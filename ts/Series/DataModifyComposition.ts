@@ -34,8 +34,7 @@ import {
     defined,
     isArray,
     isNumber,
-    isString,
-    pick
+    isString
 } from '../Shared/Utilities.js';
 
 /* *
@@ -203,7 +202,7 @@ namespace DataModifyComposition {
                 }
             });
 
-            if (pick(redraw, true)) {
+            if ((redraw ?? true)) {
                 this.chart.redraw();
             }
         }
@@ -227,7 +226,8 @@ namespace DataModifyComposition {
                     (point[value] > 0 && value === 'change' ? '+' : '') +
                         numberFormatter(
                             point[value],
-                            pick(point.series.tooltipOptions.changeDecimals, 2)
+                            (point.series.tooltipOptions.changeDecimals ?? 2
+                            )
                         )
                 );
             };
@@ -264,10 +264,9 @@ namespace DataModifyComposition {
                 chart.get(linkedTo);
 
             if (linkedSeries instanceof Series) {
-                this.options.compare = pick(
-                    this.userOptions.compare,
-                    linkedSeries.options.compare
-                );
+                this.options.compare =
+                    this.userOptions.compare ??
+                    linkedSeries.options.compare;
             }
         }
         const compare = this.options.compare;
@@ -358,7 +357,7 @@ namespace DataModifyComposition {
         this.options.compare = this.userOptions.compare = compare;
 
         // Fire series.init() that will set or delete series.dataModify
-        this.update({}, pick(redraw, true));
+        this.update({}, (redraw ?? true));
 
         if (this.dataModify && (compare === 'value' || compare === 'percent')) {
             this.dataModify.initCompare(compare);
@@ -470,13 +469,13 @@ namespace DataModifyComposition {
         redraw?: boolean
     ): void {
         // Set default value to false
-        cumulative = pick(cumulative, false);
+        cumulative = (cumulative ?? false);
 
         // Survive to export, #5485 (and for options generally)
         this.options.cumulative = this.userOptions.cumulative = cumulative;
 
         // Fire series.init() that will set or delete series.dataModify
-        this.update({}, pick(redraw, true));
+        this.update({}, (redraw ?? true));
 
         // If should, turn on the Cumulative Sum mode
         if (this.dataModify) {

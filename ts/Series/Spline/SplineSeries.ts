@@ -26,7 +26,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import { merge, pick } from '../../Shared/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -240,10 +240,10 @@ class SplineSeries extends LineSeries {
 
         const ret: SVGPath.CurveTo = [
             'C',
-            pick(lastPoint.rightContX, lastPoint.plotX, 0),
-            pick(lastPoint.rightContY, lastPoint.plotY, 0),
-            pick(leftContX, plotX, 0),
-            pick(leftContY, plotY, 0),
+            (lastPoint.rightContX ?? lastPoint.plotX ?? 0),
+            (lastPoint.rightContY ?? lastPoint.plotY ?? 0),
+            (leftContX ?? plotX ?? 0),
+            (leftContY ?? plotY ?? 0),
             plotX,
             plotY
         ];

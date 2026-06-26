@@ -48,8 +48,7 @@ import {
     isArray,
     isNumber,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -306,12 +305,9 @@ class ColumnSeries extends Series {
             pointOffsetWidth = groupWidth / (columnCount || 1),
             pointWidth = Math.min(
                 options.maxPointWidth || xAxis.len,
-                pick(
-                    options.pointWidth,
-                    pointOffsetWidth * (
-                        1 - 2 * (options.pointPadding as any)
-                    )
-                )
+                (options.pointWidth ?? pointOffsetWidth * (
+                    1 - 2 * (options.pointPadding as any)
+                ))
             ),
             pointPadding = (pointOffsetWidth - pointWidth) / 2,
             // #1251, #3737

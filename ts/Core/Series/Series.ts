@@ -105,7 +105,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     pushUnique,
     removeEvent,
     syncTimeout
@@ -930,7 +929,7 @@ class Series {
         if (chartSeries.length) {
             lastSeries = chartSeries[chartSeries.length - 1];
         }
-        series._i = pick(lastSeries?._i, -1) + 1;
+        series._i = (lastSeries?._i ?? -1) + 1;
         series.opacity = series.options.opacity;
 
         // Insert the series and re-order all series above the insertion
@@ -990,7 +989,7 @@ class Series {
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
-                        pick((seriesOptions as any)[coll], 0) === axis.index ||
+                        ((seriesOptions as any)[coll] ?? 0) === axis.index ||
                         (
                             typeof (seriesOptions as any)[coll] !==
                             'undefined' &&
@@ -1084,11 +1083,8 @@ class Series {
 
         let pointInterval: number;
 
-        this.pointInterval = pointInterval = pick(
-            this.pointInterval,
-            options.pointInterval,
-            1
-        );
+        this.pointInterval = pointInterval =
+            this.pointInterval ?? options.pointInterval ?? 1;
 
         if (relativeXValue && isNumber(x)) {
             pointInterval *= x;
@@ -1204,16 +1200,15 @@ class Series {
 
         // When shared tooltip, stickyTracking is true by default,
         // unless user says otherwise.
-        this.stickyTracking = pick(
-            seriesUserOptions.stickyTracking,
-            userPlotOptionsType.stickyTracking,
-            userPlotOptionsSeries.stickyTracking,
+        this.stickyTracking =
+            seriesUserOptions.stickyTracking ??
+            userPlotOptionsType.stickyTracking ??
+            userPlotOptionsSeries.stickyTracking ??
             (
                 this.tooltipOptions.shared && !this.noSharedTooltip ?
                     true :
                     options.stickyTracking
-            )
-        );
+            );
 
         // Delete marker object if not allowed (#1125)
         if (typeOptions.marker === null) {
@@ -1324,10 +1319,9 @@ class Series {
         if (!value) {
             // Pick up either the colorIndex option, or the series.colorIndex
             // after Series.update()
-            setting = pick(
-                prop === 'color' ? this.options.colorIndex : void 0,
-                this[indexName]
-            );
+            setting = prop === 'color' ?
+                (this.options.colorIndex ?? this[indexName]) :
+                this[indexName];
             if (defined(setting)) { // After Series.update()
                 i = setting;
             } else {
@@ -2791,9 +2785,9 @@ class Series {
                         lowValue === stackThreshold &&
                         stackIndicator.key === stacks[xValue].base
                     ) {
-                        lowValue = pick(
-                            isNumber(threshold) ? threshold : yAxis.min
-                        );
+                        lowValue = isNumber(threshold) ?
+                            threshold :
+                            yAxis.min;
                     }
 
                     // #1200, #1232
@@ -2805,7 +2799,7 @@ class Series {
                         lowValue = void 0;
                     }
 
-                    point.total = point.stackTotal = pick(stackItem.total);
+                    point.total = point.stackTotal = stackItem.total ?? void 0;
                     point.percentage = defined(point.y) && stackItem.total ?
                         (point.y / stackItem.total * 100) : void 0;
                     point.stackY = yValue;
@@ -3176,11 +3170,10 @@ class Series {
                 // Only draw the point if y is defined
                 if (shouldDrawMarker) {
                     // Shortcuts
-                    const symbol = pick(
-                        pointMarkerOptions.symbol,
-                        series.symbol,
-                        'rect' as SymbolKey
-                    );
+                    const symbol =
+                        pointMarkerOptions.symbol ??
+                        series.symbol ??
+                        'rect' as SymbolKey;
 
                     markerAttribs = series.markerAttribs(
                         point,
@@ -3581,7 +3574,8 @@ class Series {
                 zone.lineClip = [];
                 zone.translated = clamp(
                     axis.toPixels(
-                        pick(zone.value, axisMax),
+                        (
+                            zone.value ?? axisMax),
                         true
                     ) || 0,
                     0,
@@ -4508,7 +4502,7 @@ class Series {
             i: number;
 
         // Optional redraw, defaults to true
-        redraw = pick(redraw, true);
+        redraw = (redraw ?? true);
 
         // Get options and push the point to xData, yData and series.options. In
         // series.generatePoints the Point instance will be created on demand
@@ -4649,7 +4643,7 @@ class Series {
             };
 
         setAnimation(animation, chart);
-        redraw = pick(redraw, true);
+        redraw = (redraw ?? true);
 
         // Fire the event with a default handler of removing the point
         if (point) {
@@ -4703,7 +4697,7 @@ class Series {
             chart.isDirtyLegend = chart.isDirtyBox = true;
             chart.linkSeries(keepEvents);
 
-            if (pick(redraw, true)) {
+            if ((redraw ?? true)) {
                 chart.redraw(animation);
             }
         }
@@ -4989,7 +4983,7 @@ class Series {
 
         fireEvent(this, 'afterUpdate');
 
-        if (pick(redraw, true)) {
+        if ((redraw ?? true)) {
             chart.redraw(keepPoints ? void 0 : false);
         }
     }
@@ -5014,21 +5008,18 @@ class Series {
             oldOption = this.userOptions[
                 optionName as keyof DeepPartial<SeriesOptions>
             ],
-            plotOptionsOption = pick(
-                plotOptions?.[this.type]?.[
-                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
-                ],
-                plotOptions?.series?.[
-                    optionName as keyof Omit<SeriesOptions, NonPlotOptions>
-                ]
-            );
+            plotOptionsOption = (plotOptions?.[this.type]?.[
+                optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+            ] ?? plotOptions?.series?.[
+                optionName as keyof Omit<SeriesOptions, NonPlotOptions>
+            ]);
 
         // Check if `plotOptions` are defined already, #19203
         if (oldOption && !defined(plotOptionsOption)) {
             return option !== oldOption;
         }
 
-        return option !== pick(plotOptionsOption, option);
+        return option !== (plotOptionsOption ?? option);
     }
 
     /**
@@ -5129,10 +5120,9 @@ class Series {
             { inactiveOtherPoints, states: stateOptions = {} } = options,
             // By default a quick animation to hover/inactive,
             // slower to un-hover
-            stateAnimation = pick(
-                stateOptions[state || 'normal']?.animation,
-                series.chart.options.chart.animation
-            );
+            stateAnimation =
+                stateOptions[state || 'normal']?.animation ??
+                series.chart.options.chart.animation;
         let { lineWidth, opacity } = options;
 
         state = state || '';

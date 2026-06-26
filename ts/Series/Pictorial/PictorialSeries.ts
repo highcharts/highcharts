@@ -40,8 +40,7 @@ import {
     addEvent,
     defined,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -374,9 +373,9 @@ function renderStackShadow(
             series.getColumnMetrics().width,
             { height, y } = getStackMetrics(series.yAxis, shape),
             shadowOptions = options.stackShadow,
-            strokeWidth = pick(
-                shadowOptions && shadowOptions.borderWidth,
-                series.options.borderWidth,
+            strokeWidth = (
+                (shadowOptions && shadowOptions.borderWidth) ??
+                series.options.borderWidth ??
                 1
             );
 

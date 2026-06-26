@@ -63,7 +63,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     pushUnique,
     relativeLength
 } from '../Shared/Utilities.js';
@@ -496,7 +495,9 @@ class MapView {
 
         if (b) {
 
-            const pad = pick(padding, bounds ? 0 : this.options.padding),
+            const pad = padding ?? (
+                    bounds ? 0 : this.options.padding
+                ),
                 fullField = this.getField(false),
                 padArr = isArray(pad) ? pad : [pad, pad, pad, pad];
 

@@ -60,7 +60,6 @@ import {
     isNumber,
     isString,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -166,11 +165,10 @@ function getForcedAxisOptions(
     if (type === 'xAxis') {
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
-        const navigatorEnabled = pick(
-            chartOptions.navigator?.enabled,
-            NavigatorDefaults.enabled,
-            true
-        );
+        const navigatorEnabled =
+            chartOptions.navigator?.enabled ??
+            NavigatorDefaults.enabled ??
+            true;
 
         const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
@@ -235,11 +233,10 @@ class StockChart extends Chart {
             yAxisOptions = userOptions.yAxis,
             // Always disable startOnTick:true on the main axis when the
             // navigator is enabled (#1090)
-            navigatorEnabled = pick(
-                userOptions.navigator?.enabled,
-                NavigatorDefaults.enabled,
-                true
-            );
+            navigatorEnabled =
+                userOptions.navigator?.enabled ??
+                NavigatorDefaults.enabled ??
+                true;
 
         // Avoid doing these twice
         userOptions.xAxis = userOptions.yAxis = void 0;
@@ -263,26 +260,18 @@ class StockChart extends Chart {
                 },
                 scrollbar: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(
-                        ScrollbarDefaults.enabled,
-                        true
-                    )
+                    enabled: (ScrollbarDefaults.enabled ?? true)
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(
-                        RangeSelectorDefaults.rangeSelector.enabled,
-                        true
-                    )
+                    enabled:
+                        RangeSelectorDefaults.rangeSelector.enabled ?? true
                 },
                 title: {
                     text: null
                 },
                 tooltip: {
-                    split: pick(
-                        defaultOptions.tooltip?.split,
-                        true
-                    ),
+                    split: (defaultOptions.tooltip?.split ?? true),
                     crosshairs: true
                 },
                 legend: {
@@ -508,8 +497,8 @@ namespace StockChart {
                 )
                 .attr({
                     align: options.align || align,
-                    padding: pick(options.padding, 8),
-                    r: pick(options.borderRadius, 3),
+                    padding: (options.padding ?? 8),
+                    r: (options.borderRadius ?? 3),
                     zIndex: 2
                 })
                 .add(axis.labelGroup);
@@ -820,9 +809,11 @@ namespace StockChart {
                 }
             }
 
-            transVal = pick(
-                translatedValue,
-                axis.translate(value || 0, void 0, void 0, e.old)
+            transVal = translatedValue ?? axis.translate(
+                value || 0,
+                void 0,
+                void 0,
+                e.old
             );
 
             if (isNumber(transVal)) {
@@ -937,7 +928,7 @@ namespace StockChart {
             groupingEnabled = (
                 series.allowDG !== false &&
                 dataGroupingOptions &&
-                pick(dataGroupingOptions.enabled, chart.options.isStock)
+                (dataGroupingOptions.enabled ?? chart.options.isStock)
             );
 
         return groupingEnabled;
@@ -983,7 +974,7 @@ namespace StockChart {
         c?: Chart.CallbackFunction|true
     ): StockChart|Promise<StockChart> {
         const chart = new StockChart(a as any, b as any, c);
-        return chart.promise || chart;
+        return chart.promise ?? chart;
     }
 
     /* eslint-enable jsdoc/check-param-names */

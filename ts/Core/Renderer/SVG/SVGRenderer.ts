@@ -75,7 +75,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     pInt,
     replaceNested
 } from '../../../Shared/Utilities.js';
@@ -1376,7 +1375,7 @@ class SVGRenderer implements SVGRendererBase {
                         this.attr('height')
                 });
             },
-            duration: pick(animate, true) ? void 0 : 0
+            duration: (animate ?? true) ? void 0 : 0
         });
 
         renderer.alignElements();
@@ -1580,14 +1579,8 @@ class SVGRenderer implements SVGRendererBase {
             // The image width is not always the same as the symbol width. The
             // image may be centered within the symbol, as is the case when
             // image shapes are used as label backgrounds, for example in flags.
-            img.imgwidth = pick(
-                options?.width,
-                symbolSizes[imageSrc]?.width
-            );
-            img.imgheight = pick(
-                options?.height,
-                symbolSizes[imageSrc]?.height
-            );
+            img.imgwidth = (options?.width ?? symbolSizes[imageSrc]?.width);
+            img.imgheight = (options?.height ?? symbolSizes[imageSrc]?.height);
             /**
              * Set the size and position
              */

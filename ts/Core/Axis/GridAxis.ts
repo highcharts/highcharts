@@ -47,7 +47,6 @@ import {
     isNumber,
     isObject as isObjectUtils,
     merge,
-    pick,
     wrap,
     addEvent
 } from '../../Shared/Utilities.js';
@@ -218,7 +217,7 @@ function applyGridOptions(axis: Axis): void {
         options.labels = {};
     }
     */
-    options.labels.align = pick(options.labels.align, 'center');
+    options.labels.align = (options.labels.align ?? 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc
 
@@ -980,8 +979,8 @@ function onAfterSetOptions(
                             _________________________
             Into this:    |_____|_____|_____|_____|
                                 ^                 ^    */
-            options.minPadding = pick(userOptions.minPadding, 0);
-            options.maxPadding = pick(userOptions.maxPadding, 0);
+            options.minPadding = (userOptions.minPadding ?? 0);
+            options.maxPadding = (userOptions.maxPadding ?? 0);
         }
 
         // If borderWidth is set, then use its value for tick and

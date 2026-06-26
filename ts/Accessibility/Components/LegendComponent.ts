@@ -44,7 +44,6 @@ import {
     addEvent,
     fireEvent,
     isNumber,
-    pick,
     syncTimeout
 } from '../../Shared/Utilities.js';
 const {
@@ -221,7 +220,7 @@ class LegendComponent extends AccessibilityComponent {
                     (): void => component.proxyProvider
                         .updateGroupProxyElementPositions('legend'),
                     animObject(
-                        pick(this.chart.renderer.globalAnimation, true)
+                        (this.chart.renderer.globalAnimation ?? true)
                     ).duration
                 );
             }

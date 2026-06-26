@@ -35,8 +35,7 @@ import {
     isNumber,
     isObject,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -65,11 +64,8 @@ export function setAnimation(
     animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
-    chart.renderer.globalAnimation = pick(
-        animation,
-        chart.options.chart.animation,
-        true
-    );
+    chart.renderer.globalAnimation =
+        animation ?? chart.options.chart.animation ?? true;
 }
 
 /**

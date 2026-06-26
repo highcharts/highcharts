@@ -44,8 +44,7 @@ import {
     fireEvent,
     getStyle,
     isArray,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 const {
     shallowArraysEqual
@@ -90,7 +89,7 @@ class Toolbar {
         this.iconsURL = this.getIconsURL();
         this.lang = langOptions;
         this.guiEnabled = options.enabled;
-        this.visible = pick(options.visible, true);
+        this.visible = (options.visible ?? true);
         this.guiClassName = options.className;
         this.toolbarClassName = options.toolbarClassName;
 
@@ -391,7 +390,7 @@ class Toolbar {
 
         // Main button wrapper
         const buttonWrapper = createElement('li', {
-            className: pick(classMapping[btnName], '') + ' ' + userClassName
+            className: (classMapping[btnName] ?? '') + ' ' + userClassName
         }, void 0, target);
 
         // Single button
@@ -714,7 +713,9 @@ class Toolbar {
         this.isDirty = !!options.gui.definitions;
         merge(true, this.chart.options.stockTools, options);
         merge(true, this.options, options.gui);
-        this.visible = pick(this.options.visible && this.options.enabled, true);
+        this.visible = (
+            this.options.visible && this.options.enabled
+        ) ?? true;
         // If Stock Tools are updated, then bindings should be updated too:
         if (this.chart.navigationBindings) {
             this.chart.navigationBindings.update();
@@ -722,7 +723,7 @@ class Toolbar {
 
         this.chart.isDirtyBox = true;
 
-        if (pick(redraw, true)) {
+        if ((redraw ?? true)) {
             this.chart.redraw();
         }
     }

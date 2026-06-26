@@ -28,8 +28,7 @@ import {
     addEvent,
     correctFloat,
     defined,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -205,12 +204,10 @@ class NavigatorAxisAdditions {
         const axis = this.axis,
             halfPointRange = (axis.pointRange || 0) / 2;
 
-        let newMin = pick<number|undefined, number>(
-                fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
-            ),
-            newMax = pick<number|undefined, number>(
-                fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
-            );
+        let newMin =
+                fixedMin ?? axis.translate(pxMin as any, true, !axis.horiz),
+            newMax =
+                fixedMax ?? axis.translate(pxMax as any, true, !axis.horiz);
 
 
         // Add/remove half point range to/from the extremes (#1172)

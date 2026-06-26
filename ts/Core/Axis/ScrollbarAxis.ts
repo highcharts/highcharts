@@ -28,7 +28,6 @@ import {
     addEvent,
     correctFloat,
     defined,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -125,14 +124,8 @@ namespace ScrollbarAxis {
     function getExtremes(
         axis: ScrollbarAxis
     ): Record<string, number> {
-        const axisMin = pick(
-            axis.options?.min,
-            axis.min as any
-        );
-        const axisMax = pick(
-            axis.options?.max,
-            axis.max as any
-        );
+        const axisMin = (axis.options?.min ?? axis.min as any);
+        const axisMax = (axis.options?.max ?? axis.max as any);
         return {
             axisMin,
             axisMax,

@@ -54,8 +54,7 @@ import {
     extend,
     fireEvent,
     internalClearTimeout,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 
@@ -621,7 +620,7 @@ class Sonification {
             );
             const sOpts = this.chart.options.sonification;
             this.timeline.setMasterVolume(
-                pick(sOpts && sOpts.masterVolume, 1)
+                ((sOpts && sOpts.masterVolume) ?? 1)
             );
         }
 

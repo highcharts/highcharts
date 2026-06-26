@@ -3,9 +3,9 @@
         getSpacing = function (chart, tick1, tick2) {
             var yAxis = chart.yAxis[0],
                 ticks = yAxis.ticks,
-                tick1Space = ticks[Highcharts.pick(tick1, '-1')].mark.getBBox()
+                tick1Space = ticks[tick1 ?? '-1'].mark.getBBox()
                     .y,
-                tick2Space = ticks[Highcharts.pick(tick2, '0')].mark.getBBox()
+                tick2Space = ticks[tick2 ?? '0'].mark.getBBox()
                     .y;
 
             return tick2Space - tick1Space;

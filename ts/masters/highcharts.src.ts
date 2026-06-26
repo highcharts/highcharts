@@ -95,7 +95,6 @@ import {
     objectEach,
     offset,
     pad,
-    pick,
     pushUnique,
     pInt,
     relativeLength,
@@ -139,7 +138,16 @@ G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Templating = Templating;
 G.Tick = Tick;
-G.Time = Time;
+G.Time = class extends Time {
+    public constructor(options?: AnyRecord, lang?: AnyRecord) {
+        const defaultOptions = Defaults.getOptions();
+
+        super(
+            options ?? defaultOptions.time,
+            lang ?? defaultOptions.lang
+        );
+    }
+};
 G.Tooltip = Tooltip;
 
 // Utilities
@@ -192,7 +200,6 @@ G.numberFormat = Templating.numberFormat;
 G.objectEach = objectEach;
 G.offset = offset;
 G.pad = pad;
-G.pick = pick;
 G.pushUnique = pushUnique;
 G.pInt = pInt;
 G.relativeLength = relativeLength;

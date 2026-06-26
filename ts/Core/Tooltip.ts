@@ -57,7 +57,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     pushUnique,
     splat,
     syncTimeout
@@ -491,9 +490,8 @@ class Tooltip {
             'highcharts-label',
             isHeader && 'highcharts-tooltip-header',
             isSplit ? 'highcharts-tooltip-box' : 'highcharts-tooltip',
-            !isHeader && 'highcharts-color-' + pick(
-                point.colorIndex, series.colorIndex
-            ),
+            !isHeader &&
+                'highcharts-color-' + (point.colorIndex ?? series.colorIndex),
             seriesOptions?.className
         ].filter(isString).join(' ');
     }
@@ -773,9 +771,9 @@ class Tooltip {
         }
         // The far side is right or bottom
         const preferFarSide = !this.followPointer &&
-            pick(
-                point.ttBelow,
-                polar ? false : !inverted === flipped
+            (
+                point.ttBelow ??
+                (polar ? false : !inverted === flipped)
             ), // #4984
 
             /*
@@ -942,7 +940,7 @@ class Tooltip {
 
         // Disallow duplicate timers (#1728, #1766)
         clearTimeouts(this);
-        delay = pick(delay, this.options.hideDelay);
+        delay = (delay ?? this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
                 const label = tooltip.getLabel();
@@ -1056,10 +1054,9 @@ class Tooltip {
          * Split tooltip does not support outside in the first iteration. Should
          * not be too complicated to implement.
          */
-        this.outside = pick(
-            options.outside,
-            Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
-        );
+        this.outside =
+            options.outside ??
+            Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY);
     }
 
     public shouldStickOnContact(pointerEvent?: PointerEvent): boolean {
@@ -1182,7 +1179,7 @@ class Tooltip {
 
         // Register the current series
         const currentSeries = point.series;
-        this.distance = pick(currentSeries.tooltipOptions.distance, 16);
+        this.distance = (currentSeries.tooltipOptions.distance ?? 16);
 
         // Update the inner HTML
         if (text === false) {
@@ -1588,7 +1585,7 @@ class Tooltip {
                         anchorY,
                         boxWidth,
                         point,
-                        rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
+                        rank: (boxPosition as any).rank ?? (isHeader ? 1 : 0),
                         size,
                         target: boxPosition.y,
                         tt,

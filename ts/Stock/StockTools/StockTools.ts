@@ -36,8 +36,7 @@ const {
 import {
     correctFloat,
     defined,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -263,10 +262,7 @@ function navigationGetYAxisResizers(
                 enabled: true,
                 controlledAxis: {
                     next: [
-                        pick(
-                            nextYAxis.options.id,
-                            nextYAxis.index
-                        )
+                        (nextYAxis.options.id ?? nextYAxis.index)
                     ]
                 }
             };
