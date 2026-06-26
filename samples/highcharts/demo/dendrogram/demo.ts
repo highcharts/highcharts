@@ -150,9 +150,6 @@ document.querySelectorAll('.button-row button').forEach(btn => {
 });
 
 // Safari layout hack (see demo.css)
-if (
-    navigator.userAgent.indexOf('Safari') !== -1 &&
-    navigator.userAgent.indexOf('Chrome') === -1
-) {
+if ((Highcharts as any).isSafari) {
     document.getElementById('container').classList.add('safari');
 }
