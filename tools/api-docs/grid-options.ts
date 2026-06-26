@@ -43,7 +43,19 @@ import Yargs from 'yargs';
 
 interface Args {
     debug?: boolean;
+    output?: string;
     source?: string;
+}
+
+interface RuntimeBranchDiscriminator {
+    allowUndefined?: boolean;
+    property: string;
+    value: string;
+}
+
+interface RuntimeBranchMetadata {
+    discriminator: RuntimeBranchDiscriminator;
+    runtimeBasePath: string;
 }
 
 
@@ -62,7 +74,29 @@ const STACK: Array<TSLib.CodeInfo> = [];
 
 const TREE: TreeLib.Options = {};
 
+let runtimeBranchMetadata = new WeakMap<TreeLib.Option, RuntimeBranchMetadata>();
+
+function resetBuildState(): void {
+    STACK.length = 0;
+    runtimeBranchMetadata = new WeakMap();
+
+    for (const key of Object.keys(TREE)) {
+        delete TREE[key];
+    }
+}
+
 interface RendererOptionSpec {
+    interfaceName: string;
+    typeName: string;
+}
+
+interface DataConnectorOptionSpec {
+    interfaceName: string;
+    sourcePath: string;
+    typeName: string;
+}
+
+interface TreeInputOptionSpec {
     interfaceName: string;
     typeName: string;
 }
@@ -87,6 +121,42 @@ const EDIT_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
     { interfaceName: 'DateTimeInputRendererOptions', typeName: 'dateTimeInput' },
     { interfaceName: 'TimeInputRendererOptions', typeName: 'timeInput' },
     { interfaceName: 'NumberInputRendererOptions', typeName: 'numberInput' }
+];
+
+const DATA_CONNECTOR_OPTIONS: Array<DataConnectorOptionSpec> = [
+    {
+        interfaceName: 'CSVConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/CSVConnectorOptions.d.ts',
+        typeName: 'CSV'
+    },
+    {
+        interfaceName: 'JSONConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/JSONConnectorOptions.d.ts',
+        typeName: 'JSON'
+    },
+    {
+        interfaceName: 'GoogleSheetsConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts',
+        typeName: 'GoogleSheets'
+    },
+    {
+        interfaceName: 'HTMLTableConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/HTMLTableConnectorOptions.d.ts',
+        typeName: 'HTMLTable'
+    }
+];
+
+// These shared DataConnector options support Dashboards infrastructure, but
+// are not part of the recommended declarative Grid configuration.
+const DATA_CONNECTOR_GRID_HIDDEN_OPTIONS = new Set([
+    'dataTables',
+    'id',
+    'metadata'
+]);
+
+const TREE_INPUT_OPTIONS: Array<TreeInputOptionSpec> = [
+    { interfaceName: 'TreeInputParentIdOptions', typeName: 'parentId' },
+    { interfaceName: 'TreeInputPathOptions', typeName: 'path' }
 ];
 
 
@@ -195,6 +265,10 @@ function addTreeNode(
             }
             if (info.type) {
                 for (const _type of info.type) {
+                    if (isTreeInputOptionsType(sourceInfo, _type, info)) {
+                        continue;
+                    }
+
                     const resolvedInterface = resolveTypeToInterface(
                         sourceInfo, _type, info
                     );
@@ -330,7 +404,12 @@ function addTreeNode(
         switch (_tag) {
 
             default:
-                if (_infoDoclet.tags[_tag].length > 1) {
+                if (
+                    _tag === 'deprecated' &&
+                    !_infoDoclet.tags[_tag].length
+                ) {
+                    _nodeDoclet[_tag] = '';
+                } else if (_infoDoclet.tags[_tag].length > 1) {
                     _nodeDoclet[_tag] =
                         _infoDoclet.tags[_tag].slice();
                 } else {
@@ -400,20 +479,7 @@ function addTreeNode(
                 break;
 
             case 'sample':
-                _array = _nodeDoclet[`${_tag}s`] = [];
-                for (
-                    const _object
-                    of TSLib.extractTagObjects(_infoDoclet, 'sample')
-                ) {
-                    const _sample: TreeLib.OptionDocletSample = {
-                        name: _object.name || _object.text,
-                        value: _object.value || ''
-                    };
-                    if (_object.type) {
-                        _sample.products = _object.type.slice();
-                    }
-                    _array.push(_sample);
-                }
+                addSamplesToNode(_infoDoclet, _treeNode);
                 break;
 
             case 'type':
@@ -468,6 +534,10 @@ function addTreeNode(
 
     expandRendererOptionChildren(_nodeDoclet, _treeNode, debug);
     expandDataProviderOptionChildren(
+        sourceInfo, info, _nodeDoclet, _treeNode, debug
+    );
+    expandDataConnectorOptionChildren(_nodeDoclet, _treeNode, debug);
+    expandTreeInputOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
     );
 
@@ -661,6 +731,29 @@ function formatJSDocLinks(
     );
 }
 
+function addSamplesToNode(
+    infoDoclet: TSLib.DocletInfo | undefined,
+    treeNode: TreeLib.Option
+): void {
+    if (!infoDoclet?.tags.sample) {
+        return;
+    }
+
+    const samples = treeNode.doclet.samples = [];
+
+    for (const object of TSLib.extractTagObjects(infoDoclet, 'sample')) {
+        const sample: TreeLib.OptionDocletSample = {
+            name: object.name || object.text,
+            value: object.value || ''
+        };
+
+        if (object.type) {
+            sample.products = object.type.slice();
+        }
+        samples.push(sample);
+    }
+}
+
 function appendDeprecationToDescription(
     infoDoclet: TSLib.DocletInfo,
     nodeDoclet: Record<string, any>
@@ -673,7 +766,7 @@ function appendDeprecationToDescription(
         TSLib.extractTagText(infoDoclet, 'deprecated', true) || ''
     ).trim();
     const deprecatedHTML = deprecatedText ?
-        `<p><em>Deprecated:</em> ${deprecatedText}</p>` :
+        `<p><em>Deprecated:</em> ${formatJSDocLinks(deprecatedText)}</p>` :
         '<p><em>Deprecated.</em></p>';
     const existingDescription = nodeDoclet.description || '';
 
@@ -748,6 +841,15 @@ function expandRendererOptionChildren(
         // Group renderer-specific options by renderer type, similar to
         // how Highcharts Core groups series options by series type.
         const typeNode = getTreeNode(`${treeNode.meta.fullname}.${spec.typeName}`);
+
+        runtimeBranchMetadata.set(typeNode, {
+            discriminator: {
+                property: 'type',
+                value: spec.typeName
+            },
+            runtimeBasePath: treeNode.meta.fullname
+        });
+
         if (!typeNode.doclet.description) {
             const interfaceDesc = (
                 info.doclet &&
@@ -914,6 +1016,16 @@ function expandDataProviderOptionChildren(
         const providerNode = getTreeNode(
             `${treeNode.meta.fullname}.${provider.providerType}`
         );
+
+        runtimeBranchMetadata.set(providerNode, {
+            discriminator: {
+                allowUndefined: provider.providerType === 'local',
+                property: 'providerType',
+                value: provider.providerType
+            },
+            runtimeBasePath: treeNode.meta.fullname
+        });
+
         const providerSourcePath = (
             provider.interfaceInfo.meta.file ||
             provider.sourceInfo.path ||
@@ -971,6 +1083,185 @@ function expandDataProviderOptionChildren(
                         `'${provider.providerType}'`;
                 }
             }
+        }
+    }
+}
+
+function expandDataConnectorOptionChildren(
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const typeNames = nodeDoclet.type?.names;
+
+    if (
+        !Array.isArray(typeNames) ||
+        !typeNames.includes('GridDataConnectorTypeOptions')
+    ) {
+        return;
+    }
+
+    for (const spec of DATA_CONNECTOR_OPTIONS) {
+        const sourceInfo = TSLib.getSourceInfo(spec.sourcePath, void 0, debug);
+        const interfaceInfo = sourceInfo.code.find(
+            code => (
+                code.kind === 'Interface' &&
+                code.name === spec.interfaceName
+            )
+        );
+
+        if (!interfaceInfo || interfaceInfo.kind !== 'Interface') {
+            continue;
+        }
+
+        TSLib.autoExtendInfo(interfaceInfo);
+
+        const typeNode = getTreeNode(
+            `${treeNode.meta.fullname}.${spec.typeName}`
+        );
+
+        if (!typeNode.doclet.description) {
+            const interfaceDesc = (
+                interfaceInfo.doclet &&
+                TSLib.extractTagText(interfaceInfo.doclet, 'description', true)
+            ) || '';
+
+            typeNode.doclet.description = interfaceDesc || (
+                `Options for data connector type <code>'${spec.typeName}'</code>.`
+            );
+        }
+        addSamplesToNode(interfaceInfo.doclet, typeNode);
+
+        for (const member of interfaceInfo.members) {
+            const memberName = TSLib.extractInfoName(member);
+
+            // `type` is represented by the synthetic connector branch label.
+            if (
+                memberName === 'type' ||
+                (
+                    memberName &&
+                    DATA_CONNECTOR_GRID_HIDDEN_OPTIONS.has(memberName)
+                )
+            ) {
+                continue;
+            }
+            addTreeNode(sourceInfo, typeNode, member, debug);
+        }
+    }
+}
+
+function isTreeInputOptionsType(
+    sourceInfo: TSLib.SourceInfo,
+    typeName: string,
+    info: TSLib.CodeInfo
+): boolean {
+    if (
+        typeName === 'TreeInputOptions' ||
+        (
+            typeName.includes('TreeInputParentIdOptions') &&
+            typeName.includes('TreeInputPathOptions')
+        )
+    ) {
+        return true;
+    }
+
+    const alias = resolveTypeAliasInfo(sourceInfo, typeName, info);
+    const aliasValues = Array.isArray(alias?.value) ? alias.value : [];
+
+    return aliasValues.some(
+        (aliasValue: string): boolean => (
+            aliasValue.includes('TreeInputParentIdOptions') &&
+            aliasValue.includes('TreeInputPathOptions')
+        )
+    );
+}
+
+function expandTreeInputOptionChildren(
+    sourceInfo: TSLib.SourceInfo,
+    info: TSLib.CodeInfo,
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const infoTypeNames = (
+        info.kind === 'Property' || info.kind === 'Variable' ?
+            info.type || [] :
+            []
+    );
+    const docletTypeNames = Array.isArray(nodeDoclet.type?.names) ?
+        nodeDoclet.type.names :
+        [];
+    const typeNames = infoTypeNames.concat(docletTypeNames);
+
+    if (
+        !typeNames.some(
+            (typeName: string): boolean => (
+                isTreeInputOptionsType(sourceInfo, typeName, info)
+            )
+        )
+    ) {
+        return;
+    }
+
+    for (const spec of TREE_INPUT_OPTIONS) {
+        const interfaceInfo = findInterfaceInfoByName(spec.interfaceName);
+
+        if (!interfaceInfo || interfaceInfo.info.kind !== 'Interface') {
+            continue;
+        }
+
+        const typeNode = getTreeNode(`${treeNode.meta.fullname}.${spec.typeName}`);
+
+        runtimeBranchMetadata.set(typeNode, {
+            discriminator: {
+                property: 'type',
+                value: spec.typeName
+            },
+            runtimeBasePath: treeNode.meta.fullname
+        });
+
+        const interfaceDesc = (
+            interfaceInfo.info.doclet &&
+            TSLib.extractTagText(
+                interfaceInfo.info.doclet,
+                'description',
+                true
+            )
+        ) || '';
+
+        if (!typeNode.doclet.description) {
+            typeNode.doclet.description = interfaceDesc || (
+                `Options for tree input type <code>'${spec.typeName}'</code>.`
+            );
+        }
+        if (
+            typeof nodeDoclet.product !== 'undefined' &&
+            typeof (typeNode.doclet as any).product === 'undefined'
+        ) {
+            (typeNode.doclet as any).product = nodeDoclet.product;
+        }
+
+        const typeMember = interfaceInfo.info.members.find(
+            member => TSLib.extractInfoName(member) === 'type'
+        );
+
+        if (typeMember) {
+            addTreeNode(interfaceInfo.sourceInfo, typeNode, typeMember, debug);
+
+            const typeValueNode = findTreeNode(`${typeNode.meta.fullname}.type`);
+
+            if (typeValueNode) {
+                typeValueNode.doclet.defaultvalue = `'${spec.typeName}'`;
+                typeValueNode.meta.default = `'${spec.typeName}'`;
+            }
+        }
+
+        for (const member of interfaceInfo.info.members) {
+            if (TSLib.extractInfoName(member) === 'type') {
+                continue;
+            }
+
+            addTreeNode(interfaceInfo.sourceInfo, typeNode, member, debug);
         }
     }
 }
@@ -1851,13 +2142,22 @@ function findTreeNode(
     return undefined;
 }
 
+export function getRuntimeBranchMetadata(
+    node: TreeLib.Option
+): RuntimeBranchMetadata | undefined {
+    return runtimeBranchMetadata.get(node);
+}
 
-async function main() {
-    const args = Yargs.parseSync(process.argv) as Args;
+
+export async function buildGridOptionsTree(
+    args: Args = {}
+): Promise<TreeLib.Options> {
     const debug = !!args.debug;
-    const source = args.source as (string | undefined) || DEFAULT_SOURCE;
+    const source = args.source || DEFAULT_SOURCE;
 
     let timer: number;
+
+    resetBuildState();
 
     const _paths = (
         FSLib.isFile(source) ?
@@ -1909,14 +2209,14 @@ async function main() {
     LogLib.message(`Found ${Object.keys(TREE).length} root options:`);
     LogLib.message(Object.keys(TREE).sort().join(', '));
 
-    // 4. Save output
-    LogLib.warn('Saving JSON ...');
-    await saveJSON();
-    LogLib.success('Done');
+    return TREE;
 }
 
 
-async function saveJSON() {
+export async function saveJSON(
+    outputPath = 'tree-grid.json',
+    tree: TreeLib.Options = TREE
+): Promise<void> {
     const save = (filePath: string, obj: any) => {
         FS.writeFileSync(
             filePath,
@@ -1926,13 +2226,25 @@ async function saveJSON() {
         LogLib.message('Saved', filePath, '.');
     };
 
-    TREE._meta = {
+    tree._meta = {
         branch: await GitLib.getBranch(),
         commit: await GitLib.getLatestCommitShaSync(),
         version: JSON.parse(FS.readFileSync('package.json', 'utf8')).version
     } as any;
 
-    save('tree-grid.json', { _meta: TREE._meta, ...TREE });
+    save(outputPath, { _meta: tree._meta, ...tree });
+}
+
+
+async function main() {
+    const args = Yargs.parseSync(process.argv) as Args;
+    const outputPath = args.output || 'tree-grid.json';
+    const tree = await buildGridOptionsTree(args);
+
+    // 4. Save output
+    LogLib.warn('Saving JSON ...');
+    await saveJSON(outputPath, tree);
+    LogLib.success('Done');
 }
 
 
@@ -1943,4 +2255,9 @@ async function saveJSON() {
  * */
 
 
-main();
+if (
+    process.argv[1] &&
+    /(^|[\\/])grid-options\.(?:ts|js)$/u.test(process.argv[1])
+) {
+    void main();
+}

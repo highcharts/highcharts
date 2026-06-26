@@ -1,3 +1,7 @@
+/* eslint-disable node/no-extraneous-require */
+// @TODO: Remove this eslint-disable once highcharts/connectors-morningstar#179
+// is merged and released.
+
 require.config({
     paths: {
         'highcharts/highcharts': 'https://code.highcharts.com/es5/highcharts',
@@ -24,12 +28,7 @@ require(['highcharts/highcharts'], function (Highcharts) {
 
                 pane: {
                     startAngle: -90,
-                    endAngle: 90,
-                    background: {
-                        innerRadius: '60%',
-                        outerRadius: '100%',
-                        shape: 'arc'
-                    }
+                    endAngle: 90
                 },
 
                 yAxis: {

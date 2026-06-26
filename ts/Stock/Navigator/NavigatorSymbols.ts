@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,9 +22,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
-
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import rect from '../../Core/Renderer/SVG/Symbols.js';
 import { relativeLength } from '../../Shared/Utilities.js';
+
 /* *
  *
  *  Constants
@@ -32,7 +34,7 @@ import { relativeLength } from '../../Shared/Utilities.js';
 
 /**
  * Draw one of the handles on the side of the zoomed range in the navigator.
- * @private
+ * @internal
  */
 function navigatorHandle(
     _x: number,
@@ -44,7 +46,7 @@ function navigatorHandle(
     const halfWidth = options.width ? options.width / 2 : width,
         markerPosition = 1.5,
         r = relativeLength(
-            options.borderRadius || 0,
+            borderRadiusObject(options.borderRadius).radius,
             Math.min(halfWidth * 2, height)
         );
 
@@ -64,8 +66,10 @@ function navigatorHandle(
  *
  * */
 
+/** @internal */
 const NavigatorSymbols: Partial<SymbolTypeRegistry> = {
     'navigator-handle': navigatorHandle
 };
 
+/** @internal */
 export default NavigatorSymbols;

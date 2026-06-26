@@ -93,14 +93,6 @@
         }
     }
 
-    &.hcg-icon-search {
-        padding-left: 25px;
-        appearance: none;
-        background-repeat: no-repeat;
-        background-position: left 10px center;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3e%3cpath d='M10.5 10.5L7.50005 7.5M8.5 5C8.5 6.933 6.933 8.5 5 8.5C3.067 8.5 1.5 6.933 1.5 5C1.5 3.067 3.067 1.5 5 1.5C6.933 1.5 8.5 3.067 8.5 5Z' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
-    }
-
     select& {
         appearance: none;
         background-image: url("data:image/svg+xml,%3csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3.5 7.5L6 10L8.5 7.5M3.5 4.5L6 2L8.5 4.5' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
@@ -185,30 +177,31 @@
         position: relative;
     }
 
-    &.hcg-scrollable-content tbody {
+    /* <tbody> */
+    &.hcg-scrollable-content > tbody {
         height: 100%;
         overflow: auto;
         min-height: 0;
         flex: 1;
     }
 
-    &.hcg-virtualization tbody {
+    &.hcg-virtualization > tbody {
         display: block;
         position: relative;
     }
 
-    tbody tr {
+    > tbody > tr {
         overflow: hidden;
         width: 100%;
     }
 
-    tbody tr > :where(.hcg-cell) {
+    > tbody > tr > :where(.hcg-cell) {
         position: relative;
         line-height: 1em;
         overflow: hidden;
     }
 
-    tbody tr.hcg-mocked-row > :where(.hcg-cell) {
+    > tbody > tr.hcg-mocked-row > :where(.hcg-cell) {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
@@ -222,20 +215,20 @@
         border-bottom: none;
     }
 
-    &.hcg-scrollable-content tbody tr {
+    &.hcg-scrollable-content > tbody > tr {
         display: block;
     }
 
-    &.hcg-virtualization tbody tr {
+    &.hcg-virtualization > tbody > tr {
         position: absolute;
     }
 
-    tbody.hcg-rows-content-nowrap :where(.hcg-cell) {
+    > tbody.hcg-rows-content-nowrap > tr > :where(.hcg-cell) {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    tbody :where(.hcg-cell):focus {
+    > tbody > tr > :where(.hcg-cell):focus {
         outline: none;
     }
 }
@@ -592,6 +585,12 @@
     flex-flow: column;
     row-gap: 5px;
     min-width: 50px;
+}
+
+.hcg-column-filter-operator-spacer {
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
 }
 
 .hcg-clear-filter-button {

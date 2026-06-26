@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -72,7 +73,6 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import RegexLimits from '../RegexLimits.js';
 import {
     addEvent,
     createElement,
@@ -88,10 +88,10 @@ import {
     pick,
     pushUnique,
     removeEvent,
-    splat
+    splat,
+    RegexLimits
 } from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../../Core/Utilities.js';
-import { Palette } from '../../Core/Color/Palettes';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -429,9 +429,105 @@ export class Exporting {
     }
 
     /** @internal */
+    /**
+     * Extract an array of font family names from a `font-family` string.
+     * Handles trimming and removal of surrounding quotes.
+     *
+     * @param {string|undefined} fontFamily
+     * The font-family CSS value to extract font names from.
+     *
+     * @return {string[]}
+     * Array of font family names.
+     */
+    private static extractFontFamilies(fontFamily?: string): string[] {
+        if (!fontFamily) {
+            return [];
+        }
+
+        return fontFamily
+            .split(',')
+            .map((font): string => font.trim().replace(/^['"]|['"]$/g, ''))
+            .filter(Boolean);
+    }
+
+    /**
+     * Checks if a given CSS selector affects the SVG element or any of
+     * its descendants. Returns true if either the SVG element itself
+     * matches the selector, or if any element within the SVG matches it.
+     *
+     * @internal
+     *
+     * @param {string} selector
+     * The CSS selector to test against the SVG element and its descendants.
+     * @param {SVGSVGElement} svg
+     * The SVG element to check for matches with the selector.
+     *
+     * @return {boolean}
+     * True if the selector matches the SVG or any of its descendants,
+     * false otherwise.
+     */
+
+    private static selectorAffectsSVG(
+        selector: string,
+        svg: SVGSVGElement
+    ): boolean {
+        try {
+            if (svg.matches(selector)) {
+                return true;
+            }
+            return !!svg.querySelector(selector);
+        } catch {
+            // Ignore invalid/unsupported selectors for matching.
+            return false;
+        }
+    }
+
+    /** @internal */
+    /**
+     * Collects all unique font family names used inline within the root
+     * SVG element and its <text> and <tspan> elements by inspecting
+     * their style attributes and font-family attributes.
+     *
+     * @param {SVGSVGElement} svg
+     * The SVG element in which to search for inline font families.
+     * @param {Set<string>} usedFontFamilies
+     * The set to store and accumulate unique font family names.
+     */
+    private static collectSVGInlineFonts(
+        svg: SVGSVGElement,
+        usedFontFamilies: Set<string>
+    ): void {
+        // Include the root SVG element itself, since the chart-wide
+        // `chart.style.fontFamily` is applied there rather than on the
+        // individual text nodes (#24722).
+        const nodes = [svg, ...Array.from(svg.querySelectorAll('text, tspan'))];
+
+        for (const textNode of nodes) {
+            const styleAttr = textNode.getAttribute('style') || '';
+            const inlineFontFamily = textNode.getAttribute('font-family') || '';
+
+            if (styleAttr.indexOf('font-family') > -1) {
+                const match = styleAttr.match(/font-family\s*:\s*([^;]+)/i);
+                const families = Exporting.extractFontFamilies(match?.[1]);
+                for (const family of families) {
+                    usedFontFamilies.add(family);
+                }
+            }
+
+            for (
+                const family of Exporting.extractFontFamilies(inlineFontFamily)
+            ) {
+                usedFontFamilies.add(family);
+            }
+        }
+    }
+
+    /** @internal */
     private static async handleStyleSheet(
         sheet: CSSStyleSheet,
-        resultArray: string[],
+        fontFaceRules: string[],
+        usedFontFamilies: Set<string>,
+        svg: SVGSVGElement,
         visited: Set<string> = new Set()
     ): Promise<void> {
         const href = sheet.href;
@@ -441,18 +537,6 @@ export class Exporting {
                 return;
             }
             visited.add(href);
-
-            try {
-                const sheetOrigin = new URL(href, doc.baseURI).origin;
-                if (sheetOrigin !== win.location.origin) {
-                    // We skip all cross-origin stylesheets on purpose.
-                    // This prevents DOM SecurityErrors and unhandled network
-                    // rejections when the browser blocks cssRules access.
-                    return;
-                }
-            } catch {
-                // URL parsing failed, proceed to try/catch
-            }
         }
 
         try {
@@ -460,14 +544,32 @@ export class Exporting {
                 if (rule instanceof CSSImportRule) {
                     try {
                         const importedSheet =
-                        await Exporting.fetchCSS(rule.href);
+                            await Exporting.fetchCSS(rule.href);
+
                         if (importedSheet) {
                             await Exporting.handleStyleSheet(
-                                importedSheet, resultArray, visited
+                                importedSheet,
+                                fontFaceRules,
+                                usedFontFamilies,
+                                svg,
+                                visited
                             );
                         }
                     } catch {
                         // Silently ignore CORS errors on imported stylesheets
+                    }
+                }
+
+                if (
+                    rule instanceof CSSStyleRule &&
+                    Exporting.selectorAffectsSVG(rule.selectorText, svg)
+                ) {
+                    for (
+                        const family of Exporting.extractFontFamilies(
+                            rule.style.fontFamily
+                        )
+                    ) {
+                        usedFontFamilies.add(family);
                     }
                 }
 
@@ -489,7 +591,7 @@ export class Exporting {
                             });
                     }
 
-                    resultArray.push(cssText);
+                    fontFaceRules.push(cssText);
                 }
             }
         } catch (e: any) {
@@ -498,7 +600,11 @@ export class Exporting {
                     const newSheet = await Exporting.fetchCSS(href);
                     if (newSheet) {
                         await Exporting.handleStyleSheet(
-                            newSheet, resultArray, visited
+                            newSheet,
+                            fontFaceRules,
+                            usedFontFamilies,
+                            svg,
+                            visited
                         );
                     }
                 } catch {
@@ -509,19 +615,38 @@ export class Exporting {
     }
 
     /** @internal */
-    private static async fetchStyleSheets(): Promise<string[]> {
-        const cssTexts: string[] = [];
+    private static async fetchStyleSheets(svg: SVGSVGElement): Promise<string[]> {
+        const fontFaceRules: string[] = [],
+            usedFontFamilies = new Set<string>();
+
+        Exporting.collectSVGInlineFonts(svg, usedFontFamilies);
 
         for (const sheet of Array.from(doc.styleSheets)) {
-            await Exporting.handleStyleSheet(sheet, cssTexts);
+            await Exporting.handleStyleSheet(
+                sheet,
+                fontFaceRules,
+                usedFontFamilies,
+                svg
+            );
         }
 
-        return cssTexts;
+        if (!usedFontFamilies.size) {
+            return fontFaceRules;
+        }
+
+        return fontFaceRules.filter((cssText): boolean => {
+            const familyMatch = cssText.match(/font-family\s*:\s*([^;]+);?/i),
+                families = Exporting.extractFontFamilies(familyMatch?.[1]);
+
+            return families.some(
+                (family): boolean => usedFontFamilies.has(family)
+            );
+        });
     }
 
     /** @internal */
     public static async inlineFonts(svg: SVGSVGElement): Promise<SVGSVGElement> {
-        const cssTexts = await Exporting.fetchStyleSheets(),
+        const cssTexts = await Exporting.fetchStyleSheets(svg),
             urlRegex = /url\(([^)]+)\)/g,
             urls: string[] = [];
 
@@ -659,6 +784,30 @@ export class Exporting {
     }
 
     /**
+     * Prepare the SVG DOM for exporting
+     *
+     * @private
+     */
+    public static sanitizeDOM(
+        svg: SVGDOMElement
+    ): void {
+        // Increase the size of foreignObjects to avoid clipping when the
+        // applied font size in the export is larger than the on-screen font
+        // size.
+        svg.querySelectorAll('foreignObject').forEach((fo): void => {
+            ['width', 'height'].forEach((attr): void => {
+                const value = fo.getAttribute(attr);
+                if (value) {
+                    fo.setAttribute(
+                        attr,
+                        Math.ceil(parseInt(value, 10) * 1.15)
+                    );
+                }
+            });
+        });
+    }
+
+    /**
      * A collection of fixes on the produced SVG to account for expand
      * properties and browser bugs. Returns a cleaned SVG.
      *
@@ -681,38 +830,13 @@ export class Exporting {
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         options?: Options
     ): string {
-        const split = svg.indexOf('</svg>') + 6,
-            useForeignObject = svg.indexOf('<foreignObject') > -1;
-        let html = svg.substr(split);
-
-        // Remove any HTML added to the container after the SVG (#894, #9087)
-        svg = svg.substr(0, split);
-
-        if (useForeignObject) {
-            // Some tags needs to be closed in xhtml (#13726)
-            svg = svg
-                .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
-                .replace(
-                    /(<svg(?![^>]*xmlns=)[^>]*)>/g,
-                    '$1 xmlns="http://www.w3.org/2000/svg">'
-                );
-
-        // Move HTML into a foreignObject
-        } else if (html && options?.exporting?.allowHTML) {
-            html = '<foreignObject x="0" y="0" ' +
-                    'width="' + options.chart.width + '" ' +
-                    'height="' + options.chart.height + '">' +
-                '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                // Some tags needs to be closed in xhtml (#13726)
-                html
-                    .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
-                    .replace(/(<svg(?![^>]*xmlns=)[^>]*)>/g, '$1 xmlns="http://www.w3.org/2000/svg">') +
-                '</body>' +
-                '</foreignObject>';
-            svg = svg.replace('</svg>', html + '</svg>');
-        }
-
         svg = svg
+            // Some tags needs to be closed in xhtml (#13726)
+            .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+            .replace(
+                /(<svg(?![^>]*xmlns=)[^>]*)>/g,
+                '$1 xmlns="http://www.w3.org/2000/svg">'
+            )
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery\d+="[^"]+"/g, '')
@@ -1123,8 +1247,7 @@ export class Exporting {
         const exporting = this,
             chart = exporting.chart,
             navOptions = chart.options.navigation,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
+            { chartWidth, chartHeight } = chart,
             cacheName = 'cache-' + className,
             // For mouse leave detection
             menuPadding = Math.max(width, height);
@@ -1162,7 +1285,7 @@ export class Exporting {
 
             // Presentational CSS
             if (!chart.styledMode) {
-                css(innerMenu, extend<CSSObject>({
+                css(innerMenu, extend({
                     MozBoxShadow: '3px 3px 10px #0008',
                     WebkitBoxShadow: '3px 3px 10px #0008',
                     boxShadow: '3px 3px 10px #0008'
@@ -1243,7 +1366,8 @@ export class Exporting {
                         if (!chart.styledMode) {
                             css(element, {
                                 border: 'none',
-                                backgroundColor: Palette.neutralColor40,
+                                backgroundColor:
+                                    'var(--highcharts-neutral-color-40)',
                                 height: '0.5px',
                                 margin: '10px 0',
                                 padding: 0,
@@ -1299,10 +1423,13 @@ export class Exporting {
                                     navOptions?.menuItemStyle || {}
                                 );
                             };
-
-                            css(element, extend({
-                                cursor: 'pointer'
-                            } as CSSObject, navOptions?.menuItemStyle || {}));
+                            css(
+                                element,
+                                extend(
+                                    { cursor: 'pointer' } as CSSObject,
+                                    navOptions?.menuItemStyle || {}
+                                )
+                            );
                         }
                     }
 
@@ -1432,8 +1559,7 @@ export class Exporting {
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `2`.
      * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
+     * on demand.
      *
      * @async
      * @function Highcharts.Exporting#downloadSVG
@@ -1564,6 +1690,12 @@ export class Exporting {
                     // object URL yet since we are doing things
                     // asynchronously
                     if (!win.canvg) {
+                        if (!libURL) {
+                            throw new Error(
+                                'Image export requires canvg. Set ' +
+                                'exporting.libURL or preload canvg.'
+                            );
+                        }
                         Exporting.objectURLRevoke = true;
                         await getScript(libURL + 'canvg.js');
                     }
@@ -1672,7 +1804,7 @@ export class Exporting {
                 exportingOptions.error(exportingOptions, err);
             } else {
                 // Fallback disabled
-                error(28, true);
+                error(err?.message || 28, true, this.chart);
             }
         } else if (exportingOptions.type === 'application/pdf') {
             // The local must be false to fallback to server for PDF export
@@ -1680,6 +1812,9 @@ export class Exporting {
 
             // Allow fallback to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
+
+        } else {
+            error(err.message, false);
         }
     }
 
@@ -1707,6 +1842,7 @@ export class Exporting {
             this.inlineStyles();
         }
         this.resolveCSSVariables();
+        Exporting.sanitizeDOM(chart.renderer.box);
 
         // Move canvas contents over to SVG image elements
         chart.container.querySelectorAll('canvas').forEach(function (
@@ -2014,7 +2150,18 @@ export class Exporting {
                 options || {},
                 function (e): void {
                     chart.callback?.call(this, e);
-                    resolve(postprocessAndGetSVG(this));
+
+                    // `chart.events.render` is triggered after the callback in
+                    // `Chart.onload`, so wait for it before serializing the
+                    // chart copy (#24537)
+                    const unbindRender = addEvent(
+                        this,
+                        'render',
+                        function (): void {
+                            unbindRender();
+                            resolve(postprocessAndGetSVG(this));
+                        }
+                    );
                 }
             ));
 
@@ -2057,7 +2204,7 @@ export class Exporting {
         rootNode?.querySelectorAll('style').forEach(
             (style: HTMLStyleElement): void => {
                 const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
-                chartCopy.container.appendChild(clonedStyle);
+                chartCopy.renderer.defs.element.appendChild(clonedStyle);
 
                 // Store for the later removal
                 shadowStyles.push(clonedStyle);
@@ -2839,7 +2986,7 @@ export namespace Exporting {
         type: string;
         filename: string;
         scale: number;
-        libURL: string;
+        libURL?: string;
     }
 
     /**

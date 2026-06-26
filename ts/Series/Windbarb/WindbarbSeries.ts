@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,8 +27,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -136,23 +136,22 @@ class WindbarbSeries extends ColumnSeries {
 
     // Get presentational attributes.
     public pointAttribs(
-        point: WindbarbPoint,
+        point?: WindbarbPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options;
 
-        let stroke = point.color || this.color,
-            strokeWidth = this.options.lineWidth;
+        let stroke = point?.color || this.color,
+            strokeWidth = options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            stroke = options.states?.[state]?.color || stroke;
+            strokeWidth = (options.states?.[state]?.lineWidthPlus || 0) +
+                (options.states?.[state]?.lineWidth || strokeWidth || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke,
             'stroke-width': strokeWidth
         };
     }

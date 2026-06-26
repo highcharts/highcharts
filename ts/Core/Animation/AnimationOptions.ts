@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -14,6 +15,7 @@
  *
  * */
 
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
@@ -63,7 +65,7 @@ export interface AnimationOptions {
 }
 
 export interface AnimationStepCallbackFunction {
-    (this: SVGElement, ...args: Array<any>): void;
+    (this: HTMLDOMElement|SVGElement|undefined, ...args: Array<any>): void;
 }
 
 /* *

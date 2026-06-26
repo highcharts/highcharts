@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -148,7 +149,13 @@ class QueryingController {
      * Apply all modifiers to the data provider.
      */
     private async modifyData(): Promise<void> {
-        await this.grid.dataProvider?.applyQuery();
+        const dataProvider = this.grid.dataProvider;
+        if (!dataProvider) {
+            return;
+        }
+
+        await dataProvider.applyQuery();
+
         this.shouldBeUpdated = false;
     }
 }

@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -81,6 +82,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
                 /**
                  * Animation when not hovering over the node.
                  *
+                 * @default { duration: 50 }
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
@@ -99,13 +101,27 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          */
         inactive: {
             /**
+             * Deprecated. Use
+             * [link.opacity](#series.networkgraph.states.inactive.link.opacity)
+             * instead.
+             *
              * Opacity of inactive links.
+             *
+             * @deprecated next
              */
             linkOpacity: 0.3,
 
             /**
+             * @extends plotOptions.networkgraph.link
+             */
+            link: {
+                opacity: 0.3
+            },
+
+            /**
              * Animation when not hovering over the node.
              *
+             * @default { duration: 50 }
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
@@ -193,7 +209,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * **Note:** Only SVG-based renderer supports this option. Setting
          * `useHTML` to true will disable this option.
          *
-         * @extends plotOptions.networkgraph.dataLabels.textPath
+         * @extends plotOptions.series.dataLabels.textPath
          * @since   7.1.0
          */
         linkTextPath: {
@@ -494,6 +510,7 @@ export default NetworkgraphSeriesDefaults;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
  * @excluding drilldown,marker,x,y,dragDrop

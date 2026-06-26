@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  Events generator for Stock tools
  *
  *  (c) 2009-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,16 +26,15 @@ import type {
 } from '../../Extensions/Annotations/AnnotationOptions';
 import type AxisType from '../../Core/Axis/AxisType';
 import type { DeepPartial } from '../../Shared/Types';
+import type FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type Toolbar from './StockToolbar';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,
@@ -47,7 +46,8 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
+import getIcon from '../../Shared/BaseFormUtils.js';
+import StockToolsIcons from './StockToolsIcons.js';
 import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -56,6 +56,7 @@ import { fireEvent, merge } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Extensions/Annotations/NavigationBindingsBase' {
     interface NavigationBindingsBase {
         toggledAnnotations?: boolean;
@@ -70,6 +71,7 @@ declare module '../../Extensions/Annotations/NavigationBindingsBase' {
  * */
 
 /**
+ * @internal
  * @sample {highstock} stock/stocktools/custom-stock-tools-bindings
  *         Custom stock tools bindings
  *
@@ -719,6 +721,11 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: 'var(--highcharts-neutral-color-60)'
+                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -1170,7 +1177,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: Palette.negativeColor
+                                        fill: 'var(--highcharts-negative-color)'
                                     }
                                 }
                             },
@@ -1251,7 +1258,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
 
             this.verticalCounter++;
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
         }
     },
     /**
@@ -1303,7 +1310,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
 
             return annotation;
         },
@@ -1357,14 +1364,14 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
         }
     },
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
      * finds the closest point and marks it with an arrow.
-     * `${palette.positiveColor}` is the color of the arrow when
-     * pointing from above and `${palette.negativeColor}`
+     * `var(--highcharts-positive-color)` is the color of the arrow when
+     * pointing from above and `var(--highcharts-negative-color)`
      * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
@@ -1413,8 +1420,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    Palette.negativeColor :
-                                    Palette.positiveColor
+                                    'var(--highcharts-negative-color)' :
+                                    'var(--highcharts-positive-color)'
                             }
                         }
                     },
@@ -1423,7 +1430,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
         }
     },
     /**
@@ -1679,7 +1686,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this.chart.series[0].update({
                 type: 'line',
                 useOhlcData: true
-            } as any);
+            });
 
             fireEvent(
                 this,
@@ -1943,8 +1950,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             button: HTMLDOMElement
         ): void {
             const chart = this.chart,
-                gui: Toolbar = chart.stockTools as any,
-                iconsURL = gui.getIconsURL();
+                gui = chart.stockTools;
 
             this.toggledAnnotations = !this.toggledAnnotations;
 
@@ -1955,15 +1961,21 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
 
-            if (gui && gui.guiEnabled) {
+            if (gui?.guiEnabled) {
                 if (this.toggledAnnotations) {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-hidden.svg")';
+                        getIcon(
+                            'annotations-hidden.svg',
+                            gui.iconsURL,
+                            StockToolsIcons
+                        );
                 } else {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-visible.svg")';
+                        getIcon(
+                            'annotations-visible.svg',
+                            gui.iconsURL,
+                            StockToolsIcons
+                        );
                 }
             }
 
@@ -2048,4 +2060,5 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
  *
  * */
 
+/** @internal */
 export default StockToolsBindings;

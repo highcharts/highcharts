@@ -14,6 +14,7 @@ const argv = require('yargs').argv;
 const childProcess = require('child_process');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
+const sourcePackageJSON = require('../../package.json');
 
 const releaseRepos = {
     Highcharts: 'highcharts-dist',
@@ -172,6 +173,49 @@ async function removeFilesInFolder(folder, exceptions) {
 }
 
 /**
+ * Synchronize release package metadata before versioning.
+ * @param {Record<string, any>} json
+ * JSON object to update.
+ * @param {string} [productName] The product name.
+ * @return {Record<string, any>}
+ * Updated JSON object.
+ */
+function updateReleaseJSON(json, productName) {
+    if (productName === 'Highcharts') {
+        if (sourcePackageJSON.module) {
+            json.module = sourcePackageJSON.module;
+        }
+
+        json.types = (
+            json.main ?
+                json.main.replace(/\.js$/u, '.d.ts') :
+                'highcharts.d.ts'
+        );
+
+        if (json.dependencies) {
+            delete json.dependencies.jspdf;
+            delete json.dependencies['svg2pdf.js'];
+        }
+
+        json.peerDependencies = Object.assign({}, json.peerDependencies, {
+            jspdf: '^4.1.0',
+            'svg2pdf.js': '^2.7.0'
+        });
+
+        json.peerDependenciesMeta = Object.assign(
+            {},
+            json.peerDependenciesMeta,
+            {
+                jspdf: { optional: true },
+                'svg2pdf.js': { optional: true }
+            }
+        );
+    }
+
+    return json;
+}
+
+/**
  * Add the current version to the Bower and package.json files
  * @param {string} version
  * To replace with
@@ -186,32 +230,7 @@ function updateJSONFiles(version, files, productName) {
         files.forEach(function (file) {
             const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
             const json = JSON.parse(fileData);
-            if (productName === 'Highcharts') {
-                json.types = (
-                    json.main ?
-                        json.main.replace(/\.js$/u, '.d.ts') :
-                        'highcharts.d.ts'
-                );
-
-                if (json.dependencies) {
-                    delete json.dependencies.jspdf;
-                    delete json.dependencies['svg2pdf.js'];
-                }
-
-                json.peerDependencies = Object.assign({}, json.peerDependencies, {
-                    jspdf: '^4.1.0',
-                    'svg2pdf.js': '^2.7.0'
-                });
-
-                json.peerDependenciesMeta = Object.assign(
-                    {},
-                    json.peerDependenciesMeta,
-                    {
-                        jspdf: { optional: true },
-                        'svg2pdf.js': { optional: true }
-                    }
-                );
-            }
+            updateReleaseJSON(json, productName);
             json.version = version;
             const outputJson = JSON.stringify(json, null, '  ');
             fs.writeFileSync('../' + releaseRepo + '/' + file + '.json', outputJson);
@@ -237,6 +256,7 @@ function copyFiles() {
     }];
 
     const files = {
+        'SECURITY.md': join(pathToDistRepo, 'SECURITY.md')
         // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
         // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
         // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
@@ -520,7 +540,7 @@ async function release() {
             cwd: pathToDistRepo
         });
 
-        const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt'];
+        const keepFiles = ['^[.]git/', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt', 'SECURITY.md'];
         await removeFilesInFolder(pathToDistRepo, keepFiles);
         log.message('Successfully removed content of ' + pathToDistRepo);
     }

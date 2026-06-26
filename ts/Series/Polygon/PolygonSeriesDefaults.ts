@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,6 +45,28 @@ import type PolygonSeriesOptions from './PolygonSeriesOptions';
  * @optionparent plotOptions.polygon
  */
 const PolygonSeriesDefaults: PolygonSeriesOptions = {
+
+    /**
+     * Fill opacity for the polygon. When you set an explicit `fillColor`,
+     * the `fillOpacity` is not applied. Instead, you should define the
+     * opacity in the `fillColor` with an rgba color definition.
+     *
+     * In styled mode, the fill opacity can be set with the
+     * `.highcharts-area` class name.
+     *
+     * @see [color](#plotOptions.polygon.color)
+     * @see [fillColor](#plotOptions.polygon.fillColor)
+     *
+     * @sample {highcharts} highcharts/demo/violin-plot/
+     *         Translucent violins
+     *
+     * @type    {number}
+     * @default 1
+     * @since   next
+     * @product highcharts highstock
+     */
+    fillOpacity: 1,
+
     marker: {
         enabled: false,
         states: {
@@ -126,6 +149,7 @@ const PolygonSeriesDefaults: PolygonSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock

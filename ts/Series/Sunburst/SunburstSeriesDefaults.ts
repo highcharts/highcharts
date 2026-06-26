@@ -6,8 +6,9 @@
  *
  *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -160,7 +161,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      * zoom in on its children. Deprecated and replaced by
      * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
      *
-     * @deprecated
+     * @deprecated 7.0.3
      * @type      {boolean}
      * @default   false
      * @since     6.0.0
@@ -243,7 +244,6 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
         rotationMode: 'circular',
 
         style: {
-            /** @internal */
             textOverflow: 'ellipsis'
         }
 
@@ -312,7 +312,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      *
      * @extends   plotOptions.treemap.traverseUpButton
      * @since     6.0.0
-     * @deprecated
+     * @deprecated 9.3.3
      * @apioption plotOptions.sunburst.traverseUpButton
      *
      */
@@ -345,6 +345,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
  */
 
 /**
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.treemap.data
  * @excluding x, y

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,6 +30,7 @@ import type {
 } from '../DOMElementType';
 import type { EventCallback } from '../../../Core/Callback';
 import type FontMetricsObject from '../FontMetricsObject';
+import type { PaletteOptions } from '../../Color/PaletteOptions';
 import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -54,7 +56,7 @@ const {
     symbolSizes,
     win
 } = H;
-import RendererRegistry from '../RendererRegistry.js';
+import Palette from '../../Color/Palette.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
@@ -216,7 +218,9 @@ class SVGRenderer implements SVGRendererBase {
         style?: CSSObject,
         forExport?: boolean,
         allowHTML?: boolean,
-        styledMode?: boolean
+        styledMode?: boolean,
+        palette?: PaletteOptions,
+        chartIndex?: number
     ) {
         const renderer = this,
             boxWrapper = renderer
@@ -226,10 +230,6 @@ class SVGRenderer implements SVGRendererBase {
                     'class': 'highcharts-root'
                 }),
             element = boxWrapper.element as SVGDOMElement;
-
-        if (!styledMode) {
-            boxWrapper.css(this.getStyle(style || {}));
-        }
 
         container.appendChild(element);
 
@@ -248,7 +248,6 @@ class SVGRenderer implements SVGRendererBase {
 
         this.url = this.getReferenceURL();
 
-
         // Add description
         const desc = this.createElement('desc').add();
         desc.element.appendChild(
@@ -259,6 +258,7 @@ class SVGRenderer implements SVGRendererBase {
         this.allowHTML = allowHTML;
         this.forExport = forExport;
         this.styledMode = styledMode;
+        this.chartIndex = chartIndex || 0;
         this.gradients = {}; // Object where gradient SvgElements are stored
         this.cache = {}; // Cache for numerical bounding boxes
         this.cacheKeys = [];
@@ -266,6 +266,13 @@ class SVGRenderer implements SVGRendererBase {
         this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
+
+        if (!styledMode) {
+            boxWrapper.css(this.getStyle(style || {}));
+
+            // Create the palette
+            this.palette = new Palette(this, palette || defaultOptions.palette);
+        }
 
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
@@ -331,7 +338,7 @@ class SVGRenderer implements SVGRendererBase {
     public cacheKeys: Array<string>;
 
     /** @internal */
-    public chartIndex!: number;
+    public chartIndex: number;
 
     /**
      * A pointer to the `defs` node of the root SVG.
@@ -367,6 +374,15 @@ class SVGRenderer implements SVGRendererBase {
      * @internal
      **/
     public asyncCounter: number;
+
+    /**
+     * The palette instance associated with the renderer. Typically the same
+     * as the chart's palette.
+     *
+     * @name Highcharts.SVGRenderer#palette
+     * @type {Highcharts.Palette|undefined}
+     */
+    public palette?: Palette;
 
     /** @internal */
     public rootFontSize: string|undefined;
@@ -596,7 +612,7 @@ class SVGRenderer implements SVGRendererBase {
             renderer.unSubPixelFix();
         }
 
-        renderer.alignedObjects = null as any;
+        renderer.alignedObjects.length = 0;
 
         return null;
     }
@@ -661,10 +677,10 @@ class SVGRenderer implements SVGRendererBase {
             ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
-                offsetX: 1,
-                offsetY: 1,
-                opacity: 0.15,
-                width: 5
+                offsetX: 0,
+                offsetY: 2,
+                opacity: 0.05,
+                width: 6
             }, shadowOptions);
 
         if (!this.defs.element.querySelector(`#${id}`)) {
@@ -740,6 +756,7 @@ class SVGRenderer implements SVGRendererBase {
         if (color === 'transparent') {
             return '#000000';
         }
+
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,
             // For each rgb channel, compute the luminosity based on all
@@ -1726,7 +1743,7 @@ class SVGRenderer implements SVGRendererBase {
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
      *
-     * @deprecated
+     * @deprecated 11.2.0
      *
      * @param x
      *
@@ -1762,7 +1779,7 @@ class SVGRenderer implements SVGRendererBase {
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
      *
-     * @deprecated
+     * @deprecated 11.2.0
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
@@ -2312,7 +2329,7 @@ interface SVGRenderer extends SVGRendererBase {
      * Dummy function for plugins, called every time the renderer is updated.
      * Prior to Highcharts 5, this was used for the canvg renderer.
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @function Highcharts.SVGRenderer#draw
      */
     draw: Function;
@@ -2370,7 +2387,7 @@ extend(SVGRenderer.prototype, {
      * Dummy function for plugins, called every time the renderer is updated.
      * Prior to Highcharts 5, this was used for the canvg renderer.
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @function Highcharts.SVGRenderer#draw
      */
     draw: noop
@@ -2389,11 +2406,11 @@ namespace SVGRenderer {
 
 /* *
  *
- *  Registry
+ *  Compatibility
  *
  * */
 
-RendererRegistry.registerRendererType('svg', SVGRenderer, true);
+(H as AnyRecord).Renderer = SVGRenderer;
 
 /* *
  *
@@ -2491,7 +2508,7 @@ export default SVGRenderer;
  * The shadow color.
  * @name    Highcharts.ShadowOptionsObject#color
  * @type    {Highcharts.ColorString|undefined}
- * @default ${palette.neutralColor100}
+ * @default var(--highcharts-neutral-color-100)
  *//**
  * The horizontal offset from the element.
  *

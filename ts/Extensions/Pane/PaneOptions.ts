@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,6 +45,8 @@ export interface PaneBackgroundOptions {
     /**
      * The background color or gradient for the pane.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since    2.3.0
      * @requires highcharts-more
@@ -52,6 +55,8 @@ export interface PaneBackgroundOptions {
     /**
      * The pane background border color.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -69,6 +74,8 @@ export interface PaneBackgroundOptions {
     /**
      * The pixel border width of the pane background.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -126,15 +133,33 @@ export interface PaneOptions {
      * `Highcharts.setOptions` for theming, the background must be a single
      * item.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @sample   {highcharts} highcharts/demo/gauge-speedometer/
      *           Speedometer gauge with multiple backgrounds
      * @requires highcharts-more
      */
     background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
     /**
+     * The border radius of the elements of the pane. This affects the pane
+     * background, plot bands and solid gauges, unless they have specific
+     * border radius settings.
+     *
+     * @sample  highcharts/pane/borderradius
+     *          Border radius
+     * @type    {number|string}
+     * @since   13.0.0
+     * @requires highcharts-more
+     */
+    borderRadius?: number|string;
+    /**
      * The center of a polar chart or angular gauge, given as an array
      * of [x, y] positions. Positions can be given as integers that
      * transform to pixels, or as percentages of the plot area size.
+     *
+     * By default, the center is calculated to fit the plot area, depending on
+     * the `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
      *
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Two gauges with different center
@@ -145,8 +170,11 @@ export interface PaneOptions {
     /**
      * The end angle of the polar X axis or gauge value axis, given in
      * degrees where 0 is north. Defaults to
-     * [startAngle](#pane.startAngle) plus 360.
+     * [startAngle](#pane.startAngle) plus 360 for polar charts, `startAngle` +
+     * 270 for gauges.
      *
+     * @sample   {highcharts} highcharts/pane/size
+     *           Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
@@ -161,18 +189,41 @@ export interface PaneOptions {
     id?: string;
     /**
      * The inner size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the pane's size.
+     * percentage defining a percentage of the pane's size. Defaults to 0 on
+     * polar charts, 80% on gauges.
      *
+     * @sample   {highcharts} highcharts/pane/size-percent
+     *           Gauge with pane sizing
      * @sample   {highcharts} highcharts/series-polar/column-inverted-inner
      *           The inner size set to 20%
      * @requires highcharts-more
      */
     innerSize?: (number|string);
     /**
+     * The margin between the pane and the plot area when auto-fitting the pane.
+     * This does not apply when an explicit `pane.size` is set. An array sets
+     * individual margins for the sides in the order [top, right, bottom, left].
+     *
+     * By default, the margin is approximated to make room for the radial axis
+     * labels of a gauge chart.
+     *
+     * @since   13.0.0
+     * @sample  {highcharts} highcharts/pane/margin
+     */
+    margin?: number|Array<number>;
+    /**
      * The size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the available plot area (the
      * smallest of the plot height or plot width).
      *
+     * By default, the size is calculated to fit the plot area, depending on the
+     * `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
+     *
+     * @sample   {highcharts} highcharts/pane/size-percent
+     *           Gauge with pane sizing
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Smaller size
      * @requires highcharts-more
@@ -180,14 +231,27 @@ export interface PaneOptions {
     size?: (number|string);
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north.
+     * where 0 is north. Defaults to 0 for polar charts, -135 for gauges.
      *
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
      * @requires highcharts-more
      */
     startAngle?: number;
+    /**
+     * The thickness of the pane in terms of pixels. This applies to the pane
+     * background, plot bands and solid gauges. Use this for a fixed width pane
+     * across different sizes, where `size` and `innerSize` are not practical.
+     *
+     * @since    13.0.0
+     * @sample   {highcharts} highcharts/pane/thickness
+     *           Pane thickness
+     * @requires highcharts-more
+     */
+    thickness?: number;
     /**
      * The z-index of the pane group.
      *

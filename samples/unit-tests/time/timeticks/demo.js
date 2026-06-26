@@ -1,14 +1,14 @@
 (function () {
-    var isCET =
+    const isCET =
         new Date().toString().indexOf('CET') !== -1 ||
         new Date().toString().indexOf('CEST') !== -1 ||
         new Date().toString().indexOf('W. Europe Standard Time') !== -1; // Edge
     QUnit.test('Time ticks, ten minutes across DST', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'CET'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 60000,
                 count: 10
@@ -90,11 +90,11 @@
     QUnit.test(
         'Time ticks, half hour across DST, western time zone',
         function (assert) {
-            var time = new Highcharts.Time({
+            const time = new Highcharts.Time({
                 timezone: 'America/New_York'
             });
 
-            var ticks = time.getTimeTicks(
+            const ticks = time.getTimeTicks(
                 {
                     unitRange: 60000,
                     count: 30
@@ -154,12 +154,57 @@
         }
     );
 
+    QUnit.test(
+        'Time ticks after DST crossover, western time zone',
+        function (assert) {
+            const time = new Highcharts.Time({
+                    timezone: 'Canada/Pacific'
+                }),
+                // Range starts after the PST→PDT transition
+                // (2026-03-08 10:00 UTC)
+                ticks = time.getTimeTicks(
+                    {
+                        unitRange: 60000,
+                        count: 30
+                    },
+                    Date.UTC(2026, 2, 8, 13, 30),
+                    Date.UTC(2026, 2, 8, 17)
+                );
+
+            assert.strictEqual(
+                time.dateFormat(
+                    null,
+                    time.makeTime(2026, 2, 8, 6, 30)
+                ),
+                '2026-03-08 06:30:00',
+                'makeTime should not shift morning times after DST crossover'
+            );
+
+            assert.deepEqual(
+                ticks.map(function (tick) {
+                    return time.dateFormat('%H:%M', tick);
+                }),
+                [
+                    '06:30',
+                    '07:00',
+                    '07:30',
+                    '08:00',
+                    '08:30',
+                    '09:00',
+                    '09:30',
+                    '10:00'
+                ],
+                'Ticks should cover the full axis after DST crossover'
+            );
+        }
+    );
+
     QUnit.test('Time ticks, single hour across DST', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'CET'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 36e5,
                 count: 1
@@ -195,11 +240,11 @@
     });
 
     QUnit.test('Time ticks, two hours across DST', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'CET'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 36e5,
                 count: 2
@@ -227,11 +272,11 @@
     });
 
     QUnit.test('Time ticks, 12h across DST', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'CET'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 36e5,
                 count: 12
@@ -268,11 +313,11 @@
     QUnit[isCET ? 'test' : 'skip'](
         'Time ticks local, 12h across DST',
         function (assert) {
-            var time = new Highcharts.Time({
+            const time = new Highcharts.Time({
                 useUTC: false
             });
 
-            var ticks = time.getTimeTicks(
+            const ticks = time.getTimeTicks(
                 {
                     unitRange: 36e5,
                     count: 12
@@ -311,11 +356,11 @@
     );
 
     QUnit.test('Time ticks, full days across DST', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'CET'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 24 * 36e5
             },
@@ -343,11 +388,11 @@
     });
 
     QUnit[isCET ? 'test' : 'skip']('Time ticks, months', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'CET'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: Highcharts.timeUnits.month
             },
@@ -389,11 +434,11 @@
     });
 
     QUnit.test('Time ticks, week', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             useUTC: true
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 7 * 24 * 36e5,
                 count: 1,
@@ -422,11 +467,11 @@
     });
 
     QUnit.test('Time ticks, Indian time (#8768)', function (assert) {
-        var time = new Highcharts.Time({
+        const time = new Highcharts.Time({
             timezone: 'America/New_York'
         });
 
-        var ticks = time.getTimeTicks(
+        const ticks = time.getTimeTicks(
             {
                 unitRange: 60000,
                 count: 5

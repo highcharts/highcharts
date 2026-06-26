@@ -131,15 +131,15 @@
     /* End header hover & sync */
 
     /* <tbody> */
-    .hcg-table tbody tr:last-of-type > :where(.hcg-cell):first-child {
+    .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):first-child {
         border-bottom-left-radius: var(--ig-border-radius);
     }
 
-    .hcg-table tbody tr:last-of-type > :where(.hcg-cell):last-child {
+    .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):last-child {
         border-bottom-right-radius: var(--ig-border-radius);
     }
 
-    .hcg-table tbody {
+    .hcg-table > tbody:last-of-type {
         border-bottom-left-radius: var(--hcg-border-radius);
         border-bottom-right-radius: var(--hcg-border-radius);
     }

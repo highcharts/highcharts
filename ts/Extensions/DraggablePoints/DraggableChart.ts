@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,8 +36,7 @@ import type {
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import DDU from './DragDropUtilities.js';
 const {
     addEvents,
@@ -81,24 +81,6 @@ declare module '../../Core/Chart/ChartBase'{
         hideDragHandles(): void;
         /** @requires modules/draggable-points */
         zoomOrPanKeyPressed(e: Event): boolean;
-    }
-}
-
-declare module '../../Core/Chart/ChartOptions'{
-    interface ChartOptions {
-        /**
-         * Set a key to hold when dragging to zoom the chart. This is useful to
-         * avoid zooming while moving points. Should be set different than
-         * [chart.panKey](#chart.panKey).
-         *
-         * @type       {string}
-         * @since      6.2.0
-         * @validvalue ["alt", "ctrl", "meta", "shift"]
-         * @deprecated
-         * @requires  modules/draggable-points
-         * @apioption  chart.zoomKey
-         */
-        zoomKey?: string;
     }
 }
 

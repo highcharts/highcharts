@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -27,7 +28,10 @@ import type DataConnectorOptions from './DataConnectorOptions';
  * */
 
 /**
- * Options of the GoogleSheetsConnector.
+ * Options of the HTMLTableConnector.
+ *
+ * @sample grid-lite/basic/data-connector-html-table
+ *         Grid with HTML table connector
  */
 export interface HTMLTableConnectorOptions extends DataConnectorOptions {
     /**

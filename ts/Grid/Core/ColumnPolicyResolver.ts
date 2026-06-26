@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -23,8 +24,7 @@
  * */
 
 import type { NoIdColumnOptions } from './Table/Column';
-
-
+import { defined } from '../../Shared/Utilities.js';
 /* *
  *
  *  Declarations
@@ -265,9 +265,7 @@ class ColumnPolicyResolver {
         const defaultSortingOptions = this.columnDefaults.sorting;
         const sortingEnabled = (
             sortingOptions?.enabled ??
-            sortingOptions?.sortable ??
-            defaultSortingOptions?.enabled ??
-            defaultSortingOptions?.sortable
+            defaultSortingOptions?.enabled
         );
         return !this.isColumnUnbound(columnId) &&
             !!sortingEnabled;
@@ -301,6 +299,58 @@ class ColumnPolicyResolver {
         );
         return this.isColumnFilteringEnabled(columnId) &&
             !!inlineFilteringEnabled;
+    }
+
+    /**
+     * Returns whether the filter operator select is hidden.
+     *
+     * @param columnId
+     * Grid column id.
+     */
+    public isFilterOperatorSelectHidden(columnId: string): boolean {
+        const columnOptions = this.getIndividualColumnOptions(columnId);
+        const hideOperatorSelect = (
+            columnOptions?.filtering?.hideOperatorSelect ??
+            this.columnDefaults.filtering?.hideOperatorSelect
+        );
+
+        if (defined(hideOperatorSelect)) {
+            return hideOperatorSelect;
+        }
+
+        const operators = (
+            columnOptions?.filtering?.operators ??
+            columnOptions?.filtering?.conditions ??
+            this.columnDefaults.filtering?.operators ??
+            this.columnDefaults.filtering?.conditions
+        );
+
+        // If there is only one operator, hide the select.
+        return operators?.length === 1;
+    }
+
+    /**
+     * Returns whether a spacer should reserve the operator select row height
+     * for inline filtering in the given column.
+     *
+     * @param columnId
+     * Grid column id.
+     *
+     * @param enabledColumnIds
+     * Enabled Grid column ids in the filter row.
+     */
+    public shouldRenderOperatorSpacer(
+        columnId: string,
+        enabledColumnIds: string[]
+    ): boolean {
+        return (
+            this.isColumnInlineFilteringEnabled(columnId) &&
+            this.isFilterOperatorSelectHidden(columnId) &&
+            enabledColumnIds.some((id): boolean =>
+                this.isColumnInlineFilteringEnabled(id) &&
+                !this.isFilterOperatorSelectHidden(id)
+            )
+        );
     }
 
     /**

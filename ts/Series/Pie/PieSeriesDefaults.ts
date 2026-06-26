@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,8 +20,6 @@
 
 import type Point from '../../Core/Series/Point';
 import type { PieSeriesOptions } from './PieSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -134,7 +133,7 @@ const PieSeriesDefaults: PieSeriesOptions = {
      *         Empty pie series
      *
      * @type      {Highcharts.ColorType}
-     * @default   ${palette.neutralColor20}
+     * @default   var(--highcharts-neutral-color-20)
      * @apioption plotOptions.pie.color
      */
 
@@ -560,10 +559,9 @@ const PieSeriesDefaults: PieSeriesOptions = {
      *         Black border
      *
      * @type    {Highcharts.ColorType}
-     * @default ${palette.backgroundColor}
      * @product highcharts highmaps
      */
-    borderColor: Palette.backgroundColor,
+    borderColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the border surrounding each slice.
@@ -664,6 +662,7 @@ const PieSeriesDefaults: PieSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker, x

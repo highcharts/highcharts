@@ -4,8 +4,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -280,7 +281,7 @@ class Validator {
         }
 
         for (const rule of rules) {
-            let ruleDef: RuleDefinition;
+            let ruleDef: RuleDefinition|undefined;
             let err: ValidationNotification|undefined;
 
             if (typeof rule === 'string') {
@@ -288,6 +289,10 @@ class Validator {
                 err = validationNotifications?.[rule];
             } else {
                 ruleDef = rule;
+            }
+
+            if (!ruleDef) {
+                continue;
             }
 
             let validateFn: ValidateFunction;

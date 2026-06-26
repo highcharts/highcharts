@@ -4,8 +4,9 @@
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,11 +26,10 @@ import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
 import type { InterpolationObject } from './GeoHeatmapSeriesOptions.js';
 import type MapView from '../../Maps/MapView.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     stop
-} = A;
+} from '../../Core/Animation/AnimationUtilities.js';
 import GeoHeatmapPoint from './GeoHeatmapPoint.js';
 import H from '../../Core/Globals.js';
 const {
@@ -767,6 +767,7 @@ export default GeoHeatmapSeries;
  *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
  *            stickyTracking
  * @product   highmaps
+ * @requires  modules/geoheatmap
  * @apioption series.geoheatmap
  */
 
@@ -809,6 +810,7 @@ export default GeoHeatmapSeries;
  * @sample maps/series-geoheatmap/geoheatmap-equalearth/
  *         GeoHeatmap Chart on the Equal Earth Projection
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.map.data
  * @product   highmaps
