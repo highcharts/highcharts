@@ -2617,7 +2617,7 @@ class Chart {
             plotBorderWidth = chartOptions.plotBorderWidth || 0,
             halfWidth = Math.round(plotBorderWidth) / 2;
 
-        // Create margin and spacing array
+        // Resolve numbers, percentages and CSS length expressions to pixels.
         (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
             target
         ): void => {
@@ -2631,10 +2631,21 @@ class Chart {
                 'Left'
             ] as ('Top'|'Right'|'Bottom'|'Left')[]
             ).forEach((sideName, side): void => {
-                chart[target][side] = (
-                    chartOptions[`${target}${sideName}`] ??
-                    values[side]
-                ) as any;
+                const optionValue = chartOptions[`${target}${sideName}`] ??
+                    values[side];
+                if (optionValue === void 0 || optionValue === null) {
+                    chart[target][side] = optionValue as any;
+                } else {
+                    const base = side % 2 ? // Right or Left
+                        chart.chartWidth :
+                        chart.chartHeight;
+                    chart[target][side] = relativeLength(
+                        optionValue,
+                        base || 0,
+                        void 0,
+                        chart.container
+                    );
+                }
             });
         });
 

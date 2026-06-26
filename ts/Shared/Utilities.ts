@@ -1507,31 +1507,66 @@ export function pushUnique(
 }
 
 /**
- * Return a length based on either the integer value, or a percentage of a base.
+ * Returns a length based on either the integer value, a percentage of a base,
+ * or a CSS length expression resolved by the browser (e.g. `calc()`, `var()`,
+ * `em`, `rem`, `vw`).
  *
  * @function Highcharts.relativeLength
  *
  * @param {Highcharts.RelativeSize} value
- *        A percentage string or a number.
+ *        A number, a percentage string, or a CSS length expression.
  *
  * @param {number} base
- *        The full length that represents 100%.
+ *        The full length that represents 100% for percentage strings. For
+ *        CSS expressions, inner percentages resolve against `parent`
+ *        instead.
  *
  * @param {number} [offset=0]
  *        A pixel offset to apply for percentage values. Used internally in
  *        axis positioning.
  *
+ * @param {HTMLElement} [parent=document.body]
+ *        Host element for the hidden probe used to resolve CSS expressions.
+ *        Pass the chart container to inherit its CSS variables and font
+ *        size. Defaults to `document.body`.
+ *
  * @return {number}
- *         The computed length.
+ *         The computed length in pixels.
  */
 export function relativeLength(
     value: RelativeSize,
     base: number,
-    offset?: number
+    offset?: number,
+    parent = doc.body
 ): number {
-    return (/%$/).test(value as any) ?
-        (base * parseFloat(value as any) / 100) + (offset || 0) :
-        parseFloat(value as any);
+    if (typeof value === 'number') {
+        return value;
+    }
+    if ((/%$/).test(value)) {
+        return (base * parseFloat(value) / 100) + (offset || 0);
+    }
+    if ((/^-?\d+(\.\d+)?$/).test(value)) {
+        return parseFloat(value);
+    }
+    return measureCSSLength(value, parent);
+}
+
+/**
+ * Resolves a CSS length expression to pixels via a hidden probe element.
+ * @private
+ */
+function measureCSSLength(value: string, parent = doc.body): number {
+    if (!parent) {
+        return 0;
+    }
+    const probe = doc.createElement('div');
+    probe.style.cssText =
+        'position:absolute;visibility:hidden;pointer-events:none;' +
+        `top:-9999px;width:${value}`;
+    parent.appendChild(probe);
+    const px = parseFloat(win.getComputedStyle(probe).width) || 0;
+    parent.removeChild(probe);
+    return px;
 }
 
 /**
