@@ -1,0 +1,7 @@
+---
+ name: Highcharts ESM Demo
+ authors:
+   - Jon Arild Nygård
+ requiresManualTesting: true
+ js_wrap: b
+...
