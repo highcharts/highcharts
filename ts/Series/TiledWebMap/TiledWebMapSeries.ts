@@ -24,7 +24,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
 import type MapChart from '../../Core/Chart/MapChart';
 
-import AnimationUtilities from '../../Core/Animation/AnimationUtilities.js';
+import { stop } from '../../Core/Animation/AnimationUtilities.js';
 import Fx from '../../Core/Animation/Fx.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -41,8 +41,6 @@ import {
     pushUnique
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
-
-const { stop } = AnimationUtilities;
 
 /* *
  *
