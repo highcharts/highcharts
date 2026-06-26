@@ -460,7 +460,10 @@ Highcharts.chart('container', {
         }
     },
 
-    title: { text: '' },
+    title: {
+        text: 'Sales Pipeline Funnel',
+        align: 'left'
+    },
     subtitle: { text: '' },
 
     legend: {
