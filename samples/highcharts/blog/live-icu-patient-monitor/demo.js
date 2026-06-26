@@ -1,3 +1,136 @@
+const createChart = dataTable => Highcharts.chart('container', {
+
+    dataTable,
+
+    chart: {
+        style: { fontFamily: '\'Courier New\', monospace' },
+        animation: { duration: 500 }
+    },
+
+    time: { useUTC: false },
+
+    title: {
+        text: '⚠ ICU Patient Monitor - Live Feed',
+        style: { fontSize: '15px', fontWeight: '600' }
+    },
+    subtitle: {
+        text: 'ICU Bed 3 · Patient ID 7742 · ' +
+            'Crisis event will trigger at t+30s',
+        style: { color: '#ef4444', fontSize: '11px' }
+    },
+
+    xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 120,
+        maxPadding: 0.1
+    },
+
+    yAxis: [{
+        title: {
+            text: 'HR / RR'
+        },
+        min: 0,
+        max: 160,
+        plotBands: [{
+            from: 60,
+            to: 100,
+            color: 'rgba(52, 211, 153, 0.05)'
+        }],
+        plotLines: [{
+            value: 100,
+            color: '#ef444433',
+            width: 1,
+            dashStyle: 'Dot'
+        }]
+    }, {
+        title: {
+            text: 'SpO₂ / SBP'
+        },
+        min: 60,
+        max: 200,
+        opposite: true,
+        plotBands: [{
+            from: 95,
+            to: 100,
+            color: 'rgba(56, 189, 248, 0.05)'
+        }],
+        plotLines: [{
+            value: 90,
+            color: '#38bdf833',
+            width: 1,
+            dashStyle: 'Dot'
+        }]
+    }],
+
+    tooltip: {
+        shared: true,
+        shadow: false,
+        headerFormat: '<b style="color:#94a3b8">{point.key}</b><br/>'
+    },
+
+    accessibility: {
+        announceNewData: {
+            enabled: true,
+            minAnnounceInterval: 15000,
+            announcementFormatter: function (allSeries, newSeries, newPoint) {
+                if (newPoint) {
+                    return 'New vitals recorded.';
+                }
+                return false;
+            }
+        }
+    },
+
+    plotOptions: {
+        series: {
+            dataMapping: { x: 'time' },
+            lineWidth: 2,
+            marker: { radius: 3, enabled: false },
+            states: {
+                hover: { lineWidthPlus: 0 }
+            }
+        }
+    },
+
+    series: [{
+        name: 'Heart rate',
+        yAxis: 0,
+        type: 'spline',
+        dataMapping: { y: 'hr' },
+        lineWidth: 2,
+        marker: { radius: 3, enabled: false },
+        tooltip: { valueSuffix: ' bpm' }
+    }, {
+        name: 'SpO₂',
+        yAxis: 1,
+        type: 'spline',
+        dataMapping: { y: 'spo2' },
+        lineWidth: 2,
+        marker: { radius: 3, enabled: false },
+        tooltip: { valueSuffix: ' %' }
+    }, {
+        name: 'Systolic BP',
+        yAxis: 1,
+        type: 'spline',
+        dataMapping: { y: 'sbp' },
+        lineWidth: 2,
+        marker: { radius: 3, enabled: false },
+        tooltip: { valueSuffix: ' mmHg' }
+    }, {
+        name: 'Respiratory rate',
+        yAxis: 0,
+        type: 'spline',
+        dataMapping: { y: 'rr' },
+        lineWidth: 2,
+        dashStyle: 'ShortDot',
+        marker: { radius: 3, enabled: false },
+        tooltip: { valueSuffix: ' breaths/min' }
+    }],
+
+    credits: { enabled: false }
+});
+
+
 // Simulate realistic vital sign fluctuations around a baseline
 function nextValue(current, baseline, variance, min, max) {
     const delta = (Math.random() - 0.5) * variance;
@@ -60,24 +193,17 @@ function getNextVitals() {
 
 // Seed initial 30 seconds of data
 const now = new Date().getTime();
-const columns = { time: [], hr: [], spo2: [], sbp: [], rr: [] };
 
+const dataTable = new Highcharts.DataTable();
 for (let i = -29; i <= 0; i++) {
-    const t = now + i * 1000;
-    const v = getNextVitals();
-    columns.time.push(t);
-    columns.hr.push(v.hr);
-    columns.spo2.push(v.spo2);
-    columns.sbp.push(v.sbp);
-    columns.rr.push(v.rr);
+    dataTable.setRow({ time: now + i * 1000, ...getNextVitals() });
 }
 
-const dataTable = new Highcharts.DataTable({ columns });
 
 // Palette — centralized color system for dark ICU theme
 Highcharts.setOptions({
-    colorScheme: 'dark',
     palette: {
+        colorScheme: 'dark',
         dark: {
             backgroundColor: '#0d1117',
             neutralColor: '#e2e8f0',
@@ -92,181 +218,38 @@ Highcharts.setOptions({
     }
 });
 
-Highcharts.chart('container', {
+// Pulsating marker on new point
+Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
+    const point = e.point,
+        series = e.target;
 
-    dataTable,
+    if (!series.pulse) {
+        series.pulse = series.chart.renderer.circle().add(series.markerGroup);
+    }
 
-    chart: {
-        style: { fontFamily: '\'Courier New\', monospace' },
-        animation: { duration: 500 },
-        events: {
-            load: function () {
-                const c = this;
-                setInterval(function () {
-                    const v = getNextVitals();
-                    dataTable.deleteRows(0);
-                    dataTable.setRow({
-                        time: new Date().getTime(),
-                        hr: v.hr,
-                        spo2: v.spo2,
-                        sbp: v.sbp,
-                        rr: v.rr
-                    });
-
-                    // Pulsating marker on newest point
-                    setTimeout(function () {
-                        c.series.forEach(function (series) {
-                            if (!series.pulse) {
-                                series.pulse = c.renderer.circle()
-                                    .add(series.markerGroup);
-                            }
-                            const point =
-                                series.points[series.points.length - 1];
-                            if (point) {
-                                series.pulse
-                                    .attr({
-                                        x: series.xAxis.toPixels(
-                                            point.x, true
-                                        ),
-                                        y: series.yAxis.toPixels(
-                                            point.y, true
-                                        ),
-                                        r: 4,
-                                        opacity: 1,
-                                        fill: series.color
-                                    })
-                                    .animate(
-                                        { r: 16, opacity: 0 },
-                                        { duration: 900 }
-                                    );
-                            }
-                        });
-                    }, 500);
-                }, 1000);
-            }
-        }
-    },
-
-    time: { useUTC: false },
-
-    title: {
-        text: '⚠ ICU Patient Monitor - Live Feed',
-        style: { fontSize: '15px', fontWeight: '600' }
-    },
-    subtitle: {
-        text: 'ICU Bed 3 · Patient ID 7742 · ' +
-    'Crisis event will trigger at t+30s',
-        style: { color: '#ef4444', fontSize: '11px' }
-    },
-
-    xAxis: {
-        type: 'datetime',
-        tickPixelInterval: 120,
-        maxPadding: 0.1
-    },
-
-    yAxis: [{
-        title: {
-            text: 'HR / RR'
-        },
-        min: 0,
-        max: 160,
-        plotBands: [{
-            from: 60,
-            to: 100,
-            color: 'rgba(52, 211, 153, 0.05)'
-        }],
-        plotLines: [{
-            value: 100,
-            color: '#ef444433',
-            width: 1,
-            dashStyle: 'Dot'
-        }]
-    }, {
-        title: {
-            text: 'SpO₂ / SBP'
-        },
-        min: 60,
-        max: 200,
-        opposite: true,
-        plotBands: [{
-            from: 95,
-            to: 100,
-            color: 'rgba(56, 189, 248, 0.05)'
-        }],
-        plotLines: [{
-            value: 90,
-            color: '#38bdf833',
-            width: 1,
-            dashStyle: 'Dot'
-        }]
-    }],
-
-    tooltip: {
-        shared: true,
-        shadow: false,
-        headerFormat: '<b style="color:#94a3b8">{point.key}</b><br/>'
-    },
-
-    legend: {
-        backgroundColor: 'transparent'
-    },
-
-    exporting: { enabled: false },
-
-    accessibility: {
-        announceNewData: {
-            enabled: true,
-            minAnnounceInterval: 15000,
-            announcementFormatter: function (allSeries, newSeries, newPoint) {
-                if (newPoint) {
-                    return 'New vitals recorded.';
-                }
-                return false;
-            }
-        }
-    },
-
-    plotOptions: {
-        series: {
-            dataMapping: { x: 'time' }
-        }
-    },
-
-    series: [{
-        name: 'Heart rate',
-        yAxis: 0,
-        type: 'spline',
-        dataMapping: { y: 'hr' },
-        lineWidth: 2,
-        marker: { radius: 3, enabled: false },
-        tooltip: { valueSuffix: ' bpm' }
-    }, {
-        name: 'SpO₂',
-        yAxis: 1,
-        type: 'spline',
-        dataMapping: { y: 'spo2' },
-        lineWidth: 2,
-        marker: { radius: 3, enabled: false },
-        tooltip: { valueSuffix: ' %' }
-    }, {
-        name: 'Systolic BP',
-        yAxis: 1,
-        type: 'spline',
-        dataMapping: { y: 'sbp' },
-        lineWidth: 2,
-        marker: { radius: 3, enabled: false },
-        tooltip: { valueSuffix: ' mmHg' }
-    }, {
-        name: 'Respiratory rate',
-        yAxis: 0,
-        type: 'spline',
-        dataMapping: { y: 'rr' },
-        lineWidth: 2,
-        dashStyle: 'ShortDot',
-        marker: { radius: 3, enabled: false },
-        tooltip: { valueSuffix: ' breaths/min' }
-    }],
-
-    credits: { enabled: false }
+    setTimeout(() => {
+        series.pulse
+            .attr({
+                x: series.xAxis.toPixels(point.x, true),
+                y: series.yAxis.toPixels(point.y, true),
+                r: 4,
+                opacity: 1,
+                fill: series.color
+            })
+            .animate({ r: 16, opacity: 0 }, { duration: 900 });
+    }, 100);
 });
+
+createChart(dataTable);
+
+setInterval(() => {
+    const v = getNextVitals();
+    dataTable.deleteRows(0);
+    dataTable.setRow({
+        time: new Date().getTime(),
+        hr: v.hr,
+        spo2: v.spo2,
+        sbp: v.sbp,
+        rr: v.rr
+    });
+}, 1000);
