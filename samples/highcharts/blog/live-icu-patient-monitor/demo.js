@@ -130,6 +130,45 @@ const createChart = dataTable => Highcharts.chart('container', {
     credits: { enabled: false }
 });
 
+// Palette — centralized color system for dark ICU theme
+Highcharts.setOptions({
+    palette: {
+        colorScheme: 'dark',
+        dark: {
+            backgroundColor: '#0d1117',
+            neutralColor: '#e2e8f0',
+            highlightColor: '#ef4444',
+            colors: [
+                '#ef4444',   // Heart rate – red
+                '#38bdf8',   // SpO₂ – sky blue
+                '#f59e0b',   // Systolic BP – amber
+                '#a78bfa'    // Respiratory rate – violet
+            ]
+        }
+    }
+});
+
+// Pulsating marker on new point
+Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
+    const point = e.point,
+        series = e.target;
+
+    if (!series.pulse) {
+        series.pulse = series.chart.renderer.circle().add(series.markerGroup);
+    }
+
+    setTimeout(() => {
+        series.pulse
+            .attr({
+                x: series.xAxis.toPixels(point.x, true),
+                y: series.yAxis.toPixels(point.y, true),
+                r: 4,
+                opacity: 1,
+                fill: series.color
+            })
+            .animate({ r: 16, opacity: 0 }, { duration: 900 });
+    }, 100);
+});
 
 // Simulate realistic vital sign fluctuations around a baseline
 function nextValue(current, baseline, variance, min, max) {
@@ -199,49 +238,9 @@ for (let i = -29; i <= 0; i++) {
     dataTable.setRow({ time: now + i * 1000, ...getNextVitals() });
 }
 
-
-// Palette — centralized color system for dark ICU theme
-Highcharts.setOptions({
-    palette: {
-        colorScheme: 'dark',
-        dark: {
-            backgroundColor: '#0d1117',
-            neutralColor: '#e2e8f0',
-            highlightColor: '#ef4444',
-            colors: [
-                '#ef4444',   // Heart rate – red
-                '#38bdf8',   // SpO₂ – sky blue
-                '#f59e0b',   // Systolic BP – amber
-                '#a78bfa'    // Respiratory rate – violet
-            ]
-        }
-    }
-});
-
-// Pulsating marker on new point
-Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
-    const point = e.point,
-        series = e.target;
-
-    if (!series.pulse) {
-        series.pulse = series.chart.renderer.circle().add(series.markerGroup);
-    }
-
-    setTimeout(() => {
-        series.pulse
-            .attr({
-                x: series.xAxis.toPixels(point.x, true),
-                y: series.yAxis.toPixels(point.y, true),
-                r: 4,
-                opacity: 1,
-                fill: series.color
-            })
-            .animate({ r: 16, opacity: 0 }, { duration: 900 });
-    }, 100);
-});
-
 createChart(dataTable);
 
+// Update vitals every second
 setInterval(() => {
     const v = getNextVitals();
     dataTable.deleteRows(0);
