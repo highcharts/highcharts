@@ -30,13 +30,6 @@
     "files": [
         "tsglobal.d.ts",
     ],
-    "include": [
-        "gantt/**/*.ts",
-        "highcharts/**/*.ts",
-        "maps/**/*.ts",
-        "stock/**/*.ts",
-        "unit-tests/**/*.ts"
-    ],
     "references": [
         { "path": "./tsconfig.gantt.json" },
         { "path": "./tsconfig.highcharts.json" },

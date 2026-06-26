@@ -111,7 +111,7 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-      "project": "./samples/tsconfig.json",
+      "projectService": true,
       "sourceType": "module"
     },
     "rules": {
