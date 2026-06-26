@@ -4,8 +4,13 @@ const totalRange = totalMax - totalMin;
 const maxBubbleSize = 42;
 const maxZ = 36;
 
-const pixelsPerXUnit = 1350 / 16;
-const pixelsPerYUnit = 389 / 100;
+let pixelsPerXUnit = 1350 / totalRange;
+let pixelsPerYUnit = 389 / 100;
+
+function updateLayoutScale(chart) {
+    pixelsPerXUnit = chart.plotWidth / totalRange;
+    pixelsPerYUnit = chart.plotHeight / 100;
+}
 
 function seededRandom(seed) {
     let value = seed;
@@ -106,14 +111,15 @@ function fitsInsideStage(x, y, radiusPx, stage) {
     return true;
 }
 
-function overlaps(x, y, radiusPx, placed, gapPx) {
-    return placed.some(point => {
+function getOverlapAmount(x, y, radiusPx, placed, gapPx) {
+    return placed.reduce((total, point) => {
         const dx = (x - point.x) * pixelsPerXUnit;
         const dy = (y - point.y) * pixelsPerYUnit;
         const distance = Math.sqrt(dx * dx + dy * dy);
+        const minDistance = radiusPx + point.radiusPx + gapPx;
 
-        return distance < radiusPx + point.radiusPx + gapPx;
-    });
+        return total + Math.max(0, minDistance - distance);
+    }, 0);
 }
 
 function relax(placed, stage) {
@@ -124,36 +130,42 @@ function relax(placed, stage) {
     const random = seededRandom((stage.seed || 1) + 1000);
 
     for (let iteration = 0; iteration < iterations; iteration++) {
-        placed.forEach((point, i) => {
+        for (let i = 0; i < placed.length; i++) {
+            const point = placed[i];
+
             point.x += (centerX - point.x) * 0.004;
             point.y += (centerY - point.y) * 0.004;
 
-            placed.forEach((other, j) => {
+            for (let j = 0; j < placed.length; j++) {
                 if (i === j) {
-                    return;
+                    continue;
                 }
 
+                const other = placed[j];
                 const dxPx = (point.x - other.x) * pixelsPerXUnit;
                 const dyPx = (point.y - other.y) * pixelsPerYUnit;
                 const distance = Math.sqrt(dxPx * dxPx + dyPx * dyPx);
                 const minDistance = point.radiusPx + other.radiusPx + gapPx;
 
                 if (distance > 0 && distance < minDistance) {
-                    const push =
-                    (minDistance - distance) *
-                    (0.70 + random() * 0.12);
+                    const push = (minDistance - distance) *
+                        (0.70 + random() * 0.12);
                     const angle = Math.atan2(dyPx, dxPx);
 
                     point.x += Math.cos(angle) * push / pixelsPerXUnit;
                     point.y += Math.sin(angle) * push / pixelsPerYUnit;
                 }
-            });
+            }
 
-            while (!fitsInsideStage(point.x, point.y, point.radiusPx, stage)) {
+            let safety = 0;
+            while (
+                !fitsInsideStage(point.x, point.y, point.radiusPx, stage) &&
+                safety++ < 100
+            ) {
                 point.x += (centerX - point.x) * 0.08;
                 point.y += (centerY - point.y) * 0.08;
             }
-        });
+        }
     }
 }
 
@@ -175,34 +187,62 @@ function packStage(stage) {
     const placed = [];
 
     bubbles.forEach(bubble => {
+        let didPlace = false;
+        let fallback = null;
+
         for (let i = 0; i < 6000; i++) {
             const spiralRadius = Math.sqrt(i) * stage.spiralStep;
             const angle = i * goldenAngle + random() * (stage.angleJitter || 0);
 
             const x = centerX +
-    Math.cos(angle) *
-    spiralRadius *
-    stage.aspectX /
-    pixelsPerXUnit;
+            Math.cos(angle) *
+            spiralRadius *
+            stage.aspectX /
+            pixelsPerXUnit;
 
             const y = centerY +
-    Math.sin(angle) *
-    spiralRadius *
-    stage.aspectY /
-    pixelsPerYUnit;
+            Math.sin(angle) *
+            spiralRadius *
+            stage.aspectY /
+            pixelsPerYUnit;
 
-            if (
-                fitsInsideStage(x, y, bubble.radiusPx, stage) &&
-                !overlaps(x, y, bubble.radiusPx, placed, stage.gapPx)
-            ) {
-                placed.push({
+            if (fitsInsideStage(x, y, bubble.radiusPx, stage)) {
+                const overlapAmount = getOverlapAmount(
                     x,
                     y,
-                    z: bubble.z,
-                    radiusPx: bubble.radiusPx
-                });
-                break;
+                    bubble.radiusPx,
+                    placed,
+                    stage.gapPx
+                );
+
+                if (!fallback || overlapAmount < fallback.overlapAmount) {
+                    fallback = {
+                        x,
+                        y,
+                        overlapAmount
+                    };
+                }
+
+                if (!overlapAmount) {
+                    placed.push({
+                        x,
+                        y,
+                        z: bubble.z,
+                        radiusPx: bubble.radiusPx
+                    });
+                    didPlace = true;
+                    break;
+                }
             }
+        }
+
+        if (!didPlace && fallback && fallback.overlapAmount < 1) {
+            placed.push({
+                x: fallback.x,
+                y: fallback.y,
+                z: bubble.z,
+                radiusPx: bubble.radiusPx
+            });
         }
     });
 
@@ -225,77 +265,95 @@ function packStage(stage) {
     return placed.map(({ x, y, z }) => ({ x, y, z }));
 }
 
-const scopingData = packStage({
-    from: -0.5,
-    to: 3.5,
-    values: buildValues('scoping', 30, 1),
-    centerY: 50,
-    gapPx: 4,
-    spiralStep: 3.8,
-    paddingX: 0.2,
-    paddingY: 4,
-    aspectX: 1.35,
-    aspectY: 0.9,
-    relaxIterations: 12,
-    angleJitter: 0.08,
-    positionJitter: 0.04,
-    seed: 11
-});
+function getPackedData(chart) {
+    if (chart) {
+        updateLayoutScale(chart);
+    }
 
-const proposalData = packStage({
-    from: 3.5,
-    to: 7.5,
-    values: buildValues('proposal', 90, 2),
-    centerY: 50,
-    gapPx: 4,
-    spiralStep: 3.4,
-    paddingX: 0.22,
-    paddingY: 6,
-    aspectX: 1.15,
-    aspectY: 0.92,
-    relaxIterations: 12,
-    angleJitter: 0.15,
-    positionJitter: 0.05,
-    seed: 22
-});
+    return {
+        scoping: packStage({
+            from: -0.5,
+            to: 3.5,
+            values: buildValues('scoping', 30, 1),
+            gapPx: 4,
+            spiralStep: 3.8,
+            paddingX: 0.2,
+            paddingY: 4,
+            aspectX: 1.35,
+            aspectY: 0.9,
+            relaxIterations: 12,
+            angleJitter: 0.08,
+            positionJitter: 0.04,
+            seed: 11
+        }),
+        proposal: packStage({
+            from: 3.5,
+            to: 7.5,
+            values: buildValues('proposal', 90, 2),
+            gapPx: 4,
+            spiralStep: 3.4,
+            paddingX: 0.22,
+            paddingY: 6,
+            aspectX: 1.15,
+            aspectY: 0.92,
+            relaxIterations: 12,
+            angleJitter: 0.15,
+            positionJitter: 0.05,
+            seed: 22
+        }),
+        committed: packStage({
+            from: 7.5,
+            to: 11.5,
+            values: buildValues('committed', 28, 3),
+            gapPx: 4,
+            spiralStep: 3.8,
+            paddingX: 0.2,
+            paddingY: 4,
+            aspectX: 1.35,
+            aspectY: 0.9,
+            relaxIterations: 12,
+            angleJitter: 0.12,
+            positionJitter: 0.04,
+            seed: 33
+        }),
+        won: packStage({
+            from: 11.5,
+            to: 15.5,
+            values: buildValues('won', 100, 4),
+            gapPx: 4,
+            spiralStep: 3.75,
+            paddingX: 0.28,
+            paddingY: 5,
+            aspectX: 0.95,
+            aspectY: 1.35,
+            relaxIterations: 12,
+            angleJitter: 0.2,
+            positionJitter: 0.04,
+            seed: 44
+        })
+    };
+}
 
-const committedData = packStage({
-    from: 7.5,
-    to: 11.5,
-    values: buildValues('committed', 28, 3),
-    centerY: 50,
-    gapPx: 4,
-    spiralStep: 3.8,
-    paddingX: 0.2,
-    paddingY: 4,
-    aspectX: 1.35,
-    aspectY: 0.9,
-    relaxIterations: 12,
-    angleJitter: 0.12,
-    positionJitter: 0.04,
-    seed: 33
-});
-
-const wonData = packStage({
-    from: 11.5,
-    to: 15.5,
-    values: buildValues('won', 100, 4),
-    gapPx: 4,
-    spiralStep: 3.75,
-    paddingX: 0.28,
-    paddingY: 5,
-    aspectX: 0.95,
-    aspectY: 1.35,
-    relaxIterations: 12,
-    angleJitter: 0.2,
-    positionJitter: 0.04,
-    seed: 44
-});
+const packedData = {
+    scoping: [],
+    proposal: [],
+    committed: [],
+    won: []
+};
 
 Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         events: {
+            load() {
+                const packedData = getPackedData(this);
+
+                this.series[0].setData(packedData.scoping, false, false);
+                this.series[1].setData(packedData.proposal, false, false);
+                this.series[2].setData(packedData.committed, false, false);
+                this.series[3].setData(packedData.won, false, false);
+                this.redraw();
+            },
             render() {
                 const chart = this;
                 const xAxis = chart.xAxis[0];
@@ -455,9 +513,9 @@ Highcharts.chart('container', {
     },
 
     series: [
-        { name: 'Scoping', color: '#9198F0', data: scopingData },
-        { name: 'Proposal', color: '#F7A85E', data: proposalData },
-        { name: 'Committed', color: '#6DDFA0', data: committedData },
-        { name: 'Won', color: '#10b981', data: wonData }
+        { name: 'Scoping', color: '#9198F0', data: packedData.scoping },
+        { name: 'Proposal', color: '#F7A85E', data: packedData.proposal },
+        { name: 'Committed', color: '#6DDFA0', data: packedData.committed },
+        { name: 'Won', color: '#10b981', data: packedData.won }
     ]
 });
