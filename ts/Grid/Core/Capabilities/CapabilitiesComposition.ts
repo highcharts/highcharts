@@ -41,25 +41,20 @@ import {
  *
  * */
 
-export type GridCapabilityState = boolean | 'n/a';
-export type GridKeyStatus = 'valid' | 'invalid' | 'missing' | 'expired';
-export type GridKeyCapabilityState = GridKeyStatus | 'n/a';
-export type GridProduct = 'lite' | 'pro';
-
 export interface GridCapabilities {
     filtering: boolean;
     sorting: boolean;
-    pinning: GridCapabilityState;
-    treeView: GridCapabilityState;
+    pinning: boolean | 'n/a';
+    treeView: boolean | 'n/a';
     pagination: boolean;
-    editMode: GridCapabilityState;
+    editMode: boolean | 'n/a';
     cellFormat: boolean;
     cellFormatter: boolean;
     strictHeights: boolean;
     customTheme: boolean;
     header: boolean;
-    remoteOperations: GridCapabilityState;
-    key: GridKeyCapabilityState;
+    remoteOperations: boolean | 'n/a';
+    key: 'valid' | 'invalid' | 'missing' | 'expired' | 'n/a';
 }
 
 
@@ -81,7 +76,7 @@ export interface GridCapabilities {
  */
 export function compose(
     GridClass: typeof Grid,
-    product: GridProduct = 'pro'
+    product: 'lite' | 'pro' = 'pro'
 ): void {
     if (!pushUnique(Globals.composed, 'GridCapabilities')) {
         return;
