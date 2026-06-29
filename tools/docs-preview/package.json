@@ -16,12 +16,15 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
+    "@fontsource-variable/ibm-plex-sans": "^5.2.8",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
     "@docusaurus/core": "3.10.1",
     "@docusaurus/mdx-loader": "3.10.1",
     "@docusaurus/plugin-sitemap": "3.10.1",
     "@docusaurus/preset-classic": "3.10.1",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
+    "highsoft-design-tokens": "^2.10.0",
     "highsoft-ui": "1.0.140",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",

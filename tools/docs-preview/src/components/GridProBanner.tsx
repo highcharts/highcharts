@@ -1,10 +1,11 @@
 import React from 'react';
+import { Label } from 'highsoft-ui';
 
-export function GridProBanner(): JSX.Element {
+export function GridProBanner(): React.ReactElement {
     return (
-        <div className="grid-pro-badge banner">
+        <Label variant="success" iconLeft={false} border className="grid-pro-badge banner">
             Pro feature
-        </div>
+        </Label>
     );
 }
 

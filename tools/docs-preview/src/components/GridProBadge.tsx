@@ -1,10 +1,11 @@
 import React from 'react';
+import { Label } from 'highsoft-ui';
 
-export function GridProBadge(): JSX.Element {
+export function GridProBadge(): React.ReactElement {
     return (
-        <span className="grid-pro-badge">
+        <Label variant="success" iconLeft={false} border className="grid-pro-badge">
             Pro
-        </span>
+        </Label>
     );
 }
 

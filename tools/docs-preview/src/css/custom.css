@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
+@import url("@fontsource-variable/ibm-plex-sans");
+@import url("@fontsource/ibm-plex-mono");
 @import url("highsoft-design-tokens/dist/css/tokens.css");
 @import url("./highsoft-ui-variables.css");
 
@@ -120,32 +121,12 @@ nav.navbar {
     gap: var(--item-spacing-400);
 }
 
-.grid-pro-badge {
-    text-transform: uppercase;
-    border-radius: 4px;
-    border: 1px solid var(--primitives-success-700);
-    background: var(--primitives-success-50);
-    display: inline-flex;
-    padding: 6px 8px;
-    justify-content: center;
-    align-items: center;
-    gap: 2px;
-    align-self: baseline;
-    color: var(--primitives-success-700);
-    font-family: "IBM Plex Sans", sans-serif;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 500;
-    width: fit-content;
-    height: 20px;
-}
-
 main p:has(.grid-pro-badge) {
     margin-bottom: 0;
 }
 
 .grid-pro-badge.banner {
-    display: flex;
+    display: inline-flex;
     margin-bottom: 0;
 }
 
@@ -160,7 +141,7 @@ footer,
 .footer__title,
 .footer__item,
 .footer__link {
-    font-family: "IBM Plex Sans", sans-serif;
+    font-family: var(--typography-font-family), sans-serif;
 }
 
 main h1:has(.grid-pro-badge),
@@ -181,12 +162,6 @@ main h4:has(.grid-pro-badge) .grid-pro-badge,
 main h5:has(.grid-pro-badge) .grid-pro-badge,
 main h6:has(.grid-pro-badge) .grid-pro-badge {
     margin-top: 0.7em;
-}
-
-[data-theme="dark"] .grid-pro-badge {
-    border-color: var(--primitives-success-500);
-    background: var(--primitives-success-100);
-    color: var(--primitives-success-500);
 }
 
 /* Align iframe presentation with doc-builder */
@@ -224,7 +199,7 @@ iframe {
     .navbar-sidebar {
         background: var(--HS-common-background);
         border-right: 1px solid var(--HS-surface-ui-border-100);
-        font-family: "IBM Plex Sans", var(--typography-font-family), sans-serif;
+        font-family: var(--typography-font-family), sans-serif;
         position: fixed;
         top: 0;
         left: 0;

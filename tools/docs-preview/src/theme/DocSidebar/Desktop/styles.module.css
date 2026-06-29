@@ -6,7 +6,7 @@
         padding-top: var(--ifm-navbar-height);
         width: calc(var(--doc-sidebar-width) - var(--doc-sidebar-resizer-width) - 1px);
         background: var(--HS-common-background);
-        font-family: "IBM Plex Sans", var(--typography-font-family), sans-serif;
+        font-family: var(--typography-font-family), sans-serif;
     }
 
     .sidebarWithHideableNavbar {
