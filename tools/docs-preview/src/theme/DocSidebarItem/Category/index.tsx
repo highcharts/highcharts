@@ -22,6 +22,7 @@ import {
 import Link from '@docusaurus/Link';
 import { translate } from '@docusaurus/Translate';
 import useIsBrowser from '@docusaurus/useIsBrowser';
+import { Icon } from 'highsoft-ui';
 import DocSidebarItems from '@theme/DocSidebarItems';
 import DocSidebarItemLink from '@theme/DocSidebarItem/Link';
 import type { Props } from '@theme/DocSidebarItem/Category';
@@ -31,6 +32,19 @@ import type {
     PropSidebarItemLink
 } from '@docusaurus/plugin-content-docs';
 import styles from './styles.module.css';
+
+function ChevronDownIcon(props: React.SVGProps<SVGSVGElement>): JSX.Element {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" {...props}>
+            <path
+                d="M6 9l6 6 6-6"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
 
 function useAutoExpandActiveCategory({
     isActive,
@@ -117,7 +131,13 @@ function CollapseButton({
             className={styles.caretButton}
             onClick={onClick}
         >
-            <span className={styles.caret} aria-hidden="true" />
+            <Icon
+                name={ChevronDownIcon}
+                size={12}
+                strokeWidth={1.5}
+                className={styles.caret}
+                aria-hidden="true"
+            />
         </button>
     );
 }

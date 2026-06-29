@@ -106,16 +106,13 @@
 }
 
 .caret {
-    width: 0.375rem;
-    height: 0.375rem;
-    border-right: 1.5px solid currentColor;
-    border-bottom: 1.5px solid currentColor;
-    transform: rotate(45deg);
+    flex: 0 0 auto;
+    transform: rotate(0deg);
     transition: transform var(--animations-bounce-fast);
 }
 
 .categoryItemCollapsed > .categoryRow .caret {
-    transform: rotate(-45deg);
+    transform: rotate(-90deg);
 }
 
 .group {

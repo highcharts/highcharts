@@ -1,9 +1,22 @@
 import React, { type ReactNode } from 'react';
 import { translate } from '@docusaurus/Translate';
-import { Button } from 'highsoft-ui';
+import { Button, Icon } from 'highsoft-ui';
 import type { Props } from '@theme/DocSidebar/Desktop/CollapseButton';
 
 import styles from './styles.module.css';
+
+function ChevronLeftIcon(props: React.SVGProps<SVGSVGElement>): JSX.Element {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" {...props}>
+            <path
+                d="M15 18l-6-6 6-6"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
 
 export default function CollapseButton({ onClick }: Props): ReactNode {
     return (
@@ -13,7 +26,15 @@ export default function CollapseButton({ onClick }: Props): ReactNode {
                 type="button"
                 variant="plain"
                 size={100}
-                iconLeft={<span className={styles.collapseIcon} aria-hidden="true" />}
+                iconLeft={(
+                    <Icon
+                        name={ChevronLeftIcon}
+                        size={12}
+                        strokeWidth={1.5}
+                        className={styles.collapseIcon}
+                        aria-hidden="true"
+                    />
+                )}
                 title={translate({
                     id: 'theme.docs.sidebar.collapseButtonTitle',
                     message: 'Collapse sidebar',

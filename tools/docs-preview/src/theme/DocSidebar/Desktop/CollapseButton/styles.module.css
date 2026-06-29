@@ -22,10 +22,5 @@
 }
 
 .collapseIcon {
-    display: inline-block;
-    width: 0.4375rem;
-    height: 0.4375rem;
-    border-bottom: 1.5px solid currentColor;
-    border-left: 1.5px solid currentColor;
-    transform: rotate(45deg);
+    flex: 0 0 auto;
 }

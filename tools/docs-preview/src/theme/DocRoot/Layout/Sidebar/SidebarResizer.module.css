@@ -1,11 +1,21 @@
 @media (min-width: 997px) {
+    .handle,
+    .hatchClip,
+    .hatchInner {
+        --sidebar-resizer-handle-width: var(--doc-sidebar-resizer-width, 0.75rem);
+        --sidebar-resizer-hatch-width: 0.625rem;
+        --sidebar-resizer-hatch-span: 7.5rem;
+        --sidebar-resizer-hatch-tile-size: 1.625rem;
+        --sidebar-resizer-hatch-angle: 6deg;
+    }
+
     .handle {
         position: absolute;
         top: 0;
         right: 0;
         bottom: 0;
         z-index: 5;
-        width: 12px;
+        width: var(--sidebar-resizer-handle-width);
         cursor: col-resize;
     }
 
@@ -16,7 +26,7 @@
     .hatchClip {
         position: absolute;
         inset: 0 0 0 auto;
-        width: 10px;
+        width: var(--sidebar-resizer-hatch-width, 0.625rem);
         overflow: hidden;
         pointer-events: none;
     }
@@ -25,20 +35,22 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: 120px;
-        height: calc(100% + 120px);
+        width: var(--sidebar-resizer-hatch-span, 7.5rem);
+        height: calc(100% + var(--sidebar-resizer-hatch-span, 7.5rem));
         background-color: var(--HS-surface-ui-border-100);
         transform: translate(-50%, -50%) rotate(0deg);
         transform-origin: center;
         transition:
-            transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-            background-color 0.12s ease;
+            transform var(--animations-bounce-slow),
+            background-color var(--animations-fade-instant);
         -webkit-mask:
             url("data:image/svg+xml,%3Csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cg%20clip-path='url(%23c)'%3E%3Cpath%20d='M23.1852%200.916805L-2.19144%20-10.9164'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%205.9168L-2.19144%20-5.91644'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2010.9168L-2.19144%20-0.916436'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2015.9168L-2.19144%204.08356'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2020.9168L-2.19144%209.08356'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2025.9168L-2.19144%2014.0836'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2030.9168L-2.19144%2019.0836'%20stroke='white'%20stroke-linecap='square'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath%20id='c'%3E%3Crect%20width='20'%20height='20'%20fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E")
-                0 0 / 26px 26px repeat;
+                0 0 / var(--sidebar-resizer-hatch-tile-size, 1.625rem)
+                var(--sidebar-resizer-hatch-tile-size, 1.625rem) repeat;
         mask:
             url("data:image/svg+xml,%3Csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cg%20clip-path='url(%23c)'%3E%3Cpath%20d='M23.1852%200.916805L-2.19144%20-10.9164'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%205.9168L-2.19144%20-5.91644'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2010.9168L-2.19144%20-0.916436'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2015.9168L-2.19144%204.08356'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2020.9168L-2.19144%209.08356'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2025.9168L-2.19144%2014.0836'%20stroke='white'%20stroke-linecap='square'/%3E%3Cpath%20d='M23.1852%2030.9168L-2.19144%2019.0836'%20stroke='white'%20stroke-linecap='square'/%3E%3C/g%3E%3Cdefs%3E%3CclipPath%20id='c'%3E%3Crect%20width='20'%20height='20'%20fill='white'/%3E%3C/clipPath%3E%3C/defs%3E%3C/svg%3E")
-                0 0 / 26px 26px repeat;
+                0 0 / var(--sidebar-resizer-hatch-tile-size, 1.625rem)
+                var(--sidebar-resizer-hatch-tile-size, 1.625rem) repeat;
     }
 
     .hatchActive {
@@ -46,7 +58,7 @@
     }
 
     .hatchDragging {
-        transform: translate(-50%, -50%) rotate(6deg);
+        transform: translate(-50%, -50%) rotate(var(--sidebar-resizer-hatch-angle, 6deg));
     }
 
     .overlay {
@@ -67,7 +79,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .hatchInner {
-        transition: background-color 0.12s ease;
+        transition: background-color var(--animations-fade-instant);
     }
 
     .hatchDragging {
