@@ -352,6 +352,159 @@ QUnit.test('High contrast theme should persist on chart update', function (
     );
 });
 
+QUnit.test('High contrast auto mode should follow forced colors', function (
+    assert
+) {
+    const originalMatchMedia = window.matchMedia;
+    const forcedColorsQuery = '(forced-colors: active)';
+    let chart;
+    let matches = false;
+    let listeners = [];
+
+    const mediaQueryList = {
+        media: forcedColorsQuery,
+        get matches() {
+            return matches;
+        },
+        addEventListener: function (type, listener) {
+            if (type === 'change') {
+                listeners.push(listener);
+            }
+        },
+        removeEventListener: function (type, listener) {
+            if (type === 'change') {
+                listeners = listeners.filter(function (item) {
+                    return item !== listener;
+                });
+            }
+        }
+    };
+
+    function fireForcedColorsChange() {
+        listeners.slice().forEach(function (listener) {
+            listener.call(mediaQueryList, {
+                matches: matches,
+                media: forcedColorsQuery
+            });
+        });
+    }
+
+    function getPlotLineColor() {
+        return chart.yAxis[0]
+            .plotLinesAndBands[0]
+            .svgElem
+            .element
+            .getAttribute('stroke');
+    }
+
+    function getSeriesColor() {
+        return chart.series[0].color;
+    }
+
+    function getPointColor() {
+        return chart.series[0].points[0].color;
+    }
+
+    window.matchMedia = function (query) {
+        return query === forcedColorsQuery ?
+            mediaQueryList :
+            originalMatchMedia.call(window, query);
+    };
+
+    try {
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastTheme: {
+                    yAxis: {
+                        plotLines: [{
+                            color: '#ff0000',
+                            value: 2,
+                            width: 2
+                        }]
+                    }
+                }
+            },
+            yAxis: {
+                plotLines: [{
+                    color: '#0000ff',
+                    value: 2,
+                    width: 2
+                }]
+            },
+            series: [{
+                data: [{
+                    color: '#00ff00',
+                    y: 1
+                }, 2, 3]
+            }]
+        });
+
+        const regularSeriesColor = getSeriesColor();
+
+        assert.strictEqual(
+            getPlotLineColor(),
+            '#0000ff',
+            'Plot line should use regular color before forced colors'
+        );
+
+        matches = true;
+        fireForcedColorsChange();
+
+        assert.strictEqual(
+            getPlotLineColor(),
+            '#ff0000',
+            'Plot line should use high contrast color when forced colors start'
+        );
+
+        assert.strictEqual(
+            getSeriesColor(),
+            'windowText',
+            'Series should use high contrast color when forced colors start'
+        );
+
+        assert.strictEqual(
+            getPointColor(),
+            'windowText',
+            'Point should use high contrast color when forced colors start'
+        );
+
+        matches = false;
+        fireForcedColorsChange();
+
+        assert.strictEqual(
+            getPlotLineColor(),
+            '#0000ff',
+            'Plot line should restore regular color when forced colors stop'
+        );
+
+        assert.strictEqual(
+            getSeriesColor(),
+            regularSeriesColor,
+            'Series should restore regular color when forced colors stop'
+        );
+
+        assert.strictEqual(
+            getPointColor(),
+            '#00ff00',
+            'Point should restore regular color when forced colors stop'
+        );
+
+        chart.destroy();
+        chart = null;
+
+        assert.strictEqual(
+            listeners.length,
+            0,
+            'Media query listener should be removed on chart destroy'
+        );
+    } finally {
+        if (chart) {
+            chart.destroy();
+        }
+        window.matchMedia = originalMatchMedia;
+    }
+});
+
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
