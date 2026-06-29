@@ -92,10 +92,6 @@ interface KDPointSearchObject extends KDPointSearchObjectBase {
  *
  * */
 
-/**
- * Add logic to pad each axis with the amount of pixels necessary to avoid the
- * bubbles to overflow.
- */
 function onAxisFoundExtremes(
     this: Axis
 ): void {
@@ -177,8 +173,101 @@ function onAxisFoundExtremes(
                 (this as any)[keys[0]] += keys[2] / transA;
             }
         });
+
     }
 
+    // Store values so afterSetTickPositions can detect tick snap. #24039
+    if (hasActiveSeries) {
+        (this as any).bubbleMinAfterPadding = this.min;
+        (this as any).bubbleMaxAfterPadding = this.max;
+    }
+}
+
+function onAxisAfterSetTickPositions(
+    this: Axis
+): void {
+    const { coll, isXAxis } = this;
+
+    if (
+        coll !== 'xAxis' && coll !== 'yAxis' ||
+        this.logarithmic
+    ) {
+        return;
+    }
+
+    const axisLength = this.len,
+        hasUserMin = defined(pick(this.options.min, this.userMin)),
+        hasUserMax = defined(pick(this.options.max, this.userMax));
+
+    if (hasUserMin && hasUserMax) {
+        return;
+    }
+
+    // Only correct if tick snap shifted the axis after onAxisFoundExtremes
+    // already padded it — otherwise we cause a double expansion. #24039
+    if (
+        this.min === (this as any).bubbleMinAfterPadding &&
+        this.max === (this as any).bubbleMaxAfterPadding
+    ) {
+        return;
+    }
+
+    const axisMin = this.min || 0,
+        axisMax = this.max || 0;
+
+    let requiredMin = axisMin,
+        requiredMax = axisMax,
+        hasActiveSeries = false;
+
+    this.series.forEach((series): void => {
+        if (!series.bubblePadding || !series.reserveSpace()) {
+            return;
+        }
+
+        hasActiveSeries = true;
+
+        const data = series.getColumn(isXAxis ? 'x' : 'y');
+
+        let i = data.length;
+        while (i--) {
+            const d = data[i];
+            if (!isNumber(d)) {
+                continue;
+            }
+            const r = series.radii && series.radii[i] || 0;
+            if (r >= axisLength) {
+                continue;
+            }
+            const range = axisMax - axisMin,
+                pxPos = range > 0 ?
+                    (d - axisMin) / range * axisLength :
+                    axisLength / 2;
+
+            if (!hasUserMin && pxPos - r < -1) {
+                requiredMin = Math.min(
+                    requiredMin,
+                    (r * axisMax - d * axisLength) / (r - axisLength)
+                );
+            }
+            if (!hasUserMax && pxPos + r > axisLength + 1) {
+                requiredMax = Math.max(
+                    requiredMax,
+                    (d * axisLength - r * axisMin) / (axisLength - r)
+                );
+            }
+        }
+    });
+
+    if (!hasActiveSeries) {
+        return;
+    }
+
+    if (!hasUserMin && requiredMin < axisMin) {
+        this.min = requiredMin;
+    }
+    if (!hasUserMax && requiredMax > axisMax) {
+        this.max = requiredMax;
+    }
 }
 
 /**
@@ -514,6 +603,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(
                 AxisClass,
                 'afterRender',
