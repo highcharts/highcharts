@@ -8,217 +8,178 @@ const commonOptions = {
     }
 };
 
-const stockCollection = [{
-    ticker: 'Tesla, Inc. (TSLA)',
-    ISIN: 'US88160R1014',
-    SecID: '0P0000OQN8'
-}, {
-    ticker: 'Netflix, Inc. (NFLX)',
-    ISIN: 'US64110L1061',
-    SecID: '0P000003UP'
-}, {
-    ticker: 'Microsoft Corporation (MSFT)',
-    ISIN: 'US5949181045',
-    SecID: '0P000003MH'
-}, {
-    ticker: 'Amazon.com, Inc. (AMZN)',
-    ISIN: 'US0231351067',
-    SecID: '0P000000B7'
-}, {
-    ticker: 'Alphabet Inc. (GOOGL)',
-    ISIN: 'US02079K3059',
-    SecID: '0P000002HD'
-},
-{
-    ticker: 'NVIDIA Corporation (NVDA)',
-    ISIN: 'US67066G1040',
-    SecID: '0P000003RE'
-},
-{
-    ticker: 'Apple Inc. (AAPL)',
-    ISIN: 'US0378331005',
-    SecID: '0P000000GY'
-},
-{
-    ticker: 'Meta Platforms, Inc. (META)',
-    ISIN: 'US30303M1027',
-    SecID: '0P0000W3KZ'
-},
-{
-    ticker: 'Intel Corporation (INTC)',
-    ISIN: 'US4581401001',
-    SecID: '0P000002X8'
-},
-{
-    ticker: 'Advanced Micro Devices, Inc. (AMD)',
-    ISIN: 'US0079031078',
-    SecID: '0P0000006A'
-}
-];
+const stockCollection = [
+    ['Tesla, Inc. (TSLA)', 'US88160R1014', '0P0000OQN8'],
+    ['Netflix, Inc. (NFLX)', 'US64110L1061', '0P000003UP'],
+    ['Microsoft Corporation (MSFT)', 'US5949181045', '0P000003MH'],
+    ['Amazon.com, Inc. (AMZN)', 'US0231351067', '0P000000B7'],
+    ['Alphabet Inc. (GOOGL)', 'US02079K3059', '0P000002HD'],
+    ['NVIDIA Corporation (NVDA)', 'US67066G1040', '0P000003RE'],
+    ['Apple Inc. (AAPL)', 'US0378331005', '0P000000GY'],
+    ['Meta Platforms, Inc. (META)', 'US30303M1027', '0P0000W3KZ'],
+    ['Intel Corporation (INTC)', 'US4581401001', '0P000002X8'],
+    ['Advanced Micro Devices, Inc. (AMD)', 'US0079031078', '0P0000006A']
+].map(([ticker, ISIN, SecID]) => ({ ticker, ISIN, SecID }));
+
 const marketIndex = {
     ticker: 'Dow Jones World Index (W1DOW)',
     ISIN: 'US2605571031',
     SecID: '0P0001H3ZI'
 };
 
-const getHoldings = [
-    ...stockCollection.map(stock => ({ id: stock.ISIN, idType: 'ISIN' })),
-    { id: marketIndex.ISIN, idType: 'ISIN' }
-];
+const getHoldings = [...stockCollection, marketIndex].map(({ ISIN }) => ({
+    id: ISIN,
+    idType: 'ISIN'
+}));
 
 const ANIMATION_SPEED = 1000;
-const WINDOW_SIZE = 20;
+const WINDOW_SIZE = 31;
+const START_DATE = '2023-06-01';
+const END_DATE = '2023-12-31';
 const CHANGE_COLUMNS = [
     { id: 'oneDayChange', label: '1 Day', days: 1 },
     { id: 'oneWeekChange', label: '1 Week', days: 7 },
     { id: 'oneMonthChange', label: '1 Month', days: 30 }
 ];
+const RANGE_BUTTONS = [
+    { count: 1, type: 'week', text: '1W' },
+    { count: 1, type: 'month', text: '1M' },
+    { count: 3, type: 'month', text: '3M' },
+    { count: 6, type: 'month', text: '6M' },
+    { count: 1, type: 'year', text: '1Y' },
+    { type: 'all', text: 'All' }
+];
+const DATA_COLUMNS = [
+    'priceEvolution',
+    ...CHANGE_COLUMNS.map(({ id }) => id),
+    'price'
+];
 const INITIAL_VISIBLE_COUNT = Math.max(
     ...CHANGE_COLUMNS.map(({ days }) => days)
 );
+const dateFormatter = new Intl.DateTimeFormat('en', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+});
+const hasValue = value => value != null;
+const toPointData = (xData, yData) => xData.map((x, i) => [x, yData[i]]);
+const getPrices = (table, stock) => (
+    table.getColumn(stock.SecID) || []
+).map(Number);
+const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+    ...commonOptions,
+    series: { type: 'Price' },
+    securities: getHoldings,
+    startDate: START_DATE,
+    endDate: END_DATE,
+    currencyId: 'EUR'
+});
 
-(async () => {
-    const isTouchDevice = 'ontouchstart' in window
-        || navigator.maxTouchPoints > 0;
-    if (isTouchDevice) {
-        document.body.classList.add('touch-device');
-    }
-    const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
-        ...commonOptions,
-        series: { type: 'Price' },
-        securities: getHoldings,
-        startDate: '2022-05-01',
-        endDate: '2023-05-31',
-        currencyId: 'EUR'
-    });
-    const sparkStringCache = new WeakMap();
-    const toSpark = (col, count) => {
-        const end = Math.min(count, col.length);
-        const start = Math.max(0, end - WINDOW_SIZE);
-        const cacheKey = `${start}:${end}`;
-        let cachedStrings = sparkStringCache.get(col);
+function getVisibleWindow(dataLength, visibleCount) {
+    const end = Math.min(visibleCount, dataLength);
+    const start = Math.max(0, end - WINDOW_SIZE);
+    return { start, end };
+}
 
-        if (!cachedStrings) {
-            cachedStrings = new Map();
-            sparkStringCache.set(col, cachedStrings);
-        }
+function getDateRangeLabel(dates, visibleCount) {
+    const { start, end } = getVisibleWindow(dates.length, visibleCount);
+    return (
+        `${dateFormatter.format(new Date(dates[start]))} - `
+        + dateFormatter.format(new Date(dates[end - 1]))
+    );
+}
 
-        if (!cachedStrings.has(cacheKey)) {
-            cachedStrings.set(cacheKey, col.slice(start, end).join(', '));
-        }
-
-        return cachedStrings.get(cacheKey);
-    };
-
-    const getPrices = (table, stock) => {
-        const priceColumn = table.getColumn(stock.SecID) || [];
-        return priceColumn.map(Number);
-    };
-
-    function calculateDeltas(prices, visibleCount) {
-        return CHANGE_COLUMNS.map(({ days }) => {
-            const currentPrice = prices[visibleCount - 1];
-            const previousPrice = prices[visibleCount - 1 - days];
-
-            if (
-                currentPrice === null
-                || typeof currentPrice === 'undefined'
-                || previousPrice === null
-                || typeof previousPrice === 'undefined'
-            ) {
-                return 0;
-            }
-
-            return Number((
-                (currentPrice - previousPrice) / previousPrice * 100
-            ).toFixed(2));
+function updatePriceEvolutionHeader(dates, visibleCount) {
+    document
+        .querySelectorAll('#container .price-evolution-header-date')
+        .forEach(label => {
+            label.textContent = getDateRangeLabel(dates, visibleCount);
         });
-    }
-    function calculateRowValues(prices, visibleCount) {
-        return {
-            spark: toSpark(prices, visibleCount),
-            latestPrice: Number(prices[visibleCount - 1]?.toFixed(2) ?? ''),
-            deltaValues: calculateDeltas(prices, visibleCount)
-        };
-    }
-    function formatDelta(value) {
-        const formattedValue = Math.abs(value).toFixed(2);
+}
 
-        if (value > 0) {
-            return `<span style='color: #4caf50;'>${formattedValue}% &uarr;</span>`;
-        }
-        if (value < 0) {
-            return `<span style='color: #f44336;'>${formattedValue}% &#8595;</span>`;
-        }
-        return `<span>${formattedValue}%</span>`;
+function formatDelta(value) {
+    const formattedValue = Math.abs(value).toFixed(2);
+    if (value > 0) {
+        return `<span style='color: #4caf50;'>${formattedValue}% &uarr;</span>`;
     }
+    if (value < 0) {
+        return `<span style='color: #f44336;'>${formattedValue}% &#8595;</span>`;
+    }
+    return `<span>${formattedValue}%</span>`;
+}
+function getRowData(stock, prices, visibleCount) {
+    const currentPrice = prices[visibleCount - 1];
 
+    return {
+        ticker: stock.ticker,
+        priceEvolution: toSpark(prices, visibleCount),
+        price: Number(currentPrice?.toFixed(2) ?? ''),
+        ...Object.fromEntries(
+            CHANGE_COLUMNS.map(({ id, days }) => {
+                const previousPrice = prices[visibleCount - days - 1];
+                const value = hasValue(currentPrice) && hasValue(previousPrice) ?
+                    Number((
+                        (currentPrice - previousPrice) / previousPrice * 100
+                    ).toFixed(2)) :
+                    0;
+
+                return [id, value];
+            })
+        )
+    };
+}
+
+const toSpark = (col, count) => {
+    const { start, end } = getVisibleWindow(col.length, count);
+    return col.slice(start, end).map(Number).join(', ');
+};
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    document.body.classList.add('touch-device');
+}
+(async () => {
     try {
         await connector.load();
         const table = connector.getTable();
-        let visibleCount = INITIAL_VISIBLE_COUNT;
+        const dates = table.getColumn('Date') || [];
         const cachedPrices = stockCollection.map(
             stock => getPrices(table, stock)
         );
         const indexPrice = getPrices(table, marketIndex);
-
-        const rows = stockCollection.map((stock, i) => {
-            const prices = cachedPrices[i];
-            const { spark, latestPrice, deltaValues } = calculateRowValues(
-                prices,
-                visibleCount
-            );
-            return {
-                ticker: stock.ticker,
-                priceEvolution: spark,
-                ...Object.fromEntries(
-                    CHANGE_COLUMNS.map(({ id }, index) => [
-                        id,
-                        deltaValues[index]
-                    ])
-                ),
-                price: latestPrice
-            };
-        });
-
         const maxSeriesLength = Math.max(...cachedPrices.map(p => p.length), 0);
+        let visibleCount = INITIAL_VISIBLE_COUNT;
+        const rowsData = stockCollection.map((stock, i) => (
+            getRowData(stock, cachedPrices[i], visibleCount)
+        ));
         const gridData = new Grid.DataTable({
-            columns: {
-                ticker: rows.map(row => row.ticker),
-                priceEvolution: rows.map(row => row.priceEvolution),
-                ...Object.fromEntries(
-                    CHANGE_COLUMNS.map(({ id }) => [
-                        id,
-                        rows.map(row => row[id])
-                    ])
-                ),
-                price: rows.map(row => row.price)
-            }
+            columns: Object.fromEntries(
+                ['ticker', ...DATA_COLUMNS].map(column => [
+                    column,
+                    rowsData.map(row => row[column])
+                ])
+            )
         });
-        const priceHeaderFormat = (
-            '<span class="price-header">Price <wbr>(EUR)</span>'
-        );
+
         const defaultHeader = [{
             columnId: 'ticker',
             format: 'Company'
         }, {
             columnId: 'priceEvolution',
-            format: 'Price Evolution'
+            format: 'Price Evolution<span class="price-evolution-header-date">'
+                    + getDateRangeLabel(dates, visibleCount) + '</span>'
         },
         ...CHANGE_COLUMNS.map(({ id, label }) => ({
             columnId: id,
-            format: label
+            format: `${label} (%)`
         })),
         {
             columnId: 'price',
-            format: priceHeaderFormat
+            format: '<span class="price-header">Price <wbr>(EUR)</span>'
         }];
-        const compactHiddenColumns = [
+        const compactHeader = defaultHeader.filter(({ columnId }) => ![
             CHANGE_COLUMNS[0].id,
             CHANGE_COLUMNS[2].id
-        ];
-        const compactHeader = defaultHeader
-            .filter(entry => !compactHiddenColumns.includes(entry.columnId));
+        ].includes(columnId));
 
         const grid = Grid.grid('container', {
             data: { dataTable: gridData },
@@ -237,16 +198,13 @@ const INITIAL_VISIBLE_COUNT = Math.max(
             header: defaultHeader,
             columns: [{
                 id: 'ticker',
-                header: { format: 'Company' },
                 width: '20%'
             }, {
                 id: 'priceEvolution',
                 className: 'stockSparklines',
-                header: { format: 'Price Evolution' },
                 cells: {
                     events: {
                         click: function () {
-                            const rowIndex = this.row.index;
                             const ticker = this.row.data.ticker;
                             const stock = stockCollection.find(
                                 s => s.ticker === ticker
@@ -254,14 +212,17 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                             if (!stock) {
                                 return;
                             }
-                            openStockChart(stock, rowIndex, visibleCount);
+                            openStockChart(
+                                stock,
+                                stockCollection.indexOf(stock),
+                                visibleCount
+                            );
                         }
                     },
                     renderer: {
                         type: 'sparkline',
                         chartOptions: function (data) {
                             const y = (data || '').split(',').map(Number);
-
                             return {
                                 tooltip: {
                                     enabled: true,
@@ -271,20 +232,15 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                                             `<b>${this.y.toFixed(2)} EUR</b>`
                                         );
                                     }
-                                },/*
+                                },
                                 chart: {
                                     animation: true
-                                },*/
-                                plotOptions: {
-                                    series: {
-                                        enableMouseTracking: true
-                                    }
                                 },
                                 series: [{
                                     data: y,
-                                    /*animation: {
+                                    animation: {
                                         duration: ANIMATION_SPEED
-                                    },*/
+                                    },
                                     color: y[y.length - 1] >= y[0] ?
                                         '#4caf50' :
                                         '#f44336'
@@ -294,9 +250,8 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                     }
                 }
             },
-            ...CHANGE_COLUMNS.map(({ id, label }) => ({
+            ...CHANGE_COLUMNS.map(({ id }) => ({
                 id,
-                header: { format: `${label} (%)` },
                 cells: {
                     formatter: function () {
                         return formatDelta(this.value);
@@ -306,7 +261,6 @@ const INITIAL_VISIBLE_COUNT = Math.max(
             })),
             {
                 id: 'price',
-                header: { format: priceHeaderFormat },
                 width: '10%'
             }
             ],
@@ -329,32 +283,29 @@ const INITIAL_VISIBLE_COUNT = Math.max(
             }
         });
 
-        async function refreshSparkline() {
+        async function refreshGrid() {
             visibleCount = Math.min(visibleCount + 1, maxSeriesLength);
-            stockCollection.forEach((_, rowIndex) => {
-                const { spark, latestPrice, deltaValues } = calculateRowValues(
+            stockCollection.forEach((stock, rowIndex) => {
+                const rowData = getRowData(
+                    stock,
                     cachedPrices[rowIndex],
                     visibleCount
                 );
-
-                gridData.setCell('priceEvolution', rowIndex, spark);
-                CHANGE_COLUMNS.forEach(({ id }, index) => {
-                    gridData.setCell(id, rowIndex, deltaValues[index]);
+                DATA_COLUMNS.forEach(column => {
+                    gridData.setCell(column, rowIndex, rowData[column]);
                 });
-                gridData.setCell('price', rowIndex, latestPrice);
             });
+
             await grid.querying.proceed(true);
-
-            for (const column of grid.viewport.columns) {
+            updatePriceEvolutionHeader(dates, visibleCount);
+            grid.viewport.columns.forEach(column => {
                 column.loadData();
-            }
-
+            });
             stockCollection.forEach((_, rowIndex) => {
                 const row = grid.viewport.getRow(rowIndex);
                 if (!row) {
                     return;
                 }
-
                 row.loadData();
                 row.cells.forEach(cell => cell.setValue());
             });
@@ -364,12 +315,13 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                 clearInterval(gridInterval);
                 return;
             }
-            await refreshSparkline();
+            await refreshGrid();
         }, ANIMATION_SPEED);
+
         const overlay = document.getElementById('spark-popup-overlay');
         let popupChart = null;
         let popupInterval = null;
-        // Close on overlay or button click
+
         function closePopup() {
             overlay.classList.remove('open');
             clearInterval(popupInterval);
@@ -387,132 +339,75 @@ const INITIAL_VISIBLE_COUNT = Math.max(
 
         function openStockChart(stock, rowIndex, visibleCount) {
             const prices = cachedPrices[rowIndex];
-            const dates = table.getColumn('Date') || [];
-
-            const end = Math.min(visibleCount, prices.length);
-
-            // Slicing from zero to let user view entire timeline.
-            const yData = prices.slice(0, end).map(Number);
+            const { end } = getVisibleWindow(prices.length, visibleCount); 
             const xData = dates.slice(0, end);
-
+            const stockData = prices.slice(0, end).map(Number);
             const indexData = indexPrice.slice(0, end).map(Number);
-
-            const tolltipPointFormat = (
+            const pointFormat = (
                 '<span style="color:{point.color}">\u25CF</span> '
                 + '{series.name}</br> <b>{point.y} EUR</b> '
                 + '({point.change:.2f}%)<br/>'
             );
+            const makeSeries = (name, data) => ({
+                name,
+                showInLegend: true,
+                data: toPointData(xData, data),
+                compare: 'percent',
+                compareStart: true,
+                tooltip: {
+                    pointFormat,
+                    valueDecimals: 2
+                }
+            });
             overlay.classList.add('open');
             popupChart = Highcharts.stockChart('spark-popup-chart', {
                 chart: {
                     events: {
                         load: function () {
-                            const stockSeries = this.series[0];
-                            const indexSeries = this.series[1];
+                            const [stockSeries, indexSeries] = this.series;
                             let popupVisible = visibleCount;
                             popupInterval = setInterval(function () {
-                                popupVisible = Math.min(
-                                    popupVisible + 1,
-                                    maxSeriesLength
-                                );
+                                popupVisible = popupVisible + 1;
                                 const end = Math.min(
                                     popupVisible,
-                                    prices.length
+                                    maxSeriesLength
                                 );
-                                const newStockY = prices[end - 1];
-                                const newIndexY = indexPrice[end - 1];
-                                const newX = dates[end - 1];
+                                const nextStockY = prices[end - 1];
+                                const nextIndexY = indexPrice[end - 1];
+                                const nextX = dates[end - 1];
 
-                                if (
-                                    end >= prices.length
-                                    || end >= dates.length
-                                    || newStockY === null
-                                    || typeof newStockY === 'undefined'
-                                    || newX === null
-                                    || typeof newX === 'undefined'
-                                ) {
+                                if (popupVisible >= maxSeriesLength) {
                                     clearInterval(popupInterval);
                                     popupInterval = null;
                                     return;
                                 }
-
-                                stockSeries.addPoint(
-                                    [newX, newStockY],
-                                    true,
-                                    false
-                                );
-                                indexSeries.addPoint(
-                                    [newX, newIndexY],
-                                    true,
-                                    false
-                                );
+                                stockSeries.addPoint([nextX, nextStockY], true, false);
+                                indexSeries.addPoint([nextX, nextIndexY], true, false);
                             }, ANIMATION_SPEED);
                         }
                     }
                 },
                 rangeSelector: {
-                    buttons: [{
-                        count: 1,
-                        type: 'week',
-                        text: '1W'
-                    }, {
-                        count: 1,
-                        type: 'month',
-                        text: '1M'
-                    }, {
-                        count: 3,
-                        type: 'month',
-                        text: '3M'
-                    }, {
-                        count: 6,
-                        type: 'month',
-                        text: '6M'
-                    }, {
-                        count: 1,
-                        type: 'year',
-                        text: '1Y'
-                    }, {
-                        type: 'all',
-                        text: 'All'
-                    }],
+                    buttons: RANGE_BUTTONS
                 },
-                title: {
-                    text: stock.ticker
-                },
+                title: { text: stock.ticker + ' vs. ' + marketIndex.ticker },
                 yAxis: {
                     labels: {
                         format: '{text}%'
                     }
                 },
-                legend: {
-                    enabled: true
-                },
-                series: [{
-                    name: stock.ticker,
-                    showInLegend: true,
-                    data: xData.map((x, i) => [x, yData[i]]),
-                    compare: 'percent',
-                    compareStart: true,
-                    tooltip: {
-                        pointFormat: tolltipPointFormat,
-                        valueDecimals: 2
-                    }
-                }, {
-                    name: marketIndex.ticker,
-                    showInLegend: true,
-                    data: xData.map((x, i) => [x, indexData[i]]),
-                    compare: 'percent',
-                    compareStart: true,
-                    tooltip: {
-                        pointFormat: tolltipPointFormat,
-                        valueDecimals: 2
-                    }
-                }]
+                legend: { enabled: true },
+                series: [
+                    makeSeries(stock.ticker, stockData),
+                    makeSeries(marketIndex.ticker, indexData)
+                ]
             });
         }
     } catch (err) {
         document.getElementById('container').textContent = (
             'Failed to load data: ' + err.message
         );
+    } finally {
+        document.getElementById('loading-spinner')?.remove();
     }
 })();

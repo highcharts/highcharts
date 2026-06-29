@@ -33,6 +33,37 @@
     margin-top: 2px;
 }
 
+#container {
+    min-height: 260px;
+    position: relative;
+}
+
+#loading-spinner {
+    align-items: center;
+    color: #666;
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+}
+
+#loading-spinner::before {
+    animation: spinner 0.8s linear infinite;
+    border: 3px solid #d6d6d6;
+    border-radius: 50%;
+    border-top-color: #4caf50;
+    content: "";
+    height: 28px;
+    margin-right: 10px;
+    width: 28px;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 #spark-popup-overlay {
     display: none;
     position: fixed;
