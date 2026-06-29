@@ -29,6 +29,7 @@ async function init() {
     await connector.load();
 
     Grid.grid('container', {
+        gridKey: 'YOUR-GRID-KEY-HERE', // TODO: replace with your grid key
         data: {
             dataTable: connector.getTable('IncAllSectors'),
             idColumn: 'Fixed_Income_Path',
