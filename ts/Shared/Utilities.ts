@@ -1411,11 +1411,14 @@ export function offset(el: Element): OffsetObject {
  */
 export function pad(number: number, length?: number, padder?: string): string {
     return new Array(
-        (length || 2) +
-        1 -
-        String(number)
-            .replace('-', '')
-            .length
+        Math.max(
+            0,
+            (length || 2) +
+            1 -
+            String(number)
+                .replace('-', '')
+                .length
+        )
     ).join(padder || '0') + number;
 }
 
