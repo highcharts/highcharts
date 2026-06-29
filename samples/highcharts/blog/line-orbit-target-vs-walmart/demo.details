@@ -2,5 +2,6 @@
  name: Target vs Walmart Weekly Stock Prices - line
  authors:
    - Øystein Moseng
+ applyCSP: false
  js_wrap: b
 ...
