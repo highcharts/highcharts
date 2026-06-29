@@ -250,18 +250,7 @@ class Accessibility {
         this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
-        // Reapply after updates while HC mode is active, but avoid recursion
-        // while the theme itself is being applied through chart.update.
-        if (
-            !chart.highContrastState?.applying &&
-            a11yOptions.highContrastMode !== false && (
-                chart.highContrastState?.active ||
-                whcm.isHighContrastModeActive() ||
-                a11yOptions.highContrastMode === true
-            )
-        ) {
-            whcm.setHighContrastTheme(chart);
-        }
+        whcm.updateHighContrastMode(chart);
 
         fireEvent(chart, 'afterA11yUpdate', {
             accessibility: this
@@ -274,6 +263,10 @@ class Accessibility {
      */
     public destroy(): void {
         const chart: Chart = this.chart || {};
+
+        whcm.removeHighContrastModeListener(
+            chart as Accessibility.ChartComposition
+        );
 
         // Destroy components
         const components = this.components;
