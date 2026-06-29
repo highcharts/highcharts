@@ -37,11 +37,10 @@ import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -510,7 +509,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, lineColor, marker } =
+                { fillColor, lineColor } =
                     (item as Series).options,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
@@ -527,14 +526,14 @@ class Legend {
 
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
-            if (symbol) {
-                // Apply marker options
-                symbol.attr(colorizeHidden(
-                    marker && symbol.isMarker ? // #585
-                        (item as Series).pointAttribs() :
-                        { fill: item.color }
-                ));
-            }
+            // Apply legend symbol attributes
+            symbol?.attr(colorizeHidden(
+                (item as Point).series ?
+                    // When `legendType` is `point`, like pie series
+                    (item as Point).series.pointAttribs?.(item as Point) :
+                    // When `legendType` is `series`, like line or column series
+                    (item as Series).pointAttribs?.() || { fill: item.color }
+            ));
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,

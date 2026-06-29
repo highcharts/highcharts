@@ -35,6 +35,7 @@ const umdTargetFolder = Path.join('code');
 const namespace = 'Highcharts';
 const productMasters = [
     'highcharts',
+    'highcharts-autoload',
     'highcharts-gantt',
     'highmaps',
     'highstock',
@@ -125,6 +126,13 @@ const umdWebpacks = FSLib
                 // })
             ],
             resolve: {
+                byDependency: {
+                    esm: {
+                        // Imports need full .js extensions, otherwise custom
+                        // bundlers may fail (#24760)
+                        fullySpecified: true
+                    }
+                },
                 extensions: ['.js', '.ts']
             }
         };
@@ -175,6 +183,14 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
         },
         mode: 'production',
         optimization: umdWebpack.optimization,
+        resolve: {
+            byDependency: {
+                esm: {
+                    fullySpecified: true
+                }
+            },
+            extensions: ['.js', '.ts']
+        },
         output: {
             filename: masterPath,
             globalObject: 'this',

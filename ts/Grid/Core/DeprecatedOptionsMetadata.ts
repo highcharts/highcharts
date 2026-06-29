@@ -42,7 +42,7 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'dataTable'
             }
         ],
-        'text': 'Use `data.dataTable` instead.'
+        'text': '2.3.0'
     }
 ];
 

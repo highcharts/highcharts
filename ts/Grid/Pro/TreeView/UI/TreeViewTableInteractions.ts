@@ -29,6 +29,8 @@ import type TreeProjectionController from '../Projection/TreeProjectionControlle
 import type { TreeRowToggleTriggerEvent } from '../Projection/TreeProjectionController';
 
 import TreeStickyRowController from './TreeStickyRowController.js';
+import { getTreeViewCellContext } from './TreeViewCellContext.js';
+import { getTreeViewRowId } from '../TreeViewRowResolver.js';
 import { waitForAnimationFrame } from '../../../Core/GridUtils.js';
 
 
@@ -43,16 +45,13 @@ type TreeToggleDblClickListener = (event: MouseEvent) => void;
 type TreeToggleMouseDownListener = (event: MouseEvent) => void;
 type TreeToggleKeyDownListener = (event: KeyboardEvent) => void;
 type TreeToggleWheelListener = (event: WheelEvent) => void;
+type StickyCellMouseHandlerName = 'onDblClick' | 'onMouseDown';
 
 type TreeToggleContext = {
     cell: TableCell;
     controller: TreeProjectionController;
     isExpanded: boolean;
     rowId: RowId;
-};
-
-type TreeToggleAnchor = {
-    top: number;
 };
 
 export type TreeToggleListeners = {
@@ -153,16 +152,15 @@ function handleTreeBodyNavigation(
         table.tbodyElement;
     const nextRowIndex = row.index + dir[0];
 
-    if (renderedRowIndex > -1) {
-        if (
+    if (
+        renderedRowIndex > -1 && (
             !isViewportBodyRow ||
             nextRowIndex < 0 ||
             nextRowIndex >= table.rowsVirtualizer.rowCount
-        ) {
-            if (focusRenderedRow(table, nextRenderedRow, nextColumnIndex)) {
-                return true;
-            }
-        }
+        ) &&
+        focusRenderedRow(table, nextRenderedRow, nextColumnIndex)
+    ) {
+        return true;
     }
 
     if (nextRowIndex < 0 && header) {
@@ -204,37 +202,17 @@ function getTreeToggleContext(
 ): TreeToggleContext | undefined {
     const cell = table.treeStickyRowController?.getCellFromElement(element) ||
         (table.getCellFromElement(element) as TableCell | undefined);
-    if (!cell) {
-        return;
-    }
+    const context = cell && getTreeViewCellContext(cell);
 
-    const controller = cell.row.viewport.grid.treeView;
-    const options = controller?.options;
-    const projectionState = controller?.getProjectionState();
-    const treeColumn = options?.treeColumn || cell.row.viewport.columns[0]?.id;
-
-    if (!controller || !projectionState || !treeColumn) {
-        return;
-    }
-
-    if (cell.column.id !== treeColumn) {
-        return;
-    }
-
-    const rowId = cell.row.id ?? projectionState.rowIds[cell.row.index];
-    const rowState = rowId !== void 0 ?
-        projectionState.rowsById.get(rowId) :
-        void 0;
-
-    if (rowId === void 0 || !rowState?.hasChildren) {
+    if (!context?.isTreeColumnCell || !context.rowState.hasChildren) {
         return;
     }
 
     return {
-        cell,
-        controller,
-        isExpanded: rowState.isExpanded,
-        rowId
+        cell: context.cell,
+        controller: context.controller,
+        isExpanded: context.rowState.isExpanded,
+        rowId: context.rowId
     };
 }
 
@@ -297,14 +275,14 @@ function restoreTreeCellFocus(
 }
 
 /**
- * Captures the current visual anchor for a collapsing tree row.
+ * Captures the current visual top offset for a collapsing tree row.
  *
  * @param context
  * Tree-toggle context captured from the current DOM cell.
  */
-function captureTreeToggleAnchor(
+function captureTreeToggleAnchorTop(
     context: TreeToggleContext
-): TreeToggleAnchor | undefined {
+): number | undefined {
     if (!context.isExpanded) {
         return;
     }
@@ -315,9 +293,7 @@ function captureTreeToggleAnchor(
         return;
     }
 
-    return {
-        top: rowElement.getBoundingClientRect().top
-    };
+    return rowElement.getBoundingClientRect().top;
 }
 
 /**
@@ -357,14 +333,14 @@ function startTreeCellEditing(
  * @param context
  * Tree-toggle context captured from the current DOM cell.
  *
- * @param anchor
- * Previously captured anchor position.
+ * @param anchorTop
+ * Previously captured row top offset.
  */
-async function restoreTreeToggleAnchor(
+async function restoreTreeToggleAnchorTop(
     context: TreeToggleContext,
-    anchor?: TreeToggleAnchor
+    anchorTop?: number
 ): Promise<void> {
-    if (!anchor) {
+    if (typeof anchorTop !== 'number') {
         return;
     }
 
@@ -380,7 +356,7 @@ async function restoreTreeToggleAnchor(
 
     const tbody = viewport.tbodyElement;
     const delta = renderedRow.htmlElement.getBoundingClientRect().top -
-        anchor.top;
+        anchorTop;
 
     if (Math.abs(delta) < 1) {
         return;
@@ -443,6 +419,50 @@ function normalizeWheelDelta(
 }
 
 /**
+ * Forwards a sticky overlay mouse event to the rendered sticky cell when the
+ * event target is not handled as a tree toggle.
+ *
+ * @param stickyRowController
+ * Sticky row controller owning the overlay.
+ *
+ * @param stickyBody
+ * Sticky overlay body element.
+ *
+ * @param event
+ * Mouse event raised from the table body or sticky overlay.
+ *
+ * @param handlerName
+ * Sticky cell mouse handler to invoke.
+ *
+ * @returns
+ * `true` when a sticky cell handler was invoked.
+ */
+function invokeStickyCellMouseHandler(
+    stickyRowController: TreeStickyRowController,
+    stickyBody: HTMLElement,
+    event: MouseEvent,
+    handlerName: StickyCellMouseHandlerName
+): boolean {
+    if (event.currentTarget !== stickyBody) {
+        return false;
+    }
+
+    const cell = stickyRowController.getCellFromElement(event.target);
+    if (!cell || !(handlerName in cell)) {
+        return false;
+    }
+
+    (
+        cell as unknown as Record<
+            StickyCellMouseHandlerName,
+            (e: MouseEvent) => void
+        >
+    )[handlerName](event);
+
+    return true;
+}
+
+/**
  * Toggles tree row and restores focus when redraw replaces the DOM cell.
  *
  * @param context
@@ -455,18 +475,20 @@ async function toggleTreeRow(
     context: TreeToggleContext,
     originalEvent?: TreeRowToggleTriggerEvent
 ): Promise<void> {
-    const anchor = captureTreeToggleAnchor(context);
+    const anchorTop = captureTreeToggleAnchorTop(context);
     const changed = await context.controller.toggleRow(
         context.rowId,
         true,
         originalEvent
     );
 
-    if (changed) {
-        await waitForAnimationFrame();
-        await restoreTreeToggleAnchor(context, anchor);
-        restoreTreeCellFocus(context);
+    if (!changed) {
+        return;
     }
+
+    await waitForAnimationFrame();
+    await restoreTreeToggleAnchorTop(context, anchorTop);
+    restoreTreeCellFocus(context);
 }
 
 /**
@@ -519,26 +541,21 @@ export function createTreeToggleListeners(
     };
 
     const dblClickListener = (event: MouseEvent): void => {
-        if (!(event.target instanceof Element)) {
-            return;
-        }
-
-        if (event.target.closest(treeToggleSelector)) {
+        if (
+            !(event.target instanceof Element) ||
+            event.target.closest(treeToggleSelector)
+        ) {
             return;
         }
 
         const context = getTreeToggleContext(table, event.target);
         if (!context) {
-            if (event.currentTarget === stickyBody) {
-                const cell = stickyRowController.getCellFromElement(
-                    event.target
-                );
-                if (cell && 'onDblClick' in cell) {
-                    (
-                        cell as unknown as { onDblClick(e: MouseEvent): void }
-                    ).onDblClick(event);
-                }
-            }
+            invokeStickyCellMouseHandler(
+                stickyRowController,
+                stickyBody,
+                event,
+                'onDblClick'
+            );
             return;
         }
 
@@ -547,12 +564,10 @@ export function createTreeToggleListeners(
 
         const editedCell = context.cell.row.viewport.cellEditing?.editedCell;
         if (
-            editedCell &&
-            editedCell.column.id === context.cell.column.id &&
-            (
-                editedCell.row.id ??
+            editedCell?.column.id === context.cell.column.id &&
+            getTreeViewRowId(
+                editedCell.row,
                 context.controller.getProjectionState()
-                    ?.rowIds[editedCell.row.index]
             ) === context.rowId
         ) {
             return;
@@ -588,14 +603,12 @@ export function createTreeToggleListeners(
             return;
         }
 
-        if (event.currentTarget === stickyBody) {
-            const cell = stickyRowController.getCellFromElement(event.target);
-            if (cell && 'onMouseDown' in cell) {
-                (
-                    cell as unknown as { onMouseDown(e: MouseEvent): void }
-                ).onMouseDown(event);
-            }
-        }
+        invokeStickyCellMouseHandler(
+            stickyRowController,
+            stickyBody,
+            event,
+            'onMouseDown'
+        );
     };
 
     const keyDownListener = (event: KeyboardEvent): void => {

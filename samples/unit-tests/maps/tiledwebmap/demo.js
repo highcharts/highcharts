@@ -178,3 +178,116 @@ QUnit.test('Tiled Web Map on the chart', assert => {
         'Map should be loaded from custom URL entered by user.'
     );
 });
+
+QUnit.test('Tiled Web Map should stop tile animations on pan', assert => {
+    const clock = TestUtilities.lolexInstall();
+
+    try {
+        const chart = Highcharts.mapChart('container', {
+                chart: {
+                    animation: {
+                        duration: 500
+                    },
+                    width: 400,
+                    height: 300
+                },
+                mapNavigation: {
+                    enabled: true
+                },
+                mapView: {
+                    center: [0, 20],
+                    zoom: 2
+                },
+                series: [{
+                    type: 'tiledwebmap',
+                    provider: {
+                        type: 'TestProvider'
+                    }
+                }, {
+                    type: 'mappoint',
+                    data: [{
+                        lon: -0.1275,
+                        lat: 51.507222
+                    }]
+                }]
+            }),
+            controller = new TestController(chart),
+            series = chart.series[0],
+            point = chart.series[1].points[0];
+
+        chart.mapZoom(2);
+        clock.tick(50);
+
+        controller.pan(
+            [chart.plotLeft + 200, chart.plotTop + 120],
+            [chart.plotLeft + 140, chart.plotTop + 120]
+        );
+
+        clock.tick(1000);
+
+        const zoomKey = Object.keys(series.tiles).find(key =>
+                series.tiles[key].isActive
+            ) || Object.keys(series.tiles)[0],
+            firstTile = series.tiles[zoomKey].tiles[
+                Object.keys(series.tiles[zoomKey].tiles)[0]
+            ],
+            tile = series.tiles[zoomKey].tiles[
+                Object.keys(series.tiles[zoomKey].tiles)[1]
+            ] || firstTile,
+            zoomFloor = parseFloat(zoomKey),
+            scaledTileSize = Math.pow(2, chart.mapView.zoom - zoomFloor) * 256,
+            firstTileLonLat = series.tileToLonLat(
+                firstTile.posX,
+                firstTile.posY,
+                zoomFloor
+            ),
+            units = chart.mapView.projection.def.forward([
+                firstTileLonLat.lon,
+                firstTileLonLat.lat
+            ]),
+            firstTilePx = chart.mapView.projectedUnitsToPixels({
+                x: units[0],
+                y: units[1]
+            }),
+            tilesOffsetX = firstTile.posX * scaledTileSize - firstTilePx.x,
+            tilesOffsetY = firstTile.posY * scaledTileSize - firstTilePx.y,
+            expectedX = tile.posX * scaledTileSize - tilesOffsetX,
+            expectedY = tile.posY * scaledTileSize - tilesOffsetY,
+            expectedPoint = chart.mapView.lonLatToPixels({
+                lon: point.options.lon,
+                lat: point.options.lat
+            });
+
+        assert.close(
+            Number(tile.attr('x')),
+            expectedX,
+            1,
+            'Tile x should match the final map view after interrupted zoom.'
+        );
+
+        assert.close(
+            Number(tile.attr('y')),
+            expectedY,
+            1,
+            'Tile y should match the final map view after interrupted zoom.'
+        );
+
+        assert.close(
+            point.plotX,
+            expectedPoint.x,
+            1,
+            'Map point x should match lon/lat projection after ' +
+            'interrupted zoom.'
+        );
+
+        assert.close(
+            point.plotY,
+            expectedPoint.y,
+            1,
+            'Map point y should match lon/lat projection after ' +
+            'interrupted zoom.'
+        );
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});

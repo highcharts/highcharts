@@ -22,8 +22,8 @@
 
 import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
@@ -233,10 +233,10 @@ class DependencyWheelSeries extends SankeySeries {
             factor = 2 * Math.PI /
                 (series.chart.plotHeight + series.getNodePadding()),
             center = series.getCenter(),
-            startAngle = ((options.startAngle as any) - 90) * deg2rad,
-            brOption = options.borderRadius,
-            borderRadius = typeof brOption === 'object' ?
-                brOption.radius : brOption;
+            startAngle = ((options.startAngle || 0) - 90) * deg2rad,
+            borderRadius = borderRadiusObject(
+                options.borderRadius
+            ).radius;
 
         super.translate();
 

@@ -32,13 +32,20 @@ import Globals from '../../Core/Globals.js';
  * */
 
 export const classNames = {
-    cellAggregated: Globals.classNamePrefix + 'tree-cell-aggregated',
+    cellAggregated: Globals.classNamePrefix + 'cell-aggregated',
+    cellTree: Globals.classNamePrefix + 'cell-tree',
+    disclosure: Globals.classNamePrefix + 'disclosure',
+    disclosureIcon: Globals.classNamePrefix + 'disclosure-icon',
+    disclosureValue: Globals.classNamePrefix + 'disclosure-value',
+    rowCollapsed: Globals.classNamePrefix + 'row-collapsed',
+    rowExpanded: Globals.classNamePrefix + 'row-expanded',
+    rowTree: Globals.classNamePrefix + 'row-tree',
     tbodySticky: Globals.classNamePrefix + 'tbody-sticky',
-    tbodyStickyActive: Globals.classNamePrefix + 'tbody-sticky-active',
-    tree: Globals.classNamePrefix + 'tree',
-    toggle: Globals.classNamePrefix + 'tree-toggle',
-    toggleIcon: Globals.classNamePrefix + 'tree-toggle-icon',
-    value: Globals.classNamePrefix + 'tree-value'
+    tbodyStickyActive: Globals.classNamePrefix + 'tbody-sticky-active'
+} as const;
+
+export const dataAttributes = {
+    depth: 'data-tree-depth'
 } as const;
 
 export const cssVariables = {
@@ -54,5 +61,6 @@ export const cssVariables = {
 
 export default {
     classNames,
+    dataAttributes,
     cssVariables
 } as const;

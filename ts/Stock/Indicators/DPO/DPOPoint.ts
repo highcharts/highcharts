@@ -13,7 +13,7 @@
  *
  * */
 
-import DPOIndicator from './DPOIndicator';
+import type DPOIndicator from './DPOIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *

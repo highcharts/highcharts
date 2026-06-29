@@ -1,10 +1,4 @@
-const riskLabels = {
-    1: 'Low',
-    2: 'Guarded',
-    3: 'Elevated',
-    4: 'High',
-    5: 'Critical'
-};
+const riskLabels = ['Low', 'Guarded', 'Elevated', 'High', 'Critical'];
 
 const columns = {
     path: [
@@ -34,27 +28,19 @@ const columns = {
         0.71, 0.76, 0.82, 0.78, 0.63,
         0.68, 0.79, 0.76, 0.84
     ],
-    risk: [
-        1, 2, 1, 4, 1,
-        1, 2, 3, 5
-    ],
-    id: [
-        'amw', 'ame', 'ger', 'fra', 'bra',
-        'dem', 'pla', 'app', 'inf'
-    ]
+    risk: [0, 1, 0, 3, 0, 0, 1, 2, 4]
 };
 
 Grid.grid('container', {
     data: {
         columns,
-        idColumn: 'id',
         treeView: {
             enabled: true,
             expandedRowIds: 'all'
         }
     },
     columnDefaults: {
-        width: 124,
+        width: 78,
         cells: {
             editMode: {
                 enabled: true
@@ -66,7 +52,8 @@ Grid.grid('container', {
         header: {
             format: 'Team / Department'
         },
-        width: 'auto'
+        width: 'auto',
+        minWidth: 200
     }, {
         id: 'budget',
         header: {
@@ -76,7 +63,7 @@ Grid.grid('container', {
             format: '${value:,0f}'
         },
         treeView: {
-            aggregate: 'SUM'
+            aggregator: 'SUM'
         }
     }, {
         id: 'actual',
@@ -87,7 +74,7 @@ Grid.grid('container', {
             format: '${value:,0f}'
         },
         treeView: {
-            aggregate: 'SUM'
+            aggregator: 'SUM'
         }
     }, {
         id: 'headcount',
@@ -98,7 +85,7 @@ Grid.grid('container', {
             format: '{value:,0f}'
         },
         treeView: {
-            aggregate: 'SUM'
+            aggregator: 'SUM'
         }
     }, {
         id: 'utilization',
@@ -109,10 +96,11 @@ Grid.grid('container', {
             format: '{(multiply 100 value):.1f}%'
         },
         treeView: {
-            aggregate: 'AVERAGE'
+            aggregator: 'AVERAGE'
         }
     }, {
         id: 'risk',
+        width: 124,
         header: {
             format: 'Risk'
         },
@@ -124,9 +112,7 @@ Grid.grid('container', {
                     return '';
                 }
 
-                const level = Math.max(1, Math.min(5, Math.round(Number(
-                    value
-                ))));
+                const level = Math.max(0, Math.min(4, Math.round(+value)));
 
                 return (
                     level +
@@ -137,7 +123,7 @@ Grid.grid('container', {
             }
         },
         treeView: {
-            aggregate(context) {
+            aggregator(context) {
                 return context.depth === 0 ? false : 'MAX';
             }
         }

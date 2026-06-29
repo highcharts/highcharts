@@ -29,13 +29,14 @@ import type { RowId } from '../../../Core/Data/DataProvider';
 import type {
     TreeProjectionRowState,
     TreeProjectionState,
-    TreeViewColumnAggregateOption
+    TreeViewColumnAggregatorOption
 } from '../TreeViewTypes';
 import type {
     Arguments as FormulaArguments
 } from '../../../../Data/Formula/Formula';
 
 import Formula from '../../../../Data/Formula/Formula.js';
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -45,28 +46,16 @@ import Formula from '../../../../Data/Formula/Formula.js';
  * */
 
 interface TreeAggregationResolverDependencies {
-    getColumnAggregateOption: (
+    getColumnAggregatorOption: (
         sourceColumnId: string
-    ) => (TreeViewColumnAggregateOption | undefined);
+    ) => (TreeViewColumnAggregatorOption | undefined);
     resolveProjectedCellValue: (
         columnId: string,
         rowId: RowId,
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string
+        idColumn?: string
     ) => DataTableCellType;
-}
-
-/**
- * Returns whether a value should be excluded from aggregate child inputs.
- *
- * @param value
- * Candidate child value.
- */
-function isAggregateSourceValueMissing(
-    value: DataTableCellType
-): value is (null | undefined) {
-    return value === null || typeof value === 'undefined';
 }
 
 /**
@@ -129,7 +118,7 @@ class TreeAggregationResolver {
      * Source column id.
      */
     public hasColumnAggregation(columnId: string): boolean {
-        return !!this.dependencies.getColumnAggregateOption(columnId);
+        return !!this.dependencies.getColumnAggregatorOption(columnId);
     }
 
     /**
@@ -147,18 +136,18 @@ class TreeAggregationResolver {
      * @param projectionState
      * Current projected tree state.
      *
-     * @param idColumn
-     * Column containing stable row IDs.
-     *
      * @param derivedCellColumnIdsByRowId
      * Mutable map collecting derived cells for the projected state.
+     *
+     * @param idColumn
+     * Column containing stable row IDs, when configured.
      */
     public resolveColumnValues(
         columnId: string,
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string,
-        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>
+        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>,
+        idColumn?: string
     ): Map<RowId, DataTableCellType> {
         const resolvedValuesByRowId = new Map<RowId, DataTableCellType>();
         const resolvingRowIds = new Set<RowId>();
@@ -186,23 +175,18 @@ class TreeAggregationResolver {
             let resolvedValue = sourceValue;
 
             if (rowState?.childrenIds.length) {
-                const aggregateFunctionName = this.resolveAggregateFunctionName(
-                    columnId,
-                    rowState,
-                    sourceValue
+                const aggregateFunctionName = (
+                    this.resolveAggregatorFunctionName(
+                        columnId,
+                        rowState,
+                        sourceValue
+                    )
                 );
 
                 if (aggregateFunctionName) {
                     const childValues = rowState.childrenIds
                         .map(resolveValue)
-                        .filter((
-                            value
-                        ): value is Exclude<
-                            DataTableCellType,
-                            null | undefined
-                        > => !isAggregateSourceValueMissing(
-                            value
-                        ));
+                        .filter(defined);
 
                     resolvedValue = this.executeAggregateFunction(
                         aggregateFunctionName,
@@ -270,19 +254,20 @@ class TreeAggregationResolver {
      * @param sourceValue
      * Source cell value before aggregation.
      */
-    private resolveAggregateFunctionName(
+    private resolveAggregatorFunctionName(
         columnId: string,
         rowState: TreeProjectionRowState,
         sourceValue: DataTableCellType
     ): string | undefined {
-        const aggregate = this.dependencies.getColumnAggregateOption(columnId);
-        if (!aggregate || !rowState.childrenIds.length) {
+        const aggregator = this.dependencies
+            .getColumnAggregatorOption(columnId);
+        if (!aggregator || !rowState.childrenIds.length) {
             return;
         }
 
-        const aggregateResult = (
-            typeof aggregate === 'function' ?
-                aggregate({
+        const aggregatorResult = (
+            typeof aggregator === 'function' ?
+                aggregator({
                     childCount: rowState.childrenIds.length,
                     childrenIds: rowState.childrenIds.slice(),
                     columnId,
@@ -291,14 +276,14 @@ class TreeAggregationResolver {
                     rowId: rowState.id,
                     sourceValue
                 }) :
-                aggregate
+                aggregator
         );
 
-        if (typeof aggregateResult !== 'string') {
+        if (typeof aggregatorResult !== 'string') {
             return;
         }
 
-        const normalizedName = aggregateResult.trim().toUpperCase();
+        const normalizedName = aggregatorResult.trim().toUpperCase();
         return normalizedName || void 0;
     }
 

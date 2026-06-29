@@ -17,9 +17,10 @@ applied.
 ## Minimum requirements
 
 - Tree view is available in Highcharts Grid Pro.
-- Set `data.idColumn` to a column containing stable string or number row IDs.
 - Tree view works with local data (`data.columns`,
   `data.dataTable`, or connector-backed data).
+- Provide either `parentId` or `path` hierarchy data, or configure
+  `data.treeView.input` to point to custom hierarchy columns.
 
 ```js
 Grid.grid('container', {
@@ -28,16 +29,18 @@ Grid.grid('container', {
             path: [
                 'Root/Sales',
                 'Root/Marketing'
-            ],
-            id: [1, 2]
+            ]
         },
-        idColumn: 'id',
         treeView: {
             enabled: true
         }
     }
 });
 ```
+
+Tree view can work without `data.idColumn`. When it is not set, Grid uses the
+original row indexes as row IDs. Configure `data.idColumn` when your data or
+application state needs stable row IDs from a column value.
 
 ## Input models
 
@@ -52,7 +55,9 @@ prefers `path` when both `path` and `parentId` exist.
 ### `parentId` input
 
 Use `parentId` input when your backend already stores direct parent references
-and row IDs are the canonical source of hierarchy.
+and row IDs are the canonical source of hierarchy. `data.idColumn` is required
+when `parentIdColumn` values refer to IDs stored in a data column. Without
+`data.idColumn`, `parentIdColumn` values must refer to original row indexes.
 
 ```js
 Grid.grid('container', {
@@ -138,6 +143,7 @@ The expand/collapse UI is rendered in the tree column.
 - Use `data.treeView.treeColumn` to choose which column receives indentation
   and toggle buttons.
 - If `treeColumn` is omitted, Grid uses the first rendered column.
+- Tree rows expose their depth on the `tr` element as `data-tree-depth`.
 - For path input, `showFullPath: false` renders only the current segment when
   the path column is also the tree column. Set it to `true` to render the full
   path string.
@@ -164,7 +170,12 @@ treeView: {
 ```
 
 `expandedRowIds: 'all'` expands every row that currently has children. Leaf
-rows are ignored automatically.
+rows are ignored automatically. It does not require `data.idColumn`.
+
+For an explicit `expandedRowIds` array, each value is matched against the
+current Tree view row IDs. `data.idColumn` is required when those values come
+from a stable ID column. Without `data.idColumn`, use original row indexes
+instead.
 
 ## Sticky parents
 
@@ -182,24 +193,24 @@ hierarchies and [row virtualization](https://www.highcharts.com/docs/grid/rows/v
 
 ## Aggregation
 
-Use `columns[].treeView.aggregate` to derive parent values from their direct
+Use `columns[].treeView.aggregator` to derive parent values from their direct
 children during TreeView projection.
 
 ```js
 columns: [{
     id: 'budget',
     treeView: {
-        aggregate: 'SUM'
+        aggregator: 'SUM'
     }
 }, {
     id: 'utilization',
     treeView: {
-        aggregate: 'AVERAGE'
+        aggregator: 'AVERAGE'
     }
 }, {
     id: 'risk',
     treeView: {
-        aggregate: function (context) {
+        aggregator: function (context) {
             return context.depth === 0 ? false : 'MAX';
         }
     }
@@ -212,12 +223,25 @@ Aggregation rules:
 - It uses direct children after their own aggregation has been resolved.
 - It overrides parent values whenever aggregation is configured for that
   parent row and column.
+  To keep the original source value for one specific parent row, return
+  `false` from the callback for that row:
+
+  ```js
+  columns: [{
+      id: 'budget',
+      treeView: {
+          aggregator: function (context) {
+              return context.rowId === 'europe' ? false : 'SUM';
+          }
+      }
+  }]
+  ```
 - It is ignored for structural TreeView columns such as `data.idColumn`,
   `input.pathColumn`, and `input.parentIdColumn`.
 - With `path` input, parent rows do not need to be defined unless they carry
   their own source values.
 - Generated ancestors from `path` input can also receive aggregated values.
-- Derived cells are rendered with the `hcg-tree-cell-aggregated` CSS class.
+- Derived cells are rendered with the `hcg-cell-aggregated` CSS class.
 
 ## Runtime API
 

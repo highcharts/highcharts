@@ -32,6 +32,7 @@ import {
     buildPathHierarchy,
     getPathSegments
 } from './TreeViewCommons.js';
+import { getTreeViewRowId } from './TreeViewRowResolver.js';
 import { defined } from '../../../Shared/Utilities.js';
 
 
@@ -41,8 +42,10 @@ import { defined } from '../../../Shared/Utilities.js';
  *
  * */
 
-const TREE_PATH_UNIQUE_RULE = 'treeViewPathUnique';
-const TREE_PATH_SYNTAX_RULE = 'treeViewPathSyntax';
+const TREE_PATH_RULES = {
+    unique: 'treeViewPathUnique',
+    syntax: 'treeViewPathSyntax'
+} as const;
 
 
 /* *
@@ -122,12 +125,11 @@ function getTreePathSyntaxValidationMessage(
         return 'TreeView path cannot be empty.';
     }
 
-    const rowId = cell.row.id ?? controller?.getProjectionState()
-        ?.rowIds[cell.row.index];
+    const projectionState = controller?.getProjectionState();
+    const rowId = getTreeViewRowId(cell.row, projectionState);
     const sourceRowIndex = defined(rowId) ?
         (
-            controller?.getProjectionState()
-                ?.sourceRowIndexesById.get(rowId) ??
+            projectionState?.sourceRowIndexesById.get(rowId) ??
             cell.row.index
         ) :
         cell.row.index;
@@ -152,8 +154,8 @@ function getTreePathSyntaxValidationMessage(
  * registry.
  */
 function registerTreeViewValidationRules(): void {
-    if (!Validator.rulesRegistry[TREE_PATH_UNIQUE_RULE]) {
-        Validator.rulesRegistry[TREE_PATH_UNIQUE_RULE] = {
+    if (!Validator.rulesRegistry[TREE_PATH_RULES.unique]) {
+        Validator.rulesRegistry[TREE_PATH_RULES.unique] = {
             validate: function (
                 this: TableCell,
                 content: { rawValue: string }
@@ -165,8 +167,8 @@ function registerTreeViewValidationRules(): void {
         };
     }
 
-    if (!Validator.rulesRegistry[TREE_PATH_SYNTAX_RULE]) {
-        Validator.rulesRegistry[TREE_PATH_SYNTAX_RULE] = {
+    if (!Validator.rulesRegistry[TREE_PATH_RULES.syntax]) {
+        Validator.rulesRegistry[TREE_PATH_RULES.syntax] = {
             validate: function (
                 this: TableCell,
                 content: { rawValue: string }
@@ -225,8 +227,8 @@ function syncTreePathValidationRules(grid: Grid): void {
         const rules = Array.from(editMode.validationRules || []).filter((
             rule
         ): boolean => (
-            rule !== TREE_PATH_UNIQUE_RULE &&
-            rule !== TREE_PATH_SYNTAX_RULE
+            rule !== TREE_PATH_RULES.unique &&
+            rule !== TREE_PATH_RULES.syntax
         ));
 
         if (shouldApplyPathRules) {
@@ -238,25 +240,25 @@ function syncTreePathValidationRules(grid: Grid): void {
                     (
                         rule.validate === 'unique' ||
                         rule.validate === 'ignoreCaseUnique' ||
-                        rule.validate === TREE_PATH_UNIQUE_RULE
+                        rule.validate === TREE_PATH_RULES.unique
                     )
                 )
             ));
 
             if (!hasUniqueRule) {
-                rules.push(TREE_PATH_UNIQUE_RULE);
+                rules.push(TREE_PATH_RULES.unique);
             }
 
             const hasSyntaxRule = rules.some((rule): boolean => (
-                rule === TREE_PATH_SYNTAX_RULE ||
+                rule === TREE_PATH_RULES.syntax ||
                 (
                     typeof rule !== 'string' &&
-                    rule.validate === TREE_PATH_SYNTAX_RULE
+                    rule.validate === TREE_PATH_RULES.syntax
                 )
             ));
 
             if (!hasSyntaxRule) {
-                rules.push(TREE_PATH_SYNTAX_RULE);
+                rules.push(TREE_PATH_RULES.syntax);
             }
         }
 

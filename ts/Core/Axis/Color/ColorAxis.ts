@@ -189,6 +189,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
     public chart!: Chart;
 
     /** @internal */
+    public clippable = false;
+
+    /** @internal */
     public coll = 'colorAxis' as const;
 
     /** @internal */
@@ -353,20 +356,19 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * @internal
      */
     public getOffset(): void {
-        const axis = this;
-        const group = axis.legendItem?.group;
-        const sideOffset = axis.chart.axisOffset[axis.side];
+        const axis = this,
+            chart = axis.chart,
+            group = axis.legendItem?.group,
+            sideOffset = chart.axisOffset[axis.side],
+            { clipOffset, legend } = chart;
 
         if (group) {
 
-            // Hook for the getOffset method to add groups to this parent
-            // group
+            // Hook for the getOffset method to add groups to this parent group
             axis.axisParent = group;
 
             // Call the base
             super.getOffset();
-
-            const legend = this.chart.legend;
 
             // Adds `maxLabelLength` needed for label padding corrections done
             // by `render()` and `getMargins()` (#15551).
@@ -377,7 +379,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             });
 
             legend.render();
-            this.chart.getMargins(true);
+            chart.getMargins(true);
 
             // First time only
             if (!axis.added) {
@@ -387,7 +389,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
             axis.labelLeft = 0;
             axis.labelRight = axis.width;
             // Reset it to avoid color axis reserving space
-            axis.chart.axisOffset[axis.side] = sideOffset;
+            chart.axisOffset[axis.side] = sideOffset;
+            chart.clipOffset = clipOffset;
         }
     }
 
@@ -650,7 +653,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
             plotX = point?.plotX,
             plotY = point?.plotY,
             axisPos = axis.pos,
-            axisLen = axis.len;
+            axisLen = axis.len,
+            markerOptions = axis.options.marker || {};
 
         let crossPos;
 
@@ -688,7 +692,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
                     typeof axis.crosshair === 'object'
                 ) {
                     axis.cross.attr({
-                        fill: axis.crosshair.color
+                        fill: markerOptions.color,
+                        stroke: markerOptions.lineColor,
+                        'stroke-width': markerOptions.lineWidth
                     });
                 }
 
@@ -703,11 +709,23 @@ class ColorAxis extends Axis implements ColorAxisBase {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,
+            { symbol } = this.options.marker || {},
             top = axis.top;
 
         // Crosshairs only
-        return isNumber(pos) ? // `pos` can be 0 (#3969)
-            (
+        if (isNumber(pos)) {
+
+            const x = left,
+                w = axis.width,
+                y = pos - w / 2,
+                h = w;
+
+            if (symbol) {
+                return this.chart.renderer.symbols[symbol](x, y, w, h);
+            }
+
+            // Default to a triangle pointing to the value
+            return (
                 axis.horiz ? [
                     ['M', pos - 4, top - 6],
                     ['L', pos + 4, top - 6],
@@ -719,8 +737,10 @@ class ColorAxis extends Axis implements ColorAxisBase {
                     ['L', left - 6, pos - 6],
                     ['Z']
                 ]
-            ) :
-            super.getPlotLinePath(options);
+            );
+        }
+
+        return super.getPlotLinePath(options);
     }
 
     /**
