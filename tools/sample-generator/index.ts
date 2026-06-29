@@ -25,7 +25,6 @@ import type {
 } from './generator-config.d.ts';
 
 import colors from 'colors/safe.js';
-import crypto from 'crypto';
 import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
@@ -120,6 +119,52 @@ async function loadTemplate(fileName: string) {
     // Templates live in ./tpl relative to this file
     const path = new URL(`./tpl/${fileName}`, import.meta.url);
     return await fs.readFile(path, 'utf-8');
+}
+
+interface ErrorWithCode {
+    code?: string;
+}
+
+function isPermissionError(error: unknown): error is ErrorWithCode {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (
+            (error as ErrorWithCode).code === 'EACCES' ||
+            (error as ErrorWithCode).code === 'EPERM'
+        )
+    );
+}
+
+// Function to write a file with the appropriate encoding and permissions
+async function writeFile(filePath: string, content: string) {
+    try {
+        await fs.writeFile(
+            filePath,
+            content,
+            { encoding: 'utf-8', mode: 0o644 }
+        );
+    } catch (error: unknown) {
+        // On permission errors, force rewrite after unlinking the target file.
+        if (!isPermissionError(error)) {
+            throw error;
+        }
+
+        try {
+            await fs.unlink(filePath);
+        } catch (unlinkError: unknown) {
+            if ((unlinkError as ErrorWithCode).code !== 'ENOENT') {
+                throw unlinkError;
+            }
+        }
+
+        await fs.writeFile(
+            filePath,
+            content,
+            { encoding: 'utf-8', mode: 0o644 }
+        );
+    }
 }
 
 // Parse override values from path definitions
@@ -403,12 +448,14 @@ function getPathMeta(config: SampleGeneratorConfig): MetaList {
                 node = flatTree.find(n => n.name === name);
             }
 
+            /*
             if (!node) {
                 console.log(colors.gray(
                     `  - ${path} not found in flat-tree.json, ` +
                     'trying to build control anyway.'
                 ));
             }
+            */
 
             const { default: defaultValue, mainType, options } = node || {};
 
@@ -548,6 +595,13 @@ export async function getDemoHTML(
             '<script src="https://code.highcharts.com/highcharts.js"></script>',
             '<script src="https://code.highcharts.com/highcharts.js"></script>\n' +
                 moduleScripts
+        );
+    }
+
+    if (config?.codePath) {
+        html = html.replace(
+            /https:\/\/code\.highcharts\.com/gu,
+            config.codePath
         );
     }
 
@@ -1082,48 +1136,6 @@ function getDemoDetails(config: SampleGeneratorConfig): string {
     return detailsYml;
 }
 
-// Function to save the generated configuration to Highcharts Samples
-/**
- * Calculate checksum for generated files
- *
- * @param {string} outputDir
- *        Directory containing the generated files
- * @return {Promise<string>}
- *         SHA256 checksum
- */
-export async function calculateChecksum(outputDir: string): Promise<string> {
-    const files = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
-    const hash = crypto.createHash('sha256');
-
-    for (const file of files) {
-        const filePath = join(outputDir, file);
-        try {
-            const content = await fs.readFile(filePath, 'utf-8');
-            hash.update(file);
-            hash.update(content);
-        } catch {
-            // File doesn't exist, skip it
-        }
-    }
-
-    return hash.digest('hex');
-}
-
-/**
- * Save checksum file
- *
- * @param {string} outputDir
- *        Directory containing the generated files
- * @return {Promise<void>}
- *         Promise to keep
- */
-async function saveChecksum(outputDir: string): Promise<void> {
-    const checksum = await calculateChecksum(outputDir);
-    const checksumPath = join(outputDir, '.generated-checksum');
-    await fs.writeFile(
-        checksumPath, checksum, { encoding: 'utf-8', mode: 0o644 }
-    );
-}
 
 export async function saveDemoFile(config: SampleGeneratorConfig) {
     const metaList = getPathMeta(config);
@@ -1152,26 +1164,10 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Write all files in parallel
     await Promise.all([
-        fs.writeFile(
-            join(outputDir, 'demo.html'),
-            html,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, 'demo.css'),
-            css,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, 'demo.details'),
-            details,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, '.gitignore'),
-            'demo.js',
-            { encoding: 'utf-8', mode: 0o644 }
-        )
+        writeFile(join(outputDir, 'demo.html'), html),
+        writeFile(join(outputDir, 'demo.css'), css),
+        writeFile(join(outputDir, 'demo.details'), details),
+        writeFile(join(outputDir, '.gitignore'), 'demo.js')
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists
@@ -1198,20 +1194,15 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     );
 
     if (results[0].output) {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, { encoding: 'utf-8', mode: 0o644 });
+        await writeFile(`${outputDir}/demo.ts`, results[0].output);
     } else {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, { encoding: 'utf-8', mode: 0o644 });
+        await writeFile(`${outputDir}/demo.ts`, results[0].source);
         console.error(
             colors.red(results[0].messages.map(msg => msg.message).join('\n'))
         );
     }
     */
-    await fs.writeFile(
-        join(outputDir, 'demo.ts'), ts, { encoding: 'utf-8', mode: 0o644 }
-    );
-
-    // Calculate and save checksum for validation
-    await saveChecksum(outputDir);
+    await writeFile(join(outputDir, 'demo.ts'), ts);
 
     if (executedDirectly) {
         console.log(colors.green('Demo files generated successfully.'));

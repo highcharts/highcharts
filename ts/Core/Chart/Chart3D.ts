@@ -2167,7 +2167,7 @@ export default Chart3D;
  *
  * The side for the frame around a 3D chart.
  *
- * @deprecated
+ * @deprecated 5.0.12
  * @since     4.0
  * @product   highcharts
  * @requires  highcharts-3d
@@ -2177,7 +2177,7 @@ export default Chart3D;
 /**
  * The color of the panel.
  *
- * @deprecated
+ * @deprecated 5.0.12
  * @type      {Highcharts.ColorType}
  * @default   transparent
  * @since     4.0
@@ -2188,7 +2188,7 @@ export default Chart3D;
 /**
  * The thickness of the panel.
  *
- * @deprecated
+ * @deprecated 5.0.12
  * @type      {number}
  * @default   1
  * @since     4.0

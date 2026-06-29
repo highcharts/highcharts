@@ -73,13 +73,11 @@ function checkJSWrap() {
     }
 }
 
-async function checkSamplesConsistency() {
+function checkSamplesConsistency() {
     const FSLib = require('../libs/fs.js');
     const { existsSync } = require('node:fs');
     const glob = require('glob');
     const LogLib = require('../libs/log');
-    const { calculateChecksum } = await import('../sample-generator/index.ts');
-    const fs = require('fs');
 
     let errors = 0;
 
@@ -107,93 +105,6 @@ async function checkSamplesConsistency() {
             }
         }
     });
-
-    // Validate checksums for samples with config.ts
-    const configPaths = glob.sync(
-        FSLib.path(process.cwd() + '/samples/**/config.ts', true)
-    );
-
-
-    // Check generated sample files against stored checksums
-    const sampleGeneratorErrors = [];
-    for (const configPath of configPaths) {
-        const dir = path.dirname(configPath);
-        const checksumPath = path.join(dir, '.generated-checksum');
-        const relativePath = path.relative(process.cwd(), configPath),
-            shortPath = relativePath
-                .replace(/samples[\/\\]/u, '')
-                .replace(/\/config\.ts$/u, '');
-
-        // Check if any generated files exist
-        const generatedFiles = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
-        const hasGeneratedFiles = generatedFiles.some(file =>
-            existsSync(path.join(dir, file)));
-
-        if (!hasGeneratedFiles) {
-            return; // Skip if no generated files
-        }
-
-        const checksumExists = existsSync(checksumPath);
-        let checksumMisMatch = false;
-
-        // Check if checksum matches
-        if (checksumExists) {
-            // Calculate current checksum
-            const currentChecksum = await calculateChecksum(dir);
-
-            // Read saved checksum
-            const savedChecksum = fs.readFileSync(checksumPath, 'utf-8').trim();
-
-            // Compare checksums
-            if (savedChecksum !== currentChecksum) {
-                checksumMisMatch = true;
-            }
-        }
-
-        if (!checksumExists || checksumMisMatch) {
-            // Checksum file is missing or not matching. Check if this is a fresh
-            // checkout or if the user has manually edited the generated files.
-            // Compare modification times: if the most recent generated file is more
-            // than one minute newer than config.ts, assume manual edits.
-            const configMtime = fs.statSync(configPath).mtime.getTime();
-            let mostRecentGeneratedMtime = 0;
-
-            for (const file of generatedFiles) {
-                const filePath = path.join(dir, file);
-                if (existsSync(filePath)) {
-                    const mtime = fs.statSync(filePath).mtime.getTime();
-                    if (mtime > mostRecentGeneratedMtime) {
-                        mostRecentGeneratedMtime = mtime;
-                    }
-                }
-            }
-
-            // If generated files are more than 1 minute newer than config.ts,
-            // assume they were manually edited
-            const timeDiffMs = mostRecentGeneratedMtime - configMtime;
-            const oneMinuteMs = 60 * 1000;
-
-            if (timeDiffMs > oneMinuteMs) {
-                sampleGeneratorErrors.push(relativePath);
-                errors++;
-            }
-            // Otherwise, assume fresh checkout without checksum files - OK
-        }
-    }
-    if (sampleGeneratorErrors.length) {
-        if (sampleGeneratorErrors.length < 3) {
-            LogLib.failure(
-                `Generated samples not in sync with config.ts:
-                - ${sampleGeneratorErrors.join('\n- ')}`
-            );
-        } else {
-            LogLib.failure(
-                `${sampleGeneratorErrors.length}/${configPaths.length} generated samples not in sync with config.ts:
-                - Run \`gulp generate-samples\``
-            );
-        }
-    }
-
 
     if (errors) {
         throw new Error('Samples validation failed');

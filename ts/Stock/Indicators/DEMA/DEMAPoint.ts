@@ -13,7 +13,7 @@
  *
  * */
 
-import DEMAIndicator from './DEMAIndicator';
+import type DEMAIndicator from './DEMAIndicator';
 import type EMAPoint from '../EMA/EMAPoint';
 
 /* *

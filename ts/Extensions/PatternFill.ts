@@ -36,7 +36,6 @@ import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import { Palette } from '../Core/Color/Palettes';
 import {
     addEvent,
     defined,
@@ -161,7 +160,7 @@ export interface PatternOptionsObject {
      * @sample highcharts/series/pattern-fill-anchor-to-point/
      *         Compare shared vs anchored pattern positioning
      *
-     * @since next
+     * @since 12.6.0
      * @default false
      */
     anchorToPoint?: boolean;
@@ -561,7 +560,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value: string = Palette.neutralColor80;
+        value: string = 'var(--highcharts-neutral-color-80)';
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -830,7 +829,8 @@ function rendererAddPattern(
 ): (SVGElement|undefined) {
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
-        color: ColorString = options.color || Palette.neutralColor80,
+        color: ColorString = options.color ||
+            'var(--highcharts-neutral-color-80)',
         defaultSize = 32,
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||
@@ -1109,7 +1109,7 @@ declare module '../Core/Color/ColorType' {
  *         Compare shared vs anchored pattern positioning
  * @name Highcharts.PatternOptionsObject#anchorToPoint
  * @type {boolean|undefined}
- * @since next
+ * @since 12.6.0
  * @default false
  *//**
  * Background color for the pattern if a `path` is set (not images).

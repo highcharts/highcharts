@@ -30,7 +30,6 @@ const {
     composed,
     noop
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -97,7 +96,7 @@ namespace ColumnDataLabel {
             dataLabel: SVGElement
         ): number {
             const pos = dataLabel.dataLabelPosition;
-            return series.getX(
+            return series.getXPos(
                 y < (pos?.top || 0) + 2 || y > (pos?.bottom || 0) - 2 ?
                     naturalY :
                     y,
@@ -661,7 +660,7 @@ namespace ColumnDataLabel {
                                     'stroke': (
                                         connectorColor ||
                                         point.color ||
-                                        Palette.neutralColor60
+                                        'var(--highcharts-neutral-color-60)'
                                     )
                                 });
                             }

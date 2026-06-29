@@ -44,6 +44,8 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  *               softThreshold, stacking, step, threshold
  *
  * @product      highcharts highmaps
+ * @requires     modules/coloraxis
+ * @requires     modules/contour
  * @optionparent plotOptions.contour
  */
 const ContourSeriesDefaults: ContourSeriesOptions = {
@@ -177,6 +179,8 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  *
  *
  * @product      highcharts highmaps
+ * @requires     modules/coloraxis
+ * @requires     modules/contour
  * @apioption    series.contour
  */
 

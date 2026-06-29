@@ -8,9 +8,6 @@ const sidebars = {
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
-            'getting-started/installation-with-esm',
-            'getting-started/install-from-npm',
-            'getting-started/installation-with-amd-commonjs',
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
@@ -278,6 +275,7 @@ const sidebars = {
         'Working with data': [
             'working-with-data/data-intro',
             'working-with-data/data-compression',
+            'working-with-data/using-datatables-in-series',
             'working-with-data/data-module',
             'working-with-data/custom-preprocessing',
             'working-with-data/live-data',
@@ -318,6 +316,7 @@ const sidebars = {
             }
         ],
         'Chart design and style': [
+            'chart-design-and-style/branding',
             'chart-design-and-style/design-and-style',
             'chart-design-and-style/colors',
             'chart-design-and-style/pattern-fills',

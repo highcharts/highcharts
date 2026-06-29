@@ -22,8 +22,6 @@ import type Point from './Point';
 import type Series from './Series';
 import type { PlotOptionsOf } from './SeriesOptions';
 
-import { Palette } from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -351,54 +349,98 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * Options for the series data sorting.
+     * The mapping between the data table and the series data points. This is
+     * used in conjunction with the `dataTable` option (on [chart](#dataTable)
+     * or [series](#plotOptions.series.dataTable) level) to map columns from the
+     * data table to the properties of the data points. The keys of the
+     * `dataMapping` object correspond to the properties of the data points
+     * (e.g. `x`, `y`, `name`), and the values are objects that specify which
+     * column from which data table to use for that property.
      *
-     * @type      {Highcharts.DataSortingOptionsObject}
-     * @since     8.0.0
-     * @product   highcharts highstock
-     * @apioption plotOptions.series.dataSorting
+     * The keys can also be nested paths, for example `dataLabel.format`, to map
+     * to nested properties of the data points.
+     *
+     * The values can also be strings, in which case they are interpreted as
+     * column id's from the first data table.
+     *
+     * A typical use case is that multiple series share a common column, like
+     * `name` or `x`. In this case, to avoid repetition, the common column can
+     * be applied in `plotOptions.series.dataMapping` and the individual series
+     * can specify only the columns that are unique to them.
+     *
+     * The series name defaults to the column ID of the main data column in the
+     * mapping. The main data column is typically the `y` data for cartesian
+     * series, or `value` for map series. For example, if the mapping is
+     * `{ y: 'Cost' }`, the series name will be `Cost`.
+     *
+     * ```js
+     * // Shorthand mapping with string
+     * dataMapping: {
+     *     y: 'Cost'
+     * }
+     *
+     * // Full mapping with object
+     * dataMapping: {
+     *    y: {
+     *       // Optional, defaults to the first data table. Can be either a data
+     *       // table index or id.
+     *       dataTable: 'dataTable1',
+     *       // Can be either a column index or id.
+     *       column: 'Cost'
+     *    }
+     * }
+     * ```
+     *
+     * If the columns of the DataTable have keys matching the series keys, the
+     * data mapping is not necessary. For example, this DataTable will connect
+     * directly to the series' `x` and `y` keys:
+     *
+     * ```js
+     * const dataTable = new Highcharts.DataTable({
+     *     columns: {
+     *         x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+     *         y: [1, 4, 2]
+     *     }
+     *  });
+     * ```
+     *
+     * @type    {Highcharts.DataMappingOptionsObject}
+     * @sample highcharts/datatable/datamapping
+     *         Basic data mapping
+     * @sample highcharts/datatable/datamapping-dynamic
+     *         Data mapping with dynamic updates
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple
+     *         Series with two data tables
+     * @sample {highcharts} highcharts/datatable/nested-keys
+     *         Nested keys
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple
+     *         Chart with two data tables
+     *
+     * @since     13.0.0
+     * @apioption plotOptions.series.dataMapping
      */
 
     /**
-     * Enable or disable data sorting for the series. Use [xAxis.reversed](
-     * #xAxis.reversed) to change the sorting order.
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the `DataTable`
+     * class. If a `DataTable` instance is passed, it will be used directly. If
+     * a configuration object is passed, a new `DataTable` instance will be
+     * created based on the provided configuration.
      *
-     * @sample {highcharts} highcharts/datasorting/animation/
-     *         Data sorting in scatter-3d
-     * @sample {highcharts} highcharts/datasorting/labels-animation/
-     *         Axis labels animation
-     * @sample {highcharts} highcharts/datasorting/dependent-sorting/
-     *         Dependent series sorting
-     * @sample {highcharts} highcharts/datasorting/independent-sorting/
-     *         Independent series sorting
+     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *         Series with one data table each
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *         Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *         Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *         Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *         Series-level data table
      *
-     * @type      {boolean}
-     * @since     8.0.0
-     * @apioption plotOptions.series.dataSorting.enabled
-     */
-
-    /**
-     * Whether to allow matching points by name in an update. If this option
-     * is disabled, points will be matched by order.
-     *
-     * @sample {highcharts} highcharts/datasorting/match-by-name/
-     *         Enabled match by name
-     *
-     * @type      {boolean}
-     * @since     8.0.0
-     * @apioption plotOptions.series.dataSorting.matchByName
-     */
-
-    /**
-     * Determines what data value should be used to sort by.
-     *
-     * @sample {highcharts} highcharts/datasorting/sort-key/
-     *         Sort key as `z` value
-     *
-     * @type      {string}
-     * @since     8.0.0
-     * @default   y
-     * @apioption plotOptions.series.dataSorting.sortKey
+     * @since 13.0.0
+     * @apioption plotOptions.series.dataTable
      */
 
     /**
@@ -580,7 +622,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type       {Function}
      * @requires   modules/accessibility
      * @since      11.1.0
-     * @deprecated next
+     * @deprecated 12.6.0
      * @apioption  plotOptions.series.pointDescriptionFormat
      */
 
@@ -1154,7 +1196,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type {Highcharts.ColorType}
          */
-        lineColor: Palette.backgroundColor,
+        lineColor: 'var(--highcharts-background-color)',
 
         /**
          * The width of the point marker's outline.
@@ -1341,6 +1383,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * `series.allowPointSelect` option to true.
              *
              * @declare Highcharts.PointStatesSelectOptionsObject
+             * @extends plotOptions.series.marker.states.hover
              */
             select: {
 
@@ -1374,7 +1417,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @type {Highcharts.ColorType}
                  */
-                fillColor: Palette.neutralColor20,
+                fillColor: 'var(--highcharts-neutral-color-20)',
 
                 /**
                  * The color of the point marker's outline. When
@@ -1385,7 +1428,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @type {Highcharts.ColorType}
                  */
-                lineColor: Palette.neutralColor100,
+                lineColor: 'var(--highcharts-neutral-color-100)',
 
                 /**
                  * The width of the point marker's outline.
@@ -1529,8 +1572,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     },
 
     /**
-     * Options for the series data labels, appearing next to each data
-     * point.
+     * Options for the series data labels, appearing next to each data point.
      *
      * Since v6.2.0, multiple data labels can be applied to each single
      * point by defining them as an array of configs.
@@ -1635,11 +1677,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * The background color or gradient for the data label. Setting it to
-         * `auto` will use the point's color.
+         * The background color or gradient for the data label. In addition to
+         * regular colors, there are two special setting for this option:
+         * - `auto` will set the background color the point's color.
+         * - `contrast` will set it to a contrast against the text color, with
+         *   an opacity allowing to see the underlying content. The contrast is
+         *   great enough to ensure readability for the text according to
+         *   accessibility standards.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+         *         Contrast background color in stacked column
+         * @sample {highcharts} highcharts/series-pie/datalabels-background-contrast/
+         *         Contrast background color in pie
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
@@ -1671,7 +1722,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Data labels box options
          *
          * @type      {number}
-         * @default   0
+         * @default   3
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderRadius
          */
@@ -1754,6 +1805,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @product   highcharts highstock gantt
          */
         defer: true,
+
+        /**
+         * The distance of the data label from the data point. Note that the
+         * `padding` setting also affects the rendered distance, but is not
+         * visible unless the data label has a border or background.
+         *
+         * @type      {number}
+         * @product   highcharts highstock gantt
+         */
+        distance: 4,
 
         /**
          * Enable or disable the data labels.
@@ -1930,6 +1991,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * When either the `borderWidth` or the `backgroundColor` is set,
          * this is the padding within the box.
          *
+         * An array of numbers sets padding for the respective sides. An array
+         * of two numbers repeats the values for the horizontal and vertical
+         * sides.
+         *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
@@ -1937,7 +2002,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @since 2.2.1
          */
-        padding: 5,
+        padding: [1, 3],
 
         /**
          * Aligns data labels relative to points. If `center` alignment is
@@ -2003,7 +2068,11 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * text outline doesn't work well, in which cases it can be disabled
          * by setting it to `"none"`. When `useHTML` is true, the
          * `textOutline` will not be picked up. In this, case, the same
-         * effect can be achieved through the `text-shadow` CSS property.
+         * effect can be achieved through the `text-shadow` CSS property. As a
+         * complementary or alternative to the `textOutline`, a
+         * `dataLabels.backgroundColor` can be used. It provides a more calm
+         * impression and ensures readable text label, at the cost of a risk of
+         * overshadowing the underlying chart elements.
          *
          * For some series types, where each point has an extent, like for
          * example tree maps, the data label may overflow the point. There
@@ -2018,6 +2087,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Long labels truncated with an ellipsis in a pie
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
          *         Long labels are wrapped in a pie
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+         *         Default text outline and contrast background color
          * @sample {highmaps} maps/demo/color-axis/
          *         Bold labels
          *
@@ -2144,6 +2215,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * A collection of options for different series states.
+     *
+     * In addition to the options documented under each state, any option from
+     * the parent series type can be set, with exception of `data` and `states`.
      *
      * @declare Highcharts.SeriesStatesOptionsObject
      */
@@ -2335,6 +2409,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Disabled inactive state
          *
          * @declare Highcharts.SeriesStatesInactiveOptionsObject
+         * @extends plotOptions.series.states.hover
          */
         inactive: {
             /**

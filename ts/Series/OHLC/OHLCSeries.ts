@@ -25,7 +25,6 @@ import type OHLCSeriesOptions from './OHLCSeriesOptions';
 import type Series from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
@@ -158,9 +157,9 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
-    public getPointPath(point: OHLCPoint, graphic: SVGElement): SVGPath {
-        const path = super.getPointPath(point, graphic),
-            strokeWidth = graphic.strokeWidth(),
+    protected getPointPath(point: OHLCPoint): SVGPath {
+        const path = super.getPointPath(point),
+            strokeWidth = this.borderWidth,
             crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
 
@@ -181,8 +180,8 @@ class OHLCSeries extends HLCSeries {
      * @private
      */
     public pointAttribs(
-        point: OHLCPoint,
-        state: StatesOptionsKey
+        point?: OHLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state),
             options = this.options;
@@ -190,9 +189,9 @@ class OHLCSeries extends HLCSeries {
         delete attribs.fill;
 
         if (
-            !point.options.color &&
+            !point?.options.color &&
             options.upColor &&
-            point.open < point.close
+            (point?.open || 0) < (point?.close || 0)
         ) {
             attribs.stroke = options.upColor;
         }
@@ -215,7 +214,6 @@ class OHLCSeries extends HLCSeries {
 
 interface OHLCSeries {
     pointClass: typeof OHLCPoint;
-    pointAttrToOptions: Record<string, string>;
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
