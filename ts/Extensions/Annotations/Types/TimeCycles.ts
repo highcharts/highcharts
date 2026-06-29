@@ -14,6 +14,10 @@
  * */
 
 import type { AnnotationEventObject } from '../EventEmitter';
+import type {
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -33,7 +37,7 @@ import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
  * */
 
 /** @internal */
-interface TimeCyclesOptions extends CrookedLine.Options {
+interface TimeCyclesOptions extends AnnotationOptions {
     xAxis: number;
     yAxis: number;
 }
@@ -348,10 +352,10 @@ namespace TimeCycles {
      * @exclude      labelOptions
      * @optionparent annotations.types.timeCycles
      */
-    export interface Options extends CrookedLine.Options {
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends CrookedLine.TypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         type: string;
         controlPointOptions: ControlPointOptionsObject[];
     }

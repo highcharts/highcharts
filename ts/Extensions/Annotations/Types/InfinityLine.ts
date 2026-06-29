@@ -11,6 +11,10 @@
  *
  * */
 
+import type {
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 import type { AnnotationPointType } from '../AnnotationSeries';
 import type Axis from '../../../Core/Axis/Axis';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
@@ -245,10 +249,10 @@ namespace InfinityLine {
      * @product      highstock
      * @optionparent annotations.types.infinityLine
      */
-    export interface Options extends CrookedLine.Options{
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends CrookedLine.TypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         type: string;
     }
 }

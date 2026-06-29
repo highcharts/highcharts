@@ -12,6 +12,10 @@
  * */
 
 import type { AnnotationEventObject } from '../EventEmitter';
+import type {
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 import type Controllable from '../Controllables/Controllable';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type {
@@ -350,10 +354,10 @@ namespace Tunnel {
      * @product highstock
      * @optionparent annotations.types.tunnel
      */
-    export interface Options extends CrookedLine.Options {
+    export interface Options extends AnnotationOptions {
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends CrookedLine.TypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         /**
          * The height of the annotation in terms of yAxis.
          */
