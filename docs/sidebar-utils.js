@@ -1,6 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const YAML = require('js-yaml');
+
+const parseYaml = YAML.load || YAML.safeLoad;
+
 function getDocSource(id) {
     const filePath = path.join(__dirname, `${id}.md`);
     return fs.readFileSync(filePath, 'utf8');
@@ -15,7 +18,10 @@ function hasGridProTag(source) {
 
     let frontMatterConfig;
     try {
-        frontMatterConfig = YAML.safeLoad(frontMatter[1]) || {};
+        if (typeof parseYaml !== 'function') {
+            return false;
+        }
+        frontMatterConfig = parseYaml(frontMatter[1]) || {};
     } catch {
         return false;
     }
