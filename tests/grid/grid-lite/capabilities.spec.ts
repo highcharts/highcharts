@@ -71,10 +71,10 @@ test('Grid Lite capabilities expose core flags only', async ({ page }) => {
     expect(result.before.strictHeights).toBe(true);
     expect(result.before.customTheme).toBe(true);
     expect(result.before.header).toBe(false);
-    expect(result.before.pinning).toBe(false);
-    expect(result.before.treeView).toBe(false);
-    expect(result.before.editMode).toBe(false);
-    expect(result.before.remoteOperations).toBe(false);
-    expect(result.before.key).toBe('missing');
+    expect(result.before.pinning).toBe('n/a');
+    expect(result.before.treeView).toBe('n/a');
+    expect(result.before.editMode).toBe('n/a');
+    expect(result.before.remoteOperations).toBe('n/a');
+    expect(result.before.key).toBe('n/a');
     expect(result.afterUpdate.pagination).toBe(true);
 });

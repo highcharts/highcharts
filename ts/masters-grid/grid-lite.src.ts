@@ -89,7 +89,7 @@ const G = {
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
 ResponsiveComposition.compose(G.Grid);
-CapabilitiesComposition.compose(G.Grid);
+CapabilitiesComposition.compose(G.Grid, 'lite');
 
 
 /* *

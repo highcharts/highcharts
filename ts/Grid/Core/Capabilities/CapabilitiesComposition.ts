@@ -41,22 +41,25 @@ import {
  *
  * */
 
+export type GridCapabilityState = boolean | 'n/a';
 export type GridKeyStatus = 'valid' | 'invalid' | 'missing' | 'expired';
+export type GridKeyCapabilityState = GridKeyStatus | 'n/a';
+export type GridProduct = 'lite' | 'pro';
 
 export interface GridCapabilities {
     filtering: boolean;
     sorting: boolean;
-    pinning: boolean;
-    treeView: boolean;
+    pinning: GridCapabilityState;
+    treeView: GridCapabilityState;
     pagination: boolean;
-    editMode: boolean;
+    editMode: GridCapabilityState;
     cellFormat: boolean;
     cellFormatter: boolean;
     strictHeights: boolean;
     customTheme: boolean;
     header: boolean;
-    remoteOperations: boolean;
-    key: GridKeyStatus;
+    remoteOperations: GridCapabilityState;
+    key: GridKeyCapabilityState;
 }
 
 
@@ -72,16 +75,25 @@ export interface GridCapabilities {
  * @param GridClass
  * The class to extend.
  *
+ * @param product
+ * Product variant the class belongs to.
+ *
  */
 export function compose(
-    GridClass: typeof Grid
+    GridClass: typeof Grid,
+    product: GridProduct = 'pro'
 ): void {
     if (!pushUnique(Globals.composed, 'GridCapabilities')) {
         return;
     }
 
-    addEvent(GridClass, 'beforeLoad', updateCapabilities);
-    addEvent(GridClass, 'afterUpdate', updateCapabilities);
+    const hasProFeatures = product === 'pro';
+    const update = function (this: Grid): void {
+        updateCapabilities.call(this, hasProFeatures);
+    };
+
+    addEvent(GridClass, 'beforeLoad', update);
+    addEvent(GridClass, 'afterUpdate', update);
 }
 
 /**
@@ -89,22 +101,25 @@ export function compose(
  *
  * @param this
  * Grid instance.
+ *
+ * @param hasProFeatures
+ * Whether Pro-only features are available.
  */
-function updateCapabilities(this: Grid): void {
+function updateCapabilities(this: Grid, hasProFeatures: boolean): void {
     const capabilities = this.capabilities || (this.capabilities = {
         filtering: false,
         sorting: false,
-        pinning: false,
-        treeView: false,
+        pinning: 'n/a',
+        treeView: 'n/a',
         pagination: false,
-        editMode: false,
+        editMode: 'n/a',
         cellFormat: false,
         cellFormatter: false,
         strictHeights: false,
         customTheme: false,
         header: true,
-        remoteOperations: false,
-        key: 'missing'
+        remoteOperations: 'n/a',
+        key: 'n/a'
     });
     const options = this.options;
     const columnPolicy = this.columnPolicy;
@@ -112,19 +127,14 @@ function updateCapabilities(this: Grid): void {
     const rendering = options?.rendering;
     const dataOptions = options?.data;
     const columnIds = columnPolicy.getColumnIds();
-    const rowPinning = (this as {
-        rowPinning?: {
-            isEnabled: () => boolean;
-        };
-    }).rowPinning;
-    const treeView = (dataOptions as {
-        treeView?: { enabled?: boolean };
-    } | undefined)?.treeView;
     const sortingDefaultsEnabled =
         columnDefaults?.sorting?.enabled !== false;
     let filtering = columnDefaults?.filtering?.enabled === true;
     let sorting = sortingDefaultsEnabled;
-    let editMode = columnDefaults?.cells?.editMode?.enabled === true;
+    let editMode = (
+        hasProFeatures &&
+        columnDefaults?.cells?.editMode?.enabled === true
+    );
     let cellFormat = columnDefaults?.cells?.format !== void 0;
     let cellFormatter = columnDefaults?.cells?.formatter !== void 0;
 
@@ -138,7 +148,11 @@ function updateCapabilities(this: Grid): void {
             columnId
         );
         sorting = sorting || columnPolicy.isColumnSortingEnabled(columnId);
-        editMode = editMode || columnPolicy.isColumnEditable(columnId);
+        editMode = (
+            editMode ||
+            hasProFeatures &&
+            columnPolicy.isColumnEditable(columnId)
+        );
         cellFormat = cellFormat || columnOptions?.cells?.format !== void 0;
         cellFormatter = (
             cellFormatter ||
@@ -148,7 +162,7 @@ function updateCapabilities(this: Grid): void {
         if (
             filtering &&
             sorting &&
-            editMode &&
+            (!hasProFeatures || editMode) &&
             cellFormat &&
             cellFormatter
         ) {
@@ -158,10 +172,7 @@ function updateCapabilities(this: Grid): void {
 
     capabilities.filtering = filtering;
     capabilities.sorting = sorting;
-    capabilities.pinning = !!rowPinning?.isEnabled();
-    capabilities.treeView = !!treeView && treeView.enabled !== false;
     capabilities.pagination = options?.pagination?.enabled === true;
-    capabilities.editMode = editMode;
     capabilities.cellFormat = cellFormat;
     capabilities.cellFormatter = cellFormatter;
     capabilities.strictHeights = rendering?.rows?.strictHeights === true;
@@ -170,11 +181,32 @@ function updateCapabilities(this: Grid): void {
         defaultOptions.rendering?.theme
     ) !== defaultOptions.rendering?.theme;
     capabilities.header = rendering?.header?.enabled !== false;
-    capabilities.remoteOperations = (
-        dataOptions?.providerType === 'remote' &&
-        !!DataProviderRegistry.types[dataOptions.providerType]
-    );
-    capabilities.key = 'missing';
+
+    if (hasProFeatures) {
+        const rowPinning = (this as {
+            rowPinning?: {
+                isEnabled: () => boolean;
+            };
+        }).rowPinning;
+        const treeView = (dataOptions as {
+            treeView?: { enabled?: boolean };
+        } | undefined)?.treeView;
+
+        capabilities.pinning = !!rowPinning?.isEnabled();
+        capabilities.treeView = !!treeView && treeView.enabled !== false;
+        capabilities.editMode = editMode;
+        capabilities.remoteOperations = (
+            dataOptions?.providerType === 'remote' &&
+            !!DataProviderRegistry.types[dataOptions.providerType]
+        );
+        capabilities.key = 'missing';
+    } else {
+        capabilities.pinning = 'n/a';
+        capabilities.treeView = 'n/a';
+        capabilities.editMode = 'n/a';
+        capabilities.remoteOperations = 'n/a';
+        capabilities.key = 'n/a';
+    }
 
     fireEvent(this, 'updateCapabilities', { capabilities });
 }
