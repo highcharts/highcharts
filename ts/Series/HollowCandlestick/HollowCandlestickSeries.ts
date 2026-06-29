@@ -95,7 +95,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample {highstock} highcharts/css/hollow-candlestick/
          *         Colors in styled mode
          *
-         * @type    {ColorType}
+         * @type    {Highcharts.ColorType}
          * @product highstock
          */
         color: 'var(--highcharts-negative-color)',
@@ -114,7 +114,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample {highstock} highcharts/css/hollow-candlestick/
          *         Colors in styled mode
          *
-         * @type    {ColorType}
+         * @type    {Highcharts.ColorType}
          * @product highstock
          */
         lineColor: 'var(--highcharts-negative-color)',
@@ -128,7 +128,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample {highstock} highcharts/css/hollow-candlestick/
          *         Colors in styled mode
          *
-         * @type    {ColorType}
+         * @type    {Highcharts.ColorType}
          * @product highstock
          */
         upColor: 'var(--highcharts-positive-color)',
@@ -142,7 +142,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @sample {highstock} highcharts/css/hollow-candlestick/
          *         Colors in styled mode
          *
-         * @type    {ColorType}
+         * @type    {Highcharts.ColorType}
          * @product highstock
          */
         upLineColor: 'var(--highcharts-positive-color)'
@@ -210,7 +210,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @param {string} trendDirection
      * Type of candle direction (bearish/bullish)(down/up).
      *
-     * @return {ColorType}
+     * @return {Highcharts.ColorType}
      * Line color
      */
     public getLineColor(trendDirection: 'up'|'down'): ColorType {
@@ -231,7 +231,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @param {HollowcandleInfo} hollowcandleInfo
      *        Information about the current candle.
      *
-     * @return {ColorType}
+     * @return {Highcharts.ColorType}
      * Point fill color
      */
     public getPointFill(hollowcandleInfo: HollowcandleInfo): ColorType {

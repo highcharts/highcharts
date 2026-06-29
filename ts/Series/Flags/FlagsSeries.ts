@@ -508,4 +508,4 @@ export default FlagsSeries;
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-''; // Detach doclets above
+''; // Keep doclets above
