@@ -4289,7 +4289,8 @@ class Chart {
             // (#22945)
             // Set offset to 0 for ordinal axis only when zooming out, (#24545).
             const offset = (
-                    selection || axis.chart.polar || (axis.isOrdinal && scale <= 1)
+                    selection || axis.chart.polar ||
+                    (axis.isOrdinal && scale <= 1)
                 ) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
