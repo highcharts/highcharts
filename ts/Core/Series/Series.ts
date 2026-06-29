@@ -4020,7 +4020,7 @@ class Series {
      *
      * @function Highcharts.Series#searchPoint
      *
-     * @param {Highcharts.PointerEvent} e
+     * @param {PointerEvent} e
      *        The normalized pointer event
      * @param {boolean} [compareX=false]
      *        Search only by the X value, not Y
@@ -4143,7 +4143,7 @@ class Series {
      *        The point to search for.
      * @param {boolean} [compareX=false]
      *        Search only by the X value, not Y.
-     * @param {Highcharts.PointerEvent} [e]
+     * @param {PointerEvent} [e]
      *        The normalized pointer event.
      * @param {Function} [suppliedPointEvaluator]
      *        A custom point evaluator function.

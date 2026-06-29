@@ -94,7 +94,7 @@ export type MarkerClusterAlgorithmValue = ('grid'|'kmeans'|'optimizedKmeans');
 /**
  * Function callback when a cluster is clicked.
  *
- * @function Highcharts.MarkerClusterDrillCallbackFunction
+ * @callback Highcharts.MarkerClusterDrillCallbackFunction
  *
  * @param {Highcharts.Point} this
  *        The point where the event occurred.

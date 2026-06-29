@@ -505,6 +505,7 @@ export default FlagsSeries;
  * */
 
 /**
+ * Possible shapes for points of FlagsSeries.
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
