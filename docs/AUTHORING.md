@@ -262,6 +262,15 @@ tags:
 ---
 ```
 
+Inline array syntax also works:
+
+```md
+---
+title: Conditional formatting
+tags: ["grid-pro"]
+---
+```
+
 When adding a Grid Pro-specific article to `docs/sidebars.js`, use the `doc` helper from `docs/sidebar-utils.js` instead of a raw string. The helper reads the same `grid-pro` tag and adds the sidebar `Pro` badge metadata automatically while preserving the page's normal sidebar label:
 
 ```js

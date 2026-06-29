@@ -24,7 +24,10 @@ This installs dependencies for every workspace, including the docs preview site.
 - Clear caches: `npm run clear --workspace=docs-preview`
   Removes generated metadata (helpful when switching branches or Docusaurus versions).
 
-- Playwright docs tests: `npm run test:pw --workspace=docs-preview`
+- Playwright docs tests: `npm run test:pw:docs`
+  Preferred root-level alias for docs-specific Playwright tests.
+
+- Playwright docs tests (workspace form): `npm run test:pw --workspace=docs-preview`
   Runs docs-specific Playwright tests with `tools/docs-preview/playwright.config.ts`.
 
 Additional scripts (such as `write-translations` or `swizzle`) are available in `tools/docs-preview/package.json`.
@@ -60,3 +63,16 @@ In addition to the default Docusaurus components, the preview site registers a f
     ````
 
 All three components are exported from `tools/docs-preview/src/theme/MDXComponents/index.tsx`, so they are available globally in the docs preview environment.
+
+## Docs Preview CI integration
+
+`.github/workflows/docs-notifier.yml` runs for `docs/**/*.md` changes on both pushes to `master` and PRs targeting `master`.
+
+- On push to `master`, it triggers the Slack docs webhook.
+- On push and PR, it triggers a branch build in doc-builder via `POST ${DOC_BUILDER_URL}/build/trigger`.
+- On PRs, it posts or updates a `📚 Docs Preview` comment with links to changed docs pages using `/docs/<path>?branch=<encodedBranch>`.
+
+Required repository secrets for the build/comment flow:
+
+- `DOC_BUILDER_URL`
+- `DOC_BUILDER_BUILD_TRIGGER_TOKEN`

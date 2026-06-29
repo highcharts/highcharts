@@ -56,11 +56,15 @@ jobs:
             const path = require('path');
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR.js');
 
-            const { data: files } = await github.rest.pulls.listFiles({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                per_page: 100
+              }
+            );
 
             const docsFiles = files
               .filter(f => f.filename.startsWith('docs/') && f.filename.endsWith('.md'))
