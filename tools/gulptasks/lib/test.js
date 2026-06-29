@@ -212,8 +212,7 @@ function saveRun({
 
 function handleProductArgs() {
     const process = require('node:process');
-    const yargs = require('yargs');
-    const { argv } = yargs(process.argv);
+    const argv = require('yargs').argv;
     const log = require('../../libs/log');
 
     if (process.env.DEBUG) {
