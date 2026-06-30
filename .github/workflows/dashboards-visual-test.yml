@@ -137,7 +137,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Comment on PR
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
