@@ -72,6 +72,7 @@ jobs:
             tmp/benchmarks
 
       - name: Checkout trusted comment helper
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/checkout@v6
         with:
           ref: master
@@ -81,6 +82,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Comment on PR
+        if: ${{ github.event_name == 'pull_request' }}
         uses: actions/github-script@v8
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}

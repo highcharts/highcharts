@@ -239,11 +239,20 @@ jobs:
           const outputFile = process.env.GITHUB_OUTPUT;
           const reviewPath = `./test/review-pr-${prNumber}.json`;
 
+          function readJson(path) {
+            try {
+              return JSON.parse(readFileSync(path, 'utf8'));
+            } catch (error) {
+              console.warn(`Could not parse ${path}: ${error.message}`);
+            }
+          }
+
           let state = 'failure';
           let description = 'Review of changed samples needed. Click on details.';
 
-          if (existsSync(reviewPath)) {
-            const review = JSON.parse(readFileSync(reviewPath, 'utf8'));
+          const review = existsSync(reviewPath) ? readJson(reviewPath) : undefined;
+
+          if (review) {
             const samples = Array.isArray(review?.samples) ? review.samples : [];
 
             if (samples.length === 0) {
@@ -254,13 +263,15 @@ jobs:
               description = 'Diffing samples are approved';
             }
           } else {
-            const results = JSON.parse(readFileSync('./test/visual-test-results.json', 'utf8'));
-            const hasDiffs = Object.entries(results).some(([key, value]) =>
-              key !== 'meta' && typeof value === 'number' && value > 0
-            );
-            if (!hasDiffs) {
-              state = 'success';
-              description = 'No diffing samples found.';
+            const results = readJson('./test/visual-test-results.json');
+            if (results) {
+              const hasDiffs = Object.entries(results).some(([key, value]) =>
+                key !== 'meta' && typeof value === 'number' && value > 0
+              );
+              if (!hasDiffs) {
+                state = 'success';
+                description = 'No diffing samples found.';
+              }
             }
           }
 
