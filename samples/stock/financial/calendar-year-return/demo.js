@@ -76,7 +76,7 @@ async function renderChart() {
             shared: true,
             pointFormat:
                 '<span style="color:{point.color}">\u25CF</span> ' +
-                '{series.name}<b>{point.y:.2f}%</b><br/>'
+                '{series.name}<b> {point.y:.2f}%</b><br/>'
         },
         plotOptions: {
             series: {

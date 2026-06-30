@@ -357,13 +357,12 @@ function parseData(regionalExposureData) {
                 iconPath
             });
 
-            barSeries.sort((a, b) => b.y - a.y);
         }
     }
 
     return {
         mapSeries,
-        barSeries
+        barSeries: barSeries.sort((a, b) => b.y - a.y)
     };
 }
 

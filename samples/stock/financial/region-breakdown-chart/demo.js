@@ -118,9 +118,7 @@ async function renderChart() {
         },
         plotOptions: {
             series: {
-                minPointLength: 3,
-                borderWidth: 1,
-                borderColor: '#0001C'
+                minPointLength: 3
             }
         },
         series: [{

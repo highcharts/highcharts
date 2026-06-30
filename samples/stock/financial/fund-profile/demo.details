@@ -1,8 +1,0 @@
----
-name: Fund Profile
-description: A comprehensive fund profile dashboard combining multiple charts and tables for a single fund.
-tags:
-  - Dashboards
-  - Morningstar
-js_wrap: b
-...

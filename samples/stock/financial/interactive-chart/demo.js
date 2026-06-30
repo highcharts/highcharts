@@ -61,7 +61,7 @@ const updatePercentageChange = (series, lastPoint, extremes) => {
     }
 };
 
-renderChart();
+Promise.resolve().then(renderChart);
 
 // Set current date
 currentDate.textContent = timeFormatter(new Date());

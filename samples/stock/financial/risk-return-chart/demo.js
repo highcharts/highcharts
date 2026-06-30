@@ -169,7 +169,7 @@ async function renderCharts() {
             }
         },
         yAxis: {
-            gridLineColor: '#0000A',
+            gridLineColor: null,
             title: {
                 text: 'Total Return %'
             },
@@ -264,11 +264,11 @@ async function renderCharts() {
             false
         ]);
 
+        const months = parseInt(timePeriod.slice(1), 10);
+
         chart.update({
             subtitle: {
-                text:
-                    `${timePeriod.slice(1)}-${timePeriod.slice(1) === 1 ?
-                        'month' : 'months'} period`
+                text: `${months}-${months === 1 ? 'month' : 'months'} period`
             }
         }, false);
 
