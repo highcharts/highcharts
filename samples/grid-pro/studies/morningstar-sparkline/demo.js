@@ -54,9 +54,12 @@ const DATA_COLUMNS = [
     ...CHANGE_COLUMNS.map(({ id }) => id),
     'price'
 ];
-const INITIAL_VISIBLE_COUNT = Math.max(
+let visibleCount = Math.max(
     ...CHANGE_COLUMNS.map(({ days }) => days)
 ) + 1;
+let popupChart = null;
+let popupInterval = null;
+const overlay = document.getElementById('spark-popup-overlay');
 const dateFormatter = new Intl.DateTimeFormat('en', {
     day: 'numeric',
     month: 'short',
@@ -128,11 +131,14 @@ function getRowData(stock, prices, visibleCount) {
                 const value =
                     hasValue(currentPrice) &&
                     hasValue(previousPrice)
-                        ? Number((
-                        (currentPrice - previousPrice) /
-                        previousPrice * 100
-                    ).toFixed(2))
-                        : 0;
+                        ? Number(
+                            (
+                                (currentPrice - previousPrice) /
+                                previousPrice *
+                                100
+                            ).toFixed(2)
+                        ) :
+                        0;
                 return [id, value];
             })
         )
@@ -155,7 +161,6 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             ...cachedPrices.map(p => p.length),
             0
         );
-        let visibleCount = INITIAL_VISIBLE_COUNT;
         const rowsData = stockCollection.map((stock, i) => (
             getRowData(stock, cachedPrices[i], visibleCount)
         ));
@@ -405,10 +410,6 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             }
             await refreshGrid();
         }, ANIMATION_SPEED);
-
-        const overlay = document.getElementById('spark-popup-overlay');
-        let popupChart = null;
-        let popupInterval = null;
 
         const closePopup = function () {
             overlay.classList.remove('open');
