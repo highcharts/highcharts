@@ -5,10 +5,24 @@
 <figure class="highcharts-figure">
     <div id="container"></div>
     <p class="highcharts-description">
-        A simple network graph rendered with the networkgraph series type. The
-        force-directed layout has gravity turned off
-        (<code>gravitationalConstant: 0</code>), so nodes are positioned only by
-        the repulsion between them and the attraction along their links, without
-        being pulled toward the chart center.
+        Building a Sugiyama-style flowchart layout, phase by phase.
+        <strong>Phase 1, cycle removal:</strong> a layered layout needs a
+        directed acyclic graph, but flowcharts contain feedback loops, so the
+        greedy heuristic of Eades, Lin &amp; Smyth reverses a small set of "back"
+        edges to break every cycle — reversed edges are drawn flipped and dashed
+        in red. <strong>Phase 2, layer assignment:</strong> each node is ranked
+        into a horizontal layer by longest-path layering and stacked
+        top-to-bottom by that layer. <strong>Phase 3, crossing reduction:</strong>
+        edges spanning several layers are split with dummy nodes, then nodes are
+        reordered within each layer by the median heuristic (sweeping down and
+        up) to minimise edge crossings. <strong>Phase 4, coordinate
+        assignment:</strong> the priority method turns that order into real X
+        coordinates, pulling each node toward the median of its neighbours while
+        keeping a minimum gap; dummy nodes get top priority, so long edges —
+        including the reversed back-edge — straighten into vertical runs.
+        Finally, arrowheads are rendered at each edge's head in its original
+        direction, so reversed back-edges point back up into their target. Open
+        the console to inspect the vertex order, reversed edges, each node's
+        layer and the crossing count before and after reduction.
     </p>
 </figure>
