@@ -139,12 +139,22 @@ async function renderWidget(orientation) {
                     }
                 },
                 tooltip: {
-                    format:
-                        '<strong><span style="color:{point.color};">▬ </span>' +
-                        '{translateAssetAllocation point.name} ' +
-                        '{series.options.assetType} ' +
-                        '<span style="color: #8A8A8A;">' +
-                        '{point.y:,.2f}%</span></strong>'
+                    formatter: function () {
+                        const value =
+                            Math.abs(this.point.y) < 0.005 ? 0 : this.point.y,
+                            color = this.point.color,
+                            name = this.point.name;
+
+                        return `
+                        <strong>
+                            <span style="color:${color};">▬ </span>
+                            ${assetAllocationTypes[name]}
+                            ${this.series.options.assetType}
+                            <span style="color:#8A8A8A;">
+                            ${Highcharts.numberFormat(value, 2)}%</span>
+                        </strong>
+                        `;
+                    }
                 },
                 credits: {
                     enabled: false
@@ -226,21 +236,35 @@ async function renderWidget(orientation) {
                 }, {
                     id: 'MorningstarEUR3_N',
                     cells: {
-                        format:
-                            '<b>{value:.2f}</b> ' +
-                            '<span style="color: #75738C;">%</span>'
+                        formatter: function () {
+                            const value =
+                                Math.abs(this.value) < 0.005 ? 0 : this.value;
+                            return `
+                                <b>${Highcharts.numberFormat(value, 2)}</b>
+                                <span style="color: #75738C">%</span>`;
+                        }
                     }
                 }, {
                     id: 'MorningstarEUR3_L',
                     cells: {
-                        format: '<b>{value:.2f}</b> ' +
-                        '<span style="color: #75738C;">%</span>'
+                        formatter: function () {
+                            const value =
+                                Math.abs(this.value) < 0.005 ? 0 : this.value;
+                            return `
+                                <b>${Highcharts.numberFormat(value, 2)}</b>
+                                <span style="color: #75738C">%</span>`;
+                        }
                     }
                 }, {
                     id: 'MorningstarEUR3_S',
                     cells: {
-                        format: '<b>{value:.2f}</b> ' +
-                        '<span style="color: #75738C;">%</span>'
+                        formatter: function () {
+                            const value =
+                                Math.abs(this.value) < 0.005 ? 0 : this.value;
+                            return `
+                                <b>${Highcharts.numberFormat(value, 2)}</b>
+                                <span style="color: #75738C">%</span>`;
+                        }
                     }
                 }]
             }
