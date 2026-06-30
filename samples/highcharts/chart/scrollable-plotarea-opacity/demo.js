@@ -5,7 +5,8 @@ Highcharts.chart('container', {
             minWidth: 700,
             scrollPositionX: 1,
             opacity: 0
-        }
+        },
+        spacingBottom: 22
     },
     title: {
         text: 'Scrollable plot area without mask'
