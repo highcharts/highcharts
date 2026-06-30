@@ -29,10 +29,6 @@ jobs:
       matrix:
         node-version: [lts/*]
     env:
-      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
       BENCHMARK_CATEGORY: Stock
     steps:
       - uses: actions/checkout@v6
@@ -50,6 +46,11 @@ jobs:
 
       - name: Fetch cached base results from S3
         continue-on-error: true
+        env:
+          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
         run: |
           mkdir -p tmp/benchmarks/base
           aws s3 sync \
