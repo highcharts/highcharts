@@ -29,6 +29,8 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
+import NBU from '../NavigationBindingsUtilities.js';
+const { getAxisFromOptions } = NBU;
 import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
@@ -185,8 +187,9 @@ class Tunnel extends CrookedLine {
 
     public getPointsOptions(): Array<AnnotationMockPointOptionsObject> {
         const pointsOptions = CrookedLine.prototype.getPointsOptions.call(this),
-            yAxisIndex = this.options.typeOptions?.yAxis || 0,
-            yAxis = this.chart.yAxis[yAxisIndex];
+            yAxis = getAxisFromOptions(
+                this.chart, 'yAxis', this.options.typeOptions?.yAxis ?? 0
+            );
 
         pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
         pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);

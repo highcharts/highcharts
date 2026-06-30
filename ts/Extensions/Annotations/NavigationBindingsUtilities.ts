@@ -18,9 +18,11 @@
  *
  * */
 
+import type AxisType from '../../Core/Axis/AxisType';
+import type Chart from '../../Core/Chart/Chart';
 import type Pointer from '../../Core/Pointer';
 
-import { defined, isNumber, pick } from '../../Shared/Utilities.js';
+import { defined, find, isNumber, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -85,6 +87,41 @@ function getAssignedAxis(
 }
 
 /**
+ * Resolve an axis from an annotation option that can reference it either by its
+ * index (number) or by its id (string).
+ *
+ * @internal
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart instance.
+ *
+ * @param {'xAxis'|'yAxis'} coll
+ *        The axis collection to look in.
+ *
+ * @param {number|string|undefined} idOrIndex
+ *        The axis index or id.
+ *
+ * @return {Highcharts.Axis|undefined}
+ *         The matching axis, or `undefined` if none was found.
+ */
+function getAxisFromOptions(
+    chart: Chart,
+    coll: ('xAxis'|'yAxis'),
+    idOrIndex?: (number|string)
+): (AxisType|undefined) {
+    if (isNumber(idOrIndex)) {
+        return chart[coll][idOrIndex];
+    }
+
+    return defined(idOrIndex) ?
+        find(
+            chart[coll],
+            (axis): boolean => axis.options.id === idOrIndex
+        ) :
+        void 0;
+}
+
+/**
  * Get field type according to value
  *
  * @internal
@@ -123,6 +160,7 @@ function getFieldType(
 const NavigationBindingUtilities = {
     annotationsFieldsTypes,
     getAssignedAxis,
+    getAxisFromOptions,
     getFieldType
 };
 

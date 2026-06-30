@@ -28,6 +28,8 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
+import NBU from '../NavigationBindingsUtilities.js';
+const { getAxisFromOptions } = NBU;
 import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -278,15 +280,13 @@ class TimeCycles extends CrookedLine {
 
         const point1 = points[0] as any,
             point2 = points[1] as any,
-            xAxisNumber = options.xAxis || 0,
-            yAxisNumber = options.yAxis || 0,
-            xAxis = this.chart.xAxis[xAxisNumber],
-            yAxis = this.chart.yAxis[yAxisNumber],
+            xAxis = getAxisFromOptions(this.chart, 'xAxis', options.xAxis ?? 0),
+            yAxis = getAxisFromOptions(this.chart, 'yAxis', options.yAxis ?? 0),
             xValue1 = point1.x,
             yValue = point1.y,
             xValue2 = point2.x;
 
-        if (!xValue1 || !xValue2) {
+        if (!xValue1 || !xValue2 || !xAxis || !yAxis) {
             return;
         }
 
