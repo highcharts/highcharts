@@ -4,7 +4,7 @@ This type analyzes the specified portfolios and yields a risk score.
 
 You can analyze up to two portfolios at a time.
 
-## How to use RiskScore
+## How to use Risk Score Connector
 
 Use the `RiskScoreConnector` to load risk scores.
 
@@ -19,7 +19,7 @@ Holdings are the securities that make up the portfolio. You can specify a
 holding using different kinds of id’s.
 
 Supported id-types are: `CUSIP`, `FundCode`, `ISIN`, `MSID`, `PerformanceId`,
- `SecurityID`, `TradingSymbol`.
+`SecurityID`, `TradingSymbol`.
 
 You can specify the quantity of this holding in the portfolio by using either
 `weight` or `value`. If you decide to use `weight`, you need to specify
@@ -31,9 +31,9 @@ Be consistent and stick to one.
 If you specify any holdings that are invalid, the connector will still yield
 a result. The invalid holdings are in the connector’s `metadata` after load.
 
-For more details, see [Morningstar’s RiskScore API].
+For more details, see [Morningstar’s Portfolio Risk Score API].
 
-### Risk Score with Morningstar standalone for Highcharts:
+### Risk Score with Morningstar standalone for Highcharts
 
 ```js
 const riskScoreConnector = new HighchartsConnectors.Morningstar.RiskScoreConnector({
@@ -83,9 +83,15 @@ new Grid.grid('container', {
 
 ## Relevant demos
 
-You will find examples of how to use RiskScoreConnector in our demos.
+You will find examples of how to use `RiskScoreConnector` in our demos.
 
-- **Highcharts Dashboards + Morningstar Risk Score**: Shows how to use
-RiskScoreConnector in dashboards to retrieve Risk Score for a single portfolio.
+- **Highcharts Dashboards Grid + Morningstar Risk Score**: Shows how to use
+`RiskScoreConnector` in dashboards to retrieve `RiskScore` for a single
+portfolio.
 
-[Morningstar’s RiskScore API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/portfolio-analysis-apacemea/risk-score
+## Morningstar API Reference
+
+For more details, see [Morningstar’s Portfolio Risk Score API].
+
+<!-- Links -->
+[Morningstar’s Portfolio Risk Score API]: https://developer.morningstar.com/direct-web-services/documentation/direct-web-services/portfolio-risk-score/overview
