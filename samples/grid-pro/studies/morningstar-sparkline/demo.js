@@ -56,7 +56,7 @@ const DATA_COLUMNS = [
 ];
 const INITIAL_VISIBLE_COUNT = Math.max(
     ...CHANGE_COLUMNS.map(({ days }) => days)
-);
+) + 1;
 const dateFormatter = new Intl.DateTimeFormat('en', {
     day: 'numeric',
     month: 'short',
@@ -67,10 +67,7 @@ const toPointData = (xData, yData) => xData.map((x, i) => [x, yData[i]]);
 const getPrices = (table, stock) => (
     table.getColumn(stock.SecID) || []
 ).map(Number);
-const toSpark = (col, count) => {
-    const { start, end } = getVisibleWindow(col.length, count);
-    return col.slice(start, end).map(Number).join(', ');
-};
+
 const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: { type: 'Price' },
@@ -79,13 +76,15 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     endDate: END_DATE,
     currencyId: 'EUR'
 });
-
 function getVisibleWindow(dataLength, visibleCount) {
     const end = Math.min(visibleCount, dataLength);
     const start = Math.max(0, end - WINDOW_SIZE);
     return { start, end };
 }
-
+const toSpark = (col, count) => {
+    const { start, end } = getVisibleWindow(col.length, count);
+    return col.slice(start, end).map(Number).join(', ');
+};
 function getDateRangeLabel(dates, visibleCount) {
     const { start, end } = getVisibleWindow(dates.length, visibleCount);
     return (
@@ -93,7 +92,6 @@ function getDateRangeLabel(dates, visibleCount) {
         dateFormatter.format(new Date(dates[end - 1]))
     );
 }
-
 function updatePriceEvolutionHeader(dates, visibleCount) {
     document
         .querySelectorAll('#container .price-evolution-header-date')
@@ -101,7 +99,6 @@ function updatePriceEvolutionHeader(dates, visibleCount) {
             label.textContent = getDateRangeLabel(dates, visibleCount);
         });
 }
-
 function formatDelta(value) {
     const formattedValue = Math.abs(value).toFixed(2);
     if (value > 0) {
@@ -118,7 +115,6 @@ function formatDelta(value) {
     }
     return `<span>${formattedValue}%</span>`;
 }
-
 function getRowData(stock, prices, visibleCount) {
     const currentPrice = prices[visibleCount - 1];
 
@@ -129,18 +125,19 @@ function getRowData(stock, prices, visibleCount) {
         ...Object.fromEntries(
             CHANGE_COLUMNS.map(({ id, days }) => {
                 const previousPrice = prices[visibleCount - days - 1];
-                const value = hasValue(currentPrice) && hasValue(previousPrice) ?
-                    Number((
-                        (currentPrice - previousPrice) / previousPrice * 100
-                    ).toFixed(2)) :
-                    0;
-
+                const value =
+                    hasValue(currentPrice) &&
+                    hasValue(previousPrice)
+                        ? Number((
+                        (currentPrice - previousPrice) /
+                        previousPrice * 100
+                    ).toFixed(2))
+                        : 0;
                 return [id, value];
             })
         )
     };
 }
-
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     document.body.classList.add('touch-device');
 }
@@ -154,7 +151,10 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             stock => getPrices(table, stock)
         );
         const indexPrice = getPrices(table, marketIndex);
-        const maxSeriesLength = Math.max(...cachedPrices.map(p => p.length), 0);
+        const maxSeriesLength = Math.max(
+            ...cachedPrices.map(p => p.length),
+            0
+        );
         let visibleCount = INITIAL_VISIBLE_COUNT;
         const rowsData = stockCollection.map((stock, i) => (
             getRowData(stock, cachedPrices[i], visibleCount)
@@ -190,6 +190,83 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             CHANGE_COLUMNS[0].id,
             CHANGE_COLUMNS[2].id
         ].includes(columnId));
+
+        const openStockChart = function (stock, rowIndex, visibleCount) {
+            const prices = cachedPrices[rowIndex];
+            const { end } = getVisibleWindow(prices.length, visibleCount);
+            const xData = dates.slice(0, end);
+            const stockData = prices.slice(0, end).map(Number);
+            const indexData = indexPrice.slice(0, end).map(Number);
+            const pointFormat = (
+                '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}</br> <b>{point.y} EUR</b> ' +
+                '({point.change:.2f}%)<br/>'
+            );
+            const makeSeries = (name, data) => ({
+                name,
+                showInLegend: true,
+                data: toPointData(xData, data),
+                compare: 'percent',
+                compareStart: true,
+                tooltip: {
+                    pointFormat,
+                    valueDecimals: 2
+                }
+            });
+            overlay.classList.add('open');
+            popupChart = Highcharts.stockChart('spark-popup-chart', {
+                chart: {
+                    events: {
+                        load: function () {
+                            const [stockSeries, indexSeries] = this.series;
+                            let popupVisible = visibleCount;
+                            popupInterval = setInterval(function () {
+                                popupVisible = popupVisible + 1;
+                                const end = Math.min(
+                                    popupVisible,
+                                    maxSeriesLength
+                                );
+                                const nextStockY = prices[end - 1];
+                                const nextIndexY = indexPrice[end - 1];
+                                const nextX = dates[end - 1];
+
+                                if (popupVisible >= maxSeriesLength) {
+                                    clearInterval(popupInterval);
+                                    popupInterval = null;
+                                    return;
+                                }
+                                stockSeries.addPoint(
+                                    [nextX, nextStockY],
+                                    true,
+                                    false
+                                );
+                                indexSeries.addPoint(
+                                    [nextX, nextIndexY],
+                                    true,
+                                    false
+                                );
+                            }, ANIMATION_SPEED);
+                        }
+                    }
+                },
+                rangeSelector: {
+                    buttons: RANGE_BUTTONS
+                },
+                title: {
+                    text: stock.ticker + ' vs. ' + marketIndex.ticker
+                },
+                yAxis: {
+                    labels: {
+                        format: '{text}%'
+                    }
+                },
+                legend: { enabled: true },
+                series: [
+                    makeSeries(stock.ticker, stockData),
+                    makeSeries(marketIndex.ticker, indexData)
+                ]
+            });
+        };
 
         const grid = Grid.grid('container', {
             data: { dataTable: gridData },
@@ -337,7 +414,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             overlay.classList.remove('open');
             clearInterval(popupInterval);
             popupInterval = null;
-            popupChart.destroy();
+            popupChart?.destroy();
         };
 
         overlay.addEventListener('click', e => {
@@ -349,80 +426,6 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             .getElementById('spark-popup-close')
             .addEventListener('click', closePopup);
 
-        const openStockChart = function (stock, rowIndex, visibleCount) {
-            const prices = cachedPrices[rowIndex];
-            const { end } = getVisibleWindow(prices.length, visibleCount);
-            const xData = dates.slice(0, end);
-            const stockData = prices.slice(0, end).map(Number);
-            const indexData = indexPrice.slice(0, end).map(Number);
-            const pointFormat = (
-                '<span style="color:{point.color}">\u25CF</span> ' +
-                '{series.name}</br> <b>{point.y} EUR</b> ' +
-                '({point.change:.2f}%)<br/>'
-            );
-            const makeSeries = (name, data) => ({
-                name,
-                showInLegend: true,
-                data: toPointData(xData, data),
-                compare: 'percent',
-                compareStart: true,
-                tooltip: {
-                    pointFormat,
-                    valueDecimals: 2
-                }
-            });
-            overlay.classList.add('open');
-            popupChart = Highcharts.stockChart('spark-popup-chart', {
-                chart: {
-                    events: {
-                        load: function () {
-                            const [stockSeries, indexSeries] = this.series;
-                            let popupVisible = visibleCount;
-                            popupInterval = setInterval(function () {
-                                popupVisible = popupVisible + 1;
-                                const end = Math.min(
-                                    popupVisible,
-                                    maxSeriesLength
-                                );
-                                const nextStockY = prices[end - 1];
-                                const nextIndexY = indexPrice[end - 1];
-                                const nextX = dates[end - 1];
-
-                                if (popupVisible >= maxSeriesLength) {
-                                    clearInterval(popupInterval);
-                                    popupInterval = null;
-                                    return;
-                                }
-                                stockSeries.addPoint(
-                                    [nextX, nextStockY],
-                                    true,
-                                    false
-                                );
-                                indexSeries.addPoint(
-                                    [nextX, nextIndexY],
-                                    true,
-                                    false
-                                );
-                            }, ANIMATION_SPEED);
-                        }
-                    }
-                },
-                rangeSelector: {
-                    buttons: RANGE_BUTTONS
-                },
-                title: { text: stock.ticker + ' vs. ' + marketIndex.ticker },
-                yAxis: {
-                    labels: {
-                        format: '{text}%'
-                    }
-                },
-                legend: { enabled: true },
-                series: [
-                    makeSeries(stock.ticker, stockData),
-                    makeSeries(marketIndex.ticker, indexData)
-                ]
-            });
-        };
     } catch (err) {
         document.getElementById('container').textContent = (
             'Failed to load data: ' + err.message
