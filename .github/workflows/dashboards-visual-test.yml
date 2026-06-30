@@ -127,12 +127,21 @@ jobs:
           config-file: test/cypress/dashboards/visual.config.mjs
           install: false
 
+      - name: Checkout trusted comment helper
+        uses: actions/checkout@v6
+        with:
+          ref: master
+          path: trusted-highcharts
+          sparse-checkout: |
+            .github/scripts/commentOnPR.js
+          sparse-checkout-cone-mode: false
+
       - name: Comment on PR
         uses: actions/github-script@v8
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./trusted-highcharts/.github/scripts/commentOnPR');
             const { readFile } = require('node:fs/promises')
 
             const jsonFile = await readFile('./highcharts/tmp/dashboards-visual-results.json')
@@ -173,4 +182,3 @@ jobs:
             cypress/screenshots
             cypress/snapshots
             test/cypress/dashboards/cypress/snapshots/base
-
