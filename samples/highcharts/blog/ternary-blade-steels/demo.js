@@ -248,13 +248,15 @@ function updateChart() {
 function initFilter() {
     // "All steels" reset button — already in the HTML
     const allBtn = document.querySelector('[data-preset="all"]');
-    allBtn.addEventListener('click', () => {
-        activeNames = new Set(allSteelNames);
-        updateChips();
-        updatePresetStates();
-        updateDescription();
-        updateChart();
-    });
+    if (allBtn) {
+        allBtn.addEventListener('click', () => {
+            activeNames = new Set(allSteelNames);
+            updateChips();
+            updatePresetStates();
+            updateDescription();
+            updateChart();
+        });
+    }
 
     // One button per family
     steelGroups.forEach((group, gi) => {
