@@ -261,8 +261,10 @@ function initFilter() {
     // One button per family
     steelGroups.forEach((group, gi) => {
         const btn = document.getElementById(`preset-btn--${groupKeys[gi]}`);
+        if (!btn) {
+            return;
+        }
         btn.addEventListener('click', () => {
-            const familyNames = new Set(group.steels.map(s => s.name));
             const alreadyIsolated = activeNames.size === familyNames.size &&
                 [...familyNames].every(n => activeNames.has(n));
 
