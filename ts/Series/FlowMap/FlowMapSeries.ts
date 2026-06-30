@@ -973,8 +973,15 @@ export default FlowMapSeries;
  * @sample {highmaps} maps/series-flowmap/flight-routes
  *         Highmaps basic flight routes demo
  *
- * @type      {string|Highcharts.LonLatArray|Highcharts.MapLonLatObject}
+ * @declare   Highcharts.MapLonLatObject
+ * @type      {string|Highcharts.LonLatArray|*}
  * @apioption series.flowmap.data.from
+ *//**
+ * @type      {number}
+ * @apioption series.flowmap.data.from.lat
+ *//**
+ * @type      {number}
+ * @apioption series.flowmap.data.from.lon
  */
 
 /**

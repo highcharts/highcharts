@@ -497,16 +497,3 @@ SeriesRegistry.registerSeriesType('flags', FlagsSeries);
  * */
 
 export default FlagsSeries;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * Possible shapes for points of FlagsSeries.
- * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
- */
-
-''; // Keep doclets above

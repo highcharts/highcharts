@@ -382,19 +382,3 @@ export type MapDataType = Array<MapPointOptions>|GeoJSON|TopoJSON|string;
  * */
 
 export default GeoJSON;
-
-/**
- * A latitude/longitude object.
- *
- * @interface Highcharts.MapLonLatObject
- *//**
- * The latitude.
- * @name Highcharts.MapLonLatObject#lat
- * @type {number}
- *//**
- * The longitude.
- * @name Highcharts.MapLonLatObject#lon
- * @type {number}
- */
-
-''; // Keeps doclets above
