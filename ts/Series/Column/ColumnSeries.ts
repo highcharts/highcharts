@@ -347,12 +347,21 @@ class ColumnSeries extends Series {
         width: number,
         height: number
     ): BBoxObject {
+        // Restore the pre-crisp-refactor formula (#23585). The crisp() utility
+        // uses Math.round(v - 0.5) + 0.5, which shifts sub-pixel bars by 1px
+        // compared to the old Math.round(v) + yCrisp approach. That shift is
+        // benign for large bars but critical for sub-pixel stacked bars: the
+        // old formula gave height=0 for every such bar (keeping labelranks
+        // equal so overlap-hiding is consistent), whereas the new formula
+        // gives height=1 for whichever bar crosses the rounding boundary —
+        // a boundary that falls on a different series in column vs bar mode
+        // because plotHeight ≠ plotWidth.
         const borderWidth = this.borderWidth,
-            inverted = this.chart.inverted,
-            bottom = crisp(y + height, borderWidth, inverted);
+            yCrisp = (borderWidth || 0) % 2 ? 0.5 : 0,
+            bottom = Math.round(y + height) + yCrisp;
 
         // Vertical
-        y = crisp(y, borderWidth, inverted);
+        y = Math.round(y) + yCrisp;
         height = bottom - y;
 
         // Horizontal. We need to first compute the exact right edge, then
