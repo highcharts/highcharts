@@ -62,3 +62,15 @@ body {
     padding: 8px 16px;
     margin: 2em 10px 1em;
 }
+
+button {
+    appearance: none;
+    padding: 0.4em 0.75em;
+    font-family: inherit;
+    font-size: 0.9em;
+    color: var(--highcharts-neutral-color-100);
+    background-color: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-20, #ccc);
+    border-radius: 4px;
+    cursor: pointer;
+}
