@@ -275,6 +275,92 @@
         );
     });
 
+    QUnit.test(
+        'Reset zoom button should appear after pinch ends (#22128)',
+        function (assert) {
+            var chart = Highcharts.chart('container', {
+                chart: {
+                    zooming: {
+                        type: 'x',
+                        pinchType: 'x'
+                    },
+                    panning: {
+                        enabled: true,
+                        type: 'x'
+                    },
+                    animation: false,
+                    width: 600
+                },
+                tooltip: {
+                    followTouchMove: false
+                },
+                series: [
+                    {
+                        animation: false,
+                        data: getData(),
+                        kdNow: true
+                    }
+                ]
+            });
+            var offset = Highcharts.offset(chart.container),
+                xAxis = chart.xAxis[0],
+                initialMin = xAxis.min,
+                initialMax = xAxis.max,
+                movedTouches = [
+                    {
+                        pageX: 150 + offset.left,
+                        pageY: 80 + offset.top
+                    },
+                    {
+                        pageX: 350 + offset.left,
+                        pageY: 170 + offset.top
+                    }
+                ];
+
+            chart.pointer.onContainerTouchStart({
+                type: 'touchstart',
+                touches: [
+                    {
+                        pageX: 200 + offset.left,
+                        pageY: 100 + offset.top
+                    },
+                    {
+                        pageX: 300 + offset.left,
+                        pageY: 150 + offset.top
+                    }
+                ],
+                preventDefault: function () {}
+            });
+
+            chart.pointer.onContainerTouchMove({
+                type: 'touchmove',
+                touches: movedTouches,
+                preventDefault: function () {}
+            });
+
+            assert.strictEqual(
+                chart.resetZoomButton,
+                void 0,
+                'Reset zoom button should not appear during pinch.'
+            );
+
+            chart.pointer.onDocumentTouchEnd({
+                type: 'touchend',
+                touches: movedTouches
+            });
+
+            assert.notEqual(
+                [xAxis.min, xAxis.max].toString(),
+                [initialMin, initialMax].toString(),
+                'The chart should be zoomed after pinch.'
+            );
+            assert.ok(
+                chart.resetZoomButton,
+                'Reset zoom button should appear after pinch ends.'
+            );
+        }
+    );
+
     QUnit.test('pinchType is on, zoomType is off (#5840)', function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
