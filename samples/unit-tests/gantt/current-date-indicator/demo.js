@@ -68,7 +68,7 @@
     QUnit.test('Value', function (assert) {
         var chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],
-            cdi = axis.plotLinesAndBands[0],
+            cdi = axis.plotLines[0],
             wait = 1, // Comparing milliseconds, so 1 millisecond is enough
             oldValue,
             newValue,
@@ -108,7 +108,7 @@
         };
         var chart = Highcharts.chart('container', config),
             axis = chart.xAxis[0],
-            cdi = axis.plotLinesAndBands[0],
+            cdi = axis.plotLines[0],
             wait = 1,
             oldLabelText,
             newLabelText,
@@ -149,7 +149,7 @@
             customFormat,
             chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],
-            cdi = axis.plotLinesAndBands[0];
+            cdi = axis.plotLines[0];
 
         assert.ok(
             formatRegex.test(cdi.label.textStr),
@@ -177,7 +177,7 @@
         );
 
         axis = chart.xAxis[0];
-        cdi = axis.plotLinesAndBands[0];
+        cdi = axis.plotLines[0];
 
         assert.ok(
             formatRegex.test(cdi.label.textStr),
@@ -213,7 +213,7 @@
 
         chart = Highcharts.chart('container', defaultConfig);
         axis = chart.xAxis[0];
-        cdi = axis.plotLinesAndBands[0];
+        cdi = axis.plotLines[0];
 
         assert.ok(
             formatRegex.test(cdi.label.textStr),
@@ -247,7 +247,7 @@
         );
 
         axis = chart.xAxis[0];
-        cdi = axis.plotLinesAndBands[0];
+        cdi = axis.plotLines[0];
 
         assert.ok(
             formatRegex.test(cdi.label.textStr),
@@ -257,7 +257,7 @@
 
     QUnit.test('#14166: Per-chart time options', function (assert) {
         var chart = Highcharts.chart('container', defaultConfig);
-        var t0 = Date.parse(chart.xAxis[0].plotLinesAndBands[0].label.textStr);
+        var t0 = Date.parse(chart.xAxis[0].plotLines[0].label.textStr);
 
         chart = Highcharts.chart(
             'container',
@@ -267,7 +267,7 @@
                 }
             })
         );
-        var t1 = Date.parse(chart.xAxis[0].plotLinesAndBands[0].label.textStr);
+        var t1 = Date.parse(chart.xAxis[0].plotLines[0].label.textStr);
 
         assert.ok(t1 - t0 >= 300000, 'Per-chart time options work');
     });

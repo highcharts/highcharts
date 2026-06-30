@@ -19,12 +19,18 @@
  * */
 
 import type Axis from '../Axis';
+import type { DeepPartial } from '../../../Shared/Types';
 import type PlotBandOptions from './PlotBandOptions';
 import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
-import { erase, extend, isNumber } from '../../../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    isNumber,
+    splat
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -84,14 +90,12 @@ namespace PlotLineOrBandAxis {
          * The plotBand or plotLine configuration object.
          */
         addPlotBandOrLine(
-            options: PlotBandOptions,
-            coll?: 'plotBands'
-        ): (PlotLineOrBand|undefined);
+            options: PlotBandOptions
+        ): (PlotLineOrBand);
         /** @internal */
         addPlotBandOrLine(
-            options: PlotLineOptions,
-            coll?: 'plotLines'
-        ): (PlotLineOrBand|undefined);
+            options: PlotLineOptions
+        ): (PlotLineOrBand);
 
         /**
          * Add a plot line after render time.
@@ -192,28 +196,6 @@ namespace PlotLineOrBandAxis {
      * */
 
     /**
-     * Add a plot band after render time.
-     *
-     * @sample highcharts/members/axis-addplotband/
-     *         Toggle the plot band from a button
-     *
-     * @function Highcharts.Axis#addPlotBand
-     *
-     * @param {Highcharts.AxisPlotBandsOptions} options
-     * A configuration object for the plot band, as defined in
-     * [xAxis.plotBands](https://api.highcharts.com/highcharts/xAxis.plotBands).
-     *
-     * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot band, or `undefined` if the options are not valid.
-     */
-    function addPlotBand(
-        this: Composition,
-        options: PlotBandOptions
-    ): (PlotLineOrBand|undefined) {
-        return this.addPlotBandOrLine(options, 'plotBands');
-    }
-
-    /**
      * Add a plot band or plot line after render time. Called from
      * addPlotBand and addPlotLine internally.
      *
@@ -224,69 +206,26 @@ namespace PlotLineOrBandAxis {
      */
     function addPlotBandOrLine<T extends PlotBandOptions|PlotLineOptions>(
         this: Composition,
-        options: T,
-        coll?: (
-            T extends PlotBandOptions ?
-                'plotBands' :
-                'plotLines'
-        )
-    ): (PlotLineOrBand|undefined) {
-        const userOptions = this.userOptions;
+        options: T
+    ): PlotLineOrBand {
 
-        let obj: (PlotLineOrBand|undefined) = new PlotLineOrBandClass(
-            this,
-            options
-        );
+        const plotItem = new PlotLineOrBandClass(this, options),
+            coll = plotItem.coll;
 
         if (this.visible) {
-            obj = obj.render();
+            plotItem.render();
         }
 
-        if (obj) { // #2189
-            if (!this._addedPlotLB) {
-                this._addedPlotLB = true;
-                (userOptions.plotLines || [])
-                    .concat((userOptions.plotBands as any) || [])
-                    .forEach(
-                        (plotLineOptions: any): void => {
-                            this.addPlotBandOrLine(plotLineOptions);
-                        }
-                    );
-            }
+        // Add it to the user options for exporting and Axis.update.
+        // Axis.options[coll] and Axis.userOptions[coll] are always the same
+        // object, because there are no default options for plot lines and plot
+        // bands.
+        this.options[coll] ||= this.userOptions[coll] = [];
+        this.options[coll].push(options);
 
-            // Add it to the user options for exporting and Axis.update
-            if (coll) {
-                // Workaround Microsoft/TypeScript issue #32693
-                const updatedOptions = (userOptions[coll] || []) as Array<T>;
-                updatedOptions.push(options);
-                userOptions[coll] = updatedOptions;
-            }
-            this.plotLinesAndBands.push(obj);
-        }
+        this[coll].push(plotItem);
 
-        return obj;
-    }
-
-    /**
-     * Add a plot line after render time.
-     *
-     * @sample highcharts/members/axis-addplotline/
-     *         Toggle the plot line from a button
-     *
-     * @function Highcharts.Axis#addPlotLine
-     *
-     * @param {Highcharts.AxisPlotLinesOptions} options
-     * A configuration object for the plot line, as defined in
-     * [xAxis.plotLines](https://api.highcharts.com/highcharts/xAxis.plotLines).
-     *
-     * @return {Highcharts.PlotLineOrBand|undefined}
-     * The added plot line, or `undefined` if the options are not valid.
-     */
-    function addPlotLine(
-        this: Composition,
-        options: PlotLineOptions
-    ): (PlotLineOrBand|undefined) {
-        return this.addPlotBandOrLine(options, 'plotLines');
+        return plotItem;
     }
 
     /** @internal */
@@ -300,13 +239,89 @@ namespace PlotLineOrBandAxis {
             PlotLineOrBandClass = PlotLineOrBandType;
 
             extend(axisProto, {
-                addPlotBand,
-                addPlotLine,
+                addPlotBand: addPlotBandOrLine,
+                addPlotLine: addPlotBandOrLine,
                 addPlotBandOrLine,
                 getPlotBandPath,
-                removePlotBand,
-                removePlotLine,
+                removePlotBand: removePlotBandOrLine,
+                removePlotLine: removePlotBandOrLine,
                 removePlotBandOrLine
+            });
+
+            addEvent(AxisClass, 'afterInit', function (): void {
+
+                // First time only, not on Axis.update()
+                if (!this.plotBands) {
+
+                    // Placeholder for plotlines and plotbands groups
+                    this.plotLinesAndBandsGroups = {};
+
+                    // Plot lines and bands from options
+                    for (const coll of ['plotBands', 'plotLines'] as const) {
+                        this[coll] = [];
+                        for (
+                            const pOptions of splat(this.options[coll] || [])
+                        ) {
+                            this[coll].push(new PlotLineOrBandClass(
+                                this as Composition,
+                                pOptions
+                            ));
+                        }
+                    }
+                }
+            });
+
+            // Update plot bands and lines one to one
+            addEvent(AxisClass, 'update', function ({
+                options
+            }: { options: DeepPartial<Axis['options']> }): void {
+
+                for (const coll of ['plotBands', 'plotLines'] as const) {
+
+                    // Check if we have new options to process, otherwise do
+                    // nothing with existing plot lines and bands
+                    if (options[coll]) {
+
+                        const plotItems = this[coll];
+                        splat(options[coll]).forEach(
+                            (pOptions = {}, i): void => {
+                                // Match by id
+                                let pItem: PlotLineOrBand | undefined;
+                                if (pOptions?.id) {
+                                    pItem = plotItems.find(
+                                        (p): boolean => p.id === pOptions.id
+                                    );
+                                }
+
+                                // Match by index
+                                pItem ||= plotItems[i];
+
+                                // Update
+                                if (pItem) {
+                                    pItem.update(pOptions, false);
+
+                                // Add
+                                } else {
+                                    pItem = (this as Composition)
+                                        .addPlotBandOrLine(
+                                            pOptions as PlotBandOptions
+                                        );
+                                }
+                                pItem.isActive = true;
+                            }
+                        );
+
+                        // Remove inactive items from end to start
+                        let i = plotItems.length;
+                        while (i--) {
+                            if (!plotItems[i].isActive) {
+                                plotItems[i].remove();
+                            } else {
+                                delete plotItems[i].isActive;
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -409,27 +424,6 @@ namespace PlotLineOrBandAxis {
     }
 
     /**
-     * Remove a plot band by its id.
-     *
-     * @sample highcharts/members/axis-removeplotband/
-     *         Remove plot band by id
-     * @sample highcharts/members/axis-addplotband/
-     *         Toggle the plot band from a button
-     *
-     * @function Highcharts.Axis#removePlotBand
-     *
-     * @param {string} id
-     *        The plot band's `id` as given in the original configuration
-     *        object or in the `addPlotBand` option.
-     */
-    function removePlotBand(
-        this: Composition,
-        id: string
-    ): void {
-        this.removePlotBandOrLine(id);
-    }
-
-    /**
      * Remove a plot band or plot line from the chart by id. Called
      * internally from `removePlotBand` and `removePlotLine`.
      * @internal
@@ -439,52 +433,9 @@ namespace PlotLineOrBandAxis {
         this: Composition,
         id: string
     ): void {
-        const plotLinesAndBands = this.plotLinesAndBands,
-            options = this.options,
-            userOptions = this.userOptions;
-
-        if (plotLinesAndBands) { // #15639
-            let i = plotLinesAndBands.length;
-            while (i--) {
-                if (plotLinesAndBands[i].id === id) {
-                    plotLinesAndBands[i].destroy();
-                }
-            }
-            ([
-                options.plotLines || [],
-                userOptions.plotLines || [],
-                options.plotBands || [],
-                userOptions.plotBands || []
-            ]).forEach(function (arr): void {
-                i = arr.length;
-                while (i--) {
-                    if (arr[i]?.id === id) {
-                        erase(arr, arr[i]);
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * Remove a plot line by its id.
-     *
-     * @sample highcharts/xaxis/plotlines-id/
-     *         Remove plot line by id
-     * @sample highcharts/members/axis-addplotline/
-     *         Toggle the plot line from a button
-     *
-     * @function Highcharts.Axis#removePlotLine
-     *
-     * @param {string} id
-     *        The plot line's `id` as given in the original configuration
-     *        object or in the `addPlotLine` option.
-     */
-    function removePlotLine(
-        this: Composition,
-        id: string
-    ): void {
-        this.removePlotBandOrLine(id);
+        [...this.plotBands || [], ...this.plotLines || []].find(
+            (plotItem): boolean => plotItem.id === id
+        )?.remove();
     }
 
 }
