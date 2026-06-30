@@ -239,8 +239,9 @@ const chart = Highcharts.chart('container', {
 // ---- Update chart when activeNames changes ----
 function updateChart() {
     chart.series.forEach((s, gi) => {
-        s.setData(activeData(gi), true, false);
+        s.setData(activeData(gi), false, false);
     });
+    chart.redraw(false);
 }
 
 // ---- Filter UI ----
