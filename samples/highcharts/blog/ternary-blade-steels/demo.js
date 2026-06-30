@@ -169,8 +169,7 @@ const chart = Highcharts.chart('container', {
         }
     },
     subtitle: {
-        text: `Common bladesmithing steels mapped by their alloying 
-        elements`
+        text: 'Common bladesmithing steels mapped by their alloying elements'
     },
     credits: { enabled: false },
     legend: { enabled: false },
