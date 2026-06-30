@@ -284,6 +284,9 @@ function initFilter() {
         group.steels.forEach(steel => {
             // eslint-disable-next-line max-len
             const chip = document.getElementById(`chip-${steel.name.replace(/\s+/g, '-')}`);
+            if (!chip) {
+                return;
+            }
 
             chip.addEventListener('click', () => {
                 if (activeNames.has(steel.name)) {
