@@ -130,8 +130,8 @@ function getRowData(stock, prices, visibleCount) {
                 const previousPrice = prices[visibleCount - days - 1];
                 const value =
                     hasValue(currentPrice) &&
-                    hasValue(previousPrice)
-                        ? Number(
+                    hasValue(previousPrice) ?
+                        Number(
                             (
                                 (currentPrice - previousPrice) /
                                 previousPrice *
