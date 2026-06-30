@@ -138,8 +138,38 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
             const { readFileSync } = require('node:fs')
+
+            async function createOrUpdateComment(github, context, title, body) {
+              const { data: comments } = await github.rest.issues.listComments({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo
+              });
+
+              const normalizedTitle = title.split('-')[0].trim();
+              const commentToUpdate = comments.find(comment =>
+                (comment.body || '').startsWith('## ' + normalizedTitle)
+              );
+              const commentBody = '## ' + title + '\n' + body;
+
+              if (commentToUpdate) {
+                await github.rest.issues.updateComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: commentToUpdate.id,
+                  body: commentBody
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: commentBody
+                });
+              }
+            }
 
             const markdown = readFileSync('./highcharts/tmp/lighthousetable.md');
 
