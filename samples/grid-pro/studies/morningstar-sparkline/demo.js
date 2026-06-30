@@ -34,7 +34,7 @@ const getHoldings = [...stockCollection, marketIndex].map(({ ISIN }) => ({
 
 const ANIMATION_SPEED = 1000;
 const WINDOW_SIZE = 31;
-const START_DATE = '2023-06-01';
+const START_DATE = '2023-01-01';
 const END_DATE = '2023-12-31';
 const CHANGE_COLUMNS = [
     { id: 'oneDayChange', label: '1 Day', days: 1 },
@@ -62,11 +62,15 @@ const dateFormatter = new Intl.DateTimeFormat('en', {
     month: 'short',
     year: 'numeric'
 });
-const hasValue = value => value != null;
+const hasValue = value => value !== null;
 const toPointData = (xData, yData) => xData.map((x, i) => [x, yData[i]]);
 const getPrices = (table, stock) => (
     table.getColumn(stock.SecID) || []
 ).map(Number);
+const toSpark = (col, count) => {
+    const { start, end } = getVisibleWindow(col.length, count);
+    return col.slice(start, end).map(Number).join(', ');
+};
 const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
     ...commonOptions,
     series: { type: 'Price' },
@@ -85,8 +89,8 @@ function getVisibleWindow(dataLength, visibleCount) {
 function getDateRangeLabel(dates, visibleCount) {
     const { start, end } = getVisibleWindow(dates.length, visibleCount);
     return (
-        `${dateFormatter.format(new Date(dates[start]))} - `
-        + dateFormatter.format(new Date(dates[end - 1]))
+        `${dateFormatter.format(new Date(dates[start]))} - ` +
+        dateFormatter.format(new Date(dates[end - 1]))
     );
 }
 
@@ -101,13 +105,20 @@ function updatePriceEvolutionHeader(dates, visibleCount) {
 function formatDelta(value) {
     const formattedValue = Math.abs(value).toFixed(2);
     if (value > 0) {
-        return `<span style='color: #4caf50;'>${formattedValue}% &uarr;</span>`;
+        return (
+            `<span style='color: #4caf50;'>${formattedValue}% ` +
+            '&uarr;</span>'
+        );
     }
     if (value < 0) {
-        return `<span style='color: #f44336;'>${formattedValue}% &#8595;</span>`;
+        return (
+            `<span style='color: #f44336;'>${formattedValue}% ` +
+            '&#8595;</span>'
+        );
     }
     return `<span>${formattedValue}%</span>`;
 }
+
 function getRowData(stock, prices, visibleCount) {
     const currentPrice = prices[visibleCount - 1];
 
@@ -130,13 +141,10 @@ function getRowData(stock, prices, visibleCount) {
     };
 }
 
-const toSpark = (col, count) => {
-    const { start, end } = getVisibleWindow(col.length, count);
-    return col.slice(start, end).map(Number).join(', ');
-};
 if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     document.body.classList.add('touch-device');
 }
+
 (async () => {
     try {
         await connector.load();
@@ -165,8 +173,10 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             format: 'Company'
         }, {
             columnId: 'priceEvolution',
-            format: 'Price Evolution<span class="price-evolution-header-date">'
-                    + getDateRangeLabel(dates, visibleCount) + '</span>'
+            format: (
+                'Price Evolution<span class="price-evolution-header-date">' +
+                getDateRangeLabel(dates, visibleCount) + '</span>'
+            )
         },
         ...CHANGE_COLUMNS.map(({ id, label }) => ({
             columnId: id,
@@ -283,7 +293,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             }
         });
 
-        async function refreshGrid() {
+        const refreshGrid = async function () {
             visibleCount = Math.min(visibleCount + 1, maxSeriesLength);
             stockCollection.forEach((stock, rowIndex) => {
                 const rowData = getRowData(
@@ -309,7 +319,8 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                 row.loadData();
                 row.cells.forEach(cell => cell.setValue());
             });
-        }
+        };
+
         const gridInterval = setInterval(async () => {
             if (visibleCount >= maxSeriesLength) {
                 clearInterval(gridInterval);
@@ -322,12 +333,13 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
         let popupChart = null;
         let popupInterval = null;
 
-        function closePopup() {
+        const closePopup = function () {
             overlay.classList.remove('open');
             clearInterval(popupInterval);
             popupInterval = null;
             popupChart.destroy();
-        }
+        };
+
         overlay.addEventListener('click', e => {
             if (e.target === overlay) {
                 closePopup();
@@ -337,16 +349,16 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             .getElementById('spark-popup-close')
             .addEventListener('click', closePopup);
 
-        function openStockChart(stock, rowIndex, visibleCount) {
+        const openStockChart = function (stock, rowIndex, visibleCount) {
             const prices = cachedPrices[rowIndex];
-            const { end } = getVisibleWindow(prices.length, visibleCount); 
+            const { end } = getVisibleWindow(prices.length, visibleCount);
             const xData = dates.slice(0, end);
             const stockData = prices.slice(0, end).map(Number);
             const indexData = indexPrice.slice(0, end).map(Number);
             const pointFormat = (
-                '<span style="color:{point.color}">\u25CF</span> '
-                + '{series.name}</br> <b>{point.y} EUR</b> '
-                + '({point.change:.2f}%)<br/>'
+                '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}</br> <b>{point.y} EUR</b> ' +
+                '({point.change:.2f}%)<br/>'
             );
             const makeSeries = (name, data) => ({
                 name,
@@ -381,8 +393,16 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                                     popupInterval = null;
                                     return;
                                 }
-                                stockSeries.addPoint([nextX, nextStockY], true, false);
-                                indexSeries.addPoint([nextX, nextIndexY], true, false);
+                                stockSeries.addPoint(
+                                    [nextX, nextStockY],
+                                    true,
+                                    false
+                                );
+                                indexSeries.addPoint(
+                                    [nextX, nextIndexY],
+                                    true,
+                                    false
+                                );
                             }, ANIMATION_SPEED);
                         }
                     }
@@ -402,7 +422,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                     makeSeries(marketIndex.ticker, indexData)
                 ]
             });
-        }
+        };
     } catch (err) {
         document.getElementById('container').textContent = (
             'Failed to load data: ' + err.message
