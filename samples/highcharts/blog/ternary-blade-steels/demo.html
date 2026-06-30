@@ -1,0 +1,41 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highcharts-ternary-plot@2.0.1/js/ternary-plot.js"></script>
+
+<div class="chart-wrap">
+    <div id="container"></div>
+    <div id="steel-filter">
+        <div class="filter-presets">
+            <span class="filter-label">Filter</span>
+            <button class="button active" data-preset="all">All steels</button>
+            <button class="button" id="preset-btn--carbon" data-preset="carbon">Simple</button>
+            <button class="button" id="preset-btn--spring" data-preset="spring">Spring</button>
+            <button class="button" id="preset-btn--tool" data-preset="tool">Tool</button>
+            <button class="button" id="preset-btn--stainless" data-preset="stainless">Stainless</button>
+            <button class="button" id="preset-btn--pm" data-preset="pm">High-performance</button>
+        </div>
+        <div class="filters">
+            <p class="filter-description" id="description">Choose a steel family above to see what bladesmiths actually use it for, and why its metallurgic composition is suited to that particular job.</p>
+            <div class="steel-chips">
+                <button class="button active" id="chip-1084" data-name="1084" data-family="0">1084</button>
+                <button class="button active" id="chip-1095" data-name="1095" data-family="0">1095</button>
+                <button class="button active" id="chip-W2" data-name="W2" data-family="0">W2</button>
+                <button class="button active" id="chip-52100" data-name="52100" data-family="1">52100</button>
+                <button class="button active" id="chip-5160" data-name="5160" data-family="1">5160</button>
+                <button class="button active" id="chip-O1" data-name="O1" data-family="2">O1</button>
+                <button class="button active" id="chip-D2" data-name="D2" data-family="2">D2</button>
+                <button class="button active" id="chip-A2" data-name="A2" data-family="2">A2</button>
+                <button class="button active" id="chip-M4" data-name="M4" data-family="2">M4</button>
+                <button class="button active" id="chip-440C" data-name="440C" data-family="3">440C</button>
+                <button class="button active" id="chip-AEB-L" data-name="AEB-L" data-family="3">AEB-L</button>
+                <button class="button active" id="chip-14C28N" data-name="14C28N" data-family="3">14C28N</button>
+                <button class="button active" id="chip-N690" data-name="N690" data-family="3">N690</button>
+                <button class="button active" id="chip-154CM" data-name="154CM" data-family="3">154CM</button>
+                <button class="button active" id="chip-CPM-3V" data-name="CPM-3V" data-family="4">CPM-3V</button>
+                <button class="button active" id="chip-S30V" data-name="S30V" data-family="4">S30V</button>
+                <button class="button active" id="chip-S35VN" data-name="S35VN" data-family="4">S35VN</button>
+                <button class="button active" id="chip-Elmax" data-name="Elmax" data-family="4">Elmax</button>
+                <button class="button active" id="chip-CruForge-V" data-name="CruForge V" data-family="4">CruForge V</button>
+            </div>
+        </div>
+    </div>
+</div>
