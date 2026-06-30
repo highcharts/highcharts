@@ -189,3 +189,190 @@ test.describe('exporting/inline-fonts', () => {
         ]);
     });
 });
+
+test('networkgraph export should include node data labels', async ({ page }) => {
+    const chart = await createChart(
+        page,
+        {
+            chart: {
+                width: 600,
+                height: 400,
+                animation: false
+            },
+            title: {
+                text: ''
+            },
+            plotOptions: {
+                series: {
+                    animation: false
+                }
+            },
+            series: [{
+                type: 'networkgraph',
+                keys: ['from', 'to'],
+                dataLabels: {
+                    enabled: true,
+                    defer: true,
+                    animation: {
+                        defer: 1000
+                    }
+                },
+                layoutAlgorithm: {
+                    enableSimulation: true
+                },
+                data: [
+                    ['Alpha', 'Beta'],
+                    ['Alpha', 'Gamma']
+                ]
+            }]
+        },
+        {
+            modules: [
+                'modules/exporting.js',
+                'modules/networkgraph.js'
+            ],
+            applyTestOptions: false
+        }
+    );
+
+    const svg = await chart.evaluate(async c =>
+        await c.exporting.getSVGForExport());
+
+    expect(
+        svg.includes('Alpha') &&
+        svg.includes('Beta') &&
+        svg.includes('Gamma'),
+        'Exported SVG should contain node data labels'
+    ).toBe(true);
+});
+
+test('networkgraph local export should work with custom nodes from afterSetOptions', async ({ page }) => {
+    await page.setContent('<div id="container" style="width: 600px; height: 400px"></div>');
+    await page.addScriptTag({
+        url: 'https://code.highcharts.com/highcharts.js'
+    });
+    await page.addScriptTag({
+        url: 'https://code.highcharts.com/modules/exporting.js'
+    });
+    await page.addScriptTag({
+        url: 'https://code.highcharts.com/modules/networkgraph.js'
+    });
+
+    const result = await page.evaluate(async () => {
+        const Highcharts = window.Highcharts;
+
+        Highcharts.addEvent(
+            Highcharts.Series,
+            'afterSetOptions',
+            function (e) {
+                const colors = Highcharts.getOptions().colors,
+                    nodes = {};
+
+                let i = 0;
+
+                if (
+                    this instanceof Highcharts.Series.types.networkgraph &&
+                    e.options.id === 'lang-tree'
+                ) {
+                    e.options.data.forEach(function (link) {
+                        if (link[0] === 'Proto Indo-European') {
+                            nodes['Proto Indo-European'] = {
+                                id: 'Proto Indo-European',
+                                marker: {
+                                    radius: 20
+                                }
+                            };
+                            nodes[link[1]] = {
+                                id: link[1],
+                                marker: {
+                                    radius: 10
+                                },
+                                color: colors[i++]
+                            };
+                        } else if (nodes[link[0]] && nodes[link[0]].color) {
+                            nodes[link[1]] = {
+                                id: link[1],
+                                color: nodes[link[0]].color
+                            };
+                        }
+                    });
+
+                    e.options.nodes = Object.keys(nodes).map(function (id) {
+                        return nodes[id];
+                    });
+                }
+            }
+        );
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'networkgraph',
+                height: '100%'
+            },
+            title: {
+                text: 'The Indo-European Language Tree'
+            },
+            plotOptions: {
+                networkgraph: {
+                    keys: ['from', 'to'],
+                    layoutAlgorithm: {
+                        maxIterations: 72,
+                        enableSimulation: true,
+                        friction: -0.9,
+                        gravitationalConstant: 0.06
+                    }
+                }
+            },
+            series: [{
+                type: 'networkgraph',
+                dataLabels: {
+                    enabled: true,
+                    linkFormat: '',
+                    style: {
+                        fontSize: '0.8em',
+                        fontWeight: 'normal'
+                    }
+                },
+                id: 'lang-tree',
+                data: [
+                    ['Proto Indo-European', 'Balto-Slavic'],
+                    ['Proto Indo-European', 'Germanic'],
+                    ['Proto Indo-European', 'Celtic'],
+                    ['Germanic', 'North Germanic'],
+                    ['Germanic', 'West Germanic'],
+                    ['North Germanic', 'Old Norse'],
+                    ['West Germanic', 'Old English']
+                ]
+            }]
+        });
+
+        let callbackError: string | null = null,
+            thrownError: string | null = null;
+
+        try {
+            await chart.exporting.exportChart({
+                type: 'image/png',
+                fallbackToExportServer: false,
+                error: function (_options, err) {
+                    callbackError = err?.message || 'unknown';
+                }
+            });
+        } catch (err) {
+            thrownError = (err as Error).message;
+        }
+
+        return {
+            callbackError,
+            thrownError
+        };
+    });
+
+    expect(
+        result.callbackError,
+        'Local export should not trigger exporting.error'
+    ).toBeNull();
+    expect(
+        result.thrownError,
+        'Local export should not throw'
+    ).toBeNull();
+});
