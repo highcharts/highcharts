@@ -42,7 +42,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding step, boostThreshold, boostBlending
  *
- * @excluding dataParser, dataURL, stack, step, boostThreshold, boostBlending
+ * @excluding stack, step, boostThreshold, boostBlending
  *
  * @since 2.3.0
  *

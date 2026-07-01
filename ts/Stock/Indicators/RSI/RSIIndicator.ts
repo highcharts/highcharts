@@ -259,7 +259,6 @@ export default RSIIndicator;
  * @extends   series,plotOptions.rsi
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/rsi
  * @apioption series.rsi

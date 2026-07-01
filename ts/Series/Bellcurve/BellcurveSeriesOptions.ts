@@ -59,7 +59,7 @@ import type BellcurvePointOptions from './BellcurvePointOptions';
  * @excluding boostThreshold, connectNulls, dragDrop, stacking, pointInterval,
  *            pointIntervalUnit
  *
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  *
  * @requires modules/histogram-bellcurve
  */

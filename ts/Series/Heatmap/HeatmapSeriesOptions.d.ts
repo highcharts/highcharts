@@ -71,7 +71,7 @@ declare module '../../Core/Series/StatesOptions' {
  *            pointRange, pointStart, shadow, softThreshold, stacking,
  *            step, threshold, cluster, dragDrop
  *
- * @excluding cropThreshold, dataParser, dataURL, dragDrop ,pointRange, stack,
+ * @excluding cropThreshold, dragDrop ,pointRange, stack,
  *
  * @product highcharts highmaps
  */

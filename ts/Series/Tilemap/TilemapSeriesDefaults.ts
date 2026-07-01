@@ -137,7 +137,7 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.tilemap
- * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
+ * @excluding allAreas, joinBy, mapData, marker,
  *            pointRange, shadow, stack, dataSorting, boostThreshold,
  *            boostBlending
  * @product   highcharts highmaps

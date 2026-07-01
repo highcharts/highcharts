@@ -288,8 +288,8 @@ export interface SankeySeriesNodeOptions {
  *            zones, minPointLength, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
+ *            borderRadius, borderWidth, crisp, cropThreshold,
+ *            depth, dragDrop, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,

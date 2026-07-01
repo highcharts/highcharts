@@ -42,8 +42,6 @@ import type {
  *
  * @product highmaps
  *
- * @excluding dataParser, dataURL
- *
  * @excluding borderColor, borderWidth, legendSymbolColor
  *
  * @type {number}

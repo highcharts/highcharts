@@ -44,7 +44,7 @@ import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
  *
  * @excluding step, boostThreshold, boostBlending
  *
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
+ * @excluding step, boostThreshold, boostBlending
  *
  * @product highcharts highstock
  *

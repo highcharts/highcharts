@@ -763,7 +763,7 @@ export default GeoHeatmapSeries;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.geoheatmap
- * @excluding allAreas, dataParser, dataURL, dragDrop, findNearestPointBy,
+ * @excluding allAreas, dragDrop, findNearestPointBy,
  *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
  *            stickyTracking
  * @product   highmaps

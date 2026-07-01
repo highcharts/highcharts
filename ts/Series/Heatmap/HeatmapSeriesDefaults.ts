@@ -353,7 +353,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  * @productdesc {highcharts}
  *
  * @extends   series,plotOptions.heatmap
- * @excluding cropThreshold, dataParser, dataURL, dragDrop ,pointRange, stack,
+ * @excluding cropThreshold, dragDrop ,pointRange, stack,
  * @product   highcharts highmaps
  * @requires  modules/heatmap
  * @apioption series.heatmap

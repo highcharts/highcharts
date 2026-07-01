@@ -174,7 +174,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.funnel
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostBlending, boostThreshold
  * @product   highcharts
  * @requires  modules/funnel

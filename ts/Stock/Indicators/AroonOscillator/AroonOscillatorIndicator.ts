@@ -188,8 +188,8 @@ export default AroonOscillatorIndicator;
  * @extends   series,plotOptions.aroonoscillator
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, aroonDown, colorAxis, compare, compareBase, dataParser,
- *            dataURL, joinBy, keys, navigatorOptions, pointInterval,
+ * @excluding allAreas, aroonDown, colorAxis, compare, compareBase,
+ *            joinBy, keys, navigatorOptions, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking
  * @requires  stock/indicators/indicators

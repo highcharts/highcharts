@@ -613,9 +613,9 @@ export default PictorialSeries;
  * @extends   series,plotOptions.pictorial
  * @since 11.0.0
  * @product   highcharts
- * @excluding dataParser, borderRadius, boostBlending, boostThreshold,
+ * @excluding borderRadius, boostBlending, boostThreshold,
  *            borderColor, borderWidth, centerInCategory, connectEnds,
- *            connectNulls, crisp, colorKey, dataURL, dataAsColumns, depth,
+ *            connectNulls, crisp, colorKey, dataAsColumns, depth,
  *            dragDrop, edgeColor, edgeWidth, linecap, lineWidth,  marker,
  *            dataSorting, dashStyle, onPoint, relativeXValue, shadow, zoneAxis,
  *            zones

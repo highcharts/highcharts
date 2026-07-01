@@ -50,7 +50,7 @@ import type VariablePiePointOptions from './VariablePiePointOptions';
  *
  * @excluding dragDrop
  *
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostThreshold, boostBlending
  *
  * @since 6.0.0

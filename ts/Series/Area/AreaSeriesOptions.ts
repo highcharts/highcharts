@@ -47,13 +47,9 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding useOhlcData
  *
- * @excluding dataParser, dataURL, useOhlcData
+ * @excluding useOhlcData
  *
  * @product highcharts highstock
- *
- * @optionparent plotOptions.area
- *
- * @optionparent series.area
  */
 export interface AreaSeriesOptions extends LineSeriesOptions {
 

@@ -52,7 +52,7 @@ import { BoxPlotSeriesTooltipOptions } from '../BoxPlot/BoxPlotSeriesOptions';
  *
  * @excluding borderRadius, boostBlending, boostThreshold
  *
- * @excluding dataParser, dataURL, stack, stacking, boostThreshold,
+ * @excluding stack, stacking, boostThreshold,
  *            boostBlending
  *
  * @product highcharts

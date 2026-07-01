@@ -232,7 +232,6 @@ export default CMOIndicator;
  * @extends   series,plotOptions.cmo
  * @since 9.1.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/cmo
  * @apioption series.cmo
