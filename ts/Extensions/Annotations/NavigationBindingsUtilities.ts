@@ -157,7 +157,7 @@ function getFieldType(
  * */
 
 /** @internal */
-const NavigationBindingUtilities = {
+const NavigationBindingsUtilities = {
     annotationsFieldsTypes,
     getAssignedAxis,
     getAxisFromOptions,
@@ -165,4 +165,4 @@ const NavigationBindingUtilities = {
 };
 
 /** @internal */
-export default NavigationBindingUtilities;
+export default NavigationBindingsUtilities;
