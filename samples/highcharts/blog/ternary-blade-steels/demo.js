@@ -156,7 +156,7 @@ function seriesOptions(gi) {
 // ---- Chart ----
 const chart = Highcharts.chart('container', {
     chart: {
-        ternary: { sumTo: 100 },
+        ternary: true,
         backgroundColor: 'transparent',
         margin: [60, 40, 60, 40]
     },
