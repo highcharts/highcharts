@@ -1,22 +1,36 @@
+.theme-custom,
+#spark-popup {
+    color-scheme: light dark;
+}
+
 .theme-custom {
+    --hcg-color: light-dark(#111111, #f5f5f5);
+    --hcg-background: light-dark(#ffffff, #141414);
     --hcg-border-width: 1px;
-    --hcg-border-style: solid;
-    --hcg-border-color: #d6d6d6;
+    --hcg-border-color: light-dark(#d6d6d6, #3f3f3f);
     --hcg-border-radius: 8px;
     --hcg-column-border-width: 0;
     --hcg-row-border-width: 1px;
-
     --hcg-padding: 8px;
-    --hcg-header-vertical-padding: 8px;
-
-    --hcg-row-even-background: #ececec;
-    --hcg-row-hover-background: #808080;
+    --hcg-row-even-background: light-dark(#ececec, #202020);
+    --hcg-row-hover-background: light-dark(#808080, #4f4f4f);
     --hcg-hover-opacity: 18%;
-    --hcg-cell-hover-opacity: 60%;
+    --highcharts-background-color: light-dark(#ffffff, #141414);
+    --highcharts-neutral-color-100: light-dark(#000000, #ffffff);
 }
+
+.highcharts-light :is(.theme-custom, #spark-popup) {
+    color-scheme: light;
+}
+
+.highcharts-dark :is(.theme-custom, #spark-popup) {
+    color-scheme: dark;
+}
+
 .theme-custom td.stockSparklines {
     cursor: pointer;
 }
+
 .touch-device td.stockSparklines .highcharts-container {
     pointer-events: none;
 }
@@ -26,6 +40,7 @@
     text-align: center;
     white-space: normal;
 }
+
 .theme-custom .price-evolution-header-date {
     display: block;
     font-size: 0.85em;
@@ -68,28 +83,34 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     align-items: center;
     justify-content: center;
 }
+
 #spark-popup-overlay.open {
     display: flex;
 }
+
 #spark-popup {
-    background: #fefeff;
+    --highcharts-background-color: light-dark(#ffffff, #141414);
+    --highcharts-neutral-color-100: light-dark(#000000, #ffffff);
+    background: light-dark(#fefeff, #1b1d22);
     border-radius: 8px;
+    color: light-dark(#040404, #f5f5f5);
     padding: 24px;
     width: 90vw;
     max-height: 90vw;
     position: relative;
 }
+
 #spark-popup-close {
     position: absolute;
     top: 6px;
     right: 6px;
     cursor: pointer;
-    color: #040404;
+    color: inherit;
     font-size: 24px;
     background: none;
     border: none;
