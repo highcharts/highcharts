@@ -82,9 +82,8 @@ export function compose(
         return;
     }
 
-    const hasProFeatures = product === 'pro';
     const update = function (this: Grid): void {
-        updateCapabilities.call(this, hasProFeatures);
+        updateCapabilities.call(this, product === 'pro');
     };
 
     addEvent(GridClass, 'beforeLoad', update);
@@ -116,11 +115,12 @@ function updateCapabilities(this: Grid, hasProFeatures: boolean): void {
         remoteOperations: 'n/a',
         key: 'n/a'
     });
-    const options = this.options;
-    const columnPolicy = this.columnPolicy;
-    const columnDefaults = options?.columnDefaults;
-    const rendering = options?.rendering;
-    const dataOptions = options?.data;
+    const { options, columnPolicy } = this;
+    const {
+        columnDefaults,
+        rendering,
+        data: dataOptions
+    } = options || {};
     const columnIds = columnPolicy.getColumnIds();
     const sortingDefaultsEnabled =
         columnDefaults?.sorting?.enabled !== false;
