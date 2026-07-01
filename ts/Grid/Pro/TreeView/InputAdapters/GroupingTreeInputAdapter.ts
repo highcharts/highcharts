@@ -77,45 +77,10 @@ export function buildIndexFromColumns(
     input: NormalizedTreeInputGroupingOptions,
     idColumn?: string
 ): TreeIndexBuildResult {
+    validateInput(table, input);
+
     const { columns } = table;
-    const { groupBy, groupColumn } = input;
-
-    if (!groupBy.length) {
-        throw new Error(
-            'TreeView: `data.treeView.input.groupBy` must not be empty.'
-        );
-    }
-
-    if (!groupColumn) {
-        throw new Error(
-            'TreeView: `data.treeView.input.groupColumn` must not be empty.'
-        );
-    }
-
-    const groupBySet = new Set(groupBy);
-    if (groupBySet.size !== groupBy.length) {
-        throw new Error(
-            'TreeView: `data.treeView.input.groupBy` must not contain ' +
-            'duplicate column IDs.'
-        );
-    }
-
-    for (let i = 0, iEnd = groupBy.length; i < iEnd; ++i) {
-        const groupByColumn = groupBy[i];
-        if (!columns[groupByColumn]) {
-            throw new Error(
-                `TreeView: groupBy column "${groupByColumn}" not found.`
-            );
-        }
-    }
-
-    if (columns[groupColumn] && !groupBySet.has(groupColumn)) {
-        throw new Error(
-            `TreeView: groupColumn "${groupColumn}" conflicts with an ` +
-            'existing source column.'
-        );
-    }
-
+    const { groupBy } = input;
     const rowCount = table.getRowCount();
     const nodes = new Map<RowId, TreeNodeRecord>();
     const rowOrder: RowId[] = [];
@@ -224,6 +189,59 @@ export function buildIndexFromColumns(
         nodes,
         rowOrder
     };
+}
+
+/**
+ * Validates grouping tree input options against the source table.
+ *
+ * @param table
+ * Source table.
+ *
+ * @param input
+ * Normalized grouping tree input options.
+ */
+function validateInput(
+    table: DataTable,
+    input: NormalizedTreeInputGroupingOptions
+): void {
+    const { columns } = table;
+    const { groupBy, groupColumn } = input;
+
+    if (!groupBy.length) {
+        throw new Error(
+            'TreeView: `data.treeView.input.groupBy` must not be empty.'
+        );
+    }
+
+    if (!groupColumn) {
+        throw new Error(
+            'TreeView: `data.treeView.input.groupColumn` must not be empty.'
+        );
+    }
+
+    const groupBySet = new Set(groupBy);
+    if (groupBySet.size !== groupBy.length) {
+        throw new Error(
+            'TreeView: `data.treeView.input.groupBy` must not contain ' +
+            'duplicate column IDs.'
+        );
+    }
+
+    for (let i = 0, iEnd = groupBy.length; i < iEnd; ++i) {
+        const groupByColumn = groupBy[i];
+        if (!columns[groupByColumn]) {
+            throw new Error(
+                `TreeView: groupBy column "${groupByColumn}" not found.`
+            );
+        }
+    }
+
+    if (columns[groupColumn] && !groupBySet.has(groupColumn)) {
+        throw new Error(
+            `TreeView: groupColumn "${groupColumn}" conflicts with an ` +
+            'existing source column.'
+        );
+    }
 }
 
 /**

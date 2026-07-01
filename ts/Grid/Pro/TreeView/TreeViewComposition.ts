@@ -36,6 +36,9 @@ import type {
     TreeViewOptions
 } from './TreeViewTypes';
 import type {
+    NormalizedTreeInputOptions
+} from './TreeViewOptionsNormalizer';
+import type {
     AfterTreeRowToggleEvent,
     BeforeTreeRowToggleEvent
 } from './Projection/TreeProjectionController';
@@ -282,6 +285,33 @@ function onCellGetEditability(
 }
 
 /**
+ * Returns whether a mutation of the source column affects TreeView structure.
+ *
+ * @param input
+ * Resolved TreeView input options.
+ *
+ * @param sourceColumnId
+ * Source column ID that has changed.
+ */
+function isTreeStructureMutation(
+    input: NormalizedTreeInputOptions | undefined,
+    sourceColumnId: string
+): boolean {
+    if (!input) {
+        return false;
+    }
+
+    switch (input.type) {
+        case 'path':
+            return sourceColumnId === input.pathColumn;
+        case 'parentId':
+            return sourceColumnId === input.parentIdColumn;
+        case 'grouping':
+            return input.groupBy.indexOf(sourceColumnId) !== -1;
+    }
+}
+
+/**
  * Requests a full row refresh when a TreeView aggregate source changes.
  *
  * @param e
@@ -292,20 +322,9 @@ function onCellAfterDataMutation(
     e: TableCellAfterDataMutationEvent
 ): void {
     const controller = this.row.viewport.grid.treeView;
-    const input = controller?.options?.input;
-    const mutatesTreeStructure = !!(
-        input && (
-            (
-                input.type === 'path' &&
-                e.sourceColumnId === input.pathColumn
-            ) || (
-                input.type === 'parentId' &&
-                e.sourceColumnId === input.parentIdColumn
-            ) || (
-                input.type === 'grouping' &&
-                input.groupBy.indexOf(e.sourceColumnId) !== -1
-            )
-        )
+    const mutatesTreeStructure = isTreeStructureMutation(
+        controller?.options?.input,
+        e.sourceColumnId
     );
 
     if (
