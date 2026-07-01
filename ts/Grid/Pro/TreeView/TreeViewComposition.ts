@@ -36,6 +36,9 @@ import type {
     TreeViewOptions
 } from './TreeViewTypes';
 import type {
+    NormalizedTreeInputOptions
+} from './TreeViewOptionsNormalizer';
+import type {
     AfterTreeRowToggleEvent,
     BeforeTreeRowToggleEvent
 } from './Projection/TreeProjectionController';
@@ -232,9 +235,14 @@ function onProjectPresentationTable(
 
     try {
         controller.sync();
+        this.columnPolicy.setHiddenSourceColumnIds(
+            controller.getHiddenSourceColumnIds()
+        );
         TreeViewValidation.syncTreePathValidationRules(this);
         e.table = controller.projectTable(e.table);
+        this.columnPolicy.setAvailableSourceColumnIds(e.table.getColumnIds());
     } catch (error) {
+        this.columnPolicy.setHiddenSourceColumnIds();
         // eslint-disable-next-line no-console
         console.error((error as { message?: string }).message || error);
     }
@@ -277,6 +285,33 @@ function onCellGetEditability(
 }
 
 /**
+ * Returns whether a mutation of the source column affects TreeView structure.
+ *
+ * @param input
+ * Resolved TreeView input options.
+ *
+ * @param sourceColumnId
+ * Source column ID that has changed.
+ */
+function isTreeStructureMutation(
+    input: NormalizedTreeInputOptions | undefined,
+    sourceColumnId: string
+): boolean {
+    if (!input) {
+        return false;
+    }
+
+    switch (input.type) {
+        case 'path':
+            return sourceColumnId === input.pathColumn;
+        case 'parentId':
+            return sourceColumnId === input.parentIdColumn;
+        case 'grouping':
+            return input.groupBy.indexOf(sourceColumnId) !== -1;
+    }
+}
+
+/**
  * Requests a full row refresh when a TreeView aggregate source changes.
  *
  * @param e
@@ -287,17 +322,9 @@ function onCellAfterDataMutation(
     e: TableCellAfterDataMutationEvent
 ): void {
     const controller = this.row.viewport.grid.treeView;
-    const input = controller?.options?.input;
-    const mutatesTreeStructure = !!(
-        input && (
-            (
-                input.type === 'path' &&
-                e.sourceColumnId === input.pathColumn
-            ) || (
-                input.type === 'parentId' &&
-                e.sourceColumnId === input.parentIdColumn
-            )
-        )
+    const mutatesTreeStructure = isTreeStructureMutation(
+        controller?.options?.input,
+        e.sourceColumnId
     );
 
     if (
@@ -460,6 +487,7 @@ declare module '../../Core/Data/LocalDataProvider' {
          *
          * @sample grid-pro/tree-view/parent-id Parent ID tree input
          * @sample grid-pro/tree-view/input-path Path tree input
+         * @sample grid-pro/tree-view/row-grouping Row grouping
          */
         treeView?: TreeViewOptions;
     }
