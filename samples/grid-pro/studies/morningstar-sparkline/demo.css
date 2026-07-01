@@ -4,8 +4,8 @@
 }
 
 .theme-custom {
-    --hcg-color: light-dark(#111111, #f5f5f5);
-    --hcg-background: light-dark(#ffffff, #141414);
+    --hcg-color: light-dark(#111, #f5f5f5);
+    --hcg-background: light-dark(#fff, #141414);
     --hcg-border-width: 1px;
     --hcg-border-color: light-dark(#d6d6d6, #3f3f3f);
     --hcg-border-radius: 8px;
@@ -15,8 +15,8 @@
     --hcg-row-even-background: light-dark(#ececec, #202020);
     --hcg-row-hover-background: light-dark(#808080, #4f4f4f);
     --hcg-hover-opacity: 18%;
-    --highcharts-background-color: light-dark(#ffffff, #141414);
-    --highcharts-neutral-color-100: light-dark(#000000, #ffffff);
+    --highcharts-background-color: light-dark(#fff, #141414);
+    --highcharts-neutral-color-100: light-dark(#000, #fff);
 }
 
 .highcharts-light :is(.theme-custom, #spark-popup) {
@@ -94,8 +94,9 @@
 }
 
 #spark-popup {
-    --highcharts-background-color: light-dark(#ffffff, #141414);
-    --highcharts-neutral-color-100: light-dark(#000000, #ffffff);
+    --highcharts-background-color: light-dark(#fff, #141414);
+    --highcharts-neutral-color-100: light-dark(#000, #fff);
+
     background: light-dark(#fefeff, #1b1d22);
     border-radius: 8px;
     color: light-dark(#040404, #f5f5f5);
