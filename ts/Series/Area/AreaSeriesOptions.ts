@@ -47,8 +47,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding useOhlcData
  *
- * @excluding useOhlcData
- *
  * @product highcharts highstock
  */
 export interface AreaSeriesOptions extends LineSeriesOptions {

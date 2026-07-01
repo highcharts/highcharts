@@ -44,13 +44,7 @@ import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
  *
  * @excluding step, boostThreshold, boostBlending
  *
- * @excluding step, boostThreshold, boostBlending
- *
  * @product highcharts highstock
- *
- * @optionparent plotOptions.areaspline
- *
- * @optionparent series.areaspline
  */
 export interface AreaSplineSeriesOptions extends AreaSeriesOptions {
     states?: SeriesStatesOptions<AreaSplineSeriesOptions>;
