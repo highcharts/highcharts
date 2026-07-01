@@ -18,7 +18,6 @@
  * */
 
 import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
-import type DerivedComposition from '../DerivedComposition';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ColorType from '../../Core/Color/ColorType';
@@ -56,14 +55,12 @@ import type BellcurvePointOptions from './BellcurvePointOptions';
  *
  * @product highcharts
  *
- * @excluding boostThreshold, connectNulls, dragDrop, stacking, pointInterval,
- *            pointIntervalUnit
- *
- * @excluding boostThreshold, boostBlending
+ * @excluding boostBlending, boostThreshold, connectNulls, dragDrop, stacking,
+ *            pointInterval, pointIntervalUnit
  *
  * @requires modules/histogram-bellcurve
  */
-export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, DerivedComposition.SeriesOptions {
+export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions {
 
     /**
      * An integer identifying the index to use for the base series, or a string

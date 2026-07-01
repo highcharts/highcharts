@@ -56,17 +56,15 @@ namespace DerivedComposition {
         eventRemovers: Array<Function>;
         hasDerivedData?: boolean;
         initialised?: boolean;
-        options: SeriesOptions;
+        options: Series['options'] & {
+            baseSeries?: (number|string);
+        };
         addBaseSeriesEvents(): void;
         addEvents(): void;
         destroy(keepEventsForUpdate?: boolean): void;
         init(chart: Chart, userOptions: DeepPartial<CoreSeriesOptions>): void;
         setBaseSeries(): void;
         setDerivedData(): void;
-    }
-
-    export interface SeriesOptions extends CoreSeriesOptions {
-        baseSeries?: (number|string);
     }
 
     /* *
