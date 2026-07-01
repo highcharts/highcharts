@@ -252,7 +252,7 @@ let datasets;
 let clusterIds;
 
 // Redraw chart based on the selected dataset and clustering algorithm.
-function udc() {
+function updateChart() {
     let dataset;
     const d = Number(document.getElementById('datasetSelector').value);
     switch (d) {
@@ -298,5 +298,5 @@ fetch('https://www.highcharts.com/samples/data/cluster-data.json')
             [pathkmeansId, pathdbScanId, pathHierId]
         ];
 
-        udc();
+        updateChart();
     });
