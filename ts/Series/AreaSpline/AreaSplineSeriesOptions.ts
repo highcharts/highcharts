@@ -29,7 +29,7 @@ import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
  * The area spline series is an area series where the graph between the points
  * is smoothed into a spline.
  *
- * A `areaspline` series. If the [type](#series.areaspline.type) option is not
+ * An `areaspline` series. If the [type](#series.areaspline.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @sample {highcharts} highcharts/demo/areaspline/
@@ -38,12 +38,7 @@ import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
  * @sample {highstock} stock/demo/areaspline/
  *         Area spline chart
  *
- * @extends plotOptions.area
- *
- * @extends series,plotOptions.areaspline
- *
  * @excluding step, boostThreshold, boostBlending
- *
  * @product highcharts highstock
  */
 export interface AreaSplineSeriesOptions extends AreaSeriesOptions {

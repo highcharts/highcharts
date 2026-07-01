@@ -36,16 +36,9 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @sample {highstock} stock/demo/areasplinerange/
  *         Area spline range
  *
- * @extends plotOptions.arearange
- *
- * @extends series,plotOptions.areasplinerange
- *
- * @excluding stack, step, boostThreshold, boostBlending
- *
+ * @excluding step, boostThreshold, boostBlending
  * @since 2.3.0
- *
  * @product highcharts highstock
- *
  * @requires highcharts-more
  */
 export interface AreaSplineRangeSeriesOptions extends AreaRangeSeriesOptions {

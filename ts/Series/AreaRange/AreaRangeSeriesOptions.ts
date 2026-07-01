@@ -94,6 +94,10 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
 /**
  * A `arearange` series. If the [type](#series.arearange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @excluding stack, stacking
+ * @product   highcharts highstock
+ * @requires  highcharts-more
  */
 export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
 
