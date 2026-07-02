@@ -788,5 +788,45 @@
         document.body.removeChild(div);
     });
 
+    QUnit.test('RelativeLength', function (assert) {
+        const relativeLength = Highcharts.relativeLength;
+
+        assert.strictEqual(
+            relativeLength(42, 100),
+            42,
+            'Number input returns the number'
+        );
+        assert.strictEqual(
+            relativeLength('42', 100),
+            42,
+            'Numeric string returns the parsed number'
+        );
+        assert.strictEqual(
+            relativeLength('50%', 200),
+            100,
+            'Percentage resolves against base'
+        );
+        assert.strictEqual(
+            relativeLength('50%', 200, 10),
+            110,
+            'Percentage adds offset'
+        );
+
+        // CSS expressions resolved by the browser
+        const style = document.documentElement.style;
+        style.setProperty('--hc-test-gap', '12px');
+        assert.strictEqual(
+            relativeLength('var(--hc-test-gap)', 0),
+            12,
+            'CSS variable resolves to its pixel value'
+        );
+        assert.strictEqual(
+            relativeLength('calc(var(--hc-test-gap) * 3)', 0),
+            36,
+            'calc() with a CSS variable resolves correctly'
+        );
+        style.removeProperty('--hc-test-gap');
+    });
+
     console.timeEnd('Utils test time');
 }());
