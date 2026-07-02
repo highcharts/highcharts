@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
     Chart,
     Title,
@@ -8,11 +8,11 @@ import {
     Legend,
     PlotOptions,
     Tooltip
-} from "@highcharts/react";
-import { ScatterSeries } from "@highcharts/react/series/Scatter";
-import { Exporting } from "@highcharts/react/modules/Exporting";
-import { Accessibility } from "@highcharts/react/modules/Accessibility";
-import type { Athlete, SeriesData } from "./types";
+} from '@highcharts/react';
+import { ScatterSeries } from '@highcharts/react/series/Scatter';
+import { Exporting } from '@highcharts/react/modules/Exporting';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
+import type { Athlete, SeriesData } from './types';
 
 export default function Scatter() {
     const [seriesData, setSeriesData] = useState<SeriesData | null>(null);
@@ -20,7 +20,7 @@ export default function Scatter() {
     useEffect(() => {
         let cancelled = false;
 
-        fetch("https://www.highcharts.com/samples/data/olympic2012.json")
+        fetch('https://www.highcharts.com/samples/data/olympic2012.json')
             .then((res) => res.json() as Promise<Athlete[]>)
             .then((data) => {
                 if (cancelled) return;
@@ -32,14 +32,14 @@ export default function Scatter() {
                                 a.sport === sport &&
                                 a.weight > 0 &&
                                 a.height > 0 &&
-                                a.continent === "Europe"
+                                a.continent === 'Europe'
                         )
                         .map((a) => [a.weight, a.height]);
 
                 setSeriesData({
-                    triathlon: filterBySport("triathlon"),
-                    volleyball: filterBySport("volleyball"),
-                    basketball: filterBySport("basketball")
+                    triathlon: filterBySport('triathlon'),
+                    volleyball: filterBySport('volleyball'),
+                    basketball: filterBySport('basketball')
                 });
             })
             .catch(() => {
@@ -64,16 +64,16 @@ export default function Scatter() {
             options={{
                 chart: {
                     plotBorderColor:
-                        "var(--highcharts-neutral-color-10, #e6e6e6)",
+                        'var(--highcharts-neutral-color-10, #e6e6e6)',
                     plotBorderWidth: 1,
                     plotBorderRadius: 5,
                     zooming: {
-                        type: "xy"
+                        type: 'xy'
                     }
                 }
             }}
             containerProps={{
-                style: { maxWidth: "800px", height: "500px", margin: "auto" }
+                style: { maxWidth: '800px', height: '500px', margin: 'auto' }
             }}
         >
             <Exporting />
@@ -87,14 +87,14 @@ export default function Scatter() {
                 }
             </Subtitle>
             <XAxis
-                labels={{ format: "{value} kg" }}
+                labels={{ format: '{value} kg' }}
                 gridLineWidth={1}
                 lineWidth={0}
                 startOnTick={true}
                 endOnTick={true}
                 tickLength={0}
             />
-            <YAxis labels={{ format: "{value:.1f} m" }}>Height</YAxis>
+            <YAxis labels={{ format: '{value:.1f} m' }}>Height</YAxis>
             <Legend enabled={true} padding={0} />
             <PlotOptions
                 scatter={{
@@ -103,7 +103,7 @@ export default function Scatter() {
                             hover: {
                                 enabled: true,
                                 lineColor:
-                                    "var(--highcharts-neutral-color-60, #666)"
+                                    'var(--highcharts-neutral-color-60, #666)'
                             }
                         }
                     },
@@ -123,19 +123,19 @@ export default function Scatter() {
             <ScatterSeries
                 name="Triathlon"
                 id="triathlon"
-                options={{ marker: { symbol: "triangle" } }}
+                options={{ marker: { symbol: 'triangle' } }}
                 data={seriesData.triathlon}
             />
             <ScatterSeries
                 name="Volleyball"
                 id="volleyball"
-                options={{ marker: { symbol: "square" } }}
+                options={{ marker: { symbol: 'square' } }}
                 data={seriesData.volleyball}
             />
             <ScatterSeries
                 name="Basketball"
                 id="basketball"
-                options={{ marker: { symbol: "circle" } }}
+                options={{ marker: { symbol: 'circle' } }}
                 data={seriesData.basketball}
             />
         </Chart>

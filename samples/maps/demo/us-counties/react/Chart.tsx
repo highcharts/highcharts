@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { MapsChart } from "@highcharts/react/Maps";
+import React, { useEffect, useState } from 'react';
+import { MapsChart } from '@highcharts/react/Maps';
 import {
     Title,
     Subtitle,
     Legend,
     PlotOptions,
     Tooltip
-} from "@highcharts/react";
-import { MapSeries } from "@highcharts/react/series/Map";
-import { MapLineSeries } from "@highcharts/react/series/MapLine";
-import { Exporting } from "@highcharts/react/modules/Exporting";
-import { Accessibility } from "@highcharts/react/modules/Accessibility";
-import type { FetchedMapData, MapSeriesData } from "./types";
+} from '@highcharts/react';
+import { MapSeries } from '@highcharts/react/series/Map';
+import { MapLineSeries } from '@highcharts/react/series/MapLine';
+import { Exporting } from '@highcharts/react/modules/Exporting';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
+import type { FetchedMapData, MapSeriesData } from './types';
 
 const UsCounties = React.memo(function UsCounties() {
     const [mapData, setMapData] = useState<FetchedMapData | null>(null);
@@ -22,10 +22,10 @@ const UsCounties = React.memo(function UsCounties() {
 
         Promise.all([
             fetch(
-                "https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json"
+                'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json'
             ).then((response) => response.json() as Promise<FetchedMapData>),
             fetch(
-                "https://www.highcharts.com/samples/data/us-counties-unemployment.json"
+                'https://www.highcharts.com/samples/data/us-counties-unemployment.json'
             ).then((response) => response.json() as Promise<MapSeriesData>)
         ])
             .then(([fetchedMapData, fetchedData]) => {
@@ -34,11 +34,11 @@ const UsCounties = React.memo(function UsCounties() {
                 // Add state acronym for tooltip
                 fetchedMapData.objects.default.geometries.forEach((g) => {
                     const properties = g.properties;
-                    if (properties["hc-key"]) {
+                    if (properties['hc-key']) {
                         properties.name =
-                            (properties.name ?? "") +
-                            ", " +
-                            properties["hc-key"].substr(3, 2).toUpperCase();
+                            (properties.name ?? '') +
+                            ', ' +
+                            properties['hc-key'].substr(3, 2).toUpperCase();
                     }
                 });
 
@@ -58,8 +58,8 @@ const UsCounties = React.memo(function UsCounties() {
         <MapsChart
             options={{
                 chart: {
-                    map: mapData as unknown as import("highcharts").GeoJSON,
-                    height: "80%"
+                    map: mapData as unknown as import('highcharts').GeoJSON,
+                    height: '80%'
                 },
                 mapNavigation: {
                     enabled: true
@@ -69,30 +69,30 @@ const UsCounties = React.memo(function UsCounties() {
                     max: 26,
                     tickInterval: 5,
                     labels: {
-                        format: "{value}%"
+                        format: '{value}%'
                     },
                     startOnTick: false,
                     endOnTick: false,
-                    minColor: "#ebf1ff",
-                    maxColor: "#0048ff",
+                    minColor: '#ebf1ff',
+                    maxColor: '#0048ff',
                     // Dots for ticks, extended also by custom CSS
-                    tickColor: "#ffffff",
+                    tickColor: '#ffffff',
                     tickLength: 0.1,
                     tickWidth: 6,
                     gridLineWidth: 0,
                     marker: {
-                        symbol: "circle",
-                        color: "transparent",
-                        lineColor: "#fff",
+                        symbol: 'circle',
+                        color: 'transparent',
+                        lineColor: '#fff',
                         lineWidth: 3
                     }
                 }
             }}
             containerProps={{
                 style: {
-                    maxWidth: "800px",
-                    minWidth: "360px",
-                    margin: "0 auto"
+                    maxWidth: '800px',
+                    minWidth: '360px',
+                    margin: '0 auto'
                 }
             }}
         >
@@ -118,20 +118,20 @@ const UsCounties = React.memo(function UsCounties() {
             />
             <Tooltip>
                 <div data-hc-option="headerFormat">
-                    <b>{"{point.name}"}</b>
-                    <hr style={{ border: "0", borderTop: "1px solid #8884" }} />
+                    <b>{'{point.name}'}</b>
+                    <hr style={{ border: '0', borderTop: '1px solid #8884' }} />
                 </div>
                 <div data-hc-option="pointFormat">
-                    <span style={{ color: "{point.color}" }}>{"● "}</span>
+                    <span style={{ color: '{point.color}' }}>{'● '}</span>
                     <span
                         style={{
-                            paddingRight: "1em",
-                            color: "var(--highcharts-neutral-color-40)"
+                            paddingRight: '1em',
+                            color: 'var(--highcharts-neutral-color-40)'
                         }}
                     >
-                        {"{series.name}"}
+                        {'{series.name}'}
                     </span>
-                    <b>{"{point.value}"}</b>
+                    <b>{'{point.value}'}</b>
                 </div>
             </Tooltip>
             <Exporting />
@@ -140,12 +140,12 @@ const UsCounties = React.memo(function UsCounties() {
                 name="Unemployment rate"
                 options={
                     {
-                        joinBy: ["hc-key", "code"],
-                        tooltip: { valueSuffix: "%" },
+                        joinBy: ['hc-key', 'code'],
+                        tooltip: { valueSuffix: '%' },
                         borderWidth: 0.5,
                         shadow: false,
                         accessibility: { enabled: false }
-                    } as unknown as Parameters<typeof MapSeries>[0]["options"]
+                    } as unknown as Parameters<typeof MapSeries>[0]['options']
                 }
             />
             <MapLineSeries
@@ -158,7 +158,7 @@ const UsCounties = React.memo(function UsCounties() {
                         accessibility: { enabled: false }
                     } as unknown as Parameters<
                         typeof MapLineSeries
-                    >[0]["options"]
+                    >[0]['options']
                 }
             />
         </MapsChart>
