@@ -657,6 +657,16 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Circular layout should persist after a series update (#8218)'
     );
 
+    series.setData([['a', 'a', 5], ['a', 'b', 5], ['b', 'a', 5]]);
+    const aLinks = series.nodes
+        .find(node => node.id === 'a').linksFrom
+        .map(link => link.toNode.id + (link.isCircular ? '*' : ''));
+    assert.deepEqual(
+        aLinks,
+        ['b', 'a*'],
+        'Regular links should sort above circular ones in a node band (#8218)'
+    );
+
     series.update({
         data: [['A', 'B', 1], ['C', 'D', 9], ['E', 'F', 9]],
         nodes: [

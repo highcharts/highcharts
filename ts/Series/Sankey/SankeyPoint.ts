@@ -129,15 +129,17 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             fromNode;
 
         for (let i = 0; i < node.linksTo.length; i++) {
-            const point = node.linksTo[i];
+            const point = node.linksTo[i],
+                column = point.fromNode.column;
 
             if (
-                (point.fromNode.column as any) > fromColumn &&
+                defined(column) &&
+                column > fromColumn &&
                 point.fromNode !== node && // #16080
                 !point.isCircular
             ) {
                 fromNode = point.fromNode;
-                fromColumn = (fromNode.column as any);
+                fromColumn = column;
             }
         }
 
