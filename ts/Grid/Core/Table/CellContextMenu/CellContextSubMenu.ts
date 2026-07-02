@@ -21,9 +21,11 @@
  *
  * */
 
-import type TableCell from './TableCell';
+import type TableCell from '../Body/TableCell';
 import type { ContextMenu as ContextMenuType } from '../../UI/ContextMenu';
-import type { CellContextMenuDividerItemOptions } from '../../Options';
+import type {
+    CellContextMenuDividerItemOptions
+} from './CellContextMenuOptions';
 import type {
     ResolvedCellContextMenuItemOptions
 } from './CellContextMenuBuiltInActions';
