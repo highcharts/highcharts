@@ -302,7 +302,6 @@
         );
 
         const ohlcDataSeries = chart.addSeries({
-            type: 'line',
             useOhlcData: true,
             dataGrouping: {
                 approximation: () => [3, 5, 4, 2]
