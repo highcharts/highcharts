@@ -25,7 +25,7 @@ body {
 }
 
 #container {
-    height: 600px;
+    max-height: 600px;
 }
 
 #container tbody td.hcg-cell[data-column-id="weight"] {
