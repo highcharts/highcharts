@@ -405,6 +405,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * ```
      *
      * @type    {Highcharts.DataMappingOptionsObject}
+     * @sample highcharts/datatable/datamapping
+     *         Basic data mapping
+     * @sample highcharts/datatable/datamapping-dynamic
+     *         Data mapping with dynamic updates
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
      * @sample {highcharts} highcharts/datatable/nested-keys
@@ -414,6 +418,29 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since     13.0.0
      * @apioption plotOptions.series.dataMapping
+     */
+
+    /**
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the `DataTable`
+     * class. If a `DataTable` instance is passed, it will be used directly. If
+     * a configuration object is passed, a new `DataTable` instance will be
+     * created based on the provided configuration.
+     *
+     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *         Series with one data table each
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *         Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *         Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *         Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *         Series-level data table
+     *
+     * @since 13.0.0
+     * @apioption plotOptions.series.dataTable
      */
 
     /**
@@ -1356,6 +1383,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * `series.allowPointSelect` option to true.
              *
              * @declare Highcharts.PointStatesSelectOptionsObject
+             * @extends plotOptions.series.marker.states.hover
              */
             select: {
 
@@ -2188,6 +2216,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * A collection of options for different series states.
      *
+     * In addition to the options documented under each state, any option from
+     * the parent series type can be set, with exception of `data` and `states`.
+     *
      * @declare Highcharts.SeriesStatesOptionsObject
      */
     states: {
@@ -2378,6 +2409,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Disabled inactive state
          *
          * @declare Highcharts.SeriesStatesInactiveOptionsObject
+         * @extends plotOptions.series.states.hover
          */
         inactive: {
             /**

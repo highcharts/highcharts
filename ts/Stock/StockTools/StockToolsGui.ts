@@ -34,8 +34,8 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
-import getIcon from '../../Shared/BaseFormUtils';
-import StockToolsIcons from './StockToolsIcons';
+import getIcon from '../../Shared/BaseFormUtils.js';
+import StockToolsIcons from './StockToolsIcons.js';
 import { addEvent, getStyle, merge, pick } from '../../Shared/Utilities.js';
 
 /* *

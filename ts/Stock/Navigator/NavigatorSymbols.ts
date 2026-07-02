@@ -22,9 +22,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
-
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import rect from '../../Core/Renderer/SVG/Symbols.js';
 import { relativeLength } from '../../Shared/Utilities.js';
+
 /* *
  *
  *  Constants
@@ -45,7 +46,7 @@ function navigatorHandle(
     const halfWidth = options.width ? options.width / 2 : width,
         markerPosition = 1.5,
         r = relativeLength(
-            options.borderRadius || 0,
+            borderRadiusObject(options.borderRadius).radius,
             Math.min(halfWidth * 2, height)
         );
 

@@ -50,7 +50,7 @@ import { BoxPlotSeriesTooltipOptions } from '../BoxPlot/BoxPlotSeriesOptions';
  *
  * @extends series,plotOptions.errorbar
  *
- * @excluding boostBlending, boostThreshold
+ * @excluding borderRadius, boostBlending, boostThreshold
  *
  * @excluding dataParser, dataURL, stack, stacking, boostThreshold,
  *            boostBlending

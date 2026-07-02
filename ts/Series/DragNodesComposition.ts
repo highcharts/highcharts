@@ -29,7 +29,11 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { addEvent, pushUnique } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    isObject,
+    pushUnique
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -286,8 +290,9 @@ function redrawHalo(
     if (point && this.halo) {
         this.halo.attr({
             d: point.haloPath(
-                (this.options.states as any).hover.halo.size
-            ) as any
+                isObject(this.options.states?.hover?.halo) &&
+                this.options.states?.hover?.halo.size || 0
+            )
         });
     }
 }

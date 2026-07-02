@@ -151,7 +151,7 @@ class GanttSeries extends XRangeSeries {
      */
     public drawPoint(
         point: GanttPoint,
-        verb: string
+        verb: ('animate'|'attr')
     ): void {
         const series = this,
             seriesOpts = series.options,

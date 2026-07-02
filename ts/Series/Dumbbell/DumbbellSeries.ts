@@ -44,8 +44,8 @@ import { extend, merge, pick } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
         connectorWidthPlus?: number;
     }
 }
