@@ -366,7 +366,9 @@ const sidebars = {
                             'react/components/chart-elements/credits',
                             'react/components/chart-elements/legend',
                             'react/components/chart-elements/plot-options',
+                            'react/components/chart-elements/palette',
                             'react/components/chart-elements/tooltip',
+                            'react/components/chart-elements/data-table',
                             'react/components/chart-elements/x-axis',
                             'react/components/chart-elements/y-axis'
                         ],
