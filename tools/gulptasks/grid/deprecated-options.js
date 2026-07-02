@@ -94,13 +94,11 @@ function isGeneratedMetadataFile(filePath) {
  * True if the file can affect generated metadata.
  */
 function isMetadataInputFile(filePath) {
-    return (
-        (
-            filePath.startsWith(`${GRID_SOURCE_PATH}/`) &&
-            !isGeneratedMetadataFile(filePath)
-        ) ||
-        filePath === 'tools/api-docs/grid-deprecated-options.ts' ||
-        filePath === 'tools/api-docs/grid-options.ts'
+    return !isGeneratedMetadataFile(filePath) && METADATA_INPUT_PATHS.some(
+        inputPath => (
+            filePath === inputPath ||
+            filePath.startsWith(`${inputPath}/`)
+        )
     );
 }
 
@@ -272,7 +270,8 @@ async function generateDeprecatedOptions() {
     }
 
     await processLib.exec(
-        'npx ts-node tools/api-docs/grid-deprecated-options.ts --source "ts/Grid"'
+        'npx ts-node tools/api-docs/grid-deprecated-options.ts ' +
+        `--source "${GRID_SOURCE_PATH}"`
     );
 
     if (shouldStage) {
