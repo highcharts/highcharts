@@ -1,0 +1,742 @@
+{
+    "ts": {
+        "results": [
+            {
+                "symbol": "MICC",
+                "exchangeid": "149",
+                "type": "1",
+                "data": [
+                    {
+                        "Date Received (GMT)": "07-05-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "58009",
+                        "Open price": "14.785",
+                        "High price": "14.82",
+                        "Low price": "14.57",
+                        "Last price": "14.675"
+                    },
+                    {
+                        "Date Received (GMT)": "06-05-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "38878",
+                        "Open price": "15.45",
+                        "High price": "15.5",
+                        "Low price": "15.08",
+                        "Last price": "15.08"
+                    },
+                    {
+                        "Date Received (GMT)": "05-05-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "60734",
+                        "Open price": "14.665",
+                        "High price": "15.15",
+                        "Low price": "14.64",
+                        "Last price": "15.08"
+                    },
+                    {
+                        "Date Received (GMT)": "04-05-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "59521",
+                        "Open price": "15.36",
+                        "High price": "15.405",
+                        "Low price": "15.13",
+                        "Last price": "15.175"
+                    },
+                    {
+                        "Date Received (GMT)": "01-05-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "117124",
+                        "Open price": "14.58",
+                        "High price": "15.18",
+                        "Low price": "14.58",
+                        "Last price": "14.85"
+                    },
+                    {
+                        "Date Received (GMT)": "30-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "118487",
+                        "Open price": "14.2",
+                        "High price": "15.01",
+                        "Low price": "14.12",
+                        "Last price": "14.94"
+                    },
+                    {
+                        "Date Received (GMT)": "29-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "59891",
+                        "Open price": "13.05",
+                        "High price": "13.23",
+                        "Low price": "12.95",
+                        "Last price": "13.055"
+                    },
+                    {
+                        "Date Received (GMT)": "27-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "74281",
+                        "Open price": "13.24",
+                        "High price": "13.29",
+                        "Low price": "12.975",
+                        "Last price": "13.075"
+                    },
+                    {
+                        "Date Received (GMT)": "24-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "35701",
+                        "Open price": "13.2",
+                        "High price": "13.275",
+                        "Low price": "13.14",
+                        "Last price": "13.235"
+                    },
+                    {
+                        "Date Received (GMT)": "23-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "69627",
+                        "Open price": "13.235",
+                        "High price": "13.26",
+                        "Low price": "13.125",
+                        "Last price": "13.155"
+                    },
+                    {
+                        "Date Received (GMT)": "22-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "28800",
+                        "Open price": "13.36",
+                        "High price": "13.41",
+                        "Low price": "13.06",
+                        "Last price": "13.07"
+                    },
+                    {
+                        "Date Received (GMT)": "21-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "59966",
+                        "Open price": "13.77",
+                        "High price": "13.93",
+                        "Low price": "13.46",
+                        "Last price": "13.46"
+                    },
+                    {
+                        "Date Received (GMT)": "20-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "46420",
+                        "Open price": "14.28",
+                        "High price": "14.36",
+                        "Low price": "14.155",
+                        "Last price": "14.205"
+                    },
+                    {
+                        "Date Received (GMT)": "17-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "34990",
+                        "Open price": "14.47",
+                        "High price": "14.59",
+                        "Low price": "14.4",
+                        "Last price": "14.58"
+                    },
+                    {
+                        "Date Received (GMT)": "16-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "40862",
+                        "Open price": "14.165",
+                        "High price": "14.38",
+                        "Low price": "14.11",
+                        "Last price": "14.155"
+                    },
+                    {
+                        "Date Received (GMT)": "15-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "36775",
+                        "Open price": "14.17",
+                        "High price": "14.23",
+                        "Low price": "14.045",
+                        "Last price": "14.075"
+                    },
+                    {
+                        "Date Received (GMT)": "14-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "90561",
+                        "Open price": "14.22",
+                        "High price": "14.31",
+                        "Low price": "14.095",
+                        "Last price": "14.095"
+                    },
+                    {
+                        "Date Received (GMT)": "13-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "50683",
+                        "Open price": "13.98",
+                        "High price": "14.315",
+                        "Low price": "13.98",
+                        "Last price": "14.315"
+                    },
+                    {
+                        "Date Received (GMT)": "10-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "35406",
+                        "Open price": "14.51",
+                        "High price": "14.58",
+                        "Low price": "14.385",
+                        "Last price": "14.455"
+                    },
+                    {
+                        "Date Received (GMT)": "09-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "71393",
+                        "Open price": "14.41",
+                        "High price": "14.655",
+                        "Low price": "14.3",
+                        "Last price": "14.61"
+                    },
+                    {
+                        "Date Received (GMT)": "08-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "38691",
+                        "Open price": "14.635",
+                        "High price": "14.805",
+                        "Low price": "14.565",
+                        "Last price": "14.575"
+                    },
+                    {
+                        "Date Received (GMT)": "07-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "55244",
+                        "Open price": "14.36",
+                        "High price": "14.465",
+                        "Low price": "14.33",
+                        "Last price": "14.365"
+                    },
+                    {
+                        "Date Received (GMT)": "06-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "40638",
+                        "Open price": "14.32",
+                        "High price": "14.62",
+                        "Low price": "14.32",
+                        "Last price": "14.62"
+                    },
+                    {
+                        "Date Received (GMT)": "02-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "24113",
+                        "Open price": "14.31",
+                        "High price": "14.445",
+                        "Low price": "14.15",
+                        "Last price": "14.315"
+                    },
+                    {
+                        "Date Received (GMT)": "01-04-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "61475",
+                        "Open price": "14.555",
+                        "High price": "14.56",
+                        "Low price": "14.32",
+                        "Last price": "14.44"
+                    },
+                    {
+                        "Date Received (GMT)": "31-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "36659",
+                        "Open price": "14.7",
+                        "High price": "14.99",
+                        "Low price": "14.53",
+                        "Last price": "14.96"
+                    },
+                    {
+                        "Date Received (GMT)": "30-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "47277",
+                        "Open price": "14.84",
+                        "High price": "15",
+                        "Low price": "14.82",
+                        "Last price": "14.945"
+                    },
+                    {
+                        "Date Received (GMT)": "27-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "29930",
+                        "Open price": "14.6",
+                        "High price": "14.71",
+                        "Low price": "14.57",
+                        "Last price": "14.63"
+                    },
+                    {
+                        "Date Received (GMT)": "26-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "51817",
+                        "Open price": "14.82",
+                        "High price": "14.96",
+                        "Low price": "14.64",
+                        "Last price": "14.66"
+                    },
+                    {
+                        "Date Received (GMT)": "25-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "34693",
+                        "Open price": "14.59",
+                        "High price": "14.71",
+                        "Low price": "14.53",
+                        "Last price": "14.64"
+                    },
+                    {
+                        "Date Received (GMT)": "24-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "80462",
+                        "Open price": "14.56",
+                        "High price": "15.09",
+                        "Low price": "14.445",
+                        "Last price": "14.56"
+                    },
+                    {
+                        "Date Received (GMT)": "23-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "63725",
+                        "Open price": "14.86",
+                        "High price": "15.34",
+                        "Low price": "14.63",
+                        "Last price": "14.745"
+                    },
+                    {
+                        "Date Received (GMT)": "20-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "51295",
+                        "Open price": "15.02",
+                        "High price": "15.12",
+                        "Low price": "14.84",
+                        "Last price": "14.865"
+                    },
+                    {
+                        "Date Received (GMT)": "19-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "70932",
+                        "Open price": "15.22",
+                        "High price": "15.4",
+                        "Low price": "15.015",
+                        "Last price": "15.11"
+                    },
+                    {
+                        "Date Received (GMT)": "18-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "48153",
+                        "Open price": "15.52",
+                        "High price": "15.575",
+                        "Low price": "15.22",
+                        "Last price": "15.36"
+                    },
+                    {
+                        "Date Received (GMT)": "17-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "45078",
+                        "Open price": "15.72",
+                        "High price": "15.915",
+                        "Low price": "15.61",
+                        "Last price": "15.615"
+                    },
+                    {
+                        "Date Received (GMT)": "16-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "29215",
+                        "Open price": "15.48",
+                        "High price": "15.67",
+                        "Low price": "15.46",
+                        "Last price": "15.64"
+                    },
+                    {
+                        "Date Received (GMT)": "13-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "59133",
+                        "Open price": "15.66",
+                        "High price": "15.74",
+                        "Low price": "15.39",
+                        "Last price": "15.505"
+                    },
+                    {
+                        "Date Received (GMT)": "12-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "57903",
+                        "Open price": "15.38",
+                        "High price": "15.56",
+                        "Low price": "15.295",
+                        "Last price": "15.33"
+                    },
+                    {
+                        "Date Received (GMT)": "11-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "40499",
+                        "Open price": "15.51",
+                        "High price": "15.59",
+                        "Low price": "15.39",
+                        "Last price": "15.51"
+                    },
+                    {
+                        "Date Received (GMT)": "10-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "33789",
+                        "Open price": "15.16",
+                        "High price": "15.38",
+                        "Low price": "15.11",
+                        "Last price": "15.309"
+                    },
+                    {
+                        "Date Received (GMT)": "09-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "43827",
+                        "Open price": "15",
+                        "High price": "15.29",
+                        "Low price": "14.955",
+                        "Last price": "15.273"
+                    },
+                    {
+                        "Date Received (GMT)": "06-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "24087",
+                        "Open price": "15.13",
+                        "High price": "15.31",
+                        "Low price": "15.07",
+                        "Last price": "15.29"
+                    },
+                    {
+                        "Date Received (GMT)": "05-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "25662",
+                        "Open price": "15.2",
+                        "High price": "15.29",
+                        "Low price": "15.125",
+                        "Last price": "15.227"
+                    },
+                    {
+                        "Date Received (GMT)": "04-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "32549",
+                        "Open price": "15.41",
+                        "High price": "15.51",
+                        "Low price": "15.35",
+                        "Last price": "15.48"
+                    },
+                    {
+                        "Date Received (GMT)": "03-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "68850",
+                        "Open price": "14.98",
+                        "High price": "15.155",
+                        "Low price": "14.9",
+                        "Last price": "15.12"
+                    },
+                    {
+                        "Date Received (GMT)": "02-03-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "36109",
+                        "Open price": "15.54",
+                        "High price": "15.62",
+                        "Low price": "15.32",
+                        "Last price": "15.44"
+                    },
+                    {
+                        "Date Received (GMT)": "27-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "37480",
+                        "Open price": "15.89",
+                        "High price": "15.92",
+                        "Low price": "15.75",
+                        "Last price": "15.87"
+                    },
+                    {
+                        "Date Received (GMT)": "26-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "94962",
+                        "Open price": "15.8",
+                        "High price": "16.28",
+                        "Low price": "15.8",
+                        "Last price": "16.17"
+                    },
+                    {
+                        "Date Received (GMT)": "25-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "24721",
+                        "Open price": "16.23",
+                        "High price": "16.29",
+                        "Low price": "16.06",
+                        "Last price": "16.1"
+                    },
+                    {
+                        "Date Received (GMT)": "24-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "58104",
+                        "Open price": "15.95",
+                        "High price": "16.42",
+                        "Low price": "15.95",
+                        "Last price": "16.42"
+                    },
+                    {
+                        "Date Received (GMT)": "23-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "64508",
+                        "Open price": "16",
+                        "High price": "16.01",
+                        "Low price": "15.76",
+                        "Last price": "15.77"
+                    },
+                    {
+                        "Date Received (GMT)": "19-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "104342",
+                        "Open price": "15.9",
+                        "High price": "16.55",
+                        "Low price": "15.89",
+                        "Last price": "16.43"
+                    },
+                    {
+                        "Date Received (GMT)": "18-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "36817",
+                        "Open price": "16",
+                        "High price": "16.155",
+                        "Low price": "15.84",
+                        "Last price": "16.11"
+                    },
+                    {
+                        "Date Received (GMT)": "17-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "109841",
+                        "Open price": "16.24",
+                        "High price": "16.26",
+                        "Low price": "15.615",
+                        "Last price": "15.915"
+                    },
+                    {
+                        "Date Received (GMT)": "13-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "84154",
+                        "Open price": "16.9",
+                        "High price": "17",
+                        "Low price": "16.505",
+                        "Last price": "16.83"
+                    },
+                    {
+                        "Date Received (GMT)": "12-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "232075",
+                        "Open price": "16.83",
+                        "High price": "17.225",
+                        "Low price": "15.975",
+                        "Last price": "16.3"
+                    },
+                    {
+                        "Date Received (GMT)": "11-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "27199",
+                        "Open price": "19.36",
+                        "High price": "19.92",
+                        "Low price": "19.29",
+                        "Last price": "19.87"
+                    },
+                    {
+                        "Date Received (GMT)": "10-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "25649",
+                        "Open price": "19",
+                        "High price": "19.26",
+                        "Low price": "18.91",
+                        "Last price": "19.207"
+                    },
+                    {
+                        "Date Received (GMT)": "09-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "31666",
+                        "Open price": "19.35",
+                        "High price": "19.39",
+                        "Low price": "18.71",
+                        "Last price": "18.88"
+                    },
+                    {
+                        "Date Received (GMT)": "06-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "55173",
+                        "Open price": "19.31",
+                        "High price": "19.46",
+                        "Low price": "19.1",
+                        "Last price": "19.22"
+                    },
+                    {
+                        "Date Received (GMT)": "05-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "53367",
+                        "Open price": "18.7",
+                        "High price": "18.76",
+                        "Low price": "18.565",
+                        "Last price": "18.62"
+                    },
+                    {
+                        "Date Received (GMT)": "04-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "48508",
+                        "Open price": "18.13",
+                        "High price": "18.36",
+                        "Low price": "18.07",
+                        "Last price": "18.3"
+                    },
+                    {
+                        "Date Received (GMT)": "03-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "21869",
+                        "Open price": "17.64",
+                        "High price": "17.93",
+                        "Low price": "17.64",
+                        "Last price": "17.785"
+                    },
+                    {
+                        "Date Received (GMT)": "02-02-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "19220",
+                        "Open price": "17.56",
+                        "High price": "17.75",
+                        "Low price": "17.45",
+                        "Last price": "17.525"
+                    },
+                    {
+                        "Date Received (GMT)": "30-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "28292",
+                        "Open price": "17.9",
+                        "High price": "17.98",
+                        "Low price": "17.65",
+                        "Last price": "17.745"
+                    },
+                    {
+                        "Date Received (GMT)": "29-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "19083",
+                        "Open price": "18.21",
+                        "High price": "18.21",
+                        "Low price": "17.9",
+                        "Last price": "17.93"
+                    },
+                    {
+                        "Date Received (GMT)": "28-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "14982",
+                        "Open price": "17.85",
+                        "High price": "18.01",
+                        "Low price": "17.69",
+                        "Last price": "17.795"
+                    },
+                    {
+                        "Date Received (GMT)": "27-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "33493",
+                        "Open price": "17.8",
+                        "High price": "17.82",
+                        "Low price": "17.56",
+                        "Last price": "17.59"
+                    },
+                    {
+                        "Date Received (GMT)": "26-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "40837",
+                        "Open price": "17.83",
+                        "High price": "18.38",
+                        "Low price": "17.805",
+                        "Last price": "18.25"
+                    },
+                    {
+                        "Date Received (GMT)": "23-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "16915",
+                        "Open price": "16.57",
+                        "High price": "16.87",
+                        "Low price": "16.535",
+                        "Last price": "16.84"
+                    },
+                    {
+                        "Date Received (GMT)": "22-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "33558",
+                        "Open price": "16.28",
+                        "High price": "16.47",
+                        "Low price": "16.28",
+                        "Last price": "16.32"
+                    },
+                    {
+                        "Date Received (GMT)": "21-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "28337",
+                        "Open price": "16.73",
+                        "High price": "16.77",
+                        "Low price": "16.36",
+                        "Last price": "16.45"
+                    },
+                    {
+                        "Date Received (GMT)": "20-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "39383",
+                        "Open price": "16.77",
+                        "High price": "16.97",
+                        "Low price": "16.765",
+                        "Last price": "16.895"
+                    },
+                    {
+                        "Date Received (GMT)": "16-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "49787",
+                        "Open price": "16.62",
+                        "High price": "16.725",
+                        "Low price": "16.54",
+                        "Last price": "16.69"
+                    },
+                    {
+                        "Date Received (GMT)": "15-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "53404",
+                        "Open price": "16.09",
+                        "High price": "16.33",
+                        "Low price": "16.06",
+                        "Last price": "16.27"
+                    },
+                    {
+                        "Date Received (GMT)": "14-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "48322",
+                        "Open price": "15.87",
+                        "High price": "16.34",
+                        "Low price": "15.87",
+                        "Last price": "16.32"
+                    },
+                    {
+                        "Date Received (GMT)": "13-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "40224",
+                        "Open price": "15.125",
+                        "High price": "15.37",
+                        "Low price": "15.105",
+                        "Last price": "15.33"
+                    },
+                    {
+                        "Date Received (GMT)": "12-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "29928",
+                        "Open price": "15.14",
+                        "High price": "15.265",
+                        "Low price": "15.14",
+                        "Last price": "15.245"
+                    },
+                    {
+                        "Date Received (GMT)": "09-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "66819",
+                        "Open price": "15.4",
+                        "High price": "15.4",
+                        "Low price": "15.14",
+                        "Last price": "15.27"
+                    },
+                    {
+                        "Date Received (GMT)": "08-01-2026",
+                        "Time Received (GMT)": "00:00",
+                        "Cumulative volume": "23178",
+                        "Open price": "15.135",
+                        "High price": "15.3",
+                        "Low price": "15.105",
+                        "Last price": "15.18"
+                    }
+                ]
+            }
+        ]
+    }
+}

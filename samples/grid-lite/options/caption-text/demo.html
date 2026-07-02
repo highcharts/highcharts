@@ -1,0 +1,22 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
+
+<div class="content">
+    <p>
+        Edit the caption below to update the Grid
+        <code>caption.text</code> option.
+    </p>
+    <div id="container"></div>
+</div>
+
+<div class="highcharts-controls-wrapper">
+    <highcharts-controls target="#container">
+        <highcharts-group header="Caption options">
+            <highcharts-control
+                type="text"
+                path="caption.text"
+                value="Quarterly fruit inventory"
+            ></highcharts-control>
+        </highcharts-group>
+    </highcharts-controls>
+</div>

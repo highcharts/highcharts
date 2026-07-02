@@ -1181,98 +1181,234 @@ function scatter() {
 function heatmap() {
     (async () => {
         const csv = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@35bdee4/samples/data/large-heatmap.csv'
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b61efc3e897e9ea3c0e6a268d44b70f3ea004d7b/samples/data/measles.csv'
         ).then(res => res.text());
 
-        Highcharts.chart('container', {
+        Highcharts.data({
+            csv: csv,
 
-            data: {
-                csv: csv
-            },
+            parsed: function (columns) {
+                const states = [...new Set(columns[0].slice(1))];
 
-            chart: {
-                type: 'heatmap'
-            },
+                const stateIndex = new Map(
+                    states.map((state, index) => [state, index])
+                );
 
-            boost: {
-                useGPUTranslations: true
-            },
+                const data = columns[0].slice(1).map((state, i) => {
+                    const year = Number(columns[1][i + 1]);
+                    const rawRate = columns[4][i + 1] === '' ?
+                        null :
+                        Number(columns[4][i + 1]);
 
-            title: {
-                text: 'Large heatmap',
-                align: 'left',
-                x: 40
-            },
+                    if (
+                        Number.isNaN(year) ||
+                        rawRate === null ||
+                        Number.isNaN(rawRate)
+                    ) {
+                        return null;
+                    }
 
-            subtitle: {
-                text: 'Temperature variation by day and hour through 2023',
-                align: 'left',
-                x: 40
-            },
+                    return {
+                        x: year,
+                        y: stateIndex.get(state),
+                        // Log-style color value so smaller outbreaks still show
+                        value: Math.log10(rawRate + 1),
+                        rawRate: rawRate
+                    };
+                }).filter(Boolean);
 
-            xAxis: {
-                type: 'datetime',
-                min: '2023-01-01',
-                max: '2023-12-31 23:59:59',
-                labels: {
-                    align: 'left',
-                    x: 5,
-                    y: 14,
-                    format: '{value:%B}' // long month
-                },
-                showLastLabel: false,
-                tickLength: 16
-            },
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'heatmap',
+                        margin: [70, 100, 40, 80],
+                        className: 'heatmap'
+                    },
 
-            yAxis: {
-                title: {
-                    text: null
-                },
-                labels: {
-                    format: '{value}:00'
-                },
-                minPadding: 0,
-                maxPadding: 0,
-                startOnTick: false,
-                endOnTick: false,
-                tickPositions: [0, 6, 12, 18, 24],
-                tickWidth: 1,
-                min: 0,
-                max: 23,
-                reversed: true
-            },
+                    title: {
+                        // eslint-disable-next-line max-len
+                        text: 'The effectiveness of the measles vaccines across US states',
+                        align: 'left',
+                        y: 0,
+                        style: {
+                            fontSize: '14px'
+                        }
+                    },
 
-            colorAxis: {
-                stops: [
-                    [0, '#3060cf'],
-                    [0.5, '#fffbbc'],
-                    [0.9, '#c4463a'],
-                    [1, '#c4463a']
-                ],
-                min: -15,
-                max: 25,
-                startOnTick: false,
-                endOnTick: false,
-                labels: {
-                    format: '{value}℃'
-                }
-            },
+                    subtitle: {
+                        useHTML: true,
+                        text: 'Source: <a href="https://ourworldindata.org/vaccination" target="_blank" rel="noopener noreferrer">Our World in Data</a>',
+                        align: 'left',
+                        y: 15,
+                        style: {
+                            fontSize: '10px'
+                        }
+                    },
 
-            series: [{
-                boostThreshold: 100,
-                borderWidth: 0,
-                nullColor: '#EFEFEF',
-                colsize: 24 * 36e5, // one day
-                tooltip: {
-                    headerFormat: 'Temperature<br/>',
-                    // eslint-disable-next-line max-len
-                    pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
-                '℃</b>'
-                }
-            }]
+                    xAxis: [
+                        {
+                            min: 1929,
+                            title: {
+                                text: ''
+                            },
+                            tickInterval: 10,
+                            plotLines: [{
+                                color: '#000',
+                                dashStyle: 'dash',
+                                width: 2,
+                                value: 1963,
+                                zIndex: 5,
+                                label: {
+                                    useHTML: true,
+                                    rotation: -15,
+                                    text:
+                                    'First vaccine',
+                                    align: 'left',
+                                    y: -6,
+                                    x: 0,
+                                    style: {
+                                        // eslint-disable-next-line max-len
+                                        color: 'var(--highcharts-neutral-color-80)',
+                                        fontSize: '11px'
+                                    }
+                                }
+                            }, {
+                                color: '#000',
+                                dashStyle: 'dash',
+                                width: 2,
+                                value: 1971,
+                                zIndex: 5,
+                                label: {
+                                    useHTML: true,
+                                    text:
+                                    'First MMR vaccine',
+                                    rotation: -15,
+                                    align: 'left',
+                                    y: -2,
+                                    x: 0,
+                                    style: {
+                                        // eslint-disable-next-line max-len
+                                        color: 'var(--highcharts-neutral-color-80)',
+                                        fontSize: '11px'
+                                    }
+                                }
+                            },
+                            {
+                                color: '#000',
+                                dashStyle: 'dash',
+                                width: 2,
+                                value: 1980,
+                                zIndex: 5,
+                                label: {
+                                    useHTML: true,
+                                    // eslint-disable-next-line max-len
+                                    text: 'Required for kindergarten',
+                                    align: 'left',
+                                    rotation: -15,
+                                    y: -2,
+                                    x: 5,
+                                    style: {
+                                        // eslint-disable-next-line max-len
+                                        color: 'var(--highcharts-neutral-color-80)',
+                                        fontSize: '11px'
+                                    }
+                                }
+                            }
+                            ]
+                        }
+                    ],
 
+                    yAxis: [
+                        {
+                            categories: states,
+                            visible: true,
+                            title: {
+                                text: null
+                            },
+                            labels: {
+                                step: 2,
+                                style: {
+                                    color: 'var(--highcharts-neutral-color-40)'
+                                }
+
+                            },
+                            reversed: true,
+                            startOnTick: false,
+                            endOnTick: false
+                        }
+                    ],
+
+                    legend: {
+                        enabled: true,
+                        align: 'right',
+                        layout: 'vertical',
+                        verticalAlign: 'top',
+                        y: 60
+                    },
+
+                    colorAxis: {
+                        min: 0,
+                        max: Math.log10(1001),
+                        title: {
+                            rotation: 90,
+                            text: 'Cases per 100,000 (log scale)',
+                            style: {
+                                fontSize: '10px'
+                            }
+                        },
+                        tickPositions: [
+                            Math.log10(1),
+                            Math.log10(2),
+                            Math.log10(4),
+                            Math.log10(11),
+                            Math.log10(31),
+                            Math.log10(101),
+                            Math.log10(301),
+                            Math.log10(1001)
+
+                        ],
+                        height: '70%',
+                        stops: [
+                            [0, '#FEF3C7'],
+                            [0.25, '#FDE68A'],
+                            [0.5, '#A7F3D0'],
+                            [0.75, '#34D399'],
+                            [1, '#10B981']
+                        ],
+                        labels: {
+                            formatter: function () {
+                                return Highcharts.numberFormat(
+                                    Math.pow(10, this.value) - 1,
+                                    0
+                                );
+                            }
+                        }
+                    },
+                    tooltip: {
+                        useHTML: true,
+                        outside: true,
+                        formatter: function () {
+                            return (
+                                '<b>' + states[this.point.y] + '</b><br/>' +
+                                'Year: ' + this.point.x + '<br/>' +
+                                'Case rate: <b>' +
+                                Highcharts.numberFormat(this.point.rawRate, 2) +
+                                '</b> per 100,000'
+                            );
+                        }
+                    },
+
+                    series: [
+                        {
+                            name: 'Measles rate',
+                            data: data,
+                            borderWidth: 0,
+                            nullColor: '#ffffff',
+                            colsize: 1
+                        }
+                    ]
+                });
+            }
         });
-
     })();
 }
 
@@ -1702,14 +1838,14 @@ const productInfo = {
         name: 'Morningstar',
         icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1483_3937)">
-                <path d="M13.7999 13.6C14.6799 12.4333 15.1998 10.9926 15.1998 
-                9.43158C15.1998 5.54856 11.9762 2.40002 8.0003 2.40002C4.02442 
-                2.40002 0.799805 5.54856 0.799805 9.43158C0.799805 
-                10.9915 1.31932 
-                12.4341 2.19844 13.6H3.696C2.6088 12.5293 1.9372 11.0588 1.9372 
-                9.43158C1.9372 6.16186 4.65152 3.5106 8.0003 
-                3.5106C11.3491 3.5106 
-                14.063 6.16186 14.063 9.43158C14.063 11.0566 13.3925 12.5293 
+                <path d="M13.7999 13.6C14.6799 12.4333 15.1998 10.9926 15.1998
+                9.43158C15.1998 5.54856 11.9762 2.40002 8.0003 2.40002C4.02442
+                2.40002 0.799805 5.54856 0.799805 9.43158C0.799805
+                10.9915 1.31932
+                12.4341 2.19844 13.6H3.696C2.6088 12.5293 1.9372 11.0588 1.9372
+                9.43158C1.9372 6.16186 4.65152 3.5106 8.0003
+                3.5106C11.3491 3.5106
+                14.063 6.16186 14.063 9.43158C14.063 11.0566 13.3925 12.5293
                 12.3076 13.6H13.7999Z" fill="#E93D42"/>
                 </g>
                 <defs>
@@ -1739,8 +1875,8 @@ const charts = {
         demoName: 'Advanced accessible chart',
         // eslint-disable-next-line max-len
         demoDescription: 'Chart demonstrating more advanced accessibility configuration.',
-        chartDescription: `A purely decorative chart demonstrating 
-       more advanced accessibility configuration, using 
+        chartDescription: `A purely decorative chart demonstrating
+       more advanced accessibility configuration, using
        a custom series type based on the boxplot series.`,
         madeWith: ['core']
     },
@@ -1750,8 +1886,8 @@ const charts = {
         demoName: 'Live data (CSV) ',
         // eslint-disable-next-line max-len
         demoDescription: 'Data input from a remote, changing, CSV file.',
-        chartDescription: `A purely decorative chart demonstrating 
-       the use of the data module to load data from 
+        chartDescription: `A purely decorative chart demonstrating
+       the use of the data module to load data from
        a remote CSV file, with polling enabled.`,
         madeWith: ['core']
     },
@@ -1761,7 +1897,7 @@ const charts = {
         demoName: 'Polygon Series',
         // eslint-disable-next-line max-len
         demoDescription: 'Height and weight data plotted using a set of coordinates.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the polygon series type.`,
         madeWith: ['core']
     },
@@ -1771,17 +1907,17 @@ const charts = {
         demoName: 'Scatter plot with linear regression',
         // eslint-disable-next-line max-len
         demoDescription: 'Scatter charts are often used to visualize the relationships between data in two dimensions.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the scatter series type with linear regression.`,
         madeWith: ['core']
     },
     heatmap: {
         run: heatmap,
         demoCardLabel: 'Highcharts Heatmap demo',
-        demoName: 'Large Heatmap',
+        demoName: 'Heatmap',
         // eslint-disable-next-line max-len
-        demoDescription: 'The demo uses 8,000 points to visualize the temperature over a year.',
-        chartDescription: `A purely decorative chart demonstrating 
+        demoDescription: 'Heatmaps visualize hot spots within data sets, and to show patterns or correlations.',
+        chartDescription: `A purely decorative chart demonstrating
        the use of the heatmap series type.`,
         madeWith: ['core']
     },
@@ -1791,7 +1927,7 @@ const charts = {
         demoName: 'Pictorial Series',
         // eslint-disable-next-line max-len
         demoDescription: 'Chart showing the composition of the human body.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the pictorial series type.`,
         madeWith: ['core']
     }
@@ -1827,7 +1963,7 @@ function buildDemo() {
     let buttonString = '';
     for (let ii = 0; ii < chart.madeWith.length; ++ii) {
         const product = productInfo[chart.madeWith[ii]];
-        buttonString +=  `<a href="${product.url}" 
+        buttonString +=  `<a href="${product.url}"
         target="_blank" class="hc-button hc-button--white hc-button--size-100">
         ${product.name}`;
         let isHighchartsIcon = false;

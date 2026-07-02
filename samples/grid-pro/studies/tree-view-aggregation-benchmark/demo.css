@@ -1,0 +1,184 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+:root,
+.highcharts-light {
+    --bench-text-color: #3a3a3a;
+    --bench-muted-color: #6d6d6d;
+    --bench-surface-color: #f7f7f7;
+    --bench-control-surface-color: #fff;
+    --bench-border-color: #e2e2e2;
+    --bench-hover-border-color: #c6c6c6;
+    --bench-aggregate-text-color: #48607f;
+    --risk-0-background: #e7f7ec;
+    --risk-0-color: #1b7f42;
+    --risk-1-background: #eef4fb;
+    --risk-1-color: #255f9c;
+    --risk-2-background: #fff4df;
+    --risk-2-color: #a66800;
+    --risk-3-background: #ffe8d9;
+    --risk-3-color: #b65300;
+    --risk-4-background: #fde2e2;
+    --risk-4-color: #b42318;
+
+    color-scheme: light;
+}
+
+.demo {
+    padding: 12px;
+    max-width: 1280px;
+    color: var(--bench-text-color);
+}
+
+.bench-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    margin: 0 0 12px;
+}
+
+.bench-controls label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--bench-text-color);
+}
+
+.bench-controls select,
+.bench-controls button {
+    padding: 6px 10px;
+    color: var(--bench-text-color);
+    background: var(--bench-control-surface-color);
+    border: 1px solid var(--bench-border-color);
+    border-radius: 6px;
+}
+
+.bench-controls button:hover,
+.bench-controls select:hover {
+    border-color: var(--bench-hover-border-color);
+}
+
+.bench-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px 14px;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    background: var(--bench-surface-color);
+    border: 1px solid var(--bench-border-color);
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.bench-stats > div {
+    min-width: 0;
+}
+
+.bench-label {
+    color: var(--bench-muted-color);
+    margin-right: 6px;
+}
+
+#container {
+    height: 560px;
+    border: 1px solid var(--bench-border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+#container .hcg-tree-cell-aggregated {
+    color: var(--bench-aggregate-text-color);
+    font-style: italic;
+    font-weight: 100;
+}
+
+#container .hcg-tree-cell-aggregated .hcg-tree-value {
+    color: inherit;
+}
+
+.risk-pill {
+    display: inline-block;
+    min-width: 68px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.risk-0 {
+    background: var(--risk-0-background);
+    color: var(--risk-0-color);
+}
+
+.risk-1 {
+    background: var(--risk-1-background);
+    color: var(--risk-1-color);
+}
+
+.risk-2 {
+    background: var(--risk-2-background);
+    color: var(--risk-2-color);
+}
+
+.risk-3 {
+    background: var(--risk-3-background);
+    color: var(--risk-3-color);
+}
+
+.risk-4 {
+    background: var(--risk-4-background);
+    color: var(--risk-4-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bench-text-color: #eceff4;
+        --bench-muted-color: #a9b2bf;
+        --bench-surface-color: #1f2631;
+        --bench-control-surface-color: #151b23;
+        --bench-border-color: #384252;
+        --bench-hover-border-color: #556277;
+        --bench-aggregate-text-color: #bfd5f2;
+        --risk-0-background: #173726;
+        --risk-0-color: #9ae6b4;
+        --risk-1-background: #16324a;
+        --risk-1-color: #98cfff;
+        --risk-2-background: #49310f;
+        --risk-2-color: #f8d67a;
+        --risk-3-background: #522510;
+        --risk-3-color: #f9b178;
+        --risk-4-background: #4f1c24;
+        --risk-4-color: #ff9aa7;
+
+        color-scheme: dark;
+    }
+}
+
+.highcharts-dark {
+    --bench-text-color: #eceff4;
+    --bench-muted-color: #a9b2bf;
+    --bench-surface-color: #1f2631;
+    --bench-control-surface-color: #151b23;
+    --bench-border-color: #384252;
+    --bench-hover-border-color: #556277;
+    --bench-aggregate-text-color: #bfd5f2;
+    --risk-0-background: #173726;
+    --risk-0-color: #9ae6b4;
+    --risk-1-background: #16324a;
+    --risk-1-color: #98cfff;
+    --risk-2-background: #49310f;
+    --risk-2-color: #f8d67a;
+    --risk-3-background: #522510;
+    --risk-3-color: #f9b178;
+    --risk-4-background: #4f1c24;
+    --risk-4-color: #ff9aa7;
+
+    color-scheme: dark;
+}

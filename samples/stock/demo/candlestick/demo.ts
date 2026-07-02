@@ -11,7 +11,13 @@
         },
 
         title: {
-            text: 'AAPL Stock Price'
+            text: 'AAPL Stock Price',
+            align: 'left'
+        },
+
+        subtitle: {
+            text: 'Generated from Google Finance API',
+            align: 'left'
         },
 
         series: [{
@@ -29,6 +35,80 @@
                     ]
                 ]
             }
-        }]
+        }],
+
+        tooltip: {
+            fixed: true,
+            header: {
+                borderColor: 'var(--highcharts-neutral-color-20)',
+                borderWidth: 1
+            },
+            pointFormat: `
+            <table>
+                <tr>
+                    <td rowspan="5" style="vertical-align: top;">
+                        <svg width="14" height="14">
+                            <circle cx="6" cy="7" r="5" fill="{point.color}"
+                                stroke="var(--highcharts-neutral-color-80)"
+                                stroke-width="1" />
+                        </svg>
+                    </td>
+                    <td colspan="2"><b>{series.name}</b></td>
+                </tr>
+                <tr>
+                    <th>Open</th>
+                    <td>{point.open}</td>
+                </tr>
+                <tr>
+                    <th>High</th>
+                    <td>{point.high}</td>
+                </tr>
+                <tr>
+                    <th>Low</th>
+                    <td>{point.low}</td>
+                </tr>
+                <tr>
+                    <th>Close</th>
+                    <td>{point.close}</td>
+                </tr>
+            </table>`,
+            valueDecimals: 2,
+            valuePrefix: '$',
+            useHTML: true
+        },
+
+        yAxis: {
+            maxPadding: 0.25
+        },
+
+        scrollbar: {
+            enabled: false
+        },
+
+        navigator: {
+            height: 72,
+            maskFill: 'rgba(44, 175, 254, 0.15)',
+            handles: {
+                width: 12,
+                borderRadius: 4
+            },
+            series: {
+                fillColor: {
+                    linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                    stops: [
+                        [0, 'rgba(0, 117, 219, 0.12)'],
+                        [1, 'rgba(0, 113, 219, 0)']
+                    ]
+                }
+            },
+            xAxis: {
+                lineWidth: 1,
+                lineColor: 'var(--highcharts-neutral-color-40, #999)'
+            },
+            yAxis: {
+                lineWidth: 1,
+                lineColor: 'var(--highcharts-neutral-color-40, #999)'
+            }
+        }
     });
 })().catch(console.error);

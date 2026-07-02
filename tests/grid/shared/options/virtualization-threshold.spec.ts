@@ -20,7 +20,11 @@ test.describe('Grid rows virtualizaion threshold', () => {
             await grid.update({
                 data: {
                     columns: {
-                        Data: grid.dataTable.columns.Data.slice(0, 40)
+                        Data: grid.dataProvider
+                            .getDataTable()
+                            .columns
+                            .Data
+                            .slice(0, 40)
                     }
                 }
             });
@@ -48,4 +52,3 @@ test.describe('Grid rows virtualizaion threshold', () => {
         expect(result.afterManual).toBe(true);
     });
 });
-

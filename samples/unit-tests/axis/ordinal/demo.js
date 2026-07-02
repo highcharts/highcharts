@@ -1434,4 +1434,21 @@ QUnit.test('Zooming on ordinal axis, #21483', assert => {
         chart.xAxis[0].max,
         'Chart should be zoomed out - max value.'
     );
+
+    // #24545
+    chart.update({
+        xAxis: {
+            minRange: 24 * 3600 * 1000
+        }
+    });
+    // Emulate scrolling with mouse wheel to gradually zoom in, instead of
+    // calling one big mousewheel zoom in event
+    for (let i = 0; i < 40; i++) {
+        controller.mouseWheel(chart.plotWidth / 2, chart.plotHeight / 2, -100);
+    }
+    assert.strictEqual(
+        chart.xAxis[0].max - chart.xAxis[0].min,
+        24 * 3600 * 1000,
+        'Chart zoom-in on ordinal axis should work with minRange, #24545.'
+    );
 });

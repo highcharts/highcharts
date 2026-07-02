@@ -6,8 +6,9 @@
  *
  *  Author: Wojciech Chmiel
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -46,8 +47,7 @@ import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions
 import type Series from '../../Core/Series/Series';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 const { cluster: clusterDefaults } = MarkerClusterDefaults;
@@ -1481,7 +1481,10 @@ function seriesGetScaledGridSize(
     const gridSize = mapView ?
         series.gridValueSize * mapView.getScale() :
         xAxis.toPixels(series.gridValueSize) - xAxis.toPixels(0);
-    const scale = +(processedGridSize / gridSize).toFixed(14);
+
+    // Fix, #19740: Prevent division by zero error.
+    const scale = gridSize !== 0 ?
+        Math.abs(+(processedGridSize / gridSize).toFixed(14)) : 1;
 
     // Find the level and its divider.
     while (search && scale !== 1) {

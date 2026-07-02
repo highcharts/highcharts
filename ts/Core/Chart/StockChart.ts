@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,7 +45,6 @@ const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
@@ -218,17 +218,17 @@ class StockChart extends Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
-     *
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      * @emits Highcharts.StockChart#event:init
      * @emits Highcharts.StockChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
         const defaultOptions = getOptions(),
             xAxisOptions = userOptions.xAxis,
@@ -520,12 +520,12 @@ namespace StockChart {
                     .attr({
                         fill: options.backgroundColor ||
                             point?.series?.color || // #14888
-                            Palette.neutralColor60,
+                            'var(--highcharts-neutral-color-60)',
                         stroke: options.borderColor || '',
                         'stroke-width': options.borderWidth || 0
                     })
                     .css(extend<CSSObject>({
-                        color: Palette.backgroundColor,
+                        color: 'var(--highcharts-background-color)',
                         fontWeight: 'normal',
                         fontSize: '0.7em',
                         textAlign: 'center'
@@ -710,6 +710,7 @@ namespace StockChart {
         e: (Event&Axis.PlotLinePathOptions)
     ): void {
         const axis = this,
+            axisOptions = axis.options,
             series = (
                 axis.isLinked && !axis.series && axis.linkedParent ?
                     axis.linkedParent.series :
@@ -722,6 +723,10 @@ namespace StockChart {
             allPerpendicularAxes = (
                 axis.isXAxis ? chart.yAxis : chart.xAxis
             ) || [],
+            crossingPosName = horiz ? 'top' : 'left',
+            crossingLenName = horiz ? 'height' : 'width',
+            hasCrossingBounds = defined(axisOptions[crossingPosName]) ||
+                defined(axisOptions[crossingLenName]),
             /**
              * Return the other axis based on either the axis option or on
              * related series.
@@ -729,9 +734,9 @@ namespace StockChart {
              */
             getAxis = (coll: string): Array<Axis> => {
                 const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
-                    opt = (axis.options as AnyRecord)[otherColl];
+                    opt = (axisOptions as AnyRecord)[otherColl];
 
-                if (acrossPanes && !axis.options.isInternal) {
+                if (acrossPanes && !axisOptions.isInternal) {
                     return allPerpendicularAxes.filter((a): boolean =>
                         !a.options.isInternal
                     );
@@ -770,7 +775,7 @@ namespace StockChart {
             transVal: number;
 
         if (
-            chart.options.isStock &&
+            (chart.options.isStock || hasCrossingBounds) &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
             (axis.coll === 'xAxis' || axis.coll === 'yAxis')
         ) {
@@ -843,18 +848,16 @@ namespace StockChart {
                 }
 
                 if (!skip) {
-                    const crossingPosName = horiz ? 'top' : 'left',
-                        crossingLenName = horiz ? 'height' : 'width';
                     if (
-                        !acrossPanes &&
                         // If the perpendicular position is set explicitly on
                         // the axis, use it. For example, if `top` and `height`
                         // options are set on a horizontal x-axis, the grid
                         // lines should conform to that position.
-                        (
-                            axis.options[crossingPosName] ||
-                            axis.options[crossingLenName]
-                        )
+                        hasCrossingBounds &&
+                        // In parallel coordinates, the axis height/width is 0,
+                        // so we need to skip that, #24442.
+                        axis[crossingLenName] > 0 &&
+                        !acrossPanes
                     ) {
                         pushSegment(
                             pos,
@@ -977,9 +980,10 @@ namespace StockChart {
     export function stockChart(
         a: (string|HTMLDOMElement|Options),
         b?: (Chart.CallbackFunction|Options),
-        c?: Chart.CallbackFunction
-    ): StockChart {
-        return new StockChart(a as any, b as any, c);
+        c?: Chart.CallbackFunction|true
+    ): StockChart|Promise<StockChart> {
+        const chart = new StockChart(a as any, b as any, c);
+        return chart.promise || chart;
     }
 
     /* eslint-enable jsdoc/check-param-names */

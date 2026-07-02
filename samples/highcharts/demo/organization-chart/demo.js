@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: '2022 Highsoft Org Chart'
+        text: 'Organization chart'
     },
 
     accessibility: {
@@ -18,7 +18,7 @@ Highcharts.chart('container', {
 
     series: [{
         type: 'organization',
-        name: 'Highsoft',
+        name: 'Acme Corp',
         keys: ['from', 'to'],
         data: [
             ['Shareholders', 'Board'],
@@ -63,29 +63,34 @@ Highcharts.chart('container', {
         }, {
             id: 'CEO',
             title: 'CEO',
-            name: 'Atle Sivertsen',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2022/06/30081411/portrett-sorthvitt.jpg'
+            name: 'Alexander Smith',
+            image: 'https://www.highcharts.com/samples/graphics/organization-chart/' +
+                'AI_CEO.jpeg'
         }, {
             id: 'HR',
             title: 'CFO',
-            name: 'Anne Jorunn Fjærestad',
+            name: 'Sarah Jenkins',
             color: '#007ad0',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131210/Highsoft_04045_.jpg'
+            image: 'https://www.highcharts.com/samples/graphics/organization-chart/' +
+                'AI_CFO.jpeg'
         }, {
             id: 'CTO',
             title: 'CTO',
-            name: 'Christer Vasseng',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131120/Highsoft_04074_.jpg'
+            name: 'Michael Chang',
+            image: 'https://www.highcharts.com/samples/graphics/organization-chart/' +
+                'AI_CTO.jpeg'
         }, {
             id: 'CPO',
             title: 'CPO',
-            name: 'Torstein Hønsi',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131213/Highsoft_03998_.jpg'
+            name: 'David Rodriguez',
+            image: 'https://www.highcharts.com/samples/graphics/organization-chart/' +
+                'AI_CPO.jpeg'
         }, {
             id: 'CSO',
             title: 'CSO',
-            name: 'Anita Nesse',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131156/Highsoft_03834_.jpg'
+            name: 'Emily Chen',
+            image: 'https://www.highcharts.com/samples/graphics/organization-chart/' +
+                'AI_CSO.jpeg'
         }, {
             id: 'Product',
             name: 'Product developers'

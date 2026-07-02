@@ -6,8 +6,9 @@
  *
  *  Author: Wojciech Chmiel
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -40,8 +41,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';

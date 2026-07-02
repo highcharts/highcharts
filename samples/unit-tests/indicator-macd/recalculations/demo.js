@@ -124,7 +124,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[1].color,
-        '#544fc5',
+        'var(--highcharts-color-1)',
         'MACD series color should not change after update, #22562.'
     );
 

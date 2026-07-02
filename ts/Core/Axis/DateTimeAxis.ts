@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -47,7 +48,7 @@ declare module './AxisComposition' {
             startOfWeek?: number,
             positions?: Array<number>|TypedArray,
             closestDistance?: number,
-            findHigherRanks?: boolean
+            findBoundaryTicks?: boolean
         ): TickPositionsArray;
     }
 }

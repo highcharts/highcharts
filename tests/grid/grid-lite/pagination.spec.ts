@@ -359,4 +359,5 @@ test.describe('Pagination', () => {
         await expect(pagination).not.toHaveClass(/\bhcg-pagination-right\b/);
         await expect(pagination).not.toHaveClass(/\bhcg-pagination-distributed\b/);
     });
+
 });

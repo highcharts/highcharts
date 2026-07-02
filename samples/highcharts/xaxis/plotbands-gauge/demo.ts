@@ -14,7 +14,7 @@ Highcharts.chart('container', {
         plotBands: [{
             color: '#89A54E',
             from: 0,
-            outerRadius: '105%',
+            outerRadius: '95%',
             thickness: '5%',
             to: 60
         }]

@@ -44,19 +44,19 @@ test.describe('Column Header Toolbar', () => {
 
     test('One active button is present', async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
-        await expect(page.locator('.hcg-button.hcg-button-selected')).toHaveCount(1);
+        await expect(page.locator('.hcg-icon.hcg-icon-selected')).toHaveCount(1);
     });
 
     test('Clicking filter button opens menu', async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
-        await page.locator('.hcg-button.hcg-button-selected').first().click();
+        await page.locator('.hcg-icon.hcg-icon-selected').first().click();
         await expect(page.locator('.hcg-popup-content')).toHaveCount(1);
     });
 
     test('Clearing filter condition disactivates button', async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
         // First open the popup if not already open
-        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
+        const activeButton = page.locator('.hcg-icon.hcg-icon-selected').first();
         await activeButton.click();
         await expect(page.locator('.hcg-popup-content')).toBeVisible();
         
@@ -66,10 +66,10 @@ test.describe('Column Header Toolbar', () => {
         await input.clear();
         // Wait for button state to update
         await page.waitForFunction(() => {
-            const activeButtons = document.querySelectorAll('.hcg-button.hcg-button-selected');
+            const activeButtons = document.querySelectorAll('.hcg-icon.hcg-icon-selected');
             return activeButtons.length === 0;
         }, { timeout: 5000 });
-        await expect(page.locator('.hcg-button.hcg-button-selected')).toHaveCount(0);
+        await expect(page.locator('.hcg-icon.hcg-icon-selected')).toHaveCount(0);
         await page.locator('#container').click();
         await expect(page.locator('.hcg-popup-content')).toBeHidden();
     });
@@ -86,7 +86,7 @@ test.describe('Column Header Toolbar', () => {
         });
         // Wait for state to update
         await page.waitForFunction(() => {
-            const activeButtons = document.querySelectorAll('.hcg-button.hcg-button-selected');
+            const activeButtons = document.querySelectorAll('.hcg-icon.hcg-icon-selected');
             return activeButtons.length <= 1;
         }, { timeout: 5000 });
         
@@ -96,15 +96,15 @@ test.describe('Column Header Toolbar', () => {
         });
         // Wait for button state to update
         await page.waitForFunction(() => {
-            const activeButtons = document.querySelectorAll('.hcg-button.hcg-button-selected');
+            const activeButtons = document.querySelectorAll('.hcg-icon.hcg-icon-selected');
             return activeButtons.length === 1;
         }, { timeout: 5000 });
-        await expect(page.locator('.hcg-button.hcg-button-selected')).toHaveCount(1);
+        await expect(page.locator('.hcg-icon.hcg-icon-selected')).toHaveCount(1);
     });
 
     test('Shrinking window minifies toolbar', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
-        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
+        const activeButton = page.locator('.hcg-icon.hcg-icon-selected').first();
         await expect(activeButton.locator('..')).toHaveClass(/hcg-header-cell-menu-icon/);
     });
 
@@ -114,7 +114,7 @@ test.describe('Column Header Toolbar', () => {
         await page.setViewportSize({ width: 800, height: 600 });
 
         const weightMenuButton = page.locator(
-            'th[data-column-id="weight"] .hcg-header-cell-menu-icon .hcg-button'
+            'th[data-column-id="weight"] .hcg-header-cell-menu-icon button'
         );
 
         await expect(weightMenuButton).toHaveAttribute(
@@ -123,16 +123,42 @@ test.describe('Column Header Toolbar', () => {
         );
     });
 
+    test('Blank filter row cells support ArrowUp and ArrowDown navigation', async ({
+        page
+    }) => {
+        const productHeaderCell = page.locator(
+            'th[data-column-id="product"]'
+        ).first();
+        const blankProductFilterCell = page.locator(
+            'th[data-column-id="product"]'
+        ).nth(1);
+        const firstProductBodyCell = page.locator(
+            'td[data-column-id="product"]'
+        ).first();
+
+        await blankProductFilterCell.focus();
+        await expect(blankProductFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(firstProductBodyCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(blankProductFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productHeaderCell).toBeFocused();
+    });
+
     test('Clicking menu icon opens menu', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
-        await page.locator('.hcg-button.hcg-button-selected').click();
+        await page.locator('.hcg-icon.hcg-icon-selected').click();
         await expect(page.locator('.hcg-popup')).toHaveCount(1);
     });
 
     test('Can navigate menu with keyboard to filtering', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
         // First open the menu by clicking the active button
-        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
+        const activeButton = page.locator('.hcg-icon.hcg-icon-selected').first();
         await activeButton.click();
         await expect(page.locator('.hcg-popup')).toBeVisible();
         

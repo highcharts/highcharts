@@ -8,13 +8,7 @@ Highcharts.chart('container', {
     },
     pane: {
         startAngle: -150,
-        endAngle: 150,
-        background: {
-            backgroundColor: '#DDD',
-            borderWidth: 0,
-            outerRadius: '105%',
-            innerRadius: '103%'
-        }
+        endAngle: 150
     },
 
     // the value axis
@@ -22,16 +16,6 @@ Highcharts.chart('container', {
         min: 0,
         max: 120,
 
-        minorTickInterval: 'auto',
-        minorTickWidth: 1,
-        minorTickLength: 10,
-        tickPixelInterval: 40,
-        tickWidth: 2,
-
-
-        title: {
-            text: 'km/h'
-        },
         plotBands: [{
             from: 0,
             to: 50,
@@ -57,7 +41,11 @@ Highcharts.chart('container', {
                 text: 'red',
                 align: 'left'
             }
-        }]
+        }],
+        labels: {
+            // Move them inside to avoid collision with plot band labels
+            distance: '-30%'
+        }
     },
 
     series: [{

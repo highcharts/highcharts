@@ -19,7 +19,7 @@ Highcharts.chart('container', {
             dashStyle: 'dot',
             color: 'red',
             label: {
-                format: '%Y-%M-%d, %H:%M'
+                format: '%Y-%m-%d, %H:%M'
             }
         },
         type: 'datetime',

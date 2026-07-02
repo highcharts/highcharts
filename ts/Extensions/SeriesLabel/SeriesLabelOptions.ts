@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -111,10 +112,14 @@ export interface SeriesLabelOptions {
     /**
      * Styles for the series label. The color defaults to the series
      * color, or a contrast color if `onArea`.
-     *
-     * @default  {"fontSize": "0.8em", "fontWeight": "bold"}
      */
-    style?: CSSObject;
+    style?: CSSObject & {
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'bold' */
+        fontWeight?: CSSObject['fontWeight'];
+    };
 
     /**
      * Whether to use HTML to render the series label.

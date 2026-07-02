@@ -8,6 +8,13 @@ Highcharts.chart('container', {
                     month: 'long',
                     year: 'numeric'
                 }
+            },
+            month: {
+                boundary: {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }
             }
         }
     },

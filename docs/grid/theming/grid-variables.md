@@ -127,6 +127,22 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 | --hcg-header-row   | Borders between header rows   | --hcg-row |
 | --hcg-header-column| Borders between header columns| --hcg-column |
 
+### Pinned row separators
+
+In Grid Pro, when rows are pinned to the top or bottom, a separator line and
+shadow are shown to distinguish pinned rows from the scrollable area.
+
+| Variable                   | Default Value                      | Valid Values                                                                  |
+| -------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
+| --hcg-pinned-border-width  | --hcg-row-border-width             | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-pinned-border-style  | --hcg-row-border-style             | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-pinned-border-color  | --hcg-row-border-color             | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-pinned-top-shadow    | 0 3px 5px -2px rgba(0, 0, 0, 0.1)  | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+| --hcg-pinned-bottom-shadow | 0 -3px 5px -2px rgba(0, 0, 0, 0.1) | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+
+Set `--hcg-pinned-top-shadow: none` and
+`--hcg-pinned-bottom-shadow: none` to disable shadows entirely.
+
 ### Example
 
 ```css

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -209,7 +210,7 @@ export interface AxisCrosshairOptions {
      * `false` to disable animation. Used by the color axis marker.
      *
      * @product highcharts highstock highmaps
-     * @since next
+     * @since 12.6.0
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
@@ -269,9 +270,10 @@ export interface AxisCrosshairOptions {
     * mouse over a point. Works on initial hover.
     *
     * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *         Show crosshair after 2 seconds
     *
     * @default 0
-    * @since next
+    * @since 12.6.0
     */
     showDelay?: number,
 
@@ -293,11 +295,7 @@ export interface AxisCrosshairOptions {
      * The pixel width of the crosshair. Defaults to 1 for numeric or
      * datetime axes, and for one category width for category axes.
      *
-     * @sample {highcharts} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highstock} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highmaps} highcharts/xaxis/crosshair-customized/
+     * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
      *         Customized crosshairs
      *
      * @default 1
@@ -411,6 +409,12 @@ export interface AxisLabelFormatterContextObject {
      * Default formatting of date/time labels.
      */
     dateTimeLabelFormat?: Time.DateTimeFormat;
+
+    /**
+     * Boundary time unit for the label (e.g `day`, `month`, `year`), used for
+     * date/time formatting.
+     */
+    boundary?: string;
 
     /**
      * Whether the label belongs to the first tick on the axis.
@@ -703,7 +707,19 @@ export interface AxisLabelOptions {
      * @sample {highcharts} highcharts/xaxis/labels-style/
      *         Red X axis labels
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor80} */
+        color?: CSSObject['color'];
+
+        /** @default 'default' */
+        cursor?: CSSObject['cursor'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'ellipsis' */
+        textOverflow?: CSSObject['textOverflow'];
+    };
 
     /**
      * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
@@ -954,7 +970,10 @@ export interface AxisOptions {
     /**
      * The width of the grid lines extending the ticks across the plot area.
      * Defaults to 1 on the Y axis and 0 on the X axis, except for 3d
-     * charts.
+     * charts and gauges.
+     *
+     * In gauges, the grid lines are limited to the pane's `size` and
+     * `innerSize`.
      *
      * In styled mode, the stroke width is given in the
      * `.highcharts-grid-line` class.
@@ -963,6 +982,8 @@ export interface AxisOptions {
      *         2px lines
      * @sample {highcharts|highstock} highcharts/css/axis-grid/
      *         Styled mode
+     * @sample {highcharts} highcharts/yaxis/radial-gridline
+     *         Grid lines on gauge
      * @sample {highstock} stock/xaxis/gridlinewidth/
      *         2px lines
      */
@@ -1149,7 +1170,7 @@ export interface AxisOptions {
     /**
      * Deprecated. Use `minRange` instead.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @product highcharts highstock
      */
     maxZoom?: number;
@@ -1265,7 +1286,7 @@ export interface AxisOptions {
      * The pixel length of the minor tick marks.
      *
      * @sample {highcharts} highcharts/yaxis/minorticklength/
-     *         10px on Y axis
+     *         Minor ticks on Y axis
      * @sample {highstock} stock/xaxis/minorticks/
      *         10px on Y axis
      *
@@ -1316,6 +1337,8 @@ export interface AxisOptions {
     /**
      * The number of minor ticks per major tick. Works for `linear`,
      * `logarithmic` and `datetime` axes.
+     *
+     * For radial axes in gauges, the default value is 10.
      *
      * @sample {highcharts} highcharts/yaxis/minortickspermajor/
      *         2 minor ticks per major tick on Y axis
@@ -1397,21 +1420,25 @@ export interface AxisOptions {
     minTickInterval?: number;
 
     /**
-     * The distance in pixels from the plot area to the axis line.
-     * A positive offset moves the axis with it's line, labels and ticks
-     * away from the plot area. This is typically used when two or more
-     * axes are displayed on the same side of the plot. With multiple
-     * axes the offset is dynamically adjusted to avoid collision, this
+     * The distance from the plot area to the axis line. A positive offset moves
+     * the axis with its line, labels and ticks away from the plot area. With
+     * multiple axes the offset is dynamically adjusted to avoid collision, this
      * can be overridden by setting offset explicitly.
      *
-     * @sample {highcharts} highcharts/yaxis/offset/
-     *         Y axis offset of 70
+     * For radial axes in gauges, the offset can be a percentage string, and
+     * defaults to render the line and ticks on the inside of the pane and plot
+     * bands (since v13). Labels are not affected by the offset in radial axes.
+     *
+     * @sample highcharts/yaxis/offset/
+     *         Axis offfset
      * @sample {highcharts} highcharts/yaxis/offset-centered/
      *         Axes positioned in the center of the plot
+     * @sample {highcharts} highcharts/yaxis/radial-offset
+     *         Radial axis offset in gauge
      * @sample {highstock} stock/xaxis/offset/
-     *         Y axis offset by 70 px
+     *         Y axis offset in stock chart
      */
-    offset?: number;
+    offset?: number|string;
 
     /** @internal */
     offsets?: [number, number, number, number];
@@ -2010,7 +2037,7 @@ export interface AxisTitleOptions {
     /**
      * Deprecated. Set the `text` to `undefined` to disable the title.
      *
-     * @deprecated
+     * @deprecated 3.0.0
      * @product highcharts
      */
     enabled?: boolean;
@@ -2072,7 +2099,13 @@ export interface AxisTitleOptions {
      * @sample {highcharts} highcharts/css/axis/
      *         Styled mode
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor60} */
+        color?: CSSObject['color'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+    };
 
     /**
      * The actual text of the axis title. It can contain basic HTML tags

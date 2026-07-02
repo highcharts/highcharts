@@ -3,6 +3,10 @@ const options = {
         text: 'Dynamic data in Highcharts Stock'
     },
 
+    lang: {
+        locale: 'en-GB' // Keep compact 24h time format
+    },
+
     xAxis: {
         overscroll: 500000,
         range: 4 * 200000,
@@ -29,7 +33,7 @@ const options = {
 
     navigator: {
         series: {
-            color: '#000000'
+            color: 'var(--highcharts-neutral-color-80)'
         }
     },
 
@@ -94,12 +98,17 @@ options.chart = {
                 // Different x-value, we need to add a new point
                 if (lastPoint[0] !== newPoint[0]) {
                     series.addPoint(newPoint);
-                } else {
-                // Existing point, update it
-                    series.options.data[data.length - 1] = newPoint;
 
+                // Series in data grouping mode, set the full data to regroup
+                } else if (series.currentDataGrouping) {
+                    series.options.data[data.length - 1] = newPoint;
                     series.setData(data);
+
+                // Existing point, update it
+                } else {
+                    series.points.at(-1).update(newPoint, true, false);
                 }
+
                 i++;
             }, 100);
         }

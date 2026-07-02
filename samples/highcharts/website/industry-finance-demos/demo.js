@@ -1243,7 +1243,7 @@ function customization() {
                     },
                     chartOptions: {
                         chart: {
-                            height: '100%'
+                            height: '70%'
                         },
                         plotOptions: {
                             variablepie: {

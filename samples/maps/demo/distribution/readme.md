@@ -1,2 +1,0 @@
-# Distribution map
-This demo visualizes the provinces Roman Empire which did not follow the current national borders. The irregularity of the data is possible thanks to how Highcharts Maps allow you to layer any data on top of any map.

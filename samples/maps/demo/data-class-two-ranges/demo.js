@@ -160,7 +160,9 @@
                             enabled: true,
                             color: '#FFFFFF',
                             format: '{point.postal-code}',
+                            backgroundColor: 'auto',
                             style: {
+                                textOutline: 'none',
                                 textTransform: 'uppercase'
                             }
                         },

@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -24,6 +25,7 @@
 
 import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type CSSObject from '../../../../Core/Renderer/CSSObject';
+import type { RowId } from '../../Data/DataProvider';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
@@ -54,12 +56,12 @@ class TableCell extends Cell {
     /**
      * The row of the cell.
      */
-    public readonly row: TableRow;
+    public declare readonly row: TableRow;
 
     /**
      * The column of the cell.
      */
-    public override column: Column;
+    public declare column: Column;
 
     /**
      * The cell's content.
@@ -120,12 +122,14 @@ class TableCell extends Cell {
     /**
      * Edits the cell value and updates the dataset. Call this instead of
      * `setValue` when you want it to trigger the cell value user change event.
+     * Does nothing if the cell is not editable or the value is the same as the
+     * current one.
      *
      * @param value
      * The new value to set.
      */
     public async editValue(value: DataTableCellType): Promise<void> {
-        if (this.value === value) {
+        if (!this.isEditable() || this.value === value) {
             return;
         }
 
@@ -190,6 +194,7 @@ class TableCell extends Cell {
         }
 
         this.htmlElement.setAttribute('data-value', this.value + '');
+        this.updateReadonlyAttribute();
 
         // Set alignment in column cells based on column data type
         this.htmlElement.classList[
@@ -238,7 +243,7 @@ class TableCell extends Cell {
      * viewport rows to be updated, or `false` if the only change was the cell's
      * content.
      */
-    private async updateDataset(): Promise<boolean> {
+    protected async updateDataset(): Promise<boolean> {
         const sourceColumnId = this.column.viewport.grid.columnPolicy
             .getColumnSourceId(this.column.id);
         if (!sourceColumnId) {
@@ -257,7 +262,6 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
         const { dataProvider: dp } = vp.grid;
-
         const rowId = this.row.id;
         if (!dp || rowId === void 0) {
             return false;
@@ -273,12 +277,50 @@ class TableCell extends Cell {
             rowId
         );
 
-        if (vp.grid.querying.willNotModify()) {
+        const updateRowsEvent: TableCellAfterDataMutationEvent = {
+            requiresFullRowsUpdate: false,
+            rowId,
+            sourceColumnId
+        };
+        fireEvent(this, 'afterDataMutation', updateRowsEvent);
+
+        if (
+            vp.grid.querying.willNotModify() &&
+            !updateRowsEvent.requiresFullRowsUpdate
+        ) {
+            return false;
+        }
+        await vp.updateRows();
+        return true;
+    }
+
+    /**
+     * Returns whether the cell is currently editable.
+     */
+    public isEditable(): boolean {
+        if (!this.column.viewport.grid.columnPolicy.isColumnEditable(
+            this.column.id
+        )) {
             return false;
         }
 
-        await vp.updateRows();
-        return true;
+        const event: TableCellGetEditabilityEvent = {
+            editable: true
+        };
+        fireEvent(this, 'getEditability', event);
+
+        return event.editable;
+    }
+
+    /**
+     * Updates the aria-readonly state based on current row/column context.
+     */
+    private updateReadonlyAttribute(): void {
+        if (this.isEditable()) {
+            this.htmlElement.removeAttribute('aria-readonly');
+        } else {
+            this.htmlElement.setAttribute('aria-readonly', 'true');
+        }
     }
 
     /**
@@ -289,7 +331,9 @@ class TableCell extends Cell {
      * Only focus/blur remain on individual cells for focus management.
      */
     public override initEvents(): void {
-        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['blur', (e): void => {
+            this.onBlur(e as FocusEvent);
+        }]);
         this.cellEvents.push(['focus', (): void => this.onFocus()]);
 
         this.cellEvents.forEach((pair): void => {
@@ -304,11 +348,37 @@ class TableCell extends Cell {
         super.onFocus();
 
         const vp = this.row.viewport;
+        const rowId = this.row.id;
+        if (rowId === void 0) {
+            return;
+        }
 
-        vp.focusCursor = [
-            this.row.index,
-            this.column.index
-        ];
+        delete vp.pendingFocusCursor;
+        vp.clearDetachedFocus();
+        vp.focusCursor = {
+            rowId,
+            columnIndex: this.column.index
+        };
+    }
+
+    /**
+     * Handles the blur event on the cell.
+     *
+     * @param e
+     * The focus event object.
+     */
+    protected override onBlur(e?: FocusEvent): void {
+        if (
+            e &&
+            this.row.viewport.hasDetachedFocusAt(
+                this.row.id,
+                this.column.index
+            )
+        ) {
+            return;
+        }
+
+        super.onBlur();
     }
 
     /**
@@ -403,6 +473,16 @@ class TableCell extends Cell {
  */
 export interface TableCellEvent {
     target: TableCell;
+}
+
+export interface TableCellGetEditabilityEvent {
+    editable: boolean;
+}
+
+export interface TableCellAfterDataMutationEvent {
+    requiresFullRowsUpdate: boolean;
+    rowId: RowId;
+    sourceColumnId: string;
 }
 
 

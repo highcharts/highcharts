@@ -1,6 +1,7 @@
 const changelog = document.querySelector('#changelog');
 
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             available: [true, false, true, true],

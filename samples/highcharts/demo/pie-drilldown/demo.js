@@ -28,6 +28,7 @@ Highcharts.chart('container', {
                 format: '{point.name}'
             }, {
                 enabled: true,
+                backgroundColor: 'contrast',
                 distance: '-30%',
                 filter: {
                     property: 'percentage',

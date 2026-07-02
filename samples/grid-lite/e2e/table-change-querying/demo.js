@@ -16,6 +16,8 @@ const grid = Grid.grid('container', {
 });
 
 document.getElementById('add-row').addEventListener('click', () => {
-    grid.dataTable.setRow([grid.dataTable.rowCount + 1, 'Oranges', 100,  3.5]);
+    const dt = grid.dataProvider.getDataTable();
+
+    dt.setRow([dt.rowCount + 1, 'Oranges', 100,  3.5]);
     grid.viewport.updateRows();
 });

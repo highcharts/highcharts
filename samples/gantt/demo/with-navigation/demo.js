@@ -13,8 +13,8 @@ Highcharts.ganttChart('container', {
         liveRedraw: true,
         series: {
             type: 'gantt',
-            pointPlacement: 0.5,
-            pointPadding: 0.25,
+            groupPadding: 0.1,
+            pointPadding: 0,
             accessibility: {
                 enabled: false
             }
@@ -23,7 +23,9 @@ Highcharts.ganttChart('container', {
             min: 0,
             max: 3,
             reversed: true,
-            categories: []
+            categories: [],
+            type: 'treegrid',
+            visible: false
         }
     },
 

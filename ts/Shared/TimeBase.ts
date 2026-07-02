@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -311,17 +312,17 @@ class TimeBase {
             //      L, 6/3/2023 14:30:00
             .split(/(?:, | |\/|:)/g);
         return [
-            year,
+            +year,
             +month - 1,
-            dayOfMonth,
-            hours,
-            minutes,
-            seconds,
+            +dayOfMonth,
+            +hours,
+            +minutes,
+            +seconds,
             // Milliseconds
             Math.floor(Number(timestamp) || 0) % 1000,
             // Spanish weekday index
             'DLMXJVS'.indexOf(weekday)
-        ].map(Number);
+        ];
     }
 
     /**
@@ -442,19 +443,19 @@ class TimeBase {
         );
 
         if (this.timezone !== 'UTC') {
-            const offset = this.getTimezoneOffset(d);
+            const offset = this.getTimezoneOffset(d),
+                localHours = (hours - offset / timeUnits.hour + 24) % 24;
             d += offset;
 
-            // Adjustments close to DST transitions
             if (
-                // Optimize for speed by limiting the number of calls to
-                // `getTimezoneOffset`. According to
+                // Limit the number of calls to `getTimezoneOffset` to months
+                // where DST changes may occur. According to
                 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
                 // DST change may only occur in these months.
                 [2, 3, 8, 9, 10, 11].indexOf(month) !== -1 &&
 
-                // DST transitions occur only in the night-time
-                (hours < 5 || hours > 20)
+                // DST changes only occur at night (#24420)
+                (localHours < 5 || localHours > 20)
             ) {
                 const newOffset = this.getTimezoneOffset(d);
 

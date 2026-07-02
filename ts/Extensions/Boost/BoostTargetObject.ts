@@ -32,6 +32,8 @@ export interface BoostTargetObject {
     boost?: BoostTargetAdditions;
     /**
      * Needed to proper refresh boosted canvas during series replacements.
+     *
+     * @internal
      * @deprecated
      * @todo Fix dependency to use boost.target.
      */

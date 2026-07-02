@@ -1,6 +1,6 @@
 ---
-name: Data from connector
+name: CSV connector
 authors:
-  - Dawid Draguła
+  - Dawid Dragula
 js_wrap: b
 ...

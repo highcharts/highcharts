@@ -386,6 +386,8 @@ QUnit.test('Updating with firstRowAsNames', function (assert) {
     chart.update({
         data: {
             googleSpreadsheetKey: 'placeholder'
+            // This change throws a connection error (400 - API key not valid),
+            // but it's done after the chart is already destroyed in Playwright.
         }
     });
 

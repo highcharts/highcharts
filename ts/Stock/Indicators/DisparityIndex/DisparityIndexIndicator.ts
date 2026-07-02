@@ -4,8 +4,9 @@
  *
  *  Disparity Index technical indicator for Highcharts Stock
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -48,7 +49,7 @@ import {
 /**
  * The Disparity Index series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.disparityindex
  *
@@ -67,7 +68,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      * This series requires the `linkedTo` option to be set and should
      * be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/disparity-index
+     * @sample {highstock} stock/indicators/disparity-index
      *         Disparity Index indicator
      *
      * @extends      plotOptions.sma
@@ -195,6 +196,7 @@ class DisparityIndexIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -212,6 +214,7 @@ extend(DisparityIndexIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         disparityindex: typeof DisparityIndexIndicator;
@@ -226,6 +229,7 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
+/** @internal */
 export default DisparityIndexIndicator;
 
 /* *

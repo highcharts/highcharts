@@ -37,7 +37,7 @@ body {
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #222;
+        --background-color: #141414;
         --text-color: #fff;
         --grid-color: #444;
         --data-color-min: #333;
@@ -46,7 +46,7 @@ body {
 }
 
 .highcharts-dark {
-    --background-color: #222;
+    --background-color: #141414;
     --text-color: #fff;
     --grid-color: #444;
     --data-color-min: #333;

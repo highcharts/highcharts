@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -324,7 +325,7 @@ export interface AnnotationLabelOptionsOptions {
      * @sample highcharts/annotations/label-presentation/
      *         Set labels graphic options
      *
-     * @default ${palette.neutralColor100}
+     * @default var(--highcharts-neutral-color-100)
      */
     borderColor?: ColorType;
 

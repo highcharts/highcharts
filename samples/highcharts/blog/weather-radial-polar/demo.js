@@ -15,6 +15,9 @@ Highcharts.chart('container', {
             showInLegend: false
         }
     },
+    pane: {
+        size: '85%'
+    },
     chart: {
         type: 'columnrange',
         polar: true

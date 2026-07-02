@@ -6,10 +6,13 @@ const selectProductFilter = '.hcg-header-cell[data-column-id="product"] select';
 const inputWeightFilter = '.hcg-header-cell[data-column-id="weight"] input';
 const selectWeightFilter = '.hcg-header-cell[data-column-id="weight"] select';
 const selectBooleanFilter = '.hcg-header-cell[data-column-id="active"] select';
+const selectDateFilter = '.hcg-header-cell[data-column-id="date"] select';
+const inputDateFilter = '.hcg-header-cell[data-column-id="date"] input';
 const gridRows = '.hcg-row';
 const productColumn = 'td[data-column-id="product"]';
 const weightColumn = 'td[data-column-id="weight"]';
 const booleanColumn = 'td[data-column-id="active"]';
+const dateColumn = 'td[data-column-id="date"]';
 
 // Helper functions to reduce code duplication
 async function clearWeightFilter(page: Page): Promise<void> {
@@ -73,6 +76,38 @@ async function verifyRowsContent(
     }
 }
 
+async function getSelectOptionValues(
+    page: Page,
+    selectLocator: string
+): Promise<string[]> {
+    const select = page.locator(selectLocator);
+    await expect(select).toBeVisible();
+    return await select.locator('option').evaluateAll((options) =>
+        options.map((o) => (o as HTMLOptionElement).value)
+    );
+}
+
+async function getSelectOptionLabel(
+    page: Page,
+    selectLocator: string,
+    value: string
+): Promise<string | null> {
+    return page.locator(selectLocator)
+        .locator(`option[value="${value}"]`)
+        .textContent();
+}
+
+async function applyDateFilter(
+    page: Page,
+    operator: string,
+    dateValue: string
+): Promise<void> {
+    await setFilterCondition(page, selectDateFilter, operator);
+    const dateInput = page.locator(inputDateFilter);
+    await dateInput.fill(dateValue);
+    await expect(dateInput).toHaveValue(dateValue);
+}
+
 test.describe('Grid filtering', () => {
     test.beforeEach(async ({ page }) => {
         // Note: filtering tests use grid-lite demo as filtering works the same in both versions
@@ -95,6 +130,42 @@ test.describe('Grid filtering', () => {
             const weight = parseFloat(weightText?.replace(/[,\s]/g, '') || '0');
             expect(weight).toBeGreaterThan(1000);
         }
+    });
+
+    test('Arrow key navigation works across header, filter row, and body', async ({
+        page
+    }) => {
+        const productHeaderCell = page.locator(
+            'th[data-column-id="product"]'
+        ).first();
+        const weightHeaderCell = page.locator(
+            'th[data-column-id="weight"]'
+        );
+        const productFilterCell = page.locator(
+            'th[data-column-id="product"]'
+        ).nth(1);
+        const firstProductBodyCell = page.locator(productColumn).first();
+
+        await productHeaderCell.focus();
+        await expect(productHeaderCell).toBeFocused();
+
+        await page.keyboard.press('ArrowRight');
+        await expect(weightHeaderCell.first()).toBeFocused();
+
+        await page.keyboard.press('ArrowLeft');
+        await expect(productHeaderCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(productFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(firstProductBodyCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productHeaderCell).toBeFocused();
     });
 
     // Update filtering
@@ -310,3 +381,434 @@ test.describe('Grid filtering', () => {
 
 });
 
+test.describe('Grid filtering operators allowlist', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined' &&
+                   (window as any).Grid.grids &&
+                   (window as any).Grid.grids.length > 0;
+        });
+    });
+
+    test('Product column shows only column operators', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
+                columnDefaults: {
+                    filtering: {
+                        enabled: true,
+                        inline: true,
+                        operators: []
+                    }
+                },
+                columns: [{
+                    id: 'product',
+                    filtering: {
+                        enabled: true,
+                        operators: ['contains', 'beginsWith']
+                    }
+                }]
+            });
+        });
+
+        const values = await getSelectOptionValues(page, selectProductFilter);
+        expect(values.sort()).toEqual(['beginsWith', 'contains']);
+
+        const activeValues = await getSelectOptionValues(
+            page,
+            selectBooleanFilter
+        );
+        expect(activeValues.filter(Boolean).sort()).toEqual(
+            ['all', 'empty', 'false', 'true']
+        );
+    });
+
+    test('Defaults apply per type and defined column operators', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
+                columnDefaults: {
+                    filtering: {
+                        enabled: true,
+                        inline: true,
+                        operators: ['equals', 'doesNotEqual', 'lessThan']
+                    }
+                },
+                columns: [{
+                    id: 'product',
+                    filtering: {
+                        enabled: true,
+                        operators: ['contains', 'beginsWith']
+                    }
+                }]
+            });
+        });
+
+        const weightValues = (
+            await getSelectOptionValues(page, selectWeightFilter)
+        ).filter(Boolean);
+        expect(weightValues).toEqual(['equals', 'doesNotEqual', 'lessThan']);
+
+        const booleanValues = (
+            await getSelectOptionValues(page, selectBooleanFilter)
+        ).filter(Boolean);
+        expect(booleanValues.sort()).toEqual(['all', 'empty', 'false', 'true']);
+
+        const productValues = (
+            await getSelectOptionValues(page, selectProductFilter)
+        ).filter(Boolean);
+
+        expect(productValues.sort()).toEqual(['beginsWith', 'contains']);
+    });
+
+    test('Datetime column respects filtering.operators allowlist', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
+                columnDefaults: {
+                    filtering: {
+                        enabled: true,
+                        inline: true,
+                        operators: ['equals', 'doesNotEqual', 'empty']
+                    }
+                },
+                columns: [{
+                    id: 'date',
+                    dataType: 'datetime',
+                    cells: {
+                        format: '{value:%Y-%m-%d}'
+                    },
+                    filtering: {
+                        operators: ['greaterThan', 'lessThan']
+                    }
+                }, {
+                    id: 'weight',
+                    filtering: {
+                        enabled: true
+                    }
+                }]
+            });
+        });
+
+        const dateValues = (
+            await getSelectOptionValues(page, selectDateFilter)
+        ).filter(Boolean);
+
+        expect(dateValues.sort()).toEqual(['greaterThan', 'lessThan']);
+
+        await clearWeightFilter(page);
+        await applyDateFilter(page, 'greaterThan', '2025-10-15');
+        await verifyRowCount(page, 5);
+        await verifyRowsContent(page, dateColumn, (text) =>
+            (text ?? '') > '2025-10-15'
+        );
+    });
+});
+
+test.describe('Grid datetime filtering', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined' &&
+                   (window as any).Grid.grids &&
+                   (window as any).Grid.grids.length > 0;
+        });
+    });
+
+    test('Datetime column shows default operator labels without custom lang', async ({
+        page
+    }) => {
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThan'
+        )).resolves.toBe('After');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThanOrEqualTo'
+        )).resolves.toBe('On or after');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThan'
+        )).resolves.toBe('Before');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThanOrEqualTo'
+        )).resolves.toBe('On or before');
+    });
+
+    test('Datetime column shows operator labels from lang', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
+                columnDefaults: base.columnDefaults,
+                columns: base.columns,
+                lang: {
+                    columnFilteringDateTimeOperators: {
+                        greaterThan: 'Custom after',
+                        greaterThanOrEqualTo: 'Custom on or after',
+                        lessThan: 'Custom before',
+                        lessThanOrEqualTo: 'Custom on or before'
+                    }
+                }
+            });
+        });
+
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThan'
+        )).resolves.toBe('Custom after');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThanOrEqualTo'
+        )).resolves.toBe('Custom on or after');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThan'
+        )).resolves.toBe('Custom before');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThanOrEqualTo'
+        )).resolves.toBe('Custom on or before');
+    });
+
+    test.describe('Datetime comparison operators', () => {
+        test.beforeEach(async ({ page }) => {
+            await clearWeightFilter(page);
+            await page.evaluate(() => {
+                (window as any).grid.viewport.getColumn('date').filtering.set();
+            });
+            await verifyRowCount(page, 20);
+        });
+
+        test('greaterThan filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'greaterThan', '2025-10-10');
+            await verifyRowCount(page, 9);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                (text ?? '') > '2025-10-10'
+            );
+        });
+
+        test('greaterThanOrEqualTo filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'greaterThanOrEqualTo', '2025-10-10');
+            await verifyRowCount(page, 10);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                (text ?? '') >= '2025-10-10'
+            );
+        });
+
+        test('lessThan filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'lessThan', '2025-10-10');
+            await verifyRowCount(page, 10);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                !text || text < '2025-10-10'
+            );
+        });
+
+        test('lessThanOrEqualTo filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'lessThanOrEqualTo', '2025-10-10');
+            await verifyRowCount(page, 11);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                !text || text <= '2025-10-10'
+            );
+        });
+    });
+
+    test.describe('Filtering with hideOperatorSelect option', () => {
+        const inputProductFilter =
+            '.hcg-header-cell[data-column-id="product"] input';
+        const inputCategoryFilter =
+            '.hcg-header-cell[data-column-id="category"] input';
+        const productColumn = 'td[data-column-id="product"]';
+        const categoryColumn = 'td[data-column-id="category"]';
+
+        test.beforeEach(async ({ page }) => {
+            await page.goto(
+                '/grid-lite/e2e/inline-filtering-hide-select',
+                { waitUntil: 'networkidle' }
+            );
+            await page.waitForFunction(() => {
+                return typeof (window as any).Grid !== 'undefined' &&
+                    (window as any).Grid.grids &&
+                    (window as any).Grid.grids.length > 0;
+            });
+        });
+
+        test('Inline hideOperatorSelect hides select and filters columns', async ({
+            page
+        }) => {
+            await expect(
+                page.locator(
+                    'th[data-column-id="product"] select'
+                )
+            ).toHaveCount(0);
+            await expect(page.locator(inputProductFilter)).toBeVisible();
+
+            await typeFilterValue(page, inputProductFilter, 'Pear');
+            await verifyRowCount(page, 1);
+            await verifyRowsContent(
+                page,
+                productColumn,
+                (text) => (text ?? '').includes('Pear')
+            );
+
+            await clearFilterInput(page, inputProductFilter);
+            await verifyRowCount(page, 6);
+
+            await typeFilterValue(page, inputCategoryFilter, 'Citrus');
+            await verifyRowCount(page, 1);
+            await verifyRowsContent(
+                page,
+                categoryColumn,
+                (text) => (text ?? '').includes('Citrus')
+            );
+        });
+
+        test('The hideOperatorSelect hides the select in popup mode', async ({
+            page
+        }) => {
+            await page.evaluate(() => {
+                const data = (window as any).grid.userOptions.data;
+                (window as any).grid.destroy();
+                (window as any).grid = (window as any).Grid.grid('container', {
+                    data,
+                    columns: [{
+                        id: 'product',
+                        dataType: 'string',
+                        filtering: {
+                            enabled: true,
+                            hideOperatorSelect: true
+                        }
+                    }]
+                });
+            });
+
+            await page
+                .locator(
+                    '[data-column-id="product"] ' +
+                    '.hcg-header-cell-filter-icon button'
+                )
+                .evaluate((button: HTMLButtonElement) => button.click());
+            await expect(
+                page.locator('.hcg-popup-content select')
+            ).toHaveCount(0);
+            await expect(
+                page.locator('.hcg-popup-content input')
+            ).toBeVisible();
+            await expect(
+                page.locator('.hcg-popup-content .hcg-column-filter-operator-spacer')
+            ).toHaveCount(0);
+        });
+
+        test('Single operator hides select by default', async ({ page }) => {
+            await page.evaluate(() => {
+                (window as any).grid.destroy();
+                (window as any).grid = (window as any).Grid.grid('container', {
+                    data: {
+                        columns: {
+                            category: [
+                                'Fruit',
+                                'Fruit',
+                                'Citrus'
+                            ]
+                        }
+                    },
+                    columnDefaults: {
+                        filtering: {
+                            enabled: true,
+                            inline: true
+                        }
+                    },
+                    columns: [{
+                        id: 'category',
+                        dataType: 'string',
+                        filtering: {
+                            operators: ['contains']
+                        }
+                    }]
+                });
+            });
+
+            await expect(
+                page.locator('th[data-column-id="category"] select')
+            ).toHaveCount(0);
+            await expect(
+                page.locator(inputCategoryFilter)
+            ).toBeVisible();
+            await expect(
+                page.locator(
+                    'th[data-column-id="category"] .hcg-column-filter-operator-spacer'
+                )
+            ).toHaveCount(0);
+        });
+
+        test('Hidden operator select uses operator label as input placeholder', async ({
+            page
+        }) => {
+            await expect(page.locator(inputProductFilter)).toHaveAttribute(
+                'placeholder',
+                'Contains'
+            );
+        });
+
+        test('Visible operator select keeps default input placeholder', async ({
+            page
+        }) => {
+            await page.evaluate(() => {
+                const data = (window as any).grid.userOptions.data;
+                (window as any).grid.destroy();
+                (window as any).grid = (window as any).Grid.grid('container', {
+                    data,
+                    columnDefaults: {
+                        filtering: {
+                            enabled: true,
+                            inline: true
+                        }
+                    },
+                    columns: [{
+                        id: 'product',
+                        dataType: 'string'
+                    }]
+                });
+            });
+
+            await expect(page.locator(inputProductFilter)).toHaveAttribute(
+                'placeholder',
+                'Value...'
+            );
+        });
+
+    });
+});

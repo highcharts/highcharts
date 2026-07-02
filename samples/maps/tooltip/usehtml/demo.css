@@ -5,7 +5,7 @@
     margin: 0 auto;
 }
 
-.highcharts-tooltip > span {
+.highcharts-tooltip div {
     background: rgb(255 255 255 / 85%);
     border: 1px solid silver;
     border-radius: 3px;

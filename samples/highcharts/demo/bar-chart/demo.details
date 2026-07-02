@@ -1,11 +1,14 @@
 ---
-name: Basic bar chart
+name: Bar chart
 authors:
   - Torstein Hønsi
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 3
   - Column and bar charts:
       priority: 1
 ...

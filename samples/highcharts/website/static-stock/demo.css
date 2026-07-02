@@ -241,7 +241,6 @@ body {
 #stock .column .highcharts-point {
     fill: #8bf2b6;
     stroke: transparent;
-    opacity: 1;
 }
 
 #stock .green-line .highcharts-point:nth-of-type(3) {

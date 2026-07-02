@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -33,6 +34,9 @@ import type {
     Column as DataTableColumn
 } from '../../../Data/DataTable';
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import Table from './Table.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
@@ -196,7 +200,7 @@ export class Column {
         const isUnbound = grid.columnPolicy.isColumnUnbound(this.id);
 
         if (
-            dp && 'getDataTable' in dp &&
+            hasDataTableProvider(dp) &&
             sourceColumnId && !isUnbound
         ) {
             this.data = dp.getDataTable(true)?.getColumn(

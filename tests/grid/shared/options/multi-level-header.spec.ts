@@ -3,7 +3,9 @@ import { test, expect } from '~/fixtures.ts';
 test.describe('Grid events', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-lite/e2e/grouped-headers');
+        await page.goto('grid-lite/e2e/grouped-headers', {
+            waitUntil: 'domcontentloaded'
+        });
     });
 
     test('Renders multilevel header', async ({ page }) => {

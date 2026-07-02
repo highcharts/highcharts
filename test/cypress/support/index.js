@@ -203,7 +203,10 @@ Cypress.Commands.add('grid', () =>
 );
 
 Cypress.Commands.add('editGridCell', (rowIndex, columnId, newValue) => {
-    cy.get(`tr[data-row-index="${rowIndex}"] td[data-column-id="${columnId}"]`)
+    cy.get(
+        `tr[data-row-index="${rowIndex}"] ` +
+        `.hcg-cell[data-column-id="${columnId}"]`
+    )
         .dblclick()
         .find('input')
         .clear()

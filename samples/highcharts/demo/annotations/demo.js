@@ -29,11 +29,6 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
 (async () => {
     await connector.load();
 
-    const cols = connector.getTable().getColumns();
-
-    const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
-    const data = cols[name].map((value, i) => [cols.Date[i], value]);
-
     Highcharts.chart('container', {
         chart: {
             type: 'area',
@@ -240,7 +235,11 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
 
         series: [
             {
-                data,
+                dataTable: connector.getTable(),
+                dataMapping: {
+                    x: 'Date',
+                    y: '0P0000OQN8'
+                },
                 color: '#cc0000',
                 fillColor: {
                     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },

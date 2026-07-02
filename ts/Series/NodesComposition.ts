@@ -29,7 +29,14 @@ const {
         }
     }
 } = SeriesRegistry;
-import { defined, extend, find, merge, pick } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    extend,
+    find,
+    merge,
+    pick
+} from '../Shared/Utilities.js';
 
 
 /* *
@@ -143,7 +150,21 @@ namespace NodesComposition {
         seriesProto.destroy = destroy;
         seriesProto.setData = setData;
 
+        addEvent(SeriesClass, 'afterUpdate', afterUpdate);
+
         return SeriesClass as (T&typeof SeriesComposition);
+    }
+
+    /**
+     * Destroy data labels on nodes.
+     * @private
+     */
+    function afterUpdate(this: Series): void {
+        if (!this.hasDataLabels?.() && this.nodes) { // #23385
+            for (const node of this.nodes) {
+                node.destroyElements({ dataLabel: 1 });
+            }
+        }
     }
 
     /**

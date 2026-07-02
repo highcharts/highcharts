@@ -33,7 +33,7 @@
                     rotation: 0,
                     y: 20,
                     style: {
-                        color: '#333333'
+                        color: 'var(--highcharts-neutral-color-60)'
                     }
                 }
             }]
@@ -60,16 +60,10 @@
             lineWidth: 4,
             marker: {
                 lineWidth: 2,
-                lineColor: '#4840d6',
-                fillColor: '#fff'
+                lineColor: void 0,
+                fillColor: 'var(--highcharts-background-color)'
             },
-            color: {
-                linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
-                stops: [
-                    [0, '#fa4fed'],
-                    [1, '#5897ff']
-                ]
-            },
+            color: 'light-dark(#5897ff, #fa4fed)',
             zones: [{
                 value: today
             }, {

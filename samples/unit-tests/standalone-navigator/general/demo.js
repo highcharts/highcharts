@@ -81,3 +81,24 @@ QUnit.test('Standalone navigator general tests', function (assert) {
     chart.destroy();
     container2.parentNode.removeChild(container2);
 });
+
+QUnit.test('DataTable in Standalone Navigator.', function (assert) {
+    const dataTable = new Highcharts.DataTable({
+        columns: {
+            x: [1, 2, 3, 4, 5],
+            y: [1, 3, 2, 4, 5]
+        }
+    });
+
+    const standaloneNavigator = Highcharts.navigator('container', {
+        series: [{
+            dataTable
+        }]
+    });
+
+    assert.strictEqual(
+        standaloneNavigator.navigator.series[0].points.length,
+        dataTable.rowCount,
+        'Standalone navigator should render points from DataTable options.'
+    );
+});

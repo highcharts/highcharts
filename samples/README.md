@@ -104,6 +104,26 @@ for manual testing.
 are meant for education, where the actual feature is covered by other tests.
 
 
+Demo metadata for package example indexes
+-----------------------------------------
+
+The `gulp dist-examples` task generates static package example indexes from the
+local sample metadata. The generator lives in `tools/gulptasks/lib/demoIndex.js`
+and reads the product configuration in `samples/demo-config.js` together with
+per-demo `demo.details` files.
+
+For a public demo to appear in a package index, its `demo.details` file must
+have a non-empty `name`, at least one matching product `tags` entry and at least
+one category that is configured for that product in `samples/demo-config.js`.
+The category may be a string or an object with a `priority` value. Priority is
+used to sort demos inside a category; demos with the same priority are sorted by
+name.
+
+Categories that are present in `demo.details` but not configured for the product
+are ignored by the package index generator. Malformed YAML or malformed category
+metadata is treated as a build error.
+
+
 TypeScript
 ----------
 

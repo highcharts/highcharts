@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -123,11 +124,12 @@ class MapPoint extends ScatterPoint {
      */
     public applyOptions(
         options: (MapPointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): MapPoint {
 
         const series = this.series,
-            point = super.applyOptions(options, x) as MapPoint,
+            point = super.applyOptions(options, x, isMock) as MapPoint,
             joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {

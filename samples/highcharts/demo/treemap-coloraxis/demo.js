@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
     colorAxis: {
         minColor: '#FFFFFF',
-        maxColor: Highcharts.getOptions().colors[0]
+        maxColor: 'var(--highcharts-color-0)'
     },
     series: [{
         type: 'treemap',

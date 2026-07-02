@@ -50,7 +50,7 @@
         --ig-input-hover-border-color: var(--hcg-header-input-hover-border-color, var(--hcg-input-hover-border-color, var(--hcg-header-input-border-color, var(--ig-input-border-color-base))));
     }
 
-    tbody td {
+    tbody :where(.hcg-cell) {
         --ig-input-padding: var(--hcg-cell-input-padding, var(--ig-input-padding-base));
         --ig-input-font-weight: var(--hcg-cell-input-font-weight, var(--hcg-input-font-weight, inherit));
         --ig-input-font-size: var(--hcg-cell-input-font-size, var(--hcg-input-font-size, inherit));

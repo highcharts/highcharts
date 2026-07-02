@@ -5,8 +5,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 
 'use strict';
@@ -58,7 +58,26 @@ import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
-import { addEvent, merge, removeEvent } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    diffObjects,
+    find,
+    fireEvent,
+    getStyle,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    splat
+} from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
 
 // Import components
@@ -80,10 +99,25 @@ declare global {
         addEvent: typeof addEvent;
         board: typeof Board.board;
         boards: typeof Globals.boards;
+        createElement: typeof createElement;
+        css: typeof css;
+        defined: typeof defined;
+        diffObjects: typeof diffObjects;
         error: typeof Utilities.error;
+        find: typeof find;
+        fireEvent: typeof fireEvent;
+        getStyle: typeof getStyle;
+        isArray: typeof isArray;
+        isFunction: typeof isFunction;
+        isNumber: typeof isNumber;
+        isObject: typeof isObject;
+        isString: typeof isString;
         merge: typeof merge;
+        objectEach: typeof objectEach;
+        pick: typeof pick;
         removeEvent: typeof removeEvent;
         setOptions: typeof Defaults.setOptions;
+        splat: typeof splat;
         uniqueKey: typeof uniqueKey;
         version: typeof Globals.version;
         win: typeof Globals.win;
@@ -128,10 +162,25 @@ const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
 G.addEvent = addEvent;
+G.createElement = createElement;
+G.css = css;
+G.defined = defined;
+G.diffObjects = diffObjects;
 G.error = Utilities.error;
+G.find = find;
+G.fireEvent = fireEvent;
+G.getStyle = getStyle;
+G.isArray = isArray;
+G.isFunction = isFunction;
+G.isNumber = isNumber;
+G.isObject = isObject;
+G.isString = isString;
 G.merge = merge;
+G.objectEach = objectEach;
+G.pick = pick;
 G.removeEvent = removeEvent;
 G.setOptions = Defaults.setOptions;
+G.splat = splat;
 G.uniqueKey = uniqueKey;
 G.AST = AST;
 G.Board = Board;

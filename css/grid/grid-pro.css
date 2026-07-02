@@ -10,6 +10,8 @@
  */
 
 @import url("./grid-lite.css");
+@import url("./grid-tree-view.css");
+@import url("./grid-row-pinning.css");
 
 /* Grid Pro specific styles */
 
@@ -127,8 +129,7 @@
     padding: var(--ig-padding);
 }
 
-.hcg-table tbody td.hcg-edited-cell .hcg-input:not([type="checkbox"]),
-.hcg-table tbody th.hcg-edited-cell .hcg-input:not([type="checkbox"]) {
+.hcg-table tbody :where(.hcg-cell).hcg-edited-cell .hcg-input:not([type="checkbox"]) {
     border-width: 0;
     position: absolute;
     top: 0;
@@ -147,13 +148,11 @@
     line-height: 1.2em;
 }
 
-.hcg-table tbody td.hcg-edited-cell select,
-.hcg-table tbody th.hcg-edited-cell select {
+.hcg-table tbody :where(.hcg-cell).hcg-edited-cell select {
     appearance: none;
 }
 
-.hcg-table tbody td.hcg-edited-cell-error .hcg-input,
-.hcg-table tbody th.hcg-edited-cell-error .hcg-input {
+.hcg-table tbody :where(.hcg-cell).hcg-edited-cell-error .hcg-input {
     color: var(--ig-color);
     box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color) !important;
     background-color: var(--ig-negative-background) !important;

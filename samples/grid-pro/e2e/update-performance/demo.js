@@ -33,8 +33,10 @@ Grid.grid('container', {
         // Make sure the filter icon is visible.
         width: 200,
         filtering: {
-            condition: 'contains',
-            value: 'berries',
+            rule: {
+                operator: 'contains',
+                value: 'berries'
+            },
             enabled: true
         }
     }]

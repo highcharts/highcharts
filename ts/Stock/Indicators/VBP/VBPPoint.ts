@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,7 +23,7 @@ const {
         }
     }
 } = SeriesRegistry.seriesTypes;
-import VBPIndicator from './VBPIndicator';
+import type VBPIndicator from './VBPIndicator';
 
 /* *
  *
@@ -30,6 +31,7 @@ import VBPIndicator from './VBPIndicator';
  *
  * */
 
+/** @internal */
 class VBPPoint extends SMAPoint {
 
     // Required for destroying negative part of volume
@@ -48,6 +50,7 @@ class VBPPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 interface VBPPoint {
     barX: number;
     negativeGraphic: unknown;
@@ -64,4 +67,5 @@ interface VBPPoint {
  *
  * */
 
+/** @internal */
 export default VBPPoint;

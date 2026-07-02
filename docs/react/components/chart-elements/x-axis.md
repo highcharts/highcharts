@@ -3,7 +3,8 @@
 You can customize the [chart x-axis](https://www.highcharts.com/docs/chart-concepts/axes) using the `XAxis` component:
 
 ```tsx
-import { Chart, Series, XAxis } from "@highcharts/react";
+import { Chart, XAxis } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function XAxisChart() {
   return (
@@ -11,7 +12,7 @@ export default function XAxisChart() {
       <XAxis plotBands={[{ from: 1, to: 2, color: "red" }]}>
         X axis values
       </XAxis>
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }

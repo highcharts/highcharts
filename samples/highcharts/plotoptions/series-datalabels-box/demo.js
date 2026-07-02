@@ -21,9 +21,10 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 borderRadius: 5,
-                backgroundColor: 'rgba(252, 255, 197, 0.7)',
+                backgroundColor: '#d3eaffcc',
                 borderWidth: 1,
                 borderColor: '#AAA',
+                padding: [3, 5],
                 y: -6
             }
         }
@@ -35,7 +36,6 @@ Highcharts.chart('container', {
             dataLabels: {
                 borderColor: 'red',
                 borderWidth: 2,
-                padding: 5,
                 shadow: true,
                 style: {
                     fontWeight: 'bold'

@@ -30,6 +30,11 @@ npm install --save highcharts
 ### ES6 modules, AMD, CommonJS and others
 For other ways to use Highcharts in your projects, please refer to our [installation docs](http://www.highcharts.com/docs/getting-started/installation).
 
+### Native iOS integration
+For native iOS apps, Highcharts is commonly used through the
+[highcharts/highcharts-ios](https://github.com/highcharts/highcharts-ios)
+wrapper, which is currently community-maintained.
+
 ## Create your own custom build of Highcharts
 To reduce file size, or combine modules into one file to reduce latency, you may
 want to create your own build of the Highcharts modules. See [Creating custom

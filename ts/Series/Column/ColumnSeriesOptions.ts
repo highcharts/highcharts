@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,11 +37,17 @@ import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
  *
  * */
 
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        borderWidth?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
-        borderRadius?: (number|string|BorderRadiusOptionsObject);
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
         borderWidth?: number;
         centerInCategory?: boolean;
         fillColor?: ColorType;
@@ -59,19 +66,18 @@ declare module '../../Core/Series/SeriesOptions' {
          */
         pointRange?: (number|null);
     }
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        brightness?: number;
-        color?: ColorType;
-        dashStyle?: DashStyleValue;
-    }
     interface SeriesZonesOptions {
         borderColor?: ColorType;
         borderWidth?: number;
         color?: ColorType;
+    }
+}
+
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
+        borderDashStyle?: DashStyleValue;
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
+        borderWidth?: number;
     }
 }
 
@@ -127,7 +133,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @product highcharts highstock gantt
      */
-    borderRadius?: (number|string|BorderRadiusOptionsObject);
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * The width of the border surrounding each column or bar. Defaults to
@@ -274,6 +280,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
+     * @basic
+     *
      * @extends series.line.data
      *
      * @excluding marker
@@ -370,6 +378,9 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
+     *
+     * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
+     *         Pie point padding plugin
      *
      * @product highcharts highstock gantt
      */

@@ -82,6 +82,41 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
         'blue',
         'Generic fill'
     );
+
+    // borderRadius rounds the corners of the box
+    chart.series[0].update({ borderRadius: 5 });
+
+    const arcs = chart.series[0].points[0].box.pathArray.filter(
+        segment => segment[0] === 'A'
+    );
+    assert.strictEqual(
+        arcs.length,
+        4,
+        'A borderRadius should round the four corners of the box'
+    );
+    assert.strictEqual(
+        arcs[0][1],
+        5,
+        'The corner radius should match the borderRadius option'
+    );
+
+    chart.series[0].update({ borderRadius: '50%' });
+    const pctArcs = chart.series[0].points[0].box.pathArray.filter(
+        segment => segment[0] === 'A'
+    );
+    assert.ok(
+        pctArcs.length === 4 && pctArcs[0][1] > 0,
+        'A percentage borderRadius is resolved to a relative pixel radius'
+    );
+
+    chart.series[0].update({ borderRadius: 0 });
+    assert.deepEqual(
+        chart.series[0].points[0].box.pathArray.find(
+            segment => segment[0] === 'A'
+        ).slice(0, 3),
+        ['A', 0, 0],
+        'A borderRadius of 0 should fall back to sharp corners'
+    );
 });
 
 QUnit.test('Individual options and Point.update', function (assert) {

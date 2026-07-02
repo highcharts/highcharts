@@ -30,6 +30,20 @@ const dashboardsWithLayoutHTML = `
     </html>
 `;
 
+const dashboardsWithGridHTML = `
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <script src="https://code.highcharts.com/grid/grid-pro.src.js"></script>
+            <script src="https://code.highcharts.com/dashboards/dashboards.src.js"></script>
+            <script src="https://code.highcharts.com/dashboards/modules/layout.src.js"></script>
+        </head>
+        <body>
+            <div id="container"></div>
+        </body>
+    </html>
+`;
+
 test.describe('Component helpers', () => {
     // Equivalent of test/typescript-karma/Dashboards/Component/helpers.test.js
     // Note: This test uses KPI with chartOptions, which requires Highcharts
@@ -226,6 +240,146 @@ test.describe('HTML Component', () => {
 
         expect(result.elementsText, 'HTML from elements should be rendered and text should be correct.').toBe('HTML from elements');
         expect(result.stringText, 'HTML from string should be rendered and text should be correct.').toBe('HTML from string');
+    });
+});
+
+test.describe('Grid Component', () => {
+    test('connector updates should recreate the Grid without stale viewport state', async ({ page }) => {
+        await page.setContent(dashboardsWithGridHTML, {
+            waitUntil: 'networkidle'
+        });
+
+        const result = await page.evaluate(async () => {
+            const Dashboards = (window as any).Dashboards;
+
+            const dashboard = await Dashboards.board('container', {
+                dataPool: {
+                    connectors: [{
+                        id: 'data-connector',
+                        type: 'JSON',
+                        data: {
+                            first: {
+                                alpha: [1, 2],
+                                beta: [3, 4]
+                            },
+                            second: {
+                                x: 10,
+                                y: 20
+                            }
+                        },
+                        dataTables: [{
+                            key: 'first',
+                            beforeParse: ({ first }: any) => {
+                                const keys = Object.keys(first);
+
+                                return [
+                                    keys,
+                                    ...first[keys[0]].map(
+                                        (_: unknown, index: number) =>
+                                            keys.map((key) => first[key][index])
+                                    )
+                                ];
+                            }
+                        }, {
+                            key: 'second',
+                            firstRowAsNames: false,
+                            columnIds: ['x', 'y'],
+                            beforeParse: ({ second }: any) => [[
+                                second.x,
+                                second.y
+                            ]]
+                        }]
+                    }]
+                },
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{
+                                id: 'dashboard-cell-1'
+                            }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'dashboard-cell-1',
+                    type: 'Grid',
+                    connector: {
+                        id: 'data-connector',
+                        dataTableKey: 'first'
+                    },
+                    gridOptions: {}
+                }]
+            }, true);
+
+            const component = dashboard.mountedComponents[0].component;
+            await new Promise<void>((resolve, reject) => {
+                const started = Date.now();
+
+                const waitForViewport = (): void => {
+                    if (component.grid?.viewport) {
+                        resolve();
+                        return;
+                    }
+
+                    if (Date.now() - started > 1000) {
+                        reject(new Error('Grid viewport did not initialize.'));
+                        return;
+                    }
+
+                    setTimeout(waitForViewport, 10);
+                };
+
+                waitForViewport();
+            });
+
+            const initialGrid = component.grid;
+            const initialColumns = component.grid.viewport.columns.map(
+                (column: any) => column.id
+            );
+            const originalRenderViewport =
+                component.grid.renderViewport.bind(component.grid);
+            let renderViewportCallCount = 0;
+
+            component.grid.renderViewport = async (...args: Array<any>) => {
+                renderViewportCallCount += 1;
+
+                if (renderViewportCallCount === 1) {
+                    await new Promise((resolve) => setTimeout(resolve, 50));
+                }
+
+                return originalRenderViewport(...args);
+            };
+
+            await component.update({
+                connector: {
+                    id: 'data-connector',
+                    dataTableKey: 'second'
+                }
+            });
+
+            await new Promise((resolve) => setTimeout(resolve, 75));
+
+            const viewport = component.grid.viewport;
+            const firstRow = viewport?.getRenderedRowByIndex(0);
+
+            return {
+                gridRecreated: component.grid !== initialGrid,
+                initialColumns,
+                renderViewportCallCount,
+                updatedColumns: viewport?.columns?.map(
+                    (column: any) => column.id
+                ),
+                rowData: firstRow?.data,
+                viewportConnected: viewport?.tableElement?.isConnected
+            };
+        });
+
+        expect(result.gridRecreated).toBe(true);
+        expect(result.initialColumns).toEqual(['alpha', 'beta']);
+        expect(result.renderViewportCallCount).toBe(0);
+        expect(result.updatedColumns).toEqual(['x', 'y']);
+        expect(result.rowData).toEqual({ x: 10, y: 20 });
+        expect(result.viewportConnected).toBe(true);
     });
 });
 
@@ -863,6 +1017,68 @@ test.describe('Highcharts Component', () => {
         expect(result.comp5SeriesLength, 'Columns parsed to series (series options array and extra series with data).').toBe(3);
         expect(result.comp5Series1Name, 'Implicited series is created.').toBe('fake trend');
         expect(result.comp5Series2PointsLength, 'Points are created in implicited series.').toBeGreaterThan(0);
+    });
+
+    test('ColumnAssignment object and array form map same column twice (x and y)', async ({
+        page
+    }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, {
+            waitUntil: 'networkidle'
+        });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                dataPool: {
+                    connectors: [{
+                        id: 'data',
+                        type: 'JSON',
+                        data: [
+                            ['Value', 'Value 1'],
+                            [7, 70],
+                            [8, 80],
+                            [9, 90]
+                        ]
+                    }]
+                },
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'cell-1' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'cell-1',
+                    type: 'Highcharts',
+                    connector: {
+                        id: 'data',
+                        columnAssignment: [{
+                            seriesId: 's1',
+                            data: { x: 'Value', y: 'Value' }
+                        }, {
+                            seriesId: 's2',
+                            data: ['Value', 'Value']
+                        }]
+                    }
+                }]
+            }, true);
+
+            const chart = dashboard.mountedComponents[0].component.chart;
+
+            return {
+                series0: chart?.series[0]?.graph,
+                series1: chart?.series[1]?.graph
+            };
+        });
+
+        expect(result.series0).toBeDefined();
+        expect(result.series1).toBeDefined();
     });
 
     test('JSON data with columnIds and columnAssignment', async ({ page }) => {

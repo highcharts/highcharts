@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,8 +28,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare module '../Line/LineSeriesOptions' {
-    interface LineSeriesOptions {
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
 
         /**
          * The parameter allows setting line series type and use OHLC
@@ -126,6 +127,15 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      * @product highstock
      */
     data?: Array<(OHLCPointOptions|PointShortOptions)>;
+
+    /**
+     * What type of legend symbol to render for this series. For OHLC series
+     * this defaults to `ohlc`, a stem with open and close ticks.
+     *
+     * @default ohlc
+     * @apioption plotOptions.ohlc.legendSymbol
+     */
+    legendSymbol?: string;
 
     /**
      * Determines which one of  `open`, `high`, `low`, `close` values should

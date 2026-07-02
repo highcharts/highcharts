@@ -1,7 +1,8 @@
 QUnit.test('Element Z index', function (assert) {
     var renderer,
         circles = [],
-        group2;
+        group2,
+        group3;
 
     renderer = new Highcharts.Renderer($('#container')[0], 450, 300);
 
@@ -35,6 +36,7 @@ QUnit.test('Element Z index', function (assert) {
         .add();
 
     group2 = renderer.g().add();
+    group3 = renderer.g().add();
 
     circles[4] = renderer
         .circle(200, 100, 60)
@@ -64,6 +66,20 @@ QUnit.test('Element Z index', function (assert) {
             zIndex: 10
         })
         .add(group2);
+    circles[8] = renderer
+        .circle(200, 20, 20)
+        .attr({
+            fill: 'teal',
+            zIndex: 1.5
+        })
+        .add(group3);
+    circles[9] = renderer
+        .circle(230, 20, 20)
+        .attr({
+            fill: 'navy',
+            zIndex: 1
+        })
+        .add(group3);
 
     function getIndex(element) {
         var i = 0,
@@ -129,6 +145,12 @@ QUnit.test('Element Z index', function (assert) {
         getIndex(circles[7].element) > getIndex(circles[4].element),
         true,
         'Orange in front of all'
+    );
+
+    assert.strictEqual(
+        getIndex(circles[8].element) > getIndex(circles[9].element),
+        true,
+        'Sub-integer z-index should render in front of lower integer z-index'
     );
 
     assert.strictEqual(

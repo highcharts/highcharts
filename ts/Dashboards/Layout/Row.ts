@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -26,7 +27,13 @@ import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import { defined, fireEvent, merge, objectEach, pick } from '../../Shared/Utilities.js';
+import {
+    defined,
+    fireEvent,
+    merge,
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
 
 /**
  * @internal

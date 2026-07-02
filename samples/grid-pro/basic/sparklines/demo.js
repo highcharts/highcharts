@@ -218,7 +218,11 @@ Grid.grid('container', {
             // and then call `loadData` to update the row data.
             ['pieA', 'pieB', 'pieC'].forEach(colId => {
                 const value = Math.round(Math.random() * 100);
-                grid.dataTable.setCell(colId, cell.row.id, value);
+                grid.dataProvider.getDataTable().setCell(
+                    colId,
+                    cell.row.id,
+                    value
+                );
             });
             cell.row.loadData();
 

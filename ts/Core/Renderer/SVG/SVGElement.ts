@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,12 +39,11 @@ import type SVGElementBase from './SVGElementBase';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
-import A from '../../Animation/AnimationUtilities.js';
-const {
+import {
     animate,
     animObject,
     stop
-} = A;
+} from '../../Animation/AnimationUtilities.js';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
 const {
@@ -1076,7 +1076,6 @@ class SVGElement implements SVGElementBase {
             radAttr: SVGAttributes,
             gradients: Record<string, SVGElement>,
             stops: (GradientColor['stops']|undefined),
-            stopColor: ColorString,
             stopOpacity,
             radialReference: Array<number>,
             id,
@@ -1085,7 +1084,7 @@ class SVGElement implements SVGElementBase {
 
         fireEvent(this.renderer, 'complexColor', {
             args: arguments
-        }, function (): void {
+        }, (): void => {
             // Apply linear or radial gradients
             if ((colorOptions as GradientColor).radialGradient) {
                 gradName = 'radialGradient';
@@ -1156,19 +1155,18 @@ class SVGElement implements SVGElementBase {
                     // The gradient needs to keep a list of stops to be able to
                     // destroy them
                     gradientObject.stops = [];
-                    (stops as any).forEach(function (
-                        stop: [number, ColorString]
-                    ): void {
-                        if (stop[1].indexOf('rgba') === 0) {
-                            colorObject = Color.parse(stop[1]);
+                    (stops as any).forEach((
+                        [offset, stopColor]: [number, ColorString]
+                    ): void => {
+                        if (stopColor.indexOf('rgba') === 0) {
+                            colorObject = Color.parse(stopColor);
                             stopColor = colorObject.get('rgb') as any;
                             stopOpacity = colorObject.get('a') as any;
                         } else {
-                            stopColor = stop[1];
                             stopOpacity = 1;
                         }
                         const stopObject = renderer.createElement('stop').attr({
-                            offset: stop[0],
+                            offset,
                             'stop-color': stopColor,
                             'stop-opacity': stopOpacity
                         }).add(gradientObject as any);
@@ -1212,7 +1210,8 @@ class SVGElement implements SVGElementBase {
     public css(styles: CSSObject): this {
         const oldStyles = this.styles,
             newStyles: CSSObject = {},
-            elem = this.element;
+            elem = this.element,
+            renderer = this.renderer;
 
         let textWidth,
             hasNew = !oldStyles;
@@ -1254,7 +1253,7 @@ class SVGElement implements SVGElementBase {
             // Store object
             extend(this.styles, styles);
 
-            if (textWidth && (!svg && this.renderer.forExport)) {
+            if (textWidth && (!svg && renderer.forExport)) {
                 delete styles.width;
             }
 
@@ -1301,7 +1300,7 @@ class SVGElement implements SVGElementBase {
             // Rebuild text after added. Cache mechanisms in the buildText will
             // prevent building if there are no significant changes.
             if (this.element.nodeName === 'text') {
-                this.renderer.buildText(this);
+                renderer.buildText(this);
             }
 
             // Apply text outline after added
@@ -1360,13 +1359,6 @@ class SVGElement implements SVGElementBase {
             { element = {} as DOMElementType, renderer, stops } = wrapper,
             ownerSVGElement = (element as SVGDOMElement).ownerSVGElement;
 
-        let parentToClean: (SVGElement|undefined) = (
-                element.nodeName === 'SPAN' &&
-                wrapper.parentGroup ||
-                void 0
-            ),
-            grandParent: SVGElement;
-
         // Remove events
         element.onclick = element.onmouseout = element.onmouseover =
             element.onmousemove = (element as any).point = null;
@@ -1400,18 +1392,6 @@ class SVGElement implements SVGElementBase {
 
         // Remove element
         wrapper.safeRemoveChild(element);
-
-        // In case of useHTML, clean up empty containers emulating SVG groups
-        // (#1960, #2393, #2697).
-        while (
-            parentToClean?.div &&
-            parentToClean.div.childNodes.length === 0
-        ) {
-            grandParent = (parentToClean as any).parentGroup;
-            wrapper.safeRemoveChild((parentToClean as any).div);
-            delete (parentToClean as any).div;
-            parentToClean = grandParent;
-        }
 
         // Remove from alignObjects
         if (wrapper.alignOptions) {
@@ -1917,7 +1897,7 @@ class SVGElement implements SVGElementBase {
          * @name Highcharts.SVGElement#element
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
-        this.element = nodeName === 'span' || nodeName === 'body' ?
+        this.element = nodeName === 'div' || nodeName === 'body' ?
             createElement(nodeName) as HTMLDOMElement :
             doc.createElementNS(this.SVG_NS, nodeName) as SVGDOMElement;
 
@@ -2350,7 +2330,6 @@ class SVGElement implements SVGElementBase {
             element,
             foreignObject,
             matrix,
-            padding,
             rotation = 0,
             rotationOriginX,
             rotationOriginY,
@@ -2382,18 +2361,6 @@ class SVGElement implements SVGElementBase {
                 (rotationOriginY ?? element.getAttribute('y') ?? this.y ?? 0) +
                 ')'
             );
-
-            // HTML labels rotation (#20685)
-            if (
-                text?.element.tagName === 'SPAN' &&
-                !text?.foreignObject
-            ) {
-                text.attr({
-                    rotation,
-                    rotationOriginX: (rotationOriginX || 0) - padding,
-                    rotationOriginY: (rotationOriginY || 0) - padding
-                });
-            }
         }
 
         // Apply scale
@@ -2456,11 +2423,8 @@ class SVGElement implements SVGElementBase {
         value?: number,
         key?: string
     ): boolean {
-        const renderer = this.renderer,
-            parentGroup = this.parentGroup,
-            parentWrapper = parentGroup || renderer,
-            parentNode = (parentWrapper as any).element || renderer.box,
-            element = this.element,
+        const { element, parentGroup, renderer } = this,
+            parentNode = parentGroup?.element || renderer.box,
             svgParent = parentNode === renderer.box;
 
         let childNodes,
@@ -2473,18 +2437,18 @@ class SVGElement implements SVGElementBase {
 
         if (defined(value)) {
             // So we can read it for other elements in the group
-            element.setAttribute('data-z-index', (value as any));
+            element.setAttribute('data-z-index', value);
 
-            (value as any) = +(value as any);
-            if ((this as any)[key as any] === value) {
+            value = +value;
+            if (this[key as string] === value) {
                 // Only update when needed (#3865)
                 run = false;
             }
-        } else if (defined((this as any)[key as any])) {
+        } else if (defined(this[key as string])) {
             element.removeAttribute('data-z-index');
         }
 
-        (this as any)[key as any] = value;
+        this[key as string] = value;
 
         // Insert according to this and other elements' zIndex. Before .add() is
         // called, nothing is done. Then on add, or by later calls to
@@ -2498,7 +2462,7 @@ class SVGElement implements SVGElementBase {
 
             childNodes = parentNode.childNodes;
             for (i = childNodes.length - 1; i >= 0 && !inserted; i--) {
-                otherElement = childNodes[i];
+                otherElement = childNodes[i] as Element;
                 otherZIndex = otherElement.getAttribute('data-z-index');
                 undefinedOtherZIndex = !defined(otherZIndex);
 
@@ -2508,7 +2472,7 @@ class SVGElement implements SVGElementBase {
                         // On all levels except the highest. If the parent is
                         // <svg>, then we don't want to put items before <desc>
                         // or <defs>
-                        value as any < 0 &&
+                        defined(value) && value < 0 &&
                         undefinedOtherZIndex &&
                         !svgParent &&
                         !i
@@ -2517,12 +2481,15 @@ class SVGElement implements SVGElementBase {
                         inserted = true;
                     } else if (
                         // Insert after the first element with a lower zIndex
-                        pInt(otherZIndex) <= (value as any) ||
+                        (
+                            defined(value) &&
+                            parseFloat(otherZIndex || '') <= value
+                        ) ||
                         // If negative zIndex, add this before first undefined
                         // zIndex element
                         (
                             undefinedOtherZIndex &&
-                            (!defined(value) || (value as any) >= 0)
+                            (!defined(value) || value >= 0)
                         )
                     ) {
                         parentNode.insertBefore(

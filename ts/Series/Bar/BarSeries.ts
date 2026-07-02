@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,7 +34,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * Bar series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.bar
  *
@@ -80,6 +81,7 @@ class BarSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface BarSeries {
     inverted?: boolean;
     pointClass: typeof BarPoint;
@@ -94,6 +96,7 @@ extend(BarSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bar: typeof BarSeries;
@@ -107,6 +110,7 @@ SeriesRegistry.registerSeriesType('bar', BarSeries);
  *
  * */
 
+/** @internal */
 export default BarSeries;
 
 /* *
@@ -180,6 +184,7 @@ export default BarSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.column.data
  * @product   highcharts

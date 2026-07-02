@@ -286,6 +286,15 @@ module.exports = function (config) {
     // Get the files
     let files = require('./karma-files.json');
 
+    // Only include Morningstar connector in visual/reference runs.
+    // Loading it globally breaks unrelated QUnit tests.
+    if (argv.visualcompare || argv.reference) {
+        files = [
+            ...files,
+            'node_modules/@highcharts/connectors-morningstar/connectors-morningstar.js'
+        ];
+    }
+
     let options = {
         basePath: '../', // Root relative to this file
         frameworks: frameworks,

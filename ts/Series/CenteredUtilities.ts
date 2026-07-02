@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -106,12 +107,6 @@ namespace CenteredUtilities {
                 '0%'
             )
         ];
-
-        // No need for inner size in angular (gauges) series but still required
-        // for pie series
-        if (chart.angular && !(this instanceof Series)) {
-            positions[3] = 0;
-        }
 
         for (i = 0; i < 4; ++i) {
             value = positions[i];
