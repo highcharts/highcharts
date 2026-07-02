@@ -18,6 +18,9 @@ Highcharts.chart('container', {
             'can\'t stop laughing', 'top X songs', 'twitter reacts to',
             'what happened next'
         ],
+        labels: {
+            step: 1
+        },
         title: {
             text: null
         }
