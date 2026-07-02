@@ -168,7 +168,7 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  *         Simple contour
  *
  * @extends      series,plotOptions.contour
- * @excluding    cropThreshold, dataParser, dataURL, dragDrop ,pointRange,
+ * @excluding    cropThreshold, dragDrop ,pointRange,
  *               stack, allowPointSelect, boostBlending, boostThreshold, color,
  *               colorIndex, connectEnds, connectNulls, crisp, dashStyle,
  *               inactiveOtherPoints, jitter, linecap, negativeColor,

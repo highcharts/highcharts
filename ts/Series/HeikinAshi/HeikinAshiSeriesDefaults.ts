@@ -52,7 +52,7 @@ const HeikinAshiDefaults: HeikinAshiSeriesOptions = {
  *
  * @type      {*}
  * @extends   series,plotOptions.heikinashi
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  * @product   highstock
  * @requires  modules/heikinashi
  * @apioption series.heikinashi

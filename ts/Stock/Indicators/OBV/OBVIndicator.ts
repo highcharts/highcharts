@@ -240,7 +240,6 @@ export default OBVIndicator;
  * @extends   series,plotOptions.obv
  * @since     9.1.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/obv
  * @apioption series.obv

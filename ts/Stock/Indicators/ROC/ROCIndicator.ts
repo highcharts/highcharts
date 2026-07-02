@@ -251,7 +251,6 @@ export default ROCIndicator;
  * @extends   series,plotOptions.roc
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/roc
  * @apioption series.roc

@@ -56,7 +56,7 @@ import type {
  * @excluding jitter, softThreshold, threshold, cluster, boostThreshold,
  *            boostBlending
  *
- * @excluding dataParser, dataURL, stack, boostThreshold, boostBlending
+ * @excluding stack, boostThreshold, boostBlending
  *
  * @product highcharts highstock
  *

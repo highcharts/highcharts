@@ -39,7 +39,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding dragDrop
  *
- * @excluding dataParser, dataURL, dragDrop, marker
+ * @excluding dragDrop, marker
  *
  * @product highmaps
  */

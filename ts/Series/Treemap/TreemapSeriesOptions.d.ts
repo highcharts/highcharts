@@ -339,7 +339,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
  * @excluding connectEnds, connectNulls, dataSorting, dragDrop,
  *  jitter, marker
  *
- * @excluding dataParser, dataURL, stack, dataSorting
+ * @excluding stack, dataSorting
  *
  * @product highcharts
  *

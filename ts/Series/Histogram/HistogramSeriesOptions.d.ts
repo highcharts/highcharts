@@ -48,7 +48,7 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  * @excluding boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
  *            stacking, boostBlending
  *
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  *
  * @product highcharts
  *

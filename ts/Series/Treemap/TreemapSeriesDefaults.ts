@@ -709,7 +709,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treemap
- * @excluding dataParser, dataURL, stack, dataSorting
+ * @excluding stack, dataSorting
  * @product   highcharts
  * @requires  modules/treemap
  * @apioption series.treemap

@@ -628,7 +628,7 @@ export default SMAIndicator;
  * @extends   series,plotOptions.sma
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL, useOhlcData
+ * @excluding useOhlcData
  * @requires  stock/indicators/indicators
  * @apioption series.sma
  */

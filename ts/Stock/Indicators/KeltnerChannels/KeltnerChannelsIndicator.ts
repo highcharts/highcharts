@@ -302,7 +302,7 @@ export default KeltnerChannelsIndicator;
  * @extends      series,plotOptions.keltnerchannels
  * @since        7.0.0
  * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding    allAreas, colorAxis, compare, compareBase,
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator

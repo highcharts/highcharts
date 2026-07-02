@@ -46,7 +46,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding innerSize,size,dataSorting
  *
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostBlending, boostThreshold
  *
  * @product highcharts

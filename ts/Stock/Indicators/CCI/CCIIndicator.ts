@@ -228,7 +228,6 @@ export default CCIIndicator;
  *
  * @extends   series,plotOptions.cci
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/cci
