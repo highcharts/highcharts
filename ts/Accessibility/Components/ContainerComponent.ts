@@ -35,6 +35,7 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from '../Utils/HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
+import { isObject, removeEvent } from '../../Shared/Utilities.js';
 
 
 /**
@@ -64,11 +65,65 @@ class ContainerComponent extends AccessibilityComponent {
      * Called on first render/updates to the chart, including options changes.
      */
     public onChartUpdate(): void {
+        this.updatePointerEventHandlers();
         this.handleSVGTitleElement();
         this.setSVGContainerLabel();
         this.setGraphicContainerAttrs();
         this.setRenderToAttrs();
         this.makeCreditsAccessible();
+    }
+
+    /**
+     * Attach or remove container pointer event handlers based on chart
+     * interactivity, to avoid screen readers announcing the chart as
+     * "clickable". (#24151)
+     *
+     * @private
+     */
+    public updatePointerEventHandlers(): void {
+        const chart = this.chart,
+            pointer = chart.pointer,
+            container = chart.container,
+            chartOptions = chart.options.chart,
+            zoomType = chart.zooming.type || '',
+            hasZoom = /x|y/.test(zoomType),
+            panning = chartOptions.panning,
+            hasPanning = isObject(panning) ?
+                !!panning.enabled :
+                !!panning,
+            hasSelection = !!chartOptions.events?.selection,
+            hasDraggableNodes = chart.series.some(
+                (s): boolean => !!(s as any).hasDraggableNodes
+            ),
+            shouldAttachContainerMouseDown = (
+                hasZoom ||
+                hasPanning ||
+                hasSelection ||
+                hasDraggableNodes
+            ),
+            shouldAttachContainerClick = (
+                !!chart.navigationBindings ||
+                !!chartOptions.events?.click ||
+                chart.runTrackerClick
+            );
+
+        if (!pointer || !container) {
+            return;
+        }
+
+        container.onmousedown = shouldAttachContainerMouseDown ?
+            pointer.onContainerMouseDown.bind(pointer) :
+            null;
+
+        // Also remove addEventListener-based handlers from DragNodesComposition
+        // (highcharts-more) for charts without draggable nodes. (#24151)
+        if (!shouldAttachContainerMouseDown) {
+            removeEvent(container, 'mousedown');
+        }
+
+        container.onclick = shouldAttachContainerClick ?
+            pointer.onContainerClick.bind(pointer) :
+            null;
     }
 
 
