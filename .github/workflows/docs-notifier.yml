@@ -21,7 +21,7 @@ concurrency:
 jobs:
   notify:
     if: github.event_name == 'push'
-    runs-on: ubuntu-latest-slim
+    runs-on: ubuntu-slim
     steps:
       - name: Trigger Slack workflow
         id: slack
@@ -42,7 +42,7 @@ jobs:
             -d '{"ref":"main"}'
 
   docs:
-    runs-on: ubuntu-latest-slim
+    runs-on: ubuntu-slim
     steps:
       - name: Checkout
         uses: actions/checkout@v4
