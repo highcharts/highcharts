@@ -1,7 +1,7 @@
 Treemap
 ===
 
-<iframe width="320" height="410" style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels" allow="fullscreen"></iframe>
+<iframe width="320" height="420" style="border: 0; width: 100%; height: 420px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/treemap-with-levels" allow="fullscreen"></iframe>
 
 ### Requirements
 

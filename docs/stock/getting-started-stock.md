@@ -55,7 +55,7 @@ Highcharts.stockChart('container', {
 
 Instead of hardcoded data, see how you can use the data from external API/database below.
 
-<iframe src="https://www.highcharts.com/samples/embed/stock/demo/basic-line" width="100%" height="400" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/stock/demo/basic-line" width="100%" height="475" allow="fullscreen"></iframe>
 
 
 <br />

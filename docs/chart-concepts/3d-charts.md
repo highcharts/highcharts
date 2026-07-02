@@ -90,7 +90,7 @@ A 3D chart of type [columns](https://highcharts.com/docs/chart-and-series-types/
 plotOptions.column.depth: The depth of each individual column.
 ```
 
-<iframe style="width: 100%; height: 550px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-interactive" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 900px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-interactive" allow="fullscreen"></iframe>
 
 ### Displaying multiple columns
 
@@ -106,7 +106,7 @@ plotOptions.column.groupZPadding: Spacing between columns on the z-axis.
 
 A regular Highcharts column chart also offers the possibility to stack columns together, this is of course still available in 3D charts and works in exactly the same way by setting _stacking_ to **true** and defining a stack number for each series.
 
-<iframe style="width: 100%; height: 475px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-stacking-grouping" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 650px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-column-stacking-grouping" allow="fullscreen"></iframe>
 
 3D Pie
 ------
@@ -117,7 +117,7 @@ For a [pie chart](https://highcharts.com/docs/chart-and-series-types/pie-chart) 
 plotOptions.pie.depth: Defines the 'thickness' of the pie.
 ```
 
-<iframe style="width: 100%; height: 475px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-pie" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/3d-pie" allow="fullscreen"></iframe>
 
 3D Scatter
 ----------

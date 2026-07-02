@@ -1,0 +1,14 @@
+@media (min-width: 997px) {
+    .menu {
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: var(--containers-inner-padding-400) var(--containers-inner-padding-500) var(--containers-inner-padding-600);
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-gutter: stable;
+    }
+
+    .menuWithAnnouncementBar {
+        margin-bottom: var(--docusaurus-announcement-bar-height);
+    }
+}
