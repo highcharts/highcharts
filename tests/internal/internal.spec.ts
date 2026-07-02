@@ -337,6 +337,8 @@ test.describe('createChart', () => {
     test('most options combined', async ({ page }) => {
         const HC = await page.evaluateHandle<typeof Highcharts>(async () => {
             // @ts-expect-error cannot find import
+            await import('https://code.highcharts.com/esm/modules/stock.src.js');
+            // @ts-expect-error cannot find import
             await import('https://code.highcharts.com/esm/modules/stock-tools.src.js');
             // @ts-expect-error cannot find import
             await import('https://code.highcharts.com/esm/modules/annotations-advanced.src.js');
@@ -395,7 +397,7 @@ test.describe('createChart', () => {
 
         await page.locator('.highcharts-submenu-item-arrow').first()
             .click();
-        await page.getByTitle('Label', { exact: true }).locator('button')
+        await page.getByTitle('Label', { exact: true })
             .click();
         await page.getByRole('listitem', { name: 'Simple shapes' }).getByRole('button').first().click();
 
