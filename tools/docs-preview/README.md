@@ -70,9 +70,14 @@ All three components are exported from `tools/docs-preview/src/theme/MDXComponen
 
 - On push to `master`, it triggers the Slack docs webhook.
 - On push and PR, it triggers a branch build in doc-builder via `POST ${DOC_BUILDER_URL}/build/trigger`.
+- On push to `master`, it dispatches the `build_and_deploy.yml` workflow on `highcharts/doc-builder` via the GitHub API to trigger a full deploy.
 - On PRs, it posts or updates a `📚 Docs Preview` comment with links to changed docs pages using `/docs/<path>?branch=<encodedBranch>`.
 
 Required repository secrets for the build/comment flow:
 
 - `DOC_BUILDER_URL`
 - `DOC_BUILDER_BUILD_TRIGGER_TOKEN`
+- `DEMO_DOCS_WORKFLOW_DISPATCH_TOKEN`
+- `SLACK_DOCS_NOTIFICATION_WEBHOOK`
+
+> **Note:** Changes to the docs-preview setup will not be included if the lockfile changes.
