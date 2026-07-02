@@ -24,6 +24,8 @@ import type {
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 
+import NBU from './NavigationBindingsUtilities.js';
+const { getAxisFromOptions } = NBU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import { defined, fireEvent } from '../../Shared/Utilities.js';
@@ -516,13 +518,7 @@ class MockPoint {
         this.series[axisName] =
             typeof axisOptions === 'object' ?
                 axisOptions :
-                defined(axisOptions) ?
-                    (
-                        chart[axisName][axisOptions] ||
-                        // @todo v--- (axisName)[axisOptions] ?
-                        chart.get(axisOptions as any)
-                    ) :
-                    null;
+                getAxisFromOptions(chart, axisName, axisOptions) || null;
     }
 
     /**

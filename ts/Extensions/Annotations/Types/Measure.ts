@@ -228,7 +228,7 @@ if (defaultOptions.annotations?.types) {
                  */
                 formatter: void 0
             }
-        } as Measure.MeasureTypeOptions,
+        } as Measure.TypeOptions,
         controlPointOptions: {
             positioner: function (
                 this: Controllable,
@@ -722,7 +722,7 @@ class Measure extends Annotation {
      */
     public init(
         annotationOrChart: (Annotation|AnnotationChart),
-        userOptions: Measure.MeasureOptions,
+        userOptions: Measure.Options,
         index?: number
     ): void {
         super.init(annotationOrChart, userOptions, index);
@@ -1183,7 +1183,7 @@ interface Measure {
     offsetY: number;
 
     /** @internal */
-    options: Measure.MeasureOptions;
+    options: Measure.Options;
 
     /** @internal */
     resizeX: number;
@@ -1233,8 +1233,8 @@ namespace Measure {
      * @product highstock
      * @optionparent annotations.types.measure
      */
-    export interface MeasureOptions extends AnnotationOptions {
-        typeOptions: MeasureTypeOptions;
+    export interface Options extends AnnotationOptions {
+        typeOptions: TypeOptions;
     }
     export interface MeasureTypeCrosshairOptions {
         /**
@@ -1338,7 +1338,7 @@ namespace Measure {
          */
         style: CSSObject;
     }
-    export interface MeasureTypeOptions extends AnnotationTypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         background: AnnotationShapeOptionsOptions;
 
         /**

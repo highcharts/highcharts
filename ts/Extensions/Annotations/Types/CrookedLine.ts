@@ -13,9 +13,7 @@
 
 import type { AnnotationEventObject } from '../EventEmitter';
 import type {
-    AnnotationMockPointFunction,
-    AnnotationOptions,
-    AnnotationTypeOptions
+    AnnotationMockPointFunction
 } from '../AnnotationOptions';
 import type { AnnotationPointType } from '../AnnotationSeries';
 import type Controllable from '../Controllables/Controllable';
@@ -251,33 +249,6 @@ class CrookedLine extends Annotation {
     }
 }
 
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace CrookedLine {
-    /**
-     * Options for the crooked line annotation type.
-     *
-     * @sample highcharts/annotations-advanced/crooked-line/
-     *         Crooked line
-     *
-     * @product      highstock
-     * @optionparent annotations.types.crookedLine
-     */
-    export interface Options extends AnnotationOptions {
-        /**
-         * Additional options for an annotation with the type.
-         */
-        typeOptions: AnnotationTypeOptions;
-    }
-    export interface TypeOptions extends AnnotationTypeOptions {
-        points?: Array<AnnotationMockPointOptionsObject>;
-    }
-}
 
 /* *
  *
