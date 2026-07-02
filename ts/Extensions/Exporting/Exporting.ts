@@ -831,8 +831,8 @@ export class Exporting {
         options?: Options
     ): string {
         // Remove any HTML added to the container after the SVG, like the
-        // Stock Tools GUI wrapper, #24754
-        const split = svg.indexOf('</svg>');
+        // Stock Tools GUI wrapper (#894, #9087, #24754)
+        const split = svg.lastIndexOf('</svg>');
         if (split > -1) {
             svg = svg.substr(0, split + 6);
         }

@@ -334,6 +334,42 @@ QUnit.test('getSVG with Stock Tools GUI (#24754)', function (assert) {
     );
 });
 
+QUnit.test(
+    'getSVG with nested SVG in useHTML legend (#24754)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            legend: {
+                useHTML: true,
+                labelFormatter: function () {
+                    return (
+                        '<svg width="100" height="25" viewbox="0 0 100 25">' +
+                        '<text><tspan dy="12">' + this.name +
+                        '</tspan></text></svg>'
+                    );
+                }
+            },
+            exporting: {
+                allowHTML: true
+            },
+            series: [{
+                name: 'Installation',
+                data: [43934, 52503, 57177]
+            }, {
+                name: 'Manufacturing',
+                data: [24916, 24064, 29742]
+            }]
+        });
+
+        const svg = chart.exporting.getSVG();
+        assert.strictEqual(
+            svg.lastIndexOf('</svg>'),
+            svg.length - 6,
+            'Exported SVG should end at the main </svg>, keeping the chart ' +
+            'intact despite nested SVGs in the legend'
+        );
+    }
+);
+
 QUnit.test('getSVG for boosted chart', async function (assert) {
     const chart = Highcharts.chart('container', {
         boost: {
