@@ -62,7 +62,7 @@ const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
-const { deg2rad, doc, win } = H;
+const { deg2rad } = H;
 import Tick from './Tick.js';
 import {
     arrayMax,
@@ -3275,23 +3275,15 @@ class Axis {
 
         let fontSizePx: number|undefined;
 
-        if (!this.horiz && !this.isRadial) {
+        if (!tick?.label && !this.horiz && !this.isRadial) {
             if (typeof fontSize === 'number') {
                 fontSizePx = fontSize;
             } else if (typeof fontSize === 'string') {
                 if (/^\d+(\.\d+)?px$/.test(fontSize)) {
                     fontSizePx = parseFloat(fontSize);
-                } else {
-                    const container = this.chart.container,
-                        span = doc.createElement('span');
-                    span.style.cssText =
-                        `font-size:${fontSize};position:absolute;` +
-                        'visibility:hidden';
-                    container.appendChild(span);
-                    fontSizePx = parseFloat(
-                        win.getComputedStyle(span).fontSize
-                    );
-                    container.removeChild(span);
+                } else if (/^\d+(\.\d+)?r?em$/.test(fontSize)) {
+                    fontSizePx = parseFloat(fontSize) *
+                        parseFloat(renderer.rootFontSize || '16');
                 }
             }
         }
