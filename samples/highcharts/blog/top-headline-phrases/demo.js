@@ -13,11 +13,14 @@ Highcharts.chart('container', {
             'will make you', 'this is why', 'can we guess', 'only X in',
             'the reason is', 'are freaking out', 'X stunning photos',
             'tears of joy', 'is what happens', 'make you cry',
-            'give you gossebumps', 'talking about it', 'is too cute',
+            'give you goosebumps', 'talking about it', 'is too cute',
             'shocked to see', 'melt your heart', 'X things only',
             'can\'t stop laughing', 'top X songs', 'twitter reacts to',
             'what happened next'
         ],
+        labels: {
+            step: 1
+        },
         title: {
             text: null
         }

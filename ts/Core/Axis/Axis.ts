@@ -3269,13 +3269,25 @@ class Axis {
      */
     public labelMetrics(): FontMetricsObject {
         const renderer = this.chart.renderer,
-            ticks = this.ticks,
-            tick = ticks[Object.keys(ticks)[0]] || {};
+            tick = this.ticks[Object.keys(this.ticks)[0]],
+            fontSize = this.options.labels?.style?.fontSize;
 
-        return this.chart.renderer.fontMetrics(
-            tick.label ||
-            renderer.box
-        );
+        let fontSizePx: number|undefined;
+
+        if (!tick?.label && !this.horiz && !this.isRadial) {
+            if (typeof fontSize === 'number') {
+                fontSizePx = fontSize;
+            } else if (typeof fontSize === 'string') {
+                if (/^\d+(\.\d+)?px$/.test(fontSize)) {
+                    fontSizePx = parseFloat(fontSize);
+                } else if (/^\d+(\.\d+)?r?em$/.test(fontSize)) {
+                    fontSizePx = parseFloat(fontSize) *
+                        parseFloat(renderer.rootFontSize || '16');
+                }
+            }
+        }
+
+        return renderer.fontMetrics(tick?.label || fontSizePx || renderer.box);
     }
 
     /**
@@ -3290,35 +3302,58 @@ class Axis {
         const labelOptions = this.options.labels,
             padding = labelOptions.padding || 0,
             horiz = this.horiz,
+            isRadial = this.isRadial,
             tickInterval = this.tickInterval,
-            slotSize = this.len / (
-                (
-                    (this.categories ? 1 : 0) +
-                    (this.max as any) -
-                    (this.min as any)
-                ) /
-                tickInterval
+            axisLen = this.len,
+            min = (this.min as any),
+            max = (this.max as any),
+            categoriesOffset = this.categories ? 1 : 0,
+            slotSize = axisLen / (
+                (categoriesOffset + max - min) / tickInterval
             ),
             rotationOption = labelOptions.rotation,
+            labelHeight = this.labelMetrics().h,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.8em
-            lineHeight = correctFloat(this.labelMetrics().h * 0.8),
-            range = Math.max((this.max as any) - (this.min as any), 0),
-            // Return the multiple of tickInterval that is needed to avoid
-            // collision
+            lineHeight = correctFloat(labelHeight * 0.8),
+            range = Math.max(max - min, 0),
             getStep = function (spaceNeeded: number): number {
-                let step = (spaceNeeded + 2 * padding) / (slotSize || 1);
+                const requiredSpace = spaceNeeded + 2 * padding;
 
-                step = step > 1 ? Math.ceil(step) : 1;
+                let step = Math.max(
+                    1,
+                    Math.ceil(requiredSpace / (slotSize || 1))
+                );
 
-                // Guard for very small or negative angles (#9835)
                 if (
-                    step * tickInterval > range &&
+                    !isRadial &&
                     spaceNeeded !== Infinity &&
                     slotSize !== Infinity &&
                     range
                 ) {
-                    step = Math.ceil(range / tickInterval);
+                    const maxStep = Math.ceil(
+                        Math.max(Math.abs(min), Math.abs(max)) / tickInterval
+                    ) + 1;
+                    step = Math.min(step, maxStep);
+
+                    if (!horiz) {
+                        const getSlotCount = (
+                            step: number
+                        ): number => {
+                            const newInterval = step * tickInterval;
+                            return Math.ceil(max / newInterval) -
+                                Math.floor(min / newInterval) +
+                                categoriesOffset;
+                        };
+                        let slotCount = getSlotCount(step);
+                        while (
+                            step < maxStep &&
+                            axisLen / slotCount < requiredSpace
+                        ) {
+                            step += 1;
+                            slotCount = getSlotCount(step);
+                        }
+                    }
                 }
 
                 return correctFloat(step * tickInterval);
@@ -3368,7 +3403,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(lineHeight * 0.75);
+            newTickInterval = getStep(lineHeight * (isRadial ? 0.75 : 1));
         }
 
         this.autoRotation = autoRotation;
