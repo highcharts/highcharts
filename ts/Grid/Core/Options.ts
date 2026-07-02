@@ -147,6 +147,7 @@ export interface Options {
      * instead.
      *
      * @deprecated 2.3.0
+     * @deprnote Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptionsObject;
 
@@ -890,8 +891,8 @@ export interface LangOptions extends LangOptionsCore {
     /**
      * Language options for column filtering conditions.
      *
-     * @deprecated
-     * Use `columnFilteringOperators` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `columnFilteringOperators` instead.
      */
     columnFilteringConditions?: Partial<
         Record<ColumnFilteringCondition, string>
@@ -994,24 +995,24 @@ export interface ColumnFilteringOptions {
     /**
      * The condition to use for filtering the column.
      *
-     * @deprecated
-     * Use `rule.operator` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `rule.operator` instead.
      */
     condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
      *
-     * @deprecated
-     * Use `rule.value` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `rule.value` instead.
      */
     value?: string | number | boolean | null;
 
     /**
      * Restricts the list of available filtering conditions for the column.
      *
-     * @deprecated
-     * Use `operators` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `operators` instead.
      *
      * @example
      * ```js

@@ -51,6 +51,7 @@ import {
 } from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import {
     addEvent,
+    defined,
     merge,
     pushUnique
 } from '../../../Shared/Utilities.js';
@@ -65,9 +66,12 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     lang: {
-        pinRowTop: 'Pin row to top',
-        pinRowBottom: 'Pin row to bottom',
-        unpinRow: 'Unpin row',
+        rowPinning: {
+            label: 'Row pinning',
+            pinRowTop: 'Pin row to top',
+            pinRowBottom: 'Pin row to bottom',
+            unpinRow: 'Unpin row'
+        },
         accessibility: {
             rowPinning: {
                 announcements: {
@@ -104,6 +108,8 @@ const defaultPinnedRowsState = {
     topIds: [],
     bottomIds: []
 };
+
+type RowPinningActionLangKey = 'pinRowTop'|'pinRowBottom'|'unpinRow';
 
 interface RowPinningContextMenuContext {
     grid: Grid;
@@ -163,7 +169,7 @@ function registerBuiltInActions(): void {
         'pinRowTop',
         {
             getLabel: (context): string =>
-                context.grid.options?.lang?.pinRowTop || '',
+                getRowPinningActionLabel(context, 'pinRowTop'),
             icon: 'pin',
             isVisible: (context): boolean =>
                 isRowPinningActionVisible(context),
@@ -181,7 +187,7 @@ function registerBuiltInActions(): void {
         'pinRowBottom',
         {
             getLabel: (context): string =>
-                context.grid.options?.lang?.pinRowBottom || '',
+                getRowPinningActionLabel(context, 'pinRowBottom'),
             icon: 'pin',
             isVisible: (context): boolean =>
                 isRowPinningActionVisible(context),
@@ -202,7 +208,7 @@ function registerBuiltInActions(): void {
         'unpinRow',
         {
             getLabel: (context): string =>
-                context.grid.options?.lang?.unpinRow || '',
+                getRowPinningActionLabel(context, 'unpinRow'),
             icon: 'unpin',
             isVisible: (context): boolean =>
                 isRowPinningActionVisible(context),
@@ -217,9 +223,48 @@ function registerBuiltInActions(): void {
     );
 
     registerBuiltInGroup('pinning', {
+        getLabel: (context): string =>
+            context.grid.options?.lang?.rowPinning?.label || '',
+        icon: 'pin',
         isVisible: (context): boolean => isRowPinningActionVisible(context),
         items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
     }, true);
+}
+
+/**
+ * Returns a row pinning action label with support for deprecated root lang
+ * keys.
+ *
+ * @param context
+ * Context menu runtime context.
+ *
+ * @param key
+ * Row pinning action language key.
+ */
+function getRowPinningActionLabel(
+    context: RowPinningContextMenuContext,
+    key: RowPinningActionLangKey
+): string {
+    const { grid } = context;
+    const lang = grid.options?.lang;
+    const userLang = grid.userOptions?.lang;
+    const userValue = (
+        userLang?.rowPinning?.[key] ||
+        userLang?.[key]
+    );
+    const value = lang?.rowPinning?.[key];
+    const defaultValue = defaultOptions.lang?.rowPinning?.[key];
+    const hasNonDefaultValue = (
+        defined(value) &&
+        value !== defaultValue
+    );
+
+    return (
+        userValue ||
+        (hasNonDefaultValue ? value : lang?.[key]) ||
+        value ||
+        ''
+    );
 }
 
 /**

@@ -54,6 +54,39 @@ export type RowPinningPosition = 'top'|'bottom';
 export type RowPinningChangeAction = 'pin'|'unpin'|'toggle';
 
 /**
+ * Language options for the row pinning feature.
+ */
+export interface RowPinningLangOptions {
+    /**
+     * Label used for the built-in row pinning context menu group.
+     *
+     * @default 'Row pinning'
+     */
+    label?: string;
+
+    /**
+     * Label used for the built-in "pin row to top" action.
+     *
+     * @default 'Pin row to top'
+     */
+    pinRowTop?: string;
+
+    /**
+     * Label used for the built-in "pin row to bottom" action.
+     *
+     * @default 'Pin row to bottom'
+     */
+    pinRowBottom?: string;
+
+    /**
+     * Label used for the built-in "unpin row" action.
+     *
+     * @default 'Unpin row'
+     */
+    unpinRow?: string;
+}
+
+/**
  * Snapshot of pinned row IDs by section.
  */
 export interface RowPinningState {
@@ -234,9 +267,17 @@ declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
 declare module '../../Core/Options' {
     interface LangOptions {
         /**
+         * Language options for the row pinning feature.
+         */
+        rowPinning?: RowPinningLangOptions;
+
+        /**
          * Label used for the built-in "pin row to top" action.
          *
          * @default 'Pin row to top'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowTop` instead.
          */
         pinRowTop?: string;
 
@@ -244,6 +285,9 @@ declare module '../../Core/Options' {
          * Label used for the built-in "pin row to bottom" action.
          *
          * @default 'Pin row to bottom'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowBottom` instead.
          */
         pinRowBottom?: string;
 
@@ -251,6 +295,9 @@ declare module '../../Core/Options' {
          * Label used for the built-in "unpin row" action.
          *
          * @default 'Unpin row'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.unpinRow` instead.
          */
         unpinRow?: string;
     }

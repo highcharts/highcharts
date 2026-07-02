@@ -31,6 +31,11 @@ function test_grid() {
     Grid.CellContextMenuBuiltInActions.registerBuiltInGroup(
         'sampleActions',
         {
+            getLabel: function (context) {
+                context.grid;
+                return 'Sample actions';
+            },
+            icon: 'customPinIcon',
             isVisible: function (context) {
                 context.grid;
                 return true;
@@ -51,6 +56,30 @@ function test_grid() {
                     },
                     totalRowCount: 3
                 };
+            }
+        },
+        tableEditing: {
+            enabled: true
+        },
+        lang: {
+            rowPinning: {
+                label: 'Pinning',
+                pinRowTop: 'Pin to top',
+                pinRowBottom: 'Pin to bottom',
+                unpinRow: 'Unpin'
+            },
+            pinRowTop: 'Legacy pin to top',
+            pinRowBottom: 'Legacy pin to bottom',
+            unpinRow: 'Legacy unpin',
+            tableEditing: {
+                rows: 'Rows',
+                columns: 'Columns',
+                addRowAbove: 'Add row above',
+                addRowBelow: 'Add row below',
+                deleteRow: 'Delete row',
+                addColumnBefore: 'Add column before',
+                addColumnAfter: 'Add column after',
+                deleteColumn: 'Delete column'
             }
         },
         header: [{
@@ -103,14 +132,25 @@ function test_grid() {
                 contextMenu: {
                     items: [
                         'pinning',
+                        'rows',
                         {
                             type: 'group',
-                            groupId: 'pinning'
+                            groupId: 'columns'
                         },
                         {
                             type: 'action',
                             actionId: 'pinRowTop',
                             icon: 'customPinIcon'
+                        },
+                        {
+                            actionId: 'addRowAbove'
+                        },
+                        {
+                            actionId: 'deleteColumn'
+                        },
+                        {
+                            type: 'group',
+                            groupId: 'pinning'
                         },
                         {
                             type: 'separator'
@@ -155,4 +195,5 @@ function test_grid() {
     grid.rowPinning?.toggle('A', 'bottom');
     grid.rowPinning?.unpin('A');
     grid.rowPinning?.getPinnedRows();
+    grid.tableEditing?.isEnabled();
 }
