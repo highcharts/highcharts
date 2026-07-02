@@ -100,7 +100,7 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
     /**
      * Fill color for the map line shapes
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     fillColor?: ColorType;
 

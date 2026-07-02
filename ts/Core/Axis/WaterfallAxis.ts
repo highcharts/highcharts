@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,12 +26,7 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import H from '../Globals.js';
 const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
-const {
-    addEvent,
-    objectEach,
-    pushUnique
-} = U;
+import { addEvent, objectEach, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -172,8 +168,8 @@ namespace WaterfallAxis {
         const axes = this.axes as Array<WaterfallAxis>,
             series = this.series;
 
-        for (const serie of series) {
-            if (serie.options.stacking) {
+        for (const s of series) {
+            if (s.options.stacking) {
                 for (const axis of axes) {
                     if (!axis.isXAxis && axis.waterfall) {
                         axis.waterfall.stacks.changed = true;

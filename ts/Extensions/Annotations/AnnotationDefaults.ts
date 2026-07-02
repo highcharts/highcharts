@@ -8,9 +8,7 @@ import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptio
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
-const { defined } = U;
+import { defined } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -181,7 +179,7 @@ const AnnotationDefaults: AnnotationOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor100,
+        borderColor: 'var(--highcharts-neutral-color-100)',
 
         /**
          * The border radius in pixels for the annotation's label.
@@ -258,7 +256,10 @@ const AnnotationDefaults: AnnotationOptions = {
          * Callback JavaScript function to format the annotation's
          * label. Note that if a `format` or `text` are defined,
          * the format or text take precedence and the formatter is
-         * ignored. `This` refers to a point object.
+         * ignored. `This` refers to a point object. The callback also receives
+         * an argument `ctx` so that arrow-functions can access the same
+         * context (the point in this case) as normal functions can using
+         * `this`. Since v12.6.0, the callback receives `ctx`.
          *
          * @sample highcharts/annotations/label-text/
          *         Set labels text
@@ -686,8 +687,8 @@ const AnnotationDefaults: AnnotationOptions = {
          */
         style: {
             cursor: 'pointer',
-            fill: Palette.backgroundColor,
-            stroke: Palette.neutralColor100,
+            fill: 'var(--highcharts-background-color)',
+            stroke: 'var(--highcharts-neutral-color-100)',
             'stroke-width': 2
         },
 

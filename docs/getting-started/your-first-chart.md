@@ -64,10 +64,10 @@ We will start off by creating a simple bar chart.
 4.  Optionally, you can apply a theme to your charts. You can achieve this using one of the following methods:
     * Loading a preconfigured theme:
 
-    A preconfigured theme consists of a set of options that are applied globally through the [Highcharts.setOptions](https://api.highcharts.com/class-reference/Highcharts#.setOptions) method. The download package comes with several themes. To apply one of these themes, add this directly after the highcharts.js file inclusion:
+    A preconfigured theme consists of a set of options that are applied globally through the [Highcharts.setOptions](https://api.highcharts.com/class-reference/Highcharts#.setOptions) method. The download package comes with several themes. To apply one of these themes, add this directly after the `highcharts.js` file inclusion:
 
     ```html
-    <script type="text/javascript" src="/js/themes/gray.js"></script>
+    <script type="text/javascript" src="/js/themes/avocado.js"></script>
     ```
 
     * It is also possible to style the chart with CSS using [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).

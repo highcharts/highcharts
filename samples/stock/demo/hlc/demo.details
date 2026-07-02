@@ -1,7 +1,7 @@
 ---
 name: HLC
 authors:
-  - Pawel Lysy
+  - Paweł Lysy
 compareTooltips: true
 js_wrap: b
 tags:

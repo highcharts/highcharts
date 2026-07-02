@@ -31,9 +31,7 @@ import Webpack from 'webpack';
 
 const HOOKS_NAME = 'Highcharts.UMDExtensionPlugin';
 
-
-const UMD_REGEXP = /(\(function webpackUniversalModuleDefinition\(root, factory\) \{\s+)(.*?)(\s+\}\)\(this, \()/su;
-
+const UMD_REGEXP = /(\(function webpackUniversalModuleDefinition\(root, factory\) \{\s+)(.*?)(\s+\}\)\(this, (?:function)?\()/su;
 
 /* *
  *
@@ -159,6 +157,7 @@ export class UMDExtensionPlugin {
         }
 
         const content = FS.readFileSync(filepath, 'utf8');
+        const isES5 = filepath.includes('/es5/');
 
         const nodeNamespaceReplacement = '_' + content
             .match(/root\["(.*?)"\]/su)[1]
@@ -186,6 +185,12 @@ export class UMDExtensionPlugin {
                                 `root["${nodeNamespaceReplacement}"] = factory()` +
                                 `,$1root["${nodeNamespaceReplacement}"]` +
                                 ');'
+                            )
+                            .replace(
+                                /define\("(.*?)", \[\], factory\)/su,
+                                isES5
+                                    ? 'define("$1", [], function() { return factory(); })'
+                                    : 'define("$1", [], factory)'
                             ) +
                         umdSuffix
                             .replace(

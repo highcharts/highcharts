@@ -74,7 +74,7 @@ function lintDTS(argv) {
 
 lintDTS.description = 'Test TypeScript declarations in the code folder using tsconfig.json';
 lintDTS.flags = {
-    '--dashboards': 'Test only dashboards TypeScript declarations'
+    '--product': 'Test project TypeScript declarations only: Highcharts (default), Grid, Dashboards'
 };
 gulp.task('lint-dts', () => lintDTS(require('yargs').argv));
 

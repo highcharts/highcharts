@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,13 +27,12 @@ import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Legend from './Legend/Legend.js';
 import Series from './Series/Series.js';
-import U from './Utilities.js';
-const {
+import {
     addEvent,
     isFunction,
     objectEach,
     removeEvent
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -49,7 +49,6 @@ namespace Foundation {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Register event options. If an event handler is set on the options, it

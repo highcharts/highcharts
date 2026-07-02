@@ -1,0 +1,7 @@
+---
+ name: Highcharts Finance Dashboards
+ authors:
+   - Nancy Dillon
+ requiresManualTesting: true
+ js_wrap: b
+...

@@ -1008,7 +1008,7 @@ const colors = Highcharts.getOptions().colors,
             align: 'center',
             crop: true,
             overflow: 'none',
-            color: 'black',
+            color: 'var(--highcharts-neutral-color-100)',
             style: {
                 textOutline: 'none',
                 fontWeight: 'normal'
@@ -1073,6 +1073,15 @@ const chart = Highcharts.chart('container', {
         startOnTick: false,
         endOnTick: false
     }],
+    plotOptions: {
+        series: {
+            dataLabels: {
+                style: {
+                    fontFamily: 'monospace'
+                }
+            }
+        }
+    },
     series: [{
         type: 'flame',
         data: data,

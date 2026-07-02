@@ -6,8 +6,9 @@
  *
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,13 +29,12 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     isNumber,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Askel Eirik Johansson, Piotr Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,8 +40,7 @@ const {
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -50,7 +50,7 @@ const {
     merge,
     pick,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
 
 /**
  * The flowmap series type
@@ -109,7 +109,7 @@ class FlowMapSeries extends MapLineSeries {
          * used with the opacity set in
          * [fillOpacity](#plotOptions.flowmap.fillOpacity).
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.flowmap.fillColor
          */
 
@@ -854,7 +854,7 @@ extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
     pointArrayMap: ['from', 'to', 'weight'],
     drawPoints: ColumnSeries.prototype.drawPoints,
-    dataColumnKeys: ColumnSeries.prototype.dataColumnKeys,
+    getDataColumnKeys: ColumnSeries.prototype.getDataColumnKeys,
     // Make it work on zoom or pan.
     useMapGeometry: true
 });
@@ -895,6 +895,7 @@ export default FlowMapSeries;
  * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels, dragDrop,
  * joinBy, mapData, negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
+ * @requires     modules/flowmap
  * @apioption series.flowmap
  */
 
@@ -938,6 +939,7 @@ export default FlowMapSeries;
  *      }]
  *      ```
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @apioption series.flowmap.data
  */
@@ -957,7 +959,7 @@ export default FlowMapSeries;
 /**
  * The fill color of an individual link.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @apioption series.flowmap.data.fillColor
  */
 
@@ -967,7 +969,7 @@ export default FlowMapSeries;
  * and `lat` properties.
  *
  * @sample {highmaps} maps/series-flowmap/from-to-lon-lat
- *         Flowmap point using lonlat coordinates
+ *         Flowmap point using lon-lat coordinates
  * @sample {highmaps} maps/series-flowmap/flight-routes
  *         Highmaps basic flight routes demo
  *
@@ -981,7 +983,7 @@ export default FlowMapSeries;
  * and `lat` properties.
  *
  * @sample {highmaps} maps/series-flowmap/from-to-lon-lat
- *         Flowmap point using lonlat coordinates
+ *         Flowmap point using lon-lat coordinates
  * @sample {highmaps} maps/series-flowmap/flight-routes
  *         Highmaps basic flight routes demo
  *

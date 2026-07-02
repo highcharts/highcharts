@@ -1,6 +1,6 @@
 describe('Rendering types and formatters.', () => {
     beforeEach(() => {
-        cy.visit('grid-lite/cypress/column-data-type');
+        cy.visit('grid-lite/e2e/column-data-type');
     });
 
     it('For column with dateType of datetime, formatted date should be displayed', () => {

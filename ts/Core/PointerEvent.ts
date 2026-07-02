@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,10 +34,12 @@ export interface PointerEvent extends globalThis.PointerEvent {
     accumulate?: boolean;
     chartX: number;
     chartY: number;
+    DOMType?: string;
     lat?: number;
     lon?: number;
     point?: Point;
     touches?: Array<Touch>;
+    trigger?: string;
     xAxis?: Array<Pointer.AxisCoordinateObject>;
     yAxis?: Array<Pointer.AxisCoordinateObject>;
 }

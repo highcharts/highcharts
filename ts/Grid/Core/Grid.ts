@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -30,43 +31,40 @@ import type {
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
-import type DataTableOptions from '../../Data/DataTableOptions';
-import type {
-    CellType as DataTableCellType,
-    Column as DataTableColumn
-} from '../../Data/DataTable';
+import type { RowId } from './Data/DataProvider';
+import type { DataProviderType } from './Data/DataProviderType';
 import type Column from './Table/Column';
-import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
+import type { NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import { defaultOptions } from './Defaults.js';
-import GridUtils from './GridUtils.js';
+import ColumnPolicyResolver, {
+    type ColumnOptionsMapItemLike
+} from './ColumnPolicyResolver.js';
+import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import DataTable from '../../Data/DataTable.js';
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
+import { defaultOptions } from './Defaults.js';
+import {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} from './GridUtils.js';
 import Table from './Table/Table.js';
-import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-
-const {
-    makeHTMLElement,
-    setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
-
-const {
-    defined,
+import {
     diffObjects,
     extend,
     fireEvent,
     merge,
     pick
-} = U;
-
+} from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -175,11 +173,10 @@ export class Grid {
     public captionElement?: HTMLElement;
 
     /**
-     * The user options declared for the columns as an object of column ID to
-     * column options.
-     * @internal
+     * Resolver for data binding and column capabilities.
      */
-    public columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
+    public readonly columnPolicy: ColumnPolicyResolver =
+        new ColumnPolicyResolver();
 
     /**
      * The container of the grid.
@@ -192,12 +189,6 @@ export class Grid {
     public contentWrapper?: HTMLElement;
 
     /**
-     * The data source of the Grid. It contains the original data table
-     * that was passed to the Grid.
-     */
-    public dataTable?: DataTable;
-
-    /**
      * The description element of the Grid.
      */
     public descriptionElement?: HTMLElement;
@@ -206,13 +197,6 @@ export class Grid {
      * The container element of the loading indicator overlaying the Grid.
      */
     public loadingWrapper?: HTMLElement;
-
-    /**
-     * The presentation table of the Grid. It contains a modified version
-     * of the data table that is used for rendering the Grid content. If
-     * not modified, just a reference to the original data table.
-     */
-    public presentationTable?: DataTable;
 
     /**
      * The HTML element of the table.
@@ -291,18 +275,12 @@ export class Grid {
     /**
      * The unique ID of the Grid.
      */
-    public id: string;
+    public readonly id: string;
 
     /**
      * The list of currently shown popups.
      */
     public popups: Set<Popup> = new Set();
-
-    /**
-     * Functions that unregister events attached to the grid's data table,
-     * that need to be removed when the grid is destroyed.
-     */
-    private dataTableEventDestructors: Function[] = [];
 
     /**
      * The render target (container) of the Grid.
@@ -320,6 +298,25 @@ export class Grid {
      * @internal
      */
     public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
+
+    /**
+     * Per-row metadata shared across Grid modules.
+     */
+    public readonly rowMeta: Map<RowId, RowMetaRecord> = new Map();
+
+    /**
+     * Internal redraw queue used to prevent concurrent `redraw()` calls from
+     * interleaving async DOM work and corrupting the state (for example
+     * rendering duplicate pagination controls when `update()` is called
+     * multiple times without awaiting).
+     */
+    private redrawQueue: Promise<void> = Promise.resolve();
+
+    /**
+     * The data provider of the Grid. The interface between the Grid renderer
+     * and the data source.
+     */
+    public dataProvider?: DataProviderType;
 
 
     /* *
@@ -348,7 +345,7 @@ export class Grid {
         this.renderTo = renderTo;
 
         this.loadUserOptions(options);
-        this.id = this.options?.id || U.uniqueKey();
+        this.id = this.options?.id || uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement | null)?.lang
@@ -428,7 +425,7 @@ export class Grid {
 
     /**
      * Loads the new user options to all the important fields (`userOptions`,
-     * `options` and `columnOptionsMap`).
+     * `options` and column policy state).
      *
      * @param newOptions
      * The options that were declared by the user.
@@ -447,16 +444,27 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+        warnIfDeprecatedOptions(newOptions);
 
         const diff: DeepPartial<NonArrayOptions> = {};
+        const preserveIdOnlyColumnOptions = (
+            newOptions.data?.autogenerateColumns ??
+            this.userOptions.data?.autogenerateColumns ??
+            this.options?.data?.autogenerateColumns
+        ) === false;
 
         if (newOptions.columns) {
             if (oneToOne) {
                 diff.columns = this.setColumnOptionsOneToOne(
-                    newOptions.columns
+                    newOptions.columns,
+                    preserveIdOnlyColumnOptions
                 );
             } else {
-                diff.columns = this.setColumnOptions(newOptions.columns);
+                diff.columns = this.setColumnOptions(
+                    newOptions.columns,
+                    false,
+                    preserveIdOnlyColumnOptions
+                );
             }
             delete newOptions.columns;
         }
@@ -470,13 +478,15 @@ export class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
+            // TODO: Investigate if it should be always only `defaultOptions`
             this.options ?? defaultOptions,
             this.userOptions
         );
+        this.columnPolicy.setColumnDefaults(this.options?.columnDefaults);
 
         this.viewport?.columns.forEach((column: Column): void => {
             column.options = createOptionsProxy(
-                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.columnPolicy.getIndividualColumnOptions(column.id) ?? {},
                 this.options?.columnDefaults
             );
         });
@@ -492,17 +502,17 @@ export class Grid {
         const colOptions = this.userOptions.columns;
 
         if (!colOptions) {
-            this.columnOptionsMap = {};
+            this.columnPolicy.clearColumnOptions();
             return;
         }
 
         if (colOptions.length < 1) {
             delete this.userOptions.columns;
-            this.columnOptionsMap = {};
+            this.columnPolicy.clearColumnOptions();
             return;
         }
 
-        const columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
+        const columnOptionsMap: Record<string, ColumnOptionsMapItemLike> = {};
         for (let i = 0, iEnd = colOptions.length; i < iEnd; ++i) {
             columnOptionsMap[colOptions[i].id] = {
                 index: i,
@@ -510,7 +520,16 @@ export class Grid {
             };
         }
 
-        this.columnOptionsMap = columnOptionsMap;
+        this.columnPolicy.setColumnOptionsMap(columnOptionsMap);
+    }
+
+    /**
+     * Refreshes the cached source column ids available in the data provider.
+     */
+    private async refreshAvailableSourceColumnIds(): Promise<void> {
+        this.columnPolicy.setAvailableSourceColumnIds(
+            (await this.dataProvider?.getColumnIds()) || []
+        );
     }
 
     /**
@@ -523,6 +542,9 @@ export class Grid {
      * Whether to overwrite the existing column options with the new ones.
      * Default is `false`.
      *
+     * @param preserveIdOnlyColumnOptions
+     * Whether to preserve the id only column options. Default is `false`.
+     *
      * @returns
      * An object of the changed column options in form of a record of
      * `[column.id]: column.options`.
@@ -531,7 +553,8 @@ export class Grid {
      */
     public setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
-        overwrite = false
+        overwrite = false,
+        preserveIdOnlyColumnOptions = false
     ): DeepPartial<NonArrayColumnOptions> {
         const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
@@ -542,11 +565,18 @@ export class Grid {
 
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
+            if (!newOptions) {
+                continue;
+            }
             const colOptionsIndex =
-                this.columnOptionsMap?.[newOptions.id]?.index ?? -1;
+                this.columnPolicy.getColumnOptionIndex(newOptions.id) ?? -1;
 
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
+                if (preserveIdOnlyColumnOptions && colOptionsIndex === -1) {
+                    columnOptions.push(newOptions);
+                    continue;
+                }
                 if (overwrite && colOptionsIndex !== -1) {
                     columnDiffOptions[newOptions.id] = diffObjects(
                         columnOptions[colOptionsIndex],
@@ -594,12 +624,16 @@ export class Grid {
      * @param newColumnOptions
      * The new column options that should be loaded.
      *
+     * @param preserveIdOnlyColumnOptions
+     * Whether to preserve the id only column options. Default is `false`.
+     *
      * @returns
      * The difference between the previous and the new column options in form
      * of a record of `[column.id]: column.options`.
      */
     private setColumnOptionsOneToOne(
-        newColumnOptions: IndividualColumnOptions[]
+        newColumnOptions: IndividualColumnOptions[],
+        preserveIdOnlyColumnOptions = false
     ): DeepPartial<NonArrayColumnOptions> {
         const prevColumnOptions = this.userOptions.columns;
         const columnOptions = [];
@@ -623,7 +657,10 @@ export class Grid {
             }
 
             const resultOptions = merge(prevOptions ?? {}, newOptions);
-            if (Object.keys(resultOptions).length > 1) {
+            if (
+                preserveIdOnlyColumnOptions ||
+                Object.keys(resultOptions).length > 1
+            ) {
                 columnOptions.push(resultOptions);
             }
         }
@@ -662,11 +699,11 @@ export class Grid {
      * the ones that are currently defined in the user options. When `true`,
      * the columns not defined in the new options will be removed.
      */
-    public async update(
+    public update(
         options: Omit<Options, 'id'> = {},
         redraw = true,
         oneToOne = false
-    ): Promise<void> {
+    ): Promise<void> | void {
         fireEvent(this, 'beforeUpdate', {
             scope: 'grid',
             options,
@@ -677,18 +714,28 @@ export class Grid {
         const { viewport } = this;
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
-
         if (viewport) {
-            if (!this.dataTable || 'dataTable' in diff) {
-                this.userOptions.dataTable = options.dataTable;
-                (this.options ?? {}).dataTable = options.dataTable;
+            if (
+                !this.dataProvider ||
+                ('data' in diff) ||
+                ('dataTable' in diff)
+            ) {
+                if ( // Preserve legacy root-level `dataTable` option
+                    diff.dataTable &&
+                    this.options?.dataTable &&
+                    this.options?.data?.providerType === 'local'
+                ) {
+                    const userDT = this.options.dataTable;
+                    this.options.data.dataTable = 'clone' in userDT ?
+                        userDT : new DataTable(userDT);
+                }
 
-                this.loadDataTable();
+                this.loadDataProvider(); // Rebuild the data provider
 
-                // TODO: Sometimes it can be too much, so we need to check if
-                // the columns have changed or just their data. If just their
-                // data, we can just mark the grid.table as dirty instead of the
-                // whole grid.
+                // TODO(update): Sometimes it can be too much, so we need to
+                // check if the columns have changed or just their data. If
+                // just their data, we can just mark the grid.table as dirty
+                // instead of the whole grid.
                 flags.add('grid');
             }
 
@@ -696,7 +743,7 @@ export class Grid {
                 const ids = Object.keys(diff.columns ?? {});
 
                 for (const id of ids) {
-                    // TODO: Move this to the column update method.
+                    // TODO(update): Move this to the column update method.
                     this.loadColumnOptionDiffs(
                         viewport, id, diff.columns?.[id]
                     );
@@ -706,7 +753,11 @@ export class Grid {
             }
 
             if ('columnDefaults' in diff) {
-                this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
+                this.loadColumnOptionDiffs(
+                    viewport,
+                    null,
+                    diff.columnDefaults
+                );
                 delete diff.columnDefaults;
             }
 
@@ -718,7 +769,7 @@ export class Grid {
                 }
                 delete langDiff.locale;
 
-                // TODO: Add more lang diff checks here.
+                // TODO(update): Add more lang diff checks here.
 
                 if (Object.keys(langDiff).length > 0) {
                     flags.add('grid');
@@ -742,7 +793,7 @@ export class Grid {
             }
             delete diff.pagination;
 
-            // TODO: Add more options that can be optimized here.
+            // TODO(update): Add more options that can be optimized here.
 
             if (Object.keys(diff).length > 0) {
                 flags.add('grid');
@@ -751,16 +802,20 @@ export class Grid {
             flags.add('grid');
         }
 
+        const finish = (): void => {
+            fireEvent(this, 'afterUpdate', {
+                scope: 'grid',
+                options,
+                redraw,
+                oneToOne
+            });
+        };
+
         if (redraw) {
-            await this.redraw();
+            return this.redraw().then(finish);
         }
 
-        fireEvent(this, 'afterUpdate', {
-            scope: 'grid',
-            options,
-            redraw,
-            oneToOne
-        });
+        finish();
     }
 
     /**
@@ -805,7 +860,7 @@ export class Grid {
             if (
                 'format' in cellsDiff ||
                 'formatter' in cellsDiff ||
-                'className' in cellsDiff // TODO: check if this too
+                'className' in cellsDiff
             ) {
                 // Optimization idea: list of columns to update
                 flags.add('rows');
@@ -820,14 +875,19 @@ export class Grid {
         }
         delete columnDiff.cells;
 
-        if ('width' in columnDiff) {
+        if (
+            'width' in columnDiff ||
+            'minWidth' in columnDiff ||
+            'maxWidth' in columnDiff
+        ) {
             vp.columnResizing.isDirty = true;
         }
         delete columnDiff.width;
+        delete columnDiff.minWidth;
+        delete columnDiff.maxWidth;
 
         if ('sorting' in columnDiff) {
             const sortingDiff = columnDiff.sorting ?? {};
-
             if (
                 'compare' in sortingDiff ||
                 'order' in sortingDiff
@@ -836,6 +896,7 @@ export class Grid {
             }
             delete sortingDiff.compare;
             delete sortingDiff.order;
+            delete sortingDiff.orderSequence;
 
             // Idea: sortable - redraw only header cell
 
@@ -847,15 +908,23 @@ export class Grid {
 
         if ('filtering' in columnDiff) {
             const filteringDiff = columnDiff.filtering ?? {};
-
+            const ruleDiff = filteringDiff.rule ?? {};
             if (
-                'condition' in filteringDiff ||
-                'value' in filteringDiff
+                'condition' in filteringDiff || // TODO: Remove, deprecated
+                'value' in filteringDiff || // TODO: Remove, deprecated
+                'conditions' in filteringDiff || // TODO: Remove, deprecated
+                'operators' in filteringDiff ||
+                'rule' in filteringDiff ||
+                'operator' in ruleDiff ||
+                'value' in ruleDiff
             ) {
                 flags.add('filtering');
             }
-            delete filteringDiff.condition;
-            delete filteringDiff.value;
+            delete filteringDiff.condition; // TODO: Remove, deprecated
+            delete filteringDiff.value; // TODO: Remove, deprecated
+            delete filteringDiff.conditions; // TODO: Remove, deprecated
+            delete filteringDiff.operators;
+            delete filteringDiff.rule;
 
             if (Object.keys(filteringDiff).length > 0) {
                 flags.add('grid');
@@ -874,67 +943,86 @@ export class Grid {
      * them minimizing the number of DOM operations.
      */
     public async redraw(): Promise<void> {
-        fireEvent(this, 'beforeRedraw');
+        const run = async (): Promise<void> => {
+            fireEvent(this, 'beforeRedraw');
 
-        const flags = this.dirtyFlags;
+            const flags = this.dirtyFlags;
+            const flagsToProcess = new Set(flags);
 
-        if (flags.has('grid')) {
-            await this.render();
+            const { viewport: vp, pagination } = this;
+            const colResizing = vp?.columnResizing;
+            const paginationWasDirty = !!pagination?.isDirtyQuerying;
+            const colResizingWasDirty = !!colResizing?.isDirty;
+
+            if (flagsToProcess.has('grid')) {
+                await this.render(false);
+                for (const flag of flagsToProcess) {
+                    flags.delete(flag);
+                }
+                fireEvent(this, 'afterRedraw');
+                return;
+            }
+
+            await this.dataProvider?.init();
+            await this.refreshAvailableSourceColumnIds();
+
+            if (
+                flagsToProcess.has('sorting') ||
+                flagsToProcess.has('filtering') ||
+                paginationWasDirty
+            ) {
+                this.querying.loadOptions();
+            }
+
+            if (colResizingWasDirty) {
+                colResizing?.loadColumns();
+            }
+
+            if (
+                flagsToProcess.has('rows') ||
+                flagsToProcess.has('sorting') ||
+                flagsToProcess.has('filtering') ||
+                paginationWasDirty
+            ) {
+                await vp?.updateRows();
+            } else if (
+                flagsToProcess.has('reflow') ||
+                colResizingWasDirty
+            ) {
+                vp?.reflow();
+            }
+
+            const columns = vp?.columns ?? [];
+
+            if (
+                flagsToProcess.has('sorting') ||
+                flagsToProcess.has('filtering')
+            ) {
+                for (const column of columns) {
+                    column.header?.toolbar?.refreshState();
+                }
+            }
+
+            if (flagsToProcess.has('filtering')) {
+                for (const column of columns) {
+                    column.filtering?.refreshState();
+                }
+            }
+
+            pagination?.redraw();
+            delete colResizing?.isDirty;
+
+            for (const flag of ['sorting', 'filtering'] as const) {
+                flags.delete(flag);
+            }
+
             fireEvent(this, 'afterRedraw');
-            return;
-        }
+        };
 
-        const { viewport: vp, pagination } = this;
-        const colResizing = vp?.columnResizing;
-
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering') ||
-            pagination?.isDirtyQuerying
-        ) {
-            this.querying.loadOptions();
-        }
-
-        if (colResizing?.isDirty) {
-            colResizing.loadColumns();
-        }
-
-        if (
-            flags.has('rows') ||
-            flags.has('sorting') ||
-            flags.has('filtering') ||
-            pagination?.isDirtyQuerying
-        ) {
-            await vp?.updateRows();
-        } else if (
-            flags.has('reflow') ||
-            colResizing?.isDirty
-        ) {
-            vp?.reflow();
-        }
-
-        const columns = vp?.columns ?? [];
-
-        if (
-            flags.has('sorting') ||
-            flags.has('filtering')
-        ) {
-            for (const column of columns) {
-                column.header?.toolbar?.refreshState();
-            }
-        }
-
-        if (flags.has('filtering')) {
-            for (const column of columns) {
-                column.filtering?.refreshState();
-            }
-        }
-
-        pagination?.redraw();
-        delete colResizing?.isDirty;
-        flags.clear();
-
-        fireEvent(this, 'afterRedraw');
+        const queued = this.redrawQueue.then(run, run);
+        // Keep the queue progressing even if one redraw fails.
+        this.redrawQueue = queued['catch']((): void => void 0);
+        return queued;
     }
 
     public updateColumn(
@@ -1029,7 +1117,9 @@ export class Grid {
         }
 
         const normalized = (sortings || []).filter((sorting): boolean => !!(
-            sorting.columnId && sorting.order
+            sorting.columnId &&
+            sorting.order &&
+            !this.columnPolicy.isColumnUnbound(sorting.columnId)
         ));
 
         const sortingController = this.querying.sorting;
@@ -1126,24 +1216,27 @@ export class Grid {
         }
     }
 
-    private async render(): Promise<void> {
+    private async render(clearDirtyFlags = true): Promise<void> {
         if (this.isRendered) {
             this.destroy(true);
         }
 
-        this.loadDataTable();
+        await this.loadDataProvider().init();
 
         this.initContainer(this.renderTo);
         this.initAccessibility();
         this.initPagination();
+        await this.refreshAvailableSourceColumnIds();
 
         this.querying.loadOptions();
         await this.querying.proceed();
 
-        this.renderViewport();
+        await this.renderViewport();
 
         this.isRendered = true;
-        this.dirtyFlags.clear();
+        if (clearDirtyFlags) {
+            this.dirtyFlags.clear();
+        }
     }
 
     /**
@@ -1154,19 +1247,18 @@ export class Grid {
      * The index of the row.
      */
     public hoverRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.hoveredRowIndex !== void 0) {
-            rows[this.hoveredRowIndex - firstRowIndex]?.setHoveredState(false);
+            viewport.getRenderedRowByIndex(this.hoveredRowIndex)
+                ?.setHoveredState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setHoveredState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setHoveredState(true);
         }
 
         this.hoveredRowIndex = rowIndex;
@@ -1205,19 +1297,18 @@ export class Grid {
      * The index of the row.
      */
     public syncRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.syncedRowIndex !== void 0) {
-            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+            viewport.getRenderedRowByIndex(this.syncedRowIndex)
+                ?.setSyncedState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setSyncedState(true);
         }
 
         this.syncedRowIndex = rowIndex;
@@ -1266,9 +1357,10 @@ export class Grid {
 
         this.captionElement = new AST([{
             tagName,
-            attributes: { 'class': className, id: this.id + '-caption' },
-            textContent: captionOptions.text
+            attributes: { 'class': className, id: this.id + '-caption' }
         }]).addToDOM(this.contentWrapper) as HTMLElement;
+
+        setHTMLContent(this.captionElement, captionOptions.text);
     }
 
     /**
@@ -1321,21 +1413,22 @@ export class Grid {
      * rendered, it will be destroyed and re-rendered with the new data.
      * @internal
      */
-    public renderViewport(): void {
+    public async renderViewport(): Promise<void> {
         const viewportMeta = this.viewport?.getStateMeta();
-        const pagination = this.pagination;
-        const paginationPosition = pagination?.options?.position;
-
-        this.enabledColumns = this.getEnabledColumnIDs();
 
         this.credits?.destroy();
 
         this.viewport?.destroy();
         delete this.viewport;
 
+        fireEvent(this, 'beforeRenderViewport');
+
         this.resetContentWrapper();
 
-        fireEvent(this, 'beforeRenderViewport');
+        this.enabledColumns = await this.getEnabledColumnIDs();
+
+        const pagination = this.pagination;
+        const paginationPosition = pagination?.options?.position;
 
         this.renderCaption();
 
@@ -1345,7 +1438,7 @@ export class Grid {
         }
 
         if (this.enabledColumns.length > 0) {
-            this.viewport = this.renderTable();
+            this.viewport = await this.renderTable();
             this.viewport.tableElement.setAttribute('id', this.id);
 
             if (viewportMeta && this.viewport) {
@@ -1355,7 +1448,7 @@ export class Grid {
             this.renderNoData();
         }
 
-        this.renderAccessibility();
+        await this.renderAccessibility();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -1374,14 +1467,14 @@ export class Grid {
      * Renders the Grid accessibility.
      * @internal
      */
-    private renderAccessibility(): void {
+    private async renderAccessibility(): Promise<void> {
         const accessibility = this.accessibility;
 
         if (!accessibility) {
             return;
         }
 
-        accessibility.setA11yOptions();
+        await accessibility.setA11yOptions();
         accessibility.addScreenReaderSection('before');
         accessibility.addScreenReaderSection('after');
     }
@@ -1392,14 +1485,16 @@ export class Grid {
      * @returns
      * The newly rendered table (viewport) of the Grid.
      */
-    private renderTable(): Table {
+    private async renderTable(): Promise<Table> {
         this.tableElement = makeHTMLElement('table', {
             className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
 
         this.tableElement.setAttribute('role', 'grid');
 
-        return new Table(this, this.tableElement);
+        const table = new Table(this, this.tableElement);
+        await table.init();
+        return table;
     }
 
     /**
@@ -1416,72 +1511,56 @@ export class Grid {
      * Returns the array of IDs of columns that should be displayed in the data
      * grid, in the correct order.
      */
-    private getEnabledColumnIDs(): string[] {
-        const { columnOptionsMap } = this;
+    private async getEnabledColumnIDs(): Promise<string[]> {
         const header = this.options?.header;
         const headerColumns = this.getColumnIds(header || [], false);
-        const columnsIncluded = this.options?.rendering?.columns?.included || (
-            headerColumns && headerColumns.length > 0 ?
-                headerColumns : this.dataTable?.getColumnIds()
+        const dataOptions = this.options?.data;
+        const autogenerateColumns = !dataOptions ||
+            dataOptions.autogenerateColumns !== false;
+        let autoColumns = this.columnPolicy.getAvailableSourceColumnIds();
+        if (!autoColumns) {
+            await this.refreshAvailableSourceColumnIds();
+            autoColumns = this.columnPolicy.getAvailableSourceColumnIds() || [];
+        }
+
+        return this.columnPolicy.getColumnsForRender(
+            headerColumns,
+            autogenerateColumns,
+            autoColumns,
+            this.options?.columns?.map((column): string => column.id)
         );
-
-        if (!columnsIncluded?.length) {
-            return [];
-        }
-
-        if (!columnOptionsMap) {
-            return columnsIncluded;
-        }
-
-        let columnId: string;
-        const result: string[] = [];
-        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
-            columnId = columnsIncluded[i];
-            if (columnOptionsMap?.[columnId]?.options?.enabled !== false) {
-                result.push(columnId);
-            }
-        }
-
-        return result;
     }
 
-    /**
-     * Loads the data table of the Grid. If the data table is passed as a
-     * reference, it should be used instead of creating a new one.
-     */
-    private loadDataTable(): void {
-
+    private loadDataProvider(): DataProviderType {
+        this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
+        this.columnPolicy.setAvailableSourceColumnIds();
 
-        // Unregister all events attached to the previous data table.
-        this.dataTableEventDestructors.forEach((fn): void => fn());
-        const tableOptions = this.options?.dataTable;
+        const userDT = this.options?.dataTable;
+        const dataOptions = this.options?.data ?? {
+            providerType: 'local',
+            dataTable: userDT ?? {}
+        };
 
-        // If the table is passed as a reference, it should be used instead of
-        // creating a new one.
-        if ((tableOptions as DataTable)?.clone) {
-            this.dataTable = tableOptions as DataTable;
-            this.presentationTable = this.dataTable.getModified();
-            return;
+        // Preserve legacy root-level `dataTable` option for now.
+        if (
+            dataOptions.providerType === 'local' &&
+            !dataOptions.dataTable && userDT
+        ) {
+            dataOptions.dataTable = 'clone' in userDT ?
+                userDT : new DataTable(userDT);
         }
 
-        const dt = this.dataTable = this.presentationTable =
-            new DataTable(tableOptions as DataTableOptions);
+        const DataProviderConstructor =
+            DataProviderRegistry.types[dataOptions.providerType ?? 'local'] ??
+            DataProviderRegistry.types.local;
 
-        // If the data table is modified, mark the querying controller to be
-        // updated on the next proceed.
-        ([
-            'afterDeleteColumns',
-            'afterDeleteRows',
-            'afterSetCell',
-            'afterSetColumns',
-            'afterSetRows'
-        ] as const).forEach((eventName): void => {
+        this.dataProvider = new DataProviderConstructor(
+            this.querying,
+            dataOptions as never
+        );
 
-            this.dataTableEventDestructors.push(dt.on(eventName, (): void => {
-                this.querying.shouldBeUpdated = true;
-            }));
-        });
+        return this.dataProvider;
     }
 
     /**
@@ -1532,12 +1611,12 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
-        fireEvent(this, 'beforeDestroy');
+        fireEvent(this, 'beforeDestroy', { onlyDOM });
 
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
-        this.dataTableEventDestructors?.forEach((fn): void => fn());
+        this.dataProvider?.destroy();
         this.accessibility?.destroy();
         this.pagination?.destroy();
         this.viewport?.destroy();
@@ -1615,59 +1694,6 @@ export class Grid {
     }
 
     /**
-     * Returns the grid data as a JSON string.
-     *
-     * @param modified
-     * Whether to return the modified data table (after filtering/sorting/etc.)
-     * or the unmodified, original one. Default value is set to `true`.
-     *
-     * @return
-     * JSON representation of the data
-     */
-    public getData(modified: boolean = true): string {
-        const dataTable = modified ? this.presentationTable : this.dataTable;
-        const tableColumns = dataTable?.columns;
-        const outputColumns: Record<string, DataTableColumn> = {};
-
-        if (!this.enabledColumns || !tableColumns) {
-            return '{}';
-        }
-
-        const typeParser = (type: ColumnDataType) => {
-            const TypeMap: Record<
-                ColumnDataType,
-                (value: DataTableCellType) => DataTableCellType
-            > = {
-                number: Number,
-                datetime: Number,
-                string: String,
-                'boolean': Boolean
-            };
-
-            return (value: DataTableCellType): DataTableCellType | null => (
-                defined(value) ? TypeMap[type](value) : null
-            );
-        };
-
-        for (const columnId of Object.keys(tableColumns)) {
-            const column = this.viewport?.getColumn(columnId);
-            if (column) {
-                const columnData = tableColumns[columnId];
-                const parser = typeParser(column.dataType);
-                outputColumns[columnId] = ((): DataTableColumn => {
-                    const result = [];
-                    for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
-                        result.push(parser(columnData[i]));
-                    }
-                    return result;
-                })();
-            }
-        }
-
-        return JSON.stringify(outputColumns, null, 2);
-    }
-
-    /**
      * Returns the current Grid options.
      *
      * @param onlyUserOptions
@@ -1678,13 +1704,41 @@ export class Grid {
      * Grid options.
      */
     public getOptions(onlyUserOptions = true): Partial<Options> {
-        const options =
-            onlyUserOptions ? merge(this.userOptions) : merge(this.options);
+        const options = onlyUserOptions ?
+            merge(this.userOptions) :
+            merge(this.options);
 
-        if (options.dataTable?.id) {
+        // Keep `getOptions()` serializable:
+        if (options.dataTable && 'clone' in options.dataTable) {
             options.dataTable = {
                 columns: options.dataTable.columns
             };
+        }
+
+        if (options.data?.providerType === 'local') {
+            if (options.data?.dataTable && 'clone' in options.data.dataTable) {
+                options.data.columns = options.data.dataTable.columns;
+            }
+
+            if (
+                options.data?.connector &&
+                'initConverters' in options.data.connector
+            ) {
+                options.data.connector = options.data.connector.options;
+            }
+        }
+
+        // Clean up the column options by removing the ones that have no other
+        // options than `id`:
+        const oldColumnOptions = options.columns;
+        const keepIdOnlyColumns = options.data?.autogenerateColumns === false;
+        if (oldColumnOptions) {
+            options.columns = [];
+            for (const columnOption of oldColumnOptions) {
+                if (keepIdOnlyColumns || Object.keys(columnOption).length > 1) {
+                    options.columns.push(columnOption);
+                }
+            }
         }
 
         return options;
@@ -1723,13 +1777,19 @@ export type GridDirtyFlags = (
 );
 
 /**
- * @internal
- * An item in the column options map.
+ * Resolved data binding for a Grid column.
  */
 export interface ColumnOptionsMapItem {
     index: number;
     options: NoIdColumnOptions
 }
+
+/**
+ * Per-row metadata object shared across Grid modules.
+ *
+ * Empty before module extensions.
+ */
+export interface RowMetaRecord {}
 
 
 /* *

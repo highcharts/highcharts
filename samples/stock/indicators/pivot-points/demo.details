@@ -1,7 +1,7 @@
 ---
  name: Highcharts Stock Demo
  authors:
-   - Pawel fus
+   - Paweł Fus
  js_wrap: b
  use_png_thumbnail: true
 ...

@@ -1,7 +1,7 @@
 ---
 name: Highcharts Dashboards KPI linked value to
 authors:
-  - Dawid Dragula
+  - Dawid Draguła
 js_wrap: b
 tags:
   - Highcharts Dashboards demo

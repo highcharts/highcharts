@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -32,11 +33,7 @@ import type {
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
 import NumberInputContent from '../ContentTypes/NumberInputContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+import { merge } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -104,6 +101,11 @@ class NumberInputRenderer extends CellRenderer implements EditModeRenderer {
  * Options to control the number input renderer content.
  */
 export interface NumberInputRendererOptions extends CellRendererOptions {
+    /**
+     * Use the built-in number input renderer.
+     *
+     * @default 'numberInput'
+     */
     type: 'numberInput';
 
     /**
@@ -121,8 +123,19 @@ export interface NumberInputRendererOptions extends CellRendererOptions {
  * Attributes to control the number input.
  */
 export interface NumberInputAttributes {
+    /**
+     * Minimum accepted numeric value.
+     */
     min?: number;
+
+    /**
+     * Maximum accepted numeric value.
+     */
     max?: number;
+
+    /**
+     * Step interval used by the number input controls.
+     */
     step?: number;
 }
 

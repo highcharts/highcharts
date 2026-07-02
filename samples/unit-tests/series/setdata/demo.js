@@ -700,11 +700,26 @@ QUnit.test(
             'Original data array should not be modified after initial render.'
         );
 
+        chart.series[0].points[0].watermark = 'I survived setData 💪';
+        chart.series[0].points[0].graphic.watermark = 'I survived setData 💪';
+
         chart.series[0].setData(newData);
         assert.deepEqual(
             oriData,
             referenceArray,
             'The setData should not mutate the original data array.'
+        );
+
+        assert.strictEqual(
+            chart.series[0].points[0].watermark,
+            'I survived setData 💪',
+            'The point instance should be the same after setData (#24225).'
+        );
+
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.watermark,
+            'I survived setData 💪',
+            'The graphic instance should be the same after setData (#24225).'
         );
 
         chart.series[0].points[0].remove();

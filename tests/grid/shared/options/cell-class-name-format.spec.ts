@@ -6,7 +6,7 @@ test.describe('Cell class name formats', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/custom-class');
+        await page.goto('grid-pro/e2e/custom-class');
     });
 
     test('Table should have custom class name', async ({ page }) => {

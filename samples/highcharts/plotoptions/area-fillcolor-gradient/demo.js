@@ -14,11 +14,12 @@ Highcharts.chart('container', {
             fillColor: {
                 linearGradient: [0, 0, 0, 300],
                 stops: [
-                    [0, Highcharts.getOptions().colors[0]],
+                    [0, 'var(--highcharts-color-0)'],
                     [
                         1,
-                        Highcharts.color(Highcharts.getOptions().colors[0])
-                            .setOpacity(0).get('rgba')
+                        `color-mix(
+                            in srgb, var(--highcharts-color-0) 1%, transparent
+                        )`
                     ]
                 ]
             }

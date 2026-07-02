@@ -4,8 +4,9 @@
  *
  *  Author: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,13 +30,7 @@ import type Options from '../Options';
 import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../Color/Palettes.js';
-import U from '../Utilities.js';
-const {
-    isArray,
-    merge,
-    splat
-} = U;
+import { isArray, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -83,9 +78,10 @@ class GanttChart extends Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      *
      * @emits Highcharts.GanttChart#event:init
@@ -93,7 +89,7 @@ class GanttChart extends Chart {
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
         const xAxisOptions = userOptions.xAxis,
             yAxisOptions = userOptions.yAxis;
@@ -153,8 +149,6 @@ class GanttChart extends Chart {
                 // Defaults
                 {
                     grid: {
-                        borderColor: defaultOptions.xAxis?.grid?.borderColor ||
-                            Palette.neutralColor20,
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -178,8 +172,6 @@ class GanttChart extends Chart {
             // Defaults
             {
                 grid: {
-                    borderColor: defaultOptions.yAxis?.grid?.borderColor ||
-                        Palette.neutralColor20,
                     enabled: true
                 },
 
@@ -240,11 +232,12 @@ namespace GanttChart {
      * @param {Highcharts.Options} options
      *        The chart options structure.
      *
-     * @param {Highcharts.ChartCallbackFunction} [callback]
+     * @param {Highcharts.ChartCallbackFunction|true} [callback]
      *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
-     *        handler is equivalent.
+     *        handler is equivalent. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      * @return {Highcharts.GanttChart}
      *         Returns the Chart object.
@@ -252,9 +245,10 @@ namespace GanttChart {
     export function ganttChart(
         a: (string|HTMLDOMElement|Options),
         b?: (Chart.CallbackFunction|Options),
-        c?: Chart.CallbackFunction
-    ): GanttChart {
-        return new GanttChart(a as any, b as any, c);
+        c?: Chart.CallbackFunction|true
+    ): GanttChart|Promise<GanttChart> {
+        const chart = new GanttChart(a as any, b as any, c);
+        return chart.promise || chart;
     }
 
     /* eslint-enable jsdoc/check-param-names */

@@ -1,0 +1,320 @@
+[
+  {
+    "InstanceId": "i-0abcdef1234567890",
+    "InstanceType": "t2.micro",
+    "Zone": "eu-west-2b",
+    "AMI": "ami-0123456",
+    "OS": "Amazon Linux",
+    "State": "running",
+    "PrivateIpAddress": "10.0.1.101",
+    "PublicIpAddress": "54.123.45.67",
+    "CPUUtilization": 3.43,
+    "MemoryUsage": 51.36,
+    "DiskSpace": {
+      "RootDisk": {
+        "SizeGB": 30,
+        "UsedGB": 27,
+        "FreeGB": 3,
+        "MediaGB": 0,
+        "RootGB": 5,
+        "Documents": 0,
+        "Downloads": 13
+      }
+    },
+    "HealthIndicator": "OK",
+    "Details": [
+      {
+        "timestamp": 1774253739000,
+        "networkIn": 70.05,
+        "networkOut": 55.07,
+        "readOpt": 28.93,
+        "writeOpt": 86.51,
+        "cpuUtilization": 54.03
+      },
+      {
+        "timestamp": 1774253740000,
+        "networkIn": 33.14,
+        "networkOut": 15.3,
+        "readOpt": 92.47,
+        "writeOpt": 93.58,
+        "cpuUtilization": 32.26
+      },
+      {
+        "timestamp": 1774253741000,
+        "networkIn": 62.34,
+        "networkOut": 52.06,
+        "readOpt": 5.71,
+        "writeOpt": 77.24,
+        "cpuUtilization": 23.07
+      },
+      {
+        "timestamp": 1774253742000,
+        "networkIn": 36.25,
+        "networkOut": 73.72,
+        "readOpt": 18.04,
+        "writeOpt": 98.88,
+        "cpuUtilization": 35.05
+      },
+      {
+        "timestamp": 1774253743000,
+        "networkIn": 77.29,
+        "networkOut": 61.76,
+        "readOpt": 5.45,
+        "writeOpt": 89.59,
+        "cpuUtilization": 56.25
+      },
+      {
+        "timestamp": 1774253744000,
+        "networkIn": 64.34,
+        "networkOut": 27.37,
+        "readOpt": 26.1,
+        "writeOpt": 56.69,
+        "cpuUtilization": 32.71
+      },
+      {
+        "timestamp": 1774253745000,
+        "networkIn": 38.18,
+        "networkOut": 83.62,
+        "readOpt": 80.81,
+        "writeOpt": 1.4,
+        "cpuUtilization": 94.14
+      },
+      {
+        "timestamp": 1774253746000,
+        "networkIn": 83.55,
+        "networkOut": 43.26,
+        "readOpt": 76.78,
+        "writeOpt": 32.45,
+        "cpuUtilization": 0.22
+      },
+      {
+        "timestamp": 1774253747000,
+        "networkIn": 58.44,
+        "networkOut": 97.24,
+        "readOpt": 67.23,
+        "writeOpt": 34.81,
+        "cpuUtilization": 59.64
+      },
+      {
+        "timestamp": 1774253748000,
+        "networkIn": 99.61,
+        "networkOut": 7.28,
+        "readOpt": 8.97,
+        "writeOpt": 55.92,
+        "cpuUtilization": 3.43
+      }
+    ]
+  },
+  {
+    "InstanceId": "i-1a2b3c4d5e6f78901",
+    "InstanceType": "t3.small",
+    "Zone": "eu-centra-1a",
+    "AMI": "ami-043918s",
+    "OS": "Amazon Windows",
+    "State": "running",
+    "PrivateIpAddress": "10.0.1.102",
+    "PublicIpAddress": "354.123.45.67",
+    "CPUUtilization": 53.5,
+    "MemoryUsage": 67.29,
+    "DiskSpace": {
+      "RootDisk": {
+        "SizeGB": 20,
+        "UsedGB": 16,
+        "FreeGB": 4,
+        "MediaGB": 1,
+        "RootGB": 4,
+        "Documents": 1,
+        "Downloads": 8
+      }
+    },
+    "HealthIndicator": "Warning",
+    "Details": [
+      {
+        "timestamp": 1774253739000,
+        "networkIn": 64.26,
+        "networkOut": 15.73,
+        "readOpt": 19.94,
+        "writeOpt": 10.74,
+        "cpuUtilization": 71.56
+      },
+      {
+        "timestamp": 1774253740000,
+        "networkIn": 7.56,
+        "networkOut": 92.72,
+        "readOpt": 62.19,
+        "writeOpt": 20.95,
+        "cpuUtilization": 32.96
+      },
+      {
+        "timestamp": 1774253741000,
+        "networkIn": 36.36,
+        "networkOut": 52.72,
+        "readOpt": 7.22,
+        "writeOpt": 71.29,
+        "cpuUtilization": 93.58
+      },
+      {
+        "timestamp": 1774253742000,
+        "networkIn": 91.81,
+        "networkOut": 7.98,
+        "readOpt": 62.53,
+        "writeOpt": 63.47,
+        "cpuUtilization": 71.24
+      },
+      {
+        "timestamp": 1774253743000,
+        "networkIn": 6.14,
+        "networkOut": 98.42,
+        "readOpt": 67.28,
+        "writeOpt": 84.93,
+        "cpuUtilization": 10.95
+      },
+      {
+        "timestamp": 1774253744000,
+        "networkIn": 1.58,
+        "networkOut": 59.99,
+        "readOpt": 4.56,
+        "writeOpt": 3.84,
+        "cpuUtilization": 51.31
+      },
+      {
+        "timestamp": 1774253745000,
+        "networkIn": 20.94,
+        "networkOut": 84.99,
+        "readOpt": 56.17,
+        "writeOpt": 88.55,
+        "cpuUtilization": 75.45
+      },
+      {
+        "timestamp": 1774253746000,
+        "networkIn": 64.54,
+        "networkOut": 16.66,
+        "readOpt": 93.67,
+        "writeOpt": 90.84,
+        "cpuUtilization": 76.95
+      },
+      {
+        "timestamp": 1774253747000,
+        "networkIn": 96.67,
+        "networkOut": 2.14,
+        "readOpt": 53.45,
+        "writeOpt": 17.89,
+        "cpuUtilization": 63.09
+      },
+      {
+        "timestamp": 1774253748000,
+        "networkIn": 35.69,
+        "networkOut": 81.99,
+        "readOpt": 87.22,
+        "writeOpt": 39.94,
+        "cpuUtilization": 53.5
+      }
+    ]
+  },
+  {
+    "InstanceId": "i-9876543210abcdef0",
+    "InstanceType": "m5.large",
+    "Zone": "eu-east-1c",
+    "AMI": "ami-030129s",
+    "OS": "Amazon Ubuntu",
+    "State": "stopped",
+    "PrivateIpAddress": "10.0.1.103",
+    "PublicIpAddress": "54.321.67.89",
+    "CPUUtilization": 81.39,
+    "MemoryUsage": 23.8,
+    "DiskSpace": {
+      "RootDisk": {
+        "SizeGB": 50,
+        "UsedGB": 46,
+        "FreeGB": 4,
+        "MediaGB": 5,
+        "RootGB": 7,
+        "Documents": 5,
+        "Downloads": 23
+      }
+    },
+    "HealthIndicator": "Critical",
+    "Details": [
+      {
+        "timestamp": 1774253739000,
+        "networkIn": 31.72,
+        "networkOut": 95.62,
+        "readOpt": 80.44,
+        "writeOpt": 39.22,
+        "cpuUtilization": 76.97
+      },
+      {
+        "timestamp": 1774253740000,
+        "networkIn": 89.46,
+        "networkOut": 48.99,
+        "readOpt": 88.36,
+        "writeOpt": 81.44,
+        "cpuUtilization": 4.34
+      },
+      {
+        "timestamp": 1774253741000,
+        "networkIn": 30.44,
+        "networkOut": 89.34,
+        "readOpt": 87.13,
+        "writeOpt": 60.23,
+        "cpuUtilization": 14.37
+      },
+      {
+        "timestamp": 1774253742000,
+        "networkIn": 75.29,
+        "networkOut": 13.1,
+        "readOpt": 61.63,
+        "writeOpt": 82.73,
+        "cpuUtilization": 46.02
+      },
+      {
+        "timestamp": 1774253743000,
+        "networkIn": 7.12,
+        "networkOut": 8.95,
+        "readOpt": 97.75,
+        "writeOpt": 16.65,
+        "cpuUtilization": 36.51
+      },
+      {
+        "timestamp": 1774253744000,
+        "networkIn": 36.9,
+        "networkOut": 70.42,
+        "readOpt": 26.99,
+        "writeOpt": 71.44,
+        "cpuUtilization": 47.71
+      },
+      {
+        "timestamp": 1774253745000,
+        "networkIn": 17.68,
+        "networkOut": 94.42,
+        "readOpt": 19.68,
+        "writeOpt": 10.04,
+        "cpuUtilization": 51.63
+      },
+      {
+        "timestamp": 1774253746000,
+        "networkIn": 7.36,
+        "networkOut": 54.16,
+        "readOpt": 21.48,
+        "writeOpt": 49.28,
+        "cpuUtilization": 42.25
+      },
+      {
+        "timestamp": 1774253747000,
+        "networkIn": 94.76,
+        "networkOut": 7.25,
+        "readOpt": 94.44,
+        "writeOpt": 43.29,
+        "cpuUtilization": 71.32
+      },
+      {
+        "timestamp": 1774253748000,
+        "networkIn": 35.12,
+        "networkOut": 49.93,
+        "readOpt": 31.19,
+        "writeOpt": 4.39,
+        "cpuUtilization": 81.39
+      }
+    ]
+  }
+]

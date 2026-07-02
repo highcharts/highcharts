@@ -1,4 +1,4 @@
-QUnit.test('Touch event test on popup', function (assert) {
+QUnit.test('General Popup tests.', function (assert) {
     // ADD CSS STYLES
     var css =
             '.highcharts-popup.highcharts-annotation-toolbar {right: ' +
@@ -141,4 +141,17 @@ QUnit.test('Touch event test on popup', function (assert) {
     );
     // REMOVE CSS STYLES
     style.parentNode.removeChild(style);
+
+    // #24125
+    const flag = chart.navigationBindings.fieldsToOptions({
+        'typeOptions.title.text': '10/21',
+        'typeOptions.shape': 'circlepin',
+        'typeOptions.width': '10'
+    }, {});
+
+    assert.strictEqual(
+        flag.typeOptions.title.text,
+        '10/21',
+        'Title containing "/" should remain a full string, #24125.'
+    );
 });

@@ -9,7 +9,6 @@ import Globals from "./es-modules/Dashboards/Globals";
 import Defaults from "./es-modules/Dashboards/Defaults";
 import Utilities from "./es-modules/Dashboards/Utilities";
 
-import "./es-modules/Dashboards/Components/HTMLComponent/HTMLComponent";
 import "./es-modules/Data/Connectors/CSVConnector";
 import "./es-modules/Data/Connectors/JSONConnector";
 import "./es-modules/Data/Connectors/GoogleSheetsConnector";
@@ -23,6 +22,11 @@ export { default as AST } from './es-modules/Core/Renderer/HTML/AST'
 export { default as Board } from "./es-modules/Dashboards/Board";
 export { default as Component } from "./es-modules/Dashboards/Components/Component";
 export { default as ComponentRegistry } from "./es-modules/Dashboards/Components/ComponentRegistry";
+export { default as GridComponent } from "./es-modules/Dashboards/Components/GridComponent/GridComponent";
+export { default as HighchartsComponent } from "./es-modules/Dashboards/Components/HighchartsComponent/HighchartsComponent";
+export { default as HTMLComponent } from "./es-modules/Dashboards/Components/HTMLComponent/HTMLComponent";
+export { default as KPIComponent } from "./es-modules/Dashboards/Components/KPIComponent/KPIComponent";
+export { default as NavigatorComponent } from "./es-modules/Dashboards/Components/NavigatorComponent/NavigatorComponent";
 export { default as PluginHandler } from "./es-modules/Dashboards/PluginHandler";
 export { default as Sync } from "./es-modules/Dashboards/Components/Sync/Sync";
 export { default as HighchartsPlugin } from "./es-modules/Dashboards/Plugins/HighchartsPlugin";

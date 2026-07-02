@@ -2,8 +2,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -36,11 +37,8 @@ import ColumnUtils from '../../Data/ColumnUtils.js';
 const {
     convertToNumber
 } = ColumnUtils;
-import U from '../Utilities.js';
-const {
-    defined,
-    uniqueKey
-} = U;
+import { defined } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../Utilities.js';
 
 /* *
  *

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -38,12 +39,7 @@ import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    pick,
-    fireEvent
-} = U;
+import { fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

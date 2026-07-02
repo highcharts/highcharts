@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,16 +31,10 @@ const {
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-const { getRendererType } = RendererRegistry;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    pushUnique
-} = U;
+import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,12 +42,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         baseSeries?: Series;
@@ -73,9 +70,7 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,
@@ -86,7 +81,7 @@ function compose(
     if (pushUnique(composed, 'Navigator')) {
         ChartClass.prototype.setFixedRange = setFixedRange;
 
-        extend(getRendererType().prototype.symbols, NavigatorSymbols);
+        extend(SVGRenderer.prototype.symbols, NavigatorSymbols);
         extend(defaultOptions, { navigator: NavigatorDefaults });
 
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);
@@ -96,7 +91,7 @@ function compose(
 
 /**
  * Handle updating series
- * @private
+ * @internal
  */
 function onSeriesAfterUpdate(
     this: Series
@@ -112,8 +107,10 @@ function onSeriesAfterUpdate(
  *
  * */
 
+/** @internal */
 const NavigatorComposition = {
     compose
 };
 
+/** @internal */
 export default NavigatorComposition;

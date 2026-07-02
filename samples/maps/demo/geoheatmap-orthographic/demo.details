@@ -1,5 +1,5 @@
 ---
-name: Geo heatmap, orthographic
+name: GeoHeatmap, orthographic
 authors:
   - Piotr Madej, Magdalena Gut
 js_wrap: b

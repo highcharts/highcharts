@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,12 +39,7 @@ import type XRangePoint from '../../Series/XRange/XRangePoint';
 
 import DraggableChart from './DraggableChart.js';
 const { flipResizeSide } = DraggableChart;
-import U from '../../Core/Utilities.js';
-const {
-    isNumber,
-    merge,
-    pick
-} = U;
+import { isNumber, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

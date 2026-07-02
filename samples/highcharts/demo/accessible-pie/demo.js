@@ -35,7 +35,10 @@ const chart = Highcharts.chart('container', {
         valueSuffix: '%',
         borderColor: '#8ae',
         shape: 'rect',
-        backgroundColor: 'rgba(255, 255, 255, 0.94)',
+        backgroundColor: `color-mix(
+            var(--highcharts-background-color) 95%,
+            transparent
+        )`,
         followPointer: false,
         stickOnContact: true
     },

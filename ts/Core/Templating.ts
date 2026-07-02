@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,8 +30,8 @@ import G from './Globals.js';
 const {
     pageLang
 } = G;
-import U from './Utilities.js';
-const {
+import {
+    correctFloat,
     extend,
     getNestedProperty,
     isArray,
@@ -39,7 +40,7 @@ const {
     isString,
     pick,
     ucfirst
-} = U;
+} from '../Shared/Utilities.js';
 
 /** @internal */
 interface MatchObject {
@@ -59,7 +60,8 @@ interface MatchObject {
 const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
-    divide: (a: number, b: number): number | string => (b !== 0 ? a / b : ''),
+    divide: (a: number, b: number): number | string =>
+        (b !== 0 ? correctFloat(a / b) : ''),
     // eslint-disable-next-line eqeqeq
     eq: (a: unknown, b: unknown): boolean => a == b,
     each: function (arr: string[] | object[] | undefined): string | false {
@@ -79,7 +81,7 @@ const helpers: Record<string, Function> = {
     'if': (condition: string[] | undefined): boolean => !!condition,
     le: (a: number, b: number): boolean => a <= b,
     lt: (a: number, b: number): boolean => a < b,
-    multiply: (a: number, b: number): number => a * b,
+    multiply: (a: number, b: number): number => correctFloat(a * b, 15),
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
@@ -188,19 +190,11 @@ function format(
     owner?: Templating.Owner
 ): string {
 
-    // eslint-disable-next-line prefer-regex-literals
-    const regex = new RegExp(
-            '\\{([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
-            'gu'
-        ),
+    const regex = /\{([^{}]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        // eslint-disable-next-line prefer-regex-literals
-        subRegex = new RegExp(
-            '\\(([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
-            'gu'
-        ),
+        subRegex = /\(([^()]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
@@ -556,7 +550,7 @@ const Templating = {
 
 namespace Templating {
     export interface FormatterCallback<T> {
-        (this: T): string;
+        (this: T, ...args: Array<any>): string;
     }
     export interface OwnerOptions {
         /**

@@ -6,7 +6,7 @@ tags: ["grid-pro"]
 
 **Note:** Sparklines are only available in **Highcharts Grid Pro**, and also requires a valid **Highcharts Core license**.
 
-![Illustration showing different sparklines](ill_sparklines.png)
+![Illustration showing different sparklines](./ill_sparklines.png)
 
 A [`sparkline`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SparklineRenderer.SparklineRenderer) is a small, inline chart, typically a line, bar, or area chart, embedded within a cell to visually represent trends or patterns in data at a glance. Unlike full-size charts, sparklines are minimal and non-intrusive, making them ideal for showing changes over time or comparing values directly within rows of a grid, without leaving the context of the table.
 

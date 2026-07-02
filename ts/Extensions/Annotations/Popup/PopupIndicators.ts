@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,8 +36,7 @@ import H from '../../../Core/Globals.js';
 const { doc } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     addEvent,
     createElement,
     defined,
@@ -44,7 +44,7 @@ const {
     isObject,
     objectEach,
     stableSort
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -320,9 +320,6 @@ function addFormFields(
  *
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
- *
- * @param {string} [optionName]
- *        Name of the option into which selection is being added.
  *
  * @param {HTMLDOMElement} [parentDiv]
  *        HTML parent element.
@@ -859,7 +856,7 @@ function filterSeries(
             lang.navigation &&
             lang.navigation.popup &&
             lang.navigation.popup.indicatorAliases,
-        filteredSeriesArray: Array<FilteredSeries> = [];
+        filteredSeriesMap: Map<string, FilteredSeries> = new Map();
 
     let filteredSeries: FilteredSeries;
 
@@ -895,7 +892,8 @@ function filterSeries(
                         series: series as any
                     };
 
-                    filteredSeriesArray.push(filteredSeries);
+                    filteredSeriesMap
+                        .set(indicatorType.toLowerCase(), filteredSeries);
                 }
             } else {
                 filteredSeries = {
@@ -904,12 +902,13 @@ function filterSeries(
                     series: series as any
                 };
 
-                filteredSeriesArray.push(filteredSeries);
+                filteredSeriesMap
+                    .set(indicatorType.toLowerCase(), filteredSeries);
             }
         }
     });
 
-    return filteredSeriesArray;
+    return Array.from(filteredSeriesMap.values());
 }
 
 /**
@@ -952,10 +951,10 @@ function filterSeriesArray(
 function getAmount(this: Chart): number {
     let counter = 0;
 
-    this.series.forEach((serie): void => {
+    this.series.forEach((s): void => {
         if (
-            (serie as any).params ||
-            (serie.options as any).params
+            (s as any).params ||
+            (s.options as any).params
         ) {
             counter++;
         }
@@ -1019,8 +1018,11 @@ function getNameType(
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
  *
- * @param {HTMLDOMElement} [parentDiv]
+ * @param {HTMLDOMElement} parentDiv
  *        HTML parent element.
+ *
+ * @param {Highcharts.Series} currentSeries
+ *        The current SMA indicator series
  *
  * @param {string|undefined} selectedOption
  *        Default value in dropdown.

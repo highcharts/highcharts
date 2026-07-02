@@ -98,6 +98,23 @@ function addDefaultOptions(
                 }
                 break;
 
+            case 'Module':
+                if (_info.flags?.includes('declare') && _info.members) {
+                    for (const _member of _info.members) {
+                        if (_member.kind === 'Interface') {
+                            for (const _child of _member.members || []) {
+                                if (
+                                    _child.kind === 'Doclet' &&
+                                    _child.tags?.apioption
+                                ) {
+                                    addTreeNode(sourceInfo, rootNode, _child, debug);
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+
             case 'Export':
                 if (
                     sourceInfo.path.endsWith('Defaults.ts') &&
@@ -581,7 +598,6 @@ async function saveJSON() {
     } as any;
 
     save('tree-cache.json', TSLib.SOURCE_CACHE);
-    // save('tree-v2.json', TREE);
     save('tree-v2.json', {
         _meta: TREE._meta,
         plotOptions: TREE.plotOptions || {

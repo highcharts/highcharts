@@ -1,0 +1,53 @@
+:root,
+.highcharts-light {
+    --mstar-text-strong: #1a1918;
+    --mstar-text-muted: #64625f;
+    --mstar-line: #dad9d8;
+    --mstar-surface: #fff;
+    --mstar-accent: #2364b9;
+    --mstar-accent-soft: rgba(35, 100, 185, 0.15);
+    --mstar-accent-select: rgba(35, 100, 185, 0.12);
+    --mstar-hover: rgba(100, 98, 95, 0.08);
+    --mstar-mask: rgba(100, 98, 95, 0.2);
+    --mstar-positive: #0a7a13;
+    --mstar-negative: #c52a26;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --mstar-text-strong: #f3f2f0;
+        --mstar-text-muted: #a8a6a3;
+        --mstar-line: #3a3938;
+        --mstar-surface: #1f1f1f;
+        --mstar-accent: #5b9bff;
+        --mstar-accent-soft: rgba(91, 155, 255, 0.2);
+        --mstar-accent-select: rgba(91, 155, 255, 0.18);
+        --mstar-hover: rgba(255, 255, 255, 0.08);
+        --mstar-mask: rgba(255, 255, 255, 0.1);
+        --mstar-positive: #2ec27e;
+        --mstar-negative: #ef5350;
+    }
+}
+
+.highcharts-dark {
+    --mstar-text-strong: #f3f2f0;
+    --mstar-text-muted: #a8a6a3;
+    --mstar-line: #3a3938;
+    --mstar-surface: #1f1f1f;
+    --mstar-accent: #5b9bff;
+    --mstar-accent-soft: rgba(91, 155, 255, 0.2);
+    --mstar-accent-select: rgba(91, 155, 255, 0.18);
+    --mstar-hover: rgba(255, 255, 255, 0.08);
+    --mstar-mask: rgba(255, 255, 255, 0.1);
+    --mstar-positive: #2ec27e;
+    --mstar-negative: #ef5350;
+}
+
+#container {
+    height: 600px;
+    min-width: 320px;
+}
+
+.highcharts-description {
+    padding: 0 20px;
+}

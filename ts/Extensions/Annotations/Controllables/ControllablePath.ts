@@ -25,14 +25,8 @@ import Controllable from './Controllable.js';
 import ControllableDefaults from './ControllableDefaults.js';
 const { defaultMarkers } = ControllableDefaults;
 import H from '../../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    extend,
-    merge,
-    uniqueKey
-} = U;
+import { addEvent, defined, extend, merge } from '../../../Shared/Utilities.js';
+import { uniqueKey } from '../../../Core/Utilities.js';
 
 /* *
  *

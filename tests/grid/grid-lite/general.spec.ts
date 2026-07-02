@@ -32,6 +32,62 @@ test('Grid setOptions function', async ({ page }) => {
     expect(result, 'The setOptions function should modify the default options.').toBe(false);
 });
 
+test('Grid caption should render HTML content', async ({ page }) => {
+    await page.setContent(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <script src="https://code.highcharts.com/grid/grid-lite.js"></script>
+                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-lite.css"></link>
+            </head>
+            <body>
+                <div id="container"></div>
+            </body>
+        </html>
+    `, { waitUntil: 'networkidle' });
+
+    const result = await page.evaluate(async () => {
+        const parentElement = document.getElementById('container');
+        if (!parentElement) {
+            return null;
+        }
+
+        const Grid = (window as any).Grid;
+
+        if (!Grid.AST.allowedAttributes.includes('data-grid-caption')) {
+            Grid.AST.allowedAttributes.push('data-grid-caption');
+        }
+
+        const grid = await Grid.grid(parentElement, {
+            data: {
+                columns: {
+                    product: ['Apples', 'Pears'],
+                    stock: [120, 85]
+                }
+            },
+            caption: {
+                text: '<h3 data-grid-caption="inventory">Quarterly fruit inventory</h3>'
+            }
+        }, true);
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const caption = parentElement.querySelector('.hcg-caption');
+        const heading = caption?.querySelector('h3');
+
+        return {
+            captionText: caption?.textContent,
+            headingText: heading?.textContent,
+            headingAttribute: heading?.getAttribute('data-grid-caption')
+        };
+    });
+
+    expect(result).toStrictEqual({
+        captionText: 'Quarterly fruit inventory',
+        headingText: 'Quarterly fruit inventory',
+        headingAttribute: 'inventory'
+    });
+});
+
 // Equivalent of test/typescript-karma/Grid/grid.test.js - update methods test
 test('Grid update methods', async ({ page }) => {
     await page.setContent(`
@@ -54,7 +110,7 @@ test('Grid update methods', async ({ page }) => {
         }
 
         const grid = await Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                     weight: [100, 40, 0.5, 200],
@@ -209,7 +265,7 @@ test('Grid update methods', async ({ page }) => {
         'The getOptions method should return the correct JSON string.'
     ).toBe(
         '{"columns":[{"id":"product","header":{"format":"Column 1"},"cells":{"format":"after update"},"enabled":false},' +
-        '{"id":"imaginary-column","header":{"format":"New One!"}}],"dataTable":{"columns":{"product":["Apples","P' +
+        '{"id":"imaginary-column","header":{"format":"New One!"}}],"data":{"columns":{"product":["Apples","P' +
         'ears","Plums","Bananas"],"weight":[100,40,0.5,200],"price":[1.5,2.53,5,4.5]}}}'
     );
 });
@@ -236,7 +292,7 @@ test('Grid formatter options', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                     weight: [100, 40, 0.5, 200],
@@ -286,7 +342,7 @@ test('Grid custom sorting', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     label: ['A', 'B', 'C', 'D'],
                     weight: ['100 g', '40 kg', '0.5 kg', '800 g']
@@ -356,7 +412,7 @@ test('Grid delegates cell events to tbody', async ({ page }) => {
             grid = await (window as any).Grid.grid(
                 parentElement,
                 {
-                    dataTable: {
+                    data: {
                         columns: {
                             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                             weight: [100, 40, 0.5, 200],
@@ -420,4 +476,3 @@ test('Grid delegates cell events to tbody', async ({ page }) => {
         'Delegated events should not be bound to individual cells.'
     ).toBe(0);
 });
-

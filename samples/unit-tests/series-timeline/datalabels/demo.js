@@ -47,7 +47,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     );
 
     assert.notOk(
-        series.points[2].dataLabel,
+        Boolean(series.points[2].dataLabel),
         '#16084: dataLabel should be disabled'
     );
 

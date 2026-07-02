@@ -1,0 +1,198 @@
+const changelog = document.querySelector('#changelog');
+
+const grid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
+    data: {
+        columns: {
+            product: ['Apples', 'Pears', 'Plums', 'Bananas'],
+            available: [true, false, true, true],
+            sku: ['APL-120', 'PER-085', 'PLM-030', 'BAN-200'],
+            price: [1.5, 2.53, 5, 4.5],
+            country: ['PL', 'NL', 'RO', 'EC']
+        }
+    },
+    accessibility: {
+        screenReaderSection: {
+            beforeGridFormat:
+                '<div>{gridTitle}</div>' +
+                '<div>{gridDescription}</div>' +
+                '<div>Press Enter or double-click an editable cell to start ' +
+                'editing.</div>',
+            afterGridFormat:
+                '<div>End of the editable fruit inventory grid.</div>'
+        }
+    },
+    caption: {
+        text: 'Editable fruit inventory'
+    },
+    lang: {
+        accessibility: {
+            cellEditing: {
+                editable:
+                    'Editable cell. Press Enter or double-click to change ' +
+                    'the value.',
+                announcements: {
+                    started: 'Started editing the current cell.',
+                    edited: 'Saved the new cell value.',
+                    cancelled: 'Canceled cell editing.',
+                    notValid: 'The new value is not valid.'
+                }
+            }
+        },
+        validationNotifications: {
+            notEmpty: 'New value cannot be empty.',
+            number: 'New value has to be a number.'
+        }
+    },
+    rendering: {
+        rows: {
+            minVisibleRows: 4
+        }
+    },
+    columnDefaults: {
+        cells: {
+            editMode: {
+                enabled: true
+            },
+            events: {
+                afterEdit: function () {
+                    const entry = document.createElement('div');
+
+                    entry.textContent = `${this.column.id} for ` +
+                        `${this.row.data.product} was updated to ${
+                            this.value
+                        }.`;
+                    changelog.append(entry);
+                    changelog.scrollTop = changelog.scrollHeight;
+                }
+            }
+        }
+    },
+    columns: [{
+        id: 'product',
+        cells: {
+            editMode: {
+                enabled: false
+            }
+        }
+    }, {
+        id: 'available',
+        dataType: 'boolean',
+        cells: {
+            format: '{#if value}Yes{else}No{/if}',
+            editMode: {
+                renderer: {
+                    type: 'checkbox'
+                }
+            }
+        }
+    }, {
+        id: 'sku',
+        header: {
+            format: 'SKU'
+        },
+        cells: {
+            editMode: {
+                validationRules: [
+                    'notEmpty',
+                    {
+                        validate: 'unique',
+                        notification: 'SKU must be unique.'
+                    },
+                    {
+                        validate: ({ rawValue }) =>
+                            /^[A-Z]{3}-\d{3}$/.test(rawValue),
+                        notification: 'SKU must be in the format AAA-123.'
+                    }
+                ]
+            }
+        }
+    }, {
+        id: 'price',
+        cells: {
+            format: '{value:.2f} €',
+            editMode: {
+                renderer: {
+                    type: 'textInput'
+                },
+                validationRules: ['notEmpty', 'number']
+            }
+        }
+    }, {
+        id: 'country',
+        header: {
+            format: 'Supplier'
+        },
+        cells: {
+            formatter: function () {
+                const countryNames = {
+                    PL: 'Poland',
+                    NL: 'Netherlands',
+                    RO: 'Romania',
+                    EC: 'Ecuador'
+                };
+
+                return countryNames[this.value] || this.value;
+            },
+            editMode: {
+                renderer: {
+                    type: 'select',
+                    options: [
+                        { value: 'PL', label: 'Poland' },
+                        { value: 'NL', label: 'Netherlands' },
+                        { value: 'RO', label: 'Romania' },
+                        { value: 'EC', label: 'Ecuador' }
+                    ]
+                }
+            }
+        }
+    }]
+});
+
+const editorInputs = document.querySelectorAll('.editor input');
+
+function getOptionValue(path) {
+    let cursor = grid.options;
+
+    for (const key of path.split('.')) {
+        cursor = cursor?.[key];
+    }
+
+    return cursor;
+}
+
+function setOption(input) {
+    const result = {};
+    const path = input.name.split('.');
+    let cursor = result;
+
+    for (let i = 0, iEnd = path.length - 1; i < iEnd; i++) {
+        cursor[path[i]] = cursor = {};
+    }
+
+    cursor[path[path.length - 1]] =
+        input.type === 'checkbox' ? input.checked : input.value;
+
+    grid.update(result);
+}
+
+function setInputValue(input) {
+    const value = getOptionValue(input.name);
+
+    if (input.type === 'checkbox') {
+        input.checked = !!value;
+    } else {
+        input.value = value || '';
+    }
+}
+
+for (const input of editorInputs) {
+    setInputValue(input);
+
+    input.addEventListener(
+        input.type === 'checkbox' ? 'change' : 'input',
+        () => {
+            setOption(input);
+        }
+    );
+}

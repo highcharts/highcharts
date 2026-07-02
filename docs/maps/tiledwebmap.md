@@ -80,7 +80,7 @@ Available providers
     Available properties:
 
     ```js
-    theme: ‘WorldStreetMap’, ‘DeLorme’, ‘WorldTopoMap’, ‘WorldImagery’, ‘WorldTerrain’, ‘WorldShadedRelief’, ‘WorldPhysical’, ‘NatGeoWorldMap’, ‘WorldGrayCanvas’
+    theme: ‘WorldStreetMap’, ‘DeLorme’, ‘WorldTopoMap’, ‘WorldImagery’, ‘WorldTerrain’, ‘WorldShadedRelief’, ‘WorldPhysical’, ‘NatGeoWorldMap’, ‘WorldGrayCanvas’, ’WorldDarkGrayCanvas’
     ```
 * `Stamen`
 

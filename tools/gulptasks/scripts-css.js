@@ -42,10 +42,11 @@ const gridConfig = {
     sources: [
         'css/grid/'
     ],
-    target: TARGET_DIRECTORY + '/grid/',
-    replacePath: 'grid/',
+    target: TARGET_DIRECTORY + '/grid/css/modules',
+    replacePath: 'css/grid/',
     exclude: [
-        '.stylelintrc'
+        '.stylelintrc',
+        'grid.css' // deprecated, will be removed from the bundle
     ]
 };
 
@@ -64,6 +65,30 @@ function handleConfig(config) {
 
     // Merge the defaultConfig with the provided config
     return { ...defaultConfig, ...config };
+}
+
+async function bundleGridCSS() {
+    const argv = require('yargs').argv;
+    const LogLib = require('../libs/log');
+    const ProcessLib = require('../libs/process');
+    const Path = require('path');
+
+    const config = Path.join('tools', 'webpacks', 'grid-styles.webpack.mjs');
+
+    if (argv.verbose) {
+        LogLib.warn(config);
+    }
+
+    LogLib.message('Bundling Grid CSS...');
+    await ProcessLib.exec(
+        `npx webpack -c ${config} --no-color`,
+        {
+            maxBuffer: 1024 * 1024,
+            silent: argv.verbose ? 1 : 2,
+            timeout: 60000
+        }
+    );
+    LogLib.success('Finished CSS bundling.');
 }
 
 function copyCSS(config) {
@@ -86,60 +111,6 @@ function copyCSS(config) {
                 .some(name => fileName.includes(name))
         )
     );
-}
-
-function mergeAndCopyGridProCSS(config) {
-    const fslib = require('../libs/fs');
-    const path = require('path');
-
-    config = handleConfig(config);
-
-    // Read the original source files
-    const gridLiteCSS = fslib.getFile(path.join('css/grid', 'grid-lite.css'));
-    const gridProCSS = fslib.getFile(path.join('css/grid', 'grid-pro.css'));
-
-    // Extract Grid Pro license header
-    const gridProLicenseMatch = gridProCSS.match(/^\/\*\*[\s\S]*?\*\/\s*/);
-    const gridProLicense = gridProLicenseMatch ? gridProLicenseMatch[0] : '';
-
-    // Remove license header from Grid Lite CSS (everything until the first non-license content)
-    const gridLiteCSSNoLicense = gridLiteCSS.replace(/^\/\*\*[\s\S]*?\*\/\s*/, '');
-
-    // Remove license header, @import statement, and import comments from Grid Pro CSS
-    const gridProCSSClean = gridProCSS
-        .replace(/^\/\*\*[\s\S]*?\*\/\s*/, '') // Remove license header
-        .replace(/@import\s+url\s*\(\s*["']?(\.\/)?grid-lite\.css["']?\s*\)\s*;?\s*/g, '') // Remove import
-        .replace(/^\/\*\s*Import Grid Lite styles\s*\*\/\s*/gm, '') // Remove import comment
-        .trim();
-
-    // Combine: Grid Pro license + Grid Lite CSS (no license) + cleaned Grid Pro CSS
-    const mergedCSS = gridProLicense + '\n' + gridLiteCSSNoLicense + '\n\n' + gridProCSSClean;
-
-    // Write the merged CSS to the target directory
-    fslib.setFile(path.join(config.target, 'css', 'grid-pro.css'), mergedCSS);
-}
-
-function copyDeprecatedGridLiteCSS(config) {
-    const fslib = require('../libs/fs');
-    const path = require('path');
-
-    config = handleConfig(config);
-
-    // Read the original source files
-    const gridLiteCSS = fslib.getFile(path.join('css/grid', 'grid-lite.css'));
-    const gridCSS = gridLiteCSS.replace(
-        '/*  ==== Start Grid Color Scheme  ==== */',
-        '/*  ==== UPGRADE WARNING NOTE  ==== */\n/**\n' +
-        ' * This file is provided for backward compatibility only.\n' +
-        ' * Please use grid-lite.css directly instead.\n' +
-        ' * This file will be removed in the future.\n' +
-        ' */\n' +
-        '/* ==== END UPGRADE WARNING NOTE ==== */\n\n' +
-        '/*  ==== Start Grid Color Scheme  ==== */'
-    );
-
-    // Write the merged CSS to the target directory
-    fslib.setFile(path.join(config.target, 'css', 'grid.css'), gridCSS);
 }
 
 /**
@@ -205,10 +176,9 @@ function scriptCSS(argv) {
         } else if (argv.product === 'Grid') {
             log.message('Generating css for Grid...');
             copyCSS(gridConfig);
-            mergeAndCopyGridProCSS(gridConfig);
-            copyDeprecatedGridLiteCSS(gridConfig); // to be removed
+            bundleGridCSS();
             replaceProductVersionInFiles(
-                require('path').join(gridConfig.target, 'css'),
+                require('path').join(TARGET_DIRECTORY, 'grid', 'css'),
                 './grid/build-properties.json'
             );
             log.success('Copied grid CSS');

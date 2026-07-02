@@ -1,5 +1,3 @@
-const colors = Highcharts.getOptions().colors;
-
 // Create the chart
 Highcharts.chart('container', {
     chart: {
@@ -33,7 +31,7 @@ Highcharts.chart('container', {
         }],
         plotLines: [{
             dashStyle: 'dash',
-            color: colors[4],
+            color: 'var(--highcharts-color-4)',
             width: 2,
             value: 5
         }]
@@ -80,7 +78,7 @@ Highcharts.chart('container', {
                     enabled: false
                 }
             },
-            color: colors[7],
+            color: 'var(--highcharts-color-7)',
             fillOpacity: 1 / 3,
             lineWidth: 0
         }
@@ -108,7 +106,7 @@ Highcharts.chart('container', {
             ['2027',    27.7]
         ],
         zIndex: 2,
-        color: colors[1],
+        color: 'var(--highcharts-color-1)',
         lineWidth: 3
     }, {
         name: '1σ',

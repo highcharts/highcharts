@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,11 +23,9 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable.js';
 import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import type Grid from '../Grid.js';
 
-import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';
 import PaginationController from './PaginationController.js';
@@ -147,37 +146,16 @@ class QueryingController {
     }
 
     /**
-     * Apply all modifiers to the data table.
+     * Apply all modifiers to the data provider.
      */
     private async modifyData(): Promise<void> {
-        const originalDataTable = this.grid.dataTable;
-        if (!originalDataTable) {
+        const dataProvider = this.grid.dataProvider;
+        if (!dataProvider) {
             return;
         }
 
-        const groupedModifiers = this.getGroupedModifiers();
-        let interTable: DataTable;
+        await dataProvider.applyQuery();
 
-        // Grouped modifiers
-        if (groupedModifiers.length > 0) {
-            const chainModifier = new ChainModifier({}, ...groupedModifiers);
-            const dataTableCopy = originalDataTable.clone();
-            await chainModifier.modify(dataTableCopy.getModified());
-            interTable = dataTableCopy.getModified();
-        } else {
-            interTable = originalDataTable.getModified();
-        }
-
-        // Pagination modifier
-        const paginationModifier =
-            this.pagination.createModifier(interTable.rowCount);
-        if (paginationModifier) {
-            interTable = interTable.clone();
-            await paginationModifier.modify(interTable);
-            interTable = interTable.getModified();
-        }
-
-        this.grid.presentationTable = interTable;
         this.shouldBeUpdated = false;
     }
 }

@@ -1,6 +1,6 @@
 describe('Credits.', () => {
     beforeEach(() => {
-        cy.visit('/grid-pro/cypress/cell-after-edit/');
+        cy.visit('grid-pro/e2e/cell-after-edit/');
     });
 
     it('View renderer cell edition should trigger afterEdit event.', () => {

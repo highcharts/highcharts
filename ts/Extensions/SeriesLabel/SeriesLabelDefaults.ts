@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,7 +18,7 @@
  *
  * */
 
-import type SeriesLabelOptions from './SeriesLabelOptions';
+import type { SeriesLabelOptions } from './SeriesLabelOptions';
 
 /* *
  *
@@ -65,7 +66,7 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
     connectorAllowed: false,
 
     /**
-     * If the label is closer than this to a neighbour graph, draw a
+     * If the label is closer than this to a neighbor graph, draw a
      * connector.
      */
     connectorNeighbourDistance: 24,
@@ -86,6 +87,9 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * Callback function to format each of the series' labels. The
      * `this` keyword refers to the series object. By default the
      * `formatter` is undefined and the `series.name` is rendered.
+     * Since v12.6.0, the callback also receives `ctx` as the first argument,
+     * so that arrow functions can access the same context as regular
+     * functions using `this`.
      *
      * @type {Highcharts.FormatterCallbackFunction<Series>}
      * @since 8.1.0
@@ -131,11 +135,7 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * @type {Highcharts.CSSObject}
      */
     style: {
-        /**
-         * @type {number|string}
-         */
         fontSize: '0.8em',
-        /** @internal */
         fontWeight: 'bold'
     },
 
@@ -160,4 +160,5 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
  *
  * */
 
+/** @internal */
 export default SeriesLabelDefaults;

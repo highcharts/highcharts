@@ -562,4 +562,55 @@ test.describe('Layout Tests', () => {
             'Cell width should be preserved after destroy and render.'
         ).toBe(widthBeforeDestroy);
     });
+
+    // #24258 - CellEditToolbar should fire layoutChanged with type cellDestroyed
+    // (consistent with RowEditToolbar which fires layoutChanged with type rowDestroyed)
+    test('layoutChanged event with type cellDestroyed when cell destroyed', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsAndEditModeHTML, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const layoutChangedEvents: { type: string; target: unknown }[] = [];
+
+            const board = await Dashboards.board('container', {
+                editMode: { enabled: true },
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'cell-1' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'cell-1',
+                    type: 'Highcharts',
+                    chartOptions: {
+                        series: [{ data: [1, 2, 3] }]
+                    }
+                }]
+            }, true);
+
+            const editMode = board.editMode;
+            Dashboards.addEvent(editMode, 'layoutChanged', (e: any) => {
+                layoutChangedEvents.push({ type: e.type, target: e.target });
+            });
+
+            editMode.toggleEditMode(true);
+            const cell = board.layouts[0].rows[0].cells[0];
+            editMode.cellToolbar?.showToolbar(cell);
+            editMode.cellToolbar?.onCellDestroy();
+
+            return { layoutChangedEvents };
+        });
+
+        expect(
+            result.layoutChangedEvents,
+            'layoutChanged should be fired with type cellDestroyed when cell is destroyed (#24258)'
+        ).toContainEqual({ type: 'cellDestroyed', target: 'cell-1' });
+    });
 });

@@ -16,7 +16,8 @@
         "lib": [
             "DOM",
             "ES2016",
-            "ES2017.Object"
+            "ES2017.Object",
+            "ES2017.sharedMemory"
         ],
         // "jsx": "preserve",                                /* Specify what JSX code is generated. */
         // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
@@ -30,7 +31,7 @@
         // "moduleDetection": "auto",                        /* Control what method is used to detect module-format JS files. */
         /* Modules */
         // "module": "commonjs",                             /* Specify what module code is generated. */
-        "module": "ES6",
+        "module": "es2020",
         // "rootDir": "./",                                  /* Specify the root folder within your source files. */
         // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
         "moduleResolution": "node",
@@ -41,7 +42,8 @@
         // "types": [],                                      /* Specify type package names to be included without being referenced in a source file. */
         "types": [
             "jquery",
-            "trusted-types"
+            "trusted-types",
+            "@webgpu/types"
         ],
         // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
         // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */

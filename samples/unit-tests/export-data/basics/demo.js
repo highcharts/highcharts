@@ -133,7 +133,7 @@ QUnit.test('Named points', function (assert) {
 });
 
 QUnit.test('Datetime', function (assert) {
-    $('#container').highcharts({
+    const chart = Highcharts.chart('container', {
         title: {
             text: 'Datetime chart'
         },
@@ -164,7 +164,7 @@ QUnit.test('Datetime', function (assert) {
         ]
     });
 
-    var csv =
+    const csv =
         '"DateTime","Series 1"\n' +
         '"2014-01-01 00:00:00",29.9\n' +
         '"2014-01-02 00:00:00",71.5\n' +
@@ -180,11 +180,32 @@ QUnit.test('Datetime', function (assert) {
         '"2014-01-12 00:00:00",54.4';
 
     assert.equal(
-        $('#container').highcharts().exporting.getCSV(),
+        chart.exporting.getCSV(),
         csv,
         'Basic datetime content'
     );
-    $('#container').highcharts().destroy();
+
+    chart.series[0].update({
+        data: [
+            ['2024-01-01T00:00:00Z', 1],
+            ['2024-01-02T00:00:00Z', 2],
+            ['2024-01-03T00:00:00Z', 3],
+            ['2024-01-04T00:00:00Z', 4]
+        ]
+    });
+
+
+    assert.strictEqual(
+        chart.exporting.getCSV(),
+        '"DateTime","Series 1"\n' +
+        '"2024-01-01 00:00:00",1\n' +
+        '"2024-01-02 00:00:00",2\n' +
+        '"2024-01-03 00:00:00",3\n' +
+        '"2024-01-04 00:00:00",4',
+        'Date string should be exported and formatted correctly, #23654.'
+    );
+
+    chart.destroy();
 });
 
 QUnit.test('Datetime multiseries', function (assert) {
@@ -638,7 +659,7 @@ QUnit.test('Missing data in first series (#78)', function (assert) {
             .replace('<caption>Chart title</caption>', '')
             .replace(/>/g, '>\n'),
         // eslint-disable-next-line max-len
-        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\">Category</th><th class=\"highcharts-text\" scope=\"col\">Drop 2</th><th class=\"highcharts-text\" scope=\"col\">Full</th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-number\">2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">3</td><td class=\"highcharts-number\">3</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">4</td><td class=\"highcharts-number\">4</td></tr></tbody></table>'
+        '<table><caption class=\"highcharts-table-caption\">Chart title</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\"><button>Category</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Drop 2</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Full</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">1</td><td class=\"highcharts-number\">1</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-number\">2</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">3</td><td class=\"highcharts-number\">3</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">4</td><td class=\"highcharts-number\">4</td></tr></tbody></table>'
             .replace(/>/g, '>\n'),
         'Empty data in table'
     );
@@ -1120,7 +1141,7 @@ QUnit.test('Descending categories', function (assert) {
         csv = chart.exporting.getCSV().split('\n');
 
     assert.strictEqual(
-        csv[2],
+        csv[1],
         '"Category 1",34,66',
         'First point should be in Category 2 (#12767)'
     );
@@ -1487,6 +1508,61 @@ QUnit.test('Sortable table (#16972)', function (assert) {
         '100',
         'After sorting, values should correspond to the one on the chart.'
     );
+
+    const headers = chart
+        .exporting
+        .dataTableDiv
+        .querySelectorAll('thead tr th');
+
+    headers[0].children[0].click();
+    headers[1].children[0].click();
+
+    assert.strictEqual(
+        headers[0].getAttribute('aria-sort'),
+        null,
+        'When sorting a different column, previous aria-sort should be removed.'
+    );
+    assert.strictEqual(
+        headers[1].getAttribute('aria-sort'),
+        'descending',
+        'Currently sorted column should have aria-sort state.'
+    );
+    assert.strictEqual(
+        headers[2].getAttribute('aria-sort'),
+        null,
+        'Unsorted columns should not have aria-sort.'
+    );
+
+    chart.series[0].setData([300, 2000, 9, 999, 111], true);
+
+    chart.exporting.ascendingOrderInTable = false;
+
+    chart
+        .exporting
+        .dataTableDiv
+        .children[0]
+        .children[1]
+        .children[0]
+        .children[1]
+        .click();
+
+    const table = chart.exporting.dataTableDiv.children[0];
+
+    assert.strictEqual(
+        table.children[2].children[0].children[1].innerText,
+        '9',
+        'Table sorting should correctly handle formatted numbers with' +
+        'thousands separators, (#24476).'
+    );
+
+    assert.strictEqual(
+        table.children[2].children[4].children[1].innerText,
+        '2,000',
+        'Formatted numbers should be sorted numerically,' +
+        'not lexicographically, (#24476).'
+    );
+
+
 });
 
 QUnit.test('Exporting duplicated points (#17639)', function (assert) {

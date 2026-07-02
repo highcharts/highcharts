@@ -3,10 +3,11 @@
  *  Parallel coordinates module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Fus
+ *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -56,7 +57,7 @@ const chartDefaults: ParallelCoordinatesOptions = {
      * ```js
      * parallelAxes: {
      *    lineWidth: 1,       // classic mode only
-     *    gridlinesWidth: 0,  // classic mode only
+     *    gridLineWidth: 0,  // classic mode only
      *    title: {
      *        text: '',
      *        reserveSpace: false
@@ -87,13 +88,10 @@ const chartDefaults: ParallelCoordinatesOptions = {
     parallelAxes: {
         lineWidth: 1,
         /**
-         * Titles for yAxes are taken from
+         * Visually the parallel coordinates titles are done through
          * [xAxis.categories](#xAxis.categories). All options for `xAxis.labels`
          * applies to parallel coordinates titles. For example, to style
          * categories, use [xAxis.labels.style](#xAxis.labels.style).
-         *
-         * @excluding align, enabled, margin, offset, position3d, reserveSpace,
-         *            rotation, skew3d, style, text, useHTML, x, y
          */
         title: {
             text: '',
@@ -139,7 +137,6 @@ const xAxisDefaults: Partial<AxisOptions> = {
  *         Different tooltipValueFormats's
  *
  * @type      {string}
- * @default   undefined
  * @since     6.0.0
  * @product   highcharts
  * @requires  modules/parallel-coordinates
@@ -154,9 +151,11 @@ const xAxisDefaults: Partial<AxisOptions> = {
  *
  * */
 
+/** @internal */
 const ParallelCoordinatesDefaults = {
     chart: chartDefaults,
     xAxis: xAxisDefaults
 };
 
+/** @internal */
 export default ParallelCoordinatesDefaults;

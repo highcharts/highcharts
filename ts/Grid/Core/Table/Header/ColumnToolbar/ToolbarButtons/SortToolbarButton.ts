@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -26,12 +27,10 @@ import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
 import GridUtils from '../../../../GridUtils.js';
-import Globals from '../../../../Globals.js';
 import StateHelpers from '../StateHelpers.js';
-import U from '../../../../../../Core/Utilities.js';
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { addEvent } = U;
 
 
 /* *
@@ -65,7 +64,7 @@ class SortToolbarButton extends ToolbarButton {
     }
 
     private updateA11yLabel(
-        order: ('asc'|'desc'|null),
+        order: ('asc' | 'desc' | null),
         priority?: number
     ): void {
         const button = this.wrapper?.querySelector('button');
@@ -118,8 +117,7 @@ class SortToolbarButton extends ToolbarButton {
 
     constructor() {
         super({
-            icon: 'upDownArrows',
-            classNameKey: 'headerCellSortIcon',
+            icon: 'arrowUpDown',
             accessibility: {
                 ariaLabel: 'sort'
             }
@@ -157,9 +155,6 @@ class SortToolbarButton extends ToolbarButton {
 
         if (!this.sortPriorityIndicator) {
             this.sortPriorityIndicator = document.createElement('span');
-            this.sortPriorityIndicator.className = Globals.getClassName(
-                'sortPriorityIndicator'
-            );
         }
 
         // Ensure the indicator is rendered to the right of the icon.
@@ -189,7 +184,7 @@ class SortToolbarButton extends ToolbarButton {
 
         if (!StateHelpers.isSorted(column) || !columnSorting?.order) {
             this.setActive(false);
-            this.setIcon('upDownArrows');
+            this.setIcon('arrowUpDown');
             this.renderSortPriorityIndicator();
             this.updateA11yLabel(null);
             return;
@@ -197,7 +192,7 @@ class SortToolbarButton extends ToolbarButton {
 
         this.setActive(true);
         this.setIcon(
-            columnSorting.order === 'asc' ? 'sortAsc' : 'sortDesc'
+            columnSorting.order === 'asc' ? 'arrowUp' : 'arrowDown'
         );
 
         const sortIndex = sortings.findIndex((sorting): boolean =>
@@ -228,13 +223,6 @@ class SortToolbarButton extends ToolbarButton {
                 (): void => this.refreshState()
             )
         );
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected override renderActiveIndicator(render: boolean): void {
-        // Sorting uses directional icons + priority indicators
-        // (for multi-sort), not the generic active dot indicator
-        // (reserved for filtering).
     }
 }
 

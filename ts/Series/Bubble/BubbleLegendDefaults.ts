@@ -4,8 +4,9 @@
  *
  *  Author: Paweł Potaczek
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,8 +20,6 @@
  * */
 
 import type BubbleLegendItem from './BubbleLegendItem';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -50,7 +49,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      * @sample highcharts/bubble-legend/bordercolor/
      *         Individual bubble border color
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     borderColor: void 0,
     /**
@@ -78,7 +77,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      * @sample highcharts/bubble-legend/color/
      *         Individual bubble color
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     color: void 0,
     /**
@@ -96,7 +95,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      * The color of the connector, can be also defined
      * for an individual range.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     connectorColor: void 0,
     /**
@@ -178,7 +177,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
             /** @ignore-option */
             fontSize: '0.9em',
             /** @ignore-option */
-            color: Palette.neutralColor100
+            color: 'var(--highcharts-neutral-color-100)'
         },
         /**
          * The x position offset of the label relative to the
@@ -228,17 +227,17 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
         value: void 0,
         /**
          * The color of the border for individual range.
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         borderColor: void 0,
         /**
          * The color of the bubble for individual range.
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         color: void 0,
         /**
          * The color of the connector for individual range.
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         connectorColor: void 0
     } as any,

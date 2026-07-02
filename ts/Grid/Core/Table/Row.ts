@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -105,12 +106,12 @@ abstract class Row {
      * Renders the row's content. It does not attach the row element to the
      * viewport nor pushes the rows to the viewport.rows array.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             const cell = this.createCell(columns[i]);
-            cell.render();
+            await cell.render();
         }
         this.rendered = true;
 

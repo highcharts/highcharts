@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -14,7 +15,6 @@
  *
  * */
 
-import U from '../../Core/Utilities.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import BaseForm from '../../Shared/BaseForm.js';
 import EditGlobals from './EditGlobals.js';
@@ -22,10 +22,7 @@ import EditRenderer from './EditRenderer.js';
 import CellEditToolbar from './Toolbar/CellEditToolbar.js';
 import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import EditMode from './EditMode.js';
-
-const {
-    createElement
-} = U;
+import { createElement } from '../../Shared/Utilities.js';
 
 /**
  * Class to create confirmation popup.

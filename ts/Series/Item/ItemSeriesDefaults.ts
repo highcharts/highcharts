@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2019-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Item series type for Highcharts
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,8 +23,7 @@
 import type ItemSeriesOptions from './ItemSeriesOptions';
 
 import SeriesDefaults from '../../Core/Series/SeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -180,6 +180,7 @@ const ItemSeriesDefaults: ItemSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.pie.data
  * @exclude   sliced

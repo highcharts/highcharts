@@ -306,6 +306,52 @@ QUnit.test('pointDescriptionEnabledThreshold', function (assert) {
     assert.ok(getSeriesAriaLabel(series), 'There be ARIA on series');
 });
 
+QUnit.test('High contrast theme should persist on chart update', function (
+    assert
+) {
+    const options = {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                yAxis: {
+                    plotLines: [{
+                        color: '#ff0000',
+                        value: 2,
+                        width: 2
+                    }]
+                }
+            }
+        },
+        yAxis: {
+            plotLines: [{
+                color: '#0000ff',
+                value: 2,
+                width: 2
+            }]
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    };
+    const chart = Highcharts.chart('container', options);
+    let plotLine = chart.yAxis[0].plotLinesAndBands[0];
+
+    assert.strictEqual(
+        plotLine.svgElem.element.getAttribute('stroke'),
+        '#ff0000',
+        'Plot line should use the high contrast color on first render'
+    );
+
+    chart.update(options);
+    plotLine = chart.yAxis[0].plotLinesAndBands[0];
+
+    assert.strictEqual(
+        plotLine.svgElem.element.getAttribute('stroke'),
+        '#ff0000',
+        'Plot line should keep the high contrast color after chart.update'
+    );
+});
+
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {

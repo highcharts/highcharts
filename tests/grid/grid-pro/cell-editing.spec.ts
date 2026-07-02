@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Cell editing', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/cell-after-edit/', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/cell-after-edit/', { waitUntil: 'networkidle' });
         // Wait for Grid to be initialized
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&

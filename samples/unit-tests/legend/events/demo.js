@@ -1,6 +1,7 @@
 QUnit.test(
     'Legend events', function (assert) {
-        let legendItemClickFlag = false;
+        let legendItemClickFlag = false,
+            arrowFunctionFlag = false;
         const chart = Highcharts.chart('container', {
                 chart: {
                     type: 'area'
@@ -68,6 +69,22 @@ QUnit.test(
         assert.ok(
             legendItemClickFlag,
             'Legend item click configures in legend.events should fire.'
+        );
+
+        chart.legend.update({
+            events: {
+                itemClick: (e, ctx) => {
+                    arrowFunctionFlag = (e && ctx && true) || void 0;
+                }
+            }
+        });
+
+        test.click(x, y);
+
+        assert.strictEqual(
+            arrowFunctionFlag,
+            true,
+            'Legend event item click should work with arrow functions.'
         );
     }
 );

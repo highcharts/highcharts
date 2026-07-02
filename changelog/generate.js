@@ -23,7 +23,11 @@ const params = require('yargs').argv;
 const childProcess = require('child_process');
 
 const getFile = url => new Promise((resolve, reject) => {
-    https.get(url, resp => {
+    https.get(url, {
+        headers: {
+            Referer: 'https://www.highcharts.com'
+        }
+    }, resp => {
         let data = '';
 
         // A chunk of data has been received.

@@ -3,10 +3,11 @@
  *  Sankey diagram module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -65,7 +66,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
-     * wheelrender more curved. A `curveFactor` of 0 makes the lines
+     * wheel render more curved. A `curveFactor` of 0 makes the lines
      * straight.
      *
      * @private
@@ -167,7 +168,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Can set `color` on all nodes which lay on the same level.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.sankey.levels.color
      */
 
@@ -363,6 +364,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
              * Animation when not hovering over the marker.
              *
              * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @default   { duration: 50 }
              * @apioption plotOptions.series.states.inactive.animation
              */
             animation: {
@@ -444,7 +446,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 /**
  * The color of the auto generated node.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts
  * @apioption series.sankey.nodes.color
  */
@@ -459,7 +461,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  */
 
 /**
- * An optional column index of where to place the node. The default behaviour is
+ * An optional column index of where to place the node. The default behavior is
  * to place it next to the preceding node. Note that this option name is
  * counter intuitive in inverted charts, like for example an organization chart
  * rendered top down. In this case the "columns" are horizontal.
@@ -493,9 +495,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  */
 
 /**
- * An optional level index of where to place the node. The default behaviour is
+ * An optional level index of where to place the node. The default behavior is
  * to place it next to the preceding node. Alias of `nodes.column`, but in
- * inverted sankeys and org charts, the levels are laid out as rows.
+ * inverted sankey and org chart, the levels are laid out as rows.
  *
  * @type      {number}
  * @since     7.1.0
@@ -528,7 +530,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
- * @deprecated
+ * @deprecated 9.3.0
  * @type      {number|string}
  * @default   0
  * @since     6.0.5
@@ -602,6 +604,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @declare   Highcharts.SeriesSankeyPointOptionsObject
  * @type      {Array<*>|Array<Array<(string|number)>>}
  * @extends   series.line.data
@@ -616,7 +619,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * the points, so when setting a specific link color, consider setting the
  * `fillOpacity` to 1.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts
  * @apioption series.sankey.data.color
  */

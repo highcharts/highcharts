@@ -1,4 +1,20 @@
 Highcharts.chart('container', {
+    dataTable: {
+        columns: {
+            Month: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ],
+            Precipitation: [
+                45.7, 37.0, 28.9, 17.1, 39.2, 18.9, 90.2, 78.5, 74.6,
+                18.7, 17.1, 16.0
+            ],
+            Temperature: [
+                -11.4, -9.5, -14.2, 0.2, 7.0, 12.1, 13.5, 13.6, 8.2,
+                -2.8, -12.0, -15.5
+            ]
+        }
+    },
     chart: {
         zooming: {
             type: 'xy'
@@ -14,10 +30,7 @@ Highcharts.chart('container', {
             'target="_blank">YR</a>'
     },
     xAxis: [{
-        categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ],
+        type: 'category',
         crosshair: true
     }],
     yAxis: [{ // Primary yAxis
@@ -27,7 +40,7 @@ Highcharts.chart('container', {
         title: {
             text: 'Temperature'
         },
-        lineColor: Highcharts.getOptions().colors[1],
+        lineColor: 'var(--highcharts-color-1)',
         lineWidth: 2
     }, { // Secondary yAxis
         title: {
@@ -36,7 +49,7 @@ Highcharts.chart('container', {
         labels: {
             format: '{value} mm'
         },
-        lineColor: Highcharts.getOptions().colors[0],
+        lineColor: 'var(--highcharts-color-0)',
         lineWidth: 2,
         opposite: true
     }],
@@ -47,25 +60,29 @@ Highcharts.chart('container', {
         align: 'left',
         verticalAlign: 'top'
     },
+    plotOptions: {
+        series: {
+            dataMapping: {
+                name: 'Month'
+            }
+        }
+    },
     series: [{
         name: 'Precipitation',
         type: 'column',
         yAxis: 1,
-        data: [
-            45.7, 37.0, 28.9, 17.1, 39.2, 18.9, 90.2, 78.5, 74.6,
-            18.7, 17.1, 16.0
-        ],
+        dataMapping: {
+            y: 'Precipitation'
+        },
         tooltip: {
             valueSuffix: ' mm'
         }
-
     }, {
         name: 'Temperature',
         type: 'spline',
-        data: [
-            -11.4, -9.5, -14.2, 0.2, 7.0, 12.1, 13.5, 13.6, 8.2,
-            -2.8, -12.0, -15.5
-        ],
+        dataMapping: {
+            y: 'Temperature'
+        },
         tooltip: {
             valueSuffix: '°C'
         }

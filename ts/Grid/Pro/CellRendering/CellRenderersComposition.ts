@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -30,11 +31,7 @@ import type TableCell from '../../Core/Table/Body/TableCell';
 import CellRendererRegistry from './CellRendererRegistry.js';
 import Globals from '../../Core/Globals.js';
 
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -96,6 +93,9 @@ function afterColumnInit(this: Column): void {
  * Formatted cell content.
  */
 function createCellContent(this: Column, cell: TableCell): CellContent {
+    if (!this.cellRenderer) {
+        throw new Error('Called cell renderer on uninitialized column.');
+    }
     return this.cellRenderer.render(cell);
 }
 
@@ -110,6 +110,9 @@ declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
          * Options to control the cell content rendering.
+         *
+         * @sample grid-pro/basic/cell-renderers Cell renderers
+         * @sample grid-pro/basic/sparklines Sparklines
          */
         renderer?: CellRendererType['options'];
     }
@@ -120,7 +123,7 @@ declare module '../../Core/Table/Column' {
         /**
          * The cell view renderer instance for the column.
          */
-        cellRenderer: CellRendererType;
+        cellRenderer?: CellRendererType;
     }
 }
 

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -11,8 +12,8 @@
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
  *  - Sophie Bremer
- *  - Pawel Lysy
- *  - Karol Kolodziej
+ *  - Paweł Lysy
+ *  - Karol Kołodziej
  *
  * */
 
@@ -44,15 +45,13 @@ import Defaults from './Defaults.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
-import U from '../Core/Utilities.js';
-const {
-    merge,
+import {
     addEvent,
     createElement,
-    error,
-    objectEach,
-    uniqueKey
-} = U;
+    merge,
+    objectEach
+} from '../Shared/Utilities.js';
+import { error, uniqueKey } from '../Core/Utilities.js';
 
 /* *
  *

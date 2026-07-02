@@ -16,7 +16,7 @@ Grid.setOptions({
             }
         }
     },
-    dataTable: {
+    data: {
         columns: columnIds.reduce((acc, columnId) => {
             acc[columnId] = [''];
             return acc;

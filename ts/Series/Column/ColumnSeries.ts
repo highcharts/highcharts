@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,14 +25,13 @@ import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
@@ -39,8 +39,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     clamp,
     crisp,
     defined,
@@ -49,9 +48,9 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    objectEach
-} = U;
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -75,7 +74,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * The column series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.column
  *
@@ -130,12 +129,11 @@ class ColumnSeries extends Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Animate the column heights one by one from zero.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#animate
      *
      * @param {boolean} init
@@ -167,15 +165,15 @@ class ColumnSeries extends Series {
                 // Make sure the columns don't cover the axis line during
                 // entrance animation
                 translatedThreshold += reversed ?
-                    -Math.floor(clipOffset[0]) :
-                    Math.ceil(clipOffset[2]);
+                    -Math.floor(clipOffset[inverted ? 1 : 0]) :
+                    Math.ceil(clipOffset[inverted ? 3 : 2]);
                 attr.translateX = translatedThreshold - yAxis.len;
             } else {
                 // Make sure the columns don't cover the axis line during
                 // entrance animation
                 translatedThreshold += reversed ?
-                    Math.ceil(clipOffset[0]) :
-                    -Math.floor(clipOffset[2]);
+                    Math.ceil(clipOffset[inverted ? 1 : 0]) :
+                    -Math.floor(clipOffset[inverted ? 3 : 2]);
                 attr.translateY = translatedThreshold;
             }
 
@@ -210,7 +208,7 @@ class ColumnSeries extends Series {
      * Initialize the series. Extends the basic Series.init method by
      * marking other series of the same type as dirty.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#init
      */
     public init(
@@ -218,7 +216,7 @@ class ColumnSeries extends Series {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         options: ColumnSeriesOptions
     ): void {
-        super.init.apply(this, arguments as any);
+        super.init.apply(this, arguments);
 
         const series = this;
 
@@ -239,7 +237,7 @@ class ColumnSeries extends Series {
      * Return the width and x offset of the columns adjusted for grouping,
      * groupPadding, pointPadding, pointWidth etc.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      */
     public getColumnMetrics(): ColumnMetricsObject {
@@ -340,7 +338,7 @@ class ColumnSeries extends Series {
      * Make the columns crisp. The edges are rounded to the nearest full
      * pixel.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#crispCol
      */
     public crispCol(
@@ -373,7 +371,7 @@ class ColumnSeries extends Series {
      * option. Missing columns are either single points or stacks where the
      * point or points are either missing or null.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#adjustForMissingColumns
      * @param {number} x
      * The x coordinate of the column, left side
@@ -488,28 +486,26 @@ class ColumnSeries extends Series {
      * Translate each point to the plot area coordinate system and find
      * shape positions
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#translate
      */
     public translate(): void {
         const series = this,
             chart = series.chart,
             options = series.options,
-            // For points whithout graphics (null points) this value is used
+            // For points without graphics (null points) this value is used
             // to reserve space around the point such that:
-            //      - normal/null points are spaced similarily,
-            //      - focusborders of null points are like those of "0" points
+            //      - normal/null points are spaced similarly,
+            //      - focus borders of null points are like those of "0" points
             // This ensures consistent dimensions between null/normal points.
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
-            borderWidth = series.borderWidth = pick(
-                options.borderWidth,
-                dense ? 0 : 1 // #3635
-            ),
+            borderWidth = series.borderWidth =
+            options.borderWidth ?? (dense ? 0 : 1), // #3635
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             threshold = options.threshold,
-            minPointLength = pick(options.minPointLength, 5),
+            minPointLength = options.minPointLength ?? 5,
             metrics = series.getColumnMetrics(),
             seriesPointWidth = metrics.width,
             seriesXOffset = series.pointXOffset = metrics.offset,
@@ -532,8 +528,10 @@ class ColumnSeries extends Series {
         Series.prototype.translate.apply(series);
 
         // Record the new values
-        series.points.forEach(function (point): void {
-            const yBottom = pick(point.yBottom, translatedThreshold as any),
+        series.points.concat(
+            series.condemnedPoints as ColumnPoint[]
+        ).forEach(function (point): void {
+            const yBottom = point.yBottom ?? (translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotX = point.plotX || 0,
                 // Don't draw too far outside plot area (#1303, #2241,
@@ -580,7 +578,7 @@ class ColumnSeries extends Series {
                         barY - (translatedThreshold as any)
                     ) > minPointLength ?
                         // ...keep position
-                        yBottom - minPointLength :
+                        yBottom - (up ? minPointLength : 0) :
                         // #1485, #4051
                         (translatedThreshold as any) -
                         (up ? minPointLength : 0)
@@ -658,7 +656,7 @@ class ColumnSeries extends Series {
     /**
      * Columns have no graph
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#drawGraph
      */
     public drawGraph(): void {
@@ -670,7 +668,7 @@ class ColumnSeries extends Series {
     /**
      * Get presentational attributes
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#pointAttribs
      */
     public pointAttribs(
@@ -678,25 +676,24 @@ class ColumnSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            p2o = (this as any).pointAttrToOptions || {},
+            p2o = this.pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
 
-        let stateOptions: SeriesStateHoverOptions,
+        let stateOptions: SeriesStatesOptions<ColumnSeriesOptions>[keyof SeriesStatesOptions<ColumnSeriesOptions>],
             zone,
             brightness,
-            fill = (point && point.color) || this.color,
+            fill = point?.color || this.color,
             // Set to fill when borderColor null:
             stroke = (
-                (point && (point as any)[strokeOption]) ||
-                (options as any)[strokeOption] ||
+                point?.[strokeOption] ||
+                options[strokeOption] ||
                 fill
             ),
-            dashstyle =
-                (point && point.options.dashStyle) || options.dashStyle,
-            strokeWidth = (point && (point as any)[strokeWidthOption]) ||
-                (options as any)[strokeWidthOption] ||
-                (this as any)[strokeWidthOption] || 0,
+            dashstyle = point?.options.dashStyle || options.dashStyle,
+            strokeWidth = point?.[strokeWidthOption] ??
+                options[strokeWidthOption] ??
+                this[strokeWidthOption] ?? 1,
             opacity = (point?.isNull && options.nullInteraction) ?
                 0 :
                 (point?.opacity ?? options.opacity ?? 1);
@@ -722,7 +719,7 @@ class ColumnSeries extends Series {
         // Select or hover states
         if (state && point) {
             stateOptions = merge(
-                (options.states as any)[state],
+                options.states?.[state],
                 // #6401
                 point.options.states?.[state] || {}
             );
@@ -730,22 +727,21 @@ class ColumnSeries extends Series {
             fill =
                 stateOptions.color || (
                     typeof brightness !== 'undefined' &&
-                    color(fill as any)
+                    color(fill)
                         .brighten(stateOptions.brightness as any)
                         .get()
                 ) || fill;
-            stroke = (stateOptions as any)[strokeOption] || stroke;
-            strokeWidth =
-                (stateOptions as any)[strokeWidthOption] || strokeWidth;
+            stroke = stateOptions[strokeOption] || stroke;
+            strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
             dashstyle = stateOptions.dashStyle || dashstyle;
-            opacity = pick(stateOptions.opacity, opacity);
+            opacity = stateOptions.opacity ?? opacity;
         }
 
         const ret: SVGAttributes = {
-            fill: fill as any,
-            stroke: stroke,
+            fill,
+            stroke,
             'stroke-width': strokeWidth,
-            opacity: opacity
+            opacity: point?.condemned ? 0 : opacity
         };
 
         if (dashstyle) {
@@ -760,15 +756,18 @@ class ColumnSeries extends Series {
      * coordinates apply for columns and bars. This method is inherited by
      * scatter series.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(points: Array<ColumnPoint> = this.points): void {
+    public drawPoints(points?: Array<ColumnPoint>): void {
+
+        points ||= this.points.concat(this.condemnedPoints as ColumnPoint[]);
+
         const series = this,
             chart = this.chart,
             options = series.options,
             nullInteraction = options.nullInteraction,
-            renderer = chart.renderer,
+            { styledMode, renderer } = chart,
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
 
@@ -776,7 +775,7 @@ class ColumnSeries extends Series {
         points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
-                hasGraphic = !!graphic,
+                shouldUpdate = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
@@ -789,57 +788,56 @@ class ColumnSeries extends Series {
                     graphic = graphic.destroy();
                 }
 
-                // Set starting position for point sliding animation.
-                if (series.enabledDataSorting) {
-                    point.startXPos = series.xAxis.reversed ?
-                        -(shapeArgs ? (shapeArgs.width || 0) : 0) :
-                        series.xAxis.width;
-                }
-
                 if (!graphic) {
-                    point.graphic = graphic =
-                        (renderer as any)[point.shapeType as any](shapeArgs)
-                            .add(point.group || series.group);
+                    let initialAttr = shapeArgs;
 
+                    // New points fade in from old axis position
                     if (
-                        graphic &&
-                        series.enabledDataSorting &&
-                        chart.hasRendered &&
+                        point.origin &&
                         chart.pointCount < animationLimit
                     ) {
-                        graphic.attr({
-                            x: point.startXPos
-                        });
-
-                        hasGraphic = true;
+                        initialAttr = merge(
+                            shapeArgs,
+                            point.getOrigin(point.origin, shapeArgs)
+                        );
+                        if (!styledMode) {
+                            initialAttr.opacity = 0;
+                        }
+                        shouldUpdate = true;
                         verb = 'animate';
                     }
+
+                    // Create new graphic
+                    point.graphic = graphic =
+                        renderer[
+                            point.shapeType as (
+                                'roundedRect'|'rect'|'circle'|'path'
+                            )
+                        ](initialAttr).add(point.group || series.group);
                 }
 
-                if (graphic && hasGraphic) { // Update
-                    graphic[verb](
-                        merge(shapeArgs)
-                    );
+                // Update existing graphic, either because it pre-existed, or
+                // because we created it in a temporary position
+                if (shouldUpdate) {
+                    graphic[verb](merge(shapeArgs));
                 }
 
                 // Presentational
-                if (!chart.styledMode) {
-                    (graphic as any)[verb](series.pointAttribs(
+                if (!styledMode) {
+                    graphic[verb](series.pointAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : ''
                     ))
                         .shadow(
                             point.allowShadow !== false && options.shadow
                         );
                 }
 
-                if (graphic) {
-                    graphic.addClass(point.getClassName(), true);
-
-                    graphic.attr({
+                graphic
+                    .addClass(point.getClassName(), true)
+                    .attr({
                         visibility: point.visible ? 'inherit' : 'hidden'
                     });
-                }
 
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
@@ -849,7 +847,7 @@ class ColumnSeries extends Series {
 
     /**
      * Draw the tracker for a point.
-     * @private
+     * @internal
      */
     public drawTracker(points: Array<ColumnPoint> = this.points): void {
         const series = this,
@@ -860,7 +858,7 @@ class ColumnSeries extends Series {
 
                 const point = pointer?.getPointFromEvent(e);
 
-                // Undefined on graph in scatterchart
+                // Undefined on graph in scatter chart
                 if (
                     pointer &&
                     point &&
@@ -873,6 +871,15 @@ class ColumnSeries extends Series {
                             {
                                 visiblePlotOnly: true
                             }
+                        ) ||
+                        // Allow specific series types to extend interaction
+                        // outside the plot area, #24096
+                        (
+                            series.allowOutsidePlotInteraction &&
+                            pointer?.inClass(
+                                e.target as any,
+                                'highcharts-point'
+                            )
                         ) ||
                         pointer?.inClass(
                             e.target as any,
@@ -943,7 +950,7 @@ class ColumnSeries extends Series {
     /**
      * Remove this series from the chart
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#remove
      */
     public remove(): void {
@@ -960,10 +967,9 @@ class ColumnSeries extends Series {
             });
         }
 
-        Series.prototype.remove.apply(series, arguments as any);
+        Series.prototype.remove.apply(series, arguments);
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -1019,7 +1025,7 @@ export default ColumnSeries;
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
- * @private
+ * @internal
  * @interface Highcharts.ColumnMetricsObject
  *//**
  * Width of the columns.

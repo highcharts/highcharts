@@ -1,6 +1,8 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'area'
+        type: 'area',
+        plotBorderWidth: 1,
+        plotBorderRadius: 5
     },
     title: {
         text: 'Countries/regions with highest Gt CO₂-emissions'
@@ -15,6 +17,13 @@ Highcharts.chart('container', {
             valueDescriptionFormat: '{index}. {point.category}, {point.y:,' +
                 '.1f} billions, {point.percentage:.1f}%.'
         }
+    },
+    xAxis: {
+        lineWidth: 0,
+        minPadding: 0,
+        maxPadding: 0,
+        tickWidth: 0,
+        gridLineWidth: 1
     },
     yAxis: {
         labels: {

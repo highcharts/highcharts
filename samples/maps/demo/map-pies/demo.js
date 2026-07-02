@@ -93,10 +93,6 @@
         libColor = 'rgba(240,190,50,0.80)',
         grnColor = 'rgba(90,200,90,0.80)';
 
-
-    // Compute max votes to find relative sizes of bubbles
-    const maxVotes = data.reduce((max, row) => Math.max(max, row[5]), 0);
-
     // Build the chart
     const chart = Highcharts.mapChart('container', {
 
@@ -266,25 +262,21 @@
 
     // Add the pies after chart load, optionally with offset and connectors
     chart.series[0].points.forEach(state => {
+
         // Add the pie for this state
         chart.addSeries({
             type: 'pie',
             name: state.id,
+            borderRadius: 0,
+            borderWidth: 0.5,
             zIndex: 6, // Keep pies above connector lines
             minSize: 15,
             maxSize: 55,
             onPoint: {
                 id: state.id,
-                z: (() => {
-                    const mapView = chart.mapView,
-                        zoomFactor = mapView.zoom / mapView.minZoom;
-
-                    return Math.max(
-                        chart.chartWidth / 45 * zoomFactor, // Min size
-                        chart.chartWidth /
-                        11 * zoomFactor * state.sumVotes / maxVotes
-                    );
-                })()
+                minSize: 16,
+                maxSize: chart.chartWidth * 0.05,
+                z: (() => state.sumVotes)()
             },
             states: {
                 inactive: {

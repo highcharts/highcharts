@@ -22,6 +22,10 @@ Highcharts.chart('container', {
         legendSymbol: 'lineMarker',
         name: 'lineMarker'
     }, {
+        data: [1, 3, 2, 3, 2],
+        legendSymbol: 'triangle',
+        name: 'triangle'
+    }, {
         data: [1, 0, 1, 1, 0],
         legendSymbol: 'rectangle',
         name: 'rectangle *'

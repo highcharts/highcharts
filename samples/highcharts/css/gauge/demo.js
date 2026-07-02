@@ -9,40 +9,10 @@ Highcharts.chart('container', {
         text: 'Speedometer'
     },
 
-    pane: {
-        startAngle: -150,
-        endAngle: 150,
-        background: [{
-            className: 'outer-pane',
-            outerRadius: '115%'
-        }, {
-            className: 'middle-pane',
-            outerRadius: '112%'
-        }, {
-            // default background
-        }, {
-            className: 'inner-pane',
-            outerRadius: '105%',
-            innerRadius: '103%'
-        }]
-    },
-
     // the value axis
     yAxis: {
         min: 0,
         max: 200,
-
-        minorTickInterval: 'auto',
-        minorTickLength: 10,
-        minorTickPosition: 'inside',
-
-        tickPixelInterval: 30,
-        tickPosition: 'inside',
-        tickLength: 10,
-        labels: {
-            step: 2,
-            rotation: 'auto'
-        },
         title: {
             text: 'km/h'
         },

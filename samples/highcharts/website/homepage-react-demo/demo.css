@@ -21,6 +21,16 @@
     --code-orange: #aa5d00;
     --code-red: #d91e18;
     --code-yellow: #696024;
+    --code-bg: #fff;
+    --code-border: #e5e7eb;
+    --code-ln: #9ca3af;
+    --code-keyword: #7c3aed;
+    --code-string: #059669;
+    --code-component: #d97706;
+    --code-function: #2563eb;
+    --code-attr: #0891b2;
+    --code-number: #dc2626;
+    --code-plain: #1f2937;
 }
 
 .highcharts-dark {
@@ -55,6 +65,16 @@
     --code-orange: #bd93f9;
     --code-red: #ff79c6;
     --code-yellow: #f1eabe;
+    --code-bg: #1a1d27;
+    --code-border: #2a2d3a;
+    --code-ln: #4b5563;
+    --code-keyword: #c792ea;
+    --code-string: #c3e88d;
+    --code-component: #ffcb6b;
+    --code-function: #82aaff;
+    --code-attr: #89ddff;
+    --code-number: #f78c6c;
+    --code-plain: #d0d0d0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -90,6 +110,16 @@
         --code-orange: #bd93f9;
         --code-red: #ff79c6;
         --code-yellow: #f1eabe;
+        --code-bg: #1a1d27;
+        --code-border: #2a2d3a;
+        --code-ln: #4b5563;
+        --code-keyword: #c792ea;
+        --code-string: #c3e88d;
+        --code-component: #ffcb6b;
+        --code-function: #82aaff;
+        --code-attr: #89ddff;
+        --code-number: #f78c6c;
+        --code-plain: #d0d0d0;
     }
 }
 
@@ -243,8 +273,6 @@ body {
 }
 
 #code-container {
-    display: flex;
-    flex-direction: row;
     border-top: 1px solid var(--border-100);
     overflow-x: auto;
     overflow-y: scroll;
@@ -305,7 +333,6 @@ body {
     color: var(--code-yellow);
 }
 
-/* This is the key part */
 #code .code-line {
     display: block;
     white-space: pre;
@@ -314,6 +341,37 @@ body {
     color: var(--code-gray);
     font-family: inherit;
 }
+
+.hc-code {
+    border-top: 1px solid var(--code-border);
+    padding: 24px 0 24px 24px;
+    background: var(--code-bg);
+    font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    color: var(--code-plain);
+}
+
+.hc-code table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.hc-code .ln {
+    color: var(--code-ln);
+    text-align: right;
+    padding-right: 20px;
+    user-select: none;
+    vertical-align: top;
+    width: 1%;
+}
+.hc-code .k { color: var(--code-keyword); }
+.hc-code .s { color: var(--code-string); }
+.hc-code .cm { color: var(--code-component); }
+.hc-code .fn { color: var(--code-function); }
+.hc-code .at { color: var(--code-attr); }
+.hc-code .nu { color: var(--code-number); }
 
 .demo-body {
     display: flex;

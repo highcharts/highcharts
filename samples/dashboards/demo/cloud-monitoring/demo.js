@@ -24,10 +24,8 @@ const KPIOptions = {
         ]
     },
     pane: {
-        background: {
-            innerRadius: '80%',
-            outerRadius: '100%'
-        }
+        innerSize: '80%',
+        borderRadius: '50%'
     },
     accessibility: {
         typeDescription: 'The gauge chart with 1 data point.'

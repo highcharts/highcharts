@@ -1,5 +1,5 @@
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'plums', 'acerola'],
             weight: ['100 g', '40 kg', '0.5 kg', '800 g'],

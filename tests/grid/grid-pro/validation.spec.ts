@@ -21,7 +21,7 @@ async function editGridCell(
 
 test.describe('Grid Pro - validation', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/cell-editing', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/cell-editing', { waitUntil: 'networkidle' });
     });
 
     test('Notification position', async ({ page }) => {
@@ -33,7 +33,7 @@ test.describe('Grid Pro - validation', () => {
         const top = await notification.evaluate((el: HTMLElement) => {
             return el.getBoundingClientRect().top;
         });
-        console.log('top', top);
+
         expect(top).toBeGreaterThan(200);
 
         await editGridCell(page, 2, 'numbers', '4');
@@ -48,7 +48,7 @@ test.describe('Grid Pro - validation', () => {
                 return el.getBoundingClientRect().top;
             }
         );
-        console.log('topPosition', topPosition);
+
         expect(topPosition).toBeLessThan(200);
 
         await editGridCell(page, 8, 'numbers', '4');

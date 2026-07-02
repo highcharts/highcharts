@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -46,8 +47,7 @@ const {
 import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
 const { getAssignedAxis, getFieldType } = NBU;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     attr,
     defined,
@@ -60,7 +60,7 @@ const {
     objectEach,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -297,7 +297,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             const typeOptions = config.typeOptions;
 
                             if (annotation.options.type === 'measure') {
-                                // Manually disable crooshars according to
+                                // Manually disable crosshairs according to
                                 // stroke width of the shape:
                                 (typeOptions as any).crosshairY.enabled = (
                                     (typeOptions as any).crosshairY
@@ -836,13 +836,6 @@ class NavigationBindings {
      * Hook for mouse move on a chart's container. It calls current step.
      *
      * @internal
-     * @function Highcharts.NavigationBindings#bindingsContainerMouseMove
-     *
-     * @param {Highcharts.HTMLDOMElement} container
-     *        Chart's container.
-     *
-     * @param {global.Event} moveEvent
-     *        Browser's move event.
      */
     public bindingsContainerMouseMove(
         _container: HTMLDOMElement,
@@ -885,7 +878,8 @@ class NavigationBindings {
             if (
                 isNumber(parsedValue) &&
                 !value.match(/px|em/g) &&
-                !field.match(/format/g)
+                !field.match(/format/g) &&
+                !field.match(/title/g)
             ) {
                 value = parsedValue as any;
             }

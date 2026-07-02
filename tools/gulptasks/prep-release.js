@@ -12,7 +12,7 @@ const fs = require('fs');
  * Prepares a new release by replacing version numbers with the supplied
  * version. Replaces version numbers in package.json, bower.json,
  * build-properties.json and replaces any "@ since next" and "@ deprecated next"
- * (or "{next}") tags in docs with the specified --nextversion
+ * tags in docs with the specified --nextversion
  *
  * Run using `gulp prep-release --nextversion` and
  * `gulp prep-release --cleanup (--commit)`.
@@ -87,7 +87,7 @@ function prepareRelease() {
         }
         if (
             nextVersion &&
-            !/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$/.test(nextVersion)
+            !/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}/.test(nextVersion)
         ) {
             reject(new Error('--nextversion must be on the form x.x.x'));
             return;
@@ -110,25 +110,31 @@ function prepareRelease() {
             JSON.stringify(buildProperties, null, 2)
         );
 
-        // Replace occurrences of "@ since next" (or {next}) in docs with
+        // Replace occurrences of "@ since next" in docs with
         // "@ since x.y.z", and the same for "deprecated",
         // first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync(
             'xargs --version 2>&1 |grep -s GNU >/dev/null && echo true ||' +
             ' echo false'
         ).toString().replace('\n', '') === 'true';
-        ChildProcess.execSync(
-            'grep -Rl --exclude=*.bak --exclude-dir=node_modules' +
-            ' --exclude-dir=code -e "@since\\s\\+\\(next\\|{next}\\)" -e' +
-            ' "@deprecated\\s\\+\\(next\\|{next}\\)" . | ' +
-            `xargs ${isGNU ? '-r' : ''} sed -i'.bak'` +
-            ` -e 's/@since *\\(next\\|{next}\\)/@since ${nextVersion}/; ` +
-            `s/@deprecated *\\(next\\|{next}\\)/@deprecated ${nextVersion}/'`
-        );
+
+        ChildProcess.execSync([
+            'grep -Rl',
+            '--exclude=*.bak',
+            '--exclude=*.md',
+            '--exclude-dir=node_modules',
+            '--exclude-dir=code',
+            '-e "@since[[:space:]][[:space:]]*next"',
+            '-e "@deprecated[[:space:]][[:space:]]*next"',
+            '. |',
+            `xargs ${isGNU ? '-r' : ''} sed -i'.bak'`,
+            `-e 's/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${nextVersion}/;`,
+            `s/@deprecated\\([[:space:]][[:space:]]*\\)next/@deprecated\\1${nextVersion}/'`
+        ].join(' '));
 
         LogLib.success(
             'Updated version in package.json, bower.json,' +
-            ' build-properties.json and replaced next/{next} in @ since and' +
+            ' build-properties.json and replaced next in @ since and' +
             ' @ deprecated in the docs. Please review changes and commit' +
             ' & push when ready.'
         );

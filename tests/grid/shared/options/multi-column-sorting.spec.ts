@@ -2,12 +2,12 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid multi-column sorting', () => {
     const expectedOrder = ['c', 'a', 'b', 'g', 'e', 'f', 'h', 'd'];
-    const demoPath = 'grid-lite/cypress/multi-column-sorting';
+    const demoPath = 'grid-lite/e2e/multi-column-sorting';
 
     const openMenu = async (page: any, columnId: string) => {
         await page.evaluate((id: string) => {
             const button = document.querySelector(
-                `th[data-column-id="${id}"] .hcg-header-cell-menu-icon .hcg-button`
+                `th[data-column-id="${id}"] .hcg-header-cell-menu-icon .hcg-icon`
             );
             if (button) {
                 (button as HTMLElement).click();
@@ -47,19 +47,19 @@ test.describe('Grid multi-column sorting', () => {
             const sortings = grid.querying.sorting.currentSortings || [];
             return {
                 columnIds: sortings.map((sorting: any) => sorting.columnId),
-                rowOrder: grid.presentationTable.columns.id
+                rowOrder: grid.dataProvider.getDataTable(true).columns.id
             };
         });
 
         expect(result.columnIds, 'Applied sorting priority').toEqual(['group', 'score', 'id']);
         expect(result.rowOrder, 'Sorted row order').toEqual(expectedOrder);
 
-        await expect(page.locator('th[data-column-id="group"] .hcg-sort-priority-indicator'))
-            .toHaveText('1');
-        await expect(page.locator('th[data-column-id="score"] .hcg-sort-priority-indicator'))
-            .toHaveText('2');
-        await expect(page.locator('th[data-column-id="id"] .hcg-sort-priority-indicator'))
-            .toHaveText('3');
+        await expect(page.locator('th[data-column-id="group"] .hcg-header-cell-icons button'))
+            .toHaveAttribute('aria-label', /Priority 1/);
+        await expect(page.locator('th[data-column-id="score"] .hcg-header-cell-icons button'))
+            .toHaveAttribute('aria-label', /Priority 2/);
+        await expect(page.locator('th[data-column-id="id"] .hcg-header-cell-icons button'))
+            .toHaveAttribute('aria-label', /Priority 3/);
     });
 
     test('Shift-clicking menu sort adds a secondary priority', async ({ page }) => {

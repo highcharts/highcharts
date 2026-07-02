@@ -213,4 +213,22 @@ QUnit.test('MapView Inset', assert => {
         'Translation inside what was previously the inset should change'
     );
 
+    const insetClip = chart.mapView.groupClipRect.element;
+
+    assert.deepEqual(
+        [
+            +insetClip.getAttribute('x'),
+            +insetClip.getAttribute('y'),
+            +insetClip.getAttribute('width'),
+            +insetClip.getAttribute('height')
+        ],
+        [
+            chart.plotLeft,
+            chart.plotTop,
+            chart.plotWidth,
+            chart.plotHeight
+        ],
+        'The map-view group clip should match the plot area (#23723)'
+    );
+
 });

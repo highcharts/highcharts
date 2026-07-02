@@ -2,15 +2,16 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
  *  - Jomar Hønsi
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -30,8 +31,10 @@ import type {
     DataEventEmitter
 } from './DataEvent';
 import type DataModifier from './Modifiers/DataModifier';
-import type DataTableOptions from './DataTableOptions';
-import type { DataTableValue } from './DataTableOptions';
+import type {
+    DataTableOptionsObject,
+    DataTableValue
+} from './DataTableOptions';
 import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
 
 import DataTableCore from './DataTableCore.js';
@@ -39,15 +42,14 @@ import DataTableCore from './DataTableCore.js';
 import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
 
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     fireEvent,
-    isNumber,
-    uniqueKey
-} = U;
+    isNumber
+} from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
 
 /* *
@@ -65,7 +67,7 @@ const {
  * @class
  * @name Highcharts.DataTable
  *
- * @param {Highcharts.DataTableOptions} [options]
+ * @param {Highcharts.DataTableOptionsObject} [options]
  * Options to initialize the new DataTable instance.
  */
 class DataTable extends DataTableCore implements DataEventEmitter<Event> {
@@ -77,7 +79,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
      *
      * */
 
-    public constructor(options: DataTableOptions = {}) {
+    public constructor(options: DataTableOptionsObject = {}) {
         super(options);
         this.metadata = options.metadata;
     }
@@ -128,7 +130,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         eventDetail?: DataEventDetail
     ): DataTable {
         const table = this,
-            tableOptions: DataTableOptions = {};
+            tableOptions: DataTableOptionsObject = {};
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
@@ -1387,6 +1389,7 @@ export interface ColumnEvent extends DataEvent {
     readonly columns?: ColumnCollection;
     readonly columnIds: Array<string>;
     readonly rowIndex?: number;
+    readonly target?: DataTableCore;
 }
 
 /**

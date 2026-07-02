@@ -110,6 +110,10 @@ class SparklineEditorContent extends Grid.CellContentPro {
         return this.popup.data.join(',');
     }
 
+    get rawValue() {
+        return this.value;
+    }
+
     add(parentElement) {
         const { column } = this.renderer;
 
@@ -168,7 +172,7 @@ Grid.CellRendererRegistry.registerRenderer(
  * */
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             ID: [
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10

@@ -5,8 +5,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 
 
@@ -31,11 +31,12 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
-import Utilities from '../Core/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
+import TableRow from '../Grid/Core/Table/Body/TableRow.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
@@ -49,12 +50,16 @@ import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.j
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import LicenseValidationComposition from '../Grid/Pro/License/LicenseValidationComposition.js';
+import RowPinningComposition from '../Grid/Pro/RowPinning/RowPinningComposition.js';
+import TreeViewComposition from '../Grid/Pro/TreeView/TreeViewComposition.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
 
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 
 /* *
  *
@@ -74,6 +79,8 @@ import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
 
 // Compositions
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
+import '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
@@ -92,6 +99,9 @@ import '../Grid/Pro/CellRendering/Renderers/DateTimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
+
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Pro/Data/RemoteDataProvider.js';
 
 
 /* *
@@ -113,6 +123,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -120,7 +131,7 @@ const G = {
     grids: _Grid.grids,
     HeaderCell,
     isHighContrastModeActive: whcm.isHighContrastModeActive,
-    merge: Utilities.merge,
+    merge: merge,
     Pagination,
     Popup,
     product: 'Grid Pro',
@@ -128,6 +139,7 @@ const G = {
     SvgIcons,
     Table,
     TableCell,
+    TableRow,
     Templating,
     version: Globals.version,
     win: Globals.win
@@ -140,6 +152,12 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+LicenseValidationComposition.compose(G.Grid);
+RowPinningComposition.compose(
+    G.Grid, G.Table, G.Column,
+    G.TableRow, G.TableCell
+);
+TreeViewComposition.compose(G.Grid, G.Table, G.TableCell);
 ResponsiveComposition.compose(G.Grid);
 
 
@@ -160,6 +178,7 @@ export {
     DataConverter,
     DataCursor,
     DataModifier,
+    DataProviderRegistry,
     DataPool,
     DataTable,
     _Grid as Grid,
@@ -179,7 +198,6 @@ export const {
     grid,
     grids,
     isHighContrastModeActive,
-    merge,
     product,
     setOptions,
     version,

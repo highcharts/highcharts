@@ -1,0 +1,98 @@
+.hcg-container {
+    /* ─────────────────────────────────────────────────────────────
+     Defaults (internal base tokens)
+     ───────────────────────────────────────────────────────────── */
+    --ig-icon-border-width-base: var(--hcg-icon-border-width, 1px);
+    --ig-icon-border-style-base: var(--hcg-icon-border-style, solid);
+    --ig-icon-border-color-base: var(--hcg-icon-border-color, transparent);
+    --ig-icon-border-radius-base: var(--hcg-icon-border-radius, 0);
+    --ig-icon-padding-base: var(--hcg-icon-padding, 6px);
+    --ig-icon-font-weight-base: var(--hcg-icon-font-weight, inherit);
+    --ig-icon-font-size-base: var(--hcg-icon-font-size, inherit);
+    --ig-icon-font-family-base: var(--hcg-icon-font-family, inherit);
+    --ig-icon-background-base: var(--hcg-icon-background, transparent);
+    --ig-icon-color-base: var(--hcg-icon-color, inherit);
+    --ig-icon-hover-color-base: var(--hcg-icon-hover-color, var(--ig-icon-color-base));
+    --ig-icon-hover-background-source-base: var(--hcg-icon-hover-background, var(--ig-default-color));
+    --ig-icon-hover-background-base: color-mix(in srgb, var(--ig-icon-hover-background-source-base) 12%, transparent);
+    --ig-icon-hover-border-color-base: var(--hcg-icon-hover-border-color, var(--ig-icon-border-color-base));
+    --ig-icon-focus-ring: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-focus-ring-color);
+
+    /* ─────────────────────────────────────────────────────────────
+     Public theme overrides (external hcg tokens)
+     ───────────────────────────────────────────────────────────── */
+    --ig-icon-border-width: var(--hcg-icon-border-width, var(--ig-icon-border-width-base));
+    --ig-icon-border-style: var(--hcg-icon-border-style, var(--ig-icon-border-style-base));
+    --ig-icon-border-color: var(--hcg-icon-border-color, var(--ig-icon-border-color-base));
+    --ig-icon-border-radius: var(--hcg-icon-border-radius, var(--ig-icon-border-radius-base));
+    --ig-icon-padding: var(--hcg-icon-padding, var(--ig-icon-padding-base));
+    --ig-icon-font-weight: var(--hcg-icon-font-weight, var(--ig-icon-font-weight-base));
+    --ig-icon-font-size: var(--hcg-icon-font-size, var(--ig-icon-font-size-base));
+    --ig-icon-font-family: var(--hcg-icon-font-family, var(--ig-icon-font-family-base));
+    --ig-icon-background: var(--hcg-icon-background, var(--ig-icon-background-base));
+    --ig-icon-color: var(--hcg-icon-color, var(--ig-icon-color-base));
+    --ig-icon-hover-color: var(--hcg-icon-hover-color, var(--ig-icon-hover-color-base));
+    --ig-icon-hover-background-source: var(--hcg-icon-hover-background, var(--ig-icon-hover-background-source-base));
+    --ig-icon-hover-background: color-mix(in srgb, var(--ig-icon-hover-background-source) 12%, transparent);
+    --ig-icon-hover-border-color: var(--hcg-icon-hover-border-color, var(--ig-icon-hover-border-color-base));
+
+    thead th {
+        --ig-icon-background: var(--hcg-header-icon-background, var(--ig-icon-background-base));
+        --ig-icon-color: var(--hcg-header-icon-color, var(--ig-icon-color-base));
+        --ig-icon-border-width: var(--hcg-header-icon-border-width, var(--ig-icon-border-width-base));
+        --ig-icon-border-style: var(--hcg-header-icon-border-style, var(--ig-icon-border-style-base));
+        --ig-icon-border-color: var(--hcg-header-icon-border-color, var(--ig-icon-border-color-base));
+        --ig-icon-border-radius: var(--hcg-header-icon-border-radius, var(--ig-icon-border-radius-base));
+        --ig-icon-padding: var(--hcg-header-icon-padding, var(--ig-icon-padding-base));
+        --ig-icon-font-weight: var(--hcg-header-icon-font-weight, var(--ig-icon-font-weight-base));
+        --ig-icon-font-size: var(--hcg-header-icon-font-size, var(--ig-icon-font-size-base));
+        --ig-icon-font-family: var(--hcg-header-icon-font-family, var(--ig-icon-font-family-base));
+        --ig-icon-hover-color: var(--hcg-header-icon-hover-color, var(--hcg-icon-hover-color, var(--hcg-header-icon-color, var(--ig-icon-hover-color-base))));
+        --ig-icon-hover-background-source: var(--hcg-header-icon-hover-background, var(--hcg-icon-hover-background, var(--ig-icon-hover-background-source-base)));
+        --ig-icon-hover-background: color-mix(in srgb, var(--ig-icon-hover-background-source) 12%, transparent);
+        --ig-icon-hover-border-color: var(--hcg-header-icon-hover-border-color, var(--hcg-icon-hover-border-color, var(--hcg-header-icon-border-color, var(--ig-icon-hover-border-color-base))));
+    }
+
+    tbody :where(.hcg-cell) {
+        --ig-icon-background: var(--hcg-cell-icon-background, var(--ig-icon-background-base));
+        --ig-icon-color: var(--hcg-cell-icon-color, var(--ig-icon-color-base));
+        --ig-icon-border-width: var(--hcg-cell-icon-border-width, var(--ig-icon-border-width-base));
+        --ig-icon-border-style: var(--hcg-cell-icon-border-style, var(--ig-icon-border-style-base));
+        --ig-icon-border-color: var(--hcg-cell-icon-border-color, var(--ig-icon-border-color-base));
+        --ig-icon-border-radius: var(--hcg-cell-icon-border-radius, var(--ig-icon-border-radius-base));
+        --ig-icon-padding: var(--hcg-cell-icon-padding, var(--ig-icon-padding-base));
+        --ig-icon-font-weight: var(--hcg-cell-icon-font-weight, var(--ig-icon-font-weight-base));
+        --ig-icon-font-size: var(--hcg-cell-icon-font-size, var(--ig-icon-font-size-base));
+        --ig-icon-font-family: var(--hcg-cell-icon-font-family, var(--ig-icon-font-family-base));
+        --ig-icon-hover-color: var(--hcg-cell-icon-hover-color, var(--hcg-icon-hover-color, var(--hcg-cell-icon-color, var(--ig-icon-hover-color-base))));
+        --ig-icon-hover-background-source: var(--hcg-cell-icon-hover-background, var(--hcg-icon-hover-background, var(--ig-icon-hover-background-source-base)));
+        --ig-icon-hover-background: color-mix(in srgb, var(--ig-icon-hover-background-source) 12%, transparent);
+        --ig-icon-hover-border-color: var(--hcg-cell-icon-hover-border-color, var(--hcg-icon-hover-border-color, var(--hcg-cell-icon-border-color, var(--ig-icon-hover-border-color-base))));
+    }
+
+    :where(.hcg-icon) {
+        font-weight: var(--ig-icon-font-weight);
+        font-size: var(--ig-icon-font-size);
+        font-family: var(--ig-icon-font-family);
+        color: var(--ig-icon-color);
+        background: var(--ig-icon-background);
+        padding-block: var(--ig-icon-padding);
+        padding-inline: var(--ig-icon-padding);
+        min-height: calc(1em + (2 * var(--ig-icon-padding)));
+        border-width: var(--ig-icon-border-width);
+        border-style: var(--ig-icon-border-style);
+        border-color: var(--ig-icon-border-color);
+        border-radius: var(--ig-icon-border-radius);
+
+        &:hover:not(:disabled),
+        &.hcg-icon-highlighted {
+            color: var(--ig-icon-hover-color);
+            background: var(--ig-icon-hover-background);
+            border-color: var(--ig-icon-hover-border-color);
+        }
+
+        &:focus-visible {
+            box-shadow: var(--ig-icon-focus-ring);
+        }
+    }
+}

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -15,6 +16,7 @@
 'use strict';
 
 
+import { isString } from '../../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -31,10 +33,6 @@ import type {
     Reference,
     Value
 } from './FormulaTypes.js';
-import U from '../../Core/Utilities.js';
-const {
-    isString
-} = U;
 
 
 /* *
@@ -149,42 +147,42 @@ const referenceR1C1RegExp = /^R(\d*|\[\d+\])C(\d*|\[\d+\])(?!\:)/;
  * @return {string}
  * Extracted parantheses. If not found an exception will be thrown.
  */
-function extractParantheses(
+function extractParentheses(
     text: string
 ): string {
-    let parantheseLevel = 0;
+    let parenthesesLevel = 0;
 
     for (
         let i = 0,
             iEnd = text.length,
             char: string,
-            parantheseStart = 1;
+            parenthesesStart = 1;
         i < iEnd;
         ++i
     ) {
         char = text[i];
 
         if (char === '(') {
-            if (!parantheseLevel) {
-                parantheseStart = i + 1;
+            if (!parenthesesLevel) {
+                parenthesesStart = i + 1;
             }
 
-            ++parantheseLevel;
+            ++parenthesesLevel;
 
             continue;
         }
 
         if (char === ')') {
-            --parantheseLevel;
+            --parenthesesLevel;
 
-            if (!parantheseLevel) {
-                return text.substring(parantheseStart, i);
+            if (!parenthesesLevel) {
+                return text.substring(parenthesesStart, i);
             }
         }
     }
 
-    if (parantheseLevel > 0) {
-        const error = new Error('Incomplete parantheses.');
+    if (parenthesesLevel > 0) {
+        const error = new Error('Incomplete parentheses.');
         error.name = 'FormulaParseError';
         throw error;
     }
@@ -634,7 +632,7 @@ function parseFormula(
         if (match) {
             next = next.substring(match[1].length).trim();
 
-            const parantheses = extractParantheses(next);
+            const parantheses = extractParentheses(next);
 
             formula.push({
                 type: 'function',
@@ -647,15 +645,15 @@ function parseFormula(
             continue;
         }
 
-        // Check for a formula in parantheses
+        // Check for a formula in parentheses
         if (next[0] === '(') {
-            const paranteses = extractParantheses(next);
+            const parentheses = extractParentheses(next);
 
-            if (paranteses) {
+            if (parentheses) {
                 formula
-                    .push(parseFormula(paranteses, alternativeSeparators));
+                    .push(parseFormula(parentheses, alternativeSeparators));
 
-                next = next.substring(paranteses.length + 2).trim();
+                next = next.substring(parentheses.length + 2).trim();
 
                 continue;
             }

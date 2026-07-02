@@ -1,7 +1,7 @@
 ---
 name: Stock tools gui with added custom indicator for cypress
 authors:
-  - Pawel Lysy
+  - Paweł Lysy
 skipTest: true
 js_wrap: b
 ...

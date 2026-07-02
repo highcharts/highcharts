@@ -6,8 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,14 +34,13 @@ const {
     pie: { prototype: { pointClass: PiePoint } }
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     defined,
     isNumber,
     merge,
     objectEach,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -214,11 +214,7 @@ class TimelinePoint extends LinePoint {
     }
 
     public isValid(): boolean {
-        return (
-            this.options.y !== null ||
-            this.series.options.nullInteraction ||
-            true
-        );
+        return this.options.y !== null;
     }
 
     public setState(): void {
@@ -250,14 +246,10 @@ class TimelinePoint extends LinePoint {
 
     public applyOptions(
         options: (PointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): Point {
-        const isNull = (
-                this.isNull ||
-                options === null ||
-                (options as PointOptions).y === null
-            ),
-            series = this.series;
+        const series = this.series;
 
         if (!x && !(options as any)?.x) {
             if (isNumber(this.x)) {
@@ -270,16 +262,14 @@ class TimelinePoint extends LinePoint {
 
         options = Point.prototype.optionsToObject.call(
             this,
-            options ?? (
-                (series.options.nullInteraction && { y: 0 }) ||
-                    null
-            )
+            options
         );
 
-        const p = super.applyOptions(options, x);
+        const p = super.applyOptions(options, x, isMock);
 
-        this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
-        p.isNull = isNull;
+        if (!isMock) {
+            this.userDLOptions = merge(this.userDLOptions, options.dataLabels);
+        }
 
         return p;
     }

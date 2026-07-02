@@ -1,0 +1,32 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    font-size: 20px;
+}
+
+#container {
+    min-width: 300px;
+    max-width: 1200px;
+    margin: 1em auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.symbol-div {
+    width: 120px;
+    height: 136px;
+    background-color: var(--highcharts-background-color);
+    border: 1px solid light-dark(#fff, #444);
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    margin: 10px;
+}
+
+.symbol-title {
+    text-align: center;
+    font-size: 14px;
+    margin: 5px 2px;
+}

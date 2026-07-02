@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -13,7 +14,6 @@
  *  - Sophie Bremer
  *
  * */
-import U from '../../Core/Utilities.js';
 import type Row from '../Layout/Row.js';
 import type Cell from '../Layout/Cell.js';
 import type { ContextDetails } from './ContextDetection';
@@ -23,14 +23,14 @@ import EditMode from '../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../Layout/GUIElement.js';
 import ContextDetection from './ContextDetection.js';
-
-const {
+import {
     addEvent,
-    merge,
+    createElement,
     css,
     fireEvent,
-    createElement
-} = U;
+    merge
+} from '../../Shared/Utilities.js';
+
 
 /**
  * Class providing a drag and drop functionality.

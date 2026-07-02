@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -32,15 +33,11 @@ import type {
 } from './FilterModifierOptions';
 
 import DataModifier from './DataModifier.js';
+import { isFunction, merge } from '../../Shared/Utilities.js';
 import DataTable, {
     type CellType as DataTableCellType,
     type RowObject as DataTableRowObject
 } from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const {
-    isFunction,
-    merge
-} = U;
 
 
 /* *

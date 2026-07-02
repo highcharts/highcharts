@@ -1,5 +1,5 @@
 ---
-name: Heat map
+name: Temperature heatmap
 authors:
   - Torstein Hønsi
 js_wrap: b

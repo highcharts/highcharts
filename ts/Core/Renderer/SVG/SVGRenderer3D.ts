@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,8 +33,7 @@ import type SVGElement from './SVGElement';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
-import A from '../../Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Animation/AnimationUtilities.js';
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Globals.js';
@@ -47,13 +47,7 @@ const {
     shapeArea
 } = Math3D;
 import SVGElement3D from './SVGElement3D.js';
-import U from '../../Utilities.js';
-const {
-    defined,
-    extend,
-    merge,
-    pick
-} = U;
+import { defined, extend, merge, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -786,7 +780,7 @@ namespace SVGRenderer3D {
             wrapper.top.add(wrapper);
 
             // These faces are added outside the wrapper group because the
-            // z-index relates to neighbour elements as well
+            // z-index relates to neighbor elements as well
             for (const face of ['out', 'inn', 'side1', 'side2']) {
                 wrapper[face]
                     .attr({
@@ -947,8 +941,8 @@ namespace SVGRenderer3D {
                         );
 
                     anim.step = function (a: unknown, fx: Fx): void {
-                        if (fx.prop === randomProp) {
-                            fx.elem.setPaths(merge(from, {
+                        if (fx.prop === randomProp && fx.elem) {
+                            (fx.elem as SVGElement).setPaths(merge(from, {
                                 x: interpolate('x', fx.pos),
                                 y: interpolate('y', fx.pos),
                                 r: interpolate('r', fx.pos),
@@ -1189,7 +1183,7 @@ namespace SVGRenderer3D {
         angleStart = toZeroPIRange(angleStart);
         angleMid = toZeroPIRange(angleMid);
 
-        // *1e5 is to compensate pInt in zIndexSetter
+        // Keep angle-derived z-indices well spaced.
         const incPrecision = 1e5,
             a1 = angleMid * incPrecision,
             a2 = angleStart * incPrecision,

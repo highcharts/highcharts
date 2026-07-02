@@ -1,7 +1,7 @@
 ---
 name: Treegraph box layout
 authors:
-  - Pawel Lysy, Torstein Hønsi
+  - Paweł Lysy, Torstein Hønsi
 js_wrap: b
 tags:
   - Highcharts demo

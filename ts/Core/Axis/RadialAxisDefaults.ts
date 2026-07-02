@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Extension for radial axes
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,25 +45,22 @@ const defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
  * @internal
  */
 const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
-    endOnTick: false,
     gridLineWidth: 0,
     labels: {
         align: 'center',
-        distance: -25,
+        distance: 15,
         x: 0,
         y: void 0 // Auto
     },
-    lineWidth: 1,
     minorGridLineWidth: 0,
-    minorTickInterval: 'auto',
-    minorTickLength: 10,
+    minorTickLength: 5,
     minorTickPosition: 'inside',
+    minorTicksPerMajor: 10,
     minorTickWidth: 1,
-    startOnTick: false,
-    tickLength: 10,
+    tickLength: void 0,
+    tickWidth: 2,
     tickPixelInterval: 100,
     tickPosition: 'inside',
-    tickWidth: 2,
     title: {
         rotation: 0,
         text: ''

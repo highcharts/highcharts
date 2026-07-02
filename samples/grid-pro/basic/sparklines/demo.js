@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             // Data for the sparkline charts can be provided in various ways.
             // The simplest way is to provide it as a string of comma-separated
@@ -218,7 +218,11 @@ Grid.grid('container', {
             // and then call `loadData` to update the row data.
             ['pieA', 'pieB', 'pieC'].forEach(colId => {
                 const value = Math.round(Math.random() * 100);
-                grid.dataTable.setCell(colId, cell.row.id, value);
+                grid.dataProvider.getDataTable().setCell(
+                    colId,
+                    cell.row.id,
+                    value
+                );
             });
             cell.row.loadData();
 

@@ -101,7 +101,7 @@ test.describe('Screen reader sections', () => {
                 }
             });
 
-            const dataTable = grid.dataTable;
+            const dataTable = grid.dataProvider.getDataTable();
             const expectedRowCount = dataTable.rowCount;
             const expectedColumnCount = dataTable.getColumnIds().length;
 
@@ -125,4 +125,3 @@ test.describe('Screen reader sections', () => {
         await expect(page.locator('[id^="grid-screen-reader-region-after-"]')).toBeHidden();
     });
 });
-

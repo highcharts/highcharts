@@ -1,0 +1,63 @@
+/* *
+ *
+ *  (c) 2010-2026 Highsoft AS
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from '../SMA/SMAOptions';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Normalized average true range indicator (NATR). This series requires
+ * `linkedTo` option to be set and should be loaded after the
+ * `stock/indicators/indicators.js` and `stock/indicators/atr.js`.
+ *
+ * @sample {highstock} stock/indicators/natr
+ *         NATR indicator
+ *
+ * @extends      plotOptions.atr
+ * @since        7.0.0
+ * @product      highstock
+ * @requires     stock/indicators/indicators
+ * @requires     stock/indicators/natr
+ * @interface Highcharts.NATROptions
+ */
+export interface NATROptions extends SMAOptions {
+    params?: NATRParamsOptions;
+}
+
+export interface NATRParamsOptions extends SMAParamsOptions {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    index?: undefined;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default NATROptions;

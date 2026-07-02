@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -27,10 +28,9 @@ import type Button from './Button';
 
 import GridUtils from '../GridUtils.js';
 import Globals from '../Globals.js';
-import U from '../../../Core/Utilities.js';
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { fireEvent } = U;
 
 
 /* *

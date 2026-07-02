@@ -5,7 +5,7 @@
  * */
 
 export interface ControllableBase {
-    // Placeholder for additional class members of controllables
+    // Placeholder for additional class members of controllable
 }
 
 export default ControllableBase;

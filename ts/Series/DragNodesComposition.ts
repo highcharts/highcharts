@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,11 +29,11 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
+    isObject,
     pushUnique
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -289,8 +290,9 @@ function redrawHalo(
     if (point && this.halo) {
         this.halo.attr({
             d: point.haloPath(
-                (this.options.states as any).hover.halo.size
-            ) as any
+                isObject(this.options.states?.hover?.halo) &&
+                this.options.states?.hover?.halo.size || 0
+            )
         });
     }
 }

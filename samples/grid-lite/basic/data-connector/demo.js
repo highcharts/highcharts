@@ -1,0 +1,31 @@
+Grid.grid('container', {
+    data: {
+        connector: {
+            type: 'CSV',
+            enablePolling: true,
+            dataRefreshRate: 1,
+            csvURL: 'https://demo-live-data.highcharts.com/time-data.csv'
+        },
+        updateOnChange: true
+    },
+    columnDefaults: {
+        filtering: {
+            enabled: true
+        }
+    },
+    columns: [{
+        id: 'Time',
+        dataType: 'datetime'
+    }, {
+        id: 'Value',
+        cells: {
+            format: '{value:0.2f}'
+        },
+        filtering: {
+            rule: {
+                operator: 'greaterThan',
+                value: 0
+            }
+        }
+    }]
+});

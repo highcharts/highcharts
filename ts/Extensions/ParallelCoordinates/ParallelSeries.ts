@@ -3,10 +3,11 @@
  *  Parallel coordinates module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Fus
+ *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,17 +29,16 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import T from '../../Core/Templating.js';
 const { format } = T;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     erase,
     extend,
-    insertItem,
     isArray,
     isNumber,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
+import { insertItem } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -46,6 +46,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace ParallelSeries {
 
     /* *
@@ -54,6 +55,7 @@ namespace ParallelSeries {
      *
      * */
 
+    /** @internal */
     export declare class Composition extends Series {
         chart: ParallelCoordinates.ChartComposition;
     }
@@ -256,4 +258,5 @@ namespace ParallelSeries {
  *
  * */
 
+/** @internal */
 export default ParallelSeries;

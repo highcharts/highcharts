@@ -2,14 +2,15 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -31,12 +32,7 @@ import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
 import type { DataModifierTypes } from './DataModifierType';
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -180,7 +176,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
      * Emits an event on the modifier to all registered callbacks of this event.
      *
      * @param {DataModifierEvent} [e]
-     * Event object containing additonal event information.
+     * Event object containing additional event information.
      */
     public emit<E extends DataModifierEvent>(e: E): void {
         fireEvent(this, e.type, e);

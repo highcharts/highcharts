@@ -1,21 +1,30 @@
 // Prepare the data
 
-const data = [],
-    n = 1000000;
+function getDataTableOptions(n) {
+    const xColumn = new Float64Array(n),
+        yColumn = new Float64Array(n);
 
-// Generate and position the datapoints in a tangent wave pattern
-for (let i = 0; i < n; i += 1) {
-    const theta = Math.random() * 2 * Math.PI;
-    const radius = Math.pow(Math.random(), 2) * 100;
+    // Generate and position the datapoints in a tangent wave pattern
+    for (let i = 0; i < n; i += 1) {
+        const theta = Math.random() * 2 * Math.PI;
+        const radius = Math.pow(Math.random(), 2) * 100;
 
-    const waveDeviation = (Math.random() - 0.5) * 70;
-    const waveValue = Math.tan(theta) * waveDeviation;
+        const waveDeviation = (Math.random() - 0.5) * 70;
+        const waveValue = Math.tan(theta) * waveDeviation;
 
-    data.push([
-        50 + (radius + waveValue) * Math.cos(theta),
-        50 + (radius + waveValue) * Math.sin(theta)
-    ]);
+        xColumn[i] = 50 + (radius + waveValue) * Math.cos(theta);
+        yColumn[i] = 50 + (radius + waveValue) * Math.sin(theta);
+    }
+
+    return {
+        columns: {
+            x: xColumn,
+            y: yColumn
+        }
+    };
 }
+
+const dataTable = getDataTableOptions(1000000);
 
 if (!Highcharts.Series.prototype.renderCanvas) {
     throw 'Module not loaded';
@@ -23,6 +32,8 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 
 console.time('scatter');
 Highcharts.chart('container', {
+
+    dataTable,
 
     chart: {
         zooming: {
@@ -75,7 +86,6 @@ Highcharts.chart('container', {
     series: [{
         type: 'scatter',
         color: 'rgba(222, 73, 138, 0.1)',
-        data: data,
         marker: {
             radius: 0.5
         },

@@ -27,6 +27,11 @@ Highcharts.chart('container', {
             'rgb(160, 220, 245)',
             'rgb(160, 245, 220)'
         ],
+        dataLabels: {
+            style: {
+                color: 'black'
+            }
+        },
         data: [{
             sets: ['Core'],
             value: 10,

@@ -53,4 +53,26 @@ QUnit.test('Scatter series general tests.', function (assert) {
         '1',
         'The point with the last index should be highlighted'
     );
+
+    // --- Added tests for #24096 ---
+    // 1. Verify Scatter series allows outside plot interaction
+    assert.strictEqual(
+        series.allowOutsidePlotInteraction,
+        true,
+        'ScatterSeries should have the allowOutsidePlotInteraction flag set' +
+        'to true (#24096).'
+    );
+
+    // 2. Add a column series to verify the base Series class fallback
+    const columnSeries = chart.addSeries({
+        type: 'column',
+        data: [1, 2]
+    });
+
+    assert.strictEqual(
+        columnSeries.allowOutsidePlotInteraction,
+        undefined, // Or check for falsy if preferred
+        'Default series (Column) should NOT have' +
+        'the allowOutsidePlotInteraction flag (#24096).'
+    );
 });

@@ -5,8 +5,9 @@
  *
  *  Default options for accessibility.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,8 +22,6 @@
 
 import type A11yOptions from './A11yOptions';
 import type { DeepPartial } from '../../Shared/Types';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -86,6 +85,13 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @param {global.MouseEvent} evt
  *        Mouse click event
  *
+ * @param {Highcharts.Chart} [chart]
+ *        Chart context.
+ *
+ * @param {global.GlobalEventHandlers} [ctx]
+ *        Since v12.6.0, the global event handlers context passed as an extra
+ *        argument for arrow functions.
+ *
  * @return {void}
  */
 
@@ -96,6 +102,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @param {T} context
  *        Context to format
+ *
+ * @param {*} [outerContext]
+ *        Since v12.6.0, the outer context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string}
  *         Formatted string for the screen reader module.
@@ -642,11 +652,11 @@ const Options: DeepPartial<A11yOptions> = {
                  * @since   6.0.3
                  */
                 style: {
-                    /** @internal */
-                    color: Palette.highlightColor80,
-                    /** @internal */
+                    /**
+                     * @type {Highcharts.ColorType}
+                     */
+                    color: 'var(--highcharts-highlight-color-80)',
                     lineWidth: 2,
-                    /** @internal */
                     borderRadius: 3
                 },
 

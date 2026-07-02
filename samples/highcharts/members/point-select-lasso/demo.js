@@ -96,7 +96,7 @@
      */
     addEvent(Chart, 'click', function () {
         const points = this.getSelectedPoints();
-        if (points.length > 0) {
+        if (points.length > 0 && !this.lasso) {
             points.forEach(point => point.select(false));
         }
     });
@@ -146,10 +146,10 @@
                 );
 
                 const lasso = this.lasso;
-                delete this.lasso;
                 lasso.animate({ opacity: 0 }, {
                     complete: () => {
                         lasso.destroy();
+                        delete this.lasso;
                     }
                 });
             } else if (this.lasso) {

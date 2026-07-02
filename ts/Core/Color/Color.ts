@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,22 +26,25 @@ import H from '../Globals.js';
 const {
     win
 } = H;
-import U from '../Utilities.js';
-const {
+import {
+    defined,
     isNumber,
     isString,
     merge,
-    pInt,
-    defined
-} = U;
+    pInt
+} from '../../Shared/Utilities.js';
 
 /* *
  *
  *  Helpers
  *
  * */
-const colorMix = (color1: string, color2: string, weight: number): string =>
-    `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`;
+const colorMix = (color1: string, color2: string, weight: number): string => (
+    weight === 0 ? color1 :
+        weight === 1 ? color2 :
+            `color-mix(in srgb,${color1},${color2} ${weight * 100}%)`
+);
+
 
 const isStringColor = (color: ColorType): color is ColorString =>
     isString(color) && !!color && color !== 'none';
@@ -51,7 +55,6 @@ const isStringColor = (color: ColorType): color is ColorString =>
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Handle color operations. Some object methods are chainable.
@@ -183,6 +186,7 @@ class Color implements ColorBase {
     public constructor(
         input: ColorType
     ) {
+
         this.input = input;
 
         const GlobalColor = (H as AnyRecord).Color;
@@ -365,7 +369,13 @@ class Color implements ColorBase {
      *         Color with modifications.
      */
     public setOpacity(alpha: number): this {
-        this.rgba[3] = alpha;
+        if (isNumber(this.rgba[0])) {
+            this.rgba[3] = alpha;
+        } else if (Color.useColorMix && isStringColor(this.input)) {
+            this.output = colorMix(
+                this.input, '#0000', 1 - alpha
+            );
+        }
         return this;
     }
 

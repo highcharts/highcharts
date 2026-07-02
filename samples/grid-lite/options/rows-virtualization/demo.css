@@ -1,0 +1,37 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+}
+
+.content {
+    padding: 8px;
+}
+
+.grid-layout {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.grid-panel {
+    min-width: 0;
+}
+
+.grid-host {
+    height: 260px;
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+}

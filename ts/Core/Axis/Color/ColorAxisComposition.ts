@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,18 +28,18 @@ import type Legend from '../../Legend/Legend';
 import type Point from '../../Series/Point';
 import type Series from '../../Series/Series';
 import type SeriesOptions from '../../Series/SeriesOptions';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     extend,
     merge,
     pick,
     splat
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -66,7 +67,7 @@ declare module '../../Series/SeriesBase' {
  *
  * */
 
-namespace ColorAxisComposition {
+export namespace ColorAxisComposition {
 
     /* *
      *
@@ -179,7 +180,7 @@ namespace ColorAxisComposition {
         this.colorAxis = [];
 
         // If a `colorAxis` config is present in the user options (not in a
-        // theme), instanciate it.
+        // theme), instantiate it.
         if (userOptions.colorAxis) {
             userOptions.colorAxis = splat(userOptions.colorAxis);
             userOptions.colorAxis.map((axisOptions): ColorAxis => (
@@ -323,12 +324,12 @@ namespace ColorAxisComposition {
      */
     export function pointSetVisible(
         this: PointComposition,
-        vis?: boolean
+        visible?: boolean
     ): void {
         const point = this,
-            method = vis ? 'show' : 'hide';
+            method = visible ? 'show' : 'hide';
 
-        point.visible = point.options.visible = Boolean(vis);
+        point.visible = point.options.visible = Boolean(visible);
 
         // Show and hide associated elements
         ['graphic', 'dataLabel'].forEach(function (key: string): void {
@@ -430,7 +431,7 @@ namespace ColorAxisComposition {
     function wrapFxFillSetter(
         this: Fx
     ): void {
-        this.elem.attr(
+        ((this.elem as SVGElement).attr)(
             'fill',
             color(this.start as any).tweenTo(
                 color(this.end as any),
@@ -448,7 +449,7 @@ namespace ColorAxisComposition {
     function wrapFxStrokeSetter(
         this: Fx
     ): void {
-        this.elem.attr(
+        (this.elem as SVGElement).attr(
             'stroke',
             color(this.start as any).tweenTo(
                 color(this.end as any),

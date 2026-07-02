@@ -21,10 +21,8 @@ const commonGaugeOptions = {
     },
     pane: {
         startAngle: -90,
-        endAngle: 89.9,
-        background: null,
-        center: ['50%', '64%'],
-        size: '110%'
+        endAngle: 90,
+        background: null
     },
     yAxis: {
         visible: true,

@@ -12,18 +12,7 @@ function updateVendor() {
         copyFile
     } = require('../../filesystem.js');
 
-    const { mkdirSync } = require('fs');
-    const { writeFile } = require('fs/promises');
-
-    let fetch;
-
-    if ('fetch' in global) {
-        fetch = global.fetch;
-    } else {
-        console.log('Using node-fetch');
-        fetch = require('node-fetch');
-    }
-
+    const { mkdirSync } = require('node:fs');
     // Create the vendor folder if it doesn't exist
     mkdirSync('./vendor', { recursive: true });
 
@@ -74,44 +63,6 @@ function updateVendor() {
             './vendor/topojson-client.min.js'
         ]
     ].map(([source, target]) => copyFile(source, target));
-
-
-    // Download files from CDN with optional checksum check
-    const dowloadFiles = [
-        {
-            url: 'https://code.highcharts.com/lib/rgbcolor.js',
-            outFile: './vendor/rgbcolor.js',
-            checksum: '44e5e565ddfb294672a214bfdb021ddb31e324d734979571cc2c4285ff34e724'
-        }
-    ];
-
-    function validateChecksum(text, expected) {
-        const crypto = require('node:crypto');
-        const checksum = crypto.createHash('sha256')
-            .update(text).digest('hex');
-
-        if (checksum !== expected) {
-            console.log({ checksum, expected });
-            throw new Error(
-                checksum.startsWith('87c7882e51dc8f51cba26863a1353e5141488c5') ?
-                    'Remote failure' :
-                    'Checksum mismatch'
-            );
-        }
-    }
-
-    dowloadFiles.forEach(({ url, outFile, checksum }) => {
-        promises.push(
-            fetch(url)
-                .then(response => response.text())
-                .then(text => {
-                    if (checksum) {
-                        validateChecksum(text, checksum);
-                    }
-                    return writeFile(outFile, text);
-                })
-        );
-    });
 
     return Promise.all(promises);
 

@@ -8,8 +8,8 @@ import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
+import { isNumber } from '../../Shared/Utilities.js';
+
 
 /* *
  *
@@ -33,7 +33,7 @@ const { isNumber } = U;
  * @excluding    boostThreshold, boostBlending,connectEnds, connectNulls,
  *               cropThreshold, dataSorting, dragDrop, jitter,
  *               legendSymbolColor, keys, pointPlacement, sizeByAbsoluteValue,
- *               step, xAxis, yAxis, zMax, zMin
+ *               step, xAxis, yAxis
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more
@@ -189,7 +189,7 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
              *
              * @type      {Highcharts.SVGAttributes}
              * @since     7.1.0
-             * @apioption plotOptions.packedbubble.dataLabels.attributes
+             * @apioption plotOptions.packedbubble.dataLabels.parentNodeTextPath.attributes
              */
 
             /**
@@ -405,6 +405,7 @@ export default PackedBubbleSeriesDefaults;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Object|Array>}
  * @extends   series.line.data
  * @excluding marker, x, y

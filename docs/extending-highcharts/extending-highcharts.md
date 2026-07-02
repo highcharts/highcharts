@@ -15,12 +15,16 @@ Since version 2.3, Highcharts is built in a modular way with extensions in mind.
 Highcharts plugins should be wrapped in an anonymous self-executing function in order to prevent variable pollution to the global scope. A good practice is to wrap plugins like this:
 
 ```js
-(function (H) {
-    const { Chart, Series } = H; // shortcuts to Highcharts classes
+(({ Chart, Series }) => { // Destructure Highcharts properties
 
-    let localVar; // local variable
+    const myVariable1 = 'one',
+        myVariable2 = 'two';
+
+    // Extend something
+    Series.prototype.someProperty = 'some-value';
 
     doSomething();
+
 }(Highcharts));
 ```
 
@@ -44,6 +48,10 @@ H.addEvent(H.Chart, 'load', function(e) {
 ```
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/events-load-class/)
+
+When extending with `addEvent`, prefer regular functions over arrow functions.
+Highcharts binds `this` to the runtime object, while arrow functions keep
+lexical `this`.
 
 
 
@@ -72,6 +80,9 @@ H.wrap(H.Series.types.line.prototype, 'drawGraph', function (proceed) {
 ```
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/wrap-drawgraph/)
+
+For `wrap`, regular functions are strongly recommended because they rely on
+runtime `this`, `proceed`, and access to the original argument list.
 
 When loading ES modules, one can [access modules directly](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/extending-members/) for further modifications.
 

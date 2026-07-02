@@ -26,11 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    fireEvent
-} = U;
+import { defined, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -313,12 +309,9 @@ class MockPoint {
      * */
 
     /**
-     * A flag indicating that a point is not the real one.
-     *
-     * @type {boolean}
-     * @default true
+     * A flag indicating that a point is not a real one.
      */
-    public mock: true = true;
+    public mock = true as const;
 
     /**
      * Apply options for the point.
@@ -554,18 +547,6 @@ class MockPoint {
      * Translate the point.
      *
      * @internal
-     *
-     * @param {number|undefined} cx
-     * Origin x transformation.
-     *
-     * @param {number|undefined} cy
-     * Origin y transformation.
-     *
-     * @param {number} dx
-     * Translation for x coordinate.
-     *
-     * @param {number} dy
-     * Translation for y coordinate.
      **/
     public translate(
         _cx: (number|undefined),

@@ -55,7 +55,14 @@ function getProducts(logPaths) {
     }
 
     paths.forEach(path => {
-        // Any path part check
+        const pathParts = path.split('/');
+
+        // Docs: skip – don't trigger tests when only docs are modified
+        if (pathParts[0] === 'docs' && pathParts.length > 1) {
+            return;
+        }
+
+        // Any path part check (for non-docs paths)
         products.forEach(productName => {
             const productNameRegex = new RegExp(productName, 'iu');
             if (productNameRegex.test(path)) {
@@ -64,8 +71,6 @@ function getProducts(logPaths) {
         });
 
         // By directory detection
-        const pathParts = path.split('/');
-
         if (pathParts.length > 2 && pathParts[0] === 'ts') {
             if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 mark('Core');

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -15,11 +16,8 @@
  * */
 
 import Board from '../Board.js';
-import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
-
-const { addEvent } = U;
-
+import { addEvent } from '../../Shared/Utilities.js';
 class Fullscreen {
 
     /* *

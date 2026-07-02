@@ -1,10 +1,9 @@
 ---
 name: Stock data with annotations
 authors:
-  - Pawel Lysy
+  - Paweł Lysy
   - Jedrzej Ruta
 js_wrap: b
-requiresManualTesting: true
 alt_text: >-
   Highcharts basic area chart with annotations JavaScript example displays
   stock data of TSLA with annotations highlighting some meaningful events that

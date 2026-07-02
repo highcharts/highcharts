@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Hubert Kozik, Kamil Musiałowski
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,6 +24,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
 import type MapChart from '../../Core/Chart/MapChart';
 
+import { stop } from '../../Core/Animation/AnimationUtilities.js';
+import Fx from '../../Core/Animation/Fx.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -30,16 +33,14 @@ const { map: MapSeries } = SeriesRegistry.seriesTypes;
 import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
-    error,
     merge,
     pick,
     pushUnique
-} = U;
-
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -216,12 +217,6 @@ class TiledWebMapSeries extends MapSeries {
     /**
      * Convert tile to map coordinates in longitude/latitude
      * @private
-     * @param  xTile
-     *         Position x of the tile
-     * @param  yTile
-     *         Position y of the tile
-     * @param  zTile
-     *         Zoom of the tile
      * @return {Highcharts.MapLonLatObject}
      *         The map coordinates
      */
@@ -640,6 +635,12 @@ class TiledWebMapSeries extends MapSeries {
             for (const zoomKey of Object.keys(tiles)) {
                 for (const key of Object.keys(tiles[zoomKey].tiles)) {
                     if (mapView.projection && mapView.projection.def) {
+                        const tile = tiles[zoomKey].tiles[key];
+
+                        if (Fx.timers.length > 0) {
+                            stop(tile, 'animator');
+                        }
+
                         // Calculate group translations based on first loaded
                         // tile
                         const scale = ((tileSize / worldSize) *
@@ -649,7 +650,7 @@ class TiledWebMapSeries extends MapSeries {
                             firstTile = tiles[zoomKey].tiles[Object.keys(
                                 tiles[zoomKey].tiles
                             )[0]],
-                            { posX, posY } = tiles[zoomKey].tiles[key];
+                            { posX, posY } = tile;
 
                         if (
                             defined(posX) &&
@@ -680,17 +681,13 @@ class TiledWebMapSeries extends MapSeries {
                                 chart.renderer.globalAnimation &&
                                 chart.hasRendered
                             ) {
-                                const startX = Number(
-                                        tiles[zoomKey].tiles[key].attr('x')
-                                    ),
-                                    startY = Number(
-                                        tiles[zoomKey].tiles[key].attr('y')
-                                    ),
+                                const startX = Number(tile.attr('x')),
+                                    startY = Number(tile.attr('y')),
                                     startWidth = Number(
-                                        tiles[zoomKey].tiles[key].attr('width')
+                                        tile.attr('width')
                                     ),
                                     startHeight = Number(
-                                        tiles[zoomKey].tiles[key].attr('height')
+                                        tile.attr('height')
                                     );
 
 
@@ -698,7 +695,7 @@ class TiledWebMapSeries extends MapSeries {
                                     now,
                                     fx
                                 ): void => {
-                                    tiles[zoomKey].tiles[key].attr({
+                                    tile.attr({
                                         x: (
                                             startX + (((posX * scaledTileSize) -
                                                 tilesOffsetX - startX) * fx.pos)
@@ -721,7 +718,7 @@ class TiledWebMapSeries extends MapSeries {
 
                                 };
                                 series.isAnimating = true;
-                                tiles[zoomKey].tiles[key]
+                                tile
                                     .attr({ animator: 0 })
                                     .animate(
                                         { animator: 1 }, { step },
@@ -761,7 +758,7 @@ class TiledWebMapSeries extends MapSeries {
                                     animateTiles(duration);
                                 }
 
-                                tiles[zoomKey].tiles[key].attr({
+                                tile.attr({
                                     x: (posX * scaledTileSize) - tilesOffsetX,
                                     y: (posY * scaledTileSize) - tilesOffsetY,
                                     width: Math.ceil(scaledTileSize) + 1,

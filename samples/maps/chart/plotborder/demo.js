@@ -14,12 +14,13 @@
         chart: {
             plotBorderWidth: 1,
             plotBorderColor: '#A0A090',
+            plotBorderRadius: 5,
             plotShadow: true,
             plotBackgroundColor: '#e0f8ff'
         },
 
         title: {
-            text: 'Chart with a plot border'
+            text: 'Map with a plot border'
         },
 
         mapNavigation: {

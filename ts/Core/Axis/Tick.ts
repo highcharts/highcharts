@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,20 +38,18 @@ import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
-import U from '../Utilities.js';
-const {
-    clamp,
+import {
     correctFloat,
+    clamp,
     defined,
-    destroyObjectProperties,
     extend,
-    fireEvent,
-    getAlignFactor,
     isNumber,
     merge,
-    objectEach,
-    pick
-} = U;
+    pick,
+    destroyObjectProperties,
+    getAlignFactor,
+    fireEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -168,6 +167,8 @@ class Tick {
     /** @internal */
     public isActive?: boolean;
 
+    public boundary?: string;
+
     /**
      * True if the tick is the first one on the axis.
      * @name Highcharts.Tick#isFirst
@@ -206,9 +207,6 @@ class Tick {
      * @type {Highcharts.SVGElement|undefined}
      */
     public mark?: SVGElement;
-
-    /** @internal */
-    public movedLabel?: SVGElement;
 
     /** @internal */
     public options?: DeepPartial<AxisOptions>;
@@ -275,9 +273,9 @@ class Tick {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
-                axis.tickInterval === 1,
-            tickPositionInfo = tickPositions.info;
+            tickPositionInfo = tickPositions.info,
+            boundary = tickPositionInfo?.boundaryTicks[pos],
+            DTLFormats = options.dateTimeLabelFormats;
 
         let label = tick.label,
             dateTimeLabelFormat,
@@ -295,25 +293,34 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher rank is set for this
-        // position, use that. If not, use the general format.
-        if (axis.dateTime) {
+        // Set the datetime label format. If a boundary is set for this
+        // position, use that. If not, use the main format from base ticks.
+        if (axis.dateTime && DTLFormats) {
             if (tickPositionInfo) {
-                dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                    (options.dateTimeLabelFormats as any)[
-                        (
-                            !options.grid?.enabled &&
-                            tickPositionInfo.higherRanks[pos]
-                        ) ||
-                        tickPositionInfo.unitName
-                    ]
-                );
+                const boundariesMap: Record<Time.TimeUnit, Time.TimeUnit> = {
+                    millisecond: 'hour',
+                    second: 'hour',
+                    minute: 'hour',
+                    hour: 'day',
+                    day: 'month',
+                    week: 'month',
+                    month: 'year',
+                    year: 'year'
+                };
+                const unitName = tickPositionInfo.unitName,
+                    boundaryKey = boundariesMap[unitName],
+                    format = !options.grid?.enabled &&
+                        boundary &&
+                        boundaryKey &&
+                        (DTLFormats[boundaryKey] as
+                            Time.DateTimeLabelFormatObject)?.boundary ||
+                        DTLFormats[unitName];
+
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
-                    value,
-                    options.dateTimeLabelFormats ||
-                        {} as Time.DateTimeLabelFormatsOption
+                    value, DTLFormats || {}
                 );
             }
         }
@@ -333,12 +340,20 @@ class Tick {
          * @type {boolean|undefined}
          */
         tick.isLast = isLast;
+        /**
+         * Boundary time unit for the label (e.g `day`, `month`, `year`), used
+         * for date/time formatting.
+         * @name Highcharts.Tick#boundary
+         * @type {string|undefined}
+         */
+        tick.boundary = boundary;
 
         // Get the string
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            boundary,
             isFirst,
             isLast,
             pos,
@@ -367,7 +382,7 @@ class Tick {
             }
             return axis.defaultLabelFormatter.call(ctx);
         };
-        const str = labelFormatter.call(ctx, ctx);
+        const text = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
         const list = dateTimeLabelFormats?.list;
@@ -398,38 +413,31 @@ class Tick {
             tick.shortenLabel = void 0;
         }
 
-        // Call only after first render
-        if (animateLabels && axis._addedPlotLB) {
-            tick.moveLabel(str, labelOptions);
-        }
         // First call
-        if (!defined(label) && !tick.movedLabel) {
+        if (!label) {
             /**
              * The rendered text label of the tick.
              * @name Highcharts.Tick#label
              * @type {Highcharts.SVGElement|undefined}
              */
-            tick.label = label = tick.createLabel(
-                str,
-                labelOptions
-            );
+            tick.label = label = tick.createLabel(text, labelOptions);
 
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
 
         // Update
-        } else if (label && label.textStr !== str && !animateLabels) {
+        } else if (label.textStr !== text) {
             // When resetting text, also reset the width if dynamically set
             // (#8809)
             if (
                 label.textWidth &&
                 !labelOptions.style.width &&
-                !(label.styles as any).width
+                !label.styles.width
             ) {
-                label.css({ width: null as any });
+                label.css({ width: void 0 });
             }
 
-            label.attr({ text: str });
+            label.attr({ text });
 
             label.textPxLength = label.getBBox().width;
         }
@@ -695,7 +703,7 @@ class Tick {
 
     /**
      * Handle the label overflow by adjusting the labels to the left and right
-     * edge, or hide them if they collide into the neighbour label.
+     * edge, or hide them if they collide into the neighbor label.
      *
      * @internal
      * @function Highcharts.Tick#handleOverflow
@@ -800,58 +808,6 @@ class Tick {
                     width: Math.floor(textWidth) + 'px',
                     lineClamp: axis.isRadial ? 0 : 1
                 }));
-            }
-        }
-    }
-
-    /**
-     * Try to replace the label if the same one already exists.
-     *
-     * @internal
-     * @function Highcharts.Tick#moveLabel
-     */
-    public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
-        const tick = this,
-            label = tick.label,
-            axis = tick.axis;
-
-        let moved = false,
-            labelPos;
-
-        if (label && label.textStr === str) {
-            tick.movedLabel = label;
-            moved = true;
-            delete tick.label;
-
-        } else { // Find a label with the same string
-            objectEach(axis.ticks, function (currentTick: Tick): void {
-                if (
-                    !moved &&
-                    !currentTick.isNew &&
-                    currentTick !== tick &&
-                    currentTick.label &&
-                    currentTick.label.textStr === str
-                ) {
-                    tick.movedLabel = currentTick.label;
-                    moved = true;
-                    currentTick.labelPos = tick.movedLabel.xy;
-                    delete currentTick.label;
-                }
-            });
-        }
-
-        // Create new label if the actual one is moved
-        if (!moved && (tick.labelPos || label)) {
-            labelPos = tick.labelPos || (label as any).xy;
-
-            tick.movedLabel = tick.createLabel(
-                str,
-                labelOptions,
-                labelPos
-            );
-
-            if (tick.movedLabel) {
-                tick.movedLabel.attr({ opacity: 0 });
             }
         }
     }
@@ -1130,13 +1086,7 @@ class Tick {
                 show = false;
 
             // Handle label overflow and show or hide accordingly
-            } else if (
-                horiz &&
-                !labelOptions.step &&
-                !labelOptions.rotation &&
-                !old &&
-                opacity !== 0
-            ) {
+            } else if (horiz && !old && opacity !== 0) {
                 tick.handleOverflow(xy);
             }
 
@@ -1156,35 +1106,6 @@ class Tick {
                 tick.isNewLabel = true;
             }
         }
-    }
-
-    /**
-     * Replace labels with the moved ones to perform animation. Additionally
-     * destroy unused labels.
-     *
-     * @internal
-     * @function Highcharts.Tick#replaceMovedLabel
-     */
-    public replaceMovedLabel(): void {
-        const tick = this,
-            label = tick.label,
-            axis = tick.axis;
-
-        // Animate and destroy
-        if (label && !tick.isNew) {
-
-            label.animate(
-                { opacity: 0 },
-                void 0,
-                label.destroy
-            );
-
-            delete tick.label;
-        }
-
-        axis.isDirty = true;
-        tick.label = tick.movedLabel;
-        delete tick.movedLabel;
     }
 }
 
@@ -1259,7 +1180,7 @@ export default Tick;
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
  *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @name Highcharts.TimeTicksInfoObject#boundaryTicks
  * @type {Array<string>}
  *//**
  * @name Highcharts.TimeTicksInfoObject#totalRange

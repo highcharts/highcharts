@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -26,6 +27,7 @@ import type { SortModifierOrderByOption } from '../../../Data/Modifiers/SortModi
 
 import QueryingController from './QueryingController.js';
 import SortModifier from '../../../Data/Modifiers/SortModifier.js';
+import { resolveActiveGridSortings } from './SortingUtils.js';
 
 /* *
  *
@@ -180,14 +182,9 @@ class SortingController {
      * Returns the sorting options from the data grid options.
      */
     private getSortingOptions(): SortingState[] {
-        const grid = this.querying.grid,
-            { columnOptionsMap } = grid;
-
-        if (!columnOptionsMap) {
-            return [];
-        }
-
-        const columnIDs = Object.keys(columnOptionsMap);
+        const grid = this.querying.grid;
+        const columnPolicy = grid.columnPolicy;
+        const columnIDs = columnPolicy.getColumnIds();
 
         const sortings: Array<SortingState & {
             priority?: number;
@@ -195,7 +192,11 @@ class SortingController {
         }> = [];
         for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
-            const columnOptions = columnOptionsMap[columnId]?.options || {};
+            if (columnPolicy.isColumnUnbound(columnId)) {
+                continue;
+            }
+            const columnOptions = columnPolicy
+                .getIndividualColumnOptions(columnId) || {};
             const order = columnOptions.sorting?.order;
 
             if (order) {
@@ -258,34 +259,26 @@ class SortingController {
      * Returns the sorting modifier based on the loaded sorting options.
      */
     private createModifier(): SortModifier | undefined {
-        const sortings = (
-            this.currentSortings ||
-            (this.currentSorting ? [this.currentSorting] : [])
-        ).filter((
-            sorting
-        ): sorting is SortingState & { columnId: string } => !!(
-            sorting.columnId && sorting.order
-        ));
+        const grid = this.querying.grid;
+        const sourceSortings = resolveActiveGridSortings(
+            grid,
+            this.currentSortings,
+            this.currentSorting
+        );
 
-        if (!sortings.length) {
+        if (!sourceSortings.length) {
             return;
         }
 
-        const grid = this.querying.grid;
-
-        const defaultCompare =
-            grid.options?.columnDefaults?.sorting?.compare;
-
         return new SortModifier({
-            direction: sortings[0].order as ('asc'|'desc'),
-            columns: sortings.map((
-                sorting
-            ): SortModifierOrderByOption => ({
-                column: sorting.columnId,
-                direction: sorting.order as ('asc'|'desc'),
-                compare: grid.columnOptionsMap?.[sorting.columnId]
-                    ?.options?.sorting?.compare || defaultCompare
-            }))
+            direction: sourceSortings[0].order as ('asc'|'desc'),
+            columns: sourceSortings.map(
+                (sorting): SortModifierOrderByOption => ({
+                    column: sorting.sourceColumnId,
+                    direction: sorting.order as ('asc'|'desc'),
+                    compare: sorting.customCompare
+                })
+            )
         });
     }
 }

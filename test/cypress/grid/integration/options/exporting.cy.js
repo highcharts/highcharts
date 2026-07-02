@@ -32,7 +32,7 @@ const expectedJSonResult = `{
 
 describe('Exporting the Grid.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/exporting');
+        cy.visit('grid-pro/e2e/exporting');
     });
 
     it('Grid should be exported to JSON.', () => {

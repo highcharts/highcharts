@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,21 +32,18 @@ import type {
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
 
-import Color from './Color/Color.js';
-const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
     composed,
     isTouchDevice
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
-import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-const {
+import {
     addEvent,
     attr,
     css,
+    defined,
     extend,
     find,
     fireEvent,
@@ -56,7 +54,7 @@ const {
     pick,
     pushUnique,
     splat
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -76,6 +74,27 @@ declare module './Chart/ChartBase'{
         pointer?: Pointer;
     }
 }
+
+/**
+ *
+ *  Functions
+ *
+ */
+
+/**
+ * Check whether the configured action key allows the interaction.
+ *
+ * @internal
+ * @param {Event} e
+ *        A mouse event.
+ * @param {string | undefined} key
+ *        Zoom or pan key.
+ * @return {boolean}
+ *         True if the key is undefined
+ *         or if the action key is pressed. False otherwise.
+ */
+const checkActionKey = (e: Event, key: string | undefined): boolean =>
+    !defined(key) || (e as any)[`${key}Key`];
 
 /* *
  *
@@ -144,7 +163,7 @@ class Pointer {
     public hasPinched?: boolean;
 
     /**
-     * Indicates if there has beeen a movement larger than ~4px during
+     * Indicates if there has been a movement larger than ~4px during
      * a pinch event.
      * @internal
      */
@@ -424,11 +443,12 @@ class Pointer {
                 mouseDownX = 0,
                 mouseDownY = 0
             } = chart,
+            chartOptions = chart.options,
             {
                 panning,
                 panKey,
                 selectionMarkerFill
-            } = chart.options.chart,
+            } = chartOptions.chart,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -501,10 +521,7 @@ class Pointer {
 
                     if (!chart.styledMode) {
                         selectionMarker.attr({
-                            fill:
-                                selectionMarkerFill ||
-                                color(Palette.highlightColor80)
-                                    .setOpacity(0.25).get()
+                            fill: selectionMarkerFill
                         });
                     }
                 }
@@ -517,7 +534,10 @@ class Pointer {
             }
 
             // Panning
-            if (clickedInside && !selectionMarker && panningEnabled) {
+            if (
+                clickedInside && !selectionMarker && panningEnabled &&
+                (checkActionKey(e, panKey))
+            ) {
                 chart.pan(e, panning as any);
             }
         }
@@ -1348,9 +1368,8 @@ class Pointer {
                 ) ||
                 pointer.runChartClick
             ),
-            tooltip = chart.tooltip,
             followTouchMove = touchesLength === 1 &&
-                pick(tooltip?.options.followTouchMove, true);
+                (chart.tooltip?.options.followTouchMove ?? true);
 
         // Don't initiate panning until the user has pinched. This prevents us
         // from blocking page scrolling as users scroll down a long page
@@ -1956,10 +1975,7 @@ class Pointer {
             events = pointer.pointerCaptureEventsToUnbind,
             chart = pointer.chart,
             container = chart.container,
-            followTouchMove = pick(
-                chart.options.tooltip?.followTouchMove,
-                true
-            ),
+            followTouchMove = chart.options.tooltip?.followTouchMove ?? true,
             shouldHave = followTouchMove && chart.series.some(
                 (series): boolean => (series.options.findNearestPointBy as any)
                     .indexOf('y') > -1
@@ -1994,12 +2010,6 @@ class Pointer {
                 )
             );
 
-            if (!chart.styledMode) {
-                css(container, { 'touch-action': 'none' });
-            }
-            // Mostly for styled mode
-            container.className += ' highcharts-no-touch-action';
-
             pointer.hasPointerCapture = true;
         } else if (pointer.hasPointerCapture && !shouldHave) {
             // Remove
@@ -2007,20 +2017,6 @@ class Pointer {
             // Unbind
             events.forEach((e: Function): void => e());
             events.length = 0;
-
-            if (!chart.styledMode) {
-                css(container, {
-                    'touch-action': pick(
-                        chart.options.chart.style?.['touch-action'],
-                        'manipulation'
-                    )
-                });
-            }
-            // Mostly for styled mode
-            container.className = container.className.replace(
-                ' highcharts-no-touch-action',
-                ''
-            );
 
             pointer.hasPointerCapture = false;
         }
@@ -2091,7 +2087,7 @@ class Pointer {
                 // Android fires touchmove events after the touchstart even if
                 // the finger hasn't moved, or moved only a pixel or two. In iOS
                 // however, the touchmove doesn't fire unless the finger moves
-                // more than ~4px. So we emulate this behaviour in Android by
+                // more than ~4px. So we emulate this behavior in Android by
                 // checking how much it moved, and cancelling on small
                 // distances. #3450. Tested and still relevant as of 2024.
                 if (e.type === 'touchmove') {
@@ -2110,6 +2106,15 @@ class Pointer {
             } else if (start) {
                 // Hide the tooltip on touching outside the plot area (#1203)
                 this.reset();
+            }
+
+            // If inside, capture touch-drag and display tooltip. If not inside,
+            // allow dragging the finger to scroll the page
+            if (
+                (chart.tooltip?.options.followTouchMove ?? true) &&
+                isInside
+            ) {
+                e.preventDefault();
             }
 
         } else if ((e as any).touches.length === 2) {
@@ -2154,7 +2159,9 @@ class Pointer {
         this.zoomY = zoomY = /y/.test(zoomType);
         this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
         this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
-        this.hasZoom = zoomX || zoomY;
+        this.hasZoom = (zoomX || zoomY) &&
+            (checkActionKey(e, chart.zooming.key));
+
     }
 }
 

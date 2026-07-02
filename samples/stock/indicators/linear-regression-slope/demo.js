@@ -51,7 +51,7 @@
             data: data,
             id: 'base'
         }, {
-            type: 'linearRegressionSlope',
+            type: 'linearregressionslope',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
@@ -59,7 +59,7 @@
                 period: 5
             }
         }, {
-            type: 'linearRegressionSlope',
+            type: 'linearregressionslope',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,

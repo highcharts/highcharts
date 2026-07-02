@@ -1,0 +1,16 @@
+---
+name: Serverside data
+authors:
+  - Dawid Draguła
+js_wrap: b
+alt_text: >-
+  Data grid loading 100,000 employee records from a remote server using
+  server-side sorting, filtering and pagination.
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 80
+use_png_thumbnail: true
+is_pro: true
+...

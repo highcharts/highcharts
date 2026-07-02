@@ -1,4 +1,32 @@
 Highcharts.chart('container', {
+    dataTable: {
+        columns: {
+            Year: [
+                2012, 2013, 2014, 2015, 2016, 2017, 2018,
+                2019, 2020, 2021, 2022
+            ],
+            'Ocean transport': [
+                13234, 12729, 11533, 17798, 10398, 12811,
+                15483, 16196, 15060, 13365, 13301
+            ],
+            Households: [
+                6686, 6536, 6389, 6384, 6251, 5719,
+                5611, 5040, 5079, 5088, 4988
+            ],
+            'Agriculture and hunting': [
+                4812, 4872, 4961, 5001, 5070, 5035,
+                5045, 5004, 5015, 5076, 4935
+            ],
+            'Air transport': [
+                3502, 3844, 4139, 4351, 3802, 4020,
+                4461, 5074, 1558, 1247, 2694
+            ],
+            Construction: [
+                2019, 2189, 2150, 2217, 2179, 2258,
+                2348, 2196, 2018, 2180, 2127
+            ]
+        }
+    },
     chart: {
         type: 'area'
     },
@@ -22,7 +50,9 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            pointStart: 2012
+            dataMapping: {
+                x: 'Year'
+            }
         },
         area: {
             stacking: 'normal',
@@ -35,36 +65,24 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Ocean transport',
-        data: [
-            13234, 12729, 11533, 17798, 10398, 12811,
-            15483, 16196, 15060, 13365, 13301
-        ]
+        dataMapping: {
+            y: 'Ocean transport'
+        }
     }, {
-        name: 'Households',
-        data: [
-            6686, 6536, 6389, 6384, 6251, 5719,
-            5611, 5040, 5079, 5088, 4988
-        ]
-
+        dataMapping: {
+            y: 'Households'
+        }
     }, {
-        name: 'Agriculture and hunting',
-        data: [
-            4812, 4872, 4961, 5001, 5070, 5035,
-            5045, 5004, 5015, 5076, 4935
-        ]
+        dataMapping: {
+            y: 'Agriculture and hunting'
+        }
     }, {
-        name: 'Air transport',
-        data: [
-            3502, 3844, 4139, 4351, 3802, 4020,
-            4461, 5074, 1558, 1247, 2694
-        ]
-
+        dataMapping: {
+            y: 'Air transport'
+        }
     }, {
-        name: 'Construction',
-        data: [
-            2019, 2189, 2150, 2217, 2179, 2258,
-            2348, 2196, 2018, 2180, 2127
-        ]
+        dataMapping: {
+            y: 'Construction'
+        }
     }]
 });

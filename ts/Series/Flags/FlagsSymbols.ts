@@ -9,7 +9,9 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import H from '../../Core/Globals.js';
+import { pushUnique } from '../../Shared/Utilities.js';
+const { composed } = H;
 
 /* *
  *
@@ -24,6 +26,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
         /** @requires Series/Flags */
         flag: SymbolFunction;
         /** @requires Series/Flags */
+        'flag-icon': SymbolFunction;
+        /** @requires Series/Flags */
         squarepin: SymbolFunction;
     }
 }
@@ -35,22 +39,12 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  * */
 
 namespace FlagsSymbols {
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const modifiedMembers: Array<unknown> = [];
-
     /* *
      *
      *  Functions
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -58,26 +52,34 @@ namespace FlagsSymbols {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
-        if (modifiedMembers.indexOf(SVGRendererClass) === -1) {
-            modifiedMembers.push(SVGRendererClass);
-
+        if (pushUnique(composed, 'Series.Flags')) {
             const symbols = SVGRendererClass.prototype.symbols;
 
             symbols.flag = flag;
             createPinSymbol(symbols, 'circle');
             createPinSymbol(symbols, 'square');
 
+            symbols['flag-icon'] = function (
+                this: typeof Symbols,
+                x: number,
+                y: number,
+                w: number,
+                h: number
+            ): SVGPath {
+                return flag.call(
+                    this,
+                    x,
+                    y,
+                    w,
+                    Math.round(h * 0.6),
+                    {
+                        anchorX: Math.round(x),
+                        anchorY: Math.round(y + h)
+                    }
+                );
+            };
+
         }
-
-        const RendererClass = RendererRegistry.getRendererType();
-
-        // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers.
-        if (modifiedMembers.indexOf(RendererClass)) {
-            modifiedMembers.push(RendererClass);
-        }
-
     }
 
 
@@ -96,9 +98,7 @@ namespace FlagsSymbols {
         const anchorX = (options && options.anchorX) || x,
             anchorY = (options && options.anchorY) || y;
 
-        // To do: unwanted any cast because symbols.circle has wrong type, it
-        // actually returns an SVGPathArray
-        const path = this.circle(anchorX - 1, anchorY - 1, 2, 2) as any;
+        const path = this.circle(anchorX - 1, anchorY - 1, 2, 2);
         path.push(
             ['M', anchorX, anchorY],
             ['L', x, y + h],

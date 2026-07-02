@@ -5,14 +5,14 @@
  *
  * (c) 2017-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  *
  * Authors:
  * - Lars Cabrera
- * - Torstein Honsi
- * - Jon Arild Nygard
- * - Oystein Moseng
+ * - Torstein Hønsi
+ * - Jon Arild Nygård
+ * - Øystein Moseng
  */
 'use strict';
 import Highcharts from './highcharts.src.js';

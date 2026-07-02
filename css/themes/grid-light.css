@@ -32,18 +32,28 @@
 }
 
 .highcharts-axis-labels {
-    font-size: 1em;
+    font-size: 0.8em;
+}
+
+.highcharts-legend-box {
+    fill: var(--highcharts-neutral-color-5);
 }
 
 .highcharts-legend-item > text {
-    font-size: 1.1em;
+    font-size: 0.8em;
+    font-weight: bold;
 }
 
 .highcharts-xaxis-grid .highcharts-grid-line {
     stroke-width: 1px;
 }
 
-.highcharts-tooltip-box {
+.highcharts-tooltip-box,
+.highcharts-tooltip-box .highcharts-label-box {
     stroke-width: 0;
-    fill: rgb(219, 219, 216);
+    fill: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-tooltip text {
+    fill: var(--highcharts-background-color);
 }

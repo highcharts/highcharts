@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,7 +22,7 @@ import type {
 } from '../../Core/Renderer/AlignObject';
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
-import type Exporting from './Exporting';
+import type { Exporting } from './Exporting';
 import type Options from '../../Core/Options';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
@@ -108,8 +109,7 @@ declare module '../../Core/Options' {
          * [the docs](https://www.highcharts.com/docs/export-module/export-module-overview) and
          * read our [Fair Usage Policy](https://www.highcharts.com/docs/export-module/privacy-disclaimer-export).
          *
-         * @requires     modules/exporting
-         * @optionparent exporting
+         * @requires modules/exporting
          */
         exporting?: ExportingOptions;
     }
@@ -118,22 +118,16 @@ declare module '../../Core/Options' {
 export interface PdfFontOptions {
     /**
      * The TTF font file for bold text.
-     *
-     * @type string | undefined
      */
     bold?: string;
 
     /**
      * The TTF font file for bold and italic text.
-     *
-     * @type string | undefined
      */
     bolditalic?: string;
 
     /**
      * The TTF font file for italic text.
-     *
-     * @type string | undefined
      */
     italic?: string;
 
@@ -141,8 +135,6 @@ export interface PdfFontOptions {
      * The TTF font file for normal `font-style`. If font variations like
      * `bold` or `italic` are not defined, the `normal` font will be used
      * for those too.
-     *
-     * @type string | undefined
      */
     normal?: string;
 }
@@ -160,18 +152,15 @@ export interface ExportingOptions {
      * support it. This also applies to downloaded SVG that you want to
      * open in a desktop client.
      *
-     * @type      {boolean}
-     * @default   false
-     * @since     4.1.8
-     * @apioption exporting.allowHTML
+     * @default false
+     * @since   4.1.8
      */
     allowHTML?: boolean;
 
     /**
      * Allows the end user to sort the data table by clicking on column headers.
      *
-     * @since     10.3.3
-     * @apioption exporting.allowTableSorting
+     * @since 10.3.3
      */
     allowTableSorting?: boolean;
 
@@ -184,10 +173,8 @@ export interface ExportingOptions {
      *
      * @sample {highcharts} highcharts/exporting/apply-stylesheets/
      *
-     * @type      {boolean}
-     * @default   false
-     * @since     12.0.0
-     * @apioption exporting.applyStyleSheets
+     * @default false
+     * @since   12.0.0
      */
     applyStyleSheets?: boolean;
 
@@ -197,7 +184,6 @@ export interface ExportingOptions {
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
      *
-     * @type     {Highcharts.Dictionary<*>}
      * @requires modules/exporting
      */
     buttons?: ExportingButtonsOptions;
@@ -215,9 +201,6 @@ export interface ExportingOptions {
      *         Added data labels
      * @sample {highstock} highcharts/exporting/chartoptions-data-labels/
      *         Added data labels
-     *
-     * @type      {Highcharts.Options}
-     * @apioption exporting.chartOptions
      */
     chartOptions?: Options;
 
@@ -230,10 +213,8 @@ export interface ExportingOptions {
      * @sample {highstock} highcharts/exporting/enabled-false/
      *         Exporting module is loaded but disabled
      *
-     * @type      {boolean}
-     * @default   true
-     * @since     2.0
-     * @apioption exporting.enabled
+     * @default true
+     * @since   2.0
      */
     enabled?: boolean;
 
@@ -244,13 +225,18 @@ export interface ExportingOptions {
      * exception is thrown instead. Receives two parameters, the exporting
      * options, and the error from the module.
      *
+     * Since v13, PDF client-side export dependencies are opt-in. If `jsPDF` and
+     * `svg2pdf` are not present on `window` and `exporting.libURL` is not
+     * defined, a console warning is emitted on chart load. When fallback is
+     * disabled and no `exporting.error` handler is defined, the thrown error
+     * will use the underlying error message when available (for example,
+     * missing `jsPDF`/`svg2pdf`) instead of always throwing error `#28`.
+     *
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
      *
-     * @type      {Highcharts.ExportingErrorCallbackFunction}
      * @since     5.0.0
      * @requires  modules/exporting
      * @requires  modules/offline-exporting
-     * @apioption exporting.error
      */
     error?: Exporting.ErrorCallbackFunction;
 
@@ -265,12 +251,17 @@ export interface ExportingOptions {
      * handler if disabling fallback, in order to notify users in case export
      * fails.
      *
-     * @type      {boolean}
-     * @default   true
-     * @since     4.1.8
-     * @requires  modules/exporting
-     * @requires  modules/offline-exporting
-     * @apioption exporting.fallbackToExportServer
+     * Since v13, PDF client-side export dependencies are not auto-loaded unless
+     * `exporting.libURL` is defined (or the scripts are already present on
+     * the page). If dependencies are missing and no `exporting.libURL` is
+     * configured, a console warning is emitted on chart load. Disabling
+     * fallback without defining `exporting.error` will throw the underlying
+     * error message when available.
+     *
+     * @default  true
+     * @since    4.1.8
+     * @requires modules/exporting
+     * @requires modules/offline-exporting
      */
     fallbackToExportServer?: boolean;
 
@@ -281,9 +272,7 @@ export interface ExportingOptions {
      * See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
      * for more information
      *
-     * @type      {Object}
-     * @since     11.3.0
-     * @apioption exporting.fetchOptions
+     * @since 11.3.0
      */
     fetchOptions?: RequestInit;
 
@@ -295,10 +284,8 @@ export interface ExportingOptions {
      * @sample {highstock} highcharts/exporting/filename/
      *         Custom file name
      *
-     * @type      {string}
-     * @default   chart
-     * @since     2.0
-     * @apioption exporting.filename
+     * @default 'chart'
+     * @since   2.0
      */
     filename?: string;
 
@@ -313,10 +300,8 @@ export interface ExportingOptions {
      * modify the request, now use [fetchOptions](#exporting.fetchOptions)
      * instead.
      *
-     * @deprecated
-     * @type      {Highcharts.HTMLAttributes}
-     * @since     3.0.8
-     * @apioption exporting.formAttributes
+     * @deprecated 11.3.0
+     * @since      3.0.8
      */
     formAttributes?: HTMLAttributes;
 
@@ -327,11 +312,11 @@ export interface ExportingOptions {
      * [jsPDF](https://github.com/parallax/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
+     * Since v13, this option has no default and must be configured explicitly.
+     * To load dependencies from the Highcharts CDN, set it to
+     * `https://code.highcharts.com/{version}/lib/`.
      *
-     * @type      {string}
-     * @default   https://code.highcharts.com/{version}/lib
-     * @since     5.0.0
-     * @apioption exporting.libURL
+     * @since   5.0.0
      */
     libURL?: string;
 
@@ -348,11 +333,9 @@ export interface ExportingOptions {
      *
      * @see [fallbackToExportServer](#exporting.fallbackToExportServer)
      *
-     * @type      {boolean}
-     * @default   true
-     * @since 12.3.0
-     * @requires  modules/exporting
-     * @apioption exporting.local
+     * @default  true
+     * @since    12.3.0
+     * @requires modules/exporting
      */
     local?: boolean;
 
@@ -377,8 +360,7 @@ export interface ExportingOptions {
      * @sample highcharts/exporting/menuitemdefinitions-webp/
      *         Adding a custom menu item for WebP export
      *
-     * @type     {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
-     * @since    5.0.13
+     * @since 5.0.13
      */
     menuItemDefinitions?: ExportingMenuItemDefinitionsOptions;
 
@@ -438,9 +420,7 @@ export interface ExportingOptions {
     /**
      * Analogous to [sourceWidth](#exporting.sourceWidth).
      *
-     * @type      {number}
-     * @since     3.0
-     * @apioption exporting.sourceHeight
+     * @since 3.0
      */
     sourceHeight?: number;
 
@@ -457,9 +437,7 @@ export interface ExportingOptions {
      * @sample {highmaps} maps/exporting/sourcewidth/
      *         Source size demo
      *
-     * @type      {number}
-     * @since     3.0
-     * @apioption exporting.sourceWidth
+     * @since 3.0
      */
     sourceWidth?: number;
 
@@ -468,7 +446,6 @@ export interface ExportingOptions {
      * without specifying a `type` option. Possible values are `image/png`,
      *  `image/jpeg`, `application/pdf` and `image/svg+xml`.
      *
-     * @type  {Highcharts.ExportingMimeTypeValue}
      * @since 2.0
      */
     type?: ExportingMimeTypeValue;
@@ -492,9 +469,7 @@ export interface ExportingOptions {
      * @sample {highstock} highcharts/exporting/width/
      *         Export to 200px wide images
      *
-     * @type      {number}
-     * @since     2.0
-     * @apioption exporting.width
+     * @since 2.0
      */
     width?: number;
 }
@@ -581,7 +556,6 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-align/
      *         Center aligned
      *
-     * @type  {Highcharts.AlignValue}
      * @since 2.0
      */
     align?: AlignValue;
@@ -608,10 +582,8 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-enabled/
      *         Exporting module loaded but buttons disabled
      *
-     * @type      {boolean}
-     * @default   true
-     * @since     2.0
-     * @apioption navigation.buttonOptions.enabled
+     * @default true
+     * @since   2.0
      */
     enabled?: boolean;
 
@@ -643,7 +615,6 @@ export interface ExportingButtonOptions {
      * @sample highcharts/exporting/menuitemdefinitions-webp/
      *         Adding a custom menu item for WebP export
      *
-     * @type    {Array<string>}
      * @default ["viewFullscreen", "printChart", "separator", "downloadPNG", "downloadJPEG", "downloadSVG"]
      * @since   2.0
      */
@@ -656,9 +627,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/exporting/buttons-contextbutton-onclick/
      *         Skip the menu and export the chart directly
      *
-     * @type      {Function}
-     * @since     2.0
-     * @apioption exporting.buttons.contextButton.onclick
+     * @since 2.0
      */
     onclick?: Function;
 
@@ -674,7 +643,6 @@ export interface ExportingButtonOptions {
      * @sample highcharts/exporting/buttons-contextbutton-symbol-custom/
      *         Custom shape as symbol
      *
-     * @type  {Highcharts.SymbolKeyValue | "menu" | "menuball" | string}
      * @since 2.0
      */
     symbol?: ('menu' | 'menuball' | SymbolKey);
@@ -685,7 +653,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolfill/
      *         Blue symbol stroke for one of the buttons
      *
-     * @type  {Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject}
+     * @default ${palette.neutralColor60}
      * @since 2.0
      */
     symbolFill?: ColorString;
@@ -706,7 +674,6 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolstroke/
      *         Blue symbol stroke
      *
-     * @type  {Highcharts.ColorString}
      * @since 2.0
      */
     symbolStroke?: ColorString;
@@ -751,10 +718,8 @@ export interface ExportingButtonOptions {
      * @sample highcharts/exporting/buttons-text-symbol/
      *         Combined symbol and text
      *
-     * @type      {string}
-     * @default   null
-     * @since     3.0
-     * @apioption navigation.buttonOptions.text
+     * @default null
+     * @since   3.0
      */
     text?: string;
 
@@ -790,10 +755,8 @@ export interface ExportingButtonOptions {
      * @sample highcharts/exporting/buttons-text-usehtml/
      *         Icon using CSS font in text
      *
-     * @type      boolean
-     * @default   false
-     * @since     10.3.0
-     * @apioption navigation.buttonOptions.useHTML
+     * @default false
+     * @since   10.3.0
      */
     useHTML?: boolean;
 
@@ -804,7 +767,6 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-verticalalign/
      *         Buttons at lower right
      *
-     * @type  {Highcharts.VerticalAlignValue}
      * @since 2.0
      */
     verticalAlign?: VerticalAlignValue;
@@ -823,10 +785,8 @@ export interface ExportingButtonOptions {
      * The horizontal position of the button relative to the `align`
      * option.
      *
-     * @type      {number}
-     * @default   -10
-     * @since     2.0
-     * @apioption exporting.buttons.contextButton.x
+     * @default -10
+     * @since   2.0
      */
     x?: number;
 
@@ -837,8 +797,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-verticalalign/
      *         Buttons at lower right
      *
-     * @since     2.0
-     * @apioption navigation.buttonOptions.y
+     * @since 2.0
      */
     y?: number;
 }

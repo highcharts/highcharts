@@ -1,0 +1,1 @@
+1. Open the demo and check if it's displaying the gauge and exporting module correctly without any errors in the console.

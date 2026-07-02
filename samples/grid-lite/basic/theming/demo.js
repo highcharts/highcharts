@@ -42,7 +42,7 @@ function generateRandomData(rows) {
 }
 
 const config = {
-    dataTable: {
+    data: {
         columns: generateRandomData(100)
     },
     rendering: {

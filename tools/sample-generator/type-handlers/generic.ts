@@ -16,6 +16,9 @@ export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
     if (ctrlOpt.max !== void 0) {
         html += ` max="${ctrlOpt.max}"`;
     }
+    if (ctrlOpt.nullable) {
+        html += ' nullable';
+    }
     if (ctrlOpt.step !== void 0) {
         html += ` step="${ctrlOpt.step}"`;
     }

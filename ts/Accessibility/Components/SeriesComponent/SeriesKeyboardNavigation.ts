@@ -5,8 +5,9 @@
  *
  *  Handle keyboard navigation for series.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,15 +33,11 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import U from '../../../Core/Utilities.js';
-const {
-    defined,
-    fireEvent
-} = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
+import { defined, fireEvent } from '../../../Shared/Utilities.js';
 const {
     getPointFromXY,
     getSeriesFromName,
@@ -72,7 +69,6 @@ declare module '../../../Core/Series/SeriesBase' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Get the index of a point in a series. This is needed when using e.g. data
@@ -295,7 +291,6 @@ class SeriesKeyboardNavigation {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Init the keyboard navigation

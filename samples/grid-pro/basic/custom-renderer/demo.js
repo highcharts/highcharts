@@ -51,7 +51,7 @@ class TextareaRenderer extends CellRenderer {
 CellRendererRegistry.registerRenderer('textarea', TextareaRenderer);
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             number: [1, 2, 3, 4, 5, 6, 7],
             text: ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta'],

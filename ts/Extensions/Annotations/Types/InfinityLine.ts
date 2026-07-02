@@ -20,9 +20,8 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
 import { AnnotationMockPointFunction } from '../AnnotationOptions';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**
@@ -33,6 +32,7 @@ if (defaultOptions.annotations?.types) {
      *
      * @extends      annotations.types.crookedLine
      * @product      highstock
+     * @requires     modules/annotations-advanced
      * @optionparent annotations.types.infinityLine
      */
     defaultOptions.annotations.types.infinityLine = merge(

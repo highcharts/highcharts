@@ -49,7 +49,7 @@ Highcharts.chart('container', {
                 radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
                 stops: [
                     [0, 'white'],
-                    [1, Highcharts.getOptions().colors[0]]
+                    [1, 'var(--highcharts-color-0)']
                 ]
             }
         }
@@ -74,12 +74,10 @@ Highcharts.chart('container', {
             fillColor: {
                 radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
                 stops: [
-                    [0, 'rgba(255,255,255,0.5)'],
+                    [0, 'white'],
                     [
                         1,
-                        Highcharts.color(
-                            Highcharts.getOptions().colors[1]
-                        ).setOpacity(0.5).get('rgba')
+                        'var(--highcharts-color-1)'
                     ]
                 ]
             }

@@ -1,7 +1,7 @@
 ---
  name: Highcharts Demo
  authors:
-   - Rafal Sebestjanski
+   - Rafał Sebestjański
  requiresManualTesting: true
  skipTest: true
  js_wrap: b

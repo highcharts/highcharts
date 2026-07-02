@@ -55,6 +55,32 @@ QUnit.test('Arc', assert => {
     );
 });
 
+// Tests for #20585, #21701
+QUnit.test('Arc proximity', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+
+    [0, 5000, 10000].forEach(x => {
+
+        const circle = ren
+            .symbol('circle', x, 100, 6, 6)
+            .attr({
+                fill: 'blue'
+            })
+            .add();
+
+        assert.close(
+            circle.getBBox().width,
+            6,
+            0.001,
+            `Circle should be rendered with correct width, x=${x}`
+        );
+    });
+});
+
 QUnit.test('Square/rect', assert => {
     ['square', 'rect'].forEach(shape => {
         const fn = Highcharts.SVGRenderer.prototype.symbols[shape];

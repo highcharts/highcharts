@@ -49,7 +49,8 @@ QUnit.test(
                     text: 'Highcharts Treemap'
                 }
             }),
-            xAxis = chart.xAxis[0];
+            xAxis = chart.xAxis[0],
+            points = chart.series[0].points;
         let extremes;
 
         // Zoom should work when enabled
@@ -65,6 +66,24 @@ QUnit.test(
             extremes.max,
             100,
             'xAxis.max is correct according to zoom'
+        );
+
+        assert.ok(
+            points[1].dataLabel.visibility === 'hidden' &&
+            points[1].dataLabel.getStyle('visibility') === 'hidden',
+            'Data label outside of zoomed range should not be visible, #24220.'
+        );
+
+        assert.strictEqual(
+            points[2].dataLabel.visibility,
+            'inherit',
+            'Data label inside of zoomed range should be visible, #24220.'
+        );
+
+        assert.strictEqual(
+            points[2].dataLabel.getStyle('visibility'),
+            'visible',
+            'Data label inside of zoomed range should be visible, #24220.'
         );
 
         // When allowDrillToNode the extremes should be the same as the point
@@ -112,6 +131,80 @@ QUnit.test(
             chart.series[0].points[3].id,
             chart.series[0].rootNode,
             'Zoomed-into root node should be the last leaf, #20624.'
+        );
+    }
+);
+
+QUnit.test(
+    'Traversing treemap should not init data labels per point (#24626)',
+    function (assert) {
+        const data = [
+                { id: 'tech', name: 'Technology' },
+                { id: 'finance', name: 'Finance' }
+            ],
+            pointsCount = 300;
+
+        for (let i = 0; i < pointsCount; i++) {
+            data.push({
+                id: `id-${i}`,
+                name: `Point ${i}`,
+                parent: i % 2 ? 'tech' : 'finance',
+                value: i + 1
+            });
+        }
+
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: false
+                },
+                series: [{
+                    type: 'treemap',
+                    allowTraversingTree: true,
+                    dataLabels: {
+                        animation: false,
+                        defer: false,
+                        enabled: true,
+                        headers: true
+                    },
+                    data
+                }]
+            }),
+            series = chart.series[0],
+            allPointsCount = series.points.length;
+
+        let drawDataLabelsCalls = 0,
+            initDataLabelsCalls = 0;
+
+        const originalDrawDataLabels = series.drawDataLabels,
+            originalInitDataLabels = series.initDataLabels;
+
+        series.drawDataLabels = function () {
+            drawDataLabelsCalls++;
+            return originalDrawDataLabels.apply(this, arguments);
+        };
+
+        series.initDataLabels = function () {
+            initDataLabelsCalls++;
+            return originalInitDataLabels.apply(this, arguments);
+        };
+
+        series.setRootNode('tech');
+        series.setRootNode('');
+        series.setRootNode('finance');
+        series.setRootNode('');
+
+        series.drawDataLabels = originalDrawDataLabels;
+        series.initDataLabels = originalInitDataLabels;
+
+        assert.ok(
+            drawDataLabelsCalls > 0,
+            'Sanity check: traversing should trigger data labels redraw.'
+        );
+
+        assert.ok(
+            initDataLabelsCalls < allPointsCount,
+            'initDataLabels should not scale with number of points on ' +
+            'treemap traversing.'
         );
     }
 );

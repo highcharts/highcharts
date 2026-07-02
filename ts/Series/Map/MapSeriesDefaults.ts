@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,9 +21,7 @@
 import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -63,6 +62,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     dataLabels: {
         crop: false,
+        distance: 0,
         formatter: function (): string { // #2945
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as MapPoint;
@@ -72,20 +72,20 @@ const MapSeriesDefaults: MapSeriesOptions = {
         },
         inside: true, // For the color
         overflow: false as any,
-        padding: 0,
+        padding: [0, 2],
         verticalAlign: 'middle'
     },
 
     /**
+     * @productdesc {highmaps}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
      * the map borders. Round means that borders are rounded in the ends and
      * bends.
      *
-     * @sample maps/demo/mappoint-mapmarker/
+     * @sample {highmaps} maps/demo/mappoint-mapmarker/
      *         Backdrop coastline with round linecap
      *
-     * @type   {Highcharts.SeriesLinecapValue}
-     * @since  10.3.3
+     * @since 10.3.3
      */
     linecap: 'round',
 
@@ -105,11 +105,11 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @sample maps/demo/all-areas-as-null/
      *         Null color
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @private
      */
-    nullColor: Palette.neutralColor3,
+    nullColor: 'var(--highcharts-neutral-color-3)',
 
     /**
      * Whether to allow pointer interaction like tooltips and mouse events
@@ -144,10 +144,9 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @sample maps/plotoptions/series-allareas-false/
      *         All areas set to false
      *
-     * @type      {boolean}
-     * @default   true
-     * @product   highmaps
-     * @apioption plotOptions.series.allAreas
+     * @type    {boolean}
+     * @default true
+     * @product highmaps
      *
      * @private
      */
@@ -162,14 +161,13 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @sample {highmaps} maps/plotoptions/series-border/
      *         Borders demo
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   #cccccc
+     * @type      {Highcharts.ColorType}
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
      * @private
      */
-    borderColor: Palette.neutralColor10,
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The border width of each map area.
@@ -256,28 +254,10 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @sample maps/plotoptions/series-states-hover/
              *         Hover options
              *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type      {Highcharts.ColorType}
              * @product   highmaps
              * @apioption plotOptions.series.states.hover.color
              */
-
-            /**
-             * The border color of the point in this state.
-             *
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @product   highmaps
-             * @apioption plotOptions.series.states.hover.borderColor
-             */
-            borderColor: Palette.neutralColor60,
-
-            /**
-             * The border width of the point in this state
-             *
-             * @type      {number}
-             * @product   highmaps
-             * @apioption plotOptions.series.states.hover.borderWidth
-             */
-            borderWidth: 2
 
             /**
              * The relative brightness of the point when hovered, relative
@@ -288,6 +268,24 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @default   0
              * @apioption plotOptions.series.states.hover.brightness
              */
+
+            /**
+             * The border color of the point in this state.
+             *
+             * @type      {Highcharts.ColorType}
+             * @product   highmaps
+             * @apioption plotOptions.series.states.hover.borderColor
+             */
+            borderColor: 'var(--highcharts-neutral-color-60)',
+
+            /**
+             * The border width of the point in this state
+             *
+             * @type      {number}
+             * @product   highmaps
+             * @apioption plotOptions.series.states.hover.borderWidth
+             */
+            borderWidth: 2
         },
 
         /**
@@ -315,12 +313,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
         select: {
 
             /**
-             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @default   ${palette.neutralColor20}
+             * @type      {Highcharts.ColorType}
+             * @default   var(--highcharts-neutral-color-20)
              * @product   highmaps
              * @apioption plotOptions.series.states.select.color
              */
-            color: Palette.neutralColor20
+            color: 'var(--highcharts-neutral-color-20)'
         }
     },
 
@@ -391,6 +389,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @product   highmaps
  * @apioption series.map.data
@@ -426,7 +425,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * of the global [colors](#colors) when [colorByPoint](
  * #plotOptions.map.colorByPoint) is true.
  *
- * @type      {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
+ * @type      {Array<Highcharts.ColorType>}
  * @since     3.0
  * @product   highmaps
  * @apioption plotOptions.map.colors
@@ -436,7 +435,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * Individual color for the point. By default the color is either used
  * to denote the value, or pulled from the global `colors` array.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highmaps
  * @apioption series.map.data.color
  */

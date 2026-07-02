@@ -1,7 +1,8 @@
 const changelog = document.querySelector('#changelog');
 
 Grid.grid('container', {
-    dataTable: {
+    gridKey: 'YOUR-GRID-KEY-HERE',
+    data: {
         columns: {
             available: [true, false, true, true],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],

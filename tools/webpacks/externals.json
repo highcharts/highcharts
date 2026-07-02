@@ -9,7 +9,8 @@
             "modules/heatmap",
             "modules/map",
             "modules/sunburst",
-            "modules/treemap"
+            "modules/treemap",
+            "modules/contour"
         ],
         "namespacePath": ".{name}"
     },
@@ -106,7 +107,8 @@
             "Core/Defaults",
             "Core/Globals",
             "Core/Renderer/RendererUtilities",
-            "Core/Utilities"
+            "Core/Utilities",
+            "Shared/Utilities"
         ],
         "included": [],
         "namespacePath": ""
@@ -126,7 +128,6 @@
             "Core/Renderer/HTML/AST",
             "Core/Renderer/SVG/SVGElement",
             "Core/Renderer/SVG/SVGRenderer",
-            "Core/Renderer/RendererRegistry",
             "Core/Series/DataLabel",
             "Core/Series/Point",
             "Core/Series/Series",

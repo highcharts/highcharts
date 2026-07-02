@@ -1,0 +1,131 @@
+.hcg-container,
+.highcharts-light .hcg-container {
+    --ig-default-color: #000000;
+    --ig-default-background: #ffffff;
+    --ig-negative-default-color: #c10008;
+    --ig-negative-default-border-color: #e7000b;
+    --ig-negative-default-background: #fef3f2;
+    --ig-neutral-default-color: #884b00;
+    --ig-neutral-default-border-color: #d18700;
+    --ig-neutral-default-background: #fefce8;
+    --ig-positive-default-color: #008236;
+    --ig-positive-default-border-color: #00a63e;
+    --ig-positive-default-background: #effdf4;
+    --ig-highlight-color-5: #f3f6fe;
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container {
+        --ig-default-color: #ffffff;
+        --ig-default-background: #000000;
+        --ig-negative-default-color: #ffb3b3;
+        --ig-negative-default-border-color: #7a1e1e;
+        --ig-negative-default-background: #3d0e0b;
+        --ig-neutral-default-color: #ffe8c1;
+        --ig-neutral-default-border-color: #7d5c20;
+        --ig-neutral-default-background: #3b2a11;
+        --ig-positive-default-color: #a6f8c1;
+        --ig-positive-default-border-color: #1e6f3e;
+        --ig-positive-default-background: #0a3e1a;
+        --ig-highlight-color-5: #202124;
+    }
+}
+
+.highcharts-dark .hcg-container {
+    --ig-default-color: #ffffff;
+    --ig-default-background: #000000;
+    --ig-negative-default-color: #ffb3b3;
+    --ig-negative-default-border-color: #7a1e1e;
+    --ig-negative-default-background: #3d0e0b;
+    --ig-neutral-default-color: #ffe8c1;
+    --ig-neutral-default-border-color: #7d5c20;
+    --ig-neutral-default-background: #3b2a11;
+    --ig-positive-default-color: #a6f8c1;
+    --ig-positive-default-border-color: #1e6f3e;
+    --ig-positive-default-background: #0a3e1a;
+    --ig-highlight-color-5: #202124;
+}
+
+/*  ==== End Grid Color Scheme  ==== */
+
+/*  ==== Start Highcharts Variables  ==== */
+:root,
+.highcharts-light {
+    --highcharts-background-color: #ffffff;
+    --highcharts-neutral-color-100: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --highcharts-background-color: #141414;
+        --highcharts-neutral-color-100: #ffffff;
+    }
+}
+
+.highcharts-dark {
+    --highcharts-background-color: #141414;
+    --highcharts-neutral-color-100: #ffffff;
+}
+
+/*  ==== End Highcharts Variables  ==== */
+
+/* ==== Start Grid Variables ==== */
+.hcg-container {
+    --ig-hover-opacity: var(--hcg-hover-opacity, 100%);
+    --ig-sync-opacity: var(--hcg-sync-opacity, var(--ig-hover-opacity));
+
+    /* Global fonts */
+    --ig-default-font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    --ig-font-weight: var(--hcg-font-weight, normal);
+    --ig-font-size: var(--hcg-font-size, 1rem);
+    --ig-font-family: var(--hcg-font-family, var(--ig-default-font-family));
+    --ig-color: var(--hcg-color, var(--ig-default-color));
+    --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
+    --ig-text-align: var(--hcg-text-align, left);
+
+    /* Default borders */
+    --ig-border-radius: var(--hcg-border-radius, 0);
+    --ig-border-width: var(--hcg-border-width, 0);
+    --ig-border-style: var(--hcg-border-style, solid);
+    --ig-border-color: var(--hcg-border-color, var(--ig-color));
+    --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
+
+    /* Default padding */
+    --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
+    --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
+    --ig-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
+
+    /* Loading indicator */
+    --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
+
+    /* Default backgrounds and colors */
+    --ig-background: var(--hcg-background, transparent);
+
+    /* Accessibility */
+    --ig-focus-ring-color: var(--hcg-focus-ring-color, var(--ig-color));
+    --ig-focus-ring-width: var(--hcg-focus-ring-width, 2px);
+    --ig-focus-ring: 0 0 0 var(--ig-focus-ring-width) var(--ig-focus-ring-color);
+
+    /* CSS helpers */
+    --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
+
+    /* Negative colors */
+    --ig-negative-border-color: var(--hcg-negative-border-color, var(--ig-negative-default-border-color));
+    --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
+    --ig-negative-background: var(--hcg-negative-background, var(--ig-negative-default-background));
+    --ig-negative-color: var(--hcg-negative-color, var(--ig-color));
+
+    /* Neutral colors */
+    --ig-neutral-border-color: var(--hcg-neutral-border-color, var(--ig-neutral-default-border-color));
+    --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
+    --ig-neutral-background: var(--hcg-neutral-background, var(--ig-neutral-default-background));
+    --ig-neutral-color: var(--hcg-neutral-color, var(--ig-color));
+
+    /* Positive colors */
+    --ig-positive-border-color: var(--hcg-positive-border-color, var(--ig-positive-default-border-color));
+    --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
+    --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
+    --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
+
+    font: var(--ig-font);
+}

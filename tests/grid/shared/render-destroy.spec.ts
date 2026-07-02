@@ -6,7 +6,7 @@ test.describe('Render and destroy grid', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/destroy-grid');
+        await page.goto('/grid-lite/e2e/destroy-grid');
     });
 
     test('Destroy and re-render grid', async ({ page }) => {

@@ -1,7 +1,7 @@
 ---
  name: Highcharts Demo
  authors:
-   - Rafal Sebestjanski
+   - Rafał Sebestjański
    - Kacper Madej
  requiresManualTesting: true
  skipTest: true

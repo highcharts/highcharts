@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -23,6 +24,7 @@ import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type Templating from '../../Templating';
 import type PlotLineOrBand from './PlotLineOrBand';
+import type { BorderRadiusOptionsObject } from '../../../Extensions/BorderRadius';
 
 /* *
  *
@@ -55,7 +57,7 @@ export interface PlotBandLabelOptions {
      * Whether or not the label can be hidden if it overlaps with another label.
      *
      * @sample {highcharts} highcharts/xaxis/plotbands-label-allowoverlap/
-     *         A Plotband label overlapping another
+     *         A plot band label overlapping another
      *
      * @default undefined
      * @since   11.4.8
@@ -83,7 +85,9 @@ export interface PlotBandLabelOptions {
     /**
      * Callback JavaScript function to format the label. Useful properties like
      * the value of plot line or the range of plot band (`from` & `to`
-     * properties) can be found in `this.options` object.
+     * properties) can be found in `this.options` object. Since v12.6.0, the
+     * callback also receives `ctx` as the first argument, so that arrow
+     * functions can access the same context as regular functions using `this`.
      *
      * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
      *         Label formatters for plot line and plot band.
@@ -233,7 +237,7 @@ export interface PlotBandOptions {
      *
      * @since 11.4.2
      */
-    borderRadius?: number|string;
+    borderRadius?: number|string|BorderRadiusOptionsObject;
 
     /**
      * Border width for the plot band. Also requires `borderColor` to be set.
@@ -258,7 +262,7 @@ export interface PlotBandOptions {
      * @sample {highstock} stock/xaxis/plotbands/
      *         Plot band on Y axis
      *
-     * @default ${palette.highlightColor10}
+     * @default var(--highcharts-highlight-color-10)
      */
     color?: ColorType;
 

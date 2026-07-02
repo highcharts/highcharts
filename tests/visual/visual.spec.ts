@@ -244,6 +244,35 @@ test.describe('Visual tests', () => {
     let renderPage: Page | undefined;
     let renderContext: BrowserContext | undefined;
 
+    const initializeVisualPage = async (
+        targetPage: Page,
+        scripts: string[]
+    ): Promise<void> => {
+        await setupRoutes(targetPage);
+
+        await targetPage.setContent(pageTemplate(defaultPageContent));
+
+        for (const script of scripts) {
+            await targetPage.addScriptTag({
+                path: script
+            });
+        }
+
+        await targetPage.waitForFunction(
+            () => window.HCVisualSetup?.initialized === true
+        );
+        await targetPage.evaluate(() => {
+            window.HCVisualSetup?.configure({ mode: 'fast' });
+            window.HCVisualSetup?.markOptionsClean();
+        });
+    };
+
+    const getVisualPageScripts = async (): Promise<string[]> => [
+        ...(await getKarmaScripts()),
+        join('tmp', 'json-sources.js'),
+        join('tests', 'visual', 'visual-setup.js')
+    ];
+
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once('SIGINT', async () => {
         console.log('\nReceived SIGINT, closing browser...');
@@ -277,29 +306,7 @@ test.describe('Visual tests', () => {
         page = await context.newPage();
         await context.clock.setFixedTime(FIXED_CLOCK_TIME);
 
-        await setupRoutes(page);
-
-        await page.setContent(pageTemplate(defaultPageContent));
-
-        const scripts = [
-            ...(await getKarmaScripts()),
-            join('tmp', 'json-sources.js'),
-            join('tests', 'visual', 'visual-setup.js')
-        ];
-
-        for (const script of scripts) {
-            await page.addScriptTag({
-                path: script
-            });
-        }
-
-        await page.waitForFunction(
-            () => window.HCVisualSetup?.initialized === true
-        );
-        await page.evaluate(() => {
-            window.HCVisualSetup?.configure({ mode: 'fast' });
-            window.HCVisualSetup?.markOptionsClean();
-        });
+        await initializeVisualPage(page, await getVisualPageScripts());
     });
 
     test.afterEach(async () => {
@@ -354,6 +361,10 @@ test.describe('Visual tests', () => {
             'samples/highcharts/blog/gdp-growth-annual/demo.{js,mjs,ts}',
             'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.{js,mjs,ts}',
             'samples/highcharts/blog/gdp-growth-multiple-request/demo.{js,mjs,ts}',
+            'samples/highcharts/demo/annotations/demo.{js,mjs,ts}',
+            'samples/stock/demo/drag-on-axis/demo.{js,mjs,ts}',
+            'samples/stock/demo/stock-tools-gui/demo.{js,mjs,ts}',
+            'samples/stock/demo/two-standalone-navigators/demo.{js,mjs,ts}',
             'samples/highcharts/website/xmas-2021/demo.{js,mjs,ts}',
 
             // Error #13, renders to other divs than #container. Sets global
@@ -467,6 +478,16 @@ test.describe('Visual tests', () => {
 
             if (!page) {
                 throw new Error('Page not initialized');
+            }
+
+            const relativeSamplePath = getRelativeSamplePath(samplePath);
+            if (
+                relativeSamplePath.includes('samples/maps/demo/flowmap') &&
+                context
+            ) {
+                await page.close();
+                page = await context.newPage();
+                await initializeVisualPage(page, await getVisualPageScripts());
             }
 
             const sampleHtml = sample.html ?? defaultPageContent;

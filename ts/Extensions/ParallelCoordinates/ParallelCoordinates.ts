@@ -3,10 +3,11 @@
  *  Parallel coordinates module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Fus
+ *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,13 +30,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    merge,
-    splat
-} = U;
+import { addEvent, defined, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,11 +38,11 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         hasParallelCoordinates?: boolean;
         parallelInfo?: ParallelCoordinates.InfoObject;
-        /** @requires modules/parallel-coordinates */
         setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
@@ -58,6 +53,7 @@ declare module '../../Core/Chart/ChartBase'{
  *
  * */
 
+/** @internal */
 class ChartAdditions {
 
     /* *
@@ -87,7 +83,7 @@ class ChartAdditions {
      * */
 
     /**
-     * Define how many parellel axes we have according to the longest dataset.
+     * Define how many parallel axes we have according to the longest dataset.
      * This is quite heavy - loop over all series and check series.data.length
      * Consider:
      *
@@ -136,6 +132,7 @@ class ChartAdditions {
  *
  * */
 
+/** @internal */
 namespace ParallelCoordinates {
 
     /* *
@@ -144,14 +141,16 @@ namespace ParallelCoordinates {
      *
      * */
 
+    /** @internal */
     export declare class ChartComposition extends Chart {
         hasParallelCoordinates?: boolean;
         parallelInfo: InfoObject;
     }
 
-    export interface InfoObject {
+    /** @internal */
+    export type InfoObject = {
         counter: number;
-    }
+    };
 
     /* *
      *
@@ -304,4 +303,5 @@ namespace ParallelCoordinates {
  *
  * */
 
+/** @internal */
 export default ParallelCoordinates;

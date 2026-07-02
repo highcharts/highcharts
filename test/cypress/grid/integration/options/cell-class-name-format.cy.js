@@ -1,6 +1,6 @@
 describe('Cell class name formats.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/custom-class');
+        cy.visit('grid-pro/e2e/custom-class');
     });
 
     it('Table should have custom class name.', () => {
@@ -9,8 +9,14 @@ describe('Cell class name formats.', () => {
     });
 
     it('Custom class name should be refreshed on setValue.', () => {
-        cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]').as('cellA');
-        cy.get('.hcg-row[data-row-index="3"] > td[data-column-id="weight"]').as('cellB');
+        cy.get(
+            '.hcg-row[data-row-index="1"] > ' +
+            '.hcg-cell[data-column-id="weight"]'
+        ).as('cellA');
+        cy.get(
+            '.hcg-row[data-row-index="3"] > ' +
+            '.hcg-cell[data-column-id="weight"]'
+        ).as('cellB');
 
         cy.get('@cellA').should('not.have.class', 'greater-than-100');
         cy.get('@cellB').should('have.class', 'greater-than-100');

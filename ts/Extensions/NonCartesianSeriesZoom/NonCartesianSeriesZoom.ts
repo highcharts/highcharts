@@ -3,8 +3,9 @@
  *  (c) 2024-2026 Highsoft AS
  *  Author: Hubert Kozik
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,29 +26,28 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
  *  Declarations
  *
  * */
-interface Zooming {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    zoomX: number;
-    zoomY: number;
-    scale: number,
-    panX: number;
-    panY: number;
-}
 
+/** @internal */
+type Zooming = {
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    zoomX: number,
+    zoomY: number,
+    scale: number,
+    panX: number,
+    panY: number
+};
+
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         dataLabelsParentGroups?: Array<SVGElement>;
@@ -55,7 +55,24 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-/* /* *
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        /**
+         * Whether to zoom non-cartesian series. If `chart.zooming` is set, the
+         * option allows to disable zooming on an individual non-cartesian
+         * series. By default zooming is enabled for all series.
+         *
+         * **Note**: This option works only for non-cartesian series.
+         *
+         * @default  true
+         * @since    12.3.0
+         * @requires modules/non-cartesian-zoom
+         */
+        zoomEnabled?: boolean;
+    }
+}
+
+/* *
  *
  *  Functions
  *
@@ -416,7 +433,7 @@ function onAfterSetChartSize(
  */
 function onInitDataLabelsGroup(
     this: Series,
-    { index, zIndex }: { index: number, zIndex: number }
+    { index, zIndex = 6 }: { index: number, zIndex?: number }
 ): void {
     if (this.hasDataLabels?.()) {
         this.dataLabelsParentGroups ||= [];
@@ -432,15 +449,7 @@ function onInitDataLabelsGroup(
  *
  * */
 
-/**
- * The series type
- *
- * @internal
- * @class
- * @name Highcharts.seriesTypes.tiledwebmap
- *
- * @augments Highcharts.Series
- */
+/** @internal */
 class NonCartesianSeriesZoom {
 
     /* *
@@ -470,6 +479,7 @@ class NonCartesianSeriesZoom {
  *
  * */
 
+/** @internal */
 export default NonCartesianSeriesZoom;
 
 /* *
@@ -483,23 +493,13 @@ export default NonCartesianSeriesZoom;
  * allows to disable zooming on an individual non-cartesian series. By default
  * zooming is enabled for all series.
  *
- * Note: This option works only for non-cartesian series.
+ * **Note**: This option works only for non-cartesian series.
  *
  * @type      {boolean}
- * @since 12.3.0
+ * @default   true
+ * @since     12.3.0
+ * @requires  modules/non-cartesian-zoom
  * @apioption plotOptions.series.zoomEnabled
- */
-
-/**
- * Whether to zoom non-cartesian series. If `chart.zooming` is set, the option
- * allows to disable zooming on an individual non-cartesian series. By default
- * zooming is enabled for all series.
- *
- * Note: This option works only for non-cartesian series.
- *
- * @type      {boolean}
- * @since 12.3.0
- * @apioption series.zoomEnabled
  */
 
 (''); // Keeps doclets above in JS file

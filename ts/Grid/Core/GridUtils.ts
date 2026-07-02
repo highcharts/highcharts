@@ -4,20 +4,20 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
-import U from '../../Core/Utilities.js';
-const {
-    isObject
-} = U;
+import { isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -68,6 +68,11 @@ export interface MakeHTMLElementParameters {
     innerHTML?: string;
     style?: Partial<CSSStyleDeclaration>;
 }
+
+/**
+ * A style object or callback returning one.
+ */
+export type StyleValue<T> = CSSObject | ((this: T, target: T) => CSSObject);
 
 
 /* *
@@ -250,6 +255,150 @@ export function formatText(
     ));
 }
 
+/**
+ * Checks whether two objects have the same own keys and values.
+ *
+ * Supports nested plain objects and arrays. Functions are compared by
+ * reference.
+ *
+ * @param left
+ * The first object to compare.
+ *
+ * @param right
+ * The second object to compare.
+ *
+ * @returns
+ * `true` when both objects are equal, otherwise `false`.
+ */
+export function isDeepEqual(left: unknown, right: unknown): boolean {
+    if (left === right) {
+        return true;
+    }
+
+    if (left instanceof RegExp || right instanceof RegExp) {
+        return (
+            left instanceof RegExp &&
+            right instanceof RegExp &&
+            left.source === right.source &&
+            left.flags === right.flags
+        );
+    }
+
+    if (!isObject(left) || !isObject(right)) {
+        return false;
+    }
+
+    const leftRecord = left as Record<string, unknown>;
+    const rightRecord = right as Record<string, unknown>;
+
+    if ('nodeType' in leftRecord || 'nodeType' in rightRecord) {
+        return false;
+    }
+
+    if (Array.isArray(left) || Array.isArray(right)) {
+        if (!Array.isArray(left) || !Array.isArray(right)) {
+            return false;
+        }
+
+        if (left.length !== right.length) {
+            return false;
+        }
+    }
+
+    const leftKeys = Object.keys(left).filter(function (key): boolean {
+        return key !== '__proto__' && key !== 'constructor';
+    });
+    const rightKeys = Object.keys(right).filter(function (key): boolean {
+        return key !== '__proto__' && key !== 'constructor';
+    });
+
+    if (leftKeys.length !== rightKeys.length) {
+        return false;
+    }
+
+    for (let i = 0, iEnd = leftKeys.length; i < iEnd; ++i) {
+        const key = leftKeys[i];
+
+        if (!(key in rightRecord)) {
+            return false;
+        }
+
+        if (!isDeepEqual(leftRecord[key], rightRecord[key])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Resolves a style value that can be static or callback based.
+ *
+ * @param style
+ * Style object or callback returning one.
+ *
+ * @param target
+ * Runtime target used as callback context and first argument.
+ *
+ * @returns
+ * A resolved style object or `undefined`.
+ */
+export function resolveStyleValue<T>(
+    style?: StyleValue<T>,
+    target?: T
+): (CSSObject | undefined) {
+    if (!style) {
+        return;
+    }
+
+    if (typeof style === 'function') {
+        if (!target) {
+            return;
+        }
+
+        return style.call(target, target);
+    }
+
+    return style;
+}
+
+/**
+ * Resolves and merges style values in order.
+ *
+ * @param target
+ * Runtime target used as callback context and first argument.
+ *
+ * @param styleValues
+ * Style values to merge in order, where latter entries override former.
+ *
+ * @returns
+ * Merged style object.
+ */
+export function mergeStyleValues<T>(
+    target: T,
+    ...styleValues: Array<(StyleValue<T> | undefined)>
+): CSSObject {
+    const mergedStyle: CSSObject = {};
+
+    for (const styleValue of styleValues) {
+        const resolvedStyle = resolveStyleValue(styleValue, target);
+        if (resolvedStyle) {
+            Object.assign(mergedStyle, resolvedStyle);
+        }
+    }
+
+    return mergedStyle;
+}
+
+/**
+ * Waits for the next animation frame.
+ */
+export function waitForAnimationFrame(): Promise<void> {
+    return new Promise((resolve): void => {
+        requestAnimationFrame((): void => resolve());
+    });
+}
+
 
 /* *
  *
@@ -264,5 +413,9 @@ export default {
     sanitizeText,
     setHTMLContent,
     createOptionsProxy,
-    formatText
+    formatText,
+    isDeepEqual,
+    resolveStyleValue,
+    mergeStyleValues,
+    waitForAnimationFrame
 } as const;

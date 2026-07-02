@@ -1,4 +1,13 @@
 Highcharts.chart('container', {
+    dataTable: {
+        columns: {
+            Year: ['2019', '2020', '2021'],
+            Road: [434, 290, 307],
+            Rail: [272, 153, 156],
+            Air: [13, 7, 8],
+            Sea: [55, 35, 41]
+        }
+    },
     chart: {
         type: 'column'
     },
@@ -9,7 +18,7 @@ Highcharts.chart('container', {
         text: 'Source: <a href="https://www.ssb.no/transport-og-reiseliv/landtransport/statistikk/innenlandsk-transport">SSB</a>'
     },
     xAxis: {
-        categories: ['2019', '2020', '2021']
+        type: 'category'
     },
     yAxis: {
         min: 0,
@@ -28,20 +37,27 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '{point.percentage:.0f}%'
+            },
+            dataMapping: {
+                name: 'Year'
             }
         }
     },
     series: [{
-        name: 'Road',
-        data: [434, 290, 307]
+        dataMapping: {
+            y: 'Road'
+        }
     }, {
-        name: 'Rail',
-        data: [272, 153, 156]
+        dataMapping: {
+            y: 'Rail'
+        }
     }, {
-        name: 'Air',
-        data: [13, 7, 8]
+        dataMapping: {
+            y: 'Air'
+        }
     }, {
-        name: 'Sea',
-        data: [55, 35, 41]
+        dataMapping: {
+            y: 'Sea'
+        }
     }]
 });
