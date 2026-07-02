@@ -1,0 +1,8 @@
+---
+name: Clustering plot
+authors:
+  - Tord Vikestad
+js_wrap: b
+alt_text: >-
+  Highcharts scatter plot used to visualize clustered data.
+...
