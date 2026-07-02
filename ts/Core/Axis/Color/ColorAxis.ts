@@ -895,9 +895,18 @@ class ColorAxis extends Axis implements ColorAxisBase {
                         // Override setState to set either normal or inactive
                         // state to all points in this data class
                         setState: (state?: (StatesOptionsKey|'')): void => {
+                            const affectedSeries = new Set<SeriesClass>();
+
                             for (const point of getPointsInDataClass(i)) {
                                 point.setState(state);
+                                affectedSeries.add(point.series);
                             }
+
+                            // Set series state for dataClass items, #22891
+                            affectedSeries.forEach((series): void => {
+                                series.setState(state);
+                            });
+
                         },
 
                         // Override setState to show or hide all points in this
@@ -906,15 +915,11 @@ class ColorAxis extends Axis implements ColorAxisBase {
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
-                            const affectedSeries: SeriesClass[] = [];
+                            const affectedSeries = new Set<SeriesClass>();
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
                                 point.hiddenInDataClass = !vis; // #20441
-                                if (
-                                    affectedSeries.indexOf(point.series) === -1
-                                ) {
-                                    affectedSeries.push(point.series);
-                                }
+                                affectedSeries.add(point.series);
                             }
                             chart.legend.colorizeItem(this as any, vis);
                             affectedSeries.forEach((series): void => {
