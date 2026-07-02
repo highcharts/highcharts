@@ -114,7 +114,7 @@ export interface MarkerClusterEventsOptions {
      * by calling `event.preventDefault()`.
      *
      * @product   highcharts highmaps
-     * @see [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
+     * @see       [cluster.drillToCluster](#plotOptions.scatter.cluster.drillToCluster)
      * @requires  modules/marker-clusters
      */
     drillToCluster: MarkerClusterDrillCallbackFunction;

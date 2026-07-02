@@ -198,9 +198,10 @@ class GeoHeatmapSeries extends MapSeries {
              *         Advanced demo of GeoHeatmap interpolation with multiple
              *         datasets
              *
-             * @type      {boolean|Highcharts.InterpolationOptionsObject}
-             * @since     11.2.0
-             * @product   highmaps
+             * @declare Highcharts.InterpolationOptionsObject
+             * @product highmaps
+             * @since   11.2.0
+             * @type    {boolean|*}
              */
             interpolation: {
                 /**

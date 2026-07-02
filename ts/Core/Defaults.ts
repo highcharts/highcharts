@@ -2978,12 +2978,16 @@ const defaultOptions: DefaultOptions = {
          * @type {Highcharts.CSSObject}
          */
         style: {
-            /** @type {Highcharts.ColorType} */
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: 'var(--highcharts-neutral-color-80)',
 
             cursor: 'default',
 
-            /** @type {number|string} */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
