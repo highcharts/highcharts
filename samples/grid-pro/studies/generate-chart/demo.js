@@ -1,629 +1,248 @@
-let chart = null; // Chart is not created initially
+// Norwegian Storting (parliament) election results, 1957–2025.
+// Shape per party: [Full name, value, color, abbreviation]
 
-const activeCols = new Set();
-const groupStageData = [
-    // Group A
-    {
-        country: 'Mexico',
-        iso2: 'mx',
-        group: 'A',
-        wins: 3,
-        losses: 0,
-        draws: 0,
-        points: 9,
-        goalDifference: 6
-    },
-    {
-        country: 'South Africa',
-        iso2: 'za',
-        group: 'A',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: -1
-    },
-    {
-        country: 'Korea Republic',
-        iso2: 'kr',
-        group: 'A',
-        wins: 1,
-        losses: 2,
-        draws: 0,
-        points: 3,
-        goalDifference: -1
-    },
-    {
-        country: 'Czechia',
-        iso2: 'cz',
-        group: 'A',
-        wins: 0,
-        losses: 2,
-        draws: 1,
-        points: 1,
-        goalDifference: -4
-    },
-
-    // Group B
-    {
-        country: 'Switzerland',
-        iso2: 'ch',
-        group: 'B',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 4
-    },
-    {
-        country: 'Canada',
-        iso2: 'ca',
-        group: 'B',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 5
-    },
-    {
-        country: 'Bosnia and Herzegovina',
-        iso2: 'ba',
-        group: 'B',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: -1
-    },
-    {
-        country: 'Qatar',
-        iso2: 'qa',
-        group: 'B',
-        wins: 0,
-        losses: 2,
-        draws: 1,
-        points: 1,
-        goalDifference: -8
-    },
-
-    // Group C
-    {
-        country: 'Brazil',
-        iso2: 'br',
-        group: 'C',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 6
-    },
-    {
-        country: 'Morocco',
-        iso2: 'ma',
-        group: 'C',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 3
-    },
-    {
-        country: 'Scotland',
-        iso2: 'gb-sct',
-        group: 'C',
-        wins: 1,
-        losses: 2,
-        draws: 0,
-        points: 3,
-        goalDifference: -3
-    },
-    {
-        country: 'Haiti',
-        iso2: 'ht',
-        group: 'C',
-        wins: 0,
-        losses: 3,
-        draws: 0,
-        points: 0,
-        goalDifference: -6
-    },
-
-    // Group D
-    {
-        country: 'United States',
-        iso2: 'us',
-        group: 'D',
-        wins: 2,
-        losses: 1,
-        draws: 0,
-        points: 6,
-        goalDifference: 4
-    },
-    {
-        country: 'Australia',
-        iso2: 'au',
-        group: 'D',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 0
-    },
-    {
-        country: 'Paraguay',
-        iso2: 'py',
-        group: 'D',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: -2
-    },
-    {
-        country: 'Türkiye',
-        iso2: 'tr',
-        group: 'D',
-        wins: 1,
-        losses: 2,
-        draws: 0,
-        points: 3,
-        goalDifference: -2
-    },
-
-    // Group E
-    {
-        country: 'Germany',
-        iso2: 'de',
-        group: 'E',
-        wins: 2,
-        losses: 1,
-        draws: 0,
-        points: 6,
-        goalDifference: 6
-    },
-    {
-        country: 'Côte d\'Ivoire',
-        iso2: 'ci',
-        group: 'E',
-        wins: 2,
-        losses: 1,
-        draws: 0,
-        points: 6,
-        goalDifference: 2
-    },
-    {
-        country: 'Ecuador',
-        iso2: 'ec',
-        group: 'E',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 0
-    },
-    {
-        country: 'Curaçao',
-        iso2: 'cw',
-        group: 'E',
-        wins: 0,
-        losses: 2,
-        draws: 1,
-        points: 1,
-        goalDifference: -8
-    },
-
-    // Group F
-    {
-        country: 'Netherlands',
-        iso2: 'nl',
-        group: 'F',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 6
-    },
-    {
-        country: 'Japan',
-        iso2: 'jp',
-        group: 'F',
-        wins: 1,
-        losses: 0,
-        draws: 2,
-        points: 5,
-        goalDifference: 4
-    },
-    {
-        country: 'Sweden',
-        iso2: 'se',
-        group: 'F',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 0
-    },
-    {
-        country: 'Tunisia',
-        iso2: 'tn',
-        group: 'F',
-        wins: 0,
-        losses: 3,
-        draws: 0,
-        points: 0,
-        goalDifference: -10
-    },
-
-    // Group G
-    {
-        country: 'Belgium',
-        iso2: 'be',
-        group: 'G',
-        wins: 1,
-        losses: 0,
-        draws: 2,
-        points: 5,
-        goalDifference: 4
-    },
-    {
-        country: 'Egypt',
-        iso2: 'eg',
-        group: 'G',
-        wins: 1,
-        losses: 0,
-        draws: 2,
-        points: 5,
-        goalDifference: 2
-    },
-    {
-        country: 'Iran',
-        iso2: 'ir',
-        group: 'G',
-        wins: 0,
-        losses: 0,
-        draws: 3,
-        points: 3,
-        goalDifference: 0
-    },
-    {
-        country: 'New Zealand',
-        iso2: 'nz',
-        group: 'G',
-        wins: 0,
-        losses: 2,
-        draws: 1,
-        points: 1,
-        goalDifference: -6
-    },
-
-    // Group H
-    {
-        country: 'Spain',
-        iso2: 'es',
-        group: 'H',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 5
-    },
-    {
-        country: 'Cape Verde',
-        iso2: 'cv',
-        group: 'H',
-        wins: 0,
-        losses: 0,
-        draws: 3,
-        points: 3,
-        goalDifference: 0
-    },
-    {
-        country: 'Uruguay',
-        iso2: 'uy',
-        group: 'H',
-        wins: 0,
-        losses: 1,
-        draws: 2,
-        points: 2,
-        goalDifference: -1
-    },
-    {
-        country: 'Saudi Arabia',
-        iso2: 'sa',
-        group: 'H',
-        wins: 0,
-        losses: 1,
-        draws: 2,
-        points: 2,
-        goalDifference: -4
-    },
-
-    // Group I
-    {
-        country: 'France',
-        iso2: 'fr',
-        group: 'I',
-        wins: 3,
-        losses: 0,
-        draws: 0,
-        points: 9,
-        goalDifference: 8
-    },
-    {
-        country: 'Norway',
-        iso2: 'no',
-        group: 'I',
-        wins: 2,
-        losses: 1,
-        draws: 0,
-        points: 6,
-        goalDifference: 1
-    },
-    {
-        country: 'Senegal',
-        iso2: 'sn',
-        group: 'I',
-        wins: 1,
-        losses: 2,
-        draws: 0,
-        points: 3,
-        goalDifference: 2
-    },
-    {
-        country: 'Iraq',
-        iso2: 'iq',
-        group: 'I',
-        wins: 0,
-        losses: 3,
-        draws: 0,
-        points: 0,
-        goalDifference: -11
-    },
-
-    // Group J
-    {
-        country: 'Argentina',
-        iso2: 'ar',
-        group: 'J',
-        wins: 3,
-        losses: 0,
-        draws: 0,
-        points: 9,
-        goalDifference: 7
-    },
-    {
-        country: 'Austria',
-        iso2: 'at',
-        group: 'J',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 0
-    },
-    {
-        country: 'Algeria',
-        iso2: 'dz',
-        group: 'J',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: -2
-    },
-    {
-        country: 'Jordan',
-        iso2: 'jo',
-        group: 'J',
-        wins: 0,
-        losses: 3,
-        draws: 0,
-        points: 0,
-        goalDifference: -5
-    },
-
-    // Group K
-    {
-        country: 'Colombia',
-        iso2: 'co',
-        group: 'K',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 3
-    },
-    {
-        country: 'Portugal',
-        iso2: 'pt',
-        group: 'K',
-        wins: 1,
-        losses: 0,
-        draws: 2,
-        points: 5,
-        goalDifference: 5
-    },
-    {
-        country: 'DR Congo',
-        iso2: 'cd',
-        group: 'K',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 1
-    },
-    {
-        country: 'Uzbekistan',
-        iso2: 'uz',
-        group: 'K',
-        wins: 0,
-        losses: 3,
-        draws: 0,
-        points: 0,
-        goalDifference: -9
-    },
-
-    // Group L
-    {
-        country: 'England',
-        iso2: 'gb',
-        group: 'L',
-        wins: 2,
-        losses: 0,
-        draws: 1,
-        points: 7,
-        goalDifference: 4
-    },
-    {
-        country: 'Croatia',
-        iso2: 'hr',
-        group: 'L',
-        wins: 2,
-        losses: 1,
-        draws: 0,
-        points: 6,
-        goalDifference: 0
-    },
-    {
-        country: 'Ghana',
-        iso2: 'gh',
-        group: 'L',
-        wins: 1,
-        losses: 1,
-        draws: 1,
-        points: 4,
-        goalDifference: 0
-    },
-    {
-        country: 'Panama',
-        iso2: 'pa',
-        group: 'L',
-        wins: 0,
-        losses: 3,
-        draws: 0,
-        points: 0,
-        goalDifference: -4
-    }
-];
-const columnData = {
-    Country: groupStageData.map(r => r.country),
-    Wins: groupStageData.map(r => r.wins),
-    Draws: groupStageData.map(r => r.draws),
-    Losses: groupStageData.map(r => r.losses),
-    Points: groupStageData.map(r => r.points),
-    GoalDifference: groupStageData.map(r => r.goalDifference)
+const norwayElectionResults = {
+    2025: [
+        ['Red Party', 9, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 9, '#C4145F', 'SV'],
+        ['Labour Party', 53, '#E3000F', 'Ap'],
+        ['Centre Party', 9, '#00843D', 'Sp'],
+        ['Green Party', 8, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 7, '#FFBC42', 'KrF'],
+        ['Liberal Party', 3, '#00807D', 'V'],
+        ['Conservative Party', 24, '#0065B1', 'H'],
+        ['Progress Party', 47, '#00205B', 'FrP']
+    ],
+    2021: [
+        ['Red Party', 8, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 13, '#C4145F', 'SV'],
+        ['Labour Party', 48, '#E3000F', 'Ap'],
+        ['Centre Party', 28, '#00843D', 'Sp'],
+        ['Green Party', 3, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 3, '#FFBC42', 'KrF'],
+        ['Liberal Party', 8, '#00807D', 'V'],
+        ['Conservative Party', 36, '#0065B1', 'H'],
+        ['Progress Party', 21, '#00205B', 'FrP']
+    ],
+    2017: [
+        ['Red Party', 1, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 11, '#C4145F', 'SV'],
+        ['Labour Party', 49, '#E3000F', 'Ap'],
+        ['Centre Party', 19, '#00843D', 'Sp'],
+        ['Green Party', 1, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 8, '#FFBC42', 'KrF'],
+        ['Liberal Party', 8, '#00807D', 'V'],
+        ['Conservative Party', 45, '#0065B1', 'H'],
+        ['Progress Party', 27, '#00205B', 'FrP']
+    ],
+    2013: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 7, '#C4145F', 'SV'],
+        ['Labour Party', 55, '#E3000F', 'Ap'],
+        ['Centre Party', 10, '#00843D', 'Sp'],
+        ['Green Party', 1, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 10, '#FFBC42', 'KrF'],
+        ['Liberal Party', 9, '#00807D', 'V'],
+        ['Conservative Party', 48, '#0065B1', 'H'],
+        ['Progress Party', 29, '#00205B', 'FrP']
+    ],
+    2009: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 11, '#C4145F', 'SV'],
+        ['Labour Party', 64, '#E3000F', 'Ap'],
+        ['Centre Party', 11, '#00843D', 'Sp'],
+        ['Green Party', 0, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 10, '#FFBC42', 'KrF'],
+        ['Liberal Party', 2, '#00807D', 'V'],
+        ['Conservative Party', 30, '#0065B1', 'H'],
+        ['Progress Party', 41, '#00205B', 'FrP']
+    ],
+    2005: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 15, '#C4145F', 'SV'],
+        ['Labour Party', 61, '#E3000F', 'Ap'],
+        ['Centre Party', 11, '#00843D', 'Sp'],
+        ['Green Party', 0, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 11, '#FFBC42', 'KrF'],
+        ['Liberal Party', 10, '#00807D', 'V'],
+        ['Conservative Party', 23, '#0065B1', 'H'],
+        ['Progress Party', 38, '#00205B', 'FrP']
+    ],
+    2001: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 23, '#C4145F', 'SV'],
+        ['Labour Party', 43, '#E3000F', 'Ap'],
+        ['Centre Party', 10, '#00843D', 'Sp'],
+        ['Green Party', 0, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 22, '#FFBC42', 'KrF'],
+        ['Liberal Party', 2, '#00807D', 'V'],
+        ['Conservative Party', 38, '#0065B1', 'H'],
+        ['Progress Party', 26, '#00205B', 'FrP']
+    ],
+    1997: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 9, '#C4145F', 'SV'],
+        ['Labour Party', 65, '#E3000F', 'Ap'],
+        ['Centre Party', 11, '#00843D', 'Sp'],
+        ['Green Party', 0, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 25, '#FFBC42', 'KrF'],
+        ['Liberal Party', 6, '#00807D', 'V'],
+        ['Conservative Party', 23, '#0065B1', 'H'],
+        ['Progress Party', 25, '#00205B', 'FrP']
+    ],
+    1993: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 13, '#C4145F', 'SV'],
+        ['Labour Party', 67, '#E3000F', 'Ap'],
+        ['Centre Party', 32, '#00843D', 'Sp'],
+        ['Green Party', 0, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 13, '#FFBC42', 'KrF'],
+        ['Liberal Party', 1, '#00807D', 'V'],
+        ['Conservative Party', 28, '#0065B1', 'H'],
+        ['Progress Party', 10, '#00205B', 'FrP']
+    ],
+    1989: [
+        ['Red Party', 0, '#AA0000', 'Rødt'],
+        ['Socialist Left Party', 17, '#C4145F', 'SV'],
+        ['Labour Party', 63, '#E3000F', 'Ap'],
+        ['Centre Party', 11, '#00843D', 'Sp'],
+        ['Green Party', 0, '#529A44', 'MDG'],
+        ['Christian Democratic Party', 14, '#FFBC42', 'KrF'],
+        ['Liberal Party', 0, '#00807D', 'V'],
+        ['Conservative Party', 37, '#0065B1', 'H'],
+        ['Progress Party', 22, '#00205B', 'FrP']
+    ]
 };
+const years = Object.keys(norwayElectionResults).reverse();
+let selectedYear = years[0];
+let grid = null;
+const getColumnData = data => {
+    // Collect all unique party names across all years
+    const partyNames = [
+        ...new Set(years.flatMap(year => data[year].map(p => p[0])))
+    ];
+
+    const columns = {
+        Year: years,
+        ...Object.fromEntries(partyNames.map(name => [name, []]))
+    };
+
+    years.forEach(year => {
+        const resultsByParty = Object.fromEntries(
+            data[year].map(p => [p[0], p[1]])
+        );
+        partyNames.forEach(name => {
+            columns[name].push(
+                resultsByParty[name] !== 0 ?
+                    resultsByParty[name] :
+                    'n/a'
+            );
+        });
+    });
+    return columns;
+};
+const columnData = getColumnData(norwayElectionResults);
 const dataTable = new Grid.DataTable({
     columns: columnData
 });
-Grid.grid('grid', {
+
+const setActiveRowStyle = (row, grid) => {
+    if (!row) {
+        return;
+    }
+    grid.viewport.rows.forEach(r => {
+        r.cells.forEach(c => c.htmlElement.classList?.remove('active-row'));
+    });
+
+    row.cells.forEach(c => c.htmlElement.classList?.add('active-row'));
+};
+const onGridChange = () => {
+    const highlightedRow = grid.viewport.rows?.find(
+        s => s.data.Year === selectedYear
+    );
+    setActiveRowStyle(highlightedRow, grid);
+};
+
+const chart = Highcharts.chart('chart', {
+    chart: {
+        type: 'item'
+    },
+    title: {
+        text: 'Distribution of seats'
+    },
+    subtitle: {
+        text: `Norwegian Parliament election ${selectedYear}`
+    },
+    legend: {
+        labelFormat: '{name} <span style="opacity: 0.4">{y}</span>'
+    },
+    series: [{
+        name: 'Representatives',
+        keys: ['name', 'y', 'color', 'label'],
+        data: norwayElectionResults[selectedYear].map(
+            point => [...point]
+        ),
+        dataLabels: {
+            enabled: true,
+            formatter: function () {
+                return this.point.y > 0 ? this.point.label : null;
+            },
+            style: {
+                textOutline: '3px contrast'
+            }
+        },
+        // Circular options
+        center: ['50%', '88%'],
+        size: '170%',
+        startAngle: -100,
+        endAngle: 100
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 600
+            },
+            chartOptions: {
+                series: [{
+                    dataLabels: {
+                        distance: -30
+                    }
+                }]
+            }
+        }]
+    }
+});
+
+grid = Grid.grid('grid', {
     gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         dataTable
     },
+    events: {
+        afterLoad: onGridChange
+    },
     columnDefaults: {
+        events: {
+            afterSort: onGridChange
+        },
         cells: {
             events: {
                 click: function () {
-                    const grid = this.row.viewport.grid;
-                    const yearColumnId = 'Year';
-                    const columnId = this.column.id;
-
-                    // Skip if clicked on Year column
-                    if (columnId === yearColumnId) {
-                        return;
-                    }
-
-                    // We get the x axis from the Year column
-                    const years = grid.dataProvider
-                        .getDataTable()
-                        .getColumn(yearColumnId);
-
-                    // Create chart if it doesn't exist
-                    if (!chart) {
-                        chart = Highcharts.chart('chart', {
-                            title: {
-                                text: 'U.S Solar Employment Growth',
-                                align: 'center'
-                            },
-                            xAxis: {
-                                categories: years
-                            },
-                            yAxis: {
-                                title: {
-                                    text: 'Number of Employees'
-                                }
-                            }
-                        });
-                    }
-
-                    // Check if series already exists in the chart
-                    const existingSeries = chart.series.find(
-                        s => s.name === columnId
+                    const row = this.row;
+                    setActiveRowStyle(row, grid);
+                    selectedYear = row.data.Year;
+                    chart.series[0].setData(
+                        norwayElectionResults[selectedYear].map(
+                            point => [...point]
+                        )
                     );
-
-                    const toggleColumnHighlight = () => {
-                        if (activeCols.has(columnId)) {
-                            activeCols.delete(columnId);
-                        } else {
-                            activeCols.add(columnId);
-                        }
-                    };
-
-                    const accessibility = grid.accessibility;
-
-                    if (existingSeries) {
-                        // Remove the series from chart
-                        existingSeries.remove();
-
-                        // Accessibility
-                        accessibility.announce(
-                            `Removed series ${columnId} from chart.`,
-                            true
-                        );
-
-                        // If no series left, destroy the chart
-                        if (chart.series.length === 0) {
-                            chart.destroy();
-                            chart = null;
-
-                            // Accessibility
-                            accessibility.announce('Destroyed chart.', true);
-                        }
-                    } else {
-                        // Add new series to chart
-                        chart.addSeries({
-                            name: columnId,
-                            data: this.column.data
-                        });
-
-                        // Accessibility
-                        accessibility.announce(
-                            `Added series ${columnId} to the chart.`,
-                            true
-                        );
-                    }
-                    toggleColumnHighlight();
-                    setActiveColumnStyle(this);
-                },
-                afterSetValue: function () {
-                    setActiveColumnStyle(this);
+                    chart.setSubtitle({
+                        text: `
+                            Norwegian Parliament election ${selectedYear}
+                        `
+                    });
                 }
             }
         }
-    },
-    columns: [{
-        id: 'Year',
-        width: 65
-    }]
+    }
 });
-
-function setActiveColumnStyle(cell) {
-    const isActive = activeCols.has(cell.column.id);
-    const cells = cell.column.cells;
-    cells.forEach(c => {
-        c.htmlElement.classList.toggle('active-column', isActive);
-    });
-    cell.column.header.htmlElement.classList.toggle('active-column', isActive);
-}
