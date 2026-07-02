@@ -12,7 +12,7 @@
  *
  * */
 
-import MFIIndicator from './MFIIndicator';
+import type MFIIndicator from './MFIIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *

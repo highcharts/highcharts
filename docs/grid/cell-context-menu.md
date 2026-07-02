@@ -3,6 +3,10 @@
 Highcharts Grid supports context menus for table body cells. When enabled, Grid
 shows a context menu on right-click for table body cells.
 
+On touch devices, you can open the context menu using a long-press on a cell.
+This is particularly important on iOS, where browsers do not fire the
+`contextmenu` event on long-press.
+
 ## Configure a cell context menu
 
 The context menu is configured at the cell level:

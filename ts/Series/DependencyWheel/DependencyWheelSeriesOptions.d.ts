@@ -77,7 +77,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *
      * @product highcharts
      */
-    borderRadius?: (number|string|BorderRadiusOptionsObject);
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * The center of the wheel relative to the plot area. Can be

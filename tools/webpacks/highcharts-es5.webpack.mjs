@@ -121,6 +121,13 @@ const webpacks = [].concat(...mastersFolders.map(mastersFolder => FSLib
                 // })
             ],
             resolve: {
+                byDependency: {
+                    esm: {
+                        // Imports need full .js extensions, otherwise custom
+                        // bundlers may fail (#24760)
+                        fullySpecified: true
+                    }
+                },
                 extensions: ['.js', '.ts']
             },
             target: 'es5'

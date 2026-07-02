@@ -212,15 +212,8 @@ const getCurrentTotal = arrOfArr => {
             floating: true
         },
         pane: {
-            background: [{
-                borderRadius: 30,
-                borderWidth: 0,
-                outerRadius: '100%',
-                innerRadius: '85%',
-                shape: 'arc'
-            }],
-            size: 250,
-            center: ['50%', '90%'],
+            innerSize: '85%',
+            borderRadius: '50%',
             endAngle: 80,
             startAngle: -80
         },
@@ -229,8 +222,6 @@ const getCurrentTotal = arrOfArr => {
         },
         plotOptions: {
             series: {
-                borderRadius: 20,
-                innerRadius: '85%',
                 dataLabels: {
                     format: '<div style="text-align:center; ' +
                         'margin-top: -20px">' +
@@ -279,10 +270,8 @@ const getCurrentTotal = arrOfArr => {
         pane: {
             startAngle: 0,
             endAngle: 360,
-            background: [{
-                innerRadius: '90%',
-                outerRadius: '115%'
-            }]
+            innerSize: '80%',
+            borderRadius: '50%'
         },
         accessibility: {
             typeDescription: 'circular gauge',
@@ -304,7 +293,6 @@ const getCurrentTotal = arrOfArr => {
             enabled: false
         },
         series: [{
-            borderRadius: 30,
             dataLabels: {
                 format: '<div style="text-align:center; ' +
                     'margin-top: -40px">' +
@@ -313,9 +301,7 @@ const getCurrentTotal = arrOfArr => {
                     'text-align: center;">Goal probability</div>' +
                     '</div>',
                 useHTML: true
-            },
-            innerRadius: '90%',
-            radius: '115%'
+            }
         }]
     };
 

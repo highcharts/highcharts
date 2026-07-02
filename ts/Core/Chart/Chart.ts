@@ -53,12 +53,11 @@ import type {
 } from '../Series/SeriesType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animate,
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
@@ -2105,11 +2104,8 @@ class Chart {
         let chartWidth = chart.chartWidth;
 
         // Allow table cells and flex-boxes to shrink without the chart
-        // blocking them out (#6427) but skip in styled mode so inline styles
-        // don't override user CSS on renderTo
-        if (!chart.styledMode) {
-            css(renderTo, { overflow: 'hidden' });
-        }
+        // blocking them out (#6427)
+        css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
         if (!chart.styledMode) {

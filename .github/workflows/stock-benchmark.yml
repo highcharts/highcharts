@@ -17,6 +17,10 @@ on:
 permissions:
   contents: read # to fetch code (actions/checkout)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   stock-benchmark:
     runs-on: ubuntu-latest
@@ -24,10 +28,14 @@ jobs:
     strategy:
       matrix:
         node-version: [lts/*]
+    env:
+      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
+      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
+      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
+      BENCHMARK_CATEGORY: Stock
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -40,21 +48,42 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - name: Benchmark
+      - name: Fetch cached base results from S3
         continue-on-error: true
-        run: node --import tsx test/ts-node-unit-tests/bench.ts --context base --pattern Stock/
+        run: |
+          mkdir -p tmp/benchmarks/base
+          aws s3 sync \
+          "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/benchmarks/reference/latest/" tmp/benchmarks/base/ \
+          --exclude "*" --include "${BENCHMARK_CATEGORY}/*.json"
 
-      - name: Checkout current branch
+      - name: Check cached base results
+        id: check_base
+        run: .github/scripts/checkBenchmarkBase.sh "${BENCHMARK_CATEGORY}"
+
+      - name: Benchmark
+        run: node --import tsx test/ts-node-unit-tests/bench.ts --context actual --pattern ${BENCHMARK_CATEGORY}/
+
+      # Fallback: cached base is missing or incomplete, so build it from master.
+      - name: Checkout master (fallback)
+        if: steps.check_base.outputs.need_master == 'true'
         uses: actions/checkout@v6
         with:
-           clean: false # do not remove files from previous run
-      - run: npm ci
-
-      - name: Build Highcharts
+          ref: master
+          clean: false # keep the PR build and fetched base results
+      - name: Install dependencies (fallback)
+        if: steps.check_base.outputs.need_master == 'true'
+        run: npm ci
+      - name: Build Highcharts (fallback)
+        if: steps.check_base.outputs.need_master == 'true'
         run: npx gulp scripts
-
-      - name: Benchmark
-        run: node --import tsx test/ts-node-unit-tests/bench.ts --context actual --pattern Stock/
+      - name: Benchmark master (fallback)
+        if: steps.check_base.outputs.need_master == 'true'
+        run: node --import tsx test/ts-node-unit-tests/bench.ts --context base --pattern ${BENCHMARK_CATEGORY}/
+      - name: Restore PR branch (fallback)
+        if: steps.check_base.outputs.need_master == 'true'
+        uses: actions/checkout@v6
+        with:
+          clean: false
 
       - name: Benchmark comparison
         run: node --import tsx test/ts-node-unit-tests/benchmark-compare.ts
@@ -84,4 +113,3 @@ jobs:
         run: |
           echo "## Benchmark metrics" >> $GITHUB_STEP_SUMMARY
           cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY
-
