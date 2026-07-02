@@ -151,21 +151,53 @@ function getUnstagedMetadataInputFilesFromStatus(output) {
 }
 
 /**
+ * Get git command output.
+ *
+ * @param {Array<string>} args
+ * Git command arguments.
+ * @param {boolean} [optional]
+ * Whether git failures should return an empty output.
+ *
+ * @return {string}
+ * Git command output.
+ */
+function getGitOutput(args, optional) {
+    const childProcess = require('node:child_process');
+
+    try {
+        return childProcess.execFileSync(
+            'git',
+            args,
+            {
+                cwd: process.cwd(),
+                encoding: 'utf-8',
+                stdio: optional ?
+                    ['ignore', 'pipe', 'ignore'] :
+                    ['ignore', 'pipe', 'pipe']
+            }
+        );
+    } catch (error) {
+        if (optional) {
+            return '';
+        }
+
+        throw error;
+    }
+}
+
+/**
  * Get staged files that should make the task stage generated metadata.
+ *
+ * @param {boolean} [optional]
+ * Whether git failures should return no staged files.
  *
  * @return {Array<string>}
  * Staged metadata files.
  */
-function getStagedMetadataFiles() {
-    const childProcess = require('node:child_process');
-
-    const output = childProcess.execFileSync(
-        'git',
+function getStagedMetadataFiles(optional) {
+    const output = getGitOutput(
         ['diff', '--cached', '--name-only', '--', ...METADATA_INPUT_PATHS],
-        {
-            cwd: process.cwd(),
-            encoding: 'utf-8'
-        }
+        optional
     );
 
     return getStagedMetadataFilesFromOutput(output);
@@ -178,15 +210,8 @@ function getStagedMetadataFiles() {
  * Unstaged source files.
  */
 function getUnstagedMetadataInputFiles() {
-    const childProcess = require('node:child_process');
-
-    const output = childProcess.execFileSync(
-        'git',
-        ['status', '--porcelain', '--', ...METADATA_INPUT_PATHS],
-        {
-            cwd: process.cwd(),
-            encoding: 'utf-8'
-        }
+    const output = getGitOutput(
+        ['status', '--porcelain', '--', ...METADATA_INPUT_PATHS]
     );
 
     return getUnstagedMetadataInputFilesFromStatus(output);
@@ -198,16 +223,7 @@ function getUnstagedMetadataInputFiles() {
  * @return {void}
  */
 function stageGeneratedMetadata() {
-    const childProcess = require('node:child_process');
-
-    childProcess.execFileSync(
-        'git',
-        ['add', '--', GENERATED_METADATA_PATH],
-        {
-            cwd: process.cwd(),
-            encoding: 'utf-8'
-        }
-    );
+    getGitOutput(['add', '--', GENERATED_METADATA_PATH]);
 }
 
 /* *
@@ -226,7 +242,10 @@ async function generateDeprecatedOptions() {
     const argv = require('yargs').argv;
     const log = require('../../libs/log');
     const processLib = require('../../libs/process');
-    const shouldStage = argv.stage || getStagedMetadataFiles().length > 0;
+    const shouldStage = (
+        argv.stage ||
+        getStagedMetadataFiles(true).length > 0
+    );
 
     if (shouldStage) {
         const unstagedFiles = getUnstagedMetadataInputFiles();
@@ -265,6 +284,7 @@ async function generateDeprecatedOptions() {
 gulp.task('grid/deprecated-options', generateDeprecatedOptions);
 
 module.exports = {
+    getGitOutput,
     getStagedMetadataFilesFromOutput,
     getUnstagedMetadataInputFilesFromStatus,
     parseGitStatus

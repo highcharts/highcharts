@@ -1,9 +1,10 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const {
+    getGitOutput,
     getStagedMetadataFilesFromOutput,
     getUnstagedMetadataInputFilesFromStatus,
     parseGitStatus
@@ -39,6 +40,13 @@ describe('grid/deprecated-options git status parsing', () => {
                 'ts/Grid/Core/DeprecatedOptionsMetadata.ts',
                 'ts/Grid/Core/Options.ts'
             ]
+        );
+    });
+
+    it('allows optional git checks to fail without blocking generation', () => {
+        strictEqual(
+            getGitOutput(['not-a-real-git-subcommand'], true),
+            ''
         );
     });
 
