@@ -561,10 +561,14 @@ QUnit.test('Sankey and inactive state', function (assert) {
 QUnit.test('Sankey and circular data', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
-            width: 489
+            width: 489,
+            height: 400
         },
         title: {
             text: 'Highcharts Sankey Diagram'
+        },
+        tooltip: {
+            split: false
         },
         series: [
             {
@@ -589,26 +593,95 @@ QUnit.test('Sankey and circular data', function (assert) {
         ['b', 'c', 5]
     ]);
 
-    const numberOfCurves = chart.series[0].points[3].graphic
-        .attr('d')
-        .split(' ')
-        .filter(item => item === 'C').length;
-    assert.strictEqual(
-        numberOfCurves,
-        2,
-        'The link should be a straight forward link (#24079)'
+    assert.notOk(
+        chart.series[0].points[3].isCircular,
+        'Forward links should not be marked circular (#24079)'
     );
 
-    chart.series[0].setData([
-        ['a', 'a', 1]
-    ]);
-    chart.series[0].redraw();
+    const series = chart.series[0];
+    series.setData([['a', 'a', 1], ['a', 'b', 2]]);
+    const selfLink = series.points[0];
 
-    const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    assert.strictEqual(
+        selfLink.isCircular, true, 'Self link should be marked circular (#8218)'
+    );
+    assert.strictEqual(
+        series.isDataCircular, false,
+        'Self links alone should not trigger the circular layout (#8218)'
+    );
     assert.deepEqual(
-        [shapeArgs.x, shapeArgs.y],
-        [0, 0],
-        '#16080: Node should still be in top left corner after redraw'
+        [series.nodes[0].level, series.nodes[1].level], [0, 1],
+        'Self links should not block root detection and levels (#8218)'
+    );
+    assert.ok(
+        selfLink.shapeArgs.d && selfLink.shapeArgs.d.length > 0,
+        'Self link should render a visible loop, not a hidden path (#8218)'
+    );
+
+    series.setData([['a', 'b', 5]]);
+    series.setData([['a', 'a', 5]]);
+    assert.ok(
+        series.points[0].shapeArgs.d.length > 0,
+        'A link updated into a self-link should render as a loop (#8218)'
+    );
+
+    series.setData([['a', 'b', 1], ['b', 'c', 1]]);
+    assert.deepEqual(
+        [
+            series.isDataCircular,
+            series.firstColCircShift,
+            series.circularNodeTopOffset
+        ],
+        [false, 0, 0],
+        'Circular state and spacing should reset for acyclic data (#8218)'
+    );
+    assert.notOk(
+        series.points.some(point => point.isCircular),
+        'No links should remain marked circular'
+    );
+
+    series.setData([['a', 'b', 3], ['b', 'a', 1]]);
+    assert.deepEqual(
+        [series.points[0].isCircular, series.points[1].isCircular],
+        [false, true],
+        'Only the return (back) edge should be marked circular'
+    );
+    assert.ok(
+        series.isDataCircular,
+        'A back edge should trigger the circular layout'
+    );
+
+    series.update({ name: 'updated' });
+    assert.ok(
+        series.isDataCircular,
+        'Circular layout should persist after a series update (#8218)'
+    );
+
+    series.setData([['a', 'a', 5], ['a', 'b', 5], ['b', 'a', 5]]);
+    const aLinks = series.nodes
+        .find(node => node.id === 'a').linksFrom
+        .map(link => link.toNode.id + (link.isCircular ? '*' : ''));
+    assert.deepEqual(
+        aLinks,
+        ['b', 'a*'],
+        'Regular links should sort above circular ones in a node band (#8218)'
+    );
+
+    series.update({
+        data: [['A', 'B', 1], ['C', 'D', 9], ['E', 'F', 9]],
+        nodes: [
+            { id: 'A', column: 2 }, { id: 'B', column: 1 },
+            { id: 'C', column: 0 }, { id: 'D', column: 1 },
+            { id: 'E', column: 0 }, { id: 'F', column: 2 }
+        ]
+    });
+    assert.deepEqual(
+        [
+            chart.series[0].isDataCircular,
+            chart.series[0].points[0].isCircular
+        ],
+        [false, false],
+        'Explicit-column backward data should not be marked circular (#8218)'
     );
 });
 

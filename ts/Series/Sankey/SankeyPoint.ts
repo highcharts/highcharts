@@ -53,6 +53,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public hangsFrom?: SankeyPoint;
 
+    /** @internal */
+    public isCircular?: boolean;
+
     public level!: number;
 
     public linkBase!: Array<number>;
@@ -113,7 +116,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     /**
      * If there are incoming links, place it to the right of the
-     * highest order column that links to this one.
+     * highest order column that links to this one. Circular links are
+     * ignored, so a node reached only through a cycle still anchors to its
+     * non-circular predecessors (or column 0 when it has none).
      *
      * @private
      */
@@ -124,13 +129,17 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             fromNode;
 
         for (let i = 0; i < node.linksTo.length; i++) {
-            const point = node.linksTo[i];
+            const point = node.linksTo[i],
+                column = point.fromNode.column;
+
             if (
-                (point.fromNode.column as any) > fromColumn &&
-                point.fromNode !== node // #16080
+                defined(column) &&
+                column > fromColumn &&
+                point.fromNode !== node && // #16080
+                !point.isCircular
             ) {
                 fromNode = point.fromNode;
-                fromColumn = (fromNode.column as any);
+                fromColumn = column;
             }
         }
 
