@@ -1,0 +1,8 @@
+---
+name: World Map Chart
+description: Visualizes regional exposure on an interactive world map combined with a synchronized bar chart.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+...
