@@ -1,9 +1,9 @@
-import type { MapSeries } from "@highcharts/react/series/Map";
+import type { MapSeries } from '@highcharts/react/series/Map';
 
 export type TopoJSONGeometry = {
     properties: {
-        "hc-key"?: string;
-        "name"?: string;
+        'hc-key'?: string;
+        'name'?: string;
     };
 };
 
@@ -16,5 +16,5 @@ export type FetchedMapData = {
 };
 
 export type MapSeriesData = NonNullable<
-    Parameters<typeof MapSeries>[0]["data"]
+    Parameters<typeof MapSeries>[0]['data']
 >;

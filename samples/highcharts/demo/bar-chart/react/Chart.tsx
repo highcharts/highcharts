@@ -8,14 +8,14 @@ import {
     Legend,
     Credits,
     PlotOptions
-} from "@highcharts/react";
-import { BarSeries } from "@highcharts/react/series/Bar";
-import { Exporting } from "@highcharts/react/modules/Exporting";
-import { Accessibility } from "@highcharts/react/modules/Accessibility";
+} from '@highcharts/react';
+import { BarSeries } from '@highcharts/react/series/Bar';
+import { Exporting } from '@highcharts/react/modules/Exporting';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
 export default function BarChart() {
     return (
-        <Chart containerProps={{ style: { height: "400px" } }}>
+        <Chart containerProps={{ style: { height: '400px' } }}>
             <Title>Historic World Population by Region</Title>
             <Subtitle>
                 {
@@ -23,15 +23,15 @@ export default function BarChart() {
                 }
             </Subtitle>
             <XAxis
-                categories={["Africa", "America", "Asia", "Europe"]}
+                categories={['Africa', 'America', 'Asia', 'Europe']}
                 title={{ text: null }}
                 gridLineWidth={1}
                 lineWidth={0}
             />
             <YAxis
                 min={0}
-                title={{ align: "high" }}
-                labels={{ overflow: "justify" }}
+                title={{ align: 'high' }}
+                labels={{ overflow: 'justify' }}
                 gridLineWidth={0}
             >
                 Population (millions)
@@ -70,7 +70,7 @@ export default function BarChart() {
             <Credits enabled={false} />
             <PlotOptions
                 bar={{
-                    borderRadius: "50%",
+                    borderRadius: '50%',
                     dataLabels: { enabled: true },
                     groupPadding: 0.1
                 }}
