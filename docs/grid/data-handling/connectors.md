@@ -48,6 +48,29 @@ Grid.grid('container', {
 This example fetches data through a JSON connector, but pagination still runs
 client-side after the data has been loaded.
 
+## Multiple data tables
+
+Some connectors expose multiple data tables. Set `dataTableKey` next to the
+connector options to use a specific connector table as the Grid data source.
+If omitted, Grid uses the first connector table.
+
+```js
+Grid.grid('container', {
+    data: {
+        connector: {
+            type: 'JSON',
+            dataUrl: '/api/products.json',
+            dataTables: [{
+                key: 'products'
+            }, {
+                key: 'summary'
+            }]
+        },
+        dataTableKey: 'products'
+    }
+});
+```
+
 ## When to use connectors
 
 Use connectors when:
@@ -65,3 +88,4 @@ documentation on [Data handling / DataConnector](https://www.highcharts.com/docs
 
 - [`data`](https://api.highcharts.com/grid/data)
 - [`data.local.connector`](https://api.highcharts.com/grid/data.local.connector)
+- [`data.local.dataTableKey`](https://api.highcharts.com/grid/data.local.dataTableKey)
