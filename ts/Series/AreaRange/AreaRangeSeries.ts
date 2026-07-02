@@ -221,6 +221,12 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
  *
  * */
 
+/**
+ * Normalize the dataLabels config into a per-label array. Resolves the
+ * `alignToKey` default (`high` for the first label, `low` for the second) and
+ * maps the deprecated `xLow/xHigh/yLow/yHigh` offsets onto each label's `x/y`.
+ * @internal
+ */
 function getRangeDataLabelOptions(
     series: AreaRangeSeries
 ): Array<AreaRangeDataLabelOptions> {

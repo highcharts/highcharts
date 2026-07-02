@@ -31,6 +31,7 @@ const {
     arearange: AreaRangeSeries
 } = SeriesRegistry.seriesTypes;
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
+import RangeDataLabel from '../RangeDataLabel.js';
 
 /* *
  *
@@ -57,7 +58,8 @@ class ErrorBarSeries extends BoxPlotSeries {
 
     public static defaultOptions: ErrorBarSeriesOptions = merge(
         BoxPlotSeries.defaultOptions,
-        ErrorBarSeriesDefaults
+        ErrorBarSeriesDefaults,
+        { dataLabels: { formatter: RangeDataLabel.formatter } }
     );
 
     /* *

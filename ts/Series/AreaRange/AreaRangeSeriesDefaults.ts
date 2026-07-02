@@ -197,6 +197,10 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  */
 
 /**
+ * Callback JavaScript function to format the data label. Note that if a
+ * `format` is defined, the format takes precedence and the formatter is
+ * ignored.
+ *
  * By default, the data label renders the value of the point key it is
  * [aligned to](#plotOptions.arearange.dataLabels.alignToKey). Define a
  * [format](#plotOptions.arearange.dataLabels.format) or `formatter` to
