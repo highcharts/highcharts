@@ -11,13 +11,21 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/stale@v10
+      - uses: actions/stale@v10.3.0
         with:
           days-before-stale: 547
+          days-before-issue-stale: 7
           days-before-close: 7
+          any-of-issue-labels: "Status: Pending reply,Status: Can't reproduce"
           stale-issue-message: >
             This issue has been automatically marked as stale because it has not had
             recent activity. It will be closed if no further activity occurs. Thank you
             for your contributions!
+          stale-pr-message: >
+            This pull request has been automatically marked as stale because it has not had
+            recent activity. It will be closed if no further activity occurs. Thank you
+            for your contributions!
           stale-issue-label: "Status: Stale"
+          stale-pr-label: "Status: Stale"
           exempt-issue-labels: 'pinned,security'
+          exempt-pr-labels: 'pinned,security'
