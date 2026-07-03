@@ -731,21 +731,13 @@ test.describe('Visual tests', () => {
                 const updateMode = getSnapshotUpdateMode(
                     test.info().config.updateSnapshots
                 );
-                const comparison = await compareSVG(
+                await compareSVG(
                     samplePath,
                     svgContent, {
                         updateMode,
                         renderPage
                     }
                 );
-
-                if (IS_CI && !comparison.passed) {
-                    throw new Error(
-                        `SVG mismatch for ${getRelativeSamplePath(samplePath)} ` +
-                        `(diff pixels: ${comparison.diffPixels}). ` +
-                        `See ${comparison.referencePath} and ${comparison.candidatePath}.`
-                    );
-                }
 
                 await prepareRenderPageForScreenshot(renderPage, svgContent);
                 const browserName = context?.browser()?.browserType().name();

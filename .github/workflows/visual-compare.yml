@@ -155,7 +155,7 @@ jobs:
       - name: Checkout master samples and ts
         run: |
           git fetch origin master --depth=1
-          git checkout origin/master -- samples ts
+          git restore --source=origin/master --worktree samples ts css
 
       - name: Build Highcharts
         run: npx gulp scripts
@@ -186,7 +186,7 @@ jobs:
         run: git status --short
 
       - name: Restore current samples and ts
-        run: git checkout -- samples ts
+        run: git restore --worktree samples ts css
 
       - name: Generate samples
         run: npx tsc -p samples --skipLibCheck --noEmitOnError false || true
