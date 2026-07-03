@@ -97,7 +97,7 @@
     --highcharts-background-color: light-dark(#fff, #141414);
     --highcharts-neutral-color-100: light-dark(#000, #fff);
 
-    background: light-dark(#fefeff, #1b1d22);
+    background: light-dark(#fff, #141414);
     border-radius: 8px;
     color: light-dark(#040404, #f5f5f5);
     padding: 24px;

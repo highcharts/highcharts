@@ -84,10 +84,6 @@ function getVisibleWindow(dataLength, visibleCount) {
     const start = Math.max(0, end - WINDOW_SIZE);
     return { start, end };
 }
-const toSpark = (col, count) => {
-    const { start, end } = getVisibleWindow(col.length, count);
-    return col.slice(start, end).map(Number).join(', ');
-};
 function getDateRangeLabel(dates, visibleCount) {
     const { start, end } = getVisibleWindow(dates.length, visibleCount);
     return (
@@ -118,12 +114,15 @@ function formatDelta(value) {
     }
     return `<span>${formattedValue}%</span>`;
 }
-function getRowData(stock, prices, visibleCount) {
+function getRowData(stock, prices, visibleCount, dates) {
     const currentPrice = prices[visibleCount - 1];
-
+    const { start, end } = getVisibleWindow(prices.length, visibleCount);
     return {
         ticker: stock.ticker,
-        priceEvolution: toSpark(prices, visibleCount),
+        priceEvolution: [
+            dates.slice(start, end),
+            prices.slice(start, end).map(Number).join(', ')
+        ],
         price: Number(currentPrice?.toFixed(2) ?? ''),
         ...Object.fromEntries(
             CHANGE_COLUMNS.map(({ id, days }) => {
@@ -162,7 +161,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             0
         );
         const rowsData = stockCollection.map((stock, i) => (
-            getRowData(stock, cachedPrices[i], visibleCount)
+            getRowData(stock, cachedPrices[i], visibleCount, dates)
         ));
         const gridData = new Grid.DataTable({
             columns: Object.fromEntries(
@@ -314,7 +313,8 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                     renderer: {
                         type: 'sparkline',
                         chartOptions: function (data) {
-                            const y = (data || '').split(',').map(Number);
+                            const x = (data[0] || '');
+                            const y = (data[1] || '').split(',').map(Number);
                             return {
                                 tooltip: {
                                     enabled: true,
@@ -329,7 +329,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                                     animation: true
                                 },
                                 series: [{
-                                    data: y,
+                                    data: toPointData(x, y),
                                     animation: {
                                         duration: ANIMATION_SPEED
                                     },
@@ -381,7 +381,8 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                 const rowData = getRowData(
                     stock,
                     cachedPrices[rowIndex],
-                    visibleCount
+                    visibleCount,
+                    dates
                 );
                 DATA_COLUMNS.forEach(column => {
                     gridData.setCell(column, rowIndex, rowData[column]);
