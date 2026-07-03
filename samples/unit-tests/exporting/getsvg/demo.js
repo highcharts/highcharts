@@ -315,34 +315,22 @@ QUnit.test('getSVGForExport XHTML', async function (assert) {
     );
 });
 
-QUnit.test('getSVG with Stock Tools GUI (#24754)', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        stockTools: {
-            gui: {
-                enabled: true
-            }
-        },
-        series: [{
-            data: [0, 4, 5, 3, 4]
-        }]
-    });
-
-    assert.strictEqual(
-        chart.exporting.getSVG().indexOf('highcharts-stocktools-wrapper'),
-        -1,
-        'Stock Tools wrapper should not be present in the exported SVG'
-    );
-});
-
 QUnit.test(
-    'getSVG with nested SVG in useHTML legend (#24754)',
-    function (assert) {
-        const chart = Highcharts.chart('container', {
+    'Exporting with Stock Tools and nested SVG (#24754)',
+    async function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            stockTools: {
+                gui: {
+                    enabled: true
+                }
+            },
+            // Testing nested inline SVG.
             legend: {
+                enabled: true,
                 useHTML: true,
                 labelFormatter: function () {
                     return (
-                        '<svg width="100" height="25" viewbox="0 0 100 25">' +
+                        '<svg width="100" height="25" viewBox="0 0 100 25">' +
                         '<text><tspan dy="12">' + this.name +
                         '</tspan></text></svg>'
                     );
@@ -354,18 +342,28 @@ QUnit.test(
             series: [{
                 name: 'Installation',
                 data: [43934, 52503, 57177]
-            }, {
-                name: 'Manufacturing',
-                data: [24916, 24064, 29742]
             }]
         });
 
-        const svg = chart.exporting.getSVG();
+        const svg = await chart.exporting.getSVGForExport();
+
+        // Nested SVGs in the legend must not cut off the export mid-element,
+        // which would produce invalid XML (#24754).
+        const parserError = new DOMParser()
+            .parseFromString(svg, 'image/svg+xml')
+            .querySelector('parsererror');
+
+        assert.notOk(
+            parserError,
+            'Exported SVG should be valid, parseable XML (#24754)'
+        );
+
+        // The Stock Tools toolbar is appended to the container after the main
+        // SVG; it must be stripped from the export, not leaked into it.
         assert.strictEqual(
-            svg.lastIndexOf('</svg>'),
-            svg.length - 6,
-            'Exported SVG should end at the main </svg>, keeping the chart ' +
-            'intact despite nested SVGs in the legend'
+            svg.indexOf('highcharts-stocktools-wrapper'),
+            -1,
+            'Stock Tools wrapper should not be present in the exported SVG'
         );
     }
 );
