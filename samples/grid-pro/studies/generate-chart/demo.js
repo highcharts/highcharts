@@ -171,7 +171,10 @@ const chart = Highcharts.chart('chart', {
         text: 'Distribution of seats'
     },
     subtitle: {
-        text: `Norwegian Parliament election ${selectedYear}`
+        text: `Norwegian Parliament election ${selectedYear}` +
+            'Source: ' +
+            '<a href="https://www.ssb.no/statbank/table/08219' +
+            'target="_blank">SSB</a>'
     },
     legend: {
         labelFormat: '{name} <span style="opacity: 0.4">{y}</span>'
