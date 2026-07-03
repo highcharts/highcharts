@@ -89,7 +89,7 @@ async function init() {
                     type: 'sparkline',
                     chartOptions: function (cellValue) {
                         const path = String(
-                            this.row?.data?.path ?? ''
+                            this.row?.data?.Fixed_Income_Path ?? ''
                         );
                         const superKey = path.split('/')[0] || '';
                         const color =
