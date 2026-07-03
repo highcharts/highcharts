@@ -40,8 +40,8 @@ import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
 
 /** @internal */
 interface TimeCyclesOptions extends AnnotationOptions {
-    xAxis: number;
-    yAxis: number;
+    xAxis: number|string;
+    yAxis: number|string;
 }
 
 if (defaultOptions.annotations?.types) {
