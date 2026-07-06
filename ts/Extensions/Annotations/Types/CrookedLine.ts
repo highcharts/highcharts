@@ -52,15 +52,15 @@ if (defaultOptions.annotations?.types) {
          */
         typeOptions: {
             /**
-             * This option defines which xAxis the point is connected to.
+             * This option defines which `xAxis` the point is connected to.
              * It refers to either the axis id or the index of the axis
-             * in the xAxis array.
+             * in the `xAxis` array.
              */
             xAxis: 0,
             /**
-             * This option defines which yAxis the point is connected to.
+             * This option defines which `yAxis` the point is connected to.
              * It refers to either the axis id or the index of the axis
-             * in the yAxis array.
+             * in the `yAxis` array.
              */
             yAxis: 0,
 

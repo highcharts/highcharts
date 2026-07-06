@@ -46,9 +46,9 @@ export interface AnnotationMockPointOptionsObject {
     x?: number;
 
     /**
-     * This option defines which xAxis the point is connected to.
+     * This option defines which `xAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis in
-     * the xAxis array. If the option is not configured or the axis
+     * the `xAxis` array. If the option is not configured or the axis
      * is not found the point's x coordinate refers to the chart
      * pixels.
      *
@@ -67,9 +67,9 @@ export interface AnnotationMockPointOptionsObject {
     y?: number|null;
 
     /**
-     * This option defines which yAxis the point is connected to.
+     * This option defines which `yAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis in
-     * the yAxis array. If the option is not configured or the axis
+     * the `yAxis` array. If the option is not configured or the axis
      * is not found the point's y coordinate refers to the chart
      * pixels.
      *
