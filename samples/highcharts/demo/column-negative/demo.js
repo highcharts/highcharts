@@ -10,7 +10,7 @@ Highcharts.chart('container', {
     },
     yAxis: {
         title: {
-            text: 'Budget surplus'
+            text: 'Budget surplus ($ thousand)'
         }
     },
     credits: {
@@ -23,7 +23,7 @@ Highcharts.chart('container', {
     },
     tooltip: {
         headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '{point.y}k$<br/>'
+        pointFormat: '${point.y}k<br/>'
     },
     series: [{
         name: 'New York branch',
