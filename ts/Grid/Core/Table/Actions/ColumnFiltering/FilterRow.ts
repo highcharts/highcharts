@@ -79,8 +79,10 @@ class FilterRow extends HeaderRow {
         vp.theadElement?.appendChild(this.htmlElement);
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
 
-        for (let i = 0, iEnd = vp.columns.length; i < iEnd; i++) {
-            const column = vp.columns[i];
+        const columns = vp.getRenderedColumns();
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            const column = columns[i];
             if (enabledColumns?.indexOf(column.id) < 0) {
                 continue;
             }
@@ -97,7 +99,7 @@ class FilterRow extends HeaderRow {
         }
 
         const firstCell = this.cells[0];
-        if (firstCell.column?.index === 0) {
+        if (firstCell.column === columns[0]) {
             // Add class to disable left border on first column
             this.cells[0].htmlElement.classList.add(
                 Globals.getClassName('columnFirst')

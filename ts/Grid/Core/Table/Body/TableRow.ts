@@ -142,6 +142,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
+        await this.syncRenderedCells();
         this.reflow();
     }
 
@@ -176,6 +177,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
+        await this.syncRenderedCells();
         this.reflow();
     }
 

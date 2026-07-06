@@ -85,7 +85,7 @@ class TableHeader {
      */
     constructor(viewport: Table) {
         this.viewport = viewport;
-        this.columns = viewport.columns;
+        this.columns = viewport.getRenderedColumns();
 
         if (viewport.grid.options?.header) {
             this.levels = this.getRowLevels(

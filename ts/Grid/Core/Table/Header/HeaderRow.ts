@@ -113,7 +113,11 @@ class HeaderRow extends Row {
                 const columnOnLevel = columnsOnLevel[i];
                 const colIsString = typeof columnOnLevel === 'string';
                 const colSpan = (!colIsString && columnOnLevel.columns) ?
-                    vp.grid.getColumnIds(columnOnLevel.columns).length : 0;
+                    vp.grid
+                        .getColumnIds(columnOnLevel.columns)
+                        .filter((columnId): boolean =>
+                            vp.isColumnRendered(columnId)
+                        ).length : 0;
                 const columnId = colIsString ?
                     columnOnLevel : columnOnLevel.columnId;
                 const dataColumn = columnId ?
@@ -127,7 +131,10 @@ class HeaderRow extends Row {
                 if (
                     (
                         columnId && enabledColumns &&
-                        enabledColumns.indexOf(columnId) < 0
+                        (
+                            enabledColumns.indexOf(columnId) < 0 ||
+                            !vp.isColumnRendered(columnId)
+                        )
                     ) || (!dataColumn && colSpan === 0)
                 ) {
                     continue;
@@ -157,7 +164,7 @@ class HeaderRow extends Row {
                 }
 
                 // Add class to disable left border on first column
-                if (dataColumn?.index === 0 && i === 0) {
+                if (dataColumn === vp.getRenderedColumns()[0] && i === 0) {
                     headerCell.htmlElement.classList.add(
                         Globals.getClassName('columnFirst')
                     );
@@ -188,6 +195,8 @@ class HeaderRow extends Row {
             const cell = row.cells[i] as HeaderCell;
             cell.reflow();
         }
+
+        this.reflowPosition();
     }
 
     /**

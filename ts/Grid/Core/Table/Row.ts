@@ -54,6 +54,11 @@ abstract class Row {
     public cells: Cell[] = [];
 
     /**
+     * Cells indexed by column ID.
+     */
+    private cellsByColumnId: Record<string, Cell> = {};
+
+    /**
      * The HTML element of the row.
      */
     public htmlElement: HTMLTableRowElement;
@@ -107,17 +112,49 @@ abstract class Row {
      * viewport nor pushes the rows to the viewport.rows array.
      */
     public async render(): Promise<void> {
-        const columns = this.viewport.columns;
-
-        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = this.createCell(columns[i]);
-            await cell.render();
-        }
+        await this.syncRenderedCells();
         this.rendered = true;
 
         if (this.viewport.virtualRows) {
             this.reflow();
         }
+    }
+
+    /**
+     * Synchronizes the row cells with the currently rendered columns.
+     */
+    public async syncRenderedCells(): Promise<void> {
+        const columns = this.viewport.getRenderedColumns();
+        const visibleIds: Record<string, boolean> = {};
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            visibleIds[columns[i].id] = true;
+        }
+
+        for (const cell of [...this.cells]) {
+            if (cell.column && !visibleIds[cell.column.id]) {
+                cell.destroy();
+            }
+        }
+
+        const orderedCells: Cell[] = [];
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            const column = columns[i];
+            let cell = this.getCell(column.id);
+
+            if (!cell) {
+                cell = this.createCell(column);
+                await cell.render();
+            } else {
+                this.htmlElement.appendChild(cell.htmlElement);
+                cell.reflow();
+            }
+
+            orderedCells.push(cell);
+        }
+
+        this.cells = orderedCells;
+        this.reflowPosition();
     }
 
     /**
@@ -128,10 +165,20 @@ abstract class Row {
             this.cells[j].reflow();
         }
 
+        this.reflowPosition();
+    }
+
+    /**
+     * Reflows row-level dimensions and horizontal offset.
+     */
+    protected reflowPosition(): void {
         const vp = this.viewport;
         if (vp.rowsWidth) {
             this.htmlElement.style.width = vp.rowsWidth + 'px';
         }
+
+        this.htmlElement.style.paddingLeft = vp.getRenderedColumnOffset() +
+            'px';
     }
 
     /**
@@ -159,7 +206,21 @@ abstract class Row {
      * The cell with the given column ID or undefined if not found.
      */
     public getCell(columnId: string): Cell | undefined {
-        return this.cells.find((cell): boolean => cell.column?.id === columnId);
+        return this.cellsByColumnId[columnId];
+    }
+
+    /**
+     * Returns the cell with the given column index.
+     *
+     * @param columnIndex
+     * The global column index.
+     *
+     * @returns
+     * The cell with the given column index or undefined if not found.
+     */
+    public getCellByColumnIndex(columnIndex: number): Cell | undefined {
+        const column = this.viewport.getColumnByIndex(columnIndex);
+        return column ? this.getCell(column.id) : void 0;
     }
 
     /**
@@ -170,6 +231,10 @@ abstract class Row {
      */
     public registerCell(cell: Cell): void {
         this.cells.push(cell);
+
+        if (cell.column) {
+            this.cellsByColumnId[cell.column.id] = cell;
+        }
     }
 
     /**
@@ -182,6 +247,13 @@ abstract class Row {
         const index = this.cells.indexOf(cell);
         if (index > -1) {
             this.cells.splice(index, 1);
+        }
+
+        if (
+            cell.column &&
+            this.cellsByColumnId[cell.column.id] === cell
+        ) {
+            delete this.cellsByColumnId[cell.column.id];
         }
     }
 }

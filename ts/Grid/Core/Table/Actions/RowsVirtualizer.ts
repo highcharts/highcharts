@@ -736,7 +736,7 @@ class RowsVirtualizer {
                 if (row) {
                     delete vp.pendingFocusCursor;
                     vp.restoreRenderedCellFocus(
-                        row.cells[columnIndex],
+                        row.getCellByColumnIndex(columnIndex),
                         rowIndex,
                         columnIndex
                     );
@@ -753,7 +753,9 @@ class RowsVirtualizer {
                     );
                     if (focusedRow) {
                         vp.restoreRenderedCellFocus(
-                            focusedRow.cells[focusCursor.columnIndex],
+                            focusedRow.getCellByColumnIndex(
+                                focusCursor.columnIndex
+                            ),
                             focusedRow.index,
                             focusCursor.columnIndex
                         );

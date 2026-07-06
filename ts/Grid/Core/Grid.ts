@@ -880,7 +880,10 @@ export class Grid {
             'minWidth' in columnDiff ||
             'maxWidth' in columnDiff
         ) {
-            vp.columnResizing.isDirty = true;
+            const columnResizing = vp.columnResizing;
+            if (columnResizing) {
+                columnResizing.isDirty = true;
+            }
         }
         delete columnDiff.width;
         delete columnDiff.minWidth;

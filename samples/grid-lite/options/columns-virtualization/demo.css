@@ -1,0 +1,14 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+#container {
+    height: 320px;
+}
+
+#container,
+.highcharts-controls-wrapper {
+    margin: 10px;
+}
+
+highcharts-controls {
+    display: inline-block;
+}

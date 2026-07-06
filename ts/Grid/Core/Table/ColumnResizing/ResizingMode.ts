@@ -54,7 +54,6 @@ abstract class ResizingMode {
      */
     public static readonly MIN_COLUMN_WIDTH = 20;
 
-
     /* *
     *
     *  Properties
@@ -216,12 +215,8 @@ abstract class ResizingMode {
     public reflow(): void {
         const vp = this.viewport;
 
-        let rowsWidth = 0;
-        for (let i = 0, iEnd = vp.columns.length; i < iEnd; ++i) {
-            rowsWidth += this.getColumnWidth(vp.columns[i]);
-        }
-
-        vp.rowsWidth = rowsWidth;
+        vp.columnLayout.reflow();
+        vp.rowsWidth = vp.columnLayout.totalWidth;
     }
 
     /* *

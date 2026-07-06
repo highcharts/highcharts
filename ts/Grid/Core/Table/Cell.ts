@@ -256,14 +256,16 @@ abstract class Cell {
             const { header } = vp;
             const localRowIndex = getVerticalPos();
             const nextVerticalDir = localRowIndex + dir[0];
+            const nextColumnIndex = column.index + dir[1];
 
             if (nextVerticalDir < 0 && header) {
                 const extraRowIdx = header.rows.length + nextVerticalDir;
                 if (extraRowIdx + 1 > header.levels) {
                     header.rows[extraRowIdx]
-                        .cells[column.index + dir[1]]?.htmlElement.focus();
+                        .getCellByColumnIndex(nextColumnIndex)
+                        ?.htmlElement.focus();
                 } else {
-                    vp.columns[column.index + dir[1]]
+                    vp.getColumnByIndex(nextColumnIndex)
                         ?.header?.htmlElement.focus();
                 }
                 return;
@@ -271,7 +273,18 @@ abstract class Cell {
 
             const nextRow = vp.getRenderedRows()[nextVerticalDir];
             if (nextRow) {
-                nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
+                const nextCell = nextRow.getCellByColumnIndex(
+                    nextColumnIndex
+                );
+
+                if (nextCell) {
+                    nextCell.htmlElement.focus();
+                } else if ((nextRow as TableRow).index !== void 0) {
+                    vp.focusCellByRowIndex(
+                        (nextRow as TableRow).index,
+                        nextColumnIndex
+                    );
+                }
             }
         }
     }

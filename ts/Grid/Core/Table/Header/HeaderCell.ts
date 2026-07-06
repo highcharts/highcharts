@@ -138,7 +138,7 @@ class HeaderCell extends Cell {
             const columnIds = vp.grid.getColumnIds(columnsTree, true);
             for (const columnId of columnIds) {
                 const column = vp.getColumn(columnId);
-                if (column) {
+                if (column && vp.isColumnRendered(columnId)) {
                     this.columns.push(column);
                 }
             }
@@ -355,7 +355,8 @@ class HeaderCell extends Cell {
     public isLastColumn(): boolean {
         const vp = this.row.viewport;
 
-        const lastViewportColumn = vp.columns[vp.columns.length - 1];
+        const renderedColumns = vp.getRenderedColumns();
+        const lastViewportColumn = renderedColumns[renderedColumns.length - 1];
         const lastCellColumn = this.columns?.[this.columns.length - 1];
 
         return lastViewportColumn === lastCellColumn;
@@ -363,6 +364,9 @@ class HeaderCell extends Cell {
 
     public override destroy(): void {
         this.toolbar?.destroy();
+        if (this.column?.header === this) {
+            delete this.column.header;
+        }
         super.destroy();
     }
 }

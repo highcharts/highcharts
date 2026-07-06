@@ -60,6 +60,7 @@ export const rawClassNames = {
     mockedRow: 'mocked-row',
     rowsContentNowrap: 'rows-content-nowrap',
     virtualization: 'virtualization',
+    columnVirtualization: 'column-virtualization',
     scrollableContent: 'scrollable-content',
     headerCell: 'header-cell',
     headerCellContainer: 'header-cell-container',

@@ -208,8 +208,13 @@ class ColumnsResizer {
 
         const diff = pageX - (this.dragStartX || 0);
         const vp = this.viewport;
+        const columnResizing = vp.columnResizing;
 
-        vp.columnResizing.resize(this, diff);
+        if (!columnResizing) {
+            return;
+        }
+
+        columnResizing.resize(this, diff);
 
         vp.reflow();
 
@@ -329,6 +334,13 @@ class ColumnsResizer {
         document.removeEventListener('touchend', this.onDocumentDragEnd);
         document.removeEventListener('touchcancel', this.onDocumentDragEnd);
 
+        this.clearHandles();
+    }
+
+    /**
+     * Removes all handle event listeners.
+     */
+    public clearHandles(): void {
         for (let i = 0, iEnd = this.handles.length; i < iEnd; i++) {
             const [handle, listeners] = this.handles[i];
 
@@ -336,6 +348,8 @@ class ColumnsResizer {
                 handle.removeEventListener(eventName, listener);
             }
         }
+
+        this.handles.length = 0;
     }
 }
 

@@ -150,10 +150,13 @@ export const defaultOptions: DeepPartial<Options> = {
             enabled: true
         },
         columns: {
+            bufferSize: 2,
             resizing: {
                 enabled: true,
                 mode: 'adjacent'
-            }
+            },
+            strictWidths: false,
+            virtualizationThreshold: 20
         },
         theme: 'hcg-theme-default'
     },

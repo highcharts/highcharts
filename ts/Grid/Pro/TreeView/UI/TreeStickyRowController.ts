@@ -283,7 +283,9 @@ class TreeStickyRowController {
             (row): boolean => row.index === rowIndex
         );
 
-        return stickyRow?.cells[columnIndex] as TableCell | undefined;
+        return stickyRow?.getCellByColumnIndex(columnIndex) as (
+            TableCell | undefined
+        );
     }
 
     /**
@@ -1216,7 +1218,7 @@ class TreeStickyRowController {
 
         const stickyCell = this.stickyRows.find(
             (row): boolean => row.id === focusState.rowId
-        )?.cells[focusState.columnIndex];
+        )?.getCellByColumnIndex(focusState.columnIndex);
 
         if (stickyCell) {
             if (document.activeElement !== stickyCell.htmlElement) {
@@ -1234,7 +1236,7 @@ class TreeStickyRowController {
 
         const viewportCell = this.viewport.rows.find(
             (row): boolean => row.id === focusState.rowId
-        )?.cells[focusState.columnIndex];
+        )?.getCellByColumnIndex(focusState.columnIndex);
 
         if (
             viewportCell &&

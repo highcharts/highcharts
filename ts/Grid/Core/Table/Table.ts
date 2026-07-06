@@ -34,8 +34,10 @@ import TableRow from './Body/TableRow.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
+import ColumnsVirtualizer from './Actions/ColumnsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
+import ColumnLayout from './Layout/ColumnLayout.js';
 
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
@@ -94,6 +96,11 @@ class Table {
     public columns: Column[] = [];
 
     /**
+     * The columns that are currently rendered in the DOM.
+     */
+    public renderedColumns: Column[] = [];
+
+    /**
      * The visible rows of the table.
      */
     public rows: TableRow[] = [];
@@ -117,9 +124,22 @@ class Table {
     public rowsVirtualizer: RowsVirtualizer;
 
     /**
+     * The columns virtualizer instance that handles horizontal column
+     * rendering.
+     * @internal
+     */
+    public columnsVirtualizer: ColumnsVirtualizer;
+
+    /**
      * The column distribution.
      */
-    public readonly columnResizing: ColumnResizingMode;
+    public readonly columnResizing?: ColumnResizingMode;
+
+    /**
+     * Cached horizontal layout for all columns.
+     * @internal
+     */
+    public readonly columnLayout: ColumnLayout;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -161,6 +181,11 @@ class Table {
      * The flag that indicates if the table rows are virtualized.
      */
     public virtualRows: boolean = true;
+
+    /**
+     * The flag that indicates if the table columns are virtualized.
+     */
+    public virtualColumns: boolean = false;
 
     /**
      * Cell context menu instance (lazy created).
@@ -206,7 +231,11 @@ class Table {
         this.grid = grid;
         this.tableElement = tableElement;
 
-        this.columnResizing = ColumnResizing.initMode(this);
+        this.columnLayout = new ColumnLayout(this);
+
+        if (!grid.options?.rendering?.columns?.strictWidths) {
+            this.columnResizing = ColumnResizing.initMode(this);
+        }
 
         if (grid.options?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -214,6 +243,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
+        this.columnsVirtualizer = new ColumnsVirtualizer(this);
 
         fireEvent(this, 'beforeInit');
 
@@ -259,7 +289,10 @@ class Table {
                 );
             }
 
-            if (renderingOptions?.columns?.resizing?.enabled) {
+            if (
+                !renderingOptions?.columns?.strictWidths &&
+                renderingOptions?.columns?.resizing?.enabled
+            ) {
                 this.columnsResizer = new ColumnsResizer(this);
             }
 
@@ -271,6 +304,8 @@ class Table {
             );
 
             await this.loadColumns();
+            this.reflowColumns();
+            this.columnsVirtualizer.initialize();
             this.setTbodyMinHeight();
 
             // Load & render head
@@ -285,7 +320,7 @@ class Table {
 
             // Ensure row widths are ready before first row render to prevent
             // initial pinned-row misalignment.
-            this.columnResizing.reflow();
+            this.reflowColumns();
             await this.rowsVirtualizer.initialRender();
         } finally {
             fireEvent(this, 'afterInit');
@@ -460,7 +495,7 @@ class Table {
             this.columns.push(column);
         }
 
-        this.columnResizing.loadColumns();
+        this.columnResizing?.loadColumns();
     }
 
     /**
@@ -540,7 +575,8 @@ class Table {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        this.columnResizing.reflow();
+        this.reflowColumns();
+        this.columnsVirtualizer.refresh();
 
         // Reflow the head
         this.header?.reflow();
@@ -568,6 +604,21 @@ class Table {
     }
 
     /**
+     * Reflows column dimensions.
+     */
+    private reflowColumns(): void {
+        const columnResizing = this.columnResizing;
+
+        if (columnResizing) {
+            columnResizing.reflow();
+            return;
+        }
+
+        this.columnLayout.reflow();
+        this.rowsWidth = this.columnLayout.totalWidth;
+    }
+
+    /**
      * Handles the focus event on the table body.
      *
      * @param e
@@ -591,6 +642,10 @@ class Table {
     private onScroll = (): void => {
         if (this.virtualRows) {
             void this.rowsVirtualizer.scroll();
+        }
+
+        if (this.virtualColumns) {
+            this.columnsVirtualizer.scroll();
         }
 
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
@@ -851,6 +906,37 @@ class Table {
     }
 
     /**
+     * Scrolls the table to the specified column.
+     *
+     * @param index
+     * The global index of the column to scroll to.
+     *
+     * @internal
+     */
+    public scrollToColumn(index: number): void {
+        const column = this.getColumnByIndex(index);
+
+        if (!column) {
+            return;
+        }
+
+        const left = this.columnLayout.getColumnLeft(column.index);
+        const right = this.columnLayout.getColumnRight(column.index);
+        const { tbodyElement } = this;
+        const visibleLeft = tbodyElement.scrollLeft;
+        const visibleRight = visibleLeft + tbodyElement.clientWidth;
+
+        if (left < visibleLeft) {
+            tbodyElement.scrollLeft = left;
+        } else if (right > visibleRight) {
+            tbodyElement.scrollLeft = Math.max(
+                0,
+                right - tbodyElement.clientWidth
+            );
+        }
+    }
+
+    /**
      * Returns the top inset of the visible table body area. Composed modules
      * can extend this via the `getViewportTopInset` event.
      */
@@ -926,7 +1012,14 @@ class Table {
         const targetRow = this.rows.find(
             (row): boolean => row.index === rowIndex
         );
-        const targetCell = targetRow?.cells[columnIndex];
+        if (!this.isColumnRendered(columnIndex)) {
+            this.pendingFocusCursor = [rowIndex, columnIndex];
+            this.scrollToColumn(columnIndex);
+            this.scrollToRow(rowIndex);
+            return;
+        }
+
+        const targetCell = targetRow?.getCellByColumnIndex(columnIndex);
 
         if (targetCell) {
             delete this.pendingFocusCursor;
@@ -1178,6 +1271,7 @@ class Table {
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
+        this.columnsVirtualizer.refresh();
 
         this.header?.scrollHorizontally(meta.scrollLeft);
         fireEvent(this, 'bodyScroll', {
@@ -1220,6 +1314,117 @@ class Table {
         }
 
         return this.columns[columnIndex];
+    }
+
+    /**
+     * Returns the column with the provided global index.
+     *
+     * @param index
+     * The global column index.
+     *
+     * @internal
+     */
+    public getColumnByIndex(index: number): Column | undefined {
+        return this.columns[index];
+    }
+
+    /**
+     * Returns columns that are currently rendered.
+     *
+     * @internal
+     */
+    public getRenderedColumns(): Column[] {
+        return (
+            this.renderedColumns.length || this.virtualColumns ?
+                this.renderedColumns :
+                this.columns
+        );
+    }
+
+    /**
+     * Returns whether the column is rendered.
+     *
+     * @param column
+     * Column ID or global column index.
+     *
+     * @internal
+     */
+    public isColumnRendered(column: string|number): boolean {
+        const columnId = typeof column === 'number' ?
+            this.getColumnByIndex(column)?.id :
+            column;
+
+        if (!columnId) {
+            return false;
+        }
+
+        return this.getRenderedColumns().some(
+            (renderedColumn): boolean => renderedColumn.id === columnId
+        );
+    }
+
+    /**
+     * Returns the horizontal offset of the first rendered column.
+     *
+     * @internal
+     */
+    public getRenderedColumnOffset(): number {
+        const firstColumn = this.getRenderedColumns()[0];
+
+        return firstColumn && this.virtualColumns ?
+            this.columnLayout.getColumnLeft(firstColumn.index) :
+            0;
+    }
+
+    /**
+     * Synchronizes rendered column cells and headers with the current range.
+     *
+     * @internal
+     */
+    public async updateRenderedColumns(): Promise<void> {
+        for (const row of this.getRenderedRows()) {
+            if (row.rendered) {
+                await row.syncRenderedCells();
+            }
+        }
+
+        if (this.grid.options?.rendering?.header?.enabled) {
+            this.columnsResizer?.clearHandles();
+            this.header?.destroy();
+            this.header = new TableHeader(this);
+            await this.header.render();
+        }
+
+        this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
+        this.header?.reflow();
+        this.rowsVirtualizer.reflowRows();
+
+        if (this.pendingFocusCursor) {
+            const [rowIndex, columnIndex] = this.pendingFocusCursor;
+            const row = this.getRenderedRowByIndex(rowIndex);
+            const cell = row?.getCellByColumnIndex(columnIndex);
+
+            if (cell) {
+                delete this.pendingFocusCursor;
+                this.restoreRenderedCellFocus(cell, rowIndex, columnIndex);
+            }
+        } else if (this.focusCursor && !this.focusCursor.bodySectionId) {
+            const focusCursor = this.focusCursor;
+            const rowIndex = await this.grid.dataProvider?.getRowIndex(
+                focusCursor.rowId
+            );
+            const row = defined(rowIndex) ?
+                this.getRenderedRowByIndex(rowIndex) :
+                void 0;
+
+            if (defined(rowIndex)) {
+                this.restoreRenderedCellFocus(
+                    row?.getCellByColumnIndex(focusCursor.columnIndex),
+                    rowIndex,
+                    focusCursor.columnIndex
+                );
+            }
+        }
     }
 
     /**
@@ -1304,7 +1509,7 @@ class Table {
                 this.bodySections.find(
                     (section): boolean => section.id === cursor.bodySectionId
                 )?.getRowById(cursor.rowId)
-                    ?.cells[cursor.columnIndex]
+                    ?.getCellByColumnIndex(cursor.columnIndex)
                     ?.htmlElement.focus();
                 return;
             }
@@ -1323,7 +1528,7 @@ class Table {
 
                 const row = this.getRenderedRowByIndex(rowIndex);
                 this.restoreRenderedCellFocus(
-                    row?.cells[cursor.columnIndex],
+                    row?.getCellByColumnIndex(cursor.columnIndex),
                     rowIndex,
                     cursor.columnIndex
                 );
@@ -1368,7 +1573,7 @@ export interface TableBodySection {
 export interface ViewportStateMetadata {
     scrollTop: number;
     scrollLeft: number;
-    columnResizing: ColumnResizingMode;
+    columnResizing?: ColumnResizingMode;
     focusCursor?: FocusCursor;
 }
 

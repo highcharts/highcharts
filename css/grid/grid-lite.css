@@ -173,6 +173,11 @@
         display: block;
     }
 
+    &.hcg-column-virtualization thead tr {
+        display: block;
+        overflow: hidden;
+    }
+
     thead th {
         position: relative;
     }
@@ -217,6 +222,12 @@
 
     &.hcg-scrollable-content > tbody > tr {
         display: block;
+    }
+
+    &.hcg-column-virtualization :is(thead tr, tbody tr) >
+        :where(.hcg-cell, .hcg-header-cell) {
+        display: inline-block;
+        vertical-align: top;
     }
 
     &.hcg-virtualization > tbody > tr {
