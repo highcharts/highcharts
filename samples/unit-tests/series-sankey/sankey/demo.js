@@ -564,12 +564,6 @@ QUnit.test('Sankey and circular data', function (assert) {
             width: 489,
             height: 400
         },
-        title: {
-            text: 'Highcharts Sankey Diagram'
-        },
-        tooltip: {
-            split: false
-        },
         series: [
             {
                 keys: ['from', 'to', 'weight'],
@@ -627,12 +621,8 @@ QUnit.test('Sankey and circular data', function (assert) {
 
     series.setData([['a', 'b', 1], ['b', 'c', 1]]);
     assert.deepEqual(
-        [
-            series.isDataCircular,
-            series.firstColCircShift,
-            series.circularNodeTopOffset
-        ],
-        [false, 0, 0],
+        [series.isDataCircular, series.firstColCircShift],
+        [false, 0],
         'Circular state and spacing should reset for acyclic data (#8218)'
     );
     assert.notOk(
