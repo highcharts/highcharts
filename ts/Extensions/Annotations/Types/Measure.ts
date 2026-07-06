@@ -37,6 +37,8 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
+import NBU from '../NavigationBindingsUtilities.js';
+const { getAxisFromOptions } = NBU;
 import {
     defined,
     extend,
@@ -241,14 +243,22 @@ if (defaultOptions.annotations?.types) {
                     selectType = typeOptions.selectType,
                     controlPointOptions = options.controlPointOptions,
                     inverted = chart.inverted,
-                    xAxis = chart.xAxis[typeOptions.xAxis],
-                    yAxis = chart.yAxis[typeOptions.yAxis],
+                    xAxis = getAxisFromOptions(
+                        chart, 'xAxis', typeOptions.xAxis
+                    ),
+                    yAxis = getAxisFromOptions(
+                        chart, 'yAxis', typeOptions.yAxis
+                    ),
                     ext = getExtremes(
                         target.xAxisMin,
                         target.xAxisMax,
                         target.yAxisMin,
                         target.yAxisMax
                     );
+
+                if (!xAxis || !yAxis) {
+                    return { x: 0, y: 0 };
+                }
 
                 let targetX = target.xAxisMax,
                     targetY = target.yAxisMax,
@@ -470,13 +480,18 @@ function init(
     const options = this.options.typeOptions,
         chart = this.chart,
         inverted = chart.inverted,
-        xAxis = chart.xAxis[options.xAxis],
-        yAxis = chart.yAxis[options.yAxis],
+        xAxis = getAxisFromOptions(chart, 'xAxis', options.xAxis),
+        yAxis = getAxisFromOptions(chart, 'yAxis', options.yAxis),
         bg = options.background,
         width: number = inverted ? bg.height : bg.width as any,
         height: number = inverted ? bg.width : bg.height as any,
-        selectType = options.selectType,
-        top = inverted ? xAxis.left : yAxis.top, // #13664
+        selectType = options.selectType;
+
+    if (!xAxis || !yAxis) {
+        return;
+    }
+
+    const top = inverted ? xAxis.left : yAxis.top, // #13664
         left = inverted ? yAxis.top : xAxis.left; // #13664
 
     this.startXMin = (options.point as any).x;
@@ -609,10 +624,14 @@ function recalculate(
     resize?: boolean
 ): void {
     const options = this.options.typeOptions,
-        xAxis = this.chart.xAxis[options.xAxis],
-        yAxis = this.chart.yAxis[options.yAxis],
+        xAxis = getAxisFromOptions(this.chart, 'xAxis', options.xAxis),
+        yAxis = getAxisFromOptions(this.chart, 'yAxis', options.yAxis),
         offsetX = this.offsetX,
         offsetY = this.offsetY;
+
+    if (!xAxis || !yAxis) {
+        return;
+    }
 
     this.xAxisMin = getPointPos(xAxis, this.startXMin, offsetX);
     this.xAxisMax = getPointPos(xAxis, this.startXMax, offsetX);
@@ -651,14 +670,18 @@ function updateStartPoints(
 ): void {
     const options = this.options.typeOptions,
         selectType = options.selectType,
-        xAxis = this.chart.xAxis[options.xAxis],
-        yAxis = this.chart.yAxis[options.yAxis],
+        xAxis = getAxisFromOptions(this.chart, 'xAxis', options.xAxis),
+        yAxis = getAxisFromOptions(this.chart, 'yAxis', options.yAxis),
         startXMin = this.startXMin,
         startXMax = this.startXMax,
         startYMin = this.startYMin,
         startYMax = this.startYMax,
         offsetX = this.offsetX,
         offsetY = this.offsetY;
+
+    if (!xAxis || !yAxis) {
+        return;
+    }
 
     if (resize) {
         if (selectType === 'x') {
@@ -741,8 +764,12 @@ class Measure extends Annotation {
      * Overrides default setter to get axes from typeOptions.
      */
     public setClipAxes(): void {
-        this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
-        this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis];
+        this.clipXAxis = getAxisFromOptions(
+            this.chart, 'xAxis', this.options.typeOptions.xAxis
+        );
+        this.clipYAxis = getAxisFromOptions(
+            this.chart, 'yAxis', this.options.typeOptions.yAxis
+        );
     }
 
     /**
@@ -915,13 +942,17 @@ class Measure extends Annotation {
         const chart = this.chart,
             options = this.options.typeOptions,
             point = this.options.typeOptions.point,
-            xAxis = chart.xAxis[options.xAxis],
-            yAxis = chart.yAxis[options.yAxis],
+            xAxis = getAxisFromOptions(chart, 'xAxis', options.xAxis),
+            yAxis = getAxisFromOptions(chart, 'yAxis', options.yAxis),
             inverted = chart.inverted,
             defaultOptions = {
                 point: point,
                 type: 'path'
             };
+
+        if (!xAxis || !yAxis) {
+            return;
+        }
 
         let xAxisMin = xAxis.toPixels(this.xAxisMin),
             xAxisMax = xAxis.toPixels(this.xAxisMax),
@@ -1361,20 +1392,6 @@ namespace Measure {
          * mouse. Can be one of x, y or xy.
          */
         selectType: AnnotationDraggableValue;
-
-        /**
-         * This number defines which xAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis
-         * in the xAxis array.
-         */
-        xAxis: number;
-
-        /**
-         * This number defines which yAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis
-         * in the yAxis array.
-         */
-        yAxis: number;
     }
 
 }
