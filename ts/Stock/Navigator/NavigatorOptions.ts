@@ -18,9 +18,9 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../../Core/Axis/AxisOptions';
-import type ChartOptions from '../../Core/Chart/ChartOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { DeepPartial } from '../../Shared/Types';
+import type { Options } from '../../Core/Options';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type {
     SeriesTypeOptions,
@@ -428,9 +428,12 @@ export interface NavigatorOptions extends BaseNavigatorOptions {
 export interface StandaloneNavigatorOptions extends BaseNavigatorOptions {
 
     /**
-     * Chart configuration for the standalone navigator.
+     * Options for the underlying chart of the standalone navigator. For
+     * example, `chartOptions.chart.height` sets the height of the whole
+     * component, while the `height` option sets the height of the navigator
+     * itself.
      */
-    chart: ChartOptions;
+    chartOptions?: Partial<Options>;
 }
 
 /* *
