@@ -85,7 +85,6 @@ export default function ScatterChart() {
             <Title align="left">
                 European olympic athletes by height and weight
             </Title>
-            {/* @ts-expect-error */}
             <Subtitle align="left">
                 Source:{' '}
                 <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">
