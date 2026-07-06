@@ -18,9 +18,13 @@ export default function BarChart() {
         <Chart containerProps={{ style: { height: '400px' } }}>
             <Title>Historic World Population by Region</Title>
             <Subtitle>
-                {
-                    'Source: <a href="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population"target="_blank">Wikipedia.org</a>'
-                }
+                Source:{' '}
+                <a
+                    href="https://en.wikipedia.org/wiki/List_of_continents_and_continental_subregions_by_population"
+                    target="_blank"
+                >
+                    Wikipedia.org
+                </a>
             </Subtitle>
             <XAxis
                 categories={['Africa', 'America', 'Asia', 'Europe']}

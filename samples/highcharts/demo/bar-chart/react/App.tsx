@@ -1,7 +1,7 @@
 import './App.css';
 import Chart from './Chart';
 
-export default function BarChart() {
+export default function App() {
     return (
         <figure className="highcharts-figure">
             <Chart />
