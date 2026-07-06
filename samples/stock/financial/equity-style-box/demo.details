@@ -1,6 +1,6 @@
 ---
 name: Equity Style Box
-description: Displays a fund's equity style box as a heatmap using the SecurityDetails connector.
+description: Displays the Morningstar™ Style Box for a fund as a heatmap using the SecurityDetails connector.
 tags:
   - Morningstar
 js_wrap: b

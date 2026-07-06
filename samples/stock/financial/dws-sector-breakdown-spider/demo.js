@@ -54,9 +54,7 @@ async function renderChart() {
             animation: {
                 duration: 0
             },
-            pointFormat:
-            '<span style="color:{point.color}">\u25CF</span>' +
-            ' {point.name}<b> {point.y:.2f}%</b><br/>'
+            headerFormat: null
         },
         series: [{
             name: 'Capital Group Global Equity Fund (LUX) B',

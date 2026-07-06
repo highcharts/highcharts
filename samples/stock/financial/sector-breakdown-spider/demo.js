@@ -110,7 +110,7 @@ async function renderChart() {
             },
             pointFormat:
                 '<span style="color:{point.color}">\u25CF</span> ' +
-                '{point.name}<b> {point.y:.2f}%</b><br/>'
+                '{series.name}<b> {point.y:.2f}%</b><br/>'
         },
         series: [{
             name: 'Category',

@@ -149,10 +149,7 @@ const chart = Highcharts.stockChart('container', {
     rangeSelector: {
         enabled: false
     },
-    scrollbar: {
-        height: 0,
-        trackBorderWidth: 0
-    },
+    scrollbar: false,
     plotOptions: {
         series: {
             lastPrice: {
