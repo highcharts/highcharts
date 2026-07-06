@@ -1,0 +1,51 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+#container {
+    display: grid;
+    grid-template-areas:
+        "chart"
+        "grid";
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+#grid {
+    grid-area: grid;
+    min-height: 245px;
+}
+
+#chart {
+    grid-area: chart;
+    min-height: 430px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+@media (max-width: 720px) {
+    #chart {
+        min-height: 360px;
+    }
+}
