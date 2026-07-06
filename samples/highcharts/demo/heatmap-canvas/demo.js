@@ -1,87 +1,99 @@
-Highcharts.chart('container', {
+(async () => {
+    const csv = await fetch(
+        // Source: https://p.vikjavev.no/ver/highcharts-demos/heatmap.csv.php?year=2025
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@5cd39e6abf/samples/data/large-heatmap.csv'
+    ).then(res => res.text());
 
-    data: {
-        csv: document.getElementById('csv').innerHTML
-    },
+    const dataTable = new Highcharts.Data({ csv }).getDataTable();
 
-    chart: {
-        type: 'heatmap'
-    },
+    Highcharts.chart('container', {
 
-    boost: {
-        useGPUTranslations: true
-    },
+        dataTable,
 
-    title: {
-        text: 'Large heatmap',
-        align: 'left',
-        x: 40
-    },
-
-    subtitle: {
-        text: 'Temperature variation by day and hour through 2023',
-        align: 'left',
-        x: 40
-    },
-
-    xAxis: {
-        type: 'datetime',
-        min: '2023-01-01',
-        max: '2023-12-31 23:59:59',
-        labels: {
-            align: 'left',
-            x: 5,
-            y: 14,
-            format: '{value:%B}' // long month
+        chart: {
+            type: 'heatmap'
         },
-        showLastLabel: false,
-        tickLength: 16
-    },
 
-    yAxis: {
+        boost: {
+            useGPUTranslations: true
+        },
+
         title: {
-            text: null
+            text: 'Large heatmap',
+            align: 'left',
+            x: 40
         },
-        labels: {
-            format: '{value}:00'
+
+        subtitle: {
+            text: 'Temperature variation by day and hour through 2025',
+            align: 'left',
+            x: 40
         },
-        minPadding: 0,
-        maxPadding: 0,
-        startOnTick: false,
-        endOnTick: false,
-        tickPositions: [0, 6, 12, 18, 24],
-        tickWidth: 1,
-        min: 0,
-        max: 23,
-        reversed: true
-    },
 
-    colorAxis: {
-        stops: [
-            [0, 'var(--highcharts-color-0)'],
-            [0.5, 'var(--highcharts-background-color)'],
-            [0.9, 'var(--highcharts-color-3)'],
-            [1, 'var(--highcharts-color-3)']
-        ],
-        min: -15,
-        max: 25,
-        startOnTick: false,
-        endOnTick: false,
-        labels: {
-            format: '{value}℃'
-        }
-    },
+        xAxis: {
+            type: 'datetime',
+            min: '2025-01-01',
+            max: '2025-12-31 23:59:59',
+            labels: {
+                align: 'left',
+                x: 5,
+                y: 14,
+                format: '{value:%B}' // long month
+            },
+            showLastLabel: false,
+            tickLength: 16
+        },
 
-    series: [{
-        boostThreshold: 100,
-        borderWidth: 0,
-        nullColor: '#EFEFEF',
-        colsize: 24 * 36e5, // one day
-        tooltip: {
-            headerFormat: 'Temperature<br/>',
-            pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
-                '℃</b>'
-        }
-    }]
+        yAxis: {
+            title: {
+                text: null
+            },
+            labels: {
+                format: '{value}:00'
+            },
+            minPadding: 0,
+            maxPadding: 0,
+            startOnTick: false,
+            endOnTick: false,
+            tickPositions: [0, 6, 12, 18, 24],
+            tickWidth: 1,
+            min: 0,
+            max: 23,
+            reversed: true
+        },
 
-});
+        colorAxis: {
+            stops: [
+                [0, '#3060cf'],
+                [0.5, 'var(--highcharts-background-color)'],
+                [0.9, '#fe6a35'],
+                [1, '#c4463a']
+            ],
+            min: -15,
+            max: 25,
+            startOnTick: false,
+            endOnTick: false,
+            labels: {
+                format: '{value}℃'
+            }
+        },
+
+        series: [{
+            dataMapping: {
+                x: 'Date',
+                y: 'Time',
+                value: 'Temperature'
+            },
+            boostThreshold: 100,
+            borderWidth: 0,
+            nullColor: '#EFEFEF',
+            colsize: 24 * 36e5, // One day
+            tooltip: {
+                headerFormat: 'Temperature<br/>',
+                pointFormat: '{point.x:%e %b, %Y} {point.y}:00: ' +
+                    '<b>{point.value} ℃</b>'
+            }
+        }]
+
+    });
+})();

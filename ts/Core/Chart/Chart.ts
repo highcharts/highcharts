@@ -53,12 +53,11 @@ import type {
 } from '../Series/SeriesType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animate,
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
