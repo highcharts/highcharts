@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Chart,
     Title,
@@ -12,52 +12,56 @@ import {
 import { ScatterSeries } from '@highcharts/react/series/Scatter';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { Athlete, SeriesData } from './types';
+import type { Athlete, ScatterSeriesConfig } from './types';
 
-export default function Scatter() {
-    const [seriesData, setSeriesData] = useState<SeriesData | null>(null);
+const seriesTemplate: Omit<ScatterSeriesConfig, 'data'>[] = [
+    { id: 'triathlon', name: 'Triathlon', marker: { symbol: 'triangle' } },
+    { id: 'volleyball', name: 'Volleyball', marker: { symbol: 'square' } },
+    { id: 'basketball', name: 'Basketball', marker: { symbol: 'circle' } }
+];
+
+async function getData(): Promise<Athlete[]> {
+    const response = await fetch(
+        'https://www.highcharts.com/samples/data/olympic2012.json'
+    );
+    return response.json();
+}
+
+export default function ScatterChart() {
+    const [series, setSeries] = useState<ScatterSeriesConfig[] | null>(null);
 
     useEffect(() => {
         let cancelled = false;
 
-        fetch('https://www.highcharts.com/samples/data/olympic2012.json')
-            .then((res) => res.json() as Promise<Athlete[]>)
+        getData()
             .then((data) => {
                 if (cancelled) return;
-
-                const filterBySport = (sport: string): [number, number][] =>
-                    data
-                        .filter(
-                            (a) =>
-                                a.sport === sport &&
-                                a.weight > 0 &&
-                                a.height > 0 &&
-                                a.continent === 'Europe'
-                        )
-                        .map((a) => [a.weight, a.height]);
-
-                setSeriesData({
-                    triathlon: filterBySport('triathlon'),
-                    volleyball: filterBySport('volleyball'),
-                    basketball: filterBySport('basketball')
-                });
+                setSeries(
+                    seriesTemplate.map((template) => ({
+                        ...template,
+                        data: data
+                            .filter(
+                                (athlete) =>
+                                    athlete.sport === template.id &&
+                                    athlete.weight > 0 &&
+                                    athlete.height > 0 &&
+                                    athlete.continent === 'Europe'
+                            )
+                            .map((athlete): [number, number] => [
+                                athlete.weight,
+                                athlete.height
+                            ])
+                    }))
+                );
             })
-            .catch(() => {
-                if (!cancelled) {
-                    setSeriesData({
-                        triathlon: [],
-                        volleyball: [],
-                        basketball: []
-                    });
-                }
-            });
+            .catch(() => {});
 
         return () => {
             cancelled = true;
         };
     }, []);
 
-    if (!seriesData) return null;
+    if (!series) return null;
 
     return (
         <Chart
@@ -76,26 +80,27 @@ export default function Scatter() {
                 style: { maxWidth: '800px', height: '500px', margin: 'auto' }
             }}
         >
-            <Exporting />
             <Accessibility />
+            <Exporting />
             <Title align="left">
                 European olympic athletes by height and weight
             </Title>
             <Subtitle align="left">
-                {
-                    'Source: <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">The Guardian</a>'
-                }
+                Source:{' '}
+                <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">
+                    The Guardian
+                </a>
             </Subtitle>
             <XAxis
                 labels={{ format: '{value} kg' }}
                 gridLineWidth={1}
                 lineWidth={0}
-                startOnTick={true}
-                endOnTick={true}
+                startOnTick
+                endOnTick
                 tickLength={0}
             />
             <YAxis labels={{ format: '{value:.1f} m' }}>Height</YAxis>
-            <Legend enabled={true} padding={0} />
+            <Legend enabled padding={0} />
             <PlotOptions
                 scatter={{
                     marker: {
@@ -120,24 +125,15 @@ export default function Scatter() {
                 }}
             />
             <Tooltip pointFormat="Weight: {point.x} kg <br/> Height: {point.y:.2f} m" />
-            <ScatterSeries
-                name="Triathlon"
-                id="triathlon"
-                options={{ marker: { symbol: 'triangle' } }}
-                data={seriesData.triathlon}
-            />
-            <ScatterSeries
-                name="Volleyball"
-                id="volleyball"
-                options={{ marker: { symbol: 'square' } }}
-                data={seriesData.volleyball}
-            />
-            <ScatterSeries
-                name="Basketball"
-                id="basketball"
-                options={{ marker: { symbol: 'circle' } }}
-                data={seriesData.basketball}
-            />
+            {series.map((s) => (
+                <ScatterSeries
+                    key={s.id}
+                    id={s.id}
+                    name={s.name}
+                    data={s.data}
+                    options={{ marker: s.marker }}
+                />
+            ))}
         </Chart>
     );
 }

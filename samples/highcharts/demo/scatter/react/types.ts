@@ -1,3 +1,5 @@
+import type { ScatterSeriesProps } from '@highcharts/react/series/Scatter';
+
 export type Athlete = {
     sport: string;
     weight: number;
@@ -5,8 +7,9 @@ export type Athlete = {
     continent: string;
 };
 
-export type SeriesData = {
-    triathlon: [number, number][];
-    volleyball: [number, number][];
-    basketball: [number, number][];
+export type ScatterSeriesConfig = {
+    id: string;
+    name: string;
+    marker: { symbol: string };
+    data: NonNullable<ScatterSeriesProps['data']>;
 };
