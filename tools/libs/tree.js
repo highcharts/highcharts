@@ -39,6 +39,7 @@ const OPTION_DOCLET_PROPERTIES = [
     'defaultByProduct',
     'defaultvalue',
     'deprecated',
+    'deprnote',
     'description',
     'exclude',
     'extends',
@@ -593,6 +594,7 @@ module.exports = {
  * @property {string} [declare]
  * @property {boolean|null|number|string} [defaultvalue]
  * @property {string} [deprecated]
+ * @property {string} [deprnote]
  * @property {string} [description]
  * @property {Array<string>} [exclude]
  * @property {string} [extends]

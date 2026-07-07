@@ -151,8 +151,11 @@ export function findMatchingDeprecatedOptions(
 export function getDeprecatedOptionMessage(
     metadata: DeprecatedOptionMetadata
 ): string {
+    const versionText = metadata.version ?
+        ` since version ${metadata.version}` :
+        '';
     const messageParts = [
-        `Option "${metadata.runtimePath}" has been deprecated.`
+        `Option "${metadata.runtimePath}" has been deprecated${versionText}.`
     ];
 
     if (metadata.text) {
