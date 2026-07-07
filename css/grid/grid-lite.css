@@ -224,8 +224,7 @@
         display: block;
     }
 
-    &.hcg-column-virtualization :is(thead tr, tbody tr) >
-        :where(.hcg-cell, .hcg-header-cell) {
+    &.hcg-column-virtualization :is(thead tr, tbody tr) > :where(.hcg-cell, .hcg-header-cell) {
         display: inline-block;
         vertical-align: top;
     }
