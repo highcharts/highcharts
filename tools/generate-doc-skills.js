@@ -72,6 +72,11 @@ Use this for core Highcharts JS work: installation, chart setup, options, axes, 
 - This first version focuses on core Highcharts JS.
 - For Stock, Maps, Gantt, Dashboards, Grid, or framework integrations, use product-specific docs or skills.
 - For exact option signatures, inspect local TypeScript declarations or the API reference after reading the copied tutorial docs.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/
+- API reference: https://api.highcharts.com/highcharts/
 `
     }
 ];
@@ -167,6 +172,18 @@ function selectDocs(docsRoot, skill) {
     ));
 }
 
+function stripContent(markdown) {
+    const result = markdown.replace(
+        /(^```[^\n]*$[\s\S]*?^```\s*$)|(<iframe[\s\S]*?<\/iframe>)|(^\s*!\[.*?\]\(.*?\)\s*$)|(^\s*<img\b[^>]*\/?>\s*$)/gimu,
+        function (match, codeBlock) {
+            return codeBlock ? match : '';
+        }
+    );
+    return result
+        .replace(/\n{4,}/gu, '\n\n\n')
+        .replace(/\s+$/u, '') + '\n';
+}
+
 function buildSkill(skill, docsRoot, tempRoot) {
     const files = selectDocs(docsRoot, skill);
     if (!files.length) {
@@ -183,7 +200,8 @@ function buildSkill(skill, docsRoot, tempRoot) {
         const source = path.join(docsRoot, file);
         const dest = path.join(docsOut, file);
         fs.mkdirSync(path.dirname(dest), { recursive: true });
-        fs.copyFileSync(source, dest);
+        const content = fs.readFileSync(source, 'utf8');
+        fs.writeFileSync(dest, stripContent(content));
     }
 
     return {
@@ -261,10 +279,40 @@ function selfTest() {
         fs.writeFileSync(path.join(docsRoot, 'react', 'components', 'chart.md'), '# Chart\n');
         fs.writeFileSync(path.join(docsRoot, 'getting-started', 'installation.md'), '# Install\n');
 
+        // Add a doc with strippable content
+        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'with-noise.md'), [
+            '# Getting Started',
+            '',
+            'Some intro text.',
+            '',
+            '<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/line-basic" allow="fullscreen"></iframe>',
+            '',
+            '![chart screenshot](chart.png)',
+            '',
+            '   ![indented image](indented.png)',
+            '',
+            '<img src="diagram.png" alt="diagram"/>',
+            '',
+            'More useful text.',
+            '',
+            '',
+            '',
+            '',
+            'After many blank lines.',
+            '',
+            '```html',
+            '<!-- This iframe in a code block should survive -->',
+            '<iframe src="example.html"></iframe>',
+            '![keep this](keep.png)',
+            '```',
+            '',
+            'End of doc.'
+        ].join('\n') + '\n');
+
         const outputRoot = path.join(tempRoot, 'out');
         const testSkill = {
             name: 'test-skill',
-            docs: { include: ['react/'], exclude: [] },
+            docs: { include: ['getting-started/'], exclude: [] },
             destinations: [{ path: path.join(outputRoot, 'test-skill') }],
             skillMd: '# Test skill\n'
         };
@@ -272,14 +320,41 @@ function selfTest() {
         const result = publishSkill(testSkill, generated, true);
 
         assert.deepEqual(generated.files, [
-            'react/components/chart.md',
-            'react/getting-started.md'
+            'getting-started/installation.md',
+            'getting-started/with-noise.md'
         ]);
         assert.equal(result.published.length, 1);
         assert.equal(
             fs.readFileSync(path.join(outputRoot, 'test-skill', 'SKILL.md'), 'utf8'),
             '# Test skill\n'
         );
+
+        const stripped = fs.readFileSync(
+            path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'with-noise.md'),
+            'utf8'
+        );
+        // Strippable content is gone
+        assert.equal(stripped.includes('<iframe style='), false, 'iframes should be stripped');
+        assert.equal(stripped.includes('![chart screenshot]'), false, 'markdown images should be stripped');
+        assert.equal(stripped.includes('![indented image]'), false, 'indented markdown images should be stripped');
+        assert.equal(stripped.includes('<img'), false, 'HTML images should be stripped');
+        // Non-strippable content survives
+        assert.equal(stripped.includes('# Getting Started'), true, 'headings should survive');
+        assert.equal(stripped.includes('Some intro text.'), true, 'prose should survive');
+        assert.equal(stripped.includes('More useful text.'), true, 'prose should survive');
+        assert.equal(stripped.includes('End of doc.'), true, 'prose should survive');
+        // Code block content preserved
+        assert.equal(stripped.includes('<iframe src="example.html"></iframe>'), true, 'iframe inside code block should survive');
+        assert.equal(stripped.includes('![keep this](keep.png)'), true, 'image inside code block should survive');
+        assert.equal(stripped.includes('```html'), true, 'code fence language tag should survive');
+        // Blank line collapsing
+        assert.equal(stripped.includes('\n\n\n\n'), false, 'should not have 3+ consecutive blank lines');
+        // Clean file is unchanged
+        const clean = fs.readFileSync(
+            path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'installation.md'),
+            'utf8'
+        );
+        assert.equal(clean, '# Install\n', 'clean file should be unchanged');
     } finally {
         fs.rmSync(tempRoot, { force: true, recursive: true });
     }

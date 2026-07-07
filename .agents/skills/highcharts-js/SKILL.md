@@ -18,3 +18,8 @@ Use this for core Highcharts JS work: installation, chart setup, options, axes, 
 - This first version focuses on core Highcharts JS.
 - For Stock, Maps, Gantt, Dashboards, Grid, or framework integrations, use product-specific docs or skills.
 - For exact option signatures, inspect local TypeScript declarations or the API reference after reading the copied tutorial docs.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/
+- API reference: https://api.highcharts.com/highcharts/
