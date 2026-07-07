@@ -9,160 +9,154 @@ const SUPER_SECTOR_COLORS = {
     Derivative: '#0F86A3'
 };
 
-const connector = new HighchartsConnectors.MorningstarDWS.InvestmentsConnector({
-    api: {
-        url: 'https://demo-live-data.highcharts.com',
-        access: {
-            url: 'https://demo-live-data.highcharts.com/token/oauth',
-            token: 'token'
+Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE', // TODO: replace with your grid key
+    data: {
+        connector: {
+            type: 'MorningstarDWSInvestments',
+            api: {
+                url: 'https://demo-live-data.highcharts.com',
+                access: {
+                    url: 'https://demo-live-data.highcharts.com/token/oauth',
+                    token: 'token'
+                }
+            },
+            security: {
+                id: '0P00002QN3'
+            },
+            converters: {
+                FixedIncomeSectorsBreakdown: {}
+            }
+        },
+        dataTableKey: 'IncAllSectors',
+        idColumn: 'Fixed_Income_Path',
+        treeView: {
+            enabled: true,
+            input: {
+                type: 'path',
+                pathColumn: 'Fixed_Income_Path'
+            }
         }
     },
-    security: {
-        id: '0P00002QN3'
+    caption: {
+        text: 'Fixed Income Sector Allocation'
     },
-    converters: {
-        FixedIncomeSectorsBreakdown: {}
-    }
-});
+    rendering: {
+        rows: {
+            strictHeights: true
+        }
+    },
+    columnDefaults: {
+        resizing: {
+            enabled: true
+        },
+        filtering: {
+            enabled: true
+        }
+    },
+    header: [
+        'Fixed_Income_Path',
+        'Fixed_Income_PercLong',
+        'Fixed_Income_PercShort',
+        'Fixed_Income_PercNet',
+        'Fixed_Income_PercLongRescaled'
+    ],
+    columns: [{
+        id: 'Fixed_Income_Path',
+        header: {
+            format: 'Sector'
+        },
+        cells: {
+            formatter: function () {
+                const name = this.value.split('/').pop();
+                return name.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                    .toLowerCase()
+                    .replace(/^./, c => c.toUpperCase());
+            }
+        }
+    },
+    {
+        id: 'Fixed_Income_PercLongRescaled',
+        header: {
+            format: 'Long (rescaled %)'
+        },
+        cells: {
+            format: '{value:,.2f}%',
+            renderer: {
+                type: 'sparkline',
+                chartOptions: function (cellValue) {
+                    const path = String(
+                        this.row?.data?.Fixed_Income_Path ?? ''
+                    );
+                    const superKey = path.split('/')[0] || '';
+                    const color =
+                        SUPER_SECTOR_COLORS[superKey] ?? '#7cb5ec';
 
-async function init() {
-    await connector.load();
-
-    Grid.grid('container', {
-        gridKey: 'YOUR-GRID-KEY-HERE', // TODO: replace with your grid key
-        data: {
-            dataTable: connector.getTable('IncAllSectors'),
-            idColumn: 'Fixed_Income_Path',
-            treeView: {
-                enabled: true,
-                input: {
-                    type: 'path',
-                    pathColumn: 'Fixed_Income_Path'
-                }
-            }
-        },
-        caption: {
-            text: 'Fixed Income Sector Allocation'
-        },
-        rendering: {
-            rows: {
-                strictHeights: true
-            }
-        },
-        columnDefaults: {
-            resizing: {
-                enabled: true
-            },
-            filtering: {
-                enabled: true
-            }
-        },
-        header: [
-            'Fixed_Income_Path',
-            'Fixed_Income_PercLong',
-            'Fixed_Income_PercShort',
-            'Fixed_Income_PercNet',
-            'Fixed_Income_PercLongRescaled'
-        ],
-        columns: [{
-            id: 'Fixed_Income_Path',
-            header: {
-                format: 'Sector'
-            },
-            cells: {
-                formatter: function () {
-                    const name = this.value.split('/').pop();
-                    return name.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-                        .toLowerCase()
-                        .replace(/^./, c => c.toUpperCase());
-                }
-            }
-        },
-        {
-            id: 'Fixed_Income_PercLongRescaled',
-            header: {
-                format: 'Long (rescaled %)'
-            },
-            cells: {
-                format: '{value:,.2f}%',
-                renderer: {
-                    type: 'sparkline',
-                    chartOptions: function (cellValue) {
-                        const path = String(
-                            this.row?.data?.Fixed_Income_Path ?? ''
-                        );
-                        const superKey = path.split('/')[0] || '';
-                        const color =
-                            SUPER_SECTOR_COLORS[superKey] ?? '#7cb5ec';
-
-                        return {
-                            chart: {
-                                type: 'bar',
-                                height: 30,
-                                margin: [2, 6, 2, 6],
-                                animation: false
-                            },
-                            yAxis: {
-                                visible: false,
-                                min: 0,
-                                max: 100
-                            },
-                            plotOptions: {
-                                bar: {
-                                    borderRadius: 1,
-                                    pointPadding: 0.2,
-                                    groupPadding: 0,
-                                    pointWidth: 4,
-                                    dataLabels: {
-                                        crop: false,
-                                        overflow: 'allow',
-                                        useHTML: true,
-                                        enabled: true,
-                                        format: `<span style="color:${color};">{y:.2f}%</span>`
-                                    }
-                                },
-                                series: {
-                                    animation: false
+                    return {
+                        chart: {
+                            type: 'bar',
+                            height: 30,
+                            margin: [2, 6, 2, 6],
+                            animation: false
+                        },
+                        yAxis: {
+                            visible: false,
+                            min: 0,
+                            max: 100
+                        },
+                        plotOptions: {
+                            bar: {
+                                borderRadius: 1,
+                                pointPadding: 0.2,
+                                groupPadding: 0,
+                                pointWidth: 4,
+                                dataLabels: {
+                                    crop: false,
+                                    overflow: 'allow',
+                                    useHTML: true,
+                                    enabled: true,
+                                    format: `<span style="color:${color};">{y:.2f}%</span>`
                                 }
                             },
-                            series: [{
-                                type: 'bar',
-                                color: color,
-                                data: [cellValue]
-                            }]
-                        };
-                    }
+                            series: {
+                                animation: false
+                            }
+                        },
+                        series: [{
+                            type: 'bar',
+                            color: color,
+                            data: [cellValue]
+                        }]
+                    };
                 }
             }
+        }
+    },
+    {
+        id: 'Fixed_Income_PercLong',
+        header: {
+            format: 'Long (%)'
         },
-        {
-            id: 'Fixed_Income_PercLong',
-            header: {
-                format: 'Long (%)'
-            },
-            cells: {
-                format: '{value:,.2f}'
-            }
+        cells: {
+            format: '{value:,.2f}'
+        }
+    },
+    {
+        id: 'Fixed_Income_PercShort',
+        header: {
+            format: 'Short'
         },
-        {
-            id: 'Fixed_Income_PercShort',
-            header: {
-                format: 'Short'
-            },
-            cells: {
-                format: '{value:,.2f}'
-            }
+        cells: {
+            format: '{value:,.2f}'
+        }
+    },
+    {
+        id: 'Fixed_Income_PercNet',
+        header: {
+            format: 'Net'
         },
-        {
-            id: 'Fixed_Income_PercNet',
-            header: {
-                format: 'Net'
-            },
-            cells: {
-                format: '{value:,.2f}'
-            }
-        }]
-    });
-}
-
-init();
+        cells: {
+            format: '{value:,.2f}'
+        }
+    }]
+});
