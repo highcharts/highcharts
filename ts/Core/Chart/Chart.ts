@@ -3802,8 +3802,6 @@ class Chart {
             updateAllSeries,
             runSetSize;
 
-        fireEvent(chart, 'update', { options: options });
-
         // If there are responsive rules in action, undo the responsive rules
         // before we apply the updated options and replay the responsive rules
         // on top from the chart.redraw function (#9617).
@@ -3812,6 +3810,17 @@ class Chart {
         }
 
         options = diffObjects(options, chart.options);
+
+        // If no changes are detected, stop further processing (#24805).
+        if (!Object.keys(options).length) {
+            // Replay the responsive rules undone above.
+            if (!isResponsiveOptions) {
+                chart.setResponsive(pick(redraw, true));
+            }
+            return;
+        }
+
+        fireEvent(chart, 'update', { options: options });
 
         chart.userOptions = merge(chart.userOptions, options);
 
