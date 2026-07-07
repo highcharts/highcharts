@@ -33,6 +33,7 @@ type FunctionsOf<T> = {
 };
 
 type FunctionNamesOf<T> = keyof FunctionsOf<T>;
+type NullType = null|undefined;
 
 /**
  * Add an event listener.
@@ -1418,6 +1419,55 @@ export function pad(number: number, length?: number, padder?: string): string {
             .length
     ).join(padder || '0') + number;
 }
+
+export function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ?
+            T4 extends NullType ?
+                T5 extends NullType ? undefined : T5 : T4 : T3 : T2 : T1;
+export function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ?
+            T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
+export function pick<T1, T2, T3>(...args: [T1, T2, T3]):
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ? undefined : T3 : T2 : T1;
+export function pick<T1, T2>(...args: [T1, T2]):
+T1 extends NullType ?
+    T2 extends NullType ? undefined : T2 : T1;
+export function pick<T1>(...args: [T1]):
+T1 extends NullType ? undefined : T1;
+export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
+/* eslint-disable valid-jsdoc */
+/**
+ * Return the first value that is not null or undefined.
+ *
+ * @deprecated next
+ * Use nullish coalescing (`??`) or explicit fallback logic instead.
+ *
+ * @function Highcharts.pick<T>
+ *
+ * @param {...(T|null|undefined)} args
+ *        Variable number of arguments to inspect.
+ *
+ * @return {T}
+ *         The value of the first argument that is not null or undefined.
+ */
+export function pick<T>(...args: Array<T|null|undefined>): T|undefined {
+    const length = args.length;
+
+    for (let i = 0; i < length; i++) {
+        const arg = args[i];
+
+        if (typeof arg !== 'undefined' && arg !== null) {
+            return arg;
+        }
+    }
+}
+/* eslint-enable valid-jsdoc */
 
 /**
  * Shortcut for parseInt

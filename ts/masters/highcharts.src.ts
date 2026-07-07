@@ -10,6 +10,8 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
+import type TimeBase from '../Shared/TimeBase';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
@@ -89,6 +91,7 @@ import {
     objectEach,
     offset,
     pad,
+    pick,
     pushUnique,
     pInt,
     relativeLength,
@@ -133,7 +136,7 @@ G.SVGRenderer = SVGRenderer;
 G.Templating = Templating;
 G.Tick = Tick;
 G.Time = class extends Time {
-    public constructor(options?: AnyRecord, lang?: AnyRecord) {
+    public constructor(options?: TimeBase.TimeOptions, lang?: LangOptionsCore) {
         const defaultOptions = Defaults.getOptions();
 
         super(
@@ -194,6 +197,7 @@ G.numberFormat = Templating.numberFormat;
 G.objectEach = objectEach;
 G.offset = offset;
 G.pad = pad;
+G.pick = pick;
 G.pushUnique = pushUnique;
 G.pInt = pInt;
 G.relativeLength = relativeLength;
