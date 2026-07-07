@@ -39,7 +39,10 @@ import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type { GridIconName, IconRegistryValue } from './UI/SvgIcons';
+import type {
+    CellContextMenuOptions
+} from './Table/CellContextMenu/CellContextMenuOptions';
+import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -89,133 +92,6 @@ export type StyleValue<T> = CSSObject | StyleCallback<T>;
  * Column sorting order type.
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
-
-/**
- * Registry of built-in action IDs for the cell context menu.
- * Composed features can extend this via module augmentation.
- */
-export interface CellContextMenuBuiltInActionIdRegistry {}
-
-/**
- * Built-in action ID for the cell context menu.
- */
-export type CellContextMenuActionId =
-    keyof CellContextMenuBuiltInActionIdRegistry | (string & {});
-
-/**
- * Options for a single cell context menu item.
- */
-export interface CellContextMenuActionItemOptions {
-    /**
-     * The label shown in the menu.
-     */
-    label: string;
-
-    /**
-     * Optional icon name for the menu item (built-in name from the default
-     * registry or custom name from rendering.icons).
-     */
-    icon?: string;
-
-    /**
-     * Whether the menu item should be disabled.
-     */
-    disabled?: boolean;
-
-    /**
-     * Whether to render a divider instead of a button.
-     */
-    separator?: false;
-
-    /**
-     * Callback executed when the menu item is clicked.
-     *
-     * The cell is available on `this` and is also passed as the first argument
-     * to support arrow functions.
-     */
-    onClick?: (
-        this: TableCell,
-        cell: TableCell
-    ) => void;
-
-    /**
-     * Nested submenu items.
-     */
-    items?: Array<CellContextMenuItemOptions>;
-}
-
-/**
- * Options for a divider item in the cell context menu.
- */
-export interface CellContextMenuDividerItemOptions {
-    /**
-     * Whether to render a divider instead of a button.
-     */
-    separator: true;
-
-    /**
-     * Optional label for accessibility or testing.
-     * Not rendered as a clickable item.
-     */
-    label?: string;
-}
-
-/**
- * Options for a built-in item in the cell context menu.
- */
-export interface CellContextMenuBuiltInItemOptions {
-    /**
-     * Built-in action ID.
-     */
-    actionId: CellContextMenuActionId;
-
-    /**
-     * Optional custom label for this built-in action.
-     */
-    label?: string;
-
-    /**
-     * Optional icon override for this built-in action.
-     */
-    icon?: GridIconName;
-
-    /**
-     * Whether this built-in action should be disabled.
-     */
-    disabled?: boolean;
-
-    /**
-     * Nested submenu items.
-     */
-    items?: Array<CellContextMenuItemOptions>;
-}
-
-/**
- * Options for a single cell context menu item.
- */
-export type CellContextMenuItemOptions =
-    CellContextMenuDividerItemOptions |
-    CellContextMenuActionItemOptions |
-    CellContextMenuBuiltInItemOptions |
-    CellContextMenuActionId;
-
-/**
- * Cell context menu options.
- */
-export interface CellContextMenuOptions {
-    /**
-     * Whether the cell context menu is enabled. When omitted, the menu is
-     * enabled when `items` are provided, or when a composed feature registers
-     * visible built-in actions for the current cell.
-     */
-    enabled?: boolean;
-
-    /**
-     * List of items to show in the cell context menu.
-     */
-    items?: Array<CellContextMenuItemOptions>;
-}
-
 
 /**
  * Options to control the content and the user experience of a grid structure.
@@ -271,6 +147,7 @@ export interface Options {
      * instead.
      *
      * @deprecated 2.3.0
+     * @deprnote Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptionsObject;
 
@@ -650,6 +527,7 @@ export interface ColumnCellOptions {
      * context menu will be shown on right-click.
      *
      * @sample grid-lite/demo/cell-context-menu Cell context menu
+     * @sample grid-pro/basic/cell-context-menu Cell context menu with built-ins
      */
     contextMenu?: CellContextMenuOptions;
 
@@ -1013,8 +891,8 @@ export interface LangOptions extends LangOptionsCore {
     /**
      * Language options for column filtering conditions.
      *
-     * @deprecated
-     * Use `columnFilteringOperators` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `columnFilteringOperators` instead.
      */
     columnFilteringConditions?: Partial<
         Record<ColumnFilteringCondition, string>
@@ -1117,24 +995,24 @@ export interface ColumnFilteringOptions {
     /**
      * The condition to use for filtering the column.
      *
-     * @deprecated
-     * Use `rule.operator` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `rule.operator` instead.
      */
     condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
      *
-     * @deprecated
-     * Use `rule.value` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `rule.value` instead.
      */
     value?: string | number | boolean | null;
 
     /**
      * Restricts the list of available filtering conditions for the column.
      *
-     * @deprecated
-     * Use `operators` instead.
+     * @deprecated 3.1.0
+     * @deprnote Use `operators` instead.
      *
      * @example
      * ```js
@@ -1154,6 +1032,7 @@ export interface ColumnFilteringOptions {
      * Whether the filtering is enabled or not.
      *
      * @sample grid-lite/basic/column-filtering Column filtering
+     * @default false
      */
     enabled?: boolean;
 
