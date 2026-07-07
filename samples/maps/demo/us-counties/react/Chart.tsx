@@ -11,11 +11,13 @@ import { MapSeries } from '@highcharts/react/series/Map';
 import { MapLineSeries } from '@highcharts/react/series/MapLine';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { FetchedMapData, MapSeriesData } from './types';
 
-const UsCounties = React.memo(function UsCounties() {
-    const [mapData, setMapData] = useState<FetchedMapData | null>(null);
-    const [data, setData] = useState<MapSeriesData | null>(null);
+import { addStateAcronyms } from './utils';
+import type { MapPointData } from './types';
+
+const UsCountiesChart = React.memo(function UsCountiesChart() {
+    const [topology, setTopology] = useState<Highcharts.TopoJSON | null>(null);
+    const [data, setData] = useState<MapPointData | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -23,43 +25,33 @@ const UsCounties = React.memo(function UsCounties() {
         Promise.all([
             fetch(
                 'https://code.highcharts.com/mapdata/countries/us/us-all-all.topo.json'
-            ).then((response) => response.json() as Promise<FetchedMapData>),
+            ).then(
+                (response) => response.json() as Promise<Highcharts.TopoJSON>
+            ),
             fetch(
                 'https://www.highcharts.com/samples/data/us-counties-unemployment.json'
-            ).then((response) => response.json() as Promise<MapSeriesData>)
+            ).then((response) => response.json() as Promise<MapPointData>)
         ])
-            .then(([fetchedMapData, fetchedData]) => {
+            .then(([fetchedTopology, fetchedData]) => {
                 if (cancelled) return;
-
-                // Add state acronym for tooltip
-                fetchedMapData.objects.default.geometries.forEach((g) => {
-                    const properties = g.properties;
-                    if (properties['hc-key']) {
-                        properties.name =
-                            (properties.name ?? '') +
-                            ', ' +
-                            properties['hc-key'].substr(3, 2).toUpperCase();
-                    }
-                });
-
-                setMapData(fetchedMapData);
+                setTopology(addStateAcronyms(fetchedTopology));
                 setData(fetchedData);
             })
-            .catch(() => {});
+            .catch((error) => console.error(error));
 
         return () => {
             cancelled = true;
         };
     }, []);
 
-    if (!mapData || !data) return null;
+    if (!topology || !data) return <>Downloading map...</>;
 
     return (
         <MapsChart
+            height="80%"
             options={{
                 chart: {
-                    map: mapData as unknown as import('highcharts').GeoJSON,
-                    height: '80%'
+                    map: topology
                 },
                 mapNavigation: {
                     enabled: true
@@ -165,4 +157,4 @@ const UsCounties = React.memo(function UsCounties() {
     );
 });
 
-export default UsCounties;
+export default UsCountiesChart;
