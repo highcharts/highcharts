@@ -1,6 +1,6 @@
 import './App.css';
 import Chart from './Chart';
 
-export default function UsCounties() {
+export default function App() {
     return <Chart />;
 }
