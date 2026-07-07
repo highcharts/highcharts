@@ -42,7 +42,7 @@ import { attr, internalClearTimeout } from '../../Shared/Utilities.js';
 
 /**
  * Internal types.
- * @private
+ * @internal
  */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
@@ -56,6 +56,7 @@ declare module '../../Core/Chart/ChartBase'{
  *
  * */
 
+/** @internal */
 class Announcer {
 
     /* *
@@ -74,6 +75,15 @@ class Announcer {
      *
      * */
 
+    /**
+     * @param {Highcharts.Chart} chart
+     * The chart that owns the announcer.
+     *
+     * @param {Highcharts.AnnouncerType} type
+     * The ARIA live region politeness setting.
+     *
+     * @internal
+     */
     constructor(
         private chart: Chart,
         type: Announcer.Type
@@ -88,10 +98,19 @@ class Announcer {
      *
      * */
 
+    /** @internal */
     public destroy(): void {
         this.domElementProvider.destroyCreatedElements();
     }
 
+    /**
+     * Announces a message to assistive technologies.
+     *
+     * @param {string} message
+     * The message to announce.
+     *
+     * @internal
+     */
     public announce(message: string): void {
         AST.setElementHTML(this.announceRegion, message);
 
@@ -106,6 +125,7 @@ class Announcer {
         }, 3000);
     }
 
+    /** @internal */
     private addAnnounceRegion(type: Announcer.Type): HTMLDOMElement {
         const chartContainer = (
                 this.chart.announcerContainer || this.createAnnouncerContainer()
@@ -129,6 +149,7 @@ class Announcer {
         return div;
     }
 
+    /** @internal */
     private createAnnouncerContainer(): HTMLDOMElement {
         const chart = this.chart,
             container = doc.createElement('div');
@@ -154,6 +175,7 @@ class Announcer {
  *
  * */
 
+/** @internal */
 namespace Announcer {
     export type Type = ('assertive'|'polite');
 }
@@ -164,4 +186,5 @@ namespace Announcer {
  *
  * */
 
+/** @internal */
 export default Announcer;
