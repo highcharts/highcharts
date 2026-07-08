@@ -683,7 +683,7 @@ class GaugeSeries extends Series {
         Series.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             this.chart.redraw();
         }
     }

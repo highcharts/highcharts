@@ -831,11 +831,11 @@ class BubbleSeries extends ScatterSeries {
             return isPercent ? smallestSize * length / 100 : length;
         };
 
-        const minPxSize = getPxSize((this.options.minSize ?? 8));
+        const minPxSize = getPxSize(this.options.minSize ?? 8);
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            getPxSize((this.options.maxSize ?? '20%')),
+            getPxSize(this.options.maxSize ?? '20%'),
             minPxSize
         );
 

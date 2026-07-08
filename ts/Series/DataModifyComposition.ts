@@ -202,7 +202,7 @@ namespace DataModifyComposition {
                 }
             });
 
-            if ((redraw ?? true)) {
+            if (redraw ?? true) {
                 this.chart.redraw();
             }
         }

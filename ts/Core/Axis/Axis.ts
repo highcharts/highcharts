@@ -4742,7 +4742,7 @@ class Axis {
         this.init(chart, options);
 
         chart.isDirtyBox = true;
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             chart.redraw();
         }
     }
@@ -4780,7 +4780,7 @@ class Axis {
         this.destroy();
         chart.isDirtyBox = true;
 
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             chart.redraw();
         }
     }

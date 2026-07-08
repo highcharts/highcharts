@@ -400,7 +400,7 @@ class MapNavigation {
         }
 
         // Add the mousewheel event
-        if ((options.enableMouseWheelZoom ?? options.enabled)) {
+        if (options.enableMouseWheelZoom ?? options.enabled) {
             this.unbindMouseWheel = this.unbindMouseWheel || addEvent(
                 chart.container,
                 'wheel',

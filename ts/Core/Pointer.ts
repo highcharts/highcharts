@@ -2097,7 +2097,7 @@ class Pointer {
                         false;
                 }
 
-                if ((hasMoved ?? true)) {
+                if (hasMoved ?? true) {
                     this.pinch(e);
                 }
 

@@ -469,7 +469,7 @@ class Legend {
 
         this.destroy();
         chart.isDirtyLegend = chart.isDirtyBox = true;
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             chart.redraw();
         }
 

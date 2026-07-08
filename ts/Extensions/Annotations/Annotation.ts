@@ -978,7 +978,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         chart.options.annotations[userOptionsIndex] = this.options;
 
         this.isUpdating = true;
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             chart.drawAnnotations();
         }
 

@@ -1052,7 +1052,7 @@ namespace BrokenAxis {
                 };
             }
 
-            if ((redraw ?? true)) {
+            if (redraw ?? true) {
                 axis.chart.redraw();
             }
         }

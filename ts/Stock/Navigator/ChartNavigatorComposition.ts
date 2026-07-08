@@ -207,7 +207,7 @@ function onChartAfterUpdate(
     ) {
         this.scroller = this.navigator = new NavigatorConstructor(this);
 
-        if ((event.redraw ?? true)) {
+        if (event.redraw ?? true) {
             this.redraw(event.animation); // #7067
         }
     }

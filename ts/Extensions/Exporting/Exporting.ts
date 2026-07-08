@@ -2876,7 +2876,7 @@ export class Exporting {
     ): void {
         this.isDirty = true;
         merge(true, this.options, exportingOptions);
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             this.chart.redraw();
         }
     }
@@ -3250,7 +3250,7 @@ export namespace Exporting {
                     if (chart.exporting) {
                         chart.exporting.isDirty = true;
                         merge(true, chart.options.navigation, options);
-                        if ((redraw ?? true)) {
+                        if (redraw ?? true) {
                             chart.redraw();
                         }
                     }

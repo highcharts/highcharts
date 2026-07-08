@@ -723,7 +723,7 @@ class Toolbar {
 
         this.chart.isDirtyBox = true;
 
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             this.chart.redraw();
         }
     }

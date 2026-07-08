@@ -415,7 +415,7 @@ export namespace ColorAxisComposition {
                 series.isDirtyData = true;
             });
 
-            if ((options.redraw ?? true)) {
+            if (options.redraw ?? true) {
                 chart.redraw(options.animation);
             }
 

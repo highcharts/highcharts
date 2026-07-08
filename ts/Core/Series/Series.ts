@@ -4708,7 +4708,7 @@ class Series {
             chart.isDirtyLegend = chart.isDirtyBox = true;
             chart.linkSeries(keepEvents);
 
-            if ((redraw ?? true)) {
+            if (redraw ?? true) {
                 chart.redraw(animation);
             }
         }
@@ -4994,7 +4994,7 @@ class Series {
 
         fireEvent(this, 'afterUpdate');
 
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             chart.redraw(keepPoints ? void 0 : false);
         }
     }

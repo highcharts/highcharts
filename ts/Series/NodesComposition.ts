@@ -458,7 +458,7 @@ namespace NodesComposition {
                 this.series.options.nodes = [nodeConfig];
             }
 
-            if ((redraw ?? true)) {
+            if (redraw ?? true) {
                 this.series.chart.redraw(animation);
             }
         }

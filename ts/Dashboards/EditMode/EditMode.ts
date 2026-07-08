@@ -597,7 +597,7 @@ class EditMode {
                 );
 
                 // Init dragDrop cell events only when using layouts.
-                if ((editMode.dragDrop || editMode.resizer)) {
+                if (editMode.dragDrop || editMode.resizer) {
                     const dragDrop = editMode.dragDrop;
 
                     addEvent(

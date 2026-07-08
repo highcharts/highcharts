@@ -165,7 +165,7 @@ function chartAddAnnotation(
 
     this.options.annotations.push(annotation.options);
 
-    if ((redraw ?? true)) {
+    if (redraw ?? true) {
         annotation.redraw();
         annotation.graphic.attr({
             opacity: 1

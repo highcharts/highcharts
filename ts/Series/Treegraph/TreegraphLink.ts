@@ -188,7 +188,7 @@ class LinkPoint extends ColumnPoint {
 
         this.visible = this.toNode.visible;
         extend(this, oldOptions);
-        if ((redraw ?? true)) {
+        if (redraw ?? true) {
             this.series.chart.redraw(animation);
         }
     }

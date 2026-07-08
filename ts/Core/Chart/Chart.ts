@@ -1558,7 +1558,7 @@ class Chart {
             // inspect the generated series.points.
             series.getPointsCollection()
                 .forEach((point): void => {
-                    if ((point.selectedStaging ?? point.selected)) {
+                    if (point.selectedStaging ?? point.selected) {
                         acc.push(point);
                     }
                 });
@@ -3591,7 +3591,7 @@ class Chart {
     ): Axis {
         const axis = new Axis(this, options.axis, coll);
 
-        if ((options.redraw ?? true)) {
+        if (options.redraw ?? true) {
             this.redraw(options.animation);
         }
 
@@ -4042,7 +4042,7 @@ class Chart {
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
             chart.setSize(newWidth as number, newHeight as number, animation);
-        } else if ((redraw ?? true)) {
+        } else if (redraw ?? true) {
             chart.redraw(animation);
         }
 

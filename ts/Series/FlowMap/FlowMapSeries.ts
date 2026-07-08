@@ -594,8 +594,8 @@ class FlowMapSeries extends MapLineSeries {
                 averageY += (fromPos.y + toPos.y) / 2;
             }
 
-            if ((point.options.weight ?? this.options.weight)) {
-                weights.push((point.options.weight ?? this.options.weight));
+            if (point.options.weight ?? this.options.weight) {
+                weights.push(point.options.weight ?? this.options.weight);
             }
         });
 
