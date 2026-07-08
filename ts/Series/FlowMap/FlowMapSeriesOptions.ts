@@ -16,7 +16,7 @@
  *
  * */
 
-import MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions';
+import type MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions';
 import type { MarkerEndOptions } from './FlowMapPointOptions';
 
 
