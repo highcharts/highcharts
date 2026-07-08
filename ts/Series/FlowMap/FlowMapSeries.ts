@@ -55,7 +55,7 @@ import {
 /**
  * The flowmap series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.flowmap
  *
@@ -250,7 +250,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * Get vector length.
-     * @private
+     * @internal
      */
     public static getLength(x: number, y: number): number {
         return Math.sqrt(x * x + y * y);
@@ -258,7 +258,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * Return a normalized vector.
-     * @private
+     * @internal
      */
     public static normalize(x: number, y: number): Array<number> {
         const length = this.getLength(x, y);
@@ -267,7 +267,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * Return an SVGPath for markerEnd.
-     * @private
+     * @internal
      */
     public static markerEndPath(
         lCorner: [number, number],
@@ -358,7 +358,7 @@ class FlowMapSeries extends MapLineSeries {
     /**
      * Animate the flowmap point one by one from 'fromPoint'.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.flowmap#animate
      *
      * @param {boolean} init
@@ -409,7 +409,7 @@ class FlowMapSeries extends MapLineSeries {
     /**
      * Get the actual width of a link either as a mapped weight between
      * `minWidth` and `maxWidth` or a specified width.
-     * @private
+     * @internal
      */
     public getLinkWidth(point: FlowMapPoint): number {
 
@@ -438,7 +438,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * Automatically calculate the optimal curve based on a reference point.
-     * @private
+     * @internal
      */
     public autoCurve(
         fromX: number,
@@ -482,7 +482,7 @@ class FlowMapSeries extends MapLineSeries {
 
     /**
      * Get point attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point: FlowMapPoint,
@@ -521,7 +521,7 @@ class FlowMapSeries extends MapLineSeries {
      * need two loops: first loop to calculate data, like smallest/greatest
      * weights and centerOfPoints, which needs the calculated positions, second
      * loop for calculating shapes of points based on previous calculations.
-     * @private
+     * @internal
      */
     public translate(): void {
         if (this.chart.hasRendered && (this.isDirtyData || !this.hasRendered)) {

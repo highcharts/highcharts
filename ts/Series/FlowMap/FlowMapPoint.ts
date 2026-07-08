@@ -65,9 +65,7 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     isValid(): boolean {
         let valid = !!(this.options.to && this.options.from);
         [this.options.to, this.options.from]
