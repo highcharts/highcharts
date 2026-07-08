@@ -96,6 +96,11 @@ class Table {
     public columns: Column[] = [];
 
     /**
+     * Columns indexed by ID.
+     */
+    private columnsById: Record<string, Column> = {};
+
+    /**
      * The columns that are currently rendered in the DOM.
      */
     public renderedColumns: Column[] = [];
@@ -493,6 +498,7 @@ class Table {
             const column = new Column(this, columnId, i);
             await column.init();
             this.columns.push(column);
+            this.columnsById[columnId] = column;
         }
 
         this.columnResizing?.loadColumns();
@@ -1303,17 +1309,7 @@ class Table {
      * The ID of the column.
      */
     public getColumn(id: string): Column | undefined {
-        const columns = this.grid.enabledColumns;
-
-        if (!columns) {
-            return;
-        }
-        const columnIndex = columns.indexOf(id);
-        if (columnIndex < 0) {
-            return;
-        }
-
-        return this.columns[columnIndex];
+        return this.columnsById[id];
     }
 
     /**
@@ -1350,16 +1346,21 @@ class Table {
      * @internal
      */
     public isColumnRendered(column: string|number): boolean {
-        const columnId = typeof column === 'number' ?
-            this.getColumnByIndex(column)?.id :
-            column;
+        const columnObject = typeof column === 'number' ?
+            this.getColumnByIndex(column) :
+            this.getColumn(column);
 
-        if (!columnId) {
+        if (!columnObject) {
             return false;
         }
 
-        return this.getRenderedColumns().some(
-            (renderedColumn): boolean => renderedColumn.id === columnId
+        if (!this.virtualColumns) {
+            return true;
+        }
+
+        return (
+            columnObject.index >= this.columnsVirtualizer.columnCursor &&
+            columnObject.index <= this.columnsVirtualizer.columnEnd
         );
     }
 
@@ -1369,10 +1370,10 @@ class Table {
      * @internal
      */
     public getRenderedColumnOffset(): number {
-        const firstColumn = this.getRenderedColumns()[0];
-
-        return firstColumn && this.virtualColumns ?
-            this.columnLayout.getColumnLeft(firstColumn.index) :
+        return this.virtualColumns ?
+            this.columnLayout.getColumnLeft(
+                this.columnsVirtualizer.columnCursor
+            ) :
             0;
     }
 

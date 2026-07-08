@@ -74,7 +74,6 @@ class FilterRow extends HeaderRow {
 
     public override async renderContent(): Promise<void> {
         const vp = this.viewport;
-        const enabledColumns = vp.grid.enabledColumns || [];
 
         vp.theadElement?.appendChild(this.htmlElement);
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
@@ -83,10 +82,6 @@ class FilterRow extends HeaderRow {
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             const column = columns[i];
-            if (enabledColumns?.indexOf(column.id) < 0) {
-                continue;
-            }
-
             const cell = this.createCell(column);
 
             await cell.render();

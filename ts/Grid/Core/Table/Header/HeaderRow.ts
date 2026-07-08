@@ -98,7 +98,7 @@ class HeaderRow extends Row {
     public async renderContent(level: number): Promise<void> {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
-        const enabledColumns = vp.grid.enabledColumns || [];
+        const firstRenderedColumn = vp.getRenderedColumns()[0];
 
         // Render element
         vp.theadElement?.appendChild(this.htmlElement);
@@ -112,12 +112,19 @@ class HeaderRow extends Row {
             for (let i = 0, iEnd = columnsOnLevel.length; i < iEnd; i++) {
                 const columnOnLevel = columnsOnLevel[i];
                 const colIsString = typeof columnOnLevel === 'string';
-                const colSpan = (!colIsString && columnOnLevel.columns) ?
-                    vp.grid
-                        .getColumnIds(columnOnLevel.columns)
-                        .filter((columnId): boolean =>
-                            vp.isColumnRendered(columnId)
-                        ).length : 0;
+                const columnIds = !colIsString && columnOnLevel.columns ?
+                    vp.grid.getColumnIds(columnOnLevel.columns) :
+                    void 0;
+                let colSpan = 0;
+
+                if (columnIds) {
+                    for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
+                        if (vp.isColumnRendered(columnIds[j])) {
+                            ++colSpan;
+                        }
+                    }
+                }
+
                 const columnId = colIsString ?
                     columnOnLevel : columnOnLevel.columnId;
                 const dataColumn = columnId ?
@@ -129,13 +136,10 @@ class HeaderRow extends Row {
 
                 // Skip hidden column or header when all columns are hidden.
                 if (
-                    (
-                        columnId && enabledColumns &&
-                        (
-                            enabledColumns.indexOf(columnId) < 0 ||
-                            !vp.isColumnRendered(columnId)
-                        )
-                    ) || (!dataColumn && colSpan === 0)
+                    (columnId && (
+                        !dataColumn ||
+                        !vp.isColumnRendered(dataColumn.index)
+                    )) || (!dataColumn && colSpan === 0)
                 ) {
                     continue;
                 }
@@ -164,7 +168,7 @@ class HeaderRow extends Row {
                 }
 
                 // Add class to disable left border on first column
-                if (dataColumn === vp.getRenderedColumns()[0] && i === 0) {
+                if (dataColumn === firstRenderedColumn && i === 0) {
                     headerCell.htmlElement.classList.add(
                         Globals.getClassName('columnFirst')
                     );

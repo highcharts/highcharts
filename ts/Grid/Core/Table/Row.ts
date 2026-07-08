@@ -124,15 +124,26 @@ abstract class Row {
      * Synchronizes the row cells with the currently rendered columns.
      */
     public async syncRenderedCells(): Promise<void> {
-        const columns = this.viewport.getRenderedColumns();
-        const visibleIds: Record<string, boolean> = {};
+        const vp = this.viewport;
+        const columns = vp.getRenderedColumns();
+        const firstColumn = columns[0];
+        const lastColumn = columns[columns.length - 1];
+        const from = vp.virtualColumns ?
+            vp.columnsVirtualizer.columnCursor :
+            firstColumn?.index ?? 0;
+        const to = vp.virtualColumns ?
+            vp.columnsVirtualizer.columnEnd :
+            lastColumn?.index ?? -1;
 
-        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
-            visibleIds[columns[i].id] = true;
-        }
+        for (let i = this.cells.length - 1; i >= 0; --i) {
+            const cell = this.cells[i];
+            const columnIndex = cell.column?.index;
 
-        for (const cell of [...this.cells]) {
-            if (cell.column && !visibleIds[cell.column.id]) {
+            if (
+                columnIndex === void 0 ||
+                columnIndex < from ||
+                columnIndex > to
+            ) {
                 cell.destroy();
             }
         }
