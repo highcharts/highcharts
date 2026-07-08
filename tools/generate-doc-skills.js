@@ -59,18 +59,18 @@ description: Use to implement, configure, and troubleshoot Highcharts JS charts 
 
 # Highcharts JS
 
-Use this for Highcharts JS work: installation, chart setup, options, axes, series, data, styling, accessibility, exporting, and common chart types.
+Use this for Highcharts JS work: installation, chart setup, options, axes, series, data, styling, and common chart types. Includes accessibility overview, export basics, and selected advanced features.
 
 ## Workflow
 
-1. Browse the \`references/docs/\` directory for relevant topics.
+1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
 ## Boundaries
 
-- This first version focuses on core Highcharts JS.
-- For Stock, Maps, Gantt, Dashboards, Grid, or framework integrations, use product-specific docs or skills.
+- For Stock, Maps, Gantt, or Morningstar, use the \`highcharts-stock\`, \`highcharts-maps\`, \`highcharts-gantt\`, or \`highcharts-morningstar\` skill.
+- For Dashboards, Grid, React, or Flutter, consult \`docs/<area>/\` directly or the live docs — no generated skill exists yet.
 - For exact option signatures, inspect local TypeScript declarations or the API reference after reading the copied tutorial docs.
 
 ## References
@@ -104,7 +104,7 @@ Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical ind
 
 ## Workflow
 
-1. Browse the \`references/docs/\` directory for relevant topics.
+1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
@@ -112,6 +112,7 @@ Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical ind
 
 - For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
 - For Morningstar data connectors, use the \`highcharts-morningstar\` skill.
+- For Maps or Gantt, use the \`highcharts-maps\` or \`highcharts-gantt\` skill.
 - For exact option signatures, inspect local TypeScript declarations or the API reference.
 
 ## References
@@ -145,13 +146,15 @@ Use this for Highcharts Maps work: map series, mappoint, mapline, mapbubble, flo
 
 ## Workflow
 
-1. Browse the \`references/docs/\` directory for relevant topics.
+1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
 ## Boundaries
 
 - For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For Stock, Gantt, or Morningstar, use the \`highcharts-stock\`, \`highcharts-gantt\`, or \`highcharts-morningstar\` skill.
+- For Dashboards or Grid, consult \`docs/<area>/\` directly or the live docs.
 - For exact option signatures, inspect local TypeScript declarations or the API reference.
 
 ## References
@@ -185,13 +188,15 @@ Use this for Highcharts Gantt work: task configuration, dependencies, axis grids
 
 ## Workflow
 
-1. Browse the \`references/docs/\` directory for relevant topics.
+1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
 ## Boundaries
 
 - For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For Stock, Maps, or Morningstar, use the \`highcharts-stock\`, \`highcharts-maps\`, or \`highcharts-morningstar\` skill.
+- For Dashboards or Grid, consult \`docs/<area>/\` directly or the live docs.
 - For exact option signatures, inspect local TypeScript declarations or the API reference.
 
 ## References
@@ -216,23 +221,24 @@ Use this for Highcharts Gantt work: task configuration, dependencies, axis grids
         ],
         skillMd: `---
 name: highcharts-morningstar
-description: Use to implement and configure Highcharts Connectors for Morningstar Direct Web Services (DWS) from the bundled docs.
+description: Use to implement and configure Highcharts Morningstar connectors (standard and DWS variants) from the bundled docs.
 ---
 
 # Highcharts Morningstar Connectors
 
-Use this for Morningstar DWS connector work: time series (price, OHLCV, growth, returns, dividends, ratings), screeners, risk score, goal analysis, x-ray, security compare, and regulatory news.
+Use this for Morningstar connector work: time series (price, OHLCV, growth, returns, dividends, ratings), screeners, risk score, goal analysis, x-ray, security compare, and regulatory news. Covers both standard and DWS connector variants — start with \`references/docs/morningstar/morningstar.md\` to pick the right one.
 
 ## Workflow
 
-1. Browse the \`references/docs/\` directory for relevant topics.
-2. Read only the relevant copied docs before coding.
-3. Prefer documented declarative options over imperative runtime mutation.
+1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
+2. Read \`morningstar/morningstar.md\` first to understand standard vs DWS connector variants.
+3. Follow the connector constructor → load → table-mapping pattern shown in the docs.
 
 ## Boundaries
 
 - For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
 - For Highcharts Stock chart types (candlestick, OHLC, navigator, indicators), use the \`highcharts-stock\` skill.
+- For Maps or Gantt, use the \`highcharts-maps\` or \`highcharts-gantt\` skill.
 - For exact option signatures, inspect local TypeScript declarations or the API reference.
 
 ## References
@@ -340,8 +346,15 @@ function selectDocs(docsRoot, skill) {
 function stripContent(markdown) {
     const result = markdown.replace(
         /(^```[^\n]*$[\s\S]*?^```\s*$)|(<iframe[\s\S]*?<\/iframe>)|(^\s*!\[.*?\]\(.*?\)\s*$)|(^\s*<img\b[^>]*\/?>\s*$)/gimu,
-        function (match, codeBlock) {
-            return codeBlock ? match : '';
+        function (match, codeBlock, iframeBlock) {
+            if (codeBlock) {
+                return match;
+            }
+            if (iframeBlock) {
+                const srcMatch = iframeBlock.match(/\bsrc=["']([^"']+)["']/iu);
+                return srcMatch ? `[Live demo](${srcMatch[1]})` : '';
+            }
+            return '';
         }
     );
     return result
@@ -368,6 +381,30 @@ function buildSkill(skill, docsRoot, tempRoot) {
         const content = fs.readFileSync(source, 'utf8');
         fs.writeFileSync(dest, stripContent(content));
     }
+
+    // Generate topic index
+    const groups = {};
+    for (const file of files) {
+        const dest = path.join(docsOut, file);
+        const content = fs.readFileSync(dest, 'utf8');
+        const h1Match = content.match(/^# (.+)$/mu) ||
+            content.match(/^(.+)\n=+\s*$/mu);
+        const title = h1Match ? h1Match[1] : path.basename(file, '.md');
+        const group = file.split('/')[0];
+        if (!groups[group]) {
+            groups[group] = [];
+        }
+        groups[group].push({ file, title });
+    }
+    const indexLines = ['# Topic Index', ''];
+    for (const [group, entries] of Object.entries(groups)) {
+        indexLines.push(`## ${group}`, '');
+        for (const entry of entries) {
+            indexLines.push(`- [${entry.title}](${entry.file})`);
+        }
+        indexLines.push('');
+    }
+    fs.writeFileSync(path.join(docsOut, 'index.md'), indexLines.join('\n'));
 
     return {
         root: skillRoot,
@@ -443,6 +480,8 @@ function selfTest() {
         fs.writeFileSync(path.join(docsRoot, 'react', 'getting-started.md'), '# React start\n');
         fs.writeFileSync(path.join(docsRoot, 'react', 'components', 'chart.md'), '# Chart\n');
         fs.writeFileSync(path.join(docsRoot, 'getting-started', 'installation.md'), '# Install\n');
+        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'no-heading.md'), 'Just some text without a heading.\n');
+        fs.writeFileSync(path.join(docsRoot, 'getting-started', 'setext-heading.md'), 'Setext Title\n===\n\nSome content.\n');
 
         // Add a doc with strippable content
         fs.writeFileSync(path.join(docsRoot, 'getting-started', 'with-noise.md'), [
@@ -451,6 +490,8 @@ function selfTest() {
             'Some intro text.',
             '',
             '<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/line-basic" allow="fullscreen"></iframe>',
+            '',
+            '   <iframe width="320" height="800" src="https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui" allow="fullscreen"></iframe>',
             '',
             '![chart screenshot](chart.png)',
             '',
@@ -486,6 +527,8 @@ function selfTest() {
 
         assert.deepEqual(generated.files, [
             'getting-started/installation.md',
+            'getting-started/no-heading.md',
+            'getting-started/setext-heading.md',
             'getting-started/with-noise.md'
         ]);
         assert.equal(result.published.length, 1);
@@ -499,7 +542,10 @@ function selfTest() {
             'utf8'
         );
         // Strippable content is gone
-        assert.equal(stripped.includes('<iframe style='), false, 'iframes should be stripped');
+        assert.equal(stripped.includes('<iframe style='), false, 'raw iframe HTML should be stripped');
+        assert.equal(stripped.includes('<iframe width='), false, 'indented raw iframe HTML should be stripped');
+        assert.equal(stripped.includes('[Live demo](https://www.highcharts.com/samples/embed/highcharts/demo/line-basic)'), true, 'iframe src should become a demo link');
+        assert.equal(stripped.includes('[Live demo](https://www.highcharts.com/samples/embed/stock/demo/stock-tools-gui)'), true, 'indented iframe src should become a demo link');
         assert.equal(stripped.includes('![chart screenshot]'), false, 'markdown images should be stripped');
         assert.equal(stripped.includes('![indented image]'), false, 'indented markdown images should be stripped');
         assert.equal(stripped.includes('<img'), false, 'HTML images should be stripped');
@@ -521,10 +567,22 @@ function selfTest() {
         );
         assert.equal(clean, '# Install\n', 'clean file should be unchanged');
 
+        // Index generation
+        const indexContent = fs.readFileSync(
+            path.join(outputRoot, 'test-skill', 'references', 'docs', 'index.md'),
+            'utf8'
+        );
+        assert.equal(indexContent.includes('# Topic Index'), true, 'index should have Topic Index heading');
+        assert.equal(indexContent.includes('## getting-started'), true, 'index should group by directory');
+        assert.equal(indexContent.includes('[Install](getting-started/installation.md)'), true, 'index should link to docs with H1 title');
+        assert.equal(indexContent.includes('[Getting Started](getting-started/with-noise.md)'), true, 'index should link to docs with H1 title');
+        assert.equal(indexContent.includes('[no-heading](getting-started/no-heading.md)'), true, 'index should fall back to filename when no H1');
+        assert.equal(indexContent.includes('[Setext Title](getting-started/setext-heading.md)'), true, 'index should detect Setext H1 headings');
+
         for (const skill of SKILLS) {
             assert.match(
                 skill.skillMd,
-                /^---\nname: .+\ndescription: .+\n---/,
+                /^---\nname: .+\ndescription: .+\n---/u,
                 `${skill.name}: skillMd must have name and description frontmatter`
             );
         }

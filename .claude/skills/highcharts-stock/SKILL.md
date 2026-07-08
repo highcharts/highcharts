@@ -9,7 +9,7 @@ Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical ind
 
 ## Workflow
 
-1. Browse the `references/docs/` directory for relevant topics.
+1. Start with `references/docs/index.md` for a topic map, then read relevant docs.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
@@ -17,6 +17,7 @@ Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical ind
 
 - For core Highcharts JS concepts (axes, series, styling, accessibility), use the `highcharts-js` skill.
 - For Morningstar data connectors, use the `highcharts-morningstar` skill.
+- For Maps or Gantt, use the `highcharts-maps` or `highcharts-gantt` skill.
 - For exact option signatures, inspect local TypeScript declarations or the API reference.
 
 ## References

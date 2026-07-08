@@ -5,18 +5,18 @@ description: Use to implement, configure, and troubleshoot Highcharts JS charts 
 
 # Highcharts JS
 
-Use this for Highcharts JS work: installation, chart setup, options, axes, series, data, styling, accessibility, exporting, and common chart types.
+Use this for core Highcharts JS work: installation, chart setup, options, axes, series, data, styling, and common chart types. Includes accessibility overview, export basics, and selected advanced features.
 
 ## Workflow
 
-1. Browse the `references/docs/` directory for relevant topics.
+1. Start with `references/docs/index.md` for a topic map, then read relevant docs.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
 ## Boundaries
 
-- This first version focuses on core Highcharts JS.
-- For Stock, Maps, Gantt, Dashboards, Grid, or framework integrations, use product-specific docs or skills.
+- For Stock, Maps, Gantt, or Morningstar, use the `highcharts-stock`, `highcharts-maps`, `highcharts-gantt`, or `highcharts-morningstar` skill.
+- For Dashboards, Grid, React, or Flutter, consult `docs/<area>/` directly or the live docs — no generated skill exists yet.
 - For exact option signatures, inspect local TypeScript declarations or the API reference after reading the copied tutorial docs.
 
 ## References
