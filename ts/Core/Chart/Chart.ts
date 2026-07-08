@@ -3815,7 +3815,7 @@ class Chart {
         if (!Object.keys(options).length) {
             // Replay the responsive rules undone above.
             if (!isResponsiveOptions) {
-                chart.setResponsive(pick(redraw, true));
+                chart.setResponsive(redraw ?? true);
             }
             return;
         }
