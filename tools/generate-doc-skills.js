@@ -78,6 +78,167 @@ Use this for Highcharts JS work: installation, chart setup, options, axes, serie
 - Live docs: https://www.highcharts.com/docs/
 - API reference: https://api.highcharts.com/highcharts/
 `
+    },
+    {
+        name: 'highcharts-stock',
+        docs: {
+            include: ['stock/'],
+            exclude: []
+        },
+        destinations: [
+            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-stock') },
+            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-stock') },
+            {
+                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-stock'),
+                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
+            }
+        ],
+        skillMd: `---
+name: highcharts-stock
+description: Use to implement, configure, and troubleshoot Highcharts Stock charts from the bundled docs.
+---
+
+# Highcharts Stock
+
+Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical indicators, navigator, range selector, data grouping, compare mode, and stock tools.
+
+## Workflow
+
+1. Browse the \`references/docs/\` directory for relevant topics.
+2. Read only the relevant copied docs before coding.
+3. Prefer documented declarative options over imperative runtime mutation.
+
+## Boundaries
+
+- For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For Morningstar data connectors, use the \`highcharts-morningstar\` skill.
+- For exact option signatures, inspect local TypeScript declarations or the API reference.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/stock/
+- API reference: https://api.highcharts.com/highstock/
+`
+    },
+    {
+        name: 'highcharts-maps',
+        docs: {
+            include: ['maps/'],
+            exclude: []
+        },
+        destinations: [
+            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-maps') },
+            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-maps') },
+            {
+                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-maps'),
+                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
+            }
+        ],
+        skillMd: `---
+name: highcharts-maps
+description: Use to implement, configure, and troubleshoot Highcharts Maps from the bundled docs.
+---
+
+# Highcharts Maps
+
+Use this for Highcharts Maps work: map series, mappoint, mapline, mapbubble, flowmap, tilemap, geoheatmap, tiled web map, projections, GeoJSON/TopoJSON, color axis, and map navigation.
+
+## Workflow
+
+1. Browse the \`references/docs/\` directory for relevant topics.
+2. Read only the relevant copied docs before coding.
+3. Prefer documented declarative options over imperative runtime mutation.
+
+## Boundaries
+
+- For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For exact option signatures, inspect local TypeScript declarations or the API reference.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/maps/
+- API reference: https://api.highcharts.com/highmaps/
+`
+    },
+    {
+        name: 'highcharts-gantt',
+        docs: {
+            include: ['gantt/'],
+            exclude: []
+        },
+        destinations: [
+            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-gantt') },
+            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-gantt') },
+            {
+                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-gantt'),
+                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
+            }
+        ],
+        skillMd: `---
+name: highcharts-gantt
+description: Use to implement, configure, and troubleshoot Highcharts Gantt charts from the bundled docs.
+---
+
+# Highcharts Gantt
+
+Use this for Highcharts Gantt work: task configuration, dependencies, axis grids, grouping tasks, and milestones.
+
+## Workflow
+
+1. Browse the \`references/docs/\` directory for relevant topics.
+2. Read only the relevant copied docs before coding.
+3. Prefer documented declarative options over imperative runtime mutation.
+
+## Boundaries
+
+- For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For exact option signatures, inspect local TypeScript declarations or the API reference.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/gantt/
+- API reference: https://api.highcharts.com/gantt/
+`
+    },
+    {
+        name: 'highcharts-morningstar',
+        docs: {
+            include: ['morningstar/'],
+            exclude: []
+        },
+        destinations: [
+            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-morningstar') },
+            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-morningstar') },
+            {
+                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-morningstar'),
+                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
+            }
+        ],
+        skillMd: `---
+name: highcharts-morningstar
+description: Use to implement and configure Highcharts Connectors for Morningstar Direct Web Services (DWS) from the bundled docs.
+---
+
+# Highcharts Morningstar Connectors
+
+Use this for Morningstar DWS connector work: time series (price, OHLCV, growth, returns, dividends, ratings), screeners, risk score, goal analysis, x-ray, security compare, and regulatory news.
+
+## Workflow
+
+1. Browse the \`references/docs/\` directory for relevant topics.
+2. Read only the relevant copied docs before coding.
+3. Prefer documented declarative options over imperative runtime mutation.
+
+## Boundaries
+
+- For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For Highcharts Stock chart types (candlestick, OHLC, navigator, indicators), use the \`highcharts-stock\` skill.
+- For exact option signatures, inspect local TypeScript declarations or the API reference.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/morningstar/
+`
     }
 ];
 
@@ -318,7 +479,7 @@ function selfTest() {
             name: 'test-skill',
             docs: { include: ['getting-started/'], exclude: [] },
             destinations: [{ path: path.join(outputRoot, 'test-skill') }],
-            skillMd: '# Test skill\n'
+            skillMd: '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n'
         };
         const generated = buildSkill(testSkill, docsRoot, path.join(tempRoot, 'build'));
         const result = publishSkill(testSkill, generated, true);
@@ -330,7 +491,7 @@ function selfTest() {
         assert.equal(result.published.length, 1);
         assert.equal(
             fs.readFileSync(path.join(outputRoot, 'test-skill', 'SKILL.md'), 'utf8'),
-            '# Test skill\n'
+            '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n'
         );
 
         const stripped = fs.readFileSync(
@@ -359,6 +520,14 @@ function selfTest() {
             'utf8'
         );
         assert.equal(clean, '# Install\n', 'clean file should be unchanged');
+
+        for (const skill of SKILLS) {
+            assert.match(
+                skill.skillMd,
+                /^---\nname: .+\ndescription: .+\n---/,
+                `${skill.name}: skillMd must have name and description frontmatter`
+            );
+        }
     } finally {
         fs.rmSync(tempRoot, { force: true, recursive: true });
     }
