@@ -54,12 +54,12 @@ const SKILLS = [
         ],
         skillMd: `---
 name: highcharts-js
-description: Use to implement, configure, and troubleshoot core Highcharts JS charts from the bundled Highcharts markdown docs.
+description: Use to implement, configure, and troubleshoot Highcharts JS charts from the bundled Highcharts markdown docs.
 ---
 
 # Highcharts JS
 
-Use this for core Highcharts JS work: installation, chart setup, options, axes, series, data, styling, accessibility, exporting, and common chart types.
+Use this for Highcharts JS work: installation, chart setup, options, axes, series, data, styling, accessibility, exporting, and common chart types.
 
 ## Workflow
 
