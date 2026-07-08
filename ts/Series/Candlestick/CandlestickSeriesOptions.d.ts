@@ -73,7 +73,11 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * series, the default is `candlestick`, showing a filled (down) and a
      * hollow (up) candle, each being a wick with a rectangular body.
      *
-     * @default candlestick
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Candlestick, OHLC and HLC legend symbols
+     *
+     * @default   candlestick
+     * @product   highstock
      * @apioption plotOptions.candlestick.legendSymbol
      */
     legendSymbol?: string;

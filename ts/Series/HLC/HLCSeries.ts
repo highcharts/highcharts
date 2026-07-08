@@ -182,11 +182,6 @@ class HLCSeries extends ColumnSeries {
 
         if (point) {
             delete attribs.fill;
-        } else {
-            // Legend symbol: render the icon as a filled shape with no
-            // stroke, so its bars keep the designed weight (#24567)
-            delete attribs.stroke;
-            delete attribs['stroke-width'];
         }
 
         return attribs;

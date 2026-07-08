@@ -50,19 +50,16 @@
         series: [{
             type: 'candlestick',
             name: 'AAPL',
-            color: '#2caffe',
             data: data,
             yAxis: 0
         }, {
             type: 'ohlc',
             name: 'AAPL',
-            color: '#544fc5',
             data: data,
             yAxis: 1
         }, {
             type: 'hlc',
             name: 'AAPL',
-            color: '#00e272',
             useOhlcData: true,
             data: data,
             yAxis: 2

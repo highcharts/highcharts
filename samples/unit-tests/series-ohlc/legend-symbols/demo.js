@@ -20,68 +20,75 @@ QUnit.test(
             }]
         });
 
-        // Icon paths (bars/wicks) are filled with no stroke, so they keep the
-        // designed weight; the candlestick's boxes are drawn separately.
-        chart.series.forEach(series => {
-            const attribs = series.pointAttribs();
+        const [hlc, ohlc, candlestick] = chart.series;
 
-            assert.ok(
-                attribs.fill && attribs.fill !== 'none',
-                series.type + ' legend symbol should be filled'
-            );
-            assert.notOk(
-                attribs.stroke,
-                series.type + ' legend symbol should have no stroke'
-            );
-        });
-
-        const candlestick = chart.series[2],
-            boxes = () => Array.from(
-                candlestick.legendItem.group.element.querySelectorAll('rect')
-            ),
-            filledBody = () => boxes().find(
-                rect => !rect.classList.contains('highcharts-point-up')
-            );
-
-        // The candlestick draws its two box bodies as separate bordered rects.
+        // Legend symbol paths are stroked like chart points, so colors and
+        // line width flow from the series options
         assert.strictEqual(
-            boxes().filter(rect => rect.getAttribute('stroke')).length,
+            hlc.legendItem.symbol.element.getAttribute('stroke'),
+            hlc.color,
+            'HLC legend symbol should be stroked with the series color'
+        );
+
+        ohlc.update({ lineWidth: 3 });
+        assert.strictEqual(
+            ohlc.legendItem.symbol.element.getAttribute('stroke-width'),
+            '3',
+            'OHLC legend symbol should respect lineWidth'
+        );
+
+        assert.strictEqual(
+            candlestick.legendItem.symbol.element.getAttribute('stroke'),
+            candlestick.options.lineColor,
+            'Candlestick legend wicks should be stroked with lineColor'
+        );
+
+        // The candlestick draws its two candle bodies as separate rects, the
+        // filled (down) one first
+        const boxes = () => candlestick.legendItem.group.element
+            .querySelectorAll('rect');
+
+        assert.strictEqual(
+            boxes().length,
             2,
-            'Candlestick legend should draw two bordered box bodies'
+            'Candlestick legend should draw two candle bodies'
         );
 
-        // The hollow (up) body takes the `upColor`.
-        candlestick.update({ upColor: '#ff0000' });
-        assert.ok(
-            boxes().some(rect => rect.getAttribute('fill') === '#ff0000'),
-            'Candlestick hollow body should be filled with upColor'
-        );
-
-        // The filled body defaults to the series color when no override is set.
+        // The bodies follow the point coloring options
+        candlestick.update({
+            upColor: '#ff0000',
+            upLineColor: '#0000ff'
+        });
         assert.strictEqual(
-            filledBody().getAttribute('fill'),
+            boxes()[1].getAttribute('fill'),
+            '#ff0000',
+            'Hollow (up) body should be filled with upColor'
+        );
+        assert.strictEqual(
+            boxes()[1].getAttribute('stroke'),
+            '#0000ff',
+            'Hollow (up) body should be stroked with upLineColor'
+        );
+        assert.strictEqual(
+            boxes()[0].getAttribute('fill'),
             candlestick.color,
-            'Candlestick filled body should default to the series color'
+            'Filled (down) body should default to the series color'
         );
 
-        // `legendSymbolColor` recolors the filled (series-color) body (#24567).
+        // `legendSymbolColor` recolors the series-colored body
         candlestick.update({ legendSymbolColor: '#00ff00' });
         assert.strictEqual(
-            filledBody().getAttribute('fill'),
+            boxes()[0].getAttribute('fill'),
             '#00ff00',
             'Candlestick filled body should honor legendSymbolColor'
         );
-        candlestick.update({ legendSymbolColor: void 0 });
 
-        // Hiding the series dims the boxes along with the wicks.
-        const filledBox = filledBody(),
-            visibleFill = filledBox.getAttribute('fill');
-
+        // Hiding the series dims the bodies along with the wicks
         candlestick.setVisible(false);
-        assert.notStrictEqual(
-            filledBox.getAttribute('fill'),
-            visibleFill,
-            'Hidden candlestick legend boxes should be dimmed'
+        assert.strictEqual(
+            boxes()[0].getAttribute('fill'),
+            chart.legend.itemHiddenStyle.color,
+            'Hidden candlestick legend bodies should use itemHiddenStyle'
         );
     }
 );

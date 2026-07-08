@@ -6,12 +6,12 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import H from '../Core/Globals.js';
 import Legend from '../Core/Legend/Legend.js';
-import { addEvent, pushUnique } from '../Shared/Utilities.js';
+import { addEvent, crisp, pushUnique } from '../Shared/Utilities.js';
 const { composed } = H;
 
 /**
- * A legend item (the candlestick) whose symbol has extra box bodies that are
- * colored and dimmed alongside the item.
+ * A legend item (the candlestick) whose symbol has extra candle bodies that
+ * are colored and dimmed alongside the item.
  * @internal
  */
 interface LegendBoxSeries {
@@ -21,6 +21,7 @@ interface LegendBoxSeries {
         legendSymbolColor?: ColorType;
         lineColor?: ColorType;
         upColor?: ColorType;
+        upLineColor?: ColorType;
     };
 }
 
@@ -41,102 +42,56 @@ declare module '../Core/Renderer/SVG/SymbolType' {
 namespace FinancialSymbols {
 
     /**
-     * Scaled drawing helpers mapping the design viewBox onto the legend
-     * symbol box.
+     * One of the two candle bodies of the candlestick legend symbol, in
+     * pixel coordinates. The `up` body renders hollow.
      * @internal
      */
-    export interface Pen {
-        stem: (cx: number, y1: number, y2: number) => SVGPath;
-        tick: (cy: number, x1: number, x2: number) => SVGPath;
-    }
-
-    /**
-     * A rounded rectangle in symbol-box coordinates.
-     * @internal
-     */
-    export interface Rect {
+    export interface CandleBox {
+        height: number;
+        up?: boolean;
+        width: number;
         x: number;
         y: number;
-        width: number;
-        height: number;
-        r: number;
     }
 
     /**
-     * The candlestick legend's two box bodies (stroked rectangles) plus the
-     * border width that the legend should apply.
-     * @internal
-     */
-    export interface CandleBoxes {
-        filled: Rect;
-        hollow: Rect;
-        strokeWidth: number;
-    }
-
-    // Largest content box across the designs (in design units). Every icon
-    // shares one scale derived from this, so the 1-unit bars keep a uniform
-    // weight; each icon is then centered on its own content (cx, cy).
-    const contentW = 11,
-        contentH = 12;
-
-    /**
-     * Map design coordinates onto the symbol box: a single shared scale (so
-     * bars keep a consistent weight across icons), with the icon's content
-     * center (cx, cy) aligned to the center of the box.
-     */
-    function place(
-        x: number, y: number, w: number, h: number, cx: number, cy: number
-    ): { s: number; ox: number; oy: number } {
-        const s = Math.min(w / contentW, h / contentH);
-        return {
-            s,
-            ox: x + w / 2 - cx * s,
-            oy: y + h / 2 - cy * s
-        };
-    }
-
-    /**
-     * The candlestick legend's two box bodies. Each is stroked with
-     * `strokeWidth` (one design unit) and inset by half of it, so the border
-     * and the remaining fill "field" are also one unit wide — keeping wick,
-     * border and field equal at every scale (#24567).
+     * The two candle bodies (filled/down left, hollow/up right) of the
+     * candlestick legend symbol. The wicks of the `candlestick` symbol path
+     * derive from the same boxes (#24567).
      */
     export function candlestickBoxes(
         x: number, y: number, w: number, h: number
-    ): CandleBoxes {
-        const { s, ox, oy } = place(x, y, w, h, 4.5, 6),
-            r = 0.3 * s;
-        return {
-            // Filled (left) candle body: visual x0.5..3.5, y2..8
-            filled: {
-                x: ox + s,
-                y: oy + 2.5 * s,
-                width: 2 * s,
-                height: 5 * s,
-                r
-            },
-            // Hollow (right) candle body: visual x5.5..8.5, y6..10
-            hollow: {
-                x: ox + 6 * s,
-                y: oy + 6.5 * s,
-                width: 2 * s,
-                height: 3 * s,
-                r
-            },
-            strokeWidth: s
-        };
+    ): Array<CandleBox> {
+        // Even body width keeps 1px borders crisp around half-pixel centers
+        const width = 2 * Math.round(w * 0.2);
+
+        return [
+            { cx: 0.2, top: 0.25, bottom: 0.65 },
+            { cx: 0.8, top: 0.45, bottom: 0.8, up: true }
+        ].map(({ cx, top, bottom, up }): CandleBox => {
+            const y1 = crisp(y + h * top, 1),
+                y2 = crisp(y + h * bottom, 1);
+
+            return {
+                x: crisp(x + w * cx, 1) - width / 2,
+                y: y1,
+                width,
+                height: y2 - y1,
+                up
+            };
+        });
     }
 
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'Series.FinancialSymbols')) {
-            const symbols = SVGRendererClass.prototype.symbols,
-                nudge = 3;
+            const symbols = SVGRendererClass.prototype.symbols;
 
-            // Color the candlestick's box bodies (stored by its
-            // `drawLegendSymbol`) and dim them with the legend item. The wicks
-            // are the symbol path, already handled by `colorizeItem`.
+            // Color the candlestick's candle bodies (stored by its
+            // `drawLegendSymbol`) like chart points, and dim them with the
+            // legend item. The wicks are the symbol path, already handled by
+            // `colorizeItem`.
             addEvent(Legend, 'afterColorizeItem', function (e): void {
                 const { item, visible } = e as {
                         item: LegendBoxSeries;
@@ -145,74 +100,75 @@ namespace FinancialSymbols {
                     boxes = item.legendSymbolBoxes;
 
                 if (boxes && !this.chart.styledMode) {
-                    const { upColor, lineColor, legendSymbolColor } =
-                            item.options,
+                    const {
+                            legendSymbolColor, lineColor, upColor, upLineColor
+                        } = item.options,
                         color = legendSymbolColor || item.color,
+                        stroke = lineColor || color,
                         hidden = visible ? void 0 : this.itemHiddenStyle?.color;
 
                     boxes.forEach(({ element, up }): void => {
                         element.attr({
                             fill: hidden ?? (up ? upColor : color),
-                            stroke: hidden ?? lineColor
+                            stroke: hidden ??
+                                (up ? upLineColor || stroke : stroke)
                         });
                     });
                 }
             });
 
-            // `pen` maps design coordinates onto the symbol box, centering the
-            // icon's content (cx, cy) and rendering bars as rounded capsules.
-            const pen = (
-                x: number, y: number, w: number, h: number,
-                cx: number, cy: number
-            ): FinancialSymbols.Pen => {
-                const { s, ox, oy } = place(x, y, w, h, cx, cy),
-                    r = s / 2;
+            // Two staggered stems, a down bar (left) and an up bar (right),
+            // each with a close tick to the right; OHLC adds open ticks to
+            // the left
+            const hlcPath = (
+                x: number, y: number, w: number, h: number, isOhlc?: boolean
+            ): SVGPath => {
+                const x1 = crisp(x + w * 0.25, 1),
+                    x2 = crisp(x + w * 0.75, 1),
+                    tick = (x2 - x1 - 1) / 2,
+                    close1 = crisp(y + h * 0.7, 1),
+                    close2 = crisp(y + h * 0.4, 1),
+                    path: SVGPath = [
+                        ['M', x1, y], ['L', x1, y + h],
+                        ['M', x1, close1], ['L', x1 + tick, close1],
+                        ['M', x2, Math.round(y + h * 0.15)],
+                        ['L', x2, Math.round(y + h * 0.9)],
+                        ['M', x2, close2], ['L', x2 + tick, close2]
+                    ];
 
-                return {
-                    stem: (bx, y1, y2): SVGPath => symbols.rect(
-                        ox + bx * s - r, oy + y1 * s,
-                        s, (y2 - y1) * s,
-                        { r }
-                    ),
-                    tick: (by, x1, x2): SVGPath => symbols.rect(
-                        ox + x1 * s, oy + by * s - r,
-                        (x2 - x1) * s, s,
-                        { r }
-                    )
-                };
+                if (isOhlc) {
+                    // The up bar opens at the height the down bar closes,
+                    // weaving the two bars together as in the design
+                    const open1 = crisp(y + h * 0.2, 1),
+                        open2 = close1;
+
+                    path.push(
+                        ['M', x1 - tick, open1], ['L', x1, open1],
+                        ['M', x2 - tick, open2], ['L', x2, open2]
+                    );
+                }
+                return path;
             };
 
-            // High-Low-Close: two stems, each with a close tick to the right.
-            symbols.hlc = (x, y, w, h): SVGPath => {
-                const { stem, tick } = pen(x + nudge, y, w, h, 5, 6);
-                return [
-                    ...stem(1.5, 0, 9.6), ...tick(5.4, 1, 4),
-                    ...stem(6.5, 1.2, 12), ...tick(3, 6, 9)
-                ];
-            };
+            symbols.hlc = (x, y, w, h): SVGPath => hlcPath(x, y, w, h);
 
-            // Open-High-Low-Close: stems with open (left) and close (right)
-            // ticks.
-            symbols.ohlc = (x, y, w, h): SVGPath => {
-                const { stem, tick } = pen(x + nudge, y, w, h, 5.5, 6);
-                return [
-                    ...stem(2.5, 0, 12),
-                    ...tick(2.5, 0, 3), ...tick(8.5, 2, 5),
-                    ...stem(8.5, 2, 11),
-                    ...tick(8.5, 6, 9), ...tick(3.5, 8, 11)
-                ];
-            };
+            symbols.ohlc = (x, y, w, h): SVGPath => hlcPath(x, y, w, h, true);
 
-            // Candlestick: just the wicks (the box bodies are drawn by the
-            // legend, see `candlestickBoxes`).
+            // Candlestick: the wicks above and below each candle body (the
+            // bodies themselves are drawn by the legend, see
+            // `candlestickBoxes`)
             symbols.candlestick = (x, y, w, h): SVGPath => {
-                const { stem } = pen(x, y, w, h, 4.5, 6);
-                return [
-                    // Filled (left) candle wicks, above and below its body
-                    ...stem(2, 0, 3), ...stem(2, 7, 12),
-                    // Hollow (right) candle wicks, above and below its body
-                    ...stem(7, 0, 7), ...stem(7, 9, 12)
-                ];
+                const path: SVGPath = [];
+
+                candlestickBoxes(x, y, w, h).forEach((box): void => {
+                    const cx = box.x + box.width / 2;
+
+                    path.push(
+                        ['M', cx, y], ['L', cx, box.y],
+                        ['M', cx, box.y + box.height], ['L', cx, y + h]
+                    );
+                });
+                return path;
             };
         }
     }

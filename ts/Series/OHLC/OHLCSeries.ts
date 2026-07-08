@@ -186,18 +186,14 @@ class OHLCSeries extends HLCSeries {
         const attribs = super.pointAttribs.call(this, point, state),
             options = this.options;
 
-        // For the legend symbol (no point) keep the filled, stroke-less icon
-        // produced by the HLC base (#24567)
-        if (point) {
-            delete attribs.fill;
+        delete attribs.fill;
 
-            if (
-                !point.options.color &&
-                options.upColor &&
-                (point.open || 0) < (point.close || 0)
-            ) {
-                attribs.stroke = options.upColor;
-            }
+        if (
+            !point?.options.color &&
+            options.upColor &&
+            (point?.open || 0) < (point?.close || 0)
+        ) {
+            attribs.stroke = options.upColor;
         }
 
         return attribs;

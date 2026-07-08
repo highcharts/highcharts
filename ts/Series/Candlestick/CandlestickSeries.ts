@@ -94,27 +94,21 @@ class CandlestickSeries extends OHLCSeries {
         point?: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        // Without a point (e.g. the legend symbol), use the line or series
-        // color as the fill.
-        if (!point) {
-            return { fill: this.options.lineColor || this.color };
-        }
-
         const attribs = ColumnSeries.prototype.pointAttribs.call(
                 this,
                 point,
                 state
             ),
             options = this.options,
-            isUp = (point.open || 0) < (point.close || 0),
+            isUp = (point?.open || 0) < (point?.close || 0),
             stroke = options.lineColor || this.color,
-            color = point.color || this.color; // (#14826)
+            color = point?.color || this.color; // (#14826)
 
         attribs['stroke-width'] = options.lineWidth;
 
-        attribs.fill = point.options.color ||
+        attribs.fill = point?.options.color ||
             (isUp ? (options.upColor || color) : color);
-        attribs.stroke = point.options.lineColor ||
+        attribs.stroke = point?.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
 
         // Select or hover states
@@ -131,8 +125,8 @@ class CandlestickSeries extends OHLCSeries {
 
     /**
      * Draw the candlestick legend symbol. The symbol path carries only the
-     * wicks; the two box bodies are drawn here as bordered rectangles and
-     * colored/dimmed by `FinancialSymbols` on `afterColorizeItem` (#24567).
+     * wicks; the two candle bodies are drawn here as bordered rectangles and
+     * colored/dimmed by `FinancialSymbols` on `afterColorizeItem`.
      *
      * @internal
      * @function Highcharts.seriesTypes.candlestick#drawLegendSymbol
@@ -140,7 +134,12 @@ class CandlestickSeries extends OHLCSeries {
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
         super.drawLegendSymbol(legend, item);
 
-        const { chart } = this,
+        // The candle bodies apply to the default symbol only
+        if ((this.options.legendSymbol || 'candlestick') !== 'candlestick') {
+            return;
+        }
+
+        const { chart, options } = this,
             legendItem = item.legendItem || {},
             symbolHeight = legend.symbolHeight,
             squareSymbol = legend.options.squareSymbol,
@@ -148,35 +147,27 @@ class CandlestickSeries extends OHLCSeries {
             x = squareSymbol ?
                 (legend.symbolWidth - symbolHeight) / 2 :
                 0,
-            y = (legend.baseline || 0) - symbolHeight + 1,
-            { filled, hollow, strokeWidth } =
-                FinancialSymbols.candlestickBoxes(x, y, w, symbolHeight),
-            boxes: NonNullable<CandlestickSeries['legendSymbolBoxes']> = [],
-            // A bordered box; `up` flags the hollow (background-filled) candle
-            box = (rect: FinancialSymbols.Rect, up?: boolean): void => {
-                const element = chart.renderer
-                    .rect(rect.x, rect.y, rect.width, rect.height, rect.r)
-                    .addClass('highcharts-point')
-                    .attr({ zIndex: 3 })
-                    .add(legendItem.group);
-
-                if (!chart.styledMode) {
-                    element.attr({ 'stroke-width': strokeWidth });
-                }
-
-                if (up) {
-                    element.addClass('highcharts-point-up');
-                }
-                boxes.push({ element, up });
-            };
-
-        legendItem.symbol?.addClass('highcharts-candlestick-legend-symbol');
-
-        box(filled);
-        box(hollow, true);
+            y = (legend.baseline || 0) - symbolHeight + 1;
 
         // `FinancialSymbols` colors and dims these on every `colorizeItem`.
-        this.legendSymbolBoxes = boxes;
+        this.legendSymbolBoxes = FinancialSymbols.candlestickBoxes(
+            x, y, w, symbolHeight
+        ).map((box): { element: SVGElement; up?: boolean } => {
+            const element = chart.renderer
+                .rect(box.x, box.y, box.width, box.height)
+                .addClass(
+                    'highcharts-point' +
+                    (box.up ? ' highcharts-point-up' : '')
+                )
+                .attr({ zIndex: 3 })
+                .add(legendItem.group);
+
+            if (!chart.styledMode) {
+                element.attr({ 'stroke-width': options.lineWidth });
+            }
+
+            return { element, up: box.up };
+        });
     }
 
     /**
