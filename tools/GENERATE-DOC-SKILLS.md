@@ -8,7 +8,7 @@ Generates agent skill reference files by copying filtered markdown docs from `do
 npm run generate:skills
 ```
 
-Or directly (skips the confirmation prompt):
+Or directly (`--yes` is required to confirm overwrite):
 
 ```bash
 node tools/generate-doc-skills.js --yes
@@ -20,7 +20,7 @@ node tools/generate-doc-skills.js --yes
 |--------|-------------|
 | `--docs=<path>` | Override the docs source path (must be inside repo root) |
 | `--skill=<a,b>` | Generate only the named skill(s), comma-separated |
-| `--yes`, `-y` | Skip the confirmation prompt |
+| `--yes`, `-y` | Required: confirms overwrite of generated skill directories |
 | `--self-test` | Run the built-in pipeline test without touching real files |
 | `--help`, `-h` | Print usage |
 

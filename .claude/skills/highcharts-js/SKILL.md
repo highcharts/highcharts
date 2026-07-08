@@ -9,7 +9,7 @@ Use this for core Highcharts JS work: installation, chart setup, options, axes, 
 
 ## Workflow
 
-1. Start with `references/docs/index.md`.
+1. Browse the `references/docs/` directory for relevant topics.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 

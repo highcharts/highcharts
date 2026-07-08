@@ -63,7 +63,7 @@ Use this for core Highcharts JS work: installation, chart setup, options, axes, 
 
 ## Workflow
 
-1. Start with \`references/docs/index.md\`.
+1. Browse the \`references/docs/\` directory for relevant topics.
 2. Read only the relevant copied docs before coding.
 3. Prefer documented declarative options over imperative runtime mutation.
 
@@ -93,7 +93,7 @@ function printHelp() {
         'Options:',
         '  --docs=<path>       Docs markdown source directory. Default: docs',
         '  --skill=<a,b>       Generate only selected skills. Default: all',
-        '  --yes, -y           Replace generated skill directories without prompting',
+        '  --yes, -y           Required: confirms overwrite of generated skill directories',
         '  --self-test         Run the script self-test',
         '  --help, -h          Print this help text'
     ].join('\n') + '\n');
@@ -172,6 +172,10 @@ function selectDocs(docsRoot, skill) {
     ));
 }
 
+// Note: Only detects fenced code blocks starting at column 0 (^ anchor in
+// multiline mode). Indented fences (e.g. inside list items) are not tracked,
+// so strippable content inside them may be incorrectly removed. Low risk for
+// Highcharts docs which rarely use indented fences.
 function stripContent(markdown) {
     const result = markdown.replace(
         /(^```[^\n]*$[\s\S]*?^```\s*$)|(<iframe[\s\S]*?<\/iframe>)|(^\s*!\[.*?\]\(.*?\)\s*$)|(^\s*<img\b[^>]*\/?>\s*$)/gimu,
