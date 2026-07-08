@@ -98,6 +98,16 @@ class HeaderCell extends Cell {
      */
     toolbar?: ColumnToolbar;
 
+    /**
+     * Key used by the header row to reuse the cell.
+     */
+    public headerCellKey?: string;
+
+    /**
+     * Column resize handle rendered inside this header cell.
+     */
+    private resizeHandle?: HTMLElement;
+
 
     /* *
     *
@@ -130,19 +140,7 @@ class HeaderCell extends Cell {
         }
         this.tableHeader = header;
 
-        if (column) {
-            column.header = this;
-            this.columns.push(column);
-        } else if (columnsTree) {
-            const vp = this.row.viewport;
-            const columnIds = vp.grid.getColumnIds(columnsTree, true);
-            for (const columnId of columnIds) {
-                const column = vp.getColumn(columnId);
-                if (column && vp.isColumnRendered(columnId)) {
-                    this.columns.push(column);
-                }
-            }
-        }
+        this.syncColumns(column, columnsTree);
     }
 
     /* *
@@ -219,10 +217,11 @@ class HeaderCell extends Cell {
             }
 
             // Add resizing
-            column.viewport.columnsResizer?.renderColumnDragHandles(
-                column,
-                this
-            );
+            this.resizeHandle = column.viewport.columnsResizer
+                ?.renderColumnDragHandles(
+                    column,
+                    this
+                );
 
             // Add toolbar
             this.toolbar = new ColumnToolbar(column);
@@ -295,6 +294,43 @@ class HeaderCell extends Cell {
         this.toolbar?.reflow();
     }
 
+    /**
+     * Synchronizes the columns represented by this header cell.
+     *
+     * @param column
+     * The direct column represented by the cell.
+     *
+     * @param columnsTree
+     * The grouped header tree represented by the cell.
+     */
+    public syncColumns(
+        column?: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ): void {
+        if (this.column?.header === this && this.column !== column) {
+            delete this.column.header;
+        }
+
+        this.column = column;
+        this.columns.length = 0;
+
+        if (column) {
+            column.header = this;
+            this.columns.push(column);
+        } else if (columnsTree) {
+            const vp = this.row.viewport;
+            const columnIds = vp.grid.getColumnIds(columnsTree, true);
+
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                const column = vp.getColumn(columnIds[i]);
+
+                if (column && vp.isColumnRendered(column.index)) {
+                    this.columns.push(column);
+                }
+            }
+        }
+    }
+
     public override onKeyDown(e: KeyboardEvent): void {
         if (!this.column || e.target !== this.htmlElement) {
             return;
@@ -363,6 +399,13 @@ class HeaderCell extends Cell {
     }
 
     public override destroy(): void {
+        const columnsResizer = this.column?.viewport.columnsResizer;
+
+        if (this.resizeHandle && columnsResizer) {
+            columnsResizer.removeHandle(this.resizeHandle);
+            delete this.resizeHandle;
+        }
+
         this.toolbar?.destroy();
         if (this.column?.header === this) {
             delete this.column.header;

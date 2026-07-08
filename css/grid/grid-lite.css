@@ -175,7 +175,11 @@
 
     &.hcg-column-virtualization thead tr {
         display: block;
-        overflow: hidden;
+        overflow: visible;
+    }
+
+    &.hcg-column-virtualization thead th .hcg-header-cell-container {
+        height: 100%;
     }
 
     thead th {
@@ -271,6 +275,7 @@
         align-items: center;
         max-width: 0;
         opacity: 0;
+        z-index: 11;
         cursor: pointer;
         transition: max-width 0.3s ease, opacity 0.3s ease;
     }

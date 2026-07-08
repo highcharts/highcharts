@@ -24,6 +24,7 @@
 
 import type Row from '../../Row.js';
 import type Column from '../../Column.js';
+import type { GroupedHeaderOptions } from '../../../Options';
 
 import HeaderCell from '../../Header/HeaderCell.js';
 import { fireEvent } from '../../../../../Shared/Utilities.js';
@@ -83,6 +84,19 @@ class FilterCell extends HeaderCell {
         this.setCustomClassName(column.options.header?.className);
 
         fireEvent(this, 'afterRender', { column, filtering: true });
+    }
+
+    public override syncColumns(
+        column?: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ): void {
+        const trueHeader = column?.header;
+
+        super.syncColumns(column, columnsTree);
+
+        if (column) {
+            column.header = trueHeader;
+        }
     }
 
     public override onKeyDown(e: KeyboardEvent): void {

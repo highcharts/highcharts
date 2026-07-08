@@ -74,34 +74,49 @@ class FilterRow extends HeaderRow {
 
     public override async renderContent(): Promise<void> {
         const vp = this.viewport;
+        const desiredKeys: Record<string, boolean> = {};
+        const orderedCells: FilterCell[] = [];
 
-        vp.theadElement?.appendChild(this.htmlElement);
+        if (!this.htmlElement.parentElement) {
+            vp.theadElement?.appendChild(this.htmlElement);
+        }
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
+        this.clearPositionClasses();
 
         const columns = vp.getRenderedColumns();
+        const firstColumn = columns[0];
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             const column = columns[i];
-            const cell = this.createCell(column);
+            const { cell, isNew } = this.syncHeaderCell(
+                this.getColumnCellKey(column.id),
+                desiredKeys,
+                orderedCells,
+                column
+            );
 
-            await cell.render();
+            if (column === firstColumn) {
+                cell.htmlElement.classList.add(
+                    Globals.getClassName('columnFirst')
+                );
+            }
 
-            if (
-                vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
-            ) {
-                column.filtering?.renderFilteringContent(cell.htmlElement);
+            if (isNew) {
+                await cell.render();
+
+                if (
+                    vp.grid.columnPolicy
+                        .isColumnInlineFilteringEnabled(column.id)
+                ) {
+                    column.filtering?.renderFilteringContent(cell.htmlElement);
+                }
             }
         }
 
-        const firstCell = this.cells[0];
-        if (firstCell.column === columns[0]) {
-            // Add class to disable left border on first column
-            this.cells[0].htmlElement.classList.add(
-                Globals.getClassName('columnFirst')
-            );
-        }
-
+        this.destroyStaleCells(desiredKeys);
+        this.cells = orderedCells;
         this.setLastCellClass();
+        this.reflowPosition();
     }
 
 }

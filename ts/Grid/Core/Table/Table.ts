@@ -1390,10 +1390,12 @@ class Table {
         }
 
         if (this.grid.options?.rendering?.header?.enabled) {
-            this.columnsResizer?.clearHandles();
-            this.header?.destroy();
-            this.header = new TableHeader(this);
-            await this.header.render();
+            if (!this.header) {
+                this.header = new TableHeader(this);
+                await this.header.render();
+            } else {
+                await this.header.syncRenderedColumns();
+            }
         }
 
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);

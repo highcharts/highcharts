@@ -41,6 +41,95 @@ test.describe('Sorting and resizing wide grid', () => {
     });
 
     test(
+        'virtualized grouped headers should align lower levels',
+        async ({ page }) => {
+            const state = await page.evaluate(() => {
+                const getRect = (el: Element | null): {
+                    bottom: number;
+                    height: number;
+                    left: number;
+                    right: number;
+                    top: number;
+                } => {
+                    if (!el) {
+                        throw new Error('Missing header element.');
+                    }
+
+                    const rect = el.getBoundingClientRect();
+
+                    return {
+                        bottom: rect.bottom,
+                        height: rect.height,
+                        left: rect.left,
+                        right: rect.right,
+                        top: rect.top
+                    };
+                };
+                const headerRows = document.querySelectorAll('thead tr');
+                const table = document.querySelector('.hcg-table');
+                const employee = document.querySelector(
+                    'th[data-column-id="employee"]'
+                );
+                const topCells = headerRows[0]?.querySelectorAll('th');
+                const year = Array.from(topCells || []).find((cell): boolean =>
+                    cell.textContent?.trim() === '2024'
+                );
+
+                return {
+                    isVirtualized: table?.classList.contains(
+                        'hcg-column-virtualization'
+                    ) || false,
+                    employee: getRect(employee),
+                    employeeButton: getRect(employee?.querySelector(
+                        '.hcg-header-cell-menu-icon button'
+                    ) || null),
+                    year: getRect(year || null),
+                    month: getRect(headerRows[1]?.querySelector('th')),
+                    firstLeaf: getRect(
+                        headerRows[2]?.querySelector(
+                            'th[data-column-id="mar24a"]'
+                        )
+                    )
+                };
+            });
+
+            expect(state.isVirtualized).toBe(true);
+            expect(state.month.left).toBeGreaterThanOrEqual(
+                state.employee.right - 2
+            );
+            expect(Math.abs(state.month.left - state.year.left))
+                .toBeLessThan(3);
+            expect(Math.abs(state.firstLeaf.left - state.month.left))
+                .toBeLessThan(3);
+            expect(Math.abs(
+                state.employee.height -
+                    state.year.height -
+                    state.month.height -
+                    state.firstLeaf.height
+            )).toBeLessThan(3);
+            expect(Math.abs(state.employee.bottom - state.firstLeaf.bottom))
+                .toBeLessThan(3);
+            expect(Math.abs(
+                state.employeeButton.top + state.employeeButton.height / 2 -
+                    state.employee.top -
+                    state.employee.height / 2
+            )).toBeLessThan(3);
+
+            const employeeHeader = page.locator(
+                'th[data-column-id="employee"]'
+            );
+            const employeeMenuButton = employeeHeader.locator(
+                '.hcg-header-cell-menu-icon button'
+            );
+
+            await employeeHeader.hover();
+            await expect(employeeMenuButton).toBeVisible();
+            await employeeMenuButton.click();
+            await expect(page.locator('.hcg-popup')).toBeVisible();
+        }
+    );
+
+    test(
         'column virtualization should render only the horizontal window',
         async ({ page }) => {
             await page.evaluate(async () => {
@@ -110,6 +199,31 @@ test.describe('Sorting and resizing wide grid', () => {
             expect(initial.cellCount).toBe(initial.renderedCount);
             expect(initial.rowsWidth).toBeGreaterThan(6000);
             expect(initial.scrollWidth).toBeGreaterThan(6000);
+
+            await page.evaluate(() => {
+                (window as any).keptHeaderCell = document.querySelector(
+                    'th[data-column-id="Column 4"]'
+                );
+                const viewport = (window as any).virtualColumnGrid.viewport;
+
+                viewport.tbodyElement.scrollLeft = 160;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            await page.waitForFunction(() => (
+                (window as any).virtualColumnGrid
+                    .viewport
+                    .columnsVirtualizer
+                    .columnCursor > 0
+            ));
+
+            const headerCellReused = await page.evaluate(() => (
+                (window as any).keptHeaderCell === document.querySelector(
+                    'th[data-column-id="Column 4"]'
+                )
+            ));
+
+            expect(headerCellReused).toBe(true);
 
             await page.evaluate(() => {
                 const viewport = (window as any).virtualColumnGrid.viewport;

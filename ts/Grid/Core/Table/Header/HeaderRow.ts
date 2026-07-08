@@ -23,6 +23,7 @@
  *
  * */
 import type { GroupedHeaderOptions } from '../../Options';
+import type Cell from '../Cell';
 
 import Table from '../Table.js';
 import Row from '../Row.js';
@@ -30,6 +31,18 @@ import HeaderCell from './HeaderCell.js';
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
 import { isString } from '../../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface HeaderRowSyncResult {
+    cell: HeaderCell;
+    isNew: boolean;
+}
 
 
 /* *
@@ -52,6 +65,11 @@ class HeaderRow extends Row {
      * The level in the header.
      */
     public level: number;
+
+    /**
+     * Header cells indexed by a stable render key.
+     */
+    private headerCellsByKey: Record<string, HeaderCell> = {};
 
 
     /* *
@@ -99,13 +117,22 @@ class HeaderRow extends Row {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
         const firstRenderedColumn = vp.getRenderedColumns()[0];
+        const desiredKeys: Record<string, boolean> = {};
+        const orderedCells: HeaderCell[] = [];
 
         // Render element
-        vp.theadElement?.appendChild(this.htmlElement);
+        if (!this.htmlElement.parentElement) {
+            vp.theadElement?.appendChild(this.htmlElement);
+        }
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
+        this.clearPositionClasses();
 
         if (!headerOpt) {
-            await super.render();
+            await this.syncColumnHeaders(
+                vp.getRenderedColumns(),
+                desiredKeys,
+                orderedCells
+            );
         } else {
             const columnsOnLevel = this.getColumnsAtLevel(headerOpt, level);
 
@@ -144,7 +171,13 @@ class HeaderRow extends Row {
                     continue;
                 }
 
-                const headerCell = this.createCell(
+                const key = columnId ?
+                    this.getColumnCellKey(columnId) :
+                    this.getGroupCellKey(level, i);
+                const { cell: headerCell, isNew } = this.syncHeaderCell(
+                    key,
+                    desiredKeys,
+                    orderedCells,
                     dataColumn,
                     !colIsString ? columnOnLevel.columns : void 0
                 );
@@ -174,33 +207,135 @@ class HeaderRow extends Row {
                     );
                 }
 
-                await headerCell.render();
+                if (isNew) {
+                    await headerCell.render();
+                }
 
                 if (columnId) {
                     headerCell.htmlElement.setAttribute(
                         'rowSpan',
                         (this.viewport.header?.levels || 1) - level
                     );
+                    headerCell.htmlElement.removeAttribute('colSpan');
                 } else {
                     if (colSpan > 1) {
                         headerCell.htmlElement.setAttribute('colSpan', colSpan);
+                    } else {
+                        headerCell.htmlElement.removeAttribute('colSpan');
                     }
+                    headerCell.htmlElement.removeAttribute('rowSpan');
                 }
             }
         }
 
+        this.destroyStaleCells(desiredKeys);
+        this.cells = orderedCells;
         this.setLastCellClass();
+        this.reflowPosition();
     }
 
     public override reflow(): void {
         const row = this;
+        const vp = row.viewport;
+        const columnLayout = vp.columnLayout;
+        const renderedColumnOffset = vp.getRenderedColumnOffset();
+        let previousCellRight = 0;
+
+        row.htmlElement.style.height = '';
+        row.htmlElement.style.position = '';
 
         for (let i = 0, iEnd = row.cells.length; i < iEnd; i++) {
             const cell = row.cells[i] as HeaderCell;
+            const cellElement = cell.htmlElement;
+            const cellStyle = cellElement.style;
+
             cell.reflow();
+            cellStyle.height = '';
+            cellStyle.left = '';
+            cellStyle.position = '';
+            cellStyle.top = '';
+            cellStyle.zIndex = '';
+
+            if (vp.virtualColumns) {
+                const firstColumn = cell.columns[0];
+                const lastColumn = cell.columns[cell.columns.length - 1];
+
+                if (firstColumn && lastColumn) {
+                    const cellLeft = Math.max(
+                        0,
+                        columnLayout.getColumnLeft(firstColumn.index) -
+                            renderedColumnOffset
+                    );
+                    const cellRight = Math.max(
+                        cellLeft,
+                        columnLayout.getColumnRight(lastColumn.index) -
+                            renderedColumnOffset
+                    );
+
+                    cellElement.style.marginLeft =
+                        Math.max(0, cellLeft - previousCellRight) + 'px';
+                    previousCellRight = cellRight;
+                } else {
+                    cellElement.style.marginLeft = '';
+                }
+            } else {
+                cellElement.style.marginLeft = '';
+            }
         }
 
         this.reflowPosition();
+    }
+
+    /**
+     * Applies absolute cell positions and row-span heights for virtualized
+     * columns. This emulates native table layout after rows are measured.
+     *
+     * @param rowHeights
+     * Natural header row heights.
+     *
+     * @param rowIndex
+     * Index of this row in the table header.
+     */
+    public applyVirtualColumnLayout(
+        rowHeights: number[],
+        rowIndex: number
+    ): void {
+        const row = this;
+        const vp = row.viewport;
+        const columnLayout = vp.columnLayout;
+        const rowHeight = rowHeights[rowIndex] || 0;
+
+        row.htmlElement.style.height = rowHeight + 'px';
+        row.htmlElement.style.position = 'relative';
+
+        for (let i = 0, iEnd = row.cells.length; i < iEnd; i++) {
+            const cell = row.cells[i] as HeaderCell;
+            const firstColumn = cell.columns[0];
+            const lastColumn = cell.columns[cell.columns.length - 1];
+
+            if (!firstColumn || !lastColumn) {
+                continue;
+            }
+
+            const cellElement = cell.htmlElement;
+            const cellStyle = cellElement.style;
+            const rowSpan = Math.max(1, cellElement.rowSpan || 1);
+            let cellHeight = 0;
+
+            for (let j = 0; j < rowSpan; ++j) {
+                cellHeight += rowHeights[rowIndex + j] || 0;
+            }
+
+            cellStyle.height = cellHeight + 'px';
+            cellStyle.left = Math.max(
+                0,
+                columnLayout.getColumnLeft(firstColumn.index)
+            ) + 'px';
+            cellStyle.marginLeft = '';
+            cellStyle.position = 'absolute';
+            cellStyle.top = '0';
+            cellStyle.zIndex = rowSpan > 1 ? '1' : '';
+        }
     }
 
     /**
@@ -209,11 +344,165 @@ class HeaderRow extends Row {
     protected setLastCellClass(): void {
         const lastCell = this.cells[this.cells.length - 1] as HeaderCell;
 
-        if (lastCell.isLastColumn()) {
+        if (lastCell?.isLastColumn()) {
             lastCell.htmlElement.classList.add(
                 Globals.getClassName('lastHeaderCellInRow')
             );
         }
+    }
+
+    /**
+     * Synchronizes a row that consists of column header cells only.
+     *
+     * @param columns
+     * The columns to synchronize.
+     *
+     * @param desiredKeys
+     * The keys expected after synchronization.
+     *
+     * @param orderedCells
+     * The cells in the expected DOM order.
+     */
+    protected async syncColumnHeaders(
+        columns: Column[],
+        desiredKeys: Record<string, boolean>,
+        orderedCells: HeaderCell[]
+    ): Promise<void> {
+        const firstColumn = columns[0];
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            const column = columns[i];
+            const { cell, isNew } = this.syncHeaderCell(
+                this.getColumnCellKey(column.id),
+                desiredKeys,
+                orderedCells,
+                column
+            );
+
+            if (column === firstColumn) {
+                cell.htmlElement.classList.add(
+                    Globals.getClassName('columnFirst')
+                );
+            }
+
+            if (isNew) {
+                await cell.render();
+            }
+        }
+    }
+
+    /**
+     * Synchronizes one header cell.
+     *
+     * @param key
+     * The stable cell key.
+     *
+     * @param desiredKeys
+     * The keys expected after synchronization.
+     *
+     * @param orderedCells
+     * The cells in the expected DOM order.
+     *
+     * @param column
+     * The direct column represented by the cell.
+     *
+     * @param columnsTree
+     * The grouped header tree represented by the cell.
+     *
+     * @returns
+     * The synchronized cell and whether it was newly created.
+     */
+    protected syncHeaderCell(
+        key: string,
+        desiredKeys: Record<string, boolean>,
+        orderedCells: HeaderCell[],
+        column?: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ): HeaderRowSyncResult {
+        let cell = this.headerCellsByKey[key];
+        const isNew = !cell;
+
+        if (!cell) {
+            cell = this.createCell(column, columnsTree);
+            cell.headerCellKey = key;
+            this.headerCellsByKey[key] = cell;
+        } else {
+            cell.syncColumns(column, columnsTree);
+            this.htmlElement.appendChild(cell.htmlElement);
+            cell.reflow();
+        }
+
+        desiredKeys[key] = true;
+        orderedCells.push(cell);
+
+        return { cell, isNew };
+    }
+
+    /**
+     * Destroys cells that are no longer expected in this row.
+     *
+     * @param desiredKeys
+     * The keys expected after synchronization.
+     */
+    protected destroyStaleCells(
+        desiredKeys: Record<string, boolean>
+    ): void {
+        for (let i = this.cells.length - 1; i >= 0; --i) {
+            const cell = this.cells[i] as HeaderCell;
+            const key = cell.headerCellKey;
+
+            if (!key || !desiredKeys[key]) {
+                cell.destroy();
+            }
+        }
+    }
+
+    /**
+     * Clears position-related classes before recalculating them.
+     */
+    protected clearPositionClasses(): void {
+        const columnFirstClass = Globals.getClassName('columnFirst');
+        const lastCellClass = Globals.getClassName('lastHeaderCellInRow');
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            this.cells[i].htmlElement.classList.remove(
+                columnFirstClass,
+                lastCellClass
+            );
+        }
+    }
+
+    /**
+     * Returns the stable key for a column header cell.
+     *
+     * @param columnId
+     * The column ID.
+     */
+    protected getColumnCellKey(columnId: string): string {
+        return 'column:' + columnId;
+    }
+
+    /**
+     * Returns the stable key for a grouped header cell.
+     *
+     * @param level
+     * The header row level.
+     *
+     * @param index
+     * The index of the grouped header on the level.
+     */
+    private getGroupCellKey(level: number, index: number): string {
+        return 'group:' + level + ':' + index;
+    }
+
+    public override unregisterCell(cell: Cell): void {
+        const key = (cell as HeaderCell).headerCellKey;
+
+        if (key && this.headerCellsByKey[key] === cell) {
+            delete this.headerCellsByKey[key];
+        }
+
+        super.unregisterCell(cell);
     }
 
     /**

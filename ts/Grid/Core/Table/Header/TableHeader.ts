@@ -129,6 +129,48 @@ class TableHeader {
     }
 
     /**
+     * Synchronizes header rows with the currently rendered columns.
+     */
+    public async syncRenderedColumns(): Promise<void> {
+        const vp = this.viewport;
+
+        if (!vp.grid.enabledColumns) {
+            return;
+        }
+
+        this.columns = vp.getRenderedColumns();
+
+        for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
+            let row = this.rows[i];
+
+            if (!row) {
+                row = new HeaderRow(vp, i + 1);
+                this.rows[i] = row;
+            }
+
+            await row.renderContent(i);
+        }
+
+        if (this.hasInlineFiltering()) {
+            let row = this.rows[this.levels] as FilterRow | undefined;
+
+            if (!row) {
+                row = new FilterRow(vp);
+                this.rows[this.levels] = row;
+            }
+
+            await row.renderContent();
+        } else {
+            const row = this.rows[this.levels];
+
+            if (row) {
+                row.destroy();
+                this.rows.splice(this.levels, 1);
+            }
+        }
+    }
+
+    /**
      * Reflows the table head's content dimensions.
      */
     public reflow(): void {
@@ -144,6 +186,58 @@ class TableHeader {
 
         for (const row of rows) {
             row.reflow();
+        }
+
+        if (vp.virtualColumns) {
+            const rowSpans: Array<{
+                height: number;
+                rowIndex: number;
+                rowSpan: number;
+            }> = [];
+            const rowHeights: number[] = [];
+
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                const cells = rows[i].cells;
+
+                for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
+                    const cellElement = cells[j].htmlElement;
+                    const rowSpan = Math.max(1, cellElement.rowSpan || 1);
+
+                    if (rowSpan > 1) {
+                        rowSpans.push({
+                            height: cellElement.offsetHeight,
+                            rowIndex: i,
+                            rowSpan
+                        });
+                        cellElement.style.position = 'absolute';
+                    }
+                }
+
+                rowHeights[i] = rows[i].htmlElement.offsetHeight;
+            }
+
+            for (let i = 0, iEnd = rowSpans.length; i < iEnd; ++i) {
+                const { height, rowIndex, rowSpan } = rowSpans[i];
+                const end = Math.min(rows.length, rowIndex + rowSpan);
+                const spannedRows = end - rowIndex;
+                let spanHeight = 0;
+
+                for (let j = rowIndex; j < end; ++j) {
+                    spanHeight += rowHeights[j] || 0;
+                }
+
+                if (height > spanHeight && spannedRows > 0) {
+                    const extraHeight = (height - spanHeight) / spannedRows;
+
+                    for (let j = rowIndex; j < end; ++j) {
+                        rowHeights[j] = (rowHeights[j] || 0) + extraHeight;
+                    }
+                }
+            }
+
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                rows[i].applyVirtualColumnLayout(rowHeights, i);
+            }
         }
 
         if (vp.rowsWidth) {
@@ -175,6 +269,17 @@ class TableHeader {
         }
 
         return maxDepth + 1;
+    }
+
+    /**
+     * Returns whether inline filtering row should be rendered.
+     */
+    private hasInlineFiltering(): boolean {
+        const vp = this.viewport;
+
+        return vp.columns.some((column): boolean =>
+            vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
+        );
     }
 
     /**
