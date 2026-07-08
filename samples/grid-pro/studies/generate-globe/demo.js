@@ -506,7 +506,6 @@ const groupStageData = [
 
 const columnsForGroup = group => {
     const rows = groupStageData.filter(team => team.group === group);
-    console.log(rows);
     return {
         Country: rows.map(r => r.country),
         Wins: rows.map(r => r.wins),
@@ -518,17 +517,32 @@ const columnsForGroup = group => {
 };
 
 
-//const groups = [...new Set(groupStageData.map(t => t.group))];
-const GROUP_STAGE_COLOR = '#b9b9b9';
+const GROUP_STAGE_COLOR = 'light-dark(#c9ced6, #667080)';
+const NON_GROUP_STAGE_COLOR = 'light-dark(#f7f8fa, #242830)';
 const SELECTED_GROUP_COLOR = '#0400ff';
-const NON_GROUP_STAGE_COLOR = '#ffffff';
 
 const defaultGroup = 'A';
+const groups = [...new Set(groupStageData.map(team => team.group))];
+const groupSelect = document.getElementById('group-select');
 let mapChart;
+let isMoving = false;
 
 const dataTable = new Grid.DataTable({
     columns: columnsForGroup(defaultGroup)
 });
+
+if (groupSelect) {
+    groups.forEach(group => {
+        const option = document.createElement('option');
+        option.textContent = `Group ${group}`;
+        option.value = group;
+        groupSelect.appendChild(option);
+    });
+    groupSelect.value = defaultGroup;
+    groupSelect.addEventListener('change', function () {
+        selectGroup(this.value);
+    });
+}
 
 function mapData(group) {
     return groupStageData
@@ -557,18 +571,60 @@ function getTeamFromPoint(point) {
     );
 }
 function moveTo(center) {
-    mapChart.mapView.update({
-        projection: {
-            name: 'Orthographic',
-            rotation: [
-                -center.lon,
-                -center.lat
-            ]
+    if (
+        !center ||
+        !Highcharts.isNumber(center.lon) ||
+        !Highcharts.isNumber(center.lat)
+    ) {
+        return;
+    }
+
+    const mapView = mapChart.mapView;
+    const from = mapView.projection.options.rotation || [0, 0];
+    const to = [-center.lon, -center.lat];
+    const distance = Highcharts.Projection.distance(from, to);
+    const rotations = Highcharts.Projection.geodesic(
+        from,
+        to,
+        true,
+        Math.max(distance / 60, 500000)
+    );
+
+    Highcharts.stop(mapChart.renderer.boxWrapper, 'animator');
+    mapChart.renderer.boxWrapper.attr({ animator: 0 });
+    isMoving = true;
+
+    Highcharts.animate(
+        mapChart.renderer.boxWrapper,
+        { animator: rotations.length - 1 },
+        {
+            duration: 750,
+            easing: 'easeInOutSine',
+            step: now => {
+                const rotation = rotations[Math.round(now)];
+                console.log('moveTo step', now, rotation);
+
+                mapView.update({
+                    projection: {
+                        name: 'Orthographic',
+                        rotation
+                    }
+                }, false);
+
+                // Keep the projected globe origin centered after pointer
+                // rotation has changed the map view's internal center.
+                mapView.setView(
+                    mapView.projection.inverse([0, 0]),
+                    mapView.zoom,
+                    true,
+                    false
+                );
+            },
+            complete: () => {
+                isMoving = false;
+            }
         }
-    }, true, {
-        duration: 750,
-        easing: 'easeInOutSine'
-    });
+    );
 }
 
 function updateMapGroup(group, center) {
@@ -581,8 +637,11 @@ function updateMapGroup(group, center) {
     if (groupsSeries) {
         groupsSeries.points.forEach(point => {
             const team = getTeamFromPoint(point);
-            const isSelected = team && team.group === group;
+            if (!team) {
+                return;
+            }
 
+            const isSelected = team.group === group;
             point.update({
                 value: isSelected ? 2 : 1,
                 color: isSelected ? SELECTED_GROUP_COLOR : GROUP_STAGE_COLOR
@@ -631,8 +690,11 @@ const groupGrid = Grid.grid('grid', {
 
 
 async function selectGroup(group, center) {
+    if (groupSelect) {
+        groupSelect.value = group;
+    }
+
     updateMapGroup(group, center);
-    console.log(group);
     const data = columnsForGroup(group);
     for (let i = 0, iEnd = dataTable.getRowCount(); i < iEnd; i++) {
         dataTable.setCell(
@@ -729,7 +791,7 @@ const getGraticule = () => {
             map: topology
         },
         title: {
-            text: 'Group Stage'
+            text: 'FIFA World Cup 2026 Group Stage'
         },
         subtitle: {
             text: subtitleFor(defaultGroup)
@@ -819,7 +881,7 @@ const getGraticule = () => {
     // Render a circle filled with a radial gradient behind the globe to
     // make it appear as the sea around the continents.
     const renderSea = () => {
-        let verb = 'animate';
+        let verb = isMoving ? 'attr' : 'animate';
         if (!mapChart.sea) {
             mapChart.sea = mapChart.renderer
                 .circle()

@@ -30,8 +30,24 @@ body {
     align-items: start;
 }
 
-#grid {
+#grid-panel {
     grid-area: grid;
+}
+
+#grid-panel label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+#group-select {
+    margin-bottom: 8px;
+    min-width: 120px;
+    padding: 6px 8px;
+}
+
+#grid {
     min-height: 245px;
 }
 
