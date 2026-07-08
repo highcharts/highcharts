@@ -59,4 +59,16 @@ QUnit.test('Chart options in Standalone Navigator', function (assert) {
         navigator.navigator.chart.inverted,
         'Standalone navigator chart should be inverted after chart update.'
     );
+
+    assert.strictEqual(
+        navigator.navigator.chart.container.offsetHeight,
+        250,
+        'Chart height should be kept after inverting, #24715.'
+    );
+
+    assert.strictEqual(
+        navigator.navigator.height,
+        80,
+        'Navigator height should be kept after inverting, #24715.'
+    );
 });
