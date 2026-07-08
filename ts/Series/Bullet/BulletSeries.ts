@@ -182,12 +182,12 @@ class BulletSeries extends ColumnSeries {
                                 (
                                     series.zones.length &&
                                     (
-                                        point.getZone.call({
+                                        point.getZone?.call({
                                             series: series,
                                             x: point.x,
                                             y: targetVal,
                                             options: {}
-                                        }).color || series.color
+                                        })?.color || series.color
                                     )
                                 ) || void 0
                             ) ??

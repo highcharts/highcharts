@@ -26,11 +26,11 @@ import type {
 } from '../../Extensions/Annotations/AnnotationOptions';
 import type AxisType from '../../Core/Axis/AxisType';
 import type { DeepPartial } from '../../Shared/Types';
+import type FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions';
 import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type Toolbar from './StockToolbar';
 import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import H from '../../Core/Globals.js';
@@ -46,9 +46,8 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
-import getIcon from '../../Shared/BaseFormUtils';
-import StockToolsIcons from './StockToolsIcons';
+import getIcon from '../../Shared/BaseFormUtils.js';
+import StockToolsIcons from './StockToolsIcons.js';
 import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -1259,7 +1258,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
 
             this.verticalCounter++;
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
         }
     },
     /**
@@ -1311,7 +1310,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
 
             return annotation;
         },
@@ -1365,7 +1364,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
         }
     },
     /**
@@ -1431,7 +1430,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 ),
                 annotation = this.chart.addAnnotation(options);
 
-            (annotation.options.events?.click as any).call(annotation, {});
+            annotation.options.events?.click?.call(annotation, {});
         }
     },
     /**
@@ -1687,7 +1686,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             this.chart.series[0].update({
                 type: 'line',
                 useOhlcData: true
-            } as any);
+            });
 
             fireEvent(
                 this,
@@ -1951,7 +1950,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             button: HTMLDOMElement
         ): void {
             const chart = this.chart,
-                gui: Toolbar = chart.stockTools as any;
+                gui = chart.stockTools;
 
             this.toggledAnnotations = !this.toggledAnnotations;
 
@@ -1962,7 +1961,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                 annotation.setVisibility(!this.toggledAnnotations);
             }, this);
 
-            if (gui && gui.guiEnabled) {
+            if (gui?.guiEnabled) {
                 if (this.toggledAnnotations) {
                     (button.firstChild as any).style['background-image'] =
                         getIcon(

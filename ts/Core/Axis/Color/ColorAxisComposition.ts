@@ -28,6 +28,7 @@ import type Legend from '../../Legend/Legend';
 import type Point from '../../Series/Point';
 import type Series from '../../Series/Series';
 import type SeriesOptions from '../../Series/SeriesOptions';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
 
 import Color from '../../Color/Color.js';
@@ -429,7 +430,7 @@ export namespace ColorAxisComposition {
     function wrapFxFillSetter(
         this: Fx
     ): void {
-        this.elem.attr(
+        ((this.elem as SVGElement).attr)(
             'fill',
             color(this.start as any).tweenTo(
                 color(this.end as any),
@@ -447,7 +448,7 @@ export namespace ColorAxisComposition {
     function wrapFxStrokeSetter(
         this: Fx
     ): void {
-        this.elem.attr(
+        (this.elem as SVGElement).attr(
             'stroke',
             color(this.start as any).tweenTo(
                 color(this.end as any),

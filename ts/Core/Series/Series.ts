@@ -62,11 +62,10 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -470,7 +469,11 @@ class Series {
     /** @internal */
     public graphPath?: SVGPath;
 
-    /** @internal */
+    /**
+     * The main group for the series' graphics.
+     *
+     * @readonly
+     */
     public group?: SVGElement;
 
     /** @internal */
@@ -707,6 +710,13 @@ class Series {
      * lack a `y`-value.
      * @name Highcharts.Series#dataMin
      * @type {number|undefined}
+     * @readonly
+     */
+    /**
+     * The main group for the series' graphics.
+     *
+     * @name Highcharts.Series#group
+     * @type {Highcharts.SVGElement}
      * @readonly
      */
     /**

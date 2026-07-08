@@ -32,7 +32,7 @@ import type {
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
 
-import getIcon from '../../Shared/BaseFormUtils';
+import getIcon from '../../Shared/BaseFormUtils.js';
 import StockToolsIcons from '../../Stock/StockTools/StockToolsIcons.js';
 
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
