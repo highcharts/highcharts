@@ -21,7 +21,7 @@ concurrency:
 jobs:
   validate_skills:
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     strategy:
       matrix:
         node-version: [lts/*]
