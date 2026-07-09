@@ -39,7 +39,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 /** @internal */
 declare module './ChartBase'{
     interface ChartBase {
-        marginRight: ChartOptions['marginRight'];
         polar: ChartOptions['polar'];
     }
 }
@@ -577,7 +576,7 @@ export interface ChartOptions {
      * @sample {highstock} stock/chart/margin-zero/
      *         Zero margins
      */
-    margin?: (number|Array<number>);
+    margin?: (number|string|Array<(number|string)>);
 
     /**
      * The margin between the bottom outer edge of the chart and the plot
@@ -593,9 +592,10 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|string}
      * @since  2.0
      */
-    marginBottom?: number;
+    marginBottom?: (number|string);
 
     /**
      * The margin between the left outer edge of the chart and the plot
@@ -611,9 +611,10 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|string}
      * @since  2.0
      */
-    marginLeft?: number;
+    marginLeft?: (number|string);
 
     /**
      * The margin between the right outer edge of the chart and the plot
@@ -629,9 +630,10 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|string}
      * @since  2.0
      */
-    marginRight?: number;
+    marginRight?: (number|string);
 
     /**
      * The margin between the top outer edge of the chart and the plot area.
@@ -647,9 +649,10 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|string}
      * @since  2.0
      */
-    marginTop?: number;
+    marginTop?: (number|string);
 
     /**
      * Callback function to override the default function that formats all
@@ -937,7 +940,7 @@ export interface ChartOptions {
      * @default [10, 10, 15, 10]
      * @since   3.0.6
      */
-    spacing?: Array<number>;
+    spacing?: Array<(number|string)>;
 
     /**
      * The space between the bottom edge of the chart and the content (plot
@@ -951,10 +954,11 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|string}
      * @default   15
      * @since     2.1
      */
-    spacingBottom?: number;
+    spacingBottom?: (number|string);
 
     /**
      * The space between the left edge of the chart and the content (plot
@@ -968,10 +972,11 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|string}
      * @default   10
      * @since     2.1
      */
-    spacingLeft?: number;
+    spacingLeft?: (number|string);
 
     /**
      * The space between the right edge of the chart and the content (plot
@@ -987,10 +992,11 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|string}
      * @default   10
      * @since     2.1
      */
-    spacingRight?: number;
+    spacingRight?: (number|string);
 
     /**
      * The space between the top edge of the chart and the content (plot
@@ -1007,10 +1013,11 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|string}
      * @default   10
      * @since     2.1
      */
-    spacingTop?: number;
+    spacingTop?: (number|string);
 
     /**
      * Additional CSS styles to apply inline to the container `div` and the root

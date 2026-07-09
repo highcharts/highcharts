@@ -546,6 +546,9 @@ class Chart {
     /** @internal */
     public marginBottom?: number;
 
+    /** @internal */
+    public marginRight?: number;
+
     /**
      * Callback function to override the default function that formats
      * all the numbers in the chart. Returns a string with the formatted
@@ -2633,7 +2636,7 @@ class Chart {
             ).forEach((sideName, side): void => {
                 const optionValue = chartOptions[`${target}${sideName}`] ??
                     values[side];
-                if (optionValue === void 0 || optionValue === null) {
+                if (!defined(optionValue)) {
                     chart[target][side] = optionValue as any;
                 } else {
                     const base = side % 2 ? // Right or Left

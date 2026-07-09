@@ -1553,21 +1553,28 @@ export function relativeLength(
 
 /**
  * Resolves a CSS length expression to pixels via a hidden probe element.
+ * The probe is cached per parent on `H.cssLengthProbes`, so `var()`, `em`,
+ * etc. resolve in the intended scope and repeated calls reuse the same
+ * element instead of creating a new one each time.
  * @private
  */
 function measureCSSLength(value: string, parent = doc.body): number {
     if (!parent) {
         return 0;
     }
-    const probe = doc.createElement('div');
-    probe.style.cssText =
-        'position:absolute;visibility:hidden;pointer-events:none;' +
-        `top:-9999px;width:${value}`;
-    parent.appendChild(probe);
-    const px = parseFloat(win.getComputedStyle(probe).width) || 0;
-    parent.removeChild(probe);
-    return px;
+    let probe = H.cssLengthProbes.get(parent);
+    if (!probe) {
+        probe = doc.createElement('div');
+        probe.style.cssText =
+            'position:absolute;visibility:hidden;pointer-events:none;' +
+            'top:-9999px';
+        parent.appendChild(probe);
+        H.cssLengthProbes.set(parent, probe);
+    }
+    probe.style.width = value;
+    return parseFloat(win.getComputedStyle(probe).width) || 0;
 }
+
 
 /**
  * Replaces text in a string with a given replacement in a loop to catch nested

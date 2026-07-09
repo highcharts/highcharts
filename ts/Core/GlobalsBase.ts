@@ -55,6 +55,14 @@ export interface GlobalsBase {
      */
     readonly composed: Array<string>;
     /**
+     * Shared cache of hidden probe elements used by `relativeLength` to
+     * resolve CSS length expressions (e.g. `calc()`, `var()`, `em`). One
+     * probe per parent element; entries are held weakly so they clean up
+     * when the parent is garbage collected.
+     * @internal
+     */
+    readonly cssLengthProbes: WeakMap<HTMLElement, HTMLDivElement>;
+    /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the
      * specifier as key, and a function which takes the timestamp as

@@ -1,11 +1,12 @@
 QUnit.test('Chart margin from CSS expression (#23989)', function (assert) {
-    // Variable on :root, resolved via calc()
+    // Variable on :root, resolved via calc() and var() expressions.
     const rootStyle = document.documentElement.style;
     rootStyle.setProperty('--hc-test-margin', '40px');
 
     const rootChart = Highcharts.chart(document.createElement('div'), {
         chart: {
             marginLeft: 'calc(var(--hc-test-margin) * 2)',
+            spacingRight: 'var(--hc-test-margin)',
             width: 400,
             height: 300
         },
@@ -16,6 +17,11 @@ QUnit.test('Chart margin from CSS expression (#23989)', function (assert) {
         rootChart.plotLeft,
         80,
         'marginLeft as a CSS calc() expression resolves to pixels'
+    );
+    assert.strictEqual(
+        rootChart.spacing[1],
+        40,
+        'spacingRight as a CSS var() expression resolves to pixels'
     );
 
     rootChart.destroy();
