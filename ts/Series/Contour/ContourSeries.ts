@@ -52,6 +52,7 @@ const {
  *
  * */
 
+/** @internal */
 export default class ContourSeries extends ScatterSeries {
 
     /* *
@@ -849,14 +850,17 @@ extend(ContourSeries.prototype, {
 });
 
 // Registry
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;
     }
 }
 
+/** @internal */
 declare module '../../Core/Chart/Chart' {
     export default interface Chart {
+        /** @internal */
         backgroundSeriesGroup?: SVGElement;
     }
 }

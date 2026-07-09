@@ -109,7 +109,7 @@ const columnRangeOptions: DeepPartial<ColumnRangeSeriesOptions> = {
 /**
  * The ColumnRangeSeries class
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.columnrange
  *
@@ -178,11 +178,11 @@ class ColumnRangeSeries extends AreaRangeSeries {
         return columnProto.translate3dShapes.apply(this, arguments as any);
     }
 
+    /**
+     * Translate data points from raw values x and y to plotX and plotY
+     * @internal
+     */
     public afterColumnTranslate(): void {
-        /**
-         * Translate data points from raw values x and y to plotX and plotY
-         * @private
-         */
         const yAxis = this.yAxis,
             xAxis = this.xAxis,
             startAngleRad = (xAxis as RadialAxis.AxisComposition).startAngleRad,
@@ -198,7 +198,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
         // eslint-disable-next-line valid-jsdoc
         /**
          * Don't draw too far outside plot area (#6835)
-         * @private
+         * @internal
          */
         function safeBounds(pixelPos: number): number {
             return clamp(pixelPos, -safeDistance, safeDistance);
@@ -286,6 +286,7 @@ addEvent(ColumnRangeSeries, 'afterColumnTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface ColumnRangeSeries {
     options: ColumnRangeSeriesOptions;
     pointClass: typeof ColumnRangePoint;
@@ -317,7 +318,7 @@ extend(ColumnRangeSeries.prototype, {
  * */
 
 /**
- * @private
+ * @internal
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -333,6 +334,7 @@ SeriesRegistry.registerSeriesType('columnrange', ColumnRangeSeries);
  *
  * */
 
+/** @internal */
 export default ColumnRangeSeries;
 
 /* *
