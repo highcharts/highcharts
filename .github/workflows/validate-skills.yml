@@ -1,0 +1,65 @@
+name: Validate agent skills
+
+on:
+  pull_request:
+    branches: [ 'master', 'dash/**', 'grid/**' ]
+    paths:
+      - '.agents/skills/**'
+      - '.claude/skills/**'
+      - 'tools/generate-doc-skills.js'
+      - 'tools/skill-configs/**'
+      - '.github/workflows/validate-skills.yml'
+  workflow_dispatch:
+
+permissions:
+   contents: read # to fetch code (actions/checkout)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate_skills:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [lts/*]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install skills-ref
+        run: npm install --global skills-ref@0.1.5
+
+      - name: Validate skills
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          count=0
+          for root in .agents/skills .claude/skills; do
+              if [ ! -d "$root" ]; then
+                  continue
+              fi
+
+              while IFS= read -r -d '' skill_file; do
+                  skill_dir="$(dirname "$skill_file")"
+                  echo "::group::${skill_dir#./}"
+                  skills-ref validate "$skill_dir"
+                  echo "::endgroup::"
+                  count=$((count + 1))
+              done < <(find "$root" -name SKILL.md -print0 | sort -z)
+          done
+
+          if [ "$count" -eq 0 ]; then
+              echo "No SKILL.md files found."
+              exit 1
+          fi
+
+          echo "Validated $count skills."
