@@ -116,7 +116,8 @@ class HeaderRow extends Row {
     public async renderContent(level: number): Promise<void> {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
-        const firstRenderedColumn = vp.getRenderedColumns()[0];
+        const renderedColumns = vp.getRenderedColumns();
+        const firstRenderedColumn = renderedColumns[0];
         const desiredKeys: Record<string, boolean> = {};
         const orderedCells: HeaderCell[] = [];
 
@@ -129,7 +130,7 @@ class HeaderRow extends Row {
 
         if (!headerOpt) {
             await this.syncColumnHeaders(
-                vp.getRenderedColumns(),
+                renderedColumns,
                 desiredKeys,
                 orderedCells
             );
@@ -140,7 +141,7 @@ class HeaderRow extends Row {
                 const columnOnLevel = columnsOnLevel[i];
                 const colIsString = typeof columnOnLevel === 'string';
                 const columnIds = !colIsString && columnOnLevel.columns ?
-                    vp.grid.getColumnIds(columnOnLevel.columns) :
+                    vp.grid.getColumnIds(columnOnLevel.columns, false) :
                     void 0;
                 let colSpan = 0;
 
@@ -517,28 +518,30 @@ class HeaderRow extends Row {
      * @param currentLevel
      * Current level
      *
+     * @param result
+     * Target array for matched headers.
+     *
      * @return
      * Array of headers that should be rendered in a level
      */
     private getColumnsAtLevel(
         scope: Array<GroupedHeaderOptions | string>,
         targetLevel: number,
-        currentLevel: number = 0
+        currentLevel: number = 0,
+        result: Array<GroupedHeaderOptions|string> = []
     ): Array<GroupedHeaderOptions|string> {
-        let result: Array<GroupedHeaderOptions|string> = [];
-
         for (const column of scope) {
             if (currentLevel === targetLevel) {
                 result.push(column);
+                continue;
             }
 
             if (typeof column !== 'string' && column.columns) {
-                result = result.concat(
-                    this.getColumnsAtLevel(
-                        column.columns,
-                        targetLevel,
-                        currentLevel + 1
-                    )
+                this.getColumnsAtLevel(
+                    column.columns,
+                    targetLevel,
+                    currentLevel + 1,
+                    result
                 );
             }
         }

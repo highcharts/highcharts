@@ -319,7 +319,7 @@ class HeaderCell extends Cell {
             this.columns.push(column);
         } else if (columnsTree) {
             const vp = this.row.viewport;
-            const columnIds = vp.grid.getColumnIds(columnsTree, true);
+            const columnIds = vp.grid.getColumnIds(columnsTree, false);
 
             for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
                 const column = vp.getColumn(columnIds[i]);

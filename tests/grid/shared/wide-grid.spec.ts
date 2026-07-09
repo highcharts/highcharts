@@ -344,4 +344,94 @@ test.describe('Sorting and resizing wide grid', () => {
             expect(state.widthsLength).toBe(0);
         }
     );
+
+    test(
+        'horizontal wheel over header should scroll the grid',
+        async ({ page }) => {
+            await page.evaluate(async () => {
+                const gridNamespace = (window as any).Grid;
+                const container = document.getElementById('container');
+                const columns: Record<string, number[]> = {};
+
+                for (const grid of gridNamespace.grids) {
+                    grid?.destroy();
+                }
+
+                if (!container) {
+                    throw new Error('Missing grid container.');
+                }
+
+                container.innerHTML = '';
+                container.style.width = '320px';
+                container.style.height = '220px';
+
+                for (let i = 0; i < 80; ++i) {
+                    columns['Column ' + i] = Array.from(
+                        { length: 10 },
+                        (_value, row): number => row + i
+                    );
+                }
+
+                (window as any).headerWheelGrid = await gridNamespace.grid(
+                    'container',
+                    {
+                        data: {
+                            columns
+                        },
+                        columnDefaults: {
+                            width: 80
+                        },
+                        rendering: {
+                            columns: {
+                                bufferSize: 1,
+                                virtualization: true
+                            },
+                            rows: {
+                                strictHeights: true,
+                                virtualization: false
+                            }
+                        }
+                    },
+                    true
+                );
+            });
+
+            const headerBox = await page
+                .locator('th[data-column-id="Column 1"]')
+                .boundingBox();
+
+            expect(headerBox).not.toBeNull();
+
+            await page.mouse.move(
+                headerBox.x + headerBox.width / 2,
+                headerBox.y + headerBox.height / 2
+            );
+            await page.mouse.wheel(320, 0);
+
+            await page.waitForFunction(() => (
+                (window as any).headerWheelGrid
+                    .viewport
+                    .tbodyElement
+                    .scrollLeft > 0
+            ));
+            await page.waitForFunction(() => (
+                (window as any).headerWheelGrid
+                    .viewport
+                    .columnsVirtualizer
+                    .columnCursor > 0
+            ));
+
+            const state = await page.evaluate(() => {
+                const viewport = (window as any).headerWheelGrid.viewport;
+
+                return {
+                    columnCursor: viewport.columnsVirtualizer.columnCursor,
+                    scrollLeft: viewport.tbodyElement.scrollLeft
+                };
+            });
+
+            expect(state.scrollLeft).toBeGreaterThan(0);
+            expect(state.columnCursor).toBeGreaterThan(0);
+        }
+    );
 });

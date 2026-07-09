@@ -257,6 +257,9 @@ class Table {
         this.resizeObserver.observe(tableElement);
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
+        this.theadElement?.addEventListener('wheel', this.onHeaderWheel, {
+            passive: false
+        });
         this.addBodyEventListeners(this.tbodyElement);
         if (this.isContextMenuLongPressed()) {
             this.cellContextMenuLongPress!.addEvents(this.tableElement);
@@ -659,6 +662,47 @@ class Table {
             scrollLeft: this.tbodyElement.scrollLeft,
             scrollTop: this.tbodyElement.scrollTop
         });
+    };
+
+    /**
+     * Handles horizontal wheel scrolling over the table header.
+     *
+     * @param e
+     * The wheel event.
+     */
+    private onHeaderWheel = (e: WheelEvent): void => {
+        if (e.ctrlKey) {
+            return;
+        }
+
+        const tbody = this.tbodyElement;
+        let scrollDelta = e.deltaX || (e.shiftKey ? e.deltaY : 0);
+
+        if (!scrollDelta) {
+            return;
+        }
+
+        if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+            scrollDelta *= this.rowsVirtualizer.defaultRowHeight;
+        } else if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+            scrollDelta *= tbody.clientWidth;
+        }
+
+        const maxScrollLeft = Math.max(
+            tbody.scrollWidth - tbody.clientWidth,
+            0
+        );
+        const scrollLeft = Math.max(
+            0,
+            Math.min(tbody.scrollLeft + scrollDelta, maxScrollLeft)
+        );
+
+        if (scrollLeft === tbody.scrollLeft) {
+            return;
+        }
+
+        e.preventDefault();
+        tbody.scrollLeft = scrollLeft;
     };
 
     /**
@@ -1221,6 +1265,7 @@ class Table {
      */
     public destroy(): void {
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
+        this.theadElement?.removeEventListener('wheel', this.onHeaderWheel);
         document.removeEventListener('focusin', this.onDocumentFocusIn, true);
         document.removeEventListener(
             'pointerdown',
