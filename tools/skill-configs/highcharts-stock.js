@@ -1,0 +1,47 @@
+'use strict';
+const path = require('node:path');
+
+module.exports = function (repoRoot) {
+    return {
+        name: 'highcharts-stock',
+        docs: {
+            include: ['stock/'],
+            exclude: []
+        },
+        destinations: [
+            { path: path.join(repoRoot, '.agents', 'skills', 'highcharts-stock') },
+            { path: path.join(repoRoot, '.claude', 'skills', 'highcharts-stock') },
+            {
+                path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', 'highcharts-stock'),
+                requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
+            }
+        ],
+        skillMd: `---
+name: highcharts-stock
+description: Use to implement, configure, and troubleshoot Highcharts Stock charts from the bundled docs.
+---
+
+# Highcharts Stock
+
+Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical indicators, navigator, range selector, data grouping, compare mode, and stock tools.
+
+## Workflow
+
+1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
+2. Read only the relevant copied docs before coding.
+3. Prefer documented declarative options over imperative runtime mutation.
+
+## Boundaries
+
+- For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
+- For Morningstar data connectors, use the \`highcharts-morningstar\` skill.
+- For Maps or Gantt, use the \`highcharts-maps\` or \`highcharts-gantt\` skill.
+- For exact option signatures, inspect local TypeScript declarations or the API reference.
+
+## References
+
+- Live docs: https://www.highcharts.com/docs/stock/
+- API reference: https://api.highcharts.com/highstock/
+`
+    };
+};
