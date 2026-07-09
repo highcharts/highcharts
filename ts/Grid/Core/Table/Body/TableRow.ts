@@ -287,6 +287,34 @@ class TableRow extends Row {
     }
 
     /**
+     * Preserves logical focus when column virtualization detaches the active
+     * body cell.
+     *
+     * @param cell
+     * The cell that is about to be detached.
+     */
+    protected override onCellBeforeDetach(cell: Cell): void {
+        const activeElement = document.activeElement;
+        const columnIndex = cell.column?.index;
+        const focusCursor = this.viewport.focusCursor;
+
+        if (
+            columnIndex === void 0 ||
+            this.id === void 0 ||
+            !focusCursor ||
+            focusCursor.bodySectionId ||
+            focusCursor.rowId !== this.id ||
+            focusCursor.columnIndex !== columnIndex ||
+            !(activeElement instanceof Element) ||
+            !cell.htmlElement.contains(activeElement)
+        ) {
+            return;
+        }
+
+        this.viewport.preserveFocusDuringDetach();
+    }
+
+    /**
      * Sets the vertical translation of the row. Used for virtual scrolling.
      *
      * @param value

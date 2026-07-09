@@ -183,7 +183,9 @@ class HeaderCell extends Cell {
         }
 
         // Render content of th element
-        this.row.htmlElement.appendChild(this.htmlElement);
+        if (!this.htmlElement.parentElement) {
+            this.row.htmlElement.appendChild(this.htmlElement);
+        }
 
         // Create flex container for header content and icons
         const container = this.container = makeHTMLElement('div', {

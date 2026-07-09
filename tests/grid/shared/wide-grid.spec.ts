@@ -260,6 +260,129 @@ test.describe('Sorting and resizing wide grid', () => {
     );
 
     test(
+        'horizontal virtualization should keep body cell focus stable',
+        async ({ page }) => {
+            await page.evaluate(async () => {
+                const gridNamespace = (window as any).Grid;
+                const container = document.getElementById('container');
+                const outsideButton = document.createElement('button');
+                const columns: Record<string, number[]> = {};
+
+                for (const grid of gridNamespace.grids) {
+                    grid?.destroy();
+                }
+
+                if (!container) {
+                    throw new Error('Missing grid container.');
+                }
+
+                outsideButton.id = 'outside-focus-target';
+                outsideButton.textContent = 'Outside';
+                document.body.appendChild(outsideButton);
+
+                container.innerHTML = '';
+                container.style.width = '320px';
+                container.style.height = '220px';
+
+                for (let i = 0; i < 80; ++i) {
+                    columns['Column ' + i] = Array.from(
+                        { length: 20 },
+                        (_value, row): number => row + i
+                    );
+                }
+
+                (window as any).focusColumnGrid = await gridNamespace.grid(
+                    'container',
+                    {
+                        data: {
+                            columns
+                        },
+                        columnDefaults: {
+                            width: 80
+                        },
+                        rendering: {
+                            columns: {
+                                bufferSize: 1,
+                                virtualization: true
+                            },
+                            rows: {
+                                strictHeights: true,
+                                virtualization: false
+                            }
+                        }
+                    },
+                    true
+                );
+            });
+
+            const targetCell = page.locator(
+                'tr[data-row-index="0"] td[data-column-id="Column 2"]'
+            );
+            const outsideButton = page.locator('#outside-focus-target');
+
+            await targetCell.focus();
+            await expect(targetCell).toBeFocused();
+
+            await page.evaluate(() => {
+                const viewport = (window as any).focusColumnGrid.viewport;
+
+                viewport.tbodyElement.scrollLeft = 160;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            await page.waitForFunction(() => (
+                (window as any).focusColumnGrid
+                    .viewport
+                    .columnsVirtualizer
+                    .columnCursor > 0
+            ));
+            await expect(targetCell).toBeFocused();
+
+            await page.evaluate(() => {
+                const viewport = (window as any).focusColumnGrid.viewport;
+
+                viewport.tbodyElement.scrollLeft =
+                    viewport.tbodyElement.scrollWidth;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            await expect(targetCell).toHaveCount(0);
+
+            await page.evaluate(() => {
+                const viewport = (window as any).focusColumnGrid.viewport;
+
+                viewport.tbodyElement.scrollLeft = 0;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            await expect(targetCell).toBeVisible();
+            await expect(targetCell).toBeFocused();
+
+            await page.evaluate(() => {
+                const viewport = (window as any).focusColumnGrid.viewport;
+
+                viewport.tbodyElement.scrollLeft =
+                    viewport.tbodyElement.scrollWidth;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            await expect(targetCell).toHaveCount(0);
+            await outsideButton.focus();
+            await expect(outsideButton).toBeFocused();
+
+            await page.evaluate(() => {
+                const viewport = (window as any).focusColumnGrid.viewport;
+
+                viewport.tbodyElement.scrollLeft = 0;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            await expect(targetCell).toBeVisible();
+            await expect(outsideButton).toBeFocused();
+        }
+    );
+
+    test(
         'strict column widths should initialize very wide grids',
         async ({ page }) => {
             await page.evaluate(async () => {

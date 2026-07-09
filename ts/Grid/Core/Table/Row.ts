@@ -144,6 +144,7 @@ abstract class Row {
                 columnIndex < from ||
                 columnIndex > to
             ) {
+                this.onCellBeforeDetach(cell);
                 cell.destroy();
             }
         }
@@ -152,15 +153,16 @@ abstract class Row {
         for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
             const column = columns[i];
             let cell = this.getCell(column.id);
+            const cellIndex = orderedCells.length;
 
             if (!cell) {
                 cell = this.createCell(column);
                 await cell.render();
             } else {
-                this.htmlElement.appendChild(cell.htmlElement);
                 cell.reflow();
             }
 
+            this.insertCellElement(cell, cellIndex);
             orderedCells.push(cell);
         }
 
@@ -232,6 +234,37 @@ abstract class Row {
     public getCellByColumnIndex(columnIndex: number): Cell | undefined {
         const column = this.viewport.getColumnByIndex(columnIndex);
         return column ? this.getCell(column.id) : void 0;
+    }
+
+    /**
+     * Inserts a cell only when it is not already at the expected position.
+     *
+     * @param cell
+     * The cell to position.
+     *
+     * @param index
+     * The expected DOM index.
+     */
+    protected insertCellElement(cell: Cell, index: number): void {
+        const cellElement = cell.htmlElement;
+        const referenceElement = this.htmlElement.children[index];
+
+        if (referenceElement !== cellElement) {
+            this.htmlElement.insertBefore(
+                cellElement,
+                referenceElement || null
+            );
+        }
+    }
+
+    /**
+     * Handles a cell before it is detached from the row.
+     *
+     * @param cell
+     * The cell that is about to be detached.
+     */
+    protected onCellBeforeDetach(cell: Cell): void {
+        void cell;
     }
 
     /**

@@ -422,6 +422,7 @@ class HeaderRow extends Row {
     ): HeaderRowSyncResult {
         let cell = this.headerCellsByKey[key];
         const isNew = !cell;
+        const cellIndex = orderedCells.length;
 
         if (!cell) {
             cell = this.createCell(column, columnsTree);
@@ -429,11 +430,11 @@ class HeaderRow extends Row {
             this.headerCellsByKey[key] = cell;
         } else {
             cell.syncColumns(column, columnsTree);
-            this.htmlElement.appendChild(cell.htmlElement);
             cell.reflow();
         }
 
         desiredKeys[key] = true;
+        this.insertCellElement(cell, cellIndex);
         orderedCells.push(cell);
 
         return { cell, isNew };
