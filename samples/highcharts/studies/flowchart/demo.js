@@ -1237,40 +1237,43 @@ const FlowchartLayout = {
                     .path()
                     .addClass('highcharts-flowchart-arrow', true)
                     .add(this.series.group);
-            }
-        }
 
-        // Hovering a node fades every other node/link via the `inactive`
-        // state, but that machinery only knows about `this.graphic` (the
-        // line) - it has no idea `arrowGraphic` exists, so without this,
-        // the line fades and its arrowhead stays fully opaque.
-        //
-        // This mirrors `this.graphic`'s own resulting opacity rather than
-        // independently recomputing one from `pointAttribs(this,
-        // this.state)`, because `this.state` becomes 'inactive' for
-        // *every* other point during a hover, including ones connected to
-        // the hovered node - which `networkgraph`'s own hover handling
-        // (`NodesComposition.setNodeState`) deliberately re-applies 'hover'
-        // to right afterwards, bypassing this override entirely (it calls
-        // the base `Point.prototype.setState` on connected links directly,
-        // not through this subclass), so `this.state` ends up saying
-        // 'inactive' for a link this override never actually got to
-        // process as 'hover'. `this.graphic.opacity` reflects the real
-        // outcome either way; `this.state` doesn't.
-        //
-        // `this.graphic.opacity` isn't settled to that target synchronously
-        // though - reading it immediately after `super.setState()` can
-        // still catch the old value mid-transition. Reading it one tick
-        // after `states.inactive.animation.duration` (50ms) instead of
-        // immediately is a pragmatic way to sidestep both problems without
-        // re-implementing the connected/inactive decision here.
-        setState(state) {
-            super.setState(state);
-            setTimeout(() => {
-                if (this.arrowGraphic && this.graphic) {
-                    this.arrowGraphic.attr({ opacity: this.graphic.opacity });
-                }
-            }, 60);
+                // The line's opacity can change through more paths than
+                // just this point's own code - `networkgraph`'s hover
+                // handling (`NodesComposition.setNodeState`) calls
+                // `Point.prototype.setState` directly on a hovered node's
+                // connected links, bypassing any `setState` override on
+                // this point entirely, and it decides per link whether to
+                // actually change the opacity (a connected link stays at
+                // full opacity despite the wider `inactive` state other
+                // links get) - a decision this class has no independent
+                // way to reproduce correctly.
+                //
+                // Rather than re-deriving that decision (or its timing),
+                // wrap the line graphic's own `attr`/`animate` once here so
+                // *every* opacity change made to the line - by anyone,
+                // however it gets there - is mirrored onto the arrowhead
+                // through that exact same call: same target value, same
+                // animation options (duration, easing), so the two always
+                // move together instead of one guessing at or lagging
+                // behind the other.
+                ['attr', 'animate'].forEach(method => {
+                    const original = this.graphic[method]
+                        .bind(this.graphic);
+                    this.graphic[method] = (params, ...rest) => {
+                        if (
+                            this.arrowGraphic &&
+                            params && typeof params === 'object' &&
+                            'opacity' in params
+                        ) {
+                            this.arrowGraphic[method](
+                                { opacity: params.opacity }, ...rest
+                            );
+                        }
+                        return original(params, ...rest);
+                    };
+                });
+            }
         }
 
         // Reposition the line, the arrowhead, and the data label anchor.
@@ -1297,10 +1300,13 @@ const FlowchartLayout = {
             this.graphic.attr(this.shapeArgs);
 
             if (this.arrowGraphic) {
+                // Opacity isn't set here - the wrapped `this.graphic.attr`
+                // installed in `renderLink()` already mirrored it onto
+                // `arrowGraphic` from the `this.graphic.attr(attribs)` call
+                // above, which carries the same `opacity`.
                 this.arrowGraphic.attr({
                     d: this.getArrowPath(),
-                    fill: (attribs && attribs.stroke) || 'inherit',
-                    opacity: (attribs && attribs.opacity) ?? 1
+                    fill: (attribs && attribs.stroke) || 'inherit'
                 });
             }
 
