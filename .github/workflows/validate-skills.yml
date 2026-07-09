@@ -22,44 +22,47 @@ jobs:
   validate_skills:
     timeout-minutes: 10
     runs-on: ubuntu-slim
-    strategy:
-      matrix:
-        node-version: [lts/*]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6.4.0
+      - name: Use Python
+        uses: actions/setup-python@v6.3.0
         with:
-          node-version: ${{ matrix.node-version }}
+          python-version: '3.13'
 
       - name: Install skills-ref
-        run: npm install --global skills-ref@0.1.5
+        run: python -m pip install skills-ref==0.1.1
 
       - name: Validate skills
-        shell: bash
         run: |
-          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          from skills_ref import validate
 
-          count=0
-          for root in .agents/skills .claude/skills; do
-              if [ ! -d "$root" ]; then
-                  continue
-              fi
+          roots = [Path('.agents/skills'), Path('.claude/skills')]
+          skill_dirs = sorted({
+              skill_file.parent
+              for root in roots
+              if root.is_dir()
+              for skill_file in root.rglob('SKILL.md')
+          })
 
-              while IFS= read -r -d '' skill_file; do
-                  skill_dir="$(dirname "$skill_file")"
-                  echo "::group::${skill_dir#./}"
-                  skills-ref validate "$skill_dir"
-                  echo "::endgroup::"
-                  count=$((count + 1))
-              done < <(find "$root" -name SKILL.md -print0 | sort -z)
-          done
+          if not skill_dirs:
+              raise SystemExit('No SKILL.md files found.')
 
-          if [ "$count" -eq 0 ]; then
-              echo "No SKILL.md files found."
-              exit 1
-          fi
+          failed = False
+          for skill_dir in skill_dirs:
+              print(f'Validating {skill_dir}')
+              problems = validate(skill_dir)
+              if problems:
+                  failed = True
+                  print(f'::error title={skill_dir}::Validation failed')
+                  for problem in problems:
+                      print(f'  - {problem}')
 
-          echo "Validated $count skills."
+          if failed:
+              raise SystemExit(1)
+
+          print(f'Validated {len(skill_dirs)} skills.')
+          PY
