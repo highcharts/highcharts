@@ -346,7 +346,7 @@ test.describe('Sorting and resizing wide grid', () => {
     );
 
     test(
-        'horizontal wheel over header should scroll the grid',
+        'wheel over header should scroll the grid',
         async ({ page }) => {
             await page.evaluate(async () => {
                 const gridNamespace = (window as any).Grid;
@@ -367,7 +367,7 @@ test.describe('Sorting and resizing wide grid', () => {
 
                 for (let i = 0; i < 80; ++i) {
                     columns['Column ' + i] = Array.from(
-                        { length: 10 },
+                        { length: 80 },
                         (_value, row): number => row + i
                     );
                 }
@@ -414,6 +414,13 @@ test.describe('Sorting and resizing wide grid', () => {
                     .tbodyElement
                     .scrollLeft > 0
             ));
+            await page.mouse.wheel(0, 160);
+            await page.waitForFunction(() => (
+                (window as any).headerWheelGrid
+                    .viewport
+                    .tbodyElement
+                    .scrollTop > 0
+            ));
             await page.waitForFunction(() => (
                 (window as any).headerWheelGrid
                     .viewport
@@ -426,11 +433,13 @@ test.describe('Sorting and resizing wide grid', () => {
 
                 return {
                     columnCursor: viewport.columnsVirtualizer.columnCursor,
-                    scrollLeft: viewport.tbodyElement.scrollLeft
+                    scrollLeft: viewport.tbodyElement.scrollLeft,
+                    scrollTop: viewport.tbodyElement.scrollTop
                 };
             });
 
             expect(state.scrollLeft).toBeGreaterThan(0);
+            expect(state.scrollTop).toBeGreaterThan(0);
             expect(state.columnCursor).toBeGreaterThan(0);
         }
     );

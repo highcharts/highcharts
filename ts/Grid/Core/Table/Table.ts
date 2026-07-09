@@ -665,7 +665,7 @@ class Table {
     };
 
     /**
-     * Handles horizontal wheel scrolling over the table header.
+     * Handles wheel scrolling over the table header.
      *
      * @param e
      * The wheel event.
@@ -676,33 +676,53 @@ class Table {
         }
 
         const tbody = this.tbodyElement;
-        let scrollDelta = e.deltaX || (e.shiftKey ? e.deltaY : 0);
+        let deltaX = e.deltaX;
+        let deltaY = e.deltaY;
 
-        if (!scrollDelta) {
+        if (e.shiftKey && !deltaX) {
+            deltaX = deltaY;
+            deltaY = 0;
+        }
+
+        if (!deltaX && !deltaY) {
             return;
         }
 
         if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) {
-            scrollDelta *= this.rowsVirtualizer.defaultRowHeight;
+            deltaX *= this.rowsVirtualizer.defaultRowHeight;
+            deltaY *= this.rowsVirtualizer.defaultRowHeight;
         } else if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
-            scrollDelta *= tbody.clientWidth;
+            deltaX *= tbody.clientWidth;
+            deltaY *= tbody.clientHeight;
         }
 
         const maxScrollLeft = Math.max(
             tbody.scrollWidth - tbody.clientWidth,
             0
         );
+        const maxScrollTop = Math.max(
+            tbody.scrollHeight - tbody.clientHeight,
+            0
+        );
         const scrollLeft = Math.max(
             0,
-            Math.min(tbody.scrollLeft + scrollDelta, maxScrollLeft)
+            Math.min(tbody.scrollLeft + deltaX, maxScrollLeft)
+        );
+        const scrollTop = Math.max(
+            0,
+            Math.min(tbody.scrollTop + deltaY, maxScrollTop)
         );
 
-        if (scrollLeft === tbody.scrollLeft) {
+        if (
+            scrollLeft === tbody.scrollLeft &&
+            scrollTop === tbody.scrollTop
+        ) {
             return;
         }
 
         e.preventDefault();
         tbody.scrollLeft = scrollLeft;
+        tbody.scrollTop = scrollTop;
     };
 
     /**
