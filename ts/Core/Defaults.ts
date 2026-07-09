@@ -3175,6 +3175,14 @@ export function getOptions(): DefaultOptions {
 }
 
 /**
+ * Plot options from the `setOptions` calls, kept apart from `defaultOptions`
+ * where user set and built in options can no longer be told apart (#20716).
+ *
+ * @internal
+ */
+const globalUserPlotOptions: Options['plotOptions'] = {};
+
+/**
  * Merge the default options with custom options and return the new options
  * structure. Commonly used for defining reusable templates.
  *
@@ -3195,6 +3203,11 @@ function setOptions(
 
     // Copy in the default options
     merge(true, defaultOptions, options);
+
+    // Keep track of the user set plot options (#20716).
+    if (options.plotOptions) {
+        merge(true, globalUserPlotOptions, options.plotOptions);
+    }
 
     // Update the time object
     if (options.time) {
@@ -3226,6 +3239,7 @@ const DefaultOptions = {
     defaultOptions,
     defaultTime,
     getOptions,
+    globalUserPlotOptions,
     setOptions
 };
 
