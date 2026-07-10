@@ -1,0 +1,86 @@
+.benchmark {
+    color: var(--highcharts-neutral-color-100, CanvasText);
+    color-scheme: light dark;
+    max-width: 1280px;
+}
+
+.benchmark-toolbar,
+.benchmark-summary {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin: 0 0 12px;
+}
+
+.benchmark-toolbar button {
+    background: var(--highcharts-highlight-color-80, Highlight);
+    border: 1px solid var(--highcharts-highlight-color-100, Highlight);
+    border-radius: 4px;
+    color: HighlightText;
+    cursor: pointer;
+    padding: 6px 14px;
+}
+
+.benchmark-toolbar button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+#benchmark-status {
+    color: var(--highcharts-neutral-color-60, color-mix(in srgb, CanvasText 60%, Canvas));
+}
+
+.benchmark-summary {
+    background: var(--highcharts-neutral-color-3, color-mix(in srgb, CanvasText 3%, Canvas));
+    border: 1px solid var(--highcharts-neutral-color-20, color-mix(in srgb, CanvasText 20%, Canvas));
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+
+.benchmark-results {
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.benchmark-results caption {
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.benchmark-results th,
+.benchmark-results td {
+    border: 1px solid var(--highcharts-neutral-color-20, color-mix(in srgb, CanvasText 20%, Canvas));
+    padding: 6px 8px;
+    text-align: left;
+}
+
+.benchmark-results th {
+    background: var(--highcharts-neutral-color-5, color-mix(in srgb, CanvasText 5%, Canvas));
+}
+
+.benchmark-results .benchmark-result-running {
+    font-weight: 600;
+}
+
+.benchmark-preview-header {
+    color: var(--highcharts-neutral-color-60, color-mix(in srgb, CanvasText 60%, Canvas));
+    margin-bottom: 6px;
+}
+
+#container {
+    border: 1px solid var(--highcharts-neutral-color-20, color-mix(in srgb, CanvasText 20%, Canvas));
+    border-radius: 4px;
+    height: 360px;
+    overflow: hidden;
+}
+
+.highcharts-light .benchmark {
+    color-scheme: light;
+}
+
+.highcharts-dark .benchmark {
+    color-scheme: dark;
+}
