@@ -12,9 +12,12 @@ import { HeatmapSeries } from '@highcharts/react/series/Heatmap';
 import type { HeatmapSeriesProps } from '@highcharts/react/series/Heatmap';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { HighchartsWithTemplating } from './types';
 
 import 'highcharts/es-modules/masters/modules/heatmap.src.js';
+
+type HighchartsWithTemplating = typeof Highcharts & {
+    Templating: { helpers: Record<string, (...args: unknown[]) => unknown> };
+};
 
 // Substring template helper for the responsive labels
 (Highcharts as HighchartsWithTemplating).Templating.helpers.substr = (
