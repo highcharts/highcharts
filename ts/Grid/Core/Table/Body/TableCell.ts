@@ -356,6 +356,7 @@ class TableCell extends Cell {
         delete vp.pendingFocusCursor;
         vp.clearDetachedFocus();
         vp.focusCursor = {
+            type: 'body',
             rowId,
             columnIndex: this.column.index
         };

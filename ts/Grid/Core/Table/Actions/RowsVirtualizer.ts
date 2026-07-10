@@ -746,8 +746,11 @@ class RowsVirtualizer {
                     }
                 }
             } else if (vp.focusCursor) {
-                const focusCursor = vp.focusCursor;
-                if (!focusCursor.bodySectionId) {
+                const { focusCursor } = vp;
+                if (
+                    focusCursor.type !== 'header' &&
+                    !focusCursor.bodySectionId
+                ) {
                     const focusedRow = rows.find((row): boolean =>
                         row.id === focusCursor.rowId
                     );
@@ -765,7 +768,11 @@ class RowsVirtualizer {
 
             // Set the focus anchor cell.
             if (
-                (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+                (
+                    !vp.focusCursor ||
+                    vp.focusCursor.type === 'header' ||
+                    !vp.focusAnchorCell?.row.rendered
+                ) &&
                 rows.length > 0
             ) {
                 const anchorRowIndex = Math.max(0, rowCursor - rows[0].index);
@@ -1052,11 +1059,12 @@ class RowsVirtualizer {
      * The row to pool.
      */
     private poolRow(row: TableRow): void {
-        const focusCursor = this.viewport.focusCursor;
+        const { focusCursor } = this.viewport;
         const activeElement = document.activeElement;
 
         if (
             focusCursor &&
+            focusCursor.type !== 'header' &&
             focusCursor.rowId === row.id &&
             activeElement instanceof Element &&
             row.htmlElement.contains(activeElement)

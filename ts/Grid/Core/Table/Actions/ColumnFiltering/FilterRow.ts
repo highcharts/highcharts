@@ -114,6 +114,7 @@ class FilterRow extends HeaderRow {
         }
 
         this.destroyStaleCells(desiredKeys);
+        this.syncCellElements(orderedCells);
         this.cells = orderedCells;
         this.setLastCellClass();
         this.reflowPosition();

@@ -177,12 +177,6 @@ class Table {
     public focusAnchorCell?: Cell;
 
     /**
-     * Whether the current logical focus belongs to a body cell that has been
-     * detached from the DOM by virtualization.
-     */
-    private hasDetachedFocus = false;
-
-    /**
      * The flag that indicates if the table rows are virtualized.
      */
     public virtualRows: boolean = true;
@@ -516,7 +510,7 @@ class Table {
         if (!dp) {
             return;
         }
-        const focusCursor = vp.focusCursor;
+        const { focusCursor } = vp;
 
         try {
             this.grid.showLoading();
@@ -733,21 +727,15 @@ class Table {
      * The focus event.
      */
     private onDocumentFocusIn = (e: FocusEvent): void => {
-        if (!this.hasDetachedFocus) {
+        if (!this.focusCursor?.detached) {
             return;
         }
 
         const target = e.target;
+        const isTableTarget = target instanceof Node &&
+            this.tableElement.contains(target);
 
-        if (
-            target instanceof Node &&
-            this.tableElement.contains(target)
-        ) {
-            this.clearDetachedFocus();
-            return;
-        }
-
-        this.clearDetachedFocus(true);
+        this.clearDetachedFocus(!isTableTarget);
     };
 
     /**
@@ -758,7 +746,7 @@ class Table {
      * The pointer event.
      */
     private onDocumentPointerDown = (e: PointerEvent): void => {
-        if (!this.hasDetachedFocus) {
+        if (!this.focusCursor?.detached) {
             return;
         }
 
@@ -1111,9 +1099,19 @@ class Table {
     /**
      * Marks the current logical focus as temporarily detached by
      * virtualization.
+     *
+     * @param cursor
+     * Focus cursor to restore when the cell is rendered again.
      */
-    public preserveFocusDuringDetach(): void {
-        this.hasDetachedFocus = true;
+    public preserveFocusDuringDetach(cursor?: FocusCursor): void {
+        if (cursor) {
+            this.focusCursor = {
+                ...cursor,
+                detached: true
+            };
+        } else if (this.focusCursor) {
+            this.focusCursor.detached = true;
+        }
     }
 
     /**
@@ -1129,12 +1127,13 @@ class Table {
         rowId: RowId | undefined,
         columnIndex: number
     ): boolean {
-        const focusCursor = this.focusCursor;
+        const { focusCursor } = this;
 
         return !!(
-            this.hasDetachedFocus &&
             rowId !== void 0 &&
             focusCursor &&
+            focusCursor.detached &&
+            focusCursor.type !== 'header' &&
             focusCursor.rowId === rowId &&
             focusCursor.columnIndex === columnIndex
         );
@@ -1148,10 +1147,10 @@ class Table {
      * Whether to also clear the logical focus cursor.
      */
     public clearDetachedFocus(clearFocusCursor: boolean = false): void {
-        this.hasDetachedFocus = false;
-
         if (clearFocusCursor) {
             delete this.focusCursor;
+        } else if (this.focusCursor) {
+            delete this.focusCursor.detached;
         }
     }
 
@@ -1466,6 +1465,14 @@ class Table {
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
         this.header?.reflow();
         this.rowsVirtualizer.reflowRows();
+        const { focusCursor } = this;
+
+        if (
+            focusCursor?.detached &&
+            focusCursor.type === 'header'
+        ) {
+            this.restoreHeaderFocusFromCursor(focusCursor);
+        }
 
         if (this.pendingFocusCursor) {
             const [rowIndex, columnIndex] = this.pendingFocusCursor;
@@ -1476,8 +1483,11 @@ class Table {
                 delete this.pendingFocusCursor;
                 this.restoreRenderedCellFocus(cell, rowIndex, columnIndex);
             }
-        } else if (this.focusCursor && !this.focusCursor.bodySectionId) {
-            const focusCursor = this.focusCursor;
+        } else if (
+            focusCursor &&
+            focusCursor.type !== 'header' &&
+            !focusCursor.bodySectionId
+        ) {
             const rowIndex = await this.grid.dataProvider?.getRowIndex(
                 focusCursor.rowId
             );
@@ -1573,6 +1583,11 @@ class Table {
         defer: boolean = false
     ): void {
         const focus = (): void => {
+            if (cursor.type === 'header') {
+                this.restoreHeaderFocusFromCursor(cursor);
+                return;
+            }
+
             if (cursor.bodySectionId) {
                 this.bodySections.find(
                     (section): boolean => section.id === cursor.bodySectionId
@@ -1610,13 +1625,63 @@ class Table {
         }
     }
 
+    /**
+     * Restores focus to a rendered header cell when its logical focus was
+     * detached by column virtualization.
+     *
+     * @param cursor
+     * Focus cursor to restore.
+     */
+    private restoreHeaderFocusFromCursor(
+        cursor: FocusCursor | undefined = this.focusCursor
+    ): void {
+        if (cursor?.type !== 'header') {
+            return;
+        }
+
+        const rowIndex = this.header ?
+            this.header.rows.length + (cursor.rowIndex || 0) :
+            -1;
+        const cell = this.header?.rows[rowIndex]?.getCellByKey(
+            cursor.cellKey
+        );
+
+        if (!cell) {
+            return;
+        }
+
+        this.clearDetachedFocus(true);
+
+        if (cursor.toolbarButtonIndex !== void 0) {
+            const button = cell.toolbar?.buttons[cursor.toolbarButtonIndex];
+
+            if (button) {
+                button.focus();
+                return;
+            }
+        }
+
+        cell.htmlElement.focus({
+            preventScroll: true
+        });
+    }
+
 }
 
-export interface FocusCursor {
-    rowId: RowId;
+export type FocusCursor = {
     columnIndex: number;
+    detached?: boolean;
+    type?: 'body';
+    rowId: RowId;
     bodySectionId?: string;
-}
+} | {
+    cellKey: string;
+    columnIndex: number;
+    detached?: boolean;
+    rowIndex: number;
+    toolbarButtonIndex?: number;
+    type: 'header';
+};
 
 export interface TableBodySection {
     id: string;

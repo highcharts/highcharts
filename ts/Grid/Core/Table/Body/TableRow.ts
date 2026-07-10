@@ -296,12 +296,13 @@ class TableRow extends Row {
     protected override onCellBeforeDetach(cell: Cell): void {
         const activeElement = document.activeElement;
         const columnIndex = cell.column?.index;
-        const focusCursor = this.viewport.focusCursor;
+        const { focusCursor } = this.viewport;
 
         if (
             columnIndex === void 0 ||
             this.id === void 0 ||
             !focusCursor ||
+            focusCursor.type === 'header' ||
             focusCursor.bodySectionId ||
             focusCursor.rowId !== this.id ||
             focusCursor.columnIndex !== columnIndex ||

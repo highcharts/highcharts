@@ -24,6 +24,7 @@
  * */
 import type { GroupedHeaderOptions } from '../../Options';
 import type Cell from '../Cell';
+import type { FocusCursor } from '../Table';
 
 import Table from '../Table.js';
 import Row from '../Row.js';
@@ -230,6 +231,7 @@ class HeaderRow extends Row {
         }
 
         this.destroyStaleCells(desiredKeys);
+        this.syncCellElements(orderedCells);
         this.cells = orderedCells;
         this.setLastCellClass();
         this.reflowPosition();
@@ -422,7 +424,6 @@ class HeaderRow extends Row {
     ): HeaderRowSyncResult {
         let cell = this.headerCellsByKey[key];
         const isNew = !cell;
-        const cellIndex = orderedCells.length;
 
         if (!cell) {
             cell = this.createCell(column, columnsTree);
@@ -434,7 +435,6 @@ class HeaderRow extends Row {
         }
 
         desiredKeys[key] = true;
-        this.insertCellElement(cell, cellIndex);
         orderedCells.push(cell);
 
         return { cell, isNew };
@@ -454,8 +454,21 @@ class HeaderRow extends Row {
             const key = cell.headerCellKey;
 
             if (!key || !desiredKeys[key]) {
+                this.onCellBeforeDetach(cell);
                 cell.destroy();
             }
+        }
+    }
+
+    /**
+     * Synchronizes header cell elements with the expected DOM order.
+     *
+     * @param orderedCells
+     * The cells in the expected DOM order.
+     */
+    protected syncCellElements(orderedCells: HeaderCell[]): void {
+        for (let i = 0, iEnd = orderedCells.length; i < iEnd; ++i) {
+            this.insertCellElement(orderedCells[i], i);
         }
     }
 
@@ -482,6 +495,89 @@ class HeaderRow extends Row {
      */
     protected getColumnCellKey(columnId: string): string {
         return 'column:' + columnId;
+    }
+
+    /**
+     * Returns a header cell by its stable render key.
+     *
+     * @param key
+     * The stable header cell key.
+     */
+    public getCellByKey(key: string): HeaderCell | undefined {
+        return this.headerCellsByKey[key];
+    }
+
+    /**
+     * Preserves logical focus when column virtualization detaches the active
+     * header cell.
+     *
+     * @param cell
+     * The cell that is about to be detached.
+     */
+    protected override onCellBeforeDetach(cell: Cell): void {
+        const activeElement = document.activeElement;
+
+        if (
+            !(activeElement instanceof Element) ||
+            !cell.htmlElement.contains(activeElement)
+        ) {
+            return;
+        }
+
+        const cursor = this.getFocusCursor(
+            cell as HeaderCell,
+            activeElement
+        );
+
+        if (cursor) {
+            this.viewport.preserveFocusDuringDetach(cursor);
+        }
+    }
+
+    /**
+     * Returns a restorable focus cursor for a header cell.
+     *
+     * @param cell
+     * The focused header cell.
+     *
+     * @param activeElement
+     * The active element inside the header cell.
+     */
+    private getFocusCursor(
+        cell: HeaderCell,
+        activeElement: Element
+    ): FocusCursor | undefined {
+        const header = this.viewport.header;
+        const cellKey = cell.headerCellKey;
+        const headerRowIndex = header?.rows.indexOf(this) ?? -1;
+        const firstColumn = cell.columns[0];
+
+        if (!header || !cellKey || headerRowIndex < 0 || !firstColumn) {
+            return;
+        }
+
+        const cursor: FocusCursor = {
+            cellKey,
+            columnIndex: firstColumn.index,
+            rowIndex: headerRowIndex - header.rows.length,
+            type: 'header'
+        };
+
+        if (activeElement === cell.htmlElement) {
+            return cursor;
+        }
+
+        const buttons = cell.toolbar?.buttons;
+        if (!buttons) {
+            return;
+        }
+
+        for (let i = 0, iEnd = buttons.length; i < iEnd; ++i) {
+            if (buttons[i].wrapper?.contains(activeElement)) {
+                cursor.toolbarButtonIndex = i;
+                return cursor;
+            }
+        }
     }
 
     /**

@@ -196,7 +196,10 @@ abstract class Cell {
      * Handles the blur event on the cell.
      */
     protected onBlur(): void {
-        delete this.row.viewport.focusCursor;
+        const vp = this.row.viewport;
+        if (!vp.focusCursor?.detached) {
+            delete vp.focusCursor;
+        }
     }
 
     /**

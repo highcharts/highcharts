@@ -446,11 +446,12 @@ class TreeStickyRowController {
      * Captures current table cell focus shared with the sticky overlay.
      */
     private captureFocusState(): StickyFocusState | undefined {
-        const focusCursor = this.viewport.focusCursor;
+        const { focusCursor } = this.viewport;
         const activeElement = document.activeElement;
 
         if (
             !focusCursor ||
+            focusCursor.type === 'header' ||
             focusCursor.bodySectionId ||
             !(activeElement instanceof HTMLTableCellElement)
         ) {
