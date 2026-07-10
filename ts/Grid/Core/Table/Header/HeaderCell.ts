@@ -339,7 +339,9 @@ class HeaderCell extends Cell {
         }
 
         if (e.key === 'Enter') {
-            this.toolbar?.focus();
+            this.toolbar?.focus({
+                preventScroll: true
+            });
             e.preventDefault();
             return;
         }

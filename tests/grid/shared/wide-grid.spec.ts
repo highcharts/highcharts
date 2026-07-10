@@ -519,6 +519,159 @@ test.describe('Sorting and resizing wide grid', () => {
     );
 
     test(
+        'keyboard navigation should reveal focused virtual columns',
+        async ({ page }) => {
+            await page.setViewportSize({ width: 360, height: 480 });
+            await page.evaluate(async () => {
+                const gridNamespace = (window as any).Grid;
+                const container = document.getElementById('container');
+                const columns: Record<string, number[]> = {};
+
+                for (const grid of gridNamespace.grids) {
+                    grid?.destroy();
+                }
+
+                if (!container) {
+                    throw new Error('Missing grid container.');
+                }
+
+                document.body.style.width = '1200px';
+                window.scrollTo(0, 0);
+                container.innerHTML = '';
+                container.style.width = '320px';
+                container.style.height = '220px';
+
+                for (let i = 0; i < 80; ++i) {
+                    columns['Column ' + i] = Array.from(
+                        { length: 20 },
+                        (_value, row): number => row + i
+                    );
+                }
+
+                (window as any).keyboardColumnGrid =
+                    await gridNamespace.grid(
+                        'container',
+                        {
+                            data: {
+                                columns
+                            },
+                            columnDefaults: {
+                                width: 120
+                            },
+                            rendering: {
+                                columns: {
+                                    bufferSize: 1,
+                                    virtualization: true
+                                },
+                                rows: {
+                                    strictHeights: true,
+                                    virtualization: false
+                                }
+                            }
+                        },
+                        true
+                    );
+            });
+
+            const getState = async (selector: string): Promise<{
+                documentScrollLeft: number;
+                left: number;
+                right: number;
+                scrollLeft: number;
+                viewportLeft: number;
+                viewportRight: number;
+            }> => page.evaluate((selector) => {
+                const viewport = (window as any).keyboardColumnGrid.viewport;
+                const element = document.querySelector(selector);
+
+                if (!element) {
+                    throw new Error('Missing focused element.');
+                }
+
+                const rect = element.getBoundingClientRect();
+                const viewportRect =
+                    viewport.tbodyElement.getBoundingClientRect();
+
+                return {
+                    documentScrollLeft:
+                        document.scrollingElement?.scrollLeft || 0,
+                    left: rect.left,
+                    right: rect.right,
+                    scrollLeft: viewport.tbodyElement.scrollLeft,
+                    viewportLeft: viewportRect.left,
+                    viewportRight: viewportRect.right
+                };
+            }, selector);
+
+            const bodyCell = page.locator(
+                'tr[data-row-index="0"] td[data-column-id="Column 2"]'
+            );
+            const nextBodyCell = page.locator(
+                'tr[data-row-index="0"] td[data-column-id="Column 3"]'
+            );
+
+            await bodyCell.focus();
+            await page.keyboard.press('ArrowRight');
+            await expect(nextBodyCell).toBeFocused();
+            await page.waitForFunction(() => (
+                (window as any).keyboardColumnGrid
+                    .viewport
+                    .tbodyElement
+                    .scrollLeft > 0
+            ));
+
+            let state = await getState(
+                'tr[data-row-index="0"] td[data-column-id="Column 3"]'
+            );
+
+            expect(state.scrollLeft).toBeGreaterThan(0);
+            expect(state.left).toBeGreaterThanOrEqual(
+                state.viewportLeft - 2
+            );
+            expect(state.right).toBeLessThanOrEqual(
+                state.viewportRight + 2
+            );
+
+            await page.evaluate(() => {
+                const viewport = (window as any).keyboardColumnGrid.viewport;
+
+                window.scrollTo(0, 0);
+                viewport.tbodyElement.scrollLeft = 0;
+                viewport.tbodyElement.dispatchEvent(new Event('scroll'));
+            });
+
+            const headerCell = page.locator(
+                'th[data-column-id="Column 2"]'
+            );
+            const nextHeaderCell = page.locator(
+                'th[data-column-id="Column 3"]'
+            );
+
+            await expect(headerCell).toBeVisible();
+            await headerCell.focus();
+            await page.keyboard.press('ArrowRight');
+            await expect(nextHeaderCell).toBeFocused();
+            await page.waitForFunction(() => (
+                (window as any).keyboardColumnGrid
+                    .viewport
+                    .tbodyElement
+                    .scrollLeft > 0
+            ));
+
+            state = await getState('th[data-column-id="Column 3"]');
+
+            expect(state.scrollLeft).toBeGreaterThan(0);
+            expect(state.documentScrollLeft).toBe(0);
+            expect(state.left).toBeGreaterThanOrEqual(
+                state.viewportLeft - 2
+            );
+            expect(state.right).toBeLessThanOrEqual(
+                state.viewportRight + 2
+            );
+        }
+    );
+
+    test(
         'strict column widths should initialize very wide grids',
         async ({ page }) => {
             await page.evaluate(async () => {

@@ -260,17 +260,30 @@ abstract class Cell {
             const localRowIndex = getVerticalPos();
             const nextVerticalDir = localRowIndex + dir[0];
             const nextColumnIndex = column.index + dir[1];
+            const focusCell = (cell: Cell): void => {
+                cell.htmlElement.focus({
+                    preventScroll: true
+                });
+                vp.ensureColumnFullyVisible(nextColumnIndex);
+
+                if ((cell.row as TableRow).index !== void 0) {
+                    vp.ensureRowFullyVisible(cell.row as TableRow);
+                }
+            };
 
             if (nextVerticalDir < 0 && header) {
                 const extraRowIdx = header.rows.length + nextVerticalDir;
-                if (extraRowIdx + 1 > header.levels) {
+                const nextCell = extraRowIdx + 1 > header.levels ? (
                     header.rows[extraRowIdx]
-                        .getCellByColumnIndex(nextColumnIndex)
-                        ?.htmlElement.focus();
-                } else {
-                    vp.getColumnByIndex(nextColumnIndex)
-                        ?.header?.htmlElement.focus();
+                        ?.getCellByColumnIndex(nextColumnIndex)
+                ) : (
+                    vp.getColumnByIndex(nextColumnIndex)?.header
+                );
+
+                if (nextCell) {
+                    focusCell(nextCell);
                 }
+
                 return;
             }
 
@@ -281,7 +294,7 @@ abstract class Cell {
                 );
 
                 if (nextCell) {
-                    nextCell.htmlElement.focus();
+                    focusCell(nextCell);
                 } else if ((nextRow as TableRow).index !== void 0) {
                     vp.focusCellByRowIndex(
                         (nextRow as TableRow).index,

@@ -972,6 +972,18 @@ class Table {
      * @internal
      */
     public scrollToColumn(index: number): void {
+        this.ensureColumnFullyVisible(index);
+    }
+
+    /**
+     * Ensures that a column is fully visible inside the scrollable body.
+     *
+     * @param index
+     * The global index of the column to reveal.
+     *
+     * @internal
+     */
+    public ensureColumnFullyVisible(index: number): void {
         const column = this.getColumnByIndex(index);
 
         if (!column) {
@@ -983,14 +995,20 @@ class Table {
         const { tbodyElement } = this;
         const visibleLeft = tbodyElement.scrollLeft;
         const visibleRight = visibleLeft + tbodyElement.clientWidth;
+        let nextScrollLeft = visibleLeft;
 
         if (left < visibleLeft) {
-            tbodyElement.scrollLeft = left;
+            nextScrollLeft = left;
         } else if (right > visibleRight) {
-            tbodyElement.scrollLeft = Math.max(
+            nextScrollLeft = Math.max(
                 0,
                 right - tbodyElement.clientWidth
             );
+        }
+
+        if (nextScrollLeft !== visibleLeft) {
+            tbodyElement.scrollLeft = nextScrollLeft;
+            this.header?.scrollHorizontally(tbodyElement.scrollLeft);
         }
     }
 
@@ -1085,6 +1103,7 @@ class Table {
             targetCell.htmlElement.focus({
                 preventScroll: true
             });
+            this.ensureColumnFullyVisible(columnIndex);
 
             if (targetRow?.htmlElement.parentElement === this.tbodyElement) {
                 this.ensureRowFullyVisible(targetRow);
@@ -1187,6 +1206,7 @@ class Table {
             cell.htmlElement.focus({
                 preventScroll: true
             });
+            this.ensureColumnFullyVisible(columnIndex);
         });
     }
 
@@ -1656,7 +1676,10 @@ class Table {
             const button = cell.toolbar?.buttons[cursor.toolbarButtonIndex];
 
             if (button) {
-                button.focus();
+                button.focus({
+                    preventScroll: true
+                });
+                this.ensureColumnFullyVisible(cursor.columnIndex);
                 return;
             }
         }
@@ -1664,6 +1687,7 @@ class Table {
         cell.htmlElement.focus({
             preventScroll: true
         });
+        this.ensureColumnFullyVisible(cursor.columnIndex);
     }
 
 }
