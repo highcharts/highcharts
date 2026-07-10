@@ -5,10 +5,29 @@
 }
 
 #container,
-.highcharts-controls-wrapper {
+.sample-controls {
     margin: 10px;
 }
 
-highcharts-controls {
-    display: inline-block;
+.sample-controls {
+    align-items: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+}
+
+.sample-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sample-controls input[type="number"] {
+    width: 100px;
+}
+
+.sample-controls .checkbox-control {
+    align-items: center;
+    align-self: center;
+    flex-direction: row;
 }

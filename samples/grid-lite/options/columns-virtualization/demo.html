@@ -1,28 +1,30 @@
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
 
+<form id="grid-options" class="sample-controls" novalidate>
+    <label>
+        Columns
+        <input id="column-count" type="number" value="200">
+    </label>
+    <label>
+        Rows
+        <input id="row-count" type="number" value="40">
+    </label>
+    <label>
+        Buffer size
+        <input id="column-buffer-size" type="number" value="2">
+    </label>
+    <button type="submit">Apply</button>
+    <label class="checkbox-control">
+        <input id="strict-widths" type="checkbox" checked>
+        Strict widths
+    </label>
+    <label class="checkbox-control">
+        <input id="columns-virtualization" type="checkbox" checked>
+        Column virtualization
+    </label>
+    <label class="checkbox-control">
+        <input id="multi-row-header" type="checkbox">
+        Multi-row header
+    </label>
+</form>
 <div id="container"></div>
-
-<div class="highcharts-controls-wrapper">
-    <highcharts-controls target="#container">
-        <highcharts-group header="Column virtualization options">
-            <highcharts-control
-                type="boolean"
-                path="rendering.columns.strictWidths"
-                value="true"
-            ></highcharts-control>
-            <highcharts-control
-                type="boolean"
-                path="rendering.columns.virtualization"
-                value="true"
-            ></highcharts-control>
-            <highcharts-control
-                type="number"
-                path="rendering.columns.bufferSize"
-                value="2"
-                min="0"
-                max="10"
-            ></highcharts-control>
-        </highcharts-group>
-    </highcharts-controls>
-</div>
