@@ -87,6 +87,9 @@ function generateMultiRowHeader(columnCount) {
 function getGridOptions() {
     const { columnCount, rowCount, columnBufferSize } = appliedInputOptions;
     const options = {
+        caption: {
+            text: 'Column virtualization'
+        },
         data: {
             columns: generateColumns(columnCount, rowCount)
         },

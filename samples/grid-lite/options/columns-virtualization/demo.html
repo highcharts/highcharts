@@ -1,30 +1,35 @@
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
 
-<form id="grid-options" class="sample-controls" novalidate>
-    <label>
-        Columns
-        <input id="column-count" type="number" value="200">
-    </label>
-    <label>
-        Rows
-        <input id="row-count" type="number" value="40">
-    </label>
-    <label>
-        Buffer size
-        <input id="column-buffer-size" type="number" value="2">
-    </label>
-    <button type="submit">Apply</button>
-    <label class="checkbox-control">
-        <input id="strict-widths" type="checkbox" checked>
-        Strict widths
-    </label>
-    <label class="checkbox-control">
-        <input id="columns-virtualization" type="checkbox" checked>
-        Column virtualization
-    </label>
-    <label class="checkbox-control">
-        <input id="multi-row-header" type="checkbox">
-        Multi-row header
-    </label>
-</form>
 <div id="container"></div>
+
+<form id="grid-options" class="sample-controls" novalidate>
+    <div class="sample-controls-row sample-controls-fields">
+        <label>
+            Columns
+            <input id="column-count" type="number" value="1000">
+        </label>
+        <label>
+            Rows
+            <input id="row-count" type="number" value="300">
+        </label>
+        <label>
+            Buffer size
+            <input id="column-buffer-size" type="number" value="2">
+        </label>
+        <button type="submit">Apply</button>
+    </div>
+    <div class="sample-controls-row sample-controls-options">
+        <label class="checkbox-control">
+            <input id="strict-widths" type="checkbox">
+            Strict widths
+        </label>
+        <label class="checkbox-control">
+            <input id="columns-virtualization" type="checkbox" checked>
+            Column virtualization
+        </label>
+        <label class="checkbox-control">
+            <input id="multi-row-header" type="checkbox">
+            Multi-row header
+        </label>
+    </div>
+</form>
