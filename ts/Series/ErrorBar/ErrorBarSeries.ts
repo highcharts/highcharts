@@ -40,7 +40,7 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 /**
  * Errorbar series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.errorbar
  *
@@ -119,6 +119,7 @@ addEvent(ErrorBarSeries, 'afterTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface ErrorBarSeries extends BoxPlotSeries {
     pointClass: typeof ErrorBarPoint;
     doQuartiles: boolean;
@@ -139,6 +140,7 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
@@ -153,4 +155,5 @@ SeriesRegistry.registerSeriesType('errorbar', ErrorBarSeries);
  *
  * */
 
+/** @internal */
 export default ErrorBarSeries;

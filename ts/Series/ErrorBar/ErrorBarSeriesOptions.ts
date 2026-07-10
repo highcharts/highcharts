@@ -69,8 +69,6 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type {Highcharts.ColorType}
-     *
      * @default #000000
      *
      * @since 3.0
@@ -137,8 +135,6 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
-     *
      * @extends series.arearange.data
      *
      * @excluding dataLabels, drilldown, marker, states
@@ -172,8 +168,6 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
-     *
-     * @type {number}
      *
      * @since 3.0
      *

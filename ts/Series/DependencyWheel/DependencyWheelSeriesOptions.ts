@@ -84,8 +84,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
-     * @type {Array<number|string|null>}
-     *
      * @default [null, null]
      *
      * @product highcharts
@@ -115,8 +113,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *         weight: 5
      *     }]
      *  ```
-     *
-     * @type {Array<Array<string,string,number>|*>}
      *
      * @extends series.sankey.data
      *
@@ -199,8 +195,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
 
     /**
      * Size of the wheel in pixel or percent relative to the canvas space.
-     *
-     * @type {number|string}
      *
      * @default 100%
      *

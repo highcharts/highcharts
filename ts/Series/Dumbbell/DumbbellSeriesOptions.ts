@@ -72,8 +72,6 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * Color of the line that connects the dumbbell point's values.
      * By default it is the series' color.
      *
-     * @type {string}
-     *
      * @product highcharts highstock
      *
      * @since 8.0.0
@@ -96,8 +94,6 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * Color of the start markers in a dumbbell graph. This option takes
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
-     *
-     * @type {Highcharts.ColorType}
      *
      * @since 8.0.0
      *
@@ -184,8 +180,6 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      *
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
-     *
-     * @type {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
      *
      * @extends series.arearange.data
      *
