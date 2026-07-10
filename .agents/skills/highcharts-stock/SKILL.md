@@ -1,6 +1,6 @@
 ---
 name: highcharts-stock
-description: Use to implement, configure, and troubleshoot Highcharts Stock charts from the bundled docs.
+description: Highcharts Stock navigator, range selector, indicators, OHLC, candlestick, flags, data grouping, compare mode, and stock tools from the bundled docs.
 ---
 
 # Highcharts Stock
@@ -9,16 +9,16 @@ Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical ind
 
 ## Workflow
 
-1. Start with `references/docs/index.md` for a topic map, then read relevant docs.
-2. Read only the relevant copied docs before coding.
-3. Prefer documented declarative options over imperative runtime mutation.
+1. Start with `references/docs/index.md` and select every entry that matches the requested Stock feature.
+2. Read the selected docs before coding; the docs step is complete when every Stock feature, series type, or module you plan to use is covered by docs or named as an API/declaration lookup.
+3. Use local TypeScript declarations or the API reference only for exact signatures and options not covered by the docs.
+4. Prefer documented declarative options over imperative runtime mutation, except where the docs require runtime APIs.
 
 ## Boundaries
 
-- For core Highcharts JS concepts (axes, series, styling, accessibility), use the `highcharts-js` skill.
+- For core Highcharts JS concepts such as axes, series, styling, accessibility, exporting, and non-Stock chart setup, use the `highcharts-js` skill.
 - For Morningstar data connectors, use the `highcharts-morningstar` skill.
-- For Maps or Gantt, use the `highcharts-maps` or `highcharts-gantt` skill.
-- For exact option signatures, inspect local TypeScript declarations or the API reference.
+- For Maps, Gantt, or React wrapper work, use the `highcharts-maps`, `highcharts-gantt`, or `highcharts-react` skill.
 
 ## References
 

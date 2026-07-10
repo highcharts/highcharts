@@ -12,6 +12,29 @@ const path = require('node:path');
 
 const repoRoot = path.resolve(__dirname, '..');
 
+function validateStringList(file, field, value) {
+    if (!Array.isArray(value) || !value.every(item => typeof item === 'string')) {
+        throw new Error(`${file}: skillMd.${field} must be an array of strings`);
+    }
+}
+
+function validateSkillMd(file, skillMd) {
+    if (typeof skillMd === 'string') {
+        return;
+    }
+    if (!skillMd || typeof skillMd !== 'object') {
+        throw new Error(`${file}: skillMd must be a string or structured object`);
+    }
+    for (const key of ['description', 'title', 'scope']) {
+        if (typeof skillMd[key] !== 'string' || !skillMd[key]) {
+            throw new Error(`${file}: skillMd.${key} must be a non-empty string`);
+        }
+    }
+    for (const key of ['workflow', 'boundaries', 'references']) {
+        validateStringList(file, key, skillMd[key]);
+    }
+}
+
 function loadSkills(root) {
     const configDir = path.join(__dirname, 'skill-configs');
     const files = fs.readdirSync(configDir)
@@ -20,12 +43,16 @@ function loadSkills(root) {
 
     return files.map(f => {
         const skill = require(path.join(configDir, f))(root);
-        const required = ['name', 'docs', 'destinations', 'skillMd'];
+        const required = ['name', 'docs', 'destinations'];
         for (const key of required) {
             if (!skill[key]) {
                 throw new Error(`${f}: missing required property "${key}"`);
             }
         }
+        if (!skill.skillMd) {
+            throw new Error(`${f}: missing required property "skillMd"`);
+        }
+        validateSkillMd(f, skill.skillMd);
         return skill;
     });
 }
@@ -123,6 +150,45 @@ function selectDocs(docsRoot, skill) {
     ));
 }
 
+
+function numberedLines(lines) {
+    return lines.map((line, index) => `${index + 1}. ${line}`);
+}
+
+function bulletLines(lines) {
+    return lines.map(line => `- ${line}`);
+}
+
+function renderSkillMd(name, skillMd) {
+    if (typeof skillMd === 'string') {
+        return skillMd;
+    }
+
+    return [
+        '---',
+        `name: ${name}`,
+        `description: ${skillMd.description}`,
+        '---',
+        '',
+        `# ${skillMd.title}`,
+        '',
+        skillMd.scope,
+        '',
+        '## Workflow',
+        '',
+        ...numberedLines(skillMd.workflow),
+        '',
+        '## Boundaries',
+        '',
+        ...bulletLines(skillMd.boundaries),
+        '',
+        '## References',
+        '',
+        ...bulletLines(skillMd.references),
+        ''
+    ].join('\n');
+}
+
 // Note: Only detects fenced code blocks starting at column 0 (^ anchor in
 // multiline mode). Indented fences (e.g. inside list items) are not tracked,
 // so strippable content inside them may be incorrectly removed. Low risk for
@@ -156,7 +222,7 @@ function buildSkill(skill, docsRoot, tempRoot) {
     const docsOut = path.join(skillRoot, 'references', 'docs');
 
     fs.mkdirSync(docsOut, { recursive: true });
-    fs.writeFileSync(path.join(skillRoot, 'SKILL.md'), skill.skillMd);
+    fs.writeFileSync(path.join(skillRoot, 'SKILL.md'), renderSkillMd(skill.name, skill.skillMd));
 
     for (const file of files) {
         const source = path.join(docsRoot, file);
@@ -321,6 +387,49 @@ function selfTest() {
             '---\nname: test-skill\ndescription: Test skill for self-test.\n---\n\n# Test skill\n'
         );
 
+        const structuredSkill = {
+            name: 'structured-skill',
+            docs: { include: ['react/'], exclude: [] },
+            destinations: [{ path: path.join(outputRoot, 'structured-skill') }],
+            skillMd: {
+                description: 'Structured skill description.',
+                title: 'Structured Skill',
+                scope: 'Use this for structured skill generation.',
+                workflow: ['Read the index.', 'Read matching docs.'],
+                boundaries: ['Use another skill for unrelated work.'],
+                references: ['Live docs: https://example.com/']
+            }
+        };
+        const structuredGenerated = buildSkill(structuredSkill, docsRoot, path.join(tempRoot, 'build-structured'));
+        publishSkill(structuredSkill, structuredGenerated, true);
+        assert.equal(
+            fs.readFileSync(path.join(outputRoot, 'structured-skill', 'SKILL.md'), 'utf8'),
+            [
+                '---',
+                'name: structured-skill',
+                'description: Structured skill description.',
+                '---',
+                '',
+                '# Structured Skill',
+                '',
+                'Use this for structured skill generation.',
+                '',
+                '## Workflow',
+                '',
+                '1. Read the index.',
+                '2. Read matching docs.',
+                '',
+                '## Boundaries',
+                '',
+                '- Use another skill for unrelated work.',
+                '',
+                '## References',
+                '',
+                '- Live docs: https://example.com/',
+                ''
+            ].join('\n')
+        );
+
         const stripped = fs.readFileSync(
             path.join(outputRoot, 'test-skill', 'references', 'docs', 'getting-started', 'with-noise.md'),
             'utf8'
@@ -365,9 +474,9 @@ function selfTest() {
 
         for (const skill of SKILLS) {
             assert.match(
-                skill.skillMd,
+                renderSkillMd(skill.name, skill.skillMd),
                 /^---\nname: .+\ndescription: .+\n---/u,
-                `${skill.name}: skillMd must have name and description frontmatter`
+                `${skill.name}: skillMd must render name and description frontmatter`
             );
         }
     } finally {

@@ -16,32 +16,25 @@ module.exports = function (repoRoot) {
                 requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
             }
         ],
-        skillMd: `---
-name: highcharts-stock
-description: Use to implement, configure, and troubleshoot Highcharts Stock charts from the bundled docs.
----
-
-# Highcharts Stock
-
-Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical indicators, navigator, range selector, data grouping, compare mode, and stock tools.
-
-## Workflow
-
-1. Start with \`references/docs/index.md\` for a topic map, then read relevant docs.
-2. Read only the relevant copied docs before coding.
-3. Prefer documented declarative options over imperative runtime mutation.
-
-## Boundaries
-
-- For core Highcharts JS concepts (axes, series, styling, accessibility), use the \`highcharts-js\` skill.
-- For Morningstar data connectors, use the \`highcharts-morningstar\` skill.
-- For Maps or Gantt, use the \`highcharts-maps\` or \`highcharts-gantt\` skill.
-- For exact option signatures, inspect local TypeScript declarations or the API reference.
-
-## References
-
-- Live docs: https://www.highcharts.com/docs/stock/
-- API reference: https://api.highcharts.com/highstock/
-`
+        skillMd: {
+            description: 'Highcharts Stock navigator, range selector, indicators, OHLC, candlestick, flags, data grouping, compare mode, and stock tools from the bundled docs.',
+            title: 'Highcharts Stock',
+            scope: 'Use this for Highcharts Stock work: candlestick, OHLC, HLC, flags, technical indicators, navigator, range selector, data grouping, compare mode, and stock tools.',
+            workflow: [
+                'Start with `references/docs/index.md` and select every entry that matches the requested Stock feature.',
+                'Read the selected docs before coding; the docs step is complete when every Stock feature, series type, or module you plan to use is covered by docs or named as an API/declaration lookup.',
+                'Use local TypeScript declarations or the API reference only for exact signatures and options not covered by the docs.',
+                'Prefer documented declarative options over imperative runtime mutation, except where the docs require runtime APIs.'
+            ],
+            boundaries: [
+                'For core Highcharts JS concepts such as axes, series, styling, accessibility, exporting, and non-Stock chart setup, use the `highcharts-js` skill.',
+                'For Morningstar data connectors, use the `highcharts-morningstar` skill.',
+                'For Maps, Gantt, or React wrapper work, use the `highcharts-maps`, `highcharts-gantt`, or `highcharts-react` skill.'
+            ],
+            references: [
+                'Live docs: https://www.highcharts.com/docs/stock/',
+                'API reference: https://api.highcharts.com/highstock/'
+            ]
+        }
     };
 };
