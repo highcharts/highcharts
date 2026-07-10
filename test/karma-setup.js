@@ -79,6 +79,11 @@ Highcharts.setOptions({
     chart: {
         animation: false
     },
+    colorAxis: {
+        marker: {
+            animation: false
+        }
+    },
     lang: {
         locale: 'en-GB'
     },

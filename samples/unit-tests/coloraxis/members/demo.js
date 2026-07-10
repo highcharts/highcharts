@@ -44,8 +44,6 @@ QUnit.test('getSeriesExtremes', function (assert) {
     chart.update({
         colorAxis: {
             marker: {
-                // Read final path synchronously on the second hover
-                animation: false,
                 symbol: 'circle'
             }
         }
