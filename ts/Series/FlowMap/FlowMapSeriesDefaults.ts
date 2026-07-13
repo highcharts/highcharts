@@ -38,7 +38,7 @@ import type { FlowMapSeriesOptions } from './FlowMapSeriesOptions';
  * @requires     modules/flowmap
  * @optionparent plotOptions.flowmap
  */
-export const FlowMapSeriesDefaults: FlowMapSeriesOptions = {
+const FlowMapSeriesDefaults: FlowMapSeriesOptions = {
     animation: true,
 
     /**
@@ -191,3 +191,11 @@ export const FlowMapSeriesDefaults: FlowMapSeriesOptions = {
         pointFormat: '{point.options.from} \u2192 {point.options.to}: <b>{point.options.weight}</b>'
     }
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default FlowMapSeriesDefaults;
