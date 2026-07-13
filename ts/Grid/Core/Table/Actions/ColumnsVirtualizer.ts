@@ -173,13 +173,13 @@ class ColumnsVirtualizer {
         let to = columns.length - 1;
 
         if (viewport.virtualColumns) {
-            const range = viewport.columnLayout.getVisibleRange(
+            const [rangeFrom, rangeTo] = viewport.columnLayout.getVisibleRange(
                 viewport.tbodyElement.scrollLeft,
                 viewport.tbodyElement.clientWidth
             );
 
-            from = Math.max(0, range.from - this.buffer);
-            to = Math.min(columns.length - 1, range.to + this.buffer);
+            from = Math.max(0, rangeFrom - this.buffer);
+            to = Math.min(columns.length - 1, rangeTo + this.buffer);
         }
 
         if (!force && from === this.columnCursor && to === this.columnEnd) {

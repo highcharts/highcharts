@@ -31,18 +31,6 @@ import { clamp, defined } from '../../../../Shared/Utilities.js';
 
 /* *
  *
- *  Declarations
- *
- * */
-
-interface ColumnLayoutRange {
-    from: number;
-    to: number;
-}
-
-
-/* *
- *
  *  Class
  *
  * */
@@ -218,12 +206,12 @@ class ColumnLayout {
     public getVisibleRange(
         scrollLeft: number,
         viewportWidth: number
-    ): ColumnLayoutRange {
+    ): [number, number] {
         const { columns } = this.viewport;
         const columnCount = columns.length;
 
         if (!columnCount) {
-            return { from: 0, to: -1 };
+            return [0, -1];
         }
 
         const visibleLeft = Math.max(scrollLeft, 0);
@@ -246,7 +234,7 @@ class ColumnLayout {
                 )
             );
 
-            return { from, to };
+            return [from, to];
         }
 
         const from = Math.max(
@@ -258,7 +246,7 @@ class ColumnLayout {
             Math.min(this.findColumnAt(visibleRight), columnCount - 1)
         );
 
-        return { from, to };
+        return [from, to];
     }
 
     /**
