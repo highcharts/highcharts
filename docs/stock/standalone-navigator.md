@@ -38,7 +38,7 @@ The `unbind` method is used to detach a chart or axis from the Standalone Naviga
 ## Chart options
 
 The standalone navigator renders into its own chart container. General chart options
-for it, like `chart.height` or `chart.inverted`, are set through the
+ like `chart.height` or `chart.inverted`, are set through the
 `chartOptions` option, while the `height` option controls the height of the
 navigator itself:
 ```javascript
