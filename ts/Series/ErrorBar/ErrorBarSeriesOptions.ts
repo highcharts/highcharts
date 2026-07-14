@@ -175,6 +175,20 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      */
     whiskerWidth?: number;
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    borderRadius?: undefined;
+    dataParser?: undefined;
+    dataURL?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
+
 }
 
 export interface ErrorBarSeriesTooltipOptions

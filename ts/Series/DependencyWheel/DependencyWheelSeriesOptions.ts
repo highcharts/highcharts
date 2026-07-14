@@ -209,6 +209,16 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
 
     states?: SeriesStatesOptions<DependencyWheelSeriesOptions>;
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataSorting?: undefined;
+    nodeAlignment?: undefined;
+    nodeDistance?: undefined;
+
 }
 
 /* *

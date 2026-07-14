@@ -206,6 +206,18 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
 
     trackByArea?: boolean;
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    fillOpacity?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
+
 }
 
 /* *
