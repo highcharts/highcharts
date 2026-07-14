@@ -194,15 +194,24 @@ class Funnel3DSeries extends ColumnSeries {
             ignoreHiddenPoint = options.ignoreHiddenPoint,
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
+            renderTo = chart.renderTo,
             center: Array<(number|string)> = options.center as any,
-            centerX = relativeLength(center[0], plotWidth),
-            centerY = relativeLength(center[1], plotHeight),
-            width = relativeLength(options.width as any, plotWidth),
-            height = relativeLength(options.height as any, plotHeight),
-            neckWidth = relativeLength(options.neckWidth as any, plotWidth),
+            centerX = relativeLength(center[0], plotWidth, void 0, renderTo),
+            centerY = relativeLength(center[1], plotHeight, void 0, renderTo),
+            width = relativeLength(
+                options.width as any, plotWidth, void 0, renderTo
+            ),
+            height = relativeLength(
+                options.height as any, plotHeight, void 0, renderTo
+            ),
+            neckWidth = relativeLength(
+                options.neckWidth as any, plotWidth, void 0, renderTo
+            ),
             neckHeight = relativeLength(
                 options.neckHeight as any,
-                plotHeight
+                plotHeight,
+                void 0,
+                renderTo
             ),
             neckY = (centerY - height / 2) + height - neckHeight,
             points = series.points;

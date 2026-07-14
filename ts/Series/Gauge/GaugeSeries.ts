@@ -463,7 +463,8 @@ class GaugeSeries extends Series {
         const series = this,
             yAxis = series.yAxis,
             options = series.options,
-            center = yAxis.center;
+            center = yAxis.center,
+            renderTo = series.chart.renderTo;
 
         series.generatePoints();
 
@@ -476,18 +477,30 @@ class GaugeSeries extends Series {
                     options.dial,
                     point.dial
                 ),
-                radius = relativeLength(dialOptions.radius, center[2] / 2),
-                baseLength = relativeLength(dialOptions.baseLength, radius),
+                radius = relativeLength(
+                    dialOptions.radius, center[2] / 2, void 0, renderTo
+                ),
+                baseLength = relativeLength(
+                    dialOptions.baseLength, radius, void 0, renderTo
+                ),
                 rearLength = Math.min(
-                    relativeLength(dialOptions.rearLength, radius),
+                    relativeLength(
+                        dialOptions.rearLength, radius, void 0, renderTo
+                    ),
                     radius
                 ),
                 baseWidth = Math.min(
-                    relativeLength(dialOptions.baseWidth, radius),
+                    relativeLength(
+                        dialOptions.baseWidth, radius, void 0, renderTo
+                    ),
                     radius
                 ),
-                topWidth = relativeLength(dialOptions.topWidth, radius),
-                borderRadius = relativeLength(dialOptions.borderRadius, radius),
+                topWidth = relativeLength(
+                    dialOptions.topWidth, radius, void 0, renderTo
+                ),
+                borderRadius = relativeLength(
+                    dialOptions.borderRadius, radius, void 0, renderTo
+                ),
                 // Border radius at the base
                 bRBase = Math.min(borderRadius, baseWidth / 2),
                 // Border radius at the top
@@ -579,7 +592,9 @@ class GaugeSeries extends Series {
             renderer = chart.renderer,
             pivotRadius = relativeLength(
                 pivotOptions?.radius || 0,
-                center[2] / 2
+                center[2] / 2,
+                void 0,
+                chart.renderTo
             );
 
         series.points.forEach((point): void => {

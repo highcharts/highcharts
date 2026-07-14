@@ -352,11 +352,15 @@ class AxisResizer {
 
                 const minLength = Math.round(relativeLength(
                         axisOptions.minLength || NaN,
-                        plotHeight
+                        plotHeight,
+                        void 0,
+                        chart.renderTo
                     )),
                     maxLength = Math.round(relativeLength(
                         axisOptions.maxLength || NaN,
-                        plotHeight
+                        plotHeight,
+                        void 0,
+                        chart.renderTo
                     ));
 
                 if (!isFirst && axesGroup === nextAxes) {

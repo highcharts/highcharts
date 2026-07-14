@@ -121,7 +121,9 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
                 relativeLength(
                     options.distance ||
                     clusterDefaults.layoutAlgorithm.distance,
-                    series.chart.plotWidth
+                    series.chart.plotWidth,
+                    void 0,
+                    series.chart.renderTo
                 )
             ),
             iterations = options.iterations,
@@ -275,7 +277,9 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
                 relativeLength(
                     options.distance ||
                     clusterDefaults.layoutAlgorithm.gridSize,
-                    series.chart.plotWidth
+                    series.chart.plotWidth,
+                    void 0,
+                    series.chart.renderTo
                 )
             ),
 
@@ -914,13 +918,17 @@ function seriesGeneratePoints(
         layoutAlgOptions.processedGridSize = relativeLength(
             layoutAlgOptions.gridSize ||
                 clusterDefaults.layoutAlgorithm.gridSize,
-            chart.plotWidth
+            chart.plotWidth,
+            void 0,
+            chart.renderTo
         );
 
         layoutAlgOptions.processedDistance = relativeLength(
             layoutAlgOptions.distance ||
                 clusterDefaults.layoutAlgorithm.distance,
-            chart.plotWidth
+            chart.plotWidth,
+            void 0,
+            chart.renderTo
         );
 
         kmeansThreshold = layoutAlgOptions.kmeansThreshold ||
@@ -1460,7 +1468,9 @@ function seriesGetScaledGridSize(
             options.processedGridSize ??
             relativeLength(
                 options.gridSize || clusterDefaults.layoutAlgorithm.gridSize,
-                series.chart.plotWidth
+                series.chart.plotWidth,
+                void 0,
+                series.chart.renderTo
             )
         );
 

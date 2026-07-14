@@ -147,12 +147,15 @@ class SolidGaugeSeries extends GaugeSeries {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
                 const paneInnerSize = yAxis.pane.options.innerSize,
+                    renderTo = series.chart.renderTo,
                     radius = ((
                         relativeLength(
                             point.options.radius ??
                                 options.radius ??
                                 '100%',
-                            center[2] / 2
+                            center[2] / 2,
+                            void 0,
+                            renderTo
                         )
                     )),
                     innerRadius = Math.min((
@@ -165,7 +168,9 @@ class SolidGaugeSeries extends GaugeSeries {
                                         paneInnerSize
                                 ) ??
                                 0,
-                            center[2] / 2
+                            center[2] / 2,
+                            void 0,
+                            renderTo
                         )
                     ), radius),
                     axisMinAngle = Math.min(

@@ -545,7 +545,9 @@ function pieSeriesOnAfterTranslate(
         if (shapeArgs) {
             shapeArgs.borderRadius = relativeLength(
                 borderRadius.radius,
-                (shapeArgs.r || 0) - ((shapeArgs.innerR) || 0)
+                (shapeArgs.r || 0) - ((shapeArgs.innerR) || 0),
+                void 0,
+                this.chart.renderTo
             );
         }
     }

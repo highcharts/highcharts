@@ -125,7 +125,9 @@ class BulletSeries extends ColumnSeries {
 
                 width = relativeLength(
                     targetOptions.width as any,
-                    (shapeArgs as any).width
+                    (shapeArgs as any).width,
+                    void 0,
+                    chart.renderTo
                 );
                 y = series.yAxis.translate(
                     targetVal,
