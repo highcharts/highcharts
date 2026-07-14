@@ -825,6 +825,12 @@
             36,
             'calc() with a CSS variable resolves correctly'
         );
+        assert.strictEqual(
+            relativeLength('calc(', 0),
+            0,
+            'Invalid expression resolves to 0, not a previously measured ' +
+            'value'
+        );
         style.removeProperty('--hc-test-gap');
     });
 

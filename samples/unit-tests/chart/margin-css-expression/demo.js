@@ -48,6 +48,31 @@ QUnit.test('Chart margin from CSS expression (#23989)', function (assert) {
         'that scope, not just :root'
     );
 
-    scopedChart.destroy();
+    // Recreating a chart in the same element clears renderTo.innerHTML,
+    // which detaches the cached length probe (#23989)
+    const recreatedChart = Highcharts.chart(scopedContainer, {
+        chart: {
+            marginLeft: 'var(--hc-scoped-margin)',
+            width: 400,
+            height: 300
+        },
+        series: [{ data: [1, 2, 3] }]
+    });
+
+    assert.strictEqual(
+        recreatedChart.plotLeft,
+        30,
+        'CSS expression still resolves after chart re-creation in the ' +
+        'same element'
+    );
+
+    recreatedChart.destroy();
+
+    assert.strictEqual(
+        scopedContainer.querySelector('.highcharts-length-probe'),
+        null,
+        'Chart destroy removes the length probe from the render target'
+    );
+
     document.body.removeChild(scopedContainer);
 });

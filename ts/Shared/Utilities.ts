@@ -1517,9 +1517,11 @@ export function pushUnique(
  *        A number, a percentage string, or a CSS length expression.
  *
  * @param {number} base
- *        The full length that represents 100% for percentage strings. For
- *        CSS expressions, inner percentages resolve against `parent`
- *        instead.
+ *        The full length that represents 100% for percentage strings. It
+ *        does not apply to CSS expressions, where percentages follow the
+ *        CSS containing block rules, resolving against the nearest
+ *        positioned ancestor of `parent` (often the viewport). Use plain
+ *        percentage strings like `'50%'` for lengths relative to `base`.
  *
  * @param {number} [offset=0]
  *        A pixel offset to apply for percentage values. Used internally in
@@ -1541,6 +1543,10 @@ export function relativeLength(
 ): number {
     if (typeof value === 'number') {
         return value;
+    }
+    // Match parseFloat for nullish values, avoiding a needless length probe
+    if (!value || typeof value !== 'string') {
+        return NaN;
     }
     if ((/%$/).test(value)) {
         return (base * parseFloat(value) / 100) + (offset || 0);
@@ -1569,9 +1575,15 @@ function measureCSSLength(value: string, parent = doc.body): number {
         probe.style.cssText =
             'position:absolute;visibility:hidden;pointer-events:none;' +
             'top:-9999px';
-        parent.appendChild(probe);
         H.cssLengthProbes.set(parent, probe);
     }
+    // Attach, or re-attach after the parent was emptied, e.g. when a new
+    // chart is created in the same element (#23989)
+    if (!probe.isConnected) {
+        parent.appendChild(probe);
+    }
+    // Reset first, so invalid values yield 0 instead of the last measure
+    probe.style.width = '';
     probe.style.width = value;
     return parseFloat(win.getComputedStyle(probe).width) || 0;
 }

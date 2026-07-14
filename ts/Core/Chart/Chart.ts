@@ -3280,6 +3280,13 @@ class Chart {
         H.chartCount--;
         chart.renderTo.removeAttribute('data-highcharts-chart');
 
+        // Remove the CSS length probe from the render target (#23989)
+        const lengthProbe = H.cssLengthProbes.get(chart.renderTo);
+        if (lengthProbe) {
+            lengthProbe.parentNode?.removeChild(lengthProbe);
+            H.cssLengthProbes.delete(chart.renderTo);
+        }
+
         // Remove events
         removeEvent(chart);
 
