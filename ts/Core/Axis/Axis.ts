@@ -3087,24 +3087,30 @@ class Axis {
                     options.width,
                     chart.plotWidth - offsets[3] + offsets[1]
                 ),
-                chart.plotWidth
+                chart.plotWidth,
+                void 0,
+                chart.renderTo
             )),
             height = this.height = Math.round(relativeLength(
                 pick(
                     options.height,
                     chart.plotHeight - offsets[0] + offsets[2]
                 ),
-                chart.plotHeight
+                chart.plotHeight,
+                void 0,
+                chart.renderTo
             )),
             top = this.top = Math.round(relativeLength(
                 pick(options.top, chart.plotTop + offsets[0]),
                 chart.plotHeight,
-                chart.plotTop
+                chart.plotTop,
+                chart.renderTo
             )),
             left = this.left = Math.round(relativeLength(
                 pick(options.left, chart.plotLeft + offsets[3]),
                 chart.plotWidth,
-                chart.plotLeft
+                chart.plotLeft,
+                chart.renderTo
             ));
 
         // Expose basic values to use in Series object and navigator

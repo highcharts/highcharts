@@ -421,7 +421,7 @@ export interface ChartOptions {
      *
      * @default 0
      */
-    borderRadius?: number;
+    borderRadius?: (number|string);
 
     /**
      * The pixel width of the outer chart border.
@@ -1105,7 +1105,7 @@ export interface ChartOptions {
      *
      * @default null
      */
-    width?: (null|number); // @todo Add support for string (percent)
+    width?: (null|number|string);
 
     /**
      * Deprecated. Use

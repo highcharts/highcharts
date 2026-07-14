@@ -919,7 +919,9 @@ class Legend {
                         chart.spacingBox.width,
                         options.maxWidth ? relativeLength(
                             options.maxWidth,
-                            chart.chartWidth
+                            chart.chartWidth,
+                            void 0,
+                            chart.renderTo
                         ) : Infinity
                     ) - itemExtraWidth
                 ) + 'px'
@@ -1235,7 +1237,9 @@ class Legend {
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
             options.width as any,
-            chartSpacingBoxWidth - padding
+            chartSpacingBoxWidth - padding,
+            void 0,
+            chart.renderTo
         );
 
         // Compute how wide the legend is allowed to be
@@ -1312,7 +1316,9 @@ class Legend {
                     allowedWidth,
                     relativeLength(
                         options.maxWidth,
-                        chart.chartWidth
+                        chart.chartWidth,
+                        void 0,
+                        chart.renderTo
                     ) || Infinity
                 ) :
                 (legend.widthOption || legend.offsetWidth)

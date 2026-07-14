@@ -1565,6 +1565,7 @@ function measureCSSLength(value: string, parent = doc.body): number {
     let probe = H.cssLengthProbes.get(parent);
     if (!probe) {
         probe = doc.createElement('div');
+        probe.className = 'highcharts-length-probe';
         probe.style.cssText =
             'position:absolute;visibility:hidden;pointer-events:none;' +
             'top:-9999px';

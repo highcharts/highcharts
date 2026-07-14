@@ -1948,7 +1948,14 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            widthOption || containerBox.width || 600 // #1460
+            relativeLength(
+                widthOption as any,
+                containerBox.width,
+                void 0,
+                chart.renderTo
+            ) ||
+            containerBox.width ||
+            600 // #1460
         );
         /**
          * The current pixel height of the chart.
@@ -1960,7 +1967,9 @@ class Chart {
             0,
             relativeLength(
                 heightOption as any,
-                chart.chartWidth
+                chart.chartWidth,
+                void 0,
+                chart.renderTo
             ) ||
             (enableDefaultHeight ? 400 : containerBox.height)
         );
@@ -2395,16 +2404,19 @@ class Chart {
      *
      * @function Highcharts.Chart#setSize
      *
-     * @param {number|null} [width]
-     *        The new pixel width of the chart. Since v4.2.6, the argument can
-     *        be `undefined` in order to preserve the current value (when
-     *        setting height only), or `null` to adapt to the width of the
-     *        containing element.
+     * @param {number|string|null} [width]
+     *        The new width of the chart. Accepts a pixel number, a CSS length
+     *        expression resolved by the browser (e.g. `'50%'`, `'20em'`,
+     *        `'calc(var(--gap) * 2)'`), `undefined` to preserve the current
+     *        value (when setting height only), or `null` to adapt to the
+     *        width of the containing element. Since v4.2.6 for `undefined`.
      *
-     * @param {number|null} [height]
-     *        The new pixel height of the chart. Since v4.2.6, the argument can
-     *        be `undefined` in order to preserve the current value, or `null`
-     *        in order to adapt to the height of the containing element.
+     * @param {number|string|null} [height]
+     *        The new height of the chart. Accepts a pixel number, a CSS
+     *        length expression resolved by the browser (e.g. `'50%'`,
+     *        `'20em'`, `'calc(var(--gap) * 2)'`), `undefined` to preserve
+     *        the current value, or `null` to adapt to the height of the
+     *        containing element. Since v4.2.6 for `undefined`.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation. When `undefined`, it applies
@@ -2415,8 +2427,8 @@ class Chart {
      * @emits Highcharts.Chart#event:resize
      */
     public setSize(
-        width?: (number|null),
-        height?: (number|null),
+        width?: (number|string|null),
+        height?: (number|string|null),
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const chart = this,
@@ -2646,7 +2658,7 @@ class Chart {
                         optionValue,
                         base || 0,
                         void 0,
-                        chart.container
+                        chart.renderTo
                     );
                 }
             });
@@ -2745,7 +2757,14 @@ class Chart {
             y: mgn / 2,
             width: chartWidth - mgn - chartBorderWidth % 2,
             height: chartHeight - mgn - chartBorderWidth % 2,
-            r: optionsChart.borderRadius
+            r: defined(optionsChart.borderRadius) ?
+                relativeLength(
+                    optionsChart.borderRadius,
+                    0,
+                    void 0,
+                    chart.renderTo
+                ) :
+                void 0
         });
 
         // Plot background
@@ -4046,7 +4065,9 @@ class Chart {
             isString(optionsChart.height) ?
                 relativeLength(
                     optionsChart.height,
-                    newWidth || chart.chartWidth
+                    isNumber(newWidth) ? newWidth : chart.chartWidth,
+                    void 0,
+                    chart.renderTo
                 ) :
                 optionsChart.height
         );

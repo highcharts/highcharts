@@ -270,7 +270,7 @@ class Fullscreen {
     public origWidth?: number;
 
     /** @internal */
-    public origWidthOption?: (number | null);
+    public origWidthOption?: (number | string | null);
 
     /** @internal */
     public unbindFullscreenEvent?: Function;

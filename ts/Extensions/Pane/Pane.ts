@@ -395,7 +395,12 @@ class Pane {
             } else {
                 this.center[3] = Math.min(
                     size,
-                    relativeLength(options.innerSize || 0, size)
+                    relativeLength(
+                        options.innerSize || 0,
+                        size,
+                        void 0,
+                        this.chart.renderTo
+                    )
                 );
             }
         }
