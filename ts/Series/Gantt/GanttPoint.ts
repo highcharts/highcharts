@@ -34,6 +34,7 @@ const {
  *
  * */
 
+/** @internal */
 class GanttPoint extends XRangePoint {
 
     /* *
@@ -43,7 +44,7 @@ class GanttPoint extends XRangePoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public static setGanttPointAliases(
         options: (GanttPoint|GanttPointOptions),
@@ -89,7 +90,7 @@ class GanttPoint extends XRangePoint {
      * Applies the options containing the x and y data and possible some
      * extra properties. This is called on point init or from point.update.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#applyOptions
      *
      * @param {Object} options
@@ -137,4 +138,5 @@ class GanttPoint extends XRangePoint {
  *
  * */
 
+/** @internal */
 export default GanttPoint;

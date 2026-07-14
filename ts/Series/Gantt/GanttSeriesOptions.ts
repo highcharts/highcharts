@@ -82,8 +82,6 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
      *
      * @declare Highcharts.GanttPointOptionsObject
      *
-     * @type {Array<*>}
-     *
      * @extends series.xrange.data
      *
      * @excluding className, connect, dataLabels, events, selected, x, x2
