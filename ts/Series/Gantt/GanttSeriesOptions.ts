@@ -108,6 +108,23 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
     states?: SeriesStatesOptions<GanttSeriesOptions>;
 
     tooltip?: GanttSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostThreshold?: undefined;
+    dashStyle?: undefined;
+    findNearestPointBy?: undefined;
+    getExtremesFromAll?: undefined;
+    marker?: undefined;
+    negativeColor?: undefined;
+    pointInterval?: undefined;
+    pointIntervalUnit?: undefined;
+    pointPlacement?: undefined;
+    pointStart?: undefined;
 }
 
 export interface GanttSeriesTooltipOptions extends XRangeSeriesTooltipOptions {
