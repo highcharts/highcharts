@@ -51,7 +51,7 @@ import {
     pick,
     relativeLength
 } from '../../Shared/Utilities.js';
-import { FlowMapSeriesDefaults } from './FlowMapSeriesDefaults.js';
+import FlowMapSeriesDefaults from './FlowMapSeriesDefaults.js';
 
 /**
  * The flowmap series type
