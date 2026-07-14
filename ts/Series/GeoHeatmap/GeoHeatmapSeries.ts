@@ -60,7 +60,7 @@ import { error } from '../../Core/Utilities.js';
 
 /**
  * Normalize longitude value to -180:180 range.
- * @private
+ * @internal
  */
 function normalizeLonValue(lon: number): number {
     return lon - Math.floor((lon + 180) / 360) * 360;
@@ -68,7 +68,7 @@ function normalizeLonValue(lon: number): number {
 
 /**
  * Get proper point's position for PixelData array.
- * @private
+ * @internal
  */
 function scaledPointPos(
     lon: number,
@@ -93,7 +93,7 @@ function scaledPointPos(
 /**
  * The Geo Heatmap series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.geoheatmap
  *
@@ -255,7 +255,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     /**
      * For updated colsize and rowsize options
-     * @private
+     * @internal
      */
     public update(): void {
         const series = this;
@@ -276,7 +276,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     /**
      * Override translate method to not fire if not needed.
-     * @private
+     * @internal
      */
     public translate(): void {
         if (
@@ -292,7 +292,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     /**
      * Create the extended object out of the boolean
-     * @private
+     * @internal
      */
     public getInterpolation(): InterpolationObject {
         if (!isObject(this.options.interpolation)) {
@@ -306,7 +306,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     /**
      * Overriding drawPoints original method to apply new features.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const
@@ -571,7 +571,7 @@ class GeoHeatmapSeries extends MapSeries {
 
     /**
      * Project ImageData to actual mapView projection used on a chart.
-     * @private
+     * @internal
      */
     public getProjectedImageData(
         mapView: MapView,
@@ -718,6 +718,7 @@ addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
  *
  * */
 
+/** @internal */
 interface GeoHeatmapSeries {
     pointClass: typeof GeoHeatmapPoint;
     pointArrayMap: Array<string>;
@@ -737,6 +738,7 @@ extend(GeoHeatmapSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         geoheatmap: typeof GeoHeatmapSeries;
@@ -750,6 +752,7 @@ SeriesRegistry.registerSeriesType('geoheatmap', GeoHeatmapSeries);
  *
  * */
 
+/** @internal */
 export default GeoHeatmapSeries;
 
 /* *

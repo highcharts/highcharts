@@ -57,15 +57,20 @@ import {
  *
  * */
 
-declare module '../../Core/Chart/ChartBase'{
+/** @internal */
+declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
+        /** @internal */
         angular?: boolean;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         fixedBox?: boolean;
+        /** @internal */
         forceDL?: boolean;
     }
 }
@@ -80,7 +85,7 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * The `gauge` series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.map
  *
@@ -456,7 +461,7 @@ class GaugeSeries extends Series {
 
     /**
      * Calculate paths etc
-     * @private
+     * @internal
      */
     public translate(): void {
 
@@ -566,7 +571,7 @@ class GaugeSeries extends Series {
 
     /**
      * Draw the points where each point is one needle
-     * @private
+     * @internal
      */
     public drawPoints(): void {
 
@@ -648,7 +653,7 @@ class GaugeSeries extends Series {
 
     /**
      * Animate the arrow up from startAngle
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         const series = this;
@@ -675,7 +680,7 @@ class GaugeSeries extends Series {
     /**
      * Extend the basic setData method by running processData and generatePoints
      * immediately, in order to access the points from the legend.
-     * @private
+     * @internal
      */
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
@@ -692,7 +697,7 @@ class GaugeSeries extends Series {
     /**
      * Define hasData function for non-cartesian series.
      * Returns true if the series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.points.length; // != 0
@@ -706,6 +711,7 @@ class GaugeSeries extends Series {
  *
  * */
 
+/** @internal */
 interface GaugeSeries {
     angular: boolean;
     directTouch: boolean;
@@ -736,7 +742,7 @@ extend(GaugeSeries.prototype, {
  * */
 
 /**
- * @private
+ * @internal
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -752,6 +758,7 @@ SeriesRegistry.registerSeriesType('gauge', GaugeSeries);
  *
  * */
 
+/** @internal */
 export default GaugeSeries;
 
 /* *
