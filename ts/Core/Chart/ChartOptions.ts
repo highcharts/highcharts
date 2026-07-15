@@ -410,7 +410,9 @@ export interface ChartOptions {
     borderColor?: ColorType;
 
     /**
-     * The corner radius of the outer chart border.
+     * The corner radius of the outer chart border. A number denotes
+     * pixels. Also accepts a CSS length expression, e.g. `'1em'` or
+     * `'calc(var(--radius) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/borderradius/
      *         20px radius
@@ -419,6 +421,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/border/
      *         Border options
      *
+     * @type {number|string}
      * @default 0
      */
     borderRadius?: (number|string);
@@ -468,7 +471,8 @@ export interface ChartOptions {
      * given in pixels. If given a _percentage string_ (for example
      * `'56%'`), the height is given as the percentage of the actual chart
      * width. This allows for preserving the aspect ratio across responsive
-     * sizes.
+     * sizes. Also accepts a CSS length expression, e.g. `'30em'` or
+     * `'calc(var(--chart-height) * 2)'`.
      *
      * By default (when `null`) the height is calculated from the offset
      * height of the containing element, or 400 pixels if the containing
@@ -1093,8 +1097,14 @@ export interface ChartOptions {
     type?: string;
 
     /**
-     * An explicit width for the chart. By default (when `null`) the width
-     * is calculated from the offset width of the containing element.
+     * An explicit width for the chart. If a _number_, the width is given
+     * in pixels. If given a _percentage string_ (for example `'75%'`), the
+     * width is given as the percentage of the offset width of the
+     * containing element. Also accepts a CSS length expression, e.g.
+     * `'50em'` or `'calc(var(--chart-width) * 2)'`.
+     *
+     * By default (when `null`) the width is calculated from the offset
+     * width of the containing element.
      *
      * @sample {highcharts} highcharts/chart/width/
      *         800px wide

@@ -29,6 +29,19 @@ chart: {
 }
 ```
 
+#### CSS length expressions (experimental)
+
+As an experimental feature, layout options like `width`, `height`, `margin` and `spacing` also accept CSS length expressions, resolved by the browser. This includes relative units and CSS custom properties, for example `'2em'`, `'10vh'` or `'calc(var(--gap) * 2)'`. It allows the chart layout to be driven from the stylesheet, for example to adjust spacing per theme or media query. See the [chart margins from CSS variables demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/margin-css-variables).
+
+```js
+chart: {
+    marginLeft: 'var(--chart-left-gap)',
+    marginRight: '2em',
+    spacingTop: 'calc(var(--gap) * 2)'
+}
+```
+
+
 ### Credits
 
 Credits can be moved around using the "position" option:
