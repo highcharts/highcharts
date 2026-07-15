@@ -294,32 +294,31 @@ class HeaderCellToolbar implements Toolbar {
     private keyDownHandler(e: KeyboardEvent): void {
         const len = this.buttons.length;
         const cursor = this.focusCursor;
+        let elementToFocus: ToolbarButton | HTMLElement | undefined;
 
         switch (e.key) {
             case 'ArrowUp':
             case 'ArrowLeft':
-                e.preventDefault();
-                e.stopPropagation();
-                this.buttons[Math.abs((cursor - 1 + len) % len)].focus({
-                    preventScroll: true
-                });
+                elementToFocus = this.buttons[
+                    Math.abs((cursor - 1 + len) % len)
+                ];
                 break;
             case 'ArrowDown':
             case 'ArrowRight':
-                e.preventDefault();
-                e.stopPropagation();
-                this.buttons[(cursor + 1) % len].focus({
-                    preventScroll: true
-                });
+                elementToFocus = this.buttons[(cursor + 1) % len];
                 break;
             case 'Escape':
-                e.preventDefault();
-                e.stopPropagation();
-                this.column.header?.htmlElement.focus({
-                    preventScroll: true
-                });
+                elementToFocus = this.column.header?.htmlElement;
                 break;
+            default:
+                return;
         }
+
+        e.preventDefault();
+        e.stopPropagation();
+        elementToFocus?.focus({
+            preventScroll: true
+        });
     }
 }
 
