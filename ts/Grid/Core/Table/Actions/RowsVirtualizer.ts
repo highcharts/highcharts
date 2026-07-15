@@ -756,7 +756,8 @@ class RowsVirtualizer {
                                 focusCursor.columnIndex
                             ),
                             focusedRow.index,
-                            focusCursor.columnIndex
+                            focusCursor.columnIndex,
+                            false
                         );
                     }
                 }

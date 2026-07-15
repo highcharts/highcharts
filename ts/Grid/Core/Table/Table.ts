@@ -1185,11 +1185,17 @@ class Table {
      *
      * @param columnIndex
      * Target column index.
+     *
+     * @param ensureVisible
+     * Whether to scroll the target column fully into view. Should be `false`
+     * for passive focus re-attachment during scroll-driven virtualization
+     * re-renders, so the user's scroll position is not fought.
      */
     public restoreRenderedCellFocus(
         cell: Cell | undefined,
         rowIndex: number,
-        columnIndex: number
+        columnIndex: number,
+        ensureVisible: boolean = true
     ): void {
         if (!cell) {
             return;
@@ -1206,7 +1212,9 @@ class Table {
             cell.htmlElement.focus({
                 preventScroll: true
             });
-            this.ensureColumnFullyVisible(columnIndex);
+            if (ensureVisible) {
+                this.ensureColumnFullyVisible(columnIndex);
+            }
         });
     }
 
@@ -1491,7 +1499,7 @@ class Table {
             focusCursor?.detached &&
             focusCursor.type === 'header'
         ) {
-            this.restoreHeaderFocusFromCursor(focusCursor);
+            this.restoreHeaderFocusFromCursor(focusCursor, false);
         }
 
         if (this.pendingFocusCursor) {
@@ -1519,7 +1527,8 @@ class Table {
                 this.restoreRenderedCellFocus(
                     row?.getCellByColumnIndex(focusCursor.columnIndex),
                     rowIndex,
-                    focusCursor.columnIndex
+                    focusCursor.columnIndex,
+                    false
                 );
             }
         }
@@ -1651,9 +1660,15 @@ class Table {
      *
      * @param cursor
      * Focus cursor to restore.
+     *
+     * @param ensureVisible
+     * Whether to scroll the target column fully into view. Should be `false`
+     * for passive focus re-attachment during scroll-driven virtualization
+     * re-renders, so the user's scroll position is not fought.
      */
     private restoreHeaderFocusFromCursor(
-        cursor: FocusCursor | undefined = this.focusCursor
+        cursor: FocusCursor | undefined = this.focusCursor,
+        ensureVisible: boolean = true
     ): void {
         if (cursor?.type !== 'header') {
             return;
@@ -1679,7 +1694,9 @@ class Table {
                 button.focus({
                     preventScroll: true
                 });
-                this.ensureColumnFullyVisible(cursor.columnIndex);
+                if (ensureVisible) {
+                    this.ensureColumnFullyVisible(cursor.columnIndex);
+                }
                 return;
             }
         }
@@ -1687,7 +1704,9 @@ class Table {
         cell.htmlElement.focus({
             preventScroll: true
         });
-        this.ensureColumnFullyVisible(cursor.columnIndex);
+        if (ensureVisible) {
+            this.ensureColumnFullyVisible(cursor.columnIndex);
+        }
     }
 
 }
