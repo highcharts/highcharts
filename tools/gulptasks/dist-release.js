@@ -43,6 +43,9 @@ function getFilesForReleaseCleanup(folder) {
         cwd: folder,
         dot: true,
         follow: false,
+        ignore: {
+            childrenIgnored: path => /^[.]git(?:hub)?$/u.test(path.relativePosix())
+        },
         nodir: true
     }).map(file => file.replace(/\\/gu, '/'));
 }
