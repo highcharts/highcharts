@@ -50,9 +50,12 @@ class FilterCell extends HeaderCell {
      * */
 
     constructor(row: Row, column: Column) {
-        const trueHeader = column.header;
+        // `super() (via syncColumns)` sets column.header = this. A filter cell
+        // must keep column.header pointing at the real header-row cell, so we
+        // snapshot it and restore it afterwards.
+        const originalHeader = column.header;
         super(row, column);
-        column.header = trueHeader;
+        column.header = originalHeader;
     }
 
 
@@ -90,12 +93,13 @@ class FilterCell extends HeaderCell {
         column?: Column,
         columnsTree?: GroupedHeaderOptions[]
     ): void {
-        const trueHeader = column?.header;
-
+        // `super.syncColumns()` sets column.header = this. A filter cell must
+        // keep column.header pointing at the real header-row cell, so we
+        // snapshot it and restore it afterwards.
+        const originalHeader = column?.header;
         super.syncColumns(column, columnsTree);
-
         if (column) {
-            column.header = trueHeader;
+            column.header = originalHeader;
         }
     }
 
