@@ -61,7 +61,7 @@ export interface GlobalsBase {
      * when the parent is garbage collected.
      * @internal
      */
-    readonly cssLengthProbes: WeakMap<HTMLElement, HTMLDivElement>;
+    readonly cssLengthProbes: WeakMap<Element, HTMLDivElement|SVGRectElement>;
     /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the

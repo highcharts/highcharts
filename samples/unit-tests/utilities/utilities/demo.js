@@ -831,6 +831,26 @@
             'Invalid expression resolves to 0, not a previously measured ' +
             'value'
         );
+
+        // SVG parents measure through a rect probe
+        const svg = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'svg'
+        );
+        svg.style.fontSize = '10px';
+        document.body.appendChild(svg);
+        assert.strictEqual(
+            relativeLength('2em', 0, void 0, svg),
+            20,
+            'CSS length resolves against the font size of an SVG parent'
+        );
+        assert.strictEqual(
+            relativeLength('16', 0, void 0, svg),
+            16,
+            'Numeric string with an SVG parent returns the parsed number'
+        );
+        document.body.removeChild(svg);
+
         style.removeProperty('--hc-test-gap');
     });
 

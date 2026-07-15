@@ -19,6 +19,7 @@ import H from '../Core/Globals.js';
 import { EventCallback } from '../Core/Callback';
 const {
     doc,
+    SVG_NS,
     win
 } = H;
 
@@ -1527,10 +1528,11 @@ export function pushUnique(
  *        A pixel offset to apply for percentage values. Used internally in
  *        axis positioning.
  *
- * @param {HTMLElement} [parent=document.body]
- *        Host element for the hidden probe used to resolve CSS expressions.
- *        Pass the chart container to inherit its CSS variables and font
- *        size. Defaults to `document.body`.
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [parent=document.body]
+ *        Host element for the hidden probe used to resolve CSS expressions,
+ *        either an HTML or an SVG element. Pass the chart container to
+ *        inherit its CSS variables and font size. Defaults to
+ *        `document.body`.
  *
  * @return {number}
  *         The computed length in pixels.
@@ -1539,7 +1541,7 @@ export function relativeLength(
     value: RelativeSize,
     base: number,
     offset?: number,
-    parent = doc.body
+    parent: DOMElementType = doc.body
 ): number {
     if (typeof value === 'number') {
         return value;
@@ -1558,21 +1560,31 @@ export function relativeLength(
 }
 
 /**
- * Resolves a CSS length expression to pixels via a hidden probe element.
- * The probe is cached per parent on `H.cssLengthProbes`, so `var()`, `em`,
- * etc. resolve in the intended scope and repeated calls reuse the same
- * element instead of creating a new one each time.
+ * Resolves a CSS length expression to pixels via a hidden probe element, a
+ * `div` in HTML parents and a `rect` in SVG parents. The probe is cached
+ * per parent on `H.cssLengthProbes`, so `var()`, `em`, etc. resolve in the
+ * intended scope and repeated calls reuse the same element instead of
+ * creating a new one each time.
  * @private
  */
-function measureCSSLength(value: string, parent = doc.body): number {
+function measureCSSLength(
+    value: string,
+    parent: DOMElementType = doc.body
+): number {
     if (!parent) {
         return 0;
     }
+    const isSVG = 'ownerSVGElement' in parent;
     let probe = H.cssLengthProbes.get(parent);
     if (!probe) {
-        probe = doc.createElement('div');
-        probe.className = 'highcharts-length-probe';
-        probe.style.cssText =
+        probe = isSVG ?
+            doc.createElementNS(SVG_NS, 'rect') as SVGRectElement :
+            doc.createElement('div');
+        probe.setAttribute('class', 'highcharts-length-probe');
+        // A rect resolves lengths even at display:none, keeping it out of
+        // the parent's bounding box. A div must stay rendered to resolve.
+        probe.style.cssText = isSVG ?
+            'display:none' :
             'position:absolute;visibility:hidden;pointer-events:none;' +
             'top:-9999px';
         H.cssLengthProbes.set(parent, probe);
