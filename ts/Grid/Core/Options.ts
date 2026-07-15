@@ -288,7 +288,7 @@ export interface ColumnsSettings {
      * performance and saves memory.
      *
      * The option is automatically set to `true` when the number of columns
-     * exceeds the `virtualizationThreshold` option value. If defined, it takes
+     * reaches the `virtualizationThreshold` option value. If defined, it takes
      * precedence over the `virtualizationThreshold` option.
      *
      * @sample grid-lite/options/columns-virtualization
@@ -300,7 +300,7 @@ export interface ColumnsSettings {
 
     /**
      * The columns virtualization threshold option sets the column count limit
-     * at which virtualization is activated. When the number of columns exceeds
+     * at which virtualization is activated. When the number of columns reaches
      * this threshold, virtualization is enabled to optimize performance.
      *
      * The option has no effect when the `virtualization` option is defined.
@@ -392,7 +392,7 @@ export interface RowsSettings {
      * only. In case of large data set, the enabled option improve performance
      * and saves memory.
      *
-     * The option is automatically set to `true` when the number of rows exceeds
+     * The option is automatically set to `true` when the number of rows reaches
      * the `virtualizationThreshold` option value. If defined, it takes the
      * precedence over the `virtualizationThreshold` option.
      *
@@ -405,7 +405,7 @@ export interface RowsSettings {
 
     /**
      * The rows virtualization threshold option sets the row count limit at
-     * which virtualization is activated. When the number of rows exceeds this
+     * which virtualization is activated. When the number of rows reaches this
      * threshold, virtualization is enabled to optimize performance.
      *
      * The option has no effect when the `virtualization` option is defined.

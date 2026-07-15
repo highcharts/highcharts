@@ -726,24 +726,20 @@ class RowsVirtualizer {
             }
 
             // Focus the cell if the focus cursor is set
-            const hadPendingFocusCursor = !!vp.pendingFocusCursor;
             if (vp.pendingFocusCursor) {
                 const [rowIndex, columnIndex] = vp.pendingFocusCursor;
                 const row = rows.find(
                     (row): boolean => row.index === rowIndex
                 );
+                const cell = row?.getCellByColumnIndex(columnIndex);
 
-                if (row) {
+                // Keep the pending cursor until the target cell exists. The
+                // column may still be virtualized when the row renders first,
+                // in which case the column render pass restores focus later.
+                if (row && cell) {
                     delete vp.pendingFocusCursor;
-                    vp.restoreRenderedCellFocus(
-                        row.getCellByColumnIndex(columnIndex),
-                        rowIndex,
-                        columnIndex
-                    );
-
-                    if (hadPendingFocusCursor) {
-                        vp.ensureRowFullyVisible(row);
-                    }
+                    vp.restoreRenderedCellFocus(cell, rowIndex, columnIndex);
+                    vp.ensureRowFullyVisible(row);
                 }
             } else if (vp.focusCursor) {
                 const { focusCursor } = vp;
