@@ -1,0 +1,7 @@
+---
+ name: Multi-pane securities dashboard
+ authors:
+   - Stock Team
+ requiresManualTesting: true
+ js_wrap: b
+...
