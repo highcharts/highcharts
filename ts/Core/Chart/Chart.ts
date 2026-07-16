@@ -2252,6 +2252,7 @@ class Chart {
             axisOffset = chart.axisOffset = [0, 0, 0, 0],
             colorAxis = chart.colorAxis,
             margin = chart.margin,
+            spacing = chart.spacing,
             getOffset = (axes: Array<Axis>): void => {
                 axes.forEach((axis): void => {
                     if (axis.visible) {
@@ -2267,6 +2268,28 @@ class Chart {
         } else if (colorAxis?.length) {
             getOffset(colorAxis);
         }
+
+        // Treat yAxis top label as starting point for spacing.
+        // (#24652)
+        let topLabelOverflow = 0;
+
+        chart.yAxis.forEach((axis): void => {
+            if (axis.visible && axis.labelOffset) {
+                const maxLabelHeight =
+                    axis.maxLabelDimensions?.height ||
+                    axis.labelMetrics().h;
+
+                topLabelOverflow = Math.max(
+                    topLabelOverflow,
+                    Math.ceil(maxLabelHeight / 2)
+                );
+            }
+        });
+
+        axisOffset[0] = Math.max(
+            axisOffset[0],
+            Math.max(0, topLabelOverflow - Math.max(spacing[0], 0))
+        );
 
         // Add the axis offsets
         marginNames.forEach((marginName, side): void => {
