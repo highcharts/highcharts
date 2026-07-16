@@ -1788,3 +1788,54 @@ QUnit.test('Thousand separator from lang options', function (assert) {
 
     assert.ok(chart.getTable().includes('_THOUSAND_SEPARATOR_'));
 });
+
+QUnit.test('Decimal point from lang options', function (assert) {
+    const getTable = (lang, value, useLocalDecimalPoint) => {
+        const chart = Highcharts.chart('container', {
+                lang,
+                series: [{
+                    data: [value]
+                }]
+            }),
+            table = chart.getTable(useLocalDecimalPoint);
+
+        chart.destroy();
+        return table;
+    };
+
+    assert.ok(
+        getTable({ decimalPoint: ',' }, 1.5).includes('1,5'),
+        'Decimal point is inherited from lang options'
+    );
+
+    assert.ok(
+        getTable({
+            decimalPoint: '_DECIMAL_POINT_',
+            thousandsSep: '_THOUSAND_SEPARATOR_'
+        }, 10000.5).includes(
+            '10_THOUSAND_SEPARATOR_000_DECIMAL_POINT_5'
+        ),
+        'Decimal point and thousand separator are both inherited'
+    );
+
+    assert.ok(
+        getTable({}, 1.5).includes('1.5'),
+        'The default decimal point is unchanged'
+    );
+
+    const toLocaleString = Number.prototype.toLocaleString;
+
+    Number.prototype.toLocaleString = function () {
+        return String(this).replace('.', ',');
+    };
+
+    try {
+        assert.ok(
+            getTable({ decimalPoint: '_DECIMAL_POINT_' }, 1.5, true)
+                .includes('1,5'),
+            'The browser locale takes precedence when requested'
+        );
+    } finally {
+        Number.prototype.toLocaleString = toLocaleString;
+    }
+});
