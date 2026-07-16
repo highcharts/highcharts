@@ -1468,6 +1468,16 @@ class Series {
                     lastIndex
                 );
 
+                // A point can only be matched once during the update. Series
+                // with non-unique keys may otherwise resolve repeatedly to
+                // the same point when sorting is not required.
+                if (
+                    isNumber(pointIndex) &&
+                    oldData[pointIndex]?.touched
+                ) {
+                    pointIndex = void 0;
+                }
+
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
                 if (

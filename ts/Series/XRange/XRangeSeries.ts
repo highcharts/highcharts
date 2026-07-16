@@ -241,7 +241,9 @@ class XRangeSeries extends ColumnSeries {
         let pointIndex: (number|undefined);
 
         if (id) {
-            const point = find(points, (point): boolean => point.id === id);
+            const point = find(points, (point): boolean => (
+                point.id === id && !point.touched
+            ));
             pointIndex = point ? point.index : void 0;
         }
 
