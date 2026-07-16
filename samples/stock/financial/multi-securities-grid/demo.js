@@ -8,7 +8,11 @@ const MOCK_TICKER_COUNT = 15;
     const KNOWN_TICKERS = REAL_TICKERS.concat(getMockTickers());
     // Seed the cache with generated demo securities and cache fetched data.
     const dataCache = getMockDataCache();
-    const GAP = 2; // % gap between rows for visual separation
+    const GAP = 2; // % horizontal gap between columns
+    // Wider vertical gap: each pane's x-axis labels render just below it, and
+    // the pane below pins its tooltip at its own top — too small a gap lets
+    // that tooltip cover the labels of the row above.
+    const ROW_GAP = 5;
 
     let activeTickers = REAL_TICKERS.concat(['MOCK1', 'MOCK2']);
     let columns = 1;
@@ -24,8 +28,12 @@ const MOCK_TICKER_COUNT = 15;
     const indicatorsWithAxes = navUtils.indicatorsWithAxes || [];
     const indicatorsWithVolume = navUtils.indicatorsWithVolume || [];
 
-    // ticker -> [{ seriesId, type, axisId, hasAxis, options }]
+    // ticker -> [{ seriesId, type, axisId, hasAxis, groupId, options }]
     const paneIndicators = {};
+
+    // Templates of indicators added with "All securities". Newly enabled
+    // panes inherit these; groupId ties pane instances to their template.
+    const allIndicators = [];
 
     // Restore the default tooltip format for every indicator type. Each
     // indicator extends SMASeries but registers under its own series type, so
@@ -62,19 +70,20 @@ const MOCK_TICKER_COUNT = 15;
     function paneRect(index, total, cols) {
         const rows = Math.ceil(total / cols);
         const row = Math.floor(index / cols);
-        // const cellsInLastRow = total - (rows - 1) * cols;
-        // const cellsInThisRow =
-        //    row === rows - 1 ? cellsInLastRow : cols;
+        // Cells in the last row expand to share the full row width.
+        const cellsInThisRow = row === rows - 1 ?
+            total - (rows - 1) * cols :
+            cols;
 
         const rowHeight = 100 / rows;
-        const cellWidth = 100 / cols;
-        const col = index % cols;
+        const cellWidth = 100 / cellsInThisRow;
+        const col = index - row * cols;
 
         return {
             top: (row * rowHeight) + '%',
             left: (col * cellWidth) + '%',
             width: Math.max(cellWidth - GAP, 1) + '%',
-            height: Math.max(rowHeight - GAP, 1) + '%'
+            height: Math.max(rowHeight - ROW_GAP, 1) + '%'
         };
     }
 
@@ -195,81 +204,20 @@ const MOCK_TICKER_COUNT = 15;
         });
     }
 
-    // Column-aware replacement for NavigationBindings.utils.manageIndicators.
-    // Triggered by the indicator popup's onSubmit callback.
-    function columnAwareManageIndicators(navigation, data) {
+    // Add one indicator to one ticker's pane. No redraw.
+    function addIndicatorToPane(navigation, data, ticker, groupId) {
         const theChart = navigation.chart;
-
-        if (data.actionType === 'edit') {
-            const seriesConfig = {
-                linkedTo: data.linkedTo,
-                type: data.type
-            };
-            navigation.fieldsToOptions(data.fields, seriesConfig);
-            const series = theChart.get(data.seriesId);
-            if (series) {
-                series.update(seriesConfig, true);
-                // Keep our stored options in sync so rebuild() reproduces the
-                // current state.
-                Object.keys(paneIndicators).forEach(ticker => {
-                    paneIndicators[ticker].forEach(ind => {
-                        if (ind.seriesId === data.seriesId) {
-                            ind.options = Highcharts.merge(
-                                ind.options,
-                                seriesConfig
-                            );
-                        }
-                    });
-                });
-            }
-            return;
-        }
-
-        if (data.actionType === 'remove') {
-            const series = theChart.get(data.seriesId);
-            if (!series) {
-                return;
-            }
-            const ticker = series.options.linkedTo;
-            const yAxis = series.yAxis;
-            const hadOwnAxis = indicatorsWithAxes.indexOf(series.type) >= 0 &&
-                yAxis &&
-                yAxis.options.id !== 'y-' + ticker;
-
-            if (series.linkedSeries) {
-                series.linkedSeries.forEach(ls => ls.remove(false));
-            }
-            series.remove(false);
-
-            if (paneIndicators[ticker]) {
-                paneIndicators[ticker] = paneIndicators[ticker].filter(
-                    ind => ind.seriesId !== data.seriesId
-                );
-            }
-
-            if (hadOwnAxis) {
-                yAxis.remove(false);
-            }
-
-            layoutColumn(theChart, ticker);
-            bindColumnResizers(theChart, ticker);
-            theChart.redraw();
-            return;
-        }
-
-        // ADD path
-        const seriesConfig = {
-            id: Highcharts.uniqueKey(),
-            linkedTo: data.linkedTo,
-            type: data.type
-        };
-        navigation.fieldsToOptions(data.fields, seriesConfig);
-
-        const parentSeries = theChart.get(data.linkedTo);
+        const parentSeries = theChart.get(ticker);
         if (!parentSeries) {
             return;
         }
-        const ticker = data.linkedTo;
+
+        const seriesConfig = {
+            id: Highcharts.uniqueKey(),
+            linkedTo: ticker,
+            type: data.type
+        };
+        navigation.fieldsToOptions(data.fields, seriesConfig);
 
         // Match SUM approx if parent uses it (#13950).
         const plotOptions = (Highcharts.getOptions().plotOptions) || {};
@@ -327,6 +275,7 @@ const MOCK_TICKER_COUNT = 15;
             type: data.type,
             axisId: axisId,
             hasAxis: hasAxis,
+            groupId: groupId,
             options: seriesConfig
         });
 
@@ -334,11 +283,197 @@ const MOCK_TICKER_COUNT = 15;
             layoutColumn(theChart, ticker);
             bindColumnResizers(theChart, ticker);
         }
+    }
 
+    // All pane instances a popup action applies to: the picked one, or —
+    // with "All securities" — its whole group. Indicators added without a
+    // group match by type instead.
+    function getTargetEntries(seriesId, allSecurities) {
+        const all = Object.entries(paneIndicators).flatMap(
+            ([ticker, entries]) => entries.map(entry => ({ ticker, entry }))
+        );
+        const target = all.find(t => t.entry.seriesId === seriesId);
+        if (!target) {
+            return [];
+        }
+        if (!allSecurities) {
+            return [target];
+        }
+        const { groupId, type } = target.entry;
+        return all.filter(
+            ({ entry }) => (groupId ?
+                entry.groupId === groupId :
+                entry.type === type)
+        );
+    }
+
+    // Remove one pane instance: series, linked series, own axis. No redraw.
+    function removeIndicatorFromPane(theChart, ticker, entry) {
+        const series = theChart.get(entry.seriesId);
+        if (series) {
+            (series.linkedSeries || []).forEach(ls => ls.remove(false));
+            const yAxis = series.yAxis;
+            series.remove(false);
+            if (entry.hasAxis && yAxis && yAxis.options.id === entry.axisId) {
+                yAxis.remove(false);
+            }
+        }
+        paneIndicators[ticker] = paneIndicators[ticker].filter(
+            e => e !== entry
+        );
+    }
+
+    // Column-aware replacement for NavigationBindings.utils.manageIndicators.
+    // Triggered by the indicator popup's onSubmit callback.
+    function columnAwareManageIndicators(navigation, data) {
+        const theChart = navigation.chart;
+
+        if (data.actionType === 'edit') {
+            const baseConfig = { type: data.type };
+            navigation.fieldsToOptions(data.fields, baseConfig);
+            const targets = getTargetEntries(
+                data.seriesId, data.allSecurities
+            );
+            targets.forEach(({ ticker, entry }) => {
+                const config = Highcharts.merge(
+                    baseConfig, { linkedTo: ticker }
+                );
+                const series = theChart.get(entry.seriesId);
+                if (series) {
+                    series.update(config, false);
+                }
+                // Keep stored options in sync so rebuild() reproduces the
+                // current state.
+                entry.options = Highcharts.merge(entry.options, config);
+            });
+            // New panes must inherit the edited params too.
+            if (data.allSecurities && targets.length) {
+                const groupId = targets[0].entry.groupId;
+                allIndicators.forEach(template => {
+                    if (template.groupId === groupId) {
+                        template.options = Highcharts.merge(
+                            template.options, baseConfig
+                        );
+                    }
+                });
+            }
+            deselectIndicatorsButton(navigation);
+            theChart.redraw();
+            return;
+        }
+
+        if (data.actionType === 'remove') {
+            const targets = getTargetEntries(
+                data.seriesId, data.allSecurities
+            );
+            if (!targets.length) {
+                return;
+            }
+            targets.forEach(({ ticker, entry }) => {
+                removeIndicatorFromPane(theChart, ticker, entry);
+            });
+            // Group removed everywhere — stop propagating to new panes.
+            if (data.allSecurities) {
+                const groupId = targets[0].entry.groupId;
+                const type = targets[0].entry.type;
+                const matches = template => (
+                    groupId ?
+                        template.groupId === groupId :
+                        template.type === type
+                );
+                for (let i = allIndicators.length - 1; i >= 0; i--) {
+                    if (matches(allIndicators[i])) {
+                        allIndicators.splice(i, 1);
+                    }
+                }
+            }
+            [...new Set(targets.map(t => t.ticker))].forEach(ticker => {
+                layoutColumn(theChart, ticker);
+                bindColumnResizers(theChart, ticker);
+            });
+            deselectIndicatorsButton(navigation);
+            theChart.redraw();
+            return;
+        }
+
+        // ADD path — one pane, or every pane when "All securities" is on.
+        let groupId;
+        if (data.allSecurities) {
+            groupId = Highcharts.uniqueKey();
+            const template = { type: data.type };
+            navigation.fieldsToOptions(data.fields, template);
+            allIndicators.push({
+                groupId,
+                type: data.type,
+                hasAxis: indicatorsWithAxes.indexOf(data.type) >= 0,
+                options: template
+            });
+        }
+        const tickers = data.allSecurities ?
+            activeTickers.slice() :
+            [data.linkedTo];
+        tickers.forEach(ticker => {
+            addIndicatorToPane(navigation, data, ticker, groupId);
+        });
+
+        deselectIndicatorsButton(navigation);
+        theChart.redraw();
+    }
+
+    // Without this the toolbar button stays selected after submit and the
+    // next click toggles it off instead of reopening the popup.
+    function deselectIndicatorsButton(navigation) {
         Highcharts.fireEvent(navigation, 'deselectButton', {
             button: navigation.selectedButtonElement
         });
-        theChart.redraw();
+    }
+
+    // The popup is wiped on every open, so (re)inject the checkboxes each
+    // time — one per tab. They must sit outside .highcharts-popup-rhs-col —
+    // the popup's getFields reads every input there and would mistake them
+    // for the indicator type.
+    function injectAllSecuritiesCheckboxes(navigation) {
+        const tabs = navigation.popup && navigation.popup.container
+            .querySelectorAll('.highcharts-tab-item-content');
+        if (!tabs) {
+            return;
+        }
+        ['add', 'edit'].forEach((kind, i) => {
+            const tab = tabs[i];
+            if (!tab || tab.querySelector('.all-securities')) {
+                return;
+            }
+            const label = document.createElement('label');
+            label.className = 'all-securities';
+            label.innerHTML = '<input type="checkbox" id="all-securities-' +
+                kind + '">All securities';
+            tab.appendChild(label);
+        });
+    }
+
+    function isAllSecuritiesChecked(navigation, kind) {
+        const box = navigation.popup && navigation.popup.container
+            .querySelector('#all-securities-' + kind);
+        return !!(box && box.checked);
+    }
+
+    // linkedTo can't be used across panes of different widths: linked axes
+    // translate with the parent's pixel scale (Axis#translate, #1417), which
+    // misplaces points once the last row expands. Sync extremes manually
+    // instead. setExtremes (not afterSetExtremes) fires before the
+    // initiating redraw, so one redraw covers all panes.
+    function syncExtremes(e) {
+        const axis = this;
+        if (e.trigger === 'syncExtremes') {
+            return;
+        }
+        axis.chart.xAxis.forEach(other => {
+            if (other !== axis && other.options.id?.startsWith('x-')) {
+                other.setExtremes(
+                    e.min, e.max, false, false, { trigger: 'syncExtremes' }
+                );
+            }
+        });
     }
 
     function buildAxes() {
@@ -351,7 +486,7 @@ const MOCK_TICKER_COUNT = 15;
                 left: rect.left,
                 width: rect.width,
                 height: rect.height,
-                linkedTo: i === 0 ? null : 0,
+                events: { setExtremes: syncExtremes },
                 showEmpty: false,
                 offset: 0
             };
@@ -452,6 +587,22 @@ const MOCK_TICKER_COUNT = 15;
         }
         await loadTicker(ticker);
         activeTickers.push(ticker);
+        // The new pane inherits every "All securities" indicator —
+        // rebuild() creates the series and axes from these entries.
+        if (allIndicators.length) {
+            paneIndicators[ticker] = paneIndicators[ticker] || [];
+            allIndicators.forEach(template => {
+                paneIndicators[ticker].push({
+                    seriesId: Highcharts.uniqueKey(),
+                    type: template.type,
+                    axisId: template.hasAxis ?
+                        Highcharts.uniqueKey() : void 0,
+                    hasAxis: template.hasAxis,
+                    groupId: template.groupId,
+                    options: Highcharts.merge(template.options)
+                });
+            });
+        }
         rebuild();
     }
 
@@ -467,26 +618,45 @@ const MOCK_TICKER_COUNT = 15;
         rebuild();
     }
 
+    // Rightmost point of a series that is actually inside the plot.
+    function lastVisiblePoint(series) {
+        if (!series || !series.points) {
+            return null;
+        }
+        for (let i = series.points.length - 1; i >= 0; i--) {
+            const point = series.points[i];
+            if (
+                point.isInside &&
+                typeof point.plotX === 'number' &&
+                typeof point.plotY === 'number'
+            ) {
+                return point;
+            }
+        }
+        return null;
+    }
+
+    // Points to pin per pane: the main series' latest visible point, plus each
+    // indicator that has a value at that same date. Price-histogram overlays
+    // like Volume by Price have no point at the latest date, so they are
+    // skipped — otherwise their stray points crowd the split tooltip and it
+    // drops other panes' labels (the "random / missing tooltip" bug).
     function getPaneTooltipPoints(theChart) {
-        return activeTickers.reduce((points, ticker) => {
-            const series = theChart.get(ticker);
-            if (!series) {
-                return points;
+        const points = [];
+        activeTickers.forEach(ticker => {
+            const mainPoint = lastVisiblePoint(theChart.get(ticker));
+            if (!mainPoint) {
+                return;
             }
-
-            for (let i = series.points.length - 1; i >= 0; i--) {
-                const point = series.points[i];
-                if (
-                    typeof point.plotX === 'number' &&
-                    typeof point.plotY === 'number'
-                ) {
+            points.push(mainPoint);
+            (paneIndicators[ticker] || []).forEach(ind => {
+                const point = lastVisiblePoint(theChart.get(ind.seriesId));
+                if (point && point.x === mainPoint.x) {
                     points.push(point);
-                    break;
                 }
-            }
-
-            return points;
-        }, []);
+            });
+        });
+        return points;
     }
 
     function refreshPaneTooltips(theChart) {
@@ -550,47 +720,6 @@ const MOCK_TICKER_COUNT = 15;
         });
     }
 
-    // Workaround for Tooltip.renderSplit + tooltip.fixed bug: distribute()
-    // is 1-D and shoves side-by-side panes' tooltips down on top of each
-    // other. Re-anchor each pane's partial tooltips to the top of their own
-    // yAxis after refresh.
-    Highcharts.addEvent(Highcharts.Tooltip, 'refresh', function () {
-        const opts = this.options;
-        if (!opts.fixed) {
-            return;
-        }
-        const positionY = (opts.position && opts.position.y) || 0;
-
-        const byPane = new Map();
-        this.chart.series.forEach(series => {
-            if (series.tt && series.yAxis) {
-                const list = byPane.get(series.yAxis) || [];
-                list.push(series);
-                byPane.set(series.yAxis, list);
-            }
-        });
-
-        byPane.forEach((seriesList, yAxis) => {
-            let y = yAxis.pos + positionY;
-            seriesList.forEach(series => {
-                series.tt.attr({ y });
-                y += series.tt.getBBox().height + 1;
-            });
-        });
-    });
-
-    Highcharts.wrap(Highcharts.Tooltip.prototype, 'hide', function (
-        proceed,
-        delay
-    ) {
-        if (this.options.keepVisible) {
-            refreshPaneTooltips(this.chart);
-            return;
-        }
-
-        proceed.call(this, delay);
-    });
-
     // Bootstrap: load initial datasets in parallel, then render.
     await Promise.all(activeTickers.map(loadTicker));
 
@@ -645,12 +774,18 @@ const MOCK_TICKER_COUNT = 15;
                             formType: 'indicators',
                             options: {},
                             onSubmit: function (data) {
+                                data.allSecurities = isAllSecuritiesChecked(
+                                    navigation,
+                                    data.actionType === 'add' ?
+                                        'add' : 'edit'
+                                );
                                 columnAwareManageIndicators(
                                     navigation,
                                     data
                                 );
                             }
                         });
+                        injectAllSecuritiesCheckboxes(navigation);
                     }
                 }
             }
@@ -693,6 +828,55 @@ const MOCK_TICKER_COUNT = 15;
     wireControls();
     renderTickerChips();
 
+    // Split-tooltip distribute() is 1-D (Tooltip.renderSplit): with fixed,
+    // pane-relative tooltips it stacks side-by-side panes on top of each
+    // other. Re-anchor each pane's partial tooltips to the top of its own
+    // yAxis after refresh. Registered on the shared class but guarded on this
+    // chart instance, so other charts on the page are never touched.
+    Highcharts.addEvent(Highcharts.Tooltip, 'refresh', function () {
+        const opts = this.options;
+        if (this.chart !== chart || !opts.fixed) {
+            return;
+        }
+        const positionY = opts.position?.y ?? 0;
+
+        const byPane = new Map();
+        this.chart.series.forEach(series => {
+            if (series.tt && series.yAxis) {
+                const list = byPane.get(series.yAxis) || [];
+                list.push(series);
+                byPane.set(series.yAxis, list);
+            }
+        });
+
+        byPane.forEach((seriesList, yAxis) => {
+            let y = yAxis.pos + positionY;
+            seriesList.forEach(series => {
+                series.tt.attr({ y });
+                y += series.tt.getBBox().height + 1;
+            });
+        });
+    });
+
+    // Keep the pane tooltips pinned to the latest points instead of hiding
+    // (there is no built-in "always visible" tooltip). Same chart-scoped
+    // guard so other charts hide normally.
+    Highcharts.wrap(Highcharts.Tooltip.prototype, 'hide', function (
+        proceed,
+        delay
+    ) {
+        if (this.chart === chart && this.options.keepVisible) {
+            refreshPaneTooltips(this.chart);
+            return;
+        }
+
+        proceed.call(this, delay);
+    });
+
+    // Initial paint rendered before the refresh handler above existed; run one
+    // pass now so the first frame is anchored per pane too.
+    refreshPaneTooltips(chart);
+
     function rebuild() {
         const { xAxis, yAxis } = buildAxes();
         chart.update(
@@ -704,11 +888,25 @@ const MOCK_TICKER_COUNT = 15;
         activeTickers.forEach(ticker => {
             bindColumnResizers(chart, ticker);
         });
+        // Newly added panes must follow the current zoom (linkedTo used to
+        // do this implicitly; extremes are now synced via setExtremes).
+        const ext = chart.xAxis[0].getExtremes();
+        chart.xAxis[0].setExtremes(
+            typeof ext.userMin === 'number' ? ext.userMin : ext.min,
+            typeof ext.userMax === 'number' ? ext.userMax : ext.max,
+            false
+        );
         // Force a full box recomputation: when axes' top/left/width/height
         // change via update(), grid lines and tick positions don't refresh
         // until something marks the chart as dirtyBox (browser resize does
         // this implicitly).
         chart.isDirtyBox = true;
+        // Series must re-render too — axes get new positions during the
+        // dirtyBox pass, but clean series keep their old geometry until the
+        // next unrelated redraw.
+        chart.series.forEach(series => {
+            series.isDirty = true;
+        });
         chart.redraw();
         renderTickerChips();
         refreshPaneTooltips(chart);

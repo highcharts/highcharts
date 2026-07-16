@@ -142,3 +142,25 @@ body {
     height: 900px;
     min-width: 320px;
 }
+
+/* "All securities" checkbox in the indicators popup (add tab). */
+.highcharts-popup .all-securities {
+    position: absolute;
+    top: 58px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    margin: 0;
+    padding: 4px 6px;
+    cursor: pointer;
+    color: var(--highcharts-neutral-color-80);
+    background: var(--highcharts-background-color);
+}
+
+.highcharts-popup .all-securities input {
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
