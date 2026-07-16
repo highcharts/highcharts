@@ -1228,7 +1228,7 @@ namespace ExportData {
             chart = exporting.chart,
             options = chart.options,
             decimalPoint =
-                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : void 0,
             useMultiLevelHeaders = pick(
                 exporting.options.useMultiLevelHeaders, true
             ),
