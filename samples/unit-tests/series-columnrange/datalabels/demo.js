@@ -147,6 +147,26 @@ QUnit.test('Change of label alignment after add(#4605)', function (assert) {
         true,
         'All labels are visible when inverted'
     );
+
+    chart.series[0].update({
+        data: [[-15, 15]],
+        dataLabels: [{
+            enabled: true,
+            inside: true,
+            align: 'center'
+        }]
+    });
+
+    const point = chart.series[0].points[0],
+        labelRect = point.dataLabelUpper.element.getBoundingClientRect(),
+        barRect = point.graphic.element.getBoundingClientRect();
+
+    assert.close(
+        labelRect.left + labelRect.width / 2,
+        barRect.left + barRect.width / 2,
+        20,
+        'Single inside, center label is centered within the bar'
+    );
 });
 
 QUnit.test('#14050: Empty dataLabels', function (assert) {

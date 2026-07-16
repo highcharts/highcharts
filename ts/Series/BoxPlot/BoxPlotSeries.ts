@@ -20,6 +20,9 @@
 
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type {
+    BoxPlotPointValKey
+} from './BoxPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -29,6 +32,7 @@ import BoxPlotSeriesDefaults from './BoxPlotSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import RangeDataLabel from '../RangeDataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import {
     crisp,
@@ -147,14 +151,15 @@ class BoxPlotSeries extends ColumnSeries {
 
         // Do the translation on each point dimension
         series.points.forEach(function (point: BoxPlotPoint): void {
-            pointArrayMap.forEach(function (key: string): void {
-                if ((point as any)[key] !== null) {
-                    (point as any)[key + 'Plot'] = yAxis.translate(
-                        (point as any)[key],
-                        0 as any,
-                        1 as any,
-                        0 as any,
-                        1 as any
+            pointArrayMap.forEach(function (key: BoxPlotPointValKey): void {
+                const value = point[key];
+                if (value !== null) {
+                    point[`${key}Plot`] = yAxis.translate(
+                        value,
+                        false,
+                        true,
+                        false,
+                        true
                     );
                 }
             });
@@ -412,9 +417,9 @@ class BoxPlotSeries extends ColumnSeries {
 /** @internal */
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
-    pointArrayMap: Array<string>;
+    pointArrayMap: Array<BoxPlotPointValKey>;
     pointClass: typeof BoxPlotPoint;
-    pointValKey: string;
+    pointValKey: BoxPlotPointValKey;
 }
 
 extend(BoxPlotSeries.prototype, {
@@ -422,10 +427,10 @@ extend(BoxPlotSeries.prototype, {
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
     // Defines the top of the tracker
     pointValKey: 'high',
-    // Disable data labels for box plot
-    drawDataLabels: noop,
     setStackedPoints: noop // #3890
 });
+
+RangeDataLabel.compose(BoxPlotSeries);
 
 /* *
  *
