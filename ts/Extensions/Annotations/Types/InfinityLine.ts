@@ -12,6 +12,7 @@
  * */
 
 import type { AnnotationPointType } from '../AnnotationSeries';
+import type Controllable from '../Controllables/Controllable';
 import type Axis from '../../../Core/Axis/Axis';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
@@ -21,7 +22,7 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import { AnnotationMockPointFunction } from '../AnnotationOptions';
-import { merge } from '../../../Shared/Utilities.js';
+import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**
@@ -68,26 +69,35 @@ class InfinityLine extends CrookedLine {
         startIndex: number,
         endIndex: number
     ): AnnotationMockPointFunction {
-        return function (target: any): PositionObject {
+        return function (target: Controllable): PositionObject {
             const annotation = target.annotation,
-                type = annotation.options.typeOptions.type;
+                type = annotation.options.typeOptions?.type;
 
-            let points = annotation.points;
+            let points = annotation.points as Array<MockPoint>;
 
-            if (type === 'horizontalLine' || type === 'verticalLine') {
+            const firstPoint = points[0];
+
+            if (
+                (type === 'horizontalLine' || type === 'verticalLine') &&
+                isNumber(firstPoint.x) &&
+                isNumber(firstPoint.y)
+            ) {
+                const { x: firstX, y: firstY } = firstPoint,
+                    { xAxis, yAxis } = firstPoint.getOptions();
+
                 // Horizontal and vertical lines have only one point,
                 // make a copy of it:
                 points = [
-                    points[0],
+                    firstPoint,
                     new MockPoint(
                         annotation.chart,
-                        points[0].target,
+                        firstPoint.target,
                         {
                             // Add 0 or 1 to x or y depending on type
-                            x: points[0].x + +(type === 'horizontalLine'),
-                            y: points[0].y + +(type === 'verticalLine'),
-                            xAxis: points[0].options.xAxis,
-                            yAxis: points[0].options.yAxis
+                            x: firstX + +(type === 'horizontalLine'),
+                            y: firstY + +(type === 'verticalLine'),
+                            xAxis,
+                            yAxis
                         }
                     )
                 ];
@@ -207,7 +217,7 @@ class InfinityLine extends CrookedLine {
             merge(typeOptions.line, {
                 type: 'path',
                 className: 'highcharts-infinity-lines',
-                points: points as any
+                points
             }),
             0
         );

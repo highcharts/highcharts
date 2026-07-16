@@ -297,15 +297,17 @@ class Fibonacci extends Tunnel {
     public addLabels(): void {
         Fibonacci.levels.forEach(
             function (this: Fibonacci, level: number, i: number): void {
-                const options = this.options.typeOptions,
+                const annotation = this,
+                    options = this.options.typeOptions,
                     label = (this.initLabel as any)(
                         merge(options.labels[i], {
-                            point: function (target: any): MockPointOptions {
-                                const point = MockPoint.pointToOptions(
-                                    target.annotation.startRetracements[i]
-                                );
+                            point: function (): MockPointOptions {
+                                const retracement =
+                                    annotation.startRetracements?.[i];
 
-                                return point;
+                                return retracement ?
+                                    MockPoint.pointToOptions(retracement) :
+                                    {};
                             },
                             text: level.toString()
                         })
