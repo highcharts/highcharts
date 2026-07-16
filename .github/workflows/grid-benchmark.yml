@@ -6,7 +6,8 @@ on:
       - 'grid/**'
     paths:
       - 'ts/Grid/**'
-      - 'test/ts-node-unit-tests/benchmarks/Grid/*'
+      - 'css/grid/**'
+      - 'tests/benchmarks/**'
       - '.github/workflows/grid-benchmark.yml'
   workflow_dispatch:
 
@@ -25,6 +26,7 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
+      # --- Base (master) build -------------------------------------------------
       - uses: actions/checkout@v6
         with:
           ref: master
@@ -37,34 +39,42 @@ jobs:
 
       - run: npm ci
 
-      - name: Build Highcharts
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build Highcharts (base)
         run: npx gulp scripts
-      - name: Build Grid
+      - name: Build Grid (base)
         run: npx gulp scripts --product Grid
 
-      - name: Benchmark
-        continue-on-error: true
-        run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context base --pattern Grid/
+      # Keep the master build so the harness can compare against it.
+      - name: Stash base build
+        run: rm -rf code-base && cp -r code code-base
 
-      - name: Checkout current branch
+      # --- PR build ------------------------------------------------------------
+      - name: Checkout PR branch
         uses: actions/checkout@v6
         with:
-           clean: false # do not remove files from previous run
+          clean: false # keep code-base and node_modules from the previous step
+
       - run: npm ci
 
-      - name: Build Highcharts
+      - name: Build Highcharts (PR)
         run: npx gulp scripts
-
-      - name: Build Grid
+      - name: Build Grid (PR)
         run: npx gulp scripts --product Grid
 
-      - name: Benchmark
-        run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context actual --pattern Grid/
+      # --- Measure & compare ---------------------------------------------------
+      - name: Benchmark (interleaved base vs PR)
+        continue-on-error: true
+        run: cd tests/benchmarks && node --import tsx harness/run.ts --base code-base --pr code
 
-      - name: Benchmark comparison
-        run: cd test/ts-node-unit-tests && node --import tsx benchmark-compare.ts
+      - name: Compare
+        if: ${{ always() }}
+        run: cd tests/benchmarks && node --import tsx harness/compare.ts
 
       - name: Store artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v6
         with:
           name: grid-benchmark-files
@@ -72,20 +82,25 @@ jobs:
             tmp/benchmarks
 
       - name: Comment on PR
+        if: ${{ always() }}
         uses: actions/github-script@v8
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
-            const { readFileSync } = require('node:fs')
+            const { readFileSync } = require('node:fs');
 
-            const benchmarkMD = readFileSync('./tmp/benchmarks/table.md');
+            let benchmarkMD = 'No table to show';
+            try {
+              benchmarkMD = readFileSync('./tmp/benchmarks/table.md', 'utf8');
+            } catch (e) {
+              console.log('No benchmark table found:', e.message);
+            }
 
-            await createOrUpdateComment(github, context, 'Benchmark report - Grid', benchmarkMD || 'No table to show');
-
+            await createOrUpdateComment(github, context, 'Benchmark report - Grid', benchmarkMD);
 
       - name: Add to summary
         if: ${{ always() }}
         run: |
           echo "## Grid Benchmark metrics" >> $GITHUB_STEP_SUMMARY
-          cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY
+          cat ./tmp/benchmarks/table.md >> $GITHUB_STEP_SUMMARY || echo "No table produced" >> $GITHUB_STEP_SUMMARY
