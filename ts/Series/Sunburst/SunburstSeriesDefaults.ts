@@ -139,6 +139,17 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      */
 
     /**
+     * Used together with the levels and `allowTraversingTree` options. When
+     * set to false, the first level visible when traversing is considered
+     * to be level one. Otherwise the level will be the same as the tree
+     * structure.
+     *
+     * @type      {boolean}
+     * @default   true
+     * @apioption plotOptions.sunburst.levels.levelIsConstant
+     */
+
+    /**
      * Decides which level takes effect from the options set in the levels
      * object.
      *

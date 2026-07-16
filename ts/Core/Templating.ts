@@ -56,7 +56,7 @@ interface MatchObject {
 }
 
 /** @internal */
-const helpers: Record<string, Function> = {
+const helpers: Record<string, Templating.HelperFunction> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
     divide: (a: number, b: number): number | string => (b !== 0 ? a / b : ''),
@@ -555,6 +555,10 @@ const Templating = {
 };
 
 namespace Templating {
+    export interface HelperFunction {
+        (...args: Array<any>): any;
+    }
+
     export interface FormatterCallback<T> {
         (this: T, ...args: Array<any>): string;
     }
@@ -592,6 +596,18 @@ export default Templating;
  * */
 
 /**
+ * A callback function used by a templating helper.
+ *
+ * @callback Highcharts.TemplatingHelperFunction
+ *
+ * @param {...*} args
+ *        Arguments passed to the helper.
+ *
+ * @return {*}
+ *         The value inserted into the template.
+ */
+
+/**
  * @interface Highcharts.Templating
  *
  * The Highcharts.Templating interface provides a structure for defining
@@ -610,7 +626,14 @@ export default Templating;
  * format: 'Absolute value: {abs point.y}'
  *
  * @name Highcharts.Templating#helpers
- * @type {Record<string, Function>}
+ * @type {Record<string, Highcharts.TemplatingHelperFunction>}
+ */
+
+/**
+ * The global templating object containing built-in and custom helpers.
+ *
+ * @name Highcharts.Templating
+ * @type {Highcharts.Templating}
  */
 
 (''); // Keeps doclets above in file

@@ -382,10 +382,17 @@ const NavigatorDefaults: NavigatorOptions = {
         className: 'highcharts-navigator-series',
 
         /**
-         * Sets the fill color of the navigator series.
+         * Sets the color of the navigator series.
          *
          * @type      {Highcharts.ColorType}
          * @apioption navigator.series.color
+         */
+
+        /**
+         * Sets the fill color of the navigator series.
+         *
+         * @type      {Highcharts.ColorType}
+         * @apioption navigator.series.fillColor
          */
 
         /**

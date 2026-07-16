@@ -897,6 +897,44 @@ const navigation: NavigationOptions = {
              * Default stroke linecap for the buttons.
              */
             'stroke-linecap': 'round'
+
+            /**
+             * CSS styles for the button text.
+             *
+             * @type      {Highcharts.CSSObject}
+             * @apioption navigation.buttonOptions.theme.style
+             */
+
+            /**
+             * The button's theme for the hover, select and disabled states.
+             *
+             * @type      {Object}
+             * @apioption navigation.buttonOptions.theme.states
+             */
+
+            /**
+             * The button theme for the hover state.
+             *
+             * @extends   navigation.buttonOptions.theme
+             * @excluding states
+             * @apioption navigation.buttonOptions.theme.states.hover
+             */
+
+            /**
+             * The button theme for the selected state.
+             *
+             * @extends   navigation.buttonOptions.theme
+             * @excluding states
+             * @apioption navigation.buttonOptions.theme.states.select
+             */
+
+            /**
+             * The button theme for the disabled state.
+             *
+             * @extends   navigation.buttonOptions.theme
+             * @excluding states
+             * @apioption navigation.buttonOptions.theme.states.disabled
+             */
         }
     },
 

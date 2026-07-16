@@ -11,6 +11,7 @@ import * as Highcharts from 'highcharts/highstock';
 test_seriesLine();
 test_seriesCandleStick();
 test_theme();
+test_declarationOptions();
 
 /**
  * Tests Highcharts.seriesTypes.line in a simple use case.
@@ -81,7 +82,7 @@ function test_theme() {
                     }
                     // disabled: { ... }
                 }
-            } as any,
+            },
             inputBoxBorderColor: 'gray',
             inputBoxWidth: 120,
             inputBoxHeight: 18,
@@ -107,7 +108,7 @@ function test_theme() {
                                 }
                             }
                         }
-                    } as any
+                    }
                 }
             }
         },
@@ -115,6 +116,30 @@ function test_theme() {
             type: 'line',
             name: 'USD to EUR',
             data: []
+        }]
+    });
+}
+
+/**
+ * Tests documented navigator and Sankey options.
+ */
+function test_declarationOptions() {
+    const navigatorSeries: Highcharts.NavigatorSeriesOptions = {
+        fillColor: '#333'
+    };
+
+    Highcharts.stockChart('container', {
+        navigator: {
+            series: navigatorSeries
+        },
+        series: [{
+            type: 'sankey',
+            borderRadius: 3,
+            data: [{
+                from: 'A',
+                to: 'B',
+                weight: 1
+            }]
         }]
     });
 }

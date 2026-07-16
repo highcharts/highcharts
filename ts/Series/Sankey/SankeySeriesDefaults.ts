@@ -45,8 +45,8 @@ import type SankeySeries from './SankeySeries';
  * @extends      plotOptions.column
  * @since        6.0.0
  * @product      highcharts
- * @excluding    animationLimit, boostBlending, boostThreshold, borderRadius,
- *               crisp, cropThreshold, colorAxis, colorKey, dataSorting, depth,
+ * @excluding    animationLimit, boostBlending, boostThreshold, crisp,
+ *               cropThreshold, colorAxis, colorKey, dataSorting, depth,
  *               dragDrop, edgeColor, edgeWidth, findNearestPointBy, grouping,
  *               groupPadding, groupZPadding, legendSymbolColor, maxPointWidth,
  *               minPointLength, negativeColor, pointInterval,
@@ -59,6 +59,13 @@ import type SankeySeries from './SankeySeries';
  * @private
  */
 const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
+
+    /**
+     * The border radius in pixels for the nodes.
+     *
+     * @type      {number}
+     * @apioption plotOptions.sankey.borderRadius
+     */
 
     borderWidth: 0,
 
@@ -408,8 +415,8 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  *
  * @extends   series,plotOptions.sankey
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
+ *            borderWidth, crisp, cropThreshold, dataParser, dataURL, depth,
+ *            dragDrop, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,

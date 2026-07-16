@@ -92,6 +92,13 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
     dataLabels: {
 
         /**
+         * The padding between the data label and the node it points to.
+         *
+         * @type      {number}
+         * @apioption plotOptions.arcdiagram.dataLabels.padding
+         */
+
+        /**
          * Options for a _link_ label text which should follow link
          * connection. Border and background are disabled for a label that
          * follows a path.

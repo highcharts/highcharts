@@ -66,7 +66,7 @@ export interface BorderRadiusOptionsObject {
      * @sample highcharts/plotoptions/series-border-radius
      *         Column and pie with rounded border
      */
-    radius: number|string;
+    radius?: number|string;
 
     /**
      * The scope of the rounding for column charts. In a stacked column chart,
@@ -77,7 +77,7 @@ export interface BorderRadiusOptionsObject {
      * @sample {highcharts} highcharts/plotoptions/column-borderradius/
      *         Rounded columns
      */
-    scope: 'point'|'stack';
+    scope?: 'point'|'stack';
 
     /**
      * For column charts, where in the point or stack to apply rounding. The
@@ -685,7 +685,7 @@ function roundedRect(
  *          Column and pie with rounded border
  *
  * @name Highcharts.BorderRadiusOptionsObject#radius
- * @type {string|number}
+ * @type {string|number|undefined}
  *//**
  * The scope of the rounding for column charts. In a stacked column chart, the
  * value `point` means each single point will get rounded corners. The value
@@ -697,7 +697,7 @@ function roundedRect(
  *
  * @name Highcharts.BorderRadiusOptionsObject#scope
  * @validvalue ["point", "stack"]
- * @type {string}
+ * @type {string|undefined}
  *//**
  * For column charts, where in the point or stack to apply rounding. The `end`
  * value means only those corners at the point value will be rounded, leaving
@@ -709,7 +709,7 @@ function roundedRect(
  *
  * @name Highcharts.BorderRadiusOptionsObject#where
  * @validvalue ["all", "end"]
- * @type {string}
+ * @type {string|undefined}
  * @default end
  */
 

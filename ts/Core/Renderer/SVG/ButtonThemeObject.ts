@@ -56,7 +56,14 @@ export interface ButtonThemeObject extends SVGAttributes {
      */
     'stroke-linecap'?: SVGAttributes['stroke-linecap'];
 
+    /**
+     * The button's theme for the hover, select and disabled states.
+     */
     states?: ButtonThemeStatesObject;
+
+    /**
+     * CSS styles for the button text.
+     */
     style?: CSSObject;
 }
 

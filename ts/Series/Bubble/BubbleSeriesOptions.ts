@@ -53,6 +53,21 @@ import type { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOption
 export interface BubbleSeriesOptions extends ScatterSeriesOptions {
 
     /**
+     * When using automatic point colors pulled from the global
+     * [colors](colors) or series-specific
+     * [plotOptions.bubble.colors](series.colors) collections, this option
+     * determines whether the chart should receive one color per series or
+     * one color per point.
+     *
+     * @default false
+     *
+     * @since 2.0
+     *
+     * @product highcharts highstock
+     */
+    colorByPoint?: boolean;
+
+    /**
      * Whether to display negative sized bubbles. The threshold is given
      * by the [zThreshold](#plotOptions.bubble.zThreshold) option, and negative
      * bubbles can be visualized by setting

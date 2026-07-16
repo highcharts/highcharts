@@ -47,6 +47,16 @@ import { isNumber } from '../../Shared/Utilities.js';
 const MapSeriesDefaults: MapSeriesOptions = {
 
     /**
+     * Whether to apply a drop shadow to the map areas. The shadow can also be
+     * an object configuration containing `color`, `offsetX`, `offsetY`,
+     * `opacity` and `width`.
+     *
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
+     * @product   highmaps
+     * @apioption plotOptions.map.shadow
+     */
+
+    /**
      * Whether the MapView takes this series into account when computing the
      * default zoom and center of the map.
      *

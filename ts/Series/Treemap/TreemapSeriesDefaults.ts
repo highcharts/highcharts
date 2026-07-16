@@ -466,6 +466,19 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
 
     /**
+     * Group padding for parent elements on this level, in pixels. See also the
+     * `nodeSizeBy` option that controls how the leaf nodes' size is affected by
+     * the padding.
+     *
+     * @sample    {highcharts} highcharts/series-treemap/grouppadding/
+     *            Group padding
+     * @type      {number}
+     * @since     12.2.0
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.groupPadding
+     */
+
+    /**
      * Can set the layoutAlgorithm option on a specific level.
      *
      * @type       {string}
@@ -498,13 +511,26 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @apioption plotOptions.treemap.levels.level
      */
 
+    /**
+     * Used together with the levels and `allowTraversingTree` options. When
+     * set to false, the first level visible when traversing is considered
+     * to be level one. Otherwise the level will be the same as the tree
+     * structure.
+     *
+     * @type      {boolean}
+     * @default   true
+     * @since     4.1.0
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.levelIsConstant
+     */
 
     // Presentational options
 
     /**
      * The color of the border surrounding each tree map item.
      *
-     * @type {Highcharts.ColorString}
+     * @type      {Highcharts.ColorString}
+     * @apioption plotOptions.treemap.borderColor
      */
     borderColor: Palette.neutralColor10,
 

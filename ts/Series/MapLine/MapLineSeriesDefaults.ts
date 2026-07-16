@@ -46,6 +46,16 @@ import type MapLineSeriesOptions from './MapLineSeriesOptions';
 const MapLineSeriesDefaults: MapLineSeriesOptions = {
 
     /**
+     * Whether to apply a drop shadow to the map lines. The shadow can also be
+     * an object configuration containing `color`, `offsetX`, `offsetY`,
+     * `opacity` and `width`.
+     *
+     * @type      {boolean|Highcharts.ShadowOptionsObject}
+     * @product   highmaps
+     * @apioption plotOptions.mapline.shadow
+     */
+
+    /**
      * Pixel width of the mapline line.
      *
      * @type      {number}

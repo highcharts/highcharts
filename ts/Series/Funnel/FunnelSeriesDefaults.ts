@@ -129,6 +129,13 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
      */
     size: true as any,
 
+    /**
+     * Whether to position the data labels inside the funnel area.
+     *
+     * @type      {boolean}
+     * @apioption plotOptions.funnel.dataLabels.inside
+     */
+
     dataLabels: {
         connectorWidth: 1,
         verticalAlign: 'middle'

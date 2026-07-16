@@ -19,6 +19,7 @@ test_seriesLine();
 test_seriesPie();
 test_tooltip();
 test_yAxis();
+test_declarationOptions();
 
 /**
  * Tests legend options.
@@ -532,4 +533,130 @@ function test_yAxis() {
             }
         }
     })
+}
+
+/**
+ * Tests documented options that are generated from API doclets.
+ */
+function test_declarationOptions() {
+    const paneBackground: Highcharts.PaneBackgroundOptions = {
+        backgroundColor: '#fff'
+    };
+    const radiusOnly: Highcharts.BorderRadiusOptionsObject = {
+        radius: 4
+    };
+    const radiusAndWhere: Highcharts.BorderRadiusOptionsObject = {
+        radius: '50%',
+        where: 'all'
+    };
+    const scopeOnly: Highcharts.BorderRadiusOptionsObject = {
+        scope: 'point'
+    };
+    const whereOnly: Highcharts.BorderRadiusOptionsObject = {
+        where: 'end'
+    };
+
+    Highcharts.chart('container', {
+        navigation: {
+            buttonOptions: {
+                theme: {
+                    fill: '#252931',
+                    style: {
+                        color: 'silver',
+                        whiteSpace: 'nowrap'
+                    },
+                    states: {
+                        hover: {
+                            fill: '#333'
+                        }
+                    }
+                }
+            }
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    theme: {
+                        style: {
+                            color: 'silver'
+                        },
+                        states: {
+                            select: {
+                                fill: '#333'
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        pane: [{
+            background: null
+        }, {
+            background: paneBackground
+        }, {
+            background: [paneBackground]
+        }],
+        plotOptions: {
+            column: {
+                borderRadius: radiusAndWhere
+            },
+            sunburst: {
+                levelIsConstant: true
+            },
+            treemap: {
+                levelIsConstant: false
+            }
+        },
+        series: [{
+            type: 'sunburst',
+            levelIsConstant: false,
+            levels: [{
+                level: 1,
+                levelIsConstant: true
+            }]
+        }, {
+            type: 'funnel',
+            dataLabels: {
+                inside: true
+            }
+        }, {
+            type: 'bubble',
+            colorByPoint: true
+        }, {
+            type: 'treemap',
+            borderColor: '#fff'
+        }, {
+            type: 'treemap',
+            levels: [{
+                level: 1,
+                levelIsConstant: false
+            }, {
+                level: 2,
+                groupPadding: 4
+            }]
+        }, {
+            type: 'arcdiagram',
+            dataLabels: {
+                padding: 0
+            }
+        }, {
+            type: 'column',
+            borderRadius: radiusOnly
+        }, {
+            type: 'column',
+            borderRadius: scopeOnly
+        }, {
+            type: 'column',
+            borderRadius: whereOnly
+        }, {
+            type: 'column',
+            borderRadius: 4
+        }, {
+            type: 'column',
+            borderRadius: '25%'
+        }]
+    });
+
+    Highcharts.Templating.helpers['substr'] = (value, start, length) =>
+        String(value).substr(Number(start), Number(length));
 }

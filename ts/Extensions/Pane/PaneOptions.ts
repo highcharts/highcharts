@@ -131,7 +131,7 @@ export interface PaneOptions {
      *           Speedometer gauge with multiple backgrounds
      * @requires highcharts-more
      */
-    background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
+    background?: null|PaneBackgroundOptions|Array<PaneBackgroundOptions>;
     /**
      * The center of a polar chart or angular gauge, given as an array
      * of [x, y] positions. Positions can be given as integers that

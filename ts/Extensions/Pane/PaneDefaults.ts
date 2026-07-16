@@ -40,7 +40,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @sample {highcharts} highcharts/demo/gauge-speedometer/
  *         Speedometer gauge with multiple backgrounds
  *
- * @type         {*|Array<*>}
+ * @type         {null|*|Array<*>}
  * @requires     highcharts-more
  * @optionparent pane.background
  */

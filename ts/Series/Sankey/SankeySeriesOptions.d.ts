@@ -271,9 +271,9 @@ export interface SankeySeriesNodeOptions {
  *
  * @product highcharts
  *
- * @excluding animationLimit, boostThreshold, borderRadius,
- *            crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
- *            edgeColor, edgeWidth, findNearestPointBy, grouping,
+ * @excluding animationLimit, boostThreshold, crisp, cropThreshold, colorAxis,
+ *            colorKey, depth, dragDrop, edgeColor, edgeWidth,
+ *            findNearestPointBy, grouping,
  *            groupPadding, groupZPadding, maxPointWidth, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPadding,
  *            pointPlacement, pointRange, pointStart, pointWidth,
@@ -281,8 +281,8 @@ export interface SankeySeriesNodeOptions {
  *            zones, minPointLength, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
+ *            borderWidth, crisp, cropThreshold, dataParser, dataURL, depth,
+ *            dragDrop, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
@@ -292,6 +292,11 @@ export interface SankeySeriesNodeOptions {
  * @requires modules/sankey
  */
 export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesComposition.SeriesCompositionOptions {
+
+    /**
+     * The border radius in pixels for the nodes.
+     */
+    borderRadius?: number;
 
     borderWidth?: number;
 

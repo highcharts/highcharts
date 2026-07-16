@@ -10,6 +10,7 @@ import * as Highcharts from 'highcharts/highmaps';
 
 test_series();
 test_simple();
+test_shadowOptions();
 
 /**
  * Tests Highcharts.seriesTypes.map, Highcharts.seriesTypes.mapline, and
@@ -142,6 +143,27 @@ function test_simple() {
                 path: ['M', 20, 20, 'L', 30, 20, 15, 15, 20, 30, 'Z'],
                 name: 'b'
             }]
+        }]
+    });
+}
+
+/**
+ * Tests shadow options for map and mapline series.
+ */
+function test_shadowOptions() {
+    Highcharts.mapChart('container', {
+        series: [{
+            type: 'map',
+            shadow: true
+        }, {
+            type: 'mapline',
+            shadow: {
+                color: '#000',
+                offsetX: 1,
+                offsetY: 1,
+                opacity: 0.15,
+                width: 3
+            }
         }]
     });
 }
