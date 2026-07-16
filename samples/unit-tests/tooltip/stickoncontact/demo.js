@@ -25,7 +25,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                 }
             },
             function (chart) {
-                var controller = new TestController(chart),
+                const controller = new TestController(chart),
                     series1Point = chart.series[0].points[0],
                     series1PointPosition = {
                         x: Math.round(chart.plotLeft + series1Point.plotX),
@@ -103,6 +103,44 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                         .split('\u200B'),
                     ['0', '\u25CF Series 2: 1.1', ''],
                     'Tooltip should have label text of second series.'
+                );
+
+                // Issue #24255
+                chart.update({
+                    chart: { type: 'scatter' },
+                    series: [{
+                        data: [
+                            [0, 0.03], // point0
+                            [0.1, 0]   // point1
+                        ]
+                    }]
+                }, true, true);
+
+                const point0 = chart.series[0].points[0],
+                    point1 = chart.series[0].points[1];
+
+                controller.moveTo(
+                    chart.plotLeft + point1.plotX,
+                    chart.plotTop + point1.plotY
+                );
+
+                assert.strictEqual(
+                    chart.hoverPoint,
+                    point1,
+                    '#24255: Point 1 should be hovered initially (useHTML: ' +
+                    useHTML + ').'
+                );
+
+                controller.moveTo(
+                    chart.plotLeft + point0.plotX,
+                    chart.plotTop + point0.plotY
+                );
+
+                assert.strictEqual(
+                    chart.hoverPoint,
+                    point0,
+                    '#24255: Point 0 should be hovered, tracker from Point 1' +
+                    'should not block it (useHTML: ' + useHTML + ').'
                 );
             }
         );
