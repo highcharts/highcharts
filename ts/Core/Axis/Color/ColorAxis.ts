@@ -715,13 +715,17 @@ class ColorAxis extends Axis implements ColorAxisBase {
         // Crosshairs only
         if (isNumber(pos)) {
 
-            const x = left,
-                w = axis.width,
-                y = pos - w / 2,
-                h = w;
-
             if (symbol) {
-                return this.chart.renderer.symbols[symbol](x, y, w, h);
+                let w = axis.height,
+                    x = pos - w / 2,
+                    y = top;
+
+                if (!axis.horiz) {
+                    w = axis.width;
+                    x = left;
+                    y = pos - w / 2;
+                }
+                return this.chart.renderer.symbols[symbol](x, y, w, w);
             }
 
             // Default to a triangle pointing to the value
