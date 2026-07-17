@@ -39,7 +39,7 @@ import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
-import { fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -330,7 +330,7 @@ export function buildQueryRange(
         (alphabet[startColumn || 0] || 'A') +
         (Math.max((startRow || 0), 0) + 1) +
         ':' +
-        (alphabet[pick(endColumn, 25)] || 'Z') +
+        (alphabet[(endColumn ?? 25)] || 'Z') +
         (
             endRow ?
                 Math.max(endRow, 0) :

@@ -51,7 +51,6 @@ import {
     isArray,
     isNumber,
     merge,
-    pick,
     relativeLength
 } from '../../../Shared/Utilities.js';
 
@@ -430,18 +429,14 @@ class ColorAxis extends Axis implements ColorAxisBase {
             padding = legend.padding,
             legendOptions = legend.options,
             labelOptions = axis.options.labels,
-            itemDistance = pick(legendOptions.itemDistance, 10),
+            itemDistance = (legendOptions.itemDistance ?? 10),
             horiz = axis.horiz,
             {
                 width,
                 height
             } = axis.getSize(),
-            labelPadding = pick(
-                // @todo: This option is not documented, nor implemented when
-                // vertical
-                (legendOptions as any).labelPadding,
-                horiz ? 16 : 30
-            );
+            labelPadding = (legendOptions as any).labelPadding ??
+                (horiz ? 16 : 30);
 
         this.setLegendColor();
 
@@ -578,13 +573,12 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
         while (i--) { // X, y, value, other
             cSeries = series[i];
-            colorKey = cSeries.colorKey = pick(
-                cSeries.options.colorKey,
-                cSeries.colorKey,
-                cSeries.pointValKey,
-                cSeries.zoneAxis,
-                'y'
-            );
+            colorKey = cSeries.colorKey =
+                cSeries.options.colorKey ??
+                cSeries.colorKey ??
+                cSeries.pointValKey ??
+                cSeries.zoneAxis ??
+                'y';
 
             calculatedExtremes = (cSeries as any)[colorKey + 'Min'] &&
                 (cSeries as any)[colorKey + 'Max'];
@@ -844,8 +838,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 []
             ),
             legendOptions = chart.options.legend,
-            valueDecimals = pick(legendOptions.valueDecimals, -1),
-            valueSuffix = pick(legendOptions.valueSuffix, '');
+            valueDecimals = (legendOptions.valueDecimals ?? -1),
+            valueSuffix = (legendOptions.valueSuffix ?? '');
 
         const getPointsInDataClass = (i: number): Array<Point> =>
             axis.series.reduce((points, s): Point[] => {
@@ -949,18 +943,14 @@ class ColorAxis extends Axis implements ColorAxisBase {
             {
                 legend: legendOptions
             } = chart.options,
-            width = pick(
-                defined(colorAxisWidth) ?
-                    relativeLength(colorAxisWidth, chart.chartWidth) : void 0,
-                legendOptions?.symbolWidth,
-                horiz ? ColorAxis.defaultLegendLength : 12
-            ),
-            height = pick(
-                defined(colorAxisHeight) ?
-                    relativeLength(colorAxisHeight, chart.chartHeight) : void 0,
-                legendOptions?.symbolHeight,
-                horiz ? 12 : ColorAxis.defaultLegendLength
-            );
+            width = defined(colorAxisWidth) ?
+                relativeLength(colorAxisWidth, chart.chartWidth) :
+                (legendOptions?.symbolWidth ??
+                    (horiz ? ColorAxis.defaultLegendLength : 12)),
+            height = defined(colorAxisHeight) ?
+                relativeLength(colorAxisHeight, chart.chartHeight) :
+                (legendOptions?.symbolHeight ??
+                    (horiz ? 12 : ColorAxis.defaultLegendLength));
 
         return {
             width,

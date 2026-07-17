@@ -23,7 +23,7 @@ import type DumbbellPointOptions from './DumbbellPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
-import { extend, pick } from '../../Shared/Utilities.js';
+import { extend } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -66,15 +66,14 @@ class DumbbellPoint extends AreaRangePoint {
             pointOptions = point.options,
             pointLowColor = pointOptions.lowColor,
             zoneColor = point.zone && point.zone.color,
-            lowerGraphicColor = pick(
-                pointLowColor,
-                seriesLowMarker?.fillColor,
-                seriesLowColor,
-                pointOptions.color,
-                zoneColor,
-                point.color,
-                series.color
-            );
+            lowerGraphicColor =
+                pointLowColor ??
+                seriesLowMarker?.fillColor ??
+                seriesLowColor ??
+                pointOptions.color ??
+                zoneColor ??
+                point.color ??
+                series.color;
         let verb = 'attr',
             upperGraphicColor,
             origProps: Partial<DumbbellPoint>;
@@ -95,13 +94,12 @@ class DumbbellPoint extends AreaRangePoint {
                     };
                     point.y = point.high;
                     point.zone = point.zone ? point.getZone() : void 0;
-                    upperGraphicColor = pick(
-                        point.marker ? point.marker.fillColor : void 0,
-                        seriesMarker ? seriesMarker.fillColor : void 0,
-                        pointOptions.color,
-                        point.zone ? point.zone.color : void 0,
-                        point.color
-                    );
+                    upperGraphicColor =
+                        (point.marker ? point.marker.fillColor : void 0) ??
+                        (seriesMarker ? seriesMarker.fillColor : void 0) ??
+                        pointOptions.color ??
+                        (point.zone ? point.zone.color : void 0) ??
+                        point.color;
                     upperGraphic.attr({
                         fill: upperGraphicColor
                     });

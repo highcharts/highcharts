@@ -38,7 +38,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -139,9 +138,7 @@ class SolidGaugeSeries extends GaugeSeries {
                 true
             );
         }
-        this.thresholdAngleRad = pick(
-            thresholdAngleRad, yAxis.startAngleRad
-        );
+        this.thresholdAngleRad = (thresholdAngleRad ?? yAxis.startAngleRad);
 
         for (const point of series.points) {
             // #10630 null point should not be draw

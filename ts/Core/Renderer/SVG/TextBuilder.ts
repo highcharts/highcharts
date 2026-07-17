@@ -38,8 +38,7 @@ import {
     extend,
     fireEvent,
     isString,
-    objectEach,
-    pick
+    objectEach
 } from '../../../Shared/Utilities.js';
 
 // Function used to test string length including an ellipsis
@@ -123,7 +122,7 @@ class TextBuilder {
         const wrapper = this.svgElement,
             textNode = wrapper.element,
             renderer = wrapper.renderer,
-            textStr = pick(wrapper.textStr, '').toString() as string,
+            textStr = (wrapper.textStr ?? '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
             childNodes = textNode.childNodes,
             tempParent = !wrapper.added && renderer.box,

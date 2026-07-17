@@ -82,7 +82,6 @@ import type Series from '../../Core/Series/Series';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import { pick } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /* *
@@ -202,7 +201,7 @@ function traverseSetOption<T>(
         i = 0;
     for (;i < optionAsArray.length - 1; ++i) {
         prop = optionAsArray[i];
-        opt = opt[prop] = pick(opt[prop], {}) as any;
+        opt = opt[prop] = (opt[prop] ?? {}) as any;
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;
 }

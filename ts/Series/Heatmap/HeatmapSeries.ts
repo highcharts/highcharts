@@ -47,8 +47,7 @@ import {
     extend,
     fireEvent,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
@@ -331,7 +330,7 @@ class HeatmapSeries extends ScatterSeries {
         const options = this.options;
 
         // #3758, prevent resetting in setData
-        options.pointRange = pick(options.pointRange, options.colsize || 1);
+        options.pointRange = options.pointRange ?? (options.colsize || 1);
         // General point range
         this.yAxis.axisPointRange = options.rowsize || 1;
 

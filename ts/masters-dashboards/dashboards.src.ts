@@ -74,7 +74,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     removeEvent,
     splat
 } from '../Shared/Utilities.js';
@@ -114,7 +113,6 @@ declare global {
         isString: typeof isString;
         merge: typeof merge;
         objectEach: typeof objectEach;
-        pick: typeof pick;
         removeEvent: typeof removeEvent;
         setOptions: typeof Defaults.setOptions;
         splat: typeof splat;
@@ -177,7 +175,6 @@ G.isObject = isObject;
 G.isString = isString;
 G.merge = merge;
 G.objectEach = objectEach;
-G.pick = pick;
 G.removeEvent = removeEvent;
 G.setOptions = Defaults.setOptions;
 G.splat = splat;

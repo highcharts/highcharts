@@ -16,7 +16,7 @@
                 const series = point.series,
                     chart = series.chart,
                     pointX = point.plotX + series.xAxis.pos,
-                    pointY = H.pick(point.plotClose, point.plotY) +
+                    pointY = (point.plotClose ?? point.plotY) +
                                                              series.yAxis.pos;
 
                 // If trackball functionality does not already exist

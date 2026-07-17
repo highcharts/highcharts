@@ -38,8 +38,7 @@ import {
     arrayMin,
     crisp,
     extend,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -169,8 +168,8 @@ class VariwideSeries extends ColumnSeries {
                 minPx - this.chart.plotLeft - goRight * axis.minPixelPadding,
             linearSlotLeft = i / relZ.length * len,
             linearSlotRight = (i + goRight) / relZ.length * len,
-            slotLeft = (pick(relZ[i], totalZ) / totalZ) * len,
-            slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len,
+            slotLeft = ((relZ[i] ?? totalZ) / totalZ) * len,
+            slotRight = ((relZ[i + goRight] ?? totalZ) / totalZ) * len,
             xInsideLinearSlot = (x - (left + linearSlotLeft));
 
         // Set crosshairWidth for every point (#8173)

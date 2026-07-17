@@ -30,7 +30,7 @@
                             ],
                             zIndex: 10,
                             stroke: series.color,
-                            'stroke-width': H.pick(series.options.lineWidth, 2),
+                            'stroke-width': series.options.lineWidth ?? 2,
                             'marker-end': 'url(#arrow-end)'
                             // 'marker-start': "url(#arrow-start)"
                         });

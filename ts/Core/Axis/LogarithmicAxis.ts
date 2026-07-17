@@ -22,8 +22,7 @@ import type Axis from './Axis';
 
 import {
     addEvent,
-    normalizeTickInterval,
-    pick
+    normalizeTickInterval
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -255,12 +254,10 @@ namespace LogarithmicAxis {
                         axisLength / axis.tickPositions.length :
                         axisLength;
 
-                interval = pick(
-                    filteredTickIntervalOption,
-                    log.minorAutoInterval,
-                    (realMax - realMin) *
-                        tickPixelIntervalOption / (totalPixelLength || 1)
-                );
+                interval = filteredTickIntervalOption ??
+                    log.minorAutoInterval ??
+                    (realMax - realMin) * tickPixelIntervalOption /
+                        (totalPixelLength || 1);
 
                 interval = normalizeTickInterval(interval);
 

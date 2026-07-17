@@ -61,7 +61,6 @@ import {
     find,
     fireEvent,
     isNumber,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -680,15 +679,13 @@ namespace ExportData {
         let csv = '';
         const rows = this.getDataRows(),
             csvOptions = this.options?.csv,
-            decimalPoint = pick(
-                csvOptions?.decimalPoint,
+            decimalPoint = csvOptions?.decimalPoint ?? (
                 csvOptions?.itemDelimiter !== ',' && useLocalDecimalPoint ?
                     (1.1).toLocaleString()[1] :
                     '.'
             ),
             // Use ';' for direct to Excel
-            itemDelimiter = pick(
-                csvOptions?.itemDelimiter,
+            itemDelimiter = csvOptions?.itemDelimiter ?? (
                 decimalPoint === ',' ? ';' : ','
             ),
             // '\n' isn't working with the js csv data extraction
@@ -1053,16 +1050,18 @@ namespace ExportData {
                                 [prop]
                             ) as number;
                         // Allow values from nested properties (#20470)
-                        rows[key][i + j] = pick(
-                            // Y axis category if present
-                            categoryAndDatetimeMap.categoryMap[prop][val],
-                            // Datetime yAxis
-                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
-                                time.dateFormat(csvOptions.dateFormat, val) :
-                                null,
-                            // Linear/log yAxis
-                            val
-                        );
+                        rows[key][i + j] =
+                            categoryAndDatetimeMap.categoryMap[prop][val] ??
+                            (
+                                categoryAndDatetimeMap
+                                    .dateTimeValueAxisMap[prop] ?
+                                    time.dateFormat(
+                                        csvOptions.dateFormat,
+                                        val
+                                    ) :
+                                    null
+                            ) ??
+                            val;
                         j++;
                     }
                 });
@@ -1122,11 +1121,10 @@ namespace ExportData {
                             row.x
                         );
                     } else if (xAxis.categories) {
-                        category = pick(
-                            xAxis.names[row.x],
-                            xAxis.categories[row.x],
-                            row.x
-                        );
+                        category =
+                            xAxis.names[row.x] ??
+                            xAxis.categories[row.x] ??
+                            row.x;
                     } else {
                         category = row.x;
                     }
@@ -1229,9 +1227,8 @@ namespace ExportData {
             options = chart.options,
             decimalPoint =
                 useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
-            useMultiLevelHeaders = pick(
-                exporting.options.useMultiLevelHeaders, true
-            ),
+            useMultiLevelHeaders =
+                exporting.options.useMultiLevelHeaders ?? true,
             rows = exporting.getDataRows(useMultiLevelHeaders),
             topHeaders = useMultiLevelHeaders ? rows.shift() : null,
             subHeaders = rows.shift(),
@@ -1262,7 +1259,7 @@ namespace ExportData {
             ): AST.Node {
                 const children: Array<AST.Node> = [];
 
-                let textContent = pick(value, ''),
+                let textContent = (value ?? ''),
                     className =
                         'highcharts-text' + (classes ? ' ' + classes : '');
 
@@ -1524,7 +1521,7 @@ namespace ExportData {
         const chart = this.chart,
             // Create the div
             createContainer =
-                (show = pick(show, !this.isDataTableVisible)) &&
+                (show = (show ?? !this.isDataTableVisible)) &&
                 !this.dataTableDiv;
 
         if (createContainer) {

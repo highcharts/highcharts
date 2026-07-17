@@ -20,7 +20,7 @@
 
 import type Pointer from '../../Core/Pointer';
 
-import { defined, isNumber, pick } from '../../Shared/Utilities.js';
+import { defined, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -74,7 +74,7 @@ function getAssignedAxis(
             axisMax = extremes.max,
             // Correct axis edges when axis has series
             // with pointRange (like column)
-            minPointOffset = pick(coord.axis.minPointOffset, 0);
+            minPointOffset = (coord.axis.minPointOffset ?? 0);
 
         return isNumber(axisMin) && isNumber(axisMax) &&
             coord.value >= (axisMin - minPointOffset) &&

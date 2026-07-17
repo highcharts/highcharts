@@ -52,7 +52,6 @@ import {
     extend,
     isObject,
     merge,
-    pick,
     relativeLength,
     stableSort
 } from '../../Shared/Utilities.js';
@@ -300,19 +299,16 @@ class SankeySeries extends ColumnSeries {
                 obj: AnyRecord,
                 key: string
             ): AnyRecord => {
-                obj[key] = pick(
-                    stateOptions[key],
-                    (options as any)[key],
-                    levelOptions[key],
-                    (series.options as any)[key]
-                );
+                obj[key] =
+                    stateOptions[key] ??
+                    (options as any)[key] ??
+                    levelOptions[key] ??
+                    (series.options as any)[key];
                 return obj;
             }, {}),
-            color = pick(
-                stateOptions.color,
-                options.color,
-                values.colorByPoint ? point.color : levelOptions.color
-            );
+            color = stateOptions.color ??
+                options.color ??
+                (values.colorByPoint ? point.color : levelOptions.color);
 
         // Node attributes
         if (point.isNode) {
@@ -467,7 +463,7 @@ class SankeySeries extends ColumnSeries {
             { inverted } = chart,
             translationFactor = this.translationFactor,
             options = this.options,
-            linkColorMode = pick(point.linkColorMode, options.linkColorMode),
+            linkColorMode = (point.linkColorMode ?? options.linkColorMode),
             curvy = (
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor as any)
@@ -649,13 +645,10 @@ class SankeySeries extends ColumnSeries {
             ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeTop = crisp(pick(
-                (nodeOffset as any).absoluteTop,
-                (
-                    column.sankeyColumn.top(translationFactor) +
+            fromNodeTop = crisp(((nodeOffset as any).absoluteTop ?? (
+                column.sankeyColumn.top(translationFactor) +
                     (nodeOffset as any).relativeTop
-                )
-            ), borderWidth),
+            )), borderWidth),
             left = crisp(
                 this.colDistance * (node.column as any) +
                     borderWidth / 2,

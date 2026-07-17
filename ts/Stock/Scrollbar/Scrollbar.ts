@@ -44,7 +44,6 @@ import {
     extend,
     fireEvent,
     merge,
-    pick,
     pushUnique,
     removeEvent
 } from '../../Shared/Utilities.js';
@@ -289,7 +288,7 @@ class Scrollbar {
         const scroller = this;
         const range = (
             (scroller.to - scroller.from) *
-            pick(scroller.options.step, 0.2)
+            (scroller.options.step ?? 0.2)
         );
 
         scroller.updatePosition(scroller.from + range, scroller.to + range);
@@ -304,7 +303,7 @@ class Scrollbar {
     private buttonToMinClick(e: PointerEvent): void {
         const scroller = this;
         const range = correctFloat(scroller.to - scroller.from) *
-            pick(scroller.options.step, 0.2);
+            (scroller.options.step ?? 0.2);
 
         scroller.updatePosition(
             correctFloat(scroller.from - range),
@@ -481,15 +480,13 @@ class Scrollbar {
             defaultOptions.scrollbar,
             options
         );
-        scroller.options.margin = pick(scroller.options.margin, 10);
+        scroller.options.margin = (scroller.options.margin ?? 10);
 
         scroller.chart = chart;
 
         // Backward compatibility
-        scroller.size = pick(
-            scroller.options.size,
-            scroller.options.height as any
-        );
+        scroller.size = scroller.options.size ??
+            scroller.options.height as any;
 
         // Init
         if (options.enabled) {
@@ -858,12 +855,11 @@ class Scrollbar {
      */
     public shouldUpdateExtremes(eventType?: string): boolean {
         return (
-            pick(
-                this.options.liveRedraw,
+            (this.options.liveRedraw ?? (
                 H.svg &&
                 !H.isTouchDevice &&
                 !this.chart.boosted
-            ) ||
+            )) ||
             // Mouseup always should change extremes
             eventType === 'mouseup' ||
             eventType === 'touchend' ||

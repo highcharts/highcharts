@@ -34,7 +34,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import { extend, pick, pushUnique } from '../../Shared/Utilities.js';
+import { extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -116,14 +116,12 @@ class Pie3DSeries extends PieSeries {
             if (init) {
 
                 // Scale down the group and place it in the center
-                (group as any).oldtranslateX = pick(
-                    (group as any).oldtranslateX,
-                    (group as any).translateX
-                );
-                (group as any).oldtranslateY = pick(
-                    (group as any).oldtranslateY,
-                    (group as any).translateY
-                );
+                (group as any).oldtranslateX =
+                    (group as any).oldtranslateX ??
+                    (group as any).translateX;
+                (group as any).oldtranslateY =
+                    (group as any).oldtranslateY ??
+                    (group as any).translateY;
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
@@ -207,7 +205,7 @@ class Pie3DSeries extends PieSeries {
 
         if (this.chart.is3d() && !this.chart.styledMode) {
             attr.stroke = options.edgeColor || point.color || this.color;
-            attr['stroke-width'] = pick(options.edgeWidth, 1);
+            attr['stroke-width'] = (options.edgeWidth ?? 1);
         }
 
         return attr;

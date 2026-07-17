@@ -58,7 +58,6 @@ import {
     isObject,
     merge,
     objectEach,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -892,7 +891,7 @@ class NavigationBindings {
 
                     if (name !== '__proto__' && name !== 'constructor') {
 
-                        const nextName = pick(path[index + 1], '');
+                        const nextName = (path[index + 1] ?? '');
 
                         if (pathLength === index) {
                             // Last index, put value:
@@ -943,12 +942,11 @@ class NavigationBindings {
         const options = annotation.options,
             editables = NavigationBindings.annotationsEditable,
             nestedEditables = editables.nestedOptions,
-            type = pick(
-                options.type,
-                options.shapes?.[0]?.type,
-                (options.labels?.[0] as any)?.type,
-                'label'
-            ),
+            type =
+                options.type ??
+                options.shapes?.[0]?.type ??
+                (options.labels?.[0] as any)?.type ??
+                'label',
             nonEditables = (
                 NavigationBindings.annotationsNonEditable as any
             )[

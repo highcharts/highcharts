@@ -17,7 +17,7 @@
  *  Imports
  *
  * */
-import { clamp, pick, pushUnique, stableSort } from '../../Shared/Utilities.js';
+import { clamp, pushUnique, stableSort } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -164,7 +164,7 @@ namespace RendererUtilities {
         boxes = boxes.map((box): (T&BoxObject) => ({
             size: box.size,
             targets: [box.target],
-            align: pick(box.align, 0.5)
+            align: (box.align ?? 0.5)
         } as (T&BoxObject)));
 
         while (overlapping) {
