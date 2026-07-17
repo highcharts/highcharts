@@ -977,7 +977,7 @@ namespace DynamicDefaultTheme {
                                 color: 'var(--highcharts-neutral-color-60)'
                             }
                         }
-                    } as Measure.MeasureTypeOptions
+                    } as Measure.TypeOptions
                 }
             },
             shapeOptions: {
