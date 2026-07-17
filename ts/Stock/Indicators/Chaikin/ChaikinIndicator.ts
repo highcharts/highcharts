@@ -241,7 +241,7 @@ export default ChaikinIndicator;
  * @extends   series,plotOptions.chaikin
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
  * @requires  stock/indicators/indicators

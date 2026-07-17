@@ -409,7 +409,6 @@ export default LineSeries;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.line
- * @excluding dataParser,dataURL
  * @product   highcharts highstock
  * @apioption series.line
  */

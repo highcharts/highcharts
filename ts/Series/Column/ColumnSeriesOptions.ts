@@ -97,7 +97,7 @@ declare module '../../Core/Series/StatesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectEnds, connectNulls, gapSize, gapUnit,
  *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock

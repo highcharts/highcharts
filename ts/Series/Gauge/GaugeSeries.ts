@@ -766,7 +766,7 @@ export default GaugeSeries;
  *
  * @extends   series,plotOptions.gauge
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            cropThreshold, dashStyle, findNearestPointBy,
  *            getExtremesFromAll, marker, negativeColor, pointPlacement, shadow,
  *            softThreshold, stack, stacking, states, step, threshold,
  *            turboThreshold, zoneAxis, zones, dataSorting, boostBlending

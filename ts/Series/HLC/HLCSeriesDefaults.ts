@@ -156,7 +156,6 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.hlc
- * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.hlc
  */

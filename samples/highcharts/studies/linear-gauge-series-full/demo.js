@@ -737,7 +737,6 @@ seriesType(
  * @type {Object}
  * @since 6.0.0
  * @extends series,plotOptions.lineargauge
- * @excluding dataParser,dataURL
  * @product highcharts
  * @apioption series.lineargauge
  */

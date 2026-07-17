@@ -45,7 +45,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding borderColor,borderRadius,borderWidth
  *
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  *
  * @product highstock
  */

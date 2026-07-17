@@ -60,8 +60,6 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @extends series,plotOptions.ohlc
  *
- * @excluding dataParser, dataURL
- *
  * @product highstock
  */
 export interface OHLCSeriesOptions extends HLCSeriesOptions {

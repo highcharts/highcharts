@@ -48,8 +48,7 @@ import type ColorType from '../../Core/Color/ColorType';
  * @requires modules/renko
  *
  * @excluding boost, compare, compareStart, connectNulls, cumulative,
- * cumulativeStart, dataGrouping, dataParser, dataSorting, dataURL,
- * dragDrop, marker, step
+ * cumulativeStart, dataGrouping, dataSorting, dragDrop, marker, step
  */
 export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
     /**

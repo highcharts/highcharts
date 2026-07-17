@@ -62,7 +62,7 @@ import type TimelinePointOptions from './TimelinePointOptions';
  *            zoneAxis, zones, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            cropThreshold, dashStyle, findNearestPointBy,
  *            getExtremesFromAll, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *            stacking, stack, step, threshold, turboThreshold, zoneAxis, zones,

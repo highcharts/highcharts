@@ -95,7 +95,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.errorbar
- * @excluding dataParser, dataURL, stack, stacking, boostThreshold,
+ * @excluding stack, stacking, boostThreshold,
  *            boostBlending
  * @product   highcharts
  * @requires  highcharts-more
