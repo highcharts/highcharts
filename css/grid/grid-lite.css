@@ -173,6 +173,15 @@
         display: block;
     }
 
+    &.hcg-column-virtualization thead tr {
+        display: block;
+        overflow: visible;
+    }
+
+    &.hcg-column-virtualization thead th .hcg-header-cell-container {
+        height: 100%;
+    }
+
     thead th {
         position: relative;
     }
@@ -219,6 +228,11 @@
         display: block;
     }
 
+    &.hcg-column-virtualization :is(thead tr, tbody tr) > :where(.hcg-cell, .hcg-header-cell) {
+        display: inline-block;
+        vertical-align: top;
+    }
+
     &.hcg-virtualization > tbody > tr {
         position: absolute;
     }
@@ -261,6 +275,7 @@
         align-items: center;
         max-width: 0;
         opacity: 0;
+        z-index: 11;
         cursor: pointer;
         transition: max-width 0.3s ease, opacity 0.3s ease;
     }

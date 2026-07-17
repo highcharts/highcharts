@@ -283,7 +283,9 @@ class TreeStickyRowController {
             (row): boolean => row.index === rowIndex
         );
 
-        return stickyRow?.cells[columnIndex] as TableCell | undefined;
+        return stickyRow?.getCellByColumnIndex(columnIndex) as (
+            TableCell | undefined
+        );
     }
 
     /**
@@ -444,11 +446,12 @@ class TreeStickyRowController {
      * Captures current table cell focus shared with the sticky overlay.
      */
     private captureFocusState(): StickyFocusState | undefined {
-        const focusCursor = this.viewport.focusCursor;
+        const { focusCursor } = this.viewport;
         const activeElement = document.activeElement;
 
         if (
             !focusCursor ||
+            focusCursor.type === 'header' ||
             focusCursor.bodySectionId ||
             !(activeElement instanceof HTMLTableCellElement)
         ) {
@@ -1216,7 +1219,7 @@ class TreeStickyRowController {
 
         const stickyCell = this.stickyRows.find(
             (row): boolean => row.id === focusState.rowId
-        )?.cells[focusState.columnIndex];
+        )?.getCellByColumnIndex(focusState.columnIndex);
 
         if (stickyCell) {
             if (document.activeElement !== stickyCell.htmlElement) {
@@ -1234,7 +1237,7 @@ class TreeStickyRowController {
 
         const viewportCell = this.viewport.rows.find(
             (row): boolean => row.id === focusState.rowId
-        )?.cells[focusState.columnIndex];
+        )?.getCellByColumnIndex(focusState.columnIndex);
 
         if (
             viewportCell &&

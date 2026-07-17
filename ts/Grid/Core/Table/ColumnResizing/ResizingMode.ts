@@ -33,6 +33,18 @@ import { clamp, defined, getStyle } from '../../../../Shared/Utilities.js';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+interface AutoWidthCache {
+    freeColumns: number;
+    freeWidth: number;
+}
+
+
+/* *
+ *
  *  Class
  *
  * */
@@ -53,7 +65,6 @@ abstract class ResizingMode {
      * @internal
      */
     public static readonly MIN_COLUMN_WIDTH = 20;
-
 
     /* *
     *
@@ -95,6 +106,11 @@ abstract class ResizingMode {
      * determine whether the column widths should be re-loaded.
      */
     public isDirty?: boolean;
+
+    /**
+     * Auto-width metrics reused during a single reflow.
+     */
+    private autoWidthCache?: AutoWidthCache;
 
 
     /* *
@@ -145,17 +161,14 @@ abstract class ResizingMode {
         const widthValue = this.columnWidths[column.id];
 
         if (!defined(widthValue)) {
-            const tbody = vp.tbodyElement;
-            const freeWidth =
-                tbody.getBoundingClientRect().width -
-                this.calculateOccupiedWidth() -
-                tbody.offsetWidth + tbody.clientWidth;
-            const freeColumns =
-                (vp.grid.enabledColumns?.length || 0) -
-                Object.keys(this.columnWidths).length;
+            const cache = this.autoWidthCache ||
+                this.calculateAutoWidthCache();
 
             // If undefined width:
-            return ResizingMode.fitWidth(column, freeWidth / freeColumns);
+            return ResizingMode.fitWidth(
+                column,
+                cache.freeWidth / Math.max(cache.freeColumns, 1)
+            );
         }
 
         if (this.columnWidthUnits[column.id] === 0) {
@@ -215,13 +228,23 @@ abstract class ResizingMode {
      */
     public reflow(): void {
         const vp = this.viewport;
+        const columnCount = vp.grid.enabledColumns?.length || 0;
+        const definedWidthCount = Object.keys(this.columnWidths).length;
 
-        let rowsWidth = 0;
-        for (let i = 0, iEnd = vp.columns.length; i < iEnd; ++i) {
-            rowsWidth += this.getColumnWidth(vp.columns[i]);
+        if (definedWidthCount < columnCount) {
+            this.autoWidthCache = this.calculateAutoWidthCache(
+                columnCount,
+                definedWidthCount
+            );
         }
 
-        vp.rowsWidth = rowsWidth;
+        try {
+            vp.columnLayout.reflow();
+        } finally {
+            delete this.autoWidthCache;
+        }
+
+        vp.rowsWidth = vp.columnLayout.totalWidth;
     }
 
     /* *
@@ -336,6 +359,34 @@ abstract class ResizingMode {
         const maxWidth = ResizingMode.getMaxWidth(column);
 
         return clamp(width, minWidth, maxWidth ?? Number.POSITIVE_INFINITY);
+    }
+
+    /**
+     * Calculates auto-width metrics for columns without configured widths.
+     *
+     * @param columnCount
+     * The number of enabled columns.
+     *
+     * @param definedWidthCount
+     * The number of columns with a configured width.
+     *
+     * @returns The auto-width calculation cache.
+     */
+    private calculateAutoWidthCache(
+        columnCount: number = this.viewport.grid.enabledColumns?.length || 0,
+        definedWidthCount: number = Object.keys(this.columnWidths).length
+    ): AutoWidthCache {
+        const vp = this.viewport;
+        const tbody = vp.tbodyElement;
+        const freeWidth =
+            tbody.getBoundingClientRect().width -
+            this.calculateOccupiedWidth() -
+            tbody.offsetWidth + tbody.clientWidth;
+
+        return {
+            freeColumns: columnCount - definedWidthCount,
+            freeWidth
+        };
     }
 
     /**

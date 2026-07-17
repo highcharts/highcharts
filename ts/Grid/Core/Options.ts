@@ -250,9 +250,64 @@ export interface RenderingSettings {
  */
 export interface ColumnsSettings {
     /**
+     * Buffer of columns to render outside the visible area from the left and
+     * from the right while scrolling. The bigger the buffer, the less flicker
+     * will be seen while scrolling, but the more columns will have to be
+     * rendered.
+     *
+     * Cannot be lower than 0.
+     *
+     * @default 2
+     */
+    bufferSize?: number;
+
+    /**
      * Options for the columns resizing.
      */
     resizing?: ResizingOptions;
+
+    /**
+     * Whether all columns should use one fixed width, resolved from
+     * `columnDefaults.width` or a fallback width. When enabled, the grid skips
+     * per-column width and offset calculations, column resizing mode
+     * initialization and column resize handles.
+     *
+     * Enabling this option can improve initialization performance for very wide
+     * grids, especially together with column virtualization.
+     *
+     * @sample grid-lite/options/columns-virtualization
+     *         Column virtualization
+     *
+     * @default false
+     */
+    strictWidths?: boolean;
+
+    /**
+     * Columns virtualization option renders columns that are visible in the
+     * viewport only. In case of wide data sets, the enabled option improves
+     * performance and saves memory.
+     *
+     * The option is automatically set to `true` when the number of columns
+     * reaches the `virtualizationThreshold` option value. If defined, it takes
+     * precedence over the `virtualizationThreshold` option.
+     *
+     * @sample grid-lite/options/columns-virtualization
+     *         Column virtualization
+     *
+     * @default undefined
+     */
+    virtualization?: boolean;
+
+    /**
+     * The columns virtualization threshold option sets the column count limit
+     * at which virtualization is activated. When the number of columns reaches
+     * this threshold, virtualization is enabled to optimize performance.
+     *
+     * The option has no effect when the `virtualization` option is defined.
+     *
+     * @default 20
+     */
+    virtualizationThreshold?: number;
 }
 
 /**
@@ -337,7 +392,7 @@ export interface RowsSettings {
      * only. In case of large data set, the enabled option improve performance
      * and saves memory.
      *
-     * The option is automatically set to `true` when the number of rows exceeds
+     * The option is automatically set to `true` when the number of rows reaches
      * the `virtualizationThreshold` option value. If defined, it takes the
      * precedence over the `virtualizationThreshold` option.
      *
@@ -350,7 +405,7 @@ export interface RowsSettings {
 
     /**
      * The rows virtualization threshold option sets the row count limit at
-     * which virtualization is activated. When the number of rows exceeds this
+     * which virtualization is activated. When the number of rows reaches this
      * threshold, virtualization is enabled to optimize performance.
      *
      * The option has no effect when the `virtualization` option is defined.

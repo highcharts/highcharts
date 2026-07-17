@@ -196,7 +196,10 @@ abstract class Cell {
      * Handles the blur event on the cell.
      */
     protected onBlur(): void {
-        delete this.row.viewport.focusCursor;
+        const vp = this.row.viewport;
+        if (!vp.focusCursor?.detached) {
+            delete vp.focusCursor;
+        }
     }
 
     /**
@@ -256,22 +259,48 @@ abstract class Cell {
             const { header } = vp;
             const localRowIndex = getVerticalPos();
             const nextVerticalDir = localRowIndex + dir[0];
+            const nextColumnIndex = column.index + dir[1];
+            const focusCell = (cell: Cell): void => {
+                cell.htmlElement.focus({
+                    preventScroll: true
+                });
+                vp.ensureColumnFullyVisible(nextColumnIndex);
+
+                if ((cell.row as TableRow).index !== void 0) {
+                    vp.ensureRowFullyVisible(cell.row as TableRow);
+                }
+            };
 
             if (nextVerticalDir < 0 && header) {
                 const extraRowIdx = header.rows.length + nextVerticalDir;
-                if (extraRowIdx + 1 > header.levels) {
+                const nextCell = extraRowIdx + 1 > header.levels ? (
                     header.rows[extraRowIdx]
-                        .cells[column.index + dir[1]]?.htmlElement.focus();
-                } else {
-                    vp.columns[column.index + dir[1]]
-                        ?.header?.htmlElement.focus();
+                        ?.getCellByColumnIndex(nextColumnIndex)
+                ) : (
+                    vp.getColumnByIndex(nextColumnIndex)?.header
+                );
+
+                if (nextCell) {
+                    focusCell(nextCell);
                 }
+
                 return;
             }
 
             const nextRow = vp.getRenderedRows()[nextVerticalDir];
             if (nextRow) {
-                nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
+                const nextCell = nextRow.getCellByColumnIndex(
+                    nextColumnIndex
+                );
+
+                if (nextCell) {
+                    focusCell(nextCell);
+                } else if ((nextRow as TableRow).index !== void 0) {
+                    vp.focusCellByRowIndex(
+                        (nextRow as TableRow).index,
+                        nextColumnIndex
+                    );
+                }
             }
         }
     }

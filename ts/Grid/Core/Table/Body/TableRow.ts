@@ -142,6 +142,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
+        await this.syncRenderedCells();
         this.reflow();
     }
 
@@ -176,6 +177,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
+        await this.syncRenderedCells();
         this.reflow();
     }
 
@@ -282,6 +284,35 @@ class TableRow extends Row {
         if (this.viewport.grid.syncedRowIndex === this.index) {
             el.classList.add(Globals.getClassName('syncedRow'));
         }
+    }
+
+    /**
+     * Preserves logical focus when column virtualization detaches the active
+     * body cell.
+     *
+     * @param cell
+     * The cell that is about to be detached.
+     */
+    protected override onCellBeforeDetach(cell: Cell): void {
+        const activeElement = document.activeElement;
+        const columnIndex = cell.column?.index;
+        const { focusCursor } = this.viewport;
+
+        if (
+            columnIndex === void 0 ||
+            this.id === void 0 ||
+            !focusCursor ||
+            focusCursor.type === 'header' ||
+            focusCursor.bodySectionId ||
+            focusCursor.rowId !== this.id ||
+            focusCursor.columnIndex !== columnIndex ||
+            !(activeElement instanceof Element) ||
+            !cell.htmlElement.contains(activeElement)
+        ) {
+            return;
+        }
+
+        this.viewport.preserveFocusDuringDetach();
     }
 
     /**

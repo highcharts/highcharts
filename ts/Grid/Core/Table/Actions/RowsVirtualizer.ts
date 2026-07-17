@@ -726,36 +726,38 @@ class RowsVirtualizer {
             }
 
             // Focus the cell if the focus cursor is set
-            const hadPendingFocusCursor = !!vp.pendingFocusCursor;
             if (vp.pendingFocusCursor) {
                 const [rowIndex, columnIndex] = vp.pendingFocusCursor;
                 const row = rows.find(
                     (row): boolean => row.index === rowIndex
                 );
+                const cell = row?.getCellByColumnIndex(columnIndex);
 
-                if (row) {
+                // Keep the pending cursor until the target cell exists. The
+                // column may still be virtualized when the row renders first,
+                // in which case the column render pass restores focus later.
+                if (row && cell) {
                     delete vp.pendingFocusCursor;
-                    vp.restoreRenderedCellFocus(
-                        row.cells[columnIndex],
-                        rowIndex,
-                        columnIndex
-                    );
-
-                    if (hadPendingFocusCursor) {
-                        vp.ensureRowFullyVisible(row);
-                    }
+                    vp.restoreRenderedCellFocus(cell, rowIndex, columnIndex);
+                    vp.ensureRowFullyVisible(row);
                 }
             } else if (vp.focusCursor) {
-                const focusCursor = vp.focusCursor;
-                if (!focusCursor.bodySectionId) {
+                const { focusCursor } = vp;
+                if (
+                    focusCursor.type !== 'header' &&
+                    !focusCursor.bodySectionId
+                ) {
                     const focusedRow = rows.find((row): boolean =>
                         row.id === focusCursor.rowId
                     );
                     if (focusedRow) {
                         vp.restoreRenderedCellFocus(
-                            focusedRow.cells[focusCursor.columnIndex],
+                            focusedRow.getCellByColumnIndex(
+                                focusCursor.columnIndex
+                            ),
                             focusedRow.index,
-                            focusCursor.columnIndex
+                            focusCursor.columnIndex,
+                            false
                         );
                     }
                 }
@@ -763,7 +765,11 @@ class RowsVirtualizer {
 
             // Set the focus anchor cell.
             if (
-                (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+                (
+                    !vp.focusCursor ||
+                    vp.focusCursor.type === 'header' ||
+                    !vp.focusAnchorCell?.row.rendered
+                ) &&
                 rows.length > 0
             ) {
                 const anchorRowIndex = Math.max(0, rowCursor - rows[0].index);
@@ -1056,11 +1062,12 @@ class RowsVirtualizer {
      * The row to pool.
      */
     private poolRow(row: TableRow): void {
-        const focusCursor = this.viewport.focusCursor;
+        const { focusCursor } = this.viewport;
         const activeElement = document.activeElement;
 
         if (
             focusCursor &&
+            focusCursor.type !== 'header' &&
             focusCursor.rowId === row.id &&
             activeElement instanceof Element &&
             row.htmlElement.contains(activeElement)

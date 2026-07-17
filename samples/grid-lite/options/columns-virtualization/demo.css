@@ -1,0 +1,76 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+#container {
+    height: 320px;
+}
+
+#container,
+.sample-controls {
+    margin: 10px;
+}
+
+.sample-controls {
+    background: var(--highcharts-neutral-color-3, color-mix(in srgb, CanvasText 3%, Canvas));
+    border: 1px solid var(--highcharts-neutral-color-20, color-mix(in srgb, CanvasText 20%, Canvas));
+    border-radius: 4px;
+    color: var(--highcharts-neutral-color-100, CanvasText);
+    color-scheme: light dark;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+}
+
+.sample-controls-row {
+    align-items: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+}
+
+.sample-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sample-controls input[type="number"] {
+    background: var(--highcharts-background-color, Canvas);
+    border: 1px solid var(--highcharts-neutral-color-40, color-mix(in srgb, CanvasText 40%, Canvas));
+    border-radius: 3px;
+    color: inherit;
+    padding: 4px 6px;
+    width: 100px;
+}
+
+.sample-controls button {
+    background: var(--highcharts-highlight-color-80, Highlight);
+    border: 1px solid var(--highcharts-highlight-color-100, Highlight);
+    border-radius: 3px;
+    color: HighlightText;
+    cursor: pointer;
+    padding: 5px 14px;
+}
+
+.sample-controls button:hover {
+    background: var(--highcharts-highlight-color-100, Highlight);
+}
+
+.sample-controls-options {
+    align-items: center;
+    border-top: 1px solid var(--highcharts-neutral-color-10, color-mix(in srgb, CanvasText 10%, Canvas));
+    padding-top: 10px;
+}
+
+.highcharts-light .sample-controls {
+    color-scheme: light;
+}
+
+.highcharts-dark .sample-controls {
+    color-scheme: dark;
+}
+
+.sample-controls .checkbox-control {
+    align-items: center;
+    flex-direction: row;
+}
