@@ -1,0 +1,7 @@
+---
+name: Risk Return Chart
+description: Plots a scatter chart comparing fund, index, and category risk/return across multiple time periods.
+tags:
+  - Morningstar
+js_wrap: b
+...
