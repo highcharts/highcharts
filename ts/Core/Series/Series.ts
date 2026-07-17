@@ -3446,10 +3446,8 @@ class Series {
 
         const series = this,
             chart = series.chart,
-            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-            data = series.data || [];
+            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent);
         let destroy: ('hide'|'destroy'),
-            i,
             axis;
 
         // Add event hook
@@ -3473,10 +3471,7 @@ class Series {
         }
 
         // Destroy all points with their elements
-        i = data.length;
-        while (i--) {
-            data[i]?.destroy?.();
-        }
+        destroyObjectProperties(series.data);
 
         for (const zone of series.zones || []) {
             // Destroy SVGElement's but preserve primitive props (#20426)

@@ -195,7 +195,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
     public coll = 'colorAxis' as const;
 
     /** @internal */
-    public dataClasses!: Array<ColorAxisDataClassOptions>;
+    public dataClasses?: Array<ColorAxisDataClassOptions>;
 
     /** @internal */
     public legendColor?: GradientColor;
@@ -242,11 +242,13 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 userOptions.layout !== 'vertical' :
                 legend.layout !== 'vertical';
 
-        axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed;
         axis.opposite = !horiz;
 
         super.init(chart, userOptions, 'colorAxis');
+
+        axis.side = userOptions.side || horiz ? 2 : 1;
+
 
         // `super.init` saves the extended user options, now replace it with the
         // originals
@@ -258,6 +260,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
         // Prepare data classes
         if (userOptions.dataClasses) {
             axis.initDataClasses(userOptions);
+        } else {
+            delete axis.dataClasses;
         }
         axis.initStops();
 
@@ -398,6 +402,20 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * Create the color gradient.
      * @internal
      */
+    public createGroups(): void {
+        const axisParent = this.axisParent;
+        super.createGroups();
+        if (this.axisGroup?.parentGroup !== axisParent) {
+            this.gridGroup?.add(axisParent);
+            this.axisGroup?.add(axisParent);
+            this.labelGroup?.add(axisParent);
+        }
+    }
+
+    /**
+     * Create the color gradient.
+     * @internal
+     */
     public setLegendColor(): void {
         const axis = this;
         const horiz = axis.horiz;
@@ -514,7 +532,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             titleHeight + titleMargin;
         } else {
             legendItem.labelWidth = width + padding +
-                (labelOptions.x ?? labelOptions.distance ?? 0) +
+                (labelOptions.x ?? labelOptions.distance ?? 15) +
                 (this.maxLabelLength || 0) +
                 (titleWidth || 0) + titleMargin;
 
@@ -791,20 +809,20 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * @internal
      */
     public destroyItems(): void {
-        const axis = this,
-            chart = axis.chart,
-            legendItem = axis.legendItem || {};
+        const { chart, legendItem = {} } = this;
 
-        if (legendItem.label) {
-            chart.legend.destroyItem(axis);
+        if (chart) { // Means axis not destroyed yet
+            if (legendItem.label) {
+                chart.legend.destroyItem(this);
 
-        } else if (legendItem.labels) {
-            for (const item of legendItem.labels) {
-                chart.legend.destroyItem(item as any);
+            } else if (legendItem.labels) {
+                for (const item of legendItem.labels) {
+                    chart.legend.destroyItem(item as any);
+                }
             }
-        }
 
-        chart.isDirtyLegend = true;
+            chart.isDirtyLegend = true;
+        }
     }
 
     /**
@@ -858,7 +876,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
         let name;
 
         if (!legendItems.length) {
-            axis.dataClasses.forEach((dataClass, i): void => {
+            axis.dataClasses?.forEach((dataClass, i): void => {
                 const from = dataClass.from,
                     to = dataClass.to,
                     { numberFormatter } = chart;
