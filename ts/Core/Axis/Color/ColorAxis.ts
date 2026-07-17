@@ -715,10 +715,12 @@ class ColorAxis extends Axis implements ColorAxisBase {
         // Crosshairs only
         if (isNumber(pos)) {
 
-            const x = left,
-                w = axis.width,
-                y = pos - w / 2,
-                h = w;
+            const horiz = axis.horiz,
+                size = horiz ? axis.height : axis.width,
+                x = horiz ? pos - size / 2 : left,
+                y = horiz ? top : pos - size / 2,
+                w = size,
+                h = size;
 
             if (symbol) {
                 return this.chart.renderer.symbols[symbol](x, y, w, h);
