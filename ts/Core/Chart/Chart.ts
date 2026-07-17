@@ -2281,7 +2281,7 @@ class Chart {
 
                 topLabelOverflow = Math.max(
                     topLabelOverflow,
-                    Math.ceil(maxLabelHeight / 2)
+                    Math.floor(maxLabelHeight / 2)
                 );
             }
         });
