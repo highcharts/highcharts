@@ -42,6 +42,7 @@ import CellContextMenuBuiltInActions
     from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
+import CapabilitiesComposition from '../Grid/Core/Capabilities/CapabilitiesComposition.js';
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
@@ -165,6 +166,7 @@ RowPinningComposition.compose(
 TableEditingComposition.compose(G.Grid);
 TreeViewComposition.compose(G.Grid, G.Table, G.TableCell);
 ResponsiveComposition.compose(G.Grid);
+CapabilitiesComposition.compose(G.Grid, 'pro');
 
 
 /* *
