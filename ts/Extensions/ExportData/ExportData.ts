@@ -1796,6 +1796,11 @@ export default ExportData;
  * */
 
 /**
+ * @class
+ * @name Highcharts.Exporting
+ */
+
+/**
  * Function callback to execute while data rows are processed for exporting.
  * This allows the modification of data rows before processed into the final
  * format.

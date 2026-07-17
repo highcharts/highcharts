@@ -867,12 +867,12 @@ class Series {
         const options = series.options,
             visible = options.visible !== false;
 
-        // Create the data table
-        this.dataTable ??= (
+        // Create the data table or use the one passed as option
+        this.dataTable ??= isArray(options.dataTable) ?
+            new DataTableCore() :
             options.dataTable?.isDataTable ?
                 options.dataTable :
-                new DataTableCore(options.dataTable)
-        );
+                new DataTableCore(options.dataTable);
 
         /**
          * All child series that are linked to the current series through the
@@ -4031,7 +4031,7 @@ class Series {
      *
      * @function Highcharts.Series#searchPoint
      *
-     * @param {Highcharts.PointerEvent} e
+     * @param {PointerEvent} e
      *        The normalized pointer event
      * @param {boolean} [compareX=false]
      *        Search only by the X value, not Y
@@ -4154,7 +4154,7 @@ class Series {
      *        The point to search for.
      * @param {boolean} [compareX=false]
      *        Search only by the X value, not Y.
-     * @param {Highcharts.PointerEvent} [e]
+     * @param {PointerEvent} [e]
      *        The normalized pointer event.
      * @param {Function} [suppliedPointEvaluator]
      *        A custom point evaluator function.
