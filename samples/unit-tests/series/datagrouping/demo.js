@@ -1131,6 +1131,19 @@
                 `After zooming to a point where groupinng is no longer needed,
                 it should not be applied.`
             );
+
+            assert.strictEqual(
+                chart.series[0].closestPointRange,
+                1,
+                `After zooming out of grouping, closestPointRange should reflect
+                the cropped data spacing, not the stale grouped value (#24858).`
+            );
+            assert.strictEqual(
+                chart.series[1].closestPointRange,
+                1,
+                `After zooming out of grouping, closestPointRange should reflect
+                the cropped data spacing, not the stale grouped value (#24858).`
+            );
         }
     );
 })();
