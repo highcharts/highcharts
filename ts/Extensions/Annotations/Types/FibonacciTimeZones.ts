@@ -183,13 +183,12 @@ function edgePoint(
         let points = target.annotation.points as Array<MockPoint>;
 
         const firstPoint = points[0],
-            firstPointOptions = firstPoint.getOptions(),
-            xAxis = firstPoint.series.xAxis,
+            { xAxis, yAxis } = firstPoint.getOptions(),
             // Distance between the two first lines in pixels
             deltaX = points.length > 1 ?
                 points[1].plotX - firstPoint.plotX : 0,
             // `firstLine.x + fibb * offset`
-            x = xAxis?.toValue(
+            x = firstPoint.series.xAxis?.toValue(
                 firstPoint.plotX + plotLeftOrTop + fibonacciIndex * deltaX
             );
 
@@ -199,20 +198,20 @@ function edgePoint(
                 chart,
                 firstPoint.target,
                 {
-                    x: x,
+                    x,
                     y: 0,
-                    xAxis: firstPointOptions.xAxis,
-                    yAxis: firstPointOptions.yAxis
+                    xAxis,
+                    yAxis
                 }
             ),
             new MockPoint(
                 chart,
                 firstPoint.target,
                 {
-                    x: x,
+                    x,
                     y: 1,
-                    xAxis: firstPointOptions.xAxis,
-                    yAxis: firstPointOptions.yAxis
+                    xAxis,
+                    yAxis
                 }
             )
         ];
