@@ -2270,8 +2270,12 @@ class Series {
             }
         }
 
-        // Find the closest distance between processed points
-        xData = this.getColumn('x', true);
+        // Find the closest distance between processed points. When the data was
+        // cropped (or set out of range), read x from the freshly cropped local
+        // `modified` table, #24858.
+        if (modified !== table) {
+            xData = modified.getColumn('x', true) as Array<number> || [];
+        }
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
