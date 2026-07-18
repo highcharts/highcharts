@@ -19,6 +19,7 @@
  * */
 
 import type { AnnotationEventObject } from '../EventEmitter';
+import type Controllable from '../Controllables/Controllable';
 import type { ControlPointOptionsObject } from '../ControlPointOptions';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
 
@@ -175,41 +176,42 @@ function edgePoint(
     endIndex: number,
     fibonacciIndex: number
 ): AnnotationMockPointFunction {
-    return function (target: any): PositionObject {
+    return function (target: Controllable): PositionObject {
         const chart = target.annotation.chart,
             plotLeftOrTop = chart.inverted ? chart.plotTop : chart.plotLeft;
 
-        let points = target.annotation.points;
+        let points = target.annotation.points as Array<MockPoint>;
 
-        const xAxis = points[0].series.xAxis,
+        const firstPoint = points[0],
+            { xAxis, yAxis } = firstPoint.getOptions(),
             // Distance between the two first lines in pixels
             deltaX = points.length > 1 ?
-                points[1].plotX - points[0].plotX : 0,
+                points[1].plotX - firstPoint.plotX : 0,
             // `firstLine.x + fibb * offset`
-            x = xAxis.toValue(
-                points[0].plotX + plotLeftOrTop + fibonacciIndex * deltaX
+            x = firstPoint.series.xAxis?.toValue(
+                firstPoint.plotX + plotLeftOrTop + fibonacciIndex * deltaX
             );
 
         // We need 2 mock points with the same x coordinate, different y
         points = [
             new MockPoint(
                 chart,
-                points[0].target,
+                firstPoint.target,
                 {
-                    x: x,
+                    x,
                     y: 0,
-                    xAxis: points[0].options.xAxis,
-                    yAxis: points[0].options.yAxis
+                    xAxis,
+                    yAxis
                 }
             ),
             new MockPoint(
                 chart,
-                points[0].target,
+                firstPoint.target,
                 {
-                    x: x,
+                    x,
                     y: 1,
-                    xAxis: points[0].options.xAxis,
-                    yAxis: points[0].options.yAxis
+                    xAxis,
+                    yAxis
                 }
             )
         ];
