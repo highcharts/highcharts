@@ -1,0 +1,83 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+.demo {
+    color-scheme: light dark;
+}
+
+.bench-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: end;
+    margin-bottom: 1rem;
+}
+
+.bench-controls label {
+    display: grid;
+    gap: 0.25rem;
+}
+
+.bench-controls input {
+    width: 6.5rem;
+}
+
+.bench-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.bench-meta p {
+    margin: 0;
+}
+
+.bench-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 1fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.bench-block {
+    min-width: 0;
+}
+
+.bench-scroll,
+.bench-stage {
+    overflow: auto;
+}
+
+.bench-results {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bench-results th,
+.bench-results td {
+    padding: 0.4rem 0.55rem;
+    text-align: left;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.bench-results th {
+    border-bottom: 1px solid currentcolor;
+}
+
+#details-output {
+    min-height: 14rem;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+#container {
+    min-width: 30rem;
+    min-height: 35rem;
+}
+
+@media (max-width: 1100px) {
+    .bench-layout {
+        grid-template-columns: 1fr;
+    }
+}

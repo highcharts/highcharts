@@ -23,3 +23,7 @@ body {
 .highcharts-description {
     padding: 0 8px;
 }
+
+.highcharts-light .hcg-theme-default {
+    --hcg-padding: 1px;
+}
