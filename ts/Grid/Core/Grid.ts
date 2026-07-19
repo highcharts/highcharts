@@ -793,6 +793,8 @@ export class Grid {
             }
             delete diff.pagination;
 
+            fireEvent(this, 'processUpdateDiff', { diff, flags });
+
             // TODO(update): Add more options that can be optimized here.
 
             if (Object.keys(diff).length > 0) {
@@ -1775,6 +1777,18 @@ export type NonArrayOptions = Omit<Options, 'columns'> & {
 export type GridDirtyFlags = (
     'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
 );
+
+/**
+ * Payload of the `processUpdateDiff` event, fired while `update()` translates
+ * an option diff into dirty flags. Optional modules can consume the option
+ * keys they own from `diff` (and add `flags`) so that the remaining diff does
+ * not fall through to a full re-render.
+ * @internal
+ */
+export interface ProcessUpdateDiffEvent {
+    diff: DeepPartial<NonArrayOptions>;
+    flags: Set<GridDirtyFlags>;
+}
 
 /**
  * Resolved data binding for a Grid column.

@@ -280,6 +280,81 @@ test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
         .toBe(true);
 });
 
+test('Grid partial update: events should only swap callbacks, not re-render', async ({ page }) => {
+    await page.setContent(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-pro.css"></link>
+            </head>
+            <body>
+                <div id="container"></div>
+            </body>
+        </html>
+    `, { waitUntil: 'networkidle' });
+
+    const result = await page.evaluate(async () => {
+        const parentElement = document.getElementById('container');
+        if (!parentElement) {
+            return null;
+        }
+
+        const grid = await (window as any).Grid.grid(parentElement, {
+            data: {
+                columns: {
+                    product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
+                    weight: [100, 40, 0.5, 200, 10, 20],
+                    price: [1.5, 2.53, 5, 4.5, 3.7, 2.1]
+                }
+            }
+        }, true);
+
+        const viewport = grid.viewport;
+        const tableElementBefore = viewport.tableElement;
+
+        let firstCallbackCalls = 0;
+        let secondCallbackCalls = 0;
+
+        // Register the first callback.
+        await grid.update({
+            events: {
+                afterUpdate: () => {
+                    firstCallbackCalls++;
+                }
+            }
+        });
+
+        // Replace it with a second callback. The first one must not fire again.
+        await grid.update({
+            events: {
+                afterUpdate: () => {
+                    secondCallbackCalls++;
+                }
+            }
+        });
+
+        viewport.resizeObserver?.disconnect();
+
+        return {
+            firstCallbackCalls,
+            secondCallbackCalls,
+            tableElementUnchanged: grid.tableElement === tableElementBefore
+        };
+    });
+
+    // The first callback fired once (for its own update) and the second
+    // callback replaced it and fired for the second update.
+    expect(result?.firstCallbackCalls, 'The first callback should fire once, then be replaced.')
+        .toBe(1);
+
+    expect(result?.secondCallbackCalls, 'The new callback should be live.')
+        .toBe(1);
+
+    expect(result?.tableElementUnchanged, 'Updating events shouldn\'t re-render the entire grid.')
+        .toBe(true);
+});
+
 // Equivalent of test/typescript-karma/Grid/update.test.js - full update: pagination.enabled
 test('Grid full update: pagination.enabled', async ({ page }) => {
     await page.setContent(`
