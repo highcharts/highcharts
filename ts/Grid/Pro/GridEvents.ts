@@ -26,6 +26,7 @@ import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 import type Grid from '../Core/Grid';
+import type { ProcessUpdateDiffEvent } from '../Core/Grid';
 
 import Globals from '../../Core/Globals.js';
 import { addEvent, fireEvent, pushUnique } from '../../Shared/Utilities.js';
@@ -97,6 +98,12 @@ function compose(
             const grid = e.target;
             grid.options?.events?.[name]?.call(grid, e);
         });
+    });
+
+    addEvent(GridClass, 'processUpdateDiff', (
+        e: GridEvent<Grid> & ProcessUpdateDiffEvent
+    ): void => {
+        delete e.diff.events;
     });
 
     ([ // TableCell Events
