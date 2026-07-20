@@ -7,7 +7,7 @@ const MOCK_TICKER_COUNT = 15;
 
     const KNOWN_TICKERS = REAL_TICKERS.concat(getMockTickers());
     // Seed the cache with generated demo securities and cache fetched data.
-    const dataCache = getMockDataCache();
+    const dataCache = {};
     const GAP = 2; // % horizontal gap between columns
     // Wider vertical gap: each pane's x-axis labels render just below it, and
     // the pane below pins its tooltip at its own top — too small a gap lets
@@ -57,6 +57,11 @@ const MOCK_TICKER_COUNT = 15;
 
     async function loadTicker(ticker) {
         if (dataCache[ticker]) {
+            return dataCache[ticker];
+        }
+        const mockIndex = getMockTickers().indexOf(ticker);
+        if (mockIndex >= 0) {
+            dataCache[ticker] = generateMockData(mockIndex);
             return dataCache[ticker];
         }
         const url =
@@ -509,7 +514,6 @@ const MOCK_TICKER_COUNT = 15;
                     // into adjacent panes (default is outside-right).
                     align: 'right',
                     x: -8,
-                    // y: 14,
                     format: '${value:.2f}'
                 }
             });
@@ -915,29 +919,25 @@ const MOCK_TICKER_COUNT = 15;
 })();
 
 
-function getMockDataCache() {
-    const cache = {};
-    const tickers = getMockTickers();
-    tickers.forEach((ticker, i) => {
-        const data = [];
-        let prevClose = 100 + i * 10;
-        for (let j = 0; j < 10000; j++) {
-            const ts = Date.UTC(2014, 0, j + 1);
-            const dow = new Date(ts).getUTCDay();
-            if (dow === 0 || dow === 6) {
-                continue;
-            }
-            const trend = 100 + Math.sin(j / 10) * 20 + i * 10;
-            const open = prevClose;
-            const close = trend + (Math.random() - 0.5) * 4;
-            const high = Math.max(open, close) + Math.random() * 2;
-            const low = Math.min(open, close) - Math.random() * 2;
-            data.push([ts, open, high, low, close]);
-            prevClose = close;
+function generateMockData(index) {
+
+    const data = [];
+    let prevClose = 100 + index * 10;
+    for (let j = 0; j < 10000; j++) {
+        const ts = Date.UTC(2014, 0, j + 1);
+        const dow = new Date(ts).getUTCDay();
+        if (dow === 0 || dow === 6) {
+            continue;
         }
-        cache[ticker] = data;
-    });
-    return cache;
+        const trend = 100 + Math.sin(j / 10) * 20 + index * 10;
+        const open = prevClose;
+        const close = trend + (Math.random() - 0.5) * 4;
+        const high = Math.max(open, close) + Math.random() * 2;
+        const low = Math.min(open, close) - Math.random() * 2;
+        data.push([ts, open, high, low, close]);
+        prevClose = close;
+    }
+    return data;
 }
 
 function getMockTickers() {
