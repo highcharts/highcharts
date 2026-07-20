@@ -481,20 +481,12 @@
 .hcg-container .hcg-popup {
     position: absolute;
     z-index: 1000;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
     min-width: 200px;
     overflow: auto;
     border-width: 1px;
     border-style: solid;
 
-    .hcg-popup-content {
-        padding: 5px;
-    }
-
     .hcg-menu-header {
-        font-size: 0.75rem;
-        padding: 3px;
         margin-bottom: 5px;
     }
 
@@ -513,7 +505,6 @@
     display: flex;
     flex-direction: column;
     list-style: none;
-    row-gap: 5px;
     padding: 0;
 
     .hcg-menu-item {
@@ -522,13 +513,8 @@
         gap: 2px;
         width: 100%;
         min-width: 185px;
-        min-height: 2rem;
-        padding: 8px 8px 8px 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
         background-color: transparent;
         border: 1px solid transparent;
-        border-radius: 5px;
     }
 
     .hcg-menu-item:not(:disabled) {

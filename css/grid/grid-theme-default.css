@@ -5,6 +5,9 @@
     --hcg-border-radius: 5px;
     --hcg-border-width: 1px;
     --hcg-font-size: 15px;
+    --hcg-font-weight: normal;
+    --hcg-font-family: var(--ig-default-font-family);
+    --hcg-text-align: left;
     --hcg-caption-font-size: 18px;
     --hcg-padding: 15px;
     --hcg-header-vertical-padding: 10px;
@@ -13,15 +16,48 @@
     --hcg-input-border-radius: 6px;
     --hcg-input-border-color: #d1d1d1;
     --hcg-input-hover-border-color: #9d9d9d;
+    --hcg-input-background: var(--highcharts-background-color);
+    --hcg-input-padding: 5px;
     --hcg-button-border-radius: 6px;
     --hcg-button-hover-color: #000000;
     --hcg-button-hover-background: #e8e8e8;
     --hcg-button-border-color: transparent;
+    --hcg-button-selected-color: #ffffff;
+    --hcg-button-selected-background: #000000;
     --hcg-cell-button-border-color: #d1d1d1;
     --hcg-button-color: #141414;
     --hcg-icon-border-radius: 6px;
     --hcg-pagination-button-selected-background: #000000;
     --hcg-pagination-button-selected-color: #ffffff;
+
+    /* Popup / menu (C1b) */
+    --hcg-popup-color: var(--hcg-color);
+    --hcg-popup-background: #f6f6f6;
+    --hcg-popup-border-color: #e8e8e8;
+    --hcg-popup-border-radius: 6px;
+    --hcg-popup-box-shadow:
+        0 2px 4px 0 rgba(0, 0, 0, 0.08),
+        0 7px 7px 0 rgba(0, 0, 0, 0.07),
+        0 17px 10px 0 rgba(0, 0, 0, 0.04),
+        0 30px 12px 0 rgba(0, 0, 0, 0.01);
+    --hcg-popup-content-padding: 5px;
+    --hcg-popup-header-font-size: 0.75rem;
+    --hcg-popup-header-padding: 3px;
+    --hcg-menu-item-hover-background: #ffffff;
+    --hcg-menu-item-hover-border-color: #e8e8e8;
+    --hcg-menu-item-active-background: #e1e3ff;
+    --hcg-menu-item-active-border-color: #c3c8ff;
+    --hcg-menu-item-divider-color: #e8e8e8;
+    --hcg-menu-item-padding: 8px 8px 8px 12px;
+    --hcg-menu-item-font-size: 0.75rem;
+    --hcg-menu-item-font-weight: 600;
+    --hcg-menu-item-border-radius: 5px;
+    --hcg-menu-item-min-height: 2rem;
+    --hcg-menu-row-gap: 5px;
+
+    /* Grid Pro: editing / notifications */
+    --hcg-cell-editable-background: #dbeaff;
+    --hcg-notification-box-shadow: 0 0 15px 1px #00000030;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,9 +67,19 @@
         --hcg-button-color: #ffffff;
         --hcg-button-hover-color: #ffffff;
         --hcg-button-hover-background: #3f3f3f;
+        --hcg-button-selected-color: #000000;
+        --hcg-button-selected-background: #ffffff;
         --hcg-cell-button-border-color: #646464;
         --hcg-pagination-button-selected-background: #ffffff;
         --hcg-pagination-button-selected-color: #000000;
+        --hcg-popup-background: #272727;
+        --hcg-popup-border-color: #4f4f4f;
+        --hcg-menu-item-hover-background: #3b3b3b;
+        --hcg-menu-item-hover-border-color: #4f4f4f;
+        --hcg-menu-item-active-background: #3f4699;
+        --hcg-menu-item-active-border-color: #4a55c9;
+        --hcg-menu-item-divider-color: #4f4f4f;
+        --hcg-cell-editable-background: #2d415e;
     }
 }
 
@@ -43,9 +89,19 @@
     --hcg-button-color: #ffffff;
     --hcg-button-hover-color: #ffffff;
     --hcg-button-hover-background: #3f3f3f;
+    --hcg-button-selected-color: #000000;
+    --hcg-button-selected-background: #ffffff;
     --hcg-cell-button-border-color: #646464;
     --hcg-pagination-button-selected-background: #ffffff;
     --hcg-pagination-button-selected-color: #000000;
+    --hcg-popup-background: #272727;
+    --hcg-popup-border-color: #4f4f4f;
+    --hcg-menu-item-hover-background: #3b3b3b;
+    --hcg-menu-item-hover-border-color: #4f4f4f;
+    --hcg-menu-item-active-background: #3f4699;
+    --hcg-menu-item-active-border-color: #4a55c9;
+    --hcg-menu-item-divider-color: #4f4f4f;
+    --hcg-cell-editable-background: #2d415e;
 }
 
 .hcg-theme-default {

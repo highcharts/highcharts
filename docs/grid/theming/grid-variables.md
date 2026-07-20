@@ -16,6 +16,8 @@ Most variables follow this pattern:
 2. Override with section-specific variables where needed.
 3. Fall back to global values when section variables are not defined.
 
+In the tables below, **Default Value** is the value provided by `.hcg-theme-default` (including light/dark pairs where shown). Without the default theme, unset tokens fall back to neutral values so custom themes and utility CSS are not fighting baked-in visuals. See [Applying themes with the API](https://www.highcharts.com/docs/grid/theming/index#applying-themes-with-the-api).
+
 Example:
 
 ```css
