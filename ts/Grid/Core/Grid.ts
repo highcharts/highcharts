@@ -1779,10 +1779,8 @@ export type GridDirtyFlags = (
 );
 
 /**
- * Payload of the `processUpdateDiff` event, fired while `update()` translates
- * an option diff into dirty flags. Optional modules can consume the option
- * keys they own from `diff` (and add `flags`) so that the remaining diff does
- * not fall through to a full re-render.
+ * Payload of the `processUpdateDiff` event: modules can consume the option
+ * keys they own from `diff` (and add `flags`) to avoid a full re-render.
  * @internal
  */
 export interface ProcessUpdateDiffEvent {
