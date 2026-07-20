@@ -805,7 +805,7 @@ class TiledWebMapSeries extends MapSeries {
                     projection: {
                         name: (new ProviderDefinition()).initialProjectionName
                     }
-                });
+                }, false);
             }
         }
 
