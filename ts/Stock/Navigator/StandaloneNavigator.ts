@@ -112,11 +112,19 @@ class StandaloneNavigator {
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
-            userOptions.chart,
+            userOptions.chartOptions,
             { navigator: userOptions }
         );
 
-        if (this.chartOptions.chart && userOptions.height) {
+        // For a non-inverted navigator, the height option sets the chart
+        // height unless it is set explicitly in chart options (#21268,
+        // #24715).
+        if (
+            this.chartOptions.chart &&
+            !this.chartOptions.chart.inverted &&
+            !userOptions.chartOptions?.chart?.height &&
+            userOptions.height
+        ) {
             this.chartOptions.chart.height = userOptions.height;
         }
 
@@ -310,10 +318,18 @@ class StandaloneNavigator {
         newOptions: StandaloneNavigatorOptions,
         redraw?: boolean
     ): void {
+        this.userOptions = merge(this.userOptions, newOptions);
+
+        const chartUserOptions = this.userOptions.chartOptions?.chart;
+
         this.chartOptions = merge(
             this.chartOptions,
-            newOptions.height && { chart: { height: newOptions.height } },
-            newOptions.chart,
+            (
+                newOptions.height &&
+                !chartUserOptions?.inverted &&
+                !chartUserOptions?.height
+            ) ? { chart: { height: newOptions.height } } : void 0,
+            newOptions.chartOptions,
             { navigator: newOptions }
         );
 

@@ -35,6 +35,23 @@ The `bind` method binds a chart or an axis to the Standalone Navigator. Once a c
 
 The `unbind` method is used to detach a chart or axis from the Standalone Navigator. This method can unbind either a single chart or all charts bound to the navigator simultaneously. Detaching charts from the navigator stops it from influencing their range. See the [unbind method documentation](https://api.highcharts.com/class-reference/Highcharts.StandaloneNavigator#unbind) for additional information.
 
+## Chart options
+
+The standalone navigator renders into its own chart container. General chart options
+ like `chart.height` or `chart.inverted`, are set through the
+`chartOptions` option, while the `height` option controls the height of the
+navigator itself:
+```javascript
+Highcharts.navigator('container', {
+    height: 50,
+    chartOptions: {
+        chart: {
+            height: 300
+        }
+    }
+});
+```
+
 ## Managing Navigator Range
 
 The `setRange` method allows programmatic control of the navigator's range. This method not only updates the navigator's range but also synchronizes this change with all bound charts. Additionally, it triggers the `setRange` event.
