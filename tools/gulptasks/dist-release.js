@@ -6,6 +6,7 @@
 const gulp = require('gulp');
 const log = require('../libs/log');
 const fs = require('fs-extra');
+const glob = require('glob');
 // const fs = require('fs');
 // const fsLib = require('../libs/fs');
 const { join } = require('path');
@@ -24,6 +25,30 @@ const releaseRepos = {
     },
     Dashboards: 'dashboards-dist'
 };
+
+const releaseRepositoryMetadata = [
+    '^[.]git($|/)',
+    '^[.]github($|/)',
+    '^[.]gitignore$',
+    '^[.]npmignore$',
+    '^README[.]md$',
+    '^LICENSE[.]txt$',
+    '^SECURITY[.]md$',
+    '^package[.]json$',
+    '^bower[.]json$'
+];
+
+function getFilesForReleaseCleanup(folder) {
+    return glob.sync('**/*', {
+        cwd: folder,
+        dot: true,
+        follow: false,
+        ignore: {
+            childrenIgnored: path => /^[.]git(?:hub)?$/u.test(path.relativePosix())
+        },
+        nodir: true
+    }).map(file => file.replace(/\\/gu, '/'));
+}
 
 /**
  * Asks user a question, and waits for input.
@@ -164,7 +189,7 @@ async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
  * @return {Promise<Array<*>>} result
  */
 async function removeFilesInFolder(folder, exceptions) {
-    const files = getFilesInFolder(folder, true, '');
+    const files = getFilesForReleaseCleanup(folder);
     const promises = files
     // Filter out files that should be kept
         .filter(file => !exceptions.some(pattern => file.match(pattern)))
@@ -540,8 +565,7 @@ async function release() {
             cwd: pathToDistRepo
         });
 
-        const keepFiles = ['^[.]git/', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt', 'SECURITY.md'];
-        await removeFilesInFolder(pathToDistRepo, keepFiles);
+        await removeFilesInFolder(pathToDistRepo, releaseRepositoryMetadata);
         log.message('Successfully removed content of ' + pathToDistRepo);
     }
 
@@ -577,3 +601,8 @@ release.flags = {
 };
 
 gulp.task('dist-release', release);
+
+module.exports = {
+    releaseRepositoryMetadata,
+    removeFilesInFolder
+};
