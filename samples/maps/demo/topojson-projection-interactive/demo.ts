@@ -10,8 +10,6 @@ declare namespace Highcharts {
         bounds?: Highcharts.MapBounds;
     }
 }
-let globeChart = null;
-let latestPoint: Array<Float32Array> = null;
 // Create the map instance
 const createMap = (
     topology: Highcharts.TopoJSON,
@@ -112,9 +110,98 @@ const createMap = (
             exposeAsGroupOnly: true
         },
         events: {
-            click: function (e) {
-                addLinePoint(e);
+            click: function (point) {
+                addLinePoint(point, this.chart as Highcharts.MapChart);
             }
+        }
+    }, {
+        type: 'mappoint',
+        id: 'clicked-points',
+        name: 'Clicked points',
+        animation: true,
+        data: [],
+        color: '#313f77',
+        marker: {
+            lineWidth: 1,
+            lineColor: '#fff'
+        },
+        events: {
+            click: function (e): void {
+                const pointCoordinates = e.point.options.geometry.coordinates;
+                const chart = this.chart as Highcharts.MapChart;
+                const lines = chart.get('flight-route') as any;
+                const pointSeries = chart.get('clicked-points') as any;
+                console.log(pointCoordinates, chart, lines, pointSeries);
+
+                // Reset hover/tooltip state before mutating series to avoid
+                // pointer handlers referencing removed points.
+                console.log(chart.pointer);
+                console.log(chart.tooltip);
+                if ((chart as any).pointer) {
+                    (chart as any).pointer.reset();
+                }
+                if ((chart as any).tooltip) {
+                    (chart as any).tooltip.hide(0);
+                }
+                console.log(chart.pointer);
+                console.log(chart.tooltip);
+                // Collect matching lines first to avoid mutating the series
+                const toRemove: any[] = [];
+                lines?.data.forEach((line: any): void => {
+                    const lineCoordinates = line.options.geometry.coordinates;
+                    if (lineCoordinates.some(([lon, lat]) =>
+                        lon === pointCoordinates[0] &&
+                        lat === pointCoordinates[1]
+                    )) {
+                        toRemove.push(line);
+                    }
+                });
+                toRemove.forEach((line: any) => line.remove(false));
+
+                // Find the clicked point index so we can reconnect neighbours
+                const idx = pointSeries?.data.findIndex((p: any) =>
+                    p.options.geometry.coordinates[0] === pointCoordinates[0] &&
+                    p.options.geometry.coordinates[1] === pointCoordinates[1]
+                );
+                console.log(idx);
+                // If the clicked point has both a previous and next neighbour,
+                // add a new line between them after removing the two old lines.
+                if (
+                    typeof idx === 'number' &&
+                    idx > 0 &&
+                    pointSeries.data[idx + 1]
+                ) {
+                    const prev = pointSeries.data[idx - 1];
+                    const next = pointSeries.data[idx + 1];
+                    const prevCoords = prev.options.geometry.coordinates;
+                    const nextCoords = next.options.geometry.coordinates;
+                    lines.addPoint({
+                        geometry: {
+                            type: 'LineString',
+                            coordinates: [
+                                prevCoords,
+                                nextCoords
+                            ]
+                        },
+                        color: 'light-dark(#313f77, #fff)'
+                    }, false);
+                }
+                console.log('remove');
+                e.point.remove(false);
+                if ((chart as any).pointer) {
+                    (chart as any).pointer.reset();
+                }
+                chart.redraw(false);
+            }
+        }
+    }, {
+        type: 'mapline',
+        animation: false,
+        id: 'flight-route',
+        data: [],
+        lineWidth: 2,
+        accessibility: {
+            exposeAsGroupOnly: true
         }
     }]
 });
@@ -162,51 +249,30 @@ const graticuleData = ((
 })(15, 10);
 
 // Add flight route and gentle rotation after clicking the map
-function addLinePoint(point) {
-    console.log('clicked point:', point);
-    console.log(globeChart);
-    if (latestPoint) {
-        globeChart.addSeries({
-            type: 'mapline',
-            animation: false,
-            id: 'flight-route',
-            data: [{
-                geometry: {
-                    type: 'LineString',
-                    coordinates: [
-                        latestPoint,
-                        [point.lon, point.lat]
-                    ]
-                },
-                color: 'light-dark(#313f77, #fff)'
-            }],
-            lineWidth: 2,
-            accessibility: {
-                exposeAsGroupOnly: true
-            }
+function addLinePoint(point, chart) {
+    const pointSeries = chart.get('clicked-points');
+    if (pointSeries.data && pointSeries.data.length > 0) {
+        const lineSeries = chart.get('flight-route');
+        const latestPoint = pointSeries.data[pointSeries.data.length - 1];
+        lineSeries.addPoint({
+            geometry: {
+                type: 'LineString',
+                coordinates: [
+                    latestPoint.options.geometry.coordinates,
+                    [point.lon, point.lat]
+                ]
+            },
+            color: 'light-dark(#313f77, #fff)'
         }, false);
     }
-    latestPoint = [point.lon, point.lat];
-    globeChart.addSeries({
-        type: 'mappoint',
-        animation: false,
-        data: [{
-            name: point.point.key,
-            geometry: {
-                type: 'Point',
-                coordinates: latestPoint
-            }
-        }],
-        color: '#313f77',
-        marker: {
-            lineWidth: 1,
-            lineColor: '#fff'
-        },
-        accessibility: {
-            enabled: false
+    pointSeries.addPoint({
+        name: point.point.name,
+        geometry: {
+            type: 'Point',
+            coordinates: [point.lon, point.lat]
         }
     }, false);
-    globeChart.redraw(false);
+    chart.redraw();
 
     // Start a gentle rotation
     let rotationFrame = 0,
@@ -216,11 +282,11 @@ function addLinePoint(point) {
         const elapsed = lastTimestamp === undefined ?
                 0 :
                 timestamp - lastTimestamp,
-            projectionOptions = globeChart.options.mapView.projection as
+            projectionOptions = chart.options.mapView.projection as
                 Highcharts.MapViewProjectionOptions;
 
         lastTimestamp = timestamp;
-        globeChart.update({
+        chart.update({
             mapView: {
                 projection: {
                     rotation: [
@@ -307,6 +373,6 @@ Highcharts.addEvent(Highcharts.MapChart, 'render', function () {
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v13.0.0/samples/data/world-population-density.json'
     ).then(response => response.json());
 
-    globeChart = createMap(topology, data, graticuleData);
+    createMap(topology, data, graticuleData);
 
 })();
