@@ -31,11 +31,7 @@ import type {
     TreeProjectionState,
     TreeViewColumnAggregatorOption
 } from '../TreeViewTypes';
-import type {
-    Arguments as FormulaArguments
-} from '../../../../Data/Formula/Formula';
-
-import Formula from '../../../../Data/Formula/Formula.js';
+import Aggregation from '../../Aggregation/Aggregation.js';
 import { defined } from '../../../../Shared/Utilities.js';
 
 
@@ -56,24 +52,6 @@ interface TreeAggregationResolverDependencies {
         projectionState: TreeProjectionState,
         idColumn?: string
     ) => DataTableCellType;
-}
-
-/**
- * Narrows arbitrary processor results to DataTable-compatible cell values.
- *
- * @param value
- * Candidate processor result.
- */
-function isDataTableCellValue(
-    value: unknown
-): value is DataTableCellType {
-    return (
-        value === null ||
-        typeof value === 'undefined' ||
-        typeof value === 'boolean' ||
-        typeof value === 'number' ||
-        typeof value === 'string'
-    );
 }
 
 
@@ -188,7 +166,7 @@ class TreeAggregationResolver {
                         .map(resolveValue)
                         .filter(defined);
 
-                    resolvedValue = this.executeAggregateFunction(
+                    resolvedValue = Aggregation.executeAggregate(
                         aggregateFunctionName,
                         childValues
                     );
@@ -265,56 +243,15 @@ class TreeAggregationResolver {
             return;
         }
 
-        const aggregatorResult = (
-            typeof aggregator === 'function' ?
-                aggregator({
-                    childCount: rowState.childrenIds.length,
-                    childrenIds: rowState.childrenIds.slice(),
-                    columnId,
-                    depth: rowState.depth,
-                    hasChildren: rowState.hasChildren,
-                    rowId: rowState.id,
-                    sourceValue
-                }) :
-                aggregator
-        );
-
-        if (typeof aggregatorResult !== 'string') {
-            return;
-        }
-
-        const normalizedName = aggregatorResult.trim().toUpperCase();
-        return normalizedName || void 0;
-    }
-
-    /**
-     * Executes a registered Formula processor function on direct child values.
-     *
-     * @param functionName
-     * Registered Formula processor function name.
-     *
-     * @param childValues
-     * Direct child values after their own aggregation has been resolved.
-     */
-    private executeAggregateFunction(
-        functionName: string,
-        childValues: Array<Exclude<DataTableCellType, null | undefined>>
-    ): DataTableCellType {
-        const processor = Formula.processorFunctions[functionName];
-        if (!processor) {
-            return null;
-        }
-
-        try {
-            const result = processor(
-                childValues as unknown as FormulaArguments
-            );
-            return isDataTableCellValue(result) ?
-                result :
-                null;
-        } catch {
-            return null;
-        }
+        return Aggregation.resolveAggregatorName(aggregator, {
+            childCount: rowState.childrenIds.length,
+            childrenIds: rowState.childrenIds.slice(),
+            columnId,
+            depth: rowState.depth,
+            hasChildren: rowState.hasChildren,
+            rowId: rowState.id,
+            sourceValue
+        });
     }
 
 }
