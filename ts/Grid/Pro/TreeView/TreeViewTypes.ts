@@ -27,6 +27,11 @@ import type DataTable from '../../../Data/DataTable';
 import type {
     CellType as DataTableCellType
 } from '../../../Data/DataTable';
+import type {
+    AggregatorCallback,
+    AggregatorOption,
+    AggregatorResult
+} from '../Aggregation/AggregationTypes';
 
 
 /* *
@@ -122,27 +127,24 @@ export interface TreeViewColumnAggregatorContext {
 }
 
 /**
- * Callback deciding which aggregation function should be applied for a row.
+ * Result returned by a TreeView column aggregator callback.
  *
  * Return a registered Formula processor function name (for example `SUM`),
  * or a falsy value to skip aggregation for the current row.
  */
-export type TreeViewColumnAggregatorResult = (false|null|string|undefined);
+export type TreeViewColumnAggregatorResult = AggregatorResult;
 
 /**
  * Callback deciding which aggregation function should be applied for a row.
  */
-export interface TreeViewColumnAggregatorCallback {
-    (context: TreeViewColumnAggregatorContext): TreeViewColumnAggregatorResult;
-}
+export type TreeViewColumnAggregatorCallback =
+    AggregatorCallback<TreeViewColumnAggregatorContext>;
 
 /**
  * Aggregator option accepted by a TreeView column.
  */
-export type TreeViewColumnAggregatorOption = (
-    string |
-    TreeViewColumnAggregatorCallback
-);
+export type TreeViewColumnAggregatorOption =
+    AggregatorOption<TreeViewColumnAggregatorContext>;
 
 /**
  * TreeView column options.
