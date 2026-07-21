@@ -72,7 +72,11 @@ To create a custom theme from scratch, exclude the default theme:
 }
 ```
 
-Visual defaults for the grid (for example input padding, button hover and selected states, and popup or menu chrome) live on `.hcg-theme-default`. Without that class, Grid still applies structural styles and CSS variable wiring, but falls back to neutral values such as `transparent`, `inherit`, and `0`. A from-scratch theme should therefore define the `--hcg-*` tokens it needs, or extend `.hcg-theme-default` instead of replacing it.
+Visual defaults for the grid (for example cell padding, borders, input chrome, button hover and selected states, and popup or menu chrome) live on `.hcg-theme-default`.
+
+Without that class, Grid still applies structural styles and CSS variable wiring, but table surface styles such as padding, border, background, and color are applied only when the matching `--hcg-*` tokens are defined. Other surfaces may fall back to neutral values such as `transparent`, `inherit`, and `0`.
+
+A from-scratch theme should therefore define the `--hcg-*` tokens it needs, or extend `.hcg-theme-default` instead of replacing it.
 
 The theme class is appended to the `<div class="hcg-container theme-custom">` element, which wraps the `<table>` and other grid components.
 

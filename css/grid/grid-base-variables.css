@@ -96,7 +96,7 @@
     --ig-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
 
     /* Loading indicator */
-    --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
+    --ig-loader-color: var(--hcg-loader-color, var(--hcg-color));
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -127,5 +127,5 @@
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 
-    font: var(--ig-font);
+    /* Container font: set via className / inheritance. --hcg-font-* still feed cells. */
 }

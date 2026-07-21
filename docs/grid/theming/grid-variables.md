@@ -46,6 +46,7 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 | --hcg-font-weight | normal          | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
 | --hcg-color       | #000000/#ffffff | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)           |
 | --hcg-text-align  | left            | [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align)   |
+| --hcg-loader-color | light-dark(#000, #fff); falls back to `--hcg-color` | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)           |
 
 \* System fonts: `-apple-system`, `BlinkMacSystemFont`, `Segoe UI`, `Roboto`, `Helvetica`, `Arial`, `Apple Color Emoji`, `Segoe UI Emoji`, `Segoe UI Symbol`, `sans-serif`.
 
@@ -109,6 +110,8 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 
 ## Borders
 
+Without these tokens, table border properties are not applied. `.hcg-theme-default` sets `--hcg-border-width: 1px`, `--hcg-border-radius: 5px`, and a derived `--hcg-border-color`.
+
 ### Globals
 
 | Variable           | Default Value   | Valid Values                                                                    |
@@ -116,7 +119,7 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 | --hcg-border-width | 0               | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width)   |
 | --hcg-border-style | solid           | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style)   |
 | --hcg-border-color | #000000/#ffffff | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color)   |
-| --hcg-border-radius *| 0               | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
+| --hcg-border-radius *| 0             | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
 
 \* `--hcg-border-radius` controls the outer table radius only.
 
@@ -159,6 +162,8 @@ Set `--hcg-pinned-top-shadow: none` and
 ```
 
 ## Padding
+
+Without these tokens, cell padding is not applied. `.hcg-theme-default` sets `--hcg-padding: 15px` (and `--hcg-header-vertical-padding: 10px`).
 
 ### Globals
 

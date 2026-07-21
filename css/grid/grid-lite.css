@@ -641,13 +641,13 @@
     width: 100%;
     height: 100%;
     gap: 10px;
-    color: light-dark(#000000, #ffffff);
+    color: var(--ig-loader-color);
 }
 
 .hcg-loading-wrapper .hcg-spinner {
     border-top-width: 5px;
     border-top-style: solid;
-    border-top-color: light-dark(#000000, #ffffff);
+    border-top-color: var(--ig-loader-color);
     border-radius: 50%;
     width: 30px;
     height: 30px;

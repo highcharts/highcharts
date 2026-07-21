@@ -29,6 +29,7 @@
     --hcg-icon-border-radius: 6px;
     --hcg-pagination-button-selected-background: #000000;
     --hcg-pagination-button-selected-color: #ffffff;
+    --hcg-loader-color: light-dark(#000000, #ffffff);
 
     /* Popup */
     --hcg-popup-color: var(--hcg-color);

@@ -1,9 +1,9 @@
 .hcg-container {
     .hcg-table {
         /* Row borders */
-        --ig-row-border-width: var(--hcg-row-border-width, var(--ig-border-width));
-        --ig-row-border-style: var(--hcg-row-border-style, var(--ig-border-style));
-        --ig-row-border-color: var(--hcg-row-border-color, var(--ig-border-color));
+        --ig-row-border-width: var(--hcg-row-border-width, var(--hcg-border-width));
+        --ig-row-border-style: var(--hcg-row-border-style, var(--hcg-border-style, solid));
+        --ig-row-border-color: var(--hcg-row-border-color, var(--hcg-border-color));
         --ig-row-border: var(--ig-row-border-width) var(--ig-row-border-style) var(--ig-row-border-color);
 
         /* Header row borders */
@@ -13,9 +13,9 @@
         --ig-header-row-border: var(--ig-header-row-border-width) var(--ig-header-row-border-style) var(--ig-header-row-border-color);
 
         /* Column borders */
-        --ig-column-border-width: var(--hcg-column-border-width, var(--ig-border-width));
-        --ig-column-border-style: var(--hcg-column-border-style, var(--ig-border-style));
-        --ig-column-border-color: var(--hcg-column-border-color, var(--ig-border-color));
+        --ig-column-border-width: var(--hcg-column-border-width, var(--hcg-border-width));
+        --ig-column-border-style: var(--hcg-column-border-style, var(--hcg-border-style, solid));
+        --ig-column-border-color: var(--hcg-column-border-color, var(--hcg-border-color));
         --ig-column-border: var(--ig-column-border-width) var(--ig-column-border-style) var(--ig-column-border-color);
 
         /* Header column borders */
@@ -24,24 +24,27 @@
         --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
         --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
 
-        border: var(--ig-border);
-        background: var(--ig-background);
-        border-radius: var(--ig-border-radius);
+        --ig-table-border: var(--hcg-border-width) var(--hcg-border-style, solid) var(--hcg-border-color);
+        border: var(--ig-table-border);
+        background: var(--hcg-background);
+        border-radius: var(--hcg-border-radius);
     }
 
     .hcg-table thead th {
         --ig-header-column-background: var(--hcg-column-background);
+        /* transparent base required for row/header hover color-mix when no cell/row bg token */
         --ig-header-background: var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent)));
-        --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit)));
+        --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--hcg-color)));
         --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
         --ig-header-current-color: var(--ig-header-base-color);
-        --ig-header-column-font-weight: var(--hcg-column-font-weight, var(--hcg-cell-font-weight, var(--ig-font-weight)));
+        /* soft weight/family; size without fallback gates the font shorthand */
+        --ig-header-column-font-weight: var(--hcg-column-font-weight, var(--hcg-cell-font-weight, var(--hcg-font-weight, normal)));
         --ig-header-base-font-weight: var(--hcg-header-font-weight, var(--ig-header-column-font-weight));
         --ig-header-current-font-weight: var(--ig-header-base-font-weight);
-        --ig-header-column-font-size: var(--hcg-column-font-size, var(--hcg-cell-font-size, var(--ig-font-size)));
+        --ig-header-column-font-size: var(--hcg-column-font-size, var(--hcg-cell-font-size, var(--hcg-font-size)));
         --ig-header-base-font-size: var(--hcg-header-font-size, var(--ig-header-column-font-size));
         --ig-header-current-font-size: var(--ig-header-base-font-size);
-        --ig-header-column-font-family: var(--hcg-column-font-family, var(--hcg-cell-font-family, var(--ig-font-family)));
+        --ig-header-column-font-family: var(--hcg-column-font-family, var(--hcg-cell-font-family, var(--hcg-font-family, var(--ig-default-font-family))));
         --ig-header-base-font-family: var(--hcg-header-font-family, var(--ig-header-column-font-family));
         --ig-header-current-font-family: var(--ig-header-base-font-family);
         --ig-header-hover-opacity: var(--hcg-header-hover-opacity, var(--hcg-column-hover-header-opacity, var(--hcg-column-hover-opacity, var(--ig-hover-opacity))));
@@ -50,28 +53,27 @@
         border-bottom: var(--ig-header-row-border);
         background: var(--ig-header-background);
         color: var(--ig-header-current-color);
-        font-weight: var(--ig-header-current-font-weight);
-        font-size: var(--ig-header-current-font-size);
-        font-family: var(--ig-header-current-font-family);
-        padding-top: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
-        padding-right: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
-        padding-bottom: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
-        padding-left: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
+        --ig-header-applied-font: var(--ig-header-current-font-weight) var(--ig-header-current-font-size) var(--ig-header-current-font-family);
+        font: var(--ig-header-applied-font);
+        padding-top: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--hcg-vertical-padding, var(--hcg-padding))));
+        padding-right: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--hcg-horizontal-padding, var(--hcg-padding))));
+        padding-bottom: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--hcg-vertical-padding, var(--hcg-padding))));
+        padding-left: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--hcg-horizontal-padding, var(--hcg-padding))));
     }
 
     .hcg-table thead th:nth-child(even) {
         --ig-header-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
         --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent))));
-        --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit))));
+        --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--hcg-cell-color, var(--hcg-color))));
         --ig-header-base-color: var(--hcg-header-even-color, var(--hcg-header-color, var(--ig-header-column-color)));
         --ig-header-current-color: var(--ig-header-base-color);
-        --ig-header-column-font-weight: var(--hcg-column-even-font-weight, var(--hcg-column-font-weight, var(--hcg-cell-font-weight, var(--ig-font-weight))));
+        --ig-header-column-font-weight: var(--hcg-column-even-font-weight, var(--hcg-column-font-weight, var(--hcg-cell-font-weight, var(--hcg-font-weight, normal))));
         --ig-header-base-font-weight: var(--hcg-header-even-font-weight, var(--hcg-header-font-weight, var(--ig-header-column-font-weight)));
         --ig-header-current-font-weight: var(--ig-header-base-font-weight);
-        --ig-header-column-font-size: var(--hcg-column-even-font-size, var(--hcg-column-font-size, var(--hcg-cell-font-size, var(--ig-font-size))));
+        --ig-header-column-font-size: var(--hcg-column-even-font-size, var(--hcg-column-font-size, var(--hcg-cell-font-size, var(--hcg-font-size))));
         --ig-header-base-font-size: var(--hcg-header-even-font-size, var(--hcg-header-font-size, var(--ig-header-column-font-size)));
         --ig-header-current-font-size: var(--ig-header-base-font-size);
-        --ig-header-column-font-family: var(--hcg-column-even-font-family, var(--hcg-column-font-family, var(--hcg-cell-font-family, var(--ig-font-family))));
+        --ig-header-column-font-family: var(--hcg-column-even-font-family, var(--hcg-column-font-family, var(--hcg-cell-font-family, var(--hcg-font-family, var(--ig-default-font-family)))));
         --ig-header-base-font-family: var(--hcg-header-even-font-family, var(--hcg-header-font-family, var(--ig-header-column-font-family)));
         --ig-header-current-font-family: var(--ig-header-base-font-family);
     }
@@ -81,7 +83,7 @@
         --ig-header-font-size: var(--ig-header-current-font-size);
         --ig-header-font-family: var(--ig-header-current-font-family);
         --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
-        --ig-header-text-align: var(--hcg-header-text-align, var(--hcg-cell-text-align, var(--ig-text-align)));
+        --ig-header-text-align: var(--hcg-header-text-align, var(--hcg-cell-text-align, var(--hcg-text-align)));
 
         font: var(--ig-header-font);
         text-align: var(--ig-header-text-align);
@@ -93,11 +95,11 @@
     }
 
     .hcg-table thead tr:first-of-type th:first-child {
-        border-top-left-radius: var(--ig-border-radius);
+        border-top-left-radius: var(--hcg-border-radius);
     }
 
     .hcg-table thead tr:first-of-type th:last-child {
-        border-top-right-radius: var(--ig-border-radius);
+        border-top-right-radius: var(--hcg-border-radius);
     }
 
     .hcg-table thead th:focus-visible {
@@ -132,11 +134,11 @@
 
     /* <tbody> */
     .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):first-child {
-        border-bottom-left-radius: var(--ig-border-radius);
+        border-bottom-left-radius: var(--hcg-border-radius);
     }
 
     .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):last-child {
-        border-bottom-right-radius: var(--ig-border-radius);
+        border-bottom-right-radius: var(--hcg-border-radius);
     }
 
     .hcg-table > tbody:last-of-type {
@@ -174,24 +176,25 @@
         --ig-cell-hover-opacity: var(--ig-cell-hover-opacity-helper, var(--ig-hover-opacity));
         --ig-cell-active-opacity: var(--ig-cell-hover-opacity);
         --ig-cell-sync-opacity: var(--hcg-cell-sync-opacity, var(--hcg-sync-opacity, var(--ig-cell-hover-opacity)));
-        --ig-cell-base-color: var(--hcg-cell-color, var(--ig-row-color-current, var(--ig-cell-column-color, var(--ig-color, inherit))));
+        --ig-cell-base-color: var(--hcg-cell-color, var(--ig-row-color-current, var(--ig-cell-column-color, var(--hcg-color))));
         --ig-column-text-layer: var(--ig-cell-base-color);
         --ig-row-hover-text-color: var(--ig-column-text-layer);
         --ig-cell-hover-text-color: var(--ig-row-hover-text-color);
-        --ig-cell-base-font-weight: var(--hcg-cell-font-weight, var(--ig-row-font-weight-current, var(--ig-cell-column-font-weight, var(--ig-font-weight))));
+        --ig-cell-base-font-weight: var(--hcg-cell-font-weight, var(--ig-row-font-weight-current, var(--ig-cell-column-font-weight, var(--hcg-font-weight, normal))));
         --ig-cell-font-weight: var(--ig-cell-base-font-weight);
-        --ig-cell-base-font-size: var(--hcg-cell-font-size, var(--ig-row-font-size-current, var(--ig-cell-column-font-size, var(--ig-font-size))));
+        --ig-cell-base-font-size: var(--hcg-cell-font-size, var(--ig-row-font-size-current, var(--ig-cell-column-font-size, var(--hcg-font-size))));
         --ig-cell-font-size: var(--ig-cell-base-font-size);
-        --ig-cell-base-font-family: var(--hcg-cell-font-family, var(--ig-row-font-family-current, var(--ig-cell-column-font-family, var(--ig-font-family))));
+        --ig-cell-base-font-family: var(--hcg-cell-font-family, var(--ig-row-font-family-current, var(--ig-cell-column-font-family, var(--hcg-font-family, var(--ig-default-font-family)))));
         --ig-cell-font-family: var(--ig-cell-base-font-family);
         --ig-cell-font: var(--ig-cell-font-weight) var(--ig-cell-font-size) var(--ig-cell-font-family);
-        --ig-cell-text-align: var(--hcg-cell-text-align, var(--ig-text-align));
+        --ig-cell-text-align: var(--hcg-cell-text-align, var(--hcg-text-align));
 
         background: var(--ig-column-layer);
         color: var(--ig-cell-hover-text-color);
         border-right: var(--ig-column-border);
         border-bottom: var(--ig-row-border);
-        padding: var(--ig-padding);
+        --ig-cell-applied-padding: var(--hcg-vertical-padding, var(--hcg-padding)) var(--hcg-horizontal-padding, var(--hcg-padding));
+        padding: var(--ig-cell-applied-padding);
         font: var(--ig-cell-font);
         text-align: var(--ig-cell-text-align);
     }
