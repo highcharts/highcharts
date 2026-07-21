@@ -881,6 +881,10 @@ const MOCK_TICKER_COUNT = 15;
     // pass now so the first frame is anchored per pane too.
     refreshPaneTooltips(chart);
 
+    // Propagate the range selector's initial extremes to the other panes.
+    const initialExtremes = chart.xAxis[0].getExtremes();
+    chart.xAxis[0].setExtremes(initialExtremes.min, initialExtremes.max);
+
     function rebuild() {
         const { xAxis, yAxis } = buildAxes();
         chart.update(
