@@ -49,7 +49,7 @@ declare module '../Core/Series/PointBase' {
  *
  * */
 
-namespace ColorMapComposition {
+export namespace ColorMapComposition {
 
     // These properties can be set as both attributes and CSS properties
     interface ColorAttribsType {

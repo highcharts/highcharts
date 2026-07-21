@@ -75,7 +75,7 @@ interface Funnel3DPathsObject extends SVGPath3D {
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     SVGRendererClass: typeof SVGRenderer
 ): void {
@@ -93,7 +93,7 @@ function compose(
 
 }
 
-/** @private */
+/** @internal */
 function rendererFunnel3d(
     this: SVGRenderer3D.Composition,
     shapeArgs: SVGAttributes
@@ -144,7 +144,7 @@ function rendererFunnel3d(
 
 /**
  * Generates paths and zIndexes.
- * @private
+ * @internal
  */
 function rendererFunnel3dPath(
     this: SVGRenderer3D.Composition,
