@@ -1,10 +1,14 @@
 {
     "compilerOptions": {
-        "typeRoots": ["./globals.d.ts", "../node_modules/@types"],
+        "target": "ES2022",
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
         "module": "nodenext",
+        "noEmit": true,
         "resolveJsonModule": true,
         "allowImportingTsExtensions": true,
         "allowJs": true,
+        "skipLibCheck": true,
+        "types": ["node"],
         "baseUrl": ".",
         "paths": {
             "~/*": ["./*"],
