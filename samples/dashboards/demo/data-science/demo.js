@@ -45,6 +45,69 @@ function percentileZ(p) {
            r - 8.4735109) * r + 1);
 }
 
+// Two-sample Kolmogorov-Smirnov test: compares two 1-dimensional samples and
+// returns the maximum distance between their empirical CDFs (`statistic`)
+// along with the probability of observing that distance under the null
+// hypothesis that both samples are drawn from the same distribution
+// (`pValue`). A low p-value indicates the samples likely come from different
+// distributions.
+function kolmogorovSmirnovTest(sample1, sample2) {
+    const sorted1 = [...sample1].sort((a, b) => a - b);
+    const sorted2 = [...sample2].sort((a, b) => a - b);
+    const n1 = sorted1.length;
+    const n2 = sorted2.length;
+
+    let i1 = 0;
+    let i2 = 0;
+    let cdf1 = 0;
+    let cdf2 = 0;
+    let statistic = 0;
+
+    while (i1 < n1 && i2 < n2) {
+        const v1 = sorted1[i1];
+        const v2 = sorted2[i2];
+        if (v1 <= v2) {
+            do {
+                i1++;
+            } while (i1 < n1 && sorted1[i1] === v1);
+            cdf1 = i1 / n1;
+        }
+        if (v2 <= v1) {
+            do {
+                i2++;
+            } while (i2 < n2 && sorted2[i2] === v2);
+            cdf2 = i2 / n2;
+        }
+        statistic = Math.max(statistic, Math.abs(cdf1 - cdf2));
+    }
+
+    const effectiveN = Math.sqrt((n1 * n2) / (n1 + n2));
+    const pValue = kolmogorovDistribution(
+        (effectiveN + 0.12 + 0.11 / effectiveN) * statistic
+    );
+
+    return { statistic, pValue };
+}
+
+// Asymptotic complementary Kolmogorov distribution Q(lambda), used to convert
+// the KS statistic into a p-value (Marsaglia, Tsang & Wang, 2003).
+function kolmogorovDistribution(lambda) {
+    if (lambda < 0.2) {
+        return 1;
+    }
+    let sum = 0;
+    let sign = 1;
+    for (let k = 1; k <= 100; k++) {
+        const term = sign * Math.exp(-2 * k * k * lambda * lambda);
+        sum += term;
+        if (Math.abs(term) < 1e-10) {
+            break;
+        }
+        sign = -sign;
+    }
+    return Math.min(Math.max(2 * sum, 0), 1);
+}
+
 const getQQData = dataset => {
     const data = dataset;
     data.sort(function (a, b) {
@@ -260,6 +323,8 @@ async function setupBoard() {
                 }, {
                     cells: [{
                         id: 'chart-detail'
+                    }, {
+                        id: 'chart-detail-info'
                     }]
                 }]
             }]
@@ -272,6 +337,11 @@ async function setupBoard() {
             renderTo: 'chart-detail',
             type: 'Highcharts',
             chartOptions: detailChartPlaceholderOptions
+        }, {
+            renderTo: 'chart-detail-info',
+            type: 'KPI',
+            title: 'Kolmogorov-Smirnov Test over the selected datasets:',
+            valueFormat: 'P-Value: {value}'
         }, {
             renderTo: 'info-scatter-1',
             type: 'Highcharts',
@@ -405,6 +475,30 @@ function clearSeries(chart) {
     chart.series[0].setData([], true);
 }
 
+// Runs the KS test on the two active datasets and shows the result in the
+// KPI component, or clears it when fewer than 2 datasets are selected.
+function updateKpi() {
+    const kpi = board.getComponentByCellId('chart-detail-info');
+
+    if (activeRows.length < 2) {
+        kpi.update({
+            // valueFormat: '',
+            value: null
+        });
+        console.log('h');
+        return;
+    }
+
+    const sample1 = datasets[activeRows[0]].map(row => row[1]);
+    const sample2 = datasets[activeRows[1]].map(row => row[1]);
+    const { pValue } = kolmogorovSmirnovTest(sample1, sample2);
+
+    kpi.update({
+        // valueFormat: 'P-Value: {value:.3f}',
+        value: pValue
+    });
+}
+
 function updateChart() {
     const detailChart = board.getComponentByCellId('chart-detail').chart;
     const qq1 = board.getComponentByCellId('info-scatter-1').chart;
@@ -418,6 +512,7 @@ function updateChart() {
         clearSeries(qq2);
         clearSeries(hist1);
         clearSeries(hist2);
+        updateKpi();
         return;
     }
 
@@ -510,4 +605,5 @@ function updateChart() {
         clearSeries(hist2);
     }
 
+    updateKpi();
 }
