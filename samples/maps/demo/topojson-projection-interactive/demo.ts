@@ -3,6 +3,8 @@ declare namespace Highcharts {
     // Allow a custom property on the map chart
     interface MapChart {
         sea?: Highcharts.SVGElement;
+        rotationTimer?: number;
+        rotationFrame?: number;
     }
 
     // Some internal properties on the series
@@ -10,201 +12,191 @@ declare namespace Highcharts {
         bounds?: Highcharts.MapBounds;
     }
 }
+
 // Create the map instance
 const createMap = (
     topology: Highcharts.TopoJSON,
     data: Highcharts.SeriesMapDataOptions[],
     graticuleData: Highcharts.SeriesMaplineDataOptions[]
-) =>  Highcharts.mapChart('container', {
-    chart: {
-        map: topology
-    },
+) => {
+    const chart = Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    title: {
-        text: 'Population density per country',
-        floating: true,
-        align: 'left',
-        style: {
-            textOutline: '2px contrast'
-        }
-    },
+        title: {
+            text: 'Population density per country',
+            floating: true,
+            align: 'left',
+            style: {
+                textOutline: '2px contrast'
+            }
+        },
 
-    subtitle: {
-        text: '- and a popular flight route<br>Click and drag to rotate globe',
-        floating: true,
-        y: 34,
-        align: 'left'
-    },
+        subtitle: {
+            text: '- and a popular flight route<br>' +
+                    'Click and drag to rotate globe',
+            floating: true,
+            y: 34,
+            align: 'left'
+        },
 
-    legend: {
-        enabled: false
-    },
-
-    mapNavigation: {
-        enabled: true,
-        enableDoubleClickZoomTo: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
-
-    mapView: {
-        maxZoom: 30,
-        projection: {
-            name: 'Orthographic',
-            rotation: [20, -30]
-        }
-    },
-
-    colorAxis: {
-        minColor: 'light-dark(#BFCFAD, #78a37c)',
-        maxColor: 'light-dark(#31784B, #0b250d)',
-        max: 800
-    },
-
-    tooltip: {
-        pointFormat: '{point.name}: {point.value} / km²'
-    },
-    plotOptions: {
-        series: {
-            animation: {
-                duration: 750
-            },
-            clip: false
-        }
-    },
-
-    series: [{
-        name: 'Graticule',
-        id: 'graticule',
-        type: 'mapline',
-        data: graticuleData,
-        nullColor: '#aaa3',
-        accessibility: {
+        legend: {
             enabled: false
         },
-        enableMouseTracking: false,
-        states: {
-            inactive: {
+
+        mapNavigation: {
+            enabled: true,
+            enableDoubleClickZoomTo: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        mapView: {
+            maxZoom: 30,
+            projection: {
+                name: 'Orthographic',
+                rotation: [20, -30]
+            }
+        },
+
+        colorAxis: {
+            minColor: 'light-dark(#BFCFAD, #78a37c)',
+            maxColor: 'light-dark(#31784B, #0b250d)',
+            max: 800
+        },
+
+        tooltip: {
+            pointFormat: '{point.name}: {point.value} / km²'
+        },
+        plotOptions: {
+            series: {
+                animation: {
+                    duration: 750
+                },
+                clip: false
+            }
+        },
+
+        series: [{
+            name: 'Graticule',
+            id: 'graticule',
+            type: 'mapline',
+            data: graticuleData,
+            nullColor: '#aaa3',
+            accessibility: {
                 enabled: false
+            },
+            enableMouseTracking: false,
+            states: {
+                inactive: {
+                    enabled: false
+                }
             }
-        }
-    }, {
-        data,
-        joinBy: ['iso-a2', 'code'],
-        name: 'Population density',
-        borderColor: 'light-dark(#aaa, #333)',
-        states: {
-            hover: {
-                color: '#a4edba',
-                borderColor: '#333333'
+        }, {
+            data,
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            borderColor: 'light-dark(#aaa, #333)',
+            states: {
+                hover: {
+                    color: '#a4edba',
+                    borderColor: '#333333'
+                }
+            },
+            nullColor: 'light-dark(#c0c0c0, #aaa)',
+            dataLabels: {
+                enabled: false,
+                format: '{point.name}'
+            },
+            id: 'choropleth',
+            accessibility: {
+                exposeAsGroupOnly: true
+            },
+            events: {
+                click: function (point) {
+                    addLinePoint(point, this.chart as Highcharts.MapChart);
+                }
             }
-        },
-        nullColor: 'light-dark(#c0c0c0, #aaa)',
-        dataLabels: {
-            enabled: false,
-            format: '{point.name}'
-        },
-        id: 'choropleth',
-        accessibility: {
-            exposeAsGroupOnly: true
-        },
-        events: {
-            click: function (point) {
-                addLinePoint(point, this.chart as Highcharts.MapChart);
-            }
-        }
-    }, {
-        type: 'mappoint',
-        id: 'clicked-points',
-        name: 'Clicked points',
-        animation: true,
-        data: [],
-        color: '#313f77',
-        marker: {
-            lineWidth: 1,
-            lineColor: '#fff'
-        },
-        events: {
-            click: function (e): void {
-                const pointCoordinates = e.point.options.geometry.coordinates;
-                const chart = this.chart as Highcharts.MapChart;
-                const lines = chart.get('flight-route') as any;
-                const pointSeries = chart.get('clicked-points') as any;
-                console.log(pointCoordinates, chart, lines, pointSeries);
+        }, {
+            type: 'mappoint',
+            id: 'clicked-points',
+            name: 'Clicked points',
+            animation: true,
+            data: [],
+            color: '#313f77',
+            marker: {
+                lineWidth: 1,
+                lineColor: '#fff'
+            },
+            events: {
+                click: function (e: any): void {
+                    const pointCoords = e.point.options.geometry.coordinates;
+                    const chart = this.chart as Highcharts.MapChart;
+                    const lines = chart.get('flight-route') as any;
+                    const pointSeries = chart.get('clicked-points') as any;
 
-                // Reset hover/tooltip state before mutating series to avoid
-                // pointer handlers referencing removed points.
-                console.log(chart.pointer);
-                console.log(chart.tooltip);
-                if ((chart as any).pointer) {
-                    (chart as any).pointer.reset();
-                }
-                if ((chart as any).tooltip) {
-                    (chart as any).tooltip.hide(0);
-                }
-                console.log(chart.pointer);
-                console.log(chart.tooltip);
-                // Collect matching lines first to avoid mutating the series
-                const toRemove: any[] = [];
-                lines?.data.forEach((line: any): void => {
-                    const lineCoordinates = line.options.geometry.coordinates;
-                    if (lineCoordinates.some(([lon, lat]) =>
-                        lon === pointCoordinates[0] &&
-                        lat === pointCoordinates[1]
-                    )) {
-                        toRemove.push(line);
+                    // Collect matching lines first to avoid mutating the series
+                    const toRemove: any[] = [];
+                    lines?.data.forEach((line: any): void => {
+                        const lineCoords = line.options.geometry.coordinates;
+                        if (lineCoords.some(([lon, lat]) =>
+                            lon === pointCoords[0] &&
+                            lat === pointCoords[1]
+                        )) {
+                            toRemove.push(line);
+                        }
+                    });
+                    toRemove.forEach((line: any) => line.remove(false));
+
+                    // Find the clicked point index to reconnect neighbours
+                    const idx = pointSeries?.data.findIndex((p: any) =>
+                        p.options.geometry.coordinates[0] === pointCoords[0] &&
+                        p.options.geometry.coordinates[1] === pointCoords[1]
+                    );
+                    // If the clicked point has both a previous and next
+                    // neighbour, add a new line between them after removing
+                    // the two old lines.
+                    if (
+                        typeof idx === 'number' &&
+                        idx > 0 &&
+                        pointSeries.data[idx + 1]
+                    ) {
+                        const prev = pointSeries.data[idx - 1];
+                        const next = pointSeries.data[idx + 1];
+                        const prevCoords = prev.options.geometry.coordinates;
+                        const nextCoords = next.options.geometry.coordinates;
+                        lines.addPoint({
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: [
+                                    prevCoords,
+                                    nextCoords
+                                ]
+                            },
+                            color: 'light-dark(#313f77, #fff)'
+                        }, false);
                     }
-                });
-                toRemove.forEach((line: any) => line.remove(false));
-
-                // Find the clicked point index so we can reconnect neighbours
-                const idx = pointSeries?.data.findIndex((p: any) =>
-                    p.options.geometry.coordinates[0] === pointCoordinates[0] &&
-                    p.options.geometry.coordinates[1] === pointCoordinates[1]
-                );
-                console.log(idx);
-                // If the clicked point has both a previous and next neighbour,
-                // add a new line between them after removing the two old lines.
-                if (
-                    typeof idx === 'number' &&
-                    idx > 0 &&
-                    pointSeries.data[idx + 1]
-                ) {
-                    const prev = pointSeries.data[idx - 1];
-                    const next = pointSeries.data[idx + 1];
-                    const prevCoords = prev.options.geometry.coordinates;
-                    const nextCoords = next.options.geometry.coordinates;
-                    lines.addPoint({
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                prevCoords,
-                                nextCoords
-                            ]
-                        },
-                        color: 'light-dark(#313f77, #fff)'
-                    }, false);
+                    e.point.remove(false, false);
+                    chart.redraw(false);
                 }
-                console.log('remove');
-                e.point.remove(false);
-                if ((chart as any).pointer) {
-                    (chart as any).pointer.reset();
-                }
-                chart.redraw(false);
             }
-        }
-    }, {
-        type: 'mapline',
-        animation: false,
-        id: 'flight-route',
-        data: [],
-        lineWidth: 2,
-        accessibility: {
-            exposeAsGroupOnly: true
-        }
-    }]
-});
+        }, {
+            type: 'mapline',
+            animation: false,
+            id: 'flight-route',
+            data: [],
+            lineWidth: 2,
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
+        }]
+    });
+
+    setupAutoRotation(chart);
+    return chart;
+};
 
 // Create the coordinates for the graticule, the grid of meridians and parallels
 const graticuleData = ((
@@ -273,17 +265,17 @@ function addLinePoint(point, chart) {
         }
     }, false);
     chart.redraw();
+}
 
-    // Start a gentle rotation
-    let rotationFrame = 0,
-        lastTimestamp: number | undefined;
+function setupAutoRotation(chart: Highcharts.MapChart): void {
+    const rotationSpeed = 0.1 / 50;
+    let lastTimestamp: number | undefined;
 
     const rotate = (timestamp: number): void => {
         const elapsed = lastTimestamp === undefined ?
-                0 :
-                timestamp - lastTimestamp,
-            projectionOptions = chart.options.mapView.projection as
-                Highcharts.MapViewProjectionOptions;
+            0 : timestamp - lastTimestamp;
+        const projectionOptions = chart.options.mapView.projection as
+            Highcharts.MapViewProjectionOptions;
 
         lastTimestamp = timestamp;
         chart.update({
@@ -291,23 +283,45 @@ function addLinePoint(point, chart) {
                 projection: {
                     rotation: [
                         projectionOptions.rotation[0] +
-                            (elapsed * 0.1 / 50),
+                            (elapsed * rotationSpeed),
                         projectionOptions.rotation[1]
                     ]
                 }
             }
         }, undefined, undefined, false);
 
-        rotationFrame = requestAnimationFrame(rotate);
+        chart.rotationFrame = requestAnimationFrame(rotate);
     };
 
-    rotationFrame = requestAnimationFrame(rotate);
+    const stopRotation = (): void => {
+        if (chart.rotationFrame) {
+            cancelAnimationFrame(chart.rotationFrame);
+            chart.rotationFrame = void 0;
+        }
+    };
 
-    // Clear once the user drags the globe
-    document.getElementById('container')
-        ?.addEventListener('mouseover', () => {
-            cancelAnimationFrame(rotationFrame);
-        });
+    const startRotation = (): void => {
+        lastTimestamp = undefined;
+        stopRotation();
+        chart.rotationFrame = requestAnimationFrame(rotate);
+    };
+
+    const scheduleRotation = (delay = 5000): void => {
+        if (chart.rotationTimer) {
+            clearTimeout(chart.rotationTimer);
+        }
+        chart.rotationTimer = window.setTimeout(startRotation, delay);
+    };
+
+    const interactionHandler = (): void => {
+        stopRotation();
+        scheduleRotation();
+    };
+
+    const container = chart.container as HTMLElement;
+    container.addEventListener('mouseover', interactionHandler);
+
+    startRotation();
 }
 
 // Render a circle filled with a radial gradient behind the globe to make it
