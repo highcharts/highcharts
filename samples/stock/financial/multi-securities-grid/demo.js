@@ -61,7 +61,8 @@ const MOCK_TICKER_COUNT = 15;
         }
         const mockIndex = getMockTickers().indexOf(ticker);
         if (mockIndex >= 0) {
-            dataCache[ticker] = generateMockData(mockIndex);
+            const template = await loadTicker(REAL_TICKERS[0]);
+            dataCache[ticker] = generateMockData(mockIndex, template);
             return dataCache[ticker];
         }
         const url =
@@ -724,7 +725,9 @@ const MOCK_TICKER_COUNT = 15;
         });
     }
 
-    // Bootstrap: load initial datasets in parallel, then render.
+    // Bootstrap: load the real ticker(s) first so mocks can reuse their dates
+    // as a template, then load the rest in parallel and render.
+    await Promise.all(REAL_TICKERS.map(loadTicker));
     await Promise.all(activeTickers.map(loadTicker));
 
     const { xAxis, yAxis } = buildAxes();
@@ -923,16 +926,14 @@ const MOCK_TICKER_COUNT = 15;
 })();
 
 
-function generateMockData(index) {
+// Reuse the real ticker's dates (template = [[ts, o, h, l, c], ...]) so every
+// pane shares identical dates and density — ordinal axes then stay aligned.
+function generateMockData(index, template) {
 
     const data = [];
     let prevClose = 100 + index * 10;
-    for (let j = 0; j < 10000; j++) {
-        const ts = Date.UTC(2014, 0, j + 1);
-        const dow = new Date(ts).getUTCDay();
-        if (dow === 0 || dow === 6) {
-            continue;
-        }
+    template.forEach((row, j) => {
+        const ts = row[0];
         const trend = 100 + Math.sin(j / 10) * 20 + index * 10;
         const open = prevClose;
         const close = trend + (Math.random() - 0.5) * 4;
@@ -940,7 +941,7 @@ function generateMockData(index) {
         const low = Math.min(open, close) - Math.random() * 2;
         data.push([ts, open, high, low, close]);
         prevClose = close;
-    }
+    });
     return data;
 }
 
