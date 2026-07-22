@@ -85,14 +85,14 @@
     --ig-hover-opacity: var(--hcg-hover-opacity, 100%);
     --ig-sync-opacity: var(--hcg-sync-opacity, var(--ig-hover-opacity));
 
-    /* Global fonts */
+    /* Global fonts — neutral fallbacks when no theme / --hcg-* tokens */
     --ig-default-font-family: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
     --ig-font-weight: var(--hcg-font-weight, normal);
-    --ig-font-size: var(--hcg-font-size, 1rem);
+    --ig-font-size: var(--hcg-font-size, 1em);
     --ig-font-family: var(--hcg-font-family, var(--ig-default-font-family));
-    --ig-color: var(--hcg-color, var(--ig-default-color));
+    --ig-color: var(--hcg-color, inherit);
     --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
-    --ig-text-align: var(--hcg-text-align, left);
+    --ig-text-align: var(--hcg-text-align, inherit);
 
     /* Default borders */
     --ig-border-radius: var(--hcg-border-radius, 0);
@@ -107,7 +107,7 @@
     --ig-padding: var(--ig-vertical-padding) var(--ig-horizontal-padding);
 
     /* Loading indicator */
-    --ig-loader-color: var(--hcg-loader-color, var(--ig-color));
+    --ig-loader-color: var(--hcg-loader-color, var(--hcg-color));
 
     /* Default backgrounds and colors */
     --ig-background: var(--hcg-background, transparent);
@@ -138,5 +138,5 @@
     --ig-positive-background: var(--hcg-positive-background, var(--ig-positive-default-background));
     --ig-positive-color: var(--hcg-positive-color, var(--ig-color));
 
-    font: var(--ig-font);
+    /* Container font: set via className / inheritance. --hcg-font-* still feed cells. */
 }

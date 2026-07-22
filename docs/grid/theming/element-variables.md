@@ -16,6 +16,8 @@ Most element variables follow this pattern:
 2. Override with section-specific variables where needed.
 3. Fall back to global values when section variables are not defined.
 
+In the tables below, **Default Value** is the value provided by `.hcg-theme-default` (including light/dark pairs where shown). Without the default theme, unset tokens fall back to neutral values so custom themes and utility CSS are not fighting baked-in visuals. See [Applying themes with the API](https://www.highcharts.com/docs/grid/theming/index#applying-themes-with-the-api).
+
 Example:
 
 ```css
@@ -183,9 +185,63 @@ Header toolbar controls use the dedicated `--hcg-icon-*` variables described bel
 }
 ```
 
+## Editing and validation __grid_pro__
+
+Grid Pro edit mode and validation notifications use the tokens below.
+
+In the tables below, **Default Value** for edit mode and notification box-shadow comes from `.hcg-theme-default`. Status colors use the built-in light/dark highlight palette unless overridden.
+
+Without `.hcg-theme-default`, editable cell background and notification shadow stay neutral so custom themes and utility CSS are not fighting baked-in visuals.
+
+### Edit mode
+
+| Variable                       | Default Value   | Valid Values |
+| ------------------------------ | --------------- | ------------ |
+| --hcg-cell-editable-background | #dbeaff/#2d415e | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+
+### Notifications
+
+| Variable                      | Default Value          | Valid Values |
+| ----------------------------- | ---------------------- | ------------ |
+| --hcg-notification-box-shadow | 0 0 15px 1px #00000030 | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow) |
+
+Notification typography, padding, and border fall back to the global `--hcg-font-*`, `--hcg-padding`, and `--hcg-border-*` tokens unless you override them with optional `--hcg-notification-*` variables of the same kind (for example `--hcg-notification-padding` or `--hcg-notification-border-radius`).
+
+Error, warning, and success notification surfaces also apply the status color tokens below (`--hcg-negative-*`, `--hcg-neutral-*`, `--hcg-positive-*`). Validation errors on the edited input use `--hcg-negative-border-color` and `--hcg-negative-background`.
+
+### Status colors
+
+| Variable                     | Default Value       | Valid Values |
+| ---------------------------- | ------------------- | ------------ |
+| --hcg-negative-color         | --hcg-color         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-negative-background    | #fef3f2/#3d0e0b     | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-negative-border-color  | #e7000b/#7a1e1e     | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-negative-border-size   | 1px                 | [length](https://developer.mozilla.org/en-US/docs/Web/CSS/length) |
+| --hcg-neutral-color          | --hcg-color         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-neutral-background     | #fefce8/#3b2a11     | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-neutral-border-color   | #d18700/#7d5c20     | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-neutral-border-size    | 1px                 | [length](https://developer.mozilla.org/en-US/docs/Web/CSS/length) |
+| --hcg-positive-color         | --hcg-color         | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-positive-background    | #effdf4/#0a3e1a     | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-positive-border-color  | #00a63e/#1e6f3e     | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-positive-border-size   | 1px                 | [length](https://developer.mozilla.org/en-US/docs/Web/CSS/length) |
+
+### Example
+
+```css
+.theme-editing {
+    --hcg-cell-editable-background: #eef2ff;
+    --hcg-notification-box-shadow: none;
+    --hcg-negative-background: #fef2f2;
+    --hcg-negative-border-color: #ef4444;
+    --hcg-negative-color: #991b1b;
+}
+```
+
 ## Summary
 
 1. Define global input, icon, and button variables first.
 2. Override by section using `--hcg-header-*`, `--hcg-cell-*`, and `--hcg-pagination-*`.
 3. Use shared focus ring variables for accessible focus styling.
-4. Combine with [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables) for full table and element theming.
+4. For Grid Pro editing and validation, use `--hcg-cell-editable-background`, `--hcg-notification-box-shadow`, and the status color tokens above.
+5. Combine with [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables) for full table and element theming.

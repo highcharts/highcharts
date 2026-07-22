@@ -1,24 +1,29 @@
+/* Popup shell tokens — application always-on; visual defaults live in theme. */
 .hcg-container .hcg-popup,
 .highcharts-light .hcg-container .hcg-popup {
-    --ig-popup-color: var(--hcg-popup-color, var(--ig-default-color));
-    --ig-popup-background: var(--hcg-popup-background, #f6f6f6);
-    --ig-popup-border-color: var(--hcg-popup-border-color, #e8e8e8);
-}
-
-@media (prefers-color-scheme: dark) {
-    .hcg-container .hcg-popup {
-        --ig-popup-background: var(--hcg-popup-background, #272727);
-        --ig-popup-border-color: var(--hcg-popup-border-color, #4f4f4f);
-    }
-}
-
-.highcharts-dark .hcg-container .hcg-popup {
-    --ig-popup-background: var(--hcg-popup-background, #272727);
-    --ig-popup-border-color: var(--hcg-popup-border-color, #4f4f4f);
+    --ig-popup-color: var(--hcg-popup-color, inherit);
+    --ig-popup-background: var(--hcg-popup-background, transparent);
+    --ig-popup-border-color: var(--hcg-popup-border-color, transparent);
+    --ig-popup-border-radius: var(--hcg-popup-border-radius, 0);
+    --ig-popup-box-shadow: var(--hcg-popup-box-shadow, none);
+    --ig-popup-content-padding: var(--hcg-popup-content-padding, 0);
+    --ig-popup-header-font-size: var(--hcg-popup-header-font-size, inherit);
+    --ig-popup-header-padding: var(--hcg-popup-header-padding, 0);
 }
 
 .hcg-container .hcg-popup {
     color: var(--ig-popup-color);
     background: var(--ig-popup-background);
     border-color: var(--ig-popup-border-color);
+    border-radius: var(--ig-popup-border-radius);
+    box-shadow: var(--ig-popup-box-shadow);
+
+    .hcg-popup-content {
+        padding: var(--ig-popup-content-padding);
+    }
+
+    .hcg-menu-header {
+        font-size: var(--ig-popup-header-font-size);
+        padding: var(--ig-popup-header-padding);
+    }
 }
