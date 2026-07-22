@@ -71,7 +71,6 @@
 
     &:focus-visible {
         outline: none;
-        border-color: transparent;
     }
 
     &[type="checkbox"] {
@@ -98,6 +97,8 @@
         background-image: url("data:image/svg+xml,%3csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3.5 7.5L6 10L8.5 7.5M3.5 4.5L6 2L8.5 4.5' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
         background-repeat: no-repeat;
         background-position: right 5px center;
+        /* Reserve space for the chevron (functional shell, not theme). */
+        padding-inline-end: 1.25rem;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
@@ -140,7 +141,6 @@
 
     &:focus-visible {
         outline: none;
-        border-color: transparent;
     }
 
     &:disabled {
@@ -317,6 +317,8 @@
     .hcg-column-resizer.hovered::after {
         content: "";
         height: 100%;
+        width: max(3px, calc(var(--hcg-header-column-border-width, var(--hcg-border-width, 1px)) + 2px));
+        background: var(--hcg-header-color, var(--hcg-color, currentColor));
     }
 }
 
@@ -327,7 +329,6 @@
 .hcg-container .hcg-pagination {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
     flex-wrap: nowrap;
 
     > * {
@@ -343,36 +344,31 @@
 
     .hcg-pagination-controls {
         justify-content: center;
-        gap: 2px;
 
         .hcg-pagination-pages {
             display: flex;
             flex-wrap: nowrap;
-            gap: 2px;
 
             .hcg-button {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                min-width: 30px;
             }
 
             span {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                min-width: 20px;
             }
         }
     }
 
     .hcg-pagination-page-size {
         justify-content: flex-end;
-        text-align: right;
 
+        /* Override global `.hcg-input { width: 100% }` — themed sets explicit width. */
         select.hcg-input {
-            width: 60px;
-            margin-left: 8px;
+            width: auto;
         }
     }
 
@@ -407,6 +403,8 @@
     .hcg-container .hcg-pagination {
         flex-direction: column;
         align-items: stretch;
+        /* Row gap when stacked — honor theme token when set. */
+        gap: var(--hcg-pagination-gap, 0.5rem);
         --ig-pagination-stacked-align: center;
 
         &.hcg-pagination-left { --ig-pagination-stacked-align: flex-start; }
@@ -423,8 +421,22 @@
             justify-content: var(--ig-pagination-stacked-align);
         }
 
+        .hcg-pagination-controls {
+            /* Keep one row; scroll if controls still overflow. */
+            flex-wrap: nowrap;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .hcg-pagination-pages {
+            flex-wrap: nowrap;
+        }
+
         .hcg-pagination-page-size {
             text-align: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         &.hcg-pagination-left .hcg-pagination-page-size { text-align: left; }
         &.hcg-pagination-right .hcg-pagination-page-size { text-align: right; }

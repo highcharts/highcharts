@@ -74,7 +74,10 @@
         --ig-button-selected-background: var(--hcg-pagination-button-selected-background, var(--ig-button-selected-background-base));
         --ig-button-selected-border-color: var(--hcg-pagination-button-selected-border-color, var(--ig-button-selected-border-color-base));
     }
+}
 
+/* Surface application only when themed — utilities win with theme: ''. */
+.hcg-themed {
     :where(.hcg-button) {
         font-weight: var(--ig-button-font-weight);
         font-size: var(--ig-button-font-size);
@@ -112,6 +115,7 @@
 
         &:focus-visible {
             box-shadow: var(--ig-button-focus-ring);
+            border-color: transparent;
         }
     }
 }

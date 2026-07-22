@@ -83,7 +83,10 @@
         --ig-input-hover-background: var(--hcg-pagination-input-hover-background, var(--hcg-input-hover-background, var(--hcg-pagination-input-background, var(--ig-input-background-base))));
         --ig-input-hover-border-color: var(--hcg-pagination-input-hover-border-color, var(--hcg-input-hover-border-color, var(--hcg-pagination-input-border-color, var(--ig-input-border-color-base))));
     }
+}
 
+/* Surface application only when themed — utilities win with theme: ''. */
+.hcg-themed {
     :where(.hcg-input) {
         font-weight: var(--ig-input-font-weight);
         font-size: var(--ig-input-font-size);
@@ -105,6 +108,7 @@
 
         &:focus-visible {
             box-shadow: var(--ig-input-focus-ring);
+            border-color: transparent;
         }
 
         &[type="checkbox"]:checked::before {

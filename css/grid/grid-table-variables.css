@@ -1,4 +1,5 @@
-.hcg-container {
+.hcg-themed {
+
     .hcg-table {
         /* Row borders */
         --ig-row-border-width: var(--hcg-row-border-width, var(--hcg-border-width));
@@ -32,8 +33,7 @@
 
     .hcg-table thead th {
         --ig-header-column-background: var(--hcg-column-background);
-        /* transparent base required for row/header hover color-mix when no cell/row bg token */
-        --ig-header-background: var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent)));
+        --ig-header-background: var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background)));
         --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--hcg-color)));
         --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
         --ig-header-current-color: var(--ig-header-base-color);
@@ -63,7 +63,7 @@
 
     .hcg-table thead th:nth-child(even) {
         --ig-header-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
-        --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background, transparent))));
+        --ig-header-background: var(--hcg-header-even-background, var(--hcg-header-background, var(--hcg-cell-background, var(--ig-header-column-background))));
         --ig-header-column-color: var(--hcg-column-even-color, var(--hcg-column-color, var(--hcg-cell-color, var(--hcg-color))));
         --ig-header-base-color: var(--hcg-header-even-color, var(--hcg-header-color, var(--ig-header-column-color)));
         --ig-header-current-color: var(--ig-header-base-color);
@@ -87,11 +87,6 @@
 
         font: var(--ig-header-font);
         text-align: var(--ig-header-text-align);
-    }
-
-    .hcg-column-resizer.hovered::after {
-        width: max(3px, calc(var(--ig-header-column-border-width) + 2px));
-        background: var(--ig-header-color);
     }
 
     .hcg-table thead tr:first-of-type th:first-child {
@@ -168,7 +163,7 @@
         --ig-cell-column-font-weight: var(--hcg-column-font-weight);
         --ig-cell-column-font-size: var(--hcg-column-font-size);
         --ig-cell-column-font-family: var(--hcg-column-font-family);
-        --ig-cell-base-background: var(--hcg-cell-background, var(--ig-row-background-current, var(--ig-cell-column-background, transparent)));
+        --ig-cell-base-background: var(--hcg-cell-background, var(--ig-row-background-current, var(--ig-cell-column-background)));
         --ig-column-layer: var(--ig-cell-base-background);
         --ig-cell-hover-background-helper: var(--hcg-cell-hovered-background, var(--hcg-cell-hover-background));
         --ig-cell-hover-background: var(--ig-cell-hover-background-helper, var(--ig-row-hover-color, var(--ig-column-layer)));
