@@ -38,6 +38,7 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
+/** @internal */
 namespace FlagsSymbols {
     /* *
      *
@@ -47,7 +48,7 @@ namespace FlagsSymbols {
 
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
@@ -85,7 +86,7 @@ namespace FlagsSymbols {
 
     /**
      * Create the flag icon with anchor.
-     * @private
+     * @internal
      */
     function flag(
         this: typeof Symbols,
@@ -114,7 +115,7 @@ namespace FlagsSymbols {
 
     /**
      * Create the circlepin and squarepin icons with anchor.
-     * @private
+     * @internal
      */
     function createPinSymbol(
         symbols: typeof Symbols,
@@ -185,4 +186,5 @@ namespace FlagsSymbols {
  *
  * */
 
+/** @internal */
 export default FlagsSymbols;
