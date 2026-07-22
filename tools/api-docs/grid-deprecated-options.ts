@@ -62,6 +62,7 @@ interface DeprecatedOptionMetadata {
         DeprecatedOptionPropertySegment
     >;
     text: string;
+    version: string;
 }
 
 
@@ -103,8 +104,11 @@ function collectDeprecatedOptions(
                 `${parentDocsPath}.${nodeName}` :
                 nodeName;
             const branchMetadata = getRuntimeBranchMetadata(node);
-            const deprecatedText = normalizeDocletText(
+            const deprecatedVersion = normalizeDocletText(
                 node.doclet?.deprecated
+            );
+            const deprecationNote = normalizeDocletText(
+                node.doclet?.deprnote
             );
             let runtimePath = parentRuntimePath ?
                 `${parentRuntimePath}.${nodeName}` :
@@ -130,12 +134,13 @@ function collectDeprecatedOptions(
                 segments = parentSegments.concat(segment);
             }
 
-            if (typeof deprecatedText !== 'undefined') {
+            if (typeof node.doclet?.deprecated !== 'undefined') {
                 deprecatedOptions.push({
                     docsPath,
                     runtimePath,
                     segments,
-                    text: deprecatedText
+                    text: deprecationNote || '',
+                    version: deprecatedVersion || ''
                 });
             }
 
@@ -296,6 +301,7 @@ interface DeprecatedOptionMetadata {
     runtimePath: string;
     segments: Array<DeprecatedOptionMatchSegment>;
     text: string;
+    version: string;
 }
 
 const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = ${serialized};
