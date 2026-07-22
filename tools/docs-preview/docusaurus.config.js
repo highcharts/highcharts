@@ -1,92 +1,92 @@
 // @ts-check
 import { themes as prismThemes } from 'prism-react-renderer';
 
-import { visit } from 'unist-util-visit';
-
-// Plugin to remove iframe styles that can not be parsed as JSX
-const removeIframeStyle = () => {
-    const transformer = async (ast) => {
-        visit(ast, 'mdxJsxFlowElement', (node) => {
-            if (node.name === 'iframe') {
-                if(Array.isArray(node.attributes)) {
-                    const styleAttr = node.attributes.find(el => el.name === 'style');
-
-                    if(styleAttr && typeof styleAttr.value === 'string') {
-                        // Remove from node.attributes
-                        node.attributes = node.attributes.filter(el => el.name !== 'style');
-                    }
-                }
-            }
-
-        });
-    };
-    return transformer;
-};
+import gridProPlugin from './src/remark/gridProPlugin.js';
+import iframePlugin from './src/remark/iframePlugin.js';
+import customStartMessagePlugin from './plugins/custom-start-message.js';
 
 /** @type {import('@docusaurus/types').Config} */
-    const config = {
-        title: 'Highcharts Documentation (preview)',
-        favicon: 'img/favicon.ico',
+const config = {
+    title: 'Highcharts Documentation (preview)',
+    favicon: 'img/highcharts-logo.svg',
 
-        // Set the production url of your site here
-        url: 'https://www.highcharts.com',
-        baseUrl: '/docs',
+    // Set the production url of your site here
+    url: 'https://www.highcharts.com',
+    baseUrl: '/',
 
-        onBrokenLinks: 'throw',
-        onBrokenMarkdownLinks: 'warn',
+    onBrokenLinks: 'throw',
+    onDuplicateRoutes: 'warn',
 
-        i18n: {
-            defaultLocale: 'en',
-            locales: ['en'],
-        },
+    // Markdown configuration
+    markdown: {
+        hooks: {
+            onBrokenMarkdownLinks: 'warn'
+        }
+    },
 
-        presets: [
-            [
-                'classic',
-                /** @type {import('@docusaurus/preset-classic').Options} */
-                ({
-                    docs: {
-                        path: '../../docs',
-                        sidebarPath: '../../docs/sidebars.js',
-                        routeBasePath: '/',
-                        remarkPlugins:[
-                            removeIframeStyle
-                        ]
-                    },
-                    blog: false,
-                    theme: {
-                        customCss: './src/css/custom.css',
-                    },
-                }),
-            ],
-        ],
+    i18n: {
+        defaultLocale: 'en',
+        locales: ['en']
+    },
 
-        themeConfig:
+    presets: [
+        [
+            'classic',
+            /** @type {import('@docusaurus/preset-classic').Options} */
+            ({
+                docs: {
+                    path: '../../docs',
+                    sidebarPath: '../../docs/sidebars.js',
+                    routeBasePath: '/docs/',
+                    exclude: ['**/Readme.md', '**/AGENTS.md', '**/AUTHORING.md'],
+                    remarkPlugins: [
+                        iframePlugin,
+                        gridProPlugin
+                    ]
+                },
+                blog: false,
+                theme: {
+                    customCss: './src/css/custom.css'
+                }
+            })
+        ]
+    ],
+    plugins: [
+        customStartMessagePlugin,
+        [
+            'docusaurus-plugin-llms',
+            {
+                generateLLMsTxt: true,
+                generateLLMsFullTxt: true,
+                docsDir: '../../docs',
+                ignoreFiles: ['Readme.md', 'AGENTS.md', 'AUTHORING.md'],
+                pathTransformation: {
+                    ignorePaths: ['../../docs']
+                }
+            }
+        ]
+    ],
+    themeConfig:
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
-            // Replace with your project's social card
-            image: 'img/docusaurus-social-card.jpg',
+            colorMode: {
+                defaultMode: 'light',
+                disableSwitch: true,
+                respectPrefersColorScheme: true
+            },
             navbar: {
-                title: 'Highcharts Documentation',
-                items: [
-                    {
-                        type: 'docSidebar',
-                        sidebarId: 'docs',
-                        position: 'left',
-                        label: 'Docs',
-                    }
-                ],
+                // hideOnScroll: true
             },
             footer: {
                 style: 'dark',
                 links: [],
-                copyright: 'Highsoft for all eternity',
+                copyright: 'Highsoft for all eternity'
             },
             prism: {
                 theme: prismThemes.github,
-                darkTheme: prismThemes.dracula,
-            },
-        }),
-    };
+                darkTheme: prismThemes.dracula
+            }
+        })
+};
 
 export default config;

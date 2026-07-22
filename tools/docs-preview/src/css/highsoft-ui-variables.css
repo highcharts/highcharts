@@ -1,0 +1,158 @@
+/**
+ * Minimal dark-mode cascade shim for highsoft-ui in Docusaurus.
+ *
+ * highsoft-ui@1.0.140 declares dark values under `[data-theme=dark]`,
+ * then later declares light values under `:root` with equal specificity. Since
+ * docs-preview imports `highsoft-ui/css` through the Docusaurus Root wrapper,
+ * the later light declarations can win in dark mode.
+ *
+ * Keep this file limited to variables that are both referenced by the built
+ * docs-preview CSS and affected by that package cascade issue. Remove it after
+ * highsoft-ui ships higher-specificity dark variables or changes source order.
+ */
+html[data-theme="dark"] {
+    /* Semantic surfaces/text */
+    --HS-common-background: var(--primitives-neutral-950);
+    --HS-surface-brand-background-200: var(--primitives-brand-800);
+    --HS-surface-brand-background-50: var(--primitives-brand-600);
+    --HS-surface-brand-border-200: var(--primitives-brand-500);
+    --HS-surface-brand-border-300: var(--primitives-brand-600);
+    --HS-surface-danger-background: var(--primitives-danger-1200);
+    --HS-surface-danger-border: var(--primitives-danger-700);
+    --HS-surface-danger-border-boxed: var(--primitives-danger-600);
+    --HS-surface-success-border: var(--primitives-success-300);
+    --HS-surface-success-border-boxed: var(--primitives-success-300);
+    --HS-surface-ui-background-0: var(--primitives-neutral-900);
+    --HS-surface-ui-background-100: var(--primitives-neutral-750);
+    --HS-surface-ui-background-50: var(--primitives-neutral-800);
+    --HS-surface-ui-border-100: var(--primitives-neutral-700);
+    --HS-surface-ui-border-1000: var(--primitives-neutral-0);
+    --HS-surface-ui-border-200: var(--primitives-neutral-600);
+    --HS-surface-ui-border-300: var(--primitives-neutral-600);
+    --HS-surface-ui-border-50: var(--primitives-neutral-800);
+    --HS-text-brand-default-alt: var(--primitives-brand-400);
+    --HS-text-danger-default: var(--primitives-danger-500);
+    --HS-text-primary-default: var(--primitives-neutral-25);
+    --HS-text-secondary-default: var(--primitives-neutral-200);
+    --HS-text-success-Primary: var(--primitives-success-300);
+    --HS-text-tertiary-default: var(--primitives-neutral-400);
+
+    /* Buttons */
+    --button-colors-attention-background-default: var(--primitives-attention-600);
+    --button-colors-attention-background-disabled: var(--primitives-neutral-300);
+    --button-colors-attention-background-focus: var(--primitives-attention-600);
+    --button-colors-attention-background-hover: var(--primitives-attention-500);
+    --button-colors-attention-background-pressed: var(--primitives-attention-600);
+    --button-colors-attention-stroke-outer-default: var(--primitives-attention-600);
+    --button-colors-attention-stroke-outer-disabled: var(--primitives-neutral-300);
+    --button-colors-attention-stroke-outer-hover: var(--primitives-attention-600);
+    --button-colors-attention-text-default: var(--primitives-neutral-0);
+    --button-colors-attention-text-disabled: var(--primitives-neutral-0);
+    --button-colors-attention-text-focus: var(--primitives-neutral-0);
+    --button-colors-attention-text-hover: var(--primitives-neutral-0);
+    --button-colors-attention-text-pressed: var(--primitives-neutral-0);
+    --button-colors-brand-background-default: var(--primitives-brand-600);
+    --button-colors-brand-background-disabled: var(--primitives-neutral-300);
+    --button-colors-brand-background-focus: var(--primitives-brand-600);
+    --button-colors-brand-background-hover: var(--primitives-brand-500);
+    --button-colors-brand-background-pressed: var(--primitives-brand-700);
+    --button-colors-brand-stroke-outer-default: var(--primitives-brand-900);
+    --button-colors-brand-stroke-outer-disabled: var(--primitives-neutral-0);
+    --button-colors-brand-stroke-outer-hover: var(--primitives-brand-1000);
+    --button-colors-brand-text-default: var(--primitives-neutral-0);
+    --button-colors-brand-text-disabled: var(--primitives-neutral-0);
+    --button-colors-brand-text-focus: var(--primitives-neutral-0);
+    --button-colors-brand-text-hover: var(--primitives-neutral-0);
+    --button-colors-brand-text-pressed: var(--primitives-neutral-0);
+    --button-colors-danger-background-default: var(--primitives-danger-600);
+    --button-colors-danger-background-disabled: var(--primitives-neutral-300);
+    --button-colors-danger-background-focus: var(--primitives-danger-600);
+    --button-colors-danger-background-hover: var(--primitives-danger-500);
+    --button-colors-danger-background-pressed: var(--primitives-danger-700);
+    --button-colors-danger-stroke-outer-default: var(--primitives-danger-700);
+    --button-colors-danger-stroke-outer-disabled: var(--primitives-neutral-300);
+    --button-colors-danger-stroke-outer-hover: var(--primitives-danger-600);
+    --button-colors-danger-text-default: var(--primitives-neutral-0);
+    --button-colors-danger-text-disabled: var(--primitives-neutral-0);
+    --button-colors-danger-text-focus: var(--primitives-neutral-0);
+    --button-colors-danger-text-hover: var(--primitives-neutral-0);
+    --button-colors-danger-text-pressed: var(--primitives-neutral-0);
+    --button-colors-neutral-background-default: var(--primitives-neutral-50);
+    --button-colors-neutral-background-disabled: var(--primitives-neutral-500);
+    --button-colors-neutral-background-hover: var(--primitives-neutral-0);
+    --button-colors-neutral-background-pressed: var(--primitives-neutral-0);
+    --button-colors-neutral-stroke-outer-default: var(--primitives-neutral-1000);
+    --button-colors-neutral-stroke-outer-hover: var(--primitives-neutral-1000);
+    --button-colors-neutral-text-default: var(--primitives-neutral-1000);
+    --button-colors-neutral-text-disabled: var(--primitives-neutral-1000);
+    --button-colors-neutral-text-focus: var(--primitives-neutral-1000);
+    --button-colors-neutral-text-hover: var(--primitives-neutral-1000);
+    --button-colors-neutral-text-pressed: var(--primitives-neutral-1000);
+    --button-colors-plain-background-default: #2f2e3800;
+    --button-colors-plain-background-disabled: #2f2e3800;
+    --button-colors-plain-background-hover: var(--primitives-neutral-800);
+    --button-colors-plain-background-pressed: var(--primitives-neutral-700);
+    --button-colors-plain-stroke-outer-default: transparent;
+    --button-colors-plain-stroke-outer-disabled: var(--primitives-neutral-800);
+    --button-colors-plain-stroke-outer-hover: var(--primitives-neutral-700);
+    --button-colors-plain-text-default: var(--primitives-neutral-25);
+    --button-colors-plain-text-disabled: var(--primitives-neutral-500);
+    --button-colors-plain-text-focus: var(--primitives-neutral-0);
+    --button-colors-plain-text-hover: var(--primitives-neutral-0);
+    --button-colors-plain-text-pressed: var(--primitives-neutral-0);
+    --button-colors-soft-background-default: var(--primitives-neutral-800);
+    --button-colors-soft-background-disabled: var(--primitives-neutral-300);
+    --button-colors-soft-background-hover: var(--primitives-neutral-700);
+    --button-colors-soft-background-pressed: var(--primitives-neutral-700);
+    --button-colors-soft-stroke-inner-default: #ffffff1f;
+    --button-colors-soft-stroke-outer-default: var(--primitives-neutral-950);
+    --button-colors-soft-stroke-outer-disabled: var(--primitives-neutral-750);
+    --button-colors-soft-stroke-outer-hover: var(--primitives-neutral-950);
+    --button-colors-soft-text-default: var(--primitives-neutral-0);
+    --button-colors-soft-text-disabled: var(--primitives-neutral-400);
+    --button-colors-soft-text-focus: var(--primitives-neutral-0);
+    --button-colors-soft-text-hover: var(--primitives-neutral-0);
+    --button-colors-soft-text-pressed: var(--primitives-neutral-0);
+    --button-colors-success-background-default: var(--primitives-success-600);
+    --button-colors-success-background-disabled: var(--primitives-neutral-300);
+    --button-colors-success-background-focus: var(--primitives-success-600);
+    --button-colors-success-background-hover: var(--primitives-success-500);
+    --button-colors-success-background-pressed: var(--primitives-success-700);
+    --button-colors-success-stroke-outer-default: var(--primitives-success-1000);
+    --button-colors-success-stroke-outer-disabled: var(--primitives-neutral-200);
+    --button-colors-success-stroke-outer-hover: var(--primitives-success-700);
+    --button-colors-success-text-default: var(--primitives-neutral-0);
+    --button-colors-success-text-disabled: var(--primitives-neutral-0);
+    --button-colors-success-text-focus: var(--primitives-neutral-0);
+    --button-colors-success-text-hover: var(--primitives-neutral-0);
+    --button-colors-success-text-pressed: var(--primitives-neutral-0);
+    --button-colors-transparent-background-default: #ffffff05;
+    --button-colors-transparent-background-disabled: #0000;
+    --button-colors-transparent-background-hover: #85858517;
+    --button-colors-transparent-background-pressed: var(--primitives-neutral-1000);
+    --button-colors-transparent-stroke-outer-default: #00000080;
+    --button-colors-transparent-stroke-outer-disabled: var(--primitives-neutral-800);
+    --button-colors-transparent-stroke-outer-hover: #000000bf;
+    --button-colors-transparent-text-default: var(--primitives-neutral-25);
+    --button-colors-transparent-text-disabled: var(--primitives-neutral-500);
+    --button-colors-transparent-text-focus: var(--primitives-neutral-0);
+    --button-colors-transparent-text-hover: var(--primitives-neutral-0);
+    --button-colors-transparent-text-pressed: var(--primitives-neutral-0);
+
+    /* Tags */
+    --tags-attention-background: var(--primitives-attention-600);
+    --tags-attention-border: var(--primitives-attention-500);
+    --tags-attention-text: var(--primitives-neutral-0);
+    --tags-brand-background: var(--primitives-brand-600);
+    --tags-brand-border: var(--primitives-brand-500);
+    --tags-brand-text: var(--primitives-neutral-0);
+    --tags-danger-background: var(--primitives-danger-600);
+    --tags-danger-border: var(--primitives-danger-500);
+    --tags-danger-text: var(--primitives-neutral-0);
+    --tags-neutral-background: var(--primitives-neutral-600);
+    --tags-neutral-border: var(--primitives-neutral-500);
+    --tags-neutral-text: var(--primitives-neutral-0);
+    --tags-success-background: var(--primitives-success-600);
+    --tags-success-border: var(--primitives-success-500);
+    --tags-success-text: var(--primitives-neutral-0);
+}
