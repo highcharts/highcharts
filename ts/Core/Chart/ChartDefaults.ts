@@ -339,19 +339,25 @@ const ChartDefaults: ChartOptions = {
      * subtitle and legend in addition to the `spacingTop`, `spacingRight`,
      * `spacingBottom` and `spacingLeft` options.
      *
+     * A value may also be a CSS length expression resolved by the browser,
+     * e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
+     *
      * @sample {highcharts} highcharts/chart/margins-zero/
      *         Zero margins
      * @sample {highstock} stock/chart/margin-zero/
      *         Zero margins
+     * @sample {highcharts} highcharts/chart/margin-css-variables/
+     *         Margins from CSS variables
      *
-     * @type      {number|Array<number>}
+     * @type      {number|string|Array<(number|string)>}
      * @apioption chart.margin
      */
 
     /**
      * The margin between the bottom outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingBottom`.
+     * to the default dynamic margin. See also `spacingBottom`. Also accepts
+     * a CSS length expression, e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/marginbottom/
      *         100px bottom margin
@@ -360,7 +366,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     2.0
      * @apioption chart.marginBottom
      */
@@ -368,7 +374,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The margin between the left outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingLeft`.
+     * to the default dynamic margin. See also `spacingLeft`. Also accepts
+     * a CSS length expression, e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/marginleft/
      *         150px left margin
@@ -377,7 +384,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     2.0
      * @apioption chart.marginLeft
      */
@@ -385,7 +392,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The margin between the right outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingRight`.
+     * to the default dynamic margin. See also `spacingRight`. Also accepts
+     * a CSS length expression, e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/marginright/
      *         100px right margin
@@ -394,7 +402,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     2.0
      * @apioption chart.marginRight
      */
@@ -402,7 +410,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The margin between the top outer edge of the chart and the plot area.
      * Use this to set a fixed pixel value for the margin as opposed to
-     * the default dynamic margin. See also `spacingTop`.
+     * the default dynamic margin. See also `spacingTop`. Also accepts
+     * a CSS length expression, e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/margintop/ 100px top margin
      * @sample {highstock} stock/chart/margintop/
@@ -410,7 +419,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number}
+     * @type      {number|string}
      * @since     2.0
      * @apioption chart.marginTop
      */
@@ -924,7 +933,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The space between the bottom edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingbottom/
      *         Spacing bottom set to 100
@@ -933,7 +943,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   15
      * @since     2.1
      * @apioption chart.spacingBottom
@@ -942,7 +952,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The space between the left edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingleft/
      *         Spacing left set to 100
@@ -951,7 +962,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   10
      * @since     2.1
      * @apioption chart.spacingLeft
@@ -960,7 +971,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The space between the right edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingright-100/
      *         Spacing set to 100
@@ -971,7 +983,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   10
      * @since     2.1
      * @apioption chart.spacingRight
@@ -980,7 +992,8 @@ const ChartDefaults: ChartOptions = {
     /**
      * The space between the top edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingtop-100/
      *         A top spacing of 100
@@ -992,7 +1005,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number}
+     * @type      {number|string}
      * @default   10
      * @since     2.1
      * @apioption chart.spacingTop

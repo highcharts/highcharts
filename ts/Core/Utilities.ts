@@ -653,6 +653,10 @@ export interface ErrorMessageEventObject {
  * given, like for example `'50%'`, the setting defines a length relative to a
  * base size, for example the size of a container.
  *
+ * As an experimental feature, a CSS length expression resolved by the
+ * browser, like `'2em'`, `'10vh'` or `'calc(var(--gap) * 2)'`, is also
+ * accepted.
+ *
  * @typedef {number|string} Highcharts.RelativeSize
  */
 

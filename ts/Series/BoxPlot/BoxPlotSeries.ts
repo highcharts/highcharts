@@ -100,12 +100,15 @@ class BoxPlotSeries extends ColumnSeries {
         lowerWhiskerLength: number | string,
         point: BoxPlotPoint
     ): SVGPath {
-        const strokeWidth = point.whiskers.strokeWidth(),
+        const renderTo = this.chart.renderTo,
+            strokeWidth = point.whiskers.strokeWidth(),
             getWhisker = (
                 xLen: number | string,
                 yPos: number
             ): SVGPath.Segment[] => {
-                const halfLen = relativeLength(xLen, 2 * halfWidth) / 2,
+                const halfLen = relativeLength(
+                        xLen, 2 * halfWidth, void 0, renderTo
+                    ) / 2,
                     crispedYPos = crisp(
                         yPos,
                         strokeWidth
@@ -340,7 +343,9 @@ class BoxPlotSeries extends ColumnSeries {
                     const r = Math.min(
                         relativeLength(
                             borderRadiusObject(options.borderRadius).radius,
-                            right - x
+                            right - x,
+                            void 0,
+                            chart.renderTo
                         ),
                         (right - x) / 2,
                         Math.abs(q1Plot - q3Plot) / 2

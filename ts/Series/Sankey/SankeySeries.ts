@@ -691,7 +691,9 @@ class SankeySeries extends ColumnSeries {
                             borderRadius.radius :
                             borderRadius
                     ) || 0,
-                    width
+                    width,
+                    void 0,
+                    chart.renderTo
                 ),
                 0,
                 nodeHeight / 2

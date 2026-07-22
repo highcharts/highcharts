@@ -73,7 +73,14 @@ import type { XRangePointPartialFillOptions } from './XRangePointOptions';
  */
 export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
-    borderRadius?: number;
+    /**
+     * The border radius of the point. A number denotes pixels, a percentage
+     * string denotes a percentage of the point height. Also accepts a CSS
+     * length expression, e.g. `'1em'` or `'calc(var(--radius) * 2)'`.
+     *
+     * @type {number|string}
+     */
+    borderRadius?: (number|string);
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis

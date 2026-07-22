@@ -1121,7 +1121,12 @@ function onAfterColumnTranslate(
                 const brOption = borderRadiusObject(
                         options.borderRadius
                     ),
-                    borderRadius = relativeLength(brOption.radius, r - innerR);
+                    borderRadius = relativeLength(
+                        brOption.radius,
+                        r - innerR,
+                        void 0,
+                        chart.renderTo
+                    );
 
                 point.shapeArgs = {
                     x: center[0],

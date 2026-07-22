@@ -448,7 +448,12 @@ function seriesOnAfterColumnTranslate(
 
                 // Get the radius
                 const r = Math.min(
-                    relativeLength(borderRadius.radius, width),
+                    relativeLength(
+                        borderRadius.radius,
+                        width,
+                        void 0,
+                        this.chart.renderTo
+                    ),
                     width / 2,
                     // Cap to the height, but not if where is `end`
                     where === 'all' ? brBoxHeight / 2 : Infinity
@@ -540,7 +545,9 @@ function pieSeriesOnAfterTranslate(
         if (shapeArgs) {
             shapeArgs.borderRadius = relativeLength(
                 borderRadius.radius,
-                (shapeArgs.r || 0) - ((shapeArgs.innerR) || 0)
+                (shapeArgs.r || 0) - ((shapeArgs.innerR) || 0),
+                void 0,
+                this.chart.renderTo
             );
         }
     }

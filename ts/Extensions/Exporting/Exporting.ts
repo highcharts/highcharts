@@ -1983,7 +1983,7 @@ export class Exporting {
         // Get the source size
         const cssWidth: string = chart.renderTo.style.width,
             cssHeight: string = chart.renderTo.style.height,
-            sourceWidth: number = options.exporting?.sourceWidth ||
+            sourceWidth: (number | string) = options.exporting?.sourceWidth ||
                 options.chart.width ||
                 (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
                 (options.isGantt ? 800 : 600),
@@ -3033,8 +3033,8 @@ export namespace Exporting {
         childNodes: NodeListOf<ChildNode>;
         origDisplay: Array<(string | null)> ;
         resetParams?: [
-            (number | null)?,
-            (number | null)?,
+            (number | string | null)?,
+            (number | string | null)?,
             (boolean | Partial<AnimationOptions>)?
         ];
     }

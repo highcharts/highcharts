@@ -2817,7 +2817,8 @@ namespace AxisDefaults {
              *
              * On polar charts, if it's a percentage string, it is interpreted
              * the same as [series.radius](#plotOptions.gauge.radius), so the
-             * label can be aligned under the gauge's shape.
+             * label can be aligned under the gauge's shape. Also accepts a
+             * CSS length expression, e.g. `'1em'` or `'calc(var(--gap) * 2)'`.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc

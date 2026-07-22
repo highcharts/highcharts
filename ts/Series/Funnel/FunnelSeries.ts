@@ -307,7 +307,9 @@ class FunnelSeries extends PieSeries {
             points = series.points,
             borderRadius = relativeLength(
                 borderRadiusObj.radius,
-                width
+                width,
+                void 0,
+                chart.renderTo
             ),
             radiusScope = borderRadiusObj.scope,
             half = (
@@ -377,7 +379,9 @@ class FunnelSeries extends PieSeries {
                     point.dataLabel?.dataLabelPosition?.distance ??
                     relativeLength(
                         this.options.dataLabels?.distance || 0,
-                        width
+                        width,
+                        void 0,
+                        chart.renderTo
                     )
                 ));
         };

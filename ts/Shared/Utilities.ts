@@ -19,6 +19,7 @@ import H from '../Core/Globals.js';
 import { EventCallback } from '../Core/Callback';
 const {
     doc,
+    SVG_NS,
     win
 } = H;
 
@@ -1507,32 +1508,100 @@ export function pushUnique(
 }
 
 /**
- * Return a length based on either the integer value, or a percentage of a base.
+ * Returns a length based on either the integer value, a percentage of a base,
+ * or a CSS length expression resolved by the browser (e.g. `calc()`, `var()`,
+ * `em`, `rem`, `vw`).
  *
  * @function Highcharts.relativeLength
  *
- * @param {Highcharts.RelativeSize} value
- *        A percentage string or a number.
+ * @param {Highcharts.RelativeSize|null|undefined} value
+ *        A number, a percentage string, or a CSS length expression.
+ *        Nullish values resolve to `NaN`.
  *
  * @param {number} base
- *        The full length that represents 100%.
+ *        The full length that represents 100% for percentage strings. It
+ *        does not apply to CSS expressions, where percentages follow the
+ *        CSS containing block rules, resolving against the nearest
+ *        positioned ancestor of `parent` (often the viewport). Use plain
+ *        percentage strings like `'50%'` for lengths relative to `base`.
  *
  * @param {number} [offset=0]
  *        A pixel offset to apply for percentage values. Used internally in
  *        axis positioning.
  *
+ * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [parent=document.body]
+ *        Host element for the hidden probe used to resolve CSS expressions,
+ *        either an HTML or an SVG element. Pass the chart container to
+ *        inherit its CSS variables and font size. Defaults to
+ *        `document.body`.
+ *
  * @return {number}
- *         The computed length.
+ *         The computed length in pixels.
  */
 export function relativeLength(
-    value: RelativeSize,
+    value: (RelativeSize|null|undefined),
     base: number,
-    offset?: number
+    offset?: number,
+    parent: DOMElementType = doc.body
 ): number {
-    return (/%$/).test(value as any) ?
-        (base * parseFloat(value as any) / 100) + (offset || 0) :
-        parseFloat(value as any);
+    if (typeof value === 'number') {
+        return value;
+    }
+    // Match parseFloat for nullish values, avoiding a needless length probe
+    if (!value || typeof value !== 'string') {
+        return NaN;
+    }
+    if ((/%$/).test(value)) {
+        return (base * parseFloat(value) / 100) + (offset || 0);
+    }
+    // Plain numeric strings and pixel values need no probe to resolve
+    if ((/^-?\d+(\.\d+)?(px)?$/).test(value)) {
+        return parseFloat(value);
+    }
+    return measureCSSLength(value, parent);
 }
+
+/**
+ * Resolves a CSS length expression to pixels via a hidden probe element, a
+ * `div` in HTML parents and a `rect` in SVG parents. The probe is cached
+ * per parent on `H.cssLengthProbes`, so `var()`, `em`, etc. resolve in the
+ * intended scope and repeated calls reuse the same element instead of
+ * creating a new one each time.
+ * @private
+ */
+function measureCSSLength(
+    value: string,
+    parent: DOMElementType = doc.body
+): number {
+    if (!parent) {
+        return 0;
+    }
+    const isSVG = 'ownerSVGElement' in parent;
+    let probe = H.cssLengthProbes.get(parent);
+    if (!probe) {
+        probe = isSVG ?
+            doc.createElementNS(SVG_NS, 'rect') as SVGRectElement :
+            doc.createElement('div');
+        probe.setAttribute('class', 'highcharts-length-probe');
+        // A rect resolves lengths even at display:none, keeping it out of
+        // the parent's bounding box. A div must stay rendered to resolve.
+        probe.style.cssText = isSVG ?
+            'display:none' :
+            'position:absolute;visibility:hidden;pointer-events:none;' +
+            'top:-9999px';
+        H.cssLengthProbes.set(parent, probe);
+    }
+    // Attach, or re-attach after the parent was emptied, e.g. when a new
+    // chart is created in the same element (#23989)
+    if (!probe.isConnected) {
+        parent.appendChild(probe);
+    }
+    // Reset first, so invalid values yield 0 instead of the last measure
+    probe.style.width = '';
+    probe.style.width = value;
+    return parseFloat(win.getComputedStyle(probe).width) || 0;
+}
+
 
 /**
  * Replaces text in a string with a given replacement in a loop to catch nested
