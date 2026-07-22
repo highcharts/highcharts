@@ -1403,9 +1403,12 @@ export class Grid {
         }
 
         this.contentWrapper.innerHTML = AST.emptyHTML;
-        this.contentWrapper.className =
-            Globals.getClassName('container') + ' ' +
-            this.options?.rendering?.theme || '';
+        const theme = this.options?.rendering?.theme;
+        this.contentWrapper.className = [
+            Globals.getClassName('container'),
+            theme ? Globals.getClassName('themed') : '',
+            theme || ''
+        ].filter(Boolean).join(' ');
     }
 
     /**

@@ -168,7 +168,7 @@ class HeaderCell extends Cell {
         const { column } = this;
         const options = createOptionsProxy(
             this.superColumnOptions,
-            column?.options
+            column?.options ?? this.row.viewport.grid.options?.columnDefaults
         );
         const headerCellOptions = options.header || {};
         const headerValue = column ?
@@ -249,16 +249,22 @@ class HeaderCell extends Cell {
 
     /**
      * Returns merged header styles from defaults and current column options.
-     *
      */
     private getColumnStyles(): (CSSObject | undefined) {
         const { column } = this;
+        const { grid } = this.row.viewport;
 
         if (!column) {
-            return resolveStyleValue(this.superColumnOptions.header?.style);
+            const options = createOptionsProxy(
+                this.superColumnOptions,
+                grid.options?.columnDefaults
+            );
+            return {
+                ...resolveStyleValue(options.style),
+                ...resolveStyleValue(options.header?.style)
+            };
         }
 
-        const { grid } = this.row.viewport;
         const rawColumnOptions = grid.columnPolicy
             .getIndividualColumnOptions(column.id);
 

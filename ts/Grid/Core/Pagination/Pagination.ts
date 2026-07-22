@@ -27,7 +27,8 @@ import type {
     PaginationOptions,
     PaginationLangOptions,
     PageSizeSelectorOptions,
-    PageButtonsOptions
+    PageButtonsOptions,
+    PageInfoOptions
 } from './PaginationOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
@@ -53,6 +54,10 @@ const paginationAlignments = [
 ] as const;
 const alignmentClassName = (alignment: string): string =>
     `${Globals.classNamePrefix}pagination-${alignment}`;
+
+const joinClassNames = (
+    ...parts: Array<(string | undefined | null | false)>
+): string => parts.filter(Boolean).join(' ');
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -296,9 +301,11 @@ class Pagination {
             this.contentWrapper = makeHTMLElement(
                 'nav',
                 {
-                    className: alignmentClass ?
-                        `${Globals.getClassName('pagination')} ${alignmentClass}` :
-                        Globals.getClassName('pagination')
+                    className: joinClassNames(
+                        Globals.getClassName('pagination'),
+                        alignmentClass,
+                        this.options?.className
+                    )
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -394,13 +401,14 @@ class Pagination {
 
         this.paginationContainer = customContainer;
         const alignmentClass = this.getAlignmentClass();
-        const className = alignmentClass ?
-            `${Globals.getClassName('pagination')} ${alignmentClass}` :
-            Globals.getClassName('pagination');
 
         // Set content wrapper to the custom container
         this.contentWrapper = makeHTMLElement('div', {
-            className: className
+            className: joinClassNames(
+                Globals.getClassName('pagination'),
+                alignmentClass,
+                this.options?.className
+            )
         }, customContainer);
     }
 
@@ -417,7 +425,10 @@ class Pagination {
         }
 
         this.pageInfoElement = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageInfo')
+            className: joinClassNames(
+                Globals.getClassName('paginationPageInfo'),
+                (pageInfo as PageInfoOptions)?.className
+            )
         }, this.contentWrapper);
 
         this.updatePageInfo();
@@ -464,7 +475,10 @@ class Pagination {
     public renderControls(): void {
 
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControls')
+            className: joinClassNames(
+                Globals.getClassName('paginationControls'),
+                this.options?.controls?.className
+            )
         }, this.contentWrapper);
 
         const controls = this.options?.controls || {};
@@ -945,7 +959,10 @@ class Pagination {
         }
 
         const container = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageSize')
+            className: joinClassNames(
+                Globals.getClassName('paginationPageSize'),
+                (pageSizeSelector as PageSizeSelectorOptions)?.className
+            )
         }, this.contentWrapper);
 
         makeHTMLElement('span', {
