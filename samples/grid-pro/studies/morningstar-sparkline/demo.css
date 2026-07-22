@@ -1,0 +1,118 @@
+.theme-custom,
+#spark-popup {
+    color-scheme: light dark;
+}
+
+.theme-custom {
+    --hcg-color: light-dark(#111, #f5f5f5);
+    --hcg-background: light-dark(#fff, #141414);
+    --hcg-border-width: 1px;
+    --hcg-border-color: light-dark(#d6d6d6, #3f3f3f);
+    --hcg-border-radius: 8px;
+    --hcg-column-border-width: 0;
+    --hcg-row-border-width: 1px;
+    --hcg-padding: 8px;
+    --hcg-row-even-background: light-dark(#ececec, #202020);
+    --hcg-row-hover-background: light-dark(#808080, #4f4f4f);
+    --hcg-hover-opacity: 18%;
+    --highcharts-background-color: light-dark(#fff, #141414);
+    --highcharts-neutral-color-100: light-dark(#000, #fff);
+}
+
+.highcharts-light :is(.theme-custom, #spark-popup) {
+    color-scheme: light;
+}
+
+.highcharts-dark :is(.theme-custom, #spark-popup) {
+    color-scheme: dark;
+}
+
+.theme-custom td.stockSparklines {
+    cursor: pointer;
+}
+
+.touch-device td.stockSparklines .highcharts-container {
+    pointer-events: none;
+}
+
+.theme-custom .price-header {
+    display: inline-block;
+    text-align: center;
+    white-space: normal;
+}
+
+.theme-custom .price-evolution-header-date {
+    display: block;
+    font-size: 0.85em;
+    font-weight: normal;
+    margin-top: 2px;
+}
+
+#container {
+    min-height: 260px;
+    position: relative;
+}
+
+#loading-spinner {
+    align-items: center;
+    color: #666;
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    position: absolute;
+}
+
+#loading-spinner::before {
+    animation: spinner 0.8s linear infinite;
+    border: 3px solid #d6d6d6;
+    border-radius: 50%;
+    border-top-color: #4caf50;
+    content: "";
+    height: 28px;
+    margin-right: 10px;
+    width: 28px;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#spark-popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+#spark-popup-overlay.open {
+    display: flex;
+}
+
+#spark-popup {
+    --highcharts-background-color: light-dark(#fff, #141414);
+    --highcharts-neutral-color-100: light-dark(#000, #fff);
+
+    background: light-dark(#fefeff, #1b1d22);
+    border-radius: 8px;
+    color: light-dark(#040404, #f5f5f5);
+    padding: 24px;
+    width: 90vw;
+    max-height: 90vw;
+    position: relative;
+}
+
+#spark-popup-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    cursor: pointer;
+    color: inherit;
+    font-size: 24px;
+    background: none;
+    border: none;
+}
