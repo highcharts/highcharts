@@ -5,6 +5,7 @@ declare namespace Highcharts {
         sea?: Highcharts.SVGElement;
         rotationTimer?: number;
         rotationFrame?: number;
+        sonification?: Highcharts.Sonification;
     }
 
     // Some internal properties on the series
@@ -180,6 +181,15 @@ const createMap = (
                     }
                     e.point.remove(false, false);
                     chart.redraw(false);
+
+                    // Play descending notes for removing a point
+                    if (chart.sonification) {
+                        chart.sonification.playNote('vibraphone', {
+                            note: 'C2',
+                            noteDuration: 150,
+                            volume: 0.3
+                        });
+                    }
                 }
             }
         }, {
@@ -264,7 +274,17 @@ function addLinePoint(point, chart) {
             coordinates: [point.lon, point.lat]
         }
     }, false);
-    chart.redraw();
+    chart.redraw(false);
+
+    // Play ascending notes for adding a point
+    if (chart.sonification) {
+        chart.sonification.playNote('vibraphone', {
+            note: 'C3',
+            noteDuration: 150,
+            volume: 0.3
+        });
+
+    }
 }
 
 function setupAutoRotation(chart: Highcharts.MapChart): void {
