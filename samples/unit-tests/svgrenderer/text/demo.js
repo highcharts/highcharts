@@ -19,6 +19,27 @@ QUnit.test('Hide label with useHTML (#4938)', function (assert) {
     );
 });
 
+QUnit.test(
+    'hide() must visually hide a useHTML element (#24606)',
+    function (assert) {
+        const renderer = new Highcharts.Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
+            text = renderer.text('Label', 100, 100, true).add();
+
+        text.hide();
+
+        assert.strictEqual(
+            window.getComputedStyle(text.element).visibility,
+            'hidden',
+            'Text element is hidden'
+        );
+
+        renderer.destroy();
+    });
+
 QUnit.test('Legend rtl and useHTML (#4449)', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
