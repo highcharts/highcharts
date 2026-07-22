@@ -199,16 +199,16 @@ class Funnel3DSeries extends ColumnSeries {
             centerX = relativeLength(center[0], plotWidth, void 0, renderTo),
             centerY = relativeLength(center[1], plotHeight, void 0, renderTo),
             width = relativeLength(
-                options.width as any, plotWidth, void 0, renderTo
+                options.width, plotWidth, void 0, renderTo
             ),
             height = relativeLength(
-                options.height as any, plotHeight, void 0, renderTo
+                options.height, plotHeight, void 0, renderTo
             ),
             neckWidth = relativeLength(
-                options.neckWidth as any, plotWidth, void 0, renderTo
+                options.neckWidth, plotWidth, void 0, renderTo
             ),
             neckHeight = relativeLength(
-                options.neckHeight as any,
+                options.neckHeight,
                 plotHeight,
                 void 0,
                 renderTo

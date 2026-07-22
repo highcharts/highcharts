@@ -1514,8 +1514,9 @@ export function pushUnique(
  *
  * @function Highcharts.relativeLength
  *
- * @param {Highcharts.RelativeSize} value
+ * @param {Highcharts.RelativeSize|null|undefined} value
  *        A number, a percentage string, or a CSS length expression.
+ *        Nullish values resolve to `NaN`.
  *
  * @param {number} base
  *        The full length that represents 100% for percentage strings. It
@@ -1538,7 +1539,7 @@ export function pushUnique(
  *         The computed length in pixels.
  */
 export function relativeLength(
-    value: RelativeSize,
+    value: (RelativeSize|null|undefined),
     base: number,
     offset?: number,
     parent: DOMElementType = doc.body
@@ -1553,7 +1554,8 @@ export function relativeLength(
     if ((/%$/).test(value)) {
         return (base * parseFloat(value) / 100) + (offset || 0);
     }
-    if ((/^-?\d+(\.\d+)?$/).test(value)) {
+    // Plain numeric strings and pixel values need no probe to resolve
+    if ((/^-?\d+(\.\d+)?(px)?$/).test(value)) {
         return parseFloat(value);
     }
     return measureCSSLength(value, parent);

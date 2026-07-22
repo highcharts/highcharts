@@ -41,7 +41,6 @@ chart: {
 }
 ```
 
-
 ### Credits
 
 Credits can be moved around using the "position" option:

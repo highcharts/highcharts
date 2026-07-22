@@ -949,13 +949,14 @@ class ColorAxis extends Axis implements ColorAxisBase {
             {
                 legend: legendOptions
             } = chart.options,
+            renderTo = chart.renderTo,
             width = pick(
                 defined(colorAxisWidth) ?
                     relativeLength(
                         colorAxisWidth,
                         chart.chartWidth,
                         void 0,
-                        chart.renderTo
+                        renderTo
                     ) : void 0,
                 legendOptions?.symbolWidth,
                 horiz ? ColorAxis.defaultLegendLength : 12
@@ -966,7 +967,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
                         colorAxisHeight,
                         chart.chartHeight,
                         void 0,
-                        chart.renderTo
+                        renderTo
                     ) : void 0,
                 legendOptions?.symbolHeight,
                 horiz ? 12 : ColorAxis.defaultLegendLength

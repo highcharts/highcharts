@@ -113,6 +113,7 @@ class SolidGaugeSeries extends GaugeSeries {
         const series = this,
             yAxis = series.yAxis,
             center = yAxis.center,
+            outerRadius = center[2] / 2,
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
@@ -153,7 +154,7 @@ class SolidGaugeSeries extends GaugeSeries {
                             point.options.radius ??
                                 options.radius ??
                                 '100%',
-                            center[2] / 2,
+                            outerRadius,
                             void 0,
                             renderTo
                         )
@@ -168,7 +169,7 @@ class SolidGaugeSeries extends GaugeSeries {
                                         paneInnerSize
                                 ) ??
                                 0,
-                            center[2] / 2,
+                            outerRadius,
                             void 0,
                             renderTo
                         )

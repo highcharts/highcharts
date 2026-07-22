@@ -866,6 +866,7 @@ function seriesGeneratePoints(
     const series = this,
         { chart } = series,
         mapView = chart.mapView,
+        { plotWidth, renderTo } = chart,
         xData = series.getColumn('x'),
         yData = series.getColumn('y'),
         clusterOptions = series.options.cluster,
@@ -918,17 +919,17 @@ function seriesGeneratePoints(
         layoutAlgOptions.processedGridSize = relativeLength(
             layoutAlgOptions.gridSize ||
                 clusterDefaults.layoutAlgorithm.gridSize,
-            chart.plotWidth,
+            plotWidth,
             void 0,
-            chart.renderTo
+            renderTo
         );
 
         layoutAlgOptions.processedDistance = relativeLength(
             layoutAlgOptions.distance ||
                 clusterDefaults.layoutAlgorithm.distance,
-            chart.plotWidth,
+            plotWidth,
             void 0,
-            chart.renderTo
+            renderTo
         );
 
         kmeansThreshold = layoutAlgOptions.kmeansThreshold ||

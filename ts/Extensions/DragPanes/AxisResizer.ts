@@ -295,6 +295,7 @@ class AxisResizer {
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
             plotBottom = plotTop + plotHeight,
+            renderTo = chart.renderTo,
             calculatePercent = (value: number): string => (
                 value * 100 / plotHeight + '%'
             ),
@@ -354,13 +355,13 @@ class AxisResizer {
                         axisOptions.minLength || NaN,
                         plotHeight,
                         void 0,
-                        chart.renderTo
+                        renderTo
                     )),
                     maxLength = Math.round(relativeLength(
                         axisOptions.maxLength || NaN,
                         plotHeight,
                         void 0,
-                        chart.renderTo
+                        renderTo
                     ));
 
                 if (!isFirst && axesGroup === nextAxes) {

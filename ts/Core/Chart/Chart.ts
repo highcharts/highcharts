@@ -1949,7 +1949,7 @@ class Chart {
         chart.chartWidth = Math.max( // #1393
             0,
             relativeLength(
-                widthOption as any,
+                widthOption,
                 containerBox.width,
                 void 0,
                 chart.renderTo
@@ -1966,7 +1966,7 @@ class Chart {
         chart.chartHeight = Math.max(
             0,
             relativeLength(
-                heightOption as any,
+                heightOption,
                 chart.chartWidth,
                 void 0,
                 chart.renderTo
@@ -2391,9 +2391,9 @@ class Chart {
     }
 
     /**
-     * Resize the chart to a given width and height. In order to set the width
-     * only, the height argument may be skipped. To set the height only, pass
-     * `undefined` for the width.
+     * Resize the chart to a given width and height. In order to set the
+     * width only, the height argument may be skipped. To set the height
+     * only, pass `undefined` for the width.
      *
      * @sample highcharts/members/chart-setsize-button/
      *         Test resizing from buttons
@@ -2405,18 +2405,18 @@ class Chart {
      * @function Highcharts.Chart#setSize
      *
      * @param {number|string|null} [width]
-     *        The new width of the chart. Accepts a pixel number, a CSS length
-     *        expression resolved by the browser (e.g. `'50%'`, `'20em'`,
-     *        `'calc(var(--gap) * 2)'`), `undefined` to preserve the current
-     *        value (when setting height only), or `null` to adapt to the
-     *        width of the containing element. Since v4.2.6 for `undefined`.
+     *        The new width of the chart. A number sets pixels; a string is
+     *        resolved as a CSS length expression by the browser (e.g.
+     *        `'50%'`, `'20em'`, `'calc(var(--gap) * 2)'`). Pass `null` to
+     *        adapt to the containing element's width, or `undefined` to
+     *        leave it unchanged.
      *
      * @param {number|string|null} [height]
-     *        The new height of the chart. Accepts a pixel number, a CSS
-     *        length expression resolved by the browser (e.g. `'50%'`,
-     *        `'20em'`, `'calc(var(--gap) * 2)'`), `undefined` to preserve
-     *        the current value, or `null` to adapt to the height of the
-     *        containing element. Since v4.2.6 for `undefined`.
+     *        The new height of the chart. A number sets pixels; a string is
+     *        resolved as a CSS length expression by the browser (e.g.
+     *        `'50%'`, `'20em'`, `'calc(var(--gap) * 2)'`). Pass `null` to
+     *        adapt to the containing element's height, or `undefined` to
+     *        leave it unchanged.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation. When `undefined`, it applies
@@ -2694,6 +2694,7 @@ class Chart {
             optionsChart = chart.options.chart,
             {
                 backgroundColor,
+                borderRadius,
                 plotBackgroundColor,
                 plotBackgroundImage,
                 plotBorderRadius = 0,
@@ -2757,9 +2758,9 @@ class Chart {
             y: mgn / 2,
             width: chartWidth - mgn - chartBorderWidth % 2,
             height: chartHeight - mgn - chartBorderWidth % 2,
-            r: defined(optionsChart.borderRadius) ?
+            r: defined(borderRadius) ?
                 relativeLength(
-                    optionsChart.borderRadius,
+                    borderRadius,
                     0,
                     void 0,
                     chart.renderTo
@@ -3261,9 +3262,7 @@ class Chart {
      */
     public destroy(): void {
         const chart = this,
-            axes = chart.axes,
-            series = chart.series,
-            container = chart.container,
+            { axes, series, container, renderTo } = chart,
             parentNode = container?.parentNode;
 
         let i: number;
@@ -3278,13 +3277,13 @@ class Chart {
             charts[chart.index] = void 0;
         }
         H.chartCount--;
-        chart.renderTo.removeAttribute('data-highcharts-chart');
+        renderTo.removeAttribute('data-highcharts-chart');
 
         // Remove the CSS length probe from the render target (#23989)
         discardElement(
-            H.cssLengthProbes.get(chart.renderTo) as HTMLElement
+            H.cssLengthProbes.get(renderTo) as HTMLElement
         );
-        H.cssLengthProbes.delete(chart.renderTo);
+        H.cssLengthProbes.delete(renderTo);
 
         // Remove events
         removeEvent(chart);

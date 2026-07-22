@@ -788,7 +788,7 @@
         document.body.removeChild(div);
     });
 
-    QUnit.test('RelativeLength', function (assert) {
+    QUnit.test('relativeLength', function (assert) {
         const relativeLength = Highcharts.relativeLength;
 
         assert.strictEqual(
@@ -800,6 +800,11 @@
             relativeLength('42', 100),
             42,
             'Numeric string returns the parsed number'
+        );
+        assert.strictEqual(
+            relativeLength('20px', 100),
+            20,
+            'Pixel value returns the parsed number without a length probe'
         );
         assert.strictEqual(
             relativeLength('50%', 200),

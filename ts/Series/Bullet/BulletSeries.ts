@@ -124,7 +124,7 @@ class BulletSeries extends ColumnSeries {
                 }
 
                 width = relativeLength(
-                    targetOptions.width as any,
+                    targetOptions.width,
                     (shapeArgs as any).width,
                     void 0,
                     chart.renderTo

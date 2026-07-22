@@ -1236,7 +1236,7 @@ class Legend {
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
-            options.width as any,
+            options.width,
             chartSpacingBoxWidth - padding,
             void 0,
             chart.renderTo
