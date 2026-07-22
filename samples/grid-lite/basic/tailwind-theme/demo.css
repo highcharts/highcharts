@@ -1,0 +1,102 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+#container {
+    height: 600px;
+}
+
+/* Pagination — button / select internals (no className API) */
+.hcg-pagination-controls .hcg-pagination-pages {
+    gap: 0.5rem; /* gap-2 */
+}
+
+.hcg-pagination-controls .hcg-button {
+    width: 1.75rem; /* size-7 */
+    height: 1.75rem;
+    border-radius: 0.25rem; /* rounded */
+    border: 1px solid transparent;
+    font-size: 0.875rem; /* text-sm */
+    line-height: 1;
+    color: #334155; /* slate-700 */
+}
+
+.hcg-pagination-controls .hcg-button:hover:not(:disabled) {
+    background: #e2e8f0; /* slate-200 */
+}
+
+.hcg-pagination-controls .hcg-button-selected,
+.hcg-pagination-controls .hcg-button-selected:hover:not(:disabled) {
+    background: #0f766e; /* teal-700 */
+    color: #fff;
+}
+
+.demo-pag-size select.hcg-input {
+    border-radius: 0.25rem;
+    border: 1px solid #cbd5e1; /* slate-300 */
+    background-color: #fff; /* keep Core chevron background-image */
+    padding: 0.25rem 1.25rem 0.25rem 0.5rem; /* py-1 pl-2 pr-5 */
+    font-size: 0.875rem;
+    color: #334155;
+}
+
+/* Filter popup */
+.demo-grid .hcg-popup {
+    border-radius: 0.5rem; /* rounded-lg */
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    font-size: 0.875rem;
+    color: #334155;
+    box-shadow:
+        0 10px 15px -3px rgb(15 23 42 / 0.1),
+        0 4px 6px -4px rgb(15 23 42 / 0.1); /* shadow-lg */
+}
+
+.demo-grid .hcg-popup-content {
+    padding: 0.75rem; /* p-3 */
+}
+
+.demo-grid .hcg-menu-header {
+    margin-bottom: 0.5rem; /* mb-2 */
+    padding-inline: 0.25rem; /* px-1 */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600;
+    color: #64748b; /* slate-500 */
+}
+
+.demo-grid .hcg-column-filter-wrapper {
+    gap: 0.5rem;
+}
+
+.demo-grid .hcg-column-filter-wrapper .hcg-input {
+    width: 100%;
+    border-radius: 0.25rem;
+    border: 1px solid #cbd5e1;
+    background-color: #fff; /* keep Core select chevron background-image */
+    padding: 0.375rem 0.5rem; /* py-1.5 px-2 */
+    font-size: 0.875rem;
+    color: #334155;
+}
+
+.demo-grid .hcg-column-filter-wrapper select.hcg-input {
+    padding-inline-end: 1.25rem; /* pr-5 */
+}
+
+.demo-grid .hcg-clear-filter-button {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #475569; /* slate-600 */
+    text-decoration: none;
+}
+
+.demo-grid .hcg-clear-filter-button:hover:not(:disabled) {
+    color: #0f172a; /* slate-900 */
+    text-decoration: underline;
+}
+
+@container hcg (max-width: 800px) {
+    .hcg-pagination-controls {
+        justify-content: center;
+        border-left-width: 0;
+        border-right-width: 0;
+        margin-block: 0.5rem; /* my-2 */
+    }
+}
