@@ -1,5 +1,4 @@
 .hcg-themed {
-
     .hcg-table {
         /* Row borders */
         --ig-row-border-width: var(--hcg-row-border-width, var(--hcg-border-width));
@@ -24,8 +23,8 @@
         --ig-header-column-border-style: var(--hcg-header-column-border-style, var(--ig-column-border-style));
         --ig-header-column-border-color: var(--hcg-header-column-border-color, var(--ig-column-border-color));
         --ig-header-column-border: var(--ig-header-column-border-width) var(--ig-header-column-border-style) var(--ig-header-column-border-color);
-
         --ig-table-border: var(--hcg-border-width) var(--hcg-border-style, solid) var(--hcg-border-color);
+
         border: var(--ig-table-border);
         background: var(--hcg-background);
         border-radius: var(--hcg-border-radius);
@@ -37,6 +36,7 @@
         --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--hcg-color)));
         --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
         --ig-header-current-color: var(--ig-header-base-color);
+
         /* soft weight/family; size without fallback gates the font shorthand */
         --ig-header-column-font-weight: var(--hcg-column-font-weight, var(--hcg-cell-font-weight, var(--hcg-font-weight, normal)));
         --ig-header-base-font-weight: var(--hcg-header-font-weight, var(--ig-header-column-font-weight));
@@ -54,6 +54,7 @@
         background: var(--ig-header-background);
         color: var(--ig-header-current-color);
         --ig-header-applied-font: var(--ig-header-current-font-weight) var(--ig-header-current-font-size) var(--ig-header-current-font-family);
+
         font: var(--ig-header-applied-font);
         padding-top: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--hcg-vertical-padding, var(--hcg-padding))));
         padding-right: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--hcg-horizontal-padding, var(--hcg-padding))));
@@ -189,6 +190,7 @@
         border-right: var(--ig-column-border);
         border-bottom: var(--ig-row-border);
         --ig-cell-applied-padding: var(--hcg-vertical-padding, var(--hcg-padding)) var(--hcg-horizontal-padding, var(--hcg-padding));
+
         padding: var(--ig-cell-applied-padding);
         font: var(--ig-cell-font);
         text-align: var(--ig-cell-text-align);
