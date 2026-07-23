@@ -119,6 +119,21 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
     states?: SeriesStatesOptions<HistogramSeriesOptions>;
 
     tooltip?: HistogramSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    dataParser?: undefined;
+    dataURL?: undefined;
+    dragDrop?: undefined;
+    pointInterval?: undefined;
+    pointIntervalUnit?: undefined;
+    stacking?: undefined;
 }
 
 export interface HistogramSeriesTooltipOptions
