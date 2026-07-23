@@ -269,12 +269,18 @@ class StandaloneNavigator {
      *        Passing a Chart object unbinds the first X axis of the chart,
      *        an Axis object unbinds that specific axis,
      *        and undefined unbinds all axes bound to the navigator.
+     * @param {boolean} restoreExtremes
+     *        Whether to restore the axis' original min/max that were
+     *        overridden when binding a yAxis.
      */
-    public unbind(axisOrChart?: Chart | Axis): void {
+    public unbind(
+        axisOrChart?: Chart | Axis,
+        restoreExtremes?: boolean
+    ): void {
         // If no axis or chart is provided, unbind all bound axes
         if (!axisOrChart) {
             this.boundAxes.forEach((boundAxis): void => {
-                this.releaseAxis(boundAxis);
+                this.releaseAxis(boundAxis, restoreExtremes);
             });
 
             this.boundAxes.length = 0;
@@ -288,7 +294,7 @@ class StandaloneNavigator {
 
         for (let i = this.boundAxes.length - 1; i >= 0; i--) {
             if (this.boundAxes[i].axis === axis) {
-                this.releaseAxis(this.boundAxes[i]);
+                this.releaseAxis(this.boundAxes[i], restoreExtremes);
                 this.boundAxes.splice(i, 1);
             }
         }
@@ -302,19 +308,25 @@ class StandaloneNavigator {
      *
      * @param {BoundAxis} boundAxis
      *        The bound axis entry to release.
+     * @param {boolean} [restoreExtremes=false]
+     *        Whether to restore the axis' original min/max that were
+     *        overridden when binding a yAxis.
      */
-    private releaseAxis(boundAxis: BoundAxis): void {
+    private releaseAxis(
+        boundAxis: BoundAxis,
+        restoreExtremes = false
+    ): void {
         // Disconnect events
         boundAxis.callbacks.forEach(
             (removeCallback): void => removeCallback()
         );
 
         // Restore the axis' original min/max that were overridden in `bind`
-        if (boundAxis.axis.coll === 'yAxis') {
+        if (boundAxis.axis.coll === 'yAxis' && restoreExtremes) {
             boundAxis.axis.update({
                 min: boundAxis.userMin ?? null,
                 max: boundAxis.userMax ?? null
-            }, false);
+            });
         }
     }
 
@@ -322,10 +334,14 @@ class StandaloneNavigator {
      * Destroys allocated standalone navigator elements.
      *
      * @function Highcharts.StandaloneNavigator#destroy
+     *
+     * @param {boolean} restoreExtremes
+     *        Whether to restore the axis' original min/max that were
+     *        overridden when binding a yAxis.
      */
-    public destroy(): void {
+    public destroy(restoreExtremes?: boolean): void {
         this.boundAxes.forEach((boundAxis): void => {
-            this.releaseAxis(boundAxis);
+            this.releaseAxis(boundAxis, restoreExtremes);
         });
         this.boundAxes.length = 0;
         this.navigator.destroy();

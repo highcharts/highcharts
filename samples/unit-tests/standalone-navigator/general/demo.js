@@ -217,7 +217,7 @@ QUnit.test(
         );
 
         // Unbinding should restore the axis' own (unset) bounds
-        navigator.unbind(yAxis);
+        navigator.unbind(yAxis, true);
 
         assert.ok(
             yAxis.options.min === null || yAxis.options.min === void 0,
