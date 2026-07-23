@@ -31,18 +31,34 @@ import type { AggregatorOption } from '../Aggregation/AggregationTypes';
  * */
 
 /**
- * Feature-level options for flat summary (total) rows.
+ * Options for a summary (total) row.
+ *
+ * Provide a single object to render one summary row, or an array of objects to
+ * render several (mirroring the `dataLabels` object-or-array convention).
+ * Per-column aggregation is configured on the columns and can target a specific
+ * row through the row id exposed in the aggregator context.
  */
-export interface SummaryOptions {
+export type SummaryOptions = (SummaryRowOptions | SummaryRowOptions[]);
+
+/**
+ * Options for a single summary row.
+ */
+export interface SummaryRowOptions {
     /**
-     * Enables the summary row.
-     * @default false
+     * Whether the summary row is rendered.
+     * @default true
      */
     enabled?: boolean;
+
+    /**
+     * Stable id of the summary row, surfaced in the summary column aggregator
+     * and label context. Defaults to the row index.
+     */
+    id?: string;
 }
 
 /**
- * Context passed to a summary column aggregator callback.
+ * Context passed to a summary column aggregator or label callback.
  */
 export interface SummaryColumnAggregatorContext {
     /**
@@ -54,6 +70,16 @@ export interface SummaryColumnAggregatorContext {
      * Number of data rows the aggregation runs over.
      */
     rowCount: number;
+
+    /**
+     * Id of the summary row being resolved.
+     */
+    summaryRowId: string;
+
+    /**
+     * Zero-based index of the summary row being resolved.
+     */
+    summaryRowIndex: number;
 }
 
 /**
@@ -63,23 +89,33 @@ export type SummaryColumnAggregatorOption =
     AggregatorOption<SummaryColumnAggregatorContext>;
 
 /**
+ * Static or resolved label rendered in a non-aggregated summary cell.
+ */
+export type SummaryColumnLabel = (
+    string |
+    ((context: SummaryColumnAggregatorContext) => (string | null | undefined))
+);
+
+/**
  * Summary options for a single column.
  */
 export interface SummaryColumnOptions {
     /**
-     * Aggregator applied to this column in the summary row.
+     * Aggregator applied to this column in the summary rows.
      *
      * When a string, that Formula processor function name (for example `SUM`)
-     * is applied to every value in the column. When a callback, it returns a
-     * function name or a falsy value to skip aggregation for this column.
+     * is applied to every value in the column. When a callback, it receives
+     * the summary row context and returns a function name, or a falsy value to
+     * skip aggregation for that column/row.
      *
-     * @sample grid-pro/summary-rows/grand-total Summary row
+     * @sample grid-pro/options/summary-rows Summary row
      */
     aggregator?: SummaryColumnAggregatorOption;
 
     /**
-     * Static label rendered in this column's summary cell when the column is
-     * not aggregated (for example `'Total'` in the first column).
+     * Label rendered in this column's summary cell when the column is not
+     * aggregated (for example `'Total'` in the first column). A callback can
+     * return a different label per summary row.
      */
-    label?: string;
+    label?: SummaryColumnLabel;
 }

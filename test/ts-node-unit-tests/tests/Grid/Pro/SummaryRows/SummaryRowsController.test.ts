@@ -48,10 +48,10 @@ describe('SummaryRowsController', () => {
                     name: ['a', 'b', 'c'],
                     sales: [10, 20, 30],
                     margin: [1, 2, 6]
-                },
-                summary: {
-                    enabled: true
                 }
+            },
+            summaryRows: {
+                enabled: true
             },
             columns: [{
                 id: 'name',
@@ -86,6 +86,105 @@ describe('SummaryRowsController', () => {
         );
     });
 
+    it('should append multiple summary rows selecting the function per row',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: [{ id: 'total' }, { id: 'average' }],
+                columns: [{
+                    id: 'name',
+                    summary: {
+                        label: (context: any) => (
+                            context.summaryRowId === 'total' ?
+                                'Total' : 'Average'
+                        )
+                    }
+                }, {
+                    id: 'sales',
+                    summary: {
+                        aggregator: (context: any) => (
+                            context.summaryRowIndex === 0 ? 'SUM' : 'AVERAGE'
+                        )
+                    }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const columns = presentationColumns(grid);
+
+            deepStrictEqual(
+                columns.sales,
+                [10, 20, 30, 60, 20],
+                'Should append a SUM row then an AVERAGE row.'
+            );
+            deepStrictEqual(
+                columns.name,
+                ['a', 'b', 'c', 'Total', 'Average'],
+                'Each summary row should resolve its own label.'
+            );
+        });
+
+    it('should inherit the aggregator from columnDefaults and allow opt-out',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        region: ['a', 'b', 'c'],
+                        q1: [10, 20, 30],
+                        q2: [1, 2, 3]
+                    }
+                },
+                summaryRows: {
+                    enabled: true
+                },
+                columnDefaults: {
+                    summary: { aggregator: 'SUM' }
+                },
+                columns: [{
+                    id: 'region',
+                    summary: { aggregator: null, label: 'Total' }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const columns = presentationColumns(grid);
+
+            deepStrictEqual(
+                columns.q1,
+                [10, 20, 30, 60],
+                'Columns without own summary should inherit the SUM default.'
+            );
+            deepStrictEqual(
+                columns.q2,
+                [1, 2, 3, 6],
+                'The columnDefaults aggregator should apply to every column.'
+            );
+            deepStrictEqual(
+                columns.region,
+                ['a', 'b', 'c', 'Total'],
+                'A null aggregator should opt a column out and keep its label.'
+            );
+        });
+
     it('should not append a summary row when disabled', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
@@ -98,10 +197,10 @@ describe('SummaryRowsController', () => {
                 columns: {
                     name: ['a', 'b', 'c'],
                     sales: [10, 20, 30]
-                },
-                summary: {
-                    enabled: false
                 }
+            },
+            summaryRows: {
+                enabled: false
             },
             columns: [{
                 id: 'sales',
@@ -130,10 +229,10 @@ describe('SummaryRowsController', () => {
                 columns: {
                     name: ['a', 'b', 'c'],
                     sales: [10, 20, 30]
-                },
-                summary: {
-                    enabled: true
                 }
+            },
+            summaryRows: {
+                enabled: true
             },
             columns: [{
                 id: 'name',
