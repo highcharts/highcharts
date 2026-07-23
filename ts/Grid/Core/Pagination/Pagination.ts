@@ -44,7 +44,7 @@ import {
     merge
 } from '../../../Shared/Utilities.js';
 
-const { makeHTMLElement, formatText, joinClassNames, applyUserClassNames } =
+const { makeHTMLElement, formatText, joinClassNames } =
     GridUtils;
 
 const paginationAlignments = [
@@ -165,11 +165,6 @@ class Pagination {
     public pageInfoElement?: HTMLElement;
 
     /**
-     * Last applied user class name on the pagination root.
-     */
-    private appliedClassName?: string;
-
-    /**
      * Old total number of items (rows) to compare with the current total items.
      */
     private oldTotalItems?: number;
@@ -185,6 +180,12 @@ class Pagination {
      * @internal
      */
     public isDirtyAlignment?: boolean;
+
+    /**
+     * Whether the pagination root user class name should be updated.
+     * @internal
+     */
+    public isDirtyClassName?: boolean;
 
 
     /* *
@@ -265,13 +266,7 @@ class Pagination {
         }
 
         if ('className' in diff) {
-            if (this.contentWrapper) {
-                this.appliedClassName = applyUserClassNames(
-                    this.contentWrapper,
-                    this.appliedClassName,
-                    this.options?.className
-                );
-            }
+            this.isDirtyClassName = true;
             delete diff.className;
         }
 
@@ -324,8 +319,6 @@ class Pagination {
                     this.paginationContainer : grid.contentWrapper
             );
 
-            this.appliedClassName = this.options?.className;
-
             this.contentWrapper.setAttribute(
                 'aria-label',
                 'Results pagination'
@@ -357,14 +350,29 @@ class Pagination {
         const alignmentClasses = paginationAlignments.map(alignmentClassName);
 
         wrapper.classList.remove(...alignmentClasses);
+        wrapper.classList.add(this.getAlignmentClass());
+    }
 
-        const alignmentClass = this.getAlignmentClass();
-        wrapper.classList.add(alignmentClass);
+    public updateClassName(): void {
+        const wrapper = this.contentWrapper;
+
+        if (!wrapper) {
+            return;
+        }
+
+        wrapper.className = joinClassNames(
+            Globals.getClassName('pagination'),
+            this.options?.className
+        );
     }
 
     public redraw(): void {
         if (this.isDirtyQuerying) {
             this.updateControls(true);
+        }
+
+        if (this.isDirtyClassName) {
+            this.updateClassName();
         }
 
         if (this.isDirtyAlignment) {
@@ -373,6 +381,7 @@ class Pagination {
 
         delete this.isDirtyQuerying;
         delete this.isDirtyAlignment;
+        delete this.isDirtyClassName;
     }
 
     /**
@@ -425,8 +434,6 @@ class Pagination {
                 this.options?.className
             )
         }, customContainer);
-
-        this.appliedClassName = this.options?.className;
     }
 
     /**

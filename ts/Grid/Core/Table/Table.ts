@@ -162,12 +162,6 @@ class Table {
     public virtualRows: boolean = true;
 
     /**
-     * Last applied user class name on the table element.
-     * @internal
-     */
-    public appliedTableClassName?: string;
-
-    /**
      * Cell context menu instance (lazy created).
      */
     private cellContextMenu?: CellContextMenu;
@@ -260,7 +254,7 @@ class Table {
             }
 
             if (customClassName) {
-                this.appliedTableClassName = applyUserClassNames(
+                applyUserClassNames(
                     tableElement,
                     void 0,
                     customClassName
