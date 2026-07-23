@@ -24,6 +24,10 @@ body {
     height: 500px;
 }
 
+.cloud-layer {
+    pointer-events: none;
+}
+
 .highcharts-description {
     background: light-dark(#f2f6f2, #323232);
     border-radius: 0 4px 4px 0;
