@@ -88,6 +88,21 @@ class SummaryRowsController {
     }
 
     /**
+     * Returns whether a source column participates in summary aggregation, so
+     * editing it must recompute the totals.
+     *
+     * @param columnId
+     * Source column id.
+     */
+    public hasColumnAggregator(columnId: string): boolean {
+        if (!this.getSummaryRowOptions().length) {
+            return false;
+        }
+
+        return !!this.getColumnSummaryOptions(columnId)?.aggregator;
+    }
+
+    /**
      * Recomputes the summary row objects from the queried table.
      *
      * Aggregation runs over all rows of the queried table, after

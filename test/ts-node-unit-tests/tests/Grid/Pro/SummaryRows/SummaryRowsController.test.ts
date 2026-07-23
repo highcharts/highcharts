@@ -164,6 +164,95 @@ describe('SummaryRowsController', () => {
             );
         });
 
+    it('should report which columns aggregate for edit-driven recompute',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: {
+                    enabled: true
+                },
+                columns: [{
+                    id: 'name',
+                    summary: { label: 'Total' }
+                }, {
+                    id: 'sales',
+                    summary: { aggregator: 'SUM' }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const controller = (grid as any).summaryRows;
+            strictEqual(
+                controller.hasColumnAggregator('sales'),
+                true,
+                'An aggregated column must be flagged for recompute.'
+            );
+            strictEqual(
+                controller.hasColumnAggregator('name'),
+                false,
+                'A label-only column must not trigger recompute.'
+            );
+        });
+
+    it('should recompute the totals after the data changes', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    name: ['a', 'b', 'c'],
+                    sales: [10, 20, 30]
+                }
+            },
+            summaryRows: {
+                enabled: true
+            },
+            columns: [{
+                id: 'sales',
+                summary: { aggregator: 'SUM' }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            summaryRowObjects(grid)[0].sales,
+            60,
+            'Initial SUM should aggregate the original data.'
+        );
+
+        await grid.update({
+            data: {
+                columns: {
+                    name: ['a', 'b', 'c'],
+                    sales: [1, 2, 3]
+                }
+            }
+        });
+
+        deepStrictEqual(
+            summaryRowObjects(grid)[0].sales,
+            6,
+            'The SUM must recompute after the data changes.'
+        );
+    });
+
     it('should compute no summary rows when disabled', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);

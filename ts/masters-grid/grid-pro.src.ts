@@ -159,7 +159,7 @@ RowPinningComposition.compose(
     G.TableRow, G.TableCell
 );
 TreeViewComposition.compose(G.Grid, G.Table, G.TableCell);
-SummaryRowsComposition.compose(G.Grid, G.Table);
+SummaryRowsComposition.compose(G.Grid, G.Table, G.TableCell);
 ResponsiveComposition.compose(G.Grid);
 
 
