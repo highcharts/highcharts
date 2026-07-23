@@ -43,9 +43,7 @@ const {
 /** @internal */
 declare module '../../Core/Series/KDPointSearchObjectBase' {
     interface KDPointSearchObjectBase {
-        /** @internal */
         lat?: number;
-        /** @internal */
         lon?: number;
     }
 }
@@ -53,9 +51,7 @@ declare module '../../Core/Series/KDPointSearchObjectBase' {
 /** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
-        /** @internal */
         lat?: number;
-        /** @internal */
         lon?: number;
     }
 }

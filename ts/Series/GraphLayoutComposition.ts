@@ -38,7 +38,6 @@ import { addEvent, pushUnique } from '../Shared/Utilities.js';
 /** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase {
-        /** @internal */
         graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
@@ -46,23 +45,14 @@ declare module '../Core/Chart/ChartBase' {
 /** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
-        /** @internal */
         dispX?: number;
-        /** @internal */
         dispY?: number;
-        /** @internal */
         fromNode?: Point;
-        /** @internal */
         linksFrom?: Array<Point>;
-        /** @internal */
         linksTo?: Array<Point>;
-        /** @internal */
         mass?: number;
-        /** @internal */
         prevX?: number;
-        /** @internal */
         prevY?: number;
-        /** @internal */
         toNode?: Point;
     }
 }
@@ -70,7 +60,6 @@ declare module '../Core/Series/PointBase' {
 /** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
-        /** @internal */
         forces?: Array<string>;
     }
 }
