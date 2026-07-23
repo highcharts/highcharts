@@ -286,11 +286,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @excluding marker
      *
-     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
-     *
      * @product highcharts highstock
-     *
-     * @apioption series.column.data
      */
     data?: Array<(ColumnPointOptions|PointShortOptions)>;
 
@@ -434,32 +430,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     states?: SeriesStatesOptions<ColumnSeriesOptions>;
 
     /**
-     * Options for the hovered point. These settings override the normal
-     * state options when a point is moused over or touched.
-     *
-     * @extends plotOptions.series.states.hover
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.hover
-     */
-
-    /**
-     * Options for the selected point. These settings override the
-     * normal state options when a point is selected.
-     *
-     * @extends plotOptions.series.states.select
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.select
-     */
-
-    /**
      * The Y axis value to serve as the base for the columns, for
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
@@ -471,6 +441,15 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     threshold?: (number|null);
 
     tooltip?: ColumnSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataParser?: undefined;
+    dataURL?: undefined;
 }
 
 export interface ColumnSeriesTooltipOptions extends SeriesTooltipOptions {

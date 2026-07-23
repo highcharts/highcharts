@@ -32,6 +32,7 @@ const {
  *
  * */
 
+/** @internal */
 class ContourPoint extends ScatterPoint {
 
     public value!: (number|null);
@@ -49,4 +50,5 @@ class ContourPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 export default ContourPoint;

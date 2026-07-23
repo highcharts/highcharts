@@ -36,6 +36,7 @@ const {
  *
  * */
 
+/** @internal */
 class CylinderPoint extends ColumnPoint {
 
     /* *
@@ -56,6 +57,7 @@ class CylinderPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 interface CylinderPoint {
     shapeType: string;
 }
@@ -70,4 +72,5 @@ extend(CylinderPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default CylinderPoint;
