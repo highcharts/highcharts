@@ -271,6 +271,47 @@ export function joinClassNames(
 }
 
 /**
+ * Replaces previously applied user class tokens on an element without touching
+ * other classes (e.g. Core `hcg-*` tokens).
+ *
+ * @param element
+ * The element to update.
+ *
+ * @param previous
+ * Previously applied user class name string.
+ *
+ * @param next
+ * New user class name string.
+ *
+ * @returns
+ * The class name string that was applied, or `undefined` when cleared.
+ */
+export function applyUserClassNames(
+    element: Element,
+    previous?: string,
+    next?: string
+): (string | undefined) {
+    if (previous) {
+        const prevTokens = previous.split(/\s+/g).filter(Boolean);
+        if (prevTokens.length) {
+            element.classList.remove(...prevTokens);
+        }
+    }
+
+    if (!next) {
+        return;
+    }
+
+    const nextTokens = next.split(/\s+/g).filter(Boolean);
+    if (!nextTokens.length) {
+        return;
+    }
+
+    element.classList.add(...nextTokens);
+    return nextTokens.join(' ');
+}
+
+/**
  * Checks whether two objects have the same own keys and values.
  *
  * Supports nested plain objects and arrays. Functions are compared by
@@ -430,6 +471,7 @@ export default {
     createOptionsProxy,
     formatText,
     joinClassNames,
+    applyUserClassNames,
     isDeepEqual,
     resolveStyleValue,
     mergeStyleValues,

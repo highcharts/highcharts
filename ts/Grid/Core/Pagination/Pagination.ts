@@ -44,7 +44,8 @@ import {
     merge
 } from '../../../Shared/Utilities.js';
 
-const { makeHTMLElement, formatText, joinClassNames } = GridUtils;
+const { makeHTMLElement, formatText, joinClassNames, applyUserClassNames } =
+    GridUtils;
 
 const paginationAlignments = [
     'left',
@@ -164,6 +165,11 @@ class Pagination {
     public pageInfoElement?: HTMLElement;
 
     /**
+     * Last applied user class name on the pagination root.
+     */
+    private appliedClassName?: string;
+
+    /**
      * Old total number of items (rows) to compare with the current total items.
      */
     private oldTotalItems?: number;
@@ -258,6 +264,17 @@ class Pagination {
             delete diff.alignment;
         }
 
+        if ('className' in diff) {
+            if (this.contentWrapper) {
+                this.appliedClassName = applyUserClassNames(
+                    this.contentWrapper,
+                    this.appliedClassName,
+                    this.options?.className
+                );
+            }
+            delete diff.className;
+        }
+
         // TODO: Optimize more options here.
 
         if (Object.keys(diff).length > 0) {
@@ -306,6 +323,8 @@ class Pagination {
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
             );
+
+            this.appliedClassName = this.options?.className;
 
             this.contentWrapper.setAttribute(
                 'aria-label',
@@ -406,6 +425,8 @@ class Pagination {
                 this.options?.className
             )
         }, customContainer);
+
+        this.appliedClassName = this.options?.className;
     }
 
     /**

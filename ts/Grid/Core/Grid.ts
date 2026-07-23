@@ -51,7 +51,8 @@ import {
     makeHTMLElement,
     setHTMLContent,
     createOptionsProxy,
-    joinClassNames
+    joinClassNames,
+    applyUserClassNames
 } from './GridUtils.js';
 import Table from './Table/Table.js';
 import QueryingController from './Querying/QueryingController.js';
@@ -174,6 +175,11 @@ export class Grid {
     public captionElement?: HTMLElement;
 
     /**
+     * Last applied user class name on the caption element.
+     */
+    private appliedCaptionClassName?: string;
+
+    /**
      * Resolver for data binding and column capabilities.
      */
     public readonly columnPolicy: ColumnPolicyResolver =
@@ -193,6 +199,11 @@ export class Grid {
      * The description element of the Grid.
      */
     public descriptionElement?: HTMLElement;
+
+    /**
+     * Last applied user class name on the description element.
+     */
+    private appliedDescriptionClassName?: string;
 
     /**
      * The container element of the loading indicator overlaying the Grid.
@@ -794,6 +805,53 @@ export class Grid {
             }
             delete diff.pagination;
 
+            if (diff.caption && 'className' in diff.caption) {
+                if (this.captionElement) {
+                    this.appliedCaptionClassName = applyUserClassNames(
+                        this.captionElement,
+                        this.appliedCaptionClassName,
+                        this.options?.caption?.className
+                    );
+                }
+                delete diff.caption.className;
+                if (Object.keys(diff.caption).length < 1) {
+                    delete diff.caption;
+                }
+            }
+
+            if (diff.description && 'className' in diff.description) {
+                if (this.descriptionElement) {
+                    this.appliedDescriptionClassName = applyUserClassNames(
+                        this.descriptionElement,
+                        this.appliedDescriptionClassName,
+                        this.options?.description?.className
+                    );
+                }
+                delete diff.description.className;
+                if (Object.keys(diff.description).length < 1) {
+                    delete diff.description;
+                }
+            }
+
+            if (
+                diff.rendering?.table &&
+                'className' in diff.rendering.table
+            ) {
+                const tableElement = viewport.tableElement;
+                viewport.appliedTableClassName = applyUserClassNames(
+                    tableElement,
+                    viewport.appliedTableClassName,
+                    this.options?.rendering?.table?.className
+                );
+                delete diff.rendering.table.className;
+                if (Object.keys(diff.rendering.table).length < 1) {
+                    delete diff.rendering.table;
+                }
+                if (Object.keys(diff.rendering).length < 1) {
+                    delete diff.rendering;
+                }
+            }
+
             // TODO(update): Add more options that can be optimized here.
 
             if (Object.keys(diff).length > 0) {
@@ -1362,6 +1420,7 @@ export class Grid {
             attributes: { 'class': className, id: this.id + '-caption' }
         }]).addToDOM(this.contentWrapper) as HTMLElement;
 
+        this.appliedCaptionClassName = captionOptions.className;
         setHTMLContent(this.captionElement, captionOptions.text);
     }
 
@@ -1391,6 +1450,7 @@ export class Grid {
             this.descriptionElement.classList.add(
                 ...descriptionOptions.className.split(/\s+/g)
             );
+            this.appliedDescriptionClassName = descriptionOptions.className;
         }
     }
 

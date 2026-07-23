@@ -42,7 +42,7 @@ import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import CellContextMenu from './Body/CellContextMenu.js';
 import CellContextMenuBuiltInActions from './Body/CellContextMenuBuiltInActions.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
 
 /* *
@@ -162,6 +162,12 @@ class Table {
     public virtualRows: boolean = true;
 
     /**
+     * Last applied user class name on the table element.
+     * @internal
+     */
+    public appliedTableClassName?: string;
+
+    /**
      * Cell context menu instance (lazy created).
      */
     private cellContextMenu?: CellContextMenu;
@@ -254,7 +260,11 @@ class Table {
             }
 
             if (customClassName) {
-                tableElement.classList.add(...customClassName.split(/\s+/g));
+                this.appliedTableClassName = applyUserClassNames(
+                    tableElement,
+                    void 0,
+                    customClassName
+                );
             }
             tableElement.classList.add(
                 Globals.getClassName('scrollableContent')
