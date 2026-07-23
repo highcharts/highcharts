@@ -9,9 +9,8 @@ const MOCK_TICKER_COUNT = 15;
     // Seed the cache with generated demo securities and cache fetched data.
     const dataCache = {};
     const GAP = 2; // % horizontal gap between columns
-    // Wider vertical gap: each pane's x-axis labels render just below it, and
-    // the pane below pins its tooltip at its own top — too small a gap lets
-    // that tooltip cover the labels of the row above.
+    // Wider vertical gap so a pane's x-axis labels aren't covered by the
+    // tooltip pinned at the top of the pane below.
     const ROW_GAP = 5;
 
     let activeTickers = REAL_TICKERS.concat(['MOCK1', 'MOCK2']);
@@ -35,10 +34,8 @@ const MOCK_TICKER_COUNT = 15;
     // panes inherit these; groupId ties pane instances to their template.
     const allIndicators = [];
 
-    // Restore the default tooltip format for every indicator type. Each
-    // indicator extends SMASeries but registers under its own series type, so
-    // plotOptions.sma alone does not propagate. We iterate seriesTypes once
-    // at startup and build a plotOptions entry per indicator type.
+    // Indicators extend SMASeries but register under their own type, so
+    // plotOptions.sma doesn't propagate — set the tooltip format per type.
     const indicatorPointFormat =
         '<span style="color:{point.color}">●</span> ' +
         '{series.name}: <b>{point.y}</b><br/>';
@@ -181,9 +178,8 @@ const MOCK_TICKER_COUNT = 15;
         });
     }
 
-    // Drag-pane resizers bind only to the next axis in the same column. The
-    // last axis in the column has no resizer, so dragging cannot reach into
-    // another column.
+    // Resizers bind only to the next axis in the same column, so dragging
+    // can't reach into another column.
     function bindColumnResizers(theChart, ticker) {
         const parentAxis = theChart.get('y-' + ticker);
         if (!parentAxis) {
@@ -291,9 +287,8 @@ const MOCK_TICKER_COUNT = 15;
         }
     }
 
-    // All pane instances a popup action applies to: the picked one, or —
-    // with "All securities" — its whole group. Indicators added without a
-    // group match by type instead.
+    // Pane instances a popup action applies to: the picked one, or its whole
+    // group with "All securities" (by groupId, or by type if ungrouped).
     function getTargetEntries(seriesId, allSecurities) {
         const all = Object.entries(paneIndicators).flatMap(
             ([ticker, entries]) => entries.map(entry => ({ ticker, entry }))
@@ -434,10 +429,8 @@ const MOCK_TICKER_COUNT = 15;
         });
     }
 
-    // The popup is wiped on every open, so (re)inject the checkboxes each
-    // time — one per tab. They must sit outside .highcharts-popup-rhs-col —
-    // the popup's getFields reads every input there and would mistake them
-    // for the indicator type.
+    // Popup is wiped on every open, so re-inject the checkbox per tab —
+    // outside .highcharts-popup-rhs-col, which getFields scans for inputs.
     function injectAllSecuritiesCheckboxes(navigation) {
         const tabs = navigation.popup && navigation.popup.container
             .querySelectorAll('.highcharts-tab-item-content');
@@ -463,11 +456,8 @@ const MOCK_TICKER_COUNT = 15;
         return !!(box && box.checked);
     }
 
-    // linkedTo can't be used across panes of different widths: linked axes
-    // translate with the parent's pixel scale (Axis#translate, #1417), which
-    // misplaces points once the last row expands. Sync extremes manually
-    // instead. setExtremes (not afterSetExtremes) fires before the
-    // initiating redraw, so one redraw covers all panes.
+    // linkedTo breaks across panes of different widths (#1417), so sync
+    // extremes manually on setExtremes (fires before the initiating redraw).
     function syncExtremes(e) {
         const axis = this;
         if (e.trigger === 'syncExtremes') {
@@ -615,9 +605,8 @@ const MOCK_TICKER_COUNT = 15;
         if (activeTickers.length <= 1) {
             return;
         }
-        // Indicator axes/series for this ticker get dropped automatically by
-        // chart.update(..., oneToOne: true) since they're absent from the new
-        // config. Drop our state so they don't reappear on next rebuild.
+        // oneToOne update drops this ticker's axes/series; drop our state too
+        // so they don't reappear on the next rebuild.
         delete paneIndicators[ticker];
         activeTickers = activeTickers.filter(t => t !== ticker);
         rebuild();
@@ -641,11 +630,8 @@ const MOCK_TICKER_COUNT = 15;
         return null;
     }
 
-    // Points to pin per pane: the main series' latest visible point, plus each
-    // indicator that has a value at that same date. Price-histogram overlays
-    // like Volume by Price have no point at the latest date, so they are
-    // skipped — otherwise their stray points crowd the split tooltip and it
-    // drops other panes' labels (the "random / missing tooltip" bug).
+    // Pin the main series' latest visible point plus indicators with a value
+    // at that date; skips histograms (VBP) that would crowd the split tooltip.
     function getPaneTooltipPoints(theChart) {
         const points = [];
         activeTickers.forEach(ticker => {
@@ -770,9 +756,8 @@ const MOCK_TICKER_COUNT = 15;
                     'highcharts-series-type-hollowcandlestick',
                     { type: 'hollowcandlestick' }
                 ),
-                // Override the default indicators binding so the popup's
-                // submit goes through our column-aware handler instead of
-                // the global stack-everything-vertically resizer.
+                // Route the popup submit through our column-aware handler
+                // instead of the default vertical-stacking one.
                 indicators: {
                     className: 'highcharts-indicators',
                     init: function () {
@@ -835,11 +820,8 @@ const MOCK_TICKER_COUNT = 15;
     wireControls();
     renderTickerChips();
 
-    // Split-tooltip distribute() is 1-D (Tooltip.renderSplit): with fixed,
-    // pane-relative tooltips it stacks side-by-side panes on top of each
-    // other. Re-anchor each pane's partial tooltips to the top of its own
-    // yAxis after refresh. Registered on the shared class but guarded on this
-    // chart instance, so other charts on the page are never touched.
+    // Split tooltip's distribute() is 1-D and stacks side-by-side panes; re-
+    // anchor each pane's tooltips to its own yAxis top. Guarded to this chart.
     Highcharts.addEvent(Highcharts.Tooltip, 'refresh', function () {
         const opts = this.options;
         if (this.chart !== chart || !opts.fixed) {
@@ -865,9 +847,8 @@ const MOCK_TICKER_COUNT = 15;
         });
     });
 
-    // Keep the pane tooltips pinned to the latest points instead of hiding
-    // (there is no built-in "always visible" tooltip). Same chart-scoped
-    // guard so other charts hide normally.
+    // Keep tooltips pinned to the latest points instead of hiding (no built-in
+    // "always visible" option). Guarded to this chart.
     Highcharts.wrap(Highcharts.Tooltip.prototype, 'hide', function (
         proceed,
         delay
@@ -878,6 +859,66 @@ const MOCK_TICKER_COUNT = 15;
         }
 
         proceed.call(this, delay);
+    });
+
+    // Confine crosshairs to their pane: the stock default (acrossPanes) spans
+    // all rows; acrossPanes:false uses the per-pane path (cf. Tick, #18025).
+    Highcharts.wrap(
+        Highcharts.Axis.prototype,
+        'getPlotLinePath',
+        function (proceed, options) {
+            if (
+                this.chart === chart &&
+                options &&
+                options.acrossPanes === void 0
+            ) {
+                options = Highcharts.merge(options, { acrossPanes: false });
+            }
+            return proceed.call(this, options);
+        }
+    );
+
+    // Pick the hovered date from the pane under the cursor: restrict the
+    // nearest-point search to series whose pane rect holds the pointer.
+    Highcharts.addEvent(chart.pointer, 'beforeGetHoverData', function (e) {
+        const x = e.chartX,
+            y = e.chartY;
+        e.filter = series => {
+            const xAxis = series.xAxis,
+                yAxis = series.yAxis;
+            return series.visible && !!xAxis && !!yAxis &&
+                x >= xAxis.pos && x <= xAxis.pos + xAxis.len &&
+                y >= yAxis.pos && y <= yAxis.pos + yAxis.len;
+        };
+    });
+
+    // The filter also narrows the shared set to one pane; re-expand it with
+    // every pane's point at the hovered x so all stay synced and active.
+    Highcharts.wrap(chart.pointer, 'getHoverData', function (proceed) {
+        const data = proceed.apply(
+            this,
+            Array.prototype.slice.call(arguments, 1)
+        );
+        const hoverPoint = data.hoverPoint;
+        if (hoverPoint) {
+            const seen = new Set(data.hoverPoints);
+            chart.series.forEach(series => {
+                if (
+                    series.options.isInternal || !series.visible ||
+                    !series.points
+                ) {
+                    return;
+                }
+                const point = series.points.find(
+                    p => p.x === hoverPoint.x && !p.isNull
+                );
+                if (point && !seen.has(point)) {
+                    data.hoverPoints.push(point);
+                    seen.add(point);
+                }
+            });
+        }
+        return data;
     });
 
     // Initial paint rendered before the refresh handler above existed; run one
@@ -907,14 +948,11 @@ const MOCK_TICKER_COUNT = 15;
             typeof ext.userMax === 'number' ? ext.userMax : ext.max,
             false
         );
-        // Force a full box recomputation: when axes' top/left/width/height
-        // change via update(), grid lines and tick positions don't refresh
-        // until something marks the chart as dirtyBox (browser resize does
-        // this implicitly).
+        // Axis geometry changed via update() doesn't refresh grid/ticks until
+        // the chart is marked dirtyBox.
         chart.isDirtyBox = true;
-        // Series must re-render too — axes get new positions during the
-        // dirtyBox pass, but clean series keep their old geometry until the
-        // next unrelated redraw.
+        // Series must re-render too, else clean series keep old geometry after
+        // the axes move.
         chart.series.forEach(series => {
             series.isDirty = true;
         });
