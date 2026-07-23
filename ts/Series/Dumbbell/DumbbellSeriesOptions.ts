@@ -87,7 +87,23 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * @product highcharts highstock
      */
     connectorWidth?: number;
+
+    /**
+     * Padding between each value groups, in x axis units.
+     *
+     * @default 0.2
+     *
+     * @product highcharts highstock
+     */
     groupPadding?: number;
+
+    /**
+     * Padding between each column or bar, in x axis units.
+     *
+     * @default 0.1
+     *
+     * @product highcharts highstock
+     */
     pointPadding?: number;
 
     /**
@@ -194,16 +210,45 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      */
     legendSymbol?: AreaRangeSeriesOptions['legendSymbol'];
 
+    /**
+     * Whether to crisp the dumbbell connector, effectively aligning the
+     * line to the pixel grid. Overrides `crisp` on the series, which
+     * defaults to `true`.
+     *
+     * @default false
+     *
+     * @product highcharts highstock
+     */
     crisp?: boolean;
 
+    /**
+     * @internal
+     */
     stickyTracking?: boolean;
 
+    /**
+     * The X axis range that each point is valid for. Overrides
+     * `pointRange` on the series, which defaults to `0`.
+     *
+     * @default 1
+     *
+     * @product highcharts highstock
+     */
     pointRange?: number;
 
+    /**
+     * @internal
+     */
     lineWidth?: number;
 
+    /**
+     * @internal
+     */
     fillColor?: ColorType;
 
+    /**
+     * @internal
+     */
     trackByArea?: boolean;
 
     /* *

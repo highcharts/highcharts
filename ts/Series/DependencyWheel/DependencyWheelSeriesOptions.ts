@@ -90,6 +90,13 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      */
     center?: Array<(number|string|null)>;
 
+    /**
+     * Higher numbers makes the links in a sankey diagram or dependency
+     * wheel render more curved. A `curveFactor` of 0 makes the lines
+     * straight.
+     *
+     * @default 0.6
+     */
     curveFactor?: number;
 
     /**
