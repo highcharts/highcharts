@@ -268,6 +268,35 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     states?: SeriesStatesOptions<HeatmapSeriesOptions>;
 
     tooltip?: HeatmapSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    animationLimit?: undefined;
+    cluster?: undefined;
+    connectEnds?: undefined;
+    connectNulls?: undefined;
+    cropThreshold?: undefined;
+    dashStyle?: undefined;
+    dataParser?: undefined;
+    dataURL?: undefined;
+    dragDrop?: undefined;
+    findNearestPointBy?: undefined;
+    jitter?: undefined;
+    linecap?: undefined;
+    lineWidth?: undefined;
+    pointInterval?: undefined;
+    pointIntervalUnit?: undefined;
+    pointStart?: undefined;
+    shadow?: undefined;
+    softThreshold?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
+    step?: undefined;
+    threshold?: undefined;
 }
 
 export interface HeatmapSeriesTooltipOptions

@@ -61,7 +61,7 @@ class HeatmapPoint extends ScatterPoint {
      *
      * */
 
-    /** @private */
+    /** @internal */
     public applyOptions(
         options: HeatmapPointOptions,
         x?: number
@@ -79,7 +79,7 @@ class HeatmapPoint extends ScatterPoint {
         return this;
     }
 
-    /** @private */
+    /** @internal */
     public getCellAttributes(): HeatmapPoint.CellAttributes {
         const point = this,
             series = point.series,
@@ -189,7 +189,7 @@ class HeatmapPoint extends ScatterPoint {
     }
 
     /**
-     * @private
+     * @internal
      */
     public haloPath(
         size: number
@@ -213,7 +213,7 @@ class HeatmapPoint extends ScatterPoint {
     /**
      * Color points have a value option that determines whether or not it is
      * a null point
-     * @private
+     * @internal
      */
     public isValid(): boolean {
         // Undefined is allowed
@@ -254,6 +254,9 @@ namespace HeatmapPoint {
      *
      * */
 
+    /**
+     * @internal
+     */
     export interface CellAttributes extends Record<string, number> {
         x1: number;
         x2: number;

@@ -82,7 +82,7 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.heatmap
  *
@@ -134,7 +134,7 @@ class HeatmapSeries extends ScatterSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const
@@ -270,14 +270,14 @@ class HeatmapSeries extends ScatterSeries {
 
     /**
      * Override to use rectangle by default
-     * @private
+     * @internal
      */
     getSymbol(): void {
         this.symbol = this.options.marker?.symbol || 'rect';
     }
 
     /**
-     * @private
+     * @internal
      */
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
@@ -298,7 +298,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * Override to also allow null points, used when building the k-d-tree for
      * tooltips in boost mode.
-     * @private
+     * @internal
      */
     getValidPoints(
         points?: Array<HeatmapPoint>,
@@ -315,7 +315,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.dataTable.rowCount;
@@ -323,7 +323,7 @@ class HeatmapSeries extends ScatterSeries {
 
     /**
      * Override the init method to add point ranges on both axes.
-     * @private
+     * @internal
      */
     public init(): void {
         super.init.apply(this, arguments);
@@ -358,7 +358,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public markerAttribs(
         point: HeatmapPoint,
@@ -419,7 +419,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: HeatmapPoint,
@@ -476,7 +476,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -586,7 +586,7 @@ extend(HeatmapSeries.prototype, {
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
-     * @private
+     * @internal
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
