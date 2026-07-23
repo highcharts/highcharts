@@ -50,6 +50,13 @@ interface DumbbellPointOptions extends AreaRangePointOptions {
      */
     connectorWidth?: number;
 
+    /**
+     * A name for the dash style to use for the connector line that
+     * connects the dumbbell point's values. Overrides `dashStyle` on the
+     * series.
+     *
+     * @product highcharts highstock
+     */
     dashStyle?: DashStyleValue;
 
     /**

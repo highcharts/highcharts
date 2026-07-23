@@ -27,6 +27,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
  *
  * */
 
+/** @internal */
 declare class DotPlotPoint extends ColumnPoint {
     public options: DotPlotPointOptions;
     public pointAttr?: SVGAttributes;
@@ -39,4 +40,5 @@ declare class DotPlotPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default DotPlotPoint;

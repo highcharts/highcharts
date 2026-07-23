@@ -84,14 +84,19 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
-     * @type {Array<number|string|null>}
-     *
      * @default [null, null]
      *
      * @product highcharts
      */
     center?: Array<(number|string|null)>;
 
+    /**
+     * Higher numbers makes the links in a sankey diagram or dependency
+     * wheel render more curved. A `curveFactor` of 0 makes the lines
+     * straight.
+     *
+     * @default 0.6
+     */
     curveFactor?: number;
 
     /**
@@ -115,8 +120,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *         weight: 5
      *     }]
      *  ```
-     *
-     * @type {Array<Array<string,string,number>|*>}
      *
      * @extends series.sankey.data
      *
@@ -200,8 +203,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
     /**
      * Size of the wheel in pixel or percent relative to the canvas space.
      *
-     * @type {number|string}
-     *
      * @default 100%
      *
      * @apioption plotOptions.dependencywheel.size
@@ -214,6 +215,16 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
     startAngle?: number;
 
     states?: SeriesStatesOptions<DependencyWheelSeriesOptions>;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataSorting?: undefined;
+    nodeAlignment?: undefined;
+    nodeDistance?: undefined;
 
 }
 
