@@ -23,11 +23,9 @@
 
 import type DataTable from '../../../Data/DataTable';
 import type {
-    CellType as DataTableCellType
+    RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
-import type Table from '../../Core/Table/Table';
-import type TableRow from '../../Core/Table/Body/TableRow';
 import type {
     SummaryColumnAggregatorContext,
     SummaryColumnLabel,
@@ -46,7 +44,8 @@ import { defined } from '../../../Shared/Utilities.js';
  * */
 
 /**
- * Computes and injects a flat summary (total) row into the presentation table.
+ * Computes the flat summary (total) row objects for the current table. The
+ * objects are rendered in a dedicated frozen section by `SummaryView`.
  */
 class SummaryRowsController {
 
@@ -59,10 +58,9 @@ class SummaryRowsController {
     private readonly grid: Grid;
 
     /**
-     * Projected indices of the injected summary rows in the current
-     * presentation table, before pagination. Empty when none are injected.
+     * Summary row objects computed for the current queried table.
      */
-    private summaryRowIndices = new Set<number>();
+    private rowObjects: DataTableRowObject[] = [];
 
 
     /* *
@@ -83,28 +81,31 @@ class SummaryRowsController {
      * */
 
     /**
-     * Appends the configured summary rows to the queried table when enabled.
+     * Returns the summary row objects computed for the current table.
+     */
+    public getRowObjects(): DataTableRowObject[] {
+        return this.rowObjects;
+    }
+
+    /**
+     * Recomputes the summary row objects from the queried table.
      *
      * Aggregation runs over all rows of the queried table, after
      * filtering/sorting and before pagination.
      *
      * @param table
      * Queried table after filtering/sorting and before pagination.
-     *
-     * @return
-     * Table including the summary rows, or the input table when disabled.
      */
-    public projectTable(table: DataTable): DataTable {
-        this.summaryRowIndices.clear();
-
+    public updateFromTable(table: DataTable): void {
         const rowOptions = this.getSummaryRowOptions();
         if (!rowOptions.length) {
-            return table;
+            this.rowObjects = [];
+            return;
         }
 
         const columnIds = table.getColumnIds();
         const rowCount = table.getRowCount();
-        const summaryRows: Array<Record<string, DataTableCellType>> = [];
+        const rowObjects: DataTableRowObject[] = [];
 
         for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
             const summaryRow = this.buildSummaryRow(
@@ -116,26 +117,15 @@ class SummaryRowsController {
             );
 
             if (summaryRow) {
-                summaryRows.push(summaryRow);
+                rowObjects.push(summaryRow);
             }
         }
 
-        if (!summaryRows.length) {
-            return table;
-        }
-
-        const projectedTable = table.clone();
-        projectedTable.setRows(summaryRows);
-
-        for (let i = 0; i < summaryRows.length; ++i) {
-            this.summaryRowIndices.add(rowCount + i);
-        }
-
-        return projectedTable;
+        this.rowObjects = rowObjects;
     }
 
     /**
-     * Builds a single summary row, or `null` when it aggregates nothing.
+     * Builds a single summary row object, or `null` when it aggregates nothing.
      *
      * @param table
      * Queried table the aggregation runs over.
@@ -158,8 +148,8 @@ class SummaryRowsController {
         rowCount: number,
         summaryRowId: string,
         summaryRowIndex: number
-    ): Record<string, DataTableCellType> | null {
-        const summaryRow: Record<string, DataTableCellType> = {};
+    ): DataTableRowObject | null {
+        const summaryRow: DataTableRowObject = {};
         let hasAggregate = false;
 
         for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
@@ -191,19 +181,6 @@ class SummaryRowsController {
     }
 
     /**
-     * Returns whether a rendered row is one of the injected summary rows.
-     *
-     * @param row
-     * Rendered viewport row.
-     */
-    public isSummaryRow(row: TableRow): boolean {
-        return (
-            this.summaryRowIndices.size > 0 &&
-            this.summaryRowIndices.has(this.getProjectedRowIndex(row))
-        );
-    }
-
-    /**
      * Resolves a summary cell label from its option.
      *
      * @param label
@@ -217,48 +194,6 @@ class SummaryRowsController {
         context: SummaryColumnAggregatorContext
     ): string | null | undefined {
         return typeof label === 'function' ? label(context) : label;
-    }
-
-    /**
-     * Returns the enabled summary rows, normalizing the object-or-array option.
-     */
-    private getSummaryRowOptions(): SummaryRowOptions[] {
-        const summary = this.grid.options?.summaryRows;
-        if (!summary) {
-            return [];
-        }
-
-        return (Array.isArray(summary) ? summary : [summary])
-            .filter((row): boolean => row.enabled !== false);
-    }
-
-    /**
-     * Resolves the pre-pagination projected index of a rendered row.
-     *
-     * @param row
-     * Rendered viewport row.
-     */
-    private getProjectedRowIndex(row: TableRow): number {
-        const table = row.viewport;
-
-        return table.rows.indexOf(row) > -1 ?
-            row.index + this.getPaginationOffset(table) :
-            row.index;
-    }
-
-    /**
-     * Returns the number of rows skipped before the current page.
-     *
-     * @param table
-     * Table instance hosting the rendered rows.
-     */
-    private getPaginationOffset(table: Table): number {
-        const pagination = table.grid.querying.pagination;
-
-        return pagination.enabled ?
-            Math.max(0, pagination.currentPage - 1) *
-                pagination.currentPageSize :
-            0;
     }
 
     /**
@@ -284,6 +219,19 @@ class SummaryRowsController {
         }
 
         return;
+    }
+
+    /**
+     * Returns the enabled summary rows, normalizing the object-or-array option.
+     */
+    private getSummaryRowOptions(): SummaryRowOptions[] {
+        const summary = this.grid.options?.summaryRows;
+        if (!summary) {
+            return [];
+        }
+
+        return (Array.isArray(summary) ? summary : [summary])
+            .filter((row): boolean => row.enabled !== false);
     }
 
 }

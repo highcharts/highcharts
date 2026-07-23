@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual, strictEqual } from 'node:assert';
+import { deepStrictEqual, ok, strictEqual } from 'node:assert';
 
 import { mockObservers, setupDOM } from '../../../../test-utils';
 
@@ -30,12 +30,12 @@ function loadGridPro() {
     return import('../../../../../../ts/masters-grid/grid-pro.src.js');
 }
 
-function presentationColumns(grid: any): Record<string, unknown[]> {
-    return (grid.dataProvider as any).getDataTable(true).columns;
+function summaryRowObjects(grid: any): any[] {
+    return grid.summaryRows.getRowObjects();
 }
 
 describe('SummaryRowsController', () => {
-    it('should append a summary row aggregating the whole table', async () => {
+    it('should compute a summary row aggregating the whole table', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -67,26 +67,21 @@ describe('SummaryRowsController', () => {
 
         grid.viewport?.resizeObserver?.disconnect();
 
-        const columns = presentationColumns(grid);
+        deepStrictEqual(
+            summaryRowObjects(grid),
+            [{ name: 'Total', sales: 60, margin: 3 }],
+            'Should compute SUM, AVERAGE and the configured label.'
+        );
 
-        deepStrictEqual(
-            columns.sales,
-            [10, 20, 30, 60],
-            'Sales column should end with the SUM of all rows.'
-        );
-        deepStrictEqual(
-            columns.margin,
-            [1, 2, 6, 3],
-            'Margin column should end with the AVERAGE of all rows.'
-        );
-        deepStrictEqual(
-            columns.name,
-            ['a', 'b', 'c', 'Total'],
-            'Non-aggregated column should render the configured label.'
+        strictEqual(
+            (grid as any).viewport.summaryView.tbodyElement
+                .querySelectorAll('tr').length,
+            1,
+            'The summary section should render one row.'
         );
     });
 
-    it('should append multiple summary rows selecting the function per row',
+    it('should compute multiple summary rows selecting the function per row',
         async () => {
             const { win, doc, el } = setupDOM();
             mockObservers(win);
@@ -122,17 +117,13 @@ describe('SummaryRowsController', () => {
 
             grid.viewport?.resizeObserver?.disconnect();
 
-            const columns = presentationColumns(grid);
-
             deepStrictEqual(
-                columns.sales,
-                [10, 20, 30, 60, 20],
-                'Should append a SUM row then an AVERAGE row.'
-            );
-            deepStrictEqual(
-                columns.name,
-                ['a', 'b', 'c', 'Total', 'Average'],
-                'Each summary row should resolve its own label.'
+                summaryRowObjects(grid),
+                [
+                    { name: 'Total', sales: 60 },
+                    { name: 'Average', sales: 20 }
+                ],
+                'Should compute a SUM row then an AVERAGE row.'
             );
         });
 
@@ -166,26 +157,14 @@ describe('SummaryRowsController', () => {
 
             grid.viewport?.resizeObserver?.disconnect();
 
-            const columns = presentationColumns(grid);
-
             deepStrictEqual(
-                columns.q1,
-                [10, 20, 30, 60],
-                'Columns without own summary should inherit the SUM default.'
-            );
-            deepStrictEqual(
-                columns.q2,
-                [1, 2, 3, 6],
-                'The columnDefaults aggregator should apply to every column.'
-            );
-            deepStrictEqual(
-                columns.region,
-                ['a', 'b', 'c', 'Total'],
-                'A null aggregator should opt a column out and keep its label.'
+                summaryRowObjects(grid),
+                [{ region: 'Total', q1: 60, q2: 6 }],
+                'Columns should inherit the SUM default; null opts out.'
             );
         });
 
-    it('should not append a summary row when disabled', async () => {
+    it('should compute no summary rows when disabled', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -210,14 +189,13 @@ describe('SummaryRowsController', () => {
 
         grid.viewport?.resizeObserver?.disconnect();
 
-        strictEqual(
-            presentationColumns(grid).sales.length,
-            3,
-            'Disabled summary must not inject any extra row.'
+        ok(
+            summaryRowObjects(grid).length === 0,
+            'Disabled summary must compute no rows.'
         );
     });
 
-    it('should not append a summary row when no column aggregates', async () => {
+    it('should compute no summary rows when no column aggregates', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -242,10 +220,9 @@ describe('SummaryRowsController', () => {
 
         grid.viewport?.resizeObserver?.disconnect();
 
-        strictEqual(
-            presentationColumns(grid).sales.length,
-            3,
-            'A label without any aggregator must not inject a summary row.'
+        ok(
+            summaryRowObjects(grid).length === 0,
+            'A label without any aggregator must compute no rows.'
         );
     });
 });
