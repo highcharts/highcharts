@@ -7,6 +7,7 @@
         overflow: hidden;
         min-height: 0;
         flex: 0 0 auto;
+        order: 1;
         position: relative;
         z-index: 1;
         border-top: var(
