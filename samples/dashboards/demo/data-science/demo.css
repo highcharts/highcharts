@@ -31,3 +31,16 @@ body {
 .active-row {
     background: rgba(30, 136, 229, 0.12) !important;
 }
+
+#chart-detail-info .highcharts-dashboards-component-kpi-content {
+    justify-content: center;
+    height: 100%;
+    gap: 0.5em;
+    padding: 0 1em;
+}
+
+#chart-detail-info .highcharts-dashboards-component-kpi-subtitle {
+    max-width: 28em;
+    margin: 0 auto;
+    line-height: 1.4;
+}
