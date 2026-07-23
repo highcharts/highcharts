@@ -256,8 +256,7 @@ export function formatText(
 }
 
 /**
- * Joins class name parts into a single space-separated string, omitting
- * falsy values.
+ * Joins class name parts into a single space-separated string.
  *
  * @param parts
  * Class name parts to join.
