@@ -1,4 +1,6 @@
-/* Popup shell tokens — application always-on; visual defaults live in theme. */
+/* Popup shell tokens — application always-on; visual defaults live in theme.
+ * Content/header padding keep non-zero fallbacks so unthemed grids
+ * (`theme: ''`) stay usable without setting tokens. */
 .hcg-container .hcg-popup,
 .highcharts-light .hcg-container .hcg-popup {
     --ig-popup-color: var(--hcg-popup-color, inherit);
@@ -6,9 +8,9 @@
     --ig-popup-border-color: var(--hcg-popup-border-color, transparent);
     --ig-popup-border-radius: var(--hcg-popup-border-radius, 0);
     --ig-popup-box-shadow: var(--hcg-popup-box-shadow, none);
-    --ig-popup-content-padding: var(--hcg-popup-content-padding, 0);
+    --ig-popup-content-padding: var(--hcg-popup-content-padding, 5px);
     --ig-popup-header-font-size: var(--hcg-popup-header-font-size, inherit);
-    --ig-popup-header-padding: var(--hcg-popup-header-padding, 0);
+    --ig-popup-header-padding: var(--hcg-popup-header-padding, 3px);
 }
 
 .hcg-container .hcg-popup {

@@ -50,10 +50,6 @@
         0 4px 6px -4px rgb(15 23 42 / 0.1); /* shadow-lg */
 }
 
-.demo-grid .hcg-popup-content {
-    padding: 0.75rem; /* p-3 */
-}
-
 .demo-grid .hcg-menu-header {
     margin-bottom: 0.5rem; /* mb-2 */
     padding-inline: 0.25rem; /* px-1 */
@@ -99,4 +95,111 @@
         border-right-width: 0;
         margin-block: 0.5rem; /* my-2 */
     }
+}
+
+/* Dark mode — system preference + sample viewer toggle */
+@media (prefers-color-scheme: dark) {
+    :root:not(.highcharts-light) {
+        color-scheme: dark;
+    }
+
+    :root:not(.highcharts-light) .hcg-pagination-controls .hcg-button {
+        color: #e2e8f0; /* slate-200 */
+    }
+
+    :root:not(.highcharts-light)
+    .hcg-pagination-controls .hcg-button:hover:not(:disabled) {
+        background: #334155; /* slate-700 */
+    }
+
+    :root:not(.highcharts-light)
+    .hcg-pagination-controls .hcg-button-selected,
+    :root:not(.highcharts-light)
+    .hcg-pagination-controls .hcg-button-selected:hover:not(:disabled) {
+        background: #0d9488; /* teal-600 */
+        color: #fff;
+    }
+
+    :root:not(.highcharts-light) .demo-pag-size select.hcg-input {
+        border-color: #475569; /* slate-600 */
+        background-color: #0f172a; /* slate-900 */
+        color: #e2e8f0;
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-popup {
+        border-color: #334155;
+        background: #0f172a;
+        color: #e2e8f0;
+        box-shadow:
+            0 10px 15px -3px rgb(0 0 0 / 0.4),
+            0 4px 6px -4px rgb(0 0 0 / 0.3);
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-menu-header {
+        color: #94a3b8; /* slate-400 */
+    }
+
+    :root:not(.highcharts-light)
+    .demo-grid .hcg-column-filter-wrapper .hcg-input {
+        border-color: #475569;
+        background-color: #0f172a;
+        color: #e2e8f0;
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-clear-filter-button {
+        color: #cbd5e1; /* slate-300 */
+    }
+
+    :root:not(.highcharts-light)
+    .demo-grid .hcg-clear-filter-button:hover:not(:disabled) {
+        color: #f8fafc; /* slate-50 */
+    }
+}
+
+.highcharts-dark .hcg-pagination-controls .hcg-button {
+    color: #e2e8f0;
+}
+
+.highcharts-dark .hcg-pagination-controls .hcg-button:hover:not(:disabled) {
+    background: #334155;
+}
+
+.highcharts-dark .hcg-pagination-controls .hcg-button-selected,
+.highcharts-dark
+.hcg-pagination-controls .hcg-button-selected:hover:not(:disabled) {
+    background: #0d9488;
+    color: #fff;
+}
+
+.highcharts-dark .demo-pag-size select.hcg-input {
+    border-color: #475569;
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+.highcharts-dark .demo-grid .hcg-popup {
+    border-color: #334155;
+    background: #0f172a;
+    color: #e2e8f0;
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.4),
+        0 4px 6px -4px rgb(0 0 0 / 0.3);
+}
+
+.highcharts-dark .demo-grid .hcg-menu-header {
+    color: #94a3b8;
+}
+
+.highcharts-dark .demo-grid .hcg-column-filter-wrapper .hcg-input {
+    border-color: #475569;
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+.highcharts-dark .demo-grid .hcg-clear-filter-button {
+    color: #cbd5e1;
+}
+
+.highcharts-dark .demo-grid .hcg-clear-filter-button:hover:not(:disabled) {
+    color: #f8fafc;
 }

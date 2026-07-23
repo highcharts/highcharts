@@ -29,22 +29,24 @@ Grid.grid('container', {
     rendering: {
         theme: '',
         table: {
-            className: 'w-full border border-slate-200 rounded-md'
+            className:
+                'w-full border border-slate-200 rounded-md ' +
+                'dark:border-slate-700'
         },
         rows: {
-            className: 'hover:bg-slate-50',
-            evenClassName: 'bg-slate-50/50'
+            className: 'hover:bg-slate-50 dark:hover:bg-slate-800/80',
+            evenClassName: 'bg-slate-50/50 dark:bg-slate-800/40'
         }
     },
     caption: {
         text: 'Team directory',
         className: `mb-2 pt-2 pb-1 text-2xl font-semibold tracking-tight
-            text-slate-900`
+            text-slate-900 dark:text-slate-100`
     },
     description: {
         text: 'Filter, sort, and page through sample employee rows styled ' +
             'with utility classes.',
-        className: 'mb-2 pt-1 pb-4 text-sm text-slate-500'
+        className: 'mb-2 pt-1 pb-4 text-sm text-slate-500 dark:text-slate-400'
     },
     columnDefaults: {
         dataType: 'string',
@@ -57,11 +59,14 @@ Grid.grid('container', {
         header: {
             format: '{id}',
             className: `p-4 border-b border-r border-slate-200 font-semibold
-                bg-slate-50 text-slate-700`
+                bg-slate-50 text-slate-700
+                dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200`
         },
         cells: {
             format: '{value}',
-            className: 'p-4 border-b border-r border-slate-200 text-slate-600'
+            className:
+                'p-4 border-b border-r border-slate-200 text-slate-600 ' +
+                'dark:border-slate-700 dark:text-slate-300'
         }
     },
     header: [
@@ -80,7 +85,7 @@ Grid.grid('container', {
         cells: {
             className:
                 'p-4 border-b border-r border-slate-200 font-semibold ' +
-                'text-slate-900'
+                'text-slate-900 dark:border-slate-700 dark:text-slate-100'
         },
         sorting: {
             order: 'asc',
@@ -107,13 +112,15 @@ Grid.grid('container', {
             format: 'Salary (USD)',
             className:
                 'p-4 border-b border-r border-slate-200 font-semibold ' +
-                'bg-slate-50 text-slate-700 text-right tabular-nums'
+                'bg-slate-50 text-slate-700 text-right tabular-nums ' +
+                'dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200'
         },
         cells: {
             format: '${value}',
             className:
                 'p-4 border-b border-r border-slate-200 text-slate-600 ' +
-                'text-right tabular-nums'
+                'text-right tabular-nums ' +
+                'dark:border-slate-700 dark:text-slate-300'
         }
     }],
     pagination: {
@@ -122,14 +129,19 @@ Grid.grid('container', {
         pageSize: 5,
         className: 'mt-2 pt-2 pb-1',
         controls: {
-            className: 'gap-2 border-l border-r border-slate-200',
+            className:
+                'gap-2 border-l border-r border-slate-200 ' +
+                'dark:border-slate-700',
             pageInfo: {
-                className: 'font-semibold text-sm text-slate-700'
+                className:
+                    'font-semibold text-sm text-slate-700 dark:text-slate-200'
             },
             pageSizeSelector: {
                 enabled: true,
                 options: [5, 10, 25],
-                className: 'demo-pag-size gap-2 text-sm text-slate-700'
+                className:
+                    'demo-pag-size gap-2 text-sm text-slate-700 ' +
+                    'dark:text-slate-200'
             },
             pageButtons: {
                 enabled: true,
