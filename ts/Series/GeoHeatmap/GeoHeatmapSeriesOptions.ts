@@ -73,9 +73,7 @@ export interface InterpolationObject {
  *
  * @since 11.0.0
  *
- * @excluding allAreas, dataParser, dataURL, dragDrop, findNearestPointBy,
- *            geometry, joinBy, mapData, marker, negativeColor, onPoint,
- *            shadow
+ * @excluding geometry
  *
  * @product highmaps
  *

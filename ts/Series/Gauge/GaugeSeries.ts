@@ -60,7 +60,6 @@ import {
 /** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
-        /** @internal */
         angular?: boolean;
     }
 }
@@ -68,9 +67,7 @@ declare module '../../Core/Chart/ChartBase' {
 /** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
-        /** @internal */
         fixedBox?: boolean;
-        /** @internal */
         forceDL?: boolean;
     }
 }

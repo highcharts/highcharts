@@ -38,35 +38,26 @@ export interface GanttPointOptions extends XRangePointOptions {
      * @sample {gantt} gantt/treegrid-axis/collapsed/
      *         Start as collapsed
      *
-     * @type {boolean}
-     *
      * @default false
      *
      * @product gantt
-     *
-     * @apioption series.gantt.data.collapsed
      */
+    collapsed?: boolean;
 
     /**
      * The name of a task. If a `treegrid` y-axis is used (default in Gantt charts),
      * this will be picked up automatically, and used to calculate the y-value.
      *
-     * @type {string}
-     *
      * @product gantt
-     *
-     * @apioption series.gantt.data.name
      */
+    name?: XRangePointOptions['name'];
 
     /**
      * The Y value of a task.
      *
-     * @type {number}
-     *
      * @product gantt
-     *
-     * @apioption series.gantt.data.y
      */
+    y?: XRangePointOptions['y'];
 
     /**
      * Progress indicator, how much of the task completed. When set as a number,

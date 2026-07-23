@@ -41,6 +41,12 @@ import type {
  * @optionparent series.gantt.connectors.animation
  */
 export interface GanttAnimationOptions extends Partial<AnimationOptions> {
+    /**
+     * Whether the connector animation is reversed, drawing from the
+     * dependent point to the point it depends on.
+     *
+     * @default true
+     */
     reversed?: boolean;
 }
 
@@ -68,10 +74,6 @@ export type GanttDependencyOptions = (
  * @product gantt
  *
  * @requires highcharts-gantt
- *
- * @excluding boostThreshold, dashStyle, findNearestPointBy,
- *            getExtremesFromAll, marker, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPlacement, pointStart
  */
 export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
