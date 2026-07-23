@@ -20,7 +20,11 @@
 
 import type Axis from './Axis';
 import type ScrollbarType from '../../Stock/Scrollbar/Scrollbar';
-import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
+import type {
+    AxisScrollbarOptions,
+    XAxisScrollbarOptions,
+    YAxisScrollbarOptions
+} from '../../Stock/Scrollbar/ScrollbarOptions';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -48,6 +52,20 @@ declare module './AxisComposition' {
 declare module './AxisOptions' {
     interface AxisOptions {
         /**
+         * An optional scrollbar to display on the axis in response to limiting
+         * the minimum and maximum of the axis values.
+         *
+         * In styled mode, all the presentational options for the scrollbar are
+         * replaced by the classes `.highcharts-scrollbar-thumb`,
+         * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
+         * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+         *
+         * @product highstock
+         */
+        scrollbar?: AxisScrollbarOptions;
+    }
+    interface XAxisOptions {
+        /**
          * An optional scrollbar to display on the X axis in response to
          * limiting the minimum and maximum of the axis values.
          *
@@ -63,7 +81,21 @@ declare module './AxisOptions' {
          * @product   highstock
          * @apioption xAxis.scrollbar
          */
-        scrollbar?: ScrollbarOptions;
+        scrollbar?: XAxisScrollbarOptions;
+    }
+    interface YAxisOptions {
+        /**
+         * An optional scrollbar to display on the Y axis in response to
+         * limiting the minimum and maximum of the axis values.
+         *
+         * In styled mode, all the presentational options for the scrollbar are
+         * replaced by the classes `.highcharts-scrollbar-thumb`,
+         * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
+         * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+         *
+         * @product highstock
+         */
+        scrollbar?: YAxisScrollbarOptions;
     }
 }
 
