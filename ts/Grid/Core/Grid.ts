@@ -50,7 +50,8 @@ import { defaultOptions } from './Defaults.js';
 import {
     makeHTMLElement,
     setHTMLContent,
-    createOptionsProxy
+    createOptionsProxy,
+    joinClassNames
 } from './GridUtils.js';
 import Table from './Table/Table.js';
 import QueryingController from './Querying/QueryingController.js';
@@ -1351,9 +1352,10 @@ export class Grid {
 
         const tag = captionOptions.htmlTag?.toLowerCase();
         const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
-        const defaultClass = Globals.getClassName('captionElement');
-        const className = captionOptions.className ?
-            `${defaultClass} ${captionOptions.className}` : defaultClass;
+        const className = joinClassNames(
+            Globals.getClassName('captionElement'),
+            captionOptions.className
+        );
 
         this.captionElement = new AST([{
             tagName,
@@ -1404,11 +1406,11 @@ export class Grid {
 
         this.contentWrapper.innerHTML = AST.emptyHTML;
         const theme = this.options?.rendering?.theme;
-        this.contentWrapper.className = [
+        this.contentWrapper.className = joinClassNames(
             Globals.getClassName('container'),
-            theme ? Globals.getClassName('themed') : '',
-            theme || ''
-        ].filter(Boolean).join(' ');
+            theme && Globals.getClassName('themed'),
+            theme
+        );
     }
 
     /**

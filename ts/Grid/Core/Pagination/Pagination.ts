@@ -44,7 +44,7 @@ import {
     merge
 } from '../../../Shared/Utilities.js';
 
-const { makeHTMLElement, formatText } = GridUtils;
+const { makeHTMLElement, formatText, joinClassNames } = GridUtils;
 
 const paginationAlignments = [
     'left',
@@ -54,10 +54,6 @@ const paginationAlignments = [
 ] as const;
 const alignmentClassName = (alignment: string): string =>
     `${Globals.classNamePrefix}pagination-${alignment}`;
-
-const joinClassNames = (
-    ...parts: Array<(string | undefined | null | false)>
-): string => parts.filter(Boolean).join(' ');
 
 /**
  *  Representing the pagination functionalities for the Grid.

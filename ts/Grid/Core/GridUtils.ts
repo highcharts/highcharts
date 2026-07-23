@@ -256,6 +256,22 @@ export function formatText(
 }
 
 /**
+ * Joins class name parts into a single space-separated string, omitting
+ * falsy values.
+ *
+ * @param parts
+ * Class name parts to join.
+ *
+ * @returns
+ * A space-separated class name string.
+ */
+export function joinClassNames(
+    ...parts: Array<(string | undefined | null | false)>
+): string {
+    return parts.filter(Boolean).join(' ');
+}
+
+/**
  * Checks whether two objects have the same own keys and values.
  *
  * Supports nested plain objects and arrays. Functions are compared by
@@ -414,6 +430,7 @@ export default {
     setHTMLContent,
     createOptionsProxy,
     formatText,
+    joinClassNames,
     isDeepEqual,
     resolveStyleValue,
     mergeStyleValues,
