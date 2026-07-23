@@ -166,19 +166,19 @@ declare module '../../Core/Grid' {
     }
 }
 
-declare module '../../Core/Data/LocalDataProvider' {
-    interface LocalDataProviderOptions {
-        /**
-         * Flat summary (total) row options for the local provider
-         * (Grid Pro module).
-         *
-         * @sample grid-pro/summary-rows/grand-total Summary row
-         */
-        summary?: SummaryOptions;
-    }
-}
-
 declare module '../../Core/Options' {
+    interface Options {
+        /**
+         * Flat summary (total) row options (Grid Pro module).
+         *
+         * Provide a single object for one summary row, or an array of objects
+         * for several.
+         *
+         * @sample grid-pro/options/summary-rows Summary row
+         */
+        summaryRows?: SummaryOptions;
+    }
+
     interface ColumnOptions {
         /**
          * Summary row options for a single column.
