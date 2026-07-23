@@ -24,6 +24,10 @@
 import type DataTable from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
 import type Table from '../../Core/Table/Table';
+import type TableCell from '../../Core/Table/Body/TableCell';
+import type {
+    TableCellAfterDataMutationEvent
+} from '../../Core/Table/Body/TableCell';
 import type {
     SummaryColumnOptions,
     SummaryOptions
@@ -49,10 +53,14 @@ import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
  *
  * @param TableClass
  * Table (viewport) class to extend.
+ *
+ * @param TableCellClass
+ * TableCell class to extend.
  */
 export function compose(
     GridClass: typeof Grid,
-    TableClass: typeof Table
+    TableClass: typeof Table,
+    TableCellClass: typeof TableCell
 ): void {
     if (!pushUnique(Globals.composed, 'SummaryRows')) {
         return;
@@ -69,6 +77,7 @@ export function compose(
     addEvent(TableClass, 'afterReflow', onTableAfterReflow);
     addEvent(TableClass, 'bodyScroll', onTableBodyScroll);
     addEvent(TableClass, 'afterDestroy', onTableAfterDestroy);
+    addEvent(TableCellClass, 'afterDataMutation', onCellAfterDataMutation);
 }
 
 /**
@@ -168,6 +177,25 @@ function onTableBodyScroll(
 function onTableAfterDestroy(this: Table): void {
     this.summaryView?.destroy();
     delete this.summaryView;
+}
+
+/**
+ * Forces a requery so the totals recompute when an aggregated source column
+ * cell is edited.
+ *
+ * @param e
+ * Cell data mutation event payload.
+ */
+function onCellAfterDataMutation(
+    this: TableCell,
+    e: TableCellAfterDataMutationEvent
+): void {
+    const grid = this.row.viewport.grid;
+
+    if (grid.summaryRows?.hasColumnAggregator(e.sourceColumnId)) {
+        grid.querying.shouldBeUpdated = true;
+        e.requiresFullRowsUpdate = true;
+    }
 }
 
 
