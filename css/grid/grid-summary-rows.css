@@ -1,0 +1,33 @@
+/* Grid Pro flat summary (total) rows */
+
+.hcg-container .hcg-table {
+    > tbody.hcg-tbody-summary {
+        height: auto;
+        display: block;
+        overflow: hidden;
+        min-height: 0;
+        flex: 0 0 auto;
+        order: 1;
+        position: relative;
+        z-index: 1;
+        border-top: var(
+            --ig-pinned-border,
+            var(--ig-row-border-width, 1px)
+            var(--ig-row-border-style, solid)
+            var(--ig-row-border-color, #d1d5db)
+        );
+
+        > tr {
+            display: block;
+            position: static;
+        }
+
+        .hcg-cell {
+            font-weight: 600;
+        }
+    }
+
+    &:has(> tbody.hcg-tbody-summary) > tbody:not(.hcg-tbody-summary) {
+        height: auto;
+    }
+}
