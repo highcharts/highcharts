@@ -18,8 +18,7 @@
  *
  * */
 
-import type ColumnSeries from './ColumnSeries';
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
+import type ColumnSeriesOptions from './ColumnSeriesOptions';
 
 /* *
  *
@@ -41,7 +40,7 @@ import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */
-const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
+const ColumnSeriesDefaults: ColumnSeriesOptions = {
 
     /**
      * The corner radius of the border surrounding each column or bar. A number

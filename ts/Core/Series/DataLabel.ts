@@ -712,13 +712,6 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
-            const dataLabelsGroups: Array<SVGElement|undefined> = [];
-
-            seriesDlOptions.forEach((labelOptions, i): void => {
-                dataLabelsGroups[i] =
-                    this.initDataLabels(i, animationConfig, labelOptions);
-            });
-
             // Make the labels for each point
             points.concat(series.condemnedPoints).forEach((point): void => {
 
@@ -1004,7 +997,6 @@ namespace DataLabel {
                 point.dataLabel = dataLabels[0];
                 point.dataLabels = dataLabels;
             });
-
         }
 
         fireEvent(this, 'afterDrawDataLabels');

@@ -99,10 +99,52 @@ declare module '../../Core/Series/SeriesBase' {
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Depth of the columns in a 3D column chart.
+         *
+         * @type      {number}
+         * @default   25
+         * @since     4.0
+         * @product   highcharts
+         * @requires  highcharts-3d
+         * @apioption plotOptions.column.depth
+         */
         depth?: number;
+
+        /**
+         * 3D columns only. The color of the edges. Similar to `borderColor`,
+         * except it defaults to the same color as the column.
+         *
+         * @type      {Highcharts.ColorString}
+         * @product   highcharts
+         * @requires  highcharts-3d
+         * @apioption plotOptions.column.edgeColor
+         */
         edgeColor?: ColorString;
+
+        /**
+         * 3D columns only. The width of the colored edges.
+         *
+         * @type      {number}
+         * @default   1
+         * @product   highcharts
+         * @requires  highcharts-3d
+         * @apioption plotOptions.column.edgeWidth
+         */
         edgeWidth?: number;
+
+        /**
+         * The spacing between columns on the Z Axis in a 3D chart.
+         *
+         * @type      {number}
+         * @default   1
+         * @since     4.0
+         * @product   highcharts
+         * @requires  highcharts-3d
+         * @apioption plotOptions.column.groupZPadding
+         */
         groupZPadding?: number;
+
         inactiveOtherPoints?: boolean;
     }
 }
@@ -744,53 +786,3 @@ const Column3DComposition = {
 
 /** @internal */
 export default Column3DComposition;
-
-/* *
- *
- *  API Options
- *
- * */
-
-/**
- * Depth of the columns in a 3D column chart.
- *
- * @type      {number}
- * @default   25
- * @since     4.0
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.depth
- */
-
-/**
- * 3D columns only. The color of the edges. Similar to `borderColor`, except it
- * defaults to the same color as the column.
- *
- * @type      {Highcharts.ColorString}
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.edgeColor
- */
-
-/**
- * 3D columns only. The width of the colored edges.
- *
- * @type      {number}
- * @default   1
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.edgeWidth
- */
-
-/**
- * The spacing between columns on the Z Axis in a 3D chart.
- *
- * @type      {number}
- * @default   1
- * @since     4.0
- * @product   highcharts
- * @requires  highcharts-3d
- * @apioption plotOptions.column.groupZPadding
- */
-
-''; // Keeps doclets above in transpiled file
