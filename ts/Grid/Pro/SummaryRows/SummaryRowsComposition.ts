@@ -23,28 +23,16 @@
 
 import type DataTable from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
-import type TableCell from '../../Core/Table/Body/TableCell';
-import type {
-    TableCellGetEditabilityEvent
-} from '../../Core/Table/Body/TableCell';
+import type Table from '../../Core/Table/Table';
 import type {
     SummaryColumnOptions,
     SummaryOptions
 } from './SummaryRowsTypes';
 
 import Globals from '../../Core/Globals.js';
-import TableRow from '../../Core/Table/Body/TableRow.js';
 import SummaryRowsController from './SummaryRowsController.js';
+import SummaryView from './SummaryView.js';
 import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
-
-
-/* *
- *
- *  Constants
- *
- * */
-
-const summaryRowClassName = Globals.classNamePrefix + 'summary-row';
 
 
 /* *
@@ -59,12 +47,12 @@ const summaryRowClassName = Globals.classNamePrefix + 'summary-row';
  * @param GridClass
  * Grid class to extend.
  *
- * @param TableCellClass
- * TableCell class to extend.
+ * @param TableClass
+ * Table (viewport) class to extend.
  */
 export function compose(
     GridClass: typeof Grid,
-    TableCellClass: typeof TableCell
+    TableClass: typeof Table
 ): void {
     if (!pushUnique(Globals.composed, 'SummaryRows')) {
         return;
@@ -77,8 +65,10 @@ export function compose(
         'projectPresentationTable',
         onProjectPresentationTable
     );
-    addEvent(TableRow, 'afterUpdateAttributes', onRowAfterUpdateAttributes);
-    addEvent(TableCellClass, 'getEditability', onCellGetEditability);
+    addEvent(TableClass, 'beforeInit', onTableBeforeInit);
+    addEvent(TableClass, 'afterReflow', onTableAfterReflow);
+    addEvent(TableClass, 'bodyScroll', onTableBodyScroll);
+    addEvent(TableClass, 'afterDestroy', onTableAfterDestroy);
 }
 
 /**
@@ -108,7 +98,7 @@ function onBeforeDestroy(this: Grid, e: { onlyDOM?: boolean }): void {
 }
 
 /**
- * Injects the summary row into the queried table before pagination.
+ * Recomputes the summary row objects from the queried table before pagination.
  *
  * @param e
  * Presentation table event fired after sort/filter and before pagination.
@@ -122,35 +112,62 @@ function onProjectPresentationTable(
         table: DataTable;
     }
 ): void {
-    const controller = this.summaryRows;
-    if (!controller) {
-        return;
-    }
-
-    e.table = controller.projectTable(e.table);
+    this.summaryRows?.updateFromTable(e.table);
 }
 
 /**
- * Toggles the summary row class name on rendered rows.
+ * Creates the summary view and wires its re-render into the render cycle.
  */
-function onRowAfterUpdateAttributes(this: TableRow): void {
-    const isSummaryRow = !!this.viewport.grid.summaryRows?.isSummaryRow(this);
-    this.htmlElement.classList.toggle(summaryRowClassName, isSummaryRow);
+function onTableBeforeInit(this: Table): void {
+    const table = this;
+    const view = new SummaryView(table);
+    table.summaryView = view;
+
+    const renderSummary = async (): Promise<void> => {
+        await view.render(table.grid.summaryRows?.getRowObjects() ?? []);
+    };
+
+    // Initial render is not covered by afterUpdateRowsHooks; wrap the
+    // virtualizer hook (preserving any previously registered handler).
+    const virtualizer = table.rowsVirtualizer;
+    const previousBeforeInitialRender = virtualizer.beforeInitialRenderRows;
+    virtualizer.beforeInitialRenderRows = async (): Promise<void> => {
+        await previousBeforeInitialRender?.();
+        await renderSummary();
+    };
+
+    table.afterUpdateRowsHooks.push(renderSummary);
 }
 
 /**
- * Vetoes editing for cells in the summary row.
+ * Re-applies summary cell widths and offset after a table reflow.
+ */
+function onTableAfterReflow(this: Table): void {
+    this.summaryView?.reflow();
+}
+
+/**
+ * Keeps the summary section aligned with the main body horizontal scroll.
  *
  * @param e
- * Editability event fired by the body cell.
+ * Body scroll event payload.
+ *
+ * @param e.scrollLeft
+ * Current horizontal scroll offset.
  */
-function onCellGetEditability(
-    this: TableCell,
-    e: TableCellGetEditabilityEvent
+function onTableBodyScroll(
+    this: Table,
+    e: { scrollLeft?: number }
 ): void {
-    if (this.row.viewport.grid.summaryRows?.isSummaryRow(this.row)) {
-        e.editable = false;
-    }
+    this.summaryView?.syncHorizontalScroll(e.scrollLeft || 0);
+}
+
+/**
+ * Destroys the summary view on table teardown.
+ */
+function onTableAfterDestroy(this: Table): void {
+    this.summaryView?.destroy();
+    delete this.summaryView;
 }
 
 
@@ -163,6 +180,12 @@ function onCellGetEditability(
 declare module '../../Core/Grid' {
     export default interface Grid {
         summaryRows?: SummaryRowsController;
+    }
+}
+
+declare module '../../Core/Table/Table' {
+    export default interface Table {
+        summaryView?: SummaryView;
     }
 }
 
