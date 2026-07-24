@@ -1721,6 +1721,21 @@ class Pointer {
                     false
             );
 
+        if (!p && e) {
+            const directTouchPoint = pointer.getPointFromEvent(e as Event);
+
+            if (
+                directTouchPoint &&
+                directTouchPoint.series.isCartesian &&
+                pick(
+                    directTouchPoint.series.options.enableMouseTracking,
+                    true
+                )
+            ) {
+                p = directTouchPoint;
+            }
+        }
+
         let hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint?.series || chart.hoverSeries;
 
