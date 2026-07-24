@@ -6,10 +6,10 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Browser market shares. January, 2022'
+        text: 'Granola recipe with nutritional information'
     },
     subtitle: {
-        text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
+        text: 'Click the columns to view nutritional information'
     },
     accessibility: {
         announceNewData: {
@@ -19,12 +19,17 @@ Highcharts.chart('container', {
     xAxis: {
         type: 'category'
     },
-    yAxis: {
+    yAxis: [{
         title: {
-            text: 'Total percent market share'
-        }
-
-    },
+            text: 'Percent per weight'
+        },
+        showEmpty: false
+    }, {
+        title: {
+            text: 'Grams in recipe'
+        },
+        showEmpty: false
+    }],
     legend: {
         enabled: false
     },
@@ -41,48 +46,80 @@ Highcharts.chart('container', {
     tooltip: {
         headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
         pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
-            '<b>{point.y:.2f}%</b> of total<br/>'
+            '<b>{point.y:.2f}%</b> of weight<br/>'
     },
 
     series: [
         {
-            name: 'Browsers',
+            name: 'Ingredients',
             colorByPoint: true,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y:.0f} g'
+            },
+            tooltip: {
+                headerFormat:
+                    '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat:
+                    '<span style="color:{point.color}">{point.name}</span>: ' +
+                    '<b>{point.y:.0f} g</b> in recipe<br/>'
+            },
+            yAxis: 1,
             data: [
                 {
-                    name: 'Chrome',
-                    y: 63.06,
-                    drilldown: 'Chrome'
+                    name: 'Rolled Oats',
+                    y: 300,
+                    drilldown: 'Rolled Oats'
                 },
                 {
-                    name: 'Safari',
-                    y: 19.84,
-                    drilldown: 'Safari'
+                    name: 'Maple Syrup',
+                    y: 170,
+                    drilldown: 'Maple Syrup'
                 },
                 {
-                    name: 'Firefox',
-                    y: 4.18,
-                    drilldown: 'Firefox'
+                    name: 'Flaked Almonds',
+                    y: 100,
+                    drilldown: 'Flaked Almonds'
                 },
                 {
-                    name: 'Edge',
-                    y: 4.12,
-                    drilldown: 'Edge'
+                    name: 'Dried Berries',
+                    y: 100,
+                    drilldown: 'Dried Berries'
                 },
                 {
-                    name: 'Opera',
-                    y: 2.33,
-                    drilldown: 'Opera'
+                    name: 'Sunflower Seeds',
+                    y: 50,
+                    drilldown: 'Sunflower Seeds'
                 },
                 {
-                    name: 'Internet Explorer',
-                    y: 0.45,
-                    drilldown: 'Internet Explorer'
+                    name: 'Sesame Seeds',
+                    y: 50,
+                    drilldown: 'Sesame Seeds'
                 },
                 {
-                    name: 'Other',
-                    y: 1.582,
-                    drilldown: null
+                    name: 'Pumpkin Seeds',
+                    y: 50,
+                    drilldown: 'Pumpkin Seeds'
+                },
+                {
+                    name: 'Coconut',
+                    y: 50,
+                    drilldown: 'Coconut'
+                },
+                {
+                    name: 'Honey',
+                    y: 42,
+                    drilldown: 'Honey'
+                },
+                {
+                    name: 'Vegetable Oil',
+                    y: 26,
+                    drilldown: 'Vegetable Oil'
+                },
+                {
+                    name: 'Vanilla Extract',
+                    y: 5,
+                    drilldown: 'Vanilla Extract'
                 }
             ]
         }
@@ -95,218 +132,200 @@ Highcharts.chart('container', {
         },
         series: [
             {
-                name: 'Chrome',
-                id: 'Chrome',
+                name: 'Rolled Oats',
+                id: 'Rolled Oats',
                 data: [
                     [
-                        'v65.0',
-                        0.1
+                        'Carbohydrates',
+                        67.7
                     ],
                     [
-                        'v64.0',
-                        1.3
+                        'Fat',
+                        6.52
                     ],
                     [
-                        'v63.0',
-                        53.02
-                    ],
-                    [
-                        'v62.0',
-                        1.4
-                    ],
-                    [
-                        'v61.0',
-                        0.88
-                    ],
-                    [
-                        'v60.0',
-                        0.56
-                    ],
-                    [
-                        'v59.0',
-                        0.45
-                    ],
-                    [
-                        'v58.0',
-                        0.49
-                    ],
-                    [
-                        'v57.0',
-                        0.32
-                    ],
-                    [
-                        'v56.0',
-                        0.29
-                    ],
-                    [
-                        'v55.0',
-                        0.79
-                    ],
-                    [
-                        'v54.0',
-                        0.18
-                    ],
-                    [
-                        'v51.0',
-                        0.13
-                    ],
-                    [
-                        'v49.0',
-                        2.16
-                    ],
-                    [
-                        'v48.0',
-                        0.13
-                    ],
-                    [
-                        'v47.0',
-                        0.11
-                    ],
-                    [
-                        'v43.0',
-                        0.17
-                    ],
-                    [
-                        'v29.0',
-                        0.26
+                        'Protein',
+                        13.15
                     ]
                 ]
             },
             {
-                name: 'Firefox',
-                id: 'Firefox',
+                name: 'Maple Syrup',
+                id: 'Maple Syrup',
                 data: [
                     [
-                        'v58.0',
-                        1.02
+                        'Carbohydrates',
+                        67
                     ],
                     [
-                        'v57.0',
-                        7.36
+                        'Fat',
+                        0.06
                     ],
                     [
-                        'v56.0',
-                        0.35
-                    ],
-                    [
-                        'v55.0',
-                        0.11
-                    ],
-                    [
-                        'v54.0',
-                        0.1
-                    ],
-                    [
-                        'v52.0',
-                        0.95
-                    ],
-                    [
-                        'v51.0',
-                        0.15
-                    ],
-                    [
-                        'v50.0',
-                        0.1
-                    ],
-                    [
-                        'v48.0',
-                        0.31
-                    ],
-                    [
-                        'v47.0',
-                        0.12
+                        'Protein',
+                        0.04
                     ]
                 ]
             },
             {
-                name: 'Internet Explorer',
-                id: 'Internet Explorer',
+                name: 'Flaked Almonds',
+                id: 'Flaked Almonds',
                 data: [
                     [
-                        'v11.0',
-                        6.2
+                        'Carbohydrates',
+                        21.6
                     ],
                     [
-                        'v10.0',
-                        0.29
+                        'Fat',
+                        49.9
                     ],
                     [
-                        'v9.0',
-                        0.27
-                    ],
-                    [
-                        'v8.0',
-                        0.47
+                        'Protein',
+                        21.2
                     ]
                 ]
             },
             {
-                name: 'Safari',
-                id: 'Safari',
+                name: 'Dried Berries',
+                id: 'Dried Berries',
                 data: [
                     [
-                        'v11.0',
-                        3.39
+                        'Carbohydrates',
+                        65
                     ],
                     [
-                        'v10.1',
-                        0.96
+                        'Fat',
+                        1
                     ],
                     [
-                        'v10.0',
-                        0.36
-                    ],
-                    [
-                        'v9.1',
-                        0.54
-                    ],
-                    [
-                        'v9.0',
-                        0.13
-                    ],
-                    [
-                        'v5.1',
-                        0.2
+                        'Protein',
+                        1
                     ]
                 ]
             },
             {
-                name: 'Edge',
-                id: 'Edge',
+                name: 'Sunflower Seeds',
+                id: 'Sunflower Seeds',
                 data: [
                     [
-                        'v16',
-                        2.6
+                        'Carbohydrates',
+                        20
                     ],
                     [
-                        'v15',
-                        0.92
+                        'Fat',
+                        51.46
                     ],
                     [
-                        'v14',
-                        0.4
-                    ],
-                    [
-                        'v13',
-                        0.1
+                        'Protein',
+                        20.78
                     ]
                 ]
             },
             {
-                name: 'Opera',
-                id: 'Opera',
+                name: 'Sesame Seeds',
+                id: 'Sesame Seeds',
                 data: [
                     [
-                        'v50.0',
-                        0.96
+                        'Carbohydrates',
+                        23.4
                     ],
                     [
-                        'v49.0',
-                        0.82
+                        'Fat',
+                        49.7
                     ],
                     [
-                        'v12.1',
-                        0.14
+                        'Protein',
+                        17.7
+                    ]
+                ]
+            },
+            {
+                name: 'Pumpkin Seeds',
+                id: 'Pumpkin Seeds',
+                data: [
+                    [
+                        'Carbohydrates',
+                        14.71
+                    ],
+                    [
+                        'Fat',
+                        49.05
+                    ],
+                    [
+                        'Protein',
+                        29.84
+                    ]
+                ]
+            },
+            {
+                name: 'Coconut',
+                id: 'Coconut',
+                data: [
+                    [
+                        'Carbohydrates',
+                        15.23
+                    ],
+                    [
+                        'Fat',
+                        33.49
+                    ],
+                    [
+                        'Protein',
+                        3.33
+                    ]
+                ]
+            },
+            {
+                name: 'Honey',
+                id: 'Honey',
+                data: [
+                    [
+                        'Carbohydrates',
+                        82
+                    ],
+                    [
+                        'Fat',
+                        0
+                    ],
+                    [
+                        'Protein',
+                        0.3
+                    ]
+                ]
+            },
+            {
+                name: 'Vegetable Oil',
+                id: 'Vegetable Oil',
+                data: [
+                    [
+                        'Carbohydrates',
+                        0
+                    ],
+                    [
+                        'Fat',
+                        96
+                    ],
+                    [
+                        'Protein',
+                        0
+                    ]
+                ]
+            },
+            {
+                name: 'Vanilla Extract',
+                id: 'Vanilla Extract',
+                data: [
+                    [
+                        'Carbohydrates',
+                        12.6
+                    ],
+                    [
+                        'Fat',
+                        0
+                    ],
+                    [
+                        'Protein',
+                        0
                     ]
                 ]
             }
