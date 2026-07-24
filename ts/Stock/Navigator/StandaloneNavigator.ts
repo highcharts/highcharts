@@ -39,8 +39,8 @@ declare module '../../Core/GlobalsBase' {
 interface BoundAxis {
     axis: Axis;
     callbacks: Array<Function>;
-    userMin?: (null|number|string);
-    userMax?: (null|number|string);
+    oldMin?: (null|number|string);
+    oldMax?: (null|number|string);
 }
 
 /* *
@@ -224,8 +224,8 @@ class StandaloneNavigator {
             // should cover. Stash the axis' own bounds before overriding them,
             // so `unbind` can restore them, #24716
             if (axis.coll === 'yAxis') {
-                boundAxis.userMin = axis.options.min;
-                boundAxis.userMax = axis.options.max;
+                boundAxis.oldMin = axis.options.min ?? axis.min;
+                boundAxis.oldMax = axis.options.max ?? axis.max;
             }
 
             this.boundAxes.push(boundAxis);
@@ -323,10 +323,11 @@ class StandaloneNavigator {
 
         // Restore the axis' original min/max that were overridden in `bind`
         if (boundAxis.axis.coll === 'yAxis' && restoreExtremes) {
-            boundAxis.axis.update({
-                min: boundAxis.userMin ?? null,
-                max: boundAxis.userMax ?? null
-            });
+            const min = boundAxis.oldMin ?? void 0,
+                max = boundAxis.oldMax ?? void 0;
+
+            boundAxis.axis.update({ min, max }, false);
+            boundAxis.axis.setExtremes(min, max);
         }
     }
 

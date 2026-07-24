@@ -164,7 +164,11 @@ QUnit.test(
             }]
         });
 
-        const yAxis = chart.yAxis[0];
+        const yAxis = chart.yAxis[0],
+            // The axis' own extremes before binding overrides them
+            initialYMin = yAxis.min,
+            initialYMax = yAxis.max;
+
         navigator.bind(yAxis, true);
 
         // Binding a y-axis bounds it to the navigator's range, so panning can
@@ -216,18 +220,21 @@ QUnit.test(
             'navigator range, #24716.'
         );
 
-        // Unbinding should restore the axis' own (unset) bounds
+        // Unbinding with restoreExtremes should update the y-axis min and max
+        // back to the axis' own bounds from before binding
         navigator.unbind(yAxis, true);
 
-        assert.ok(
-            yAxis.options.min === null || yAxis.options.min === void 0,
-            'Unbinding should restore the y-axis min bound set by binding, ' +
-            '#24716.'
+        assert.strictEqual(
+            yAxis.min,
+            initialYMin,
+            'Unbinding should update the unbound y-axis min back to its own ' +
+            'pre-bind extreme, #24716.'
         );
-        assert.ok(
-            yAxis.options.max === null || yAxis.options.max === void 0,
-            'Unbinding should restore the y-axis max bound set by binding, ' +
-            '#24716.'
+        assert.strictEqual(
+            yAxis.max,
+            initialYMax,
+            'Unbinding should update the unbound y-axis max back to its own ' +
+            'pre-bind extreme, #24716.'
         );
 
         // Cleanup
