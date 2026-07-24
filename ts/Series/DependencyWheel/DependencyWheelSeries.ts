@@ -398,7 +398,8 @@ interface DependencyWheelSeries {
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
-    getCenter: PieSeries.prototype.getCenter
+    getCenter: PieSeries.prototype.getCenter,
+    useCircularLayout: false
 });
 
 /* *
