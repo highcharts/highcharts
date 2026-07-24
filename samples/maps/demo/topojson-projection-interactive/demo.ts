@@ -6,6 +6,7 @@ declare namespace Highcharts {
         rotationTimer?: number;
         rotationFrame?: number;
         sonification?: Highcharts.Sonification;
+        mapView?: Highcharts.mapView
     }
 
     // Some internal properties on the series
@@ -196,8 +197,8 @@ const createMap = (
             opacity: 0.95,
             borderWidth: 0,
             interpolation: {
-                enabled: true,
-                blur: 0.35
+                enabled: false
+                // blur: 0.35
             },
             affectsMapView: false,
             enableMouseTracking: false,
@@ -377,45 +378,70 @@ function addLinePoint(point, chart) {
 }
 
 function setupAutoRotation(chart: Highcharts.MapChart): void {
-    const rotationSpeed = 0.1 / 50,
-        clouds = chart.get('clouds') as any,
-        projectClouds = clouds.getProjectedImageData;
-    let lastTimestamp: number | undefined,
-        cloudRotation = 0;
+    const mapView = chart.mapView;
+    const globeRotationSpeed = 0.1 / 50;
+    let lastTimestamp: number | undefined;
+    let cloudRotation = 0;
+    const cloudDriftSpeed = globeRotationSpeed * 0.5;
+    const clouds = chart.get('clouds') as any;
 
+    /* cloud-drift, only works with interpolation on.
+    const projectClouds = clouds.getProjectedImageData;
     clouds.getProjectedImageData = function (mapView, ...args): any {
-        const projection = mapView.projection,
-            rotator = projection.rotator,
-            rotation = projection.options.rotation;
+        const pixelsToLonLat = mapView.pixelsToLonLat;
+        mapView.pixelsToLonLat = function (position): any {
+            const lonLat = pixelsToLonLat.call(this, position);
 
-        projection.rotator = projection.getRotator([
-            rotation[0] + cloudRotation,
-            rotation[1]
-        ]);
-        const imageData = projectClouds.call(this, mapView, ...args);
-        projection.rotator = rotator;
-        return imageData;
+            if (lonLat) {
+                lonLat.lon = (
+                    (lonLat.lon - cloudRotation + 540) % 360
+                ) - 180;
+            }
+
+            return lonLat;
+        };
+
+        try {
+            return projectClouds.call(this, mapView, ...args);
+        } finally {
+            mapView.pixelsToLonLat = pixelsToLonLat;
+        }
     };
+    */
 
     const rotate = (timestamp: number): void => {
         const elapsed = lastTimestamp === undefined ?
             0 : timestamp - lastTimestamp;
-        const projectionOptions = chart.options.mapView.projection as
-            Highcharts.MapViewProjectionOptions;
+        const projectionOptions = mapView.projection.options as any;
 
         lastTimestamp = timestamp;
-        cloudRotation = (cloudRotation + elapsed * rotationSpeed * 0.15) % 360;
-        chart.update({
-            mapView: {
-                projection: {
-                    rotation: [
-                        projectionOptions.rotation[0] +
-                            (elapsed * rotationSpeed),
-                        projectionOptions.rotation[1]
-                    ]
-                }
+        cloudRotation = (cloudRotation + elapsed * cloudDriftSpeed) % 360;
+        // alternative cloud-drift that does not require interpolation
+        clouds.setData(
+            cloudData.map(point => ({
+                ...point,
+                lon: (
+                    (point.lon - cloudRotation + 540) % 360
+                ) - 180
+            })),
+            false
+        );
+        mapView.update({
+            projection: {
+                rotation: [
+                    projectionOptions.rotation[0] +
+                        (elapsed * globeRotationSpeed),
+                    projectionOptions.rotation[1]
+                ]
             }
-        }, undefined, undefined, false);
+        }, false);
+        // recenter globe after rotation
+        mapView.setView(
+            mapView.projection.inverse([0, 0]),
+            mapView.zoom,
+            true,
+            false
+        );
 
         chart.rotationFrame = requestAnimationFrame(rotate);
     };
@@ -423,13 +449,11 @@ function setupAutoRotation(chart: Highcharts.MapChart): void {
     const stopRotation = (): void => {
         if (chart.rotationFrame) {
             cancelAnimationFrame(chart.rotationFrame);
-            chart.rotationFrame = void 0;
         }
     };
 
     const startRotation = (): void => {
         lastTimestamp = undefined;
-        stopRotation();
         chart.rotationFrame = requestAnimationFrame(rotate);
     };
 
@@ -440,14 +464,12 @@ function setupAutoRotation(chart: Highcharts.MapChart): void {
         chart.rotationTimer = window.setTimeout(startRotation, delay);
     };
 
-    const interactionHandler = (): void => {
+    // Reset timer once the user drags the globe
+    const container = chart.container as HTMLElement;
+    container?.addEventListener('mouseover', () => {
         stopRotation();
         scheduleRotation();
-    };
-
-    const container = chart.container as HTMLElement;
-    container.addEventListener('mouseover', interactionHandler);
-
+    });
     startRotation();
 }
 
