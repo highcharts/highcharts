@@ -655,6 +655,8 @@ const MOCK_TICKER_COUNT = 15;
 
         if (points.length) {
             theChart.tooltip.refresh(points);
+            // refresh() sets 'hover'; reset to normal so pinned points don't
+            // keep a halo (visible on line series and indicators).
             points.forEach(point => point.setState());
         }
     }
@@ -878,47 +880,41 @@ const MOCK_TICKER_COUNT = 15;
         }
     );
 
-    // Pick the hovered date from the pane under the cursor: restrict the
-    // nearest-point search to series whose pane rect holds the pointer.
-    Highcharts.addEvent(chart.pointer, 'beforeGetHoverData', function (e) {
-        const x = e.chartX,
-            y = e.chartY;
-        e.filter = series => {
+    // Sync hover across panes: take the point under the cursor in its own pane
+    // (searchPoint), then show that same x on every pane (synced and active).
+    Highcharts.wrap(chart.pointer, 'getHoverData', function (proceed, ...args) {
+        const e = args[5]; // getHoverData's last arg is the pointer event
+
+        const pane = e && chart.series.find(series => {
             const xAxis = series.xAxis,
                 yAxis = series.yAxis;
-            return series.visible && !!xAxis && !!yAxis &&
-                x >= xAxis.pos && x <= xAxis.pos + xAxis.len &&
-                y >= yAxis.pos && y <= yAxis.pos + yAxis.len;
-        };
-    });
-
-    // The filter also narrows the shared set to one pane; re-expand it with
-    // every pane's point at the hovered x so all stay synced and active.
-    Highcharts.wrap(chart.pointer, 'getHoverData', function (proceed) {
-        const data = proceed.apply(
-            this,
-            Array.prototype.slice.call(arguments, 1)
-        );
-        const hoverPoint = data.hoverPoint;
-        if (hoverPoint) {
-            const seen = new Set(data.hoverPoints);
-            chart.series.forEach(series => {
-                if (
-                    series.options.isInternal || !series.visible ||
-                    !series.points
-                ) {
-                    return;
-                }
-                const point = series.points.find(
-                    p => p.x === hoverPoint.x && !p.isNull
-                );
-                if (point && !seen.has(point)) {
-                    data.hoverPoints.push(point);
-                    seen.add(point);
-                }
-            });
+            return isMainSeries(series) && series.visible && xAxis && yAxis &&
+                e.chartX >= xAxis.pos &&
+                e.chartX <= xAxis.pos + xAxis.len &&
+                e.chartY >= yAxis.pos &&
+                e.chartY <= yAxis.pos + yAxis.len;
+        });
+        const hoverPoint = pane && pane.searchPoint(e, true);
+        if (!hoverPoint) {
+            return proceed.apply(this, args);
         }
-        return data;
+
+        const hoverPoints = [];
+        chart.series.forEach(series => {
+            if (
+                series.options.isInternal || !series.visible ||
+                !series.points
+            ) {
+                return;
+            }
+            const point = series.points.find(
+                p => p.x === hoverPoint.x && !p.isNull
+            );
+            if (point) {
+                hoverPoints.push(point);
+            }
+        });
+        return { hoverPoint, hoverPoints, hoverSeries: pane };
     });
 
     // Initial paint rendered before the refresh handler above existed; run one
