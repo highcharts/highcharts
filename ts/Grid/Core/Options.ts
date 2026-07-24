@@ -360,8 +360,9 @@ export interface RenderingSettings {
     table?: TableSettings;
 
     /**
-     * The theme of the Grid. It will set the class name on the container.
-     * Can be set to the empty string to disable the theme.
+     * Theme class name(s) on the grid container.
+     * A non-empty value also adds `.hcg-themed`, which applies table surface
+     * styles. An empty string disables theming.
      *
      * @default 'hcg-theme-default'
      */
@@ -481,6 +482,17 @@ export interface RowsSettings {
      * @default 50
      */
     virtualizationThreshold?: number;
+
+    /**
+     * Additional CSS class names applied to every body row (`<tr>`).
+     */
+    className?: string;
+
+    /**
+     * Additional CSS class names applied to even body rows (`<tr>`), matching
+     * the `.hcg-row-even` parity used by the grid.
+     */
+    evenClassName?: string;
 
 }
 

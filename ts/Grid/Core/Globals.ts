@@ -40,6 +40,7 @@ export const version = '@product.version@';
 export const buildDate = '@product.date@';
 export const rawClassNames = {
     container: 'container',
+    themed: 'themed',
     tableElement: 'table',
     captionElement: 'caption',
     descriptionElement: 'description',
