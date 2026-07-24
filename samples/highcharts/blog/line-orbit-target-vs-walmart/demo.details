@@ -1,6 +1,8 @@
 ---
  name: Target vs Walmart Weekly Stock Prices - line
- authors:
-   - Øystein Moseng
- js_wrap: b
+  authors:
+    - Øystein Moseng
+  # CSP is disabled because this demo loads third-party assets (orbit.highsoftlabs.com, jsdelivr) that are blocked by the sample runner CSP.
+  applyCSP: false
+  js_wrap: b
 ...
