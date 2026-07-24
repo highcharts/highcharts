@@ -44,7 +44,8 @@ import {
     merge
 } from '../../../Shared/Utilities.js';
 
-const { makeHTMLElement, formatText } = GridUtils;
+const { makeHTMLElement, formatText, joinClassNames } =
+    GridUtils;
 
 const paginationAlignments = [
     'left',
@@ -54,10 +55,6 @@ const paginationAlignments = [
 ] as const;
 const alignmentClassName = (alignment: string): string =>
     `${Globals.classNamePrefix}pagination-${alignment}`;
-
-const joinClassNames = (
-    ...parts: Array<(string | undefined | null | false)>
-): string => parts.filter(Boolean).join(' ');
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -184,6 +181,12 @@ class Pagination {
      */
     public isDirtyAlignment?: boolean;
 
+    /**
+     * Whether the pagination root user class name should be updated.
+     * @internal
+     */
+    public isDirtyClassName?: boolean;
+
 
     /* *
     *
@@ -260,6 +263,11 @@ class Pagination {
         if ('alignment' in diff) {
             this.isDirtyAlignment = true;
             delete diff.alignment;
+        }
+
+        if ('className' in diff) {
+            this.isDirtyClassName = true;
+            delete diff.className;
         }
 
         // TODO: Optimize more options here.
@@ -342,14 +350,29 @@ class Pagination {
         const alignmentClasses = paginationAlignments.map(alignmentClassName);
 
         wrapper.classList.remove(...alignmentClasses);
+        wrapper.classList.add(this.getAlignmentClass());
+    }
 
-        const alignmentClass = this.getAlignmentClass();
-        wrapper.classList.add(alignmentClass);
+    public updateClassName(): void {
+        const wrapper = this.contentWrapper;
+
+        if (!wrapper) {
+            return;
+        }
+
+        wrapper.className = joinClassNames(
+            Globals.getClassName('pagination'),
+            this.options?.className
+        );
     }
 
     public redraw(): void {
         if (this.isDirtyQuerying) {
             this.updateControls(true);
+        }
+
+        if (this.isDirtyClassName) {
+            this.updateClassName();
         }
 
         if (this.isDirtyAlignment) {
@@ -358,6 +381,7 @@ class Pagination {
 
         delete this.isDirtyQuerying;
         delete this.isDirtyAlignment;
+        delete this.isDirtyClassName;
     }
 
     /**
