@@ -665,12 +665,18 @@ namespace OrdinalAxis {
                 (min <= dataMin && movedUnits <= 0) ||
                 (max >= dataMax + overscroll && movedUnits >= 0)
             ) {
-                e.preventDefault();
-                return;
-            }
+                // At the x-axis data edge, with vertical panning enabled, fall
+                // back to the base pan so the y-axis can still be panned,
+                // otherwise block panning past the edge, #24716
+                if (panning && /y/.test(panning.type)) {
+                    runBase = true;
+                } else {
+                    e.preventDefault();
+                    return;
+                }
 
             // We have an ordinal axis, but the data is equally spaced
-            if (!extendedAxis.ordinal.positions) {
+            } else if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
             } else if (Math.abs(movedUnits) > 1) {
