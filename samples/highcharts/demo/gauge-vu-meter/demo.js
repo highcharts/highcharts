@@ -1,4 +1,4 @@
-Highcharts.chart('container', {
+const c = Highcharts.chart('container', {
     chart: {
         type: 'gauge',
         plotBorderWidth: 1,
@@ -123,33 +123,51 @@ Highcharts.chart('container', {
         yAxis: 1
     }]
 
-},
+});
 
-// Let the music play
-function (chart) {
-    setInterval(function () {
-        if (chart.series) { // the chart may be destroyed
+document.getElementById('audioButton').addEventListener('click', async () => {
+    let analyser;
+    let bufferLength;
+    let dataArray;
 
-            const left = chart.series[0].points[0],
-                right = chart.series[1].points[0],
-                inc = (Math.random() - 0.5) * 3;
+    function trackVolume() {
+        requestAnimationFrame(trackVolume);
 
-            let leftVal,
-                rightVal;
+        analyser.getByteFrequencyData(dataArray);
 
-            leftVal = left.y + inc;
-            rightVal = leftVal + inc / 3;
-            if (leftVal < -20 || leftVal > 6) {
-                leftVal = left.y - inc;
-            }
-            if (rightVal < -20 || rightVal > 6) {
-                rightVal = leftVal;
-            }
-
-            left.update(leftVal, false);
-            right.update(rightVal, false);
-            chart.redraw();
+        let sum = 0;
+        for (let i = 0; i < bufferLength; i++) {
+            sum += dataArray[i] * dataArray[i];
         }
-    }, 500);
+        const volume = (Math.sqrt(sum / bufferLength) / 5) - 20;
 
+        const left = c.series[0].points[0],
+            right = c.series[1].points[0];
+
+        left.update(volume, false);
+        right.update(volume, false);
+        c.redraw(false);
+    }
+
+    try {
+        const stream = await navigator.mediaDevices
+            .getUserMedia({ audio: true });
+
+        const audioContext = new (
+            window.AudioContext || window.webkitAudioContext
+        )();
+        const source = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+
+        analyser.fftSize = 256;
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
+        source.connect(analyser);
+
+        trackVolume();
+    } catch (err) {
+        console.error('Error accessing microphone: ', err);
+        alert('Please allow microphone access to use this feature.');
+    }
 });
