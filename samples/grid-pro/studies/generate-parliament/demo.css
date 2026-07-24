@@ -24,6 +24,13 @@ body {
     padding: 0 8px;
 }
 
+#grid {
+    cursor: pointer;
+
+    --hcg-focus-ring-color: rgba(0, 0, 0, 0.15);
+    --hcg-focus-ring-width: 1px;
+}
+
 .active-row {
-    background: rgba(30, 136, 229, 0.12) !important; /* Soft blue, 12% opacity */
+    background: rgba(30, 136, 229, 0.25) !important; /* Soft blue, 12% opacity */
 }

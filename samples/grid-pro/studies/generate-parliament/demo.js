@@ -116,6 +116,12 @@ const norwayElectionResults = {
 const years = Object.keys(norwayElectionResults).reverse();
 let selectedYear = years[0];
 let grid = null;
+
+const partyColumns = norwayElectionResults[selectedYear].map(party => ({
+    id: party[0],
+    minWidth: 215
+}));
+
 const getColumnData = data => {
     // Collect all unique party names across all years
     const partyNames = [
@@ -224,6 +230,7 @@ grid = Grid.grid('grid', {
     events: {
         afterLoad: onGridChange
     },
+    columns: partyColumns,
     columnDefaults: {
         events: {
             afterSort: onGridChange
