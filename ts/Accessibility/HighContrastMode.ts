@@ -21,7 +21,9 @@
  * */
 
 import type Accessibility from './Accessibility';
+import type { Options } from '../Core/Options';
 import type ColorType from '../Core/Color/ColorType';
+import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
@@ -30,6 +32,9 @@ const {
     isMS,
     win
 } = H;
+import {
+    diffObjects
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -40,7 +45,16 @@ const {
 interface HighContrastState {
     active?: boolean;
     applying?: boolean;
+    restore?: {
+        chartOptions: Partial<Options>;
+        pointOptions: Array<Array<PointRestoreOptions>>;
+        seriesOptions: Array<AnyRecord>;
+    };
+    mediaQueryList?: MediaQueryList;
+    removeMediaQueryListener?: Function;
 }
+
+type PointRestoreOptions = Partial<PointOptions>|undefined;
 
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
@@ -91,6 +105,73 @@ function isHighContrastModeActive(): boolean {
 }
 
 /**
+ * Get the state storage for the chart.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to get state for.
+ * @return {Highcharts.Dictionary<*>} The state object.
+ */
+function getHighContrastState(
+    chart: Accessibility.ChartComposition
+): HighContrastState {
+    return chart.highContrastState || (
+        chart.highContrastState = {}
+    );
+}
+
+/**
+ * Store chart, series and point options before high contrast overrides them.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to store options for.
+ * @param {Highcharts.Options} theme The high contrast theme.
+ * @return {void}
+ */
+function storeRestoreOptions(
+    chart: Accessibility.ChartComposition,
+    theme: AnyRecord
+): void {
+    const highContrastState = getHighContrastState(chart);
+
+    if (highContrastState.restore) {
+        return;
+    }
+
+    highContrastState.restore = {
+        chartOptions: diffObjects(
+            theme,
+            chart.options,
+            true,
+            chart.collectionsWithUpdate
+        ),
+        pointOptions: chart.series.map(
+            (series): PointRestoreOptions[] => {
+                const points = series.points || [];
+
+                return points.map((point): PointRestoreOptions => {
+                    if (point.options?.color) {
+                        return {
+                            borderColor: (
+                                point.options as AnyRecord
+                            ).borderColor,
+                            color: point.options.color
+                        };
+                    }
+
+                    return void 0;
+                });
+            }
+        ),
+        seriesOptions: chart.series.map((series): AnyRecord => ({
+            borderColor: series.userOptions.borderColor,
+            color: series.userOptions.color,
+            colors: series.userOptions.colors,
+            fillColor: series.userOptions.fillColor
+        }))
+    };
+}
+
+/**
  * Force high contrast theme for the chart. The default theme is defined in
  * a separate file.
  *
@@ -102,13 +183,7 @@ function isHighContrastModeActive(): boolean {
 function setHighContrastTheme(
     chart: Accessibility.ChartComposition
 ): void {
-    // We might want to add additional functionality here in the future for
-    // storing the old state so that we can reset the theme if HC mode is
-    // disabled. For now, the user will have to reload the page.
-
-    const highContrastState = chart.highContrastState || (
-        chart.highContrastState = {}
-    );
+    const highContrastState = getHighContrastState(chart);
 
     highContrastState.active = true;
     highContrastState.applying = true;
@@ -118,6 +193,8 @@ function setHighContrastTheme(
         const theme: AnyRecord = (
             chart.options.accessibility.highContrastTheme
         );
+
+        storeRestoreOptions(chart, theme);
 
         chart.update(theme, false);
 
@@ -162,6 +239,177 @@ function setHighContrastTheme(
     }
 }
 
+/**
+ * Reset the chart options that were overridden by the high contrast theme.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to reset.
+ * @return {void}
+ */
+function unsetHighContrastTheme(
+    chart: Accessibility.ChartComposition
+): void {
+    const highContrastState = getHighContrastState(chart),
+        restore = highContrastState.restore;
+
+    if (!restore) {
+        highContrastState.active = false;
+        return;
+    }
+
+    highContrastState.active = false;
+    highContrastState.applying = true;
+
+    try {
+        chart.update(restore.chartOptions, false);
+
+        chart.series.forEach(function (series, seriesIndex): void {
+            const seriesOptions = restore.seriesOptions[seriesIndex];
+
+            if (seriesOptions) {
+                series.update(seriesOptions, false);
+            }
+
+            if (series.points) {
+                series.points.forEach(function (point, pointIndex): void {
+                    const pointOptions = restore.pointOptions[seriesIndex]?.[
+                        pointIndex
+                    ];
+
+                    if (pointOptions) {
+                        point.update(pointOptions, false);
+                    }
+                });
+            }
+        });
+
+        chart.redraw();
+    } finally {
+        delete highContrastState.applying;
+        delete highContrastState.restore;
+    }
+}
+
+/**
+ * Get the forced-colors media query list.
+ *
+ * @private
+ * @return {MediaQueryList|undefined} The media query list if supported.
+ */
+function getForcedColorsQuery(): (MediaQueryList|undefined) {
+    return win.matchMedia && win.matchMedia('(forced-colors: active)');
+}
+
+/**
+ * Remove the forced-colors media query listener for the chart.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to clean up.
+ * @return {void}
+ */
+function removeHighContrastModeListener(
+    chart: Accessibility.ChartComposition
+): void {
+    const highContrastState = chart.highContrastState;
+
+    if (highContrastState?.removeMediaQueryListener) {
+        highContrastState.removeMediaQueryListener();
+        delete highContrastState.removeMediaQueryListener;
+        delete highContrastState.mediaQueryList;
+    }
+}
+
+/**
+ * Add a forced-colors media query listener for auto high contrast mode.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to update on changes.
+ * @return {void}
+ */
+function addHighContrastModeListener(
+    chart: Accessibility.ChartComposition
+): void {
+    const highContrastState = getHighContrastState(chart);
+
+    if (highContrastState.removeMediaQueryListener) {
+        return;
+    }
+
+    const mediaQueryList = getForcedColorsQuery();
+
+    if (!mediaQueryList) {
+        return;
+    }
+
+    const onChange = function (): void {
+        const accessibility = chart.accessibility;
+
+        if (accessibility && !accessibility.zombie) {
+            accessibility.update();
+        }
+    };
+
+    if (mediaQueryList.addEventListener) {
+        mediaQueryList.addEventListener('change', onChange);
+        highContrastState.removeMediaQueryListener = function (): void {
+            mediaQueryList.removeEventListener('change', onChange);
+        };
+    } else if (mediaQueryList.addListener) {
+        mediaQueryList.addListener(onChange);
+        highContrastState.removeMediaQueryListener = function (): void {
+            mediaQueryList.removeListener(onChange);
+        };
+    }
+
+    highContrastState.mediaQueryList = mediaQueryList;
+}
+
+/**
+ * Apply or reset the high contrast theme according to the current mode.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to update.
+ * @return {void}
+ */
+function updateHighContrastMode(
+    chart: Accessibility.ChartComposition
+): void {
+    const highContrastState = getHighContrastState(chart),
+        highContrastMode = chart.options.accessibility.highContrastMode;
+
+    if (highContrastState.applying) {
+        return;
+    }
+
+    if (highContrastMode === false) {
+        removeHighContrastModeListener(chart);
+
+        if (highContrastState.active) {
+            unsetHighContrastTheme(chart);
+        }
+
+        return;
+    }
+
+    if (highContrastMode === 'auto') {
+        addHighContrastModeListener(chart);
+    } else {
+        removeHighContrastModeListener(chart);
+    }
+
+    if (
+        highContrastMode === true ||
+        (
+            highContrastMode === 'auto' &&
+            isHighContrastModeActive()
+        )
+    ) {
+        setHighContrastTheme(chart);
+    } else if (highContrastState.active) {
+        unsetHighContrastTheme(chart);
+    }
+}
+
 /* *
  *
  *  Default Export
@@ -169,8 +417,11 @@ function setHighContrastTheme(
  * */
 
 const whcm = {
+    removeHighContrastModeListener,
     isHighContrastModeActive,
-    setHighContrastTheme
+    setHighContrastTheme,
+    unsetHighContrastTheme,
+    updateHighContrastMode
 };
 
 export default whcm;
