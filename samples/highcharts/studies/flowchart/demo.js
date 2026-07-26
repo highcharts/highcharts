@@ -34,12 +34,13 @@
 // renders the result directly — no manual positioning or arrow-drawing code is
 // needed in chart configs that use it.
 
-// Three datasets to lay out. Flip `datasetName` to switch between them.
+// The datasets to lay out. Flip `datasetName` to switch between them;
+// `payment` is also the sub-flow the realistic dataset drills down into.
 const datasetName = 'realistic';
 
 // Debugging aid: show the internal dummy points long edges are routed
 // through (see `series.debug` on the `flowchart` series defined below).
-const showDummyPoints = true;
+const showDummyPoints = false;
 
 // A small graph with a single feedback loop (F → A). The loop-closing edge
 // is labeled so it reads the same way in the chart as it does in this
@@ -109,46 +110,106 @@ const realisticEdges = [
     ['NotifyCustomer', 'End', '']
 ];
 
+// The internal payment-processing flow that the realistic dataset's
+// "Process payment" subroutine expands into (the drilldown target). Card
+// details are validated, authorized with a gateway, and on approval the
+// funds are captured and the transaction recorded; an invalid card loops
+// back for re-entry, and a decline exits the sub-flow. This mirrors how a
+// predefined-process (subroutine) box refers out to its own definition -
+// here that definition is another flowchart the user can drill into.
+const paymentEdges = [
+    ['Start', 'EnterCard', ''],
+    ['EnterCard', 'ValidateCard', ''],
+    ['ValidateCard', 'Authorize', 'Valid'],
+    ['ValidateCard', 'ShowError', 'Invalid'],
+    // Back edge: an invalid card sends the customer back to re-enter it.
+    ['ShowError', 'EnterCard', 'Re-enter'],
+    ['Authorize', 'Authorized', ''],
+    ['Authorized', 'CaptureFunds', 'Approved'],
+    ['Authorized', 'Declined', 'Declined'],
+    ['CaptureFunds', 'RecordTransaction', ''],
+    ['RecordTransaction', 'End', ''],
+    ['Declined', 'End', '']
+];
+
 // Node shapes/labels for each dataset, in classic flowchart style: ovals
-// for start/end terminals, diamonds for decisions, rectangles (the
-// `flowchart` series' default `nodeShape`, so left unlisted here) for
-// everything else.
+// for start/end terminals, diamonds for decisions, parallelograms for
+// input/output, hexagons for preparation, the subroutine box for a
+// predefined process, cylinders for data stores, documents for generated
+// output, and rectangles (the `flowchart` series' default `nodeShape`, so
+// left unlisted here) for a plain process step.
 const nodeShapesByDataset = {
     simple: [
         { id: 'A', shape: 'oval' },
         { id: 'F', shape: 'oval' },
         { id: 'D', shape: 'diamond' }
     ],
+    // Not semantically meaningful - this dataset is an abstract stress test,
+    // so it just puts one of each available shape on the chart to show them.
     complex: [
         { id: 'Start', shape: 'oval' },
         { id: 'End', shape: 'oval' },
         { id: 'A', shape: 'diamond' },
-        { id: 'J', shape: 'diamond' }
+        { id: 'J', shape: 'diamond' },
+        { id: 'B', shape: 'parallelogram' },
+        { id: 'C', shape: 'hexagon' },
+        { id: 'H', shape: 'subroutine' },
+        { id: 'K', shape: 'cylinder' },
+        { id: 'M', shape: 'document' }
     ],
     realistic: [
         { id: 'Start', shape: 'oval' },
         { id: 'End', shape: 'oval', name: 'Order closed' },
-        { id: 'ReceiveOrder', name: 'Receive order' },
-        { id: 'CheckInventory', name: 'Check inventory' },
+        { id: 'ReceiveOrder', shape: 'parallelogram', name: 'Receive order' },
+        { id: 'CheckInventory', shape: 'cylinder', name: 'Check inventory' },
         { id: 'InStock', shape: 'diamond', name: 'In stock?' },
-        { id: 'Backorder', name: 'Backorder item' },
-        { id: 'ProcessPayment', name: 'Process payment' },
+        { id: 'Backorder', shape: 'hexagon', name: 'Backorder item' },
+        {
+            id: 'ProcessPayment',
+            shape: 'subroutine',
+            name: 'Process payment',
+            // Clicking this node drills into the `payment` dataset - the
+            // sub-flow it stands for. A subroutine box is exactly the classic
+            // flowchart symbol for "defined elsewhere", so it's the natural
+            // node to make drillable.
+            drilldown: 'payment'
+        },
         { id: 'PaymentValid', shape: 'diamond', name: 'Payment valid?' },
         { id: 'RequestRetry', name: 'Request retry' },
         { id: 'CancelOrder', name: 'Cancel order' },
         { id: 'ShipItem', name: 'Ship item' },
-        { id: 'NotifyCustomer', name: 'Notify customer' }
+        { id: 'NotifyCustomer', shape: 'document', name: 'Notify customer' }
+    ],
+    payment: [
+        { id: 'Start', shape: 'oval' },
+        { id: 'EnterCard', shape: 'parallelogram', name: 'Enter card details' },
+        { id: 'ValidateCard', shape: 'diamond', name: 'Card valid?' },
+        { id: 'ShowError', name: 'Show error' },
+        {
+            id: 'Authorize',
+            shape: 'subroutine',
+            name: 'Authorize with gateway'
+        },
+        { id: 'Authorized', shape: 'diamond', name: 'Authorized?' },
+        { id: 'CaptureFunds', name: 'Capture funds' },
+        {
+            id: 'RecordTransaction',
+            shape: 'cylinder',
+            name: 'Record transaction'
+        },
+        { id: 'Declined', name: 'Payment declined' },
+        { id: 'End', shape: 'oval', name: 'Return to order' }
     ]
 };
 
 const datasets = {
     simple: simpleEdges,
     complex: complexEdges,
-    realistic: realisticEdges
+    realistic: realisticEdges,
+    payment: paymentEdges
 };
 
 const edges = datasets[datasetName];
-const nodeShapes = nodeShapesByDataset[datasetName];
 
 const FlowchartLayout = {
 
@@ -706,10 +767,25 @@ const FlowchartLayout = {
     const NetworkgraphPointClass =
         H.seriesTypes.networkgraph.prototype.pointClass;
 
+    // Geometry tunables shared by a shape's symbol (how it's drawn), its
+    // `shapeSize` (how much bigger than its text box it has to be) and its
+    // `shapeBoundaryDistance` (where its edge is). Keeping the three in sync
+    // is the whole reason these live in one place. Each is a fraction of the
+    // shape's own height (the cylinder's, of its width), so a shape's slant/
+    // inset/cap/bar scales with its label rather than being a fixed size.
+    const PARALLELOGRAM_SLANT = 0.4; // horizontal slant per side, ×height
+    const HEXAGON_INSET = 0.25;      // end-cap inset per side, ×height
+    const SUBROUTINE_BAR = 0.1;     // side-bar width, ×height
+    const SUBROUTINE_GAP = 0.05;      // gap beside each side-bar, ×height
+    const CYLINDER_CAP = 0.12;       // elliptical cap radius, ×width
+    const CYLINDER_GAP = 0.1;        // cap-to-body gap, ×cap radius
+    const DOCUMENT_WAVE = 0.13;      // wavy-bottom reserve, ×height
+
     // A full ellipse, drawn as two 180° arcs since an SVG path has no
     // native ellipse primitive - registered as a symbol so "oval" nodes go
     // through the same marker pipeline (states, halo, dragging) as the
-    // built-in 'circle'/'square'/'diamond' shapes.
+    // built-in 'circle'/'square'/'diamond' shapes. The shapes below join it
+    // for the same reason.
     H.SVGRenderer.prototype.symbols.oval = function (x, y, w, h) {
         return [
             ['M', x, y + h / 2],
@@ -719,17 +795,118 @@ const FlowchartLayout = {
         ];
     };
 
+    // Input/output: a right-leaning parallelogram with horizontal top and
+    // bottom edges and sides slanted by `s`.
+    H.SVGRenderer.prototype.symbols.parallelogram = function (x, y, w, h) {
+        const s = PARALLELOGRAM_SLANT * h;
+        return [
+            ['M', x + s, y],
+            ['L', x + w, y],
+            ['L', x + w - s, y + h],
+            ['L', x, y + h],
+            ['Z']
+        ];
+    };
+
+    // Preparation: a hexagon with pointed left/right ends, the top and
+    // bottom edges inset by `c` from each side.
+    H.SVGRenderer.prototype.symbols.hexagon = function (x, y, w, h) {
+        const c = HEXAGON_INSET * h;
+        return [
+            ['M', x, y + h / 2],
+            ['L', x + c, y],
+            ['L', x + w - c, y],
+            ['L', x + w, y + h / 2],
+            ['L', x + w - c, y + h],
+            ['L', x + c, y + h],
+            ['Z']
+        ];
+    };
+
+    // Predefined process (subroutine): a main rectangle flanked by a thin
+    // bar on each side, each separated from the body by a small gap. All
+    // three are filled (the node has no stroke), so the background showing
+    // through the gaps reads as the classic vertical divider lines - no
+    // border needed. Three disjoint closed subpaths, each filling on its own.
+    H.SVGRenderer.prototype.symbols.subroutine = function (x, y, w, h) {
+        const b = SUBROUTINE_BAR * h;
+        const g = SUBROUTINE_GAP * h;
+        const rect = (x0, x1) => [
+            ['M', x0, y],
+            ['L', x1, y],
+            ['L', x1, y + h],
+            ['L', x0, y + h],
+            ['Z']
+        ];
+        return [
+            ...rect(x, x + b),                       // left bar
+            ...rect(x + b + g, x + w - b - g),       // main body
+            ...rect(x + w - b, x + w)                // right bar
+        ];
+    };
+
+    // Database: a vertical cylinder drawn as two disjoint closed subpaths -
+    // a full elliptical cap on top, and the body below it. The body's top
+    // edge is the same downward-bulging rim as the cap's underside, shifted
+    // down by just `gap`, so the two curves run parallel and read as one
+    // cylinder with a thin seam - not a lid that doesn't fit. Being disjoint
+    // (the gap separates them), each subpath fills solid on its own with no
+    // winding interaction between them.
+    H.SVGRenderer.prototype.symbols.cylinder = function (x, y, w, h) {
+        const rx = w / 2;
+        const ry = Math.min(CYLINDER_CAP * w, h / 4);
+        const gap = CYLINDER_GAP * ry;
+        return [
+            // Cap: a full, closed ellipse across the top.
+            ['M', x, y + ry],
+            ['A', rx, ry, 0, 1, 0, x + w, y + ry],
+            ['A', rx, ry, 0, 1, 0, x, y + ry],
+            ['Z'],
+            // Body: a front rim matching the cap's underside a `gap` lower,
+            // then straight sides and a front-bulging bottom.
+            ['M', x, y + ry + gap],
+            ['A', rx, ry, 0, 0, 0, x + w, y + ry + gap],
+            ['L', x + w, y + h - ry],
+            ['A', rx, ry, 0, 0, 1, x, y + h - ry],
+            ['Z']
+        ];
+    };
+
+    // Document: straight top and sides, with a wavy bottom edge (one dip
+    // then one rise) that swings ±`a` around a baseline `a` above the box
+    // bottom, so the lowest point of the wave just reaches the box bottom.
+    // A single closed subpath - the wave is part of the outline, not an
+    // internal detail line, so there's nothing to fill wrong.
+    H.SVGRenderer.prototype.symbols.document = function (x, y, w, h) {
+        const a = DOCUMENT_WAVE * h / 2;
+        const baseY = y + h - a;
+        return [
+            ['M', x, y],
+            ['L', x + w, y],
+            ['L', x + w, baseY],
+            ['Q', x + w * 0.75, baseY + 2 * a, x + w * 0.5, baseY],
+            ['Q', x + w * 0.25, baseY - 2 * a, x, baseY],
+            ['Z']
+        ];
+    };
+
     const SYMBOL_BY_SHAPE = {
         rectangle: 'square',
         oval: 'oval',
-        diamond: 'diamond'
+        diamond: 'diamond',
+        parallelogram: 'parallelogram',
+        hexagon: 'hexagon',
+        subroutine: 'subroutine',
+        cylinder: 'cylinder',
+        document: 'document'
     };
 
     const SHAPE_PADDING = { x: 16, y: 10 };
     const MIN_SHAPE_SIZE = { width: 60, height: 36 };
 
-    // Box dimensions that exactly inscribe a `textWidth`×`textHeight` box
-    // (already padded) for the given shape:
+    // Box dimensions that inscribe a `textWidth`×`textHeight` box (already
+    // padded) for the given shape. `boxW`/`boxH` below are that padded text
+    // box; each shape grows it by just enough to keep the box inside:
     // - rectangle: the padded text box itself.
     // - diamond: a rhombus with half-diagonals p, q inscribes a rectangle
     //   of half-extents (rw, rh) exactly at its tightest fit when
@@ -740,23 +917,101 @@ const FlowchartLayout = {
     //   half-extents (rw, rh) exactly at its tightest fit when
     //   (rw/a)² + (rh/b)² = 1; choosing a = rw·√2, b = rh·√2 satisfies
     //   that, so the oval's full width/height are the text box's × √2.
+    // - parallelogram: the slanted sides eat `slant` off the box's width at
+    //   the narrow corner on each side, so it widens by 2·slant.
+    // - hexagon: the pointed ends inset the full-height edges by `inset` per
+    //   side, so it likewise widens by 2·inset.
+    // - subroutine: a main rectangle plus a thin bar and gap on each side, so
+    //   the box widens by 2·(bar + gap)·height to keep the text in the main
+    //   body.
+    // - cylinder: the cap (height 2·ry) and the body's matching top rim (a
+    //   `gap` lower, dipping ry into the body) sit above the label, the
+    //   bottom bulge below; reserving 2·ry + gap top and bottom clears both.
+    // - document: the wavy bottom swings up to 2·a into the box, so the box
+    //   grows in height until the centered label clears that highest point.
     function shapeSize(shape, textWidth, textHeight) {
-        const w = textWidth + SHAPE_PADDING.x * 2;
-        const h = textHeight + SHAPE_PADDING.y * 2;
-        const scale = shape === 'diamond' ? 2 :
-            shape === 'oval' ? Math.SQRT2 : 1;
+        const boxW = textWidth + SHAPE_PADDING.x * 2;
+        const boxH = textHeight + SHAPE_PADDING.y * 2;
+
+        let width, height;
+        switch (shape) {
+        case 'diamond':
+            width = boxW * 2;
+            height = boxH * 2;
+            break;
+        case 'oval':
+            width = boxW * Math.SQRT2;
+            height = boxH * Math.SQRT2;
+            break;
+        case 'parallelogram':
+            height = Math.max(MIN_SHAPE_SIZE.height, boxH);
+            width = boxW + 2 * PARALLELOGRAM_SLANT * height;
+            break;
+        case 'hexagon':
+            height = Math.max(MIN_SHAPE_SIZE.height, boxH);
+            width = boxW + 2 * HEXAGON_INSET * height;
+            break;
+        case 'subroutine':
+            height = Math.max(MIN_SHAPE_SIZE.height, boxH);
+            width = boxW + 2 * (SUBROUTINE_BAR + SUBROUTINE_GAP) * height;
+            break;
+        case 'cylinder': {
+            width = Math.max(MIN_SHAPE_SIZE.width, boxW);
+            const ry = CYLINDER_CAP * width;
+            // Reserve the cap (2·ry) + the gap on top, plus 2·ry more so the
+            // centered label clears the cap/gap above and the bottom bulge.
+            height = boxH + 4 * ry + 2 * CYLINDER_GAP * ry;
+            break;
+        }
+        case 'document':
+            width = boxW;
+            height = boxH / (1 - 2 * DOCUMENT_WAVE);
+            break;
+        default: // rectangle
+            width = boxW;
+            height = boxH;
+        }
 
         return {
-            width: Math.max(MIN_SHAPE_SIZE.width, w * scale),
-            height: Math.max(MIN_SHAPE_SIZE.height, h * scale)
+            width: Math.max(MIN_SHAPE_SIZE.width, width),
+            height: Math.max(MIN_SHAPE_SIZE.height, height)
         };
+    }
+
+    // Distance from the center (origin) to a convex polygon's boundary along
+    // direction (dx, dy). `verts` are the corners relative to the center, in
+    // order; the ray from the (inside) origin exits through exactly one edge,
+    // found by solving ray-vs-segment for each edge and taking the one whose
+    // hit lands within the segment at a non-negative distance. With (dx, dy)
+    // a unit vector the returned parameter is that distance directly.
+    function polygonBoundaryDistance(verts, dx, dy) {
+        for (let i = 0; i < verts.length; i++) {
+            const a = verts[i];
+            const b = verts[(i + 1) % verts.length];
+            const ex = b[0] - a[0];
+            const ey = b[1] - a[1];
+            const det = ex * dy - ey * dx;
+            if (!det) {
+                continue; // ray parallel to this edge
+            }
+            const t = (ex * a[1] - ey * a[0]) / det;
+            const u = (dx * a[1] - dy * a[0]) / det;
+            if (t >= 0 && u >= -1e-9 && u <= 1 + 1e-9) {
+                return t;
+            }
+        }
+        return 0;
     }
 
     // Distance from a shape's center to its boundary along a (unit)
     // direction (dx, dy) - used to pull an arrow's tip back to the node's
-    // actual edge instead of its center, whichever of the three shapes the
-    // node is. Each is the standard closed-form "ray from center to
-    // boundary" formula for that shape.
+    // actual edge instead of its center, whichever shape the node is. The
+    // closed-form shapes use the standard "ray from center to boundary"
+    // formula; the polygonal ones (parallelogram, hexagon) hand their
+    // centered corners to `polygonBoundaryDistance`. The subroutine shares
+    // the rectangle's box exactly, and the cylinder and document are close
+    // enough to a rectangle along the cardinal directions arrows usually
+    // approach from (straight sides, near-flush top/bottom) to reuse it.
     function shapeBoundaryDistance(shape, halfWidth, halfHeight, dx, dy) {
         if (shape === 'diamond') {
             const denom = Math.abs(dx) / halfWidth + Math.abs(dy) / halfHeight;
@@ -768,7 +1023,28 @@ const FlowchartLayout = {
             );
             return denom ? 1 / denom : 0;
         }
-        // Rectangle.
+        if (shape === 'parallelogram') {
+            const s = PARALLELOGRAM_SLANT * 2 * halfHeight;
+            return polygonBoundaryDistance([
+                [-halfWidth + s, -halfHeight],
+                [halfWidth, -halfHeight],
+                [halfWidth - s, halfHeight],
+                [-halfWidth, halfHeight]
+            ], dx, dy);
+        }
+        if (shape === 'hexagon') {
+            const c = HEXAGON_INSET * 2 * halfHeight;
+            return polygonBoundaryDistance([
+                [-halfWidth, 0],
+                [-halfWidth + c, -halfHeight],
+                [halfWidth - c, -halfHeight],
+                [halfWidth, 0],
+                [halfWidth - c, halfHeight],
+                [-halfWidth + c, halfHeight]
+            ], dx, dy);
+        }
+        // Rectangle - and, by close approximation, subroutine/cylinder/
+        // document.
         const denom = Math.max(
             Math.abs(dx) / halfWidth, Math.abs(dy) / halfHeight
         );
@@ -793,7 +1069,8 @@ const FlowchartLayout = {
             radius: 16
         },
         // Default shape for nodes that don't set their own via
-        // `nodes: [{ id, shape }]` - one of 'rectangle', 'oval', 'diamond'.
+        // `nodes: [{ id, shape }]` - one of 'rectangle', 'oval', 'diamond',
+        // 'parallelogram', 'hexagon', 'subroutine', 'cylinder', 'document'.
         nodeShape: 'rectangle',
         nodeLabelStyle: {
             fontSize: '12px',
@@ -1343,29 +1620,148 @@ const FlowchartLayout = {
 
 }(Highcharts));
 
-Highcharts.chart('container', {
-    chart: {
-        type: 'flowchart'
-    },
+// Drilldown for the flowchart series.
+//
+// Integration approach (and why this shape). Highcharts' own drilldown
+// module (`ts/Extensions/Drilldown/Drilldown.ts`) is built around cartesian
+// axes: it discovers drillable points per `xAxis` (`ddPoints`), makes axis
+// ticks clickable, and reconstructs series from `dataTable` columns on the
+// way back up. A `flowchart` (a `networkgraph`) has no axes, and the thing a
+// user clicks is a *node*, not a data point - so most of that machinery
+// doesn't apply. Only the *concepts* transfer: a level stack, a breadcrumb
+// trail, and drilling up.
+//
+// So this is a small, self-contained take on those concepts: a node can
+// carry a `drilldown` naming a child dataset; clicking it swaps the whole
+// series to that sub-flow and pushes a breadcrumb; the breadcrumb climbs
+// back up. It stays entirely in chart/series API calls (`addSeries`,
+// `remove`, renderer text), with none of the axis assumptions - and could
+// later delegate to the module's `Breadcrumbs`/`addSeriesAsDrilldown` if the
+// series is ever promoted from a study to a real drilldown-aware type.
 
-    title: {
-        text: 'Flowchart series — automatic layered layout'
-    },
+// Human-readable heading per flow, shown in the breadcrumb trail.
+const flowTitles = {
+    simple: 'Simple graph',
+    complex: 'Every shape',
+    realistic: 'Order fulfillment',
+    payment: 'Process payment'
+};
 
-    series: [{
+// The trail of flows drilled through; the last entry is the one on screen.
+// Starts at the chosen root dataset.
+const drillTrail = [datasetName];
+
+// Series options for a given flow. `keys` is explicit, unlike the inherited
+// `pointArrayMap` alone: Highcharts' generic array-data parsing has a
+// leading-`x` special case that otherwise shifts a 3-element
+// `[from, to, text]` row by one index.
+function flowSeries(name) {
+    return {
         name: 'Connections',
-        // Explicit, unlike the inherited `pointArrayMap` alone: Highcharts'
-        // generic array-data parsing has a leading-`x` special case that
-        // otherwise shifts a 3-element `[from, to, text]` row by one index.
         keys: ['from', 'to', 'text'],
-        data: edges,
-        // dataLabels: {
-        //     enabled: true,
-        //     linkFormat: ''
-        // },
-        nodes: nodeShapes,
+        data: datasets[name],
+        nodes: nodeShapesByDataset[name],
         debug: {
             dummyPoints: showDummyPoints
         }
-    }]
+    };
+}
+
+// Show whatever flow is at the end of the trail. The series is fully
+// replaced (remove + add) rather than updated in place: a drill swaps every
+// node id and link, so a clean rebuild is simpler to reason about than
+// diffing two unrelated graphs. The `render` event (below) redraws the
+// breadcrumb and re-binds node clicks afterwards.
+function showCurrentFlow(chart) {
+    const name = drillTrail[drillTrail.length - 1];
+    if (chart.series[0]) {
+        chart.series[0].remove(false);
+    }
+    chart.addSeries(flowSeries(name), false);
+    chart.redraw();
+}
+
+// Draw the breadcrumb trail as clickable renderer text just above the plot.
+// Rebuilt from scratch on every chart render so it survives redraws and
+// resizes; each parent crumb climbs back up to its level.
+function renderBreadcrumb(chart) {
+    (chart.breadcrumbEls || []).forEach(el => el.destroy());
+    chart.breadcrumbEls = [];
+
+    let x = chart.plotLeft;
+    const y = Math.max(14, chart.plotTop - 12);
+
+    drillTrail.forEach((name, i) => {
+        const isLast = i === drillTrail.length - 1;
+        const crumb = chart.renderer
+            .text((i ? '› ' : '') + (flowTitles[name] || name), x, y)
+            .attr({ zIndex: 7 })
+            .css({
+                cursor: isLast ? 'default' : 'pointer',
+                fontWeight: isLast ? 'bold' : 'normal',
+                color: 'var(--highcharts-neutral-color-80)'
+            })
+            .add();
+
+        if (!isLast) {
+            crumb.on('click', () => {
+                // Climb back to this crumb's level, dropping everything below.
+                drillTrail.length = i + 1;
+                showCurrentFlow(chart);
+            });
+        }
+
+        x += crumb.getBBox().width + 6;
+        chart.breadcrumbEls.push(crumb);
+    });
+}
+
+Highcharts.chart('container', {
+    chart: {
+        type: 'flowchart',
+        height: '80%',
+        events: {
+            // After every render, give drillable nodes a pointer cursor and a
+            // click that drills into their target flow, then (re)draw the
+            // breadcrumb. The click is bound directly to the node's elements -
+            // both the shape *and* its data label, since the label sits on top
+            // of the box and would otherwise swallow clicks on the text - each
+            // guarded so it binds once per element. Binding on the elements
+            // themselves sidesteps any ambiguity about whether networkgraph
+            // nodes fire the series-level point click event.
+            render: function () {
+                const chart = this,
+                    series = chart.series[0];
+                (series && series.nodes || []).forEach(node => {
+                    const target = node.options.drilldown;
+                    if (!target) {
+                        return;
+                    }
+                    const drill = () => {
+                        drillTrail.push(target);
+                        showCurrentFlow(chart);
+                    };
+                    const bind = el => {
+                        if (el && !el.drilldownBound) {
+                            el.drilldownBound = true;
+                            el.css({ cursor: 'pointer' }).on('click', drill);
+                        }
+                    };
+
+                    bind(node.graphic);
+                    (
+                        node.dataLabels ||
+                        (node.dataLabel ? [node.dataLabel] : [])
+                    ).forEach(bind);
+                });
+                renderBreadcrumb(chart);
+            }
+        }
+    },
+
+    title: {
+        text: 'Flowchart series — click a subroutine to drill down'
+    },
+
+    series: [flowSeries(datasetName)]
 });
