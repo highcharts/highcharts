@@ -517,9 +517,9 @@ const columnsForGroup = group => {
 };
 
 
-const GROUP_STAGE_COLOR = 'light-dark(#c9ced6, #667080)';
-const NON_GROUP_STAGE_COLOR = 'light-dark(#f7f8fa, #242830)';
-const SELECTED_GROUP_COLOR = '#0400ff';
+const GROUP_STAGE_COLOR = '#3D8B6D';
+// const SELECTED_GROUP_COLOR = '#D3AF37';
+const SELECTED_GROUP_COLOR = '#EFBF04';
 
 const defaultGroup = 'A';
 const groups = [...new Set(groupStageData.map(team => team.group))];
@@ -832,10 +832,10 @@ const getGraticule = () => {
             id: 'groups',
             zIndex: 2,
             data: mapData(defaultGroup),
-            nullColor: NON_GROUP_STAGE_COLOR,
             color: SELECTED_GROUP_COLOR,
             dataLabels: {
                 enabled: true,
+                y: 15,
                 formatter: function () {
                     return this.point.value === 2 ? this.point.name : '';
                 }
