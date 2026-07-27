@@ -55,8 +55,10 @@
     --highcharts-neutral-color-100: #000000;
 }
 
+/* Concrete values (:root:root beats the light-dark() Highcharts injects on
+   :root) so the page stays dark even when the embedder forces color-scheme. */
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:root {
         --highcharts-background-color: #141414;
         --highcharts-neutral-color-100: #ffffff;
     }
@@ -65,6 +67,15 @@
 .highcharts-dark {
     --highcharts-background-color: #141414;
     --highcharts-neutral-color-100: #ffffff;
+}
+
+/* Restore light-dark() on the chart itself, so a forced scheme
+   (.highcharts-light / .highcharts-dark) still overrides the values above. */
+@supports (color: light-dark(#fff, #000)) {
+    .highcharts-container {
+        --highcharts-background-color: light-dark(#ffffff, #141414);
+        --highcharts-neutral-color-100: light-dark(#000000, #ffffff);
+    }
 }
 
 /*  ==== End Highcharts Variables  ==== */
