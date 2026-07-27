@@ -28,10 +28,7 @@ import type TableCell from '../../Core/Table/Body/TableCell';
 import type {
     TableCellAfterDataMutationEvent
 } from '../../Core/Table/Body/TableCell';
-import type {
-    SummaryColumnOptions,
-    SummaryOptions
-} from './SummaryRowsTypes';
+import type { SummaryOptions } from './SummaryRowsTypes';
 
 import Globals from '../../Core/Globals.js';
 import SummaryRowsController from './SummaryRowsController.js';
@@ -225,16 +222,9 @@ declare module '../../Core/Options' {
          * Provide a single object for one summary row, or an array of objects
          * for several.
          *
-         * @sample grid-pro/options/summary-rows Summary row
+         * @sample grid-pro/options/summary-rows Summary rows
          */
         summaryRows?: SummaryOptions;
-    }
-
-    interface ColumnOptions {
-        /**
-         * Summary row options for a single column.
-         */
-        summary?: SummaryColumnOptions;
     }
 }
 

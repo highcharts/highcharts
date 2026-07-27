@@ -27,9 +27,8 @@ import type {
 } from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
 import type {
-    SummaryColumnAggregatorContext,
-    SummaryColumnLabel,
-    SummaryColumnOptions,
+    SummaryAggregatorOption,
+    SummaryCellOptions,
     SummaryRowOptions
 } from './SummaryRowsTypes';
 
@@ -88,18 +87,23 @@ class SummaryRowsController {
     }
 
     /**
-     * Returns whether a source column participates in summary aggregation, so
+     * Returns whether a source column is aggregated by any summary row, so
      * editing it must recompute the totals.
      *
      * @param columnId
      * Source column id.
      */
     public hasColumnAggregator(columnId: string): boolean {
-        if (!this.getSummaryRowOptions().length) {
-            return false;
+        const rowOptions = this.getSummaryRowOptions();
+
+        for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
+            const cell = this.getCellsByColumnId(rowOptions[r]).get(columnId);
+            if (defined(this.getCellAggregator(rowOptions[r], cell))) {
+                return true;
+            }
         }
 
-        return !!this.getColumnSummaryOptions(columnId)?.aggregator;
+        return false;
     }
 
     /**
@@ -127,7 +131,7 @@ class SummaryRowsController {
                 table,
                 columnIds,
                 rowCount,
-                rowOptions[r].id ?? String(r),
+                rowOptions[r],
                 r
             );
 
@@ -151,8 +155,8 @@ class SummaryRowsController {
      * @param rowCount
      * Number of data rows.
      *
-     * @param summaryRowId
-     * Stable id of the summary row.
+     * @param options
+     * Options of the summary row.
      *
      * @param summaryRowIndex
      * Zero-based index of the summary row.
@@ -161,23 +165,31 @@ class SummaryRowsController {
         table: DataTable,
         columnIds: string[],
         rowCount: number,
-        summaryRowId: string,
+        options: SummaryRowOptions,
         summaryRowIndex: number
     ): DataTableRowObject | null {
         const summaryRow: DataTableRowObject = {};
+        const summaryRowId = options.id ?? String(summaryRowIndex);
+        const cells = this.getCellsByColumnId(options);
         let hasAggregate = false;
 
         for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
             const columnId = columnIds[i];
-            const options = this.getColumnSummaryOptions(columnId);
-            const context: SummaryColumnAggregatorContext = {
-                columnId,
-                rowCount,
-                summaryRowId,
-                summaryRowIndex
-            };
-            const aggregatorName = options?.aggregator && (
-                Aggregation.resolveAggregatorName(options.aggregator, context)
+            const cell = cells.get(columnId);
+
+            if (cell && cell.value !== void 0) {
+                summaryRow[columnId] = cell.value;
+                continue;
+            }
+
+            const aggregatorName = Aggregation.resolveAggregatorName(
+                this.getCellAggregator(options, cell),
+                {
+                    columnId,
+                    rowCount,
+                    summaryRowId,
+                    summaryRowIndex
+                }
             );
 
             if (aggregatorName) {
@@ -187,8 +199,7 @@ class SummaryRowsController {
                     Aggregation.executeAggregate(aggregatorName, values);
                 hasAggregate = true;
             } else {
-                summaryRow[columnId] =
-                    this.resolveLabel(options?.label, context) ?? null;
+                summaryRow[columnId] = null;
             }
         }
 
@@ -196,44 +207,49 @@ class SummaryRowsController {
     }
 
     /**
-     * Resolves a summary cell label from its option.
+     * Resolves the effective aggregator option for a summary cell.
      *
-     * @param label
-     * Configured label option.
+     * @param options
+     * Summary row options.
      *
-     * @param context
-     * Summary row context.
+     * @param cell
+     * Cell options for the resolved column, when present.
      */
-    private resolveLabel(
-        label: SummaryColumnLabel | undefined,
-        context: SummaryColumnAggregatorContext
-    ): string | null | undefined {
-        return typeof label === 'function' ? label(context) : label;
+    private getCellAggregator(
+        options: SummaryRowOptions,
+        cell: SummaryCellOptions | undefined
+    ): (SummaryAggregatorOption | undefined) {
+        if (cell && cell.aggregator !== void 0) {
+            return cell.aggregator;
+        }
+
+        // A static value suppresses the row default aggregator.
+        if (cell && cell.value !== void 0) {
+            return;
+        }
+
+        return options.aggregator;
     }
 
     /**
-     * Resolves the summary options for a source column id.
+     * Indexes a summary row's cell options by column id.
      *
-     * @param columnId
-     * Source column id.
+     * @param options
+     * Summary row options.
      */
-    private getColumnSummaryOptions(
-        columnId: string
-    ): SummaryColumnOptions | undefined {
-        const columnPolicy = this.grid.columnPolicy;
-        const defaultOptions = this.grid.options?.columnDefaults?.summary;
-        const directOptions = columnPolicy
-            .getIndividualColumnOptions(columnId)
-            ?.summary;
+    private getCellsByColumnId(
+        options: SummaryRowOptions
+    ): Map<string, SummaryCellOptions> {
+        const cellsByColumnId = new Map<string, SummaryCellOptions>();
+        const cells = options.cells;
 
-        if (directOptions || defaultOptions) {
-            return {
-                ...defaultOptions,
-                ...directOptions
-            };
+        if (cells) {
+            for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
+                cellsByColumnId.set(cells[i].columnId, cells[i]);
+            }
         }
 
-        return;
+        return cellsByColumnId;
     }
 
     /**
