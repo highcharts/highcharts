@@ -235,13 +235,12 @@ class CrookedLine extends Annotation {
                     type: 'path',
                     className: 'highcharts-crooked-lines',
                     points: this.points.map(
-                        (_point, i): AnnotationMockPointFunction => (
+                        (_point, i): AnnotationMockPointFunction =>
                             function (
                                 target: Controllable
                             ): AnnotationPointType {
                                 return target.annotation.points[i];
                             }
-                        ) as AnnotationMockPointFunction
                     )
                 }),
                 0

@@ -253,7 +253,7 @@ class Tunnel extends CrookedLine {
                         this.points[0],
                         this.points[1],
                         function (
-                            target: any
+                            target: Controllable
                         ): AnnotationMockPointOptionsObject {
                             const pointOptions = MockPoint.pointToOptions(
                                 target.annotation.points[2]

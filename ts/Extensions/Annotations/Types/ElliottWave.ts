@@ -12,6 +12,8 @@
  * */
 
 import type ColorType from '../../../Core/Color/ColorType';
+import type { AnnotationPointType } from '../AnnotationSeries';
+import type Controllable from '../Controllables/Controllable';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
@@ -93,7 +95,9 @@ class ElliottWave extends CrookedLine {
                         point.label,
                         {
                             text: typeOptions.labels[i],
-                            point: function (target: any): any {
+                            point: function (
+                                target: Controllable
+                            ): AnnotationPointType {
                                 return target.annotation.points[i];
                             }
                         }
