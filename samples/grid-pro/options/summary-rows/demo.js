@@ -7,7 +7,6 @@ const shortColumns = {
     growth: [0.12, 0.08, 0.15, 0.06]
 };
 
-// Generate a large dataset to show aggregation over many rows.
 function createLargeColumns(rowCount) {
     const regions = ['Americas', 'EMEA', 'APAC', 'LATAM', 'MEA'];
     const columns = {
@@ -32,10 +31,20 @@ const grid = Grid.grid('container', {
     data: {
         columns: shortColumns
     },
-    // Enable the flat summary (total) row.
-    summaryRows: {
-        enabled: true
-    },
+    summaryRows: [{
+        id: 'total',
+        aggregator: 'SUM',
+        cells: [
+            { columnId: 'region', value: 'Total' },
+            { columnId: 'growth', aggregator: 'AVERAGE' }
+        ]
+    }, {
+        id: 'average',
+        aggregator: 'AVERAGE',
+        cells: [
+            { columnId: 'region', value: 'Average' }
+        ]
+    }],
     rendering: {
         rows: {
             pinning: {
@@ -61,41 +70,26 @@ const grid = Grid.grid('container', {
         minWidth: 160,
         cells: {
             format: '{value}'
-        },
-        summary: {
-            label: 'Total'
         }
     }, {
         id: 'q1',
         header: {
             format: 'Q1'
-        },
-        summary: {
-            aggregator: 'SUM'
         }
     }, {
         id: 'q2',
         header: {
             format: 'Q2'
-        },
-        summary: {
-            aggregator: 'SUM'
         }
     }, {
         id: 'q3',
         header: {
             format: 'Q3'
-        },
-        summary: {
-            aggregator: 'SUM'
         }
     }, {
         id: 'q4',
         header: {
             format: 'Q4'
-        },
-        summary: {
-            aggregator: 'SUM'
         }
     }, {
         id: 'growth',
@@ -104,9 +98,6 @@ const grid = Grid.grid('container', {
         },
         cells: {
             format: '{(multiply 100 value):.1f}%'
-        },
-        summary: {
-            aggregator: 'AVERAGE'
         }
     }],
     header: [

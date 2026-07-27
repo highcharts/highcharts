@@ -51,18 +51,12 @@ describe('SummaryRowsController', () => {
                 }
             },
             summaryRows: {
-                enabled: true
-            },
-            columns: [{
-                id: 'name',
-                summary: { label: 'Total' }
-            }, {
-                id: 'sales',
-                summary: { aggregator: 'SUM' }
-            }, {
-                id: 'margin',
-                summary: { aggregator: 'AVERAGE' }
-            }]
+                cells: [
+                    { columnId: 'name', value: 'Total' },
+                    { columnId: 'sales', aggregator: 'SUM' },
+                    { columnId: 'margin', aggregator: 'AVERAGE' }
+                ]
+            }
         }, true);
 
         grid.viewport?.resizeObserver?.disconnect();
@@ -70,7 +64,7 @@ describe('SummaryRowsController', () => {
         deepStrictEqual(
             summaryRowObjects(grid),
             [{ name: 'Total', sales: 60, margin: 3 }],
-            'Should compute SUM, AVERAGE and the configured label.'
+            'Should compute SUM, AVERAGE and the static value.'
         );
 
         strictEqual(
@@ -81,53 +75,7 @@ describe('SummaryRowsController', () => {
         );
     });
 
-    it('should compute multiple summary rows selecting the function per row',
-        async () => {
-            const { win, doc, el } = setupDOM();
-            mockObservers(win);
-            installGridDOMGlobals(win, doc);
-
-            const Grid = await loadGridPro();
-
-            const grid = await Grid.grid(el, {
-                data: {
-                    columns: {
-                        name: ['a', 'b', 'c'],
-                        sales: [10, 20, 30]
-                    }
-                },
-                summaryRows: [{ id: 'total' }, { id: 'average' }],
-                columns: [{
-                    id: 'name',
-                    summary: {
-                        label: (context: any) => (
-                            context.summaryRowId === 'total' ?
-                                'Total' : 'Average'
-                        )
-                    }
-                }, {
-                    id: 'sales',
-                    summary: {
-                        aggregator: (context: any) => (
-                            context.summaryRowIndex === 0 ? 'SUM' : 'AVERAGE'
-                        )
-                    }
-                }]
-            }, true);
-
-            grid.viewport?.resizeObserver?.disconnect();
-
-            deepStrictEqual(
-                summaryRowObjects(grid),
-                [
-                    { name: 'Total', sales: 60 },
-                    { name: 'Average', sales: 20 }
-                ],
-                'Should compute a SUM row then an AVERAGE row.'
-            );
-        });
-
-    it('should inherit the aggregator from columnDefaults and allow opt-out',
+    it('should apply the row aggregator default and let value suppress it',
         async () => {
             const { win, doc, el } = setupDOM();
             mockObservers(win);
@@ -144,15 +92,11 @@ describe('SummaryRowsController', () => {
                     }
                 },
                 summaryRows: {
-                    enabled: true
-                },
-                columnDefaults: {
-                    summary: { aggregator: 'SUM' }
-                },
-                columns: [{
-                    id: 'region',
-                    summary: { aggregator: null, label: 'Total' }
-                }]
+                    aggregator: 'SUM',
+                    cells: [
+                        { columnId: 'region', value: 'Total' }
+                    ]
+                }
             }, true);
 
             grid.viewport?.resizeObserver?.disconnect();
@@ -160,7 +104,52 @@ describe('SummaryRowsController', () => {
             deepStrictEqual(
                 summaryRowObjects(grid),
                 [{ region: 'Total', q1: 60, q2: 6 }],
-                'Columns should inherit the SUM default; null opts out.'
+                'The row aggregator should sum q1/q2; value suppresses it.'
+            );
+        });
+
+    it('should compute multiple summary rows with per-row aggregators',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: [{
+                    id: 'total',
+                    aggregator: 'SUM',
+                    cells: [{ columnId: 'name', value: 'Total' }]
+                }, {
+                    id: 'average',
+                    aggregator: 'AVERAGE',
+                    cells: [{ columnId: 'name', value: 'Average' }]
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            deepStrictEqual(
+                summaryRowObjects(grid),
+                [
+                    { name: 'Total', sales: 60 },
+                    { name: 'Average', sales: 20 }
+                ],
+                'Should compute a SUM row then an AVERAGE row.'
+            );
+
+            strictEqual(
+                (grid as any).viewport.summaryView.tbodyElement
+                    .querySelectorAll('tr').length,
+                2,
+                'The summary section should render both rows.'
             );
         });
 
@@ -180,15 +169,11 @@ describe('SummaryRowsController', () => {
                     }
                 },
                 summaryRows: {
-                    enabled: true
-                },
-                columns: [{
-                    id: 'name',
-                    summary: { label: 'Total' }
-                }, {
-                    id: 'sales',
-                    summary: { aggregator: 'SUM' }
-                }]
+                    cells: [
+                        { columnId: 'name', value: 'Total' },
+                        { columnId: 'sales', aggregator: 'SUM' }
+                    ]
+                }
             }, true);
 
             grid.viewport?.resizeObserver?.disconnect();
@@ -202,7 +187,7 @@ describe('SummaryRowsController', () => {
             strictEqual(
                 controller.hasColumnAggregator('name'),
                 false,
-                'A label-only column must not trigger recompute.'
+                'A static-value column must not trigger recompute.'
             );
         });
 
@@ -221,17 +206,13 @@ describe('SummaryRowsController', () => {
                 }
             },
             summaryRows: {
-                enabled: true
-            },
-            columns: [{
-                id: 'sales',
-                summary: { aggregator: 'SUM' }
-            }]
+                cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+            }
         }, true);
 
         grid.viewport?.resizeObserver?.disconnect();
 
-        deepStrictEqual(
+        strictEqual(
             summaryRowObjects(grid)[0].sales,
             60,
             'Initial SUM should aggregate the original data.'
@@ -246,7 +227,7 @@ describe('SummaryRowsController', () => {
             }
         });
 
-        deepStrictEqual(
+        strictEqual(
             summaryRowObjects(grid)[0].sales,
             6,
             'The SUM must recompute after the data changes.'
@@ -268,12 +249,9 @@ describe('SummaryRowsController', () => {
                 }
             },
             summaryRows: {
-                enabled: false
-            },
-            columns: [{
-                id: 'sales',
-                summary: { aggregator: 'SUM' }
-            }]
+                enabled: false,
+                cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+            }
         }, true);
 
         grid.viewport?.resizeObserver?.disconnect();
@@ -284,7 +262,7 @@ describe('SummaryRowsController', () => {
         );
     });
 
-    it('should compute no summary rows when no column aggregates', async () => {
+    it('should compute no summary rows when nothing aggregates', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -299,19 +277,15 @@ describe('SummaryRowsController', () => {
                 }
             },
             summaryRows: {
-                enabled: true
-            },
-            columns: [{
-                id: 'name',
-                summary: { label: 'Total' }
-            }]
+                cells: [{ columnId: 'name', value: 'Total' }]
+            }
         }, true);
 
         grid.viewport?.resizeObserver?.disconnect();
 
         ok(
             summaryRowObjects(grid).length === 0,
-            'A label without any aggregator must compute no rows.'
+            'A static value without any aggregator must compute no rows.'
         );
     });
 });

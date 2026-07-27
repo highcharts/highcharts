@@ -21,6 +21,9 @@
  *
  * */
 
+import type {
+    CellType as DataTableCellType
+} from '../../../Data/DataTable';
 import type { AggregatorOption } from '../Aggregation/AggregationTypes';
 
 
@@ -35,30 +38,11 @@ import type { AggregatorOption } from '../Aggregation/AggregationTypes';
  *
  * Provide a single object to render one summary row, or an array of objects to
  * render several (mirroring the `dataLabels` object-or-array convention).
- * Per-column aggregation is configured on the columns and can target a specific
- * row through the row id exposed in the aggregator context.
  */
 export type SummaryOptions = (SummaryRowOptions | SummaryRowOptions[]);
 
 /**
- * Options for a single summary row.
- */
-export interface SummaryRowOptions {
-    /**
-     * Whether the summary row is rendered.
-     * @default true
-     */
-    enabled?: boolean;
-
-    /**
-     * Stable id of the summary row, surfaced in the summary column aggregator
-     * and label context. Defaults to the row index.
-     */
-    id?: string;
-}
-
-/**
- * Context passed to a summary column aggregator or label callback.
+ * Context passed to a summary aggregator callback.
  */
 export interface SummaryColumnAggregatorContext {
     /**
@@ -83,39 +67,64 @@ export interface SummaryColumnAggregatorContext {
 }
 
 /**
- * Aggregator option accepted by a summary column.
+ * Aggregator option: a registered Formula processor function name (for example
+ * `SUM`), or a callback returning one.
  */
-export type SummaryColumnAggregatorOption =
+export type SummaryAggregatorOption =
     AggregatorOption<SummaryColumnAggregatorContext>;
 
 /**
- * Static or resolved label rendered in a non-aggregated summary cell.
+ * Configuration of a single summary cell (a column within a summary row).
+ *
+ * The column is referenced by `columnId`. Provide `aggregator` to aggregate the
+ * column, or `value` for a static cell (for example a `'Total'` label). Without
+ * either, the row's `aggregator` default applies.
  */
-export type SummaryColumnLabel = (
-    string |
-    ((context: SummaryColumnAggregatorContext) => (string | null | undefined))
-);
+export interface SummaryCellOptions {
+    /**
+     * Referenced source column id.
+     */
+    columnId: string;
+
+    /**
+     * Aggregator applied to this cell, overriding the row `aggregator` default.
+     */
+    aggregator?: SummaryAggregatorOption;
+
+    /**
+     * Static value rendered in this cell (no aggregation), for example a
+     * `'Total'` label. Takes precedence over the row `aggregator` default.
+     */
+    value?: DataTableCellType;
+}
 
 /**
- * Summary options for a single column.
+ * Options for a single summary row.
  */
-export interface SummaryColumnOptions {
+export interface SummaryRowOptions {
     /**
-     * Aggregator applied to this column in the summary rows.
-     *
-     * When a string, that Formula processor function name (for example `SUM`)
-     * is applied to every value in the column. When a callback, it receives
-     * the summary row context and returns a function name, or a falsy value to
-     * skip aggregation for that column/row.
-     *
-     * @sample grid-pro/options/summary-rows Summary row
+     * Whether the summary row is rendered.
+     * @default true
      */
-    aggregator?: SummaryColumnAggregatorOption;
+    enabled?: boolean;
 
     /**
-     * Label rendered in this column's summary cell when the column is not
-     * aggregated (for example `'Total'` in the first column). A callback can
-     * return a different label per summary row.
+     * Stable id of the summary row, surfaced in the aggregator context.
+     * Defaults to the row index.
      */
-    label?: SummaryColumnLabel;
+    id?: string;
+
+    /**
+     * Default aggregator applied to every column of the row, except cells
+     * given an explicit `aggregator` or `value` in `cells`.
+     *
+     * @sample grid-pro/options/summary-rows Summary rows
+     */
+    aggregator?: SummaryAggregatorOption;
+
+    /**
+     * Per-cell overrides for this row (aggregator or static value), keyed by
+     * `columnId`.
+     */
+    cells?: SummaryCellOptions[];
 }
