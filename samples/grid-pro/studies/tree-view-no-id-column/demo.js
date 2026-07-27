@@ -28,6 +28,7 @@ const grid = Grid.grid('container', {
             ]
         },
         treeView: {
+            enabled: true,
             treeColumn: 'name',
             expandedRowIds: 'all'
         }

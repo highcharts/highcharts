@@ -41,6 +41,7 @@ const grid = Grid.grid('container', {
             ]
         },
         treeView: {
+            enabled: true,
             input: {
                 type: 'path'
             }

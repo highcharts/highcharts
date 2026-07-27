@@ -43,6 +43,7 @@ const grid = Grid.grid('container', {
             ]
         },
         treeView: {
+            enabled: true,
             input: {
                 type: 'path',
                 separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
