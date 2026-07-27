@@ -708,13 +708,41 @@ class Tick {
      * @internal
      * @function Highcharts.Tick#handleOverflow
      */
-    public handleOverflow(xy: PositionObject): void {
+    public handleOverflow(xy: PositionObject, tickPos?: number): void {
         const tick = this,
             axis = this.axis,
             labelOptions = axis.options.labels,
-            pxPos = xy.x,
+            label = this.label,
+            spacing = axis.chart.spacing;
+
+        // On vertical axes the first and last labels are centered on the
+        // tick and may reach outside the chart spacing box (e.g. the top
+        // label when there is no top spacing). Justify them back inside,
+        // mirroring the horizontal behavior below. (#24652)
+        if (!axis.horiz) {
+            if (
+                label &&
+                !axis.isRadial &&
+                labelOptions.overflow === 'justify' &&
+                isNumber(tickPos)
+            ) {
+                const labelHeight = label.getBBox().height,
+                    topBound = spacing[0],
+                    bottomBound = (axis.chart.chartHeight as any) - spacing[2],
+                    labelTop = tickPos - labelHeight / 2,
+                    labelBottom = tickPos + labelHeight / 2;
+
+                if (labelTop < topBound) {
+                    xy.y += topBound - labelTop;
+                } else if (labelBottom > bottomBound) {
+                    xy.y -= labelBottom - bottomBound;
+                }
+            }
+            return;
+        }
+
+        const pxPos = xy.x,
             chartWidth = axis.chart.chartWidth,
-            spacing = axis.chart.spacing,
             leftBound = pick(
                 axis.labelLeft,
                 Math.min(axis.pos as any, spacing[3])
@@ -726,7 +754,6 @@ class Tick {
                     (chartWidth as any) - spacing[1]
                 )
             ),
-            label = this.label,
             rotation = this.rotation,
             factor = getAlignFactor(
                 axis.labelAlign || (label as any).attr('align')
@@ -1085,9 +1112,11 @@ class Tick {
             ) {
                 show = false;
 
-            // Handle label overflow and show or hide accordingly
-            } else if (horiz && !old && opacity !== 0) {
-                tick.handleOverflow(xy);
+            // Handle label overflow and show or hide accordingly. For
+            // vertical axes, `y` is the tick position the label is centered
+            // on (#24652).
+            } else if (!old && opacity !== 0) {
+                tick.handleOverflow(xy, y);
             }
 
             // Apply step
