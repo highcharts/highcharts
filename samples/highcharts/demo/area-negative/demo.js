@@ -1,5 +1,12 @@
 function drawChart(dataset) {
     Highcharts.chart('container', {
+        dataTable: {
+            columns: {
+                imports: dataset.imports.map(x => -x),
+                exports: dataset.exports,
+                balance: dataset.exports.map((x, i) => x - dataset.imports[i])
+            }
+        },
         chart: {
             type: 'area'
         },
@@ -12,7 +19,7 @@ function drawChart(dataset) {
                 ' target="_blank">SSB</a>'
         },
         xAxis: {
-            categories: dataset.categories,
+            type: 'datetime',
             lineWidth: 0
         },
         yAxis: {
@@ -29,7 +36,9 @@ function drawChart(dataset) {
             series: {
                 marker: {
                     enabled: false
-                }
+                },
+                pointIntervalUnit: 'month',
+                pointStart: '2020-01-01'
             }
         },
         credits: {
@@ -37,17 +46,19 @@ function drawChart(dataset) {
         },
         series: [{
             name: 'Exports',
-            data: dataset.exports
+            dataMapping: {
+                y: 'exports'
+            }
         }, {
             name: 'Imports',
-            data: dataset.imports.map(point => ({
-                y: -point
-            }))
+            dataMapping: {
+                y: 'imports'
+            }
         }, {
             name: 'Trade Balance',
-            data: dataset.imports.map((point, i) => ({
-                y: dataset.exports[i] - point
-            }))
+            dataMapping: {
+                y: 'balance'
+            }
         }]
     });
 }
