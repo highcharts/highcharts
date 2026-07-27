@@ -99,10 +99,27 @@ declare module '../../Core/Series/SeriesBase' {
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Depth of the columns in a 3D column chart.
+         */
         depth?: number;
+
+        /**
+         * 3D columns only. The color of the edges. Similar to `borderColor`,
+         * except it defaults to the same color as the column.
+         */
         edgeColor?: ColorString;
+
+        /**
+         * 3D columns only. The width of the colored edges.
+         */
         edgeWidth?: number;
+
+        /**
+         * The spacing between columns on the Z Axis in a 3D chart.
+         */
         groupZPadding?: number;
+
         inactiveOtherPoints?: boolean;
     }
 }
