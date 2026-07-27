@@ -1,5 +1,3 @@
-// Data retrieved from https://gs.statcounter.com/browser-market-share#monthly-202201-202201-bar
-
 // Create the chart
 Highcharts.chart('container', {
     chart: {
@@ -35,11 +33,7 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            borderWidth: 0,
-            dataLabels: {
-                enabled: true,
-                format: '{point.y:.1f}%'
-            }
+            borderWidth: 0
         }
     },
 
@@ -53,10 +47,6 @@ Highcharts.chart('container', {
         {
             name: 'Ingredients',
             colorByPoint: true,
-            dataLabels: {
-                enabled: true,
-                format: '{point.y:.0f} g'
-            },
             tooltip: {
                 headerFormat:
                     '<span style="font-size:11px">{series.name}</span><br>',
