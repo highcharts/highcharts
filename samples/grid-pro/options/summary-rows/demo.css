@@ -8,10 +8,13 @@
 }
 
 #container {
-    height: 400px;
     padding: 12px;
-}
 
-#container .hcg-summary-row .hcg-cell {
-    font-weight: 600;
+    .hcg-summary-row .hcg-cell {
+        font-weight: 600;
+    }
+
+    .hcg-container {
+        min-height: 340px;
+    }
 }

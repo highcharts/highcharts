@@ -153,6 +153,47 @@ describe('SummaryRowsController', () => {
             );
         });
 
+    it('should render unaggregated cells empty, not fetched from data',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30],
+                        note: [111, 222, 333]
+                    }
+                },
+                summaryRows: {
+                    cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+                },
+                columns: [{
+                    id: 'note',
+                    cells: { format: '${value:,0f}' }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const cells = (grid as any).viewport.summaryView.rows[0].cells;
+            const byId: Record<string, unknown> = {};
+            for (const cell of cells) {
+                byId[cell.column.id] = cell.value;
+            }
+
+            strictEqual(byId.name, '', 'Unaggregated text cell renders empty.');
+            strictEqual(
+                byId.note, '',
+                'Unaggregated cell is empty, not fetched from data (not 111).'
+            );
+            strictEqual(byId.sales, 60, 'Aggregated cell holds the SUM.');
+        });
+
     it('should report which columns aggregate for edit-driven recompute',
         async () => {
             const { win, doc, el } = setupDOM();
@@ -262,30 +303,39 @@ describe('SummaryRowsController', () => {
         );
     });
 
-    it('should compute no summary rows when nothing aggregates', async () => {
-        const { win, doc, el } = setupDOM();
-        mockObservers(win);
-        installGridDOMGlobals(win, doc);
+    it('should render a row with static values even when nothing aggregates',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
 
-        const Grid = await loadGridPro();
+            const Grid = await loadGridPro();
 
-        const grid = await Grid.grid(el, {
-            data: {
-                columns: {
-                    name: ['a', 'b', 'c'],
-                    sales: [10, 20, 30]
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: {
+                    cells: [{ columnId: 'name', value: 'Total' }]
                 }
-            },
-            summaryRows: {
-                cells: [{ columnId: 'name', value: 'Total' }]
-            }
-        }, true);
+            }, true);
 
-        grid.viewport?.resizeObserver?.disconnect();
+            grid.viewport?.resizeObserver?.disconnect();
 
-        ok(
-            summaryRowObjects(grid).length === 0,
-            'A static value without any aggregator must compute no rows.'
-        );
-    });
+            deepStrictEqual(
+                summaryRowObjects(grid),
+                [{ name: 'Total', sales: null }],
+                'A row without aggregation still renders its static values.'
+            );
+
+            strictEqual(
+                (grid as any).viewport.summaryView.tbodyElement
+                    .querySelectorAll('tr').length,
+                1,
+                'The empty/static summary row should still render.'
+            );
+        });
 });

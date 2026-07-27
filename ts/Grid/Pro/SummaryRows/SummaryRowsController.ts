@@ -127,24 +127,21 @@ class SummaryRowsController {
         const rowObjects: DataTableRowObject[] = [];
 
         for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
-            const summaryRow = this.buildSummaryRow(
+            rowObjects.push(this.buildSummaryRow(
                 table,
                 columnIds,
                 rowCount,
                 rowOptions[r],
                 r
-            );
-
-            if (summaryRow) {
-                rowObjects.push(summaryRow);
-            }
+            ));
         }
 
         this.rowObjects = rowObjects;
     }
 
     /**
-     * Builds a single summary row object, or `null` when it aggregates nothing.
+     * Builds a single summary row object. Columns that neither aggregate nor
+     * carry a static value render empty.
      *
      * @param table
      * Queried table the aggregation runs over.
@@ -167,11 +164,10 @@ class SummaryRowsController {
         rowCount: number,
         options: SummaryRowOptions,
         summaryRowIndex: number
-    ): DataTableRowObject | null {
+    ): DataTableRowObject {
         const summaryRow: DataTableRowObject = {};
         const summaryRowId = options.id ?? String(summaryRowIndex);
         const cells = this.getCellsByColumnId(options);
-        let hasAggregate = false;
 
         for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
             const columnId = columnIds[i];
@@ -192,18 +188,15 @@ class SummaryRowsController {
                 }
             );
 
-            if (aggregatorName) {
-                const values = Array.from(table.getColumn(columnId) || [])
-                    .filter(defined);
-                summaryRow[columnId] =
-                    Aggregation.executeAggregate(aggregatorName, values);
-                hasAggregate = true;
-            } else {
-                summaryRow[columnId] = null;
-            }
+            summaryRow[columnId] = aggregatorName ?
+                Aggregation.executeAggregate(
+                    aggregatorName,
+                    Array.from(table.getColumn(columnId) || []).filter(defined)
+                ) :
+                null;
         }
 
-        return hasAggregate ? summaryRow : null;
+        return summaryRow;
     }
 
     /**

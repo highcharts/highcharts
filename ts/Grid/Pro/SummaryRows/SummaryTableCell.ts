@@ -48,6 +48,9 @@ class SummaryTableCell extends TableCell {
      * instead of the data provider, then runs the normal cell pipeline so
      * `cells.format`, renderers and styles are honored.
      *
+     * A missing value renders empty; the base data-provider fetch (keyed by row
+     * index) must never run for a synthetic summary row.
+     *
      * @param value
      * Optional explicit value.
      *
@@ -58,11 +61,11 @@ class SummaryTableCell extends TableCell {
         value?: DataTableCellType,
         updateDataset: boolean = false
     ): Promise<void> {
-        if (!defined(value)) {
-            value = this.row.data[this.column.id] as DataTableCellType;
-        }
+        const resolved = defined(value) ?
+            value :
+            this.row.data[this.column.id] as DataTableCellType;
 
-        await super.setValue(value, updateDataset);
+        await super.setValue(defined(resolved) ? resolved : '', updateDataset);
     }
 
     /**
