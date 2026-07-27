@@ -51,12 +51,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'condition'
             }
         ],
-<<<<<<< HEAD
-        'text': 'Use `rule.operator` instead.'
-=======
         'text': 'Use `rule.operator` instead.',
         'version': '3.1.0'
->>>>>>> master
     },
     {
         'docsPath': 'columnDefaults.filtering.conditions',
@@ -75,12 +71,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'conditions'
             }
         ],
-<<<<<<< HEAD
-        'text': 'Use `operators` instead.'
-=======
         'text': 'Use `operators` instead.',
         'version': '3.1.0'
->>>>>>> master
     },
     {
         'docsPath': 'columnDefaults.filtering.value',
@@ -99,12 +91,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'value'
             }
         ],
-<<<<<<< HEAD
-        'text': 'Use `rule.value` instead.'
-=======
         'text': 'Use `rule.value` instead.',
         'version': '3.1.0'
->>>>>>> master
     },
     {
         'docsPath': 'columns.filtering.condition',
@@ -123,12 +111,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'condition'
             }
         ],
-<<<<<<< HEAD
-        'text': 'Use `rule.operator` instead.'
-=======
         'text': 'Use `rule.operator` instead.',
         'version': '3.1.0'
->>>>>>> master
     },
     {
         'docsPath': 'columns.filtering.conditions',
