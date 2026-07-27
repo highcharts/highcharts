@@ -15,64 +15,6 @@ declare namespace Highcharts {
     }
 }
 
-// Create a semi-transparent cloud field on a regular longitude/latitude grid.
-// Each tuple describes the center, spread, intensity and curve of a front.
-const cloudSystems: [number, number, number, number, number][] = [
-    [-165, 50, 70, 9, 12],
-    [-135, -25, 55, 8, -10],
-    [-100, 15, 75, 10, 14],
-    [-70, -50, 65, 8, -12],
-    [-35, 55, 70, 8, -10],
-    [5, 20, 50, 7, 8],
-    [35, -15, 80, 10, 13],
-    [75, -45, 60, 8, -9],
-    [100, 35, 70, 9, -12],
-    [145, -15, 55, 8, 10],
-    [175, 10, 80, 10, -14]
-];
-const cloudData: Array<{ lat: number; lon: number; value: number }> = [];
-
-for (let lat = -85; lat <= 85; lat += 5) {
-    for (let lon = -180; lon <= 180; lon += 5) {
-        let value = 0;
-
-        for (const [
-            centerLon,
-            centerLat,
-            lonRadius,
-            latRadius,
-            curve
-        ] of cloudSystems) {
-            const lonDistance = ((lon - centerLon + 540) % 360) - 180,
-                frontLatitude = centerLat + curve * Math.sin(
-                    lonDistance / lonRadius * Math.PI
-                ),
-                latDistance = lat - frontLatitude,
-                shape = Math.exp(-(
-                    Math.pow(lonDistance / lonRadius, 2) +
-                    Math.pow(latDistance / latRadius, 2)
-                )),
-                texture = Math.max(
-                    0,
-                    0.55 +
-                    0.3 * Math.sin((lonDistance + lat * 2) / 5) +
-                    0.15 * Math.cos((lonDistance * 2 - lat) / 3)
-                );
-
-            value = Math.max(value, shape * texture);
-        }
-
-        // Remove thin haze and boost the remaining cloud banks.
-        value = value < 0.16 ? 0 : Math.pow((value - 0.16) / 0.84, 0.5);
-
-        cloudData.push({
-            lat,
-            lon,
-            value: Math.min(value, 1)
-        });
-    }
-}
-
 // Create the map instance
 const createMap = (
     topology: Highcharts.TopoJSON,
@@ -94,7 +36,7 @@ const createMap = (
         },
 
         subtitle: {
-            text: '- with clouds and a popular flight route<br>' +
+            text: 'Add flight destinations by clicking on a country <br>' +
                     'Click and drag to rotate globe',
             floating: true,
             y: 34,
@@ -186,34 +128,10 @@ const createMap = (
                 }
             }
         }, {
-            type: 'geoheatmap',
-            id: 'clouds',
-            name: 'Cloud cover',
-            className: 'cloud-layer',
-            colorAxis: 1,
-            data: cloudData,
-            colsize: 5,
-            rowsize: 5,
-            opacity: 0.95,
-            borderWidth: 0,
-            interpolation: {
-                enabled: false
-                // blur: 0.35
-            },
-            affectsMapView: false,
-            enableMouseTracking: false,
-            accessibility: {
-                enabled: false
-            },
-            states: {
-                inactive: {
-                    enabled: false
-                }
-            }
-        }, {
             type: 'mappoint',
             id: 'clicked-points',
             name: 'Clicked points',
+            cursor: 'pointer',
             animation: true,
             data: [],
             color: '#313f77',
@@ -228,7 +146,6 @@ const createMap = (
                     const lines = chart.get('flight-route') as any;
                     const pointSeries = chart.get('clicked-points') as any;
 
-                    // Collect matching lines first to avoid mutating the series
                     const toRemove: any[] = [];
                     lines?.data.forEach((line: any): void => {
                         const lineCoords = line.options.geometry.coordinates;
@@ -273,13 +190,11 @@ const createMap = (
                     chart.redraw(false);
 
                     // Play descending notes for removing a point
-                    if (chart.sonification) {
-                        chart.sonification.playNote('vibraphone', {
-                            note: 'C2',
-                            noteDuration: 150,
-                            volume: 0.3
-                        });
-                    }
+                    chart.sonification?.playNote('vibraphone', {
+                        note: 'C2',
+                        noteDuration: 150,
+                        volume: 0.3
+                    });
                 }
             }
         }, {
@@ -367,47 +282,17 @@ function addLinePoint(point, chart) {
     chart.redraw(false);
 
     // Play ascending notes for adding a point
-    if (chart.sonification) {
-        chart.sonification.playNote('vibraphone', {
-            note: 'C3',
-            noteDuration: 150,
-            volume: 0.3
-        });
-
-    }
+    chart.sonification?.playNote('vibraphone', {
+        note: 'C3',
+        noteDuration: 150,
+        volume: 0.3
+    });
 }
 
 function setupAutoRotation(chart: Highcharts.MapChart): void {
     const mapView = chart.mapView;
     const globeRotationSpeed = 0.1 / 50;
     let lastTimestamp: number | undefined;
-    let cloudRotation = 0;
-    const cloudDriftSpeed = globeRotationSpeed * 0.5;
-    const clouds = chart.get('clouds') as any;
-
-    /* cloud-drift, only works with interpolation on.
-    const projectClouds = clouds.getProjectedImageData;
-    clouds.getProjectedImageData = function (mapView, ...args): any {
-        const pixelsToLonLat = mapView.pixelsToLonLat;
-        mapView.pixelsToLonLat = function (position): any {
-            const lonLat = pixelsToLonLat.call(this, position);
-
-            if (lonLat) {
-                lonLat.lon = (
-                    (lonLat.lon - cloudRotation + 540) % 360
-                ) - 180;
-            }
-
-            return lonLat;
-        };
-
-        try {
-            return projectClouds.call(this, mapView, ...args);
-        } finally {
-            mapView.pixelsToLonLat = pixelsToLonLat;
-        }
-    };
-    */
 
     const rotate = (timestamp: number): void => {
         const elapsed = lastTimestamp === undefined ?
@@ -415,17 +300,6 @@ function setupAutoRotation(chart: Highcharts.MapChart): void {
         const projectionOptions = mapView.projection.options as any;
 
         lastTimestamp = timestamp;
-        cloudRotation = (cloudRotation + elapsed * cloudDriftSpeed) % 360;
-        // alternative cloud-drift that does not require interpolation
-        clouds.setData(
-            cloudData.map(point => ({
-                ...point,
-                lon: (
-                    (point.lon - cloudRotation + 540) % 360
-                ) - 180
-            })),
-            false
-        );
         mapView.update({
             projection: {
                 rotation: [
