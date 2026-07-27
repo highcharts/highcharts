@@ -1783,9 +1783,7 @@ namespace AxisDefaults {
          *
          * @see [scrollbar.enabled](#scrollbar.enabled)
          *
-         * @type      {boolean}
          * @default   false
-         * @since     4.2.6
          * @product   highstock
          * @apioption xAxis.scrollbar.enabled
          */
@@ -2935,9 +2933,7 @@ namespace AxisDefaults {
          * @sample {highstock} stock/yaxis/scrollbar/
          *         Enabled on Y axis
          *
-         * @type      {boolean}
          * @default   false
-         * @since     4.2.6
          * @product   highstock
          * @apioption yAxis.scrollbar.enabled
          */
