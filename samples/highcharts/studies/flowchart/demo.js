@@ -38,9 +38,10 @@
 // `payment` is also the sub-flow the realistic dataset drills down into.
 const datasetName = 'realistic';
 
-// Debugging aid: show the internal dummy points long edges are routed
-// through (see `series.debug` on the `flowchart` series defined below).
-const showDummyPoints = false;
+// Show the internal dummy points long edges are routed through (see
+// `series.debug` on the `flowchart` series defined below). They double as
+// drag handles: moving one bends its edge through the new position.
+const showDummyPoints = true;
 
 // A small graph with a single feedback loop (F → A). The loop-closing edge
 // is labeled so it reads the same way in the chart as it does in this
@@ -1064,7 +1065,11 @@ const FlowchartLayout = {
     }
 
     const FlowchartSeries = H.seriesType('flowchart', 'networkgraph', {
-        draggable: false,
+        // Nodes can be nudged after layout. This reuses `networkgraph`'s
+        // inherited drag plumbing (the chart-level mousedown handler and
+        // `onMouseDown`); the `onMouseMove`/`onMouseUp` overrides below
+        // replace its force-simulation steps, which this series has none of.
+        draggable: true,
         marker: {
             radius: 16
         },
@@ -1180,10 +1185,12 @@ const FlowchartLayout = {
         // Debugging aid: the internal dummy nodes a long edge is routed
         // through (see `FlowchartLayout.buildLayeredGraph`) never become
         // real series points, so there is nothing to inspect on them by
-        // default. Turning this on draws a small marker at each one.
+        // default. Turning this on draws a marker at each one - which also
+        // acts as a drag handle to bend the edge (see `bindDummyDrag`), so
+        // the radius is sized to be grabbable, not just visible.
         debug: {
             dummyPoints: false,
-            dummyPointRadius: 3,
+            dummyPointRadius: 5,
             dummyPointColor: '#e6373b'
         }
     }, {
@@ -1205,6 +1212,35 @@ const FlowchartLayout = {
             const solved = FlowchartLayout.solve(
                 this.points.map(point => [point.from, point.to])
             );
+
+            // Honour manual drags: a node the user has moved carries a
+            // `dragPos` (fractional, so it survives a resize). Overriding the
+            // solved position here - before nodes are placed *and* before
+            // link waypoints are read from it below - makes both the node and
+            // every link endpoint follow the drag, while the rest of the
+            // graph keeps the layout the solver computed.
+            this.nodes.forEach(node => {
+                if (node.dragPos) {
+                    solved.positions[node.id] = {
+                        x: node.dragPos.x,
+                        y: node.dragPos.y
+                    };
+                }
+            });
+
+            // The same, for dragged dummy waypoints. Dummies aren't real
+            // points, so their overrides live in a map on the series keyed by
+            // the solver's (stable, deterministic) dummy id. Overriding here
+            // bends the affected link through the moved waypoint.
+            this.dummyDragPos = this.dummyDragPos || {};
+            Object.keys(this.dummyDragPos).forEach(id => {
+                if (solved.positions[id]) {
+                    solved.positions[id] = {
+                        x: this.dummyDragPos[id].x,
+                        y: this.dummyDragPos[id].y
+                    };
+                }
+            });
 
             this.nodes.forEach(node => {
                 // A node with no edges left (e.g. after removing its only
@@ -1251,6 +1287,10 @@ const FlowchartLayout = {
                 point.waypoints = edge.waypointIds.map(
                     id => toPixels(solved.positions[id])
                 );
+                // Keep the id chain alongside the pixel waypoints, so a dummy
+                // drag handle (`renderDebugPoints`) can map an interior
+                // waypoint back to the solver id it overrides.
+                point.waypointIds = edge.waypointIds;
                 point.shapeType = 'path';
                 point.y = 1;
 
@@ -1320,6 +1360,92 @@ const FlowchartLayout = {
             };
         },
 
+        // Drag a node. Replaces the inherited `networkgraph` handler, whose
+        // final step nudges a force simulation this series doesn't run. It
+        // moves the node to the cursor (once past a small threshold, so a
+        // plain click still reads as a click), records the position as a
+        // fraction for `translate()` to preserve, and redraws just the node
+        // and its links rather than re-solving the whole layout every frame.
+        onMouseMove: function (point, event) {
+            if (!point.fixedPosition || !point.inDragMode) {
+                return;
+            }
+
+            const chart = this.chart,
+                normalized = chart.pointer ?
+                    chart.pointer.normalize(event) : event,
+                diffX = point.fixedPosition.chartX - normalized.chartX,
+                diffY = point.fixedPosition.chartY - normalized.chartY;
+
+            // At least 5px of travel to count as a drag, not a click.
+            if (Math.abs(diffX) <= 5 && Math.abs(diffY) <= 5) {
+                return;
+            }
+
+            const newPlotX = point.fixedPosition.plotX - diffX,
+                newPlotY = point.fixedPosition.plotY - diffY;
+
+            if (!chart.isInsidePlot(newPlotX, newPlotY)) {
+                return;
+            }
+
+            point.plotX = newPlotX;
+            point.plotY = newPlotY;
+            point.hasDragged = true;
+            point.dragPos = {
+                x: newPlotX / chart.plotWidth,
+                y: newPlotY / chart.plotHeight
+            };
+
+            this.redrawDraggedNode(point);
+        },
+
+        // Finish a drag. Replaces the inherited handler's simulation
+        // restart with a no-op, and - if the pointer actually moved -
+        // arms a one-shot flag so the click the browser fires next doesn't
+        // also trigger this node's drilldown.
+        onMouseUp: function (point) {
+            if (!point.fixedPosition) {
+                return;
+            }
+            if (point.hasDragged) {
+                point.suppressClick = true;
+                // The click fires synchronously right after mouseup; clear
+                // the flag on the next tick so a later genuine click works.
+                setTimeout(() => {
+                    point.suppressClick = false;
+                }, 0);
+            }
+            point.inDragMode = point.hasDragged = false;
+            delete point.fixedPosition;
+        },
+
+        // Move a dragged node's shape, its labels and its connected links to
+        // the node's new position, without re-running the layout solver. The
+        // endpoint waypoint that *is* this node moves with it; interior dummy
+        // waypoints (long-edge bends) stay where the solver put them.
+        redrawDraggedNode: function (node) {
+            if (node.graphic) {
+                node.graphic.attr(this.markerAttribs(node));
+            }
+
+            const endpoint = { x: node.plotX, y: node.plotY };
+            node.linksFrom.forEach(link => {
+                link.waypoints[0] = endpoint;
+                link.redrawLink();
+            });
+            node.linksTo.forEach(link => {
+                link.waypoints[link.waypoints.length - 1] = endpoint;
+                link.redrawLink();
+            });
+
+            // Re-align labels (the node's, plus any link labels whose anchor
+            // moved) to the updated positions, and keep the hover halo on the
+            // node under the cursor.
+            this.drawDataLabels();
+            this.redrawHalo(node);
+        },
+
         // Debugging aid: draw a marker at every internal dummy waypoint a
         // link was routed through - the points that make long edges bend,
         // but that are otherwise invisible since they never become real
@@ -1350,12 +1476,76 @@ const FlowchartLayout = {
             const radius = debugOptions.dummyPointRadius;
             const color = debugOptions.dummyPointColor;
 
-            this.points.forEach(point => {
-                point.waypoints.slice(1, -1).forEach(p => {
-                    renderer.circle(p.x, p.y, radius)
+            this.points.forEach(link => {
+                const wp = link.waypoints;
+                const ids = link.waypointIds || [];
+                // Interior waypoints only (endpoints are real nodes).
+                for (let j = 1; j < wp.length - 1; j++) {
+                    const marker = renderer.circle(wp[j].x, wp[j].y, radius)
                         .addClass('highcharts-flowchart-dummy-point', true)
                         .attr({ fill: color, 'stroke-width': 0 })
+                        .css({ cursor: 'move' })
                         .add(this.group);
+
+                    if (ids[j]) {
+                        this.bindDummyDrag(marker, link, j, ids[j]);
+                    }
+                }
+            });
+        },
+
+        // Make a dummy waypoint marker draggable. Unlike node dragging - which
+        // rides networkgraph's inherited chart-level mousedown handler (that
+        // only fires for real points) - a dummy isn't a point, so its drag is
+        // wired straight onto the marker element. Moving it bends just the one
+        // link the waypoint belongs to; the position is stored (fractional) in
+        // `dummyDragPos` so `translate()` keeps the bend on later redraws.
+        bindDummyDrag: function (marker, link, index, id) {
+            const series = this,
+                chart = series.chart,
+                doc = chart.container.ownerDocument;
+
+            marker.on('mousedown', downEvent => {
+                if (downEvent.stopPropagation) {
+                    // Don't let the chart-level handler start a node drag.
+                    downEvent.stopPropagation();
+                }
+                if (downEvent.preventDefault) {
+                    downEvent.preventDefault();
+                }
+
+                const startEvent = chart.pointer ?
+                        chart.pointer.normalize(downEvent) : downEvent,
+                    start = {
+                        chartX: startEvent.chartX,
+                        chartY: startEvent.chartY,
+                        x: link.waypoints[index].x,
+                        y: link.waypoints[index].y
+                    };
+
+                const onMove = moveEvent => {
+                    const e = chart.pointer ?
+                        chart.pointer.normalize(moveEvent) : moveEvent;
+                    const x = start.x + (e.chartX - start.chartX),
+                        y = start.y + (e.chartY - start.chartY);
+
+                    if (!chart.isInsidePlot(x, y)) {
+                        return;
+                    }
+
+                    link.waypoints[index] = { x, y };
+                    series.dummyDragPos[id] = {
+                        x: x / chart.plotWidth,
+                        y: y / chart.plotHeight
+                    };
+                    marker.attr({ x, y });
+                    link.redrawLink();
+                };
+
+                const unbindMove = H.addEvent(doc, 'mousemove', onMove);
+                const unbindUp = H.addEvent(doc, 'mouseup', () => {
+                    unbindMove();
+                    unbindUp();
                 });
             });
         }
@@ -1738,6 +1928,11 @@ Highcharts.chart('container', {
                         return;
                     }
                     const drill = () => {
+                        // A drag ends in a browser click too; the drag
+                        // handler arms `suppressClick` so that one is ignored.
+                        if (node.suppressClick) {
+                            return;
+                        }
                         drillTrail.push(target);
                         showCurrentFlow(chart);
                     };
