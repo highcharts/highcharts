@@ -1,3 +1,18 @@
+QUnit.test(
+    'Only one body element in the document when using useHTML (#24839)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {});
+
+        chart.renderer.text('Hello', 10, 10, true).add();
+
+        assert.strictEqual(
+            document.querySelectorAll('body').length,
+            1,
+            'There should only be one body element in the document'
+        );
+    }
+);
+
 QUnit.test('Hide label with useHTML (#4938)', function (assert) {
     var chart = Highcharts.chart('container', {}),
         renderer = chart.renderer,
