@@ -715,6 +715,9 @@ export class Grid {
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
         if (viewport) {
+            // Let modules preprocess the diff before it sets dirty flags
+            fireEvent(this, 'processUpdateDiff', { diff, flags });
+
             if (
                 !this.dataProvider ||
                 ('data' in diff) ||
@@ -792,8 +795,6 @@ export class Grid {
                 this.pagination?.update(paginationDiff);
             }
             delete diff.pagination;
-
-            fireEvent(this, 'processUpdateDiff', { diff, flags });
 
             // TODO(update): Add more options that can be optimized here.
 

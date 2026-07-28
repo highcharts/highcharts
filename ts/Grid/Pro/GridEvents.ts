@@ -103,7 +103,7 @@ function compose(
     addEvent(GridClass, 'processUpdateDiff', (
         e: GridEvent<Grid> & ProcessUpdateDiffEvent
     ): void => {
-        delete e.diff.events;
+        stripEventsFromDiff(e.diff);
     });
 
     ([ // TableCell Events
@@ -146,6 +146,37 @@ function compose(
             }
         );
     });
+}
+
+/**
+ * Removes every `events` group from an update diff (in place), pruning
+ * containers it empties. Event callbacks are read live, so they need no
+ * re-render.
+ *
+ * @param diff
+ * The update diff, stripped in place.
+ */
+function stripEventsFromDiff(diff: AnyRecord): void {
+    for (const key of Object.keys(diff)) {
+        if (key === 'events') {
+            delete diff[key];
+            continue;
+        }
+
+        const value = diff[key];
+
+        // Recurse into plain option objects only, never class instances.
+        if (
+            value &&
+            typeof value === 'object' &&
+            value.constructor === Object
+        ) {
+            stripEventsFromDiff(value);
+            if (Object.keys(value).length === 0) {
+                delete diff[key];
+            }
+        }
+    }
 }
 
 
