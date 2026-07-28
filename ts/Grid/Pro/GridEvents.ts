@@ -170,7 +170,8 @@ function stripEventsFromDiff(diff: AnyRecord): void {
 
         const value = diff[key];
 
-        if (isObject(value, true)) {
+        // Recurse into plain option objects only, never class instances.
+        if (isObject(value, true) && value.constructor === Object) {
             stripEventsFromDiff(value);
             if (Object.keys(value).length === 0) {
                 delete diff[key];
