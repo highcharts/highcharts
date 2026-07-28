@@ -29,7 +29,12 @@ import type Grid from '../Core/Grid';
 import type { ProcessUpdateDiffEvent } from '../Core/Grid';
 
 import Globals from '../../Core/Globals.js';
-import { addEvent, fireEvent, pushUnique } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    fireEvent,
+    isObject,
+    pushUnique
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -165,12 +170,7 @@ function stripEventsFromDiff(diff: AnyRecord): void {
 
         const value = diff[key];
 
-        // Recurse into plain option objects only, never class instances.
-        if (
-            value &&
-            typeof value === 'object' &&
-            value.constructor === Object
-        ) {
+        if (isObject(value, true)) {
             stripEventsFromDiff(value);
             if (Object.keys(value).length === 0) {
                 delete diff[key];
