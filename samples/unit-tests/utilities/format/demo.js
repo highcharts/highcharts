@@ -281,6 +281,50 @@ QUnit.module('Format', () => {
             'Nested conditions with sub expression'
         );
 
+        assert.deepEqual(
+            [
+                { isLow: true, isMid: false },
+                { isLow: false, isMid: true },
+                { isLow: false, isMid: false }
+            ].map(ctx => format(
+                '{#if isLow}Green{else if isMid}Yellow{else}Red{/if}',
+                ctx
+            ).trim()),
+            ['Green', 'Yellow', 'Red'],
+            'Else-if conditions'
+        );
+
+        assert.deepEqual(
+            [
+                { isLow: true, isMid: false },
+                { isLow: false, isMid: true },
+                { isLow: false, isMid: false }
+            ].map(ctx => format(
+                '{#if isLow}Green{else if isMid}Yellow{/if}',
+                ctx
+            ).trim()),
+            ['Green', 'Yellow', ''],
+            'Else-if conditions without final else'
+        );
+
+        assert.deepEqual(
+            [
+                { value: 1 },
+                { value: 5 },
+                { value: 8 }
+            ].map(ctx => format(
+                `{#if (lt value 3)}
+                    Green
+                {else if (lt value 7)}
+                    Yellow
+                {else}
+                    Red
+                {/if}`,
+                ctx
+            ).trim()),
+            ['Green', 'Yellow', 'Red'],
+            'Else-if conditions with sub expressions'
+        );
     });
 
     QUnit.test('each helper', assert => {

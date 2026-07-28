@@ -47,6 +47,7 @@ interface MatchObject {
     body?: string;
     ctx: any;
     elseBody?: string;
+    elseIfDepth?: number;
     expression: string;
     find: string;
     fn?: string;
@@ -238,7 +239,7 @@ function format(
         // When a sub expression is found, it is evaluated first, and the
         // results recursively evaluated until no subexpression exists.
         const mainMatch = match,
-            subMatch = subRegex.exec(match[1]);
+            subMatch = !currentMatch?.isBlock ? subRegex.exec(match[1]) : null;
         if (subMatch) {
             match = subMatch;
             hasSub = true;
@@ -271,7 +272,10 @@ function format(
         }
 
         // Closing a block helper
-        const startingElseSection = match[1] === 'else';
+        const elseIfMatch = currentMatch.fn === 'if' ?
+                mainMatch[1].match(/^else +if +(.+)$/) :
+                null,
+            startingElseSection = mainMatch[1] === 'else' || !!elseIfMatch;
         if (
             currentMatch.isBlock &&
             currentMatch.fn && (
@@ -291,15 +295,38 @@ function format(
                 // an else section
                 if (currentMatch.body === void 0) {
                     currentMatch.body = body;
-                    currentMatch.startInner = match.index + match[0].length;
 
-                    // The body exists already, so this is the else section
+                // The body exists already, so this is the else section
                 } else {
-                    currentMatch.elseBody = body;
+                    currentMatch.elseBody =
+                        (currentMatch.elseBody || '') + body;
+                }
+
+                if (elseIfMatch) {
+                    if (currentMatch.elseIfDepth) {
+                        currentMatch.elseBody += '{else}';
+                    }
+                    currentMatch.elseBody =
+                        (currentMatch.elseBody || '') +
+                        `{#if ${elseIfMatch[1].trim()}}`;
+                    currentMatch.elseIfDepth =
+                        (currentMatch.elseIfDepth || 0) + 1;
+                    currentMatch.startInner =
+                        mainMatch.index + mainMatch[0].length;
+                } else if (startingElseSection) {
+                    if (currentMatch.elseIfDepth) {
+                        currentMatch.elseBody += '{else}';
+                    }
+                    currentMatch.startInner =
+                        mainMatch.index + mainMatch[0].length;
                 }
                 currentMatch.find += body + match[0];
 
                 if (!startingElseSection) {
+                    if (currentMatch.elseIfDepth) {
+                        currentMatch.elseBody +=
+                            '{/if}'.repeat(currentMatch.elseIfDepth);
+                    }
                     matches.push(currentMatch);
                     currentMatch = void 0;
                 }
