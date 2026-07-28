@@ -380,6 +380,7 @@ class HTMLElement extends SVGElement {
         super.add(
             // Create a block-level div inside the foreignObject (#24839)
             renderer.createElement('div')
+                .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
                 .css({
                     background: 'transparent',
                     // 3px is to avoid clipping on the right
