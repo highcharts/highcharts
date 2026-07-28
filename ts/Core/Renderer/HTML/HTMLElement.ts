@@ -343,8 +343,8 @@ class HTMLElement extends SVGElement {
             foreignObject.attr({
                 x: x + (this.xCorr || 0),
                 y: y + (this.yCorr || 0),
-                // Add 4px to avoid ellipsis, since the body adds 3 px right
-                // margin. We need one more because of rounding.
+                // Add 4px to avoid ellipsis, since the wrapper div has a
+                // 3px right margin. We need one more because of rounding.
                 width: element.offsetWidth + 4,
                 // Add 1px to account for subpixel bounding boxes
                 height: element.offsetHeight + 1,
@@ -378,14 +378,13 @@ class HTMLElement extends SVGElement {
         // Foreign object
         foreignObject.add(parentGroup);
         super.add(
-            // Create a body inside the foreignObject
-            renderer.createElement('body')
-                .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
+            // Create a block-level div inside the foreignObject (#24839)
+            renderer.createElement('div')
                 .css({
                     background: 'transparent',
                     // 3px is to avoid clipping on the right
                     margin: '0 3px 0 0',
-                    // Avoid inheriting padding from page body (#24779)
+                    // Guard against global div padding rules
                     padding: 0
                 })
                 .add(foreignObject)
