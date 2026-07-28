@@ -378,7 +378,8 @@ class HTMLElement extends SVGElement {
         // Foreign object
         foreignObject.add(parentGroup);
         super.add(
-            // Create a block-level div inside the foreignObject (#24839)
+            // Create a block-level div inside the foreignObject (#24839).
+            // xmlns is required when SVG is serialized.
             renderer.createElement('div')
                 .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
                 .addClass('highcharts-html-container')
