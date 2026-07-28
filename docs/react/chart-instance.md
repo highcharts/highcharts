@@ -1,9 +1,10 @@
 # Chart instance
 
-If you need to access the specific chart instance, you can use the `ref` prop. The `ref` prop will be
-passed a reference to the chart instance, as well as the chart container element.
+If you need to access the specific chart instance, you can use the `ref` prop.
+The `ref` prop will be passed a reference to the chart instance, as well as the
+chart container element.
 
-```jsx
+```tsx
 import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
 function RefExample() {
