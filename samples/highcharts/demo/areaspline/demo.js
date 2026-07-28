@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'areaspline'
     },
     title: {
-        text: 'Moose and deer hunting in Norway, 2000 - 2025'
+        text: 'Moose and deer hunting in Norway, 2000 - 2026'
     },
     subtitle: {
         text: 'Source: <a href="https://www.ssb.no/jord-skog-jakt-og-fiskeri/jakt" target="_blank">SSB</a>'
