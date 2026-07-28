@@ -4,10 +4,10 @@ If you need to access the specific chart instance, you can use the `ref` prop. T
 passed a reference to the chart instance, as well as the chart container element.
 
 ```jsx
-import { Chart } from "@highcharts/react";
+import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
 function RefExample() {
-  const ref = useRef();
+  const ref = useRef<HighchartsReactRefObject>(null);
 
   useEffect(() => {
     if (ref.current?.chart) {
