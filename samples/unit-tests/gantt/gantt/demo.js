@@ -967,4 +967,31 @@
                 'Icon restored after showing series'
             );
         });
+
+    QUnit.test(
+        `Points without a start value should not affect the xAxis extremes
+        (#24849)`,
+        function (assert) {
+            const start = Date.UTC(2019, 5, 19),
+                end = Date.UTC(2019, 5, 26),
+                chart = Highcharts.ganttChart('container', {
+                    yAxis: {
+                        uniqueNames: true
+                    },
+                    series: [{
+                        data: [
+                            { name: 'Main' },
+                            { name: 'First', start: start, end: end },
+                            { name: 'Second', start: start, end: end }
+                        ]
+                    }]
+                });
+
+            assert.strictEqual(
+                chart.xAxis[0].dataMin,
+                start,
+                'A point without a start should not set dataMin to 0.'
+            );
+        }
+    );
 }());
