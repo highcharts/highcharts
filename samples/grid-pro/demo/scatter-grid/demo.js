@@ -10,8 +10,13 @@ const getTestData = x => {
 
 // Generate statistics from the test data
 const getTestStatistics = datasets => {
-    const reMatrix = [];
-    let i = 0;
+    const columns = {
+        dID: [],
+        mean: [],
+        var: [],
+        sd: []
+    };
+    let i = 1;
     for (const dataset of datasets) {
         const mean = dataset.map(x => x[1])
             .reduce((sum, num) => sum + num, 0) / dataset.length;
@@ -19,26 +24,19 @@ const getTestStatistics = datasets => {
             .reduce((sum, num) => sum + ((num - mean) ** 2)) /
             (dataset.length - 1);
         const standardDeviation = Math.sqrt(variance);
-        reMatrix.push([i, mean, variance, standardDeviation]);
+
+        columns.dID.push(i);
+        columns.mean.push(mean);
+        columns.var.push(variance);
+        columns.sd.push(standardDeviation);
         i++;
     }
-    return reMatrix;
+    return new Grid.DataTable({ columns });
 };
 
 const datasets = new Array(5).fill(1).map((_, i) =>
     getTestData(i)
 );
-
-// Transpose 2d list. Workaround for column-only data assignment
-const transpose = matrix => {
-    const reMatrix = Array(matrix[0].length).fill(0).map(() => Array(5));
-    for (let i = 0; i < matrix.length; i += 1) {
-        for (let j = 0; j < matrix[0].length; j += 1) {
-            reMatrix[j][i] = matrix[i][j];
-        }
-    }
-    return reMatrix;
-};
 
 
 // Make all the colors semi-transparent so we can see overlapping dots
@@ -60,7 +58,7 @@ const fullChartOptions = {
     },
 
     xAxis: {
-        categories: ['Run 1', 'Run 2', 'Run 3', 'Run 4', 'Run 5']
+        categories: ['Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5']
     },
 
     yAxis: {
@@ -84,41 +82,20 @@ const fullChartOptions = {
             }
         }
     },
-    series: [{
-        name: 'Run 1',
-        data: datasets[0],
-        colorIndex: 0
-    }, {
-        name: 'Run 2',
-        data: datasets[1],
-        colorIndex: 1
-    }, {
-        name: 'Run 3',
-        data: datasets[2],
-        colorIndex: 2
-    }, {
-        name: 'Run 4',
-        data: datasets[3],
-        colorIndex: 3
-    }, {
-        name: 'Run 5',
-        data: datasets[4],
-        colorIndex: 4
-    }]
+    series: datasets.map((dataset, i) => ({
+        name: 'Sample ' + (i + 1),
+        data: dataset,
+        colorIndex: i
+    }))
 };
 
-let chart = Highcharts.chart('chart-container', fullChartOptions);
+const chart = Highcharts.chart('chart-container', fullChartOptions);
 
-const gridData = transpose(getTestStatistics(datasets));
+const gridData = getTestStatistics(datasets);
 
-Grid.grid('grid-container', {
+const grid = Grid.grid('grid-container', {
     data: {
-        columns: {
-            dID: gridData[0],
-            mean: gridData[1],
-            var: gridData[2],
-            sd: gridData[3]
-        }
+        dataTable: gridData
     },
     rendering: {
         rows: {
@@ -153,10 +130,9 @@ Grid.grid('grid-container', {
                     const rowId = this.row.id;
 
                     if (activeRow === rowId) {
-                        activeRow = null;
-                    } else {
-                        activeRow = rowId;
+                        return;
                     }
+                    activeRow = rowId;
 
                     setActiveRowStyle(this);
                     updateChart();
@@ -170,11 +146,26 @@ Grid.grid('grid-container', {
     }
 });
 
+document.getElementById('reset-selection')
+    .addEventListener('click', () => {
+        activeRow = null;
+        clearActiveRowStyle();
+        updateChart();
+    });
+
 function setActiveRowStyle(cell) {
     cell.row.viewport.rows.forEach(row => {
         const rowIsActive = (activeRow === row.id);
         row.cells.forEach(c => {
             c.htmlElement.classList.toggle('active-row', rowIsActive);
+        });
+    });
+}
+
+function clearActiveRowStyle() {
+    grid.viewport?.rows.forEach(row => {
+        row.cells.forEach(c => {
+            c.htmlElement.classList.remove('active-row');
         });
     });
 }
@@ -200,7 +191,38 @@ const minMax = getMinMax(datasets);
 
 function updateChart() {
     if (activeRow === null) {
-        chart = Highcharts.chart('chart-container', fullChartOptions);
+        // chart = Highcharts.chart('chart-container', fullChartOptions);
+        chart.update({
+            xAxis: {
+                categories: [
+                    'Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5'
+                ],
+                min: undefined,
+                max: undefined,
+                plotLines: undefined
+            },
+            yAxis: {
+                title: {
+                    text: 'Measurements'
+                }
+            },
+            plotOptions: {
+                scatter: {
+                    jitter: {
+                        x: 0.24,
+                        y: 0
+                    },
+                    marker: {
+                        radius: 3
+                    }
+                }
+            },
+            series: datasets.map((dataset, i) => ({
+                name: 'Sample ' + (i + 1),
+                data: dataset,
+                colorIndex: i
+            }))
+        }, true, true);
     } else {
         chart.update({
             chart: {
@@ -211,7 +233,7 @@ function updateChart() {
                 min: minMax[0],
                 max: minMax[1],
                 plotLines: [{
-                    value: gridData[1][activeRow],
+                    value: gridData.getCell('mean', activeRow),
                     width: 2,
                     label: {
                         text: 'mean',
