@@ -716,6 +716,9 @@ export class Grid {
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
         if (viewport) {
+            // Let modules preprocess the diff before it sets dirty flags
+            fireEvent(this, 'processUpdateDiff', { diff, flags });
+
             if (
                 !this.dataProvider ||
                 ('data' in diff) ||
@@ -1833,6 +1836,16 @@ export type NonArrayOptions = Omit<Options, 'columns'> & {
 export type GridDirtyFlags = (
     'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow' | 'classes'
 );
+
+/**
+ * Payload of the `processUpdateDiff` event: modules can consume the option
+ * keys they own from `diff` (and add `flags`) to avoid a full re-render.
+ * @internal
+ */
+export interface ProcessUpdateDiffEvent {
+    diff: DeepPartial<NonArrayOptions>;
+    flags: Set<GridDirtyFlags>;
+}
 
 /**
  * Resolved data binding for a Grid column.
