@@ -123,8 +123,8 @@ const createMap = (
                 exposeAsGroupOnly: true
             },
             events: {
-                click: function (point) {
-                    addLinePoint(point, this.chart as Highcharts.MapChart);
+                click: function (e) {
+                    addLinePoint(e, this.chart as Highcharts.MapChart);
                 }
             }
         }, {
@@ -140,61 +140,8 @@ const createMap = (
                 lineColor: '#fff'
             },
             events: {
-                click: function (e: any): void {
-                    const pointCoords = e.point.options.geometry.coordinates;
-                    const chart = this.chart as Highcharts.MapChart;
-                    const lines = chart.get('flight-route') as any;
-                    const pointSeries = chart.get('clicked-points') as any;
-
-                    const toRemove: any[] = [];
-                    lines?.data.forEach((line: any): void => {
-                        const lineCoords = line.options.geometry.coordinates;
-                        if (lineCoords.some(([lon, lat]) =>
-                            lon === pointCoords[0] &&
-                            lat === pointCoords[1]
-                        )) {
-                            toRemove.push(line);
-                        }
-                    });
-                    toRemove.forEach((line: any) => line.remove(false));
-
-                    // Find the clicked point index to reconnect neighbours
-                    const idx = pointSeries?.data.findIndex((p: any) =>
-                        p.options.geometry.coordinates[0] === pointCoords[0] &&
-                        p.options.geometry.coordinates[1] === pointCoords[1]
-                    );
-                    // If the clicked point has both a previous and next
-                    // neighbour, add a new line between them after removing
-                    // the two old lines.
-                    if (
-                        typeof idx === 'number' &&
-                        idx > 0 &&
-                        pointSeries.data[idx + 1]
-                    ) {
-                        const prev = pointSeries.data[idx - 1];
-                        const next = pointSeries.data[idx + 1];
-                        const prevCoords = prev.options.geometry.coordinates;
-                        const nextCoords = next.options.geometry.coordinates;
-                        lines.addPoint({
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: [
-                                    prevCoords,
-                                    nextCoords
-                                ]
-                            },
-                            color: 'light-dark(#313f77, #fff)'
-                        }, false);
-                    }
-                    e.point.remove(false, false);
-                    chart.redraw(false);
-
-                    // Play descending notes for removing a point
-                    chart.sonification?.playNote('vibraphone', {
-                        note: 'C2',
-                        noteDuration: 150,
-                        volume: 0.3
-                    });
+                click: function (e): void {
+                    removePoint(e, this.chart as Highcharts.MapChart);
                 }
             }
         }, {
@@ -209,6 +156,7 @@ const createMap = (
         }]
     });
 
+    addInitialFlight(chart);
     setupAutoRotation(chart);
     return chart;
 };
@@ -256,7 +204,7 @@ const graticuleData = ((
 })(15, 10);
 
 // Add flight route and gentle rotation after clicking the map
-function addLinePoint(point, chart) {
+function addLinePoint(event, chart) {
     const pointSeries = chart.get('clicked-points');
     if (pointSeries.data && pointSeries.data.length > 0) {
         const lineSeries = chart.get('flight-route');
@@ -266,17 +214,17 @@ function addLinePoint(point, chart) {
                 type: 'LineString',
                 coordinates: [
                     latestPoint.options.geometry.coordinates,
-                    [point.lon, point.lat]
+                    [event.lon, event.lat]
                 ]
             },
             color: 'light-dark(#313f77, #fff)'
         }, false);
     }
     pointSeries.addPoint({
-        name: point.point.name,
+        name: event.point.name,
         geometry: {
             type: 'Point',
-            coordinates: [point.lon, point.lat]
+            coordinates: [event.lon, event.lat]
         }
     }, false);
     chart.redraw(false);
@@ -287,6 +235,84 @@ function addLinePoint(point, chart) {
         noteDuration: 150,
         volume: 0.3
     });
+}
+
+function removePoint(event, chart) {
+    const pointCoords = event.point.options.geometry.coordinates;
+    console.log(pointCoords);
+    const pointSeries = chart.get('clicked-points');
+    if (pointSeries.data && pointSeries.data.length > 0) {
+        const lineSeries = chart.get('flight-route');
+        const toRemove: any[] = [];
+        lineSeries?.data.forEach((line: any): void => {
+            const lineCoords = line.options.geometry.coordinates;
+            if (lineCoords.some(([lon, lat]) =>
+                lon === pointCoords[0] &&
+                lat === pointCoords[1]
+            )) {
+                toRemove.push(line);
+            }
+        });
+        toRemove.forEach((line: any) => line.remove(false));
+        // Find the clicked point index to reconnect neighbours
+        const idx = pointSeries?.data.findIndex((p: any) =>
+            p.options.geometry.coordinates[0] === pointCoords[0] &&
+            p.options.geometry.coordinates[1] === pointCoords[1]
+        );
+        // If the clicked point has both a previous and next
+        // neighbour, add a new line between them after removing
+        // the two old lines.
+        if (
+            typeof idx === 'number' &&
+            idx > 0 &&
+            pointSeries.data[idx + 1]
+        ) {
+            const prev = pointSeries.data[idx - 1];
+            const next = pointSeries.data[idx + 1];
+            const prevCoords = prev.options.geometry.coordinates;
+            const nextCoords = next.options.geometry.coordinates;
+            lineSeries.addPoint({
+                geometry: {
+                    type: 'LineString',
+                    coordinates: [
+                        prevCoords,
+                        nextCoords
+                    ]
+                },
+                color: 'light-dark(#313f77, #fff)'
+            }, false);
+        }
+    }
+    event.point.remove(false, false);
+    chart.redraw(false);
+
+    // Play descending notes for removing a point
+    chart.sonification?.playNote('vibraphone', {
+        note: 'C2',
+        noteDuration: 150,
+        volume: 0.3
+    });
+}
+
+function addInitialFlight(chart) {
+    // Add a flight path between Amsterdam and Los Angeles
+    const amsterdamPoint = {
+        point: {
+            name: 'Amsterdam'
+        },
+        lon: 4.90,
+        lat: 53.38
+    };
+    const losAngelesPoint = {
+        point: {
+            name: 'Los Angeles'
+        },
+        lon: -118.24,
+        lat: 34.05
+    };
+    console.log(chart);
+    addLinePoint(amsterdamPoint, chart);
+    addLinePoint(losAngelesPoint, chart);
 }
 
 function setupAutoRotation(chart: Highcharts.MapChart): void {
