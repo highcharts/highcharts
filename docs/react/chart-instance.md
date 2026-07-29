@@ -5,6 +5,7 @@ The `ref` prop will be passed a reference to the chart instance, as well as the
 chart container element.
 
 ```tsx
+import { useEffect, useRef } from "react";
 import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
 function RefExample() {
