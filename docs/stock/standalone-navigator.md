@@ -51,6 +51,11 @@ Highcharts.navigator('container', {
     }
 });
 ```
+The `height` option applies to the navigator series area only. The scrollbar is
+a separate component with its own `scrollbar.height`, and it is rendered below
+the navigator, so the chart height must leave room for both. When the navigator
+is inverted, `height` still means the thickness of the navigator strip, which
+in that orientation runs horizontally.
 
 ## Managing Navigator Range
 
