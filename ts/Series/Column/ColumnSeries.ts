@@ -31,8 +31,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
@@ -803,6 +802,7 @@ class ColumnSeries extends Series {
                         );
                         if (!styledMode) {
                             initialAttr.opacity = 0;
+                            initialAttr['stroke-width'] = 0;
                         }
                         shouldUpdate = true;
                         verb = 'animate';

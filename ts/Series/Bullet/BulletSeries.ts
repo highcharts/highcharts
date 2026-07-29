@@ -184,7 +184,7 @@ class BulletSeries extends ColumnSeries {
                                 x: point.x,
                                 y: targetVal,
                                 options: {}
-                            }).color || series.color)) || void 0,
+                            })?.color || series.color)) || void 0,
                             point.color,
                             series.color
                         ),

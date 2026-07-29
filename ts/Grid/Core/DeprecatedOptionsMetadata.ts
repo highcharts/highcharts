@@ -30,9 +30,130 @@ interface DeprecatedOptionMetadata {
     runtimePath: string;
     segments: Array<DeprecatedOptionMatchSegment>;
     text: string;
+    version: string;
 }
 
 const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
+    {
+        'docsPath': 'columnDefaults.filtering.condition',
+        'runtimePath': 'columnDefaults.filtering.condition',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'filtering'
+            },
+            {
+                'kind': 'property',
+                'name': 'condition'
+            }
+        ],
+        'text': 'Use `rule.operator` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columnDefaults.filtering.conditions',
+        'runtimePath': 'columnDefaults.filtering.conditions',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'filtering'
+            },
+            {
+                'kind': 'property',
+                'name': 'conditions'
+            }
+        ],
+        'text': 'Use `operators` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columnDefaults.filtering.value',
+        'runtimePath': 'columnDefaults.filtering.value',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'filtering'
+            },
+            {
+                'kind': 'property',
+                'name': 'value'
+            }
+        ],
+        'text': 'Use `rule.value` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columns.filtering.condition',
+        'runtimePath': 'columns.filtering.condition',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'filtering'
+            },
+            {
+                'kind': 'property',
+                'name': 'condition'
+            }
+        ],
+        'text': 'Use `rule.operator` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columns.filtering.conditions',
+        'runtimePath': 'columns.filtering.conditions',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'filtering'
+            },
+            {
+                'kind': 'property',
+                'name': 'conditions'
+            }
+        ],
+        'text': 'Use `operators` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columns.filtering.value',
+        'runtimePath': 'columns.filtering.value',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'filtering'
+            },
+            {
+                'kind': 'property',
+                'name': 'value'
+            }
+        ],
+        'text': 'Use `rule.value` instead.',
+        'version': '3.1.0'
+    },
     {
         'docsPath': 'dataTable',
         'runtimePath': 'dataTable',
@@ -42,7 +163,72 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'dataTable'
             }
         ],
-        'text': '2.3.0'
+        'text': 'Use `data.dataTable` instead.',
+        'version': '2.3.0'
+    },
+    {
+        'docsPath': 'lang.columnFilteringConditions',
+        'runtimePath': 'lang.columnFilteringConditions',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'columnFilteringConditions'
+            }
+        ],
+        'text': 'Use `columnFilteringOperators` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'lang.pinRowBottom',
+        'runtimePath': 'lang.pinRowBottom',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'pinRowBottom'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.pinRowBottom` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'lang.pinRowTop',
+        'runtimePath': 'lang.pinRowTop',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'pinRowTop'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.pinRowTop` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'lang.unpinRow',
+        'runtimePath': 'lang.unpinRow',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'unpinRow'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.unpinRow` instead.',
+        'version': '3.1.0'
     }
 ];
 
