@@ -6,10 +6,15 @@
 <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
 
 <figure class="highcharts-figure">
+    <div
+        class="flight-controls"
+    >
+        <button id="undo-point" type="button">Undo point</button>
+        <button id="new-route" type="button">New route</button>
+    </div>
     <div id="container"></div>
     <p class="highcharts-description">
-        Map showing how a TopoJSON map source is handled and how the built-in
-        orthographic projection is used. A semi-transparent geoheatmap adds a
-        layer of interpolated cloud cover.
+        Select countries to build one or more flight routes on a map using the
+        built-in orthographic projection.
     </p>
 </figure>

@@ -7,6 +7,7 @@ declare namespace Highcharts {
         rotationFrame?: number;
         sonification?: Highcharts.Sonification;
         mapView?: Highcharts.mapView
+        routeIndex?: number;
     }
 
     // Some internal properties on the series
@@ -141,7 +142,7 @@ const createMap = (
             },
             events: {
                 click: function (e): void {
-                    removePoint(e, this.chart as Highcharts.MapChart);
+                    removePoint(e.point, this.chart as Highcharts.MapChart);
                 }
             }
         }, {
@@ -156,11 +157,20 @@ const createMap = (
         }]
     });
 
+    chart.routeIndex = 0;
+    setupControls(chart);
     addInitialFlight(chart);
     setupAutoRotation(chart);
     return chart;
 };
 
+// Define buttons used to remove points and to add new routes.
+const undoButton = document.getElementById(
+    'undo-point'
+) as HTMLButtonElement;
+const newRouteButton = document.getElementById(
+    'new-route'
+) as HTMLButtonElement;
 // Create the coordinates for the graticule, the grid of meridians and parallels
 const graticuleData = ((
     meridianStep: number,
@@ -205,10 +215,16 @@ const graticuleData = ((
 
 // Add flight route and gentle rotation after clicking the map
 function addLinePoint(event, chart) {
-    const pointSeries = chart.get('clicked-points');
-    if (pointSeries.data && pointSeries.data.length > 0) {
-        const lineSeries = chart.get('flight-route');
-        const latestPoint = pointSeries.data[pointSeries.data.length - 1];
+    const pointSeries = chart.get('clicked-points'),
+        lineSeries = chart.get('flight-route'),
+        routeIndex = chart.routeIndex || 0,
+        routePoints = pointSeries.data.filter(
+            (point): boolean =>
+                point.options.custom?.routeIndex === routeIndex
+        );
+
+    if (routePoints.length) {
+        const latestPoint = routePoints[routePoints.length - 1];
         lineSeries.addPoint({
             geometry: {
                 type: 'LineString',
@@ -217,7 +233,10 @@ function addLinePoint(event, chart) {
                     [event.lon, event.lat]
                 ]
             },
-            color: 'light-dark(#313f77, #fff)'
+            color: 'light-dark(#313f77, #fff)',
+            custom: {
+                routeIndex
+            }
         }, false);
     }
     pointSeries.addPoint({
@@ -225,9 +244,13 @@ function addLinePoint(event, chart) {
         geometry: {
             type: 'Point',
             coordinates: [event.lon, event.lat]
+        },
+        custom: {
+            routeIndex
         }
     }, false);
     chart.redraw(false);
+    updateControls(chart);
 
     // Play ascending notes for adding a point
     chart.sonification?.playNote('vibraphone', {
@@ -237,38 +260,42 @@ function addLinePoint(event, chart) {
     });
 }
 
-function removePoint(event, chart) {
-    const pointCoords = event.point.options.geometry.coordinates;
-    console.log(pointCoords);
-    const pointSeries = chart.get('clicked-points');
-    if (pointSeries.data && pointSeries.data.length > 0) {
-        const lineSeries = chart.get('flight-route');
-        const toRemove: any[] = [];
-        lineSeries?.data.forEach((line: any): void => {
+function removePoint(point, chart) {
+    const pointCoords = point.options.geometry.coordinates,
+        pointSeries = chart.get('clicked-points'),
+        lineSeries = chart.get('flight-route'),
+        routeIndex = point.options.custom?.routeIndex,
+        routePoints = pointSeries.data.filter(
+            (routePoint): boolean =>
+                routePoint.options.custom?.routeIndex === routeIndex
+        ),
+        pointIndex = routePoints.indexOf(point),
+        toRemove: Highcharts.Point[] = [];
+
+    if (pointIndex !== -1) {
+        lineSeries.data.forEach((line): void => {
             const lineCoords = line.options.geometry.coordinates;
-            if (lineCoords.some(([lon, lat]) =>
-                lon === pointCoords[0] &&
-                lat === pointCoords[1]
-            )) {
+            if (
+                line.options.custom?.routeIndex === routeIndex &&
+                lineCoords.some(([lon, lat]) =>
+                    lon === pointCoords[0] &&
+                    lat === pointCoords[1]
+                )
+            ) {
                 toRemove.push(line);
             }
         });
-        toRemove.forEach((line: any) => line.remove(false));
-        // Find the clicked point index to reconnect neighbours
-        const idx = pointSeries?.data.findIndex((p: any) =>
-            p.options.geometry.coordinates[0] === pointCoords[0] &&
-            p.options.geometry.coordinates[1] === pointCoords[1]
-        );
+        toRemove.forEach((line): void => line.remove(false));
+
         // If the clicked point has both a previous and next
         // neighbour, add a new line between them after removing
         // the two old lines.
         if (
-            typeof idx === 'number' &&
-            idx > 0 &&
-            pointSeries.data[idx + 1]
+            pointIndex > 0 &&
+            routePoints[pointIndex + 1]
         ) {
-            const prev = pointSeries.data[idx - 1];
-            const next = pointSeries.data[idx + 1];
+            const prev = routePoints[pointIndex - 1];
+            const next = routePoints[pointIndex + 1];
             const prevCoords = prev.options.geometry.coordinates;
             const nextCoords = next.options.geometry.coordinates;
             lineSeries.addPoint({
@@ -279,12 +306,16 @@ function removePoint(event, chart) {
                         nextCoords
                     ]
                 },
-                color: 'light-dark(#313f77, #fff)'
+                color: 'light-dark(#313f77, #fff)',
+                custom: {
+                    routeIndex
+                }
             }, false);
         }
     }
-    event.point.remove(false, false);
+    point.remove(false, false);
     chart.redraw(false);
+    updateControls(chart);
 
     // Play descending notes for removing a point
     chart.sonification?.playNote('vibraphone', {
@@ -292,6 +323,32 @@ function removePoint(event, chart) {
         noteDuration: 150,
         volume: 0.3
     });
+}
+
+function setupControls(chart: Highcharts.MapChart): void {
+    undoButton.addEventListener('click', (): void => {
+        const pointSeries = chart.get('clicked-points'),
+            point = pointSeries.data[pointSeries.data.length - 1];
+        if (point) {
+            removePoint(point, chart);
+        }
+    });
+    newRouteButton.addEventListener('click', (): void => {
+        chart.routeIndex = (chart.routeIndex || 0) + 1;
+        updateControls(chart);
+    });
+
+    updateControls(chart);
+}
+
+function updateControls(chart: Highcharts.MapChart): void {
+    const points = chart.get('clicked-points').data,
+        routeIndex = chart.routeIndex || 0;
+    undoButton.disabled = !points.length;
+    newRouteButton.disabled = !points.some(
+        (point): boolean =>
+            point.options.custom?.routeIndex === routeIndex
+    );
 }
 
 function addInitialFlight(chart) {
@@ -310,7 +367,6 @@ function addInitialFlight(chart) {
         lon: -118.24,
         lat: 34.05
     };
-    console.log(chart);
     addLinePoint(amsterdamPoint, chart);
     addLinePoint(losAngelesPoint, chart);
 }
