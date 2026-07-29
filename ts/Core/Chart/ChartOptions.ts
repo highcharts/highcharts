@@ -610,6 +610,8 @@ export interface ChartOptions {
      *
      * @sample {highcharts} highcharts/chart/marginleft/
      *         150px left margin
+     * @sample {highcharts} highcharts/chart/margins-percent/
+     *         Percentage margins
      * @sample {highstock} stock/chart/marginleft/
      *         150px left margin
      * @sample {highmaps} maps/chart/margin/
@@ -629,6 +631,8 @@ export interface ChartOptions {
      *
      * @sample {highcharts} highcharts/chart/marginright/
      *         100px right margin
+     * @sample {highcharts} highcharts/chart/margins-percent/
+     *         Percentage margins
      * @sample {highstock} stock/chart/marginright/
      *         100px right margin
      * @sample {highmaps} maps/chart/margin/
