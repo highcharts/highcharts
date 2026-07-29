@@ -9,7 +9,7 @@ import { useEffect, useRef } from "react";
 import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
 function RefExample() {
-  const ref = useRef<HighchartsReactRefObject>(null);
+  const chartRef = useRef<HighchartsReactRefObject>(null);
 
   useEffect(() => {
     if (ref.current?.chart) {
