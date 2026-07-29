@@ -382,7 +382,6 @@ class HTMLElement extends SVGElement {
             // xmlns is required when SVG is serialized.
             renderer.createElement('div')
                 .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
-                .addClass('highcharts-html-container')
                 .css({
                     background: 'transparent',
                     // 3px is to avoid clipping on the right
