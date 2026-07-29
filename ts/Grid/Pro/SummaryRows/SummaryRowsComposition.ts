@@ -23,17 +23,43 @@
 
 import type DataTable from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
+import type Options from '../../Core/Options';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type {
     TableCellAfterDataMutationEvent
 } from '../../Core/Table/Body/TableCell';
+import type { DeepPartial } from '../../../Shared/Types';
 import type { SummaryOptions } from './SummaryRowsTypes';
 
+import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
 import SummaryRowsController from './SummaryRowsController.js';
 import SummaryView from './SummaryView.js';
-import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Default options contributed by the summary rows feature (accessibility
+ * strings). Merged into the shared grid defaults on compose.
+ */
+export const defaultOptions: DeepPartial<Options> = {
+    lang: {
+        accessibility: {
+            summaryRows: {
+                descriptions: {
+                    summary: 'Summary row.'
+                }
+            }
+        }
+    }
+};
 
 
 /* *
@@ -62,6 +88,8 @@ export function compose(
     if (!pushUnique(Globals.composed, 'SummaryRows')) {
         return;
     }
+
+    merge(true, gridDefaultOptions, defaultOptions);
 
     addEvent(GridClass, 'beforeLoad', onBeforeLoad);
     addEvent(GridClass, 'beforeDestroy', onBeforeDestroy);
@@ -201,6 +229,30 @@ function onCellAfterDataMutation(
  *  Declarations
  *
  * */
+
+/**
+ * Accessibility language options for summary rows.
+ */
+export interface SummaryRowsLangA11yOptions {
+    /**
+     * Descriptions exposed to assistive technology for summary rows.
+     */
+    descriptions?: {
+        /**
+         * Role description announced for a summary row.
+         */
+        summary?: string;
+    };
+}
+
+declare module '../../Core/Accessibility/A11yOptions' {
+    interface LangAccessibilityOptions {
+        /**
+         * Accessibility language options for summary rows.
+         */
+        summaryRows?: SummaryRowsLangA11yOptions;
+    }
+}
 
 declare module '../../Core/Grid' {
     export default interface Grid {
