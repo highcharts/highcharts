@@ -82,7 +82,7 @@
     --ig-notification-padding: var(--ig-notification-vertical-padding) var(--ig-notification-horizontal-padding);
 
     /* Notification border */
-    --ig-notification-border-radius: var(--hcg-notification-border-radius, var(--ig-border-radius));
+    --ig-notification-border-radius: var(--hcg-notification-border-radius, var(--hcg-border-radius, 0));
     --ig-notification-border-width: var(--hcg-notification-border-width, 1px);
     --ig-notification-border-style: var(--hcg-notification-border-style, solid);
     --ig-notification-border-color: var(--hcg-notification-border-color, var(--ig-color));

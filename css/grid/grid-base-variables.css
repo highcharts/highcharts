@@ -94,13 +94,6 @@
     --ig-font: var(--ig-font-weight) var(--ig-font-size) var(--ig-font-family);
     --ig-text-align: var(--hcg-text-align, inherit);
 
-    /* Default borders */
-    --ig-border-radius: var(--hcg-border-radius, 0);
-    --ig-border-width: var(--hcg-border-width, 0);
-    --ig-border-style: var(--hcg-border-style, solid);
-    --ig-border-color: var(--hcg-border-color, var(--ig-color));
-    --ig-border: var(--ig-border-width) var(--ig-border-style) var(--ig-border-color);
-
     /* Default padding */
     --ig-horizontal-padding: var(--hcg-horizontal-padding, var(--hcg-padding, 0));
     --ig-vertical-padding: var(--hcg-vertical-padding, var(--hcg-padding, 0));
