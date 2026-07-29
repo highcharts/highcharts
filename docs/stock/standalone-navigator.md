@@ -37,10 +37,9 @@ The `unbind` method is used to detach a chart or axis from the Standalone Naviga
 
 ## Chart options
 
-The standalone navigator renders into its own chart container. General chart options
- like `chart.height` or `chart.inverted`, are set through the
-`chartOptions` option, while the `height` option controls the height of the
-navigator itself:
+The standalone navigator renders into its own chart container. General chart options,
+like `chart.height` or `chart.inverted`, are set through the`chartOptions`
+option, while the `height` option controls the height of the navigator itself:
 ```javascript
 Highcharts.navigator('container', {
     height: 50,
@@ -51,6 +50,7 @@ Highcharts.navigator('container', {
     }
 });
 ```
+
 The `height` option applies to the navigator series area only. The scrollbar is
 a separate component with its own `scrollbar.height`, and it is rendered below
 the navigator, so the chart height must leave room for both. When the navigator
