@@ -430,11 +430,21 @@ class HTMLElement extends SVGElement {
         this[key] = value;
         this.doTransform = true;
     }
+    /**
+     * Apply visibility/opacity to the foreignObject; the HTML element
+     * ignores them.
+     * @internal
+     */
+    public visibilitySetter(value: string, key: 'visibility'|'opacity'): void {
+        this.foreignObject.attr({ [key]: value });
+        (this as AnyRecord)[key] = value;
+    }
 }
 
 // Some shared setters
 const proto = HTMLElement.prototype;
 proto.ySetter = proto.xSetter;
+proto.opacitySetter = proto.visibilitySetter;
 
 
 /* *
