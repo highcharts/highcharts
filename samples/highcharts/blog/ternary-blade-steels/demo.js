@@ -98,57 +98,12 @@ function activeData(gi) {
         .map(s => ({ name: s.name, a: s.a, b: s.b, c: s.c, total: s.total }));
 }
 
-// Static series options shared by every group
-function seriesOptions(gi) {
+// Create each series object for a given group index
+function createSeries(gi) {
     return {
         type: 'ternaryscatter',
         name: steelGroups[gi].name,
         color: groupColors[gi],
-        minSize: 10,
-        maxSize: 40,
-        states: {
-            hover: {
-                halo: {
-                    size: 0
-                }
-            }
-        },
-        marker: {
-            symbol: 'circle',
-            lineWidth: 1,
-            lineColor: 'rgba(255,255,255,0.25)'
-        },
-        dataLabels: {
-            enabled: true,
-            format: '{point.name}',
-            allowOverlap: false,
-            style: {
-                fontSize: '0.68rem',
-                fontWeight: '500',
-                textOutline: 'none',
-                color: 'var(--highcharts-neutral-color-100)'
-            }
-        },
-        componentColors: {
-            a: '#f5a623',
-            b: '#7b68ee',
-            c: '#3ecfcf',
-            alpha: 0.15,
-            strokeAlpha: 1
-        },
-        tooltip: {
-            headerFormat:
-            '<span class="tooltip-header">{point.name}</span><br/>',
-            pointFormat:
-                // eslint-disable-next-line max-len
-                '<span class="tooltip-color-a">●</span> Carbon: <b>{point.a:.1f}%</b><br/>' +
-                // eslint-disable-next-line max-len
-                '<span class="tooltip-color-b">●</span> Chromium: <b>{point.b:.1f}%</b><br/>' +
-                // eslint-disable-next-line max-len
-                '<span class="tooltip-color-c">●</span> Other alloys: <b>{point.c:.1f}%</b><br/>' +
-                // eslint-disable-next-line max-len
-                '<span class="tooltip-color-total">◎</span> Total alloys: <b>{point.total:.2f}%</b>'
-        },
         data: activeData(gi)
     };
 }
@@ -173,6 +128,43 @@ const chart = Highcharts.chart('container', {
     },
     credits: { enabled: false },
     legend: { enabled: false },
+
+    plotOptions: {
+        ternaryscatter: {
+            minSize: 10,
+            maxSize: 40,
+            states: {
+                hover: {
+                    halo: {
+                        size: 0
+                    }
+                }
+            },
+            marker: {
+                symbol: 'circle',
+                lineWidth: 1,
+                lineColor: 'rgba(255,255,255,0.25)'
+            },
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}',
+                allowOverlap: false,
+                style: {
+                    fontSize: '0.68rem',
+                    fontWeight: '500',
+                    textOutline: 'none',
+                    color: 'var(--highcharts-neutral-color-100)'
+                }
+            },
+            componentColors: {
+                a: '#f5a623',
+                b: '#7b68ee',
+                c: '#3ecfcf',
+                alpha: 0.15,
+                strokeAlpha: 1
+            }
+        }
+    },
 
     ternaryAxis: {
         common: {
@@ -229,10 +221,21 @@ const chart = Highcharts.chart('container', {
         style: {
             fontSize: '0.8rem'
         },
-        useHTML: true
+        useHTML: true,
+        headerFormat:
+            '<span class="tooltip-header">{point.name}</span><br/>',
+        pointFormat:
+                // eslint-disable-next-line max-len
+                '<span class="tooltip-color-a">●</span> Carbon: <b>{point.a:.1f}%</b><br/>' +
+                // eslint-disable-next-line max-len
+                '<span class="tooltip-color-b">●</span> Chromium: <b>{point.b:.1f}%</b><br/>' +
+                // eslint-disable-next-line max-len
+                '<span class="tooltip-color-c">●</span> Other alloys: <b>{point.c:.1f}%</b><br/>' +
+                // eslint-disable-next-line max-len
+                '<span class="tooltip-color-total">◎</span> Total alloys: <b>{point.total:.2f}%</b>'
     },
 
-    series: steelGroups.map((_, gi) => seriesOptions(gi))
+    series: steelGroups.map((_, gi) => createSeries(gi))
 });
 
 // ---- Update chart when activeNames changes ----
