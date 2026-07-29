@@ -125,7 +125,15 @@ class SummaryTableRow extends TableRow {
     }
 
     public override updateRowAttributes(): void {
-        this.htmlElement.removeAttribute('aria-rowindex');
+        const summaryDescription = this.viewport.grid.options?.lang
+            ?.accessibility?.summaryRows?.descriptions?.summary;
+
+        if (summaryDescription) {
+            this.htmlElement.setAttribute(
+                'aria-roledescription',
+                summaryDescription
+            );
+        }
     }
 
     protected override updateParityClass(): void {

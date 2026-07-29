@@ -194,6 +194,42 @@ describe('SummaryRowsController', () => {
             strictEqual(byId.sales, 60, 'Aggregated cell holds the SUM.');
         });
 
+    it('should expose an a11y role description and keep the row index',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: {
+                    cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+                }
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const rowElement =
+                (grid as any).viewport.summaryView.rows[0].htmlElement;
+
+            strictEqual(
+                rowElement.getAttribute('aria-roledescription'),
+                'Summary row.',
+                'Summary row should carry the localized role description.'
+            );
+            ok(
+                rowElement.getAttribute('aria-rowindex') !== null,
+                'Summary row must keep its aria-rowindex (not stripped).'
+            );
+        });
+
     it('should report which columns aggregate for edit-driven recompute',
         async () => {
             const { win, doc, el } = setupDOM();
