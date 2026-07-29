@@ -1267,6 +1267,106 @@ describe('TreeProjectionController', () => {
         }
     });
 
+    it('should keep resolving the deprecated treeView.aggregator option', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2, 3],
+                    path: ['R/A', 'R/B', 'R/C'],
+                    value: [1, 2, 3],
+                    other: [10, 20, 30]
+                },
+                idColumn: 'id',
+                treeView: {
+                    expandedRowIds: 'all',
+                    treeColumn: 'path'
+                }
+            },
+            columnDefaults: {
+                treeView: {
+                    aggregator: 'SUM'
+                }
+            },
+            columns: [{
+                // Legacy aggregator resolved through a `dataId` mapping.
+                id: 'valueCopy',
+                dataId: 'value',
+                treeView: {
+                    aggregator: 'AVERAGE'
+                }
+            }, {
+                // The new option wins over the deprecated one.
+                id: 'other',
+                aggregator: 'MAX',
+                treeView: {
+                    aggregator: 'SUM'
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const presentationTable = (grid.dataProvider as any).getDataTable(true);
+
+        deepStrictEqual(
+            presentationTable.columns.value,
+            [2, 1, 2, 3],
+            'A deprecated aggregator mapped through dataId should still apply.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.other,
+            [30, 10, 20, 30],
+            'columns.aggregator should take precedence over the deprecated ' +
+            'columns.treeView.aggregator.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should resolve aggregators from deprecated columnDefaults.treeView', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2],
+                    path: ['R/A', 'R/B'],
+                    value: [4, 6]
+                },
+                idColumn: 'id',
+                treeView: {
+                    expandedRowIds: 'all',
+                    treeColumn: 'path'
+                }
+            },
+            columnDefaults: {
+                treeView: {
+                    aggregator: 'SUM'
+                }
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.value,
+            [10, 4, 6],
+            'A deprecated aggregator in columnDefaults should still apply.'
+        );
+
+        grid.destroy();
+    });
+
     it('should project flat rows grouped by one source column', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
@@ -1281,14 +1381,12 @@ describe('TreeProjectionController', () => {
                     B: ['Alpha', 'Beta', 'Gamma'],
                     C: [1, 2, 3],
                     D: ['Open', 'Closed', 'Open']
-                },
-                treeView: {
-                    input: {
-                        type: 'grouping',
-                        groupBy: 'A'
-                    },
-                    expandedRowIds: 'all'
                 }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: 'A',
+                expandedLevels: 'all'
             }
         }, true);
 
@@ -1299,8 +1397,8 @@ describe('TreeProjectionController', () => {
 
         deepStrictEqual(
             presentationTable.getColumnIds(),
-            ['Group', 'B', 'C', 'D'],
-            'Grouped source columns should be replaced by the Group column.'
+            ['group', 'B', 'C', 'D'],
+            'Grouped source columns should be replaced by the group column.'
         );
         strictEqual(
             presentationTable.columns.A,
@@ -1308,7 +1406,7 @@ describe('TreeProjectionController', () => {
             'The grouped column should not be present in the projection.'
         );
         deepStrictEqual(
-            presentationTable.columns.Group,
+            presentationTable.columns.group,
             ['North', null, null, 'South', null],
             'Generated parent rows should show unique group values.'
         );
@@ -1319,7 +1417,7 @@ describe('TreeProjectionController', () => {
         );
         deepStrictEqual(
             grid.viewport.columns.map((column: AnyRecord): string => column.id),
-            ['Group', 'B', 'C', 'D'],
+            ['group', 'B', 'C', 'D'],
             'The rendered columns should match the grouped projection.'
         );
         deepStrictEqual(
@@ -1331,8 +1429,18 @@ describe('TreeProjectionController', () => {
         );
         strictEqual(
             grid.treeView?.options?.treeColumn,
-            'Group',
-            'The Group column should be the default tree column.'
+            'group',
+            'The group column should be the default tree column.'
+        );
+        strictEqual(
+            grid.rowGrouping?.enabled,
+            true,
+            'The row grouping API should report the active grouping.'
+        );
+        deepStrictEqual(
+            grid.rowGrouping?.getGroupBy(),
+            ['A'],
+            'The row grouping API should expose the active grouping levels.'
         );
 
         grid.destroy();
@@ -1352,20 +1460,16 @@ describe('TreeProjectionController', () => {
                     segment: ['Retail', 'Retail', 'Enterprise', 'Retail'],
                     product: ['A', 'B', 'C', 'D'],
                     amount: [5, 7, 11, 13]
-                },
-                treeView: {
-                    input: {
-                        type: 'grouping',
-                        groupBy: ['region', 'segment']
-                    },
-                    expandedRowIds: 'all'
                 }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region', 'segment'],
+                expandedLevels: 'all'
             },
             columns: [{
                 id: 'amount',
-                treeView: {
-                    aggregator: 'SUM'
-                }
+                aggregator: 'SUM'
             }]
         }, true);
 
@@ -1376,7 +1480,7 @@ describe('TreeProjectionController', () => {
 
         deepStrictEqual(
             presentationTable.getColumnIds(),
-            ['Group', 'product', 'amount'],
+            ['group', 'product', 'amount'],
             'All grouped source columns should be hidden from the projection.'
         );
         strictEqual(
@@ -1390,7 +1494,7 @@ describe('TreeProjectionController', () => {
             'The second grouped source column should be hidden.'
         );
         deepStrictEqual(
-            presentationTable.columns.Group,
+            presentationTable.columns.group,
             [
                 'EMEA',
                 'Retail',
@@ -1422,7 +1526,7 @@ describe('TreeProjectionController', () => {
         deepStrictEqual(
             presentationTable.columns.amount,
             [23, 12, 5, 7, 11, 11, 13, 13, 13],
-            'Generated group parents should participate in aggregation.'
+            'Generated group parents should aggregate with columns.aggregator.'
         );
         deepStrictEqual(
             projectionState?.rowIds.map((rowId): number | undefined =>
@@ -1448,14 +1552,12 @@ describe('TreeProjectionController', () => {
                     region: ['North', 'South'],
                     product: ['Alpha', 'Beta'],
                     amount: [1, 2]
-                },
-                treeView: {
-                    input: {
-                        type: 'grouping',
-                        groupBy: 'region'
-                    },
-                    expandedRowIds: 'all'
                 }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region'],
+                expandedLevels: 'all'
             },
             columns: [{
                 id: 'region',
@@ -1469,18 +1571,327 @@ describe('TreeProjectionController', () => {
 
         deepStrictEqual(
             (grid.dataProvider as any).getDataTable(true).getColumnIds(),
-            ['Group', 'product', 'amount'],
+            ['group', 'product', 'amount'],
             'The projected table should not include grouped source columns.'
         );
         deepStrictEqual(
             grid.enabledColumns,
-            ['Group', 'product', 'amount'],
+            ['group', 'product', 'amount'],
             'Configured grouped source columns should be hidden from render.'
         );
         deepStrictEqual(
             grid.viewport.columns.map((column: AnyRecord): string => column.id),
-            ['Group', 'product', 'amount'],
+            ['group', 'product', 'amount'],
             'Rendered columns should match the grouped projection.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should keep grouped columns rendered when hideGroupedColumns is false', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['North', 'South'],
+                    product: ['Alpha', 'Beta'],
+                    amount: [1, 2]
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region'],
+                expandedLevels: 'all',
+                hideGroupedColumns: false
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const presentationTable = (grid.dataProvider as any).getDataTable(true);
+
+        deepStrictEqual(
+            presentationTable.getColumnIds(),
+            ['group', 'region', 'product', 'amount'],
+            'The grouped source column should stay in the projection.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.region,
+            [null, 'North', null, 'South'],
+            'Grouped column values should be rendered for leaf rows only.'
+        );
+        deepStrictEqual(
+            grid.enabledColumns,
+            ['group', 'region', 'product', 'amount'],
+            'The grouped source column should stay rendered.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should not group rows until rowGrouping.enabled is set', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'APAC'],
+                    revenue: [10, 20, 30]
+                }
+            },
+            rowGrouping: {
+                groupBy: ['region']
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).getColumnIds(),
+            ['region', 'revenue'],
+            'Grouping levels alone should not project the table.'
+        );
+        deepStrictEqual(
+            grid.viewport.columns.map((column: AnyRecord): string => column.id),
+            ['region', 'revenue'],
+            'Grouped columns should render normally when grouping is off.'
+        );
+        strictEqual(
+            grid.rowGrouping?.enabled,
+            false,
+            'The row grouping API should report the disabled state.'
+        );
+        deepStrictEqual(
+            grid.rowGrouping?.getGroupBy(),
+            [],
+            'Disabled row grouping should not report grouping levels.'
+        );
+
+        await grid.update({
+            rowGrouping: {
+                enabled: true,
+                expandedLevels: 'all'
+            }
+        });
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).getColumnIds(),
+            ['group', 'revenue'],
+            'Enabling should project the configured grouping levels.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            ['EMEA', null, null, 'APAC', null],
+            'Enabling should generate group rows for the configured levels.'
+        );
+
+        await grid.update({
+            rowGrouping: {
+                enabled: false
+            }
+        });
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).getColumnIds(),
+            ['region', 'revenue'],
+            'Disabling should restore the unprojected table.'
+        );
+
+        await grid.rowGrouping?.setGroupBy(['region']);
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            ['EMEA', null, null, 'APAC', null],
+            'setGroupBy should enable row grouping when it is disabled.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should apply column options configured for the group column', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'APAC'],
+                    account: ['A', 'B', 'C'],
+                    revenue: [10, 20, 30]
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region'],
+                expandedLevels: 'all'
+            },
+            columns: [{
+                id: 'group',
+                header: {
+                    format: 'Region'
+                },
+                width: 200
+            }, {
+                id: 'revenue',
+                aggregator: 'SUM'
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const groupColumn = grid.viewport.columns[0];
+
+        deepStrictEqual(
+            grid.viewport.columns.map((column: AnyRecord): string => column.id),
+            ['group', 'account', 'revenue'],
+            'The generated group column should keep its projected position.'
+        );
+        strictEqual(
+            groupColumn.options?.header?.format,
+            'Region',
+            'Column options should apply to the generated group column.'
+        );
+        strictEqual(
+            groupColumn.header?.htmlElement?.style.width,
+            '200px',
+            'The generated group column should honor its configured width.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.revenue,
+            [30, 10, 20, 30, 30],
+            'Group rows should aggregate their children.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should order grouping levels by groupBy and map them through dataId', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    segment: ['Retail', 'Retail'],
+                    region: ['EMEA', 'APAC'],
+                    amount: [1, 2]
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['regionLabel', 'segment'],
+                expandedLevels: 'all'
+            },
+            columns: [{
+                id: 'regionLabel',
+                dataId: 'region'
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            grid.rowGrouping?.getGroupBy(),
+            ['region', 'segment'],
+            'Grouping levels should follow the groupBy order and resolve ' +
+            'column IDs through dataId.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            ['EMEA', 'Retail', null, 'APAC', 'Retail', null],
+            'Generated group rows should follow the groupBy level order.'
+        );
+
+        await grid.rowGrouping?.setGroupBy(['segment']);
+
+        deepStrictEqual(
+            grid.rowGrouping?.getGroupBy(),
+            ['segment'],
+            'setGroupBy should replace the active grouping levels.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            ['Retail', null, null],
+            'setGroupBy should reproject rows for the new grouping levels.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should seed group row expansion from rowGrouping.expandedLevels', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'EMEA', 'APAC'],
+                    segment: ['Retail', 'Retail', 'Enterprise', 'Retail'],
+                    product: ['A', 'B', 'C', 'D']
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region', 'segment'],
+                expandedLevels: 1
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            ['EMEA', 'Retail', 'Enterprise', 'APAC', 'Retail'],
+            'Only the first grouping level should be expanded.'
+        );
+
+        await grid.update({
+            rowGrouping: {
+                enabled: true,
+                expandedLevels: 0
+            }
+        });
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            ['EMEA', 'APAC'],
+            'Zero expanded levels should collapse all group rows.'
+        );
+
+        await grid.rowGrouping?.expandAll();
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.group,
+            [
+                'EMEA',
+                'Retail',
+                null,
+                null,
+                'Enterprise',
+                null,
+                'APAC',
+                'Retail',
+                null
+            ],
+            'Expanding all should reveal every group level and leaf row.'
         );
 
         grid.destroy();
@@ -1499,37 +1910,35 @@ describe('TreeProjectionController', () => {
                     region: ['North', 'North', 'South', 'East'],
                     product: ['Alpha', 'Beta', 'Gamma', 'Delta'],
                     amount: [1, 2, 3, 4]
-                },
-                treeView: {
-                    input: {
-                        type: 'grouping',
-                        groupBy: 'region'
-                    },
-                    expandedRowIds: 'all'
                 }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region'],
+                expandedLevels: 'all'
             }
         }, true);
 
         grid.viewport?.resizeObserver?.disconnect();
 
         await grid.setSorting([{
-            columnId: 'Group',
+            columnId: 'group',
             order: 'asc'
         }]);
 
         deepStrictEqual(
-            (grid.dataProvider as any).getDataTable(true).columns.Group,
+            (grid.dataProvider as any).getDataTable(true).columns.group,
             ['East', null, 'North', null, null, 'South', null],
             'Ascending sorting should order generated groups by label.'
         );
 
         await grid.setSorting([{
-            columnId: 'Group',
+            columnId: 'group',
             order: 'desc'
         }]);
 
         deepStrictEqual(
-            (grid.dataProvider as any).getDataTable(true).columns.Group,
+            (grid.dataProvider as any).getDataTable(true).columns.group,
             ['South', null, 'North', null, null, 'East', null],
             'Descending sorting should order generated groups by label.'
         );

@@ -32,6 +32,12 @@ Use TreeView to present flat source rows as an expandable hierarchy with
 parent-child context, sticky ancestors, and runtime expand/collapse control.
 See [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view).
 
+## Row grouping
+
+Use row grouping to collect rows that share column values under generated group
+rows, with aggregated values and runtime expand/collapse control. See
+[Row grouping](https://www.highcharts.com/docs/grid/rows/row-grouping).
+
 ## Virtualization
 
 Use row virtualization to render only the visible window of rows when working

@@ -32,6 +32,7 @@ import type {
     TableCellGetEditabilityEvent
 } from '../../Core/Table/Body/TableCell';
 import type {
+    TreeViewColumnAggregatorOption,
     TreeViewColumnOptions,
     TreeViewOptions
 } from './TreeViewTypes';
@@ -45,6 +46,7 @@ import type {
 import type TreeStickyRowController from './UI/TreeStickyRowController';
 
 import Globals from '../../Core/Globals.js';
+import RowGroupingController from '../RowGrouping/RowGroupingController.js';
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import TreeProjectionController from './Projection/TreeProjectionController.js';
 import TreeViewValidation from './TreeViewValidation.js';
@@ -148,10 +150,17 @@ function onTableBeforeRestoreCellFocus(
 
 /**
  * Initializes TreeView projection infrastructure before first data querying.
+ *
+ * Row grouping is projected by the same infrastructure, so its API is
+ * initialized here as well.
  */
 function onBeforeLoad(this: Grid): void {
     if (!this.treeView) {
         this.treeView = new TreeProjectionController(this);
+    }
+
+    if (!this.rowGrouping) {
+        this.rowGrouping = new RowGroupingController(this);
     }
 }
 
@@ -178,6 +187,7 @@ function onBeforeDestroy(this: Grid, e: { onlyDOM?: boolean }): void {
 
     this.treeView?.destroy();
     delete this.treeView;
+    delete this.rowGrouping;
 }
 
 /**
@@ -487,7 +497,6 @@ declare module '../../Core/Data/LocalDataProvider' {
          *
          * @sample grid-pro/tree-view/parent-id Parent ID tree input
          * @sample grid-pro/tree-view/input-path Path tree input
-         * @sample grid-pro/tree-view/row-grouping Row grouping
          */
         treeView?: TreeViewOptions;
     }
@@ -495,6 +504,25 @@ declare module '../../Core/Data/LocalDataProvider' {
 
 declare module '../../Core/Options' {
     interface ColumnOptions {
+        /**
+         * Aggregator applied to the column in parent rows, both for TreeView
+         * parents and for row grouping group rows.
+         *
+         * When provided as a string, the registered Formula processor function
+         * of that name is applied to every row that has children, overriding
+         * the row's source value. When provided as a callback, it is invoked
+         * per parent row and should return a function name, or a falsy value to
+         * skip aggregation for that row.
+         *
+         * Structural columns, such as `data.idColumn`,
+         * `data.treeView.input.pathColumn` and columns listed in
+         * `rowGrouping.groupBy`, never aggregate, even if configured.
+         *
+         * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
+         * @sample grid-pro/options/row-grouping Row grouping
+         */
+        aggregator?: TreeViewColumnAggregatorOption;
+
         /**
          * TreeView options for a single column.
          */

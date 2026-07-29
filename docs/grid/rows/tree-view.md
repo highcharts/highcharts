@@ -199,29 +199,27 @@ hierarchies and [row virtualization](https://www.highcharts.com/docs/grid/rows/v
 
 ## Aggregation
 
-Use `columns[].treeView.aggregator` to derive parent values from their direct
+Use `columns[].aggregator` to derive parent values from their direct
 children during TreeView projection.
 
 ```js
 columns: [{
     id: 'budget',
-    treeView: {
-        aggregator: 'SUM'
-    }
+    aggregator: 'SUM'
 }, {
     id: 'utilization',
-    treeView: {
-        aggregator: 'AVERAGE'
-    }
+    aggregator: 'AVERAGE'
 }, {
     id: 'risk',
-    treeView: {
-        aggregator: function (context) {
-            return context.depth === 0 ? false : 'MAX';
-        }
+    aggregator: function (context) {
+        return context.depth === 0 ? false : 'MAX';
     }
 }]
 ```
+
+`columns[].treeView.aggregator` is deprecated since v3.1.0. Use
+`columns[].aggregator`, which is shared with
+[row grouping](https://www.highcharts.com/docs/grid/rows/row-grouping).
 
 Aggregation rules:
 
@@ -235,10 +233,8 @@ Aggregation rules:
   ```js
   columns: [{
       id: 'budget',
-      treeView: {
-          aggregator: function (context) {
-              return context.rowId === 'europe' ? false : 'SUM';
-          }
+      aggregator: function (context) {
+          return context.rowId === 'europe' ? false : 'SUM';
       }
   }]
   ```

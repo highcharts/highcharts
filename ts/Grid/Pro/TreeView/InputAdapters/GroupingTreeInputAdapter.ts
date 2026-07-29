@@ -209,37 +209,32 @@ function validateInput(
 
     if (!groupBy.length) {
         throw new Error(
-            'TreeView: `data.treeView.input.groupBy` must not be empty.'
+            'Row grouping: `rowGrouping.groupBy` must not be empty.'
         );
     }
 
     if (!groupColumn) {
         throw new Error(
-            'TreeView: `data.treeView.input.groupColumn` must not be empty.'
+            'Row grouping: `rowGrouping.columnId` must not be empty.'
         );
     }
 
     const groupBySet = new Set(groupBy);
-    if (groupBySet.size !== groupBy.length) {
-        throw new Error(
-            'TreeView: `data.treeView.input.groupBy` must not contain ' +
-            'duplicate column IDs.'
-        );
-    }
 
     for (let i = 0, iEnd = groupBy.length; i < iEnd; ++i) {
         const groupByColumn = groupBy[i];
         if (!columns[groupByColumn]) {
             throw new Error(
-                `TreeView: groupBy column "${groupByColumn}" not found.`
+                `Row grouping: grouped column "${groupByColumn}" not found ` +
+                'in the data.'
             );
         }
     }
 
     if (columns[groupColumn] && !groupBySet.has(groupColumn)) {
         throw new Error(
-            `TreeView: groupColumn "${groupColumn}" conflicts with an ` +
-            'existing source column.'
+            `Row grouping: \`rowGrouping.columnId\` "${groupColumn}" ` +
+            'conflicts with an existing data column.'
         );
     }
 }

@@ -62,9 +62,7 @@ Grid.grid('container', {
         cells: {
             format: '${value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        aggregator: 'SUM'
     }, {
         id: 'actual',
         header: {
@@ -73,9 +71,7 @@ Grid.grid('container', {
         cells: {
             format: '${value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        aggregator: 'SUM'
     }, {
         id: 'headcount',
         header: {
@@ -84,9 +80,7 @@ Grid.grid('container', {
         cells: {
             format: '{value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        aggregator: 'SUM'
     }, {
         id: 'utilization',
         header: {
@@ -95,9 +89,7 @@ Grid.grid('container', {
         cells: {
             format: '{(multiply 100 value):.1f}%'
         },
-        treeView: {
-            aggregator: 'AVERAGE'
-        }
+        aggregator: 'AVERAGE'
     }, {
         id: 'risk',
         width: 124,
@@ -122,10 +114,8 @@ Grid.grid('container', {
                 );
             }
         },
-        treeView: {
-            aggregator(context) {
-                return context.depth === 0 ? false : 'MAX';
-            }
+        aggregator(context) {
+            return context.depth === 0 ? false : 'MAX';
         }
     }],
     header: [

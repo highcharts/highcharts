@@ -1,5 +1,5 @@
 const groupByOptions = {
-    region: 'region',
+    region: ['region'],
     'region-segment': ['region', 'segment']
 };
 
@@ -42,17 +42,20 @@ const grid = Grid.grid('container', {
                 0.31, 0.28, 0.24, 0.34,
                 0.27, 0.22, 0.30, 0.25
             ]
-        },
-        treeView: {
-            enabled: true,
-            input: {
-                type: 'grouping',
-                groupBy: groupByOptions['region-segment']
-            },
-            expandedRowIds: 'all'
         }
     },
+    rowGrouping: {
+        enabled: true,
+        groupBy: groupByOptions['region-segment'],
+        expandedLevels: 'all'
+    },
     columns: [{
+        id: 'group',
+        header: {
+            format: 'Group'
+        },
+        width: 200
+    }, {
         id: 'account',
         header: {
             format: 'Account'
@@ -72,9 +75,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '${value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        aggregator: 'SUM'
     }, {
         id: 'units',
         header: {
@@ -83,9 +84,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        aggregator: 'SUM'
     }, {
         id: 'margin',
         header: {
@@ -94,30 +93,18 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{(multiply 100 value):.1f}%'
         },
-        treeView: {
-            aggregator: 'AVERAGE'
-        }
+        aggregator: 'AVERAGE'
     }]
 });
 
 document.getElementById('grouping-mode').addEventListener('change', e => {
-    grid.update({
-        data: {
-            treeView: {
-                input: {
-                    type: 'grouping',
-                    groupBy: groupByOptions[e.target.value]
-                },
-                expandedRowIds: 'all'
-            }
-        }
-    });
+    grid.rowGrouping?.setGroupBy(groupByOptions[e.target.value]);
 });
 
 document.getElementById('expand-all').addEventListener('click', () => {
-    grid.treeView?.expandAll();
+    grid.rowGrouping?.expandAll();
 });
 
 document.getElementById('collapse-all').addEventListener('click', () => {
-    grid.treeView?.collapseAll();
+    grid.rowGrouping?.collapseAll();
 });

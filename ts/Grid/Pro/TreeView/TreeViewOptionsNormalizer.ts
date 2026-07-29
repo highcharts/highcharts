@@ -27,12 +27,11 @@ import type {
     TreeExpandedRowIds,
     TreeViewOptions
 } from './TreeViewTypes';
+import type {
+    RowGroupingExpandedLevels
+} from '../RowGrouping/RowGroupingTypes';
 
-import {
-    isArray,
-    isString,
-    merge
-} from '../../../Shared/Utilities.js';
+import { merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -52,10 +51,15 @@ export interface NormalizedTreeInputPathOptions {
     showFullPath: boolean;
 }
 
+/**
+ * Internal projection input generated from `rowGrouping` options. Row grouping
+ * is a presentation feature and is not part of the public TreeView input API.
+ */
 export interface NormalizedTreeInputGroupingOptions {
     type: 'grouping';
     groupBy: string[];
     groupColumn: string;
+    hideGroupedColumns: boolean;
 }
 
 export type NormalizedTreeInputOptions = (
@@ -68,14 +72,17 @@ export interface NormalizedTreeViewOptions {
     input?: NormalizedTreeInputOptions;
     treeColumn?: string;
     expandedRowIds: TreeExpandedRowIds;
+
+    /**
+     * Depth-based expansion seed used by row grouping instead of explicit
+     * `expandedRowIds`, which are not authorable for generated group rows.
+     */
+    expandedLevels?: RowGroupingExpandedLevels;
     stickyParents: boolean;
 }
 
-export interface ResolvedTreeViewOptions {
+export interface ResolvedTreeViewOptions extends NormalizedTreeViewOptions {
     input: NormalizedTreeInputOptions;
-    treeColumn?: string;
-    expandedRowIds: TreeExpandedRowIds;
-    stickyParents: boolean;
 }
 
 const defaultParentIdInput: NormalizedTreeInputParentIdOptions = {
@@ -90,37 +97,12 @@ const defaultPathInput: NormalizedTreeInputPathOptions = {
     showFullPath: false
 };
 
-const defaultGroupingInput: NormalizedTreeInputGroupingOptions = {
-    type: 'grouping',
-    groupBy: [],
-    groupColumn: 'Group'
-};
-
 
 /* *
  *
  *  Functions
  *
  * */
-
-/**
- * Normalizes row grouping column definitions.
- *
- * @param groupBy
- * Raw grouping column or columns.
- *
- * @returns
- * Normalized grouping column IDs.
- */
-function normalizeGroupBy(
-    groupBy: (string | string[] | undefined)
-): string[] {
-    if (isArray(groupBy)) {
-        return groupBy.slice();
-    }
-
-    return isString(groupBy) ? [groupBy] : [];
-}
 
 /**
  * Validates and normalizes TreeView options from Grid config.
@@ -144,12 +126,7 @@ export function normalizeTreeViewOptions(
             void 0 :
             treeView.input.type === 'path' ?
                 merge(defaultPathInput, treeView.input) :
-                treeView.input.type === 'grouping' ?
-                    {
-                        ...merge(defaultGroupingInput, treeView.input),
-                        groupBy: normalizeGroupBy(treeView.input.groupBy)
-                    } :
-                    merge(defaultParentIdInput, treeView.input)
+                merge(defaultParentIdInput, treeView.input)
     );
 
     return {
