@@ -16,7 +16,7 @@
  *
  * */
 
-import CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
+import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
 
 /* *
  *
