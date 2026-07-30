@@ -18,15 +18,12 @@
  *
  * */
 
-import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
-import type InfoRegionsComponent from '../Components/InfoRegionsComponent';
-import type NewDataAnnouncer from '../Components/SeriesComponent/NewDataAnnouncer';
 /* *
  *
  *  Declarations
@@ -62,7 +59,7 @@ export interface AccessibilityAnnouncementFormatter {
         updatedSeries: Array<Series>,
         addedSeries?: Series,
         addedPoint?: Point,
-        ctx?: NewDataAnnouncer
+        ctx?: AnyRecord
     ): false|string;
 }
 
@@ -597,7 +594,7 @@ export interface AccessibilityScreenReaderSectionOptions {
      * @since 8.0.0
      */
     afterChartFormatter?: (
-        ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>
+        ScreenReaderFormatterCallbackFunction<Chart>
     );
 
     /**
@@ -645,7 +642,7 @@ export interface AccessibilityScreenReaderSectionOptions {
      * @since 8.0.0
      */
     beforeChartFormatter?: (
-        ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>
+        ScreenReaderFormatterCallbackFunction<Chart>
     );
 
     /**
@@ -875,12 +872,12 @@ export interface ScreenReaderClickCallbackFunction {
      */
     (
         evt: MouseEvent,
-        chart?: Accessibility.ChartComposition,
+        chart?: Chart,
         ctx?: GlobalEventHandlers
     ): void;
 }
 
-export interface ScreenReaderFormatterCallbackFunction<T, U = void> {
+export interface ScreenReaderFormatterCallbackFunction<T, U = AnyRecord> {
 
     /**
      * Creates a formatted string for the screen reader module.
