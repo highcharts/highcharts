@@ -10,12 +10,10 @@
         order: 1;
         position: relative;
         z-index: 1;
-        border-top: var(
-            --ig-pinned-border,
+        border-top:
             var(--ig-row-border-width, 1px)
             var(--ig-row-border-style, solid)
-            var(--ig-row-border-color, #d1d5db)
-        );
+            var(--ig-row-border-color, #d1d5db);
 
         > tr {
             display: block;
