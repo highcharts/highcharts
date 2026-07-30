@@ -158,7 +158,7 @@ function onTableBeforeInit(this: Table): void {
     table.summaryView = view;
 
     const renderSummary = async (): Promise<void> => {
-        await view.render(table.grid.summaryRows?.getRowObjects() ?? []);
+        await view.render(table.grid.summaryRows?.getRows() ?? []);
     };
 
     // Initial render is not covered by afterUpdateRowsHooks; wrap the

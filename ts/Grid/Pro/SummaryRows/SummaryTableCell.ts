@@ -27,6 +27,7 @@ import type {
 import type SummaryTableRow from './SummaryTableRow';
 
 import TableCell from '../../Core/Table/Body/TableCell.js';
+import { setHTMLContent } from '../../Core/GridUtils.js';
 import { defined } from '../../../Shared/Utilities.js';
 
 
@@ -46,7 +47,9 @@ class SummaryTableCell extends TableCell {
     /**
      * Renders the value, sourcing it from the computed summary row object
      * instead of the data provider, then runs the normal cell pipeline so
-     * `cells.format`, renderers and styles are honored.
+     * `cells.format`, renderers and styles are honored. A per-cell summary
+     * `format` overrides the column format for display only (the cell value and
+     * `data-value` stay the raw aggregated/static value).
      *
      * A missing value renders empty; the base data-provider fetch (keyed by row
      * index) must never run for a synthetic summary row.
@@ -66,6 +69,11 @@ class SummaryTableCell extends TableCell {
             this.row.data[this.column.id] as DataTableCellType;
 
         await super.setValue(defined(resolved) ? resolved : '', updateDataset);
+
+        const format = this.row.formats[this.column.id];
+        if (defined(format)) {
+            setHTMLContent(this.htmlElement, this.format(format));
+        }
     }
 
     /**
