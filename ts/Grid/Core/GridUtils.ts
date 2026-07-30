@@ -17,7 +17,8 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import { getStyle, isObject } from '../../Shared/Utilities.js';
+import Globals from './Globals.js';
+import { isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -153,10 +154,14 @@ export function measureWidthOverhead(el?: HTMLElement): number {
         return 0;
     }
 
-    return (getStyle(el, 'padding-left', true) || 0) +
-        (getStyle(el, 'padding-right', true) || 0) +
-        (getStyle(el, 'border-left', true) || 0) +
-        (getStyle(el, 'border-right', true) || 0);
+    const style = Globals.win.getComputedStyle(el);
+
+    return (
+        (parseFloat(style.paddingLeft) || 0) +
+        (parseFloat(style.paddingRight) || 0) +
+        (parseFloat(style.borderLeftWidth) || 0) +
+        (parseFloat(style.borderRightWidth) || 0)
+    );
 }
 
 /**
