@@ -37,17 +37,20 @@ const {
  *
  * */
 
+/** @internal */
 interface HighContrastState {
     active?: boolean;
     applying?: boolean;
 }
 
+/** @internal */
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
         highContrastState?: HighContrastState;
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         borderColor?: ColorType;
@@ -64,8 +67,9 @@ declare module '../Core/Series/PointBase' {
  * Detect WHCM in the browser.
  *
  * @function Highcharts#isHighContrastModeActive
- * @private
  * @return {boolean} Returns true if the browser is in High Contrast mode.
+ *
+ * @internal
  */
 function isHighContrastModeActive(): boolean {
     // Test BG image for IE
@@ -95,9 +99,9 @@ function isHighContrastModeActive(): boolean {
  * a separate file.
  *
  * @function Highcharts#setHighContrastTheme
- * @private
  * @param {Highcharts.AccessibilityChart} chart The chart to set the theme of.
- * @return {void}
+ *
+ * @internal
  */
 function setHighContrastTheme(
     chart: Accessibility.ChartComposition
@@ -168,9 +172,11 @@ function setHighContrastTheme(
  *
  * */
 
+/** @internal */
 const whcm = {
     isHighContrastModeActive,
     setHighContrastTheme
 };
 
+/** @internal */
 export default whcm;

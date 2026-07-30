@@ -66,6 +66,7 @@ import { addEvent, extend, fireEvent, merge } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase {
         a11yDirty?: boolean;
@@ -85,7 +86,6 @@ declare module '../Core/Chart/ChartBase' {
 /**
  * The Accessibility class
  *
- * @private
  * @requires modules/accessibility
  *
  * @class
@@ -93,6 +93,8 @@ declare module '../Core/Chart/ChartBase' {
  *
  * @param {Highcharts.Chart} chart
  * Chart object
+ *
+ * @internal
  */
 class Accessibility {
 
@@ -132,9 +134,10 @@ class Accessibility {
 
     /**
      * Initialize the accessibility class
-     * @private
      * @param {Highcharts.Chart} chart
      *        Chart object
+     *
+     * @internal
      */
     public init(
         chart: Chart
@@ -161,9 +164,7 @@ class Accessibility {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public initComponents(): void {
         const chart = this.chart;
         const proxyProvider = this.proxyProvider;
@@ -196,7 +197,8 @@ class Accessibility {
 
     /**
      * Get order to update components in.
-     * @private
+     *
+     * @internal
      */
     public getComponentOrder(): string[] {
         if (!this.components) {
@@ -311,7 +313,8 @@ class Accessibility {
 
     /**
      * Return a list of the types of series we have in the chart.
-     * @private
+     *
+     * @internal
      */
     public getChartTypes(): Array<string> {
         const types: Record<string, number> = {};
@@ -329,6 +332,7 @@ class Accessibility {
  *
  * */
 
+/** @internal */
 namespace Accessibility {
 
     /* *
@@ -337,6 +341,7 @@ namespace Accessibility {
      *
      * */
 
+    /** @internal */
     export interface ComponentsObject {
         [key: string]: AccessibilityComponent;
         container: ContainerComponent;
@@ -349,21 +354,25 @@ namespace Accessibility {
         navigator: NavigatorComponent;
     }
 
+    /** @internal */
     export declare class ChartComposition extends Chart {
         options: Required<Options>;
         series: Array<SeriesComposition>;
     }
 
+    /** @internal */
     export declare class PointComposition extends Point {
         accessibility?: PointStateObject;
         series: SeriesComposition;
         value?: (number|null);
     }
 
+    /** @internal */
     export interface PointStateObject {
         valueDescription?: string;
     }
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         chart: ChartComposition;
         newDataAnnouncer?: NewDataAnnouncer;
@@ -377,6 +386,7 @@ namespace Accessibility {
      *
      * */
 
+    /** @internal */
     export const i18nFormat = A11yI18n.i18nFormat;
 
     /* *
@@ -387,7 +397,8 @@ namespace Accessibility {
 
     /**
      * Destroy with chart.
-     * @private
+     *
+     * @internal
      */
     function chartOnDestroy(
         this: ChartComposition
@@ -399,7 +410,8 @@ namespace Accessibility {
 
     /**
      * Handle updates to the module and send render updates to components.
-     * @private
+     *
+     * @internal
      */
     function chartOnRender(
         this: ChartComposition
@@ -423,7 +435,8 @@ namespace Accessibility {
 
     /**
      * Update with chart/series/point updates.
-     * @private
+     *
+     * @internal
      */
     function chartOnUpdate(
         this: ChartComposition,
@@ -450,9 +463,7 @@ namespace Accessibility {
         this.a11yDirty = true;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function chartUpdateA11yEnabled(
         this: ChartComposition
     ): void {
@@ -498,9 +509,7 @@ namespace Accessibility {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart,
         LegendClass: typeof Legend,
@@ -593,7 +602,8 @@ namespace Accessibility {
 
     /**
      * Mark dirty for update.
-     * @private
+     *
+     * @internal
      */
     function pointOnUpdate(
         this: PointComposition
@@ -630,4 +640,5 @@ merge(
  *
  * */
 
+/** @internal */
 export default Accessibility;

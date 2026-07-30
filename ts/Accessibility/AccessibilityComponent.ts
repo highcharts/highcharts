@@ -66,10 +66,19 @@ class AccessibilityComponent {
      *
      * */
 
+    /** @internal */
     public chart!: Accessibility.ChartComposition;
+
+    /** @internal */
     public domElementProvider!: DOMElementProvider;
+
+    /** @internal */
     public eventProvider!: EventProvider;
+
+    /** @internal */
     public keyCodes!: Record<string, number>;
+
+    /** @internal */
     public proxyProvider!: ProxyProvider;
 
     /* *
@@ -122,9 +131,10 @@ class AccessibilityComponent {
 
     /**
      * Initialize the class
-     * @private
      * @param {Highcharts.Chart} chart The chart object
      * @param {Highcharts.ProxyProvider} proxyProvider The proxy provider of the accessibility module
+     *
+     * @internal
      */
     public initBase(
         chart: Accessibility.ChartComposition,
@@ -157,7 +167,8 @@ class AccessibilityComponent {
     /**
      * Add an event to an element and keep track of it for later removal.
      * See EventProvider for details.
-     * @private
+     *
+     * @internal
      */
     public addEvent<T>(
         el: (T|Class<T>),
@@ -172,7 +183,8 @@ class AccessibilityComponent {
     /**
      * Create an element and keep track of it for later removal.
      * See DOMElementProvider for details.
-     * @private
+     *
+     * @internal
      */
     public createElement<K extends keyof HTMLElementTagNameMap>(
         tagName: K,
@@ -185,7 +197,8 @@ class AccessibilityComponent {
     /**
      * Fire a fake click event on an element. It is useful to have this on
      * AccessibilityComponent for users of custom components.
-     * @private
+     *
+     * @internal
      */
     public fakeClickEvent(
         el: (HTMLElement|SVGElement|DOMElementType)
@@ -197,7 +210,8 @@ class AccessibilityComponent {
 
     /**
      * Remove traces of the component.
-     * @private
+     *
+     * @internal
      */
     public destroyBase(): void {
         this.domElementProvider.destroyCreatedElements();
