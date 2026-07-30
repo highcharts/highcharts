@@ -35,14 +35,14 @@ const grid = Grid.grid('container', {
         id: 'total',
         aggregator: 'SUM',
         columns: [
-            { id: 'region', format: 'Total' },
+            { id: 'region', value: 'Total' },
             { id: 'growth', aggregator: 'AVERAGE' }
         ]
     }, {
         id: 'average',
         aggregator: 'AVERAGE',
         columns: [
-            { id: 'region', format: 'Average' }
+            { id: 'region', value: 'Average' }
         ]
     }],
     rendering: {
