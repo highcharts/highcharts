@@ -11,7 +11,7 @@ const getTestData = x => {
 // Generate statistics from the test data
 const getTestStatistics = datasets => {
     const columns = {
-        dID: [],
+        sample: [],
         mean: [],
         var: [],
         sd: []
@@ -25,7 +25,7 @@ const getTestStatistics = datasets => {
             (dataset.length - 1);
         const standardDeviation = Math.sqrt(variance);
 
-        columns.dID.push(i);
+        columns.sample.push(i);
         columns.mean.push(mean);
         columns.var.push(variance);
         columns.sd.push(standardDeviation);
@@ -38,7 +38,6 @@ const datasets = new Array(5).fill(1).map((_, i) =>
     getTestData(i)
 );
 
-
 // Make all the colors semi-transparent so we can see overlapping dots
 const colors = Highcharts.getOptions().colors.map(color =>
     Highcharts.color(color).setOpacity(0.5).get()
@@ -50,32 +49,42 @@ const fullChartOptions = {
     chart: {
         type: 'scatter'
     },
-
-    colors,
-
-    title: {
-        text: 'Scatter chart with jitter'
+    colors: colors,
+    credits: {
+        enabled: false
     },
-
+    title: {
+        text: 'Scatter chart connected to a Grid'
+    },
     xAxis: {
         categories: ['Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5']
     },
-
     yAxis: {
         title: {
             text: 'Measurements'
         }
     },
-
     plotOptions: {
         scatter: {
             showInLegend: false,
+            cursor: 'pointer',
             jitter: {
                 x: 0.24
             },
             marker: {
                 radius: 2,
                 symbol: 'circle'
+            },
+            point: {
+                events: {
+                    click: function () {
+                        // In the single-sample view there is only one series,
+                        // and it is already the selected one.
+                        if (activeRow === null) {
+                            selectRow(this.series.index);
+                        }
+                    }
+                }
             },
             tooltip: {
                 pointFormat: 'Measurement: {point.y:.3f}'
@@ -104,8 +113,8 @@ const grid = Grid.grid('grid-container', {
     },
     header: [
         {
-            columnId: 'dID',
-            format: 'Dataset ID'
+            columnId: 'sample',
+            format: 'Sample'
         }, {
             columnId: 'mean',
             format: 'Mean'
@@ -118,7 +127,7 @@ const grid = Grid.grid('grid-container', {
         }
     ],
     columns: [{
-        id: 'dID',
+        id: 'sample',
         cells: {
             format: '{value:.0f}'
         }
@@ -127,18 +136,10 @@ const grid = Grid.grid('grid-container', {
         cells: {
             events: {
                 click: function () {
-                    const rowId = this.row.id;
-
-                    if (activeRow === rowId) {
-                        return;
-                    }
-                    activeRow = rowId;
-
-                    setActiveRowStyle(this);
-                    updateChart();
+                    selectRow(this.row.id);
                 },
                 afterSetValue: function () {
-                    setActiveRowStyle(this);
+                    setActiveRowStyle();
                 }
             },
             format: '{value:.3f}'
@@ -148,24 +149,26 @@ const grid = Grid.grid('grid-container', {
 
 document.getElementById('reset-selection')
     .addEventListener('click', () => {
-        activeRow = null;
-        clearActiveRowStyle();
-        updateChart();
+        selectRow(null);
     });
 
-function setActiveRowStyle(cell) {
-    cell.row.viewport.rows.forEach(row => {
+// Selects a sample, either from the grid or from the chart. Pass null to
+// clear the selection.
+function selectRow(rowId) {
+    if (activeRow === rowId) {
+        return;
+    }
+    activeRow = rowId;
+
+    setActiveRowStyle();
+    updateChart();
+}
+
+function setActiveRowStyle() {
+    grid.viewport?.rows.forEach(row => {
         const rowIsActive = (activeRow === row.id);
         row.cells.forEach(c => {
             c.htmlElement.classList.toggle('active-row', rowIsActive);
-        });
-    });
-}
-
-function clearActiveRowStyle() {
-    grid.viewport?.rows.forEach(row => {
-        row.cells.forEach(c => {
-            c.htmlElement.classList.remove('active-row');
         });
     });
 }
@@ -191,8 +194,9 @@ const minMax = getMinMax(datasets);
 
 function updateChart() {
     if (activeRow === null) {
-        // chart = Highcharts.chart('chart-container', fullChartOptions);
+        // Revert chart options
         chart.update({
+            colors: colors,
             xAxis: {
                 categories: [
                     'Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5'
@@ -213,7 +217,7 @@ function updateChart() {
                         y: 0
                     },
                     marker: {
-                        radius: 3
+                        radius: 2
                     }
                 }
             },
@@ -224,10 +228,9 @@ function updateChart() {
             }))
         }, true, true);
     } else {
+        // Set new chart options
         chart.update({
-            chart: {
-                type: 'scatter'
-            },
+            colors: colors,
             xAxis: {
                 categories: undefined,
                 min: minMax[0],
@@ -256,8 +259,7 @@ function updateChart() {
                         y: 0.3
                     },
                     marker: {
-                        radius: 5,
-                        symbol: 'circle'
+                        radius: 5
                     },
                     tooltip: {
                         pointFormat: 'Measurement: {point.x:.3f}'
