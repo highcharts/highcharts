@@ -512,7 +512,7 @@ const columnsForGroup = group => {
         Draws: rows.map(r => r.draws),
         Losses: rows.map(r => r.losses),
         Points: rows.map(r => r.points),
-        GoalDifference: rows.map(r => r.goalDifference)
+        'Goal Difference': rows.map(r => r.goalDifference)
     };
 };
 
@@ -722,9 +722,9 @@ async function selectGroup(group, center) {
             data.Points[i]
         );
         dataTable.setCell(
-            'GoalDifference',
+            'Goal Difference',
             i,
-            data.GoalDifference[i]
+            data['Goal Difference'][i]
         );
         const row = groupGrid?.viewport.getRow(i);
         await groupGrid.querying.proceed(true);
