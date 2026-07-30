@@ -45,7 +45,7 @@ import CellContextMenu from './CellContextMenu/CellContextMenu.js';
 import CellContextMenuBuiltInActions from './CellContextMenu/CellContextMenuBuiltInActions.js';
 import { CellContextMenuLongPress } from './CellContextMenu/CellContextMenuLongPress.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
 
 /* *
@@ -299,7 +299,11 @@ class Table {
             }
 
             if (customClassName) {
-                tableElement.classList.add(...customClassName.split(/\s+/g));
+                applyUserClassNames(
+                    tableElement,
+                    void 0,
+                    customClassName
+                );
             }
             tableElement.classList.add(
                 Globals.getClassName('scrollableContent')

@@ -305,9 +305,10 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @sample highcharts/series-organization/hanging-shrink
      *         Every indent decreases the nodes' width
      *
-     * @type {Highcharts.OrganizationHangingIndentTranslationValue}
-     * @since 10.0.0
+     * @declare Highcharts.OrganizationHangingIndentTranslationValue
      * @default inherit
+     * @since   10.0.0
+     * @type    {"inherit"|"cumulative"|"shrink"}
      *
      * @private
      */

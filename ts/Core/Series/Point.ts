@@ -713,7 +713,7 @@ class Point {
      * @function Highcharts.Point#destroy
      */
     public destroy(): void {
-        if (!this.condemned) {
+        if (!this.destroyed && !this.condemned) {
             const point = this,
                 series = point.series,
                 chart = series.chart,
@@ -740,6 +740,8 @@ class Point {
                 for (const prop in point) { // eslint-disable-line guard-for-in
                     delete point[prop];
                 }
+
+                this.destroyed = true;
             };
 
             if (point.legendItem) {

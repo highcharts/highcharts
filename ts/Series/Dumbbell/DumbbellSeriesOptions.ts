@@ -72,8 +72,6 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * Color of the line that connects the dumbbell point's values.
      * By default it is the series' color.
      *
-     * @type {string}
-     *
      * @product highcharts highstock
      *
      * @since 8.0.0
@@ -89,15 +87,29 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * @product highcharts highstock
      */
     connectorWidth?: number;
+
+    /**
+     * Padding between each value groups, in x axis units.
+     *
+     * @default 0.2
+     *
+     * @product highcharts highstock
+     */
     groupPadding?: number;
+
+    /**
+     * Padding between each column or bar, in x axis units.
+     *
+     * @default 0.1
+     *
+     * @product highcharts highstock
+     */
     pointPadding?: number;
 
     /**
      * Color of the start markers in a dumbbell graph. This option takes
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
-     *
-     * @type {Highcharts.ColorType}
      *
      * @since 8.0.0
      *
@@ -185,8 +197,6 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
-     *
      * @extends series.arearange.data
      *
      * @product highcharts highstock
@@ -200,17 +210,58 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      */
     legendSymbol?: AreaRangeSeriesOptions['legendSymbol'];
 
+    /**
+     * Whether to crisp the dumbbell connector, effectively aligning the
+     * line to the pixel grid. Overrides `crisp` on the series, which
+     * defaults to `true`.
+     *
+     * @default false
+     *
+     * @product highcharts highstock
+     */
     crisp?: boolean;
 
+    /**
+     * @internal
+     */
     stickyTracking?: boolean;
 
+    /**
+     * The X axis range that each point is valid for. Overrides
+     * `pointRange` on the series, which defaults to `0`.
+     *
+     * @default 1
+     *
+     * @product highcharts highstock
+     */
     pointRange?: number;
 
+    /**
+     * @internal
+     */
     lineWidth?: number;
 
+    /**
+     * @internal
+     */
     fillColor?: ColorType;
 
+    /**
+     * @internal
+     */
     trackByArea?: boolean;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    fillOpacity?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
 
 }
 
