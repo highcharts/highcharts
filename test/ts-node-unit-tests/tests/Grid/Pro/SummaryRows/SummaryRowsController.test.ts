@@ -194,42 +194,6 @@ describe('SummaryRowsController', () => {
             strictEqual(byId.sales, 60, 'Aggregated cell holds the SUM.');
         });
 
-    it('should use format as value when no aggregator or value is set',
-        async () => {
-            const { win, doc, el } = setupDOM();
-            mockObservers(win);
-            installGridDOMGlobals(win, doc);
-
-            const Grid = await loadGridPro();
-
-            const grid = await Grid.grid(el, {
-                data: {
-                    columns: {
-                        region: ['a', 'b', 'c'],
-                        sales: [10, 20, 30]
-                    }
-                },
-                summaryRows: {
-                    aggregator: 'SUM',
-                    columns: [{ id: 'region', format: 'Total' }]
-                }
-            }, true);
-
-            grid.viewport?.resizeObserver?.disconnect();
-
-            const rows = (grid as any).summaryRows.getRows();
-
-            strictEqual(
-                rows[0].data.region, 'Total',
-                'Format acts as the value and suppresses the row aggregator.'
-            );
-            strictEqual(
-                rows[0].data.sales, 60,
-                'Other columns still use the row aggregator default.'
-            );
-            strictEqual(rows[0].formats.region, 'Total');
-        });
-
     it('should carry a per-cell format override alongside the value',
         async () => {
             const { win, doc, el } = setupDOM();

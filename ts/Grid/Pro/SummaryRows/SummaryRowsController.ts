@@ -201,17 +201,12 @@ class SummaryRowsController {
                 }
             );
 
-            if (aggregatorName) {
-                data[columnId] = Aggregation.executeAggregate(
+            data[columnId] = aggregatorName ?
+                Aggregation.executeAggregate(
                     aggregatorName,
                     Array.from(table.getColumn(columnId) || []).filter(defined)
-                );
-            } else if (column && column.format !== void 0) {
-                // Neither aggregation nor value: the format acts as the value.
-                data[columnId] = column.format;
-            } else {
-                data[columnId] = null;
-            }
+                ) :
+                null;
         }
 
         return { data, formats };
@@ -234,8 +229,8 @@ class SummaryRowsController {
             return column.aggregator;
         }
 
-        // A static value or a format-as-value suppresses the row default.
-        if (column && (column.value !== void 0 || column.format !== void 0)) {
+        // A static value suppresses the row default aggregator.
+        if (column && column.value !== void 0) {
             return;
         }
 
