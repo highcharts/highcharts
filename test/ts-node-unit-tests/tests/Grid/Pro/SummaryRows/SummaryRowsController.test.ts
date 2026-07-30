@@ -51,10 +51,10 @@ describe('SummaryRowsController', () => {
                 }
             },
             summaryRows: {
-                cells: [
-                    { columnId: 'name', value: 'Total' },
-                    { columnId: 'sales', aggregator: 'SUM' },
-                    { columnId: 'margin', aggregator: 'AVERAGE' }
+                columns: [
+                    { id: 'name', value: 'Total' },
+                    { id: 'sales', aggregator: 'SUM' },
+                    { id: 'margin', aggregator: 'AVERAGE' }
                 ]
             }
         }, true);
@@ -93,8 +93,8 @@ describe('SummaryRowsController', () => {
                 },
                 summaryRows: {
                     aggregator: 'SUM',
-                    cells: [
-                        { columnId: 'region', value: 'Total' }
+                    columns: [
+                        { id: 'region', value: 'Total' }
                     ]
                 }
             }, true);
@@ -126,11 +126,11 @@ describe('SummaryRowsController', () => {
                 summaryRows: [{
                     id: 'total',
                     aggregator: 'SUM',
-                    cells: [{ columnId: 'name', value: 'Total' }]
+                    columns: [{ id: 'name', value: 'Total' }]
                 }, {
                     id: 'average',
                     aggregator: 'AVERAGE',
-                    cells: [{ columnId: 'name', value: 'Average' }]
+                    columns: [{ id: 'name', value: 'Average' }]
                 }]
             }, true);
 
@@ -170,7 +170,7 @@ describe('SummaryRowsController', () => {
                     }
                 },
                 summaryRows: {
-                    cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+                    columns: [{ id: 'sales', aggregator: 'SUM' }]
                 },
                 columns: [{
                     id: 'note',
@@ -210,7 +210,7 @@ describe('SummaryRowsController', () => {
                     }
                 },
                 summaryRows: {
-                    cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+                    columns: [{ id: 'sales', aggregator: 'SUM' }]
                 }
             }, true);
 
@@ -246,9 +246,9 @@ describe('SummaryRowsController', () => {
                     }
                 },
                 summaryRows: {
-                    cells: [
-                        { columnId: 'name', value: 'Total' },
-                        { columnId: 'sales', aggregator: 'SUM' }
+                    columns: [
+                        { id: 'name', value: 'Total' },
+                        { id: 'sales', aggregator: 'SUM' }
                     ]
                 }
             }, true);
@@ -283,7 +283,7 @@ describe('SummaryRowsController', () => {
                 }
             },
             summaryRows: {
-                cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+                columns: [{ id: 'sales', aggregator: 'SUM' }]
             }
         }, true);
 
@@ -327,7 +327,7 @@ describe('SummaryRowsController', () => {
             },
             summaryRows: {
                 enabled: false,
-                cells: [{ columnId: 'sales', aggregator: 'SUM' }]
+                columns: [{ id: 'sales', aggregator: 'SUM' }]
             }
         }, true);
 
@@ -355,7 +355,7 @@ describe('SummaryRowsController', () => {
                     }
                 },
                 summaryRows: {
-                    cells: [{ columnId: 'name', value: 'Total' }]
+                    columns: [{ id: 'name', value: 'Total' }]
                 }
             }, true);
 

@@ -74,25 +74,26 @@ export type SummaryAggregatorOption =
     AggregatorOption<SummaryColumnAggregatorContext>;
 
 /**
- * Configuration of a single summary cell (a column within a summary row).
+ * Per-column configuration within a summary row (a "mini" `columns[]` entry).
  *
- * The column is referenced by `columnId`. Provide `aggregator` to aggregate the
+ * The column is referenced by `id`. Provide `aggregator` to aggregate the
  * column, or `value` for a static cell (for example a `'Total'` label). Without
  * either, the row's `aggregator` default applies.
  */
-export interface SummaryCellOptions {
+export interface SummaryColumnOptions {
     /**
      * Referenced source column id.
      */
-    columnId: string;
+    id: string;
 
     /**
-     * Aggregator applied to this cell, overriding the row `aggregator` default.
+     * Aggregator applied to this column, overriding the row `aggregator`
+     * default.
      */
     aggregator?: SummaryAggregatorOption;
 
     /**
-     * Static value rendered in this cell (no aggregation), for example a
+     * Static value rendered in this column (no aggregation), for example a
      * `'Total'` label. Takes precedence over the row `aggregator` default.
      */
     value?: DataTableCellType;
@@ -115,16 +116,16 @@ export interface SummaryRowOptions {
     id?: string;
 
     /**
-     * Default aggregator applied to every column of the row, except cells
-     * given an explicit `aggregator` or `value` in `cells`.
+     * Default aggregator applied to every column of the row, except columns
+     * given an explicit `aggregator` or `value` in `columns`.
      *
      * @sample grid-pro/options/summary-rows Summary rows
      */
     aggregator?: SummaryAggregatorOption;
 
     /**
-     * Per-cell overrides for this row (aggregator or static value), keyed by
-     * `columnId`.
+     * Per-column overrides for this row (aggregator or static value),
+     * referenced by column `id`.
      */
-    cells?: SummaryCellOptions[];
+    columns?: SummaryColumnOptions[];
 }

@@ -28,7 +28,7 @@ import type {
 import type Grid from '../../Core/Grid';
 import type {
     SummaryAggregatorOption,
-    SummaryCellOptions,
+    SummaryColumnOptions,
     SummaryRowOptions
 } from './SummaryRowsTypes';
 
@@ -97,8 +97,8 @@ class SummaryRowsController {
         const rowOptions = this.getSummaryRowOptions();
 
         for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
-            const cell = this.getCellsByColumnId(rowOptions[r]).get(columnId);
-            if (defined(this.getCellAggregator(rowOptions[r], cell))) {
+            const column = this.getColumnsById(rowOptions[r]).get(columnId);
+            if (defined(this.getColumnAggregator(rowOptions[r], column))) {
                 return true;
             }
         }
@@ -167,19 +167,19 @@ class SummaryRowsController {
     ): DataTableRowObject {
         const summaryRow: DataTableRowObject = {};
         const summaryRowId = options.id ?? String(summaryRowIndex);
-        const cells = this.getCellsByColumnId(options);
+        const columnsById = this.getColumnsById(options);
 
         for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
             const columnId = columnIds[i];
-            const cell = cells.get(columnId);
+            const column = columnsById.get(columnId);
 
-            if (cell && cell.value !== void 0) {
-                summaryRow[columnId] = cell.value;
+            if (column && column.value !== void 0) {
+                summaryRow[columnId] = column.value;
                 continue;
             }
 
             const aggregatorName = Aggregation.resolveAggregatorName(
-                this.getCellAggregator(options, cell),
+                this.getColumnAggregator(options, column),
                 {
                     columnId,
                     rowCount,
@@ -200,24 +200,24 @@ class SummaryRowsController {
     }
 
     /**
-     * Resolves the effective aggregator option for a summary cell.
+     * Resolves the effective aggregator option for a summary column.
      *
      * @param options
      * Summary row options.
      *
-     * @param cell
-     * Cell options for the resolved column, when present.
+     * @param column
+     * Column options for the resolved column, when present.
      */
-    private getCellAggregator(
+    private getColumnAggregator(
         options: SummaryRowOptions,
-        cell: SummaryCellOptions | undefined
+        column: SummaryColumnOptions | undefined
     ): (SummaryAggregatorOption | undefined) {
-        if (cell && cell.aggregator !== void 0) {
-            return cell.aggregator;
+        if (column && column.aggregator !== void 0) {
+            return column.aggregator;
         }
 
         // A static value suppresses the row default aggregator.
-        if (cell && cell.value !== void 0) {
+        if (column && column.value !== void 0) {
             return;
         }
 
@@ -225,24 +225,24 @@ class SummaryRowsController {
     }
 
     /**
-     * Indexes a summary row's cell options by column id.
+     * Indexes a summary row's column options by column id.
      *
      * @param options
      * Summary row options.
      */
-    private getCellsByColumnId(
+    private getColumnsById(
         options: SummaryRowOptions
-    ): Map<string, SummaryCellOptions> {
-        const cellsByColumnId = new Map<string, SummaryCellOptions>();
-        const cells = options.cells;
+    ): Map<string, SummaryColumnOptions> {
+        const columnsById = new Map<string, SummaryColumnOptions>();
+        const columns = options.columns;
 
-        if (cells) {
-            for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
-                cellsByColumnId.set(cells[i].columnId, cells[i]);
+        if (columns) {
+            for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+                columnsById.set(columns[i].id, columns[i]);
             }
         }
 
-        return cellsByColumnId;
+        return columnsById;
     }
 
     /**
