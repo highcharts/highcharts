@@ -23,7 +23,7 @@
 
 import type Cell from '../../Core/Table/Cell';
 import type Column from '../../Core/Table/Column';
-import type { SummaryRenderRow } from './SummaryRowsTypes';
+import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
 
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import SummaryTableCell from './SummaryTableCell.js';
@@ -74,28 +74,29 @@ class SummaryTableRow extends TableRow {
     }
 
     public override async update(): Promise<void> {
-        await this.sync(
-            { data: this.data, formats: this.formats },
-            this.index
-        );
+        await this.sync(this.data, this.formats, this.index);
     }
 
     /**
-     * Feeds the row with a resolved summary row (values + formats).
+     * Feeds the row with computed cell values and per-cell formats.
      *
-     * @param summaryRow
-     * Resolved summary row.
+     * @param data
+     * Cell values keyed by column id.
+     *
+     * @param formats
+     * Per-cell format overrides keyed by column id.
      *
      * @param index
      * Row index within the summary section.
      */
     public async sync(
-        summaryRow: SummaryRenderRow,
+        data: DataTableRowObject,
+        formats: Record<string, string>,
         index: number = this.index
     ): Promise<void> {
         this.index = index;
-        this.data = summaryRow.data;
-        this.formats = summaryRow.formats;
+        this.data = data;
+        this.formats = formats;
         this.setRowAttributes();
 
         if (this.rendered) {

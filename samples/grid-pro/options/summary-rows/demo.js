@@ -27,13 +27,11 @@ function createLargeColumns(rowCount) {
 
 const largeColumns = createLargeColumns(1000);
 
-const grid = Grid.grid('container', {
-    data: {
-        columns: shortColumns
-    },
-    summaryRows: [{
+function buildSummaryRows(totalOnTop) {
+    return [{
         id: 'total',
         aggregator: 'SUM',
+        position: totalOnTop ? 'top' : 'bottom',
         columns: [
             { id: 'region', value: 'Total' },
             { id: 'growth', aggregator: 'AVERAGE' }
@@ -44,7 +42,14 @@ const grid = Grid.grid('container', {
         columns: [
             { id: 'region', value: 'Average' }
         ]
-    }],
+    }];
+}
+
+const grid = Grid.grid('container', {
+    data: {
+        columns: shortColumns
+    },
+    summaryRows: buildSummaryRows(false),
     rendering: {
         rows: {
             pinning: {
@@ -117,6 +122,15 @@ document.getElementById('large-dataset').addEventListener(
             data: {
                 columns: e.target.checked ? largeColumns : shortColumns
             }
+        });
+    }
+);
+
+document.getElementById('total-on-top').addEventListener(
+    'change',
+    function (e) {
+        grid.update({
+            summaryRows: buildSummaryRows(e.target.checked)
         });
     }
 );
