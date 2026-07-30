@@ -67,9 +67,7 @@ import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function getTableSummary(chart: Chart): string {
     return chart.langFormat(
         'accessibility.table.tableSummary', { chart: chart }
@@ -77,9 +75,7 @@ function getTableSummary(chart: Chart): string {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function getTypeDescForMapChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
@@ -96,9 +92,7 @@ function getTypeDescForMapChart(
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function getTypeDescForCombinationChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
@@ -110,9 +104,7 @@ function getTypeDescForCombinationChart(
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function getTypeDescForEmptyChart(
     chart: Chart,
     formatContext: InfoRegionsComponent.TypeDescFormatContextObject
@@ -124,9 +116,7 @@ function getTypeDescForEmptyChart(
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function buildTypeDescriptionFromSeries(
     chart: Chart,
     types: Array<string>,
@@ -157,11 +147,12 @@ function buildTypeDescriptionFromSeries(
  * familiar to most users, but in those cases we try to add an explanation
  * of the type.
  *
- * @private
  * @function Highcharts.Chart#getTypeDescription
  * @param {Highcharts.Chart} chart The associated Chart instance.
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
+ *
+ * @internal
  */
 function getTypeDescription(
     chart: Chart,
@@ -194,9 +185,7 @@ function getTypeDescription(
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function stripEmptyHTMLTags(str: string): string {
     // Scan alert #[71]: Loop for nested patterns
     return replaceNested(str, [/<([\w\-.:!]+)\b[^<>]*>\s*<\/\1>/g, '']);
@@ -213,9 +202,10 @@ function stripEmptyHTMLTags(str: string): string {
 /**
  * The InfoRegionsComponent class
  *
- * @private
  * @class
  * @name Highcharts.InfoRegionsComponent
+ *
+ * @internal
  */
 class InfoRegionsComponent extends AccessibilityComponent {
 
@@ -246,7 +236,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * Init the component
-     * @private
+     *
+     * @internal
      */
     public init(): void {
         const chart = this.chart;
@@ -292,9 +283,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public initRegionsDefinitions(): void {
         const component = this,
             accessibilityOptions = this.chart.options.accessibility;
@@ -384,9 +373,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getLinkedDescriptionElement(): (HTMLDOMElement|undefined) {
         const chartOptions = this.chart.options,
             linkedDescOption = chartOptions.accessibility.linkedDescription;
@@ -408,9 +395,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setLinkedDescriptionAttrs(): void {
         const el = this.linkedDescriptionElement;
 
@@ -422,9 +407,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
 
     /**
-     * @private
      * @param {string} regionKey
      * The name/key of the region to update
+     *
+     * @internal
      */
     public updateScreenReaderSection(
         regionKey: string
@@ -466,9 +452,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * Apply a11y attributes to a screen reader info section
-     * @private
      * @param {Highcharts.HTMLDOMElement} sectionDiv The section element
      * @param {string} regionKey Name/key of the region we are setting attrs for
+     *
+     * @internal
      */
     public setScreenReaderSectionAttribs(
         sectionDiv: HTMLDOMElement,
@@ -501,9 +488,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public defaultBeforeChartFormatter(): string {
         const chart = this.chart,
             format = chart.options.accessibility.screenReaderSection
@@ -554,9 +539,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public defaultAfterChartFormatter(): string {
         const chart = this.chart;
         const format = chart.options.accessibility.screenReaderSection
@@ -573,9 +556,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getLinkedDescription(): string {
         const el = this.linkedDescriptionElement,
             content = el && el.innerHTML || '';
@@ -584,9 +565,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getLongdescText(): string {
         const chartOptions = this.chart.options,
             captionOptions = chartOptions.caption,
@@ -602,9 +581,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getTypeDescriptionText(): string {
         const chart = this.chart;
         return chart.types ?
@@ -613,9 +590,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getDataTableButtonText(
         buttonId: string
     ): string {
@@ -629,9 +604,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getSonifyButtonText(
         buttonId: string
     ): string {
@@ -653,9 +626,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getSubtitleText(): string {
         const subtitle = (
             this.chart.options.subtitle
@@ -667,9 +638,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getEndOfChartMarkerText(): string {
         const endMarkerId = `highcharts-end-of-chart-marker-${this.chart.index}`,
             endMarker = getElement(endMarkerId);
@@ -689,10 +658,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {Highcharts.Dictionary<string>} e
-     */
+    /** @internal */
     public onDataTableCreated(
         e: { tree: AST.Node }
     ): void {
@@ -711,9 +677,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public focusDataTable(): void {
         const tableDiv = this.dataTableDiv,
             table = tableDiv && tableDiv.getElementsByTagName('table')[0];
@@ -724,10 +688,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {string} sonifyButtonId
-     */
+    /** @internal */
     public initSonifyButton(
         sonifyButtonId: string
     ): void {
@@ -779,8 +740,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * Set attribs and handlers for default viewAsDataTable button if exists.
-     * @private
-     * @param {string} tableButtonId
+     *
+     * @internal
      */
     public initDataTableButton(
         tableButtonId: string
@@ -806,7 +767,8 @@ class InfoRegionsComponent extends AccessibilityComponent {
 
     /**
      * Return object with text description of each of the chart's axes.
-     * @private
+     *
+     * @internal
      */
     public getAxesDescription(): Record<string, string> {
         const chart = this.chart,
@@ -847,9 +809,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getAxisDescriptionText(
         collectionKey: ('xAxis'|'yAxis')
     ): string {
@@ -894,6 +854,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
  * */
 
 
+/** @internal */
 namespace InfoRegionsComponent {
 
 
@@ -904,6 +865,7 @@ namespace InfoRegionsComponent {
      * */
 
 
+    /** @internal */
     export interface ScreenReaderSectionObject {
         afterInserted?: Function;
         element: (HTMLDOMElement|null);
@@ -912,6 +874,7 @@ namespace InfoRegionsComponent {
     }
 
 
+    /** @internal */
     export interface TypeDescFormatContextObject {
         chart: Chart;
         mapTitle: (string|undefined);
@@ -930,4 +893,5 @@ namespace InfoRegionsComponent {
  * */
 
 
+/** @internal */
 export default InfoRegionsComponent;

@@ -38,6 +38,7 @@ import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 namespace ForcedMarkersComposition {
 
     /* *
@@ -46,11 +47,13 @@ namespace ForcedMarkersComposition {
      *
      * */
 
+    /** @internal */
     export declare class PointComposition extends Accessibility.PointComposition {
         hasForcedA11yMarker?: boolean;
     }
 
 
+    /** @internal */
     export declare class SeriesComposition extends Accessibility.SeriesComposition {
         a11yMarkersForced?: boolean;
         points: Array<PointComposition>;
@@ -65,9 +68,7 @@ namespace ForcedMarkersComposition {
      * */
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose<T extends typeof Series>(
         SeriesClass: T
     ): void {
@@ -98,9 +99,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function forceZeroOpacityMarkerOptions(
         options: (PointOptions|SeriesOptions)
     ): void {
@@ -117,9 +116,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function getPointMarkerOpacity(
         pointOptions: PointOptions
     ): number|undefined {
@@ -129,9 +126,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function handleForcePointMarkers(series: SeriesComposition): void {
         let i = series.points.length;
 
@@ -157,9 +152,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function hasIndividualPointMarkerOptions(series: Series): boolean {
         return !!(
             series._hasPointMarkers &&
@@ -169,9 +162,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function isWithinDescriptionThreshold(
         series: Accessibility.SeriesComposition
     ): boolean {
@@ -186,7 +177,8 @@ namespace ForcedMarkersComposition {
 
     /**
      * Process marker graphics after render
-     * @private
+     *
+     * @internal
      */
     function seriesOnAfterRender(
         this: SeriesComposition
@@ -224,7 +216,8 @@ namespace ForcedMarkersComposition {
 
     /**
      * Keep track of options to reset markers to if no longer forced.
-     * @private
+     *
+     * @internal
      */
     function seriesOnAfterSetOptions(
         this: SeriesComposition,
@@ -238,7 +231,8 @@ namespace ForcedMarkersComposition {
 
     /**
      * Keep track of forcing markers.
-     * @private
+     *
+     * @internal
      */
     function seriesOnRender(
         this: SeriesComposition
@@ -276,9 +270,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function shouldForceMarkers(
         series: Accessibility.SeriesComposition
     ): boolean {
@@ -295,9 +287,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function unforcePointMarkerOptions(pointOptions: PointOptions): void {
         merge(true, pointOptions.marker, {
             states: {
@@ -309,9 +299,7 @@ namespace ForcedMarkersComposition {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     function destroyPointMarkerGraphics(series: SeriesComposition): void {
         series.points?.forEach((point): void => {
             if (point.graphic) {
@@ -323,7 +311,8 @@ namespace ForcedMarkersComposition {
 
     /**
      * Reset markers to normal
-     * @private
+     *
+     * @internal
      */
     function unforceSeriesMarkerOptions(series: SeriesComposition): void {
         const resetMarkerOptions = series.resetA11yMarkerOptions;
@@ -358,7 +347,8 @@ namespace ForcedMarkersComposition {
 
     /**
      * Reset markers if series is boosted and had forced markers (#17320).
-     * @private
+     *
+     * @internal
      */
     function seriesOnRenderCanvas(this: SeriesComposition): void {
         if (this.boosted && this.a11yMarkersForced) {
@@ -379,4 +369,5 @@ namespace ForcedMarkersComposition {
  *
  * */
 
+/** @internal */
 export default ForcedMarkersComposition;
