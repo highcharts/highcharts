@@ -22,10 +22,8 @@ body {
 
 #container {
     display: grid;
-    grid-template-areas:
-        "chart"
-        "grid";
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "grid chart";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     gap: 16px;
     align-items: start;
 }
@@ -42,10 +40,4 @@ body {
 
 .highcharts-description {
     padding: 0 8px;
-}
-
-@media (max-width: 720px) {
-    #chart {
-        min-height: 360px;
-    }
 }

@@ -75,27 +75,27 @@ function getChartData() {
 
 function getSubtitle(model) {
     if (model.breakevenUnits === null) {
-        return 'Increase unit price above unit cost to reach breakeven.';
+        return 'Increase unit price above unit cost to reach break-even.';
     }
-    return 'Breakeven at ' +
+    return 'Break-even at ' +
         `${Highcharts.numberFormat(model.breakevenUnits, 0)} units`;
 }
 
 function getBreakevenPlotLine(model) {
     return {
         id: 'breakeven',
-        color: '#2caffe',
+        color: '#544fc5',
         dashStyle: 'Dash',
         value: model.breakevenUnits,
         width: 2,
         zIndex: 4,
         label: {
-            text: 'Breakeven',
+            text: 'Break-even',
             rotation: 0,
             textAlign: 'center',
             y: 15,
             style: {
-                color: '#2caffe',
+                color: '#544fc5',
                 fontWeight: '600'
             }
         }
@@ -105,7 +105,7 @@ function getBreakevenPlotLine(model) {
 const chartData = getChartData();
 const chart = Highcharts.chart('chart', {
     title: {
-        text: 'P&L breakeven model'
+        text: 'Profit and Loss break-even model'
     },
     subtitle: {
         text: getSubtitle(chartData.model)
@@ -169,7 +169,7 @@ const chart = Highcharts.chart('chart', {
         color: '#fe6a35'
     }, {
         type: 'scatter',
-        name: 'Breakeven point',
+        name: 'Break-even point',
         data: chartData.breakeven,
         color: '#544fc5',
         marker: {
@@ -180,7 +180,7 @@ const chart = Highcharts.chart('chart', {
         tooltip: {
             pointFormatter: function () {
                 return '<span style="color:' + this.color + '">\u25cf</span> ' +
-                    `Breakeven: <b>${Highcharts.numberFormat(
+                    `Break-even: <b>${Highcharts.numberFormat(
                         this.x,
                         0
                     )} units</b><br/>`;
@@ -218,6 +218,11 @@ Grid.grid('grid', {
     data: {
         dataTable
     },
+    columnDefaults: {
+        sorting: {
+            enabled: false
+        }
+    },
     columns: [{
         id: 'lineItem',
         header: {
@@ -226,7 +231,7 @@ Grid.grid('grid', {
     }, {
         id: 'value',
         header: {
-            format: 'Value'
+            format: 'Amount'
         },
         cells: {
             format: moneyFormat,
