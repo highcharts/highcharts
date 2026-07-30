@@ -9,6 +9,8 @@ const path = require('path');
 const fs = require('fs');
 const { glob } = require('glob');
 
+let saveDemoFile;
+
 /* *
  *
  *  Tasks
@@ -22,18 +24,27 @@ const { glob } = require('glob');
  *        The config file path (relative to project root)
  * @param {object} log
  *        Logger instance
+ * @param {object} [options]
+ *        Generation options
+ * @param {boolean} [options.silent=false]
+ *        Whether to suppress per-sample log output
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function generateSample(configFile, log) {
-    const { saveDemoFile } = await import(
-        '../sample-generator/index.ts'
-    );
+async function generateSample(configFile, log, options = {}) {
+    const { silent = false } = options;
+
+    // Lazy load on first use
+    saveDemoFile ||= (
+        await import('../sample-generator/index.ts')
+    ).saveDemoFile;
 
     const configPath = path.join(__dirname, '../../', configFile);
     const outputDir = path.dirname(configFile);
 
-    log.message(`Generating sample from ${configFile}...`);
+    if (!silent) {
+        log.message(`Generating sample from ${configFile}...`);
+    }
 
     // Clear the module cache to ensure fresh import
     delete require.cache[configPath];
@@ -49,10 +60,81 @@ async function generateSample(configFile, log) {
         .replace(/^samples\//u, '')
         .replace(/^samples\\/u, ''); // samples\\ for Windows
 
-    // Call saveDemoFile (checksum is calculated and saved inside)
+    // Generate sample assets from config.
     await saveDemoFile(config);
 
-    log.success(' ✔︎ Success');
+    if (!silent) {
+        log.success(' ✔︎ Success');
+    }
+}
+
+/**
+ * Whether a path is a generated sample artifact.
+ *
+ * @param {string} filePath
+ *        Git status file path.
+ * @return {boolean}
+ *         True if generated artifact.
+ */
+function isGeneratedSampleArtifact(filePath) {
+    const normalizedPath = filePath.replace(/\\/gu, '/');
+
+    if (!normalizedPath.startsWith('samples/')) {
+        return false;
+    }
+
+    return /\/(demo\.(ts|html|css|details)|\.gitignore|demo\.js)$/u
+        .test(normalizedPath);
+}
+
+/**
+ * Parse `git status --porcelain` output and return unstaged generated files.
+ *
+ * @return {Array<string>}
+ *         Relative file paths that are modified but not staged.
+ */
+function getUnstagedGeneratedFiles() {
+    const childProcess = require('node:child_process');
+
+    const output = childProcess.execFileSync(
+        'git',
+        ['status', '--porcelain', '--', 'samples'],
+        {
+            cwd: process.cwd(),
+            encoding: 'utf-8'
+        }
+    );
+
+    const files = [];
+
+    output
+        .split('\n')
+        .filter(Boolean)
+        .forEach(line => {
+            const status = line.slice(0, 2);
+            let filePath = line.slice(3).trim();
+
+            if (status === '!!') {
+                return;
+            }
+
+            if (filePath.includes(' -> ')) {
+                filePath = filePath.split(' -> ').pop() || filePath;
+            }
+
+            if (!isGeneratedSampleArtifact(filePath)) {
+                return;
+            }
+
+            const isUntracked = status === '??';
+            const hasUnstagedChanges = status[1] !== ' ';
+
+            if (isUntracked || hasUnstagedChanges) {
+                files.push(filePath);
+            }
+        });
+
+    return [...new Set(files)].sort();
 }
 
 /**
@@ -73,6 +155,9 @@ async function generateSample(configFile, log) {
  *
  * // Watch for changes and regenerate automatically
  * gulp generate-samples --watchfiles
+ *
+ * // Regenerate all samples and fail on unstaged generated output
+ * gulp generate-samples --check
  *
  * @return {Promise<void>}
  *         Promise to keep
@@ -210,9 +295,46 @@ async function task() {
 
     log.message(`Found ${configFiles.length} config file(s)`);
 
+    const useDotProgress = Boolean(argv.check);
+    let dotCount = 0;
+
     // Process each config file
     for (const configFile of configFiles) {
-        await generateSample(configFile, log);
+        await generateSample(configFile, log, { silent: useDotProgress });
+
+        if (useDotProgress) {
+            process.stdout.write('.');
+            dotCount += 1;
+
+            if (dotCount % 80 === 0) {
+                process.stdout.write('\n');
+            }
+        }
+    }
+
+    if (useDotProgress && dotCount % 80 !== 0) {
+        process.stdout.write('\n');
+    }
+
+    if (argv.check) {
+        const unstagedFiles = getUnstagedGeneratedFiles();
+
+        if (unstagedFiles.length) {
+            const preview = unstagedFiles.slice(0, 20);
+
+            log.failure('Generated sample files are modified but not staged:');
+            preview.forEach(file => log.warn(`- ${file}`));
+
+            if (unstagedFiles.length > preview.length) {
+                log.warn(`- ... and ${unstagedFiles.length - preview.length} more`);
+            }
+
+            throw new Error(
+                'Generated sample files are not staged. Run `git add .` and try again.'
+            );
+        }
+
+        log.success('Generated sample files are up to date and staged.');
     }
 
     log.success('All samples generated successfully');

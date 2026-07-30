@@ -988,6 +988,7 @@ class RowsVirtualizer {
             return false;
         }
 
+        const prevHeight = this.defaultRowHeight;
         this.defaultRowHeight = nextHeight;
         this.totalGridHeight = this.rowCount * this.defaultRowHeight;
         this.gridHeightOverflow = Math.max(
@@ -996,6 +997,11 @@ class RowsVirtualizer {
         );
 
         const target = this.viewport.tbodyElement;
+
+        if (this.viewport.virtualRows && prevHeight > 0) {
+            target.scrollTop = target.scrollTop * nextHeight / prevHeight;
+        }
+
         const scrollDenominator = this.maxElementHeight - target.clientHeight;
         const scrollPercentage = scrollDenominator > 0 ?
             target.scrollTop / scrollDenominator :

@@ -1,0 +1,8 @@
+---
+ name: Live ICU patient monitor
+ authors:
+   - Askill Solheim
+   - Mustapha Mekhatria
+   - Torstein Hønsi
+ js_wrap: b
+...

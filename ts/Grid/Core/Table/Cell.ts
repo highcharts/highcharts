@@ -33,6 +33,7 @@ import Row from './Row';
 import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
 import { fireEvent } from '../../../Shared/Utilities.js';
+import { applyUserClassNames } from '../GridUtils.js';
 
 
 /* *
@@ -345,25 +346,20 @@ abstract class Cell {
      * The template string.
      */
     protected setCustomClassName(template?: string): void {
-        const element = this.htmlElement;
-
-        if (this.customClassName) {
-            element.classList.remove(...this.customClassName.split(/\s+/g));
-        }
-
         if (!template) {
-            delete this.customClassName;
+            this.customClassName = applyUserClassNames(
+                this.htmlElement,
+                this.customClassName
+            );
             return;
         }
 
         const newClassName = this.format(template);
-        if (!newClassName) {
-            delete this.customClassName;
-            return;
-        }
-
-        element.classList.add(...newClassName.split(/\s+/g));
-        this.customClassName = newClassName;
+        this.customClassName = applyUserClassNames(
+            this.htmlElement,
+            this.customClassName,
+            newClassName || void 0
+        );
     }
 
     /**

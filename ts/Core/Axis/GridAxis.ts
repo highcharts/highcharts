@@ -1072,6 +1072,12 @@ function onDestroy(
         grid
     } = this as GridAxisComposition;
 
+    // Axes created before the Gantt module was loaded have no grid
+    // additions to be destroyed (#24644).
+    if (!grid) {
+        return;
+    }
+
     (grid.columns || []).forEach(
         (column): void => column.destroy(e.keepEvents)
     );
@@ -1105,7 +1111,9 @@ function onInit(
 
     axis.hiddenLabels = [];
     axis.hiddenMarks = [];
-    axis.clippable = false;
+    if (gridOptions.enabled) {
+        axis.clippable = false;
+    }
 }
 
 /**
