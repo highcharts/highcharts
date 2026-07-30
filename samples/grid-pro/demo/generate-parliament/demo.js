@@ -119,7 +119,14 @@ let grid = null;
 
 const partyColumns = norwayElectionResults[selectedYear].map(party => ({
     id: party[0],
-    minWidth: 215
+    minWidth: 70,
+    style: {
+        '--hcg-column-hover-background': party[2],
+        '--hcg-column-hover-opacity': '50%'
+    },
+    header: {
+        format: party[3]
+    }
 }));
 
 const getColumnData = data => {
@@ -183,7 +190,10 @@ const chart = Highcharts.chart('chart', {
             'target="_blank">SSB</a>'
     },
     legend: {
-        labelFormat: '{name} <span style="opacity: 0.4">{y}</span>'
+        labelFormat: '{label} ({name}) <span style="opacity: 0.4">{y}</span>'
+    },
+    credits: {
+        enabled: false
     },
     series: [{
         name: 'Representatives',
