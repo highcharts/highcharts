@@ -4018,22 +4018,17 @@ class Chart {
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
-                    null :
+                    void 0 :
                     'plotBox'
             );
 
-        /** @internal */
-        function zoomOut(): void {
-            chart.zoomOut();
-        }
-
-        fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {
+        fireEvent(this, 'beforeShowResetZoom', void 0, (): void => {
             chart.resetZoomButton = chart.renderer
                 .button(
                     lang.resetZoom,
-                    null as any,
-                    null as any,
-                    zoomOut,
+                    0,
+                    0,
+                    (): void => chart.zoomOut(),
                     theme
                 )
                 .attr({
@@ -4042,7 +4037,7 @@ class Chart {
                 })
                 .addClass('highcharts-reset-zoom')
                 .add()
-                .align(btnOptions.position, false, alignTo as any);
+                .align(btnOptions.position, false, alignTo);
         });
 
         fireEvent(this, 'afterShowResetZoom');
@@ -4143,8 +4138,7 @@ class Chart {
                 selection,
                 to = {},
                 trigger,
-                allowResetButton = true,
-                deferResetButton = false
+                allowResetButton = true
             } = params,
             { inverted, time } = this;
 
@@ -4338,19 +4332,22 @@ class Chart {
                         // disallow certain axis padding options that would make
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
-                        axis.isPanning = trigger !== 'zoom';
+                        axis.isPanning = trigger !== 'zoom' &&
+                            trigger !== 'drop';
 
                         if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
-                        axis.setExtremes(
-                            reset ? void 0 : newMin,
-                            reset ? void 0 : newMax,
-                            false,
-                            false,
-                            { move, trigger, scale }
-                        );
+                        if (trigger !== 'drop') {
+                            axis.setExtremes(
+                                reset ? void 0 : newMin,
+                                reset ? void 0 : newMax,
+                                false,
+                                false,
+                                { move, trigger, scale }
+                            );
+                        }
 
                         if (
                             !reset &&
@@ -4394,20 +4391,16 @@ class Chart {
                 );
             } else {
 
-                if (deferResetButton) {
-                    params.showResetButton = !!displayButton;
-                } else {
-                    // Show or hide the Reset zoom button, but not while
-                    // panning.
-                    if (
-                        displayButton &&
-                        !isAnyAxisPanning &&
-                        !this.resetZoomButton
-                    ) {
-                        this.showResetZoom();
-                    } else if (!displayButton && this.resetZoomButton) {
-                        this.resetZoomButton = this.resetZoomButton.destroy();
-                    }
+                // Show or hide the Reset zoom button, but not while
+                // panning.
+                if (
+                    displayButton &&
+                    !isAnyAxisPanning &&
+                    !this.resetZoomButton
+                ) {
+                    this.showResetZoom();
+                } else if (!displayButton && this.resetZoomButton) {
+                    this.resetZoomButton = this.resetZoomButton.destroy();
                 }
 
                 this.redraw(
@@ -4651,8 +4644,6 @@ namespace Chart {
         from?: Partial<BBoxObject>;
         trigger?: string;
         allowResetButton?: boolean;
-        deferResetButton?: boolean;
-        showResetButton?: boolean;
         hasZoomed?: boolean;
     }
 
