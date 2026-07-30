@@ -209,7 +209,7 @@ class SummaryRowsController {
                 null;
         }
 
-        return { data, formats };
+        return { data, formats, position: options.position ?? 'bottom' };
     }
 
     /**

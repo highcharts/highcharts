@@ -136,7 +136,18 @@ export interface SummaryRowOptions {
      * referenced by column `id`.
      */
     columns?: SummaryColumnOptions[];
+
+    /**
+     * Where the summary row is stuck relative to the scrollable body.
+     * @default 'bottom'
+     */
+    position?: SummaryRowPosition;
 }
+
+/**
+ * Placement of a summary row relative to the scrollable body.
+ */
+export type SummaryRowPosition = ('top' | 'bottom');
 
 /**
  * Resolved summary row ready to render: cell values plus per-cell format
@@ -152,4 +163,9 @@ export interface SummaryRenderRow {
      * Per-cell format overrides keyed by column id.
      */
     formats: Record<string, string>;
+
+    /**
+     * Where the row is stuck relative to the scrollable body.
+     */
+    position: SummaryRowPosition;
 }

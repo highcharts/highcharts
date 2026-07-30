@@ -68,7 +68,7 @@ describe('SummaryRowsController', () => {
         );
 
         strictEqual(
-            (grid as any).viewport.summaryView.tbodyElement
+            (grid as any).viewport.summaryView.bottom.tbodyElement
                 .querySelectorAll('tr').length,
             1,
             'The summary section should render one row.'
@@ -146,10 +146,55 @@ describe('SummaryRowsController', () => {
             );
 
             strictEqual(
-                (grid as any).viewport.summaryView.tbodyElement
+                (grid as any).viewport.summaryView.bottom.tbodyElement
                     .querySelectorAll('tr').length,
                 2,
                 'The summary section should render both rows.'
+            );
+        });
+
+    it('should stick a summary row to the top when configured',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: [{
+                    id: 'top-total',
+                    position: 'top',
+                    columns: [{ id: 'sales', aggregator: 'SUM' }]
+                }, {
+                    id: 'bottom-total',
+                    columns: [{ id: 'sales', aggregator: 'SUM' }]
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const view = (grid as any).viewport.summaryView;
+
+            strictEqual(
+                view.top.rows.length, 1,
+                'The top-positioned row renders in the top section.'
+            );
+            strictEqual(
+                view.bottom.rows.length, 1,
+                'The default row renders in the bottom section.'
+            );
+            strictEqual(
+                view.top.tbodyElement.classList
+                    .contains('hcg-tbody-summary-top'),
+                true,
+                'The top tbody carries the top modifier class.'
             );
         });
 
@@ -180,7 +225,7 @@ describe('SummaryRowsController', () => {
 
             grid.viewport?.resizeObserver?.disconnect();
 
-            const cells = (grid as any).viewport.summaryView.rows[0].cells;
+            const cells = (grid as any).viewport.summaryView.bottom.rows[0].cells;
             const byId: Record<string, unknown> = {};
             for (const cell of cells) {
                 byId[cell.column.id] = cell.value;
@@ -262,7 +307,7 @@ describe('SummaryRowsController', () => {
             grid.viewport?.resizeObserver?.disconnect();
 
             const rowElement =
-                (grid as any).viewport.summaryView.rows[0].htmlElement;
+                (grid as any).viewport.summaryView.bottom.rows[0].htmlElement;
 
             strictEqual(
                 rowElement.getAttribute('aria-roledescription'),
@@ -413,7 +458,7 @@ describe('SummaryRowsController', () => {
             );
 
             strictEqual(
-                (grid as any).viewport.summaryView.tbodyElement
+                (grid as any).viewport.summaryView.bottom.tbodyElement
                     .querySelectorAll('tr').length,
                 1,
                 'The empty/static summary row should still render.'

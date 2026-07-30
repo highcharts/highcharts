@@ -23,11 +23,26 @@
 
 import type Table from '../../Core/Table/Table';
 import type TableRow from '../../Core/Table/Body/TableRow';
-import type { SummaryRenderRow } from './SummaryRowsTypes';
+import type {
+    SummaryRenderRow,
+    SummaryRowPosition
+} from './SummaryRowsTypes';
 
 import SummaryTableRow from './SummaryTableRow.js';
 import Globals from '../../Core/Globals.js';
 import { makeHTMLElement } from '../../Core/GridUtils.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface SummarySection {
+    tbodyElement: HTMLElement;
+    rows: SummaryTableRow[];
+}
 
 
 /* *
@@ -37,8 +52,8 @@ import { makeHTMLElement } from '../../Core/GridUtils.js';
  * */
 
 /**
- * Renders computed summary rows in a dedicated frozen tbody section below the
- * scrollable table body.
+ * Renders computed summary rows in dedicated frozen tbody sections above and/or
+ * below the scrollable table body.
  */
 class SummaryView {
 
@@ -51,14 +66,14 @@ class SummaryView {
     private readonly viewport: Table;
 
     /**
-     * Frozen tbody element owned by the summary section.
+     * Frozen section stuck above the scrollable body.
      */
-    public readonly tbodyElement: HTMLElement;
+    private readonly top: SummarySection;
 
     /**
-     * Currently rendered summary rows.
+     * Frozen section stuck below the scrollable body.
      */
-    private rows: SummaryTableRow[] = [];
+    private readonly bottom: SummarySection;
 
 
     /* *
@@ -69,21 +84,8 @@ class SummaryView {
 
     constructor(viewport: Table) {
         this.viewport = viewport;
-        this.tbodyElement = makeHTMLElement('tbody', {
-            className: Globals.classNamePrefix + 'tbody-summary'
-        });
-
-        viewport.registerBodySection({
-            id: 'summary',
-            position: 'after',
-            tbodyElement: this.tbodyElement,
-            getRows: (): TableRow[] => this.rows,
-            getRowByElement: (element): (TableRow | undefined) =>
-                this.rows.find(
-                    (row): boolean => row.htmlElement === element
-                ),
-            getRowById: (): (TableRow | undefined) => void 0
-        });
+        this.top = this.createSection('top', 'before');
+        this.bottom = this.createSection('bottom', 'after');
     }
 
 
@@ -94,61 +96,143 @@ class SummaryView {
      * */
 
     /**
-     * Renders the given summary rows, reusing existing rows.
+     * Registers a summary body section.
+     *
+     * @param position
+     * Summary position the section holds.
+     *
+     * @param sectionPosition
+     * Body section placement relative to the main rows.
+     */
+    private createSection(
+        position: SummaryRowPosition,
+        sectionPosition: ('before' | 'after')
+    ): SummarySection {
+        const prefix = Globals.classNamePrefix;
+        const tbodyElement = makeHTMLElement('tbody', {
+            className: prefix + 'tbody-summary ' + prefix +
+                'tbody-summary-' + position
+        });
+        const section: SummarySection = { tbodyElement, rows: [] };
+
+        this.viewport.registerBodySection({
+            id: 'summary-' + position,
+            position: sectionPosition,
+            tbodyElement,
+            getRows: (): TableRow[] => section.rows,
+            getRowByElement: (element): (TableRow | undefined) =>
+                section.rows.find(
+                    (row): boolean => row.htmlElement === element
+                ),
+            getRowById: (): (TableRow | undefined) => void 0
+        });
+
+        return section;
+    }
+
+    /**
+     * Renders the given summary rows into the top and bottom sections.
      *
      * @param summaryRows
-     * Resolved summary rows (values + per-cell formats).
+     * Resolved summary rows (values, formats, position).
      */
     public async render(summaryRows: SummaryRenderRow[]): Promise<void> {
-        const tableElement = this.viewport.tableElement;
-
-        if (
-            summaryRows.length &&
-            this.tbodyElement.parentElement !== tableElement
-        ) {
-            tableElement.appendChild(this.tbodyElement);
-        }
-
-        for (let i = 0, iEnd = summaryRows.length; i < iEnd; ++i) {
-            let row = this.rows[i];
-
-            if (!row) {
-                row = new SummaryTableRow(this.viewport, i);
-                await row.sync(summaryRows[i], i);
-                await row.init();
-                await row.render();
-                this.tbodyElement.appendChild(row.htmlElement);
-                this.rows[i] = row;
-            } else {
-                await row.sync(summaryRows[i], i);
-                if (!row.htmlElement.isConnected) {
-                    this.tbodyElement.appendChild(row.htmlElement);
-                }
-            }
-        }
-
-        for (let i = this.rows.length - 1; i >= summaryRows.length; --i) {
-            this.rows[i].destroy();
-            this.rows.length = i;
-        }
-
-        if (!this.rows.length && this.tbodyElement.parentElement) {
-            this.tbodyElement.remove();
-        }
+        await this.renderSection(
+            this.top,
+            summaryRows.filter((row): boolean => row.position === 'top'),
+            true
+        );
+        await this.renderSection(
+            this.bottom,
+            summaryRows.filter((row): boolean => row.position !== 'top'),
+            false
+        );
 
         this.syncHorizontalScroll(this.viewport.tbodyElement.scrollLeft);
         await this.viewport.syncAriaRowIndexes();
     }
 
     /**
+     * Renders one section's rows, reusing existing rows.
+     *
+     * @param section
+     * Target section.
+     *
+     * @param summaryRows
+     * Rows assigned to the section.
+     *
+     * @param before
+     * Whether the section is inserted before the main body.
+     */
+    private async renderSection(
+        section: SummarySection,
+        summaryRows: SummaryRenderRow[],
+        before: boolean
+    ): Promise<void> {
+        const tableElement = this.viewport.tableElement;
+        const { tbodyElement, rows } = section;
+
+        if (
+            summaryRows.length &&
+            tbodyElement.parentElement !== tableElement
+        ) {
+            if (before) {
+                tableElement.insertBefore(
+                    tbodyElement,
+                    this.viewport.tbodyElement
+                );
+            } else {
+                tableElement.appendChild(tbodyElement);
+            }
+        }
+
+        for (let i = 0, iEnd = summaryRows.length; i < iEnd; ++i) {
+            let row = rows[i];
+
+            if (!row) {
+                row = new SummaryTableRow(this.viewport, i);
+                await row.sync(summaryRows[i].data, summaryRows[i].formats, i);
+                await row.init();
+                await row.render();
+                tbodyElement.appendChild(row.htmlElement);
+                rows[i] = row;
+            } else {
+                await row.sync(summaryRows[i].data, summaryRows[i].formats, i);
+                if (!row.htmlElement.isConnected) {
+                    tbodyElement.appendChild(row.htmlElement);
+                }
+            }
+        }
+
+        for (let i = rows.length - 1; i >= summaryRows.length; --i) {
+            rows[i].destroy();
+            rows.length = i;
+        }
+
+        if (!rows.length && tbodyElement.parentElement) {
+            tbodyElement.remove();
+        }
+    }
+
+    /**
      * Re-applies per-cell widths and horizontal offset after a reflow.
      */
     public reflow(): void {
-        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-            this.rows[i].reflow();
-        }
-
+        this.reflowSection(this.top);
+        this.reflowSection(this.bottom);
         this.syncHorizontalScroll(this.viewport.tbodyElement.scrollLeft);
+    }
+
+    /**
+     * Reflows a single section's rows.
+     *
+     * @param section
+     * Target section.
+     */
+    private reflowSection(section: SummarySection): void {
+        for (let i = 0, iEnd = section.rows.length; i < iEnd; ++i) {
+            section.rows[i].reflow();
+        }
     }
 
     /**
@@ -160,24 +244,55 @@ class SummaryView {
     public syncHorizontalScroll(scrollLeft: number): void {
         const transform = scrollLeft ? `translateX(${-scrollLeft}px)` : '';
 
-        this.tbodyElement.scrollLeft = 0;
-        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-            this.rows[i].htmlElement.style.transform = transform;
+        this.offsetSection(this.top, transform);
+        this.offsetSection(this.bottom, transform);
+    }
+
+    /**
+     * Applies the horizontal offset to a single section.
+     *
+     * @param section
+     * Target section.
+     *
+     * @param transform
+     * Transform to apply to each row.
+     */
+    private offsetSection(section: SummarySection, transform: string): void {
+        section.tbodyElement.scrollLeft = 0;
+        for (let i = 0, iEnd = section.rows.length; i < iEnd; ++i) {
+            section.rows[i].htmlElement.style.transform = transform;
         }
     }
 
     /**
-     * Unregisters the section and removes all rendered rows.
+     * Unregisters the sections and removes all rendered rows.
      */
     public destroy(): void {
-        this.viewport.unregisterBodySection('summary');
+        this.destroySection('top', this.top);
+        this.destroySection('bottom', this.bottom);
+    }
 
-        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
-            this.rows[i].destroy();
+    /**
+     * Destroys a single section.
+     *
+     * @param position
+     * Summary position the section holds.
+     *
+     * @param section
+     * Target section.
+     */
+    private destroySection(
+        position: SummaryRowPosition,
+        section: SummarySection
+    ): void {
+        this.viewport.unregisterBodySection('summary-' + position);
+
+        for (let i = 0, iEnd = section.rows.length; i < iEnd; ++i) {
+            section.rows[i].destroy();
         }
 
-        this.rows.length = 0;
-        this.tbodyElement.remove();
+        section.rows.length = 0;
+        section.tbodyElement.remove();
     }
 
 }
