@@ -122,11 +122,6 @@ const createMap = (
             id: 'choropleth',
             accessibility: {
                 exposeAsGroupOnly: true
-            },
-            events: {
-                click: function (e) {
-                    addLinePoint(e, this.chart as Highcharts.MapChart);
-                }
             }
         }, {
             type: 'mappoint',
@@ -139,11 +134,6 @@ const createMap = (
             marker: {
                 lineWidth: 1,
                 lineColor: '#fff'
-            },
-            events: {
-                click: function (e): void {
-                    removePoint(e.point, this.chart as Highcharts.MapChart);
-                }
             }
         }, {
             type: 'mapline',
@@ -428,6 +418,17 @@ function setupAutoRotation(chart: Highcharts.MapChart): void {
     });
     startRotation();
 }
+
+// Handle interactions outside the chart configuration.
+Highcharts.addEvent(Highcharts.Series, 'click', function (event) {
+    const chart = this.chart as Highcharts.MapChart;
+
+    if (this.options.id === 'choropleth') {
+        addLinePoint(event, chart);
+    } else if (this.options.id === 'clicked-points') {
+        removePoint(event.point, chart);
+    }
+});
 
 // Render a circle filled with a radial gradient behind the globe to make it
 // appear as the sea around the continents
