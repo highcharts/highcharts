@@ -378,6 +378,7 @@ module.exports = {
                             'react/components/modules/drilldown',
                             'react/components/modules/broken-axis',
                             'react/components/modules/draggable-points',
+                            'react/components/modules/serieslabel',
                             'react/components/modules/stock-tools',
                         ]
                     },
