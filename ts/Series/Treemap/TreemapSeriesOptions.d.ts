@@ -285,6 +285,16 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
     dataLabels?: Partial<TreemapDataLabelOptions>;
 
     /**
+     * Can set the group padding on a specific level. Overrides the series
+     * option of the same name.
+     *
+     * @since 12.2.0
+     *
+     * @product highcharts
+     */
+    groupPadding?: number;
+
+    /**
      * Can set the layoutAlgorithm option on a specific level.
      *
      * @since 4.1.0
@@ -318,6 +328,15 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      * @product highcharts
      */
     level?: number;
+
+    /**
+     * Whether the `level` number is absolute, or relative to the currently
+     * visible root. Overrides the series option of the same name for this
+     * level.
+     *
+     * @product highcharts
+     */
+    levelIsConstant?: boolean;
 
 }
 

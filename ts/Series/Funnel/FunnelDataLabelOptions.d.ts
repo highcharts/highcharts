@@ -27,7 +27,15 @@ import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
  * */
 
 export interface FunnelDataLabelOptions extends PieDataLabelOptions {
-    // Nothing yet
+
+    /**
+     * Whether to render the data label inside the funnel item instead of
+     * outside, connected by a connector line.
+     *
+     * @default false
+     */
+    inside?: boolean;
+
 }
 
 /* *

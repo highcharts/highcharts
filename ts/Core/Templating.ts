@@ -586,8 +586,6 @@ export default Templating;
  * */
 
 /**
- * @interface Highcharts.Templating
- *
  * The Highcharts.Templating interface provides a structure for defining
  * helpers. Helpers can be used as conditional blocks or functions within
  * expressions. Highcharts includes several built-in helpers and supports
@@ -603,8 +601,19 @@ export default Templating;
  * // Usage in a format string
  * format: 'Absolute value: {abs point.y}'
  *
- * @name Highcharts.Templating#helpers
+ * @interface Highcharts.TemplatingObject
+ *//**
+ * The collection of helpers, keyed by the name used in format expressions.
+ *
+ * @name Highcharts.TemplatingObject#helpers
  * @type {Record<string, Function>}
+ */
+
+/**
+ * The templating object, exposing the helpers used by format strings.
+ *
+ * @name Highcharts.Templating
+ * @type {Highcharts.TemplatingObject}
  */
 
 (''); // Keeps doclets above in file
