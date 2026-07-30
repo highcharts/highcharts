@@ -23,7 +23,7 @@
 
 import type Table from '../../Core/Table/Table';
 import type TableRow from '../../Core/Table/Body/TableRow';
-import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
+import type { SummaryRenderRow } from './SummaryRowsTypes';
 
 import SummaryTableRow from './SummaryTableRow.js';
 import Globals from '../../Core/Globals.js';
@@ -94,40 +94,40 @@ class SummaryView {
      * */
 
     /**
-     * Renders the given summary row objects, reusing existing rows.
+     * Renders the given summary rows, reusing existing rows.
      *
-     * @param rowObjects
-     * Computed summary row objects keyed by column id.
+     * @param summaryRows
+     * Resolved summary rows (values + per-cell formats).
      */
-    public async render(rowObjects: DataTableRowObject[]): Promise<void> {
+    public async render(summaryRows: SummaryRenderRow[]): Promise<void> {
         const tableElement = this.viewport.tableElement;
 
         if (
-            rowObjects.length &&
+            summaryRows.length &&
             this.tbodyElement.parentElement !== tableElement
         ) {
             tableElement.appendChild(this.tbodyElement);
         }
 
-        for (let i = 0, iEnd = rowObjects.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = summaryRows.length; i < iEnd; ++i) {
             let row = this.rows[i];
 
             if (!row) {
                 row = new SummaryTableRow(this.viewport, i);
-                await row.sync(rowObjects[i], i);
+                await row.sync(summaryRows[i], i);
                 await row.init();
                 await row.render();
                 this.tbodyElement.appendChild(row.htmlElement);
                 this.rows[i] = row;
             } else {
-                await row.sync(rowObjects[i], i);
+                await row.sync(summaryRows[i], i);
                 if (!row.htmlElement.isConnected) {
                     this.tbodyElement.appendChild(row.htmlElement);
                 }
             }
         }
 
-        for (let i = this.rows.length - 1; i >= rowObjects.length; --i) {
+        for (let i = this.rows.length - 1; i >= summaryRows.length; --i) {
             this.rows[i].destroy();
             this.rows.length = i;
         }

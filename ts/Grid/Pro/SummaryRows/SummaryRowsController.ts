@@ -29,6 +29,7 @@ import type Grid from '../../Core/Grid';
 import type {
     SummaryAggregatorOption,
     SummaryColumnOptions,
+    SummaryRenderRow,
     SummaryRowOptions
 } from './SummaryRowsTypes';
 
@@ -57,9 +58,9 @@ class SummaryRowsController {
     private readonly grid: Grid;
 
     /**
-     * Summary row objects computed for the current queried table.
+     * Summary rows computed for the current queried table (values + formats).
      */
-    private rowObjects: DataTableRowObject[] = [];
+    private rows: SummaryRenderRow[] = [];
 
 
     /* *
@@ -80,10 +81,17 @@ class SummaryRowsController {
      * */
 
     /**
-     * Returns the summary row objects computed for the current table.
+     * Returns the resolved summary rows (values + per-cell formats).
+     */
+    public getRows(): SummaryRenderRow[] {
+        return this.rows;
+    }
+
+    /**
+     * Returns the computed summary row value objects.
      */
     public getRowObjects(): DataTableRowObject[] {
-        return this.rowObjects;
+        return this.rows.map((row): DataTableRowObject => row.data);
     }
 
     /**
@@ -118,16 +126,16 @@ class SummaryRowsController {
     public updateFromTable(table: DataTable): void {
         const rowOptions = this.getSummaryRowOptions();
         if (!rowOptions.length) {
-            this.rowObjects = [];
+            this.rows = [];
             return;
         }
 
         const columnIds = table.getColumnIds();
         const rowCount = table.getRowCount();
-        const rowObjects: DataTableRowObject[] = [];
+        const rows: SummaryRenderRow[] = [];
 
         for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
-            rowObjects.push(this.buildSummaryRow(
+            rows.push(this.buildSummaryRow(
                 table,
                 columnIds,
                 rowCount,
@@ -136,7 +144,7 @@ class SummaryRowsController {
             ));
         }
 
-        this.rowObjects = rowObjects;
+        this.rows = rows;
     }
 
     /**
@@ -164,8 +172,9 @@ class SummaryRowsController {
         rowCount: number,
         options: SummaryRowOptions,
         summaryRowIndex: number
-    ): DataTableRowObject {
-        const summaryRow: DataTableRowObject = {};
+    ): SummaryRenderRow {
+        const data: DataTableRowObject = {};
+        const formats: Record<string, string> = {};
         const summaryRowId = options.id ?? String(summaryRowIndex);
         const columnsById = this.getColumnsById(options);
 
@@ -173,8 +182,12 @@ class SummaryRowsController {
             const columnId = columnIds[i];
             const column = columnsById.get(columnId);
 
+            if (column && column.format !== void 0) {
+                formats[columnId] = column.format;
+            }
+
             if (column && column.value !== void 0) {
-                summaryRow[columnId] = column.value;
+                data[columnId] = column.value;
                 continue;
             }
 
@@ -188,15 +201,20 @@ class SummaryRowsController {
                 }
             );
 
-            summaryRow[columnId] = aggregatorName ?
-                Aggregation.executeAggregate(
+            if (aggregatorName) {
+                data[columnId] = Aggregation.executeAggregate(
                     aggregatorName,
                     Array.from(table.getColumn(columnId) || []).filter(defined)
-                ) :
-                null;
+                );
+            } else if (column && column.format !== void 0) {
+                // Neither aggregation nor value: the format acts as the value.
+                data[columnId] = column.format;
+            } else {
+                data[columnId] = null;
+            }
         }
 
-        return summaryRow;
+        return { data, formats };
     }
 
     /**
@@ -216,8 +234,8 @@ class SummaryRowsController {
             return column.aggregator;
         }
 
-        // A static value suppresses the row default aggregator.
-        if (column && column.value !== void 0) {
+        // A static value or a format-as-value suppresses the row default.
+        if (column && (column.value !== void 0 || column.format !== void 0)) {
             return;
         }
 

@@ -194,6 +194,87 @@ describe('SummaryRowsController', () => {
             strictEqual(byId.sales, 60, 'Aggregated cell holds the SUM.');
         });
 
+    it('should use format as value when no aggregator or value is set',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        region: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: {
+                    aggregator: 'SUM',
+                    columns: [{ id: 'region', format: 'Total' }]
+                }
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const rows = (grid as any).summaryRows.getRows();
+
+            strictEqual(
+                rows[0].data.region, 'Total',
+                'Format acts as the value and suppresses the row aggregator.'
+            );
+            strictEqual(
+                rows[0].data.sales, 60,
+                'Other columns still use the row aggregator default.'
+            );
+            strictEqual(rows[0].formats.region, 'Total');
+        });
+
+    it('should carry a per-cell format override alongside the value',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        name: ['a', 'b', 'c'],
+                        sales: [10, 20, 30]
+                    }
+                },
+                summaryRows: {
+                    columns: [
+                        { id: 'name', value: 'Total' },
+                        {
+                            id: 'sales',
+                            aggregator: 'SUM',
+                            format: '${value:,0f}'
+                        }
+                    ]
+                }
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const rows = (grid as any).summaryRows.getRows();
+
+            strictEqual(
+                rows[0].data.sales, 60,
+                'The value is the aggregated result.'
+            );
+            strictEqual(
+                rows[0].formats.sales, '${value:,0f}',
+                'The per-cell format is carried for the aggregated cell.'
+            );
+            strictEqual(
+                rows[0].formats.name, void 0,
+                'Columns without a format carry none.'
+            );
+        });
+
     it('should expose an a11y role description and keep the row index',
         async () => {
             const { win, doc, el } = setupDOM();

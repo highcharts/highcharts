@@ -23,7 +23,7 @@
 
 import type Cell from '../../Core/Table/Cell';
 import type Column from '../../Core/Table/Column';
-import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
+import type { SummaryRenderRow } from './SummaryRowsTypes';
 
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import SummaryTableCell from './SummaryTableCell.js';
@@ -57,6 +57,11 @@ class SummaryTableRow extends TableRow {
     public readonly bodySectionId = 'summary';
 
     /**
+     * Per-cell format overrides for this row, keyed by column id.
+     */
+    public formats: Record<string, string> = {};
+
+    /**
      * Skips the data-provider fetch of the base row init.
      */
     public override init(): Promise<void> {
@@ -69,24 +74,28 @@ class SummaryTableRow extends TableRow {
     }
 
     public override async update(): Promise<void> {
-        await this.sync(this.data, this.index);
+        await this.sync(
+            { data: this.data, formats: this.formats },
+            this.index
+        );
     }
 
     /**
-     * Feeds the row with a computed summary row object.
+     * Feeds the row with a resolved summary row (values + formats).
      *
-     * @param data
-     * Computed summary row object keyed by column id.
+     * @param summaryRow
+     * Resolved summary row.
      *
      * @param index
      * Row index within the summary section.
      */
     public async sync(
-        data: DataTableRowObject,
+        summaryRow: SummaryRenderRow,
         index: number = this.index
     ): Promise<void> {
         this.index = index;
-        this.data = data;
+        this.data = summaryRow.data;
+        this.formats = summaryRow.formats;
         this.setRowAttributes();
 
         if (this.rendered) {

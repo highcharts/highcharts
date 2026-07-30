@@ -22,7 +22,8 @@
  * */
 
 import type {
-    CellType as DataTableCellType
+    CellType as DataTableCellType,
+    RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
 import type { AggregatorOption } from '../Aggregation/AggregationTypes';
 
@@ -97,6 +98,13 @@ export interface SummaryColumnOptions {
      * `'Total'` label. Takes precedence over the row `aggregator` default.
      */
     value?: DataTableCellType;
+
+    /**
+     * Format applied to this summary cell only, overriding the column's
+     * `cells.format`. Works like a regular cell format; the formatted value is
+     * the aggregated value or `value`.
+     */
+    format?: string;
 }
 
 /**
@@ -128,4 +136,20 @@ export interface SummaryRowOptions {
      * referenced by column `id`.
      */
     columns?: SummaryColumnOptions[];
+}
+
+/**
+ * Resolved summary row ready to render: cell values plus per-cell format
+ * overrides keyed by column id.
+ */
+export interface SummaryRenderRow {
+    /**
+     * Cell values keyed by column id.
+     */
+    data: DataTableRowObject;
+
+    /**
+     * Per-cell format overrides keyed by column id.
+     */
+    formats: Record<string, string>;
 }
