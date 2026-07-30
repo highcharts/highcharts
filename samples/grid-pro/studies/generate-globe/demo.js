@@ -602,7 +602,6 @@ function moveTo(center) {
             easing: 'easeInOutSine',
             step: now => {
                 const rotation = rotations[Math.round(now)];
-                console.log('moveTo step', now, rotation);
 
                 mapView.update({
                     projection: {
