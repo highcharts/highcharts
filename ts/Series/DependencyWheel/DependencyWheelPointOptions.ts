@@ -27,7 +27,7 @@ import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
  * */
 
 export interface DependencyWheelPointOptions extends SankeyPointOptions {
-    linkWeight?: number;
+    // Nothing to add
 }
 
 /* *
