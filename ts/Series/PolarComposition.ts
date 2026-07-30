@@ -45,8 +45,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type Tick from '../Core/Axis/Tick';
 
-import A from '../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import { borderRadiusObject } from '../Extensions/BorderRadius.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;

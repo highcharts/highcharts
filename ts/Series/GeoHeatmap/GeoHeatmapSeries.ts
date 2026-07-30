@@ -26,11 +26,10 @@ import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
 import type { InterpolationObject } from './GeoHeatmapSeriesOptions.js';
 import type MapView from '../../Maps/MapView.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     stop
-} = A;
+} from '../../Core/Animation/AnimationUtilities.js';
 import GeoHeatmapPoint from './GeoHeatmapPoint.js';
 import H from '../../Core/Globals.js';
 const {
@@ -199,9 +198,10 @@ class GeoHeatmapSeries extends MapSeries {
              *         Advanced demo of GeoHeatmap interpolation with multiple
              *         datasets
              *
-             * @type      {boolean|Highcharts.InterpolationOptionsObject}
-             * @since     11.2.0
-             * @product   highmaps
+             * @declare Highcharts.InterpolationOptionsObject
+             * @product highmaps
+             * @since   11.2.0
+             * @type    {boolean|*}
              */
             interpolation: {
                 /**

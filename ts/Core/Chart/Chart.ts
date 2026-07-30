@@ -53,12 +53,11 @@ import type {
 } from '../Series/SeriesType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animate,
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
@@ -4290,7 +4289,8 @@ class Chart {
             // (#22945)
             // Set offset to 0 for ordinal axis only when zooming out, (#24545).
             const offset = (
-                    axis.chart.polar || (axis.isOrdinal && scale <= 1)
+                    selection || axis.chart.polar ||
+                    (axis.isOrdinal && scale <= 1)
                 ) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
@@ -4300,14 +4300,6 @@ class Chart {
             let newMin = eventMin + offset,
                 newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
-
-            if (selection) {
-                selection[axis.coll as 'xAxis' | 'yAxis']!.push({
-                    axis,
-                    min: Math.min(eventMin, eventMax),
-                    max: Math.max(eventMin, eventMax)
-                });
-            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -4420,16 +4412,21 @@ class Chart {
                 if (
                     reset || (
                         axis.series.length &&
-                        (newMin !== min || newMax !== max) &&
-                        newMin >= floor &&
-                        newMax <= ceiling
+                        (
+                            selection ||
+                            (
+                                (newMin !== min || newMax !== max) &&
+                                newMin >= floor &&
+                                newMax <= ceiling
+                            )
+                        )
                     )
                 ) {
                     if (selection) {
                         selection[axis.coll as 'xAxis'|'yAxis']!.push({
                             axis,
-                            min: newMin,
-                            max: newMax
+                            min: Math.min(eventMin, eventMax),
+                            max: Math.max(eventMin, eventMax)
                         });
                     } else {
 

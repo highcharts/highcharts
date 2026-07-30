@@ -46,7 +46,8 @@ import type {
 export interface TreeViewOptions {
     /**
      * Enables tree view processing.
-     * @default true
+     *
+     * @default false
      */
     enabled?: boolean;
 

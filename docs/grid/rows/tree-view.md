@@ -9,14 +9,15 @@ expandable hierarchy inside the grid. Use it when your data represents
 parent-child relationships such as organization structures, folders, product
 categories, account trees, or multi-level budgets.
 
-Tree view is configured using `data.treeView` and works with the local
-data provider. Grid builds a tree index from the source table, then projects
-the queried row set into visible parent and child rows before pagination is
-applied.
+Tree view is enabled by setting `data.treeView.enabled` to `true`. It works
+with the local data provider. Grid builds a tree index from the source table,
+then projects the queried row set into visible parent and child rows before
+pagination is applied.
 
 ## Minimum requirements
 
 - Tree view is available in Highcharts Grid Pro.
+- Set `data.treeView.enabled: true`.
 - Tree view works with local data (`data.columns`,
   `data.dataTable`, or connector-backed data).
 - Provide either `parentId` or `path` hierarchy data, or configure
@@ -70,6 +71,7 @@ Grid.grid('container', {
         },
         idColumn: 'id',
         treeView: {
+            enabled: true,
             input: {
                 type: 'parentId',
                 parentIdColumn: 'parentId'
@@ -106,6 +108,7 @@ Grid.grid('container', {
         },
         idColumn: 'id',
         treeView: {
+            enabled: true,
             input: {
                 type: 'path',
                 pathColumn: 'path',
@@ -150,6 +153,7 @@ The expand/collapse UI is rendered in the tree column.
 
 ```js
 treeView: {
+    enabled: true,
     treeColumn: 'name',
     input: {
         type: 'path',
@@ -165,6 +169,7 @@ initialized or when Tree view configuration changes.
 
 ```js
 treeView: {
+    enabled: true,
     expandedRowIds: [1, 2, 7] // or: 'all'
 }
 ```
@@ -184,6 +189,7 @@ scrolling long trees.
 
 ```js
 treeView: {
+    enabled: true,
     stickyParents: true
 }
 ```
@@ -307,6 +313,7 @@ in `data.treeView.input.separator`.
 
 ```js
 treeView: {
+    enabled: true,
     input: {
         type: 'path',
         separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
@@ -323,6 +330,7 @@ should return an ordered array of path segments.
 
 ```js
 treeView: {
+    enabled: true,
     input: {
         type: 'path',
         separator: path => path.split(' > ')
