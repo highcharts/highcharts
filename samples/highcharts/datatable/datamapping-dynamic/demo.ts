@@ -33,7 +33,7 @@ Highcharts.chart('container', {
 // Simulate dynamic updates to the data table
 setInterval(() => {
     dataTable.deleteRows(0);
-    const lastExperimentNo = dataTable.getColumn('ExperimentNo').slice(-1)[0];
+    const lastExperimentNo = +dataTable.getColumn('ExperimentNo').slice(-1)[0];
     dataTable.setRow({
         ExperimentNo: lastExperimentNo + 1,
         Prediction: Math.round(10 + Math.random() * 10),

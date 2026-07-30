@@ -802,6 +802,7 @@ class ColumnSeries extends Series {
                         );
                         if (!styledMode) {
                             initialAttr.opacity = 0;
+                            initialAttr['stroke-width'] = 0;
                         }
                         shouldUpdate = true;
                         verb = 'animate';
