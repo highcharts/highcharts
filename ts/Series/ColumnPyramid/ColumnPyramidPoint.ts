@@ -26,6 +26,7 @@ import type ColumnPyramidSeries from './ColumnPyramidSeries';
  *
  * */
 
+/** @internal */
 declare class ColumnPyramidPoint extends ColumnPoint {
     public options: ColumnPyramidPointOptions;
     public series: ColumnPyramidSeries;
@@ -37,4 +38,5 @@ declare class ColumnPyramidPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default ColumnPyramidPoint;
