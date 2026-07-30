@@ -85,7 +85,6 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
-import Tick from '../Axis/Tick.js';
 import {
     addEvent,
     attr,
@@ -3028,24 +3027,22 @@ class Chart {
                 expectedSpace = options.tickLength;
                 axis.createGroups();
 
-                // Calculate expected space based on dummy tick
-                const mockTick = new Tick(axis, 0, '', true),
-                    label = mockTick.createLabel('x', labels);
-                mockTick.destroy();
+                // Calculate expected space based on a probe tick
+                const probeLabel = axis.probeLabel();
                 if (
-                    label &&
+                    probeLabel &&
                     pick(
                         labels.reserveSpace,
                         !isNumber(options.crossing)
                     )
                 ) {
-                    expectedSpace = label.getBBox().height +
+                    expectedSpace = probeLabel.getBBox().height +
                         labels.distance +
                         Math.max(isNumber(offset) ? offset : 0, 0);
                 }
 
                 if (expectedSpace) {
-                    label?.destroy();
+                    probeLabel?.destroy();
                     break;
                 }
             }
