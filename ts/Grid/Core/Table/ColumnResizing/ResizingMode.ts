@@ -28,7 +28,8 @@ import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
-import { clamp, defined, getStyle } from '../../../../Shared/Utilities.js';
+import { measureWidthOverhead } from '../../GridUtils.js';
+import { clamp, defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -270,21 +271,21 @@ abstract class ResizingMode {
             column.options.minWidth
         );
 
-        const getElPaddings = (el: HTMLElement): number => (
-            (getStyle(el, 'padding-left', true) || 0) +
-            (getStyle(el, 'padding-right', true) || 0) +
-            (getStyle(el, 'border-left', true) || 0) +
-            (getStyle(el, 'border-right', true) || 0)
-        );
+        // A cell cannot be rendered narrower than its paddings and borders.
+        // When the column is outside of the rendered range (column
+        // virtualization), they are measured on any rendered cell instead.
+        const overhead = tableColumnEl || headerColumnEl ?
+            Math.max(
+                measureWidthOverhead(tableColumnEl),
+                measureWidthOverhead(headerColumnEl)
+            ) :
+            column.viewport.columnLayout.getCellWidthOverhead();
 
-        let result = Math.max(ResizingMode.MIN_COLUMN_WIDTH, minWidth ?? 0);
-        if (tableColumnEl) {
-            result = Math.max(result, getElPaddings(tableColumnEl));
-        }
-        if (headerColumnEl) {
-            result = Math.max(result, getElPaddings(headerColumnEl));
-        }
-        return result;
+        return Math.max(
+            ResizingMode.MIN_COLUMN_WIDTH,
+            minWidth ?? 0,
+            overhead
+        );
     }
 
     /**

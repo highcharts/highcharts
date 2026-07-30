@@ -855,4 +855,172 @@ test.describe('Sorting and resizing wide grid', () => {
             expect(state.columnCursor).toBeGreaterThan(0);
         }
     );
+
+    test(
+        'columns without widths should keep the header aligned with the body',
+        async ({ page }) => {
+            await page.evaluate(async () => {
+                const gridNamespace = (window as any).Grid;
+                const container = document.getElementById('container');
+                const columns: Record<string, number[]> = {};
+
+                for (const grid of gridNamespace.grids) {
+                    grid?.destroy();
+                }
+
+                if (!container) {
+                    throw new Error('Missing grid container.');
+                }
+
+                container.innerHTML = '';
+                container.style.width = '320px';
+                container.style.height = '220px';
+
+                // No width options, so all columns fall back to the minimal
+                // width, which cannot be smaller than the cell paddings.
+                for (let i = 0; i < 400; ++i) {
+                    columns['Column ' + i] = Array.from(
+                        { length: 6 },
+                        (_value, row): number => row + i
+                    );
+                }
+
+                (window as any).autoWidthColumnGrid = await gridNamespace.grid(
+                    'container',
+                    {
+                        data: {
+                            columns
+                        },
+                        rendering: {
+                            columns: {
+                                bufferSize: 1,
+                                virtualization: true
+                            },
+                            rows: {
+                                strictHeights: true,
+                                virtualization: false
+                            }
+                        }
+                    },
+                    true
+                );
+            });
+
+            const measure = async (
+                scrollRatio: number
+            ): Promise<{
+                columnWidth: number;
+                lastColumnRight: number;
+                maxLeftDiff: number;
+                maxWidthDiff: number;
+                renderedCount: number;
+                rowsWidth: number;
+                scrollWidth: number;
+                viewportRight: number;
+            }> => {
+                await page.evaluate((ratio) => {
+                    const { tbodyElement } =
+                        (window as any).autoWidthColumnGrid.viewport;
+
+                    tbodyElement.scrollLeft = Math.round(
+                        (tbodyElement.scrollWidth - tbodyElement.clientWidth) *
+                            ratio
+                    );
+                    tbodyElement.dispatchEvent(new Event('scroll'));
+                }, scrollRatio);
+
+                // Wait until the column at the current scroll position is
+                // rendered in both the header and the body.
+                await page.waitForFunction(() => {
+                    const { columnLayout, columns, tbodyElement } =
+                        (window as any).autoWidthColumnGrid.viewport;
+                    const [from] = columnLayout.getVisibleRange(
+                        tbodyElement.scrollLeft,
+                        tbodyElement.clientWidth
+                    );
+                    const columnId = columns[from].id;
+
+                    return !!document.querySelector(
+                        'thead tr th[data-column-id="' + columnId + '"]'
+                    ) && !!document.querySelector(
+                        'tbody tr td[data-column-id="' + columnId + '"]'
+                    );
+                });
+
+                return page.evaluate(() => {
+                    const viewport =
+                        (window as any).autoWidthColumnGrid.viewport;
+                    const headerCells = Array.from(
+                        document.querySelectorAll('thead tr th')
+                    );
+                    const lastCell =
+                        headerCells[headerCells.length - 1] as HTMLElement;
+                    let maxLeftDiff = 0;
+                    let maxWidthDiff = 0;
+
+                    for (const headerCell of headerCells) {
+                        const columnId =
+                            headerCell.getAttribute('data-column-id');
+                        const bodyCell = document.querySelector(
+                            'tbody tr td[data-column-id="' + columnId + '"]'
+                        );
+
+                        if (!bodyCell) {
+                            throw new Error('Missing body cell: ' + columnId);
+                        }
+
+                        const headerRect = headerCell.getBoundingClientRect();
+                        const bodyRect = bodyCell.getBoundingClientRect();
+
+                        maxLeftDiff = Math.max(
+                            maxLeftDiff,
+                            Math.abs(headerRect.left - bodyRect.left)
+                        );
+                        maxWidthDiff = Math.max(
+                            maxWidthDiff,
+                            Math.abs(headerRect.width - bodyRect.width)
+                        );
+                    }
+
+                    return {
+                        columnWidth: viewport.columnLayout.getColumnWidth(
+                            viewport.columns[0]
+                        ),
+                        lastColumnRight: lastCell.getBoundingClientRect().right,
+                        maxLeftDiff,
+                        maxWidthDiff,
+                        renderedCount: viewport.getRenderedColumns().length,
+                        rowsWidth: viewport.rowsWidth,
+                        scrollWidth: viewport.tbodyElement.scrollWidth,
+                        viewportRight: viewport.tbodyElement
+                            .getBoundingClientRect().right
+                    };
+                });
+            };
+
+            for (const scrollRatio of [0, 0.5, 1]) {
+                const state = await measure(scrollRatio);
+
+                expect(state.renderedCount).toBeLessThan(400);
+                expect(state.maxLeftDiff).toBeLessThan(1.5);
+                expect(state.maxWidthDiff).toBeLessThan(1.5);
+
+                // The layout width must be renderable, so that the columns
+                // fill the whole scrollable width. The last column has no
+                // right border, so it is allowed to be slightly narrower.
+                expect(Math.abs(state.rowsWidth - 400 * state.columnWidth))
+                    .toBeLessThan(2);
+                expect(Math.abs(state.scrollWidth - state.rowsWidth))
+                    .toBeLessThan(2);
+
+                if (scrollRatio === 1) {
+                    // The last column must be reachable.
+                    expect(state.lastColumnRight)
+                        .toBeLessThanOrEqual(state.viewportRight + 1);
+                    expect(state.lastColumnRight)
+                        .toBeGreaterThan(state.viewportRight - 2);
+                }
+            }
+        }
+    );
 });

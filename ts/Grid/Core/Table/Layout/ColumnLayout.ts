@@ -26,6 +26,7 @@
 import type Column from '../Column';
 import type Table from '../Table';
 
+import { measureWidthOverhead } from '../../GridUtils.js';
 import { clamp, defined } from '../../../../Shared/Utilities.js';
 
 
@@ -89,6 +90,11 @@ class ColumnLayout {
      */
     private strictColumnWidth?: number;
 
+    /**
+     * Cached horizontal paddings and borders of a rendered cell.
+     */
+    private cellWidthOverhead?: number;
+
 
     /* *
      *
@@ -114,6 +120,8 @@ class ColumnLayout {
         const { columns, columnResizing } = this.viewport;
         const widths = this.widths;
         const offsets = this.offsets;
+
+        delete this.cellWidthOverhead;
 
         if (this.viewport.grid.options?.rendering?.columns?.strictWidths) {
             const width = this.strictColumnWidth =
@@ -250,7 +258,7 @@ class ColumnLayout {
     }
 
     /**
-     * Returns the fixed strict column width without DOM measurement.
+     * Returns the fixed strict column width, with no per-column calculations.
      */
     public getStrictColumnWidth(): number {
         const columnDefaults = this.viewport.grid.options?.columnDefaults;
@@ -265,6 +273,34 @@ class ColumnLayout {
             columnDefaults?.minWidth,
             columnDefaults?.maxWidth
         );
+    }
+
+    /**
+     * Returns the horizontal paddings and borders of a rendered cell, used as
+     * the minimal width of the columns that are not rendered. A cell cannot be
+     * rendered narrower than that, so the layout must not assign smaller
+     * widths, or the header would drift away from the body.
+     *
+     * @returns
+     * The overhead in pixels, or `0` when no cell is rendered yet.
+     */
+    public getCellWidthOverhead(): number {
+        if (defined(this.cellWidthOverhead)) {
+            return this.cellWidthOverhead;
+        }
+
+        const column = this.viewport.getRenderedColumns()[0];
+        const overhead = Math.max(
+            measureWidthOverhead(column?.cells[0]?.htmlElement),
+            measureWidthOverhead(column?.header?.htmlElement)
+        );
+
+        // Do not cache the fallback used before the first cell is rendered.
+        if (overhead) {
+            this.cellWidthOverhead = overhead;
+        }
+
+        return overhead;
     }
 
     /**
@@ -319,6 +355,7 @@ class ColumnLayout {
     ): number {
         const min = Math.max(
             ColumnLayout.MIN_COLUMN_WIDTH,
+            viewport.columnLayout.getCellWidthOverhead(),
             ColumnLayout.getViewportOptionWidth(viewport, minWidth) ?? 0
         );
         const max = ColumnLayout.getViewportOptionWidth(viewport, maxWidth);

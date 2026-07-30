@@ -17,7 +17,7 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import { isObject } from '../../Shared/Utilities.js';
+import { getStyle, isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -137,6 +137,26 @@ export function makeHTMLElement<T extends HTMLElement>(
  */
 export function makeDiv(className: string, id?: string): HTMLElement {
     return makeHTMLElement('div', { className, id });
+}
+
+/**
+ * Measures the horizontal paddings and borders of an element.
+ *
+ * @param el
+ * The element to measure.
+ *
+ * @returns
+ * The overhead in pixels.
+ */
+export function measureWidthOverhead(el?: HTMLElement): number {
+    if (!el) {
+        return 0;
+    }
+
+    return (getStyle(el, 'padding-left', true) || 0) +
+        (getStyle(el, 'padding-right', true) || 0) +
+        (getStyle(el, 'border-left', true) || 0) +
+        (getStyle(el, 'border-right', true) || 0);
 }
 
 /**
@@ -465,6 +485,7 @@ export function waitForAnimationFrame(): Promise<void> {
 export default {
     makeHTMLElement,
     makeDiv,
+    measureWidthOverhead,
     isHTML,
     sanitizeText,
     setHTMLContent,
