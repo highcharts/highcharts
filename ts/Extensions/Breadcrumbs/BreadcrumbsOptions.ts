@@ -192,7 +192,7 @@ export interface BreadcrumbsButtonsFormatter {
  *
  * @callback Highcharts.BreadcrumbsClickCallbackFunction
  *
- * @param {Highcharts.Event} e
+ * @param {Event} e
  * Event.
  *
  * @param {Highcharts.BreadcrumbOptions} breadcrumb

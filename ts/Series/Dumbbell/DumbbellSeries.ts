@@ -58,7 +58,7 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * The dumbbell series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dumbbell
  *
@@ -99,7 +99,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
-     * @private
+     * @internal
      *
      * @param {Highcharts.Point} point The point to inspect.
      *
@@ -203,7 +203,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
     /**
      * Draw connector line that connects dumbbell point's low and high values.
-     * @private
+     * @internal
      * @param {Highcharts.Point} point
      *        The point to inspect.
      */
@@ -227,7 +227,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Return the width and x offset of the dumbbell adjusted for grouping,
      * groupPadding, pointPadding, pointWidth etc.
-     * @private
+     * @internal
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const metrics = ColumnSeries.prototype
@@ -241,7 +241,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -275,7 +275,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -331,7 +331,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Get presentational attributes.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
      * @param {Highcharts.Point} point
@@ -358,7 +358,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
     /**
      * Set the shape arguments for dumbbells.
-     * @private
+     * @internal
      */
     public setShapeArgs(): void {
         ColumnSeries.prototype.translate.apply(this);
@@ -373,6 +373,7 @@ class DumbbellSeries extends AreaRangeSeries {
  *
  * */
 
+/** @internal */
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
     crispCol: typeof ColumnSeries.prototype.crispCol;
@@ -397,6 +398,7 @@ extend(DumbbellSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dumbbell: typeof DumbbellSeries;
@@ -411,4 +413,5 @@ SeriesRegistry.registerSeriesType('dumbbell', DumbbellSeries);
  *
  * */
 
+/** @internal */
 export default DumbbellSeries;

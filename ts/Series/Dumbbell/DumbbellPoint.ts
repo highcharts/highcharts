@@ -31,6 +31,7 @@ import { extend } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class DumbbellPoint extends AreaRangePoint {
 
     /* *
@@ -54,7 +55,7 @@ class DumbbellPoint extends AreaRangePoint {
      * Set the point's state extended by have influence on the connector
      * (between low and high value).
      *
-     * @private
+     * @internal
      */
     public setState(): void {
         const point = this,
@@ -129,7 +130,8 @@ class DumbbellPoint extends AreaRangePoint {
  *
  * */
 
-interface DumbbellPoint{
+/** @internal */
+interface DumbbellPoint {
     pointSetState: typeof AreaRangePoint.prototype.setState;
 }
 
@@ -143,4 +145,5 @@ extend(DumbbellPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default DumbbellPoint;

@@ -1226,7 +1226,7 @@ namespace ExportData {
             chart = exporting.chart,
             options = chart.options,
             decimalPoint =
-                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : void 0,
             useMultiLevelHeaders =
                 exporting.options.useMultiLevelHeaders ?? true,
             rows = exporting.getDataRows(useMultiLevelHeaders),
@@ -1791,6 +1791,11 @@ export default ExportData;
  *  API Declarations
  *
  * */
+
+/**
+ * @class
+ * @name Highcharts.Exporting
+ */
 
 /**
  * Function callback to execute while data rows are processed for exporting.

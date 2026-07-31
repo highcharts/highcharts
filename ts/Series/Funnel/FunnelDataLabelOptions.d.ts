@@ -27,7 +27,15 @@ import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
  * */
 
 export interface FunnelDataLabelOptions extends PieDataLabelOptions {
-    // Nothing yet
+    /**
+     * Whether to render the data labels inside the funnel or pyramid shape.
+     * By default, the labels are rendered outside the shape.
+     *
+     * @since 3.0.10
+     *
+     * @product highcharts
+     */
+    inside?: boolean;
 }
 
 /* *

@@ -858,7 +858,7 @@ export default Breadcrumbs;
  *
  * @callback Highcharts.BreadcrumbsClickCallbackFunction
  *
- * @param {Highcharts.Event} event
+ * @param {Event} event
  * Event.
  *
  * @param {Highcharts.BreadcrumbOptions} breadcrumb

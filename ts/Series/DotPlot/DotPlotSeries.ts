@@ -13,7 +13,7 @@
  * */
 
 /**
- * @private
+ * @internal
  * @todo
  * - Check update, remove etc.
  * - Custom icons like persons, carts etc. Either as images, font icons or
@@ -47,7 +47,7 @@ import { extend, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dotplot
  *
@@ -222,6 +222,7 @@ class DotPlotSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface DotPlotSeries {
     pointAttr?: SVGAttributes;
     pointClass: typeof DotPlotPoint;
@@ -237,6 +238,7 @@ extend(DotPlotSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dotplot: typeof DotPlotSeries;
@@ -251,4 +253,5 @@ SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
  *
  * */
 
+/** @internal */
 export default DotPlotSeries;

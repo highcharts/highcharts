@@ -2021,7 +2021,7 @@ export default Legend;
  *//**
  * Related browser event.
  * @name Highcharts.LegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
+ * @type {PointerEvent}
  *//**
  * Prevent the default action of toggle the visibility of the series or point.
  * @name Highcharts.LegendItemClickEventObject#preventDefault
@@ -2074,7 +2074,7 @@ export default Legend;
  *//**
  * Related browser event.
  * @name Highcharts.PointLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
+ * @type {PointerEvent}
  *//**
  * Whether the default action has been prevented (`true`) or not.
  * @name Highcharts.PointLegendItemClickEventObject#defaultPrevented
@@ -2133,7 +2133,7 @@ export default Legend;
  *//**
  * Related browser event.
  * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
+ * @type {PointerEvent}
  *//**
  * Whether the default action has been prevented (`true`) or not.
  * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented
