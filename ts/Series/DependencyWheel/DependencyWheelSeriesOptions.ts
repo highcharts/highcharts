@@ -24,7 +24,8 @@ import type {
     SankeySeriesNodeOptions,
     SankeySeriesOptions
 } from '../Sankey/SankeySeriesOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type SankeyDataLabelOptions from '../Sankey/SankeyDataLabelOptions';
+import type { SankeyDataLabelsFormatterCallbackFunction } from '../Sankey/SankeyDataLabelOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -36,6 +37,41 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 interface DependencyWheelSeriesNodeOptions extends SankeySeriesNodeOptions {
     // Nothing to add
+}
+
+export interface DependencyWheelSeriesDataLabelsOptions
+    extends SankeyDataLabelOptions {
+
+    /**
+     * Distance between the data label and the center of the node.
+     */
+    distance?: number;
+
+    /**
+     * A format string for data labels of the links between nodes. Available
+     * variables are the same as for `formatter`.
+     */
+    format?: string;
+
+    /**
+     * Callback to format data labels of the links between nodes. The
+     * `format` option takes precedence over the `formatter` option.
+     */
+    formatter?: SankeyDataLabelsFormatterCallbackFunction;
+
+    /**
+     * The format string specifying what to show for nodes in the sankey
+     * diagram. By default the nodeFormatter returns `{point.name}`. Available
+     * variables are the same as for `nodeFormatter`.
+     */
+    nodeFormat?: string;
+
+    /**
+     * Callback to format data labels of nodes in the dependency wheel. The
+     * `nodeFormat` option takes precedence over the `nodeFormatter` option.
+     */
+    nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
+
 }
 
 /**
@@ -84,14 +120,19 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
-     * @type {Array<number|string|null>}
-     *
      * @default [null, null]
      *
      * @product highcharts
      */
     center?: Array<(number|string|null)>;
 
+    /**
+     * Higher numbers makes the links in a sankey diagram or dependency
+     * wheel render more curved. A `curveFactor` of 0 makes the lines
+     * straight.
+     *
+     * @default 0.6
+     */
     curveFactor?: number;
 
     /**
@@ -116,8 +157,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      *     }]
      *  ```
      *
-     * @type {Array<Array<string,string,number>|*>}
-     *
      * @extends series.sankey.data
      *
      * @product highcharts
@@ -128,7 +167,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      */
     data?: Array<(DependencyWheelPointOptions|PointShortOptions)>;
 
-    dataLabels?: Partial<DataLabelOptions>;
+    dataLabels?: Partial<DependencyWheelSeriesDataLabelsOptions>;
 
     /**
      * Individual data label for each node. The options are the same as
@@ -200,8 +239,6 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
     /**
      * Size of the wheel in pixel or percent relative to the canvas space.
      *
-     * @type {number|string}
-     *
      * @default 100%
      *
      * @apioption plotOptions.dependencywheel.size
@@ -214,6 +251,16 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
     startAngle?: number;
 
     states?: SeriesStatesOptions<DependencyWheelSeriesOptions>;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataSorting?: undefined;
+    nodeAlignment?: undefined;
+    nodeDistance?: undefined;
 
 }
 

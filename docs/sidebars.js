@@ -363,12 +363,12 @@ module.exports = {
                             'react/components/chart-elements/subtitle',
                             'react/components/chart-elements/credits',
                             'react/components/chart-elements/legend',
-                            'react/components/chart-elements/plot-options',
+                            'react/components/chart-elements/plotoptions',
                             'react/components/chart-elements/palette',
                             'react/components/chart-elements/tooltip',
-                            'react/components/chart-elements/data-table',
-                            'react/components/chart-elements/x-axis',
-                            'react/components/chart-elements/y-axis'
+                            'react/components/chart-elements/datatable',
+                            'react/components/chart-elements/xaxis',
+                            'react/components/chart-elements/yaxis'
                         ],
                         'Modules': [
                             'react/components/modules/accessibility',
@@ -376,9 +376,10 @@ module.exports = {
                             'react/components/modules/data',
                             'react/components/modules/boost',
                             'react/components/modules/drilldown',
-                            'react/components/modules/broken-axis',
-                            'react/components/modules/draggable-points',
-                            'react/components/modules/stock-tools',
+                            'react/components/modules/brokenaxis',
+                            'react/components/modules/draggablepoints',
+                            'react/components/modules/serieslabel',
+                            'react/components/modules/stocktools',
                         ]
                     },
                     'react/components/technical-indicators'
