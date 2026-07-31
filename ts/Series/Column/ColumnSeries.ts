@@ -347,22 +347,28 @@ class ColumnSeries extends Series {
         width: number,
         height: number
     ): BBoxObject {
-        // Restore the pre-crisp-refactor formula (#23585). The crisp() utility
-        // uses Math.round(v - 0.5) + 0.5, which shifts sub-pixel bars by 1px
-        // compared to the old Math.round(v) + yCrisp approach. That shift is
-        // benign for large bars but critical for sub-pixel stacked bars: the
-        // old formula gave height=0 for every such bar (keeping labelranks
-        // equal so overlap-hiding is consistent), whereas the new formula
-        // gives height=1 for whichever bar crosses the rounding boundary —
-        // a boundary that falls on a different series in column vs bar mode
-        // because plotHeight ≠ plotWidth.
         const borderWidth = this.borderWidth,
-            yCrisp = (borderWidth || 0) % 2 ? 0.5 : 0,
-            bottom = Math.round(y + height) + yCrisp;
+            inverted = this.chart.inverted;
 
-        // Vertical
-        y = Math.round(y) + yCrisp;
-        height = bottom - y;
+        // Vertical. Sub-pixel bars (height under 1px, typically near a
+        // stack's zero baseline) collapse to height 0 instead of being
+        // crisped normally (#23585). crisp() alone rounds some of them up
+        // to 1px depending on which side of the rounding boundary they
+        // land on - a boundary that falls on a different series in column
+        // vs bar mode because plotHeight != plotWidth for the same data.
+        // Since labelrank defaults to shapeArgs.height (#4118), that stray
+        // 1px made a different series "win" the overlap contest between
+        // column and bar. Collapsing consistently to 0 keeps labelranks
+        // tied without changing the crisp edges of any bar large enough to
+        // actually be visible.
+        if (Math.abs(height) < 1) {
+            y = crisp(y, borderWidth, inverted);
+            height = 0;
+        } else {
+            const bottom = crisp(y + height, borderWidth, inverted);
+            y = crisp(y, borderWidth, inverted);
+            height = bottom - y;
+        }
 
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
