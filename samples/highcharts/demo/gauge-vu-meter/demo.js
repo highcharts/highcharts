@@ -1,4 +1,4 @@
-const c = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'gauge',
         plotBorderWidth: 1,
@@ -301,10 +301,10 @@ function renderFrame(now) {
         levels[i] += (amplitude - levels[i]) *
             (1 - Math.exp(-deltaTime / integration));
 
-        c.series[i].points[0].update(toDecibels(levels[i]), false);
+        chart.series[i].points[0].update(toDecibels(levels[i]), false);
     });
 
-    c.redraw(false);
+    chart.redraw(false);
 }
 
 requestAnimationFrame(renderFrame);
