@@ -32,8 +32,7 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type AnimationOptions from '../Animation/AnimationOptions';
 
-import A from '../Animation/AnimationUtilities.js';
-const { getDeferredAnimation } = A;
+import { getDeferredAnimation } from '../Animation/AnimationUtilities.js';
 import F from '../Templating.js';
 const { format } = F;
 import R from '../Renderer/RendererUtilities.js';
@@ -733,7 +732,6 @@ namespace DataLabel {
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
-
                     // Options for one dataLabel
                     const labelEnabled = (
                             labelOptions.enabled &&

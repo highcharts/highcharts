@@ -30,8 +30,7 @@ import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type TooltipOptions from './TooltipOptions';
 
-import A from './Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from './Animation/AnimationUtilities.js';
 import F from './Templating.js';
 const { format } = F;
 import H from './Globals.js';

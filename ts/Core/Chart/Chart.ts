@@ -53,12 +53,11 @@ import type {
 } from '../Series/SeriesType';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animate,
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import Axis from '../Axis/Axis.js';
 import D from '../Defaults.js';
 const {
@@ -2105,11 +2104,8 @@ class Chart {
         let chartWidth = chart.chartWidth;
 
         // Allow table cells and flex-boxes to shrink without the chart
-        // blocking them out (#6427) but skip in styled mode so inline styles
-        // don't override user CSS on renderTo
-        if (!chart.styledMode) {
-            css(renderTo, { overflow: 'hidden' });
-        }
+        // blocking them out (#6427)
+        css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -4117,22 +4113,17 @@ class Chart {
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
-                    null :
+                    void 0 :
                     'plotBox'
             );
 
-        /** @internal */
-        function zoomOut(): void {
-            chart.zoomOut();
-        }
-
-        fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {
+        fireEvent(this, 'beforeShowResetZoom', void 0, (): void => {
             chart.resetZoomButton = chart.renderer
                 .button(
                     lang.resetZoom,
-                    null as any,
-                    null as any,
-                    zoomOut,
+                    0,
+                    0,
+                    (): void => chart.zoomOut(),
                     theme
                 )
                 .attr({
@@ -4141,7 +4132,7 @@ class Chart {
                 })
                 .addClass('highcharts-reset-zoom')
                 .add()
-                .align(btnOptions.position, false, alignTo as any);
+                .align(btnOptions.position, false, alignTo);
         });
 
         fireEvent(this, 'afterShowResetZoom');
@@ -4293,7 +4284,8 @@ class Chart {
             // (#22945)
             // Set offset to 0 for ordinal axis only when zooming out, (#24545).
             const offset = (
-                    axis.chart.polar || (axis.isOrdinal && scale <= 1)
+                    selection || axis.chart.polar ||
+                    (axis.isOrdinal && scale <= 1)
                 ) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
@@ -4303,14 +4295,6 @@ class Chart {
             let newMin = eventMin + offset,
                 newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
-
-            if (selection) {
-                selection[axis.coll as 'xAxis' | 'yAxis']!.push({
-                    axis,
-                    min: Math.min(eventMin, eventMax),
-                    max: Math.max(eventMin, eventMax)
-                });
-            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -4423,16 +4407,21 @@ class Chart {
                 if (
                     reset || (
                         axis.series.length &&
-                        (newMin !== min || newMax !== max) &&
-                        newMin >= floor &&
-                        newMax <= ceiling
+                        (
+                            selection ||
+                            (
+                                (newMin !== min || newMax !== max) &&
+                                newMin >= floor &&
+                                newMax <= ceiling
+                            )
+                        )
                     )
                 ) {
                     if (selection) {
                         selection[axis.coll as 'xAxis'|'yAxis']!.push({
                             axis,
-                            min: newMin,
-                            max: newMax
+                            min: Math.min(eventMin, eventMax),
+                            max: Math.max(eventMin, eventMax)
                         });
                     } else {
 
@@ -4440,19 +4429,22 @@ class Chart {
                         // disallow certain axis padding options that would make
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
-                        axis.isPanning = trigger !== 'zoom';
+                        axis.isPanning = trigger !== 'zoom' &&
+                            trigger !== 'drop';
 
                         if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
-                        axis.setExtremes(
-                            reset ? void 0 : newMin,
-                            reset ? void 0 : newMax,
-                            false,
-                            false,
-                            { move, trigger, scale }
-                        );
+                        if (trigger !== 'drop') {
+                            axis.setExtremes(
+                                reset ? void 0 : newMin,
+                                reset ? void 0 : newMax,
+                                false,
+                                false,
+                                { move, trigger, scale }
+                            );
+                        }
 
                         if (
                             !reset &&
@@ -4496,7 +4488,8 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button, but not while panning
+                // Show or hide the Reset zoom button, but not while
+                // panning.
                 if (
                     displayButton &&
                     !isAnyAxisPanning &&

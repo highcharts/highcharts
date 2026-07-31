@@ -222,8 +222,10 @@ const menuItems = [{
 }, {
     separator: true
 }, {
+    type: 'submenu',
     label: 'Edit',
     items: [{
+        type: 'submenu',
         label: 'Rows',
         items: [{
             label: 'Add row above',
@@ -239,6 +241,7 @@ const menuItems = [{
             onClick: deleteRow
         }]
     }, {
+        type: 'submenu',
         label: 'Columns',
         items: [{
             label: 'Add column left',

@@ -1,6 +1,32 @@
+@media (prefers-color-scheme: dark) {
+    html,
+    body {
+        background: transparent !important;
+        color-scheme: dark !important;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    html,
+    body {
+        background: transparent !important;
+        color-scheme: light !important;
+    }
+}
+
 #container {
     min-width: 310px;
     max-width: 800px;
     height: 400px;
     margin: 0 auto;
+}
+
+.hc-tools-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    background: var(--highcharts-background-color);
+    font-family: var(--highcharts-font-family, "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif);
+    flex-shrink: 0;
 }

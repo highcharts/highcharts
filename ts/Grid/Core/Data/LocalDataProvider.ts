@@ -172,12 +172,19 @@ export class LocalDataProvider extends DataProvider {
     private async handleTableChange(e: DataEvent): Promise<void> {
         this.querying.shouldBeUpdated = true;
 
+        if (
+            e.type === 'afterDeleteRows' ||
+            e.type === 'afterSetRows'
+        ) {
+            this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
+        }
+
         const grid = this.querying.grid;
         if (!grid?.viewport) {
             return;
         }
 
-        if (e.type === 'afterSetCell' && e.detail?.fromGrid) {
+        if (e.detail?.fromGrid) {
             return;
         }
 

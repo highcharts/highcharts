@@ -139,7 +139,7 @@ export interface PaneOptions {
      *           Speedometer gauge with multiple backgrounds
      * @requires highcharts-more
      */
-    background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
+    background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>|null;
     /**
      * The border radius of the elements of the pane. This affects the pane
      * background, plot bands and solid gauges, unless they have specific

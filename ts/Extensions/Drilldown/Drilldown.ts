@@ -45,8 +45,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type Tick from '../../Core/Axis/Tick';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject, stop } = A;
+import { animObject, stop } from '../../Core/Animation/AnimationUtilities.js';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;

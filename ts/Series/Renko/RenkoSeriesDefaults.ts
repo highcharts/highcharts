@@ -18,7 +18,6 @@
  *
  * */
 
-import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type RenkoSeriesOptions from './RenkoSeriesOptions';
 
 /* *
@@ -69,7 +68,7 @@ const RenkoDefaults: RenkoSeriesOptions = {
     stickyTracking: true,
     borderRadius: {
         where: 'all'
-    } as BorderRadiusOptionsObject,
+    },
     tooltip: {
         pointFormat:
             '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low:.2f} - {point.y:.2f}</b><br/>'
