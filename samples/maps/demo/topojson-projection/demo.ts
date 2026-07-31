@@ -7,7 +7,7 @@ declare namespace Highcharts {
         rotationFrame?: number;
         sonification?: Highcharts.Sonification;
         mapView?: Highcharts.mapView
-        routeIndex?: number;
+        currentPoint?: Highcharts.Point;
     }
 
     // Some internal properties on the series
@@ -37,7 +37,7 @@ const createMap = (
         },
 
         subtitle: {
-            text: 'Add flight destinations by clicking on a country <br>' +
+            text: 'Select a point to extend or remove it<br>' +
                     'Click and drag to rotate globe',
             floating: true,
             y: 34,
@@ -133,7 +133,15 @@ const createMap = (
             color: '#313f77',
             marker: {
                 lineWidth: 1,
-                lineColor: '#fff'
+                lineColor: '#fff',
+                states: {
+                    select: {
+                        fillColor: '#fff',
+                        lineColor: '#313f77',
+                        lineWidth: 3,
+                        radius: 7
+                    }
+                }
             }
         }, {
             type: 'mapline',
@@ -146,21 +154,17 @@ const createMap = (
             }
         }]
     });
-
-    chart.routeIndex = 0;
-    setupControls(chart);
-    addInitialFlight(chart);
-    setupAutoRotation(chart);
     return chart;
 };
 
 // Define buttons used to remove points and to add new routes.
-const undoButton = document.getElementById(
-    'undo-point'
+const removeButton = document.getElementById(
+    'remove-point'
 ) as HTMLButtonElement;
 const newRouteButton = document.getElementById(
     'new-route'
 ) as HTMLButtonElement;
+
 // Create the coordinates for the graticule, the grid of meridians and parallels
 const graticuleData = ((
     meridianStep: number,
@@ -203,128 +207,15 @@ const graticuleData = ((
     return data;
 })(15, 10);
 
-// Add flight route and gentle rotation after clicking the map
-function addLinePoint(event, chart) {
-    const pointSeries = chart.get('clicked-points'),
-        lineSeries = chart.get('flight-route'),
-        routeIndex = chart.routeIndex || 0,
-        routePoints = pointSeries.data.filter(
-            (point): boolean =>
-                point.options.custom?.routeIndex === routeIndex
-        );
-
-    if (routePoints.length) {
-        const latestPoint = routePoints[routePoints.length - 1];
-        lineSeries.addPoint({
-            geometry: {
-                type: 'LineString',
-                coordinates: [
-                    latestPoint.options.geometry.coordinates,
-                    [event.lon, event.lat]
-                ]
-            },
-            color: 'light-dark(#313f77, #fff)',
-            custom: {
-                routeIndex
-            }
-        }, false);
-    }
-    pointSeries.addPoint({
-        name: event.point.name,
-        geometry: {
-            type: 'Point',
-            coordinates: [event.lon, event.lat]
-        },
-        custom: {
-            routeIndex
-        }
-    }, false);
-    chart.redraw(false);
-    updateControls(chart);
-
-    // Play ascending notes for adding a point
-    chart.sonification?.playNote('vibraphone', {
-        note: 'C3',
-        noteDuration: 150,
-        volume: 0.3
-    });
-}
-
-function removePoint(point, chart) {
-    const pointCoords = point.options.geometry.coordinates,
-        pointSeries = chart.get('clicked-points'),
-        lineSeries = chart.get('flight-route'),
-        routeIndex = point.options.custom?.routeIndex,
-        routePoints = pointSeries.data.filter(
-            (routePoint): boolean =>
-                routePoint.options.custom?.routeIndex === routeIndex
-        ),
-        pointIndex = routePoints.indexOf(point),
-        toRemove: Highcharts.Point[] = [];
-
-    if (pointIndex !== -1) {
-        lineSeries.data.forEach((line): void => {
-            const lineCoords = line.options.geometry.coordinates;
-            if (
-                line.options.custom?.routeIndex === routeIndex &&
-                lineCoords.some(([lon, lat]) =>
-                    lon === pointCoords[0] &&
-                    lat === pointCoords[1]
-                )
-            ) {
-                toRemove.push(line);
-            }
-        });
-        toRemove.forEach((line): void => line.remove(false));
-
-        // If the clicked point has both a previous and next
-        // neighbour, add a new line between them after removing
-        // the two old lines.
-        if (
-            pointIndex > 0 &&
-            routePoints[pointIndex + 1]
-        ) {
-            const prev = routePoints[pointIndex - 1];
-            const next = routePoints[pointIndex + 1];
-            const prevCoords = prev.options.geometry.coordinates;
-            const nextCoords = next.options.geometry.coordinates;
-            lineSeries.addPoint({
-                geometry: {
-                    type: 'LineString',
-                    coordinates: [
-                        prevCoords,
-                        nextCoords
-                    ]
-                },
-                color: 'light-dark(#313f77, #fff)',
-                custom: {
-                    routeIndex
-                }
-            }, false);
-        }
-    }
-    point.remove(false, false);
-    chart.redraw(false);
-    updateControls(chart);
-
-    // Play descending notes for removing a point
-    chart.sonification?.playNote('vibraphone', {
-        note: 'C2',
-        noteDuration: 150,
-        volume: 0.3
-    });
-}
-
 function setupControls(chart: Highcharts.MapChart): void {
-    undoButton.addEventListener('click', (): void => {
-        const pointSeries = chart.get('clicked-points'),
-            point = pointSeries.data[pointSeries.data.length - 1];
-        if (point) {
-            removePoint(point, chart);
+    removeButton.addEventListener('click', (): void => {
+        if (chart.currentPoint) {
+            removePoint(chart.currentPoint, chart);
         }
     });
     newRouteButton.addEventListener('click', (): void => {
-        chart.routeIndex = (chart.routeIndex || 0) + 1;
+        chart.currentPoint?.select(false);
+        chart.currentPoint = void 0;
         updateControls(chart);
     });
 
@@ -332,13 +223,8 @@ function setupControls(chart: Highcharts.MapChart): void {
 }
 
 function updateControls(chart: Highcharts.MapChart): void {
-    const points = chart.get('clicked-points').data,
-        routeIndex = chart.routeIndex || 0;
-    undoButton.disabled = !points.length;
-    newRouteButton.disabled = !points.some(
-        (point): boolean =>
-            point.options.custom?.routeIndex === routeIndex
-    );
+    removeButton.disabled = !chart.currentPoint;
+    newRouteButton.disabled = !chart.currentPoint;
 }
 
 function addInitialFlight(chart) {
@@ -419,14 +305,124 @@ function setupAutoRotation(chart: Highcharts.MapChart): void {
     startRotation();
 }
 
+function addConnection(from, to, series): void {
+    series.addPoint({
+        geometry: {
+            type: 'LineString',
+            coordinates: [
+                from.geometry.coordinates,
+                to.geometry.coordinates
+            ]
+        },
+        color: 'light-dark(#313f77, #fff)',
+        custom: {
+            from: from.id,
+            to: to.id
+        }
+    }, false);
+}
+
+function selectPoint(
+    point: Highcharts.Point,
+    chart: Highcharts.MapChart
+): void {
+    point.select(true);
+    chart.currentPoint = point;
+    updateControls(chart);
+}
+
+// Add flight route and gentle rotation after clicking the map
+function addLinePoint(event, chart) {
+    const pointSeries = chart.get('clicked-points'),
+        lineSeries = chart.get('flight-route'),
+        lastPoint = chart.currentPoint,
+        newPoint = {
+            id: Highcharts.uniqueKey(),
+            name: event.point.name,
+            geometry: {
+                type: 'Point',
+                coordinates: [event.lon, event.lat]
+            }
+        };
+
+    if (lastPoint) {
+        addConnection(lastPoint.options, newPoint, lineSeries);
+    }
+    pointSeries.addPoint(newPoint, false);
+    chart.redraw(false);
+    selectPoint(pointSeries.data[pointSeries.data.length - 1], chart);
+
+    // Play ascending notes for adding a point
+    chart.sonification?.playNote('vibraphone', {
+        note: 'C3',
+        noteDuration: 150,
+        volume: 0.3
+    });
+}
+
+function removePoint(point, chart) {
+    const pointSeries = chart.get('clicked-points'),
+        lineSeries = chart.get('flight-route'),
+        toRemove: Highcharts.Point[] = [],
+        neighbours: Highcharts.Point[] = [];
+
+    lineSeries.data.forEach((line): void => {
+        const { from, to } = line.options.custom || {};
+        if (from === point.id || to === point.id) {
+            const neighbour = pointSeries.data.find(
+                (routePoint): boolean =>
+                    routePoint.id === (from === point.id ? to : from)
+            );
+            if (neighbour) {
+                neighbours.push(neighbour);
+            }
+            toRemove.push(line);
+        }
+    });
+    toRemove.forEach((line): void => line.remove(false));
+
+    // Preserve an unbranched route when removing a point in the middle.
+    if (neighbours.length === 2) {
+        addConnection(
+            neighbours[0].options,
+            neighbours[1].options,
+            lineSeries
+        );
+    }
+
+    point.remove(false, false);
+    chart.currentPoint = neighbours[0];
+    chart.redraw(false);
+    if (chart.currentPoint) {
+        selectPoint(chart.currentPoint, chart);
+    } else {
+        updateControls(chart);
+    }
+
+    // Play descending notes for removing a point
+    chart.sonification?.playNote('vibraphone', {
+        note: 'C2',
+        noteDuration: 150,
+        volume: 0.3
+    });
+}
+
 // Handle interactions outside the chart configuration.
 Highcharts.addEvent(Highcharts.Series, 'click', function (event) {
     const chart = this.chart as Highcharts.MapChart;
-
     if (this.options.id === 'choropleth') {
         addLinePoint(event, chart);
     } else if (this.options.id === 'clicked-points') {
-        removePoint(event.point, chart);
+        selectPoint(event.point, chart);
+    }
+});
+
+Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
+    const chart = this.chart as Highcharts.MapChart;
+    if (this.options.id === 'choropleth') {
+        addInitialFlight(chart);
+        setupControls(chart);
+        setupAutoRotation(chart);
     }
 });
 
