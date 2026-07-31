@@ -214,8 +214,8 @@ const getCurrentTotal = arrOfArr => {
         pane: {
             innerSize: '85%',
             borderRadius: '50%',
-            endAngle: 80,
-            startAngle: -80
+            endAngle: 100,
+            startAngle: -50
         },
         tooltip: {
             enabled: false
@@ -223,9 +223,8 @@ const getCurrentTotal = arrOfArr => {
         plotOptions: {
             series: {
                 dataLabels: {
-                    format: '<div style="text-align:center; ' +
-                        'margin-top: -20px">' +
-                    '<div style="font-size:1.6em;">{y:.0f}</div>' +
+                    format: '<div style="text-align:center">' +
+                    '<div style="font-size:1.2em;">{y:.0f}</div>' +
                     '<div style="font-size:14px; opacity:0.5; ' +
                     'text-align: center;">Risk score</div>' +
                     '</div>',
@@ -259,7 +258,7 @@ const getCurrentTotal = arrOfArr => {
 
     const goalAnalysisKPIOptions = {
         chart: {
-            height: 186,
+            height: 200,
             type: 'solidgauge',
             className: 'hidden-title'
         },
@@ -268,8 +267,6 @@ const getCurrentTotal = arrOfArr => {
             floating: true
         },
         pane: {
-            startAngle: 0,
-            endAngle: 360,
             innerSize: '80%',
             borderRadius: '50%'
         },
@@ -294,10 +291,9 @@ const getCurrentTotal = arrOfArr => {
         },
         series: [{
             dataLabels: {
-                format: '<div style="text-align:center; ' +
-                    'margin-top: -40px">' +
-                    '<div style="font-size:1.4em;">{y}%</div>' +
-                    '<div style="font-size:14px; opacity:0.5; ' +
+                format: '<div style="text-align:center">' +
+                    '<div style="font-size:1.2em;">{y:.0f}</div>' +
+                    '<div style="font-size:10px; opacity:0.5; ' +
                     'text-align: center;">Goal probability</div>' +
                     '</div>',
                 useHTML: true
