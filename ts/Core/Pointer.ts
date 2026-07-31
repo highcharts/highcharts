@@ -602,6 +602,13 @@ class Pointer {
                 }
             }
         }
+
+        // Run a final transform with a drop trigger to display the reset zoom
+        // button after a pinch gesture (#22128)
+        if (e?.type === 'touchend') {
+            chart.transform({ trigger: 'drop' });
+        }
+
         if (redraw) {
             chart.redraw();
         }

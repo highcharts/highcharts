@@ -217,9 +217,14 @@ class TableRow extends Row {
     public setRowAttributes(): void {
         const idx = this.index;
         const el = this.htmlElement;
+        const rowsOptions = this.viewport.grid.options?.rendering?.rows;
 
         el.classList.add(Globals.getClassName('rowElement'));
         el.setAttribute('data-row-index', idx + '');
+
+        if (rowsOptions?.className) {
+            el.classList.add(...rowsOptions.className.split(/\s+/g));
+        }
 
         this.updateRowAttributes();
 
@@ -254,15 +259,27 @@ class TableRow extends Row {
      */
     protected updateParityClass(): void {
         const el = this.htmlElement;
+        const isEven = !!(this.index % 2);
+        const evenClassName =
+            this.viewport.grid.options?.rendering?.rows?.evenClassName;
+
         el.classList.remove(
             Globals.getClassName('rowEven'),
             Globals.getClassName('rowOdd')
         );
 
+        if (evenClassName) {
+            el.classList.remove(...evenClassName.split(/\s+/g));
+        }
+
         // Indexing from 0, so rows with even index are odd.
         el.classList.add(
-            Globals.getClassName(this.index % 2 ? 'rowEven' : 'rowOdd')
+            Globals.getClassName(isEven ? 'rowEven' : 'rowOdd')
         );
+
+        if (isEven && evenClassName) {
+            el.classList.add(...evenClassName.split(/\s+/g));
+        }
     }
 
     /**

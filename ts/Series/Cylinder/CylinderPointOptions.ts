@@ -28,6 +28,9 @@ import type ColumnPointOptions from '../Column/ColumnPointOptions';
  * */
 
 export interface CylinderPointOptions extends ColumnPointOptions {
+    /**
+     * @internal
+     */
     shapeType?: string;
 }
 
