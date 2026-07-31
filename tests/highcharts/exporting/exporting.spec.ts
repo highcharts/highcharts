@@ -361,9 +361,12 @@ test('networkgraph local export should work with custom nodes from afterSetOptio
             thrownError = (err as Error).message;
         }
 
+        const svg = await chart.exporting.getSVGForExport();
+
         return {
             callbackError,
-            thrownError
+            thrownError,
+            svg
         };
     });
 
@@ -375,4 +378,10 @@ test('networkgraph local export should work with custom nodes from afterSetOptio
         result.thrownError,
         'Local export should not throw'
     ).toBeNull();
+    expect(
+        result.svg.includes('Proto Indo-European') &&
+        result.svg.includes('Old Norse') &&
+        result.svg.includes('Old English'),
+        'Exported SVG should contain the custom nodes added in afterSetOptions'
+    ).toBe(true);
 });
