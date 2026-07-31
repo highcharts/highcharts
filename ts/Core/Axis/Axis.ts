@@ -1193,7 +1193,12 @@ class Axis {
         pointPlacement?: number
     ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = (old && axis.old ? axis.old.min : axis.min);
+            localMin = (old && axis.old ? axis.old.min : axis.min),
+            // Scale for a linked axis with its own pixel length (#1417)
+            lenRatio = (
+                axis !== this && axis.len && this.len &&
+                axis.len !== this.len
+            ) ? this.len / axis.len : 1;
 
         if (!isNumber(localMin)) {
             return NaN;
@@ -1231,7 +1236,7 @@ class Axis {
         // From pixels to value
         if (backwards) { // Reverse translation
 
-            val = val * sign + cvsOffset;
+            val = val / lenRatio * sign + cvsOffset;
             val -= minPixelPadding;
             // From chart pixel to value:
             returnValue = val / localA + localMin;
@@ -1254,6 +1259,7 @@ class Axis {
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
             }
+            returnValue *= lenRatio;
         }
 
         return returnValue;

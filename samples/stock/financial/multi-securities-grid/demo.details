@@ -1,0 +1,9 @@
+---
+ name: Multi-security grid demo
+ authors:
+   - Andrzej Buleczka
+   - Jedrzej Ruta
+ js_wrap: b
+ tags:
+   - Highcharts Stock demo
+...
