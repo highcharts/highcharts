@@ -81,6 +81,45 @@ QUnit.test('Test updating axis by id', function (assert) {
     assert.strictEqual(chart.xAxis[1].categories[0], 'Uno', 'Updated category');
 });
 
+QUnit.test('Updating a linked axis id (#24658)', function (assert) {
+    const options = id => ({
+        xAxis: [{ id, max: 10 }, { id: 'linked', linkedTo: 0 }],
+        series: [
+            { data: [1, 2, 3], xAxis: id },
+            { data: [3, 2, 1], xAxis: 'linked' }
+        ]
+    });
+
+    const chart = Highcharts.chart('container', options('first'));
+
+    chart.update(options('renamed'), true, true);
+
+    const linked = chart.get('linked');
+    assert.strictEqual(
+        linked.linkedParent === linked,
+        false,
+        'Linked axis is not its own parent'
+    );
+    assert.strictEqual(
+        chart.series[1].points.length,
+        3,
+        'Linked series stays visible'
+    );
+
+    // Linking by id resolves the master and inherits its extremes
+    linked.update({ linkedTo: 'renamed' });
+    assert.strictEqual(
+        linked.linkedParent && linked.linkedParent.options.id,
+        'renamed',
+        'linkedTo resolves the master axis by id'
+    );
+    assert.strictEqual(
+        linked.max,
+        10,
+        'Linked axis inherits the master extremes'
+    );
+});
+
 QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
