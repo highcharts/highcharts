@@ -203,9 +203,10 @@ const getCurrentTotal = arrOfArr => {
 
     const riskScoreKPIOptions = {
         chart: {
-            height: 186,
+            height: 200,
             type: 'solidgauge',
-            className: 'hidden-title'
+            className: 'hidden-title',
+            marginTop: 30
         },
         title: {
             text: 'Risk score',
@@ -224,7 +225,7 @@ const getCurrentTotal = arrOfArr => {
             series: {
                 dataLabels: {
                     format: '<div style="text-align:center">' +
-                    '<div style="font-size:1.2em;">{y:.0f}</div>' +
+                    '<div style="font-size:1.4em;">{y:.0f}</div>' +
                     '<div style="font-size:14px; opacity:0.5; ' +
                     'text-align: center;">Risk score</div>' +
                     '</div>',
