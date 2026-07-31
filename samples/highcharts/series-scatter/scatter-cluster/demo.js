@@ -273,7 +273,7 @@ function updateChart() {
     drawChart(datasets[dataset], clusterIds[d][clustering]);
 }
 
-fetch('https://www.highcharts.com/samples/data/cluster-data.json')
+fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@367ad88/samples/data/cluster-data.json')
     .then(response => response.json())
     .then(data => {
         datasets = data;
