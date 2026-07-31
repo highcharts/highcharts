@@ -291,6 +291,10 @@ const DependencyMapping: Record<string, Array<string>> = {
     'series.errorbar': [
         'highcharts-more'
     ],
+    'series.flowchart': [
+        'modules/networkgraph',
+        'modules/flowchart'
+    ],
     'series.flowmap': [
         'modules/flowmap'
     ],
