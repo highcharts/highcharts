@@ -25,7 +25,7 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                 }
             },
             function (chart) {
-                const controller = new TestController(chart),
+                var controller = new TestController(chart),
                     series1Point = chart.series[0].points[0],
                     series1PointPosition = {
                         x: Math.round(chart.plotLeft + series1Point.plotX),
@@ -104,47 +104,112 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
                     ['0', '\u25CF Series 2: 1.1', ''],
                     'Tooltip should have label text of second series.'
                 );
-
-                // Issue #24255
-                chart.update({
-                    chart: { type: 'scatter' },
-                    series: [{
-                        data: [
-                            [0, 0.03], // point0
-                            [0.1, 0]   // point1
-                        ]
-                    }]
-                }, true, true);
-
-                const point0 = chart.series[0].points[0],
-                    point1 = chart.series[0].points[1];
-
-                controller.moveTo(
-                    chart.plotLeft + point1.plotX,
-                    chart.plotTop + point1.plotY
-                );
-
-                assert.strictEqual(
-                    chart.hoverPoint,
-                    point1,
-                    '#24255: Point 1 should be hovered initially (useHTML: ' +
-                    useHTML + ').'
-                );
-
-                controller.moveTo(
-                    chart.plotLeft + point0.plotX,
-                    chart.plotTop + point0.plotY
-                );
-
-                assert.strictEqual(
-                    chart.hoverPoint,
-                    point0,
-                    '#24255: Point 0 should be hovered, tracker from Point 1' +
-                    'should not block it (useHTML: ' + useHTML + ').'
-                );
             }
         );
     });
+});
+
+// Issue #24255
+// The tracker should bridge the gap between the point and the tooltip, but
+// not block the surrounding plot area.
+QUnit.test('Stick on contact tracker shape (#24255)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter',
+                width: 600,
+                height: 400
+            },
+            tooltip: {
+                animation: false,
+                hideDelay: 0,
+                stickOnContact: true
+            },
+            xAxis: {
+                min: 0,
+                max: 10
+            },
+            yAxis: {
+                min: 0,
+                max: 10
+            },
+            series: [{
+                data: [[4.6, 5], [5, 5]]
+            }, {
+                data: [[5, 8]]
+            }]
+        }),
+        controller = new TestController(chart),
+        [neighbour, point] = chart.series[0].points,
+        chartX = p => chart.plotLeft + p.plotX,
+        chartY = p => chart.plotTop + p.plotY,
+        // Probe the area right next to the point, 4px towards the tooltip and
+        // 4px off the centre line. A callout arrow reaching only its own
+        // length leaves this area uncovered.
+        keepsContact = p => {
+            const box = chart.tooltip.label.getBBox(),
+                x = chartX(p),
+                y = chartY(p),
+                // Vector from the point towards the tooltip
+                dx = box.x + box.width / 2 - x,
+                dy = box.y + box.height / 2 - y,
+                len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+            return chart.pointer.inClass(
+                controller.elementFromPoint(
+                    x + 4 * (dx - dy) / len,
+                    y + 4 * (dy + dx) / len
+                ),
+                'highcharts-tooltip'
+            );
+        };
+
+    controller.moveTo(chartX(point), chartY(point));
+
+    assert.strictEqual(
+        chart.hoverPoint,
+        point,
+        'Point should be hovered.'
+    );
+
+    assert.ok(
+        keepsContact(point),
+        'Tracker should bridge the gap between the point and the tooltip.'
+    );
+
+    controller.moveTo(chartX(neighbour), chartY(neighbour));
+
+    assert.strictEqual(
+        chart.hoverPoint,
+        neighbour,
+        'Densely placed neighbour should not be blocked by the tracker.'
+    );
+
+    // Shared tooltips have no anchor on the label, so the connector is
+    // derived from the last position update instead. Scatter series do not
+    // take part in shared tooltips, hence the type change.
+    chart.update({
+        chart: {
+            type: 'line'
+        },
+        tooltip: {
+            shared: true
+        }
+    });
+
+    const sharedPoint = chart.series[0].points[1];
+
+    controller.moveTo(chart.plotLeft, chart.plotTop);
+    controller.moveTo(chartX(sharedPoint), chartY(sharedPoint));
+
+    assert.ok(
+        chart.tooltip.len > 1,
+        'Precondition: the tooltip should be shared between the series.'
+    );
+
+    assert.ok(
+        keepsContact(sharedPoint),
+        'Shared tooltip tracker should bridge the gap as well.'
+    );
 });
 
 // Issue #12885

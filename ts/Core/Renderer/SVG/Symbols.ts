@@ -173,7 +173,7 @@ function callout(
     h: number,
     options?: SymbolOptions
 ): SVGPath {
-    const arrowLength = 6,
+    const arrowLength = options?.arrowLength ?? 6,
         halfDistance = 6,
         r = Math.min((options?.r) || 0, w, h),
         safeDistance = r + halfDistance,

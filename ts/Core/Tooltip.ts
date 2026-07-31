@@ -160,6 +160,17 @@ class Tooltip {
     public allowShared: boolean = true;
 
     /**
+     * Anchor of the latest position update, in chart coordinates. The tracker
+     * needs it also when the label itself has no anchor (#24255).
+     *
+     * @internal
+     */
+    private anchorX?: number;
+
+    /** @internal */
+    private anchorY?: number;
+
+    /**
      * Chart of the tooltip.
      *
      * @readonly
@@ -372,6 +383,9 @@ class Tooltip {
      */
     public destroy(): void {
         // Destroy and clear local variables
+        if (this.tracker) {
+            this.tracker = this.tracker.destroy();
+        }
         if (this.label) {
             this.label = this.label.destroy();
         }
@@ -1095,6 +1109,9 @@ class Tooltip {
             skipAnchor = followPointer || (this.len || 0) > 1,
             attr: SVGAttributes = { x, y };
 
+        this.anchorX = anchorX;
+        this.anchorY = anchorY;
+
         if (!skipAnchor) {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
@@ -1753,23 +1770,42 @@ class Tooltip {
         const chart = tooltip.chart;
         const label = tooltip.label;
         const points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint;
+        const box = label?.box;
 
-        if (!label || !points) {
+        if (!box || !points) {
             return;
         }
 
-        // Grab the exact SVG path data from the tooltip bubble's background
-        const d = label.box.d;
+        const { height, r, width, x, y } = box;
 
-        if (tooltip.tracker) {
-            tooltip.tracker.attr({ d });
-        } else {
+        let { anchorX, anchorY } = box;
+
+        // Shared tooltips clear the label anchor (#22295), so fall back to the
+        // anchor the position was calculated from
+        if (!isNumber(anchorX)) {
+            anchorX = (tooltip.anchorX || 0) - (label.translateX || 0);
+            anchorY = (tooltip.anchorY || 0) - (label.translateY || 0);
+        }
+
+        // Match the tooltip shape, but stretch the connector all the way to the
+        // point, so that the pointer can travel between the two without losing
+        // contact. (#24255)
+        const d = label.renderer.symbols.callout(x, y, width, height, {
+            anchorX,
+            anchorY,
+            arrowLength: Math.max(
+                anchorX - width,
+                -anchorX,
+                anchorY - height,
+                -anchorY,
+                0
+            ),
+            r
+        });
+
+        if (!tooltip.tracker) {
             tooltip.tracker = label.renderer
                 .path()
-                .attr({
-                    d,
-                    'stroke-width': 10 // Creates a 10px invisible buffer zone
-                })
                 .addClass('highcharts-tracker highcharts-tooltip-tracker')
                 .add(label);
 
@@ -1785,10 +1821,13 @@ class Tooltip {
                 tooltip.tracker.attr({
                     fill: 'rgba(0,0,0,0)',
                     stroke: 'rgba(0,0,0,0)',
+                    'stroke-linejoin': 'round',
                     'stroke-width': 10
                 });
             }
         }
+
+        tooltip.tracker.attr({ d });
     }
 
     /** @internal */
