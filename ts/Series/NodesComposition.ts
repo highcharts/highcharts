@@ -45,12 +45,14 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         name?: string;
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         nodes?: Array<NodesComposition.PointComposition>;
@@ -71,6 +73,7 @@ namespace NodesComposition {
      *
      * */
 
+    /** @internal */
     export declare class PointComposition extends Point {
         public from: string;
         public fromNode: PointComposition;
@@ -101,6 +104,7 @@ namespace NodesComposition {
         ): void;
     }
 
+    /** @internal */
     export interface PointCompositionOptions extends PointOptions {
         id?: string;
         level?: number;
@@ -109,6 +113,7 @@ namespace NodesComposition {
         weight?: (number|null);
     }
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         public data: Array<PointComposition>;
         public nodeLookup: Record<string, PointComposition>;
@@ -122,6 +127,7 @@ namespace NodesComposition {
         public generatePoints(): void;
     }
 
+    /** @internal */
     export interface SeriesCompositionOptions extends SeriesOptions {
         mass?: number;
         nodes?: Array<PointCompositionOptions>;
@@ -134,7 +140,7 @@ namespace NodesComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Series>(
         PointClass: typeof Point,
@@ -157,7 +163,7 @@ namespace NodesComposition {
 
     /**
      * Destroy data labels on nodes.
-     * @private
+     * @internal
      */
     function afterUpdate(this: Series): void {
         if (!this.hasDataLabels?.() && this.nodes) { // #23385
@@ -170,7 +176,7 @@ namespace NodesComposition {
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
-     * @private
+     * @internal
      */
     export function createNode(
         this: SeriesComposition,
@@ -205,7 +211,7 @@ namespace NodesComposition {
 
             /**
              * Return the largest sum of either the incoming or outgoing links.
-             * @private
+             * @internal
              */
             newNode.getSum = function (): number {
                 let sumTo = 0,
@@ -221,7 +227,7 @@ namespace NodesComposition {
             };
             /**
              * Get the offset in weight values of a point/link.
-             * @private
+             * @internal
              */
             newNode.offset = function (
                 point: PointComposition,
@@ -275,7 +281,7 @@ namespace NodesComposition {
 
     /**
      * Destroy all nodes and links.
-     * @private
+     * @internal
      */
     export function destroy(
         this: SeriesComposition
@@ -290,7 +296,7 @@ namespace NodesComposition {
     /**
      * Extend generatePoints by adding the nodes, which are Point objects but
      * pushed to the this.nodes array.
-     * @private
+     * @internal
      */
     export function generatePoints(
         this: SeriesComposition
@@ -350,7 +356,7 @@ namespace NodesComposition {
 
     /**
      * Destroy all nodes on setting new data
-     * @private
+     * @internal
      */
     function setData(
         this: SeriesComposition
@@ -367,7 +373,7 @@ namespace NodesComposition {
     /**
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
-     * @private
+     * @internal
      */
     export function setNodeState(
         this: PointComposition,
@@ -405,7 +411,7 @@ namespace NodesComposition {
     /**
      * When updating a node, don't update `series.options.data`, but
      * `series.options.nodes`
-     * @private
+     * @internal
      */
     export function updateNode(
         this: PointComposition,
@@ -477,4 +483,5 @@ namespace NodesComposition {
  *
  * */
 
+/** @internal */
 export default NodesComposition;

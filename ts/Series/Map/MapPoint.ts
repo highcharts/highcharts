@@ -58,7 +58,7 @@ class MapPoint extends ScatterPoint {
     /**
      * Get the projected path based on the geometry. May also be called on
      * mapData options (not point instances), hence static.
-     * @private
+     * @internal
      */
     public static getProjectedPath(
         point: MapPoint,
@@ -120,7 +120,7 @@ class MapPoint extends ScatterPoint {
 
     /**
      * Extend the Point object to split paths.
-     * @private
+     * @internal
      */
     public applyOptions(
         options: (MapPointOptions|PointShortOptions),
@@ -154,7 +154,7 @@ class MapPoint extends ScatterPoint {
 
     /**
      * Get the bounds in terms of projected units
-     * @private
+     * @internal
      */
     public getProjectedBounds(
         projection: Projection
@@ -206,7 +206,7 @@ class MapPoint extends ScatterPoint {
 
     /**
      * Stop the fade-out
-     * @private
+     * @internal
      */
     public onMouseOver(
         e?: PointerEvent
