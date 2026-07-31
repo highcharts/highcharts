@@ -69,11 +69,12 @@ test.describe('Pagination', () => {
             }
 
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         ID: rows.map((row) => row.ID),
                         Name: rows.map((row) => row.Name)
-                    }
+                    },
+                    idColumn: 'ID'
                 },
                 pagination: {
                     enabled: true,
@@ -83,7 +84,7 @@ test.describe('Pagination', () => {
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'ID'
+                            enabled: false
                         }
                     }
                 }
@@ -133,11 +134,12 @@ test.describe('Pagination', () => {
             }));
 
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         ID: rows.map((row) => row.ID),
                         Name: rows.map((row) => row.Name)
-                    }
+                    },
+                    idColumn: 'ID'
                 },
                 pagination: {
                     enabled: true,
@@ -148,7 +150,7 @@ test.describe('Pagination', () => {
                     rows: {
                         virtualization: false,
                         pinning: {
-                            idColumn: 'ID'
+                            enabled: false
                         }
                     }
                 }

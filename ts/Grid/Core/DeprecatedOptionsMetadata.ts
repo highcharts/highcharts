@@ -30,6 +30,7 @@ interface DeprecatedOptionMetadata {
     runtimePath: string;
     segments: Array<DeprecatedOptionMatchSegment>;
     text: string;
+    version: string;
 }
 
 const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
@@ -50,7 +51,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'condition'
             }
         ],
-        'text': 'Use `rule.operator` instead.'
+        'text': 'Use `rule.operator` instead.',
+        'version': '3.1.0'
     },
     {
         'docsPath': 'columnDefaults.filtering.conditions',
@@ -69,7 +71,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'conditions'
             }
         ],
-        'text': 'Use `operators` instead.'
+        'text': 'Use `operators` instead.',
+        'version': '3.1.0'
     },
     {
         'docsPath': 'columnDefaults.filtering.value',
@@ -88,7 +91,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'value'
             }
         ],
-        'text': 'Use `rule.value` instead.'
+        'text': 'Use `rule.value` instead.',
+        'version': '3.1.0'
     },
     {
         'docsPath': 'columns.filtering.condition',
@@ -107,7 +111,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'condition'
             }
         ],
-        'text': 'Use `rule.operator` instead.'
+        'text': 'Use `rule.operator` instead.',
+        'version': '3.1.0'
     },
     {
         'docsPath': 'columns.filtering.conditions',
@@ -126,7 +131,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'conditions'
             }
         ],
-        'text': 'Use `operators` instead.'
+        'text': 'Use `operators` instead.',
+        'version': '3.1.0'
     },
     {
         'docsPath': 'columns.filtering.value',
@@ -145,7 +151,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'value'
             }
         ],
-        'text': 'Use `rule.value` instead.'
+        'text': 'Use `rule.value` instead.',
+        'version': '3.1.0'
     },
     {
         'docsPath': 'dataTable',
@@ -156,7 +163,8 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'dataTable'
             }
         ],
-        'text': '2.3.0'
+        'text': 'Use `data.dataTable` instead.',
+        'version': '2.3.0'
     },
     {
         'docsPath': 'lang.columnFilteringConditions',
@@ -171,7 +179,56 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'columnFilteringConditions'
             }
         ],
-        'text': 'Use `columnFilteringOperators` instead.'
+        'text': 'Use `columnFilteringOperators` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'lang.pinRowBottom',
+        'runtimePath': 'lang.pinRowBottom',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'pinRowBottom'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.pinRowBottom` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'lang.pinRowTop',
+        'runtimePath': 'lang.pinRowTop',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'pinRowTop'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.pinRowTop` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'lang.unpinRow',
+        'runtimePath': 'lang.unpinRow',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'unpinRow'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.unpinRow` instead.',
+        'version': '3.1.0'
     }
 ];
 
