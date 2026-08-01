@@ -247,13 +247,13 @@ const getCurrentTotal = arrOfArr => {
             visible: true,
             tickPositions: [23, 40, 60, 78, 90],
             minorTickWidth: 0,
-            tickLength: 50,
+            gridLineWidth: 2,
             min: 0,
             max: 100,
             labels: {
                 enabled: false
             },
-            zIndex: 10
+            gridZIndex: 10
         }
     };
 
