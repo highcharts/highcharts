@@ -215,8 +215,8 @@ const getCurrentTotal = arrOfArr => {
         pane: {
             innerSize: '85%',
             borderRadius: '50%',
-            endAngle: 100,
-            startAngle: -50
+            startAngle: -100,
+            endAngle: 100
         },
         tooltip: {
             enabled: false
@@ -253,7 +253,9 @@ const getCurrentTotal = arrOfArr => {
             labels: {
                 enabled: false
             },
-            gridZIndex: 10
+            gridZIndex: 10,
+            startOnTick: false,
+            endOnTick: false
         }
     };
 
