@@ -24,7 +24,7 @@ body {
     padding: 0 8px;
 }
 
-#container {
+#container .hcg-container {
     max-height: 600px;
 }
 
