@@ -54,41 +54,72 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
+        /** @internal */
         columnGroup: SVGElement;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
+        /** @internal */
         outside3dPlot?: (boolean|null);
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /** @internal */
         height?: number;
+        /** @internal */
         outside3dPlot?: (boolean|null);
+        /** @internal */
         shapey?: number;
+        /** @internal */
         plot3d?: Position3DObject;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         z: number;
-        /** @requires Series/Column3DSeries */
+        /**
+         * @internal
+         * @requires Series/Column3DSeries
+         */
         translate3dShapes(): void;
     }
 }
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Depth of the columns in a 3D column chart.
+         */
         depth?: number;
+
+        /**
+         * 3D columns only. The color of the edges. Similar to `borderColor`,
+         * except it defaults to the same color as the column.
+         */
         edgeColor?: ColorString;
+
+        /**
+         * 3D columns only. The width of the colored edges.
+         */
         edgeWidth?: number;
+
+        /**
+         * The spacing between columns on the Z Axis in a 3D chart.
+         */
         groupZPadding?: number;
+
         inactiveOtherPoints?: boolean;
     }
 }
@@ -99,7 +130,7 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * */
 
-/** @private */
+/** @internal */
 function columnSeriesTranslate3dShapes(
     this: ColumnSeries
 ): void {
@@ -236,7 +267,7 @@ function columnSeriesTranslate3dShapes(
     series.z = z;
 }
 
-/** @private */
+/** @internal */
 function compose(
     SeriesClass: typeof Series,
     StackItemClass: typeof StackItem
@@ -313,7 +344,7 @@ function compose(
 }
 
 /**
- * @private
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart with stacks
  * @param {string} stacking
@@ -347,7 +378,7 @@ function retrieveStacks(
     return stacks;
 }
 
-/** @private */
+/** @internal */
 function onColumnSeriesAfterInit(
     this: ColumnSeries
 ): void {
@@ -393,7 +424,7 @@ function onColumnSeriesAfterInit(
 /**
  * In 3D mode, simple checking for a new shape to animate is not enough.
  * Additionally check if graphic is a group of elements
- * @private
+ * @internal
  */
 function wrapColumnPointHasNewShapeType(
     this: ColumnPoint,
@@ -405,7 +436,7 @@ function wrapColumnPointHasNewShapeType(
         proceed.apply(this, args);
 }
 
-/** @private */
+/** @internal */
 function wrapColumnSeriesAnimate(
     this: ColumnSeries,
     proceed: Function
@@ -474,7 +505,7 @@ function wrapColumnSeriesAnimate(
  * In case of 3d columns there is no sense to add these columns to a specific
  * series group. If a series is added to a group all columns will have the same
  * zIndex in comparison to another series.
- * @private
+ * @internal
  */
 function wrapColumnSeriesPlotGroup(
     this: (ColumnRangeSeries&ColumnSeries),
@@ -508,7 +539,7 @@ function wrapColumnSeriesPlotGroup(
     return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 }
 
-/** @private */
+/** @internal */
 function wrapColumnSeriesPointAttribs(
     this: (ColumnSeries|ColumnRangeSeries),
     proceed: Function
@@ -527,7 +558,7 @@ function wrapColumnSeriesPointAttribs(
 /**
  * In 3D mode, all column-series are rendered in one main group. Because of that
  * we need to apply inactive state on all points.
- * @private
+ * @internal
  */
 function wrapColumnSeriesSetState(
     this: ColumnSeries,
@@ -551,7 +582,7 @@ function wrapColumnSeriesSetState(
 /**
  * When series is not added to group it is needed to change setVisible method to
  * allow correct Legend functionality. This wrap is basing on pie chart series.
- * @private
+ * @internal
  */
 function wrapColumnSeriesSetVisible(
     this: (ColumnRangeSeries&ColumnSeries),
@@ -576,7 +607,7 @@ function wrapColumnSeriesSetVisible(
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 }
 
-/** @private */
+/** @internal */
 function wrapColumnSeriesTranslate(
     this: ColumnSeries,
     proceed: Function
@@ -589,7 +620,7 @@ function wrapColumnSeriesTranslate(
     }
 }
 
-/** @private */
+/** @internal */
 function wrapSeriesAlignDataLabel(
     this: Series,
     proceed: Function,
@@ -648,7 +679,7 @@ function wrapSeriesAlignDataLabel(
 
 /**
  * Don't use justifyDataLabel when point is outsidePlot.
- * @private
+ * @internal
  */
 function wrapSeriesJustifyDataLabel(
     this: ColumnSeries,
@@ -663,7 +694,7 @@ function wrapSeriesJustifyDataLabel(
 
 /**
  * Added stackLabels position calculation for 3D charts.
- * @private
+ * @internal
  */
 function wrapStackItemGetStackBox(
     this: StackItem,
@@ -723,10 +754,12 @@ function wrapStackItemGetStackBox(
  *
  * */
 
+/** @internal */
 const Column3DComposition = {
     compose
 };
 
+/** @internal */
 export default Column3DComposition;
 
 /* *
