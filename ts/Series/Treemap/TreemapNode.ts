@@ -28,6 +28,7 @@ import type TreemapPoint from './TreemapPoint';
  *
  * */
 
+/** @internal */
 class TreemapNode {
 
     /* *
@@ -109,6 +110,7 @@ namespace TreemapNode {
      *
      * */
 
+    /** @internal */
     export interface NodeValuesObject extends BBoxObject {
         direction: number;
         val: number;
@@ -122,4 +124,5 @@ namespace TreemapNode {
  *
  * */
 
+/** @internal */
 export default TreemapNode;

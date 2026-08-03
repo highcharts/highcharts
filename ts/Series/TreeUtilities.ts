@@ -45,7 +45,7 @@ import {
 
 
 /**
- * @private
+ * @internal
  */
 function getColor(
     node: TreeUtilities.NodeObject,
@@ -70,7 +70,7 @@ function getColor(
         colorIndex;
 
     /**
-     * @private
+     * @internal
      */
     const variateColor = (color: ColorType): ColorType => {
         const colorVariation = level && level.colorVariation;
@@ -130,7 +130,7 @@ function getColor(
 /**
  * Creates a map from level number to its given options.
  *
- * @private
+ * @internal
  *
  * @param {Object} params
  * Object containing parameters.
@@ -199,7 +199,7 @@ function getLevelOptions<T extends TreeUtilities.Series>(
 }
 
 /**
- * @private
+ * @internal
  * @todo Combine buildTree and buildNode with setTreeValues
  * @todo Remove logic from Treemap and make it utilize this mixin.
  */
@@ -261,7 +261,7 @@ function setTreeValues<T extends TreeUtilities.Series>(
  * Update the rootId property on the series. Also makes sure that it is
  * accessible to exporting.
  *
- * @private
+ * @internal
  *
  * @param {Object} series
  * The series to operate on.
@@ -296,7 +296,7 @@ function updateRootId(
  * Get the node width, which relies on the plot width and the nodeDistance
  * option.
  *
- * @private
+ * @internal
  */
 function getNodeWidth(
     series: SankeySeries|TreegraphSeries,
@@ -340,11 +340,13 @@ namespace TreeUtilities {
      *
      * */
 
+    /** @internal */
     export interface ColorObject {
         color: ColorType;
         colorIndex: number;
     }
 
+    /** @internal */
     export interface GetColorOptions {
         colorIndex?: number;
         colors?: Array<ColorType>;
@@ -356,6 +358,7 @@ namespace TreeUtilities {
         siblings?: number;
     }
 
+    /** @internal */
     export interface NodeObject {
         children: Array<NodeObject>;
         childrenTotal?: number;
@@ -369,24 +372,29 @@ namespace TreeUtilities {
         visible: boolean;
     }
 
+    /** @internal */
     export interface Point extends CorePoint {
         options: PointOptions;
     }
 
+    /** @internal */
     export interface PointOptions extends CorePointOptions {
         value?: (number|null);
     }
 
+    /** @internal */
     export interface Series extends CoreSeries {
         mapOptionsToLevel: any;
         points: Array<Point>;
         tree: NodeObject;
     }
 
+    /** @internal */
     export interface SetTreeValuesBeforeCallbackFunction<T extends Series> {
         (node: T['tree'], options: SetTreeValuesOptions<T>): T['tree'];
     }
 
+    /** @internal */
     export interface SetTreeValuesOptions<T extends Series> {
         before?: SetTreeValuesBeforeCallbackFunction<T>;
         idRoot: string;
@@ -415,4 +423,5 @@ const TreeUtilities = {
     updateRootId
 };
 
+/** @internal */
 export default TreeUtilities;
