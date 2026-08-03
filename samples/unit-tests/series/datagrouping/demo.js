@@ -300,6 +300,37 @@
             newSeries.navigatorSeries.points.length,
             'All points should have the same average value (#11191).'
         );
+
+        const ohlcDataSeries = chart.addSeries({
+            useOhlcData: true,
+            dataGrouping: {
+                approximation: () => [3, 5, 4, 2]
+            },
+            data: [
+                [0, 1, 3, 0, 2],
+                [1, 1, 5, 1, 2],
+                [2, 2, 2, 2, 2]
+            ]
+        });
+
+        assert.strictEqual(
+            typeof ohlcDataSeries.options.dataGrouping.approximation,
+            'function',
+            'A custom dataGrouping.approximation should not be overwritten ' +
+            'with the "ohlc" default when useOhlcData is set (#24692).'
+        );
+
+        assert.deepEqual(
+            [
+                ohlcDataSeries.points[0].open,
+                ohlcDataSeries.points[0].high,
+                ohlcDataSeries.points[0].low,
+                ohlcDataSeries.points[0].close
+            ],
+            [3, 5, 4, 2],
+            'The grouped point should reflect the custom approximation ' +
+            'callback output, not the "ohlc" approximation (#24692).'
+        );
     });
 
     QUnit.test('dataGrouping and multiple series', function (assert) {

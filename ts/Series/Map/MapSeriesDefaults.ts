@@ -512,7 +512,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * a two dimensional array of the same. The dimensionality must comply with the
  * `type`.
  *
- * @type      {Array<LonLatArray>|Array<Array<LonLatArray>>}
+ * @type      {Array<Highcharts.LonLatArray>|Array<Array<Highcharts.LonLatArray>>}
  * @since 9.3.0
  * @product   highmaps
  * @apioption series.map.data.geometry.coordinates

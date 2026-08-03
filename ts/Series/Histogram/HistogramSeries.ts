@@ -149,7 +149,7 @@ class HistogramSeries extends ColumnSeries {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        let alteredData;
+        let alteredData: Array<HistogramPointOptions> = [];
         if (typeof data !== 'undefined' && data.length > 0) {
             // Support data array of objects (#24073).
             data = data.map(function (
