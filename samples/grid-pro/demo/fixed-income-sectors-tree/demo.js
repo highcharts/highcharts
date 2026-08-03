@@ -1,14 +1,4 @@
-/* eslint-disable max-len, quotes */
-/** Super-sector colors (aligned with Morningstar-style reference palette). */
-const SUPER_SECTOR_COLORS = {
-    Government: '#2364B9',
-    Municipal: '#6B4EA1',
-    Corporate: '#F47206',
-    Securitized: '#125B2F',
-    CashAndEquivalents: '#039649',
-    Derivative: '#0F86A3'
-};
-
+/* eslint-disable max-len */
 Grid.grid('container', {
     gridKey: 'YOUR-GRID-KEY-HERE', // TODO: replace with your grid key
     data: {
@@ -85,13 +75,6 @@ Grid.grid('container', {
             renderer: {
                 type: 'sparkline',
                 chartOptions: function (cellValue) {
-                    const path = String(
-                        this.row?.data?.Fixed_Income_Path ?? ''
-                    );
-                    const superKey = path.split('/')[0] || '';
-                    const color =
-                        SUPER_SECTOR_COLORS[superKey] ?? '#7cb5ec';
-
                     return {
                         chart: {
                             type: 'bar',
@@ -113,9 +96,8 @@ Grid.grid('container', {
                                 dataLabels: {
                                     crop: false,
                                     overflow: 'allow',
-                                    useHTML: true,
                                     enabled: true,
-                                    format: `<span style="color:${color};">{y:.2f}%</span>`
+                                    format: '{y:.2f}%'
                                 }
                             },
                             series: {
@@ -124,8 +106,16 @@ Grid.grid('container', {
                         },
                         series: [{
                             type: 'bar',
-                            color: color,
-                            data: [cellValue]
+                            data: [cellValue],
+                            zones: [{
+                                value: 10,
+                                color: 'red'
+                            }, {
+                                value: 30,
+                                color: 'yellow'
+                            }, {
+                                color: 'green'
+                            }]
                         }]
                     };
                 }
@@ -144,7 +134,7 @@ Grid.grid('container', {
     {
         id: 'Fixed_Income_PercShort',
         header: {
-            format: 'Short'
+            format: 'Short (%)'
         },
         cells: {
             format: '{value:,.2f}'
@@ -153,7 +143,7 @@ Grid.grid('container', {
     {
         id: 'Fixed_Income_PercNet',
         header: {
-            format: 'Net'
+            format: 'Net (%)'
         },
         cells: {
             format: '{value:,.2f}'
