@@ -65,7 +65,7 @@ class TilemapPoint extends HeatmapPoint {
      * */
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Point#haloPath
      */
     public haloPath(): SVGPath {

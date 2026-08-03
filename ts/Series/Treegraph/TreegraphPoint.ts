@@ -46,7 +46,7 @@ import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreegraphPoint extends TreemapPoint {

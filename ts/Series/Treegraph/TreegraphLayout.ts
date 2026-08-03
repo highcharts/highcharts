@@ -29,7 +29,7 @@ import TreegraphNode from './TreegraphNode.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreegraphLayout {

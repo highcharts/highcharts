@@ -118,7 +118,7 @@ export interface LinkPointOptions extends TreegraphPointOptions {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class LinkPoint extends ColumnPoint {
