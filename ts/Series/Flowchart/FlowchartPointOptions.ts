@@ -57,7 +57,7 @@ export interface FlowchartDataOptions extends NetworkgraphDataOptions {
  *
  * @optionparent series.flowchart.nodes
  */
-export interface FlowchartPointOptions extends NetworkgraphPointOptions {
+export interface FlowchartPointOptions extends Omit<NetworkgraphPointOptions, 'mass'> {
 
     /**
      * The symbol this node is drawn with, in classic flowchart notation:

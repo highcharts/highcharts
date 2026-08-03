@@ -30,6 +30,7 @@ import type {
     NetworkgraphSeriesOptions
 } from '../Networkgraph/NetworkgraphSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type { SeriesEventsOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -158,7 +159,7 @@ export interface FlowchartWaypointsOptions {
  *
  * @requires modules/flowchart
  */
-export interface FlowchartSeriesOptions extends NetworkgraphSeriesOptions {
+export interface FlowchartSeriesOptions extends Omit<NetworkgraphSeriesOptions, 'layoutAlgorithm'> {
 
     /**
      * An array of links between the nodes. For the `flowchart` series type,
@@ -196,6 +197,17 @@ export interface FlowchartSeriesOptions extends NetworkgraphSeriesOptions {
      * @product highcharts
      */
     data?: Array<(FlowchartDataOptions|PointShortOptions)>;
+
+    /**
+     * General event handlers for the series.
+     *
+     * Deliberately the plain series events rather than the networkgraph ones:
+     * the only event networkgraph adds is `afterSimulation`, which is fired by
+     * the force layout this series never runs. Naming the base type rather
+     * than subtracting that one member also means any further
+     * simulation-specific event networkgraph gains stays out on its own.
+     */
+    events?: SeriesEventsOptions;
 
     /**
      * Link style options.

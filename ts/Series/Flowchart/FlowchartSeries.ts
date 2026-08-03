@@ -89,6 +89,22 @@ const unpositioned: FlowchartLayoutPosition = { x: 0.5, y: 0.5 };
  */
 const dragThreshold = 5;
 
+/**
+ * The networkgraph defaults, minus `layoutAlgorithm` - it configures the force
+ * simulation this series never runs (see `deferLayout` below), so keeping it
+ * out of `getOptions().plotOptions.flowchart` stops it being offered as the
+ * handle for influencing a layout it cannot influence.
+ *
+ * Note this cannot be a `delete` on `NetworkgraphSeries.defaultOptions`
+ * itself: `merge` with a single argument returns a deep copy, and it is the
+ * copy that is mutated, so the networkgraph series keeps its own defaults
+ * intact.
+ * @internal
+ */
+const inheritedDefaults = merge(NetworkgraphSeries.defaultOptions);
+
+delete inheritedDefaults.layoutAlgorithm;
+
 /* *
  *
  *  Class
@@ -111,7 +127,7 @@ class FlowchartSeries extends NetworkgraphSeries {
      * */
 
     public static defaultOptions = merge(
-        NetworkgraphSeries.defaultOptions,
+        inheritedDefaults,
         FlowchartSeriesDefaults
     );
 
@@ -170,6 +186,21 @@ class FlowchartSeries extends NetworkgraphSeries {
      *  Functions
      *
      * */
+
+    /**
+     * A flowchart computes its own positions in `translate()`, so there is no
+     * graph layout to defer to and no `layoutAlgorithm` to read.
+     *
+     * Overridden as a no-op rather than left merely unreachable: the
+     * networkgraph implementation reads `layoutAlgorithm.type` without a guard,
+     * and `layoutAlgorithm` is deliberately absent from this series' defaults,
+     * so an unguarded call would throw. Replacing it means a future
+     * `super.translate()` cannot quietly reintroduce a simulation either.
+     * @internal
+     */
+    public deferLayout(): void {
+        // Intentionally empty.
+    }
 
     /**
      * The size a node's label renders at, so its shape can be grown to fit.
@@ -532,6 +563,13 @@ class FlowchartSeries extends NetworkgraphSeries {
         }
 
         point.inDragMode = point.hasDragged = false;
+
+        // `fixedDraggable` is deliberately not consulted here. In a
+        // networkgraph it keeps a dragged node pinned against the simulation;
+        // in a flowchart a drag is already permanent - recorded as
+        // `point.dragPos` and reapplied by `translate()` - so honouring the
+        // option would change nothing while implying a distinction that does
+        // not exist.
         delete point.fixedPosition;
     }
 
@@ -702,6 +740,10 @@ interface FlowchartSeries {
     pointClass: typeof FlowchartPoint;
 }
 extend(FlowchartSeries.prototype, {
+    // Named force functions for the simulation this series never runs, read
+    // only by `ReingoldFruchtermanLayout`. Cleared the same way the
+    // networkgraph series clears `animate` and `drawGraph`.
+    forces: void 0,
     pointArrayMap: ['from', 'to', 'text'],
     pointClass: FlowchartPoint
 });

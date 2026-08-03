@@ -81,13 +81,12 @@ const FlowchartSeriesDefaults: FlowchartSeriesOptions = {
      */
     nodeShape: 'rectangle',
 
-    marker: {
-        /**
-         * A node's box is sized to its own shape and label, so this only
-         * sets the reach of the hover halo.
-         */
-        radius: 16
-    },
+    // No `marker.radius` default here on purpose. A node's box comes from its
+    // shape and label (see `series.markerAttribs`), the hover halo is sized by
+    // `states.hover.halo.size`, and the only other readers of a node's radius
+    // - its layout `mass` and the repulsive force - belong to the simulation
+    // this series never runs. Setting one would just imply a node size handle
+    // that isn't one.
 
     /**
      * Text inside the shape is a node's whole point, so data labels are on by
@@ -372,6 +371,7 @@ export default FlowchartSeriesDefaults;
  *
  * @type      {Array<*>}
  * @extends   series.networkgraph.nodes
+ * @excluding mass
  * @product   highcharts
  * @apioption series.flowchart.nodes
  */
@@ -398,6 +398,16 @@ export default FlowchartSeriesDefaults;
  * @default   rectangle
  * @product   highcharts
  * @apioption series.flowchart.nodes.shape
+ */
+
+/**
+ * @excluding afterSimulation
+ * @apioption plotOptions.flowchart.events
+ */
+
+/**
+ * @excluding afterSimulation
+ * @apioption series.flowchart.events
  */
 
 ''; // Adds doclets above to transpiled file

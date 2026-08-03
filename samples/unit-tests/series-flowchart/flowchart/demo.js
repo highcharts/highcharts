@@ -290,3 +290,95 @@ QUnit.test('Flowchart degenerate data', function (assert) {
         'The series should survive a full data replacement'
     );
 });
+
+QUnit.test('Flowchart inert simulation options', function (assert) {
+    const plotOptions = Highcharts.getOptions().plotOptions;
+
+    assert.strictEqual(
+        plotOptions.flowchart.layoutAlgorithm,
+        undefined,
+        'A flowchart should not carry a force-simulation config it cannot run'
+    );
+
+    // The guard against the one real regression risk here: the flowchart
+    // defaults are built from a `merge` copy of the networkgraph ones, so
+    // dropping `layoutAlgorithm` must not reach the shared parent.
+    assert.ok(
+        plotOptions.networkgraph.layoutAlgorithm,
+        'Networkgraph should keep its own layoutAlgorithm defaults'
+    );
+
+    assert.strictEqual(
+        plotOptions.networkgraph.layoutAlgorithm.type,
+        'reingold-fruchterman',
+        'Networkgraph layoutAlgorithm defaults should be intact'
+    );
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'flowchart',
+            width: 600,
+            height: 400
+        },
+        series: [{
+            // Explicitly asking for a simulation should be inert, not fatal.
+            layoutAlgorithm: {
+                enableSimulation: true,
+                type: 'reingold-fruchterman'
+            },
+            data: [
+                ['A', 'B'],
+                ['B', 'C'],
+                ['C', 'A']
+            ]
+        }]
+    });
+
+    const series = chart.series[0];
+
+    assert.strictEqual(
+        series.layout,
+        undefined,
+        'A user-supplied layoutAlgorithm should not start a graph layout'
+    );
+
+    assert.strictEqual(
+        chart.graphLayoutsStorage,
+        undefined,
+        'No graph layout should be registered on the chart'
+    );
+
+    assert.ok(
+        series.nodes.every(
+            n => Highcharts.isNumber(n.plotX) &&
+            Highcharts.isNumber(n.plotY)
+        ),
+        'Nodes should still be laid out by the layered solver'
+    );
+
+    const layerOrder = ['A', 'B', 'C'].map(
+        id => series.nodes.find(n => n.id === id).plotY
+    );
+
+    assert.ok(
+        layerOrder[0] < layerOrder[1] && layerOrder[1] < layerOrder[2],
+        'Layers should still run top to bottom'
+    );
+
+    // `deferLayout` is overridden as a no-op because the networkgraph
+    // implementation reads `layoutAlgorithm.type` unguarded, which would now
+    // throw. Call it directly rather than trusting that nothing reaches it.
+    series.deferLayout();
+
+    assert.strictEqual(
+        series.layout,
+        undefined,
+        'deferLayout should be a no-op that cannot throw'
+    );
+
+    assert.strictEqual(
+        chart.graphLayoutsStorage,
+        undefined,
+        'deferLayout should not create a layout store'
+    );
+});
