@@ -1,10 +1,9 @@
+import { useEffect, useState } from 'react';
 import { StockChart } from '@highcharts/react/Stock';
 import { Title, Subtitle, Tooltip, YAxis } from '@highcharts/react';
 import { CandlestickSeries } from '@highcharts/react/series/Candlestick';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-
-import { useEffect, useState } from 'react';
 import type { CandlestickData } from './types';
 
 export default function CandlestickChart() {
