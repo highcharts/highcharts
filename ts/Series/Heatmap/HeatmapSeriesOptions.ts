@@ -285,6 +285,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
     dataURL?: undefined;
     dragDrop?: undefined;
     findNearestPointBy?: undefined;
+    getExtremesFromAll?: undefined;
     jitter?: undefined;
     linecap?: undefined;
     lineWidth?: undefined;
