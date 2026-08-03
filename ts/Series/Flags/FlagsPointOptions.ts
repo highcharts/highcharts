@@ -34,8 +34,6 @@ export interface FlagsPointOptions extends ColumnPointOptions {
      * the series color.
      *
      * @product highstock
-     *
-     * @apioption series.flags.data.fillColor
      */
     fillColor?: ColorType;
 
