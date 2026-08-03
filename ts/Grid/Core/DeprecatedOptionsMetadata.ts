@@ -95,6 +95,22 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
         'version': '3.1.0'
     },
     {
+        'docsPath': 'columnDefaults.treeView',
+        'runtimePath': 'columnDefaults.treeView',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columnDefaults'
+            },
+            {
+                'kind': 'property',
+                'name': 'treeView'
+            }
+        ],
+        'text': 'Use the column level `aggregator` option instead.',
+        'version': '3.1.0'
+    },
+    {
         'docsPath': 'columns.filtering.condition',
         'runtimePath': 'columns.filtering.condition',
         'segments': [
@@ -152,6 +168,44 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
             }
         ],
         'text': 'Use `rule.value` instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'columns.treeView',
+        'runtimePath': 'columns.treeView',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'columns'
+            },
+            {
+                'kind': 'property',
+                'name': 'treeView'
+            }
+        ],
+        'text': 'Use the column level `aggregator` option instead.',
+        'version': '3.1.0'
+    },
+    {
+        'docsPath': 'data.local.treeView',
+        'runtimePath': 'data.treeView',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'data'
+            },
+            {
+                'kind': 'discriminator',
+                'name': 'providerType',
+                'value': 'local',
+                'allowUndefined': true
+            },
+            {
+                'kind': 'property',
+                'name': 'treeView'
+            }
+        ],
+        'text': 'Use the root level `treeView` and `rowGrouping` instead.',
         'version': '3.1.0'
     },
     {

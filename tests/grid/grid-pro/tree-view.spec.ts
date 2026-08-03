@@ -93,10 +93,11 @@ test.describe('Grid Pro - tree view', () => {
                         parentId: [null, 1, 1, 2],
                         name: ['Root', 'Sales', 'Marketing', 'EMEA']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
@@ -133,11 +134,11 @@ test.describe('Grid Pro - tree view', () => {
                         parentId: [null, 0, 0, 1],
                         name: ['Root', 'Sales', 'Marketing', 'EMEA'],
                         sortKey: ['Z', 'B', 'A', 'C']
-                    },
-                    treeView: {
-                        expandedRowIds: 'all',
-                        treeColumn: 'name'
                     }
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 columns: [{
                     id: 'sortKey',
@@ -147,6 +148,7 @@ test.describe('Grid Pro - tree view', () => {
                 }],
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -179,14 +181,15 @@ test.describe('Grid Pro - tree view', () => {
                         parentId: [null, 1, 1, 2],
                         name: ['Root', 'Sales', 'Marketing', 'EMEA']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        expandedRowIds: [1],
-                        treeColumn: 'name'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedRowIds: [1],
                         virtualization: false
                     }
                 }
@@ -210,14 +213,15 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['A/a', 'A/b', 'B/c'],
                         name: ['a', 'b', 'c']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -243,14 +247,15 @@ test.describe('Grid Pro - tree view', () => {
                     columns: {
                         path: ['A/a', 'A/b', 'B/c'],
                         name: ['a', 'b', 'c']
-                    },
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
                     }
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -279,14 +284,15 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['A/a', 'A/b', 'B/c'],
                         name: ['a', 'b', 'c']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -314,14 +320,14 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['A/a', 'B/b'],
                         name: ['a', 'b']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path'
-                        },
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path'
+                    },
+                    treeColumn: 'name'
                 },
                 pagination: {
                     enabled: true,
@@ -329,6 +335,7 @@ test.describe('Grid Pro - tree view', () => {
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -364,21 +371,22 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['AaaBbbCcc', 'AaaBbbDdd'],
                         name: ['Ccc', 'Ddd']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path',
-                            separator: (path: string): string[] =>
-                                path.match(
-                                    /[A-Z]+(?![a-z])|[A-Z][a-z]*/g
-                                ) || []
-                        },
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        separator: (path: string): string[] =>
+                            path.match(
+                                /[A-Z]+(?![a-z])|[A-Z][a-z]*/g
+                            ) || []
+                    },
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -408,18 +416,19 @@ test.describe('Grid Pro - tree view', () => {
                             'Engineering/Frontend/Platform'
                         ]
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path',
-                            showFullPath: false
-                        },
-                        treeColumn: 'path',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        showFullPath: false
+                    },
+                    treeColumn: 'path'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -453,18 +462,19 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['AaaBbbCcc', 'AaaBbbDdd'],
                         name: ['Ccc', 'Ddd']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path',
-                            separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
-                        },
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
+                    },
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -508,14 +518,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -586,14 +597,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: true
                     }
                 }
@@ -662,14 +674,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: true
                     }
                 }
@@ -768,14 +781,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: true
                     }
                 }
@@ -848,14 +862,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -934,20 +949,17 @@ test.describe('Grid Pro - tree view', () => {
                             (id): (number|null) => id === 1 ? null : id - 1
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all',
-                        stickyParents: true
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 columns: [{
                     id: 'name'
                 }, {
                     id: 'value',
-                    treeView: {
-                        aggregator: 'SUM'
-                    }
+                    aggregator: 'SUM'
                 }],
                 columnDefaults: {
                     cells: {
@@ -958,6 +970,8 @@ test.describe('Grid Pro - tree view', () => {
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
+                        stickyParents: true,
                         virtualization: false
                     }
                 }
