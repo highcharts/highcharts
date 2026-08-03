@@ -124,6 +124,7 @@ Start with:
 - [Resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width)
 - [Sorting](https://www.highcharts.com/docs/grid/columns/sorting)
 - [Filtering](https://www.highcharts.com/docs/grid/columns/filtering)
+- [Virtualization](https://www.highcharts.com/docs/grid/columns/virtualization)
 - [Styling and theming](https://www.highcharts.com/docs/grid/columns/styling-and-theming)
 
 ### Rows
