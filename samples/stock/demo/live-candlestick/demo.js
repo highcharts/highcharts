@@ -99,14 +99,10 @@ options.chart = {
                 if (lastPoint[0] !== newPoint[0]) {
                     series.addPoint(newPoint);
 
-                // Series in data grouping mode, set the full data to regroup
-                } else if (series.currentDataGrouping) {
-                    series.options.data[data.length - 1] = newPoint;
-                    series.setData(data);
-
                 // Existing point, update it
                 } else {
-                    series.points.at(-1).update(newPoint, true, false);
+                    series.options.data[data.length - 1] = newPoint;
+                    series.setData(data);
                 }
 
                 i++;
