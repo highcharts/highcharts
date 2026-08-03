@@ -1,4 +1,4 @@
-QUnit.test('Navigator and Gantt first render', assert => {
+QUnit.test('Navigator and Gantt first render (#24855)', assert => {
     const chart = Highcharts.ganttChart('container', {
         navigator: {
             enabled: true
@@ -16,19 +16,19 @@ QUnit.test('Navigator and Gantt first render', assert => {
         }]
     });
 
-    const SeriesColY = chart.series[0].dataTable.getColumn('y'),
-        NavSeriesColY = chart.navigator.series[0].dataTable.getColumn('y');
+    const seriesColY = chart.series[0].dataTable.getColumn('y'),
+        navSeriesColY = chart.navigator.series[0].dataTable.getColumn('y');
 
     assert.notStrictEqual(
-        NavSeriesColY,
+        navSeriesColY,
         undefined,
         'Column "y" should exist in navigator series data table'
     );
 
-    NavSeriesColY.forEach((_, i) => {
+    navSeriesColY.forEach((_, i) => {
         assert.strictEqual(
-            SeriesColY[i],
-            NavSeriesColY[i],
+            seriesColY[i],
+            navSeriesColY[i],
             '"y" column values in Nav and Chart series should be identical'
         );
     });
