@@ -29,6 +29,7 @@ import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
+import PictorialSeriesDefaults from './PictorialSeriesDefaults.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -99,7 +100,7 @@ declare module '../../Core/Axis/AxisOptions' {
 /**
  * The pictorial series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pictorial
  *
@@ -115,27 +116,7 @@ class PictorialSeries extends ColumnSeries {
 
     public static defaultOptions: PictorialSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        /**
-         * A pictorial chart uses vector images to represents the data.
-         * The shape of the data point is taken from the path parameter.
-         *
-         * @sample       {highcharts} highcharts/demo/pictorial/
-         *               Pictorial chart
-         *
-         * @extends      plotOptions.column
-         * @since 11.0.0
-         * @product      highcharts
-         * @excluding    allAreas, borderRadius,
-         *               centerInCategory, colorAxis, colorKey, connectEnds,
-         *               connectNulls, crisp, compare, compareBase, dataSorting,
-         *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
-         *               onPoint
-         * @requires     modules/pictorial
-         * @optionparent plotOptions.pictorial
-         */
-        {
-            borderWidth: 0
-        } as PictorialSeriesOptions
+        PictorialSeriesDefaults
     );
 
     /* *
