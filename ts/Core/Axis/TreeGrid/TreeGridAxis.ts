@@ -566,17 +566,13 @@ function wrapGenerateTick(
     const axis = this,
         mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {},
         isTreeGrid = axis.type === 'treegrid',
-        ticks = axis.ticks;
+        ticks = axis.ticks,
+        gridNode = axis.treeGrid.mapOfPosToGridNode?.[pos];
     let tick = ticks[pos],
         levelOptions,
-        options: (DeepPartial<AxisOptions> | undefined),
-        gridNode;
+        options: (DeepPartial<AxisOptions> | undefined);
 
-    if (
-        isTreeGrid &&
-        axis.treeGrid.mapOfPosToGridNode
-    ) {
-        gridNode = axis.treeGrid.mapOfPosToGridNode[pos];
+    if (isTreeGrid && gridNode) {
         levelOptions = mapOptionsToLevel[gridNode.depth];
 
         if (levelOptions) {
@@ -585,10 +581,7 @@ function wrapGenerateTick(
             };
         }
 
-        if (
-            !tick &&
-            TickConstructor
-        ) {
+        if (!tick && TickConstructor) {
             ticks[pos] = tick =
                 new TickConstructor(axis, pos, void 0, void 0, {
                     category: gridNode.name,
@@ -789,9 +782,7 @@ function wrapSetTickInterval(
     const axis = this,
         options = axis.options,
         time = axis.chart.time,
-        linkedParent = typeof options.linkedTo === 'number' ?
-            this.chart[axis.coll]?.[options.linkedTo] :
-            void 0,
+        linkedParent = axis.getLinkedParent(),
         isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {

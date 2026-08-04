@@ -109,7 +109,7 @@ QUnit.test('Updating a linked axis id (#24658)', function (assert) {
     // Linking by id resolves the master and inherits its extremes
     linked.update({ linkedTo: 'renamed' });
     assert.strictEqual(
-        linked.linkedParent && linked.linkedParent.options.id,
+        linked.linkedParent?.options.id,
         'renamed',
         'linkedTo resolves the master axis by id'
     );
