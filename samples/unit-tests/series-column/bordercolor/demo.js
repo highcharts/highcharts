@@ -80,3 +80,39 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Columns far below the axis maximum should stay visible (#23585)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            yAxis: {
+                max: 1000
+            },
+            plotOptions: {
+                column: {
+                    borderWidth: 1,
+                    borderColor: 'transparent'
+                }
+            },
+            series: [
+                {
+                    type: 'column',
+                    data: [1, 2, 3, 500]
+                }
+            ]
+        });
+
+        // Values 1, 2 and 3 are all under one pixel tall against a 1000
+        // maximum. They must still be rendered, not rounded away.
+        chart.series[0].points.slice(0, 3).forEach(function (point) {
+            assert.ok(
+                point.shapeArgs.height >= 1,
+                'Point ' + point.y + ' should keep a visible height, got ' +
+                    point.shapeArgs.height
+            );
+        });
+    }
+);

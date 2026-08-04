@@ -59,6 +59,20 @@ import {
  * */
 
 /** @internal */
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * The column height before it is rounded to whole pixels by
+         * `crispCol`. Used to rank data labels independently of pixel
+         * rounding (#23585).
+         *
+         * @internal
+         */
+        unroundedHeight?: number;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         /** @internal */
@@ -351,27 +365,12 @@ class ColumnSeries extends Series {
         height: number
     ): BBoxObject {
         const borderWidth = this.borderWidth,
-            inverted = this.chart.inverted;
+            inverted = this.chart.inverted,
+            bottom = crisp(y + height, borderWidth, inverted);
 
-        // Vertical. Sub-pixel bars (height under 1px, typically near a
-        // stack's zero baseline) collapse to height 0 instead of being
-        // crisped normally (#23585). crisp() alone rounds some of them up
-        // to 1px depending on which side of the rounding boundary they
-        // land on - a boundary that falls on a different series in column
-        // vs bar mode because plotHeight != plotWidth for the same data.
-        // Since labelrank defaults to shapeArgs.height (#4118), that stray
-        // 1px made a different series "win" the overlap contest between
-        // column and bar. Collapsing consistently to 0 keeps labelranks
-        // tied without changing the crisp edges of any bar large enough to
-        // actually be visible.
-        if (Math.abs(height) < 1) {
-            y = crisp(y, borderWidth, inverted);
-            height = 0;
-        } else {
-            const bottom = crisp(y + height, borderWidth, inverted);
-            y = crisp(y, borderWidth, inverted);
-            height = bottom - y;
-        }
+        // Vertical
+        y = crisp(y, borderWidth, inverted);
+        height = bottom - y;
 
         // Horizontal. We need to first compute the exact right edge, then
         // round it and compute the width from there.
@@ -653,6 +652,19 @@ class ColumnSeries extends Series {
             // `shapeType` defined on `pointClass` level.
             point.shapeType = series.pointClass.prototype.shapeType ||
                 'roundedRect';
+
+            const shapeHeight = point.isNull ? 0 : barH;
+
+            // Keep the height before crisping, for data label ranking
+            // (#23585). `crispCol` rounds the height to whole pixels, and
+            // for columns thinner than one pixel the rounding boundary
+            // falls on a different series in column vs bar mode, because
+            // plotHeight and plotWidth differ for the same data. That
+            // flipped which label survived overlap removal. The unrounded
+            // height scales with the point value, so it ranks the same in
+            // both orientations.
+            point.unroundedHeight = shapeHeight;
+
             point.shapeArgs = series.crispCol(
                 barX,
                 // #3169, drilldown from null must have a position to work from.
@@ -660,7 +672,7 @@ class ColumnSeries extends Series {
                 // the middle of the chart.
                 barY,
                 barW,
-                point.isNull ? 0 : barH
+                shapeHeight
             );
         });
 

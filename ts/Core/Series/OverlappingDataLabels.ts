@@ -347,6 +347,11 @@ function onChartRender(
                             label.labelrank = pick(
                                 options.labelrank,
                                 (point as any).labelrank,
+                                // Prefer the height before pixel rounding,
+                                // so ranking does not depend on which side
+                                // of a rounding boundary a sub-pixel column
+                                // happens to fall on (#23585)
+                                point.unroundedHeight,
                                 point.shapeArgs?.height
                             ); // #4118
 
