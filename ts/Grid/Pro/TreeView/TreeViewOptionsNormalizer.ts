@@ -78,10 +78,11 @@ export interface NormalizedTreeViewOptions {
     stickyParents: boolean;
 
     /**
-     * Whether tree view and row grouping were enabled at the same time and
-     * row grouping has been ignored.
+     * Whether row grouping has been ignored, because tree view was enabled at
+     * the same time.
+     * @internal
      */
-    hasFeatureConflict: boolean;
+    rowGroupingIgnored: boolean;
 }
 
 export interface ResolvedTreeViewOptions extends NormalizedTreeViewOptions {
@@ -245,6 +246,6 @@ export function normalizeTreeViewOptions(
             deprecatedRows?.stickyParents ??
             true
         ),
-        hasFeatureConflict: !!(treeView && rowGrouping)
+        rowGroupingIgnored: !!(treeView && rowGrouping)
     };
 }

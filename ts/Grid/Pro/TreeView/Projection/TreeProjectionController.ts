@@ -251,7 +251,7 @@ class TreeProjectionController {
 
     private resolvedOptions?: ResolvedTreeViewOptions;
 
-    private featureConflictWarned?: boolean;
+    private rowGroupingIgnoredWarned?: boolean;
 
     private cacheSource?: {
         table: DataTable;
@@ -307,8 +307,8 @@ class TreeProjectionController {
             dataOptions?.treeView
         );
 
-        this.syncFeatureConflictWarning(
-            !!normalizedOptions?.hasFeatureConflict
+        this.syncRowGroupingIgnoredWarning(
+            !!normalizedOptions?.rowGroupingIgnored
         );
 
         if (!normalizedOptions) {
@@ -392,19 +392,20 @@ class TreeProjectionController {
     }
 
     /**
-     * Warns once when tree view and row grouping are enabled at the same time.
+     * Warns once when row grouping is ignored, because tree view is enabled at
+     * the same time.
      *
-     * @param hasConflict
-     * Whether both features are currently enabled.
+     * @param isIgnored
+     * Whether row grouping is currently ignored.
      */
-    private syncFeatureConflictWarning(hasConflict: boolean): void {
-        if (hasConflict === !!this.featureConflictWarned) {
+    private syncRowGroupingIgnoredWarning(isIgnored: boolean): void {
+        if (isIgnored === !!this.rowGroupingIgnoredWarned) {
             return;
         }
 
-        this.featureConflictWarned = hasConflict;
+        this.rowGroupingIgnoredWarned = isIgnored;
 
-        if (hasConflict) {
+        if (isIgnored) {
             // eslint-disable-next-line no-console
             console.warn(
                 'TreeView: `treeView` and `rowGrouping` cannot be enabled at ' +
