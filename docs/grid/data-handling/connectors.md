@@ -104,7 +104,7 @@ Grid.grid('container', {
 ```
 
 For connector-specific setup, authentication, converters, and available table
-keys, see the [Morningstar documentation](https://www.highcharts.com/docs/morningstar).
+keys, see the [Morningstar documentation](https://www.highcharts.com/docs/morningstar/morningstar).
 
 ## Using non-bundled connectors
 
