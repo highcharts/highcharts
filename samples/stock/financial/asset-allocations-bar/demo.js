@@ -11,9 +11,9 @@ Highcharts.Templating.helpers.translateAssetAllocation = value =>
     assetAllocationTypes[value];
 
 
-async function renderWidget(orientation) {
+async function renderWidget() {
 
-    Dashboards.board(`${orientation}-container`, {
+    Dashboards.board('container', {
         dataPool: {
             // Fetch data with the Morningstar connector
             connectors: [{
@@ -50,22 +50,12 @@ async function renderWidget(orientation) {
             }]
         },
         gui: {
-            layouts: orientation === 'horizontal' ? [{
+            layouts: [{
                 rows: [{
                     cells: [{
                         id: 'datagrid'
                     }, {
-                        id: 'pie-chart'
-                    }]
-                }]
-            }] : [{
-                rows: [{
-                    cells: [{
-                        id: 'pie-chart'
-                    }]
-                }, {
-                    cells: [{
-                        id: 'datagrid'
+                        id: 'chart'
                     }]
                 }]
             }]
@@ -89,12 +79,13 @@ async function renderWidget(orientation) {
                     data: ['MorningstarEUR3_Type', 'MorningstarEUR3_L']
                 }]
             },
-            renderTo: 'pie-chart',
+            renderTo: 'chart',
             type: 'Highcharts',
             chartOptions: {
                 chart: {
                     type: 'bar',
-                    backgroundColor: 'transparent'
+                    spacingBottom: 0,
+                    styledMode: true
                 },
                 title: {
                     text: '',
@@ -110,13 +101,6 @@ async function renderWidget(orientation) {
                         innerSize: '90%',
                         borderWidth: 2,
                         borderRadius: 2,
-                        colors: [
-                            '#014CE5',
-                            '#29D36A',
-                            '#EA293C',
-                            '#000000',
-                            '#ABABAB'
-                        ],
                         dataLabels: {
                             enabled: false
                         },
@@ -142,12 +126,12 @@ async function renderWidget(orientation) {
                     formatter: function () {
                         const value =
                             Math.abs(this.point.y) < 0.005 ? 0 : this.point.y,
-                            color = this.point.color,
+                            colIndex = this.point.colorIndex,
                             name = this.point.name;
 
                         return `
                         <strong>
-                            <span style="color:${color};">▬ </span>
+                            <span class="highcharts-color-${colIndex}">▬</span>
                             ${assetAllocationTypes[name]}
                             ${this.series.options.assetType}
                             <span style="color:#8A8A8A;">
@@ -226,10 +210,11 @@ async function renderWidget(orientation) {
                         formatter: function () {
                             const points =
                                     Highcharts.charts[0].series[0].points,
-                                color = points.find(
+                                colIndex = points.find(
                                     point => point.name === this.value
-                                ).color;
-                            return `<span style='color:${color};'>▬</span>
+                                ).colorIndex;
+                            // eslint-disable-next-line max-len
+                            return `<span class="highcharts-color-${colIndex}">▬</span>
                                 ${assetAllocationTypes[this.value]}`;
                         }
                     }
@@ -272,5 +257,4 @@ async function renderWidget(orientation) {
     }, true);
 }
 
-renderWidget('horizontal');
-renderWidget('vertical');
+renderWidget();
