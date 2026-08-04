@@ -56,7 +56,7 @@ import type SankeySeries from './SankeySeries';
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  *
- * @private
+ * @internal
  */
 const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
@@ -69,7 +69,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * wheel render more curved. A `curveFactor` of 0 makes the lines
      * straight.
      *
-     * @private
+     * @internal
      */
     curveFactor: 0.33,
 
@@ -82,7 +82,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      *
      * @declare Highcharts.SeriesSankeyDataLabelsOptionsObject
      *
-     * @private
+     * @internal
      */
     dataLabels: {
 
@@ -135,7 +135,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * @default   true
      * @extends   plotOptions.series.inactiveOtherPoints
-     * @private
+     * @internal
      */
     inactiveOtherPoints: true,
 
@@ -233,14 +233,14 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Opacity for the links between nodes in the sankey diagram.
      *
-     * @private
+     * @internal
      */
     linkOpacity: 0.5,
 
     /**
      * Opacity for the nodes in the sankey diagram.
      *
-     * @private
+     * @internal
      */
     opacity: 1,
 
@@ -256,7 +256,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * @default   0
      * @apioption plotOptions.sankey.minLinkWidth
      *
-     * @private
+     * @internal
      */
     minLinkWidth: 0,
 
@@ -674,4 +674,5 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  *
  * */
 
+/** @internal */
 export default SankeySeriesDefaults;
