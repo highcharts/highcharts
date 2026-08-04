@@ -37,7 +37,7 @@ import { merge, pick } from '../../Shared/Utilities.js';
 /**
  * Spline series type.
  *
- * @private
+ * @internal
  */
 class SplineSeries extends LineSeries {
 
@@ -86,7 +86,7 @@ class SplineSeries extends LineSeries {
      * Get the spline segment from a given point's previous neighbor to the
      * given point.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.spline#getPointSpline
      */
     public getPointSpline(
@@ -110,7 +110,7 @@ class SplineSeries extends LineSeries {
             rightContY: number;
 
         /**
-         * @private
+         * @internal
          */
         function doCurve(otherPoint: SplinePoint): boolean {
             return otherPoint &&
@@ -263,6 +263,7 @@ class SplineSeries extends LineSeries {
  *
  * */
 
+/** @internal */
 interface SplineSeries {
     pointClass: typeof SplinePoint;
 }
@@ -273,6 +274,7 @@ interface SplineSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         spline: typeof SplineSeries;
@@ -286,6 +288,7 @@ SeriesRegistry.registerSeriesType('spline', SplineSeries);
  *
  * */
 
+/** @internal */
 export default SplineSeries;
 
 /* *
