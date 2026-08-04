@@ -1195,10 +1195,7 @@ class Axis {
         const axis = (this.linkedParent || this), // #1417
             localMin = (old && axis.old ? axis.old.min : axis.min),
             // Scale for a linked axis with its own pixel length (#1417)
-            lenRatio = (
-                axis !== this && axis.len && this.len &&
-                axis.len !== this.len
-            ) ? this.len / axis.len : 1;
+            lenRatio = (this.len && axis.len) ? this.len / axis.len : 1;
 
         if (!isNumber(localMin)) {
             return NaN;
