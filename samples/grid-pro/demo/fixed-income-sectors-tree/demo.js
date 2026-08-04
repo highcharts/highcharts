@@ -109,12 +109,12 @@ Grid.grid('container', {
                             data: [cellValue],
                             zones: [{
                                 value: 10,
-                                color: 'red'
+                                color: '#ff0000'
                             }, {
                                 value: 30,
-                                color: 'yellow'
+                                color: '#bebe00'
                             }, {
-                                color: 'green'
+                                color: '#008000'
                             }]
                         }]
                     };
