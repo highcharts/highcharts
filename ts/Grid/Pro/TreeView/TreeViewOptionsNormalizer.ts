@@ -60,8 +60,8 @@ export interface NormalizedTreeInputPathOptions {
 export interface NormalizedTreeInputGroupingOptions {
     type: 'grouping';
     groupBy: string[];
-    groupColumn: string;
-    hideGroupedColumns: boolean;
+    groupColumnId: string;
+    hideGroupByColumns: boolean;
 }
 
 export type NormalizedTreeInputOptions = (
@@ -164,8 +164,8 @@ function normalizeGroupingInput(
     return {
         type: 'grouping',
         groupBy: normalizeGroupBy(rowGrouping.groupBy),
-        groupColumn: rowGrouping.groupColumn || 'group',
-        hideGroupedColumns: rowGrouping.hideGroupedColumns !== false
+        groupColumnId: rowGrouping.groupColumnId || 'group',
+        hideGroupByColumns: rowGrouping.hideGroupByColumns !== false
     };
 }
 

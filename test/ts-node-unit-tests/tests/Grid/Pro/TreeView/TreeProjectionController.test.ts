@@ -1588,7 +1588,7 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
-    it('should keep grouped source columns rendered with hideGroupedColumns disabled', async () => {
+    it('should keep grouped source columns rendered with hideGroupByColumns disabled', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -1606,7 +1606,7 @@ describe('TreeProjectionController', () => {
             rowGrouping: {
                 enabled: true,
                 groupBy: ['region', 'segment'],
-                hideGroupedColumns: false
+                hideGroupByColumns: false
             },
             rendering: {
                 rows: {
@@ -1648,6 +1648,133 @@ describe('TreeProjectionController', () => {
             grid.viewport.columns.map((column: AnyRecord): string => column.id),
             ['group', 'region', 'segment', 'product'],
             'Grouped source columns should stay rendered.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should render group labels in place of a reused groupBy column', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'APAC'],
+                    account: ['Luma', 'Mercury', 'Harbor']
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: 'region',
+                groupColumnId: 'region'
+            },
+            rendering: {
+                rows: {
+                    expandedLevels: 'all'
+                }
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            grid.viewport.columns.map((column: AnyRecord): string => column.id),
+            ['region', 'account'],
+            'The reused column ID should stay rendered as the group column.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.region,
+            ['EMEA', null, null, 'APAC', null],
+            'The reused column should carry group labels on group rows only, ' +
+            'like the default generated group column.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should position the group column by header order', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'APAC'],
+                    account: ['Luma', 'Mercury', 'Harbor'],
+                    revenue: [10, 20, 30]
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: 'region'
+            },
+            header: ['account', 'group', 'revenue']
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            grid.viewport.columns.map((column: AnyRecord): string => column.id),
+            ['account', 'group', 'revenue'],
+            'The group column should follow the configured header order.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should reset a columnDefaults aggregator with `aggregator: false`', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'APAC'],
+                    revenue: [10, 20, 30],
+                    units: [1, 2, 3]
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: 'region'
+            },
+            rendering: {
+                rows: {
+                    expandedLevels: 'all'
+                }
+            },
+            columnDefaults: {
+                aggregator: 'SUM'
+            },
+            columns: [{
+                id: 'units',
+                aggregator: false
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const presentationTable = (grid.dataProvider as any).getDataTable(true);
+
+        deepStrictEqual(
+            presentationTable.columns.revenue,
+            [30, 10, 20, 30, 30],
+            'The columnDefaults aggregator should apply to group rows.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.units,
+            [null, 1, 2, null, 3],
+            'A column with `aggregator: false` should not aggregate.'
         );
 
         grid.destroy();

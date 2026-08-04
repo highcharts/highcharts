@@ -643,6 +643,9 @@ declare module '../../Core/Options' {
          * and should return a registered Formula processor function name, or a
          * falsy value to skip aggregation for the current row.
          *
+         * Set it in `columnDefaults` to aggregate every column the same way,
+         * and to `false` in a single column to reset that default.
+         *
          * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
          * @sample grid-pro/options/row-grouping Row grouping
          */

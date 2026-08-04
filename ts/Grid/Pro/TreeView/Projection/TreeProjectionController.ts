@@ -349,7 +349,7 @@ class TreeProjectionController {
 
         const treeColumn = normalizedOptions.treeColumn || (
             resolvedInput.type === 'grouping' ?
-                resolvedInput.groupColumn :
+                resolvedInput.groupColumnId :
                 void 0
         );
         const options: ResolvedTreeViewOptions = {
@@ -436,9 +436,16 @@ class TreeProjectionController {
      */
     public getHiddenSourceColumnIds(): string[] | undefined {
         const input = this.options?.input;
-        return input?.type === 'grouping' && input.hideGroupedColumns ?
-            input.groupBy.slice() :
-            void 0;
+
+        if (input?.type !== 'grouping' || !input.hideGroupByColumns) {
+            return;
+        }
+
+        // The group column keeps rendering even when it reuses a grouped
+        // column ID.
+        return input.groupBy.filter(
+            (columnId): boolean => columnId !== input.groupColumnId
+        );
     }
 
     /**
@@ -1466,16 +1473,16 @@ class TreeProjectionController {
         }
 
         const groupedColumnIds = new Set(input.groupBy);
-        const projectedColumnIds = [input.groupColumn];
+        const projectedColumnIds = [input.groupColumnId];
 
         for (let i = 0, iEnd = sourceColumnIds.length; i < iEnd; ++i) {
             const columnId = sourceColumnIds[i];
             if (
                 (
-                    input.hideGroupedColumns &&
+                    input.hideGroupByColumns &&
                     groupedColumnIds.has(columnId)
                 ) ||
-                columnId === input.groupColumn
+                columnId === input.groupColumnId
             ) {
                 continue;
             }
@@ -1722,7 +1729,7 @@ class TreeProjectionController {
 
         return (
             input?.type === 'grouping' &&
-            sourceColumnId === input.groupColumn
+            sourceColumnId === input.groupColumnId
         );
     }
 
@@ -1752,7 +1759,7 @@ class TreeProjectionController {
 
         if (input.type === 'grouping') {
             return (
-                sourceColumnId === input.groupColumn ||
+                sourceColumnId === input.groupColumnId ||
                 input.groupBy.indexOf(sourceColumnId) !== -1
             );
         }
@@ -1809,7 +1816,7 @@ class TreeProjectionController {
 
         const groupValues = node.groupValues;
         if (input.type === 'grouping' && groupValues) {
-            if (columnId === input.groupColumn) {
+            if (columnId === input.groupColumnId) {
                 return groupValues[groupValues.length - 1];
             }
 

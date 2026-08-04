@@ -209,7 +209,7 @@ function validateInput(
     input: NormalizedTreeInputGroupingOptions
 ): void {
     const { columns } = table;
-    const { groupBy, groupColumn } = input;
+    const { groupBy, groupColumnId } = input;
 
     if (!groupBy.length) {
         throw new Error(
@@ -217,9 +217,9 @@ function validateInput(
         );
     }
 
-    if (!groupColumn) {
+    if (!groupColumnId) {
         throw new Error(
-            'TreeView: `rowGrouping.groupColumn` must not be empty.'
+            'TreeView: `rowGrouping.groupColumnId` must not be empty.'
         );
     }
 
@@ -240,16 +240,18 @@ function validateInput(
         }
     }
 
+    // Reusing a hidden `groupBy` column ID renders group labels in place of
+    // that source column. Any other collision would shadow source data.
     if (
-        columns[groupColumn] &&
+        columns[groupColumnId] &&
         (
-            !groupBySet.has(groupColumn) ||
-            !input.hideGroupedColumns
+            !groupBySet.has(groupColumnId) ||
+            !input.hideGroupByColumns
         )
     ) {
         throw new Error(
-            `TreeView: groupColumn "${groupColumn}" conflicts with an ` +
-            'existing source column.'
+            `TreeView: \`rowGrouping.groupColumnId\` "${groupColumnId}" ` +
+            'conflicts with an existing source column.'
         );
     }
 }

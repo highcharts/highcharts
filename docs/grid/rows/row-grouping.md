@@ -71,7 +71,7 @@ also the tree column of the grouped table. Configure it as any other column:
 rowGrouping: {
     enabled: true,
     groupBy: 'region',
-    groupColumn: 'group'
+    groupColumnId: 'group'
 },
 columns: [{
     id: 'group',
@@ -83,11 +83,46 @@ columns: [{
 ```
 
 The default header of the generated column comes from
-`lang.rowGrouping.columnHeader`. The column ID must not collide with a
-source column ID.
+`lang.rowGrouping.columnHeader`.
+
+### Replacing a grouped column
+
+Set `groupColumnId` to one of the `groupBy` column IDs to render group labels in
+place of that source column instead of adding a column. This requires
+`hideGroupByColumns` to stay enabled, since the generated column takes over the
+ID. Collisions with any other source column ID are rejected, because they would
+shadow that column's data.
+
+```js
+rowGrouping: {
+    enabled: true,
+    groupBy: 'region',
+    groupColumnId: 'region'
+}
+```
+
+### Column position
+
+The generated column is rendered first by default. Use
+[`header`](https://www.highcharts.com/docs/grid/columns/header) to place it
+anywhere in the column order:
+
+```js
+rowGrouping: {
+    enabled: true,
+    groupBy: 'region',
+    groupColumnId: 'group'
+},
+header: ['account', 'group', 'revenue']
+```
+
+As with any `header` configuration, every column that should stay rendered has
+to be listed, including the generated group column.
+
+### Hiding grouped columns
 
 Grouped columns are hidden from the rendered table by default, because their
-values are already represented by the group rows. Set `hideGroupedColumns` to
+values are already represented by the group rows. Set `hideGroupByColumns` to
 `false` to keep them visible - group rows then repeat the group value of their
 own and their ancestor levels.
 
@@ -95,7 +130,7 @@ own and their ancestor levels.
 rowGrouping: {
     enabled: true,
     groupBy: ['region', 'segment'],
-    hideGroupedColumns: false
+    hideGroupByColumns: false
 }
 ```
 
@@ -113,6 +148,21 @@ columns: [{
 }, {
     id: 'margin',
     aggregator: 'AVERAGE'
+}]
+```
+
+To aggregate most columns the same way, set the aggregator in `columnDefaults`
+and reset it with `aggregator: false` where it does not apply. Note that a
+default aggregator also reaches text columns, where numeric functions such as
+`SUM` resolve to `0`.
+
+```js
+columnDefaults: {
+    aggregator: 'SUM'
+},
+columns: [{
+    id: 'account',
+    aggregator: false
 }]
 ```
 
