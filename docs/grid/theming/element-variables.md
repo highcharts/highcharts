@@ -185,14 +185,6 @@ Header toolbar controls use the dedicated `--hcg-icon-*` variables described bel
 }
 ```
 
-## Editing and validation __grid_pro__
-
-Grid Pro edit mode and validation notifications use the tokens below.
-
-In the tables below, **Default Value** for edit mode and notification box-shadow comes from `.hcg-theme-default`. Status colors use the built-in light/dark highlight palette unless overridden.
-
-Without `.hcg-theme-default`, editable cell background and notification shadow stay neutral so custom themes and utility CSS are not fighting baked-in visuals.
-
 ### Edit mode
 
 | Variable                       | Default Value   | Valid Values |
