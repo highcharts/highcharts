@@ -26,6 +26,12 @@ As the user scrolls horizontally, columns entering the viewport are rendered and
 
 Row and column virtualization are independent and can be combined. In a data set that is both wide and long, only the intersection of both windows is rendered.
 
+## Performance impact
+
+With virtualization, the number of rendered cells depends on the size of the viewport, not on the size of the data set. A grid of 200 columns and 1000 rows would create 200 000 cells if every column were rendered. With virtualization, it creates only the cells that fit on the screen — around 15 columns by 30 rows.
+
+As a result, adding columns does not make the grid slower: 200 columns render as fast as 20. The same applies to memory usage and to how quickly the grid reacts to data updates.
+
 ## Virtualization threshold
 
 By default, column virtualization turns on when the column count reaches 20. Below that, all columns are rendered.
