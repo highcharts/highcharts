@@ -6,11 +6,11 @@ Highcharts.chart('container', {
         }
     },
     title: {
-        HTML: true,
+        useHTML: true,
         text: 'Consumer Price Index vs Wages Increase (Norway)'
     },
     subtitle: {
-        HTML: true,
+        useHTML: true,
         text:
         'Source: <a href="https://www.ssb.no/en/priser-og-prisindekser/konsumpriser/statistikk/konsumprisindeksen" target="_blank">SSB</a>'
     },
