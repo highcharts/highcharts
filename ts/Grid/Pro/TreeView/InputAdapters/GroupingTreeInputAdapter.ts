@@ -136,7 +136,8 @@ export function buildIndexFromColumns(
     const ensureGroupNode = (
         key: string,
         parentId: RowId | null,
-        groupValues: DataTableCellType[]
+        rowGroupValues: DataTableCellType[],
+        depth: number
     ): RowId => {
         const existingId = groupNodeIdByKey.get(key);
         if (defined(existingId)) {
@@ -149,7 +150,7 @@ export function buildIndexFromColumns(
             parentId,
             rowIndex: null,
             isGenerated: true,
-            groupValues,
+            groupValues: rowGroupValues.slice(0, depth),
             childrenIds: []
         });
         rowOrder.push(generatedNodeId);
@@ -172,7 +173,8 @@ export function buildIndexFromColumns(
             parentId = ensureGroupNode(
                 key,
                 parentId,
-                row.groupValues.slice(0, i + 1)
+                row.groupValues,
+                i + 1
             );
         }
 

@@ -77,7 +77,7 @@ Grid.grid('container', {
     },
     rendering: {
         rows: {
-            expandedRowIds: [1, 2, 3, 13] // Values from defined idColum above
+            expandedRowIds: [1, 2, 3, 13] // Values from defined idColumn above
         }
     },
     columnDefaults: {
