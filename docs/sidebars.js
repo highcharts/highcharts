@@ -128,7 +128,8 @@ module.exports = {
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
                     'grid/columns/sorting',
-                    'grid/columns/filtering'
+                    'grid/columns/filtering',
+                    'grid/columns/virtualization'
                 ]
             },
             {
