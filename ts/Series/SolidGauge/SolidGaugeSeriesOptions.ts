@@ -53,6 +53,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @product highcharts
  *
+ * @requires highcharts-more
+ *
  * @requires modules/solid-gauge
  */
 export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
@@ -111,13 +113,9 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|null|*>}
-     *
      * @extends series.gauge.data
      *
      * @product highcharts
-     *
-     * @apioption series.solidgauge.data
      */
     data?: Array<(number|null|SolidGaugePointOptions)>;
 
@@ -214,6 +212,36 @@ export interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
      * @product highcharts
      */
     threshold?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    animationLimit?: undefined;
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    connectEnds?: undefined;
+    connectNulls?: undefined;
+    cropThreshold?: undefined;
+    dashStyle?: undefined;
+    dataParser?: undefined;
+    dataSorting?: undefined;
+    dataURL?: undefined;
+    findNearestPointBy?: undefined;
+    getExtremesFromAll?: undefined;
+    negativeColor?: undefined;
+    pointPlacement?: undefined;
+    shadow?: undefined;
+    softThreshold?: undefined;
+    stack?: undefined;
+    stacking?: undefined;
+    step?: undefined;
+    turboThreshold?: undefined;
+    wrap?: undefined;
+    zoneAxis?: undefined;
+    zones?: undefined;
 
 }
 
