@@ -71,6 +71,71 @@ Grid.grid('container', {
 });
 ```
 
+## Using Morningstar connectors
+
+Grid can also use built-in Morningstar connector types through
+`data.connector`, for example `MorningstarDWSInvestments`.
+
+Some Morningstar connectors expose multiple data tables. In that case, use
+`dataTableKey` to choose which returned table Grid should render.
+
+```js
+Grid.grid('container', {
+    data: {
+        connector: {
+            type: 'MorningstarDWSInvestments',
+            api: {
+                url: 'https://demo-live-data.highcharts.com',
+                access: {
+                    url: 'https://demo-live-data.highcharts.com/token/oauth',
+                    token: 'token'
+                }
+            },
+            security: {
+                id: '0P00002QN3'
+            },
+            converters: {
+                FixedIncomeSectorsBreakdown: {}
+            }
+        },
+        dataTableKey: 'IncAllSectors'
+    }
+});
+```
+
+For connector-specific setup, authentication, converters, and available table
+keys, see the [Morningstar documentation](https://www.highcharts.com/docs/morningstar).
+
+## Using non-bundled connectors
+
+You can also use connectors that are not available as Grid `data.connector`
+types. In that case, load the connector separately and pass the resulting
+`DataTable` to Grid through `data.dataTable`.
+
+```js
+const securityDetailsConnector =
+    new HighchartsConnectors.Morningstar.SecurityDetailsConnector({
+        api: {
+            access: {
+                token: 'your_access_token'
+            }
+        },
+        security: {
+            id: 'F0GBR050DD',
+            idType: 'MSID'
+        },
+        converters: ['PortfolioHoldings']
+    });
+
+await securityDetailsConnector.load();
+
+Grid.grid('container', {
+    data: {
+        dataTable: securityDetailsConnector.dataTables.PortfolioHoldings
+    }
+});
+```
+
 ## When to use connectors
 
 Use connectors when:
