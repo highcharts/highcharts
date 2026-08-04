@@ -108,11 +108,13 @@ abstract class Row {
      */
     public async render(): Promise<void> {
         const columns = this.viewport.columns;
+        const cells: Cell[] = [];
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
-            const cell = this.createCell(columns[i]);
-            await cell.render();
+            cells.push(this.createCell(columns[i]));
         }
+
+        await Promise.all(cells.map((cell): Promise<void> => cell.render()));
         this.rendered = true;
 
         if (this.viewport.virtualRows) {

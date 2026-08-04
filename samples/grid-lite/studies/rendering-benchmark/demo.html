@@ -1,0 +1,104 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+
+<div class="demo">
+    <div class="bench-controls">
+        <button id="run-suite">Run suite</button>
+        <button id="run-virtualized">Run virtualized</button>
+        <button id="run-full-dom">Run full DOM</button>
+        <button id="clear-results">Clear results</button>
+        <label>
+            Rows
+            <input id="rows" type="number" min="100" step="100" value="1000">
+        </label>
+        <label>
+            Columns
+            <input id="columns" type="number" min="4" step="1" value="20">
+        </label>
+        <label>
+            Scroll rows/sec
+            <input
+                id="scroll-rows-per-sec"
+                type="number"
+                min="500"
+                step="500"
+                value="12000"
+            >
+        </label>
+        <label>
+            Scroll duration
+            <input
+                id="scroll-duration"
+                type="number"
+                min="500"
+                step="250"
+                value="1500"
+            >
+        </label>
+        <label>
+            Resize iterations
+            <input
+                id="resize-iterations"
+                type="number"
+                min="2"
+                step="1"
+                value="3"
+            >
+        </label>
+        <label>
+            Buffer size
+            <input id="buffer-size" type="number" min="0" step="1" value="10">
+        </label>
+    </div>
+
+    <div class="bench-meta">
+        <p>Status: <strong id="status">Idle</strong></p>
+        <p>Current profile: <strong id="current-profile">-</strong></p>
+        <p>Grid version: <strong id="grid-version">-</strong></p>
+        <p>Method: <strong>Same data, fresh grid per profile</strong></p>
+    </div>
+
+    <div class="bench-layout">
+        <section class="bench-block">
+            <h3>Summary</h3>
+            <div class="bench-scroll">
+                <table class="bench-results">
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th>Rows in DOM</th>
+                            <th>Init ready</th>
+                            <th>Init paint</th>
+                            <th>Scroll avg FPS</th>
+                            <th>Scroll P5 FPS</th>
+                            <th>Scroll P95 render</th>
+                            <th>Scroll P95 handler</th>
+                            <th>Resize avg</th>
+                            <th>Resize P95</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body"></tbody>
+                </table>
+            </div>
+
+            <h3>Details</h3>
+            <pre id="details-output">Run a benchmark to populate results.</pre>
+        </section>
+
+        <section class="bench-block">
+            <h3>Benchmark stage</h3>
+            <div class="bench-stage">
+                <div id="container"></div>
+            </div>
+        </section>
+    </div>
+
+    <p class="highcharts-description">
+        This study compares two Grid rendering profiles on the same generated
+        dataset: one with row virtualization enabled and one with a full DOM
+        render. Each run recreates the grid from scratch, measures
+        initialization until the async Grid promise resolves and the next paint
+        lands, then runs a fast synthetic scroll and a resize/reflow loop.
+        Use it as a repeatable baseline when validating rendering
+        optimizations.
+    </p>
+</div>
