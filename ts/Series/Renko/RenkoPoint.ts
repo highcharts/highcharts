@@ -34,10 +34,16 @@ const {
  *
  * */
 
+/** @internal */
 class RenkoPoint extends ColumnPoint {
     public options!: RenkoPointOptions;
+
+    /** @internal */
     public upTrend!: boolean;
+
     public series!: RenkoSeries;
+
+    /** @internal */
     public getClassName(): string {
         return (
             super.getClassName.call(this) +
@@ -52,4 +58,5 @@ class RenkoPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default RenkoPoint;
