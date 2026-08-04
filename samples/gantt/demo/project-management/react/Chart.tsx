@@ -113,16 +113,12 @@ export default function ProjectManagementChart() {
                 }
             />
             <XAxis
-                dateTimeLabelFormats={
-                    {
-                        day: {
-                            main: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>',
-                            list: null
-                        }
-                    } as unknown as Parameters<
-                        typeof XAxis
-                    >[0]['dateTimeLabelFormats']
-                }
+                dateTimeLabelFormats={{
+                    day: {
+                        main: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>',
+                        list: undefined
+                    }
+                }}
                 grid={{ borderWidth: 0, cellHeight: 46 }}
                 gridLineWidth={1}
                 min={today - 3 * day}
@@ -142,13 +138,9 @@ export default function ProjectManagementChart() {
                 } as unknown as Partial<Parameters<typeof XAxis>[0]>)}
             />
             <XAxis
-                dateTimeLabelFormats={
-                    {
-                        month: { main: '%[bY]', list: null }
-                    } as unknown as Parameters<
-                        typeof XAxis
-                    >[0]['dateTimeLabelFormats']
-                }
+                dateTimeLabelFormats={{
+                    month: { main: '%[bY]', list: undefined }
+                }}
                 labels={{
                     align: 'left',
                     x: 5,
