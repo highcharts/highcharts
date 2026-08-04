@@ -291,7 +291,7 @@ export interface BreadcrumbsOptions {
      * `spacingBox`.
      *
      * @type    {Highcharts.ButtonRelativeToValue}
-     * @default plotBox
+     * @default 'plotBox'
      * @since   10.0.0
      * @product highcharts highmaps
      */

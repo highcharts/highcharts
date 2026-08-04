@@ -17,9 +17,8 @@
  * */
 
 import type ColumnPoint from '../Column/ColumnPoint';
-import type DotPlotPointOptions from './DotPlotPointOptions';
-import type DotPlotSeries from './DotPlotSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type ColumnPyramidPointOptions from './ColumnPyramidPointOptions';
+import type ColumnPyramidSeries from './ColumnPyramidSeries';
 
 /* *
  *
@@ -27,10 +26,10 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
  *
  * */
 
-declare class DotPlotPoint extends ColumnPoint {
-    public options: DotPlotPointOptions;
-    public pointAttr?: SVGAttributes;
-    public series: DotPlotSeries;
+/** @internal */
+declare class ColumnPyramidPoint extends ColumnPoint {
+    public options: ColumnPyramidPointOptions;
+    public series: ColumnPyramidSeries;
 }
 
 /* *
@@ -39,4 +38,5 @@ declare class DotPlotPoint extends ColumnPoint {
  *
  * */
 
-export default DotPlotPoint;
+/** @internal */
+export default ColumnPyramidPoint;
