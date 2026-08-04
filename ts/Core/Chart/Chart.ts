@@ -29,6 +29,7 @@ import type AxisType from '../Axis/AxisType';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorAxisOptions from '../Axis/Color/ColorAxisOptions';
 import type {
+    CSSLength,
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
@@ -2404,14 +2405,14 @@ class Chart {
      *
      * @function Highcharts.Chart#setSize
      *
-     * @param {number|string|null} [width]
+     * @param {number|Highcharts.CSSLength|null} [width]
      *        The new width of the chart. A number sets pixels; a string is
      *        resolved as a CSS length expression by the browser (e.g.
      *        `'50%'`, `'20em'`, `'calc(var(--gap) * 2)'`). Pass `null` to
      *        adapt to the containing element's width, or `undefined` to
      *        leave it unchanged.
      *
-     * @param {number|string|null} [height]
+     * @param {number|Highcharts.CSSLength|null} [height]
      *        The new height of the chart. A number sets pixels; a string is
      *        resolved as a CSS length expression by the browser (e.g.
      *        `'50%'`, `'20em'`, `'calc(var(--gap) * 2)'`). Pass `null` to
@@ -2427,8 +2428,8 @@ class Chart {
      * @emits Highcharts.Chart#event:resize
      */
     public setSize(
-        width?: (number|string|null),
-        height?: (number|string|null),
+        width?: (number|CSSLength|null),
+        height?: (number|CSSLength|null),
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const chart = this,

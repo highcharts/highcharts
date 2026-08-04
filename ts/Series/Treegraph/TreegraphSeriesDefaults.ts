@@ -78,7 +78,7 @@ const TreegraphSeriesDefaults = {
          * plot height. Also accepts a CSS length expression, e.g. `'1em'`
          * or `'calc(var(--radius) * 2)'`.
          *
-         * @type {number|string}
+         * @type {number|Highcharts.CSSLength}
          */
         radius: 10,
         lineWidth: 0,

@@ -27,6 +27,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
@@ -264,13 +265,13 @@ class Fullscreen {
     public origHeight?: number;
 
     /** @internal */
-    public origHeightOption?: (number | string | null);
+    public origHeightOption?: (number|CSSLength|null);
 
     /** @internal */
     public origWidth?: number;
 
     /** @internal */
-    public origWidthOption?: (number | string | null);
+    public origWidthOption?: (number|CSSLength|null);
 
     /** @internal */
     public unbindFullscreenEvent?: Function;

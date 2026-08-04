@@ -22,6 +22,7 @@ import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
 } from '../Column/ColumnSeriesOptions';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type XRangePointOptions from './XRangePointOptions';
@@ -78,9 +79,9 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
      * string denotes a percentage of the point height. Also accepts a CSS
      * length expression, e.g. `'1em'` or `'calc(var(--radius) * 2)'`.
      *
-     * @type {number|string}
+     * @type {number|Highcharts.CSSLength}
      */
-    borderRadius?: (number|string);
+    borderRadius?: (number|CSSLength);
 
     /**
      * In an X-range series, this option makes all points of the same Y-axis

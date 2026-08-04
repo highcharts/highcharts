@@ -10,6 +10,7 @@
  * */
 
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type { CSSLength } from '../Core/Renderer/CSSObject';
 import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -1514,7 +1515,7 @@ export function pushUnique(
  *
  * @function Highcharts.relativeLength
  *
- * @param {Highcharts.RelativeSize|null|undefined} value
+ * @param {number|Highcharts.CSSLength|null|undefined} value
  *        A number, a percentage string, or a CSS length expression.
  *        Nullish values resolve to `NaN`.
  *
@@ -1539,7 +1540,7 @@ export function pushUnique(
  *         The computed length in pixels.
  */
 export function relativeLength(
-    value: (RelativeSize|null|undefined),
+    value: (number|CSSLength|null|undefined),
     base: number,
     offset?: number,
     parent: DOMElementType = doc.body
@@ -1949,6 +1950,6 @@ export interface EventWrapperObject<T> {
 }
 
 
-export type RelativeSize = (number|string); interface WrapProceedFunction<T extends ArrowFunction> {
+interface WrapProceedFunction<T extends ArrowFunction> {
     (proceed: (T&ArrowFunction), ...args: Array<any>): ReturnType<T>;
 }

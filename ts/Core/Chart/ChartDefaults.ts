@@ -349,7 +349,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highcharts} highcharts/chart/margin-css-variables/
      *         Margins from CSS variables
      *
-     * @type      {number|string|Array<(number|string)>}
+     * @type      {number|Highcharts.CSSLength|Array<(number|Highcharts.CSSLength)>}
      * @apioption chart.margin
      */
 
@@ -366,7 +366,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @since     2.0
      * @apioption chart.marginBottom
      */
@@ -386,7 +386,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @since     2.0
      * @apioption chart.marginLeft
      */
@@ -406,7 +406,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @since     2.0
      * @apioption chart.marginRight
      */
@@ -423,7 +423,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @since     2.0
      * @apioption chart.marginTop
      */
@@ -947,7 +947,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @default   15
      * @since     2.1
      * @apioption chart.spacingBottom
@@ -966,7 +966,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @default   10
      * @since     2.1
      * @apioption chart.spacingLeft
@@ -987,7 +987,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @default   10
      * @since     2.1
      * @apioption chart.spacingRight
@@ -1009,7 +1009,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
-     * @type      {number|string}
+     * @type      {number|Highcharts.CSSLength}
      * @default   10
      * @since     2.1
      * @apioption chart.spacingTop
@@ -1269,7 +1269,9 @@ const ChartDefaults: ChartOptions = {
     },
     /**
      * An explicit width for the chart. By default (when `null`) the width
-     * is calculated from the offset width of the containing element.
+     * is calculated from the offset width of the containing element. Also
+     * accepts a percentage string (e.g. `'75%'`) or any CSS length
+     * expression, e.g. `'30em'` or `'calc(var(--chart-width) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/width/
      *         800px wide
@@ -1278,7 +1280,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
      *
-     * @type {null|number|string}
+     * @type {null|number|Highcharts.CSSLength}
      */
     width: null,
 
@@ -1287,7 +1289,8 @@ const ChartDefaults: ChartOptions = {
      * given in pixels. If given a _percentage string_ (for example
      * `'56%'`), the height is given as the percentage of the actual chart
      * width. This allows for preserving the aspect ratio across responsive
-     * sizes.
+     * sizes. Also accepts a CSS length expression, e.g. `'30em'` or
+     * `'calc(var(--chart-height) * 2)'`.
      *
      * By default (when `null`) the height is calculated from the offset
      * height of the containing element, or 400 pixels if the containing
@@ -1304,7 +1307,7 @@ const ChartDefaults: ChartOptions = {
      * @sample highcharts/chart/height-inherited/
      *         Chart with inherited height
      *
-     * @type {null|number|string}
+     * @type {null|number|Highcharts.CSSLength}
      */
     height: null,
 

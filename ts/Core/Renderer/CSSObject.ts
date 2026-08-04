@@ -25,6 +25,9 @@ import ColorType from '../Color/ColorType';
  *
  * */
 
+
+export type CSSLength = string;
+
 export type CursorValue = (
     'alias'|'all-scroll'|'auto'|'cell'|'col-resize'|'context-menu'|
     'copy'|'crosshair'|'default'|'e-resize'|'ew-resize'|'grab'|
@@ -147,7 +150,7 @@ export interface CSSObject {
     /**
      * Font size.
      */
-    fontSize?: (number|string);
+    fontSize?: (number|CSSLength);
     /**
      * Font style.
      */
@@ -179,7 +182,7 @@ export interface CSSObject {
     /**
      * Line width (not a standard CSS property, used internally).
      */
-    lineWidth?: (number|string);
+    lineWidth?: (number|CSSLength);
     /**
      * List style.
      */
@@ -239,7 +242,7 @@ export interface CSSObject {
     /**
      * Padding.
      */
-    padding?: number|string;
+    padding?: (number|CSSLength);
     /**
      * Pointer events.
      */
@@ -267,7 +270,7 @@ export interface CSSObject {
     /**
      * Stroke width.
      */
-    'stroke-width'?: (number|string);
+    'stroke-width'?: (number|CSSLength);
     /**
      * Stroke width.
      */
