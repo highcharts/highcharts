@@ -36,6 +36,7 @@ import { addEvent, defined, pick } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
@@ -51,7 +52,7 @@ declare module '../../Core/Chart/ChartBase' {
  * */
 
 /**
- * @private
+ * @internal
  */
 function chartGetSelectedParentNodes(
     this: Chart
@@ -71,7 +72,7 @@ function chartGetSelectedParentNodes(
 /**
  * Remove accumulated data points to redistribute all of them again
  * (i.e after hiding series by legend)
- * @private
+ * @internal
  */
 function onChartBeforeRedraw(
     this: Chart
