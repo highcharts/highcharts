@@ -89,8 +89,6 @@ export interface ResolvedTreeViewOptions extends NormalizedTreeViewOptions {
     input: NormalizedTreeInputOptions;
 }
 
-const defaultGroupColumn = 'group';
-
 const defaultParentIdInput: NormalizedTreeInputParentIdOptions = {
     type: 'parentId',
     parentIdColumn: 'parentId'
@@ -165,7 +163,7 @@ function normalizeGroupingInput(
     return {
         type: 'grouping',
         groupBy: normalizeGroupBy(rowGrouping.groupBy),
-        groupColumn: rowGrouping.groupColumn || defaultGroupColumn,
+        groupColumn: rowGrouping.groupColumn || 'group',
         hideGroupedColumns: rowGrouping.hideGroupedColumns !== false
     };
 }
