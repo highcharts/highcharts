@@ -981,8 +981,8 @@
                     series: [{
                         data: [
                             { name: 'Main' },
-                            { name: 'First', start: start, end: end },
-                            { name: 'Second', start: start, end: end }
+                            { name: 'First', start, end },
+                            { name: 'Second', start, end }
                         ]
                     }]
                 });
