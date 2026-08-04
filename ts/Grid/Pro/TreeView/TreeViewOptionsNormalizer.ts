@@ -143,9 +143,10 @@ function normalizeTreeInput(
         return;
     }
 
-    return input.type === 'path' ?
-        merge(defaultPathInput, input) :
-        merge(defaultParentIdInput, input);
+    return merge(
+        input.type === 'path' ? defaultPathInput : defaultParentIdInput,
+        input
+    );
 }
 
 /**
