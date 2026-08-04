@@ -95,11 +95,9 @@ export interface RowGroupingOptions {
     groupBy?: (string | string[]);
 
     /**
-     * ID of the generated column rendering group row labels.
-     *
-     * Set it to a `groupBy` column ID to render group labels in place of that
-     * source column, which requires `hideGroupByColumns` to stay enabled. Any
-     * other collision with a source column ID is not supported.
+     * ID of the generated column rendering group row labels. It must not
+     * collide with a source column ID, because it would shadow that column's
+     * data.
      *
      * The generated column is the tree column of the grouped table unless
      * `treeView.treeColumn` is set.

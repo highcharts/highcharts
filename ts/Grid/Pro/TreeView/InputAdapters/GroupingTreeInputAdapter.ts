@@ -240,15 +240,7 @@ function validateInput(
         }
     }
 
-    // Reusing a hidden `groupBy` column ID renders group labels in place of
-    // that source column. Any other collision would shadow source data.
-    if (
-        columns[groupColumnId] &&
-        (
-            !groupBySet.has(groupColumnId) ||
-            !input.hideGroupByColumns
-        )
-    ) {
+    if (columns[groupColumnId]) {
         throw new Error(
             `TreeView: \`rowGrouping.groupColumnId\` "${groupColumnId}" ` +
             'conflicts with an existing source column.'

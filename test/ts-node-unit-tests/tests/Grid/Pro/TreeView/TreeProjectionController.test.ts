@@ -1653,47 +1653,58 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
-    it('should render group labels in place of a reused groupBy column', async () => {
+    it('should reject a groupColumnId colliding with a source column', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
         const Grid = await loadGridPro();
+        const originalConsoleError = console.error;
+        const consoleErrors: unknown[][] = [];
 
-        const grid = await Grid.grid(el, {
-            data: {
-                columns: {
-                    region: ['EMEA', 'EMEA', 'APAC'],
-                    account: ['Luma', 'Mercury', 'Harbor']
+        console.error = (...args: unknown[]): void => {
+            consoleErrors.push(args);
+        };
+
+        try {
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        region: ['EMEA', 'EMEA', 'APAC'],
+                        account: ['Luma', 'Mercury', 'Harbor']
+                    }
+                },
+                rowGrouping: {
+                    enabled: true,
+                    groupBy: 'region',
+                    groupColumnId: 'region'
+                },
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all'
+                    }
                 }
-            },
-            rowGrouping: {
-                enabled: true,
-                groupBy: 'region',
-                groupColumnId: 'region'
-            },
-            rendering: {
-                rows: {
-                    expandedLevels: 'all'
-                }
-            }
-        }, true);
+            }, true);
 
-        grid.viewport?.resizeObserver?.disconnect();
+            grid.viewport?.resizeObserver?.disconnect();
 
-        deepStrictEqual(
-            grid.viewport.columns.map((column: AnyRecord): string => column.id),
-            ['region', 'account'],
-            'The reused column ID should stay rendered as the group column.'
-        );
-        deepStrictEqual(
-            (grid.dataProvider as any).getDataTable(true).columns.region,
-            ['EMEA', null, null, 'APAC', null],
-            'The reused column should carry group labels on group rows only, ' +
-            'like the default generated group column.'
-        );
+            ok(
+                consoleErrors.some((args): boolean => String(args[0]).includes(
+                    '`rowGrouping.groupColumnId` "region" conflicts with an ' +
+                    'existing source column.'
+                )),
+                'Collision with a source column should be reported.'
+            );
+            deepStrictEqual(
+                (grid.dataProvider as any).getDataTable(true).columns.region,
+                ['EMEA', 'EMEA', 'APAC'],
+                'The source column should keep its own data unprojected.'
+            );
 
-        grid.destroy();
+            grid.destroy();
+        } finally {
+            console.error = originalConsoleError;
+        }
     });
 
     it('should position the group column by header order', async () => {

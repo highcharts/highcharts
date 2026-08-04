@@ -85,21 +85,8 @@ columns: [{
 The default header of the generated column comes from
 `lang.rowGrouping.columnHeader`.
 
-### Replacing a grouped column
-
-Set `groupColumnId` to one of the `groupBy` column IDs to render group labels in
-place of that source column instead of adding a column. This requires
-`hideGroupByColumns` to stay enabled, since the generated column takes over the
-ID. Collisions with any other source column ID are rejected, because they would
-shadow that column's data.
-
-```js
-rowGrouping: {
-    enabled: true,
-    groupBy: 'region',
-    groupColumnId: 'region'
-}
-```
+`groupColumnId` must not collide with a source column ID, because the generated
+column would shadow that column's data.
 
 ### Column position
 

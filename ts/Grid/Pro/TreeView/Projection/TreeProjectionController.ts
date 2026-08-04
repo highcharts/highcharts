@@ -441,11 +441,7 @@ class TreeProjectionController {
             return;
         }
 
-        // The group column keeps rendering even when it reuses a grouped
-        // column ID.
-        return input.groupBy.filter(
-            (columnId): boolean => columnId !== input.groupColumnId
-        );
+        return input.groupBy.slice();
     }
 
     /**
@@ -1477,13 +1473,7 @@ class TreeProjectionController {
 
         for (let i = 0, iEnd = sourceColumnIds.length; i < iEnd; ++i) {
             const columnId = sourceColumnIds[i];
-            if (
-                (
-                    input.hideGroupByColumns &&
-                    groupedColumnIds.has(columnId)
-                ) ||
-                columnId === input.groupColumnId
-            ) {
+            if (input.hideGroupByColumns && groupedColumnIds.has(columnId)) {
                 continue;
             }
 
