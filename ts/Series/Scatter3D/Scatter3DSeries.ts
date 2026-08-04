@@ -38,7 +38,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.scatter3d
  *
@@ -94,6 +94,7 @@ class Scatter3DSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface Scatter3DSeries {
     pointClass: typeof Scatter3DPoint;
 }
@@ -121,6 +122,7 @@ extend(Scatter3DSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         scatter3d: typeof Scatter3DSeries;
@@ -135,4 +137,5 @@ SeriesRegistry.registerSeriesType('scatter3d', Scatter3DSeries);
  *
  * */
 
+/** @internal */
 export default Scatter3DSeries;
