@@ -1691,7 +1691,7 @@ describe('TreeProjectionController', () => {
         await grid.update({
             lang: {
                 rowGrouping: {
-                    groupColumnHeader: 'Grupa'
+                    columnHeader: 'Grupa'
                 }
             }
         });

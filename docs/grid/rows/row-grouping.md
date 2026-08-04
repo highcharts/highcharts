@@ -83,7 +83,7 @@ columns: [{
 ```
 
 The default header of the generated column comes from
-`lang.rowGrouping.groupColumnHeader`. The column ID must not collide with a
+`lang.rowGrouping.columnHeader`. The column ID must not collide with a
 source column ID.
 
 Grouped columns are hidden from the rendered table by default, because their

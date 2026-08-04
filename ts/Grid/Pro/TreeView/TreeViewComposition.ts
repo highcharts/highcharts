@@ -93,7 +93,7 @@ export interface RowGroupingLangOptions {
      *
      * @default 'Group'
      */
-    groupColumnHeader?: string;
+    columnHeader?: string;
 }
 
 /**
@@ -102,7 +102,7 @@ export interface RowGroupingLangOptions {
 export const defaultOptions: DeepPartial<Options> = {
     lang: {
         rowGrouping: {
-            groupColumnHeader: 'Group'
+            columnHeader: 'Group'
         }
     }
 };
@@ -199,12 +199,11 @@ function onAfterHeaderCellRender(
         return;
     }
 
-    const groupColumnHeader = grid.options?.lang?.rowGrouping
-        ?.groupColumnHeader;
+    const columnHeader = grid.options?.lang?.rowGrouping?.columnHeader;
 
-    if (groupColumnHeader) {
-        this.value = groupColumnHeader;
-        setHTMLContent(headerContent, groupColumnHeader);
+    if (columnHeader) {
+        this.value = columnHeader;
+        setHTMLContent(headerContent, columnHeader);
     }
 }
 
