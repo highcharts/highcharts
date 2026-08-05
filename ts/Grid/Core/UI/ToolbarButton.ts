@@ -170,8 +170,8 @@ class ToolbarButton implements Button {
         }
     }
 
-    public focus(): void {
-        this.buttonEl?.focus();
+    public focus(options?: FocusOptions): void {
+        this.buttonEl?.focus(options);
 
         const tb = this.toolbar;
         if (tb) {

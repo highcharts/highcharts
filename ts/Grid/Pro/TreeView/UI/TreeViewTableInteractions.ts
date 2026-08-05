@@ -94,7 +94,7 @@ function focusRenderedRow(
     if (row.htmlElement.parentElement === table.tbodyElement) {
         table.focusCellByRowIndex(row.index, columnIndex);
     } else {
-        row.cells[columnIndex]?.htmlElement.focus({
+        row.getCellByColumnIndex(columnIndex)?.htmlElement.focus({
             preventScroll: true
         });
     }
@@ -139,9 +139,15 @@ function handleTreeBodyNavigation(
     const nextColumnIndex = column.index + dir[1];
 
     if (!dir[0]) {
-        row.cells[nextColumnIndex]?.htmlElement.focus({
-            preventScroll: true
-        });
+        const nextCell = row.getCellByColumnIndex(nextColumnIndex);
+
+        if (nextCell) {
+            nextCell.htmlElement.focus({
+                preventScroll: true
+            });
+        } else {
+            table.focusCellByRowIndex(row.index, nextColumnIndex);
+        }
         return true;
     }
 
@@ -168,9 +174,10 @@ function handleTreeBodyNavigation(
 
         if (extraRowIdx + 1 > header.levels) {
             header.rows[extraRowIdx]
-                .cells[nextColumnIndex]?.htmlElement.focus();
+                .getCellByColumnIndex(nextColumnIndex)
+                ?.htmlElement.focus();
         } else {
-            table.columns[nextColumnIndex]
+            table.getColumnByIndex(nextColumnIndex)
                 ?.header?.htmlElement.focus();
         }
 
@@ -251,7 +258,7 @@ function restoreTreeCellFocus(
     const restoredCell = (
         viewport.treeStickyRowController?.getRenderedRow(context.rowId) ||
         viewport.getRow(context.rowId)
-    )?.cells[columnIndex];
+    )?.getCellByColumnIndex(columnIndex);
 
     if (restoredCell) {
         restoredCell.htmlElement.focus({
