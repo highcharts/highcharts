@@ -457,6 +457,7 @@ function cbSetTreeValuesBefore(
  *
  * */
 
+/** @internal */
 class SunburstSeries extends TreemapSeries {
 
     /* *
@@ -990,6 +991,7 @@ extend(SunburstSeries.prototype, {
  *
  * */
 
+/** @internal */
 namespace SunburstSeries {
 
     /* *

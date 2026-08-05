@@ -63,9 +63,7 @@ import type ColorType from '../../Core/Color/ColorType';
 export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
 
     /**
-     * The width of the border surrounding each column or bar. Defaults to
-     * `1` when there is room for a border, but to `0` when the columns are
-     * so dense that a border would cover the next column.
+     * The width of the border surrounding each box.
      *
      * In styled mode, the stroke width can be set with the
      * `.highcharts-point` rule.
@@ -137,7 +135,7 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
      *
      * @product highstock
      */
-    downColor: ColorType;
+    downColor?: ColorType;
 
     /**
      * @internal
@@ -186,7 +184,6 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
     compare?: undefined;
     compareBase?: undefined;
     compareStart?: undefined;
-    compareTo?: undefined;
     connectNulls?: undefined;
     cumulative?: undefined;
     cumulativeStart?: undefined;

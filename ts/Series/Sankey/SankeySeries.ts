@@ -790,6 +790,7 @@ extend(SankeySeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sankey: typeof SankeySeries;

@@ -307,6 +307,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      */
     levelSize?: SunburstSeriesLevelSizeOptions;
 
+    /** @internal */
     mapIdToNode?: SunburstSeries['nodeMap'];
 
     /**

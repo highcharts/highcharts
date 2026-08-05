@@ -39,6 +39,8 @@ import type ScatterSeries from './ScatterSeries';
  *               useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.scatter
+ *
+ * @internal
  */
 const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
 
@@ -218,4 +220,5 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  *
  * */
 
+/** @internal */
 export default ScatterSeriesDefaults;
