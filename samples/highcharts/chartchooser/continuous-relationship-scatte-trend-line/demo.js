@@ -9,7 +9,7 @@ Highcharts.chart('container', {
         text: 'Vitamin D in preventing COVID-19 infection'
     },
     subtitle: {
-        HTML: true,
+        useHTML: true,
         text: 'Source: <a href="https://www.sciencedirect.com/science/article/pii/S1876034120305311" target="_blank">Sciencedirect</a>'
     },
 

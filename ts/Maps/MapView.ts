@@ -329,7 +329,7 @@ class MapView {
          * The current center of the view in terms of `[longitude, latitude]`.
          * @name Highcharts.MapView#center
          * @readonly
-         * @type {LonLatArray}
+         * @type {Highcharts.LonLatArray}
          */
         this.center = o.center;
         this.options = o;

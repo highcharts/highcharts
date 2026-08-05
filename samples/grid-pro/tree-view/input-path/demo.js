@@ -39,11 +39,12 @@ const grid = Grid.grid('container', {
                 'Team', 'Team', 'Team',
                 'Project', 'Project', 'Project', 'Project', 'Project'
             ]
-        },
-        treeView: {
-            input: {
-                type: 'path'
-            }
+        }
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path'
         }
     },
     columnDefaults: {
@@ -57,10 +58,8 @@ const grid = Grid.grid('container', {
 
 document.getElementById('tree-view-enabled').addEventListener('change', e => {
     grid.update({
-        data: {
-            treeView: {
-                enabled: e.target.checked
-            }
+        treeView: {
+            enabled: e.target.checked
         }
     });
 });

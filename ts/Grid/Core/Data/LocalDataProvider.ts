@@ -172,12 +172,19 @@ export class LocalDataProvider extends DataProvider {
     private async handleTableChange(e: DataEvent): Promise<void> {
         this.querying.shouldBeUpdated = true;
 
+        if (
+            e.type === 'afterDeleteRows' ||
+            e.type === 'afterSetRows'
+        ) {
+            this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
+        }
+
         const grid = this.querying.grid;
         if (!grid?.viewport) {
             return;
         }
 
-        if (e.type === 'afterSetCell' && e.detail?.fromGrid) {
+        if (e.detail?.fromGrid) {
             return;
         }
 
@@ -239,7 +246,17 @@ export class LocalDataProvider extends DataProvider {
             })
         );
 
-        this.setDataTable(connector.getTable());
+        if (!connector.loaded) {
+            try {
+                const loadedConnector = await connector.load();
+                connector.converter = loadedConnector.converter;
+                connector.loaded = true;
+            } catch {
+                return;
+            }
+        }
+
+        this.setDataTable(connector.getTable(this.options.dataTableKey));
 
         if (
             'enablePolling' in connector.options &&
@@ -250,14 +267,6 @@ export class LocalDataProvider extends DataProvider {
             connector.startPolling(
                 Math.max(connector.options.dataRefreshRate || 0, 1) * 1000
             );
-        }
-
-        if (!connector.loaded) {
-            try {
-                await connector.load();
-            } catch {
-                return;
-            }
         }
     }
 
@@ -579,6 +588,12 @@ export interface LocalDataProviderOptions extends DataProviderOptions {
      *         Grid with HTML table connector
      */
     connector?: GridDataConnectorTypeOptions | DataConnectorType;
+
+    /**
+     * The connector data table key used as the grid data source. If omitted,
+     * the first connector table is used.
+     */
+    dataTableKey?: string;
 
     /**
      * Columns data to initialize the Grid with.
