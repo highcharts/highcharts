@@ -33,6 +33,7 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         temperature?: number;
@@ -51,7 +52,7 @@ declare module '../../Core/Series/PointBase' {
  * In Euler integration, force is stored in a node, not changing it's
  * position. Later, in `integrate()` forces are applied on nodes.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} link
  *        Link that connects two nodes
  * @param {number} force
@@ -94,7 +95,7 @@ function attractive(
  * basic, not recommended:
  *    `function (d, k) { return d / k }`
  *
- * @private
+ * @internal
  * @param {number} d current distance between two nodes
  * @param {number} k expected distance between two nodes
  * @return {number} force
@@ -113,7 +114,7 @@ function attractiveForceFunction(
  * In Euler integration, force is stored in a node, not changing it's
  * position. Later, in `integrate()` forces are applied on nodes.
  *
- * @private
+ * @internal
  */
 function barycenter(
     this: ReingoldFruchtermanLayout
@@ -145,7 +146,7 @@ function barycenter(
 /**
  * Estimate the best possible distance between two nodes, making graph
  * readable.
- * @private
+ * @internal
  */
 function getK(
     layout: ReingoldFruchtermanLayout
@@ -182,7 +183,7 @@ function getK(
  * Note:
  * Actually `min(v(n), temperature(n))` replaces simulated annealing.
  *
- * @private
+ * @internal
  * @param {Highcharts.NetworkgraphLayout} layout
  *        Layout object
  * @param {Highcharts.Point} node
@@ -223,7 +224,7 @@ function integrate(
 /**
  * Repulsive force.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} node
  *        Node that should be translated by force.
  * @param {number} force
@@ -258,7 +259,7 @@ function repulsive(
  * grid-variant:
  *    `function (d, k) { return k * k / d * (2 * k - d > 0 ? 1 : 0) }`
  *
- * @private
+ * @internal
  * @param {number} d current distance between two nodes
  * @param {number} k expected distance between two nodes
  * @return {number} force
@@ -286,4 +287,5 @@ const EulerIntegration: GraphIntegrationObject = {
     repulsiveForceFunction
 };
 
+/** @internal */
 export default EulerIntegration;
