@@ -35,7 +35,6 @@ import type HLCSeriesOptions from './HLCSeriesOptions';
  * @sample stock/demo/hlc/
  *         HLC chart
  *
- * @extends      plotOptions.column
  * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
  *               stack
  * @product      highstock
