@@ -88,6 +88,13 @@ The default header of the generated column comes from
 `groupColumnId` must not collide with a source column ID, because the generated
 column would shadow that column's data.
 
+### Sorting and filtering
+
+Sorting the group column orders the group rows by their labels. Filtering it
+matches the values of all `groupBy` columns, so a row is kept when any of its
+grouping levels matches the filter, and the matching group rows are rebuilt from
+the remaining rows.
+
 ### Column position
 
 The generated column is rendered first by default. Use

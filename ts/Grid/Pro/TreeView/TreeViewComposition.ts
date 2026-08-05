@@ -37,6 +37,12 @@ import type {
 } from '../../Core/Table/Body/TableCell';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type {
+    FilterCondition
+} from '../../../Data/Modifiers/FilterModifierOptions';
+import type {
+    ResolveFilterConditionEvent
+} from '../../Core/Querying/FilteringController';
+import type {
     DeprecatedTreeViewOptions,
     RowGroupingOptions,
     TreeExpandedLevels,
@@ -53,6 +59,7 @@ import type {
 } from './Projection/TreeProjectionController';
 import type TreeStickyRowController from './UI/TreeStickyRowController';
 
+import FilteringController from '../../Core/Querying/FilteringController.js';
 import Globals from '../../Core/Globals.js';
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
@@ -144,6 +151,7 @@ export function compose(
     addEvent(GridClass, 'afterRedraw', onAfterRedraw);
     addEvent(GridClass, 'beforeTreeRowToggle', onBeforeTreeRowToggle);
     addEvent(GridClass, 'afterTreeRowToggle', onAfterTreeRowToggle);
+    addEvent(GridClass, 'resolveFilterCondition', onResolveFilterCondition);
     addEvent(
         GridClass,
         'projectPresentationTable',
@@ -293,6 +301,60 @@ function onAfterTreeRowToggle(
  */
 function onAfterRedraw(this: Grid): void {
     this.viewport?.treeStickyRowController?.scheduleRefresh(true, true);
+}
+
+/**
+ * Redirects filtering of the generated row grouping column to the source
+ * columns it is built from, since the column itself does not exist in the
+ * source table the filter modifier runs on.
+ *
+ * @param e
+ * Filter condition event payload.
+ */
+function onResolveFilterCondition(
+    this: Grid,
+    e: ResolveFilterConditionEvent
+): void {
+    const input = this.treeView?.options?.input;
+
+    if (
+        !e.condition ||
+        input?.type !== 'grouping' ||
+        e.sourceColumnId !== input.groupColumnId
+    ) {
+        return;
+    }
+
+    const conditions: FilterCondition[] = [];
+    for (let i = 0, iEnd = input.groupBy.length; i < iEnd; ++i) {
+        const condition = FilteringController.mapOptionsToFilter(
+            input.groupBy[i],
+            e.options
+        );
+
+        if (condition) {
+            conditions.push(condition);
+        }
+    }
+
+    const first = conditions[0];
+    if (conditions.length < 2) {
+        e.condition = first;
+        return;
+    }
+
+    // Group values match on any level, but negated operators, e.g.
+    // `doesNotContain`, have to hold on every level.
+    const isNegated = typeof first !== 'function' && (
+        first.operator === 'not' ||
+        first.operator === '!==' ||
+        first.operator === '!='
+    );
+
+    e.condition = {
+        operator: isNegated ? 'and' : 'or',
+        conditions
+    };
 }
 
 /**

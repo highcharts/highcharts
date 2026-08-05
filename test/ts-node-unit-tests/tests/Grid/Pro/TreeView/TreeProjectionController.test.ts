@@ -1588,6 +1588,68 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
+    it('should filter generated group rows by the grouping display column', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['EMEA', 'EMEA', 'APAC', 'APAC'],
+                    segment: ['Retail', 'Enterprise', 'Retail', 'Enterprise'],
+                    product: ['A', 'B', 'C', 'D']
+                }
+            },
+            rowGrouping: {
+                enabled: true,
+                groupBy: ['region', 'segment']
+            },
+            rendering: {
+                rows: {
+                    expandedLevels: 'all'
+                }
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const filterGroupColumn = async (rule: AnyRecord): Promise<void> => {
+            grid.querying.filtering.clearColumnFiltering();
+            grid.querying.filtering.addColumnFilterCondition(
+                'group',
+                rule as any
+            );
+            await grid.querying.proceed();
+        };
+
+        await filterGroupColumn({
+            condition: 'contains',
+            value: 'Retail'
+        });
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.product,
+            [null, null, 'A', null, null, 'C'],
+            'Group column filter should match any grouping level.'
+        );
+
+        await filterGroupColumn({
+            condition: 'doesNotContain',
+            value: 'EMEA'
+        });
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.product,
+            [null, null, 'C', null, 'D'],
+            'Negated group column filter should hold on every grouping level.'
+        );
+
+        grid.destroy();
+    });
+
     it('should keep grouped source columns rendered with hideGroupByColumns disabled', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
