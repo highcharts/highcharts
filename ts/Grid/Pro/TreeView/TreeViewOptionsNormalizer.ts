@@ -22,9 +22,14 @@
  *
  * */
 
+import type { Options } from '../../Core/Options';
+import type { RowId } from '../../Core/Data/DataProvider';
 import type {
+    DeprecatedTreeViewOptions,
+    RowGroupingOptions,
+    TreeInputOptions,
     TreeInputPathSeparator,
-    TreeExpandedRowIds,
+    TreeExpandedLevels,
     TreeViewOptions
 } from './TreeViewTypes';
 
@@ -55,7 +60,8 @@ export interface NormalizedTreeInputPathOptions {
 export interface NormalizedTreeInputGroupingOptions {
     type: 'grouping';
     groupBy: string[];
-    groupColumn: string;
+    groupColumnId: string;
+    hideGroupByColumns: boolean;
 }
 
 export type NormalizedTreeInputOptions = (
@@ -67,15 +73,20 @@ export type NormalizedTreeInputOptions = (
 export interface NormalizedTreeViewOptions {
     input?: NormalizedTreeInputOptions;
     treeColumn?: string;
-    expandedRowIds: TreeExpandedRowIds;
+    expandedLevels: TreeExpandedLevels;
+    expandedRowIds: RowId[];
     stickyParents: boolean;
+
+    /**
+     * Whether row grouping has been ignored, because tree view was enabled at
+     * the same time.
+     * @internal
+     */
+    rowGroupingIgnored: boolean;
 }
 
-export interface ResolvedTreeViewOptions {
+export interface ResolvedTreeViewOptions extends NormalizedTreeViewOptions {
     input: NormalizedTreeInputOptions;
-    treeColumn?: string;
-    expandedRowIds: TreeExpandedRowIds;
-    stickyParents: boolean;
 }
 
 const defaultParentIdInput: NormalizedTreeInputParentIdOptions = {
@@ -88,12 +99,6 @@ const defaultPathInput: NormalizedTreeInputPathOptions = {
     pathColumn: 'path',
     separator: '/',
     showFullPath: false
-};
-
-const defaultGroupingInput: NormalizedTreeInputGroupingOptions = {
-    type: 'grouping',
-    groupBy: [],
-    groupColumn: 'Group'
 };
 
 
@@ -123,43 +128,123 @@ function normalizeGroupBy(
 }
 
 /**
- * Validates and normalizes TreeView options from Grid config.
+ * Normalizes the tree input definition of the tree view options.
  *
- * @param treeView
- * Raw TreeView options.
+ * @param input
+ * Raw tree input options.
  *
  * @returns
- * Normalized options or `undefined` when TreeView is disabled.
+ * Normalized input, or `undefined` when the input should be autodetected.
  */
-export function normalizeTreeViewOptions(
-    treeView?: TreeViewOptions
-): NormalizedTreeViewOptions | undefined {
-    if (!treeView || treeView.enabled === false) {
+function normalizeTreeInput(
+    input?: TreeInputOptions
+): NormalizedTreeInputOptions | undefined {
+    if (!input) {
         return;
     }
 
-    const expandedRowIds: TreeExpandedRowIds = treeView.expandedRowIds ?? [];
-    const normalizedInput: (NormalizedTreeInputOptions|undefined) = (
-        !treeView.input ?
-            void 0 :
-            treeView.input.type === 'path' ?
-                merge(defaultPathInput, treeView.input) :
-                treeView.input.type === 'grouping' ?
-                    {
-                        ...merge(defaultGroupingInput, treeView.input),
-                        groupBy: normalizeGroupBy(treeView.input.groupBy)
-                    } :
-                    merge(defaultParentIdInput, treeView.input)
+    return merge(
+        input.type === 'path' ? defaultPathInput : defaultParentIdInput,
+        input
+    );
+}
+
+/**
+ * Normalizes row grouping options into a grouping tree input.
+ *
+ * @param rowGrouping
+ * Raw row grouping options.
+ *
+ * @returns
+ * Normalized grouping input.
+ */
+function normalizeGroupingInput(
+    rowGrouping: RowGroupingOptions
+): NormalizedTreeInputGroupingOptions {
+    return {
+        type: 'grouping',
+        groupBy: normalizeGroupBy(rowGrouping.groupBy),
+        groupColumnId: rowGrouping.groupColumnId || 'group',
+        hideGroupByColumns: rowGrouping.hideGroupByColumns !== false
+    };
+}
+
+/**
+ * Validates and normalizes TreeView options from Grid config.
+ *
+ * Tree view takes precedence when both tree view and row grouping are enabled.
+ *
+ * @param options
+ * Grid options.
+ *
+ * @param deprecatedTreeView
+ * Tree view options of the local data provider.
+ *
+ * @returns
+ * Normalized options or `undefined` when both features are disabled.
+ */
+export function normalizeTreeViewOptions(
+    options?: Options,
+    // TODO: Remove deprecated option before releasing next major
+    deprecatedTreeView?: DeprecatedTreeViewOptions
+): NormalizedTreeViewOptions | undefined {
+    let treeView: TreeViewOptions | undefined;
+
+    if (options?.treeView?.enabled) {
+        treeView = options.treeView;
+    } else if (deprecatedTreeView?.enabled) {
+        // TODO: Remove deprecated option before releasing next major
+        treeView = deprecatedTreeView;
+    }
+
+    const rowGrouping = options?.rowGrouping?.enabled ?
+        options.rowGrouping :
+        void 0;
+
+    let input: NormalizedTreeInputOptions | undefined;
+
+    if (treeView) {
+        input = normalizeTreeInput(treeView.input);
+    } else if (rowGrouping) {
+        input = normalizeGroupingInput(rowGrouping);
+    } else {
+        return;
+    }
+
+    const rows = options?.rendering?.rows;
+
+    // TODO: Remove deprecated option before releasing next major
+    // Options moved to `rendering.rows` are read from the data provider
+    // options only when the deprecated `data.treeView` is the active source.
+    const deprecatedRows = treeView === deprecatedTreeView ?
+        deprecatedTreeView :
+        void 0;
+
+    // TODO: Remove deprecated option before releasing next major
+    // The deprecated option accepted `'all'`, which is now expressed by
+    // `rendering.rows.expandedLevels`.
+    const deprecatedExpandedRowIds = deprecatedRows?.expandedRowIds;
+    const deprecatedExpandAll = deprecatedExpandedRowIds === 'all';
+
+    const expandedRowIds = (
+        rows?.expandedRowIds ??
+        (deprecatedExpandAll ? void 0 : deprecatedExpandedRowIds) ??
+        []
     );
 
     return {
-        input: normalizedInput,
-        treeColumn: treeView.treeColumn,
-        expandedRowIds: (
-            expandedRowIds === 'all' ?
-                expandedRowIds :
-                expandedRowIds.slice()
+        input,
+        treeColumn: treeView?.treeColumn,
+        expandedLevels: (
+            rows?.expandedLevels ??
+            (deprecatedExpandAll ? 'all' : 0)
         ),
-        stickyParents: treeView.stickyParents !== false
+        expandedRowIds: expandedRowIds.slice(),
+        stickyParents: (
+            rows?.stickyParents ??
+            deprecatedRows?.stickyParents ??
+            true
+        ),
+        rowGroupingIgnored: !!(treeView && rowGrouping)
     };
 }

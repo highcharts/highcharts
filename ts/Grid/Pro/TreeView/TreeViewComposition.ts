@@ -24,14 +24,29 @@
 
 import type DataTable from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
+import type Column from '../../Core/Table/Column';
+import type HeaderCell from '../../Core/Table/Header/HeaderCell';
+import type Options from '../../Core/Options';
 import type Table from '../../Core/Table/Table';
+import type { DeepPartial } from '../../../Shared/Types';
 import type { RestoreCellFocusEvent } from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type {
     TableCellAfterDataMutationEvent,
     TableCellGetEditabilityEvent
 } from '../../Core/Table/Body/TableCell';
+import type { RowId } from '../../Core/Data/DataProvider';
 import type {
+    FilterCondition
+} from '../../../Data/Modifiers/FilterModifierOptions';
+import type {
+    ResolveFilterConditionEvent
+} from '../../Core/Querying/FilteringController';
+import type {
+    DeprecatedTreeViewOptions,
+    RowGroupingOptions,
+    TreeExpandedLevels,
+    TreeViewColumnAggregatorOption,
     TreeViewColumnOptions,
     TreeViewOptions
 } from './TreeViewTypes';
@@ -44,8 +59,11 @@ import type {
 } from './Projection/TreeProjectionController';
 import type TreeStickyRowController from './UI/TreeStickyRowController';
 
+import FilteringController from '../../Core/Querying/FilteringController.js';
 import Globals from '../../Core/Globals.js';
 import TableRow from '../../Core/Table/Body/TableRow.js';
+import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
+import { setHTMLContent } from '../../Core/GridUtils.js';
 import TreeProjectionController from './Projection/TreeProjectionController.js';
 import TreeViewValidation from './TreeViewValidation.js';
 import { decorateTreeViewCell } from './UI/TreeViewCellDecorator.js';
@@ -58,7 +76,7 @@ import {
     getTreeViewRowId,
     syncTreeViewRowId
 } from './TreeViewRowResolver.js';
-import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -70,6 +88,30 @@ import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 type TreeToggleScrollListener = () => void;
 type TreeViewCompositionListeners = TreeToggleListeners & {
     scroll?: TreeToggleScrollListener;
+};
+
+/**
+ * Language options for the row grouping feature.
+ */
+export interface RowGroupingLangOptions {
+    /**
+     * Header of the generated group column, used when the column has no header
+     * options configured.
+     *
+     * @default 'Group'
+     */
+    columnHeader?: string;
+}
+
+/**
+ * Default options for the tree view and row grouping features.
+ */
+export const defaultOptions: DeepPartial<Options> = {
+    lang: {
+        rowGrouping: {
+            columnHeader: 'Group'
+        }
+    }
 };
 
 const treeToggleAttribute = 'data-hcg-tree-toggle';
@@ -86,16 +128,21 @@ const treeToggleListeners = new WeakMap<Table, TreeViewCompositionListeners>();
  *
  * @param TableCellClass
  * TableCell class to extend.
+ *
+ * @param HeaderCellClass
+ * HeaderCell class to extend.
  */
 export function compose(
     GridClass: typeof Grid,
     TableClass: typeof Table,
-    TableCellClass: typeof TableCell
+    TableCellClass: typeof TableCell,
+    HeaderCellClass: typeof HeaderCell
 ): void {
     if (!pushUnique(Globals.composed, 'TreeView')) {
         return;
     }
 
+    merge(true, gridDefaultOptions, defaultOptions);
     TreeViewValidation.registerTreeViewValidationRules();
 
     addEvent(GridClass, 'beforeLoad', onBeforeLoad);
@@ -104,6 +151,7 @@ export function compose(
     addEvent(GridClass, 'afterRedraw', onAfterRedraw);
     addEvent(GridClass, 'beforeTreeRowToggle', onBeforeTreeRowToggle);
     addEvent(GridClass, 'afterTreeRowToggle', onAfterTreeRowToggle);
+    addEvent(GridClass, 'resolveFilterCondition', onResolveFilterCondition);
     addEvent(
         GridClass,
         'projectPresentationTable',
@@ -123,6 +171,48 @@ export function compose(
     addEvent(TableCellClass, 'getEditability', onCellGetEditability);
     addEvent(TableCellClass, 'afterDataMutation', onCellAfterDataMutation);
     addEvent(TableCellClass, 'afterRender', onAfterCellRender);
+    addEvent(HeaderCellClass, 'afterRender', onAfterHeaderCellRender);
+}
+
+/**
+ * Applies the default header of the generated row grouping column.
+ *
+ * @param e
+ * Header cell render event payload.
+ *
+ * @param e.column
+ * Rendered column, when the header cell is bound to one.
+ */
+function onAfterHeaderCellRender(
+    this: HeaderCell,
+    e: { column?: Column }
+): void {
+    const column = e.column;
+    const headerContent = this.headerContent;
+
+    if (!column || !headerContent) {
+        return;
+    }
+
+    const grid = column.viewport.grid;
+    const sourceColumnId = grid.columnPolicy.getColumnSourceId(column.id) ||
+        column.id;
+    const headerOptions = column.options.header;
+
+    if (
+        headerOptions?.format ||
+        headerOptions?.formatter ||
+        !grid.treeView?.isGroupingDisplayColumn(sourceColumnId)
+    ) {
+        return;
+    }
+
+    const columnHeader = grid.options?.lang?.rowGrouping?.columnHeader;
+
+    if (columnHeader) {
+        this.value = columnHeader;
+        setHTMLContent(headerContent, columnHeader);
+    }
 }
 
 /**
@@ -211,6 +301,60 @@ function onAfterTreeRowToggle(
  */
 function onAfterRedraw(this: Grid): void {
     this.viewport?.treeStickyRowController?.scheduleRefresh(true, true);
+}
+
+/**
+ * Redirects filtering of the generated row grouping column to the source
+ * columns it is built from, since the column itself does not exist in the
+ * source table the filter modifier runs on.
+ *
+ * @param e
+ * Filter condition event payload.
+ */
+function onResolveFilterCondition(
+    this: Grid,
+    e: ResolveFilterConditionEvent
+): void {
+    const input = this.treeView?.options?.input;
+
+    if (
+        !e.condition ||
+        input?.type !== 'grouping' ||
+        e.sourceColumnId !== input.groupColumnId
+    ) {
+        return;
+    }
+
+    const conditions: FilterCondition[] = [];
+    for (let i = 0, iEnd = input.groupBy.length; i < iEnd; ++i) {
+        const condition = FilteringController.mapOptionsToFilter(
+            input.groupBy[i],
+            e.options
+        );
+
+        if (condition) {
+            conditions.push(condition);
+        }
+    }
+
+    const first = conditions[0];
+    if (conditions.length < 2) {
+        e.condition = first;
+        return;
+    }
+
+    // Group values match on any level, but negated operators, e.g.
+    // `doesNotContain`, have to hold on every level.
+    const isNegated = typeof first !== 'function' && (
+        first.operator === 'not' ||
+        first.operator === '!==' ||
+        first.operator === '!='
+    );
+
+    e.condition = {
+        operator: isNegated ? 'and' : 'or',
+        conditions
+    };
 }
 
 /**
@@ -485,20 +629,104 @@ declare module '../../Core/Data/LocalDataProvider' {
         /**
          * Tree view options for local provider (Grid Pro module).
          *
-         * @sample grid-pro/tree-view/parent-id Parent ID tree input
-         * @sample grid-pro/tree-view/input-path Path tree input
-         * @sample grid-pro/tree-view/row-grouping Row grouping
+         * @deprecated 3.1.0
+         * @deprnote Use the root level `treeView` and `rowGrouping` instead.
          */
-        treeView?: TreeViewOptions;
+        treeView?: DeprecatedTreeViewOptions;
     }
 }
 
 declare module '../../Core/Options' {
+    interface Options {
+        /**
+         * Tree view options, turning hierarchical data into expandable parent
+         * and child rows.
+         *
+         * @sample grid-pro/tree-view/parent-id Parent ID tree input
+         * @sample grid-pro/tree-view/input-path Path tree input
+         */
+        treeView?: TreeViewOptions;
+
+        /**
+         * Row grouping options, turning repeated values of the selected
+         * columns into expandable group rows.
+         *
+         * @sample grid-pro/options/row-grouping Row grouping
+         */
+        rowGrouping?: RowGroupingOptions;
+    }
+
+    interface RowsSettings {
+        /**
+         * Number of tree levels expanded initially, or `'all'` to expand every
+         * level. A row is initially expanded when its depth is lower than the
+         * configured number of levels, or when its ID is listed in
+         * `expandedRowIds`.
+         *
+         * Applies to `treeView` and `rowGrouping`.
+         *
+         * @default 0
+         */
+        expandedLevels?: TreeExpandedLevels;
+
+        /**
+         * Explicit set of row IDs expanded initially, in addition to the rows
+         * expanded by `expandedLevels`.
+         *
+         * Applies to `treeView` and `rowGrouping`.
+         *
+         * @default []
+         */
+        expandedRowIds?: RowId[];
+
+        /**
+         * Enables sticky parent rows.
+         *
+         * Applies to `treeView` and `rowGrouping`.
+         *
+         * @sample grid-pro/tree-view/sticky-parents Sticky parents
+         * @default true
+         */
+        stickyParents?: boolean;
+    }
+
     interface ColumnOptions {
         /**
+         * Aggregator used for parent rows of the projected tree, in the
+         * `treeView` and `rowGrouping` features.
+         *
+         * When provided as a string, the function is applied to every row that
+         * has children in the projected tree, overriding the row's source
+         * value. Structural columns such as `data.idColumn`,
+         * `treeView.input.pathColumn`, `treeView.input.parentIdColumn`, and
+         * `rowGrouping.groupBy` columns never aggregate, even if configured.
+         *
+         * When provided as a callback, it is invoked for matching parent rows
+         * and should return a registered Formula processor function name, or a
+         * falsy value to skip aggregation for the current row.
+         *
+         * Set it in `columnDefaults` to aggregate every column the same way,
+         * and to `false` in a single column to reset that default.
+         *
+         * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
+         * @sample grid-pro/options/row-grouping Row grouping
+         */
+        rowAggregator?: TreeViewColumnAggregatorOption;
+
+        /**
          * TreeView options for a single column.
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use the column level `rowAggregator` option instead.
          */
         treeView?: TreeViewColumnOptions;
+    }
+
+    interface LangOptions {
+        /**
+         * Language options for the row grouping feature.
+         */
+        rowGrouping?: RowGroupingLangOptions;
     }
 }
 
@@ -510,5 +738,6 @@ declare module '../../Core/Options' {
  * */
 
 export default {
-    compose
+    compose,
+    defaultOptions
 } as const;

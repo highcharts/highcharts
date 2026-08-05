@@ -136,7 +136,8 @@ export function buildIndexFromColumns(
     const ensureGroupNode = (
         key: string,
         parentId: RowId | null,
-        groupValue: DataTableCellType
+        rowGroupValues: DataTableCellType[],
+        depth: number
     ): RowId => {
         const existingId = groupNodeIdByKey.get(key);
         if (defined(existingId)) {
@@ -149,7 +150,7 @@ export function buildIndexFromColumns(
             parentId,
             rowIndex: null,
             isGenerated: true,
-            groupValue,
+            groupValues: rowGroupValues.slice(0, depth),
             childrenIds: []
         });
         rowOrder.push(generatedNodeId);
@@ -168,10 +169,13 @@ export function buildIndexFromColumns(
         let key = '';
 
         for (let i = 0, iEnd = groupBy.length; i < iEnd; ++i) {
-            const groupValue = row.groupValues[i];
-
-            key += getGroupKeyPart(groupBy[i], groupValue);
-            parentId = ensureGroupNode(key, parentId, groupValue);
+            key += getGroupKeyPart(groupBy[i], row.groupValues[i]);
+            parentId = ensureGroupNode(
+                key,
+                parentId,
+                row.groupValues,
+                i + 1
+            );
         }
 
         const node = nodes.get(row.rowId);
@@ -205,24 +209,24 @@ function validateInput(
     input: NormalizedTreeInputGroupingOptions
 ): void {
     const { columns } = table;
-    const { groupBy, groupColumn } = input;
+    const { groupBy, groupColumnId } = input;
 
     if (!groupBy.length) {
         throw new Error(
-            'TreeView: `data.treeView.input.groupBy` must not be empty.'
+            'TreeView: `rowGrouping.groupBy` must not be empty.'
         );
     }
 
-    if (!groupColumn) {
+    if (!groupColumnId) {
         throw new Error(
-            'TreeView: `data.treeView.input.groupColumn` must not be empty.'
+            'TreeView: `rowGrouping.groupColumnId` must not be empty.'
         );
     }
 
     const groupBySet = new Set(groupBy);
     if (groupBySet.size !== groupBy.length) {
         throw new Error(
-            'TreeView: `data.treeView.input.groupBy` must not contain ' +
+            'TreeView: `rowGrouping.groupBy` must not contain ' +
             'duplicate column IDs.'
         );
     }
@@ -236,10 +240,10 @@ function validateInput(
         }
     }
 
-    if (columns[groupColumn] && !groupBySet.has(groupColumn)) {
+    if (columns[groupColumnId]) {
         throw new Error(
-            `TreeView: groupColumn "${groupColumn}" conflicts with an ` +
-            'existing source column.'
+            `TreeView: \`rowGrouping.groupColumnId\` "${groupColumnId}" ` +
+            'conflicts with an existing source column.'
         );
     }
 }
