@@ -38,18 +38,12 @@ const datasets = new Array(5).fill(1).map((_, i) =>
     getTestData(i)
 );
 
-// Make all the colors semi-transparent so we can see overlapping dots
-const colors = Highcharts.getOptions().colors.map(color =>
-    Highcharts.color(color).setOpacity(0.5).get()
-);
-
 let activeRow = null;
 
 const fullChartOptions = {
     chart: {
         type: 'scatter'
     },
-    colors: colors,
     credits: {
         enabled: false
     },
@@ -196,7 +190,6 @@ function updateChart() {
     if (activeRow === null) {
         // Revert chart options
         chart.update({
-            colors: colors,
             xAxis: {
                 categories: [
                     'Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5'
@@ -230,7 +223,6 @@ function updateChart() {
     } else {
         // Set new chart options
         chart.update({
-            colors: colors,
             xAxis: {
                 categories: undefined,
                 min: minMax[0],
