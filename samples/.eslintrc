@@ -133,7 +133,8 @@
     },
     {
       "files": [
-        "samples/*/demo/*/react/**/*.ts"
+        "samples/*/demo/*/react/**/*.ts",
+        "*/demo/*/react/**/*.ts"
       ],
       "rules": {
         "node/no-extraneous-import": [
