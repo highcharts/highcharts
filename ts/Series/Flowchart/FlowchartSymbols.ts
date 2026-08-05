@@ -124,6 +124,14 @@ namespace FlowchartSymbols {
     const minShapeSize = { width: 60, height: 36 };
 
     /**
+     * The narrowest a label is worth wrapping to, in pixels: a shape never
+     * goes below `minShapeSize.width`, so a cap tighter than the text room
+     * inside one buys no narrower node.
+     * @internal
+     */
+    export const minLabelWidth = minShapeSize.width - shapePadding.x * 2;
+
+    /**
      * The renderer symbol each shape is drawn with. The two shapes that map
      * to a core symbol (`rectangle`, `diamond`) keep their flowchart name in
      * the API while reusing what the renderer already has.

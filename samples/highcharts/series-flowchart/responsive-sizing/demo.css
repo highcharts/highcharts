@@ -1,0 +1,45 @@
+#container {
+    min-width: 320px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto 12px;
+    font-family: sans-serif;
+    font-size: 13px;
+}
+
+#controls button {
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+/* Marks a button whose dimension is currently halved. */
+#controls button[aria-pressed="true"] {
+    font-weight: bold;
+    outline: 2px solid highlight;
+}
+
+#readout {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+/* The stage the layout is currently in, so the three are easy to tell apart. */
+.stage-spacing {
+    color: #2caffe;
+}
+
+.stage-wrapping {
+    color: #f7a35c;
+}
+
+.stage-shrinking {
+    color: #e6373b;
+}

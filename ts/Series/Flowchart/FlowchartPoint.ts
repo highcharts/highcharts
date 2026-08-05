@@ -155,11 +155,19 @@ class FlowchartPoint extends NetworkgraphPoint {
     public arrowGraphic?: SVGElement;
 
     /**
-     * Fractional position a node was dragged to, so the drag survives a
-     * resize. Nodes only.
+     * How far a node was dragged from where the layout put it, in the layout's
+     * own units - see `FlowchartSeries.toLayoutPosition()`.
+     *
+     * A displacement rather than a position, because the layout re-flows: the
+     * gaps between nodes close up as the plot area shrinks, which moves every
+     * laid out node within the layout's own frame. Stored as a position, a
+     * dragged node would keep the coordinate it had under the spacing in force
+     * when it was dropped, and drift as soon as that spacing changed. Stored as
+     * a displacement, it rides along with wherever the layout currently puts
+     * it. Nodes only.
      * @internal
      */
-    public dragPos?: PositionObject;
+    public dragOffset?: PositionObject;
 
     /**
      * Whether the pointer has moved far enough for the current press to count
@@ -355,7 +363,11 @@ class FlowchartPoint extends NetworkgraphPoint {
             return [];
         }
 
-        const { arrowLength = 0, arrowWidth = 0 } =
+        // The arrowhead is part of the diagram's geometry, so it takes the same
+        // shrink factor the node boxes did - a full-size head on a scaled-down
+        // node reads as a different chart.
+        const scale = this.series.layoutScale,
+            { arrowLength = 0, arrowWidth = 0 } =
                 this.series.options.link || {},
             tip = wp[wp.length - 1],
             prev = wp[wp.length - 2],
@@ -379,9 +391,9 @@ class FlowchartPoint extends NetworkgraphPoint {
                 0,
             tipX = tip.x - dx * pullBack,
             tipY = tip.y - dy * pullBack,
-            baseX = tipX - dx * arrowLength,
-            baseY = tipY - dy * arrowLength,
-            halfWidth = arrowWidth / 2;
+            baseX = tipX - dx * arrowLength * scale,
+            baseY = tipY - dy * arrowLength * scale,
+            halfWidth = arrowWidth * scale / 2;
 
         return [
             ['M', tipX, tipY],

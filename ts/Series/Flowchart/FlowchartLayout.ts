@@ -30,13 +30,22 @@ export interface FlowchartLayoutEdge {
 }
 
 /**
- * A normalized (0-1) position: 0 is the leftmost/topmost node's center, 1 the
- * rightmost/bottommost one's.
+ * A position in pixels, relative to the top left of the laid out graph's own
+ * bounding box - not the plot area. The series places that box.
  * @internal
  */
 export interface FlowchartLayoutPosition {
     x: number;
     y: number;
+}
+
+/**
+ * The space a node's shape needs, in pixels.
+ * @internal
+ */
+export interface FlowchartLayoutSize {
+    height: number;
+    width: number;
 }
 
 /**
@@ -50,10 +59,39 @@ export interface FlowchartLayoutRoute {
     waypointIds: Array<string>;
 }
 
-/** @internal */
-export interface FlowchartLayoutResult {
-    positions: Record<string, FlowchartLayoutPosition>;
+/**
+ * Everything about the graph that does not depend on how big anything is:
+ * which layer each node sits in, the order within each layer, and the waypoint
+ * chain per edge. Phases 1-3 produce this, and none of them consult a pixel
+ * size - so it survives a resize untouched and is worth caching.
+ * @internal
+ */
+export interface FlowchartLayoutTopology {
+    down: Map<string, Array<string>>;
+    dummies: Array<string>;
+    layers: Array<Array<string>>;
     routes: Array<FlowchartLayoutRoute>;
+    up: Map<string, Array<string>>;
+}
+
+/**
+ * Where everything ends up, in pixels, plus the size the graph needs in order
+ * to be drawn without overlap. The series compares `intrinsic` against the plot
+ * area to decide how to place - or whether to scale - the result.
+ * @internal
+ */
+export interface FlowchartLayoutGeometry {
+    intrinsic: FlowchartLayoutSize;
+    positions: Record<string, FlowchartLayoutPosition>;
+}
+
+/**
+ * Spacing the geometry phase works to, in pixels.
+ * @internal
+ */
+export interface FlowchartLayoutSpacing {
+    layerSpacing: number;
+    nodeSpacing: number;
 }
 
 /** @internal */
@@ -114,6 +152,17 @@ interface LayeredGraph {
  * priority, so long edges straighten into vertical runs and the bends from
  * Phase 3 disappear.
  *
+ * Phases 1-3 are pure ordering: they never look at how big a node is, so
+ * `solveTopology()` returns them on their own and the result stays valid
+ * across a resize. Only phase 4 and the layer placement need pixel sizes, and
+ * those live in `solveGeometry()` - which is what a resize re-runs.
+ *
+ * The gap phase 4 keeps is the real one: half of each neighbour's width plus
+ * `nodeSpacing`, so two wide nodes in the same layer are pushed apart by as
+ * much as they actually need. Layers are likewise spaced by the tallest node
+ * in each. Positions come back in pixels relative to the graph's own bounding
+ * box, together with the size that box needs.
+ *
  * @internal
  */
 namespace FlowchartLayout {
@@ -139,12 +188,12 @@ namespace FlowchartLayout {
     const coordinateSweeps = 12;
 
     /**
-     * Minimum gap between two nodes in the same layer, in the abstract units
-     * phase 4 works in (one unit is one within-layer slot). Normalized away
-     * before the positions are returned.
+     * A waypoint is a bend in an edge, not a box, so it takes up no width or
+     * height of its own - the surrounding `nodeSpacing` alone leaves a routed
+     * edge half a gap of clearance either side of the nodes it passes between.
      * @internal
      */
-    const minSeparation = 1;
+    const waypointSize: FlowchartLayoutSize = { width: 0, height: 0 };
 
     /* *
      *
@@ -544,15 +593,41 @@ namespace FlowchartLayout {
     }
 
     /**
-     * Move node `i` within its layer toward `desired`, pushing
-     * lower-priority neighbours aside but stopping at the first
-     * equal-or-higher-priority node (a wall), so the minimum gap is always
-     * preserved.
+     * The minimum centre-to-centre distance each neighbouring pair in a layer
+     * needs - half of each one's width, plus the gap that has to stay open
+     * between them - accumulated from the left so the minimum distance from
+     * node `i` to node `k` is a single subtraction, `cum[k] - cum[i]`.
+     *
+     * This is what makes the layout size-aware. With one flat separation for
+     * every pair, two nodes with wide labels sit as close together as two
+     * narrow ones and overlap however much room the plot area has.
+     * @internal
+     */
+    function separations(
+        widths: Array<number>,
+        nodeSpacing: number
+    ): Array<number> {
+        const cum = [0];
+
+        for (let i = 0; i < widths.length - 1; i++) {
+            cum.push(
+                cum[i] + (widths[i] + widths[i + 1]) / 2 + nodeSpacing
+            );
+        }
+
+        return cum;
+    }
+
+    /**
+     * Move node `i` within its layer toward `desired`, pushing lower-priority
+     * neighbours aside but stopping at the first equal-or-higher-priority node
+     * (a wall), so every pair keeps at least the distance `cum` requires.
      * @internal
      */
     function placeNode(
         x: Array<number>,
         prio: Array<number>,
+        cum: Array<number>,
         i: number,
         desired: number
     ): void {
@@ -560,7 +635,7 @@ namespace FlowchartLayout {
             let wall = Infinity;
             for (let k = i + 1; k < x.length; k++) {
                 if (prio[k] >= prio[i]) {
-                    wall = x[k] - (k - i) * minSeparation;
+                    wall = x[k] - (cum[k] - cum[i]);
                     break;
                 }
             }
@@ -569,10 +644,11 @@ namespace FlowchartLayout {
             if (target > x[i]) {
                 x[i] = target;
                 for (let k = i + 1; k < x.length; k++) {
-                    if (x[k] >= x[k - 1] + minSeparation) {
+                    const min = x[k - 1] + (cum[k] - cum[k - 1]);
+                    if (x[k] >= min) {
                         break;
                     }
-                    x[k] = x[k - 1] + minSeparation;
+                    x[k] = min;
                 }
             }
 
@@ -580,7 +656,7 @@ namespace FlowchartLayout {
             let wall = -Infinity;
             for (let k = i - 1; k >= 0; k--) {
                 if (prio[k] >= prio[i]) {
-                    wall = x[k] + (i - k) * minSeparation;
+                    wall = x[k] + (cum[i] - cum[k]);
                     break;
                 }
             }
@@ -589,10 +665,11 @@ namespace FlowchartLayout {
             if (target < x[i]) {
                 x[i] = target;
                 for (let k = i - 1; k >= 0; k--) {
-                    if (x[k] <= x[k + 1] - minSeparation) {
+                    const max = x[k + 1] - (cum[k + 1] - cum[k]);
+                    if (x[k] <= max) {
                         break;
                     }
-                    x[k] = x[k + 1] - minSeparation;
+                    x[k] = max;
                 }
             }
         }
@@ -607,10 +684,16 @@ namespace FlowchartLayout {
         nodes: Array<string>,
         desired: Map<string, number>,
         xMap: Map<string, number>,
-        prioMap: Map<string, number>
+        prioMap: Map<string, number>,
+        sizeMap: Map<string, FlowchartLayoutSize>,
+        nodeSpacing: number
     ): void {
         const x = nodes.map((id): number => xMap.get(id)!),
             prio = nodes.map((id): number => prioMap.get(id)!),
+            cum = separations(
+                nodes.map((id): number => sizeMap.get(id)!.width),
+                nodeSpacing
+            ),
             byPriority = nodes
                 .map((_id, i): number => i)
                 .sort((a, b): number => prio[b] - prio[a]);
@@ -618,7 +701,7 @@ namespace FlowchartLayout {
         for (const i of byPriority) {
             const d = desired.get(nodes[i]);
             if (d !== void 0) {
-                placeNode(x, prio, i, d);
+                placeNode(x, prio, cum, i, d);
             }
         }
 
@@ -630,22 +713,33 @@ namespace FlowchartLayout {
     /**
      * Phase 4 - Priority-method coordinate assignment. Dummy nodes get top
      * priority (so long edges straighten); real nodes are ranked by degree.
-     * Returns a map of node id -> X coordinate in arbitrary units.
+     * Returns a map of node id -> X coordinate, in pixels.
+     *
+     * Each layer starts packed left at the minimum spacing its own node widths
+     * require, rather than at one slot per node, so the arrangement the sweeps
+     * begin from is already free of overlap and they only ever improve it.
      * @internal
      */
     function assignCoordinates(
         layers: Array<Array<string>>,
         up: Map<string, Array<string>>,
         down: Map<string, Array<string>>,
-        dummies: Array<string>
+        dummies: Array<string>,
+        sizeMap: Map<string, FlowchartLayoutSize>,
+        nodeSpacing: number
     ): Map<string, number> {
         const dummySet = new Set(dummies),
             xMap = new Map<string, number>(),
             prioMap = new Map<string, number>();
 
         for (const ids of layers) {
+            const cum = separations(
+                ids.map((id): number => sizeMap.get(id)!.width),
+                nodeSpacing
+            );
+
             ids.forEach((id, i): void => {
-                xMap.set(id, i);
+                xMap.set(id, cum[i]);
                 prioMap.set(
                     id,
                     dummySet.has(id) ?
@@ -668,7 +762,9 @@ namespace FlowchartLayout {
                 }
             }
 
-            positionLayer(layers[l], desired, xMap, prioMap);
+            positionLayer(
+                layers[l], desired, xMap, prioMap, sizeMap, nodeSpacing
+            );
         };
 
         for (let iter = 0; iter < coordinateSweeps; iter++) {
@@ -707,29 +803,43 @@ namespace FlowchartLayout {
      */
     function centerLayers(
         layers: Array<Array<string>>,
-        xMap: Map<string, number>
+        xMap: Map<string, number>,
+        sizeMap: Map<string, FlowchartLayoutSize>
     ): Map<string, number> {
-        let minX = Infinity,
-            maxX = -Infinity;
+        // A layer's extent runs from its leftmost node's left edge to its
+        // rightmost node's right edge, not between their centers - a layer
+        // holding one very wide node is not centered by its center alone.
+        const extent = (ids: Array<string>): {max: number; min: number} => {
+            let min = Infinity,
+                max = -Infinity;
 
-        xMap.forEach((x): void => {
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
-        });
+            for (const id of ids) {
+                const x = xMap.get(id)!,
+                    half = sizeMap.get(id)!.width / 2;
 
-        const globalCenter = (minX + maxX) / 2,
+                min = Math.min(min, x - half);
+                max = Math.max(max, x + half);
+            }
+
+            return { min, max };
+        };
+
+        let graphMin = Infinity,
+            graphMax = -Infinity;
+
+        for (const ids of layers) {
+            const { min, max } = extent(ids);
+            graphMin = Math.min(graphMin, min);
+            graphMax = Math.max(graphMax, max);
+        }
+
+        const graphCenter = (graphMin + graphMax) / 2,
             centered = new Map<string, number>();
 
         for (const ids of layers) {
-            let layerMin = Infinity,
-                layerMax = -Infinity;
+            const { min, max } = extent(ids),
+                offset = graphCenter - (min + max) / 2;
 
-            for (const id of ids) {
-                layerMin = Math.min(layerMin, xMap.get(id)!);
-                layerMax = Math.max(layerMax, xMap.get(id)!);
-            }
-
-            const offset = globalCenter - (layerMin + layerMax) / 2;
             for (const id of ids) {
                 centered.set(id, xMap.get(id)! + offset);
             }
@@ -739,54 +849,79 @@ namespace FlowchartLayout {
     }
 
     /**
-     * Turn layer indices and X coordinates into normalized (0-1) positions: Y
-     * from the layer (layer 0 at the top), X from the layer coordinates
-     * scaled so the whole graph spans the range exactly. Both are the
-     * *centers* of what the series will draw, with no margin of their own -
-     * only the series knows how big a node ends up, so it is the one that
-     * insets these to leave room for the outermost shapes.
+     * Stack the layers vertically and shift the whole graph so its own top
+     * left corner is the origin, giving every node a pixel center relative to
+     * the graph's bounding box - plus the size of that box.
+     *
+     * Each gap between two layers is the bottom half of the tallest node above
+     * it, `layerSpacing`, and the top half of the tallest node below. A layer
+     * of plain boxes therefore does not reserve the room a layer containing a
+     * tall diamond needs, which a single uniform row height would force it to.
      * @internal
      */
-    function positionsFromCoordinates(
+    function placeLayers(
         layers: Array<Array<string>>,
-        xMap: Map<string, number>
-    ): Record<string, FlowchartLayoutPosition> {
-        const maxLayer = layers.length - 1,
-            centeredXMap = centerLayers(layers, xMap);
+        xMap: Map<string, number>,
+        sizeMap: Map<string, FlowchartLayoutSize>,
+        spacing: FlowchartLayoutSpacing
+    ): FlowchartLayoutGeometry {
+        const centered = centerLayers(layers, xMap, sizeMap);
 
         let minX = Infinity,
             maxX = -Infinity;
 
-        centeredXMap.forEach((x): void => {
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
+        centered.forEach((x, id): void => {
+            const half = sizeMap.get(id)!.width / 2;
+
+            minX = Math.min(minX, x - half);
+            maxX = Math.max(maxX, x + half);
         });
 
-        const span = maxX - minX,
-            positions: Record<string, FlowchartLayoutPosition> = {};
+        const positions: Record<string, FlowchartLayoutPosition> = {};
+
+        let y = 0,
+            previousHeight = 0;
 
         layers.forEach((ids, l): void => {
-            const y = maxLayer === 0 ? 0.5 : l / maxLayer;
+            const height = ids.reduce(
+                (tallest, id): number =>
+                    Math.max(tallest, sizeMap.get(id)!.height),
+                0
+            );
+
+            y += l === 0 ?
+                height / 2 :
+                previousHeight / 2 + spacing.layerSpacing + height / 2;
 
             for (const id of ids) {
-                positions[id] = {
-                    x: span ? (centeredXMap.get(id)! - minX) / span : 0.5,
-                    y
-                };
+                positions[id] = { x: centered.get(id)! - minX, y };
             }
+
+            previousHeight = height;
         });
 
-        return positions;
+        return {
+            intrinsic: {
+                width: maxX - minX,
+                height: y + previousHeight / 2
+            },
+            positions
+        };
     }
 
     /**
-     * Run all four phases and return everything the series needs to render:
-     * fractional node positions, and, per input edge (same order as
-     * `edgeList`), whether it was reversed and the waypoint id chain to
-     * route it through - already re-oriented to the ORIGINAL from -> to
-     * direction, so an arrowhead drawn at the end of the chain always lands
-     * on the data's real `to` node, even for a back edge that renders going
-     * "up".
+     * Phases 1 to 3: everything about the graph that holds regardless of how
+     * big anything is. Returns which layer each node sits in, the order within
+     * each layer, and - per input edge, in `edgeList` order - whether it was
+     * reversed and the waypoint id chain to route it through.
+     *
+     * That chain is already re-oriented to the ORIGINAL from -> to direction,
+     * so an arrowhead drawn at the end of it always lands on the data's real
+     * `to` node, even for a back edge that renders going "up".
+     *
+     * Nothing here depends on a pixel size, so the result survives a resize
+     * and only needs recomputing when the links themselves change. Feed it to
+     * `solveGeometry()` to get actual positions.
      *
      * Self-referencing edges are excluded from the layered graph - they are
      * a cycle no reversal can break, and would leave phase 2 with a node
@@ -794,9 +929,9 @@ namespace FlowchartLayout {
      * `routes` stay aligned with `edgeList`.
      * @internal
      */
-    export function solve(
+    export function solveTopology(
         edgeList: Array<FlowchartLayoutEdge>
-    ): FlowchartLayoutResult {
+    ): FlowchartLayoutTopology {
         const graphEdges: Array<FlowchartLayoutEdge> = [],
             // Index in `edgeList` of each entry in `graphEdges`.
             sourceIndex: Array<number> = [],
@@ -813,7 +948,13 @@ namespace FlowchartLayout {
             });
 
         if (!graphEdges.length) {
-            return { positions: {}, routes };
+            return {
+                down: new Map(),
+                dummies: [],
+                layers: [],
+                routes,
+                up: new Map()
+            };
         }
 
         const dag = greedyCycleRemoval(graphEdges);
@@ -836,8 +977,7 @@ namespace FlowchartLayout {
         const layer = assignLayers(dag),
             { layers, up, down, dummies, waypointIds } =
                 buildLayeredGraph(dag, layer),
-            ordered = reduceCrossings(layers, up, down),
-            xMap = assignCoordinates(ordered, up, down, dummies);
+            ordered = reduceCrossings(layers, up, down);
 
         dag.forEach((edge, i): void => {
             routes[sourceIndex[i]] = {
@@ -848,10 +988,52 @@ namespace FlowchartLayout {
             };
         });
 
-        return {
-            positions: positionsFromCoordinates(ordered, xMap),
-            routes
-        };
+        return { down, dummies, layers: ordered, routes, up };
+    }
+
+    /**
+     * Phase 4 and the layer placement: turn a topology plus the pixel size of
+     * every node into pixel positions, and report how much room the result
+     * needs. This is the half of the layout that a resize has to re-run, and
+     * it is the cheap half - O(sweeps x nodes), against the O(sweeps x edges^2)
+     * crossing counting in `solveTopology()`.
+     *
+     * `sizes` only has to cover the real nodes. The waypoints a long edge is
+     * routed through are bends rather than boxes, and are sized accordingly.
+     * @internal
+     */
+    export function solveGeometry(
+        topology: FlowchartLayoutTopology,
+        sizes: Record<string, FlowchartLayoutSize>,
+        spacing: FlowchartLayoutSpacing
+    ): FlowchartLayoutGeometry {
+        const { layers, up, down, dummies } = topology;
+
+        if (!layers.length) {
+            return {
+                intrinsic: { width: 0, height: 0 },
+                positions: {}
+            };
+        }
+
+        const sizeMap = new Map<string, FlowchartLayoutSize>();
+
+        for (const ids of layers) {
+            for (const id of ids) {
+                // A node with no measured size is treated as a point, the same
+                // as a waypoint - it can only occur if the caller left one out.
+                sizeMap.set(id, sizes[id] || waypointSize);
+            }
+        }
+
+        return placeLayers(
+            layers,
+            assignCoordinates(
+                layers, up, down, dummies, sizeMap, spacing.nodeSpacing
+            ),
+            sizeMap,
+            spacing
+        );
     }
 
 }
