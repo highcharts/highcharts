@@ -17,10 +17,14 @@ QUnit.test('Chart spacing options', function (assert) {
     });
 
     const yAxisTop = chart.yAxis[0].top;
+    const expectedTop = Math.floor(
+        (chart.yAxis[0].maxLabelDimensions?.height ||
+            chart.yAxis[0].labelMetrics().h) / 2
+    );
 
     assert.strictEqual(
         yAxisTop,
-        7,
+        expectedTop,
         'The top label of the yAxis should be ' +
         'respected by spacingTop when set to 0 (#24652).'
     );
