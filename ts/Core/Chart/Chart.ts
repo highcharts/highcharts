@@ -2271,10 +2271,17 @@ class Chart {
 
         // Treat yAxis top label as starting point for spacing.
         // (#24652)
-        let topLabelOverflow = 0;
+        let topLabelOverflow = 0,
+            highestAxisPos = chart.yAxis[0].pos;
 
         chart.yAxis.forEach((axis): void => {
-            if (axis.visible && axis.labelOffset) {
+            // In case of multiple axes with different label sizes, find the
+            // label size of the top-most axis.
+            if (
+                axis.visible && axis.labelOffset &&
+                axis.pos <= highestAxisPos
+            ) {
+                highestAxisPos = axis.pos;
                 const maxLabelHeight =
                     axis.maxLabelDimensions?.height ||
                     axis.labelMetrics().h;
