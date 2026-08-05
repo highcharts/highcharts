@@ -1,5 +1,6 @@
 ---
 tags: ["grid-pro"]
+sidebar_label: "Grouping"
 ---
 
 # Row grouping

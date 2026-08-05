@@ -36,7 +36,7 @@ See [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view).
 
 Use row grouping to turn repeated values of flat data into expandable group rows
 with aggregated summaries. See
-[Row grouping](https://www.highcharts.com/docs/grid/rows/row-grouping).
+[Row grouping](https://www.highcharts.com/docs/grid/rows/grouping).
 
 ## Virtualization
 
