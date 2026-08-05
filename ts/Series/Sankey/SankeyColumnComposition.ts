@@ -35,6 +35,7 @@ import {
  *
  * */
 
+/** @internal */
 namespace SankeyColumnComposition {
 
     /* *
@@ -345,4 +346,5 @@ namespace SankeyColumnComposition {
  *
  * */
 
+/** @internal */
 export default SankeyColumnComposition;

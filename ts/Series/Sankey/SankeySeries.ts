@@ -65,7 +65,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.sankey
  *
@@ -751,6 +751,7 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface SankeySeries extends NodesComposition.SeriesComposition {
     animate(init?: boolean): void;
     createNode(id: string): SankeyPoint;
@@ -805,6 +806,7 @@ SeriesRegistry.registerSeriesType('sankey', SankeySeries);
  *
  * */
 
+/** @internal */
 export default SankeySeries;
 
 /* *
