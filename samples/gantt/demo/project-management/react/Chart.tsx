@@ -2,36 +2,11 @@ import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
 import { Title, Tooltip, XAxis, YAxis, PlotOptions } from '@highcharts/react';
 import { GanttChart } from '@highcharts/react/Gantt';
 import { GanttSeries } from '@highcharts/react/series/Gantt';
-import type { GanttSeriesProps } from '@highcharts/react/series/Gantt';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
+import type { GanttTaskPoint, GanttPoint } from './types';
 
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
-
-type GanttTaskPoint = NonNullable<GanttSeriesProps['data']>[number] & {
-    owner?: string;
-    pointWidth?: number;
-    dataLabels?: {
-        align?: string;
-        format?: string;
-        style?: {
-            color?: string;
-            fontWeight?: string;
-            textOutline?: string;
-            opacity?: number;
-        };
-        x?: number;
-    };
-};
-
-type GanttPoint = Highcharts.Point & {
-    completed?: { amount?: number } | number;
-    dependency?: string;
-    milestone?: boolean;
-    owner?: string;
-    yCategory?: string;
-    x2?: number;
-};
 
 const day = 24 * 36e5;
 const today = Math.floor(Date.now() / day) * day;
