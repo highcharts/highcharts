@@ -28,6 +28,7 @@ import type {
     ColumnCollection
 } from '../../../../Data/DataTable';
 import type Grid from '../../../Core/Grid';
+import type { ColumnOptions } from '../../../Core/Options';
 import type { RowMetaRecord } from '../../../Core/Grid';
 import type { RowId } from '../../../Core/Data/DataProvider';
 import type { DataProviderOptionsType } from '../../../Core/Data/DataProviderType';
@@ -35,7 +36,6 @@ import type { LocalDataProviderOptions } from '../../../Core/Data/LocalDataProvi
 import type {
     TreeIndexBuildResult,
     TreeViewColumnAggregatorOption,
-    TreeViewColumnOptions,
     TreeProjectionRowState,
     TreeProjectionState
 } from '../TreeViewTypes';
@@ -47,6 +47,9 @@ import type {
 import {
     buildIndexFromColumns as buildPathIndexFromColumns
 } from '../InputAdapters/PathTreeInputAdapter.js';
+import {
+    buildIndexFromColumns as buildGroupingIndexFromColumns
+} from '../InputAdapters/GroupingTreeInputAdapter.js';
 import TreeAggregationResolver from './TreeAggregationResolver.js';
 import {
     resolveActiveGridSortings
@@ -110,11 +113,7 @@ function areRowIndexesIdentity(
 function getExpansionSeedKey(
     options: ResolvedTreeViewOptions
 ): string {
-    if (options.expandedRowIds === 'all') {
-        return 'all';
-    }
-
-    const parts: string[] = [];
+    const parts: string[] = ['levels:' + String(options.expandedLevels)];
 
     for (
         let i = 0,
@@ -127,6 +126,25 @@ function getExpansionSeedKey(
     }
 
     return parts.join('|');
+}
+
+/**
+ * Resolves the aggregator option of column options.
+ *
+ * @param columnOptions
+ * Column options to read.
+ *
+ * @returns
+ * Configured aggregator, when any.
+ */
+function getColumnOptionsAggregator(
+    columnOptions?: ColumnOptions
+): (TreeViewColumnAggregatorOption | undefined) {
+    return (
+        columnOptions?.rowAggregator ??
+        // TODO: Remove deprecated option before releasing next major
+        columnOptions?.treeView?.aggregator
+    );
 }
 
 /**
@@ -175,7 +193,7 @@ function resolveInputOptions(
     throw new Error(
         'TreeView: Could not autodetect input type. Expected either ' +
         `"${parentIdColumn}" or "${pathColumn}" column, ` +
-        'or set `data.treeView.input.type` explicitly.'
+        'or set `treeView.input.type` explicitly.'
     );
 }
 
@@ -233,6 +251,8 @@ class TreeProjectionController {
 
     private resolvedOptions?: ResolvedTreeViewOptions;
 
+    private rowGroupingIgnoredWarned?: boolean;
+
     private cacheSource?: {
         table: DataTable;
         versionTag: string;
@@ -282,7 +302,13 @@ class TreeProjectionController {
     public sync(): void {
         const dataOptions = this.getDataOptions();
         const normalizedOptions = normalizeTreeViewOptions(
+            this.grid.options,
+            // TODO: Remove deprecated option before releasing next major
             dataOptions?.treeView
+        );
+
+        this.syncRowGroupingIgnoredWarning(
+            !!normalizedOptions?.rowGroupingIgnored
         );
 
         if (!normalizedOptions) {
@@ -321,9 +347,15 @@ class TreeProjectionController {
             throw error;
         }
 
+        const treeColumn = normalizedOptions.treeColumn || (
+            resolvedInput.type === 'grouping' ?
+                resolvedInput.groupColumnId :
+                void 0
+        );
         const options: ResolvedTreeViewOptions = {
             ...normalizedOptions,
-            input: resolvedInput
+            input: resolvedInput,
+            treeColumn
         };
 
         this.resolvedOptions = options;
@@ -360,6 +392,29 @@ class TreeProjectionController {
     }
 
     /**
+     * Warns once when row grouping is ignored, because tree view is enabled at
+     * the same time.
+     *
+     * @param isIgnored
+     * Whether row grouping is currently ignored.
+     */
+    private syncRowGroupingIgnoredWarning(isIgnored: boolean): void {
+        if (isIgnored === !!this.rowGroupingIgnoredWarned) {
+            return;
+        }
+
+        this.rowGroupingIgnoredWarned = isIgnored;
+
+        if (isIgnored) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                'TreeView: `treeView` and `rowGrouping` cannot be enabled at ' +
+                'the same time. Row grouping has been ignored.'
+            );
+        }
+    }
+
+    /**
      * Returns metadata for currently projected rows.
      */
     public getProjectionState(): TreeProjectionState | undefined {
@@ -374,6 +429,19 @@ class TreeProjectionController {
      */
     public hasColumnAggregation(columnId: string): boolean {
         return this.aggregationResolver.hasColumnAggregation(columnId);
+    }
+
+    /**
+     * Returns source column ids hidden from the projected table.
+     */
+    public getHiddenSourceColumnIds(): string[] | undefined {
+        const input = this.options?.input;
+
+        if (input?.type !== 'grouping' || !input.hideGroupByColumns) {
+            return;
+        }
+
+        return input.groupBy.slice();
     }
 
     /**
@@ -573,12 +641,13 @@ class TreeProjectionController {
 
         const projectionState = this.projectToVisibleState(table, idColumn);
         this.projectionStateCache = projectionState;
-        const aggregateColumnIds = this.getAggregateColumnIds(
-            table.getColumnIds()
-        );
+        const sourceColumnIds = table.getColumnIds();
+        const aggregateColumnIds = this.getAggregateColumnIds(sourceColumnIds);
+        const projectedColumnIds = this.getProjectedColumnIds(sourceColumnIds);
 
         if (
             !aggregateColumnIds.length &&
+                isDeepEqual(projectedColumnIds, sourceColumnIds) &&
                 areRowIndexesIdentity(
                     projectionState.rowIndexes,
                     table.getRowCount()
@@ -591,6 +660,7 @@ class TreeProjectionController {
             table,
             projectionState,
             aggregateColumnIds,
+            projectedColumnIds,
             idColumn
         );
     }
@@ -755,6 +825,14 @@ class TreeProjectionController {
             );
         }
 
+        if (input.type === 'grouping') {
+            return buildGroupingIndexFromColumns(
+                table,
+                input,
+                idColumn
+            );
+        }
+
         return buildPathIndexFromColumns(
             table,
             input,
@@ -777,10 +855,12 @@ class TreeProjectionController {
         }
 
         const seedKey = getExpansionSeedKey(options);
-        const expandAll = options.expandedRowIds === 'all';
-        const explicitExpanded = expandAll ?
-            void 0 :
-            new Set<RowId>(options.expandedRowIds);
+        const explicitExpanded = new Set<RowId>(options.expandedRowIds);
+        const nodeDepths = new Map<RowId, number>();
+        const isSeedExpanded = (nodeId: RowId): boolean => (
+            explicitExpanded.has(nodeId) ||
+            this.isExpandedByLevel(nodeId, nodeDepths)
+        );
 
         if (this.expansionStateSeedKey !== seedKey) {
             this.expansionStateSeedKey = seedKey;
@@ -791,7 +871,7 @@ class TreeProjectionController {
                     continue;
                 }
 
-                if (expandAll || explicitExpanded?.has(nodeId)) {
+                if (isSeedExpanded(nodeId)) {
                     this.setRowMetaExpanded(nodeId, true);
                 }
             }
@@ -818,10 +898,73 @@ class TreeProjectionController {
                 continue;
             }
 
-            if (expandAll || explicitExpanded?.has(nodeId)) {
+            if (isSeedExpanded(nodeId)) {
                 this.setRowMetaExpanded(nodeId, true);
             }
         }
+    }
+
+    /**
+     * Returns whether a tree node is initially expanded by its depth.
+     *
+     * @param nodeId
+     * Tree node ID.
+     *
+     * @param nodeDepths
+     * Cache of already resolved node depths.
+     */
+    private isExpandedByLevel(
+        nodeId: RowId,
+        nodeDepths: Map<RowId, number>
+    ): boolean {
+        const expandedLevels = this.options?.expandedLevels ?? 0;
+
+        if (expandedLevels === 'all') {
+            return true;
+        }
+
+        if (expandedLevels <= 0) {
+            return false;
+        }
+
+        return this.getNodeDepth(nodeId, nodeDepths) < expandedLevels;
+    }
+
+    /**
+     * Resolves the depth of a tree node in the source tree index.
+     *
+     * @param nodeId
+     * Tree node ID.
+     *
+     * @param nodeDepths
+     * Cache of already resolved node depths.
+     */
+    private getNodeDepth(
+        nodeId: RowId,
+        nodeDepths: Map<RowId, number>
+    ): number {
+        const unresolvedIds: RowId[] = [];
+        let currentId: RowId | null = nodeId;
+        let depth = -1;
+
+        while (defined(currentId)) {
+            const cachedDepth: number | undefined = nodeDepths.get(currentId);
+
+            if (defined(cachedDepth)) {
+                depth = cachedDepth;
+                break;
+            }
+
+            unresolvedIds.push(currentId);
+            currentId = this.indexCache?.nodes.get(currentId)?.parentId ?? null;
+        }
+
+        // Resolved from the topmost unresolved ancestor down to the node.
+        for (let i = unresolvedIds.length - 1; i >= 0; --i) {
+            nodeDepths.set(unresolvedIds[i], ++depth);
+        }
+
+        return depth;
     }
 
     /**
@@ -1217,7 +1360,7 @@ class TreeProjectionController {
         if (
             !activeSortings.length ||
             !activeSortings.some((sorting): boolean =>
-                this.hasColumnAggregation(sorting.sourceColumnId)
+                this.requiresProjectedTreeSort(sorting.sourceColumnId)
             )
         ) {
             return;
@@ -1298,6 +1441,49 @@ class TreeProjectionController {
     }
 
     /**
+     * Returns whether sorting the column depends on projected tree values.
+     *
+     * @param sourceColumnId
+     * Source column id.
+     */
+    private requiresProjectedTreeSort(sourceColumnId: string): boolean {
+        return (
+            this.hasColumnAggregation(sourceColumnId) ||
+            this.isGroupingDisplayColumn(sourceColumnId)
+        );
+    }
+
+    /**
+     * Resolves output column IDs for the projected table.
+     *
+     * @param sourceColumnIds
+     * Source column IDs from the queried table.
+     *
+     * @returns
+     * Column IDs to include in the projected table.
+     */
+    private getProjectedColumnIds(sourceColumnIds: string[]): string[] {
+        const input = this.options?.input;
+        if (input?.type !== 'grouping') {
+            return sourceColumnIds.slice();
+        }
+
+        const groupedColumnIds = new Set(input.groupBy);
+        const projectedColumnIds = [input.groupColumnId];
+
+        for (let i = 0, iEnd = sourceColumnIds.length; i < iEnd; ++i) {
+            const columnId = sourceColumnIds[i];
+            if (input.hideGroupByColumns && groupedColumnIds.has(columnId)) {
+                continue;
+            }
+
+            projectedColumnIds.push(columnId);
+        }
+
+        return projectedColumnIds;
+    }
+
+    /**
      * Builds a projected table by reordering all columns to projected indexes.
      *
      * @param table
@@ -1309,6 +1495,9 @@ class TreeProjectionController {
      * @param aggregateColumnIds
      * Source column ids that should be aggregated in the projected table.
      *
+     * @param projectedColumnIds
+     * Column ids included in the projected table.
+     *
      * @param idColumn
      * Column containing stable row IDs, when configured.
      *
@@ -1319,23 +1508,23 @@ class TreeProjectionController {
         table: DataTable,
         projectionState: TreeProjectionState,
         aggregateColumnIds: string[],
+        projectedColumnIds: string[],
         idColumn?: string
     ): DataTable {
         const { rowIds, rowIndexes } = projectionState;
 
         const projectedTable = table.clone(true);
-        const sourceColumnIds = table.getColumnIds();
         const projectedColumns: ColumnCollection = {};
         const aggregateColumnIdSet = new Set(aggregateColumnIds);
         const derivedCellColumnIdsByRowId = new Map<RowId, Set<string>>();
 
         for (
             let i = 0,
-                iEnd = sourceColumnIds.length;
+                iEnd = projectedColumnIds.length;
             i < iEnd;
             ++i
         ) {
-            const columnId = sourceColumnIds[i];
+            const columnId = projectedColumnIds[i];
             const sourceColumn = table.columns[columnId];
             const projectedColumn = new Array<DataTableCellType>(
                 rowIndexes.length
@@ -1361,15 +1550,18 @@ class TreeProjectionController {
                 }
 
                 const rowIndex = rowIndexes[j];
-                projectedColumn[j] = typeof rowIndex === 'number' ?
-                    sourceColumn?.[rowIndex] :
+                projectedColumn[j] = (
+                    this.isGroupingDisplayColumn(columnId) ||
+                    typeof rowIndex !== 'number'
+                ) ?
                     this.resolveProjectedCellValue(
                         columnId,
                         rowId,
                         table,
                         projectionState,
                         idColumn
-                    );
+                    ) :
+                    sourceColumn?.[rowIndex];
             }
 
             projectedColumns[columnId] = projectedColumn;
@@ -1452,6 +1644,10 @@ class TreeProjectionController {
         projectionState: TreeProjectionState,
         idColumn?: string
     ): DataTableCellType {
+        if (this.isGroupingDisplayColumn(columnId)) {
+            return this.getGeneratedCellValue(columnId, rowId, idColumn);
+        }
+
         const rowIndex = projectionState.sourceRowIndexesById.get(rowId);
         if (typeof rowIndex === 'number') {
             return table.columns[columnId]?.[rowIndex] as DataTableCellType;
@@ -1465,25 +1661,25 @@ class TreeProjectionController {
     }
 
     /**
-     * Resolves TreeView column options for a source column id.
+     * Resolves aggregator option for a source column id.
      *
      * @param sourceColumnId
      * Source column id.
      */
-    private getColumnTreeViewOptions(
+    private getColumnAggregatorOption(
         sourceColumnId: string
-    ): TreeViewColumnOptions | undefined {
-        const columnPolicy = this.grid.columnPolicy;
-        const defaultOptions = this.grid.options?.columnDefaults?.treeView;
-        const directOptions = columnPolicy
-            .getIndividualColumnOptions(sourceColumnId)
-            ?.treeView;
+    ): (TreeViewColumnAggregatorOption | undefined) {
+        if (this.isTreeSpecialColumn(sourceColumnId)) {
+            return;
+        }
 
-        if (directOptions) {
-            return {
-                ...defaultOptions,
-                ...directOptions
-            };
+        const columnPolicy = this.grid.columnPolicy;
+        const directAggregator = getColumnOptionsAggregator(
+            columnPolicy.getIndividualColumnOptions(sourceColumnId)
+        );
+
+        if (defined(directAggregator)) {
+            return directAggregator;
         }
 
         const configuredColumnIds = columnPolicy.getColumnIds();
@@ -1500,35 +1696,31 @@ class TreeProjectionController {
                 continue;
             }
 
-            const mappedOptions = columnPolicy
-                .getIndividualColumnOptions(configuredColumnId)
-                ?.treeView;
+            const mappedAggregator = getColumnOptionsAggregator(
+                columnPolicy.getIndividualColumnOptions(configuredColumnId)
+            );
 
-            if (mappedOptions) {
-                return {
-                    ...defaultOptions,
-                    ...mappedOptions
-                };
+            if (defined(mappedAggregator)) {
+                return mappedAggregator;
             }
         }
 
-        return defaultOptions;
+        return getColumnOptionsAggregator(this.grid.options?.columnDefaults);
     }
 
     /**
-     * Resolves aggregator option for a source column id.
+     * Returns whether a source column is the generated grouping display column.
      *
      * @param sourceColumnId
      * Source column id.
      */
-    private getColumnAggregatorOption(
-        sourceColumnId: string
-    ): (TreeViewColumnAggregatorOption | undefined) {
-        if (this.isTreeSpecialColumn(sourceColumnId)) {
-            return;
-        }
+    public isGroupingDisplayColumn(sourceColumnId: string): boolean {
+        const input = this.options?.input;
 
-        return this.getColumnTreeViewOptions(sourceColumnId)?.aggregator;
+        return (
+            input?.type === 'grouping' &&
+            sourceColumnId === input.groupColumnId
+        );
     }
 
     /**
@@ -1553,6 +1745,13 @@ class TreeProjectionController {
             sourceColumnId === input.pathColumn
         ) {
             return true;
+        }
+
+        if (input.type === 'grouping') {
+            return (
+                sourceColumnId === input.groupColumnId ||
+                input.groupBy.indexOf(sourceColumnId) !== -1
+            );
         }
 
         return (
@@ -1603,6 +1802,20 @@ class TreeProjectionController {
             node.path
         ) {
             return node.path;
+        }
+
+        const groupValues = node.groupValues;
+        if (input.type === 'grouping' && groupValues) {
+            if (columnId === input.groupColumnId) {
+                return groupValues[groupValues.length - 1];
+            }
+
+            // Repeat the group values of the row level and its ancestor levels
+            // when grouped columns are rendered.
+            const levelIndex = input.groupBy.indexOf(columnId);
+            if (levelIndex !== -1 && levelIndex < groupValues.length) {
+                return groupValues[levelIndex];
+            }
         }
 
         return null;
