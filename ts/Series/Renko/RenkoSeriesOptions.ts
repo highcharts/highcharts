@@ -131,7 +131,7 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
      * Color of the point if there is a down trend. (color of point with up
      * trend is inferred from series.color)
      *
-     * @default #ff0000
+     * @default '#ff0000'
      *
      * @product highstock
      */
