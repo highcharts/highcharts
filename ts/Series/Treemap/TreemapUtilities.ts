@@ -40,6 +40,7 @@ namespace TreemapUtilities {
     /**
      * @todo find correct name for this function.
      * @todo Similar to reduce, this function is likely redundant
+     * @internal
      */
     export function recursive<TContext = any, TItem = any>(
         this: any,
@@ -61,4 +62,5 @@ namespace TreemapUtilities {
  *
  * */
 
+/** @internal */
 export default TreemapUtilities;

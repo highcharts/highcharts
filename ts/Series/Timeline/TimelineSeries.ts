@@ -59,7 +59,7 @@ import {
 /**
  * The timeline series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.timeline
  *
