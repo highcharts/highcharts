@@ -119,7 +119,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      * the default is `hlc`, a vertical stem with a tick on the right
      * representing the closing value.
      *
-     * @default hlc
+     * @default 'hlc'
      */
     legendSymbol?: string;
 
