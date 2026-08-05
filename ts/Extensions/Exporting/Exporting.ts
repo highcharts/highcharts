@@ -1950,6 +1950,7 @@ export class Exporting {
      * The SVG representation of the rendered chart.
      *
      * @emits Highcharts.Chart#event:getSVG
+     * @emits Highcharts.Chart#event:afterGetSVG
      *
      * @requires modules/exporting
      */
@@ -2124,15 +2125,17 @@ export class Exporting {
                 this.applyShadowDOMStyles(chartCopy);
             }
 
+            fireEvent(chart, 'getSVG', { chartCopy });
+
             // Get the SVG from the container's innerHTML
             svg = exporting?.getChartHTML(
                 chart.styledMode ||
                 options?.exporting?.applyStyleSheets
             ) || '';
 
-            fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
-
             svg = Exporting.sanitizeSVG(svg, options);
+
+            fireEvent(chart, 'afterGetSVG', { chartCopy, svg });
 
             // Free up memory
             options = void 0;
@@ -2217,7 +2220,7 @@ export class Exporting {
                 shadowStyles.push(clonedStyle);
             });
 
-        addEvent(chart, 'getSVG', (): void => {
+        addEvent(chart, 'afterGetSVG', (): void => {
             // Remove temporary Shadow DOM styles
             shadowStyles.forEach((style): void => {
                 style.remove();
@@ -2629,8 +2632,9 @@ export class Exporting {
             return;
         }
 
-        // Hook into getSVG to get a copy of the chart copy's container (#8273)
-        const unbindGetSVG = addEvent(chart, 'getSVG', (
+        // Hook into afterGetSVG to get a copy of the chart copy's container
+        // (#8273)
+        const unbindGetSVG = addEvent(chart, 'afterGetSVG', (
             e: { chartCopy: Chart }
         ): void => {
             chartCopyOptions = e.chartCopy.options;

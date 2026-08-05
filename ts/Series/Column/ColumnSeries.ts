@@ -58,9 +58,12 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         barW?: number;
+        /** @internal */
         pointXOffset?: number;
     }
 }
@@ -980,6 +983,7 @@ class ColumnSeries extends Series {
  *
  * */
 
+/** @internal */
 interface ColumnSeries {
     pointClass: typeof ColumnPoint;
 }
@@ -1002,6 +1006,7 @@ extend(ColumnSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         column: typeof ColumnSeries;
@@ -1015,6 +1020,7 @@ SeriesRegistry.registerSeriesType('column', ColumnSeries);
  *
  * */
 
+/** @internal */
 export default ColumnSeries;
 
 /* *
