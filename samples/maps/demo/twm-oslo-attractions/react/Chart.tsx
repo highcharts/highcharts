@@ -1,0 +1,247 @@
+import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+import { MapsChart } from '@highcharts/react/Maps';
+import {
+    Title,
+    Subtitle,
+    Tooltip,
+    Legend,
+    PlotOptions
+} from '@highcharts/react';
+import { TiledWebMapSeries } from '@highcharts/react/series/TiledWebMap';
+import { MapPointSeries } from '@highcharts/react/series/MapPoint';
+import { Exporting } from '@highcharts/react/modules/Exporting';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
+import type { HighchartsWithTemplating } from './types';
+
+// Templating helper to trim some character from the end
+(Highcharts as unknown as HighchartsWithTemplating).Templating.helpers['trim'] =
+    (txt: unknown, len: unknown): string => String(txt).slice(0, -Number(len));
+
+export default function TwmOsloAttractionsChart() {
+    return (
+        <MapsChart
+            margin={0}
+            options={{
+                navigation: {
+                    buttonOptions: {
+                        align: 'left',
+                        theme: {
+                            stroke: 'var(--highcharts-neutral-color-10, #e6e6e6)'
+                        }
+                    }
+                },
+                mapNavigation: {
+                    enabled: true,
+                    buttonOptions: {
+                        alignTo: 'spacingBox',
+                        theme: {
+                            stroke: 'var(--highcharts-neutral-color-10, #e6e6e6)'
+                        }
+                    }
+                },
+                mapView: {
+                    center: [10.7302, 59.9126],
+                    zoom: 13
+                }
+            }}
+            containerProps={{
+                style: { height: '500px', minWidth: '310px', margin: '0 auto' }
+            }}
+        >
+            <Title>{''}</Title>
+            <Subtitle>{''}</Subtitle>
+            <Tooltip
+                headerFormat={
+                    '<table style="border-left:3px solid {series.color}; padding-left:5px;"><tr><td style="font-size: 0.9em;">{trim series.name 1}</td></tr>'
+                }
+                pointFormat='<tr><td style="font-size: 1.1em;">{point.name}</td></tr>'
+                footerFormat="</table>"
+            />
+            <Legend
+                enabled={true}
+                align="left"
+                symbolWidth={24}
+                symbolHeight={24}
+                itemStyle={{ textOutline: '1 1 1px rgba(255,255,255)' }}
+                backgroundColor={`color-mix(
+                    in srgb,
+                    var(--highcharts-background-color, white),
+                    transparent 15%
+                )`}
+                floating={true}
+                borderRadius={12}
+                itemMarginBottom={10}
+                itemMarginTop={10}
+                padding={10}
+            />
+            <PlotOptions
+                mappoint={{
+                    dataLabels: {
+                        enabled: false
+                    },
+                    states: {
+                        inactive: {
+                            opacity: 0.5
+                        }
+                    }
+                }}
+            />
+
+            <TiledWebMapSeries
+                name="Basemap Tiles"
+                options={{
+                    provider: {
+                        type: 'OpenStreetMap',
+                        theme: 'Standard'
+                    },
+                    showInLegend: false
+                }}
+            />
+            <MapPointSeries
+                name="Museums"
+                color="#414141"
+                options={{
+                    marker: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/museum.svg)',
+                        width: 24,
+                        height: 24
+                    }
+                }}
+                data={[
+                    {
+                        name: 'Fram Museum',
+                        lon: 10.69299,
+                        lat: 59.90199
+                    },
+                    {
+                        name: 'Vigeland Museum',
+                        lon: 10.70013,
+                        lat: 59.92285
+                    },
+                    {
+                        name: 'Norwegian Museum of Cultural History',
+                        lon: 10.6849,
+                        lat: 59.90414
+                    },
+                    {
+                        name: 'The Viking Ship Museum (Vikingskipshuset)',
+                        lon: 10.68446,
+                        lat: 59.90475
+                    },
+                    {
+                        name: 'Museum of Cultural History',
+                        lon: 10.73547,
+                        lat: 59.9168
+                    },
+                    {
+                        name: 'The Astrup Fearnley Museum of Modern Art',
+                        lon: 10.72086,
+                        lat: 59.90706
+                    },
+                    {
+                        name: 'Munch Museum',
+                        lon: 10.75565,
+                        lat: 59.90616
+                    },
+                    {
+                        name: 'Natural History Museum at the University of Oslo',
+                        lon: 10.7717,
+                        lat: 59.9198
+                    }
+                ]}
+            />
+            <MapPointSeries
+                name="Parks"
+                color="#00AC22"
+                options={{
+                    marker: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/tree.svg)',
+                        width: 24,
+                        height: 24
+                    }
+                }}
+                data={[
+                    {
+                        name: 'The Vigeland Park',
+                        lon: 10.70514,
+                        lat: 59.92448
+                    },
+                    {
+                        name: 'Frogner Park',
+                        lon: 10.70347,
+                        lat: 59.92645
+                    },
+                    {
+                        name: "The University's Botanical Garden",
+                        lon: 10.7699,
+                        lat: 59.9174
+                    }
+                ]}
+            />
+            <MapPointSeries
+                name="Great buildings"
+                color="#0D66DB"
+                options={{
+                    marker: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/building.svg)',
+                        width: 24,
+                        height: 24
+                    }
+                }}
+                data={[
+                    {
+                        name: 'The Norwegian National Opera & Ballet',
+                        lon: 10.75182,
+                        lat: 59.90766
+                    },
+                    {
+                        name: 'Akershus Fortress',
+                        lon: 10.73601,
+                        lat: 59.90766
+                    },
+                    {
+                        name: 'Royal Palace in Oslo',
+                        lon: 10.7275,
+                        lat: 59.91694
+                    },
+                    {
+                        name: 'Oslo City Hall',
+                        lon: 10.73358,
+                        lat: 59.91176
+                    },
+                    {
+                        name: 'Akrobaten bru',
+                        lon: 10.75965,
+                        lat: 59.90971
+                    }
+                ]}
+            />
+            <MapPointSeries
+                name="Restaurants"
+                color="#CE0056"
+                options={{
+                    marker: {
+                        symbol: 'url(https://www.highcharts.com/samples/graphics/eat.svg)',
+                        width: 24,
+                        height: 24
+                    }
+                }}
+                data={[
+                    {
+                        name: 'Elias mat & sånt',
+                        lon: 10.73868,
+                        lat: 59.91631
+                    },
+                    {
+                        name: 'Østbanehallen renovated train station & food court',
+                        lon: 10.75109,
+                        lat: 59.91085
+                    }
+                ]}
+            />
+
+            <Exporting />
+            <Accessibility />
+        </MapsChart>
+    );
+}
