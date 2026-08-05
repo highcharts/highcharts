@@ -959,7 +959,7 @@ test.describe('Grid Pro - tree view', () => {
                     id: 'name'
                 }, {
                     id: 'value',
-                    aggregator: 'SUM'
+                    rowAggregator: 'SUM'
                 }],
                 columnDefaults: {
                     cells: {

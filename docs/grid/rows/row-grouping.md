@@ -27,7 +27,7 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'revenue',
-        aggregator: 'SUM'
+        rowAggregator: 'SUM'
     }]
 });
 ```
@@ -133,30 +133,30 @@ Grouped columns are structural columns and are rendered readonly.
 ## Aggregation
 
 Group rows have no source row of their own, so their cells are empty unless the
-column defines an `aggregator`.
+column defines a `rowAggregator`.
 
 ```js
 columns: [{
     id: 'revenue',
-    aggregator: 'SUM'
+    rowAggregator: 'SUM'
 }, {
     id: 'margin',
-    aggregator: 'AVERAGE'
+    rowAggregator: 'AVERAGE'
 }]
 ```
 
-To aggregate most columns the same way, set the aggregator in `columnDefaults`
-and reset it with `aggregator: false` where it does not apply. Note that a
+To aggregate most columns the same way, set `rowAggregator` in `columnDefaults`
+and reset it with `rowAggregator: false` where it does not apply. Note that a
 default aggregator also reaches text columns, where numeric functions such as
 `SUM` resolve to `0`.
 
 ```js
 columnDefaults: {
-    aggregator: 'SUM'
+    rowAggregator: 'SUM'
 },
 columns: [{
     id: 'account',
-    aggregator: false
+    rowAggregator: false
 }]
 ```
 

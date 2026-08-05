@@ -211,7 +211,7 @@ async function buildGrid() {
             cells: {
                 format: '${value:,0f}'
             },
-            aggregator: 'SUM'
+            rowAggregator: 'SUM'
         }, {
             id: 'actual',
             header: {
@@ -220,7 +220,7 @@ async function buildGrid() {
             cells: {
                 format: '${value:,0f}'
             },
-            aggregator: 'SUM'
+            rowAggregator: 'SUM'
         }, {
             id: 'headcount',
             header: {
@@ -229,7 +229,7 @@ async function buildGrid() {
             cells: {
                 format: '{value:,0f}'
             },
-            aggregator: 'SUM'
+            rowAggregator: 'SUM'
         }, {
             id: 'utilization',
             header: {
@@ -238,7 +238,7 @@ async function buildGrid() {
             cells: {
                 format: '{(multiply 100 value):.1f}%'
             },
-            aggregator: 'AVERAGE'
+            rowAggregator: 'AVERAGE'
         }, {
             id: 'risk',
             header: {
@@ -266,7 +266,7 @@ async function buildGrid() {
                     );
                 }
             },
-            aggregator: 'MAX'
+            rowAggregator: 'MAX'
         }],
         header: [
             'path',

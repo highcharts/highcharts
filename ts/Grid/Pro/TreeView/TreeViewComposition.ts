@@ -711,13 +711,13 @@ declare module '../../Core/Options' {
          * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
          * @sample grid-pro/options/row-grouping Row grouping
          */
-        aggregator?: TreeViewColumnAggregatorOption;
+        rowAggregator?: TreeViewColumnAggregatorOption;
 
         /**
          * TreeView options for a single column.
          *
          * @deprecated 3.1.0
-         * @deprnote Use the column level `aggregator` option instead.
+         * @deprnote Use the column level `rowAggregator` option instead.
          */
         treeView?: TreeViewColumnOptions;
     }

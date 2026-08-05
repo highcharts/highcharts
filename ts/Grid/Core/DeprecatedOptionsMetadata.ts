@@ -107,7 +107,7 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'treeView'
             }
         ],
-        'text': 'Use the column level `aggregator` option instead.',
+        'text': 'Use the column level `rowAggregator` option instead.',
         'version': '3.1.0'
     },
     {
@@ -183,7 +183,7 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
                 'name': 'treeView'
             }
         ],
-        'text': 'Use the column level `aggregator` option instead.',
+        'text': 'Use the column level `rowAggregator` option instead.',
         'version': '3.1.0'
     },
     {

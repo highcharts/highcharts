@@ -141,7 +141,7 @@ function getColumnOptionsAggregator(
     columnOptions?: ColumnOptions
 ): (TreeViewColumnAggregatorOption | undefined) {
     return (
-        columnOptions?.aggregator ??
+        columnOptions?.rowAggregator ??
         // TODO: Remove deprecated option before releasing next major
         columnOptions?.treeView?.aggregator
     );

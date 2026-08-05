@@ -73,7 +73,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '${value:,0f}'
         },
-        aggregator: 'SUM'
+        rowAggregator: 'SUM'
     }, {
         id: 'units',
         header: {
@@ -82,7 +82,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{value:,0f}'
         },
-        aggregator: 'SUM'
+        rowAggregator: 'SUM'
     }, {
         id: 'margin',
         header: {
@@ -91,7 +91,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{(multiply 100 value):.1f}%'
         },
-        aggregator: 'AVERAGE'
+        rowAggregator: 'AVERAGE'
     }]
 });
 

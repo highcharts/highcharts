@@ -155,7 +155,7 @@ describe('TreeProjectionController', () => {
                         enabled: true
                     }
                 },
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -464,13 +464,13 @@ describe('TreeProjectionController', () => {
             },
             columns: [{
                 id: 'id',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }, {
                 id: 'path',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }, {
                 id: 'value',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -546,7 +546,7 @@ describe('TreeProjectionController', () => {
                         enabled: true
                     }
                 },
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -616,13 +616,13 @@ describe('TreeProjectionController', () => {
             },
             columns: [{
                 id: 'id',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }, {
                 id: 'parentId',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }, {
                 id: 'value',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -697,7 +697,7 @@ describe('TreeProjectionController', () => {
             },
             columns: [{
                 id: 'value',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -769,7 +769,7 @@ describe('TreeProjectionController', () => {
                         Math.abs(Number(a) - 12) -
                         Math.abs(Number(b) - 12)
                 },
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -1412,7 +1412,7 @@ describe('TreeProjectionController', () => {
             },
             columns: [{
                 id: 'amount',
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             }]
         }, true);
 
@@ -1802,7 +1802,7 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
-    it('should reset a columnDefaults aggregator with `aggregator: false`', async () => {
+    it('should reset a columnDefaults rowAggregator with `rowAggregator: false`', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -1827,11 +1827,11 @@ describe('TreeProjectionController', () => {
                 }
             },
             columnDefaults: {
-                aggregator: 'SUM'
+                rowAggregator: 'SUM'
             },
             columns: [{
                 id: 'units',
-                aggregator: false
+                rowAggregator: false
             }]
         }, true);
 
@@ -1842,12 +1842,12 @@ describe('TreeProjectionController', () => {
         deepStrictEqual(
             presentationTable.columns.revenue,
             [30, 10, 20, 30, 30],
-            'The columnDefaults aggregator should apply to group rows.'
+            'The columnDefaults rowAggregator should apply to group rows.'
         );
         deepStrictEqual(
             presentationTable.columns.units,
             [null, 1, 2, null, 3],
-            'A column with `aggregator: false` should not aggregate.'
+            'A column with `rowAggregator: false` should not aggregate.'
         );
 
         grid.destroy();
