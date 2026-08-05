@@ -131,8 +131,6 @@ const grid = Grid.grid('grid-container', {
             events: {
                 click: function () {
                     selectRow(this.row.id);
-                },
-                afterSetValue: function () {
                     setActiveRowStyle();
                 }
             },
@@ -161,9 +159,7 @@ function selectRow(rowId) {
 function setActiveRowStyle() {
     grid.viewport?.rows.forEach(row => {
         const rowIsActive = (activeRow === row.id);
-        row.cells.forEach(c => {
-            c.htmlElement.classList.toggle('active-row', rowIsActive);
-        });
+        row.htmlElement.classList.toggle('active-row', rowIsActive);
     });
 }
 

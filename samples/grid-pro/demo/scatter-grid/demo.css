@@ -54,39 +54,14 @@ body {
     background: var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
-#grid-container .hcg-table tbody .hcg-cell {
+.hcg-cell {
     cursor: pointer;
 }
 
-.active-row {
+.active-row .hcg-cell {
     background: rgba(30, 136, 229, 0.12) !important;
 }
 
-/* Grid focus workaround, making the focus mark the entire row */
-.hcg-table tbody .hcg-cell:focus {
-    box-shadow: none;
-}
-
-.hcg-table tbody .hcg-row:has(.hcg-cell:focus) .hcg-cell {
-    --focus-w: var(--ig-focus-ring-width, 2px);
-    --focus-c: var(--ig-focus-ring-color, #626bd0);
-
-    box-shadow:
-        inset 0 var(--focus-w) 0 var(--focus-c),
-        inset 0 calc(var(--focus-w) * -1) 0 var(--focus-c);
-}
-
-/* Close the ring at the two ends of the row */
-.hcg-table tbody .hcg-row:has(.hcg-cell:focus) .hcg-cell:first-child {
-    box-shadow:
-        inset 0 var(--focus-w) 0 var(--focus-c),
-        inset 0 calc(var(--focus-w) * -1) 0 var(--focus-c),
-        inset var(--focus-w) 0 0 var(--focus-c);
-}
-
-.hcg-table tbody .hcg-row:has(.hcg-cell:focus) .hcg-cell:last-child {
-    box-shadow:
-        inset 0 var(--focus-w) 0 var(--focus-c),
-        inset 0 calc(var(--focus-w) * -1) 0 var(--focus-c),
-        inset calc(var(--focus-w) * -1) 0 0 var(--focus-c);
+.hcg-row:has(.hcg-cell:focus) .hcg-cell {
+    background: var(--hcg-row-hover-background);
 }
