@@ -31,7 +31,7 @@
               <li>Added the experimental <a href="https://api.highcharts.com/class-reference/Highcharts.Loader">autoload</a> feature, loading required modules based on the chart configuration.</li>
               <li>Added customizable <code>boundary</code> ticks for <code>datetime</code> axes, see the docs for <a href="https://www.highcharts.com/docs/chart-concepts/axes#datetime">Axes → Datetime</a> → Boundary ticks on datetime axis.</li>
               <li>Added new setting, <code>contrast</code>, for <code>dataLabels.backgroundColor</code>. Allows enhancing readability with a plain, semi-transparent background color. Extended the <code>dataLabels.distance</code> option to apply to more series types than previously.</li>
-              <li>Added new option, <a href="https://api.highcharts.com/chart.plotBorderRadius"><code>chart.plotBorderRadius</code></a>.</li>
+              <li>Added new option, <a href="https://api.highcharts.com/highcharts/chart.plotBorderRadius"><code>chart.plotBorderRadius</code></a>.</li>
               <li>Added new options set, <a href="https://api.highcharts.com/highcharts/tooltip.header"><code>tooltip.header</code></a>, for better control over the header design i split tooltips.</li>
             </ul>
             <div class="accordion card-group">
@@ -48,6 +48,9 @@
                       <li>Solid gauge <code>radius</code> and <code>innerRadius</code>, when given as numeric values, defined on series or point level, no longer resolve as percents, but as pixels. To set it to a percent, use a percentage string like <code>radius: &#39;50%&#39;</code>.</li>
                       <li>The <code>dataSorting</code> feature now requires the <code>modules/data-sorting.js</code> file.</li>
                       <li>Default data label positions have changed slightly. Previously, the distance to the point or column was determined by <code>padding</code> and adjusted by <code>x</code> and <code>y</code>. Introduced new option, <code>dataLabels.distance</code>, in order to allow backgrounds with padding without touching the point.</li>
+                      <li>Content marked with <code>useHTML</code> is now wrapped in a <code>div</code> instead of a <code>span</code>
+                        in order to comply with valid HTML. Custom CSS rules addressing the <code>span</code> may
+                        have to be updated.</li>
                     </ul>
 
                   </div>
@@ -16421,6 +16424,43 @@ import &#39;highcharts/modules/accessibility&#39;;
             <h2 id="highcharts-grid">Highcharts Grid</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-grid-v3.1.0"></a>
+              <span>Highcharts Grid v3.1.0 (2026-08-06)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v3.1.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-3.1.0.zip" title="Download the zip archive for Highcharts Grid v3.1.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid Pro:</strong> Added support for <a href="https://www.highcharts.com/docs/grid/rows/grouping">row grouping</a></li>
+              <li><strong>Grid Pro:</strong> Optimized event options update.</li>
+              <li><strong>Grid Pro:</strong> Added <code>treeView</code> <a href="https://www.highcharts.com/docs/grid/rows/tree-view#aggregation">data aggregation</a>.</li>
+              <li><strong>Grid:</strong> Added support for <a href="https://www.highcharts.com/docs/grid/columns/virtualization">column virtualization</a>.</li>
+              <li><strong>Grid:</strong> Added built-in context menu groups.</li>
+              <li><strong>Grid:</strong> Grid filtering conditions allowlist.</li>
+              <li><strong>Grid:</strong> Added possibility to render Grid caption as HTML. See <a href="https://github.com/highcharts/highcharts/issues/24683">#24683</a>.</li>
+              <li><strong>Grid:</strong> Added support for runtime warnings when deprecated Grid options are used.</li>
+              <li><strong>Grid:</strong> Added support for <a href="https://api.highcharts.com/grid/columns.minWidth">minWidth</a> and <a href="https://api.highcharts.com/grid/columns.maxWidth">maxWidth</a> in column options. See <a href="https://github.com/highcharts/highcharts/issues/24395">#24395</a>.</li>
+              <li><strong>Grid:</strong> Added <code>data.dataTableKey</code> option to select a table from Grid data connectors.</li>
+              <li><strong>Grid:</strong> Refactored CSS by separating theme styles from functional styles.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hGrid-heading-3-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v3.1.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v3.1.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-3-1-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-3-1-0" class="collapse" aria-labelledby="hGrid-heading-3-1-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid:</strong> Fixed rows being pushed out of view when resizing a column while scrolled down, with variable row heights.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-grid-v3.0.0"></a>
               <span>Highcharts Grid v3.0.0 (2026-05-06)</span>
