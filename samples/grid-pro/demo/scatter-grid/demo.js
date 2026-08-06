@@ -128,6 +128,11 @@ const grid = Grid.grid('grid-container', {
                     '--active-row-color',
                     chart.options.colors[this.value - 1]
                 );
+                const rowIsActive = (activeRow === this.value - 1);
+                this.row.htmlElement.classList.toggle(
+                    'active-row',
+                    rowIsActive
+                );
                 return this.value;
             }
         }
@@ -197,9 +202,7 @@ function updateChart() {
                 plotLines: undefined
             },
             yAxis: {
-                title: {
-                    text: 'Measurements'
-                }
+                visible: true
             },
             plotOptions: {
                 scatter: {
@@ -238,9 +241,7 @@ function updateChart() {
                 }]
             },
             yAxis: {
-                title: {
-                    text: 'Dataset ID'
-                }
+                visible: false
             },
             plotOptions: {
                 scatter: {
