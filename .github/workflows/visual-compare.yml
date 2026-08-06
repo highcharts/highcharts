@@ -83,14 +83,24 @@ jobs:
           --master ./tmp/filesizes/master.json \
           --proposed ./tmp/filesizes/${{github.event.pull_request.number}}.json
 
+      - name: Checkout trusted comment helper
+        if: ${{ github.event.pull_request.number && hashFiles('tmp/filesizes/comparison.md') != '' }}
+        uses: actions/checkout@v6
+        with:
+          ref: master
+          path: trusted-highcharts
+          sparse-checkout: |
+            .github/scripts/commentOnPR.js
+          sparse-checkout-cone-mode: false
+
       - name: Comment PR with file size table
         if: ${{ github.event.pull_request.number && hashFiles('tmp/filesizes/comparison.md') != '' }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
             const { readFileSync } = require('node:fs');
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./trusted-highcharts/.github/scripts/commentOnPR');
 
             const comparisonPath = './tmp/filesizes/comparison.md';
             const title = 'File size comparison';
@@ -182,7 +192,6 @@ jobs:
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:
-          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
           HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
           AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
@@ -219,13 +228,108 @@ jobs:
           AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
           PR_NUMBER: ${{github.event.pull_request.number}}
 
+      - name: Resolve visual status metadata
+        id: visual_status
+        if: ${{ always() && hashFiles('test/visual-test-results.json') != '' }}
+        run: |
+          node <<'NODE'
+          const { readFileSync, existsSync, appendFileSync } = require('node:fs');
+
+          const prNumber = process.env.PR_NUMBER;
+          const outputFile = process.env.GITHUB_OUTPUT;
+          const reviewPath = `./test/review-pr-${prNumber}.json`;
+
+          function readJson(path) {
+            try {
+              return JSON.parse(readFileSync(path, 'utf8'));
+            } catch (error) {
+              console.warn(`Could not parse ${path}: ${error.message}`);
+            }
+          }
+
+          let state = 'failure';
+          let description = 'Review of changed samples needed. Click on details.';
+
+          const review = existsSync(reviewPath) ? readJson(reviewPath) : undefined;
+
+          if (review) {
+            const samples = Array.isArray(review?.samples) ? review.samples : [];
+
+            if (samples.length === 0) {
+              state = 'success';
+              description = 'No diffing samples found.';
+            } else if (samples.every(sample => sample && sample.approved)) {
+              state = 'success';
+              description = 'Diffing samples are approved';
+            }
+          } else {
+            const results = readJson('./test/visual-test-results.json');
+            if (results) {
+              const hasDiffs = Object.entries(results).some(([key, value]) =>
+                key !== 'meta' && typeof value === 'number' && value > 0
+              );
+              if (!hasDiffs) {
+                state = 'success';
+                description = 'No diffing samples found.';
+              }
+            }
+          }
+
+          appendFileSync(outputFile, `state=${state}\n`);
+          appendFileSync(outputFile, `description=${description}\n`);
+          NODE
+        env:
+          PR_NUMBER: ${{github.event.pull_request.number}}
+
+      - name: Checkout trusted comment helper
+        if: ${{ always() && (hashFiles('tmp/pr-visual-test-comment.json') != '' || hashFiles('test/visual-test-results.json') != '') }}
+        uses: actions/checkout@v6
+        with:
+          ref: master
+          path: trusted-highcharts
+          sparse-checkout: |
+            .github/scripts/commentOnPR.js
+            .github/scripts/setCommitStatus.js
+          sparse-checkout-cone-mode: false
+
+      - name: Update commit status (trusted)
+        uses: actions/github-script@v9
+        if: ${{ always() && steps.visual_status.outputs.state != '' }}
+        with:
+          github-token: ${{secrets.PR_COMMENT_TOKEN}}
+          script: |
+            const { setCommitStatus } = require('./trusted-highcharts/.github/scripts/setCommitStatus');
+
+            const prNumber = context.issue.number;
+            const sha = context.payload.pull_request?.head?.sha;
+
+            if (!sha) {
+              core.warning('Skipping commit status update because PR head SHA is missing.');
+              return;
+            }
+
+            try {
+              await setCommitStatus({
+                github: github.rest,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                sha,
+                state: '${{ steps.visual_status.outputs.state }}',
+                targetUrl: `https://vrevs.highsoft.com/pr/${prNumber}/review`,
+                description: '${{ steps.visual_status.outputs.description }}',
+                context: 'Highcharts review tool'
+              });
+            } catch (error) {
+              core.warning(`Failed to create commit status for ${sha}: ${error.message}`);
+            }
+
       - name: Comment on PR
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         if: ${{ always() && hashFiles('tmp/pr-visual-test-comment.json') != '' }}
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./trusted-highcharts/.github/scripts/commentOnPR');
             const { existsSync, readFileSync } = require('node:fs');
 
             const commentPath = './tmp/pr-visual-test-comment.json';
