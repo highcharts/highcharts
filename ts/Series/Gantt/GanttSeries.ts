@@ -125,7 +125,9 @@ class GanttSeries extends XRangeSeries {
             const startColumn = super.getColumn('start');
             if (startColumn.length) {
                 return startColumn.map((val: number|string): number =>
-                    time.parse(val) || 0
+                    // Handle string dates, but let undefined and null pass
+                    // through (#24849)
+                    (typeof val === 'string' ? time.parse(val) as number : val)
                 );
             }
         }

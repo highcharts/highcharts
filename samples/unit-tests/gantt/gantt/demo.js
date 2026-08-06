@@ -578,14 +578,31 @@
         );
     });
 
-    QUnit.test('No series', function (assert) {
-        Highcharts.ganttChart('container', {
+    QUnit.test('No series or incomplete data', function (assert) {
+        const chart = Highcharts.ganttChart('container', {
             title: {
                 text: 'Gantt'
             }
         });
 
         assert.ok(true, 'Gantt should be initialized with no errors.');
+
+        chart.addSeries({
+            name: 'Project 1',
+            data: [{
+                name: 'Empty'
+            }, {
+                name: 'Valid',
+                start: '2026-08-06',
+                end: '2026-08-10'
+            }]
+        });
+
+        assert.strictEqual(
+            Highcharts.dateFormat(undefined, chart.xAxis[0].min),
+            '2026-08-06 00:00:00',
+            'Empty point should not affect the axis (#24849).'
+        );
     });
 
     QUnit.test('Scrolling', assert => {
