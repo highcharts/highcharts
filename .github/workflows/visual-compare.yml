@@ -170,10 +170,49 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --single-run --browsercount 2 --visualcompare || true
+      - name: Compare Highcharts visual tests
+        run: |
+          marker='test/visual-test-complete'
+          rm -f "$marker"
+          npx karma start test/karma-conf.js --tests highcharts/*/* --ts --single-run --browsercount 2 --visualcompare || true
+          if [ ! -f "$marker" ]; then
+            printf '%s\n' \
+              'Highcharts candidate run did not reach image-capture reporter completion.' \
+              >> test/visual-test-errors.log
+          fi
+
+      - name: Compare Stock visual tests
+        run: |
+          marker='test/visual-test-complete'
+          rm -f "$marker"
+          npx karma start test/karma-conf.js --tests stock/*/* --ts --single-run --browsercount 2 --visualcompare || true
+          if [ ! -f "$marker" ]; then
+            printf '%s\n' \
+              'Stock candidate run did not reach image-capture reporter completion.' \
+              >> test/visual-test-errors.log
+          fi
+
+      - name: Compare Maps visual tests
+        run: |
+          marker='test/visual-test-complete'
+          rm -f "$marker"
+          npx karma start test/karma-conf.js --tests maps/*/* --ts --single-run --browsercount 2 --visualcompare || true
+          if [ ! -f "$marker" ]; then
+            printf '%s\n' \
+              'Maps candidate run did not reach image-capture reporter completion.' \
+              >> test/visual-test-errors.log
+          fi
+
+      - name: Compare Gantt visual tests
+        run: |
+          marker='test/visual-test-complete'
+          rm -f "$marker"
+          npx karma start test/karma-conf.js --tests gantt/*/* --ts --single-run --browsercount 2 --visualcompare || true
+          if [ ! -f "$marker" ]; then
+            printf '%s\n' \
+              'Gantt candidate run did not reach image-capture reporter completion.' \
+              >> test/visual-test-errors.log
+          fi
 
       - name: Generate visual test report
         run: |
@@ -262,5 +301,16 @@ jobs:
           name: visual-test-results
           path: |
             test/visual-test-results.json
+            test/visual-test-errors.log
             test/review-pr-*.json
             tmp/pr-visual-test-comment.json
+
+      - name: Fail on visual test execution errors
+        if: ${{ always() }}
+        run: |
+          error_file=test/visual-test-errors.log
+          if [ -s "$error_file" ]; then
+            echo "Visual test execution errors:"
+            cat "$error_file"
+            exit 1
+          fi
