@@ -201,19 +201,12 @@ const kpiComponent = {
             type: 'solidgauge'
         },
         pane: {
-            background: {
-                innerRadius: '80%',
-                outerRadius: '120%',
-                shape: 'arc'
-            },
-            center: ['50%', '70%'],
             endAngle: 90,
             startAngle: -90
         },
         yAxis: {
             title: {
-                text: measInfo.descr('P_gen'),
-                y: -80
+                text: measInfo.descr('P_gen')
             },
             labels: {
                 distance: '100%',
@@ -228,9 +221,7 @@ const kpiComponent = {
         },
         series: [{
             name: measInfo.brief('P_gen'),
-            enableMouseTracking: true,
-            innerRadius: '80%',
-            radius: '120%'
+            enableMouseTracking: true
         }],
         tooltip: {
             valueSuffix: ' ' + powerUnit

@@ -155,6 +155,22 @@ function compose(
                     opacity
                 });
         }
+
+        // Boosted scatter crops its data table on the Y axis, so it must be
+        // reprocessed when the axis extremes change (#24386).
+        if (!this.isPanning) {
+            for (const series of this.series) {
+                if (
+                    series.boost &&
+                    series.is('scatter') &&
+                    !series.is('bubble') &&
+                    !series.is('treemap') &&
+                    !series.is('heatmap')
+                ) {
+                    series.isDirty = true;
+                }
+            }
+        }
     });
 }
 

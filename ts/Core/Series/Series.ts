@@ -62,11 +62,10 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -471,7 +470,11 @@ class Series {
     /** @internal */
     public graphPath?: SVGPath;
 
-    /** @internal */
+    /**
+     * The main group for the series' graphics.
+     *
+     * @readonly
+     */
     public group?: SVGElement;
 
     /** @internal */
@@ -711,6 +714,13 @@ class Series {
      * @readonly
      */
     /**
+     * The main group for the series' graphics.
+     *
+     * @name Highcharts.Series#group
+     * @type {Highcharts.SVGElement}
+     * @readonly
+     */
+    /**
      * Contains the series' index in the `Chart.series` array.
      *
      * @name Highcharts.Series#index
@@ -857,12 +867,12 @@ class Series {
         const options = series.options,
             visible = options.visible !== false;
 
-        // Create the data table
-        this.dataTable ??= (
+        // Create the data table or use the one passed as option
+        this.dataTable ??= isArray(options.dataTable) ?
+            new DataTableCore() :
             options.dataTable?.isDataTable ?
                 options.dataTable :
-                new DataTableCore(options.dataTable)
-        );
+                new DataTableCore(options.dataTable);
 
         /**
          * All child series that are linked to the current series through the
@@ -2260,8 +2270,12 @@ class Series {
             }
         }
 
-        // Find the closest distance between processed points
-        xData = this.getColumn('x', true);
+        // Find the closest distance between processed points. When the data was
+        // cropped (or set out of range), read x from the freshly cropped local
+        // `modified` table, #24858.
+        if (modified !== table) {
+            xData = modified.getColumn('x', true) as Array<number> || [];
+        }
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
@@ -4021,7 +4035,7 @@ class Series {
      *
      * @function Highcharts.Series#searchPoint
      *
-     * @param {Highcharts.PointerEvent} e
+     * @param {PointerEvent} e
      *        The normalized pointer event
      * @param {boolean} [compareX=false]
      *        Search only by the X value, not Y
@@ -4144,7 +4158,7 @@ class Series {
      *        The point to search for.
      * @param {boolean} [compareX=false]
      *        Search only by the X value, not Y.
-     * @param {Highcharts.PointerEvent} [e]
+     * @param {PointerEvent} [e]
      *        The normalized pointer event.
      * @param {Function} [suppliedPointEvaluator]
      *        A custom point evaluator function.
@@ -4454,11 +4468,13 @@ class Series {
      *         Both X and Y values given
      * @sample highcharts/members/series-addpoint-pie/
      *         Append pie slice
-     * @sample stock/members/series-addpoint/
+     * @sample highcharts/datatable/datamapping-dynamic
+     *         Alternative approach with data table
+     * @sample {highstock} stock/members/series-addpoint/
      *         Append 100 points in Highcharts Stock
-     * @sample stock/members/series-addpoint-shift/
+     * @sample {highstock} stock/members/series-addpoint-shift/
      *         Append and shift in Highcharts Stock
-     * @sample maps/members/series-addpoint/
+     * @sample {highmaps} maps/members/series-addpoint/
      *         Add a point in Highmaps
      *
      * @function Highcharts.Series#addPoint

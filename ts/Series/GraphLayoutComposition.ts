@@ -24,11 +24,10 @@ import type Chart from '../Core/Chart/Chart';
 import type Point from '../Core/Series/Point';
 import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
 
-import A from '../Core/Animation/AnimationUtilities.js';
-const { setAnimation } = A;
+import { setAnimation } from '../Core/Animation/AnimationUtilities.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { addEvent, pushUnique } from '../Shared/Utilities.js';
+import { addEvent, fireEvent, pushUnique } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -198,6 +197,7 @@ function onChartRender(
             this.series.forEach((series): void => {
                 if (series && series.layout) {
                     series.render();
+                    fireEvent(series, 'afterSimulation');
                 }
             });
         }

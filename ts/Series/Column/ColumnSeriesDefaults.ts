@@ -18,8 +18,7 @@
  *
  * */
 
-import type ColumnSeries from './ColumnSeries';
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
+import type ColumnSeriesOptions from './ColumnSeriesOptions';
 
 /* *
  *
@@ -41,7 +40,7 @@ import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */
-const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
+const ColumnSeriesDefaults: ColumnSeriesOptions = {
 
     /**
      * The corner radius of the border surrounding each column or bar. A number
@@ -170,6 +169,8 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      *          0.25
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
+     * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
+     *         Pie point padding plugin
      *
      * @product highcharts highstock gantt
      */
@@ -531,13 +532,13 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
 
 /**
  * @excluding halo, lineWidth, lineWidthPlus, marker
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.column.states.hover
  */
 
 /**
  * @excluding halo, lineWidth, lineWidthPlus, marker
- * @product   highcharts highstock
+ * @product   highcharts highstock gantt
  * @apioption series.column.states.select
  */
 
