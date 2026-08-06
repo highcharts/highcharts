@@ -62,6 +62,14 @@ import {
  * */
 
 /** @internal */
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
+        bubblePaddedMax?: number;
+        bubblePaddedMin?: number;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         bubbleZExtremes?: BubbleZExtremes;
@@ -92,6 +100,10 @@ interface KDPointSearchObject extends KDPointSearchObjectBase {
  *
  * */
 
+/**
+ * Add logic to pad each axis with the amount of pixels necessary to avoid the
+ * bubbles to overflow.
+ */
 function onAxisFoundExtremes(
     this: Axis
 ): void {
@@ -176,13 +188,22 @@ function onAxisFoundExtremes(
 
     }
 
-    // Store values so afterSetTickPositions can detect tick snap. #24039
+    // Record the extremes as left by the padding above, so that
+    // `onAxisAfterSetTickPositions` can tell whether anything moved them
+    // afterwards. #24039
     if (hasActiveSeries) {
-        (this as any).bubbleMinAfterPadding = this.min;
-        (this as any).bubbleMaxAfterPadding = this.max;
+        this.bubblePaddedMin = this.min;
+        this.bubblePaddedMax = this.max;
     }
 }
 
+/**
+ * The padding applied on `foundExtremes` is computed before the tick positions
+ * are known. Anything that moves the extremes after that - tick snapping
+ * (`startOnTick`/`endOnTick`), `softMin`/`softMax`, `minRange` expansion or
+ * `adjustTickAmount` - invalidates it and can leave bubbles hanging outside the
+ * plot area. Re-measure here and widen the extremes if that happened. #24039
+ */
 function onAxisAfterSetTickPositions(
     this: Axis
 ): void {
@@ -203,11 +224,11 @@ function onAxisAfterSetTickPositions(
         return;
     }
 
-    // Only correct if tick snap shifted the axis after onAxisFoundExtremes
-    // already padded it — otherwise we cause a double expansion. #24039
+    // The extremes are still the ones the padding left behind, so it is
+    // still valid and there is nothing to correct
     if (
-        this.min === (this as any).bubbleMinAfterPadding &&
-        this.max === (this as any).bubbleMaxAfterPadding
+        this.min === this.bubblePaddedMin &&
+        this.max === this.bubblePaddedMax
     ) {
         return;
     }
@@ -226,7 +247,10 @@ function onAxisAfterSetTickPositions(
 
         hasActiveSeries = true;
 
-        const data = series.getColumn(isXAxis ? 'x' : 'y');
+        const data = series.getColumn(isXAxis ? 'x' : 'y'),
+            // Bubbles rendered on a point of another series keep their radii
+            // on the `onPoint` object, like in `onAxisFoundExtremes`
+            radii = (series.onPoint || series).radii;
 
         let i = data.length;
         while (i--) {
@@ -234,7 +258,7 @@ function onAxisAfterSetTickPositions(
             if (!isNumber(d)) {
                 continue;
             }
-            const r = series.radii && series.radii[i] || 0;
+            const r = radii && radii[i] || 0;
             if (r >= axisLength) {
                 continue;
             }
