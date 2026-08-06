@@ -124,13 +124,9 @@ export interface CylinderSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
-     *
      * @extends series.column.data
      *
      * @product highcharts highstock
-     *
-     * @apioption series.cylinder.data
      */
     data?: Array<(CylinderPointOptions|PointShortOptions)>;
 
