@@ -63,7 +63,7 @@ import type WindbarbPointOptions from './WindbarbPointOptions';
 export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
 
     /**
-     * @default value
+     * @default 'value'
      */
     colorKey?: string;
 
