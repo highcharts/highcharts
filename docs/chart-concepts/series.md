@@ -137,7 +137,18 @@ series: [{
 The series options can be defined in two places within the Highcharts options structure.
 
 *   General options that apply to multiple series are defined in the [plotOptions](https://api.highcharts.com/highcharts/plotOptions). To set general options for all series in the chart, use [plotOptions.series](https://api.highcharts.com/highcharts/plotOptions.series). To set general options for a specific chart type, each chart type has its own collection of plotOptions.
-*   Specific options for each series are defined in the [series](https://api.highcharts.com/highcharts/series) options structure. All options that are listed for the plotOptions structure, can also be set in the specific series definition. Some options, like _data_, _id_ or _name_, only make sense for specific series.
+*   Specific options for each series are defined in the [series](https://api.highcharts.com/highcharts/series) options structure. All options that are listed for the `plotOptions` structure, can also be set in the specific series definition. Some options, like _data_, _id_ or _name_, only make sense for specific series.
+
+**TypeScript:**
+
+- In order to filter out general series options for the series instance options, you can specify the `type` option for each item.
+- When accessing an array of series in a chart instance, for example in an event handler, the combined set of all series types is represented by [Highcharts.SeriesOptionsType](https://api.highcharts.com/class-reference/Highcharts#.SeriesOptionsType). Narrowing down to the specific type can be done by checking the `type` property.
+
+```ts
+if (chart.options.series?.[0]?.type === 'pie') {
+    // code specific to the pie series
+}
+```
 
 Here is an overview over the most common options that can be applied to a data series:
 
