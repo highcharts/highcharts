@@ -37,6 +37,7 @@ import { addEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/AxisBase' {
     interface AxisBase {
         variwide?: boolean;
@@ -44,6 +45,7 @@ declare module '../../Core/Axis/AxisBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Axis/TickBase' {
     interface TickBase {
         postTranslate(
@@ -61,7 +63,7 @@ declare module '../../Core/Axis/TickBase' {
  * */
 
 /**
- * @private
+ * @internal
  */
 function compose(
     AxisClass: typeof Axis,
@@ -84,7 +86,7 @@ function compose(
 
 /**
  * Same width as the category (#8083)
- * @private
+ * @internal
  */
 function onAxisAfterDrawCrosshair(
     this: Axis,
@@ -102,7 +104,7 @@ function onAxisAfterDrawCrosshair(
 
 /**
  * On a vertical axis, apply anti-collision logic to the labels.
- * @private
+ * @internal
  */
 function onAxisAfterRender(
     this: Axis
@@ -125,7 +127,7 @@ function onAxisAfterRender(
 }
 
 /**
- * @private
+ * @internal
  */
 function onTickAfterGetPosition(
     this: Tick,
@@ -144,7 +146,7 @@ function onTickAfterGetPosition(
 }
 
 /**
- * @private
+ * @internal
  */
 function tickPostTranslate(
     this: Tick,
@@ -168,7 +170,7 @@ function tickPostTranslate(
 }
 
 /**
- * @private
+ * @internal
  */
 function wrapTickGetLabelPosition(
     this: Tick,
@@ -213,4 +215,5 @@ const VariwideComposition = {
     compose
 };
 
+/** @internal */
 export default VariwideComposition;

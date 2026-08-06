@@ -69,7 +69,7 @@ declare module '../../Core/Series/SeriesBase' {
 
 /**
  * Returns true if the key is a direct property of the object.
- * @private
+ * @internal
  * @param {*} obj
  * Object with property to test
  * @param {string} key
@@ -90,7 +90,7 @@ function ownProp(obj: unknown, key: string): boolean {
 /**
  * Waterfall series type.
  *
- * @private
+ * @internal
  */
 class WaterfallSeries extends ColumnSeries {
 
