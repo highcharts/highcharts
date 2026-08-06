@@ -10,13 +10,13 @@
  *
  * */
 
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-
 /* *
  *
  *  Imports
  *
  * */
+
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
  *

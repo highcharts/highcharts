@@ -39,8 +39,30 @@ import type {
  *
  * */
 
+/**
+ * @declare Highcharts.SeriesSunburstDataLabelsOptionsObject
+ */
 export interface SunburstDataLabelOptions extends DataLabelOptions {
     allowOverlap?: boolean;
+
+    /**
+     * Decides how the data label will be rotated relative to the
+     * perimeter of the sunburst. Valid values are `circular`, `auto`,
+     * `parallel` and `perpendicular`. When `circular`, the best fit
+     * will be computed for the point, so that the label is curved
+     * around the center when there is room for it, otherwise
+     * perpendicular. The legacy `auto` option works similar to
+     * `circular`, but instead of curving the labels they are tangent to
+     * the perimeter.
+     *
+     * The `rotation` option takes precedence over `rotationMode`.
+     *
+     * @sample {highcharts}
+     *         highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
+     *         Circular rotation mode
+     *
+     * @since 6.0.0
+     */
     rotationMode?: SunburstDataLabelRotationValue;
 
     style?: DataLabelOptions['style'] & {
@@ -62,16 +84,12 @@ export interface SunburstSeriesLevelColorVariationOptions extends TreemapSeriesL
 
     /**
      * The key of a color variation. Currently supports `brightness` only.
-     *
-     * @type {string}
      */
     key?: string;
 
     /**
      * The ending value of a color variation. The last sibling will receive
      * this value.
-     *
-     * @type {number}
      */
     to?: number;
 }
@@ -289,6 +307,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      */
     levelSize?: SunburstSeriesLevelSizeOptions;
 
+    /** @internal */
     mapIdToNode?: SunburstSeries['nodeMap'];
 
     /**
@@ -318,8 +337,6 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @deprecated 9.3.3
      *
      * @since 6.0.0
-     *
-     * @apioption plotOptions.sunburst.traverseUpButton
      */
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
@@ -329,6 +346,34 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @ignore-option
      */
     opacity?: number;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    colorAxis?: undefined;
+    colorKey?: undefined;
+    compare?: undefined;
+    compareBase?: undefined;
+    dataGrouping?: undefined;
+    dataParser?: undefined;
+    dataSorting?: undefined;
+    dataURL?: undefined;
+    depth?: undefined;
+    dragDrop?: undefined;
+    gapSize?: undefined;
+    gapUnit?: undefined;
+    ignoreHiddenPoint?: undefined;
+    joinBy?: undefined;
+    legendType?: undefined;
+    linecap?: undefined;
+    navigatorOptions?: undefined;
+    pointRange?: undefined;
+    stack?: undefined;
 
 }
 
