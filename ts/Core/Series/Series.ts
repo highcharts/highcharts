@@ -1678,11 +1678,10 @@ class Series {
                 if (!oldData[i].destroyed && !oldData[i].condemned) {
                     const pOptions = dataTable.getRowObject(i);
                     if (pOptions) {
+                        // Remove undefined properties, but preserve explicit
+                        // nulls (#24872)
                         Object.keys(pOptions).forEach((key): void => {
-                            if (
-                                !defined(pOptions[key]) /* ||
-                                pOptions[key] === oldData[i].options[key]*/
-                            ) {
+                            if (pOptions[key] === void 0) {
                                 delete pOptions[key];
                             }
                         });
