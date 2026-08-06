@@ -134,7 +134,7 @@ class BellcurveSeries extends AreaSplineSeries {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        let alteredData;
+        let alteredData: Array<Array<number>> = [];
         if (typeof data !== 'undefined' && data.length > 0) {
             // Support data array of objects (#24073).
             data = data

@@ -140,6 +140,12 @@ Filtering adds popup or inline filter controls to individual columns, with
 conditions based on each column's data type. See
 [Column filtering](https://www.highcharts.com/docs/grid/columns/filtering).
 
+## Virtualization
+
+Wide grids render only the columns visible in the viewport, which keeps the DOM
+small and the initial render fast. See
+[Column virtualization](https://www.highcharts.com/docs/grid/columns/virtualization).
+
 ## Cell formatting
 
 Cell output is configured through `columns[].cells`, including template
