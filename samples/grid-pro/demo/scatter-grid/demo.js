@@ -123,7 +123,13 @@ const grid = Grid.grid('grid-container', {
     columns: [{
         id: 'sample',
         cells: {
-            format: '{value:.0f}'
+            formatter() {
+                this.row.htmlElement.style.setProperty(
+                    '--active-row-color',
+                    chart.options.colors[this.value - 1]
+                );
+                return this.value;
+            }
         }
     }],
     columnDefaults: {
@@ -131,7 +137,6 @@ const grid = Grid.grid('grid-container', {
             events: {
                 click: function () {
                     selectRow(this.row.id);
-                    setActiveRowStyle();
                 }
             },
             format: '{value:.3f}'
@@ -147,9 +152,6 @@ document.getElementById('reset-selection')
 // Selects a sample, either from the grid or from the chart. Pass null to
 // clear the selection.
 function selectRow(rowId) {
-    if (activeRow === rowId) {
-        return;
-    }
     activeRow = rowId;
 
     setActiveRowStyle();
@@ -201,6 +203,7 @@ function updateChart() {
             },
             plotOptions: {
                 scatter: {
+                    cursor: 'pointer',
                     jitter: {
                         x: 0.24,
                         y: 0
@@ -241,6 +244,7 @@ function updateChart() {
             },
             plotOptions: {
                 scatter: {
+                    cursor: 'default',
                     showInLegend: false,
                     jitter: {
                         x: 0,
