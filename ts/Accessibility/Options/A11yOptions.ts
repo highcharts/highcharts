@@ -59,7 +59,7 @@ export interface AccessibilityAnnouncementFormatter {
         updatedSeries: Array<Series>,
         addedSeries?: Series,
         addedPoint?: Point,
-        ctx?: AnyRecord
+        ctx?: AnnouncementFormatterContext
     ): false|string;
 }
 
@@ -594,7 +594,9 @@ export interface AccessibilityScreenReaderSectionOptions {
      * @since 8.0.0
      */
     afterChartFormatter?: (
-        ScreenReaderFormatterCallbackFunction<Chart>
+        ScreenReaderFormatterCallbackFunction<
+            Chart, ScreenReaderSectionFormatterContext
+        >
     );
 
     /**
@@ -642,7 +644,9 @@ export interface AccessibilityScreenReaderSectionOptions {
      * @since 8.0.0
      */
     beforeChartFormatter?: (
-        ScreenReaderFormatterCallbackFunction<Chart>
+        ScreenReaderFormatterCallbackFunction<
+            Chart, ScreenReaderSectionFormatterContext
+        >
     );
 
     /**
@@ -750,6 +754,20 @@ export interface AnnotationsAccessibilityOptionsObject {
     description?: string;
 }
 
+export interface AnnouncementFormatterContext {
+
+    /**
+     * The chart the announcer belongs to.
+     */
+    chart: Chart;
+
+    /**
+     * Timestamp of the previous announcement, used to throttle how often new
+     * data is announced.
+     */
+    lastAnnouncementTime: number;
+}
+
 export interface AxisAccessibilityOptions {
 
     /**
@@ -855,6 +873,14 @@ export interface PointAccessibilityOptionsObject {
     enabled?: boolean;
 }
 
+export interface ScreenReaderClickCallbackContext extends Chart {
+
+    /**
+     * Chart options, with the accessibility options guaranteed to be present.
+     */
+    options: Required<Options>;
+}
+
 export interface ScreenReaderClickCallbackFunction {
 
     /**
@@ -872,12 +898,12 @@ export interface ScreenReaderClickCallbackFunction {
      */
     (
         evt: MouseEvent,
-        chart?: Chart,
+        chart?: ScreenReaderClickCallbackContext,
         ctx?: GlobalEventHandlers
     ): void;
 }
 
-export interface ScreenReaderFormatterCallbackFunction<T, U = AnyRecord> {
+export interface ScreenReaderFormatterCallbackFunction<T, U = void> {
 
     /**
      * Creates a formatted string for the screen reader module.
@@ -893,6 +919,19 @@ export interface ScreenReaderFormatterCallbackFunction<T, U = AnyRecord> {
      *         Formatted string for the screen reader module.
      */
     (context: T, outerContext?: U): string;
+}
+
+export interface ScreenReaderSectionFormatterContext {
+
+    /**
+     * Returns the default contents of the information region after the chart.
+     */
+    defaultAfterChartFormatter(): string;
+
+    /**
+     * Returns the default contents of the information region before the chart.
+     */
+    defaultBeforeChartFormatter(): string;
 }
 
 export interface SeriesAccessibilityKeyboardNavigationOptions {
