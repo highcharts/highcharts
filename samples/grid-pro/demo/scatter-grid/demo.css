@@ -39,7 +39,7 @@ body {
 
 .highcharts-demo-button {
     background: var(--highcharts-neutral-color-5, #f2f2f2);
-    border: none;
+    border: 1px solid transparent;
     border-radius: 4px;
     color: var(--highcharts-neutral-color-100, #000);
     cursor: pointer;
@@ -50,8 +50,17 @@ body {
     transition: background 250ms;
 }
 
+.highcharts-demo-button:not(:disabled) {
+    border-color: light-dark(#c8d3e3, #4a5568);
+}
+
 .highcharts-demo-button:hover {
     background: var(--highcharts-neutral-color-10, #e6e6e6);
+}
+
+.highcharts-demo-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 
 .hcg-cell {
