@@ -313,7 +313,9 @@ namespace ColumnDataLabel {
                     dataLabelOptions = dataLabel.options,
                     distance = relativeLength(
                         dataLabelOptions?.distance || 0,
-                        r
+                        r,
+                        void 0,
+                        chart.renderTo
                     );
 
                 // Arrange points for collision detection
@@ -792,7 +794,13 @@ namespace ColumnDataLabel {
                     options.thickness ?
                         Math.max(0, newSize - options.thickness * 2) :
                         Math.max(
-                            0, relativeLength(options.innerSize || 0, newSize)
+                            0,
+                            relativeLength(
+                                options.innerSize || 0,
+                                newSize,
+                                void 0,
+                                this.chart.renderTo
+                            )
                         ), newSize
                 ); // #6647
                 this.translate(center);

@@ -3079,32 +3079,39 @@ class Axis {
             // [top, right, bottom, left]
             offsets = options.offsets || [0, 0, 0, 0],
             horiz = this.horiz,
+            { plotWidth, plotHeight, plotLeft, plotTop, renderTo } = chart,
 
             // Check for percentage based input values. Rounding fixes problems
             // with column overflow and plot line filtering (#4898, #4899)
             width = this.width = Math.round(relativeLength(
                 pick(
                     options.width,
-                    chart.plotWidth - offsets[3] + offsets[1]
+                    plotWidth - offsets[3] + offsets[1]
                 ),
-                chart.plotWidth
+                plotWidth,
+                void 0,
+                renderTo
             )),
             height = this.height = Math.round(relativeLength(
                 pick(
                     options.height,
-                    chart.plotHeight - offsets[0] + offsets[2]
+                    plotHeight - offsets[0] + offsets[2]
                 ),
-                chart.plotHeight
+                plotHeight,
+                void 0,
+                renderTo
             )),
             top = this.top = Math.round(relativeLength(
-                pick(options.top, chart.plotTop + offsets[0]),
-                chart.plotHeight,
-                chart.plotTop
+                pick(options.top, plotTop + offsets[0]),
+                plotHeight,
+                plotTop,
+                renderTo
             )),
             left = this.left = Math.round(relativeLength(
-                pick(options.left, chart.plotLeft + offsets[3]),
-                chart.plotWidth,
-                chart.plotLeft
+                pick(options.left, plotLeft + offsets[3]),
+                plotWidth,
+                plotLeft,
+                renderTo
             ));
 
         // Expose basic values to use in Series object and navigator

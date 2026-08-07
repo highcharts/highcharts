@@ -365,11 +365,16 @@ class XRangeSeries extends ColumnSeries {
             width = x2 - x;
 
         const r = Math.min(
-            relativeLength((
-                typeof borderRadius === 'object' ?
-                    (borderRadius as any).radius :
-                    borderRadius || 0
-            ), pointHeight),
+            relativeLength(
+                (
+                    typeof borderRadius === 'object' ?
+                        (borderRadius as any).radius :
+                        borderRadius || 0
+                ),
+                pointHeight,
+                void 0,
+                this.chart.renderTo
+            ),
             Math.min(width, pointHeight) / 2
         );
 
