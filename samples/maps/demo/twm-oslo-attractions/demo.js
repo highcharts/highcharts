@@ -49,7 +49,6 @@ Highcharts.mapChart('container', {
     },
 
     legend: {
-        enabled: true,
         align: 'left',
         symbolWidth: 24,
         symbolHeight: 24,
