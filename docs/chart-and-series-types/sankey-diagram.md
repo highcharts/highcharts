@@ -47,3 +47,12 @@ Nodes
 The nodes are generated so that the total weight going in or out of a node is visualized. Nodes are instances of [Point](https://api.highcharts.com/class-reference/Highcharts.Point) and are available from the `series.nodes` array. The width of the nodes can be set with the `nodeWidth` option, and padding between them with `nodePadding`.
 
 In addition to auto-generated properties, custom properties such as `color` or `colorIndex` can be set by adding an array, [nodes](https://api.highcharts.com/highcharts/series.sankey.nodes), to the series options and linking the nodes by id; the following jsfiddle [demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-inverted/) illustrates this concept.
+
+Circular dependencies
+---------------------
+
+Links may flow back to an earlier node, forming a cycle. A link that closes a cycle is drawn as a band wrapping around the diagram, either above or below it, whichever side is closer. A link where `from` and `to` refer to the same node is drawn as a loop around that node.
+
+When a cycle contains more than one link, the link that appears last in the data is the one drawn as the wrapping band, so the order of the data decides which flow reads as the "return" flow. The bend radius of the wrapping bands and loops follows the [curveFactor](https://api.highcharts.com/highcharts/series.sankey.curveFactor) option.
+
+<iframe style="width: 100%; height: 485px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/series-sankey/circular-dependencies" allow="fullscreen"></iframe>
