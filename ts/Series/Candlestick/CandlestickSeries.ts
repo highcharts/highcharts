@@ -20,11 +20,14 @@
 
 import type CandlestickPoint from './CandlestickPoint';
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
+import type Legend from '../../Core/Legend/Legend';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
+import FinancialSymbols from '../FinancialSymbols.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -68,6 +71,8 @@ class CandlestickSeries extends OHLCSeries {
      * */
 
     public data!: Array<CandlestickPoint>;
+
+    public legendSymbolBoxes?: Array<{ element: SVGElement; up?: boolean }>;
 
     public options!: CandlestickSeriesOptions;
 
@@ -116,6 +121,53 @@ class CandlestickSeries extends OHLCSeries {
         }
 
         return attribs;
+    }
+
+    /**
+     * Draw the candlestick legend symbol. The symbol path carries only the
+     * wicks; the two candle bodies are drawn here as bordered rectangles and
+     * colored/dimmed by `FinancialSymbols` on `afterColorizeItem`.
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.candlestick#drawLegendSymbol
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        super.drawLegendSymbol(legend, item);
+
+        // The candle bodies apply to the default symbol only
+        if ((this.options.legendSymbol || 'candlestick') !== 'candlestick') {
+            return;
+        }
+
+        const { chart, options } = this,
+            legendItem = item.legendItem || {},
+            symbolHeight = legend.symbolHeight,
+            squareSymbol = legend.options.squareSymbol,
+            w = squareSymbol ? symbolHeight : legend.symbolWidth,
+            x = squareSymbol ?
+                (legend.symbolWidth - symbolHeight) / 2 :
+                0,
+            y = (legend.baseline || 0) - symbolHeight + 1;
+
+        // `FinancialSymbols` colors and dims these on every `colorizeItem`.
+        this.legendSymbolBoxes = FinancialSymbols.candlestickBoxes(
+            x, y, w, symbolHeight
+        ).map((box): { element: SVGElement; up?: boolean } => {
+            const element = chart.renderer
+                .rect(box.x, box.y, box.width, box.height)
+                .addClass(
+                    'highcharts-point' +
+                    (box.up ? ' highcharts-point-up' : '')
+                )
+                .attr({ zIndex: 3 })
+                .add(legendItem.group);
+
+            if (!chart.styledMode) {
+                element.attr({ 'stroke-width': options.lineWidth });
+            }
+
+            return { element, up: box.up };
+        });
     }
 
     /**
