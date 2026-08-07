@@ -20,10 +20,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from './Axis';
-import type {
-    AxisBreakOptions,
-    YAxisOptions
-} from './AxisOptions';
+import type { AxisBreakOptions } from './AxisOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
@@ -554,7 +551,6 @@ namespace BrokenAxis {
                             xRange
                         ] = new StackItem(
                             yAxis as any,
-                            (yAxis.options as YAxisOptions).stackLabels as any,
                             false,
                             xRange,
                             this.stack ?? ''

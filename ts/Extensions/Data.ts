@@ -2605,7 +2605,7 @@ class Data {
 // Fire 1st xAxis properties modifier after the options are set.
 addEvent(
     Axis,
-    'afterSetOptions',
+    'afterSetType',
     function (): void {
         // Target first xAxis only
         if (
@@ -2615,7 +2615,9 @@ addEvent(
         ) {
             this.chart.data?.xAxisUpdateHandler(this);
         }
-    }
+    },
+    // Do this before the DataTimeAxis composition is added
+    { order: 0 }
 );
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
