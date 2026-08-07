@@ -188,9 +188,8 @@ function onAxisFoundExtremes(
 
     }
 
-    // Record the extremes as left by the padding above, so that
-    // `onAxisAfterSetTickPositions` can tell whether anything moved them
-    // afterwards. #24039
+    // Record the padded extremes so `onAxisAfterSetTickPositions` can tell
+    // whether anything has moved them since. #24039
     if (hasActiveSeries) {
         this.bubblePaddedMin = this.min;
         this.bubblePaddedMax = this.max;
@@ -198,11 +197,11 @@ function onAxisFoundExtremes(
 }
 
 /**
- * The padding applied on `foundExtremes` is computed before the tick positions
- * are known. Anything that moves the extremes after that - tick snapping
- * (`startOnTick`/`endOnTick`), `softMin`/`softMax`, `minRange` expansion or
- * `adjustTickAmount` - invalidates it and can leave bubbles hanging outside the
- * plot area. Re-measure here and widen the extremes if that happened. #24039
+ * Pad the axis a second time. The padding from `foundExtremes` is applied
+ * before the tick positions are known, and the extremes shift again while they
+ * are computed, which can leave bubbles outside the plot area. Measure the
+ * bubbles against the final extremes and widen min and max where they
+ * overflow. #24039
  */
 function onAxisAfterSetTickPositions(
     this: Axis
@@ -224,8 +223,7 @@ function onAxisAfterSetTickPositions(
         return;
     }
 
-    // The extremes are still the ones the padding left behind, so it is
-    // still valid and there is nothing to correct
+    // Unchanged since `foundExtremes`, so its padding still applies. #24039
     if (
         this.min === this.bubblePaddedMin &&
         this.max === this.bubblePaddedMax
