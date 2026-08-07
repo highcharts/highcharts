@@ -375,6 +375,31 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         'All points with id should be mapped, no errors'
     );
 
+    // Non-unique IDs should not match the same point more than once
+    scatterS.setData(
+        [
+            { id: 'shared', x: 0, y: 1 },
+            { id: 'shared', x: 1, y: 2 }
+        ],
+        true,
+        false,
+        false
+    );
+    scatterS.points.forEach(function (p) {
+        p.wasThere = true;
+    });
+    scatterS.setData([
+        { id: 'shared', x: 2, y: 3 },
+        { id: 'shared', x: 3, y: 4 }
+    ]);
+    assert.deepEqual(
+        scatterS.points.map(function (p) {
+            return p.wasThere;
+        }),
+        [true, undefined],
+        'Points with duplicate IDs should not collapse onto one point'
+    );
+
     // Pie series, no X
     var pieS = chart.addSeries({ type: 'pie' });
     pieS.setData(
@@ -826,6 +851,103 @@ QUnit.test(
             referenceArray,
             `After updating the allowMutatingData property to false,
             setData should not mutate the original data.`
+        );
+    }
+);
+
+QUnit.test(
+    'X-range setData point matching with non-unique keys, #12545',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                series: [{
+                    type: 'xrange',
+                    data: [
+                        { x: 0, x2: 2, y: 0 },
+                        { x: 0, x2: 4, y: 3 }
+                    ]
+                }]
+            }),
+            series = chart.series[0];
+
+        series.setData([
+            { x: 0, x2: 4, y: 4 },
+            { x: 0, x2: 2, y: 1 }
+        ]);
+
+        assert.deepEqual(
+            series.points.map(point => [point.x, point.x2, point.y]),
+            [
+                [0, 2, 1],
+                [0, 4, 4]
+            ],
+            'Points with the same start and different ends should all update'
+        );
+        assert.ok(
+            series.points.every(point => point.graphic),
+            'All updated points should render'
+        );
+        assert.deepEqual(
+            [series.yAxis.dataMin, series.yAxis.dataMax],
+            [1, 4],
+            'The y-axis extremes should include every updated point'
+        );
+
+        series.setData(
+            [
+                { id: 'shared', x: 1, x2: 3, y: 0 },
+                { id: 'shared', x: 1, x2: 5, y: 2 }
+            ],
+            true,
+            false,
+            false
+        );
+        series.points.forEach(point => {
+            point.wasThere = true;
+        });
+        series.setData([
+            { id: 'shared', x: 2, x2: 4, y: 1 },
+            { id: 'shared', x: 2, x2: 6, y: 5 }
+        ]);
+        series.setData([
+            { id: 'shared', x: 3, x2: 5, y: 2 },
+            { id: 'shared', x: 3, x2: 7, y: 6 }
+        ]);
+
+        assert.deepEqual(
+            series.points.map(point => [
+                point.x,
+                point.x2,
+                point.y,
+                point.wasThere
+            ]),
+            [
+                [3, 5, 2, true],
+                [3, 7, 6, true]
+            ],
+            'Reused non-unique IDs should preserve both point instances'
+        );
+        assert.deepEqual(
+            [series.yAxis.dataMin, series.yAxis.dataMax],
+            [2, 6],
+            'Extremes should remain correct after successive updates'
+        );
+
+        series.setData([{ x: 4, x2: 6, y: 3 }]);
+        assert.deepEqual(
+            [series.points.length, series.yAxis.dataMin, series.yAxis.dataMax],
+            [1, 3, 3],
+            'Setting fewer points should remove unmatched points'
+        );
+
+        series.setData([
+            { x: 5, x2: 6, y: 0 },
+            { x: 5, x2: 7, y: 4 },
+            { x: 5, x2: 8, y: 8 }
+        ]);
+        assert.deepEqual(
+            [series.points.length, series.yAxis.dataMin, series.yAxis.dataMax],
+            [3, 0, 8],
+            'Setting more points should add every unmatched point'
         );
     }
 );
