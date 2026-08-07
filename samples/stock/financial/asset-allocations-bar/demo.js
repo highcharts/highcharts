@@ -84,7 +84,6 @@ async function renderWidget() {
             chartOptions: {
                 chart: {
                     type: 'bar',
-                    spacingBottom: 0,
                     styledMode: true
                 },
                 title: {

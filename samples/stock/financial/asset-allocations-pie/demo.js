@@ -11,9 +11,9 @@ Highcharts.Templating.helpers.translateAssetAllocation = value =>
     assetAllocationTypes[value];
 
 
-async function renderWidget(orientation) {
+async function renderWidget() {
 
-    Dashboards.board(`${orientation}-container`, {
+    Dashboards.board('container', {
         dataPool: {
             // Fetch data with the Morningstar connector
             connectors: [{
@@ -41,22 +41,12 @@ async function renderWidget(orientation) {
             }]
         },
         gui: {
-            layouts: orientation === 'horizontal' ? [{
+            layouts: [{
                 rows: [{
                     cells: [{
                         id: 'datagrid'
                     }, {
                         id: 'pie-chart'
-                    }]
-                }]
-            }] : [{
-                rows: [{
-                    cells: [{
-                        id: 'pie-chart'
-                    }]
-                }, {
-                    cells: [{
-                        id: 'datagrid'
                     }]
                 }]
             }]
@@ -79,7 +69,7 @@ async function renderWidget(orientation) {
             chartOptions: {
                 chart: {
                     type: 'pie',
-                    backgroundColor: 'transparent'
+                    styledMode: true
                 },
                 title: {
                     text: '',
@@ -104,13 +94,6 @@ async function renderWidget(orientation) {
                         innerSize: '90%',
                         borderWidth: 4,
                         borderRadius: '50%',
-                        colors: [
-                            '#014CE5',
-                            '#29D36A',
-                            '#EA293C',
-                            '#000',
-                            '#ABABAB'
-                        ],
                         dataLabels: {
                             enabled: false
                         },
@@ -124,11 +107,21 @@ async function renderWidget(orientation) {
                     }
                 },
                 tooltip: {
-                    format:
-                        '<strong><span style="color:{point.color};">▬</span> ' +
-                        '{translateAssetAllocation point.name} ' +
-                        '<span style="color: #8A8A8A;">{point.y:,.2f}%' +
-                        '</span></strong>'
+                    formatter: function () {
+                        const value =
+                            Math.abs(this.point.y) < 0.005 ? 0 : this.point.y,
+                            colIndex = this.point.colorIndex,
+                            name = this.point.name;
+
+                        return `
+                        <strong>
+                            <span class="highcharts-color-${colIndex}">▬</span>
+                            ${assetAllocationTypes[name]}
+                            <span style="color:#8A8A8A;">
+                            ${Highcharts.numberFormat(value, 2)}%</span>
+                        </strong>
+                        `;
+                    }
                 },
                 credits: {
                     enabled: false
@@ -183,10 +176,11 @@ async function renderWidget(orientation) {
                         formatter: function () {
                             const points =
                                     Highcharts.charts[0].series[0].points,
-                                color = points.find(
+                                colIndex = points.find(
                                     point => point.name === this.value
-                                ).color;
-                            return `<span style='color:${color};'>▬</span>
+                                ).colorIndex;
+                            // eslint-disable-next-line max-len
+                            return `<span class="highcharts-color-${colIndex}">▬</span>
                                 ${assetAllocationTypes[this.value]}`;
                         }
                     }
@@ -232,5 +226,4 @@ async function renderWidget(orientation) {
         });
 }
 
-renderWidget('horizontal');
-renderWidget('vertical');
+renderWidget();

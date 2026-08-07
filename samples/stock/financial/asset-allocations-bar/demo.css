@@ -130,6 +130,10 @@ th {
     #chart {
         flex: 1 1 100%;
     }
+
+    .highcharts-dashboards-row {
+        flex-direction: column-reverse;
+    }
 }
 
 @media (max-width: 500px) {
