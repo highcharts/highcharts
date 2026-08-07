@@ -274,6 +274,22 @@ class BubbleSeries extends ScatterSeries {
         animationLimit: 250,
 
         /**
+         * When using automatic point colors pulled from the global
+         * [colors](colors) or series-specific
+         * [plotOptions.bubble.colors](series.colors) collections, this option
+         * determines whether the chart should receive one color per series or
+         * one color per point.
+         *
+         * In styled mode, the `colors` or `series.colors` arrays are not
+         * supported, and instead this option gives the points individual color
+         * class names on the form `highcharts-color-{n}`.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption plotOptions.bubble.colorByPoint
+         */
+
+        /**
          * Whether to display negative sized bubbles. The threshold is given
          * by the [zThreshold](#plotOptions.bubble.zThreshold) option, and negative
          * bubbles can be visualized by setting
