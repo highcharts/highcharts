@@ -171,48 +171,16 @@ jobs:
         run: npx gulp scripts
 
       - name: Compare Highcharts visual tests
-        run: |
-          marker='test/visual-test-complete'
-          rm -f "$marker"
-          npx karma start test/karma-conf.js --tests highcharts/*/* --ts --single-run --browsercount 2 --visualcompare || true
-          if [ ! -f "$marker" ]; then
-            printf '%s\n' \
-              'Highcharts candidate run did not reach image-capture reporter completion.' \
-              >> test/visual-test-errors.log
-          fi
+        run: node .github/scripts/runVisualCompare.js "Highcharts" "highcharts/*/*"
 
       - name: Compare Stock visual tests
-        run: |
-          marker='test/visual-test-complete'
-          rm -f "$marker"
-          npx karma start test/karma-conf.js --tests stock/*/* --ts --single-run --browsercount 2 --visualcompare || true
-          if [ ! -f "$marker" ]; then
-            printf '%s\n' \
-              'Stock candidate run did not reach image-capture reporter completion.' \
-              >> test/visual-test-errors.log
-          fi
+        run: node .github/scripts/runVisualCompare.js "Stock" "stock/*/*"
 
       - name: Compare Maps visual tests
-        run: |
-          marker='test/visual-test-complete'
-          rm -f "$marker"
-          npx karma start test/karma-conf.js --tests maps/*/* --ts --single-run --browsercount 2 --visualcompare || true
-          if [ ! -f "$marker" ]; then
-            printf '%s\n' \
-              'Maps candidate run did not reach image-capture reporter completion.' \
-              >> test/visual-test-errors.log
-          fi
+        run: node .github/scripts/runVisualCompare.js "Maps" "maps/*/*"
 
       - name: Compare Gantt visual tests
-        run: |
-          marker='test/visual-test-complete'
-          rm -f "$marker"
-          npx karma start test/karma-conf.js --tests gantt/*/* --ts --single-run --browsercount 2 --visualcompare || true
-          if [ ! -f "$marker" ]; then
-            printf '%s\n' \
-              'Gantt candidate run did not reach image-capture reporter completion.' \
-              >> test/visual-test-errors.log
-          fi
+        run: node .github/scripts/runVisualCompare.js "Gantt" "gantt/*/*"
 
       - name: Generate visual test report
         run: |
