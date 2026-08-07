@@ -58,7 +58,6 @@ export default function TwmOsloAttractionsChart() {
                 footerFormat="</table>"
             />
             <Legend
-                enabled={true}
                 align="left"
                 symbolWidth={24}
                 symbolHeight={24}
