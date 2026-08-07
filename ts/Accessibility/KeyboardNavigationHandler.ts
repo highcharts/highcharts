@@ -102,7 +102,6 @@ class KeyboardNavigationHandler {
      * Find handler function(s) for key code in the keyCodeMap and run it.
      *
      * @function KeyboardNavigationHandler#run
-     * @param {global.KeyboardEvent} e
      * @return {number} Returns a response code indicating whether the run was
      *      a success/fail/unhandled, or if we should move to next/prev module.
      */
@@ -142,10 +141,33 @@ namespace KeyboardNavigationHandler {
      *
      * */
 
+    /**
+     * Options for the keyboard navigation handler.
+     */
     export interface Options {
+
+        /**
+         * An array containing pairs of an array of keycodes, mapped to a
+         * handler function. When the keycode is received, the handler is called
+         * with the keycode as parameter.
+         */
         keyCodeMap: Array<[Array<number>, Function]>;
+
+        /**
+         * Function to run on initialization of module.
+         */
         init: Function;
+
+        /**
+         * Function to run before moving to next/prev module. Receives moving
+         * direction as parameter: +1 for next, -1 for previous.
+         */
         terminate?: Function;
+
+        /**
+         * Function to run to validate module. Should return false if module
+         * should not run, true otherwise. Receives chart as parameter.
+         */
         validate?: Function;
     }
 

@@ -33,6 +33,7 @@ import { getNestedProperty, pick } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase extends A11yI18nComposition.ChartComposition {
         // Nothing to add
@@ -45,6 +46,7 @@ declare module '../Core/Chart/ChartBase' {
  *
  * */
 
+/** @internal */
 namespace A11yI18nComposition {
 
     /* *
@@ -64,6 +66,7 @@ namespace A11yI18nComposition {
         value: string;
     }
 
+    /** @internal */
     export declare class ChartComposition {
         /** @requires modules/accessibility */
         langFormat(
@@ -79,9 +82,7 @@ namespace A11yI18nComposition {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -99,11 +100,14 @@ namespace A11yI18nComposition {
      * returns the statement within brackets.  Invalid array statements return
      * an empty string.
      *
-     * @private
      * @function formatExtendedStatement
+     *
      * @param {string} statement
+     *
      * @param {Highcharts.Dictionary<*>} ctx
      * Context to apply to the format string.
+     *
+     * @internal
      */
     function formatExtendedStatement(
         statement: string,
@@ -215,7 +219,6 @@ namespace A11yI18nComposition {
      *
      * - Result: 'This is the first index: 0. The last: 5.'
      *
-     *
      * They can also be iterated using the #each() function.  This will repeat
      * the contents of the bracket expression for each element.  Example:
      *
@@ -224,7 +227,6 @@ namespace A11yI18nComposition {
      * - Context: { myArray: [0, 1, 2] }
      *
      * - Result: 'List contains: 0cm 1cm 2cm '
-     *
      *
      * The #each() function optionally takes a length parameter.  If positive,
      * this parameter specifies the max number of elements to iterate through.
@@ -237,7 +239,6 @@ namespace A11yI18nComposition {
      *
      * - Result: 'List contains: 0, 1, 2, and 3.'
      *
-     *
      * Use the #plural() function to pick a string depending on whether or not a
      * context object is 1.  Arguments are #plural(obj, plural, singular).
      * Example:
@@ -248,7 +249,6 @@ namespace A11yI18nComposition {
      *
      * - Result: 'Has 5 points.'
      *
-     *
      * Optionally there are additional parameters for dual and none:
      * #plural(obj, plural, singular, dual, none).  Example:
      *
@@ -258,7 +258,6 @@ namespace A11yI18nComposition {
      * - Context: { numPoints: 2 }
      *
      * - Result: 'Has two points.'
-     *
      *
      * The dual or none parameters will take precedence if they are supplied.
      *
@@ -394,7 +393,6 @@ namespace A11yI18nComposition {
     }
 
     /**
-     * @private
      * @function stringTrim
      *
      * @param {string} str
@@ -402,6 +400,8 @@ namespace A11yI18nComposition {
      *
      * @return {string}
      * The trimmed string
+     *
+     * @internal
      */
     function stringTrim(str: string): string {
         return str.trim && str.trim() || str.replace(/^\s+|\s+$/g, '');
@@ -415,4 +415,5 @@ namespace A11yI18nComposition {
  *
  * */
 
+/** @internal */
 export default A11yI18nComposition;

@@ -47,9 +47,7 @@ import { attr, pick } from '../../Shared/Utilities.js';
  * */
 
 
-/**
- * @private
- */
+/** @internal */
 function chartHasMapZoom(
     chart: MapChart
 ): boolean {
@@ -71,9 +69,10 @@ function chartHasMapZoom(
 /**
  * The ZoomComponent class
  *
- * @private
  * @class
  * @name Highcharts.ZoomComponent
+ *
+ * @internal
  */
 class ZoomComponent extends AccessibilityComponent {
 
@@ -136,11 +135,7 @@ class ZoomComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} button
-     * @param {string} labelFormatKey
-     */
+    /** @internal */
     public setMapNavButtonAttrs(
         button: DOMElementType,
         labelFormatKey: string
@@ -211,12 +206,7 @@ class ZoomComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {Highcharts.SVGElement} buttonEl
-     * @param {string} buttonProp
-     * @param {string} label
-     */
+    /** @internal */
     public createZoomProxyButton(
         buttonEl: SVGElement,
         buttonProp: ('drillUpProxyButton'|'resetZoomProxyButton'),
@@ -233,8 +223,9 @@ class ZoomComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for map zoom.
-     * @private
      * @return {Highcharts.KeyboardNavigationHandler} The module object
+     *
+     * @internal
      */
     public getMapZoomNavigation(): KeyboardNavigationHandler {
         const keys = this.keyCodes,
@@ -285,10 +276,11 @@ class ZoomComponent extends AccessibilityComponent {
 
     /**
      * Arrow key panning for maps.
-     * @private
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler The handler context.
      * @param {number} keyCode Key pressed.
      * @return {number} Response code
+     *
+     * @internal
      */
     public onMapKbdArrow(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -323,10 +315,9 @@ class ZoomComponent extends AccessibilityComponent {
 
 
     /**
-     * @private
-     * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler
-     * @param {global.KeyboardEvent} event
      * @return {number} Response code
+     *
+     * @internal
      */
     public onMapKbdTab(
         keyboardNavigationHandler: KeyboardNavigationHandler,
@@ -362,9 +353,10 @@ class ZoomComponent extends AccessibilityComponent {
 
     /**
      * Called on map button click.
-     * @private
      * @param {Highcharts.KeyboardNavigationHandler} keyboardNavigationHandler The handler context object
      * @return {number} Response code
+     *
+     * @internal
      */
     public onMapKbdClick(
         keyboardNavigationHandler: KeyboardNavigationHandler
@@ -377,10 +369,7 @@ class ZoomComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     * @param {number} direction
-     */
+    /** @internal */
     public onMapNavInit(
         direction: number
     ): void {
@@ -400,9 +389,10 @@ class ZoomComponent extends AccessibilityComponent {
      * Get keyboard navigation handler for a simple chart button. Provide the
      * button reference for the chart, and a function to call on click.
      *
-     * @private
      * @param {string} buttonProp The property on chart referencing the button.
      * @return {Highcharts.KeyboardNavigationHandler} The module object
+     *
+     * @internal
      */
     public simpleButtonNavigation(
         buttonProp: string,
@@ -504,4 +494,5 @@ class ZoomComponent extends AccessibilityComponent {
  * */
 
 
+/** @internal */
 export default ZoomComponent;
