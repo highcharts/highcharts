@@ -53,7 +53,7 @@ export default function CandlestickChart() {
                             ]
                         },
                         type: 'areaspline'
-                    } as unknown as Highcharts.NavigatorSeriesOptions,
+                    },
                     xAxis: {
                         lineWidth: 1,
                         lineColor: 'var(--highcharts-neutral-color-40, #999)'

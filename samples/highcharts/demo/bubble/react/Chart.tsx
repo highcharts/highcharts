@@ -175,20 +175,16 @@ export default function BubbleChart() {
                 }}
             />
             <BubbleSeries
-                options={
-                    {
-                        dataMapping: {
-                            'x': 'FatIntake',
-                            'y': 'SugarIntake',
-                            'z': 'Obesity',
-                            'name': 'CountryCode',
-                            'custom.countryName': 'CountryName'
-                        },
-                        colorByPoint: true
-                    } as unknown as Parameters<
-                        typeof BubbleSeries
-                    >[0]['options']
-                }
+                options={{
+                    dataMapping: {
+                        'x': 'FatIntake',
+                        'y': 'SugarIntake',
+                        'z': 'Obesity',
+                        'name': 'CountryCode',
+                        'custom.countryName': 'CountryName'
+                    },
+                    colorByPoint: true
+                }}
             />
             <Exporting />
             <Accessibility
