@@ -182,7 +182,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      *
      * @type {Highcharts.CSSObject}
      *
-     * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
+     * @default { fontFamily: 'sans-serif', fontWeight: '900', whiteSpace: 'nowrap' }
      */
     style?: CSSObject;
 
