@@ -3270,12 +3270,30 @@ class Axis {
     public labelMetrics(): FontMetricsObject {
         const renderer = this.chart.renderer,
             ticks = this.ticks,
-            tick = ticks[Object.keys(ticks)[0]] || {};
+            tick: Tick|undefined = ticks[Object.keys(ticks)[0]],
+            label = tick?.label,
+            // #24123, large y-axis labels overlapped on first render
+            probeLabel = label ? void 0 : this.probeLabel();
 
-        return this.chart.renderer.fontMetrics(
-            tick.label ||
-            renderer.box
+        const metrics = this.chart.renderer.fontMetrics(
+            label || probeLabel || renderer.box
         );
+
+        probeLabel?.destroy();
+
+        return metrics;
+    }
+
+    /**
+     * Create a temporary tick label in order to measure the text size
+     */
+    public probeLabel(): SVGElement|undefined {
+        const probeTick = new Tick(this, 0, '', true),
+            probeLabel = probeTick.createLabel('x', this.options.labels);
+
+        probeTick.destroy();
+
+        return probeLabel;
     }
 
     /**
