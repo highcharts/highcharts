@@ -1366,25 +1366,44 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (chartBoost && lineWidth > 1 && this.is('line')) {
-        chartBoost.lineWidthFilter?.remove();
-        chartBoost.lineWidthFilter = chart.renderer.definition({
-            tagName: 'filter',
-            children: [
-                {
-                    tagName: 'feMorphology',
-                    attributes: {
-                        operator: 'dilate',
-                        radius: 0.25 * lineWidth
-                    }
-                }
-            ],
-            attributes: { id: 'linewidth' }
-        });
+    if (chartBoost && this.type === 'line') {
+        const boostTarget = seriesBoost?.target || chartBoost.target,
+            // The dilate filter is applied to the whole render target, so
+            // it must stay off when that target is shared with a
+            // non-line series (chart-level boosting). Otherwise it would
+            // also dilate/blur their pixels, washing out the chart
+            // (#24728). Note `this.is('line')` would also match `area`
+            // and other types inheriting from the line series, so an
+            // exact type check is used here and below.
+            sharesTargetWithNonLine = !seriesBoost?.target &&
+                chart.series.some((otherSeries): boolean =>
+                    otherSeries !== this &&
+                    !!otherSeries.boosted &&
+                    otherSeries.type !== 'line'
+                );
 
-        (seriesBoost?.target || chartBoost.target)?.attr({
-            filter: 'url(#linewidth)'
-        });
+        if (lineWidth > 1 && !sharesTargetWithNonLine) {
+            chartBoost.lineWidthFilter?.remove();
+            chartBoost.lineWidthFilter = chart.renderer.definition({
+                tagName: 'filter',
+                children: [
+                    {
+                        tagName: 'feMorphology',
+                        attributes: {
+                            operator: 'dilate',
+                            radius: 0.25 * lineWidth
+                        }
+                    }
+                ],
+                attributes: { id: 'linewidth' }
+            });
+
+            boostTarget?.attr({
+                filter: 'url(#linewidth)'
+            });
+        } else {
+            boostTarget?.attr({ filter: 'none' });
+        }
     }
 
     if (renderer) {
