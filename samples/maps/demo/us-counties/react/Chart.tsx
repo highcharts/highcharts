@@ -130,28 +130,22 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
             <MapSeries
                 data={data}
                 name="Unemployment rate"
-                options={
-                    {
-                        joinBy: ['hc-key', 'code'],
-                        tooltip: { valueSuffix: '%' },
-                        borderWidth: 0.5,
-                        shadow: false,
-                        accessibility: { enabled: false }
-                    } as unknown as Parameters<typeof MapSeries>[0]['options']
-                }
+                options={{
+                    joinBy: ['hc-key', 'code'],
+                    tooltip: { valueSuffix: '%' },
+                    borderWidth: 0.5,
+                    shadow: false,
+                    accessibility: { enabled: false }
+                }}
             />
             <MapLineSeries
                 name="State borders"
                 color="white"
-                options={
-                    {
-                        shadow: false,
-                        borderWidth: 2,
-                        accessibility: { enabled: false }
-                    } as unknown as Parameters<
-                        typeof MapLineSeries
-                    >[0]['options']
-                }
+                options={{
+                    shadow: false,
+                    borderWidth: 2,
+                    accessibility: { enabled: false }
+                }}
             />
         </MapsChart>
     );

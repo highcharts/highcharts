@@ -11,11 +11,9 @@ import { TiledWebMapSeries } from '@highcharts/react/series/TiledWebMap';
 import { MapPointSeries } from '@highcharts/react/series/MapPoint';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { HighchartsWithTemplating } from './types';
-
 // Templating helper to trim some character from the end
-(Highcharts as unknown as HighchartsWithTemplating).Templating.helpers['trim'] =
-    (txt: unknown, len: unknown): string => String(txt).slice(0, -Number(len));
+Highcharts.Templating.helpers['trim'] = (txt: unknown, len: unknown): string =>
+    String(txt).slice(0, -Number(len));
 
 export default function TwmOsloAttractionsChart() {
     return (

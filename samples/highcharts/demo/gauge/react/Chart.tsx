@@ -2,8 +2,6 @@ import { Chart, Title, YAxis } from '@highcharts/react';
 import { GaugeSeries } from '@highcharts/react/series/Gauge';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { PaneBackgroundOptions } from 'highcharts';
-
 import 'highcharts/es-modules/masters/themes/adaptive.src.js';
 
 export default function GaugeChart() {
@@ -14,7 +12,7 @@ export default function GaugeChart() {
                 pane: {
                     startAngle: -90,
                     endAngle: 90,
-                    background: null as unknown as PaneBackgroundOptions
+                    background: null
                 }
             }}
         >
