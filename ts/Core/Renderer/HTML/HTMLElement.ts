@@ -384,6 +384,7 @@ class HTMLElement extends SVGElement {
                 .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
                 .css({
                     background: 'transparent',
+                    border: 'none',
                     // 3px is to avoid clipping on the right
                     margin: '0 3px 0 0',
                     // Guard against global div padding rules

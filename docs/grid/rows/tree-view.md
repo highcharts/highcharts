@@ -15,7 +15,7 @@ projects the queried row set into visible parent and child rows before
 pagination is applied.
 
 To build a hierarchy from repeated values of flat data instead, use
-[row grouping](https://www.highcharts.com/docs/grid/rows/row-grouping).
+[row grouping](https://www.highcharts.com/docs/grid/rows/grouping).
 
 ## Minimum requirements
 
