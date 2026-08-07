@@ -59,6 +59,20 @@ import {
  * */
 
 /** @internal */
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * The column height before it is rounded to whole pixels by
+         * `crispCol`. Used to rank data labels independently of pixel
+         * rounding (#23585).
+         *
+         * @internal
+         */
+        unroundedHeight?: number;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         /** @internal */
@@ -638,6 +652,19 @@ class ColumnSeries extends Series {
             // `shapeType` defined on `pointClass` level.
             point.shapeType = series.pointClass.prototype.shapeType ||
                 'roundedRect';
+
+            const shapeHeight = point.isNull ? 0 : barH;
+
+            // Keep the height before crisping, for data label ranking
+            // (#23585). `crispCol` rounds the height to whole pixels, and
+            // for columns thinner than one pixel the rounding boundary
+            // falls on a different series in column vs bar mode, because
+            // plotHeight and plotWidth differ for the same data. That
+            // flipped which label survived overlap removal. The unrounded
+            // height scales with the point value, so it ranks the same in
+            // both orientations.
+            point.unroundedHeight = shapeHeight;
+
             point.shapeArgs = series.crispCol(
                 barX,
                 // #3169, drilldown from null must have a position to work from.
@@ -645,7 +672,7 @@ class ColumnSeries extends Series {
                 // the middle of the chart.
                 barY,
                 barW,
-                point.isNull ? 0 : barH
+                shapeHeight
             );
         });
 
