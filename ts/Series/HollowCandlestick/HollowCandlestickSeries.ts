@@ -33,6 +33,7 @@ const {
     }
 } = SeriesRegistry;
 
+/** @internal */
 interface HollowcandleInfo {
     isBullish: boolean;
     trendDirection: 'down'|'up';
@@ -59,7 +60,7 @@ type OHLCObject = {
 /**
  * The hollowcandlestick series.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.hollowcandlestick
  *
@@ -170,7 +171,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * Iterate through all points and get their type.
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPriceMovement
      *
@@ -203,7 +204,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * Return line color based on candle type.
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getLineColor
      *
@@ -224,7 +225,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
     /**
      * Return fill color based on candle type.
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#getPointFill
      *
@@ -247,7 +248,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.hollowcandlestick#init
      */
     public init(): void {
@@ -285,7 +286,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Add color and fill attribute for each point.
      *
-     * @private
+     * @internal
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
      *
@@ -357,7 +358,8 @@ HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+/** @internal */
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         hollowcandlestick: typeof HollowCandlestickSeries;
     }
@@ -370,6 +372,8 @@ SeriesRegistry.registerSeriesType('hollowcandlestick', HollowCandlestickSeries);
  * Default Export
  *
  * */
+
+/** @internal */
 export default HollowCandlestickSeries;
 
 /* *
