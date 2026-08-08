@@ -618,6 +618,26 @@ namespace OfflineExporting {
                     outline.parentNode.removeChild(outline);
                 }
             }
+
+            // Work around jsPDF's missing support for color(srgb r g b) format
+            // (#25001)
+            ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
+                const value = el.style?.[prop as any];
+                if (value.startsWith('color(srgb')) {
+                    const rgb = value.match(
+                        /color\(srgb ([\d.]+)[, ]([\d.]+)[, ]([\d.]+)\)/
+                    );
+                    if (rgb) {
+                        const r = Math.round(parseFloat(rgb[1]) * 255),
+                            g = Math.round(parseFloat(rgb[2]) * 255),
+                            b = Math.round(parseFloat(rgb[3]) * 255);
+                        el.style[prop as any] = '#' +
+                            ((1 << 24) + (r << 16) + (g << 8) + b)
+                                .toString(16)
+                                .slice(1);
+                    }
+                }
+            });
         });
         return dummySVGContainer.querySelector('svg');
     }
