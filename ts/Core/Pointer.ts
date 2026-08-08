@@ -51,7 +51,6 @@ import {
     isObject,
     objectEach,
     offset,
-    pick,
     pushUnique,
     splat
 } from '../Shared/Utilities.js';
@@ -885,7 +884,7 @@ class Pointer {
                 return (
                     s.visible &&
                     !(!shared && s.directTouch) && // #3821
-                    pick(s.options.enableMouseTracking, true)
+                    (s.options.enableMouseTracking ?? true)
                 );
             };
 
@@ -1103,10 +1102,9 @@ class Pointer {
             touches ?
                 touches.length ?
                     touches.item(0) as Touch :
-                    (pick( // #13534
-                        touches.changedTouches,
+                    (
+                        touches.changedTouches ??
                         (e as TouchEvent).changedTouches
-                    )
                     )[0] :
                 e as unknown as PointerEvent
         );
@@ -1214,7 +1212,7 @@ class Pointer {
      * @function Highcharts.Pointer#onContainerMouseLeave
      */
     public onContainerMouseLeave(e: MouseEvent): void {
-        const { pointer } = charts[pick(Pointer.hoverChartIndex, -1)] || {};
+        const { pointer } = charts[(Pointer.hoverChartIndex ?? -1)] || {};
 
         e = this.normalize(e);
 
@@ -1349,7 +1347,7 @@ class Pointer {
             e?.preventDefault?.();
         }
 
-        charts[pick(Pointer.hoverChartIndex, -1)]
+        charts[(Pointer.hoverChartIndex ?? -1)]
             ?.pointer
             ?.drop(e);
     }
@@ -2037,7 +2035,7 @@ class Pointer {
      */
     public setHoverChartIndex(e?: MouseEvent): void {
         const chart = this.chart;
-        const hoverChart = H.charts[pick(Pointer.hoverChartIndex, -1)];
+        const hoverChart = H.charts[(Pointer.hoverChartIndex ?? -1)];
 
         if (
             hoverChart &&
@@ -2106,7 +2104,7 @@ class Pointer {
                         false;
                 }
 
-                if (pick(hasMoved, true)) {
+                if (hasMoved ?? true) {
                     this.pinch(e);
                 }
 
@@ -2159,7 +2157,7 @@ class Pointer {
 
         // Look for the pinchType option
         if (/touch/.test(e.type)) {
-            zoomType = pick(chart.zooming.pinchType, zoomType);
+            zoomType = (chart.zooming.pinchType ?? zoomType);
         }
 
         this.zoomX = zoomX = /x/.test(zoomType);
