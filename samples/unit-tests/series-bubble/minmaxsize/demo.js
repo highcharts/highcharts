@@ -326,3 +326,85 @@ QUnit.test('Bubble zMin update, #24138.', function (assert) {
         'Radius should update after zMin change.'
     );
 });
+
+QUnit.test(
+    'Bubble markers visible and axis padding correct, #24039.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bubble',
+                animation: false
+            },
+            plotOptions: {
+                bubble: {
+                    maxSize: '100%'
+                }
+            },
+            series: [{
+                data: [
+                    [823667, -276003, 359003],
+                    [526000, -114001, 87001]
+                ]
+            }]
+        });
+
+        const withinBounds = (point, tolerance) => {
+            const r = point.graphic.width / 2;
+            return (
+                point.plotX - r >= -tolerance &&
+                point.plotX + r <= chart.plotWidth + tolerance &&
+                point.plotY - r >= -tolerance &&
+                point.plotY + r <= chart.plotHeight + tolerance
+            );
+        };
+
+        assert.ok(
+            chart.series[0].points.every(function (p) {
+                return withinBounds(p, 0);
+            }),
+            'maxSize 100%, default axis: all bubbles within plot bounds'
+        );
+
+        chart.update({
+            yAxis: {
+                startOnTick: false,
+                endOnTick: false
+            }
+        });
+
+        assert.ok(
+            chart.series[0].points.every(function (p) {
+                return withinBounds(p, 0);
+            }),
+            'maxSize 100%, no tick snap: all bubbles within plot bounds'
+        );
+
+        chart.update({
+            plotOptions: {
+                bubble: {
+                    maxSize: '20%'
+                }
+            },
+            yAxis: {
+                startOnTick: true,
+                endOnTick: true
+            },
+            series: [{
+                data: [
+                    { x: 95, y: 95, z: 13.8 },
+                    { x: 86.5, y: 102.9, z: 14.7 },
+                    { x: 65.5, y: 126.4, z: 35.3 },
+                    { x: 63.4, y: 51.8, z: 15.4 }
+                ]
+            }]
+        });
+
+        assert.ok(
+            chart.series[0].points.every(function (p) {
+                return withinBounds(p, 1);
+            }),
+            'maxSize 20%, startOnTick/endOnTick true: all bubbles within ' +
+            'plot bounds'
+        );
+    }
+);

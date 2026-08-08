@@ -62,6 +62,14 @@ import {
  * */
 
 /** @internal */
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
+        bubblePaddedMax?: number;
+        bubblePaddedMin?: number;
+    }
+}
+
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         bubbleZExtremes?: BubbleZExtremes;
@@ -177,8 +185,111 @@ function onAxisFoundExtremes(
                 (this as any)[keys[0]] += keys[2] / transA;
             }
         });
+
     }
 
+    // Record the padded extremes so `onAxisAfterSetTickPositions` can tell
+    // whether anything has moved them since. #24039
+    if (hasActiveSeries) {
+        this.bubblePaddedMin = this.min;
+        this.bubblePaddedMax = this.max;
+    }
+}
+
+/**
+ * Pad the axis a second time. The padding from `foundExtremes` is applied
+ * before the tick positions are known, and the extremes shift again while they
+ * are computed, which can leave bubbles outside the plot area. Measure the
+ * bubbles against the final extremes and widen min and max where they
+ * overflow. #24039
+ */
+function onAxisAfterSetTickPositions(
+    this: Axis
+): void {
+    const { coll, isXAxis } = this;
+
+    if (
+        coll !== 'xAxis' && coll !== 'yAxis' ||
+        this.logarithmic
+    ) {
+        return;
+    }
+
+    const axisLength = this.len,
+        hasUserMin = defined(pick(this.options.min, this.userMin)),
+        hasUserMax = defined(pick(this.options.max, this.userMax));
+
+    if (hasUserMin && hasUserMax) {
+        return;
+    }
+
+    // Unchanged since `foundExtremes`, so its padding still applies. #24039
+    if (
+        this.min === this.bubblePaddedMin &&
+        this.max === this.bubblePaddedMax
+    ) {
+        return;
+    }
+
+    const axisMin = this.min || 0,
+        axisMax = this.max || 0;
+
+    let requiredMin = axisMin,
+        requiredMax = axisMax,
+        hasActiveSeries = false;
+
+    this.series.forEach((series): void => {
+        if (!series.bubblePadding || !series.reserveSpace()) {
+            return;
+        }
+
+        hasActiveSeries = true;
+
+        const data = series.getColumn(isXAxis ? 'x' : 'y'),
+            // Bubbles rendered on a point of another series keep their radii
+            // on the `onPoint` object, like in `onAxisFoundExtremes`
+            radii = (series.onPoint || series).radii;
+
+        let i = data.length;
+        while (i--) {
+            const d = data[i];
+            if (!isNumber(d)) {
+                continue;
+            }
+            const r = radii && radii[i] || 0;
+            if (r >= axisLength) {
+                continue;
+            }
+            const range = axisMax - axisMin,
+                pxPos = range > 0 ?
+                    (d - axisMin) / range * axisLength :
+                    axisLength / 2;
+
+            if (!hasUserMin && pxPos - r < -1) {
+                requiredMin = Math.min(
+                    requiredMin,
+                    (r * axisMax - d * axisLength) / (r - axisLength)
+                );
+            }
+            if (!hasUserMax && pxPos + r > axisLength + 1) {
+                requiredMax = Math.max(
+                    requiredMax,
+                    (d * axisLength - r * axisMin) / (axisLength - r)
+                );
+            }
+        }
+    });
+
+    if (!hasActiveSeries) {
+        return;
+    }
+
+    if (!hasUserMin && requiredMin < axisMin) {
+        this.min = requiredMin;
+    }
+    if (!hasUserMax && requiredMax > axisMax) {
+        this.max = requiredMax;
+    }
 }
 
 /**
@@ -530,6 +641,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(
                 AxisClass,
                 'afterRender',
