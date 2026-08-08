@@ -1,0 +1,25 @@
+#container-daily,
+#container-monthly {
+    display: flex;
+    justify-content: space-between;
+}
+
+#container-daily-alpha,
+#container-daily-beta,
+#container-daily-rsquare,
+#container-monthly-alpha,
+#container-monthly-beta,
+#container-monthly-rsquare {
+    width: 33%;
+    height: 330px;
+}
+
+.highcharts-description {
+    background: light-dark(#f2f6f2, #323232);
+    border-radius: 0 4px 4px 0;
+    border-left: 2px solid light-dark(#1d6aff, #fff);
+    font-size: 0.8rem;
+    font-style: italic;
+    padding: 8px 16px;
+    margin: 2em 10px 1em;
+}
