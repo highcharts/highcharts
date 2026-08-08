@@ -90,7 +90,7 @@ function uploadVisualTestResults() {
     return Promise.all(promises);
 }
 
-uploadVisualTestResults.description = 'Uploads images/assets from visual test runs. E.g candidate.svg, diff.gif and visual-test-results.json';
+uploadVisualTestResults.description = 'Uploads images/assets from visual test runs. E.g candidate.svg, diff.png and visual-test-results.json';
 uploadVisualTestResults.flags = {
     '--tag': 'Will look for reference.svg files and upload them to a S3 path with the specified tag.',
     '--bucket': 'The S3 bucket to upload to.',

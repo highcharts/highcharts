@@ -73,8 +73,7 @@ function getStatus() {
  * Returns the lastest commit sha
  *
  * @param {Boolean} useShortVersion if you want the short version of the latest git sha.
- * @return {Promise<String>}
- *         Promise to keep with results
+ * @return {String} Result
  */
 function getLatestCommitShaSync(useShortVersion = false) {
     const ChildProcess = require('child_process');

@@ -31,17 +31,23 @@ different browser timezones:
 npx playwright test --project=setup-highcharts --project=highcharts tests/highcharts/time/
 ```
 
-## Visual Tests (Karma)
+## Visual Tests (Playwright)
 
-Visual comparison tests still use Karma for generating and comparing SVG
-reference images:
+Visual comparison tests run in Playwright. Pass/fail uses Playwright screenshot
+assertions (`toHaveScreenshot`) with baselines in
+`tests/visual/visual.spec.ts-snapshots/`. The run still writes
+`reference.svg` and `candidate.svg` into sample directories for
+the existing visual review tooling:
 
 ```bash
-# Generate reference images
-npx karma start test/karma-conf.js --tests highcharts/*/* --reference
+# Generate reference images for a product
+VISUAL_TEST_PRODUCT=highcharts npx playwright test --project=visual --update-snapshots
 
 # Compare against reference
-npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
+VISUAL_TEST_PRODUCT=highcharts npx playwright test --project=visual
+
+# Narrow by sample path
+VISUAL_TEST_PATH=stacklabels-enabled-variwide npx playwright test --project=visual
 ```
 
 ## Writing Tests

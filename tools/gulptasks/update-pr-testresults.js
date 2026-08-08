@@ -3,7 +3,7 @@
  */
 
 const gulp = require('gulp');
-const fs = require('fs');
+const fs = require('node:fs');
 const logLib = require('../libs/log');
 const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
@@ -39,12 +39,10 @@ async function postGitCommitStatusUpdate(pr, newReview) {
         description = 'No diffing samples found.';
         commitState = 'success';
         logLib.message('No diffing samples found.');
-    } else {
-        if (newReview.samples.every(sample => sample.approved)) {
-            // on every subsequent run we don't need to re-approve same samples.
-            description = 'Diffing samples are approved';
-            commitState = 'success';
-        }
+    } else if (newReview.samples.every(sample => sample.approved)) {
+        // on every subsequent run we don't need to re-approve same samples.
+        description = 'Diffing samples are approved';
+        commitState = 'success';
         logLib.message('All samples are already approved.');
     }
 
@@ -96,7 +94,7 @@ function completeTask(message) {
     if (!argv.failSilently) {
         return Promise.reject(new Error(message));
     }
-    logLib.warn('Forcing success, but error occured: ' + message);
+    logLib.warn(`Forcing success, but error occured: ${message}`);
     return Promise.resolve(message);
 }
 
@@ -135,8 +133,14 @@ function createMarkdownLink(link, message = 'link') {
  * @return {string} markdown template with the changed files.
  */
 function createTemplateForChangedSamples() {
-    const gitChangedFiles = getFilesChanged();
-    logLib.message(`Changed files:\n${gitChangedFiles}`);
+    let gitChangedFiles = '';
+    try {
+        gitChangedFiles = getFilesChanged();
+        logLib.message(`Changed files:\n${gitChangedFiles}`);
+    } catch (err) {
+        logLib.warn(`Failed to read changed files: ${err}`);
+        return '';
+    }
 
     const changedPaths = new Set(
         gitChangedFiles.split('\n')
@@ -145,12 +149,11 @@ function createTemplateForChangedSamples() {
 
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
-        samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
-            Array.from(changedPaths).map(line => {
-                const parts = line.split('\t');
-                return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
-            }).join('\n');
-        samplesChangedTemplate += '\n\n</p>\n</details>\n';
+        const tableRows = Array.from(changedPaths).map(line => {
+            const parts = line.split('\t');
+            return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
+        }).join('\n');
+        samplesChangedTemplate = `---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n${tableRows}\n\n</p>\n</details>\n`;
     }
     return samplesChangedTemplate;
 }
@@ -161,11 +164,12 @@ function createPRCommentBody(newReview, prNumber) {
         if (newReview.samples.every(sample => sample.approved)) {
             commentTemplate = `${DEFAULT_COMMENT_TITLE} - All diffing samples already approved`;
         } else {
+            const reviewLink = createMarkdownLink(
+                `https://vrevs.highsoft.com/pr/${prNumber}/review`,
+                'Please review the differences.'
+            );
             commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
-                `Found **${newReview.samples.length}** diffing sample(s). ${createMarkdownLink(
-                    'https://vrevs.highsoft.com/pr/' + prNumber + '/review',
-                    'Please review the differences.'
-                )}\n`;
+                `Found **${newReview.samples.length}** diffing sample(s). ${reviewLink}\n`;
         }
     }
     const changedSamplesTemplate = createTemplateForChangedSamples();
@@ -194,9 +198,9 @@ async function fetchExistingReview(pr) {
             existingReview = await response.json();
         }
         // if we have and existing review we want to keep certains parts of it.
-        logLib.message('Found existing review for pr: ' + pr);
+        logLib.message(`Found existing review for pr: ${pr}`);
     } catch (err) {
-        logLib.message('No existing review found or error occured: ' + err);
+        logLib.message(`No existing review found or error occured: ${err}`);
     }
 
     return existingReview;
@@ -208,7 +212,7 @@ async function fetchReviewFile(pr) {
             `https://vrevs.highsoft.com/api/assets/visualtests/diffs/pullrequests/${pr}/review-pr-${pr}.json`
         );
 
-        if (response && response.ok) {
+        if (response?.ok) {
             return await response.json();
         }
     } catch (error) {
@@ -231,7 +235,7 @@ async function fetchAllReviewsForVersion(version) {
             allReviews = await response.json();
         }
     } catch (err) {
-        logLib.message(`Couldn't fetch all reviews for version ${version}` + err);
+        logLib.message(`Couldn't fetch all reviews for version ${version}: ${err}`);
     }
 
     return allReviews;
@@ -249,18 +253,19 @@ async function fetchAllReviewsForVersion(version) {
  */
 async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
     const allReviews = await fetchAllReviewsForVersion(highchartsVersion);
-    if (allReviews && allReviews.samples) {
+    if (allReviews?.samples) {
         const approvedSamplesToRemove = Object.keys(allReviews.samples).filter(sampleName => (
             // only keep approvals for this pr that are still having a diff > 0 in the test results.
             allReviews.samples[sampleName].some(s => s.pr === pr && !diffingSampleEntries.some(e => e[0] === sampleName))
         ));
 
-        approvedSamplesToRemove.forEach(s => {
-            logLib.message(`Removing previously approved sample ${s} for current pr #${pr} as it is no longer different.`);
-            allReviews.samples[s] = allReviews.samples[s].filter(approvedSample => approvedSample.pr !== pr);
-        });
+        for (const sampleName of approvedSamplesToRemove) {
+            logLib.message(`Removing previously approved sample ${sampleName} for current pr #${pr} as it is no longer different.`);
+            allReviews.samples[sampleName] = allReviews.samples[sampleName]
+                .filter(approvedSample => approvedSample.pr !== pr);
+        }
 
-        if (approvedSamplesToRemove && approvedSamplesToRemove.length && !argv.dryrun) {
+        if (approvedSamplesToRemove?.length && !argv.dryrun) {
             const key = `${S3_REVIEWS_PATH}/all-reviews-${highchartsVersion}.json`;
             return putS3Object(
                 key,
@@ -284,13 +289,14 @@ async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
  * @param {number} pr PR number
  */
 async function createPRReviewFile(testResults, pr) {
-    const samplesWithDiffs = Object.entries(testResults).filter(
-        entry => entry[0] !== 'meta' && !isNaN(entry[1]) && entry[1] > 0
-    ) || [];
+    const samplesWithDiffs = Object.entries(testResults).filter(entry => {
+        const diffValue = Number(entry[1]);
+        return entry[0] !== 'meta' && Number.isFinite(diffValue) && diffValue > 0;
+    }) || [];
 
     let existingApprovedSamples = [];
     const existingReview = await fetchExistingReview(pr);
-    if (existingReview && existingReview.samples) {
+    if (existingReview?.samples) {
         // this is not first run, so get which samples are already approved
         existingApprovedSamples = existingReview.samples.filter(sample => sample.approved);
     }
@@ -298,8 +304,7 @@ async function createPRReviewFile(testResults, pr) {
     const samples = samplesWithDiffs.map(([key, value]) => {
         const alreadyApprovedSample = existingApprovedSamples.find(s => s.name === key && s.diff === value);
         if (alreadyApprovedSample) {
-            logLib.message(`${alreadyApprovedSample.name} has already been approved for the diffing value` +
-                alreadyApprovedSample.diff);
+            logLib.message(`${alreadyApprovedSample.name} has already been approved for the diffing value ${alreadyApprovedSample.diff}`);
         }
         return alreadyApprovedSample || {
             name: key,
@@ -324,22 +329,22 @@ async function createPRReviewFile(testResults, pr) {
 
 /**
  * Based on a list of diffing samples (that contain visual test differences compared to a baseline/reference)
- * this function uploads the reference/candidate/diff images + JSON report + review file that are produced
+ * this function uploads reference/candidate assets + JSON report + review file that are produced
  * from a visual test run to S3 in order to make them easily available.
  * @param {Array} diffingSamples list
  * @param {number} pr number to upload for
  * @param {boolean} includeReview file
- * @param {boolean} includeDiffFiles upload image files
+ * @param {boolean} includeSampleAssets upload image files
  * @return {object|undefined} result of upload or undefined
  */
 async function uploadVisualTestFiles(
     diffingSamples,
     pr,
     includeReview = true,
-    includeDiffFiles = false
+    includeSampleAssets = false
 ) {
     let result;
-    const files = includeDiffFiles ? diffingSamples.reduce((resultingFiles, sample) => {
+    const files = includeSampleAssets ? diffingSamples.reduce((resultingFiles, sample) => {
         resultingFiles.push({
             from: `samples/${sample[0]}/reference.svg`,
             to: buildImgS3Path('reference.svg', sample[0], pr)
@@ -347,10 +352,6 @@ async function uploadVisualTestFiles(
         resultingFiles.push({
             from: `samples/${sample[0]}/candidate.svg`,
             to: buildImgS3Path('candidate.svg', sample[0], pr)
-        });
-        resultingFiles.push({
-            from: `samples/${sample[0]}/diff.gif`,
-            to: buildImgS3Path('diff.gif', sample[0], pr)
         });
         return resultingFiles;
     }, []) : [];
@@ -375,14 +376,13 @@ async function uploadVisualTestFiles(
                 files,
                 bucket: VISUAL_TESTS_BUCKET,
                 profile: argv.profile,
-                name: `image diff on PR #${pr}`,
+                name: `visual sample assets on PR #${pr}`,
                 s3Params: {
                     ACL: void 0 // use bucket permissions
                 }
             });
         } catch (err) {
-            logLib.failure('One or more files were not uploaded. Continuing to let task finish gracefully. ' +
-                'Original error: ' + err.message);
+            logLib.failure(`One or more files were not uploaded. Continuing to let task finish gracefully. Original error: ${err.message}`);
         }
 
     } else {
@@ -410,6 +410,15 @@ async function writeCommentFile(content) {
     logLib.message('Wrote file to', JSONFilePath);
 }
 
+async function writeCommentFileSafe(content) {
+    try {
+        return await writeCommentFile(content);
+    } catch (err) {
+        logLib.warn(`Failed to write PR comment file: ${err?.message || String(err)}`);
+    }
+    return null;
+}
+
 /**
  * Task for adding a visual test result as a comment to a PR.
  * It also updates the status for the commit with github.
@@ -421,45 +430,79 @@ async function commentOnPR() {
         pr,
         resultsPath = 'test/visual-test-results.json'
     } = argv;
+    let failureMessage = '';
+    let commentTemplate = `${DEFAULT_COMMENT_TITLE} - Unable to generate report`;
+
     if (!pr) {
-        return completeTask('No --pr (pull request number) specified');
+        failureMessage = 'No --pr (pull request number) specified';
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Unable to generate report\n${failureMessage}`;
+        await writeCommentFileSafe(commentTemplate);
+        return completeTask(failureMessage);
     }
-    const prNumber = parseInt(pr, 10);
+
+    const prNumber = Number.parseInt(pr, 10);
+    if (Number.isNaN(prNumber)) {
+        failureMessage = `Invalid --pr value "${pr}"`;
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Unable to generate report\n${failureMessage}`;
+        await writeCommentFileSafe(commentTemplate);
+        return completeTask(failureMessage);
+    }
+
     const testResults = readTestResultsFile(resultsPath);
     if (!testResults) {
-        const errMsg = `Unable to read file ${resultsPath}`;
-        logLib.warn(errMsg);
-        return completeTask(errMsg);
+        failureMessage = `Unable to read file ${resultsPath}`;
+        logLib.warn(failureMessage);
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Unable to generate report\n${failureMessage}`;
+        await writeCommentFileSafe(commentTemplate);
+        return completeTask(failureMessage);
     }
 
-    const diffingSamples = Object.entries(testResults).filter(entry => {
-        const value = entry[1];
-        return typeof value === 'number' && value > 0;
-    });
-
-    const newReview = await createPRReviewFile(testResults, prNumber);
-
-    let shouldSaveReview = newReview.samples.length > 0;
-    if (!shouldSaveReview) {
-        const existingReview = await fetchReviewFile(prNumber);
-        shouldSaveReview = !!(existingReview && existingReview.samples?.length);
-    }
-
-    await uploadVisualTestFiles(
-        diffingSamples,
-        prNumber,
-        shouldSaveReview
-    );
-
-    await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
-    await postGitCommitStatusUpdate(pr, newReview);
-
+    let newReview;
     try {
-        const commentTemplate = createPRCommentBody(newReview, prNumber);
-        return writeCommentFile(commentTemplate);
+        const diffingSamples = Object.entries(testResults).filter(entry => {
+            const value = entry[1];
+            return typeof value === 'number' && value > 0;
+        });
+
+        newReview = await createPRReviewFile(testResults, prNumber);
+
+        let shouldSaveReview = newReview.samples.length > 0;
+        if (!shouldSaveReview) {
+            const existingReview = await fetchReviewFile(prNumber);
+            shouldSaveReview = !!existingReview?.samples?.length;
+        }
+
+        await uploadVisualTestFiles(
+            diffingSamples,
+            prNumber,
+            shouldSaveReview
+        );
+
+        await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
+        await postGitCommitStatusUpdate(pr, newReview);
     } catch (err) {
-        return completeTask(err || err.message);
+        failureMessage = err?.message || String(err);
+        logLib.warn(`Failed to process visual test results: ${failureMessage}`);
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Unable to generate report\n${failureMessage}`;
     }
+
+    if (!failureMessage && newReview) {
+        try {
+            commentTemplate = createPRCommentBody(newReview, prNumber);
+        } catch (err) {
+            const bodyError = err?.message || String(err);
+            logLib.warn(`Failed to build PR comment body: ${bodyError}`);
+            failureMessage = failureMessage || bodyError;
+            commentTemplate = `${DEFAULT_COMMENT_TITLE} - Failed to build PR comment body\n${bodyError}`;
+        }
+    }
+
+    const writeResult = await writeCommentFileSafe(commentTemplate);
+    if (failureMessage) {
+        return completeTask(failureMessage);
+    }
+
+    return writeResult;
 }
 
 commentOnPR.description = 'Updates/creates reviews for pr and comments any diffs from test/visual-test-results.json';

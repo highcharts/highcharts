@@ -8,6 +8,15 @@ import { shouldBuild } from './setup-build-utils.mts';
 
 const rootDir = join(import.meta.dirname, '..');
 
+const productEnv = process.env.VISUAL_TEST_PRODUCT ?? '';
+const productFilters = productEnv
+    .split(/[,;\n]/)
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+const needsDashboardsBuild = productFilters.some((product) =>
+    product.startsWith('dashboards') || product.startsWith('grid')
+);
+
 const builds = [
     {
         label: 'Dashboards',
@@ -40,15 +49,19 @@ const builds = [
     }
 ] as const;
 
-for (const { label, check, inputs, command } of builds) {
-    if (!shouldBuild(check, inputs)) {
-        logger.message(`Note: Skipped ${label} build`);
-        continue;
-    }
+if (productFilters.length && !needsDashboardsBuild) {
+    logger.message('Note: Skipped Dashboards/Grid build');
+} else {
+    for (const { label, check, inputs, command } of builds) {
+        if (!shouldBuild(check, inputs)) {
+            logger.message(`Note: Skipped ${label} build`);
+            continue;
+        }
 
-    logger.message(`Running ${label} build`);
-    execSync(command, {
-        cwd: rootDir,
-        stdio: 'inherit'
-    });
+        logger.message(`Running ${label} build`);
+        execSync(command, {
+            cwd: rootDir,
+            stdio: 'inherit'
+        });
+    }
 }
