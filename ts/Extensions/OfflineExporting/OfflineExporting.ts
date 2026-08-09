@@ -622,8 +622,8 @@ namespace OfflineExporting {
             // Work around jsPDF's missing support for color(srgb r g b) format
             // (#25001)
             ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
-                const value = el.style?.[prop as any];
-                if (value.startsWith('color(srgb')) {
+                const value = el.style?.[prop as any] as string|undefined;
+                if (value?.startsWith('color(srgb')) {
                     const rgb = value.match(
                         /color\(srgb ([\d.]+)[, ]([\d.]+)[, ]([\d.]+)\)/
                     );
