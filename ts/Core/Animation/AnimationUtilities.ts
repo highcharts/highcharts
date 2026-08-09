@@ -227,7 +227,11 @@ export function animate(
         if (typeof end === 'string' && end.match('px')) {
             end = end.replace(/px/g, ''); // #4351
         }
-        fx.run(start as any, end as any, unit);
+
+        // Empty dashstyle animation crashes treemap on hover
+        if (defined(end)) {
+            fx.run(start as any, end as any, unit);
+        }
     });
 }
 
