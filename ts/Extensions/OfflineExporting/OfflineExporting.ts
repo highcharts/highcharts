@@ -619,22 +619,35 @@ namespace OfflineExporting {
 
         // Work around jsPDF's missing support for color(srgb r g b) format
         // (#25001)
-        const convertColorSRGBToHex = (
+        const convertColorSRGBToRGB = (
             srgbColor?: string|null
         ): string|undefined => {
             if (srgbColor?.startsWith('color(srgb')) {
-                const rgb = srgbColor.match(
-                    /color\(srgb ([\d.]+)[, ]([\d.]+)[, ]([\d.]+)\)/
+                const rgba = srgbColor.match(
+                    RegExp(
+                        'color\\(srgb\\s+([\\d.]+)[, ]+([\\d.]+)[, ]+' +
+                        '([\\d.]+)(?:\\s*\\/\\s*([\\d.]+))?\\)'
+                    )
                 );
 
-                if (rgb) {
-                    const r = Math.round(parseFloat(rgb[1]) * 255),
-                        g = Math.round(parseFloat(rgb[2]) * 255),
-                        b = Math.round(parseFloat(rgb[3]) * 255);
-                    return '#' +
-                        ((1 << 24) + (r << 16) + (g << 8) + b)
-                            .toString(16)
-                            .slice(1);
+                if (rgba) {
+                    const toChannel = (value: string): number =>
+                            Math.round(
+                                Math.max(0, Math.min(1, parseFloat(value))) *
+                                255
+                            ),
+                        toAlpha = (value: string): number =>
+                            Math.max(0, Math.min(1, parseFloat(value))),
+                        r = toChannel(rgba[1]),
+                        g = toChannel(rgba[2]),
+                        b = toChannel(rgba[3]),
+                        alpha = rgba[4];
+
+                    if (alpha !== void 0) {
+                        return `rgba(${r}, ${g}, ${b}, ${toAlpha(alpha)})`;
+                    }
+
+                    return `rgb(${r}, ${g}, ${b})`;
                 }
             }
         };
@@ -644,17 +657,17 @@ namespace OfflineExporting {
         ).forEach((el): void => {
             ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
                 // Handle attributes
-                const attrHex = convertColorSRGBToHex(el.getAttribute(prop));
-                if (attrHex) {
-                    el.setAttribute(prop, attrHex);
+                const attrRGB = convertColorSRGBToRGB(el.getAttribute(prop));
+                if (attrRGB) {
+                    el.setAttribute(prop, attrRGB);
                 }
 
                 // Handle style properties
-                const styleHex = convertColorSRGBToHex(
+                const styleRGB = convertColorSRGBToRGB(
                     el.style?.[prop as any] as string|undefined
                 );
-                if (styleHex) {
-                    el.style[prop as any] = styleHex;
+                if (styleRGB) {
+                    el.style[prop as any] = styleRGB;
                 }
             });
         });
