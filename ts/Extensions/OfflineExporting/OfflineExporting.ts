@@ -606,39 +606,70 @@ namespace OfflineExporting {
             [].forEach.call(titleElements, function (
                 titleElement: HTMLDOMElement
             ): void {
-                el.removeChild(titleElement);
+                titleElement.remove();
             });
 
             // Remove all .highcharts-text-outline elements, #17170
             outlineElements =
                 el.getElementsByClassName('highcharts-text-outline');
             while (outlineElements.length > 0) {
-                const outline = outlineElements[0];
-                if (outline.parentNode) {
-                    outline.parentNode.removeChild(outline);
+                outlineElements[0].remove();
+            }
+        });
+
+        // Work around jsPDF's missing support for color(srgb r g b) format
+        // (#25001)
+        const srgbColorRegex =
+            /color\(\s*srgb\s+([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/;
+
+        const convertColorSRGBToRGB = (
+            srgbColor?: string|null
+        ): string|undefined => {
+            if (srgbColor?.startsWith('color(srgb')) {
+                const rgba = srgbColor.match(srgbColorRegex);
+
+                if (rgba) {
+                    const toChannel = (value: string): number =>
+                            Math.round(
+                                Math.max(0, Math.min(1, parseFloat(value))) *
+                                255
+                            ),
+                        toAlpha = (value: string): number =>
+                            Math.max(0, Math.min(1, parseFloat(value))),
+                        r = toChannel(rgba[1]),
+                        g = toChannel(rgba[2]),
+                        b = toChannel(rgba[3]),
+                        alpha = rgba[4];
+
+                    if (alpha !== void 0) {
+                        return `rgba(${r}, ${g}, ${b}, ${toAlpha(alpha)})`;
+                    }
+
+                    return `rgb(${r}, ${g}, ${b})`;
                 }
             }
+        };
 
-            // Work around jsPDF's missing support for color(srgb r g b) format
-            // (#25001)
+        Array.from(
+            dummySVGContainer.querySelectorAll('*') as NodeListOf<SVGDOMElement>
+        ).forEach((el): void => {
             ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
-                const value = el.style?.[prop as any] as string|undefined;
-                if (value?.startsWith('color(srgb')) {
-                    const rgb = value.match(
-                        /color\(srgb ([\d.]+)[, ]([\d.]+)[, ]([\d.]+)\)/
-                    );
-                    if (rgb) {
-                        const r = Math.round(parseFloat(rgb[1]) * 255),
-                            g = Math.round(parseFloat(rgb[2]) * 255),
-                            b = Math.round(parseFloat(rgb[3]) * 255);
-                        el.style[prop as any] = '#' +
-                            ((1 << 24) + (r << 16) + (g << 8) + b)
-                                .toString(16)
-                                .slice(1);
-                    }
+                // Handle attributes
+                const attrRGB = convertColorSRGBToRGB(el.getAttribute(prop));
+                if (attrRGB) {
+                    el.setAttribute(prop, attrRGB);
+                }
+
+                // Handle style properties
+                const styleRGB = convertColorSRGBToRGB(
+                    el.style?.[prop as any] as string|undefined
+                );
+                if (styleRGB) {
+                    el.style[prop as any] = styleRGB;
                 }
             });
         });
+
         return dummySVGContainer.querySelector('svg');
     }
 
