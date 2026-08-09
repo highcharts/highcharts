@@ -85,7 +85,11 @@ class HTMLElement extends SVGElement {
                     .attr({
                         text: str,
                         x: Math.round(x),
-                        y: Math.round(y)
+                        y: Math.round(y),
+                        // The namespace attribute is required for serialization
+                        // (export and side-by-side comparison), otherwise it
+                        // inherits the SVG namespace from foreignObject.
+                        xmlns: 'http://www.w3.org/1999/xhtml'
                     });
             };
         }
@@ -343,8 +347,10 @@ class HTMLElement extends SVGElement {
             foreignObject.attr({
                 x: x + (this.xCorr || 0),
                 y: y + (this.yCorr || 0),
-                // Add 4px to avoid ellipsis, since the wrapper div has a
-                // 3px right margin. We need one more because of rounding.
+                // Add 4px to avoid ellipsis. In v13.0.0 we had a body inside
+                // the foreignObject with a 3px right margin. This was later
+                // removed, but we still need to add a few pixels to avoid
+                // ellipsis.
                 width: element.offsetWidth + 4,
                 // Add 1px to account for subpixel bounding boxes
                 height: element.offsetHeight + 1,
@@ -367,31 +373,18 @@ class HTMLElement extends SVGElement {
     }
 
     /**
-     * Add the element to a group wrapper. For HTML elements, a parallel div
-     * will be created for each ancestor SVG `g` element.
+     * Add the element to the foreign object
      *
      * @internal
      */
     public add(parentGroup?: SVGElement): this {
-        const { foreignObject, renderer } = this;
+        const { foreignObject } = this;
 
         // Foreign object
         foreignObject.add(parentGroup);
-        super.add(
-            // Create a block-level div inside the foreignObject (#24839).
-            // xmlns is required when SVG is serialized.
-            renderer.createElement('div')
-                .attr({ xmlns: 'http://www.w3.org/1999/xhtml' })
-                .css({
-                    background: 'transparent',
-                    border: 'none',
-                    // 3px is to avoid clipping on the right
-                    margin: '0 3px 0 0',
-                    // Guard against global div padding rules
-                    padding: 0
-                })
-                .add(foreignObject)
-        );
+
+        // Add this.element to the foreign objct
+        super.add(foreignObject);
 
         if (this.alignOnAdd) {
             this.updateTransform();
