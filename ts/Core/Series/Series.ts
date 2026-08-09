@@ -3479,7 +3479,7 @@ class Series {
         // Destroy all points with their elements
         i = data.length;
         while (i--) {
-            data[i]?.destroy?.();
+            data[i]?.destroy?.(true);
         }
 
         for (const zone of series.zones || []) {
