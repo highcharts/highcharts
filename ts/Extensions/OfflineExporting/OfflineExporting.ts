@@ -619,16 +619,14 @@ namespace OfflineExporting {
 
         // Work around jsPDF's missing support for color(srgb r g b) format
         // (#25001)
+        const srgbColorRegex =
+            /color\(\s*srgb\s+([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/;
+
         const convertColorSRGBToRGB = (
             srgbColor?: string|null
         ): string|undefined => {
             if (srgbColor?.startsWith('color(srgb')) {
-                const rgba = srgbColor.match(
-                    RegExp(
-                        'color\\(srgb\\s+([\\d.]+)[, ]+([\\d.]+)[, ]+' +
-                        '([\\d.]+)(?:\\s*\\/\\s*([\\d.]+))?\\)'
-                    )
-                );
+                const rgba = srgbColor.match(srgbColorRegex);
 
                 if (rgba) {
                     const toChannel = (value: string): number =>
