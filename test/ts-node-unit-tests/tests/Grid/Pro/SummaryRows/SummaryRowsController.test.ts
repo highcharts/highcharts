@@ -251,7 +251,8 @@ describe('SummaryRowsController', () => {
                 data: {
                     columns: {
                         name: ['a', 'b', 'c'],
-                        sales: [10, 20, 30]
+                        sales: [10, 20, 30],
+                        margin: [1, 2, 6]
                     }
                 },
                 summaryRows: {
@@ -261,9 +262,17 @@ describe('SummaryRowsController', () => {
                             id: 'sales',
                             aggregator: 'SUM',
                             format: '${value:,0f}'
-                        }
+                        },
+                        { id: 'margin', aggregator: 'SUM' }
                     ]
-                }
+                },
+                columnDefaults: {
+                    cells: { format: '{value} usd' }
+                },
+                columns: [{
+                    id: 'margin',
+                    cells: { format: '{value} eur' }
+                }]
             }, true);
 
             grid.viewport?.resizeObserver?.disconnect();
@@ -281,6 +290,29 @@ describe('SummaryRowsController', () => {
             strictEqual(
                 rows[0].formats.name, void 0,
                 'Columns without a format carry none.'
+            );
+
+            // Plain text content lands in `innerText`, which jsdom stores as a
+            // property instead of reflecting it into the DOM.
+            const rendered: Record<string, string> = {};
+            for (
+                const cell of (grid as any).viewport.summaryView.bottom
+                    .rows[0].cells
+            ) {
+                rendered[cell.column.id] = cell.htmlElement.innerText;
+            }
+
+            strictEqual(
+                rendered.sales, '$60',
+                'The summary format wins over the column cells format.'
+            );
+            strictEqual(
+                rendered.margin, '9 eur',
+                'Without a summary format, columns[].cells.format is used.'
+            );
+            strictEqual(
+                rendered.name, 'Total usd',
+                'columnDefaults.cells.format applies where the column has none.'
             );
         });
 
