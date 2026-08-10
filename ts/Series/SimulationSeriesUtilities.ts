@@ -23,7 +23,7 @@ type SimulationSeries = (NetworkgraphSeries | PackedBubbleSeries);
  * Create a setTimeout for the first drawDataLabels()
  * based on the dataLabels.animation.defer value
  * for series which have enabled simulation.
- * @private
+ * @internal
  */
 function initDataLabelsDefer(this: SimulationSeries): void {
     const dlOptions = this.options.dataLabels;
@@ -48,7 +48,7 @@ function initDataLabelsDefer(this: SimulationSeries): void {
  * Initialize the SVG group for the DataLabels with correct opacities
  * and correct styles so that the animation for the series that have
  * simulation enabled works fine.
- * @private
+ * @internal
  */
 function initDataLabels(this: SimulationSeries): SVGElement {
     const series = this,
@@ -95,4 +95,5 @@ const DataLabelsDeferUtils = {
     initDataLabelsDefer
 };
 
+/** @internal */
 export default DataLabelsDeferUtils;
