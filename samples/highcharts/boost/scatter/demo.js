@@ -33,7 +33,7 @@ Highcharts.chart('container', {
 
     boost: {
         useGPUTranslations: true,
-        usePreAllocated: true
+        usePreallocated: true
     },
 
     xAxis: {

@@ -69,6 +69,13 @@ module.exports = {
         { from: 'dashboards/dashboards-with-angular', to: 'dashboards/wrappers/dashboards-with-angular' },
         { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/dashboards-with-react' },
         { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' },
+        { from: 'react/components/chart-elements/data-table', to: 'react/components/chart-elements/datatable' },
+        { from: 'react/components/chart-elements/plot-options', to: 'react/components/chart-elements/plotoptions' },
+        { from: 'react/components/chart-elements/x-axis', to: 'react/components/chart-elements/xaxis' },
+        { from: 'react/components/chart-elements/y-axis', to: 'react/components/chart-elements/yaxis' },
+        { from: 'react/components/modules/broken-axis', to: 'react/components/modules/brokenaxis' },
+        { from: 'react/components/modules/draggable-points', to: 'react/components/modules/draggablepoints' },
+        { from: 'react/components/modules/stock-tools', to: 'react/components/modules/stocktools' },
         // Special case for xmlns schema in Map Collection
         // # --> https://github.com/highcharts/doc-builder/issues/58
         { from: 'mc', to: 'maps/map-collection#map-properties' }

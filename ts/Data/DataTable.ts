@@ -1346,12 +1346,13 @@ export type CellType = (boolean|number|null|string|undefined);
  * `true` when the value is a valid `CellType`.
  */
 export function isCellValue(value: unknown): value is CellType {
+    const valueType = typeof value;
     return (
         value === null ||
-        typeof value === 'undefined' ||
-        typeof value === 'boolean' ||
-        typeof value === 'number' ||
-        typeof value === 'string'
+        valueType === 'undefined' ||
+        valueType === 'boolean' ||
+        valueType === 'number' ||
+        valueType === 'string'
     );
 }
 
