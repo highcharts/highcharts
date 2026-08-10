@@ -54,6 +54,7 @@ declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         baseSeries?: Series;
         navigatorSeries?: Series;
+        baseSeriesDataVersionTag?: string;
     }
 }
 
