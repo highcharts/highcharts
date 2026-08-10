@@ -23,6 +23,7 @@
 
 import type DataTable from '../../../Data/DataTable';
 import type {
+    CellType as DataTableCellType,
     RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
@@ -32,11 +33,36 @@ import type {
     SummaryAggregatorOption,
     SummaryColumnOptions,
     SummaryRenderRow,
-    SummaryRowOptions
+    SummaryRowOptions,
+    SummaryRowScope
 } from './SummaryRowsTypes';
 
 import Aggregation from '../Aggregation/Aggregation.js';
+import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';
 import { defined } from '../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Rows a summary row aggregates, resolved from its `scope`.
+ */
+interface SummaryScopedSource {
+
+    /**
+     * Table holding the rows.
+     */
+    table: DataTable;
+
+    /**
+     * Row range within the table, when the scope selects a part of it.
+     */
+    range?: [number, number];
+}
 
 
 /* *
@@ -63,6 +89,11 @@ class SummaryRowsController {
      * Summary rows computed for the current queried table (values + formats).
      */
     private rows: SummaryRenderRow[] = [];
+
+    /**
+     * Whether an unsupported scope was already reported.
+     */
+    private warnedScope: boolean = false;
 
 
     /* *
@@ -119,8 +150,8 @@ class SummaryRowsController {
     /**
      * Recomputes the summary row objects from the queried table.
      *
-     * Aggregation runs over all rows of the queried table, after
-     * filtering/sorting and before pagination.
+     * Each row aggregates the pipeline stage its `scope` selects, defaulting to
+     * the queried table, after filtering/sorting and before pagination.
      *
      * @param table
      * Queried table after filtering/sorting and before pagination.
@@ -133,14 +164,12 @@ class SummaryRowsController {
         }
 
         const columnIds = table.getColumnIds();
-        const rowCount = table.getRowCount();
         const rows: SummaryRenderRow[] = [];
 
         for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
             rows.push(this.buildSummaryRow(
-                table,
+                this.getScopedSource(table, rowOptions[r].scope),
                 columnIds,
-                rowCount,
                 rowOptions[r],
                 r
             ));
@@ -153,14 +182,11 @@ class SummaryRowsController {
      * Builds a single summary row object. Columns that neither aggregate nor
      * carry a static value render empty.
      *
-     * @param table
-     * Queried table the aggregation runs over.
+     * @param source
+     * Rows the aggregation runs over, resolved from the row `scope`.
      *
      * @param columnIds
      * Column ids of the queried table.
-     *
-     * @param rowCount
-     * Number of data rows.
      *
      * @param options
      * Options of the summary row.
@@ -169,12 +195,12 @@ class SummaryRowsController {
      * Zero-based index of the summary row.
      */
     private buildSummaryRow(
-        table: DataTable,
+        source: SummaryScopedSource,
         columnIds: string[],
-        rowCount: number,
         options: SummaryRowOptions,
         summaryRowIndex: number
     ): SummaryRenderRow {
+        const rowCount = this.getScopedRowCount(source);
         const data: DataTableRowObject = {};
         const formats: Record<string, string> = {};
         const classNames: Record<string, string> = {};
@@ -217,7 +243,7 @@ class SummaryRowsController {
             data[columnId] = aggregatorName ?
                 Aggregation.executeAggregate(
                     aggregatorName,
-                    Array.from(table.getColumn(columnId) || []).filter(defined)
+                    this.getAggregableValues(source, columnId)
                 ) :
                 null;
         }
@@ -231,6 +257,141 @@ class SummaryRowsController {
             style: options.style,
             position: options.position ?? 'bottom'
         };
+    }
+
+    /**
+     * Resolves the rows a `scope` selects, falling back to the queried table.
+     *
+     * @param table
+     * Queried table, after filtering/sorting and before pagination.
+     *
+     * @param scope
+     * Pipeline stage to aggregate.
+     */
+    private getScopedSource(
+        table: DataTable,
+        scope?: SummaryRowScope
+    ): SummaryScopedSource {
+        if (scope === 'all') {
+            const dataProvider = this.grid.dataProvider;
+            const sourceTable = hasDataTableProvider(dataProvider) ?
+                dataProvider.getDataTable() :
+                void 0;
+
+            if (!sourceTable) {
+                this.warnScope(
+                    '`scope: \'all\'` requires a local data provider'
+                );
+
+                return { table };
+            }
+
+            return { table: sourceTable };
+        }
+
+        if (scope === 'page') {
+            return { table, range: this.getPageRange() };
+        }
+
+        return { table };
+    }
+
+    /**
+     * Resolves the row range of the current page within the queried table, or
+     * nothing when the page scope does not apply.
+     *
+     * The queried table is the one the pagination modifier slices, so the page
+     * is a plain range of it. A projecting feature (TreeView, row grouping)
+     * replaces that table with the projected rows before pagination, and the
+     * range then addresses rows the aggregation never sees.
+     */
+    private getPageRange(): ([number, number] | undefined) {
+        const grid = this.grid;
+        const pagination = grid.querying.pagination;
+        const options = grid.options;
+
+        // Read from the options rather than from the TreeView controller, which
+        // resolves its state in the same event and only after this handler.
+        const projecting = !!(
+            options?.treeView?.enabled ||
+            options?.rowGrouping?.enabled ||
+            // TODO: Remove deprecated option before releasing next major
+            options?.data?.treeView?.enabled
+        );
+
+        if (!pagination.enabled || projecting) {
+            this.warnScope(
+                '`scope: \'page\'` requires pagination and is not supported ' +
+                'with TreeView or row grouping'
+            );
+
+            return;
+        }
+
+        const pageSize = pagination.currentPageSize;
+        const offset = Math.max(0, pagination.currentPage - 1) * pageSize;
+
+        return [offset, offset + pageSize];
+    }
+
+    /**
+     * Number of rows the scoped source holds, surfaced in the aggregator
+     * context so that it matches the aggregated values.
+     *
+     * @param source
+     * Resolved scoped source.
+     */
+    private getScopedRowCount(source: SummaryScopedSource): number {
+        const rowCount = source.table.getRowCount();
+        const range = source.range;
+
+        return range ?
+            Math.max(0, Math.min(range[1], rowCount) - range[0]) :
+            rowCount;
+    }
+
+    /**
+     * Collects the values a column contributes to the totals.
+     *
+     * @param source
+     * Resolved scoped source.
+     *
+     * @param columnId
+     * Aggregated column id.
+     */
+    private getAggregableValues(
+        source: SummaryScopedSource,
+        columnId: string
+    ): Array<Exclude<DataTableCellType, null | undefined>> {
+        const column = source.table.getColumn(columnId) || [];
+        const range = source.range;
+
+        return Array.from(
+            range ?
+                column.slice(range[0], range[1]) :
+                column
+        ).filter(defined);
+    }
+
+    /**
+     * Reports an unsupported scope once, so that a per-query recompute does not
+     * repeat it.
+     *
+     * @param reason
+     * What is unsupported.
+     */
+    private warnScope(reason: string): void {
+        if (this.warnedScope) {
+            return;
+        }
+
+        this.warnedScope = true;
+
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Summary rows: ${reason}. The row aggregates the filtered rows ` +
+            'instead.'
+        );
     }
 
     /**

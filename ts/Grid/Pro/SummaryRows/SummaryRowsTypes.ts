@@ -178,12 +178,36 @@ export interface SummaryRowOptions {
      * @default 'bottom'
      */
     position?: SummaryRowPosition;
+
+    /**
+     * Rows the aggregation runs over, as a stage of the data pipeline. Each
+     * value narrows the previous one, so several rows can render a page
+     * subtotal, a filtered total and an unfiltered grand total side by side.
+     *
+     * - `'all'`: every source row, ignoring the active filters. Requires a
+     *   local data provider.
+     * - `'filtered'`: the rows left by filtering, across all pages.
+     * - `'page'`: the rows of the current page. Requires pagination.
+     *
+     * A value that does not apply falls back to `'filtered'` and is reported
+     * once. `'page'` is also unsupported with TreeView and row grouping, where
+     * a page is a range of projected rows that the aggregated rows do not line
+     * up with.
+     *
+     * @default 'filtered'
+     */
+    scope?: SummaryRowScope;
 }
 
 /**
  * Placement of a summary row relative to the scrollable body.
  */
 export type SummaryRowPosition = ('top' | 'bottom');
+
+/**
+ * Rows a summary row aggregates, as a stage of the data pipeline.
+ */
+export type SummaryRowScope = ('all' | 'filtered' | 'page');
 
 /**
  * Resolved summary row ready to render: cell values plus the per-cell format,
