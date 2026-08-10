@@ -621,6 +621,108 @@ describe('SummaryRowsController', () => {
             );
         });
 
+    it('should aggregate each pipeline stage the scope selects', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    name: ['a', 'b', 'c', 'd', 'e'],
+                    sales: [1, 2, 3, 4, 5]
+                }
+            },
+            pagination: {
+                enabled: true,
+                pageSize: 2
+            },
+            summaryRows: [
+                { aggregator: 'SUM', scope: 'page' },
+                { aggregator: 'SUM', scope: 'filtered' },
+                { aggregator: 'SUM', scope: 'all' }
+            ]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const totals = (): number[] => summaryRowObjects(grid)
+            .map((row): number => row.sales as number);
+
+        deepStrictEqual(
+            totals(), [3, 15, 15],
+            'Unfiltered, the filtered total and the grand total match.'
+        );
+
+        grid.querying.filtering.addColumnFilterCondition('sales', {
+            condition: 'greaterThan',
+            value: 2
+        } as any);
+        await grid.querying.proceed();
+
+        deepStrictEqual(
+            totals(), [7, 12, 15],
+            'The page and filtered totals follow the filter, the grand ' +
+            'total ignores it.'
+        );
+
+        grid.querying.pagination.setPage(2);
+        await grid.querying.proceed();
+
+        deepStrictEqual(
+            totals(), [5, 12, 15],
+            'Only the page total follows the page change.'
+        );
+    });
+
+    it('should fall back to all rows when the page scope does not apply',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+            const warnings: string[] = [];
+            const originalWarn = console.warn;
+
+            // eslint-disable-next-line no-console
+            console.warn = (message: string): void => {
+                warnings.push(message);
+            };
+
+            try {
+                const grid = await Grid.grid(el, {
+                    data: {
+                        columns: {
+                            name: ['a', 'b', 'c', 'd', 'e'],
+                            sales: [1, 2, 3, 4, 5]
+                        }
+                    },
+                    summaryRows: [{ aggregator: 'SUM', scope: 'page' }]
+                }, true);
+
+                grid.viewport?.resizeObserver?.disconnect();
+
+                strictEqual(
+                    summaryRowObjects(grid)[0].sales, 15,
+                    'Without pagination the row aggregates all rows.'
+                );
+                strictEqual(
+                    warnings.filter(
+                        (message): boolean =>
+                            message.indexOf('Summary rows:') === 0
+                    ).length,
+                    1,
+                    'The unsupported scope is reported once, not per query.'
+                );
+            } finally {
+                // eslint-disable-next-line no-console
+                console.warn = originalWarn;
+            }
+        });
+
     it('should apply the row and cell className/style options', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
