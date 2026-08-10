@@ -262,7 +262,6 @@
         plotOptions: {
             series: {
                 animation: false,
-                enableMouseTracking: false,
                 opacity: 1,
                 dataLabels: {
                     enabled: false
