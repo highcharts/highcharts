@@ -128,7 +128,8 @@ module.exports = {
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
                     'grid/columns/sorting',
-                    'grid/columns/filtering'
+                    'grid/columns/filtering',
+                    'grid/columns/virtualization'
                 ]
             },
             {
@@ -136,6 +137,7 @@ module.exports = {
                     'grid/rows/index',
                     'grid/rows/data',
                     'grid/rows/tree-view',
+                    'grid/rows/grouping',
                     'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',

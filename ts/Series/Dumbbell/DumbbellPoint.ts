@@ -114,7 +114,7 @@ class DumbbellPoint extends AreaRangePoint {
         point.connector?.[verb](series.getConnectorAttribs(point));
     }
 
-    public destroy(): void {
+    public destroy(sync?: boolean): void {
         const point = this;
 
         // #15560
@@ -122,7 +122,7 @@ class DumbbellPoint extends AreaRangePoint {
             point.graphic = point.connector;
             point.connector = void 0 as any;
         }
-        return super.destroy();
+        return super.destroy(sync);
     }
 }
 
