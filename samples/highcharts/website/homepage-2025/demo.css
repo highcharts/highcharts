@@ -90,6 +90,7 @@
     --highlight-purple: #8791ff;
     --highlight-red: #f87171;
     --text-primary: var(--primitives-neutral-900);
+    --annotation-label-background: #fffc;
     --text-secondary: var(--primitives-neutral-700);
     --text-tertiary: var(--primitives-neutral-500);
     --unimportant: #e3e3e8;
@@ -206,6 +207,7 @@
     --button-colors-transparent-stroke-outer-pressed: var(--primitives-neutral-800);
     --background: var(--primitives-neutral-900);
     --text-primary: var(--primitives-neutral-25);
+    --annotation-label-background: transparent;
     --text-secondary: var(--primitives-neutral-200);
     --text-tertiary: var(--primitives-neutral-400);
     --border-100: var(--primitives-neutral-700);
@@ -289,6 +291,7 @@
         --button-colors-transparent-stroke-outer-pressed: var(--primitives-neutral-800);
         --background: var(--primitives-neutral-900);
         --text-primary: var(--primitives-neutral-25);
+        --annotation-label-background: transparent;
         --text-secondary: var(--primitives-neutral-200);
         --text-tertiary: var(--primitives-neutral-400);
         --border-100: var(--primitives-neutral-700);
@@ -883,8 +886,16 @@ button.dot {
     stroke: #c00;
 }
 
-.events-annotations .highcharts-annotation-label span {
-    background-color: light-dark(#fffc, transparent);
+/* useHTML renders these labels as foreignObject > body > div, with no
+   span, so the old selector matched nothing and the chip never appeared.
+   Content inside foreignObject also starts from the UA default black
+   rather than inheriting the page colour, which left the text invisible
+   on a dark card, so set both explicitly.
+   light-dark() is avoided here because it needs color-scheme declared,
+   which would change UA form and scrollbar rendering page-wide. */
+.events-annotations .highcharts-annotation-label div {
+    background-color: var(--annotation-label-background);
+    color: var(--text-primary);
     font-size: 0.9em;
 }
 
@@ -1054,6 +1065,20 @@ button.dot {
 .highcharts-dashboards-component-kpi-value {
     padding-left: 20px;
     font-weight: bold;
+}
+
+/* The KPI components pass chartOptions without a chart.height and nothing
+   constrained this container, so every sparkline fell back to Highcharts'
+   400px default inside a ~148px card and painted outside it -- the strip
+   of stray graph visible between the KPI row and the row below.
+   Kept off the shared component rule so tooltips elsewhere in the
+   dashboard are not clipped; the KPI charts disable mouse tracking. */
+.highcharts-dashboards-component-kpi {
+    overflow: hidden;
+}
+
+.highcharts-dashboards-component-kpi-chart-container {
+    height: 64px;
 }
 
 /* Grid theme */
