@@ -191,13 +191,13 @@ class SummaryView {
 
             if (!row) {
                 row = new SummaryTableRow(this.viewport, i);
-                await row.sync(summaryRows[i].data, summaryRows[i].formats, i);
+                await row.sync(summaryRows[i], i);
                 await row.init();
                 await row.render();
                 tbodyElement.appendChild(row.htmlElement);
                 rows[i] = row;
             } else {
-                await row.sync(summaryRows[i].data, summaryRows[i].formats, i);
+                await row.sync(summaryRows[i], i);
                 if (!row.htmlElement.isConnected) {
                     tbodyElement.appendChild(row.htmlElement);
                 }

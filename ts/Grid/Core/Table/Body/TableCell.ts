@@ -215,7 +215,7 @@ class TableCell extends Cell {
     /**
      * Returns merged styles from defaults and current column options.
      */
-    private getCellStyles(): CSSObject {
+    protected getCellStyles(): CSSObject {
         const { grid } = this.column.viewport;
         const rawColumnOptions =
             grid.columnPolicy.getIndividualColumnOptions(this.column.id);

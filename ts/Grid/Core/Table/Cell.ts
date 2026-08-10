@@ -33,7 +33,7 @@ import Row from './Row';
 import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
 import { fireEvent } from '../../../Shared/Utilities.js';
-import { applyUserClassNames } from '../GridUtils.js';
+import { applyTrackedStyles, applyUserClassNames } from '../GridUtils.js';
 
 
 /* *
@@ -399,38 +399,11 @@ abstract class Cell {
      * A style object to apply.
      */
     protected setCustomStyles(styles?: CSSObject): void {
-        const elementStyle = this.htmlElement.style;
-        const getCSSPropertyName = (property: string): string => (
-            property.indexOf('-') > -1 ?
-                property :
-                property.replace(/[A-Z]/g, '-$&').toLowerCase()
+        this.customStyleProperties = applyTrackedStyles(
+            this.htmlElement,
+            this.customStyleProperties,
+            styles
         );
-
-        if (this.customStyleProperties) {
-            for (const property of this.customStyleProperties) {
-                elementStyle.removeProperty(property);
-            }
-        }
-
-        if (!styles) {
-            delete this.customStyleProperties;
-            return;
-        }
-
-        const appliedProperties: string[] = [];
-
-        for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
-            const value = styles[key];
-            if (value === void 0 || value === null) {
-                continue;
-            }
-
-            const property = getCSSPropertyName(String(key));
-            elementStyle.setProperty(property, String(value));
-            appliedProperties.push(property);
-        }
-
-        this.customStyleProperties = appliedProperties;
     }
 
     /**

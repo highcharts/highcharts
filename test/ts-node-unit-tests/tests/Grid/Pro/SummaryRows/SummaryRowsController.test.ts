@@ -278,7 +278,7 @@ describe('SummaryRowsController', () => {
                         margin: [1, 2, 6]
                     }
                 },
-                summaryRows: {
+                summaryRows: [{
                     columns: [
                         { id: 'name', value: 'Total' },
                         {
@@ -288,7 +288,13 @@ describe('SummaryRowsController', () => {
                         },
                         { id: 'margin', aggregator: 'SUM' }
                     ]
-                },
+                }, {
+                    aggregator: 'SUM',
+                    format: '{value} pln',
+                    columns: [
+                        { id: 'sales', format: '${value:,0f}' }
+                    ]
+                }],
                 columnDefaults: {
                     cells: { format: '{value} usd' }
                 },
@@ -315,15 +321,29 @@ describe('SummaryRowsController', () => {
                 'Columns without a format carry none.'
             );
 
+            strictEqual(
+                rows[1].formats.margin, '{value} pln',
+                'The row format is the default for every cell of the row.'
+            );
+            strictEqual(
+                rows[1].formats.sales, '${value:,0f}',
+                'A per-cell format overrides the row format.'
+            );
+
             // Plain text content lands in `innerText`, which jsdom stores as a
             // property instead of reflecting it into the DOM.
-            const rendered: Record<string, string> = {};
-            for (
-                const cell of (grid as any).viewport.summaryView.bottom
-                    .rows[0].cells
-            ) {
-                rendered[cell.column.id] = cell.htmlElement.innerText;
-            }
+            const renderedOf = (rowIndex: number): Record<string, string> => {
+                const rendered: Record<string, string> = {};
+                for (
+                    const cell of (grid as any).viewport.summaryView.bottom
+                        .rows[rowIndex].cells
+                ) {
+                    rendered[cell.column.id] = cell.htmlElement.innerText;
+                }
+
+                return rendered;
+            };
+            const rendered = renderedOf(0);
 
             strictEqual(
                 rendered.sales, '$60',
@@ -336,6 +356,21 @@ describe('SummaryRowsController', () => {
             strictEqual(
                 rendered.name, 'Total usd',
                 'columnDefaults.cells.format applies where the column has none.'
+            );
+
+            const renderedRowFormat = renderedOf(1);
+
+            strictEqual(
+                renderedRowFormat.margin, '9 pln',
+                'The row format replaces the column cells format.'
+            );
+            strictEqual(
+                renderedRowFormat.sales, '$60',
+                'The per-cell format still wins over the row format.'
+            );
+            strictEqual(
+                renderedRowFormat.name, '0 pln',
+                'The row format reaches the text column as well.'
             );
         });
 
@@ -585,4 +620,116 @@ describe('SummaryRowsController', () => {
                 'The static value survives in the tree column.'
             );
         });
+
+    it('should apply the row and cell className/style options', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    name: ['a', 'b', 'c'],
+                    sales: [10, 20, 30]
+                }
+            },
+            summaryRows: [{
+                aggregator: 'SUM',
+                className: 'my-total-row',
+                style: { borderTop: '2px solid red' },
+                columns: [
+                    { id: 'name', value: 'Total' },
+                    {
+                        id: 'sales',
+                        className: 'my-total-cell',
+                        style: { color: 'blue' }
+                    }
+                ]
+            }],
+            columns: [{
+                id: 'sales',
+                cells: {
+                    className: 'col-cell',
+                    style: { fontWeight: 'bold' }
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const row = (grid as any).viewport.summaryView.bottom.rows[0];
+        const rowElement = row.htmlElement;
+
+        ok(
+            rowElement.classList.contains('my-total-row'),
+            'The row class name is added next to the Core row classes.'
+        );
+        ok(
+            rowElement.classList.contains('hcg-summary-row'),
+            'The Core summary row class survives.'
+        );
+        strictEqual(
+            rowElement.style.getPropertyValue('border-top'), '2px solid red',
+            'The row style is applied to the row element.'
+        );
+        ok(
+            rowElement.style.getPropertyValue('width'),
+            'The layout styles of the row element are left in place.'
+        );
+
+        const summaryCell = row.cells.find(
+            (cell: any): boolean => cell.column.id === 'sales'
+        );
+
+        ok(
+            summaryCell.htmlElement.classList.contains('my-total-cell') &&
+            summaryCell.htmlElement.classList.contains('col-cell'),
+            'The cell class name is added on top of the column one.'
+        );
+        strictEqual(
+            summaryCell.htmlElement.style.getPropertyValue('color'), 'blue',
+            'The cell style is applied to the summary cell.'
+        );
+        strictEqual(
+            summaryCell.htmlElement.style.getPropertyValue('font-weight'),
+            'bold',
+            'The column cell style still applies to the summary cell.'
+        );
+
+        const bodyCell = (grid as any).viewport.rows[0].cells.find(
+            (cell: any): boolean => cell.column.id === 'sales'
+        );
+
+        strictEqual(
+            bodyCell.htmlElement.classList.contains('my-total-cell'), false,
+            'The summary cell options do not leak into body cells.'
+        );
+
+        // A re-sync must not stack the class names or leak the styles.
+        await grid.update({
+            data: {
+                columns: {
+                    name: ['a', 'b'],
+                    sales: [1, 2]
+                }
+            }
+        });
+
+        const updatedRow = (grid as any).viewport.summaryView.bottom.rows[0];
+
+        strictEqual(
+            updatedRow.htmlElement.className.split(/\s+/g)
+                .filter((token: string): boolean => token === 'my-total-row')
+                .length,
+            1,
+            'The row class name is applied once after an update.'
+        );
+        strictEqual(
+            updatedRow.htmlElement.style.getPropertyValue('border-top'),
+            '2px solid red',
+            'The row style survives an update.'
+        );
+    });
 });
