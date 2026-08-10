@@ -96,7 +96,8 @@ export function compose(
     addEvent(
         GridClass,
         'projectPresentationTable',
-        onProjectPresentationTable
+        onProjectPresentationTable,
+        { order: 0 } // Run before TreeView and row grouping
     );
     addEvent(TableClass, 'beforeInit', onTableBeforeInit);
     addEvent(TableClass, 'afterReflow', onTableAfterReflow);

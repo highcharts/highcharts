@@ -519,4 +519,70 @@ describe('SummaryRowsController', () => {
                 'The empty/static summary row should still render.'
             );
         });
+
+    it('should aggregate the rows behind a TreeView projection, once',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        id: [1, 2, 3, 4],
+                        parentId: [null, 1, 1, null],
+                        name: ['Parent', 'ChildA', 'ChildB', 'Solo'],
+                        sales: [null, 10, 20, 5]
+                    },
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
+                },
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all'
+                    }
+                },
+                columns: [{ id: 'sales', rowAggregator: 'SUM' }],
+                summaryRows: {
+                    aggregator: 'SUM',
+                    columns: [{ id: 'name', value: 'Total' }]
+                }
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            strictEqual(
+                (grid.dataProvider as any).getDataTable(true).columns.sales[0],
+                30,
+                'The projected parent row holds the aggregate of its children.'
+            );
+            strictEqual(
+                summaryRowObjects(grid)[0].sales, 35,
+                'The summary aggregates the source rows, not the projected ' +
+                'parent aggregates on top of them.'
+            );
+
+            // The summary row index addresses the summary section, so it must
+            // not adopt the identity of the projected row at that index.
+            const nameCell = (grid as any).viewport.summaryView.bottom.rows[0]
+                .cells.find(
+                    (cell: any): boolean => cell.column.id === 'name'
+                );
+
+            strictEqual(
+                nameCell.htmlElement
+                    .querySelector('[data-hcg-tree-toggle]'),
+                null,
+                'A summary cell does not get the TreeView disclosure.'
+            );
+            strictEqual(
+                nameCell.htmlElement.innerText, 'Total',
+                'The static value survives in the tree column.'
+            );
+        });
 });
