@@ -308,18 +308,10 @@ class SummaryRowsController {
     private getPageRange(): ([number, number] | undefined) {
         const grid = this.grid;
         const pagination = grid.querying.pagination;
-        const options = grid.options;
 
-        // Read from the options rather than from the TreeView controller, which
-        // resolves its state in the same event and only after this handler.
-        const projecting = !!(
-            options?.treeView?.enabled ||
-            options?.rowGrouping?.enabled ||
-            // TODO: Remove deprecated option before releasing next major
-            options?.data?.treeView?.enabled
-        );
-
-        if (!pagination.enabled || projecting) {
+        // Resolved from the options, not from the projection state, which this
+        // handler runs before.
+        if (!pagination.enabled || grid.treeView?.isEnabled()) {
             this.warnScope(
                 '`scope: \'page\'` requires pagination and is not supported ' +
                 'with TreeView or row grouping'

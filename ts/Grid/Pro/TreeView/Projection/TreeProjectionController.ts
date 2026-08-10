@@ -392,6 +392,20 @@ class TreeProjectionController {
     }
 
     /**
+     * Returns whether TreeView or row grouping is configured.
+     *
+     * Resolved from the options alone, so unlike `options` it answers before
+     * `sync()` has run for the current query.
+     */
+    public isEnabled(): boolean {
+        return !!normalizeTreeViewOptions(
+            this.grid.options,
+            // TODO: Remove deprecated option before releasing next major
+            this.getDataOptions()?.treeView
+        );
+    }
+
+    /**
      * Warns once when row grouping is ignored, because tree view is enabled at
      * the same time.
      *
