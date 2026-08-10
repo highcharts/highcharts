@@ -107,3 +107,73 @@ QUnit.test('Axis events', function (assert) {
         'Event handler should be removed after updating to undefined (#15983)'
     );
 });
+
+QUnit.test(
+    'afterSetExtremes should not fire on axes whose extremes have ' +
+        'not changed (#22780)',
+    function (assert) {
+        const calls = {
+            x: 0,
+            y: 0
+        };
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            xAxis: {
+                events: {
+                    afterSetExtremes: function () {
+                        calls.x++;
+                    }
+                }
+            },
+            yAxis: {
+                events: {
+                    afterSetExtremes: function () {
+                        calls.y++;
+                    }
+                }
+            },
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5],
+                    animation: false
+                }
+            ]
+        });
+
+        assert.deepEqual(
+            [calls.x, calls.y],
+            [0, 0],
+            'No events should be fired on initial render'
+        );
+
+        chart.xAxis[0].setExtremes(1, 4);
+        assert.deepEqual(
+            [calls.x, calls.y],
+            [1, 0],
+            'Only the x axis should fire when its own extremes change'
+        );
+
+        chart.xAxis[0].setExtremes(2, 3);
+        assert.deepEqual(
+            [calls.x, calls.y],
+            [1, 0],
+            'The y axis should stay silent when only x extremes change'
+        );
+
+        chart.xAxis[0].setExtremes(2, 3);
+        assert.deepEqual(
+            [calls.x, calls.y],
+            [1, 0],
+            'No event should be fired when extremes are set to the same values'
+        );
+
+        chart.yAxis[0].setExtremes(0, 5);
+        assert.deepEqual(
+            [calls.x, calls.y],
+            [1, 1],
+            'The y axis should fire when its own extremes change'
+        );
+    });

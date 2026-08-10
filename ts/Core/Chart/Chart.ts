@@ -3133,6 +3133,14 @@ class Chart {
             chart.setResponsive();
         }
 
+        // Initialize the extKey for each axis, so that the first redraw does
+        // not trigger a spurious afterSetExtremes event (#22780)
+        axes.forEach((axis): void => {
+            if (axis.extKey === void 0) {
+                axis.extKey = axis.min + ',' + axis.max;
+            }
+        });
+
         // Set flag
         chart.hasRendered = true;
     }
