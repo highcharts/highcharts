@@ -44,9 +44,11 @@ export interface AggregatorCallback<TContext> {
  *
  * When provided as a string, that Formula processor function name is always
  * applied. When provided as a callback, it is invoked per aggregation and
- * should return a function name or a falsy value to skip aggregation.
+ * should return a function name or a falsy value to skip aggregation. Set it
+ * to `false` to skip aggregation entirely, resetting an inherited aggregator.
  */
 export type AggregatorOption<TContext> = (
+    false |
     string |
     AggregatorCallback<TContext>
 );

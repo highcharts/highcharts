@@ -42,14 +42,15 @@ const grid = Grid.grid('container', {
                 0.31, 0.28, 0.24, 0.34,
                 0.27, 0.22, 0.30, 0.25
             ]
-        },
-        treeView: {
-            enabled: true,
-            input: {
-                type: 'grouping',
-                groupBy: groupByOptions['region-segment']
-            },
-            expandedRowIds: 'all'
+        }
+    },
+    rowGrouping: {
+        enabled: true,
+        groupBy: groupByOptions['region-segment']
+    },
+    rendering: {
+        rows: {
+            expandedLevels: 'all'
         }
     },
     columns: [{
@@ -72,9 +73,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '${value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        rowAggregator: 'SUM'
     }, {
         id: 'units',
         header: {
@@ -83,9 +82,7 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{value:,0f}'
         },
-        treeView: {
-            aggregator: 'SUM'
-        }
+        rowAggregator: 'SUM'
     }, {
         id: 'margin',
         header: {
@@ -94,21 +91,18 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{(multiply 100 value):.1f}%'
         },
-        treeView: {
-            aggregator: 'AVERAGE'
-        }
+        rowAggregator: 'AVERAGE'
     }]
 });
 
 document.getElementById('grouping-mode').addEventListener('change', e => {
     grid.update({
-        data: {
-            treeView: {
-                input: {
-                    type: 'grouping',
-                    groupBy: groupByOptions[e.target.value]
-                },
-                expandedRowIds: 'all'
+        rowGrouping: {
+            groupBy: groupByOptions[e.target.value]
+        },
+        rendering: {
+            rows: {
+                expandedLevels: 'all'
             }
         }
     });

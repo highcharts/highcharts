@@ -113,7 +113,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @default #ffffff
+     * @default var(--highcharts-background-color)
      *
      * @product highcharts highstock gantt
      */

@@ -606,19 +606,70 @@ namespace OfflineExporting {
             [].forEach.call(titleElements, function (
                 titleElement: HTMLDOMElement
             ): void {
-                el.removeChild(titleElement);
+                titleElement.remove();
             });
 
             // Remove all .highcharts-text-outline elements, #17170
             outlineElements =
                 el.getElementsByClassName('highcharts-text-outline');
             while (outlineElements.length > 0) {
-                const outline = outlineElements[0];
-                if (outline.parentNode) {
-                    outline.parentNode.removeChild(outline);
-                }
+                outlineElements[0].remove();
             }
         });
+
+        // Work around jsPDF's missing support for color(srgb r g b) format
+        // (#25001)
+        const srgbColorRegex =
+            /color\(\s*srgb\s+([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/;
+
+        const convertColorSRGBToRGB = (
+            srgbColor?: string|null
+        ): string|undefined => {
+            if (srgbColor?.startsWith('color(srgb')) {
+                const rgba = srgbColor.match(srgbColorRegex);
+
+                if (rgba) {
+                    const toChannel = (value: string): number =>
+                            Math.round(
+                                Math.max(0, Math.min(1, parseFloat(value))) *
+                                255
+                            ),
+                        toAlpha = (value: string): number =>
+                            Math.max(0, Math.min(1, parseFloat(value))),
+                        r = toChannel(rgba[1]),
+                        g = toChannel(rgba[2]),
+                        b = toChannel(rgba[3]),
+                        alpha = rgba[4];
+
+                    if (alpha !== void 0) {
+                        return `rgba(${r}, ${g}, ${b}, ${toAlpha(alpha)})`;
+                    }
+
+                    return `rgb(${r}, ${g}, ${b})`;
+                }
+            }
+        };
+
+        Array.from(
+            dummySVGContainer.querySelectorAll('*') as NodeListOf<SVGDOMElement>
+        ).forEach((el): void => {
+            ['color', 'fill', 'stop-color', 'stroke'].forEach((prop): void => {
+                // Handle attributes
+                const attrRGB = convertColorSRGBToRGB(el.getAttribute(prop));
+                if (attrRGB) {
+                    el.setAttribute(prop, attrRGB);
+                }
+
+                // Handle style properties
+                const styleRGB = convertColorSRGBToRGB(
+                    el.style?.[prop as any] as string|undefined
+                );
+                if (styleRGB) {
+                    el.style[prop as any] = styleRGB;
+                }
+            });
+        });
+
         return dummySVGContainer.querySelector('svg');
     }
 
