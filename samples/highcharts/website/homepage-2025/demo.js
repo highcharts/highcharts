@@ -188,6 +188,16 @@ function getNewPoint(i, data) {
     ];
 }
 
+// csSeries is captured in the chart's load event and goes stale as soon as
+// that chart is destroyed. A destroyed series keeps its options object, so
+// the options check below does not notice, and pushing data into it renders
+// at NaN coordinates -- which the price indicator then tries to draw a
+// crosshair at. Detached from its chart is the reliable signal.
+function csIsDestroyed() {
+    const chart = csSeries && csSeries.chart;
+    return !chart || chart.series.indexOf(csSeries) === -1;
+}
+
 function animateCS() {
     if (!csSeries || !csSeries.options || !csSeries.options.data) {
         return;
@@ -195,8 +205,18 @@ function animateCS() {
 
     let i = 0;
     csInterval = setInterval(() => {
-        if (!csSeries || !csSeries.options || !csSeries.options.data) {
+        if (
+            !csSeries || !csSeries.options || !csSeries.options.data ||
+            csIsDestroyed()
+        ) {
             clearInterval(csInterval);
+            return;
+        }
+
+        // Mid-rebuild, or the slide is hidden, so there is nothing to
+        // measure against yet. Skip the tick rather than stopping, since
+        // this state is transient.
+        if (csSeries.chart.plotWidth <= 0) {
             return;
         }
 
