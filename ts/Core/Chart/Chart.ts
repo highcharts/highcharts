@@ -3746,6 +3746,10 @@ class Chart {
      * Note that when changing series data, `chart.update` may mutate the passed
      * data options.
      *
+     * If the given options don't differ from the current chart options, the
+     * update is skipped and the `update` and `afterUpdate` events are not
+     * emitted.
+     *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
@@ -4057,7 +4061,7 @@ class Chart {
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
             chart.setSize(newWidth as number, newHeight as number, animation);
-        } else if (pick(redraw, true)) {
+        } else if (redraw ?? true) {
             chart.redraw(animation);
         }
 
