@@ -25,6 +25,10 @@ import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
@@ -472,6 +476,10 @@ namespace Accessibility {
         this: ChartComposition,
         e: { options: Options }
     ): void {
+        // Roll back the high contrast theme before the new options are merged
+        // in, so that it does not swallow them (#15567)
+        whcm.onChartUpdate(this, e.options);
+
         // Merge new options
         const newOptions = e.options.accessibility;
         if (newOptions) {
@@ -624,7 +632,7 @@ namespace Accessibility {
             );
 
             // Mark dirty for update
-            ['update', 'updatedData', 'remove'].forEach((event): void => {
+            ['updatedData', 'remove'].forEach((event): void => {
                 addEvent(
                     SeriesClass as typeof SeriesComposition,
                     event,
@@ -635,19 +643,43 @@ namespace Accessibility {
                     }
                 );
             });
+
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'update',
+                seriesOnUpdate
+            );
         }
 
     }
 
     /**
-     * Mark dirty for update.
+     * Keep high contrast mode in sync, and mark dirty for update.
      * @private
      */
     function pointOnUpdate(
-        this: PointComposition
+        this: PointComposition,
+        e: { options: (PointOptions|PointShortOptions) }
     ): void {
+        whcm.onPointUpdate(this, e.options);
+
         if (this.series.chart.accessibility) {
             this.series.chart.a11yDirty = true;
+        }
+    }
+
+    /**
+     * Keep high contrast mode in sync, and mark dirty for update.
+     * @private
+     */
+    function seriesOnUpdate(
+        this: SeriesComposition,
+        e: { options: SeriesOptions }
+    ): void {
+        whcm.onSeriesUpdate(this, e.options);
+
+        if (this.chart.accessibility) {
+            this.chart.a11yDirty = true;
         }
     }
 

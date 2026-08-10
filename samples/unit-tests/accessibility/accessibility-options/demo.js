@@ -388,17 +388,24 @@ QUnit.test('High contrast theme should persist on chart update', function (
     );
 });
 
-QUnit.test('High contrast auto mode should follow forced colors', function (
-    assert
-) {
-    const originalMatchMedia = window.matchMedia;
-    const forcedColorsQuery = '(forced-colors: active)';
-    let chart;
-    let matches = false;
-    let listeners = [];
+/**
+ * Run a test body with the `(forced-colors: active)` media query faked, so
+ * that Windows High Contrast Mode can be switched on and off from a test.
+ *
+ * The body gets a handle with `chart` for creating charts that are cleaned up
+ * afterwards, `set` for toggling forced colors, and `listenerCount` for
+ * asserting that listeners are removed again.
+ */
+function withForcedColors(body) {
+    const originalMatchMedia = window.matchMedia,
+        query = '(forced-colors: active)',
+        charts = [];
+
+    let listeners = [],
+        matches = false;
 
     const mediaQueryList = {
-        media: forcedColorsQuery,
+        media: query,
         get matches() {
             return matches;
         },
@@ -416,39 +423,49 @@ QUnit.test('High contrast auto mode should follow forced colors', function (
         }
     };
 
-    function fireForcedColorsChange() {
-        listeners.slice().forEach(function (listener) {
-            listener.call(mediaQueryList, {
-                matches: matches,
-                media: forcedColorsQuery
-            });
-        });
-    }
-
-    function getPlotLineColor() {
-        return chart.yAxis[0]
-            .plotLinesAndBands[0]
-            .svgElem
-            .element
-            .getAttribute('stroke');
-    }
-
-    function getSeriesColor() {
-        return chart.series[0].color;
-    }
-
-    function getPointColor() {
-        return chart.series[0].points[0].color;
-    }
-
-    window.matchMedia = function (query) {
-        return query === forcedColorsQuery ?
+    window.matchMedia = function (mediaQuery) {
+        return mediaQuery === query ?
             mediaQueryList :
-            originalMatchMedia.call(window, query);
+            originalMatchMedia.call(window, mediaQuery);
     };
 
     try {
-        chart = Highcharts.chart('container', {
+        body({
+            chart: function (options) {
+                const chart = Highcharts.chart('container', options);
+                charts.push(chart);
+                return chart;
+            },
+            listenerCount: function () {
+                return listeners.length;
+            },
+            set: function (active) {
+                matches = active;
+                listeners.slice().forEach(function (listener) {
+                    listener.call(mediaQueryList, {
+                        matches: matches,
+                        media: query
+                    });
+                });
+            }
+        });
+    } finally {
+        charts.forEach(function (chart) {
+            // `destroy` deletes the chart's own properties, so a live chart is
+            // one that still has options
+            if (chart.options) {
+                chart.destroy();
+            }
+        });
+        window.matchMedia = originalMatchMedia;
+    }
+}
+
+QUnit.test('High contrast auto mode should follow forced colors', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
             accessibility: {
                 highContrastTheme: {
                     yAxis: {
@@ -475,7 +492,13 @@ QUnit.test('High contrast auto mode should follow forced colors', function (
             }]
         });
 
-        const regularSeriesColor = getSeriesColor();
+        const getPlotLineColor = () => chart.yAxis[0]
+            .plotLinesAndBands[0]
+            .svgElem
+            .element
+            .getAttribute('stroke');
+
+        const regularSeriesColor = chart.series[0].color;
 
         assert.strictEqual(
             getPlotLineColor(),
@@ -483,8 +506,7 @@ QUnit.test('High contrast auto mode should follow forced colors', function (
             'Plot line should use regular color before forced colors'
         );
 
-        matches = true;
-        fireForcedColorsChange();
+        forcedColors.set(true);
 
         assert.strictEqual(
             getPlotLineColor(),
@@ -493,19 +515,18 @@ QUnit.test('High contrast auto mode should follow forced colors', function (
         );
 
         assert.strictEqual(
-            getSeriesColor(),
+            chart.series[0].color,
             'windowText',
             'Series should use high contrast color when forced colors start'
         );
 
         assert.strictEqual(
-            getPointColor(),
+            chart.series[0].points[0].color,
             'windowText',
             'Point should use high contrast color when forced colors start'
         );
 
-        matches = false;
-        fireForcedColorsChange();
+        forcedColors.set(false);
 
         assert.strictEqual(
             getPlotLineColor(),
@@ -514,31 +535,145 @@ QUnit.test('High contrast auto mode should follow forced colors', function (
         );
 
         assert.strictEqual(
-            getSeriesColor(),
+            chart.series[0].color,
             regularSeriesColor,
             'Series should restore regular color when forced colors stop'
         );
 
         assert.strictEqual(
-            getPointColor(),
+            chart.series[0].points[0].color,
             '#00ff00',
             'Point should restore regular color when forced colors stop'
         );
 
-        chart.destroy();
-        chart = null;
+        // Toggling repeatedly should not lose the original options
+        forcedColors.set(true);
+        forcedColors.set(false);
 
         assert.strictEqual(
-            listeners.length,
+            getPlotLineColor(),
+            '#0000ff',
+            'Plot line should restore regular color after a second toggle'
+        );
+
+        chart.destroy();
+
+        assert.strictEqual(
+            forcedColors.listenerCount(),
             0,
             'Media query listener should be removed on chart destroy'
         );
-    } finally {
-        if (chart) {
-            chart.destroy();
+    });
+});
+
+QUnit.test('High contrast theme should be removed with the option', function (
+    assert
+) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            backgroundColor: '#123456'
+        },
+        accessibility: {
+            highContrastMode: false
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+    const regularSeriesColor = chart.series[0].color;
+
+    chart.update({
+        accessibility: {
+            highContrastMode: true
         }
-        window.matchMedia = originalMatchMedia;
-    }
+    });
+
+    assert.strictEqual(
+        chart.options.chart.backgroundColor,
+        'window',
+        'Background should be themed when the option is turned on'
+    );
+
+    chart.update({
+        accessibility: {
+            highContrastMode: false
+        }
+    });
+
+    assert.strictEqual(
+        chart.options.chart.backgroundColor,
+        '#123456',
+        'Background should be restored when the option is turned off'
+    );
+
+    assert.strictEqual(
+        chart.series[0].color,
+        regularSeriesColor,
+        'Series color should be restored when the option is turned off'
+    );
+
+    chart.destroy();
+});
+
+QUnit.test('High contrast theme should not swallow updates', function (assert) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            chart: {
+                backgroundColor: '#123456'
+            },
+            series: [{
+                data: [1, 2, 3],
+                color: '#00ff00'
+            }]
+        });
+
+        forcedColors.set(true);
+
+        // Updates made while the theme is applied should survive it
+        chart.update({
+            chart: {
+                backgroundColor: '#654321'
+            }
+        });
+        chart.series[0].update({
+            color: '#ff0000'
+        });
+        chart.addSeries({
+            data: [3, 2, 1]
+        });
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            'window',
+            'Theme should still win while forced colors are active'
+        );
+
+        assert.strictEqual(
+            chart.series[1].color,
+            'windowText',
+            'Series added while active should be themed'
+        );
+
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            '#654321',
+            'Chart update should survive the theme being removed'
+        );
+
+        assert.strictEqual(
+            chart.series[0].color,
+            '#ff0000',
+            'Series update should survive the theme being removed'
+        );
+
+        assert.notStrictEqual(
+            chart.series[1].color,
+            'windowText',
+            'Series added while active should be restored'
+        );
+    });
 });
 
 QUnit.test('pointNavigationThreshold', function (assert) {
