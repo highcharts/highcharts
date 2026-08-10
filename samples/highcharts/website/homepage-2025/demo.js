@@ -3284,6 +3284,9 @@ function destroyGrid() {
     });
 
     container.innerHTML = '';
+    // clearGridUpdates() above tags the container as paused; drop the
+    // class so a rebuilt grid does not start out marked as paused
+    container.classList.remove('paused-grid');
     gridControls = null;
 }
 
