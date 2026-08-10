@@ -26,6 +26,8 @@ import type {
     RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
+import type { StyleValue } from '../../Core/GridUtils';
+import type SummaryTableCell from './SummaryTableCell';
 import type {
     SummaryAggregatorOption,
     SummaryColumnOptions,
@@ -175,6 +177,8 @@ class SummaryRowsController {
     ): SummaryRenderRow {
         const data: DataTableRowObject = {};
         const formats: Record<string, string> = {};
+        const classNames: Record<string, string> = {};
+        const styles: Record<string, StyleValue<SummaryTableCell>> = {};
         const summaryRowId = options.id ?? String(summaryRowIndex);
         const columnsById = this.getColumnsById(options);
 
@@ -182,8 +186,17 @@ class SummaryRowsController {
             const columnId = columnIds[i];
             const column = columnsById.get(columnId);
 
-            if (column && column.format !== void 0) {
-                formats[columnId] = column.format;
+            const format = column?.format ?? options.format;
+            if (format !== void 0) {
+                formats[columnId] = format;
+            }
+
+            if (column?.className !== void 0) {
+                classNames[columnId] = column.className;
+            }
+
+            if (column?.style !== void 0) {
+                styles[columnId] = column.style;
             }
 
             if (column && column.value !== void 0) {
@@ -209,7 +222,15 @@ class SummaryRowsController {
                 null;
         }
 
-        return { data, formats, position: options.position ?? 'bottom' };
+        return {
+            data,
+            formats,
+            classNames,
+            styles,
+            className: options.className,
+            style: options.style,
+            position: options.position ?? 'bottom'
+        };
     }
 
     /**

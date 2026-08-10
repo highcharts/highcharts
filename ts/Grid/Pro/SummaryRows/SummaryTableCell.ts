@@ -25,9 +25,14 @@ import type {
     CellType as DataTableCellType
 } from '../../../Data/DataTable';
 import type SummaryTableRow from './SummaryTableRow';
+import type { CSSObject } from '../../../Core/Renderer/CSSObject';
 
 import TableCell from '../../Core/Table/Body/TableCell.js';
-import { setHTMLContent } from '../../Core/GridUtils.js';
+import {
+    joinClassNames,
+    mergeStyleValues,
+    setHTMLContent
+} from '../../Core/GridUtils.js';
 import { defined } from '../../../Shared/Utilities.js';
 
 
@@ -77,6 +82,32 @@ class SummaryTableCell extends TableCell {
         if (defined(format)) {
             setHTMLContent(this.htmlElement, this.format(format));
         }
+    }
+
+    /**
+     * Adds the summary cell class name on top of the column's `cells.className`
+     * instead of replacing it.
+     *
+     * @param template
+     * Class name template from the column options.
+     */
+    protected override setCustomClassName(template?: string): void {
+        super.setCustomClassName(joinClassNames(
+            template,
+            this.row.renderRow?.classNames[this.column.id]
+        ) || void 0);
+    }
+
+    /**
+     * Merges the summary cell style over the styles resolved from the column.
+     */
+    protected override getCellStyles(): CSSObject {
+        return {
+            ...super.getCellStyles(),
+            ...mergeStyleValues(this, this.row.renderRow?.styles[
+                this.column.id
+            ])
+        };
     }
 
     /**

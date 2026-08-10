@@ -23,11 +23,16 @@
 
 import type Cell from '../../Core/Table/Cell';
 import type Column from '../../Core/Table/Column';
-import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
+import type { SummaryRenderRow } from './SummaryRowsTypes';
 
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import SummaryTableCell from './SummaryTableCell.js';
 import Globals from '../../Core/Globals.js';
+import {
+    applyTrackedStyles,
+    applyUserClassNames,
+    mergeStyleValues
+} from '../../Core/GridUtils.js';
 
 
 /* *
@@ -62,6 +67,21 @@ class SummaryTableRow extends TableRow {
     public formats: Record<string, string> = {};
 
     /**
+     * Per-cell class name and style overrides for this row, keyed by column id.
+     */
+    public renderRow?: SummaryRenderRow;
+
+    /**
+     * Class name applied to the row element from options.
+     */
+    private customClassName?: string;
+
+    /**
+     * Style properties applied to the row element from options.
+     */
+    private customStyleProperties?: string[];
+
+    /**
      * Skips the data-provider fetch of the base row init.
      */
     public override init(): Promise<void> {
@@ -74,29 +94,29 @@ class SummaryTableRow extends TableRow {
     }
 
     public override async update(): Promise<void> {
-        await this.sync(this.data, this.formats, this.index);
+        if (this.renderRow) {
+            await this.sync(this.renderRow, this.index);
+        }
     }
 
     /**
-     * Feeds the row with computed cell values and per-cell formats.
+     * Feeds the row with the computed values and the resolved per-cell
+     * overrides.
      *
-     * @param data
-     * Cell values keyed by column id.
-     *
-     * @param formats
-     * Per-cell format overrides keyed by column id.
+     * @param renderRow
+     * Resolved summary row to render.
      *
      * @param index
      * Row index within the summary section.
      */
     public async sync(
-        data: DataTableRowObject,
-        formats: Record<string, string>,
+        renderRow: SummaryRenderRow,
         index: number = this.index
     ): Promise<void> {
         this.index = index;
-        this.data = data;
-        this.formats = formats;
+        this.renderRow = renderRow;
+        this.data = renderRow.data;
+        this.formats = renderRow.formats;
         this.setRowAttributes();
 
         if (this.rendered) {
@@ -128,6 +148,20 @@ class SummaryTableRow extends TableRow {
             summaryRowClassName
         );
         el.removeAttribute('data-row-index');
+
+        this.customClassName = applyUserClassNames(
+            el,
+            this.customClassName,
+            this.renderRow?.className
+        );
+
+        // Applied on top of the layout styles the reflow writes to the element,
+        // so only the properties from options are removed on an update.
+        this.customStyleProperties = applyTrackedStyles(
+            el,
+            this.customStyleProperties,
+            mergeStyleValues(this, this.renderRow?.style)
+        );
 
         this.updateRowAttributes();
         this.updateParityClass();

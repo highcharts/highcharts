@@ -26,6 +26,9 @@ import type {
     RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
 import type { AggregatorOption } from '../Aggregation/AggregationTypes';
+import type { StyleValue } from '../../Core/GridUtils';
+import type SummaryTableCell from './SummaryTableCell';
+import type SummaryTableRow from './SummaryTableRow';
 
 
 /* *
@@ -107,6 +110,19 @@ export interface SummaryColumnOptions {
      * the aggregated value or `value`.
      */
     format?: string;
+
+    /**
+     * Additional class name for this summary cell, added on top of the column's
+     * `cells.className`. It uses templating, where the context is the summary
+     * cell instance.
+     */
+    className?: string;
+
+    /**
+     * CSS styles for this summary cell, merged over the column's `cells.style`.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<SummaryTableCell>;
 }
 
 /**
@@ -134,6 +150,24 @@ export interface SummaryRowOptions {
     aggregator?: SummaryAggregatorOption;
 
     /**
+     * Format applied to every cell of the row, overriding the columns'
+     * `cells.format`. A `format` in `columns` overrides it for that cell; set it
+     * there to `'{value}'` to render a cell unformatted.
+     */
+    format?: string;
+
+    /**
+     * Additional class name for the summary row element.
+     */
+    className?: string;
+
+    /**
+     * CSS styles for the summary row element. Can be a static style object or a
+     * callback that returns one.
+     */
+    style?: StyleValue<SummaryTableRow>;
+
+    /**
      * Per-column overrides for this row (aggregator or static value),
      * referenced by column `id`.
      */
@@ -152,8 +186,8 @@ export interface SummaryRowOptions {
 export type SummaryRowPosition = ('top' | 'bottom');
 
 /**
- * Resolved summary row ready to render: cell values plus per-cell format
- * overrides keyed by column id.
+ * Resolved summary row ready to render: cell values plus the per-cell format,
+ * class name and style overrides keyed by column id.
  */
 export interface SummaryRenderRow {
     /**
@@ -165,6 +199,26 @@ export interface SummaryRenderRow {
      * Per-cell format overrides keyed by column id.
      */
     formats: Record<string, string>;
+
+    /**
+     * Per-cell class names keyed by column id.
+     */
+    classNames: Record<string, string>;
+
+    /**
+     * Per-cell styles keyed by column id.
+     */
+    styles: Record<string, StyleValue<SummaryTableCell>>;
+
+    /**
+     * Class name for the row element.
+     */
+    className?: string;
+
+    /**
+     * Styles for the row element.
+     */
+    style?: StyleValue<SummaryTableRow>;
 
     /**
      * Where the row is stuck relative to the scrollable body.

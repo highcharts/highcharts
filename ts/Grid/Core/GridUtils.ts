@@ -472,6 +472,59 @@ export function mergeStyleValues<T>(
 }
 
 /**
+ * Applies inline styles from options to an element, removing the properties
+ * applied by the previous call so that updates stay deterministic and leave
+ * layout styles set elsewhere on the element untouched.
+ *
+ * @param element
+ * Element to style.
+ *
+ * @param previousProperties
+ * CSS property names applied by the previous call.
+ *
+ * @param styles
+ * Style object to apply.
+ *
+ * @returns
+ * CSS property names applied by this call, to pass to the next one.
+ */
+export function applyTrackedStyles(
+    element: HTMLElement,
+    previousProperties?: string[],
+    styles?: CSSObject
+): (string[] | undefined) {
+    const elementStyle = element.style;
+
+    if (previousProperties) {
+        for (const property of previousProperties) {
+            elementStyle.removeProperty(property);
+        }
+    }
+
+    if (!styles) {
+        return;
+    }
+
+    const appliedProperties: string[] = [];
+
+    for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
+        const value = styles[key];
+        if (value === void 0 || value === null) {
+            continue;
+        }
+
+        const property = key.indexOf('-') > -1 ?
+            key :
+            key.replace(/[A-Z]/g, '-$&').toLowerCase();
+
+        elementStyle.setProperty(property, String(value));
+        appliedProperties.push(property);
+    }
+
+    return appliedProperties;
+}
+
+/**
  * Waits for the next animation frame.
  */
 export function waitForAnimationFrame(): Promise<void> {
@@ -501,5 +554,6 @@ export default {
     isDeepEqual,
     resolveStyleValue,
     mergeStyleValues,
+    applyTrackedStyles,
     waitForAnimationFrame
 } as const;
