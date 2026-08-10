@@ -3219,38 +3219,35 @@ function announceChange(announcement) {
    containers, and the Grid kept re-rendering its 30 rows of sparklines
    off-screen, which cost roughly half the frame budget on every other
    slide. */
+// A board owns its components, their charts and their DOM, so destroying
+// it is the entire teardown -- verified to take the container from 5
+// charts / 502 nodes to 0 / 102. Nothing else may touch that DOM first,
+// or the components have nothing left to clean up.
+// Dashboards.board() is async, so the resolved board is kept separately
+// from the in-flight promise; that way the common case (already built)
+// tears down synchronously.
 let dashBoard = null;
+let dashPending = null;
 
 function buildDashboards() {
-    if (dashBoard) {
+    if (dashBoard || dashPending) {
         return;
     }
-    // dashboards() resolves asynchronously
-    dashBoard = Promise.resolve(dashboards());
+    dashPending = Promise.resolve(dashboards()).then(board => {
+        dashPending = null;
+        dashBoard = board;
+    });
 }
 
 function destroyDashboards() {
-    if (!dashBoard) {
-        return;
+    if (dashBoard) {
+        dashBoard.destroy();
+        dashBoard = null;
+    } else if (dashPending) {
+        // left the slide before the board finished loading; dashPending
+        // stays set so buildDashboards() cannot start a second board
+        dashPending.then(destroyDashboards);
     }
-    const container = document.getElementById('dash-container');
-
-    dashBoard.then(board => {
-        if (board) {
-            board.destroy();
-        }
-    }).catch(() => {
-        // nothing to tear down
-    });
-
-    Highcharts.charts.filter(Boolean).forEach(chart => {
-        if (container.contains(chart.renderTo)) {
-            chart.destroy();
-        }
-    });
-
-    container.innerHTML = '';
-    dashBoard = null;
 }
 
 function buildGrid() {
@@ -3264,29 +3261,16 @@ function destroyGrid() {
     if (!gridControls) {
         return;
     }
-    const container = document.getElementById('grid-container');
-
-    // stops the per-row update timers
+    // stops the per-row update timers, and tags the container as paused
     gridControls.clearGridUpdates();
 
-    Promise.resolve(gridControls.gridInstance).then(gridInstance => {
-        if (gridInstance) {
-            gridInstance.destroy();
-        }
-    }).catch(() => {
-        // nothing to tear down
-    });
+    // Grid.grid() is synchronous, and the Grid owns its 90 sparkline
+    // charts and their DOM the same way the board does
+    gridControls.gridInstance.destroy();
 
-    Highcharts.charts.filter(Boolean).forEach(chart => {
-        if (container.contains(chart.renderTo)) {
-            chart.destroy();
-        }
-    });
-
-    container.innerHTML = '';
-    // clearGridUpdates() above tags the container as paused; drop the
-    // class so a rebuilt grid does not start out marked as paused
-    container.classList.remove('paused-grid');
+    // drop the paused tag so a rebuilt grid does not start out paused
+    document.getElementById('grid-container')
+        .classList.remove('paused-grid');
     gridControls = null;
 }
 
