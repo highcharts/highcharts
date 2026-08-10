@@ -45,7 +45,7 @@ import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 import GridUtils from '../GridUtils.js';
-import { fireEvent } from '../../../Shared/Utilities.js';
+import { defined, fireEvent } from '../../../Shared/Utilities.js';
 
 const {
     createOptionsProxy
@@ -227,7 +227,7 @@ export class Column {
     public async getCellValue(cell: TableCell): Promise<DataTableCellType> {
         const valueGetter = this.options.cells?.valueGetter;
         if (valueGetter) {
-            return await valueGetter.call(cell, cell);
+            return this.conformValue(await valueGetter.call(cell, cell));
         }
 
         const sourceColumnId = this.viewport.grid.columnPolicy
@@ -236,10 +236,33 @@ export class Column {
             return void 0;
         }
 
-        return this.viewport.grid.dataProvider?.getValue(
-            sourceColumnId,
-            cell.row.index
+        return this.conformValue(
+            await this.viewport.grid.dataProvider?.getValue(
+                sourceColumnId,
+                cell.row.index
+            )
         );
+    }
+
+    /**
+     * Keeps a value the grid resolves for a cell within the column's declared
+     * `dataType`, so cell formatters and renderers written for the column never
+     * receive a foreign type. Values derived by the grid are the usual source:
+     * a numeric aggregator over a text column resolves to `0`.
+     *
+     * @param value
+     * Resolved cell value.
+     */
+    public conformValue(value: DataTableCellType): DataTableCellType {
+        if (
+            this.dataType === 'string' &&
+            defined(value) &&
+            typeof value !== 'string'
+        ) {
+            return String(value);
+        }
+
+        return value;
     }
 
     /**

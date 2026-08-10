@@ -68,7 +68,10 @@ class SummaryTableCell extends TableCell {
             value :
             this.row.data[this.column.id] as DataTableCellType;
 
-        await super.setValue(defined(resolved) ? resolved : '', updateDataset);
+        await super.setValue(
+            this.column.conformValue(defined(resolved) ? resolved : ''),
+            updateDataset
+        );
 
         const format = this.row.formats[this.column.id];
         if (defined(format)) {

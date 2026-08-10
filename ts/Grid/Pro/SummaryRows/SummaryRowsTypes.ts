@@ -89,7 +89,9 @@ export interface SummaryColumnOptions {
 
     /**
      * Aggregator applied to this column, overriding the row `aggregator`
-     * default.
+     * default. Set it to `false` to leave the cell empty, for example in a text
+     * column where a numeric aggregator would resolve to `0`. A static `value`
+     * suppresses the row default as well.
      */
     aggregator?: SummaryAggregatorOption;
 

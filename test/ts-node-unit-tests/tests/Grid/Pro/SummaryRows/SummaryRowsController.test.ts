@@ -91,20 +91,43 @@ describe('SummaryRowsController', () => {
                         q2: [1, 2, 3]
                     }
                 },
-                summaryRows: {
+                summaryRows: [{
                     aggregator: 'SUM',
                     columns: [
                         { id: 'region', value: 'Total' }
                     ]
-                }
+                }, {
+                    aggregator: 'SUM'
+                }]
             }, true);
 
             grid.viewport?.resizeObserver?.disconnect();
 
             deepStrictEqual(
                 summaryRowObjects(grid),
-                [{ region: 'Total', q1: 60, q2: 6 }],
+                [
+                    { region: 'Total', q1: 60, q2: 6 },
+                    { region: 0, q1: 60, q2: 6 }
+                ],
                 'The row aggregator should sum q1/q2; value suppresses it.'
+            );
+
+            // The second row has no static value, so the numeric aggregator
+            // reaches the text column and resolves to 0. The cell must still
+            // hand a string to the column's formatters.
+            const cells = (grid as any).viewport.summaryView.bottom.rows[1]
+                .cells;
+            const regionCell = cells.find(
+                (cell: any): boolean => cell.column.id === 'region'
+            );
+
+            strictEqual(
+                regionCell.column.dataType, 'string',
+                'The region column is a text column.'
+            );
+            strictEqual(
+                regionCell.value, '0',
+                'An aggregated value conforms to the column dataType.'
             );
         });
 
