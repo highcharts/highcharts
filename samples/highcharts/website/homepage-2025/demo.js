@@ -2009,12 +2009,7 @@ const gantt = {
 // Dashboards personal finance
 function dashboards() {
 
-    Highcharts.setOptions({
-        chart: {
-            styledMode: true
-        }
-    });
-    Dashboards.board('dash-container', {
+    return Dashboards.board('dash-container', {
         dataPool: {
             connectors: [{
                 id: 'transactions',
@@ -3218,6 +3213,80 @@ function announceChange(announcement) {
     }
 }
 
+
+/* The Dashboards and Grid demos are only built while their slide is
+   showing. Building them up front left ~95 charts alive in hidden
+   containers, and the Grid kept re-rendering its 30 rows of sparklines
+   off-screen, which cost roughly half the frame budget on every other
+   slide. */
+let dashBoard = null;
+
+function buildDashboards() {
+    if (dashBoard) {
+        return;
+    }
+    // dashboards() resolves asynchronously
+    dashBoard = Promise.resolve(dashboards());
+}
+
+function destroyDashboards() {
+    if (!dashBoard) {
+        return;
+    }
+    const container = document.getElementById('dash-container');
+
+    dashBoard.then(board => {
+        if (board) {
+            board.destroy();
+        }
+    }).catch(() => {
+        // nothing to tear down
+    });
+
+    Highcharts.charts.filter(Boolean).forEach(chart => {
+        if (container.contains(chart.renderTo)) {
+            chart.destroy();
+        }
+    });
+
+    container.innerHTML = '';
+    dashBoard = null;
+}
+
+function buildGrid() {
+    if (gridControls) {
+        return;
+    }
+    gridControls = grid();
+}
+
+function destroyGrid() {
+    if (!gridControls) {
+        return;
+    }
+    const container = document.getElementById('grid-container');
+
+    // stops the per-row update timers
+    gridControls.clearGridUpdates();
+
+    Promise.resolve(gridControls.gridInstance).then(gridInstance => {
+        if (gridInstance) {
+            gridInstance.destroy();
+        }
+    }).catch(() => {
+        // nothing to tear down
+    });
+
+    Highcharts.charts.filter(Boolean).forEach(chart => {
+        if (container.contains(chart.renderTo)) {
+            chart.destroy();
+        }
+    });
+
+    container.innerHTML = '';
+    gridControls = null;
+}
+
 function updateChart(i) {
 
     const p = products[i];
@@ -3256,13 +3325,19 @@ function updateChart(i) {
                     document.getElementById('grid-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'block';
+                    destroyGrid();
+                    buildDashboards();
                 } else if (p.chart === grid) {
                     document.getElementById('container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('grid-container').style.display = 'block';
+                    destroyDashboards();
+                    buildGrid();
                 } else {
+                    destroyDashboards();
+                    destroyGrid();
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
@@ -3272,6 +3347,8 @@ function updateChart(i) {
                     p.chart();
                 }
             } else {
+                destroyDashboards();
+                destroyGrid();
                 // eslint-disable-next-line max-len
                 document.getElementById('dash-container').style.display = 'none';
                 // eslint-disable-next-line max-len
@@ -3490,8 +3567,14 @@ document.addEventListener('DOMContentLoaded', function () {
     initializePauseButtonState();
 
     // --- Start carousel setup ---
-    dashboards();
-    gridControls = grid();
+    // Dashboards and Grid are built when their slide is first shown.
+    // dashboards() used to apply this as a side effect of running at
+    // load, and every demo relies on it, so it is set here instead.
+    Highcharts.setOptions({
+        chart: {
+            styledMode: true
+        }
+    });
 
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
