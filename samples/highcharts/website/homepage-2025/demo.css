@@ -388,9 +388,17 @@
     opacity: 0.01;
 }
 
+/* The sample is embedded in an iframe on the homepage, and an opaque body
+   paints over whatever the parent page has behind it -- including the area
+   below the card. color-scheme is declared so that a standalone visit
+   still gets a themed canvas from the UA rather than white. */
+:root {
+    color-scheme: light dark;
+}
+
 body {
     font-family: "IBM Plex Sans", sans-serif;
-    background-color: var(--background);
+    background-color: transparent;
     margin: 0;
 }
 
