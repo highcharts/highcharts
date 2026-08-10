@@ -2988,6 +2988,13 @@ class Axis {
             delete axis.allExtremes;
         }
 
+        // Initialize the extKey on the first scale computation, so that the
+        // first redraw of an axis added after the initial render does not
+        // trigger a spurious afterSetExtremes event (#22780)
+        if (axis.extKey === void 0) {
+            axis.extKey = axis.min + ',' + axis.max;
+        }
+
         fireEvent(this, 'afterSetScale');
     }
 

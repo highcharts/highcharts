@@ -3133,12 +3133,11 @@ class Chart {
             chart.setResponsive();
         }
 
-        // Initialize the extKey for each axis, so that the first redraw does
-        // not trigger a spurious afterSetExtremes event (#22780)
+        // Initialize each axis extKey so the first redraw does not trigger
+        // a spurious afterSetExtremes event (#22780). Unconditional, as
+        // setScale() may have pinned preliminary extremes during layout.
         axes.forEach((axis): void => {
-            if (axis.extKey === void 0) {
-                axis.extKey = axis.min + ',' + axis.max;
-            }
+            axis.extKey = axis.min + ',' + axis.max;
         });
 
         // Set flag

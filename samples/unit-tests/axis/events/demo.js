@@ -149,6 +149,13 @@ QUnit.test(
             'No events should be fired on initial render'
         );
 
+        chart.redraw();
+        assert.deepEqual(
+            [calls.x, calls.y],
+            [0, 0],
+            'No events should be fired on a redraw where extremes do not change'
+        );
+
         chart.xAxis[0].setExtremes(1, 4);
         assert.deepEqual(
             [calls.x, calls.y],
@@ -175,5 +182,50 @@ QUnit.test(
             [calls.x, calls.y],
             [1, 1],
             'The y axis should fire when its own extremes change'
+        );
+    });
+
+QUnit.test(
+    'afterSetExtremes should not fire on an added axis (#22780)',
+    function (assert) {
+        const calls = {
+            added: 0
+        };
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5],
+                    animation: false
+                }
+            ]
+        });
+
+        chart.addAxis({
+            title: {
+                text: 'extra'
+            },
+            events: {
+                afterSetExtremes: function () {
+                    calls.added++;
+                }
+            }
+        }, true, false);
+
+        chart.redraw();
+        assert.deepEqual(
+            [calls.added],
+            [0],
+            'No events should be fired on the first redraw of an added axis'
+        );
+
+        chart.xAxis[1].setExtremes(0, 10);
+        assert.deepEqual(
+            [calls.added],
+            [1],
+            'The added axis should fire when its own extremes change'
         );
     });
