@@ -1303,7 +1303,7 @@ function stockWithAnnotations() {
         const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
         const data = cols[name].map((value, i) => [cols.Date[i], value]);
 
-        Highcharts.chart('container', {
+        currentChart = Highcharts.chart('container', {
             chart: {
                 type: 'area',
                 zooming: {
@@ -2752,7 +2752,7 @@ function grid() {
 
 /* DEMO VIEWER */
 // product info for demo viewer
-const products = [
+let products = [
     {
         name: 'Highcharts Stock',
         tagline: 'Financial visualization and analysis tools',
@@ -2879,6 +2879,15 @@ const products = [
     }
 ];
 
+// The Grid demo renders 30 rows of sparklines, which is 90 charts built in
+// one go. Small screens only ever see its first two columns anyway, and
+// building it there has been enough to crash mobile browsers, so drop that
+// slide below the tablet breakpoint.
+const isSmallScreen = window.matchMedia('(max-width: 767px)').matches;
+if (isSmallScreen) {
+    products = products.filter(p => p.chart !== grid);
+}
+
 const carousel = document.getElementById('carousel');
 const chartWrapper = document.getElementById('chart-wrapper');
 
@@ -2905,7 +2914,8 @@ products.forEach((p, index) => {
     titleInner.appendChild(item);
 });
 const clone = titleInner.firstElementChild.cloneNode(true);
-clone.id = 'title-6';
+clone.id = 'title-clone';
+clone.setAttribute('aria-hidden', 'true');
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
@@ -2923,6 +2933,11 @@ let isResetting = false;
 const dots = document.querySelectorAll('.dot');
 
 dots.forEach((dot, i) => {
+    if (i >= products.length) {
+        dot.style.display = 'none';
+        return;
+    }
+
     dot.addEventListener('click', function () {
         goTo(i);
         if (!isPaused) {
@@ -2959,7 +2974,8 @@ function updateView() {
     if (currentIndex === products.length) {
         currentIndex = 0;
         isResetting = true;
-        titleInner.style.transform = 'translateY(-240px)';
+        titleInner.style.transform =
+            `translateY(-${products.length * 40}px)`;
         titleInner.style.opacity = 1;
 
         updateFooter(currentIndex);
@@ -3156,12 +3172,19 @@ function stopMapAnimation() {
     logAnim('Map animation stopped');
 }
 // --- Animation Failsafe ---
+// Looked up rather than hardcoded: every one of these indices was stale,
+// and the order shifts again when a demo is dropped on small screens. A
+// wrong number here starts the wrong chart's interval.
+function slideIndexOf(chartFn) {
+    return products.findIndex(p => p.chart === chartFn);
+}
+
 function ensureCorrectAnimationState() {
     // When resuming, respect each chart's individual animation preference
     Object.keys(chartAnimationState).forEach(key => {
         const isActive = chartAnimationState[key];
-        // stock chart
-        if (key === 'stock' && currentIndex === 0) { // stock index is 0
+        // Candlestick chart
+        if (key === 'stock' && currentIndex === slideIndexOf(cs)) {
             if (isActive) {
                 startStockChartAnimation();
                 logAnim('Stock animation resumed');
@@ -3170,8 +3193,8 @@ function ensureCorrectAnimationState() {
                 logAnim('Stock animation paused');
             }
         }
-        // map chart
-        if (key === 'maps' && currentIndex === 4) { // maps index is 4
+        // Map chart
+        if (key === 'maps' && currentIndex === slideIndexOf(animatedMap)) {
             if (isActive) {
                 startMapAnimation();
                 logAnim('Map animation resumed');
@@ -3180,9 +3203,9 @@ function ensureCorrectAnimationState() {
                 logAnim('Map animation paused');
             }
         }
-        // grid
-        // eslint-disable-next-line max-len
-        if (key === 'grid' && gridControls && currentIndex === 1) { // grid index is 1
+        // Grid sparklines, absent on small screens
+        const onGridSlide = currentIndex === slideIndexOf(grid);
+        if (key === 'grid' && gridControls && onGridSlide) {
             if (isActive) {
                 if (typeof gridControls.resumeGridUpdates === 'function') {
                     gridControls.resumeGridUpdates();
