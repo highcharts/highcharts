@@ -13,7 +13,7 @@ const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa9
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let isPaused = false;
-let gridControls = null;
+// let gridControls = null;
 let currentChart = null;
 
 // Track per-chart animation states (true = running)
@@ -1303,7 +1303,7 @@ function stockWithAnnotations() {
         const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
         const data = cols[name].map((value, i) => [cols.Date[i], value]);
 
-        Highcharts.chart('container', {
+        currentChart = Highcharts.chart('container', {
             chart: {
                 type: 'area',
                 zooming: {
@@ -2792,25 +2792,6 @@ const products = [
         new data every 100 milliseconds.</div>`
     },
     {
-        name: 'Highcharts Grid ',
-        tagline: 'Tools for JavaScript data tables',
-        id: 'gridTitle',
-        chart: grid,
-        icon: 'icon-grid.svg',
-        // eslint-disable-next-line max-len
-        stopLink: `<button class="stop-link" 
-         id="stop-grid">(Stop chart animation)</button>`,
-        demoTitle: 'Data grid with sparklines',
-        demoDesc: `Combine tabular data and inline 
-        charts for instant visual context.`,
-        description: `<p>Data Grid with Sparklines</p>
-        A purely decorative data grid 
-        displaying the status and performance metrics of 30 virtual 
-        server instances. Each row represents an instance with columns 
-        for running status, CPU and memory utilization sparklines, 
-        public IP address, disk operations bar chart, and disk usage pie chart.`
-    },
-    {
         name: 'Highcharts Core',
         tagline: '40+ Chart Types',
         id: 'coreTitle',
@@ -2826,24 +2807,6 @@ const products = [
         69 percent, followed by brown cheese at 12 percent, 
         sour cream 9 percent, butter and sugar 6 percent, 
         and other toppings 5 percent.</div>`
-    },
-    {
-        name: 'Highcharts Dashboards',
-        tagline: 'Time-saving dashboard tools',
-        id: 'dashboardsTitle',
-        chart: dashboards,
-        icon: 'icon-dashboards.svg',
-        demoTitle: 'Personal finance dashboard',
-        stopLink: null,
-        demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
-        description: `<p>Personal Finance Dashboard</p>A purely decorative  
-        dashboard showing key financial metrics, including total 
-        balance, savings, earnings, spendings, and recent transactions. 
-        Line and area charts illustrate trends in balance, 
-        savings growth, and monthly earnings. A pie chart shows 
-        wallet condition, indicating 58 percent of income saved 
-        this month. A data table lists four recent transactions 
-        by receiver, amount, and remaining balance.`
     },
     {
         name: 'Highcharts Maps',
@@ -2910,7 +2873,8 @@ products.forEach((p, index) => {
     titleInner.appendChild(item);
 });
 const clone = titleInner.firstElementChild.cloneNode(true);
-clone.id = 'title-6';
+clone.id = 'title-clone';
+clone.setAttribute('aria-hidden', 'true');
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
@@ -2928,6 +2892,11 @@ let isResetting = false;
 const dots = document.querySelectorAll('.dot');
 
 dots.forEach((dot, i) => {
+    if (i >= products.length) {
+        dot.style.display = 'none';
+        return;
+    }
+
     dot.addEventListener('click', function () {
         goTo(i);
         if (!isPaused) {
@@ -2964,7 +2933,8 @@ function updateView() {
     if (currentIndex === products.length) {
         currentIndex = 0;
         isResetting = true;
-        titleInner.style.transform = 'translateY(-240px)';
+        titleInner.style.transform =
+            `translateY(-${products.length * 40}px)`;
         titleInner.style.opacity = 1;
 
         updateFooter(currentIndex);
@@ -3088,26 +3058,27 @@ function toggleChartAnimation(chartType, link) {
             stopMapAnimation();
             announceChange('Map animation paused.');
         }
-    } else if (chartType === 'grid') {
-        if (!gridControls) {
-            return;
-        }
-        if (isStarting) {
-            if (typeof gridControls.resumeGridUpdates === 'function') {
-                gridControls.resumeGridUpdates();
-            } else if (typeof gridControls.startGridUpdates === 'function') {
-                gridControls.startGridUpdates();
-            } else {
-                // nothing
-            }
-            announceChange('Grid chart animation started.');
-        } else {
-            if (typeof gridControls.clearGridUpdates === 'function') {
-                gridControls.clearGridUpdates();
-                announceChange('Grid chart animation paused.');
-            }
-        }
     }
+    // else if (chartType === 'grid') {
+    //     if (!gridControls) {
+    //         return;
+    //     }
+    //     if (isStarting) {
+    //         if (typeof gridControls.resumeGridUpdates === 'function') {
+    //             gridControls.resumeGridUpdates();
+    //         } else if (typeof gridControls.startGridUpdates === 'function') {
+    //             gridControls.startGridUpdates();
+    //         } else {
+    //             // nothing
+    //         }
+    //         announceChange('Grid chart animation started.');
+    //     } else {
+    //         if (typeof gridControls.clearGridUpdates === 'function') {
+    //             gridControls.clearGridUpdates();
+    //             announceChange('Grid chart animation paused.');
+    //         }
+    //     }
+    // }
 }
 
 
@@ -3165,8 +3136,9 @@ function ensureCorrectAnimationState() {
     // When resuming, respect each chart's individual animation preference
     Object.keys(chartAnimationState).forEach(key => {
         const isActive = chartAnimationState[key];
-        // stock chart
-        if (key === 'stock' && currentIndex === 0) { // stock index is 0
+
+        // Candlestick chart
+        if (key === 'stock' && currentIndex === 1) {
             if (isActive) {
                 startStockChartAnimation();
                 logAnim('Stock animation resumed');
@@ -3175,33 +3147,15 @@ function ensureCorrectAnimationState() {
                 logAnim('Stock animation paused');
             }
         }
-        // map chart
-        if (key === 'maps' && currentIndex === 4) { // maps index is 4
+
+        // Map chart
+        if (key === 'maps' && currentIndex === 3) {
             if (isActive) {
                 startMapAnimation();
                 logAnim('Map animation resumed');
             } else {
                 stopMapAnimation();
                 logAnim('Map animation paused');
-            }
-        }
-        // grid
-        // eslint-disable-next-line max-len
-        if (key === 'grid' && gridControls && currentIndex === 1) { // grid index is 1
-            if (isActive) {
-                if (typeof gridControls.resumeGridUpdates === 'function') {
-                    gridControls.resumeGridUpdates();
-                    logAnim('Grid updates resumed');
-                // eslint-disable-next-line max-len
-                } else if (typeof gridControls.startGridUpdates === 'function') {
-                    gridControls.startGridUpdates();
-                    logAnim('Grid updates resumed (startGridUpdates fallback)');
-                }
-            } else {
-                if (typeof gridControls.clearGridUpdates === 'function') {
-                    gridControls.clearGridUpdates();
-                    logAnim('Grid updates paused');
-                }
             }
         }
     });
@@ -3309,11 +3263,11 @@ function updateChart(i) {
             }
         }
 
-        if (p.chart === grid && gridControls && !chartAnimationState.grid) {
-            if (typeof gridControls.clearGridUpdates === 'function') {
-                gridControls.clearGridUpdates();
-            }
-        }
+        // if (p.chart === grid && gridControls && !chartAnimationState.grid) {
+        //     if (typeof gridControls.clearGridUpdates === 'function') {
+        //         gridControls.clearGridUpdates();
+        //     }
+        // }
 
     }, setTimeoutDuration);
 
@@ -3488,10 +3442,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Initialize button states first ---
     initializePauseButtonState();
-
-    // --- Start carousel setup ---
-    dashboards();
-    gridControls = grid();
 
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
