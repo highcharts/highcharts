@@ -90,6 +90,8 @@
     --highlight-purple: #8791ff;
     --highlight-red: #f87171;
     --text-primary: var(--primitives-neutral-900);
+    --product-icon-contrast: #000;
+    --product-icon-surface: #fff;
     --text-secondary: var(--primitives-neutral-700);
     --text-tertiary: var(--primitives-neutral-500);
     --unimportant: #e3e3e8;
@@ -206,6 +208,8 @@
     --button-colors-transparent-stroke-outer-pressed: var(--primitives-neutral-800);
     --background: var(--primitives-neutral-900);
     --text-primary: var(--primitives-neutral-25);
+    --product-icon-contrast: var(--primitives-neutral-25);
+    --product-icon-surface: var(--primitives-neutral-900);
     --text-secondary: var(--primitives-neutral-200);
     --text-tertiary: var(--primitives-neutral-400);
     --border-100: var(--primitives-neutral-700);
@@ -289,6 +293,8 @@
         --button-colors-transparent-stroke-outer-pressed: var(--primitives-neutral-800);
         --background: var(--primitives-neutral-900);
         --text-primary: var(--primitives-neutral-25);
+        --product-icon-contrast: var(--primitives-neutral-25);
+        --product-icon-surface: var(--primitives-neutral-900);
         --text-secondary: var(--primitives-neutral-200);
         --text-tertiary: var(--primitives-neutral-400);
         --border-100: var(--primitives-neutral-700);
@@ -440,6 +446,20 @@ body {
     align-items: center;
     gap: 10px;
     height: 40px;
+    flex-shrink: 0;
+}
+
+/* Product icons: an inlined <symbol> sprite, so the markup carries no
+   definitions of its own and nothing is fetched at runtime. The two
+   --product-icon-* tokens invert the marks the Figma export hardcoded to
+   black and white, which would otherwise vanish on a dark card. */
+.product-icon-sprite {
+    display: none;
+}
+
+.product-icon {
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
 }
 
