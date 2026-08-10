@@ -253,6 +253,42 @@ QUnit.test('Keyboard navigation', function (assert) {
     );
 });
 
+QUnit.test(
+    'skipNullPoints only skips null points, not valid ones (#24650)',
+    function (assert) {
+        const homeKey = 36;
+        const chart = Highcharts.chart('container', {
+            accessibility: {
+                keyboardNavigation: {
+                    seriesNavigation: {
+                        skipNullPoints: true
+                    }
+                }
+            },
+            series: [{
+                // The first null must be skipped, but the valid points
+                // after it should still be reachable.
+                data: [null, 2, 3]
+            }]
+        });
+
+        chart.accessibility.keyboardNavigation.onKeydown(
+            new KeyboardEvent('keydown', { keyCode: homeKey })
+        );
+        const point = chart.highlightedPoint;
+
+        assert.ok(
+            point,
+            'Keyboard navigation should reach a point when skipNullPoints ' +
+            'is true.'
+        );
+        assert.notOk(
+            point && point.isNull,
+            'Navigation should skip the null point and land on a valid point.'
+        );
+    }
+);
+
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{}]

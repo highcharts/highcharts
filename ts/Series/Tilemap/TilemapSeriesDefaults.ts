@@ -126,7 +126,8 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
      * @sample maps/demo/diamondmap
      *         Diamond tile shapes
      *
-     * @type {Highcharts.TilemapShapeValue}
+     * @declare Highcharts.TilemapShapeValue
+     * @type    {"circle"|"diamond"|"hexagon"|"square"}
      */
     tileShape: 'hexagon'
 

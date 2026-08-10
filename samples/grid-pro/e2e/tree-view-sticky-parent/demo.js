@@ -98,19 +98,20 @@ for (const [path, budget] of dataset) {
 
 window.grid = Grid.grid('container', {
     data: {
-        columns,
-        treeView: {
-            input: {
-                type: 'path'
-            },
-            expandedRowIds: 'all',
-            stickyParents: true,
-            treeColumn: 'name'
-        }
+        columns
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path'
+        },
+        treeColumn: 'name'
     },
     header: ['name', 'budget'],
     rendering: {
         rows: {
+            expandedLevels: 'all',
+            stickyParents: true,
             virtualization: true
         }
     }

@@ -711,9 +711,14 @@ class Point {
      *
      * @internal
      * @function Highcharts.Point#destroy
+     *
+     * @param {boolean} [sync]
+     *        Whether to destroy the point synchronously. Used internally from
+     *        series.destroy, where condemned points may cause animation errors
+     *        (#24976).
      */
-    public destroy(): void {
-        if (!this.condemned) {
+    public destroy(sync?: boolean): void {
+        if (!this.destroyed && !this.condemned) {
             const point = this,
                 series = point.series,
                 chart = series.chart,
@@ -740,6 +745,8 @@ class Point {
                 for (const prop in point) { // eslint-disable-line guard-for-in
                     delete point[prop];
                 }
+
+                this.destroyed = true;
             };
 
             if (point.legendItem) {
@@ -760,7 +767,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (duration && series.condemnedPoints) {
+            if (duration && !sync && series.condemnedPoints) {
                 series.condemnedPoints.push(this);
                 this.graphic?.addClass('highcharts-point-condemned');
                 setTimeout(destroyPoint, duration);
@@ -913,10 +920,10 @@ class Point {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
+     * @return {Highcharts.SeriesZonesOptionsObject|undefined}
+     *         The zone item, or `undefined` if the series has no zones.
      */
-    public getZone(): Series.ZoneObject {
+    public getZone(): Series.ZoneObject|undefined {
         const series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y';
@@ -924,7 +931,10 @@ class Point {
             i = 0;
 
         zone = zones[i];
-        while ((this as any)[zoneAxis] >= (zone.value as any)) {
+        while (
+            i < zones.length &&
+            (this as any)[zoneAxis] >= (zone.value as any)
+        ) {
             zone = zones[++i];
         }
 
