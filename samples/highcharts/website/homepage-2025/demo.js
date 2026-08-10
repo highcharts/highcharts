@@ -271,7 +271,22 @@ function cs() {
         },
 
         yAxis: {
-            visible: false,
+            // Kept in the layout rather than visible: false. The lastPrice
+            // label is a crosshair label anchored to this axis, and on a
+            // hidden axis it has no x to anchor to: it rendered as
+            // transform="translate(NaN,<price>)", logged an SVG attribute
+            // error on every redraw, and fell back to x=0 so the price
+            // badge sat in the top left instead of beside the series.
+            // Switching the parts off individually looks the same.
+            visible: true,
+            labels: {
+                enabled: false
+            },
+            lineWidth: 0,
+            gridLineWidth: 0,
+            title: {
+                text: null
+            },
             height: '80%'
         },
         credits: {
