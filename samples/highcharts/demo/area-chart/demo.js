@@ -89,3 +89,4 @@ Highcharts.chart('container', {
         ]
     }]
 });
+throw new Error('Intentional runtime error for tooling test');
