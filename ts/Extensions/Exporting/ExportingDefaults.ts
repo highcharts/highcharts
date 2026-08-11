@@ -895,6 +895,43 @@ const navigation: NavigationOptions = {
             padding: 5,
 
             /**
+             * Tri-state button styles.
+             *
+             * @sample highcharts/navigation/buttonoptions-theme/
+             *         Theming the buttons
+             *
+             * @apioption navigation.buttonOptions.theme.states
+             */
+
+            /**
+             * SVG attributes for the disabled state of the button.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @apioption navigation.buttonOptions.theme.states.disabled
+             */
+
+            /**
+             * SVG attributes for the hovered state of the button.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @apioption navigation.buttonOptions.theme.states.hover
+             */
+
+            /**
+             * SVG attributes for the selected state of the button.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @apioption navigation.buttonOptions.theme.states.select
+             */
+
+            /**
+             * CSS styling for the button's text or symbol.
+             *
+             * @type      {Highcharts.CSSObject}
+             * @apioption navigation.buttonOptions.theme.style
+             */
+
+            /**
              * Default stroke for the buttons.
              *
              * @type {Highcharts.ColorString}

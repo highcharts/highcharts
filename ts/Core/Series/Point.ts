@@ -711,8 +711,13 @@ class Point {
      *
      * @internal
      * @function Highcharts.Point#destroy
+     *
+     * @param {boolean} [sync]
+     *        Whether to destroy the point synchronously. Used internally from
+     *        series.destroy, where condemned points may cause animation errors
+     *        (#24976).
      */
-    public destroy(): void {
+    public destroy(sync?: boolean): void {
         if (!this.destroyed && !this.condemned) {
             const point = this,
                 series = point.series,
@@ -762,7 +767,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (duration && series.condemnedPoints) {
+            if (duration && !sync && series.condemnedPoints) {
                 series.condemnedPoints.push(this);
                 this.graphic?.addClass('highcharts-point-condemned');
                 setTimeout(destroyPoint, duration);
