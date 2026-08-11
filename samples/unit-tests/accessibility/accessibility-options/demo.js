@@ -676,6 +676,108 @@ QUnit.test('High contrast theme should not swallow updates', function (assert) {
     });
 });
 
+QUnit.test('High contrast theme should not swallow axis updates', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            yAxis: {
+                gridLineColor: '#0000ff'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        forcedColors.set(true);
+        chart.yAxis[0].update({
+            gridLineColor: '#ff0000'
+        });
+
+        assert.strictEqual(
+            chart.yAxis[0].options.gridLineColor,
+            'windowText',
+            'Theme should still win after an axis update'
+        );
+
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.yAxis[0].options.gridLineColor,
+            '#ff0000',
+            'Axis update should survive the theme being removed'
+        );
+    });
+});
+
+QUnit.test('High contrast theme should preserve responsive state', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            chart: {
+                backgroundColor: '#0000ff',
+                width: 500
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 600
+                    },
+                    chartOptions: {
+                        chart: {
+                            backgroundColor: '#ff0000'
+                        }
+                    }
+                }]
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        forcedColors.set(true);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            'window',
+            'Theme should win while the responsive rule is active'
+        );
+
+        chart.setSize(700, 400, false);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            'window',
+            'Theme should persist when the responsive rule stops matching'
+        );
+
+        chart.setSize(500, 400, false);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            'window',
+            'Theme should persist when the responsive rule matches again'
+        );
+
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            '#ff0000',
+            'Responsive color should be restored with forced colors off'
+        );
+
+        chart.setSize(700, 400, false);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            '#0000ff',
+            'Base color should return when the responsive rule stops matching'
+        );
+    });
+});
+
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {

@@ -39,7 +39,8 @@ const {
 } = H;
 import {
     diffObjects,
-    find
+    find,
+    merge
 } from '../Shared/Utilities.js';
 
 /* *
@@ -243,6 +244,24 @@ function findPointRestore(
 }
 
 /**
+ * Update the chart without resetting responsive rules. High contrast options
+ * are transient and must be applied on top of the current responsive state.
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart to update.
+ * @param {Highcharts.Options} options The transient options to apply.
+ * @return {void}
+ */
+function updateChart(
+    chart: Accessibility.ChartComposition,
+    options: Partial<Options>
+): void {
+    chart.update(merge(options, {
+        isResponsiveOptions: true
+    }), false);
+}
+
+/**
  * Force high contrast theme for the chart. The default theme is defined in
  * a separate file.
  *
@@ -277,7 +296,7 @@ function setHighContrastTheme(
             );
         }
 
-        chart.update(theme, false);
+        updateChart(chart, theme);
 
         const hasCustomColors = theme.colors?.length > 1,
             // Rebuilt on every application, so that series and points that
@@ -376,7 +395,7 @@ function unsetHighContrastTheme(
 
     try {
         if (chartOptions) {
-            chart.update(chartOptions, false);
+            updateChart(chart, chartOptions);
         }
 
         (seriesRestore || []).forEach(function (restore): void {
@@ -525,11 +544,25 @@ function onChartUpdate(
 
     if (
         highContrastState?.active &&
-        !highContrastState.applying &&
-        // Responsive rules undo themselves, and run within `chart.update`
-        !(options as AnyRecord)?.isResponsiveOptions
+        !highContrastState.applying
     ) {
+        const currentResponsive = options?.isResponsiveOptions &&
+            (chart as AnyRecord).currentResponsive;
+
         unsetHighContrastTheme(chart, false);
+
+        // Responsive undo options are calculated before `chart.update` fires.
+        // Recalculate them against the regular options instead of the active
+        // high contrast theme.
+        if (currentResponsive) {
+            currentResponsive.undoOptions = diffObjects(
+                currentResponsive.mergedOptions,
+                chart.options,
+                true,
+                chart.collectionsWithUpdate
+            );
+            currentResponsive.undoOptions.isResponsiveOptions = true;
+        }
     }
 }
 
