@@ -2711,9 +2711,9 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            { options, xAxis, yAxis } = series,
+            { hasRendered, options, xAxis, yAxis } = series,
             { stacking, threshold } = options,
-            { hasRendered, polar } = series.chart,
+            { polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
