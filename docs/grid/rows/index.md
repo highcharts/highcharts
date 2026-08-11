@@ -28,9 +28,15 @@ main row set scrolls normally. See
 
 ## Tree view
 
-Use TreeView to present flat source rows as an expandable hierarchy with
+Use TreeView to present hierarchical source rows as an expandable hierarchy with
 parent-child context, sticky ancestors, and runtime expand/collapse control.
 See [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view).
+
+## Row grouping
+
+Use row grouping to turn repeated values of flat data into expandable group rows
+with aggregated summaries. See
+[Row grouping](https://www.highcharts.com/docs/grid/rows/grouping).
 
 ## Virtualization
 
