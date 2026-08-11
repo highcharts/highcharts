@@ -102,6 +102,7 @@ class KeyboardNavigationHandler {
      * Find handler function(s) for key code in the keyCodeMap and run it.
      *
      * @function KeyboardNavigationHandler#run
+     * @param {global.KeyboardEvent} e
      * @return {number} Returns a response code indicating whether the run was
      *      a success/fail/unhandled, or if we should move to next/prev module.
      */
