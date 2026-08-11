@@ -29,7 +29,8 @@ import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type {
-    ScreenReaderFormatterCallbackFunction
+    ScreenReaderFormatterCallbackFunction,
+    ScreenReaderSectionFormatterContext
 } from '../Options/A11yOptions';
 
 import A11yI18n from '../A11yI18n.js';
@@ -295,7 +296,9 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
-                        ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>|undefined
+                        ScreenReaderFormatterCallbackFunction<
+                            Chart, ScreenReaderSectionFormatterContext
+                        >|undefined
                     ) = accessibilityOptions.screenReaderSection
                         .beforeChartFormatter;
                     return formatter ? formatter(chart, component) :
