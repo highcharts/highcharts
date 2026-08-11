@@ -1765,4 +1765,5 @@ class PolarAdditions {
  *
  * */
 
+/** @internal */
 export default PolarAdditions;

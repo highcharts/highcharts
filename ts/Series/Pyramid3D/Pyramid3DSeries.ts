@@ -81,6 +81,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
  *
  * */
 
+/** @internal */
 interface Pyramid3DSeries {
     pointClass: typeof Pyramid3DPoint;
 }

@@ -1287,6 +1287,7 @@ extend(PackedBubbleSeries.prototype, {
  *
  * */
 
+/** @internal */
 namespace PackedBubbleSeries {
 
     export type Data = [

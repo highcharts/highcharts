@@ -88,6 +88,7 @@ class PyramidSeries extends FunnelSeries {
  *
  * */
 
+/** @internal */
 interface PyramidSeries {
     pointClass: typeof PyramidPoint;
 }

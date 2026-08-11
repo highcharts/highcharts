@@ -200,9 +200,11 @@ function applyRadius(path: SVGPath, r?: number): SVGPath {
     }
     return d;
 }
+/** @internal */
 const PathUtilities = {
     applyRadius,
     getLinkPath
 };
 
+/** @internal */
 export default PathUtilities;
