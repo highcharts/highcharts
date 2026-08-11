@@ -26,12 +26,27 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
  * */
 
 
-interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
+export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     boxSize: number|string;
     reversalAmount: number;
     pointPadding: number;
     marker: PointMarkerOptions;
     markerUp: PointMarkerOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    compare?: undefined;
+    compareBase?: undefined;
+    compareStart?: undefined;
+    cumulative?: undefined;
+    cumulativeStart?: undefined;
+    dragDrop?: undefined;
 }
 
 
