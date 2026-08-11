@@ -40,7 +40,7 @@ function getNextColumnId(existingIds) {
     let id = '';
 
     do {
-        id = 'new column ' + newColumnCount;
+        id = 'New Column #' + newColumnCount;
         newColumnCount += 1;
     } while (existingIds.indexOf(id) !== -1);
 
@@ -79,7 +79,7 @@ async function addRowBelow(cell) {
     );
 
     dt.setRow({
-        product: 'New item',
+        product: 'New Item',
         weight: null,
         price: null
     }, insertAtIndex, true);
@@ -106,7 +106,7 @@ async function addRowAbove(cell) {
     );
 
     dt.setRow({
-        product: 'New item',
+        product: 'New Item',
         weight: null,
         price: null
     }, insertAt, true);
@@ -258,15 +258,15 @@ const menuItems = [{
 Grid.grid('container', {
     data: {
         columns: {
-            product: [
+            Product: [
                 'Apples',
                 'Pears',
                 'Plums',
                 'Bananas',
                 'Oranges'
             ],
-            weight: [100, 40, 0.5, 200, 120],
-            price: [1.5, 2.53, 5, 4.5, 3.2]
+            Weight: [100, 40, 0.5, 200, 120],
+            Price: [1.5, 2.53, 5, 4.5, 3.2]
         }
     },
     columnDefaults: {
