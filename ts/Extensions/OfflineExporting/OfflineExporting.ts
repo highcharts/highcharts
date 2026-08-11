@@ -619,8 +619,7 @@ namespace OfflineExporting {
 
         // Work around jsPDF's missing support for color(srgb r g b) format
         // (#25001)
-        const srgbColorRegex =
-            /color\(\s*srgb\s+([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/;
+        const srgbColorRegex = /color\(\s*srgb\s+([\d.]+)[, ]+([\d.]+)[, ]+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/; // eslint-disable-line max-len
 
         const convertColorSRGBToRGB = (
             srgbColor?: string|null
