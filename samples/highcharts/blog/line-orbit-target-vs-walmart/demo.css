@@ -3,6 +3,15 @@
     body {
         background: transparent !important;
         color-scheme: dark !important;
+        font-family:
+            var(
+                --highcharts-font-family,
+                "Lucida Grande",
+                "Lucida Sans Unicode",
+                Arial,
+                Helvetica,
+                sans-serif
+            );
     }
 }
 
@@ -11,6 +20,15 @@
     body {
         background: transparent !important;
         color-scheme: light !important;
+        font-family:
+            var(
+                --highcharts-font-family,
+                "Lucida Grande",
+                "Lucida Sans Unicode",
+                Arial,
+                Helvetica,
+                sans-serif
+            );
     }
 }
 
