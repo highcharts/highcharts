@@ -350,8 +350,13 @@ function onChartRender(
                                 // Prefer the height before pixel rounding,
                                 // so ranking does not depend on which side
                                 // of a rounding boundary a sub-pixel column
-                                // happens to fall on (#23585)
-                                point.unroundedHeight,
+                                // happens to fall on. Ignore it once the
+                                // shape it was measured from has been
+                                // replaced, as in series that build on the
+                                // column translation (#23585)
+                                point.unroundedHeightShape === point.shapeArgs ?
+                                    point.unroundedHeight :
+                                    void 0,
                                 point.shapeArgs?.height
                             ); // #4118
 

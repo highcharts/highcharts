@@ -64,11 +64,21 @@ declare module '../../Core/Series/PointBase' {
         /**
          * The column height before it is rounded to whole pixels by
          * `crispCol`. Used to rank data labels independently of pixel
-         * rounding (#23585).
+         * rounding (#23585). Only meaningful while `unroundedHeightShape`
+         * is still the current `shapeArgs`.
          *
          * @internal
          */
         unroundedHeight?: number;
+        /**
+         * The `shapeArgs` that `unroundedHeight` was measured from. Series
+         * that inherit the column translation and then replace `shapeArgs`
+         * with another geometry are detected by this, so they never rank
+         * their data labels by a leftover height (#23585).
+         *
+         * @internal
+         */
+        unroundedHeightShape?: SVGAttributes;
     }
 }
 
@@ -655,16 +665,6 @@ class ColumnSeries extends Series {
 
             const shapeHeight = point.isNull ? 0 : barH;
 
-            // Keep the height before crisping, for data label ranking
-            // (#23585). `crispCol` rounds the height to whole pixels, and
-            // for columns thinner than one pixel the rounding boundary
-            // falls on a different series in column vs bar mode, because
-            // plotHeight and plotWidth differ for the same data. That
-            // flipped which label survived overlap removal. The unrounded
-            // height scales with the point value, so it ranks the same in
-            // both orientations.
-            point.unroundedHeight = shapeHeight;
-
             point.shapeArgs = series.crispCol(
                 barX,
                 // #3169, drilldown from null must have a position to work from.
@@ -674,6 +674,20 @@ class ColumnSeries extends Series {
                 barW,
                 shapeHeight
             );
+
+            // Keep the height before crisping, for data label ranking
+            // (#23585). `crispCol` rounds the height to whole pixels, and
+            // for columns thinner than one pixel the rounding boundary
+            // falls on a different series in column vs bar mode, because
+            // plotHeight and plotWidth differ for the same data. That
+            // flipped which label survived overlap removal. The unrounded
+            // height scales with the point value, so it ranks the same in
+            // both orientations. Tie it to the shape it was measured from,
+            // so series that inherit this translation and then replace
+            // `shapeArgs` with another geometry rank by the rendered height
+            // instead of a leftover one.
+            point.unroundedHeight = shapeHeight;
+            point.unroundedHeightShape = point.shapeArgs;
         });
 
         // Fire a specific event after column translate. We could instead apply
