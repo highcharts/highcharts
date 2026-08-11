@@ -64,6 +64,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace NodesComposition {
 
     /* *

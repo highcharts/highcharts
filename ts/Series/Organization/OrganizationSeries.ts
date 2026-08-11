@@ -474,6 +474,7 @@ class OrganizationSeries extends SankeySeries {
  *
  * */
 
+/** @internal */
 interface OrganizationSeries {
     pointClass: typeof OrganizationPoint;
 }

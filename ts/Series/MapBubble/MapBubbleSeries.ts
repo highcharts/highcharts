@@ -105,6 +105,7 @@ class MapBubbleSeries extends BubbleSeries {
  *
  * */
 
+/** @internal */
 interface MapBubbleSeries {
     type: string;
     getProjectedBounds: typeof mapProto.getProjectedBounds;

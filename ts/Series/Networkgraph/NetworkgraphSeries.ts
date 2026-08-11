@@ -516,6 +516,7 @@ class NetworkgraphSeries extends Series {
  *
  * */
 
+/** @internal */
 interface NetworkgraphSeries
     extends DragNodesSeries, NodesComposition.SeriesComposition{
     pointClass: typeof NetworkgraphPoint;

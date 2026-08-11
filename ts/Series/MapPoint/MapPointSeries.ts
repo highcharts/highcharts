@@ -270,6 +270,7 @@ SVGRenderer.prototype.symbols.mapmarker = mapmarker;
  *
  * */
 
+/** @internal */
 interface MapPointSeries {
     bounds: MapBounds | undefined;
     pointClass: typeof MapPointPoint;

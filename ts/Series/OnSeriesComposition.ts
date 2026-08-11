@@ -36,6 +36,7 @@ import { defined, pushUnique, stableSort } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 namespace OnSeriesComposition {
 
     /* *

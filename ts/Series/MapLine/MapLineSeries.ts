@@ -98,6 +98,7 @@ class MapLineSeries extends MapSeries {
  *
  * */
 
+/** @internal */
 interface MapLineSeries {
     colorProp: 'stroke';
     pointClass: typeof MapLinePoint;

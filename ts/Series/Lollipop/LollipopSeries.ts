@@ -143,6 +143,7 @@ class LollipopSeries extends Series {
  *
  * */
 
+/** @internal */
 interface LollipopSeries {
     alignDataLabel: typeof colProto['alignDataLabel'];
     crispCol: typeof colProto['crispCol'];
