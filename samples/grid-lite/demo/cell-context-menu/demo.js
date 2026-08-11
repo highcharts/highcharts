@@ -79,9 +79,9 @@ async function addRowBelow(cell) {
     );
 
     dt.setRow({
-        product: 'New Item',
-        weight: null,
-        price: null
+        Product: 'New Item',
+        Weight: null,
+        Price: null
     }, insertAtIndex, true);
 
     // Re-apply modifiers (if any) and update rendering.
@@ -106,9 +106,9 @@ async function addRowAbove(cell) {
     );
 
     dt.setRow({
-        product: 'New Item',
-        weight: null,
-        price: null
+        Product: 'New Item',
+        Weight: null,
+        Price: null
     }, insertAt, true);
 
     // Re-apply modifiers (if any) and update rendering.
@@ -139,11 +139,7 @@ function addColumnLeft(cell) {
     logEvent('Added column "' + newColumnId + '" to the left.');
 
     void grid.update({
-        rendering: {
-            columns: {
-                included: columnIds
-            }
-        }
+        header: columnIds
     });
 }
 
@@ -173,11 +169,7 @@ function addColumnRight(cell) {
     logEvent('Added column "' + newColumnId + '" to the right.');
 
     void grid.update({
-        rendering: {
-            columns: {
-                included: columnIds
-            }
-        }
+        header: columnIds
     });
 }
 
@@ -255,19 +247,23 @@ const menuItems = [{
     }]
 }];
 
+const dataTable = new Grid.DataTable({
+    columns: {
+        Product: [
+            'Apples',
+            'Pears',
+            'Plums',
+            'Bananas',
+            'Oranges'
+        ],
+        Weight: [100, 40, 0.5, 200, 120],
+        Price: [1.5, 2.53, 5, 4.5, 3.2]
+    }
+});
+
 Grid.grid('container', {
     data: {
-        columns: {
-            Product: [
-                'Apples',
-                'Pears',
-                'Plums',
-                'Bananas',
-                'Oranges'
-            ],
-            Weight: [100, 40, 0.5, 200, 120],
-            Price: [1.5, 2.53, 5, 4.5, 3.2]
-        }
+        dataTable: dataTable
     },
     columnDefaults: {
         cells: {
