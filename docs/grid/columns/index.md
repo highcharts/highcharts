@@ -104,6 +104,77 @@ Grid.grid('container', {
 // Rendered columns: sum, sales, price, product
 ```
 
+## Summary columns (`columnAggregator`)
+
+A summary column derives its value from the other columns of the same row, for
+example a `Total` column summing quarterly columns. It is the per-row mirror of
+a summary row. Set `columnAggregator` to an aggregation function name (`SUM`,
+`AVERAGE`, `MIN`, `MAX`, `COUNT`, `MEDIAN`, `PRODUCT`, ...) and list the source
+columns in `aggregatedColumns`:
+
+```js
+Grid.grid('container', {
+    data: {
+        columns: {
+            region: ['North', 'South'],
+            q1: [120, 80],
+            q2: [140, 85]
+        }
+    },
+    columns: [{
+        // No source column provides `total`, so the column is unbound.
+        id: 'total',
+        columnAggregator: 'SUM',
+        aggregatedColumns: ['q1', 'q2']
+    }]
+});
+```
+
+- `aggregatedColumns` is optional. When omitted, every other numeric column of
+  the table is aggregated, skipping columns that are derived themselves. List
+  the columns explicitly when the table holds numeric columns that must stay out
+  of the result, such as an id or a year.
+- Without an explicit `dataType`, a summary column is assumed numeric.
+- The header and body cells always carry the `hcg-summary-column` class, so
+  styling them needs no `className` of your own.
+- The cells are derived, so they are not editable while the column is unbound
+  (an `id` that no source column provides, or `dataId: null`). Unbound columns
+  are also excluded from sorting, filtering, and exports.
+- The value is re-resolved whenever a cell of its row is edited.
+
+Pass a callback to decide per row, returning a function name or a falsy value to
+skip aggregation and leave the column's own data in place:
+
+```js
+columns: [{
+    id: 'total',
+    aggregatedColumns: ['q1', 'q2'],
+    columnAggregator: context => context.rowIndex === 0 ? false : 'SUM'
+}]
+```
+
+For logic no Formula function covers, use `cells.valueGetter` instead. It
+receives the cell, derives the value from `cell.row.data`, takes precedence over
+`columnAggregator`, and follows edits the same way:
+
+```js
+columns: [{
+    id: 'margin',
+    dataId: null,
+    dataType: 'number',
+    cells: {
+        valueGetter: cell => cell.row.data.revenue - cell.row.data.cost
+    }
+}]
+```
+
+See the
+[summary columns demo](https://www.highcharts.com/samples/grid-pro/options/summary-columns).
+
+Aggregating *down* a column instead — one value per column over many rows — is
+what [`rowAggregator`](https://www.highcharts.com/docs/grid/rows/grouping) and
+summary rows do.
+
 ## Styling and Theming
 
 Use column-level classes, inline styles, and theme variables to control how

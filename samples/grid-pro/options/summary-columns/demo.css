@@ -1,0 +1,17 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#hint {
+    padding: 12px 12px 0;
+    font-family: sans-serif;
+}
+
+#container {
+    padding: 12px;
+}
+
+/* Applied automatically to every column with a `columnAggregator`. The cells
+   are derived, so they are read-only by design. */
+.hcg-summary-column {
+    --hcg-cell-background: rgb(128 128 128 / 12%);
+    --hcg-cell-font-weight: 600;
+}
