@@ -1301,7 +1301,6 @@ class Chart {
         let hasDirtyStacks: (boolean|undefined),
             hasStackedSeries: (boolean|undefined),
             i: number,
-            isDirtyBox = chart.isDirtyBox,
             redrawLegend = chart.isDirtyLegend,
             serie: Series;
 
@@ -1394,6 +1393,7 @@ class Chart {
         chart.getMargins(); // #3098
 
         // If one axis is dirty, all axes must be redrawn (#792, #2169)
+        let isDirtyBox = chart.isDirtyBox;
         axes.forEach(function (axis): void {
             if (axis.isDirty) {
                 isDirtyBox = true;
