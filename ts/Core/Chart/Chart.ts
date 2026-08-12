@@ -4066,7 +4066,16 @@ class Chart {
         }
 
         // Update size. Redraw is forced.
-        const newWidth = optionsChart?.width;
+        const newWidth = optionsChart && (
+            isString(optionsChart.width) ?
+                relativeLength(
+                    optionsChart.width,
+                    chart.getContainerBox().width,
+                    void 0,
+                    chart.renderTo
+                ) :
+                optionsChart.width
+        );
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
                 relativeLength(
@@ -4088,7 +4097,9 @@ class Chart {
             (isNumber(newWidth) && newWidth !== chart.chartWidth) ||
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
-            chart.setSize(newWidth as number, newHeight as number, animation);
+            // Avoid overwriting a CSS length expression with its resolved
+            // pixel value (#23989)
+            chart.setSize(void 0, void 0, animation);
         } else if (pick(redraw, true)) {
             chart.redraw(animation);
         }
