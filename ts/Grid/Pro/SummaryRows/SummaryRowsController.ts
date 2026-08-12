@@ -33,8 +33,7 @@ import type {
     SummaryAggregatorOption,
     SummaryColumnOptions,
     SummaryRenderRow,
-    SummaryRowOptions,
-    SummaryRowScope
+    SummaryRowOptions
 } from './SummaryRowsTypes';
 
 import Aggregation from '../Aggregation/Aggregation.js';
@@ -62,6 +61,12 @@ interface SummaryScopedSource {
      * Row range within the table, when the scope selects a part of it.
      */
     range?: [number, number];
+
+    /**
+     * Rows of the table that roll up other rows of it, left out of the
+     * aggregation unless the row opts into `includeParents`.
+     */
+    rollupRowIndexes?: Set<number>;
 }
 
 
@@ -94,6 +99,12 @@ class SummaryRowsController {
      * Whether an unsupported scope was already reported.
      */
     private warnedScope: boolean = false;
+
+    /**
+     * Rollup rows resolved per table within one recompute, so that several
+     * summary rows over the same table resolve them once.
+     */
+    private rollupCache?: Map<DataTable, Set<number> | undefined>;
 
 
     /* *
@@ -166,15 +177,18 @@ class SummaryRowsController {
         const columnIds = table.getColumnIds();
         const rows: SummaryRenderRow[] = [];
 
+        this.rollupCache = new Map();
+
         for (let r = 0, rEnd = rowOptions.length; r < rEnd; ++r) {
             rows.push(this.buildSummaryRow(
-                this.getScopedSource(table, rowOptions[r].scope),
+                this.getScopedSource(table, rowOptions[r]),
                 columnIds,
                 rowOptions[r],
                 r
             ));
         }
 
+        delete this.rollupCache;
         this.rows = rows;
     }
 
@@ -265,13 +279,15 @@ class SummaryRowsController {
      * @param table
      * Queried table, after filtering/sorting and before pagination.
      *
-     * @param scope
-     * Pipeline stage to aggregate.
+     * @param options
+     * Options of the summary row.
      */
     private getScopedSource(
         table: DataTable,
-        scope?: SummaryRowScope
+        options: SummaryRowOptions
     ): SummaryScopedSource {
+        const scope = options.scope;
+
         if (scope === 'all') {
             const dataProvider = this.grid.dataProvider;
             const sourceTable = hasDataTableProvider(dataProvider) ?
@@ -283,17 +299,53 @@ class SummaryRowsController {
                     '`scope: \'all\'` requires a local data provider'
                 );
 
-                return { table };
+                return this.withRollups({ table }, options);
             }
 
-            return { table: sourceTable };
+            return this.withRollups({ table: sourceTable }, options);
         }
 
         if (scope === 'page') {
-            return { table, range: this.getPageRange() };
+            return this.withRollups(
+                { table, range: this.getPageRange() },
+                options
+            );
         }
 
-        return { table };
+        return this.withRollups({ table }, options);
+    }
+
+    /**
+     * Resolves the rows of a scoped source that roll up other rows of it, so
+     * that pre-calculated parent values are not counted next to the rows below
+     * them.
+     *
+     * @param source
+     * Resolved scoped source.
+     *
+     * @param options
+     * Options of the summary row.
+     */
+    private withRollups(
+        source: SummaryScopedSource,
+        options: SummaryRowOptions
+    ): SummaryScopedSource {
+        if (options.includeParents) {
+            return source;
+        }
+
+        const cache = this.rollupCache;
+        let rollupRowIndexes = cache?.get(source.table);
+
+        if (!rollupRowIndexes && !cache?.has(source.table)) {
+            rollupRowIndexes = this.grid.treeView
+                ?.getRollupRowIndexes(source.table);
+            cache?.set(source.table, rollupRowIndexes);
+        }
+
+        source.rollupRowIndexes = rollupRowIndexes;
+
+        return source;
     }
 
     /**
@@ -336,10 +388,22 @@ class SummaryRowsController {
     private getScopedRowCount(source: SummaryScopedSource): number {
         const rowCount = source.table.getRowCount();
         const range = source.range;
+        const from = range ? range[0] : 0;
+        const to = range ? Math.min(range[1], rowCount) : rowCount;
+        const rollupRowIndexes = source.rollupRowIndexes;
 
-        return range ?
-            Math.max(0, Math.min(range[1], rowCount) - range[0]) :
-            rowCount;
+        if (!rollupRowIndexes?.size) {
+            return Math.max(0, to - from);
+        }
+
+        let count = 0;
+        for (let i = Math.max(0, from); i < to; ++i) {
+            if (!rollupRowIndexes.has(i)) {
+                ++count;
+            }
+        }
+
+        return count;
     }
 
     /**
@@ -357,12 +421,29 @@ class SummaryRowsController {
     ): Array<Exclude<DataTableCellType, null | undefined>> {
         const column = source.table.getColumn(columnId) || [];
         const range = source.range;
+        const rollupRowIndexes = source.rollupRowIndexes;
 
-        return Array.from(
-            range ?
-                column.slice(range[0], range[1]) :
-                column
-        ).filter(defined);
+        if (!rollupRowIndexes?.size) {
+            return Array.from(
+                range ?
+                    column.slice(range[0], range[1]) :
+                    column
+            ).filter(defined);
+        }
+
+        const from = Math.max(0, range ? range[0] : 0);
+        const to = range ? Math.min(range[1], column.length) : column.length;
+        const values: Array<Exclude<DataTableCellType, null | undefined>> = [];
+
+        for (let i = from; i < to; ++i) {
+            const value = column[i] as DataTableCellType;
+
+            if (defined(value) && !rollupRowIndexes.has(i)) {
+                values.push(value);
+            }
+        }
+
+        return values;
     }
 
     /**

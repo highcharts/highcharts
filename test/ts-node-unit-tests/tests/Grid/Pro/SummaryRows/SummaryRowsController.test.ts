@@ -621,6 +621,107 @@ describe('SummaryRowsController', () => {
             );
         });
 
+    it('should not count pre-calculated parent values twice', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        // The dataset carries the parent totals, as an export from another
+        // system typically would.
+        const options = {
+            data: {
+                columns: {
+                    id: ['europe', 'france', 'germany', 'asia', 'japan'],
+                    parentId: [null, 'europe', 'europe', null, 'asia'],
+                    name: ['Europe', 'France', 'Germany', 'Asia', 'Japan'],
+                    sales: [100, 60, 40, 70, 70]
+                },
+                idColumn: 'id'
+            },
+            treeView: { enabled: true, treeColumn: 'name' },
+            rendering: { rows: { expandedLevels: 'all' } },
+            summaryRows: {
+                aggregator: 'SUM',
+                columns: [{ id: 'name', value: 'Total' }]
+            }
+        };
+
+        const grid = await Grid.grid(el, options as any, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            summaryRowObjects(grid)[0].sales, 170,
+            'A row rolled up by another one is left out, so the total ' +
+            'matches the top level rows (100 + 70).'
+        );
+
+        const withParents = await Grid.grid(
+            setupDOM().el,
+            {
+                ...options,
+                summaryRows: {
+                    ...options.summaryRows,
+                    includeParents: true
+                }
+            } as any,
+            true
+        );
+
+        withParents.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            summaryRowObjects(withParents)[0].sales, 340,
+            'includeParents brings the parent values back in.'
+        );
+    });
+
+    it('should keep a parent left alone by a filter in the total',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        id: ['europe', 'france', 'germany'],
+                        parentId: [null, 'europe', 'europe'],
+                        name: ['Europe', 'France', 'Germany'],
+                        sales: [100, 60, 40]
+                    },
+                    idColumn: 'id'
+                },
+                treeView: { enabled: true, treeColumn: 'name' },
+                rendering: { rows: { expandedLevels: 'all' } },
+                summaryRows: { aggregator: 'SUM' }
+            } as any, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            strictEqual(
+                summaryRowObjects(grid)[0].sales, 100,
+                'Unfiltered, only the children count.'
+            );
+
+            // Keep the parent, drop both of its children.
+            grid.querying.filtering.addColumnFilterCondition('sales', {
+                condition: 'greaterThan',
+                value: 90
+            } as any);
+            await grid.querying.proceed();
+
+            strictEqual(
+                summaryRowObjects(grid)[0].sales, 100,
+                'The parent is no longer rolling anything up, so its own ' +
+                'value counts.'
+            );
+        });
+
     it('should aggregate each pipeline stage the scope selects', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
