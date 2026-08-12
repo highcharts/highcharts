@@ -446,6 +446,74 @@ class TreeProjectionController {
     }
 
     /**
+     * Row indexes of a table whose values roll up other rows of the same table,
+     * so that aggregating both would count them twice. A feature aggregating
+     * whole columns (summary rows) skips them.
+     *
+     * A parent row is only reported when at least one of its descendants is
+     * part of the table, so a parent a filter left on its own keeps counting
+     * with its own value.
+     *
+     * @param table
+     * Table the row indexes address.
+     */
+    public getRollupRowIndexes(table: DataTable): Set<number> | undefined {
+        try {
+            // The index is built from the source table and cached by its
+            // version, so this reuses the build of the surrounding query.
+            this.sync();
+        } catch {
+            return;
+        }
+
+        const index = this.indexCache;
+        if (!index) {
+            return;
+        }
+
+        const idColumn = this.getDataOptions()?.idColumn;
+        const idValues = idColumn ? table.columns[idColumn] : void 0;
+        if (idColumn && !idValues) {
+            return;
+        }
+
+        const rowIndexById = new Map<RowId, number>();
+        for (
+            let rowIndex = 0, rowCount = table.getRowCount();
+            rowIndex < rowCount;
+            ++rowIndex
+        ) {
+            const rowId = (idValues && idColumn) ?
+                normalizeRowIdValue(idValues[rowIndex], idColumn, rowIndex) :
+                table.getOriginalRowIndex(rowIndex);
+
+            if (defined(rowId)) {
+                rowIndexById.set(rowId, rowIndex);
+            }
+        }
+
+        const rollupRowIndexes = new Set<number>();
+
+        for (const rowId of rowIndexById.keys()) {
+            const seen = new Set<RowId>([rowId]);
+            let ancestorId = index.nodes.get(rowId)?.parentId ?? null;
+
+            while (ancestorId !== null && !seen.has(ancestorId)) {
+                seen.add(ancestorId);
+
+                const ancestorRowIndex = rowIndexById.get(ancestorId);
+                if (ancestorRowIndex !== void 0) {
+                    rollupRowIndexes.add(ancestorRowIndex);
+                }
+
+                ancestorId = index.nodes.get(ancestorId)?.parentId ?? null;
+            }
+        }
+
+        return rollupRowIndexes;
+    }
+
+    /**
      * Returns source column ids hidden from the projected table.
      */
     public getHiddenSourceColumnIds(): string[] | undefined {
