@@ -2120,7 +2120,8 @@ class Pointer {
             // allow dragging the finger to scroll the page
             if (
                 (chart.tooltip?.options.followTouchMove ?? true) &&
-                isInside
+                isInside &&
+                !(chart.scrollablePixelsX || chart.scrollablePixelsY)
             ) {
                 e.preventDefault();
             }
