@@ -225,7 +225,7 @@ QUnit.test(
         assert.notEqual(
             master.len,
             linked.len,
-            'Sanity check: the two panes have different pixel widths'
+            'Sanity check: the two panes should have different pixel widths'
         );
 
         const lenRatio = linked.len / master.len,
@@ -236,7 +236,7 @@ QUnit.test(
             linkedPixel,
             masterPixel * lenRatio,
             0.5,
-            'A value on the linked axis is placed at a pixel position ' +
+            'A value on the linked axis should be placed at a pixel position ' +
                 'scaled to its own (narrower) pane width, not the ' +
                 'parent\'s pixel position'
         );
@@ -246,7 +246,7 @@ QUnit.test(
             value,
             1e-6,
             'Translating back from pixels to a value on the linked axis ' +
-                'returns the original value'
+                'should return the original value'
         );
     }
 );
