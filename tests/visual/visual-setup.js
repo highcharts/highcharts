@@ -319,57 +319,6 @@
             }
         };
 
-        Highcharts.prepareShot = function (chart) {
-            if (!chart || !chart.series || !chart.series[0]) {
-                return;
-            }
-
-            var points = chart.series[0].nodes ||
-                chart.series[0].points || [];
-            var i = points.length;
-
-            while (i--) {
-                var point = points[i];
-                if (
-                    point &&
-                    point.visible &&
-                    !point.isNull &&
-                    !(
-                        point.shapeArgs &&
-                        point.shapeArgs.d &&
-                        point.shapeArgs.d.length === 0
-                    ) &&
-                    point.series.options.enableMouseTracking !== false &&
-                    typeof point.onMouseOver === 'function'
-                ) {
-                    point.onMouseOver();
-                    break;
-                }
-            }
-
-            var foreignObjects = chart.container.querySelectorAll('foreignObject br');
-            Array.prototype.forEach.call(foreignObjects, function (br) {
-                var div = document.createElement('div');
-                br.parentNode.replaceChild(div, br);
-            });
-
-            var images = chart.container.querySelectorAll('foreignObject img');
-            Array.prototype.forEach.call(images, function (img) {
-                var div = document.createElement('div');
-                div.style.width = '16px';
-                div.style.height = '16px';
-                div.style.position = 'inline-block';
-                div.style.backgroundColor = '#ddd';
-                img.parentNode.replaceChild(div, img);
-            });
-
-            const description = document.querySelector('.highcharts-description');
-            if (description) {
-                description.style.display = 'none';
-            }
-
-        };
-
         var randomValues = [
             0.14102989272214472, 0.0351817375048995, 0.10094573209062219,
             0.35990892769768834, 0.7690574480220675, 0.16634021210484207,

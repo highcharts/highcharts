@@ -1,7 +1,6 @@
-/* eslint-disable playwright/no-conditional-expect */
 /* eslint-disable playwright/no-conditional-in-test */
 import type { Page, BrowserContext } from '@playwright/test';
-import { test, expect} from '@playwright/test';
+import { test } from '@playwright/test';
 import { setupRoutes } from '~/fixtures.ts';
 import {
     getKarmaScripts,
@@ -11,6 +10,38 @@ import {
 } from '~/utils.ts';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
+import { GIFEncoder, applyPalette, quantize } from 'gifenc';
+import {
+    appendError,
+    readReference,
+    recordCandidateResult,
+    writeCandidateCompletion,
+    writeReference
+} from './visual-results.ts';
+
+type VisualComparator = {
+    CANVAS_WIDTH: number;
+    CANVAS_HEIGHT: number;
+    compare: (data1: Uint8ClampedArray, data2: Uint8ClampedArray) => number;
+    createCanvas: (id: string) => HTMLCanvasElement;
+    getSVG: (chart: unknown) => string | undefined;
+    svgToPixels: (
+        svg: string,
+        canvas: HTMLCanvasElement
+    ) => Promise<Uint8ClampedArray>;
+};
+
+type VisualWindow = Window & {
+    VisualComparator?: VisualComparator;
+};
+
+type ComparisonResult = {
+    candidatePixels?: number[];
+    difference: number;
+    height: number;
+    referencePixels?: number[];
+    width: number;
+};
 
 function transformVisualSampleScript(script: string | undefined): string {
     let transformed = script ?? '';
@@ -32,6 +63,8 @@ const MAX_CHART_LOAD_ATTEMPTS = 100;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
 const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
+const root = process.cwd();
+const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
 
@@ -45,6 +78,26 @@ const pageTemplate = (bodyContent = '') =>
     </body>
 </html>`;
 
+function createAnimatedGif(
+    referencePixels: Uint8Array,
+    candidatePixels: Uint8Array,
+    width: number,
+    height: number
+): Uint8Array {
+    const palette = quantize(referencePixels, 256);
+    const gif = GIFEncoder();
+
+    [referencePixels, candidatePixels].forEach(frame => {
+        gif.writeFrame(applyPalette(frame, palette), width, height, {
+            palette,
+            delay: 500
+        });
+    });
+    gif.finish();
+
+    return gif.bytes();
+}
+
 test.describe('Visual tests', () => {
     test.describe.configure({
         timeout: 5_000,
@@ -52,6 +105,7 @@ test.describe('Visual tests', () => {
 
     let page: Page | undefined;
     let context: BrowserContext | undefined;
+    let initialized = false;
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once('SIGINT', async () => {
@@ -84,6 +138,7 @@ test.describe('Visual tests', () => {
         const scripts = [
             ...(await getKarmaScripts()),
             join('tmp', 'json-sources.js'),
+            join('test', 'visual-comparator.js'),
             join('tests', 'visual', 'visual-setup.js')
         ];
 
@@ -94,12 +149,14 @@ test.describe('Visual tests', () => {
         }
 
         await page.waitForFunction(
-            () => window.HCVisualSetup?.initialized === true
+            () => window.HCVisualSetup?.initialized === true &&
+                !!(window as VisualWindow).VisualComparator
         );
         await page.evaluate(() => {
             window.HCVisualSetup?.configure({ mode: 'fast' });
             window.HCVisualSetup?.markOptionsClean();
         });
+        initialized = true;
     });
 
     test.afterEach(async () => {
@@ -124,6 +181,9 @@ test.describe('Visual tests', () => {
         if (context) {
             await context.close();
             context = undefined;
+        }
+        if (!referenceMode && initialized) {
+            writeCandidateCompletion(root);
         }
     });
 
@@ -220,6 +280,10 @@ test.describe('Visual tests', () => {
 
     for (const samplePath of filteredSamples){
         test(samplePath + '', async () =>{
+            const visualSamplePath = relative(
+                join(root, 'samples'),
+                dirname(samplePath)
+            ).replace(/\\/g, '/');
             if (context) {
                 await context.clock.setFixedTime(FIXED_CLOCK_TIME);
             }
@@ -237,159 +301,111 @@ test.describe('Visual tests', () => {
                 test.skip();
             }
 
-            if (!page) {
-                throw new Error('Page not initialized');
-            }
+            let scriptHandle: Awaited<ReturnType<Page['addScriptTag']>> | undefined;
+            try {
+                if (!page) {
+                    throw new Error('Page not initialized');
+                }
 
-            await page.evaluate(body => {
-                window.HCVisualSetup?.beforeSample();
+                await page.evaluate(body => {
+                    window.HCVisualSetup?.beforeSample();
 
-                const testContainer = document.querySelector('div[data-test-container]');
-                testContainer.innerHTML = body;
-            }, sample.html ?? defaultPageContent);
+                    const testContainer = document.querySelector('div[data-test-container]');
+                    testContainer.innerHTML = body;
+                }, sample.html ?? defaultPageContent);
 
-            await setTestingOptions(page);
+                await setTestingOptions(page);
 
-            await page.evaluate(() => {
-                window.HCVisualSetup?.markOptionsClean();
+                await page.evaluate(() => {
+                    window.HCVisualSetup?.markOptionsClean();
 
-                if (window.Highcharts) {
-                    (window.Highcharts as any).setOptions({
-                        chart: {
-                            events: {
-                                load: function () {
-                                    (window as any).setHCStyles(this);
+                    if (window.Highcharts) {
+                        (window.Highcharts as any).setOptions({
+                            chart: {
+                                events: {
+                                    load: function () {
+                                        (window as any).setHCStyles(this);
+                                    }
                                 }
                             }
-                        }
-                    });
-                }
-            });
-
-            // Inject CSS for styled mode like karma-conf.js does
-            const transformedScript = transformVisualSampleScript(
-                sample.script
-            );
-            const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
-
-            if (isStyledMode) {
-                // Add highcharts.css
-                const highchartsCSS = await page.evaluate(() => {
-                    return (window as any).highchartsCSS || '';
+                        });
+                    }
                 });
 
-                if (highchartsCSS) {
-                    const styleHandle = await page.addStyleTag({
-                        content: highchartsCSS
+                // Inject CSS for styled mode like karma-conf.js does
+                const transformedScript = transformVisualSampleScript(
+                    sample.script
+                );
+                const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
+
+                if (isStyledMode) {
+                    // Add highcharts.css
+                    const highchartsCSS = await page.evaluate(() => {
+                        return (window as any).highchartsCSS || '';
                     });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'highcharts.css'
-                    );
+
+                    if (highchartsCSS) {
+                        const styleHandle = await page.addStyleTag({
+                            content: highchartsCSS
+                        });
+                        await styleHandle.evaluate(
+                            (el: HTMLStyleElement) => el.id = 'highcharts.css'
+                        );
+                    }
+
+                    // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
+                    if (sample.css) {
+                        const styleHandle = await page.addStyleTag({
+                            content: sample.css
+                        });
+                        await styleHandle.evaluate(
+                            (el: HTMLStyleElement) => el.id = 'demo.css'
+                        );
+                    }
+                } else {
+                    // For non-styled mode, add demo.css with standard id
+                    if (sample.css) {
+                        const styleHandle = await page.addStyleTag({
+                            content: sample.css
+                        });
+                        await styleHandle.evaluate(
+                            (el: HTMLStyleElement) => el.id = 'visual-test-styles'
+                        );
+                    }
                 }
 
-                // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
-                if (sample.css) {
-                    const styleHandle = await page.addStyleTag({
-                        content: sample.css
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'demo.css'
-                    );
-                }
-            } else {
-                // For non-styled mode, add demo.css with standard id
-                if (sample.css) {
-                    const styleHandle = await page.addStyleTag({
-                        content: sample.css
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'visual-test-styles'
-                    );
-                }
-            }
+                // Load script with timeout handling
+                scriptHandle = await page.addScriptTag({
+                    content: transformedScript
+                });
 
-            // Load script with timeout handling
-            const scriptHandle = await page.addScriptTag({
-                content: transformedScript
-            });
-
-            try {
-                // Wait for chart to load, similar to karma-conf.js waitForChartToLoad
-                const { chartCount, svgContent } = await page.evaluate(
+                const candidateSVG = await page.evaluate(
                     async ({ maxAttempts, retryDelay, timeoutMs }) => {
                         const Highcharts = (window as any).Highcharts;
+                        const comparator =
+                            (window as VisualWindow).VisualComparator;
 
-                        // Modern while loop approach instead of recursion
+                        if (!comparator) {
+                            throw new Error('Visual comparator is not loaded.');
+                        }
+
                         let attempts = 0;
                         while (attempts < maxAttempts) {
                             const chart = Highcharts?.charts?.at(-1);
 
                             if (chart || document.getElementsByTagName('svg').length) {
-                                // Chart exists, prepare shot like karma-setup.js:prepareShot
-                                if (Highcharts && chart) {
-                                    Highcharts.prepareShot(chart);
-                                }
-
-                                // Extract SVG similar to karma-setup.js:getSVG
                                 const validCharts = Highcharts?.charts?.filter(
                                     (c: any) => c &&
                                         c.container &&
                                         !c.renderer?.forExport
                                 ) || [];
+                                const svg = comparator.getSVG(validCharts[0]);
 
-                                const count = validCharts.length;
-                                let svg: string | null = null;
-
-                                if (count >= 1 && validCharts[0]) {
-                                    const container = validCharts[0].container;
-                                    const svgElement = container.querySelector('svg');
-
-                                    if (svgElement) {
-                                        // Step 1: Extract SVG and add xmlns:xlink namespace
-                                        svg = svgElement.outerHTML.replace(
-                                            /<svg /,
-                                            '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
-                                        );
-
-                                        // Step 2: For styled mode, inject CSS into SVG like karma-setup.js
-                                        if (validCharts[0].styledMode) {
-                                            // Inject Highcharts base CSS
-                                            const highchartsCSS = document.getElementById('highcharts.css');
-                                            if (highchartsCSS) {
-                                                svg = svg
-                                                    .replace(
-                                                        ' class="highcharts-root" ',
-                                                        ' class="highcharts-root highcharts-container" ' +
-                                                        'style="width:auto; height:auto" '
-                                                    )
-                                                    .replace(
-                                                        '</defs>',
-                                                        `<style>${highchartsCSS.innerText}</style></defs>`
-                                                    );
-                                            }
-
-                                            // Inject demo-specific CSS
-                                            const demoCSS = document.getElementById('demo.css');
-                                            if (demoCSS) {
-                                                svg = svg.replace(
-                                                    '</defs>',
-                                                    `<style>${demoCSS.innerText}</style></defs>`
-                                                );
-                                            }
-                                        }
-
-                                        // Step 3: Pretty-print SVG like karma-setup.js:prettyXML
-                                        svg = svg
-                                            .replace(/>/g, '>\n')
-                                            // Don't introduce newlines inside tspans or links
-                                            .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
-                                            .replace(/<\/tspan>\n/g, '</tspan>')
-                                            .replace(/<a([^>]*)>\n/g, '<a$1>')
-                                            .replace(/<\/a>\n/g, '</a>');
-                                    }
+                                if (!svg) {
+                                    throw new Error('No candidate SVG found.');
                                 }
 
-                                return { chartCount: count, svgContent: svg };
+                                return svg;
                             }
 
                             attempts++;
@@ -410,20 +426,81 @@ test.describe('Visual tests', () => {
                     }
                 );
 
-                if (svgContent) {
-                    expect(svgContent).toMatchSnapshot(`${samplePath}.svg`);
-                }
-
-                if (svgContent && chartCount === 1) {
-                    // For single chart, still take screenshot but don't compare
-                    await page.screenshot({ fullPage: true });
+                if (referenceMode) {
+                    writeReference(root, visualSamplePath, candidateSVG);
                 } else {
-                    await expect(page).toHaveScreenshot({
-                        fullPage: true
-                    });
+                    const referenceSVG = readReference(root, visualSamplePath);
+                    const comparison = await page.evaluate(
+                        async (
+                            { candidateSVG, referenceSVG }
+                        ): Promise<ComparisonResult> => {
+                            const comparator =
+                                (window as VisualWindow).VisualComparator;
+
+                            if (!comparator) {
+                                throw new Error('Visual comparator is not loaded.');
+                            }
+
+                            const pixels = await Promise.all([
+                                comparator.svgToPixels(
+                                    referenceSVG,
+                                    comparator.createCanvas('reference')
+                                ),
+                                comparator.svgToPixels(
+                                    candidateSVG,
+                                    comparator.createCanvas('candidate')
+                                )
+                            ]);
+                            const difference = comparator.compare(
+                                pixels[0],
+                                pixels[1]
+                            );
+
+                            return {
+                                difference,
+                                width: comparator.CANVAS_WIDTH,
+                                height: comparator.CANVAS_HEIGHT,
+                                ...(difference ? {
+                                    referencePixels: Array.from(pixels[0]),
+                                    candidatePixels: Array.from(pixels[1])
+                                } : {})
+                            };
+                        },
+                        { candidateSVG, referenceSVG }
+                    );
+
+                    if (comparison.difference) {
+                        if (
+                            !comparison.referencePixels ||
+                            !comparison.candidatePixels
+                        ) {
+                            throw new Error('Missing pixels for visual diff GIF.');
+                        }
+
+                        recordCandidateResult(
+                            root,
+                            visualSamplePath,
+                            comparison.difference,
+                            candidateSVG,
+                            createAnimatedGif(
+                                Uint8Array.from(comparison.referencePixels),
+                                Uint8Array.from(comparison.candidatePixels),
+                                comparison.width,
+                                comparison.height
+                            )
+                        );
+                    } else {
+                        recordCandidateResult(root, visualSamplePath, 0);
+                    }
                 }
-            } catch {
-                // noop
+            } catch (error) {
+                appendError(
+                    root,
+                    `Visual test failed for ${visualSamplePath}: ${
+                        error instanceof Error ? error.message : String(error)
+                    }`
+                );
+                throw error;
             } finally {
                 if (page && scriptHandle) {
                     await scriptHandle.evaluate(

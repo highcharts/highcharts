@@ -23,6 +23,7 @@ This directory contains the Playwright test suite for Highcharts products.
 - [Debugging](#debugging)
   - [QUnit browser logs](#qunit-browser-logs)
 - [Environment Variables](#environment-variables)
+- [Playwright Visual Diagnostic](#playwright-visual-diagnostic)
 - [FAQ](#faq)
 - [Common Issues](#common-issues)
 - [Resources](#resources)
@@ -734,6 +735,7 @@ npx playwright show-trace test-results/<test-folder>/trace.zip
 | `QUNIT_TEST_PATH` | Glob-enabled QUnit test path (e.g., `unit-tests/rangeselector/*`) |
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
 | `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
+| `VISUAL_TEST_REFERENCE` | Set to `1` to write the reference SVG for the selected sample instead of comparing |
 
 Examples:
 
@@ -747,6 +749,56 @@ VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --projec
 # Test against live CDN
 NO_REWRITES=1 npx playwright test
 ```
+
+## Playwright Visual Diagnostic
+
+> **Note:** This is a non-authoritative local diagnostic. Karma remains the authoritative visual test runner. Results here do not gate merges and do not replace Karma visual testing.
+
+The `visual` Playwright project (`tests/visual/visual.spec.ts`) can render a single sample to SVG, compare it against a stored reference, and record a pixel-difference count. It runs on Chromium only and is currently scoped to samples that have a `reference.svg` committed alongside their `demo.*` file.
+
+### Workflow
+
+Run the two commands in order for the same sample:
+
+**1. Generate the reference** (write once, or to refresh):
+
+```sh
+VISUAL_TEST_PATH=samples/highcharts/demo/area-missing \
+VISUAL_TEST_REFERENCE=1 \
+npx playwright test tests/visual/visual.spec.ts --project=visual
+```
+
+This writes `samples/highcharts/demo/area-missing/reference.svg` and exits. It does **not** produce candidate output, results JSON, or a completion marker. Re-running it overwrites the existing file, so only run this intentionally.
+
+**2. Run the candidate comparison**:
+
+```sh
+VISUAL_TEST_PATH=samples/highcharts/demo/area-missing \
+npx playwright test tests/visual/visual.spec.ts --project=visual
+```
+
+### Outputs
+
+| File | Written when |
+|------|-------------|
+| `samples/<path>/reference.svg` | Reference mode only |
+| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 |
+| `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
+| `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
+| `test/visual-test-errors.log` | Any sample or terminal error during the run |
+| `test/visual-test-complete` | Candidate mode, after spec finalization completes |
+
+### Failure semantics
+
+A **numeric pixel difference** recorded in `test/visual-test-results.json` is diagnostic and does not itself fail the Playwright run. The following conditions are failures:
+
+- The sample script throws or the chart does not load within the timeout
+- The browser context or Playwright process terminates unexpectedly
+- `reference.svg` is absent when candidate mode is run
+- `test/visual-test-errors.log` is non-empty after the run
+- `test/visual-test-complete` is absent after the run (indicates the spec never reached finalization)
+
+The CI workflow uses these markers to gate result artifact upload and report errors; locally they are informational.
 
 ## FAQ
 

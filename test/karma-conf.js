@@ -309,6 +309,7 @@ module.exports = function (config) {
             ...files,
 
             // Set up
+            'test/visual-comparator.js',
             'test/karma-setup.js',
 
             // Tests
