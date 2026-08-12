@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual } from 'node:assert';
 
-import { mockObservers, setupDOM } from '../../../test-utils';
+import { mockObservers, setupDOM } from '../../../../test-utils';
 
 function installGridDOMGlobals(
     win: any,
@@ -27,7 +27,7 @@ function installGridDOMGlobals(
 }
 
 function loadGridPro() {
-    return import('../../../../../ts/masters-grid/grid-pro.src.js');
+    return import('../../../../../../ts/masters-grid/grid-pro.src.js');
 }
 
 function cellOf(grid: any, rowIndex: number, columnId: string): any {
@@ -49,7 +49,7 @@ const EDITABLE = {
     }
 };
 
-describe('Column aggregation (columnAggregator)', () => {
+describe('SummaryColumns', () => {
     it('should aggregate the listed columns of the same row', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
@@ -364,6 +364,180 @@ describe('Column aggregation (columnAggregator)', () => {
             pinnedCell('total').value, 7,
             'The pinned derived cell follows the edited source value.'
         );
+    });
+
+    it('should be sortable, filterable and exportable when materialized',
+        async () => {
+            const { win, doc, el } = setupDOM();
+            mockObservers(win);
+            installGridDOMGlobals(win, doc);
+
+            const Grid = await loadGridPro();
+
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        region: ['a', 'b', 'c'],
+                        q1: [1, 100, 10],
+                        q2: [2, 200, 20]
+                    }
+                },
+                columnDefaults: EDITABLE,
+                columns: [{
+                    id: 'total',
+                    columnAggregator: 'SUM',
+                    aggregatedColumns: ['q1', 'q2'],
+                    materialize: true,
+                    sorting: { enabled: true }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const policy = (grid as any).columnPolicy;
+
+            strictEqual(
+                policy.isColumnUnbound('total'), false,
+                'A materialized column counts as bound.'
+            );
+            strictEqual(
+                policy.isColumnSortingEnabled('total'), true,
+                'Sorting is unlocked for it.'
+            );
+            strictEqual(
+                policy.isColumnExportable('total'), true,
+                'Exporting is unlocked for it.'
+            );
+            strictEqual(
+                cellOf(grid, 0, 'total').isEditable(), false,
+                'The derived cells stay read-only.'
+            );
+            strictEqual(
+                cellOf(grid, 0, 'total').value, 3,
+                'The materialized value is rendered.'
+            );
+
+            // The value must live in the queried table, not only in the cell.
+            deepStrictEqual(
+                Array.from(
+                    (grid.dataProvider as any).presentationTable
+                        .getColumn('total')
+                ),
+                [3, 300, 30],
+                'The aggregate is a column of the queried table.'
+            );
+
+            await (grid as any).viewport.getColumn('total').sorting?.setOrder(
+                'desc'
+            );
+
+            deepStrictEqual(
+                [0, 1, 2].map(
+                    (row): unknown => cellOf(grid, row, 'total').value
+                ),
+                [300, 30, 3],
+                'Sorting by the materialized column reorders the rows.'
+            );
+
+            grid.querying.filtering.addColumnFilterCondition('total', {
+                condition: 'greaterThan',
+                value: 20
+            } as any);
+            await grid.querying.proceed();
+            await (grid as any).viewport.updateRows();
+
+            strictEqual(
+                (grid.dataProvider as any).presentationTable.getRowCount(), 2,
+                'Filtering by the materialized column drops rows.'
+            );
+        });
+
+    it('should recompute a materialized column after an edit', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: QUARTERS
+            },
+            columnDefaults: EDITABLE,
+            columns: [{
+                id: 'total',
+                columnAggregator: 'SUM',
+                aggregatedColumns: ['q1', 'q2'],
+                materialize: true
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            grid.querying.willNotModify(), false,
+            'The materializing modifier makes an edit requery.'
+        );
+
+        await cellOf(grid, 0, 'q1').editValue(5);
+
+        strictEqual(
+            cellOf(grid, 0, 'total').value, 7,
+            'The materialized total follows the edited source value.'
+        );
+    });
+
+    it('should not materialize without a local data provider', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+        const warnings: string[] = [];
+        const originalWarn = console.warn;
+
+        // eslint-disable-next-line no-console
+        console.warn = (message: string): void => {
+            warnings.push(message);
+        };
+
+        try {
+            const grid = await Grid.grid(el, {
+                data: {
+                    providerType: 'remote',
+                    fetchCallback: (): unknown => ({
+                        columns: { q1: [1, 10], q2: [2, 20] },
+                        totalRowCount: 2
+                    })
+                } as any,
+                columns: [{
+                    id: 'total',
+                    columnAggregator: 'SUM',
+                    aggregatedColumns: ['q1', 'q2'],
+                    materialize: true
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            strictEqual(
+                (grid as any).columnPolicy.isColumnUnbound('total'), true,
+                'The column stays unbound, so sorting stays locked.'
+            );
+            strictEqual(
+                cellOf(grid, 0, 'total').value, 3,
+                'It falls back to resolving the rendered cells.'
+            );
+            strictEqual(
+                warnings.filter((message): boolean =>
+                    message.indexOf('Summary columns:') === 0).length > 0,
+                true,
+                'The unsupported combination is reported.'
+            );
+        } finally {
+            // eslint-disable-next-line no-console
+            console.warn = originalWarn;
+        }
     });
 
     it('should recompute a cells.valueGetter column on edit too', async () => {
