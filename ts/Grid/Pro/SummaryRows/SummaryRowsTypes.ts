@@ -197,6 +197,30 @@ export interface SummaryRowOptions {
      * @default 'filtered'
      */
     scope?: SummaryRowScope;
+
+    /**
+     * Whether a parent row of a TreeView contributes its own value, on top of
+     * the rows below it.
+     *
+     * Source data often carries pre-calculated parent values. Aggregating those
+     * together with their children counts the same numbers twice, so by default
+     * a row is skipped whenever another row it rolls up is aggregated as well.
+     * A parent a filter left on its own is not rolling anything up, so it keeps
+     * counting.
+     *
+     * Set it to `true` when a parent row is an independent data point rather
+     * than a total of its children, for example a department's own cost next to
+     * the costs of its teams.
+     *
+     * It has no effect without TreeView: row grouping generates its parent
+     * rows, so they are never part of the aggregated source data.
+     *
+     * @sample grid-pro/options/summary-rows-include-parents
+     *         Pre-calculated parent values
+     *
+     * @default false
+     */
+    includeParents?: boolean;
 }
 
 /**
