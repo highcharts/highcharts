@@ -5,7 +5,7 @@ Generates agent skill reference files by copying filtered markdown docs from `do
 ## Quick start
 
 ```bash
-npm run generate:skills
+npm run generate:skills -- --yes
 ```
 
 Or directly (`--yes` is required to confirm overwrite):
@@ -36,7 +36,7 @@ node tools/generate-doc-skills.js --yes
 `references/` directories are gitignored. Regenerate them after cloning:
 
 ```bash
-npm run generate:skills
+npm run generate:skills -- --yes
 ```
 
 ## Adding a new skill

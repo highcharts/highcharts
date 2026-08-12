@@ -6,6 +6,8 @@ on:
     paths:
       - '.agents/skills/**'
       - '.claude/skills/**'
+      - 'docs/**'
+      - 'package.json'
       - 'tools/generate-doc-skills.js'
       - 'tools/skill-configs/**'
       - '.github/workflows/validate-skills.yml'
@@ -25,6 +27,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7.0.0
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Generate and validate skills
+        run: |
+          node tools/generate-doc-skills.js --self-test
+          node tools/generate-doc-skills.js --yes
+          git diff --exit-code -- .agents/skills .claude/skills
 
       - name: Use Python
         uses: actions/setup-python@v6.3.0
