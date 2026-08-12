@@ -9,8 +9,8 @@ component will be bound to.
 | [Subtitle](https://www.highcharts.com/docs/react/components/chart-elements/subtitle) | [subtitle.text](https://api.highcharts.com/highcharts/subtitle.text)           |
 | [Credits](https://www.highcharts.com/docs/react/components/chart-elements/credits)   | [credits.text](https://api.highcharts.com/highcharts/credits.text)             |
 | [Tooltip](https://www.highcharts.com/docs/react/components/chart-elements/tooltip)   | [tooltip.format](https://api.highcharts.com/highcharts/tooltip.format)         |
-| [XAxis](https://www.highcharts.com/docs/react/components/chart-elements/x-axis)      | [xAxis.title.text](https://api.highcharts.com/highcharts/xAxis.title.text)     |
-| [YAxis](https://www.highcharts.com/docs/react/components/chart-elements/y-axis)      | [yAxis.title.text](https://api.highcharts.com/highcharts/yAxis.title.text)     |
+| [XAxis](https://www.highcharts.com/docs/react/components/chart-elements/xaxis)       | [xAxis.title.text](https://api.highcharts.com/highcharts/xAxis.title.text)     |
+| [YAxis](https://www.highcharts.com/docs/react/components/chart-elements/yaxis)       | [yAxis.title.text](https://api.highcharts.com/highcharts/yAxis.title.text)     |
 | [Legend](https://www.highcharts.com/docs/react/components/chart-elements/legend)     | [legend.labelFormat](https://api.highcharts.com/highcharts/legend.labelFormat) |
 
 ## Advanced configuration

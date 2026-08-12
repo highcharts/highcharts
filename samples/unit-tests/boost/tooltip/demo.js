@@ -85,7 +85,7 @@ QUnit.test(
                 }
             },
             boost: {
-                usePreAllocated: true
+                usePreallocated: true
             },
             xAxis: {
                 min: 0,
@@ -168,7 +168,7 @@ QUnit.skip(
                 }
             },
             boost: {
-                usePreAllocated: true
+                usePreallocated: true
             },
             xAxis: {
                 min: 0,

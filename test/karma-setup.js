@@ -79,6 +79,11 @@ Highcharts.setOptions({
     chart: {
         animation: false
     },
+    colorAxis: {
+        marker: {
+            animation: false
+        }
+    },
     lang: {
         locale: 'en-GB'
     },
@@ -612,6 +617,7 @@ Highcharts.prepareShot = function (chart) {
                     points[i].shapeArgs.d &&
                     points[i].shapeArgs.d.length === 0
                 ) &&
+                points[i].series.options.enableMouseTracking !== false &&
                 typeof points[i].onMouseOver === 'function'
             ) {
                 points[i].onMouseOver();

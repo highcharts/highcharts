@@ -102,3 +102,145 @@ QUnit.test('DataTable in Standalone Navigator.', function (assert) {
         'Standalone navigator should render points from DataTable options.'
     );
 });
+
+QUnit.test(
+    'Panning a y-axis bound to a standalone navigator (#24716)',
+    function (assert) {
+        const navContainer = document.createElement('div');
+        navContainer.style.height = '400px';
+        navContainer.style.width = '120px';
+        navContainer.id = 'nav-ypan';
+        document.getElementById('container').appendChild(navContainer);
+
+        const chartContainer = document.createElement('div');
+        chartContainer.style.height = '400px';
+        chartContainer.style.width = '600px';
+        chartContainer.id = 'chart-ypan';
+        document.getElementById('container').appendChild(chartContainer);
+
+        const data = [],
+            seriesDataMax = 150;
+
+        for (let i = 0; i < 50; i++) {
+            data.push([Date.UTC(2023, 0, 1) + i * 864e5, 100 + i]);
+        }
+
+        // Ordinal x-axis stays at its full extent, the standalone navigator is
+        // bound to the y-axis. The navigator range is deliberately wider than
+        // the series' data
+        const chart = Highcharts.stockChart('chart-ypan', {
+            chart: {
+                panning: {
+                    enabled: true,
+                    type: 'xy'
+                }
+            },
+            navigator: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: false
+            },
+            rangeSelector: {
+                enabled: false
+            },
+            series: [{
+                data
+            }]
+        });
+
+        const navigator = Highcharts.navigator('nav-ypan', {
+            chart: {
+                chart: {
+                    inverted: true,
+                    height: 400,
+                    width: 120
+                }
+            },
+            series: [{
+                data: [
+                    [100, 0], [300, 1]
+                ]
+            }]
+        });
+
+        const yAxis = chart.yAxis[0],
+            // The axis' own extremes before binding overrides them
+            initialYMin = yAxis.min,
+            initialYMax = yAxis.max;
+
+        navigator.bind(yAxis, true);
+
+        // Binding a y-axis bounds it to the navigator's range, so panning can
+        // traverse the whole navigator rather than only the data extremes
+        assert.strictEqual(
+            yAxis.options.min,
+            100,
+            'Binding a y-axis should set min to the navigator data min, #24716.'
+        );
+        assert.strictEqual(
+            yAxis.options.max,
+            300,
+            'Binding a y-axis should set max to the navigator data max, #24716.'
+        );
+
+        // Zoom into a sub-range so there is room to pan vertically
+        navigator.setRange(120, 140);
+
+        const yMinBefore = yAxis.min,
+            navMinBefore = navigator.getRange().min,
+            controller = new TestController(chart),
+            cx = chart.plotLeft + chart.plotWidth / 2;
+
+        // Pan up (drag down) repeatedly, past the series' data max
+        for (let i = 0; i < 6; i++) {
+            controller.pan(
+                [cx, chart.plotTop + 20],
+                [cx, chart.plotTop + chart.plotHeight - 20]
+            );
+        }
+
+        assert.notStrictEqual(
+            yAxis.min,
+            yMinBefore,
+            'Panning vertically should change the y-axis extremes even when ' +
+            'the ordinal x-axis is at its full extent, #24716.'
+        );
+
+        assert.notStrictEqual(
+            navigator.getRange().min,
+            navMinBefore,
+            'The bound standalone navigator should follow the chart y-axis ' +
+            'while panning, #24716.'
+        );
+
+        assert.ok(
+            yAxis.max > seriesDataMax,
+            'Panning should move past the series data extremes, up to the ' +
+            'navigator range, #24716.'
+        );
+
+        // Unbinding with restoreExtremes should update the y-axis min and max
+        // back to the axis' own bounds from before binding
+        navigator.unbind(yAxis, true);
+
+        assert.strictEqual(
+            yAxis.min,
+            initialYMin,
+            'Unbinding should update the unbound y-axis min back to its own ' +
+            'pre-bind extreme, #24716.'
+        );
+        assert.strictEqual(
+            yAxis.max,
+            initialYMax,
+            'Unbinding should update the unbound y-axis max back to its own ' +
+            'pre-bind extreme, #24716.'
+        );
+
+        // Cleanup
+        navigator.destroy();
+        navContainer.parentNode.removeChild(navContainer);
+        chart.destroy();
+        chartContainer.parentNode.removeChild(chartContainer);
+    }
+);

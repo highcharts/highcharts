@@ -70,6 +70,9 @@ const grid = Grid.grid('container', {
     },
     columns: [{
         id: 'product',
+        header: {
+            format: 'Product'
+        },
         cells: {
             editMode: {
                 enabled: false
@@ -77,6 +80,9 @@ const grid = Grid.grid('container', {
         }
     }, {
         id: 'available',
+        header: {
+            format: 'Available'
+        },
         dataType: 'boolean',
         cells: {
             format: '{#if value}Yes{else}No{/if}',
@@ -109,6 +115,9 @@ const grid = Grid.grid('container', {
         }
     }, {
         id: 'price',
+        header: {
+            format: 'Price'
+        },
         cells: {
             format: '{value:.2f} €',
             editMode: {
