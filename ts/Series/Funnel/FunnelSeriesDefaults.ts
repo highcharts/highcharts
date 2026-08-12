@@ -242,6 +242,13 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * @apioption series.funnel.data
  */
 
+/**
+ * Options for a selected funnel item.
+ *
+ * @excluding halo, marker, lineWidth, lineWidthPlus
+ * @apioption series.funnel.states.select
+ */
+
 ''; // Keeps doclets above separate
 
 /* *
