@@ -97,6 +97,7 @@ const offlineIcon = `
 
 export default function GridComponent() {
     const [options] = useState<GridOptions>({
+        gridKey: 'YOUR-GRID-KEY-HERE',
         data: {
             dataTable
         },

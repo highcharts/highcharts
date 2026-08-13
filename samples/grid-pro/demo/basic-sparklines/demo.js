@@ -87,6 +87,7 @@ const offlineIcon = `
 `;
 
 const grid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         dataTable
     },
