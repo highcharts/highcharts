@@ -1,12 +1,20 @@
 
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/geoheatmap.js"></script>
+<script src="https://code.highcharts.com/modules/sonification.js"></script>
 <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
 
 <figure class="highcharts-figure">
+    <div
+        class="flight-controls"
+    >
+        <button id="remove-point" type="button">Remove point</button>
+        <button id="new-route" type="button">New route</button>
+    </div>
     <div id="container"></div>
     <p class="highcharts-description">
-        Map showing how a TopoJSON map source is handled and how the built-in
-        orthographic projection is used.
+        Select a flight destination to remove it or create a new connection
+        from it. Select New route to start a separate route on the map.
     </p>
 </figure>

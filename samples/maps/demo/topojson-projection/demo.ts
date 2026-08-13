@@ -3,6 +3,11 @@ declare namespace Highcharts {
     // Allow a custom property on the map chart
     interface MapChart {
         sea?: Highcharts.SVGElement;
+        rotationTimer?: number;
+        rotationFrame?: number;
+        sonification?: Highcharts.Sonification;
+        mapView?: Highcharts.mapView
+        currentPoint?: Highcharts.Point;
     }
 
     // Some internal properties on the series
@@ -16,103 +21,149 @@ const createMap = (
     topology: Highcharts.TopoJSON,
     data: Highcharts.SeriesMapDataOptions[],
     graticuleData: Highcharts.SeriesMaplineDataOptions[]
-) =>  Highcharts.mapChart('container', {
-    chart: {
-        map: topology
-    },
+) => {
+    const chart = Highcharts.mapChart('container', {
+        chart: {
+            map: topology
+        },
 
-    title: {
-        text: 'Population density per country',
-        floating: true,
-        align: 'left',
-        style: {
-            textOutline: '2px contrast'
-        }
-    },
+        title: {
+            text: 'Population density per country',
+            floating: true,
+            align: 'left',
+            style: {
+                textOutline: '2px contrast'
+            }
+        },
 
-    subtitle: {
-        text: '- and a popular flight route<br>Click and drag to rotate globe',
-        floating: true,
-        y: 34,
-        align: 'left'
-    },
+        subtitle: {
+            text: 'Select a point to extend or remove it<br>' +
+                    'Click and drag to rotate globe',
+            floating: true,
+            y: 34,
+            align: 'left'
+        },
 
-    legend: {
-        enabled: false
-    },
-
-    mapNavigation: {
-        enabled: true,
-        enableDoubleClickZoomTo: true,
-        buttonOptions: {
-            verticalAlign: 'bottom'
-        }
-    },
-
-    mapView: {
-        maxZoom: 30,
-        projection: {
-            name: 'Orthographic',
-            rotation: [20, -30]
-        }
-    },
-
-    colorAxis: {
-        minColor: 'light-dark(#BFCFAD, #78a37c)',
-        maxColor: 'light-dark(#31784B, #0b250d)',
-        max: 800
-    },
-
-    tooltip: {
-        pointFormat: '{point.name}: {point.value} / km²'
-    },
-
-    plotOptions: {
-        series: {
-            animation: {
-                duration: 750
-            },
-            clip: false
-        }
-    },
-
-    series: [{
-        name: 'Graticule',
-        id: 'graticule',
-        type: 'mapline',
-        data: graticuleData,
-        nullColor: '#aaa3',
-        accessibility: {
+        legend: {
             enabled: false
         },
-        enableMouseTracking: false,
-        states: {
-            inactive: {
+
+        mapNavigation: {
+            enabled: true,
+            enableDoubleClickZoomTo: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        mapView: {
+            maxZoom: 30,
+            projection: {
+                name: 'Orthographic',
+                rotation: [20, -30]
+            }
+        },
+
+        colorAxis: [{
+            minColor: 'light-dark(#BFCFAD, #78a37c)',
+            maxColor: 'light-dark(#31784B, #0b250d)',
+            max: 800
+        }, {
+            min: 0,
+            max: 1,
+            showInLegend: false,
+            minColor: '#ffffff00',
+            maxColor: '#ffff'
+        }],
+
+        tooltip: {
+            pointFormat: '{point.name}: {point.value} / km²'
+        },
+        plotOptions: {
+            series: {
+                animation: {
+                    duration: 750
+                },
+                clip: false
+            }
+        },
+
+        series: [{
+            name: 'Graticule',
+            id: 'graticule',
+            type: 'mapline',
+            data: graticuleData,
+            nullColor: '#aaa3',
+            accessibility: {
                 enabled: false
+            },
+            enableMouseTracking: false,
+            states: {
+                inactive: {
+                    enabled: false
+                }
             }
-        }
-    }, {
-        data,
-        joinBy: ['iso-a2', 'code'],
-        name: 'Population density',
-        borderColor: 'light-dark(#aaa, #333)',
-        states: {
-            hover: {
-                color: '#a4edba',
-                borderColor: '#333333'
+        }, {
+            data,
+            joinBy: ['iso-a2', 'code'],
+            name: 'Population density',
+            borderColor: 'light-dark(#aaa, #333)',
+            states: {
+                hover: {
+                    color: '#a4edba',
+                    borderColor: '#333333'
+                }
+            },
+            nullColor: 'light-dark(#c0c0c0, #aaa)',
+            dataLabels: {
+                enabled: false,
+                format: '{point.name}'
+            },
+            id: 'choropleth',
+            accessibility: {
+                exposeAsGroupOnly: true
             }
-        },
-        nullColor: 'light-dark(#c0c0c0, #aaa)',
-        dataLabels: {
-            enabled: false,
-            format: '{point.name}'
-        },
-        id: 'choropleth',
-        accessibility: {
-            exposeAsGroupOnly: true
-        }
-    }]
-});
+        }, {
+            type: 'mappoint',
+            id: 'clicked-points',
+            name: 'Clicked points',
+            cursor: 'pointer',
+            animation: true,
+            data: [],
+            color: '#313f77',
+            marker: {
+                lineWidth: 1,
+                lineColor: '#fff',
+                states: {
+                    select: {
+                        fillColor: '#fff',
+                        lineColor: '#313f77',
+                        lineWidth: 3,
+                        radius: 7
+                    }
+                }
+            }
+        }, {
+            type: 'mapline',
+            animation: false,
+            id: 'flight-route',
+            data: [],
+            lineWidth: 2,
+            accessibility: {
+                exposeAsGroupOnly: true
+            }
+        }]
+    });
+    return chart;
+};
+
+// Define buttons used to remove points and to add new routes.
+const removeButton = document.getElementById(
+    'remove-point'
+) as HTMLButtonElement;
+const newRouteButton = document.getElementById(
+    'new-route'
+) as HTMLButtonElement;
 
 // Create the coordinates for the graticule, the grid of meridians and parallels
 const graticuleData = ((
@@ -156,96 +207,224 @@ const graticuleData = ((
     return data;
 })(15, 10);
 
-// Add flight route and gentle rotation after the initial animation of the
-// main series.
-Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
-    const chart = this.chart as Highcharts.MapChart;
+function setupControls(chart: Highcharts.MapChart): void {
+    removeButton.addEventListener('click', (): void => {
+        if (chart.currentPoint) {
+            removePoint(chart.currentPoint, chart);
+        }
+    });
+    newRouteButton.addEventListener('click', (): void => {
+        chart.currentPoint?.select(false);
+        chart.currentPoint = void 0;
+        updateControls(chart);
+    });
 
-    if (this.options.id === 'choropleth') {
-        chart.addSeries({
-            type: 'mapline',
-            name: 'Flight route, Amsterdam - Los Angeles',
-            animation: false,
-            id: 'flight-route',
-            data: [{
-                geometry: {
-                    type: 'LineString',
-                    coordinates: [
-                        [4.90, 53.38], // Amsterdam
-                        [-118.24, 34.05] // Los Angeles
-                    ]
-                },
-                color: 'light-dark(#313f77, #fff)'
-            }],
-            lineWidth: 2,
-            accessibility: {
-                exposeAsGroupOnly: true
+    updateControls(chart);
+}
+
+function updateControls(chart: Highcharts.MapChart): void {
+    removeButton.disabled = !chart.currentPoint;
+    newRouteButton.disabled = !chart.currentPoint;
+}
+
+function addInitialFlight(chart) {
+    // Add a flight path between Amsterdam and Los Angeles
+    const amsterdamPoint = {
+        point: {
+            name: 'Amsterdam'
+        },
+        lon: 4.90,
+        lat: 53.38
+    };
+    const losAngelesPoint = {
+        point: {
+            name: 'Los Angeles'
+        },
+        lon: -118.24,
+        lat: 34.05
+    };
+    addLinePoint(amsterdamPoint, chart);
+    addLinePoint(losAngelesPoint, chart);
+}
+
+function setupAutoRotation(chart: Highcharts.MapChart): void {
+    const mapView = chart.mapView;
+    const globeRotationSpeed = 0.1 / 50;
+    let lastTimestamp: number | undefined;
+
+    const rotate = (timestamp: number): void => {
+        const elapsed = lastTimestamp === undefined ?
+            0 : timestamp - lastTimestamp;
+        const projectionOptions = mapView.projection.options as any;
+
+        lastTimestamp = timestamp;
+        mapView.update({
+            projection: {
+                rotation: [
+                    projectionOptions.rotation[0] +
+                        (elapsed * globeRotationSpeed),
+                    projectionOptions.rotation[1]
+                ]
             }
         }, false);
-        chart.addSeries({
-            type: 'mappoint',
-            animation: false,
-            data: [{
-                name: 'Amsterdam',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [4.90, 53.38]
-                }
-            }, {
-                name: 'LA',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [-118.24, 34.05]
-                }
-            }],
-            color: '#313f77',
-            marker: {
-                lineWidth: 1,
-                lineColor: '#fff'
-            },
-            accessibility: {
-                enabled: false
+        // recenter globe after rotation
+        mapView.setView(
+            mapView.projection.inverse([0, 0]),
+            mapView.zoom,
+            true,
+            false
+        );
+
+        chart.rotationFrame = requestAnimationFrame(rotate);
+    };
+
+    const stopRotation = (): void => {
+        if (chart.rotationFrame) {
+            cancelAnimationFrame(chart.rotationFrame);
+        }
+    };
+
+    const startRotation = (): void => {
+        lastTimestamp = undefined;
+        chart.rotationFrame = requestAnimationFrame(rotate);
+    };
+
+    const scheduleRotation = (delay = 5000): void => {
+        if (chart.rotationTimer) {
+            clearTimeout(chart.rotationTimer);
+        }
+        chart.rotationTimer = window.setTimeout(startRotation, delay);
+    };
+
+    // Reset timer once the user drags the globe
+    const container = chart.container as HTMLElement;
+    container?.addEventListener('mouseover', () => {
+        stopRotation();
+        scheduleRotation();
+    });
+    startRotation();
+}
+
+function addConnection(from, to, series): void {
+    series.addPoint({
+        geometry: {
+            type: 'LineString',
+            coordinates: [
+                from.geometry.coordinates,
+                to.geometry.coordinates
+            ]
+        },
+        color: 'light-dark(#313f77, #fff)',
+        custom: {
+            from: from.id,
+            to: to.id
+        }
+    }, false);
+}
+
+function selectPoint(
+    point: Highcharts.Point,
+    chart: Highcharts.MapChart
+): void {
+    point.select(true);
+    chart.currentPoint = point;
+    updateControls(chart);
+}
+
+// Add flight route and gentle rotation after clicking the map
+function addLinePoint(event, chart) {
+    const pointSeries = chart.get('clicked-points'),
+        lineSeries = chart.get('flight-route'),
+        lastPoint = chart.currentPoint,
+        newPoint = {
+            id: Highcharts.uniqueKey(),
+            name: event.point.name,
+            geometry: {
+                type: 'Point',
+                coordinates: [event.lon, event.lat]
             }
-        }, false);
-        chart.redraw(false);
-
-        // Start a gentle rotation
-        let rotationFrame = 0,
-            lastTimestamp: number | undefined;
-
-        const rotate = (timestamp: number): void => {
-            const elapsed = lastTimestamp === undefined ?
-                    0 :
-                    timestamp - lastTimestamp,
-                projectionOptions = chart.options.mapView.projection as
-                    Highcharts.MapViewProjectionOptions;
-
-            lastTimestamp = timestamp;
-            chart.update({
-                mapView: {
-                    projection: {
-                        rotation: [
-                            projectionOptions.rotation[0] +
-                                (elapsed * 0.1 / 50),
-                            projectionOptions.rotation[1]
-                        ]
-                    }
-                }
-            }, undefined, undefined, false);
-
-            rotationFrame = requestAnimationFrame(rotate);
         };
 
-        rotationFrame = requestAnimationFrame(rotate);
+    if (lastPoint) {
+        addConnection(lastPoint.options, newPoint, lineSeries);
+    }
+    pointSeries.addPoint(newPoint, false);
+    chart.redraw(false);
+    selectPoint(pointSeries.data[pointSeries.data.length - 1], chart);
 
-        // Clear once the user drags the globe
-        document.getElementById('container')
-            ?.addEventListener('mouseover', () => {
-                cancelAnimationFrame(rotationFrame);
-            });
+    // Play ascending notes for adding a point
+    chart.sonification?.playNote('vibraphone', {
+        note: 'C3',
+        noteDuration: 150,
+        volume: 0.3
+    });
+}
+
+function removePoint(point, chart) {
+    const pointSeries = chart.get('clicked-points'),
+        lineSeries = chart.get('flight-route'),
+        toRemove: Highcharts.Point[] = [],
+        neighbours: Highcharts.Point[] = [];
+
+    lineSeries.data.forEach((line): void => {
+        const { from, to } = line.options.custom || {};
+        if (from === point.id || to === point.id) {
+            const neighbour = pointSeries.data.find(
+                (routePoint): boolean =>
+                    routePoint.id === (from === point.id ? to : from)
+            );
+            if (neighbour) {
+                neighbours.push(neighbour);
+            }
+            toRemove.push(line);
+        }
+    });
+    toRemove.forEach((line): void => line.remove(false));
+
+    // Preserve an unbranched route when removing a point in the middle.
+    if (neighbours.length === 2) {
+        addConnection(
+            neighbours[0].options,
+            neighbours[1].options,
+            lineSeries
+        );
+    }
+
+    point.remove(false, false);
+    chart.currentPoint = neighbours[0];
+    chart.redraw(false);
+    if (chart.currentPoint) {
+        selectPoint(chart.currentPoint, chart);
+    } else {
+        updateControls(chart);
+    }
+
+    // Play descending notes for removing a point
+    chart.sonification?.playNote('vibraphone', {
+        note: 'C2',
+        noteDuration: 150,
+        volume: 0.3
+    });
+}
+
+// Handle interactions outside the chart configuration.
+Highcharts.addEvent(Highcharts.Series, 'click', function (event) {
+    const chart = this.chart as Highcharts.MapChart;
+    if (this.options.id === 'choropleth') {
+        addLinePoint(event, chart);
+    } else if (this.options.id === 'clicked-points') {
+        selectPoint(event.point, chart);
     }
 });
 
+Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
+    const chart = this.chart as Highcharts.MapChart;
+    if (this.options.id === 'choropleth') {
+        addInitialFlight(chart);
+        setupControls(chart);
+        setupAutoRotation(chart);
+    }
+});
 
 // Render a circle filled with a radial gradient behind the globe to make it
 // appear as the sea around the continents
