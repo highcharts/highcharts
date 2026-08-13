@@ -337,6 +337,8 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * @deprecated 9.3.3
      *
      * @since 6.0.0
+     *
+     * @apioption plotOptions.sunburst.traverseUpButton
      */
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
