@@ -159,9 +159,6 @@ class Pointer {
      */
     public hasDragged: number = 0;
 
-    /** @internal */
-    public hasPinched?: boolean;
-
     /**
      * Indicates if there has been a movement larger than ~4px during
      * a pinch event.
@@ -603,9 +600,9 @@ class Pointer {
             }
         }
 
-        // Run a final transform with a drop trigger to display the reset zoom
-        // button after a pinch gesture (#22128)
-        if (e?.type === 'touchend') {
+        // Run a final transform with a drop trigger to display the reset
+        // zoom button after a pinch gesture (#22128)
+        if (e?.type === 'touchend' && this.hasDragged) {
             chart.transform({ trigger: 'drop' });
         }
 
@@ -1446,6 +1443,10 @@ class Pointer {
                     trigger: e.type
                 });
 
+                // Record a truthy value in order to trigger the final transform
+                // in the drop function
+                pointer.hasDragged = 1;
+
             });
 
             if (pointer.res) {
@@ -2119,7 +2120,8 @@ class Pointer {
             // allow dragging the finger to scroll the page
             if (
                 (chart.tooltip?.options.followTouchMove ?? true) &&
-                isInside
+                isInside &&
+                !(chart.scrollablePixelsX || chart.scrollablePixelsY)
             ) {
                 e.preventDefault();
             }

@@ -44,7 +44,7 @@ import type SankeySeriesOptions from './SankeySeriesOptions';
  * @extends      plotOptions.column
  * @since        6.0.0
  * @product      highcharts
- * @excluding    animationLimit, boostBlending, boostThreshold, borderRadius,
+ * @excluding    animationLimit, boostBlending, boostThreshold,
  *               crisp, cropThreshold, colorAxis, colorKey, dataSorting, depth,
  *               dragDrop, edgeColor, edgeWidth, findNearestPointBy, grouping,
  *               groupPadding, groupZPadding, legendSymbolColor, maxPointWidth,
@@ -396,7 +396,7 @@ const SankeySeriesDefaults: SankeySeriesOptions = {
  *
  * @extends   series,plotOptions.sankey
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
+ *            borderWidth, crisp, cropThreshold, dataParser,
  *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
