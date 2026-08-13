@@ -48,6 +48,7 @@ const {
 } = H;
 import {
     addEvent,
+    clamp,
     correctFloat,
     defined,
     extend,
@@ -983,18 +984,12 @@ namespace RadialAxis {
 
         // Concentric circles
         } else {
-            // Pick the right values depending if it is grid line or crosshair
-            let transValue = this.translate(value);
-
-            // This is required in case when xAxis is non-circular to
-            // prevent grid lines (or crosshairs, if enabled) from
-            // rendering above the center after they supposed to be
-            // displayed below the center point
-            if (transValue) {
-                if (transValue < 0 || transValue > height) {
-                    transValue = 0;
-                }
-            }
+            // Pick the right values depending if it is grid line or crosshair.
+            // Clamp is required in case when xAxis is non-circular to prevent
+            // grid lines (or crosshairs, if enabled) from rendering above the
+            // center after they supposed to be displayed below the center
+            // point.
+            let transValue = clamp(this.translate(value), 0, height);
 
             if (this.options.gridLineInterpolation === 'circle') {
                 // A value of 0 is in the center, so it won't be
