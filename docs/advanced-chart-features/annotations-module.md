@@ -169,7 +169,21 @@ annotations: [{
 Defining markers for the path
 -----------------------------
 
-It is possible to define markers at the end and at the beginning of the path. To apply the markers set `markerEnd` or `markerStart` property to the id of the marker. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/custom-markers).
+It is possible to define markers at the end and at the beginning of the path. To apply a marker, set the `markerEnd` or `markerStart` property of a shape to the id of the marker.
+
+Two markers are available by default: `arrow` and `reverse-arrow`. For example, to draw an arrowhead at the end of a path:
+
+```js
+annotations: [{
+    shapes: [{
+        type: 'path',
+        markerEnd: 'arrow',
+        points: ['point1', 'point2']
+    }]
+}]
+```
+
+Custom markers are added through the [defs](https://api.highcharts.com/highcharts/defs) option, where each key becomes a marker id that can be referenced by `markerEnd` or `markerStart`. Check the following example about how to define custom markers [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/annotations/custom-markers).
 
 ## Build a custom UI
 
