@@ -12,7 +12,6 @@ const dataTable = new Grid.DataTable({
         ip: [
             '203.0.113.45', '198.51.100.23', '128.11.120.26',
             '185.220.100.12', '200.100.50.88', '213.20.13315'
-
         ],
         disk: [
             4, 9, 80, 30, 0, 50
@@ -93,7 +92,6 @@ const grid = Grid.grid('container', {
     },
     rendering: {
         theme: 'hcg-theme-default theme-servers'
-
     },
     columns: [{
         id: 'server',
@@ -159,7 +157,7 @@ const grid = Grid.grid('container', {
                                 y: data,
                                 color: sharedPlotOptions.series.zones.find(
                                     zone => data <= (zone.value || Infinity)
-                                ).color
+                                )?.color
                             }, {
                                 y: 100 - data,
                                 color: '#9994'
