@@ -50,7 +50,7 @@ interface SonificationTimelineOptions {
  * @internal
  */
 function filterChannels(
-    filter: Sonification.TimelineFilterCallback,
+    filter: TimelineFilterCallback,
     channels: TimelineChannel[]
 ): TimelineChannel[] {
     interface FilteredChannel {
@@ -137,7 +137,7 @@ class SonificationTimeline {
     // The filterPersists argument determines whether or not the filter persists
     // after e.g. pausing and resuming. Usually this should be true.
     play(
-        filter?: Sonification.TimelineFilterCallback,
+        filter?: TimelineFilterCallback,
         filterPersists = true,
         resetAfter = true,
         onEnd?: Sonification.ChartCallback
@@ -345,7 +345,7 @@ class SonificationTimeline {
     // Play a short moment, then pause, setting the cursor to the final
     // event's time.
     anchorPlayMoment(
-        eventFilter: Sonification.TimelineFilterCallback,
+        eventFilter: TimelineFilterCallback,
         onEnd?: Sonification.ChartCallback
     ): void {
         if (this.isPlaying) {
@@ -375,7 +375,7 @@ class SonificationTimeline {
         next: boolean,
         onEnd?: Sonification.ChartCallback,
         onBoundaryHit?: Sonification.BoundaryHitCallback,
-        eventFilter?: Sonification.TimelineFilterCallback
+        eventFilter?: TimelineFilterCallback
     ): void {
         if (this.isPlaying) {
             this.pause();
@@ -446,7 +446,7 @@ class SonificationTimeline {
         targetVal: number,
         onEnd?: Sonification.ChartCallback,
         onBoundaryHit?: Sonification.BoundaryHitCallback,
-        eventFilter?: Sonification.TimelineFilterCallback
+        eventFilter?: TimelineFilterCallback
     ): void {
         const filter = (
             e: Sonification.TimelineEvent,
@@ -569,7 +569,7 @@ class SonificationTimeline {
     // Get last played / current point
     // Since events are scheduled we can't just store points as we play them
     getLastPlayedPoint(
-        filter?: Sonification.TimelineFilterCallback
+        filter?: TimelineFilterCallback
     ): Point|null {
         const curTime = this.getCurrentTime(),
             channels = this.playingChannels || this.channels;
