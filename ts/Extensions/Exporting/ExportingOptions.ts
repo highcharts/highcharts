@@ -459,11 +459,11 @@ export interface ExportingOptions {
     url?: string;
 
     /**
-     * The pixel width of charts exported to PNG or JPG. The option only
-     * takes effect on server-side exports, when [exporting.local](
-     * #exporting.local) is `false`. Deprecated, as the same result is
-     * achieved with [exporting.sourceWidth](#exporting.sourceWidth) combined
-     * with [exporting.scale](#exporting.scale).
+     * The pixel width of charts exported to PNG or JPG. Deprecated and
+     * without effect, as the export server does not apply it to the rendered
+     * SVG that the exporting module sends. The same result is achieved with
+     * [exporting.sourceWidth](#exporting.sourceWidth) combined with
+     * [exporting.scale](#exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
