@@ -154,8 +154,6 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts|highstock} highcharts/plotoptions/windbarb-onseries
      *         Projected on area series
-     *
-     * @type {string|null}
      */
     onSeries?: (string|null);
 
@@ -226,8 +224,6 @@ interface WindbarbSeriesDataGroupingOptions {
      * weighted by wind speed.
      *
      * @product highcharts highstock
-     *
-     * @type {string|Function}
      */
     approximation?: string|Function;
 
