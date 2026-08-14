@@ -459,17 +459,19 @@ export interface ExportingOptions {
     url?: string;
 
     /**
-     * The pixel width of charts exported to PNG or JPG. As of Highcharts
-     * 3.0, the default pixel width is a function of the [chart.width](
-     * #chart.width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
-     * [exporting.scale](#exporting.scale).
+     * The pixel width of charts exported to PNG or JPG. The option only
+     * takes effect on server-side exports, when [exporting.local](
+     * #exporting.local) is `false`. Deprecated, as the same result is
+     * achieved with [exporting.sourceWidth](#exporting.sourceWidth) combined
+     * with [exporting.scale](#exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
      * @sample {highstock} highcharts/exporting/width/
      *         Export to 200px wide images
      *
-     * @since 2.0
+     * @deprecated next
+     * @since      2.0
      */
     width?: number;
 }

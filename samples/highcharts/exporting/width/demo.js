@@ -27,6 +27,9 @@ Highcharts.chart('container', {
     }],
 
     exporting: {
+        // The deprecated width option only applies to exports done on the
+        // export server
+        local: false,
         width: 200
     }
 
