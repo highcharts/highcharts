@@ -123,6 +123,12 @@ export interface SummaryColumnOptions {
      * Can be a static style object or a callback that returns one.
      */
     style?: StyleValue<SummaryTableCell>;
+
+    /**
+     * Whether a parent row of a TreeView contributes its own value to this
+     * column, overriding the row `includeParents` default.
+     */
+    includeParents?: boolean;
 }
 
 /**
@@ -202,20 +208,16 @@ export interface SummaryRowOptions {
      * Whether a parent row of a TreeView contributes its own value, on top of
      * the rows below it.
      *
-     * By default every row of the aggregated source data counts, parent rows
-     * included. Values a `rowAggregator` derives are not affected, because a
-     * summary row aggregates the source data rather than the projected tree.
+     * With `false`, a row is skipped whenever another row it rolls up is
+     * aggregated as well, so pre-calculated parent values are not counted
+     * twice. A parent a filter left on its own keeps counting. Resolving that
+     * costs an extra pass over the tree per recompute.
      *
-     * Set it to `false` when the source data carries pre-calculated parent
-     * values, the way an export from a reporting system typically does.
-     * Aggregating those together with their children would count the same
-     * numbers twice, so a row is then skipped whenever another row it rolls up
-     * is aggregated as well. A parent a filter left on its own is not rolling
-     * anything up, so it keeps counting. Resolving that costs an extra pass
-     * over the tree per recompute.
+     * A summary row aggregates the source data rather than the projected tree,
+     * so values a `rowAggregator` derives are unaffected, and the parent rows
+     * row grouping generates are never part of it.
      *
-     * It has no effect without TreeView: row grouping generates its parent
-     * rows, so they are never part of the aggregated source data.
+     * Can be overridden per column with `columns[].includeParents`.
      *
      * @sample grid-pro/options/summary-rows-include-parents
      *         Pre-calculated parent values

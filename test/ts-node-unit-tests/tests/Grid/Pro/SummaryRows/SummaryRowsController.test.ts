@@ -679,6 +679,70 @@ describe('SummaryRowsController', () => {
         );
     });
 
+    it('should let a column override includeParents', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        // `sales` carries a pre-calculated rollup, `staff` belongs to the
+        // region row itself.
+        const options = {
+            data: {
+                columns: {
+                    id: ['europe', 'france', 'germany'],
+                    parentId: [null, 'europe', 'europe'],
+                    name: ['Europe', 'France', 'Germany'],
+                    sales: [100, 60, 40],
+                    staff: [5, 20, 30]
+                },
+                idColumn: 'id'
+            },
+            treeView: { enabled: true, treeColumn: 'name' },
+            rendering: { rows: { expandedLevels: 'all' } }
+        };
+
+        const optedOut = await Grid.grid(el, {
+            ...options,
+            summaryRows: {
+                aggregator: 'SUM',
+                columns: [{ id: 'sales', includeParents: false }]
+            }
+        } as any, true);
+
+        optedOut.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            summaryRowObjects(optedOut)[0].sales, 100,
+            'The opted-out column drops the rolled up parent value.'
+        );
+        strictEqual(
+            summaryRowObjects(optedOut)[0].staff, 55,
+            'A column left on the row default keeps counting the parent.'
+        );
+
+        const optedIn = await Grid.grid(setupDOM().el, {
+            ...options,
+            summaryRows: {
+                aggregator: 'SUM',
+                includeParents: false,
+                columns: [{ id: 'staff', includeParents: true }]
+            }
+        } as any, true);
+
+        optedIn.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            summaryRowObjects(optedIn)[0].sales, 100,
+            'The row default still drops the rolled up parent value.'
+        );
+        strictEqual(
+            summaryRowObjects(optedIn)[0].staff, 55,
+            'The opted-in column counts the parent on top of its children.'
+        );
+    });
+
     it('should keep a parent left alone by a filter in the total',
         async () => {
             const { win, doc, el } = setupDOM();
