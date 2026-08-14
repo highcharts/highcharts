@@ -89,6 +89,7 @@ namespace SeriesOnPointComposition {
      *
      * */
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         onPoint: Additions;
     }

@@ -90,6 +90,7 @@ function initDataLabels(this: SimulationSeries): SVGElement {
 }
 
 
+/** @internal */
 const DataLabelsDeferUtils = {
     initDataLabels,
     initDataLabelsDefer
