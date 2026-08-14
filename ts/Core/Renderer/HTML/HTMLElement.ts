@@ -161,7 +161,11 @@ class HTMLElement extends SVGElement {
         // Some properties require other properties to be set
         if (styles?.textOverflow === 'ellipsis') {
             styles.overflow = 'hidden';
-            styles.whiteSpace = 'nowrap';
+            // With a line clamp, the text should wrap and ellipsis at the
+            // clamped line instead of staying on one line (#24724)
+            if (!(styles.lineClamp ?? this.styles.lineClamp)) {
+                styles.whiteSpace = 'nowrap';
+            }
         }
 
         // Apply line clamp
