@@ -43,6 +43,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         maxPxSize?: number;
@@ -391,6 +392,7 @@ class VariablePieSeries extends PieSeries {
  *
  * */
 
+/** @internal */
 interface VariablePieSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -409,6 +411,7 @@ extend(VariablePieSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variablepie: typeof VariablePieSeries;
@@ -423,6 +426,7 @@ SeriesRegistry.registerSeriesType('variablepie', VariablePieSeries);
  *
  * */
 
+/** @internal */
 export default VariablePieSeries;
 
 /* *

@@ -516,6 +516,7 @@ class WordcloudSeries extends ColumnSeries {
  * Prototype properties
  *
  * */
+/** @internal */
 interface WordcloudSeries {
     placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
     pointArrayMap: Array<string>;
@@ -585,6 +586,7 @@ extend(WordcloudSeries.prototype, {
  * Registry
  *
  * */
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof WordcloudSeries;
@@ -599,6 +601,7 @@ SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
  *
  * */
 
+/** @internal */
 namespace WordcloudSeries {
     export interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
         ratioX: number;
@@ -644,4 +647,5 @@ namespace WordcloudSeries {
  *
  * */
 
+/** @internal */
 export default WordcloudSeries;

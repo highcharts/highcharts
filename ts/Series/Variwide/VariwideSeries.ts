@@ -314,6 +314,7 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface VariwideSeries {
     irregularWidths: boolean;
     parallelArrays: Array<string>;
@@ -335,6 +336,7 @@ extend(VariwideSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof VariwideSeries;
@@ -349,4 +351,5 @@ SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
  *
  * */
 
+/** @internal */
 export default VariwideSeries;

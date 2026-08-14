@@ -336,6 +336,7 @@ class WindbarbSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     beaufortFloor: Array<number>;
     beaufortName: Array<string>;
@@ -396,6 +397,7 @@ extend(WindbarbSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         windbarb: typeof WindbarbSeries;
@@ -412,4 +414,5 @@ registerApproximation();
  *
  * */
 
+/** @internal */
 export default WindbarbSeries;

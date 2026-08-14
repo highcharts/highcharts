@@ -250,6 +250,7 @@ class VectorSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface VectorSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -289,6 +290,7 @@ extend(VectorSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vector: typeof VectorSeries;
@@ -303,4 +305,5 @@ SeriesRegistry.registerSeriesType('vector', VectorSeries);
  *
  * */
 
+/** @internal */
 export default VectorSeries;

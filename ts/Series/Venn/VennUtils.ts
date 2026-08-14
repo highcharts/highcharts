@@ -949,6 +949,7 @@ function sortByTotalOverlap(
  *
  * */
 
+/** @internal */
 const VennUtils = {
     geometry: GU,
     geometryCircles: CU,

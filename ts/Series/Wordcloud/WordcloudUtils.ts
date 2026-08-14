@@ -958,6 +958,7 @@ function rotate2DToPoint(
  *
  * */
 
+/** @internal */
 namespace WordcloudUtils {
 
     /* *
@@ -985,6 +986,7 @@ namespace WordcloudUtils {
  *
  * */
 
+/** @internal */
 const WordcloudUtils = {
     archimedeanSpiral,
     extendPlayingField,

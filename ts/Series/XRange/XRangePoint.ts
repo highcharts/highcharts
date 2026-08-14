@@ -42,12 +42,14 @@ import { extend } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         tooltipDateKeys?: Array<string>;
     }
 }
 
+/** @internal */
 interface BBoxObjectWithCenter extends BBoxObject {
     centerX?: number;
 }
@@ -58,6 +60,7 @@ interface BBoxObjectWithCenter extends BBoxObject {
  *
  * */
 
+/** @internal */
 class XRangePoint extends ColumnPoint {
 
     /* *
@@ -196,6 +199,7 @@ class XRangePoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 interface XRangePoint {
     clipRectArgs?: RectangleObject;
     len?: number;
@@ -225,6 +229,7 @@ extend(XRangePoint.prototype, {
  *
  * */
 
+/** @internal */
 export default XRangePoint;
 
 /* *

@@ -659,6 +659,7 @@ class VennSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface VennSeries {
     directTouch: boolean;
     isCartesian: boolean;
@@ -700,6 +701,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         venn: typeof VennSeries;
@@ -714,4 +716,5 @@ SeriesRegistry.registerSeriesType('venn', VennSeries);
  *
  * */
 
+/** @internal */
 export default VennSeries;

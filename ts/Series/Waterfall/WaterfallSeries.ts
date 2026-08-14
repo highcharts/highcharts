@@ -54,6 +54,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         showLine?: WaterfallSeries['showLine'];
@@ -592,6 +593,7 @@ class WaterfallSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface WaterfallSeries {
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
@@ -896,6 +898,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
  *
  * */
 
+/** @internal */
 namespace WaterfallSeries {
     export interface WaterfallChart extends Chart {
         axes: Array<WaterfallAxis>;
@@ -908,6 +911,7 @@ namespace WaterfallSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         waterfall: typeof WaterfallSeries;
@@ -922,4 +926,5 @@ SeriesRegistry.registerSeriesType('waterfall', WaterfallSeries);
  *
  * */
 
+/** @internal */
 export default WaterfallSeries;

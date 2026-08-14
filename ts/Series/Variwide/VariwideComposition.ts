@@ -211,6 +211,7 @@ function wrapTickGetLabelPosition(
  *
  * */
 
+/** @internal */
 const VariwideComposition = {
     compose
 };
