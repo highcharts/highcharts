@@ -644,6 +644,7 @@ describe('SummaryRowsController', () => {
             rendering: { rows: { expandedLevels: 'all' } },
             summaryRows: {
                 aggregator: 'SUM',
+                includeParents: false,
                 columns: [{ id: 'name', value: 'Total' }]
             }
         };
@@ -663,8 +664,8 @@ describe('SummaryRowsController', () => {
             {
                 ...options,
                 summaryRows: {
-                    ...options.summaryRows,
-                    includeParents: true
+                    aggregator: 'SUM',
+                    columns: [{ id: 'name', value: 'Total' }]
                 }
             } as any,
             true
@@ -674,7 +675,7 @@ describe('SummaryRowsController', () => {
 
         strictEqual(
             summaryRowObjects(withParents)[0].sales, 340,
-            'includeParents brings the parent values back in.'
+            'By default every row counts, parent values included.'
         );
     });
 
@@ -698,7 +699,7 @@ describe('SummaryRowsController', () => {
                 },
                 treeView: { enabled: true, treeColumn: 'name' },
                 rendering: { rows: { expandedLevels: 'all' } },
-                summaryRows: { aggregator: 'SUM' }
+                summaryRows: { aggregator: 'SUM', includeParents: false }
             } as any, true);
 
             grid.viewport?.resizeObserver?.disconnect();

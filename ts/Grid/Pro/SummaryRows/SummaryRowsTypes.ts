@@ -202,15 +202,17 @@ export interface SummaryRowOptions {
      * Whether a parent row of a TreeView contributes its own value, on top of
      * the rows below it.
      *
-     * Source data often carries pre-calculated parent values. Aggregating those
-     * together with their children counts the same numbers twice, so by default
-     * a row is skipped whenever another row it rolls up is aggregated as well.
-     * A parent a filter left on its own is not rolling anything up, so it keeps
-     * counting.
+     * By default every row of the aggregated source data counts, parent rows
+     * included. Values a `rowAggregator` derives are not affected, because a
+     * summary row aggregates the source data rather than the projected tree.
      *
-     * Set it to `true` when a parent row is an independent data point rather
-     * than a total of its children, for example a department's own cost next to
-     * the costs of its teams.
+     * Set it to `false` when the source data carries pre-calculated parent
+     * values, the way an export from a reporting system typically does.
+     * Aggregating those together with their children would count the same
+     * numbers twice, so a row is then skipped whenever another row it rolls up
+     * is aggregated as well. A parent a filter left on its own is not rolling
+     * anything up, so it keeps counting. Resolving that costs an extra pass
+     * over the tree per recompute.
      *
      * It has no effect without TreeView: row grouping generates its parent
      * rows, so they are never part of the aggregated source data.
@@ -218,7 +220,7 @@ export interface SummaryRowOptions {
      * @sample grid-pro/options/summary-rows-include-parents
      *         Pre-calculated parent values
      *
-     * @default false
+     * @default true
      */
     includeParents?: boolean;
 }

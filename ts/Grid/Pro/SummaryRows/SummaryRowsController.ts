@@ -63,8 +63,8 @@ interface SummaryScopedSource {
     range?: [number, number];
 
     /**
-     * Rows of the table that roll up other rows of it, left out of the
-     * aggregation unless the row opts into `includeParents`.
+     * Rows of the table that roll up other rows of it, resolved only when the
+     * row opts out of `includeParents`, and then left out of the aggregation.
      */
     rollupRowIndexes?: Set<number>;
 }
@@ -330,7 +330,7 @@ class SummaryRowsController {
         source: SummaryScopedSource,
         options: SummaryRowOptions
     ): SummaryScopedSource {
-        if (options.includeParents) {
+        if (options.includeParents !== false) {
             return source;
         }
 

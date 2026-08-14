@@ -493,20 +493,27 @@ class TreeProjectionController {
         }
 
         const rollupRowIndexes = new Set<number>();
+        const nodes = index.nodes;
 
         for (const rowId of rowIndexById.keys()) {
-            const seen = new Set<RowId>([rowId]);
-            let ancestorId = index.nodes.get(rowId)?.parentId ?? null;
+            let ancestorId = nodes.get(rowId)?.parentId ?? null;
+            // Bounds a parent chain that cycles, without a per-row visited set.
+            let steps = nodes.size;
 
-            while (ancestorId !== null && !seen.has(ancestorId)) {
-                seen.add(ancestorId);
-
+            while (ancestorId !== null && steps-- > 0) {
                 const ancestorRowIndex = rowIndexById.get(ancestorId);
+
                 if (ancestorRowIndex !== void 0) {
+                    // An ancestor in the table walks up on its own turn, so
+                    // everything above it is covered already.
+                    if (rollupRowIndexes.has(ancestorRowIndex)) {
+                        break;
+                    }
+
                     rollupRowIndexes.add(ancestorRowIndex);
                 }
 
-                ancestorId = index.nodes.get(ancestorId)?.parentId ?? null;
+                ancestorId = nodes.get(ancestorId)?.parentId ?? null;
             }
         }
 
