@@ -1678,11 +1678,10 @@ class Series {
                 if (!oldData[i].destroyed && !oldData[i].condemned) {
                     const pOptions = dataTable.getRowObject(i);
                     if (pOptions) {
+                        // Remove undefined properties, but preserve explicit
+                        // nulls (#24872)
                         Object.keys(pOptions).forEach((key): void => {
-                            if (
-                                !defined(pOptions[key]) /* ||
-                                pOptions[key] === oldData[i].options[key]*/
-                            ) {
+                            if (pOptions[key] === void 0) {
                                 delete pOptions[key];
                             }
                         });
@@ -2270,8 +2269,12 @@ class Series {
             }
         }
 
-        // Find the closest distance between processed points
-        xData = this.getColumn('x', true);
+        // Find the closest distance between processed points. When the data was
+        // cropped (or set out of range), read x from the freshly cropped local
+        // `modified` table, #24858.
+        if (modified !== table) {
+            xData = modified.getColumn('x', true) as Array<number> || [];
+        }
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
@@ -2708,9 +2711,9 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            { options, xAxis, yAxis } = series,
+            { hasRendered, options, xAxis, yAxis } = series,
             { stacking, threshold } = options,
-            { hasRendered, polar } = series.chart,
+            { polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
@@ -3475,7 +3478,7 @@ class Series {
         // Destroy all points with their elements
         i = data.length;
         while (i--) {
-            data[i]?.destroy?.();
+            data[i]?.destroy?.(true);
         }
 
         for (const zone of series.zones || []) {
