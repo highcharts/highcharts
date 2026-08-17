@@ -63,8 +63,9 @@ interface SummaryScopedSource {
     range?: [number, number];
 
     /**
-     * Rows of the table that roll up other rows of it, left out of the
-     * aggregation unless the row opts into `includeParents`.
+     * Rows of the table that roll up other rows of it, resolved only when the
+     * row or one of its columns opts into `skipParents`, and then left out of
+     * the aggregation.
      */
     rollupRowIndexes?: Set<number>;
 }
@@ -214,7 +215,9 @@ class SummaryRowsController {
         options: SummaryRowOptions,
         summaryRowIndex: number
     ): SummaryRenderRow {
-        const rowCount = this.getScopedRowCount(source);
+        // The second one only costs a pass when the rollups were resolved.
+        const rowCountWithParents = this.getScopedRowCount(source, false);
+        const rowCountWithoutParents = this.getScopedRowCount(source, true);
         const data: DataTableRowObject = {};
         const formats: Record<string, string> = {};
         const classNames: Record<string, string> = {};
@@ -244,11 +247,15 @@ class SummaryRowsController {
                 continue;
             }
 
+            const skipParents = this.getColumnSkipParents(options, column);
+
             const aggregatorName = Aggregation.resolveAggregatorName(
                 this.getColumnAggregator(options, column),
                 {
                     columnId,
-                    rowCount,
+                    rowCount: skipParents ?
+                        rowCountWithoutParents :
+                        rowCountWithParents,
                     summaryRowId,
                     summaryRowIndex
                 }
@@ -257,7 +264,7 @@ class SummaryRowsController {
             data[columnId] = aggregatorName ?
                 Aggregation.executeAggregate(
                     aggregatorName,
-                    this.getAggregableValues(source, columnId)
+                    this.getAggregableValues(source, columnId, skipParents)
                 ) :
                 null;
         }
@@ -330,7 +337,7 @@ class SummaryRowsController {
         source: SummaryScopedSource,
         options: SummaryRowOptions
     ): SummaryScopedSource {
-        if (options.includeParents) {
+        if (!this.excludesRollups(options)) {
             return source;
         }
 
@@ -384,13 +391,21 @@ class SummaryRowsController {
      *
      * @param source
      * Resolved scoped source.
+     *
+     * @param skipParents
+     * Whether rows rolling up other rows are left out.
      */
-    private getScopedRowCount(source: SummaryScopedSource): number {
+    private getScopedRowCount(
+        source: SummaryScopedSource,
+        skipParents: boolean
+    ): number {
         const rowCount = source.table.getRowCount();
         const range = source.range;
         const from = range ? range[0] : 0;
         const to = range ? Math.min(range[1], rowCount) : rowCount;
-        const rollupRowIndexes = source.rollupRowIndexes;
+        const rollupRowIndexes = skipParents ?
+            source.rollupRowIndexes :
+            void 0;
 
         if (!rollupRowIndexes?.size) {
             return Math.max(0, to - from);
@@ -414,14 +429,20 @@ class SummaryRowsController {
      *
      * @param columnId
      * Aggregated column id.
+     *
+     * @param skipParents
+     * Whether rows rolling up other rows are left out.
      */
     private getAggregableValues(
         source: SummaryScopedSource,
-        columnId: string
+        columnId: string,
+        skipParents: boolean
     ): Array<Exclude<DataTableCellType, null | undefined>> {
         const column = source.table.getColumn(columnId) || [];
         const range = source.range;
-        const rollupRowIndexes = source.rollupRowIndexes;
+        const rollupRowIndexes = skipParents ?
+            source.rollupRowIndexes :
+            void 0;
 
         if (!rollupRowIndexes?.size) {
             return Array.from(
@@ -490,6 +511,49 @@ class SummaryRowsController {
         }
 
         return options.aggregator;
+    }
+
+    /**
+     * Resolves whether a summary column leaves out rows that roll up other
+     * rows, falling back to the summary row default.
+     *
+     * @param options
+     * Summary row options.
+     *
+     * @param column
+     * Column options for the resolved column, when present.
+     */
+    private getColumnSkipParents(
+        options: SummaryRowOptions,
+        column: SummaryColumnOptions | undefined
+    ): boolean {
+        return !!(column?.skipParents ?? options.skipParents);
+    }
+
+    /**
+     * Whether anything in the summary row leaves rollup rows out, so that
+     * resolving them is worth the pass over the tree.
+     *
+     * @param options
+     * Summary row options.
+     */
+    private excludesRollups(options: SummaryRowOptions): boolean {
+        if (options.skipParents) {
+            return true;
+        }
+
+        const columns = options.columns;
+        if (!columns) {
+            return false;
+        }
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+            if (columns[i].skipParents) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
