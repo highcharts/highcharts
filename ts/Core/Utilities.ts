@@ -649,11 +649,11 @@ export interface ErrorMessageEventObject {
  */
 
 /**
- * If a number is given, it defines the pixel length. If a percentage string is
- * given, like for example `'50%'`, the setting defines a length relative to a
- * base size, for example the size of a container.
+ * A CSS length expression. A percentage string like `'50%'` resolves against
+ * a context-specific base; any browser-resolved CSS length also works, such
+ * as `'20px'`, `'2em'`, `'10vh'`, `'var(--gap)'`, or `'calc(var(--gap) * 2)'`.
  *
- * @typedef {number|string} Highcharts.RelativeSize
+ * @typedef {string} Highcharts.CSSLength
  */
 
 /**

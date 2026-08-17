@@ -22,6 +22,7 @@ import type Axis from '../Axis/Axis';
 import type Chart from './Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type { CSSLength } from '../Renderer/CSSObject';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
@@ -39,7 +40,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 /** @internal */
 declare module './ChartBase'{
     interface ChartBase {
-        marginRight: ChartOptions['marginRight'];
         polar: ChartOptions['polar'];
     }
 }
@@ -411,7 +411,9 @@ export interface ChartOptions {
     borderColor?: ColorType;
 
     /**
-     * The corner radius of the outer chart border.
+     * The corner radius of the outer chart border. A number denotes
+     * pixels. Also accepts a CSS length expression, e.g. `'1em'` or
+     * `'calc(var(--radius) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/borderradius/
      *         20px radius
@@ -420,9 +422,10 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/border/
      *         Border options
      *
+     * @type {number|Highcharts.CSSLength}
      * @default 0
      */
-    borderRadius?: number;
+    borderRadius?: (number|CSSLength);
 
     /**
      * The pixel width of the outer chart border.
@@ -469,7 +472,8 @@ export interface ChartOptions {
      * given in pixels. If given a _percentage string_ (for example
      * `'56%'`), the height is given as the percentage of the actual chart
      * width. This allows for preserving the aspect ratio across responsive
-     * sizes.
+     * sizes. Also accepts a CSS length expression, e.g. `'30em'` or
+     * `'calc(var(--chart-height) * 2)'`.
      *
      * By default (when `null`) the height is calculated from the offset
      * height of the containing element, or 400 pixels if the containing
@@ -488,7 +492,7 @@ export interface ChartOptions {
      *
      * @default null
      */
-    height?: (null|number|string);
+    height?: (null|number|CSSLength);
 
     /**
      * If true, the axes will scale to the remaining visible series once
@@ -572,17 +576,21 @@ export interface ChartOptions {
      * subtitle and legend in addition to the `spacingTop`, `spacingRight`,
      * `spacingBottom` and `spacingLeft` options.
      *
+     * A value may also be a CSS length expression resolved by the browser,
+     * e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
+     *
      * @sample {highcharts} highcharts/chart/margins-zero/
      *         Zero margins
      * @sample {highstock} stock/chart/margin-zero/
      *         Zero margins
      */
-    margin?: (number|Array<number>);
+    margin?: (number|CSSLength|Array<(number|CSSLength)>);
 
     /**
      * The margin between the bottom outer edge of the chart and the plot
-     * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin.
+     * area. Use this to set a fixed value for the margin as opposed to the
+     * default dynamic margin. Also accepts a CSS length expression, e.g.
+     * `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @see [spacingBottom](#chart.spacingBottom)
      *
@@ -593,50 +601,60 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|Highcharts.CSSLength}
      * @since  2.0
      */
-    marginBottom?: number;
+    marginBottom?: (number|CSSLength);
 
     /**
      * The margin between the left outer edge of the chart and the plot
-     * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin.
+     * area. Use this to set a fixed value for the margin as opposed to the
+     * default dynamic margin. Also accepts a CSS length expression, e.g.
+     * `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @see [spacingLeft](#chart.spacingLeft)
      *
      * @sample {highcharts} highcharts/chart/marginleft/
      *         150px left margin
+     * @sample {highcharts} highcharts/chart/margins-percent/
+     *         Percentage margins
      * @sample {highstock} stock/chart/marginleft/
      *         150px left margin
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|Highcharts.CSSLength}
      * @since  2.0
      */
-    marginLeft?: number;
+    marginLeft?: (number|CSSLength);
 
     /**
      * The margin between the right outer edge of the chart and the plot
-     * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin.
+     * area. Use this to set a fixed value for the margin as opposed to the
+     * default dynamic margin. Also accepts a CSS length expression, e.g.
+     * `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @see [spacingRight](#chart.spacingRight)
      *
      * @sample {highcharts} highcharts/chart/marginright/
      *         100px right margin
+     * @sample {highcharts} highcharts/chart/margins-percent/
+     *         Percentage margins
      * @sample {highstock} stock/chart/marginright/
      *         100px right margin
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|Highcharts.CSSLength}
      * @since  2.0
      */
-    marginRight?: number;
+    marginRight?: (number|CSSLength);
 
     /**
      * The margin between the top outer edge of the chart and the plot area.
-     * Use this to set a fixed pixel value for the margin as opposed to
-     * the default dynamic margin.
+     * Use this to set a fixed value for the margin as opposed to the
+     * default dynamic margin. Also accepts a CSS length expression, e.g.
+     * `'2em'` or `'calc(var(--gap) * 2)'`.
      *
      * @see [spacingTop](#chart.spacingTop)
      *
@@ -647,9 +665,10 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
+     * @type   {number|Highcharts.CSSLength}
      * @since  2.0
      */
-    marginTop?: number;
+    marginTop?: (number|CSSLength);
 
     /**
      * Callback function to override the default function that formats all
@@ -933,16 +952,20 @@ export interface ChartOptions {
      * `spacingBottom` and `spacingLeft` options for shorthand setting of one
      * option.
      *
+     * A value may also be a CSS length expression resolved by the browser,
+     * e.g. `'2em'` or `'calc(var(--gap) * 2)'`.
+     *
      * @see     [chart.margin](#chart.margin)
      * @default [10, 10, 15, 10]
      * @since   3.0.6
      */
-    spacing?: Array<number>;
+    spacing?: Array<(number|CSSLength)>;
 
     /**
      * The space between the bottom edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingbottom/
      *         Spacing bottom set to 100
@@ -951,15 +974,17 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|Highcharts.CSSLength}
      * @default   15
      * @since     2.1
      */
-    spacingBottom?: number;
+    spacingBottom?: (number|CSSLength);
 
     /**
      * The space between the left edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingleft/
      *         Spacing left set to 100
@@ -968,15 +993,17 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|Highcharts.CSSLength}
      * @default   10
      * @since     2.1
      */
-    spacingLeft?: number;
+    spacingLeft?: (number|CSSLength);
 
     /**
      * The space between the right edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingright-100/
      *         Spacing set to 100
@@ -987,15 +1014,17 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|Highcharts.CSSLength}
      * @default   10
      * @since     2.1
      */
-    spacingRight?: number;
+    spacingRight?: (number|CSSLength);
 
     /**
      * The space between the top edge of the chart and the content (plot
      * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * position). Also accepts a CSS length expression, e.g. `'2em'` or
+     * `'calc(var(--gap) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/spacingtop-100/
      *         A top spacing of 100
@@ -1007,10 +1036,11 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
      *
+     * @type      {number|Highcharts.CSSLength}
      * @default   10
      * @since     2.1
      */
-    spacingTop?: number;
+    spacingTop?: (number|CSSLength);
 
     /**
      * Additional CSS styles to apply inline to the container `div` and the root
@@ -1086,8 +1116,14 @@ export interface ChartOptions {
     type?: string;
 
     /**
-     * An explicit width for the chart. By default (when `null`) the width
-     * is calculated from the offset width of the containing element.
+     * An explicit width for the chart. If a _number_, the width is given
+     * in pixels. If given a _percentage string_ (for example `'75%'`), the
+     * width is given as the percentage of the offset width of the
+     * containing element. Also accepts a CSS length expression, e.g.
+     * `'50em'` or `'calc(var(--chart-width) * 2)'`.
+     *
+     * By default (when `null`) the width is calculated from the offset
+     * width of the containing element.
      *
      * @sample {highcharts} highcharts/chart/width/
      *         800px wide
@@ -1098,7 +1134,7 @@ export interface ChartOptions {
      *
      * @default null
      */
-    width?: (null|number); // @todo Add support for string (percent)
+    width?: (null|number|CSSLength);
 
     /**
      * Deprecated. Use

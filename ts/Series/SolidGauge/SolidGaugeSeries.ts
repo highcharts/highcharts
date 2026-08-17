@@ -113,6 +113,7 @@ class SolidGaugeSeries extends GaugeSeries {
         const series = this,
             yAxis = series.yAxis,
             center = yAxis.center,
+            outerRadius = center[2] / 2,
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
@@ -147,12 +148,15 @@ class SolidGaugeSeries extends GaugeSeries {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
                 const paneInnerSize = yAxis.pane.options.innerSize,
+                    renderTo = series.chart.renderTo,
                     radius = ((
                         relativeLength(
                             point.options.radius ??
                                 options.radius ??
                                 '100%',
-                            center[2] / 2
+                            outerRadius,
+                            void 0,
+                            renderTo
                         )
                     )),
                     innerRadius = Math.min((
@@ -165,7 +169,9 @@ class SolidGaugeSeries extends GaugeSeries {
                                         paneInnerSize
                                 ) ??
                                 0,
-                            center[2] / 2
+                            outerRadius,
+                            void 0,
+                            renderTo
                         )
                     ), radius),
                     axisMinAngle = Math.min(

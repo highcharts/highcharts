@@ -677,7 +677,9 @@ class FlowMapSeries extends MapLineSeries {
             // Prepare offset if it's a percentage by converting to number.
             offset = relativeLength(
                 offset,
-                finalWidth * 4
+                finalWidth * 4,
+                void 0,
+                this.chart.renderTo
             );
 
             // Vector between the points.

@@ -788,5 +788,76 @@
         document.body.removeChild(div);
     });
 
+    QUnit.test('relativeLength', function (assert) {
+        const relativeLength = Highcharts.relativeLength;
+
+        assert.strictEqual(
+            relativeLength(42, 100),
+            42,
+            'Number input returns the number'
+        );
+        assert.strictEqual(
+            relativeLength('42', 100),
+            42,
+            'Numeric string returns the parsed number'
+        );
+        assert.strictEqual(
+            relativeLength('20px', 100),
+            20,
+            'Pixel value returns the parsed number without a length probe'
+        );
+        assert.strictEqual(
+            relativeLength('50%', 200),
+            100,
+            'Percentage resolves against base'
+        );
+        assert.strictEqual(
+            relativeLength('50%', 200, 10),
+            110,
+            'Percentage adds offset'
+        );
+
+        // CSS expressions resolved by the browser
+        const style = document.documentElement.style;
+        style.setProperty('--hc-test-gap', '12px');
+        assert.strictEqual(
+            relativeLength('var(--hc-test-gap)', 0),
+            12,
+            'CSS variable resolves to its pixel value'
+        );
+        assert.strictEqual(
+            relativeLength('calc(var(--hc-test-gap) * 3)', 0),
+            36,
+            'calc() with a CSS variable resolves correctly'
+        );
+        assert.strictEqual(
+            relativeLength('calc(', 0),
+            0,
+            'Invalid expression resolves to 0, not a previously measured ' +
+            'value'
+        );
+
+        // SVG parents measure through a rect probe
+        const svg = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'svg'
+        );
+        svg.style.fontSize = '10px';
+        document.body.appendChild(svg);
+        assert.strictEqual(
+            relativeLength('2em', 0, void 0, svg),
+            20,
+            'CSS length resolves against the font size of an SVG parent'
+        );
+        assert.strictEqual(
+            relativeLength('16', 0, void 0, svg),
+            16,
+            'Numeric string with an SVG parent returns the parsed number'
+        );
+        document.body.removeChild(svg);
+
+        style.removeProperty('--hc-test-gap');
+    });
+
     console.timeEnd('Utils test time');
 }());

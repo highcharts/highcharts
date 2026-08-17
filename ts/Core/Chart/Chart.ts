@@ -29,6 +29,7 @@ import type AxisType from '../Axis/AxisType';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorAxisOptions from '../Axis/Color/ColorAxisOptions';
 import type {
+    CSSLength,
     CSSObject,
     CursorValue
 } from '../Renderer/CSSObject';
@@ -545,6 +546,9 @@ class Chart {
 
     /** @internal */
     public marginBottom?: number;
+
+    /** @internal */
+    public marginRight?: number;
 
     /**
      * Callback function to override the default function that formats
@@ -1945,7 +1949,14 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            widthOption || containerBox.width || 600 // #1460
+            relativeLength(
+                widthOption,
+                containerBox.width,
+                void 0,
+                chart.renderTo
+            ) ||
+            containerBox.width ||
+            600 // #1460
         );
         /**
          * The current pixel height of the chart.
@@ -1956,8 +1967,10 @@ class Chart {
         chart.chartHeight = Math.max(
             0,
             relativeLength(
-                heightOption as any,
-                chart.chartWidth
+                heightOption,
+                chart.chartWidth,
+                void 0,
+                chart.renderTo
             ) ||
             (enableDefaultHeight ? 400 : containerBox.height)
         );
@@ -2379,9 +2392,9 @@ class Chart {
     }
 
     /**
-     * Resize the chart to a given width and height. In order to set the width
-     * only, the height argument may be skipped. To set the height only, pass
-     * `undefined` for the width.
+     * Resize the chart to a given width and height. In order to set the
+     * width only, the height argument may be skipped. To set the height
+     * only, pass `undefined` for the width.
      *
      * @sample highcharts/members/chart-setsize-button/
      *         Test resizing from buttons
@@ -2392,16 +2405,19 @@ class Chart {
      *
      * @function Highcharts.Chart#setSize
      *
-     * @param {number|null} [width]
-     *        The new pixel width of the chart. Since v4.2.6, the argument can
-     *        be `undefined` in order to preserve the current value (when
-     *        setting height only), or `null` to adapt to the width of the
-     *        containing element.
+     * @param {number|Highcharts.CSSLength|null} [width]
+     *        The new width of the chart. A number sets pixels; a string is
+     *        resolved as a CSS length expression by the browser (e.g.
+     *        `'50%'`, `'20em'`, `'calc(var(--gap) * 2)'`). Pass `null` to
+     *        adapt to the containing element's width, or `undefined` to
+     *        leave it unchanged.
      *
-     * @param {number|null} [height]
-     *        The new pixel height of the chart. Since v4.2.6, the argument can
-     *        be `undefined` in order to preserve the current value, or `null`
-     *        in order to adapt to the height of the containing element.
+     * @param {number|Highcharts.CSSLength|null} [height]
+     *        The new height of the chart. A number sets pixels; a string is
+     *        resolved as a CSS length expression by the browser (e.g.
+     *        `'50%'`, `'20em'`, `'calc(var(--gap) * 2)'`). Pass `null` to
+     *        adapt to the containing element's height, or `undefined` to
+     *        leave it unchanged.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation. When `undefined`, it applies
@@ -2412,8 +2428,8 @@ class Chart {
      * @emits Highcharts.Chart#event:resize
      */
     public setSize(
-        width?: (number|null),
-        height?: (number|null),
+        width?: (number|CSSLength|null),
+        height?: (number|CSSLength|null),
         animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const chart = this,
@@ -2631,10 +2647,21 @@ class Chart {
                 'Left'
             ] as ('Top'|'Right'|'Bottom'|'Left')[]
             ).forEach((sideName, side): void => {
-                chart[target][side] = (
-                    chartOptions[`${target}${sideName}`] ??
-                    values[side]
-                ) as any;
+                const optionValue = chartOptions[`${target}${sideName}`] ??
+                    values[side];
+                if (!defined(optionValue)) {
+                    chart[target][side] = optionValue as any;
+                } else {
+                    const base = side % 2 ? // Right or Left
+                        chart.chartWidth :
+                        chart.chartHeight;
+                    chart[target][side] = relativeLength(
+                        optionValue,
+                        base || 0,
+                        void 0,
+                        chart.renderTo
+                    );
+                }
             });
         });
 
@@ -2668,6 +2695,7 @@ class Chart {
             optionsChart = chart.options.chart,
             {
                 backgroundColor,
+                borderRadius,
                 plotBackgroundColor,
                 plotBackgroundImage,
                 plotBorderRadius = 0,
@@ -2731,7 +2759,14 @@ class Chart {
             y: mgn / 2,
             width: chartWidth - mgn - chartBorderWidth % 2,
             height: chartHeight - mgn - chartBorderWidth % 2,
-            r: optionsChart.borderRadius
+            r: defined(borderRadius) ?
+                relativeLength(
+                    borderRadius,
+                    0,
+                    void 0,
+                    chart.renderTo
+                ) :
+                void 0
         });
 
         // Plot background
@@ -3228,9 +3263,7 @@ class Chart {
      */
     public destroy(): void {
         const chart = this,
-            axes = chart.axes,
-            series = chart.series,
-            container = chart.container,
+            { axes, series, container, renderTo } = chart,
             parentNode = container?.parentNode;
 
         let i: number;
@@ -3245,7 +3278,13 @@ class Chart {
             charts[chart.index] = void 0;
         }
         H.chartCount--;
-        chart.renderTo.removeAttribute('data-highcharts-chart');
+        renderTo.removeAttribute('data-highcharts-chart');
+
+        // Remove the CSS length probe from the render target (#23989)
+        discardElement(
+            H.cssLengthProbes.get(renderTo) as HTMLElement
+        );
+        H.cssLengthProbes.delete(renderTo);
 
         // Remove events
         removeEvent(chart);
@@ -4027,12 +4066,23 @@ class Chart {
         }
 
         // Update size. Redraw is forced.
-        const newWidth = optionsChart?.width;
+        const newWidth = optionsChart && (
+            isString(optionsChart.width) ?
+                relativeLength(
+                    optionsChart.width,
+                    chart.getContainerBox().width,
+                    void 0,
+                    chart.renderTo
+                ) :
+                optionsChart.width
+        );
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
                 relativeLength(
                     optionsChart.height,
-                    newWidth || chart.chartWidth
+                    isNumber(newWidth) ? newWidth : chart.chartWidth,
+                    void 0,
+                    chart.renderTo
                 ) :
                 optionsChart.height
         );
@@ -4047,7 +4097,9 @@ class Chart {
             (isNumber(newWidth) && newWidth !== chart.chartWidth) ||
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
-            chart.setSize(newWidth as number, newHeight as number, animation);
+            // Avoid overwriting a CSS length expression with its resolved
+            // pixel value (#23989)
+            chart.setSize(void 0, void 0, animation);
         } else if (pick(redraw, true)) {
             chart.redraw(animation);
         }

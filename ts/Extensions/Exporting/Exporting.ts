@@ -24,6 +24,7 @@ import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Axis from '../../Core/Axis/Axis';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../../Core/Callback';
 import type {
@@ -1991,7 +1992,7 @@ export class Exporting {
         // Get the source size
         const cssWidth: string = chart.renderTo.style.width,
             cssHeight: string = chart.renderTo.style.height,
-            sourceWidth: number = options.exporting?.sourceWidth ||
+            sourceWidth: (number|CSSLength) = options.exporting?.sourceWidth ||
                 options.chart.width ||
                 (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
                 (options.isGantt ? 800 : 600),
@@ -3044,8 +3045,8 @@ export namespace Exporting {
         childNodes: NodeListOf<ChildNode>;
         origDisplay: Array<(string | null)> ;
         resetParams?: [
-            (number | null)?,
-            (number | null)?,
+            (number|CSSLength|null)?,
+            (number|CSSLength|null)?,
             (boolean | Partial<AnimationOptions>)?
         ];
     }
