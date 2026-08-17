@@ -18,7 +18,7 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';
-import { isObject } from '../../Shared/Utilities.js';
+import { defined, isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -509,7 +509,7 @@ export function applyTrackedStyles(
 
     for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
         const value = styles[key];
-        if (value === void 0 || value === null) {
+        if (!defined(value)) {
             continue;
         }
 

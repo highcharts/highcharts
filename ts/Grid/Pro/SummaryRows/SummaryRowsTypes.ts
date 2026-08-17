@@ -125,10 +125,10 @@ export interface SummaryColumnOptions {
     style?: StyleValue<SummaryTableCell>;
 
     /**
-     * Whether a parent row of a TreeView contributes its own value to this
-     * column, overriding the row `includeParents` default.
+     * Whether a parent row of a TreeView is left out of this column's
+     * aggregation, overriding the row `skipParents` default.
      */
-    includeParents?: boolean;
+    skipParents?: boolean;
 }
 
 /**
@@ -205,26 +205,25 @@ export interface SummaryRowOptions {
     scope?: SummaryRowScope;
 
     /**
-     * Whether a parent row of a TreeView contributes its own value, on top of
-     * the rows below it.
+     * Whether a parent row of a TreeView is left out of the aggregation, so
+     * that pre-calculated parent values are not counted twice.
      *
-     * With `false`, a row is skipped whenever another row it rolls up is
-     * aggregated as well, so pre-calculated parent values are not counted
-     * twice. A parent a filter left on its own keeps counting. Resolving that
-     * costs an extra pass over the tree per recompute.
+     * With `true`, a row is skipped whenever another row it rolls up is
+     * aggregated as well. A parent a filter left on its own keeps counting.
+     * Resolving that costs an extra pass over the tree per recompute.
      *
      * A summary row aggregates the source data rather than the projected tree,
      * so values a `rowAggregator` derives are unaffected, and the parent rows
      * row grouping generates are never part of it.
      *
-     * Can be overridden per column with `columns[].includeParents`.
+     * Can be overridden per column with `columns[].skipParents`.
      *
-     * @sample grid-pro/options/summary-rows-include-parents
+     * @sample grid-pro/options/summary-rows-skip-parents
      *         Pre-calculated parent values
      *
-     * @default true
+     * @default false
      */
-    includeParents?: boolean;
+    skipParents?: boolean;
 }
 
 /**

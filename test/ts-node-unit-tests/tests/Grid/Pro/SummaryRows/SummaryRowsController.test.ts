@@ -644,7 +644,7 @@ describe('SummaryRowsController', () => {
             rendering: { rows: { expandedLevels: 'all' } },
             summaryRows: {
                 aggregator: 'SUM',
-                includeParents: false,
+                skipParents: true,
                 columns: [{ id: 'name', value: 'Total' }]
             }
         };
@@ -679,7 +679,7 @@ describe('SummaryRowsController', () => {
         );
     });
 
-    it('should let a column override includeParents', async () => {
+    it('should let a column override skipParents', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -707,7 +707,7 @@ describe('SummaryRowsController', () => {
             ...options,
             summaryRows: {
                 aggregator: 'SUM',
-                columns: [{ id: 'sales', includeParents: false }]
+                columns: [{ id: 'sales', skipParents: true }]
             }
         } as any, true);
 
@@ -726,8 +726,8 @@ describe('SummaryRowsController', () => {
             ...options,
             summaryRows: {
                 aggregator: 'SUM',
-                includeParents: false,
-                columns: [{ id: 'staff', includeParents: true }]
+                skipParents: true,
+                columns: [{ id: 'staff', skipParents: false }]
             }
         } as any, true);
 
@@ -763,7 +763,7 @@ describe('SummaryRowsController', () => {
                 },
                 treeView: { enabled: true, treeColumn: 'name' },
                 rendering: { rows: { expandedLevels: 'all' } },
-                summaryRows: { aggregator: 'SUM', includeParents: false }
+                summaryRows: { aggregator: 'SUM', skipParents: true }
             } as any, true);
 
             grid.viewport?.resizeObserver?.disconnect();
