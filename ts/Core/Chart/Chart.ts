@@ -3747,8 +3747,7 @@ class Chart {
      * data options.
      *
      * If the given options don't differ from the current chart options, the
-     * update is skipped and the `update` and `afterUpdate` events are not
-     * emitted.
+     * update is skipped and the `afterUpdate` event is not emitted.
      *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
@@ -3815,16 +3814,21 @@ class Chart {
 
         options = diffObjects(options, chart.options);
 
+        const e: AnyRecord = {
+            options,
+            // Event handlers can turn this on or off to control further
+            // processing
+            hasChanged: !!Object.keys(options).length
+        };
+        fireEvent(chart, 'update', e);
+
         // If no changes are detected, stop further processing (#24805).
-        if (!Object.keys(options).length) {
-            // Replay the responsive rules undone above.
+        if (!e.hasChanged) {
             if (!isResponsiveOptions) {
                 chart.setResponsive(redraw ?? true);
             }
             return;
         }
-
-        fireEvent(chart, 'update', { options: options });
 
         chart.userOptions = merge(chart.userOptions, options);
 

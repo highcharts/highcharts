@@ -4,7 +4,7 @@ QUnit.test('Chart events', assert => {
         chart: {
             events: {
                 redraw: () => stack.push('Redraw.1'),
-                update: () => stack.push('Update'),
+                update: e => stack.push(`Update.${!!e.hasChanged}`),
                 afterUpdate: () => stack.push('AfterUpdate')
             },
             width: 200
@@ -38,7 +38,7 @@ QUnit.test('Chart events', assert => {
         stack,
         [
             'Redraw.1',
-            'Update',
+            'Update.true',
             'AfterUpdate'
         ],
         'Updated without redraw, the update events should fire but no redraw'
@@ -49,7 +49,7 @@ QUnit.test('Chart events', assert => {
         stack,
         [
             'Redraw.1',
-            'Update',
+            'Update.true',
             'AfterUpdate',
             'Redraw.2'
         ],
@@ -61,11 +61,12 @@ QUnit.test('Chart events', assert => {
         stack,
         [
             'Redraw.1',
-            'Update',
+            'Update.true',
             'AfterUpdate',
-            'Redraw.2'
+            'Redraw.2',
+            'Update.false'
         ],
-        'Empty chart.update({}) should be a no-op, neither update, ' +
+        'Empty chart.update({}) should be a no-op, neither ' +
         'afterUpdate nor redraw should fire (#24805)'
     );
 
@@ -74,11 +75,13 @@ QUnit.test('Chart events', assert => {
         stack,
         [
             'Redraw.1',
-            'Update',
+            'Update.true',
             'AfterUpdate',
-            'Redraw.2'
+            'Redraw.2',
+            'Update.false',
+            'Update.false'
         ],
         'chart.update() with options matching current state should be a ' +
-        'no-op, neither update, afterUpdate nor redraw should fire (#24805)'
+        'no-op, neither afterUpdate nor redraw should fire (#24805)'
     );
 });
