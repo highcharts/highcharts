@@ -38,8 +38,6 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      * applies to the points, so when setting a specific link color, consider
      * setting the `fillOpacity` to 1.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @product highcharts
      */
     color?: ColorType;
