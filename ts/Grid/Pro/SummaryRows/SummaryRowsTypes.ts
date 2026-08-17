@@ -123,6 +123,12 @@ export interface SummaryColumnOptions {
      * Can be a static style object or a callback that returns one.
      */
     style?: StyleValue<SummaryTableCell>;
+
+    /**
+     * Whether a parent row of a TreeView is left out of this column's
+     * aggregation, overriding the row `skipParents` default.
+     */
+    skipParents?: boolean;
 }
 
 /**
@@ -199,28 +205,25 @@ export interface SummaryRowOptions {
     scope?: SummaryRowScope;
 
     /**
-     * Whether a parent row of a TreeView contributes its own value, on top of
-     * the rows below it.
+     * Whether a parent row of a TreeView is left out of the aggregation, so
+     * that pre-calculated parent values are not counted twice.
      *
-     * Source data often carries pre-calculated parent values. Aggregating those
-     * together with their children counts the same numbers twice, so by default
-     * a row is skipped whenever another row it rolls up is aggregated as well.
-     * A parent a filter left on its own is not rolling anything up, so it keeps
-     * counting.
+     * With `true`, a row is skipped whenever another row it rolls up is
+     * aggregated as well. A parent a filter left on its own keeps counting.
+     * Resolving that costs an extra pass over the tree per recompute.
      *
-     * Set it to `true` when a parent row is an independent data point rather
-     * than a total of its children, for example a department's own cost next to
-     * the costs of its teams.
+     * A summary row aggregates the source data rather than the projected tree,
+     * so values a `rowAggregator` derives are unaffected, and the parent rows
+     * row grouping generates are never part of it.
      *
-     * It has no effect without TreeView: row grouping generates its parent
-     * rows, so they are never part of the aggregated source data.
+     * Can be overridden per column with `columns[].skipParents`.
      *
-     * @sample grid-pro/options/summary-rows-include-parents
+     * @sample grid-pro/options/summary-rows-skip-parents
      *         Pre-calculated parent values
      *
      * @default false
      */
-    includeParents?: boolean;
+    skipParents?: boolean;
 }
 
 /**

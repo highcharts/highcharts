@@ -644,6 +644,7 @@ describe('SummaryRowsController', () => {
             rendering: { rows: { expandedLevels: 'all' } },
             summaryRows: {
                 aggregator: 'SUM',
+                skipParents: true,
                 columns: [{ id: 'name', value: 'Total' }]
             }
         };
@@ -663,8 +664,8 @@ describe('SummaryRowsController', () => {
             {
                 ...options,
                 summaryRows: {
-                    ...options.summaryRows,
-                    includeParents: true
+                    aggregator: 'SUM',
+                    columns: [{ id: 'name', value: 'Total' }]
                 }
             } as any,
             true
@@ -674,7 +675,71 @@ describe('SummaryRowsController', () => {
 
         strictEqual(
             summaryRowObjects(withParents)[0].sales, 340,
-            'includeParents brings the parent values back in.'
+            'By default every row counts, parent values included.'
+        );
+    });
+
+    it('should let a column override skipParents', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        // `sales` carries a pre-calculated rollup, `staff` belongs to the
+        // region row itself.
+        const options = {
+            data: {
+                columns: {
+                    id: ['europe', 'france', 'germany'],
+                    parentId: [null, 'europe', 'europe'],
+                    name: ['Europe', 'France', 'Germany'],
+                    sales: [100, 60, 40],
+                    staff: [5, 20, 30]
+                },
+                idColumn: 'id'
+            },
+            treeView: { enabled: true, treeColumn: 'name' },
+            rendering: { rows: { expandedLevels: 'all' } }
+        };
+
+        const optedOut = await Grid.grid(el, {
+            ...options,
+            summaryRows: {
+                aggregator: 'SUM',
+                columns: [{ id: 'sales', skipParents: true }]
+            }
+        } as any, true);
+
+        optedOut.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            summaryRowObjects(optedOut)[0].sales, 100,
+            'The opted-out column drops the rolled up parent value.'
+        );
+        strictEqual(
+            summaryRowObjects(optedOut)[0].staff, 55,
+            'A column left on the row default keeps counting the parent.'
+        );
+
+        const optedIn = await Grid.grid(setupDOM().el, {
+            ...options,
+            summaryRows: {
+                aggregator: 'SUM',
+                skipParents: true,
+                columns: [{ id: 'staff', skipParents: false }]
+            }
+        } as any, true);
+
+        optedIn.viewport?.resizeObserver?.disconnect();
+
+        strictEqual(
+            summaryRowObjects(optedIn)[0].sales, 100,
+            'The row default still drops the rolled up parent value.'
+        );
+        strictEqual(
+            summaryRowObjects(optedIn)[0].staff, 55,
+            'The opted-in column counts the parent on top of its children.'
         );
     });
 
@@ -698,7 +763,7 @@ describe('SummaryRowsController', () => {
                 },
                 treeView: { enabled: true, treeColumn: 'name' },
                 rendering: { rows: { expandedLevels: 'all' } },
-                summaryRows: { aggregator: 'SUM' }
+                summaryRows: { aggregator: 'SUM', skipParents: true }
             } as any, true);
 
             grid.viewport?.resizeObserver?.disconnect();

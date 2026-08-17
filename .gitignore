@@ -87,3 +87,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 **/*.spec.*-snapshots/
+
+# Old changelog artefact
+changelog/changelog.html
