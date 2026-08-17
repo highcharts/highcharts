@@ -500,7 +500,14 @@ class Legend {
             { area, group, label, line, symbol } = item.legendItem || {};
 
         if (item instanceof Series || item instanceof Point) {
-            item.color = item.options?.legendSymbolColor || originalColor;
+            const legendSymbolOption = item instanceof Series ?
+                item.options?.legendSymbol : void 0;
+            item.color = (
+                typeof legendSymbolOption === 'object' ?
+                    legendSymbolOption.color : void 0
+            ) ||
+                item.options?.legendSymbolColor ||
+                originalColor;
         }
         group?.[visible ? 'removeClass' : 'addClass'](
             'highcharts-legend-item-hidden'
@@ -511,6 +518,10 @@ class Legend {
                 hiddenColor = itemHiddenStyle.color,
                 { fillColor, lineColor } =
                     (item as Series).options,
+                legendSymbolOpt = item instanceof Series ?
+                    item.options?.legendSymbol : void 0,
+                legendMarker = typeof legendSymbolOpt === 'object' ?
+                    legendSymbolOpt.marker : void 0,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
                         if (attr.fill) {
@@ -526,14 +537,28 @@ class Legend {
 
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
-            // Apply legend symbol attributes
-            symbol?.attr(colorizeHidden(
-                (item as Point).series ?
+            if (symbol) {
+                // Apply legend symbol attributes. legendSymbol.marker
+                // properties take priority over the result of pointAttribs().
+                const markerAttribs = (item as Point).series ?
                     // When `legendType` is `point`, like pie series
                     (item as Point).series.pointAttribs?.(item as Point) :
                     // When `legendType` is `series`, like line or column series
-                    (item as Series).pointAttribs?.() || { fill: item.color }
-            ));
+                    (item as Series).pointAttribs?.() || { fill: item.color };
+
+                if (legendMarker) {
+                    if (legendMarker.fillColor) {
+                        markerAttribs.fill = legendMarker.fillColor;
+                    }
+                    if (legendMarker.lineColor) {
+                        markerAttribs.stroke = legendMarker.lineColor;
+                    }
+                    if (defined(legendMarker.lineWidth)) {
+                        markerAttribs['stroke-width'] = legendMarker.lineWidth;
+                    }
+                }
+                symbol.attr(colorizeHidden(markerAttribs));
+            }
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,
@@ -618,6 +643,10 @@ class Legend {
         )
     ): void {
         const legendItem = item.legendItem || {};
+
+        if (item instanceof Series) {
+            fireEvent(item, 'destroyLegendSymbol', { legendItem });
+        }
 
         // Destroy SVG elements
         for (const key of ['group', 'label', 'line', 'symbol'] as const) {
