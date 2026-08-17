@@ -3746,6 +3746,9 @@ class Chart {
      * Note that when changing series data, `chart.update` may mutate the passed
      * data options.
      *
+     * If the given options don't differ from the current chart options, the
+     * update is skipped and the `afterUpdate` event is not emitted.
+     *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
@@ -3802,7 +3805,20 @@ class Chart {
             updateAllSeries,
             runSetSize;
 
-        fireEvent(chart, 'update', { options: options });
+        options = diffObjects(options, chart.options);
+
+        const e: AnyRecord = {
+            options,
+            // Event handlers can turn this on or off to control further
+            // processing
+            hasChanged: !!Object.keys(options).length
+        };
+        fireEvent(chart, 'update', e);
+
+        // If no changes are detected, stop further processing (#24805).
+        if (!e.hasChanged) {
+            return;
+        }
 
         // If there are responsive rules in action, undo the responsive rules
         // before we apply the updated options and replay the responsive rules
@@ -3810,8 +3826,6 @@ class Chart {
         if (!isResponsiveOptions) {
             chart.setResponsive(false, true);
         }
-
-        options = diffObjects(options, chart.options);
 
         chart.userOptions = merge(chart.userOptions, options);
 
@@ -4048,7 +4062,7 @@ class Chart {
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
             chart.setSize(newWidth as number, newHeight as number, animation);
-        } else if (pick(redraw, true)) {
+        } else if (redraw ?? true) {
             chart.redraw(animation);
         }
 

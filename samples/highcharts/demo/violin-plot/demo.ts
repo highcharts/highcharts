@@ -59,23 +59,23 @@ function renderChart(
                     <table class="violin-tooltip-table">
                         <tr>
                             <th>Max:</th>
-                            <td>{high:.2f} cm</td>
+                            <td>{high:.0f} cm</td>
                         </tr>
                         <tr>
                             <th>Q3:</th>
-                            <td>{q3:.2f} cm</td>
+                            <td>{q3:.0f} cm</td>
                         </tr>
                         <tr class="median-row">
                             <th>Median:</th>
-                            <td>{median:.2f} cm</td>
+                            <td>{median:.0f} cm</td>
                         </tr>
                         <tr>
                             <th>Q1:</th>
-                            <td>{q1:.2f} cm</td>
+                            <td>{q1:.0f} cm</td>
                         </tr>
                         <tr>
                             <th>Min:</th>
-                            <td>{low:.2f} cm</td>
+                            <td>{low:.0f} cm</td>
                         </tr>
                     </table>
                 </div>
