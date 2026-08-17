@@ -64,8 +64,8 @@ interface SummaryScopedSource {
 
     /**
      * Rows of the table that roll up other rows of it, resolved only when the
-     * row or one of its columns opts out of `includeParents`, and then left
-     * out of the aggregation.
+     * row or one of its columns opts into `skipParents`, and then left out of
+     * the aggregation.
      */
     rollupRowIndexes?: Set<number>;
 }
@@ -216,8 +216,8 @@ class SummaryRowsController {
         summaryRowIndex: number
     ): SummaryRenderRow {
         // The second one only costs a pass when the rollups were resolved.
-        const rowCountWithParents = this.getScopedRowCount(source, true);
-        const rowCountWithoutParents = this.getScopedRowCount(source, false);
+        const rowCountWithParents = this.getScopedRowCount(source, false);
+        const rowCountWithoutParents = this.getScopedRowCount(source, true);
         const data: DataTableRowObject = {};
         const formats: Record<string, string> = {};
         const classNames: Record<string, string> = {};
@@ -247,16 +247,15 @@ class SummaryRowsController {
                 continue;
             }
 
-            const includeParents =
-                this.getColumnIncludeParents(options, column);
+            const skipParents = this.getColumnSkipParents(options, column);
 
             const aggregatorName = Aggregation.resolveAggregatorName(
                 this.getColumnAggregator(options, column),
                 {
                     columnId,
-                    rowCount: includeParents ?
-                        rowCountWithParents :
-                        rowCountWithoutParents,
+                    rowCount: skipParents ?
+                        rowCountWithoutParents :
+                        rowCountWithParents,
                     summaryRowId,
                     summaryRowIndex
                 }
@@ -265,7 +264,7 @@ class SummaryRowsController {
             data[columnId] = aggregatorName ?
                 Aggregation.executeAggregate(
                     aggregatorName,
-                    this.getAggregableValues(source, columnId, includeParents)
+                    this.getAggregableValues(source, columnId, skipParents)
                 ) :
                 null;
         }
@@ -393,20 +392,20 @@ class SummaryRowsController {
      * @param source
      * Resolved scoped source.
      *
-     * @param includeParents
-     * Whether rows rolling up other rows count as well.
+     * @param skipParents
+     * Whether rows rolling up other rows are left out.
      */
     private getScopedRowCount(
         source: SummaryScopedSource,
-        includeParents: boolean
+        skipParents: boolean
     ): number {
         const rowCount = source.table.getRowCount();
         const range = source.range;
         const from = range ? range[0] : 0;
         const to = range ? Math.min(range[1], rowCount) : rowCount;
-        const rollupRowIndexes = includeParents ?
-            void 0 :
-            source.rollupRowIndexes;
+        const rollupRowIndexes = skipParents ?
+            source.rollupRowIndexes :
+            void 0;
 
         if (!rollupRowIndexes?.size) {
             return Math.max(0, to - from);
@@ -431,19 +430,19 @@ class SummaryRowsController {
      * @param columnId
      * Aggregated column id.
      *
-     * @param includeParents
-     * Whether rows rolling up other rows contribute as well.
+     * @param skipParents
+     * Whether rows rolling up other rows are left out.
      */
     private getAggregableValues(
         source: SummaryScopedSource,
         columnId: string,
-        includeParents: boolean
+        skipParents: boolean
     ): Array<Exclude<DataTableCellType, null | undefined>> {
         const column = source.table.getColumn(columnId) || [];
         const range = source.range;
-        const rollupRowIndexes = includeParents ?
-            void 0 :
-            source.rollupRowIndexes;
+        const rollupRowIndexes = skipParents ?
+            source.rollupRowIndexes :
+            void 0;
 
         if (!rollupRowIndexes?.size) {
             return Array.from(
@@ -515,8 +514,8 @@ class SummaryRowsController {
     }
 
     /**
-     * Resolves whether a summary column counts rows that roll up other rows,
-     * falling back to the summary row default.
+     * Resolves whether a summary column leaves out rows that roll up other
+     * rows, falling back to the summary row default.
      *
      * @param options
      * Summary row options.
@@ -524,11 +523,11 @@ class SummaryRowsController {
      * @param column
      * Column options for the resolved column, when present.
      */
-    private getColumnIncludeParents(
+    private getColumnSkipParents(
         options: SummaryRowOptions,
         column: SummaryColumnOptions | undefined
     ): boolean {
-        return (column?.includeParents ?? options.includeParents) !== false;
+        return !!(column?.skipParents ?? options.skipParents);
     }
 
     /**
@@ -539,7 +538,7 @@ class SummaryRowsController {
      * Summary row options.
      */
     private excludesRollups(options: SummaryRowOptions): boolean {
-        if (options.includeParents === false) {
+        if (options.skipParents) {
             return true;
         }
 
@@ -549,7 +548,7 @@ class SummaryRowsController {
         }
 
         for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
-            if (columns[i].includeParents === false) {
+            if (columns[i].skipParents) {
                 return true;
             }
         }

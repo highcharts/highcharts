@@ -39,7 +39,7 @@ const grid = Grid.grid('container', {
     },
     summaryRows: {
         aggregator: 'SUM',
-        includeParents: false,
+        skipParents: true,
         columns: [{ id: 'name', value: 'Total' }]
     },
     columnDefaults: {
@@ -71,13 +71,13 @@ const grid = Grid.grid('container', {
     header: ['name', 'sales']
 });
 
-document.getElementById('include-parents').addEventListener(
+document.getElementById('skip-parents').addEventListener(
     'change',
     function (e) {
         grid.update({
             summaryRows: {
                 aggregator: 'SUM',
-                includeParents: e.target.checked,
+                skipParents: e.target.checked,
                 columns: [{ id: 'name', value: 'Total' }]
             }
         });
