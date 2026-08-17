@@ -240,8 +240,12 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             }
 
             if (title) {
-                html += '<p ' + styleAttr(titleStyle) + '>' +
-                    (title || '') + '</p>';
+                html += '<p ' + styleAttr(titleStyle) + '>' + title + '</p>';
+            } else {
+                // Required to prevent a glitch in iOS Safari, where text would
+                // flow outside the box if the title is missing (#25043)
+                html += '<p style="line-height: 0;font-size:1px;opacity: 0">.' +
+                    '</p>';
             }
 
             if (description) {
