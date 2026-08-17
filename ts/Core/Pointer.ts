@@ -2121,6 +2121,7 @@ class Pointer {
             if (
                 (chart.tooltip?.options.followTouchMove ?? true) &&
                 isInside &&
+                e.type === 'touchmove' &&
                 !(chart.scrollablePixelsX || chart.scrollablePixelsY)
             ) {
                 e.preventDefault();
