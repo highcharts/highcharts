@@ -3805,13 +3805,6 @@ class Chart {
             updateAllSeries,
             runSetSize;
 
-        // If there are responsive rules in action, undo the responsive rules
-        // before we apply the updated options and replay the responsive rules
-        // on top from the chart.redraw function (#9617).
-        if (!isResponsiveOptions) {
-            chart.setResponsive(false, true);
-        }
-
         options = diffObjects(options, chart.options);
 
         const e: AnyRecord = {
@@ -3824,10 +3817,14 @@ class Chart {
 
         // If no changes are detected, stop further processing (#24805).
         if (!e.hasChanged) {
-            if (!isResponsiveOptions) {
-                chart.setResponsive(redraw ?? true);
-            }
             return;
+        }
+
+        // If there are responsive rules in action, undo the responsive rules
+        // before we apply the updated options and replay the responsive rules
+        // on top from the chart.redraw function (#9617).
+        if (!isResponsiveOptions) {
+            chart.setResponsive(false, true);
         }
 
         chart.userOptions = merge(chart.userOptions, options);
