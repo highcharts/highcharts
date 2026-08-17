@@ -110,8 +110,6 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|Array<number>|*>}
-     *
      * @extends series.column.data
      *
      * @product highcharts
@@ -135,8 +133,6 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
      * the pixel height, if it is a percentage string it is the percentage
      * of the plot area height.
      *
-     * @type {number|string}
-     *
      * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
      *
      * @product highcharts
@@ -150,8 +146,6 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
      * defines pixel width, a percentage string defines a percentage
      * of the plot area height.
      *
-     * @type {number|string}
-     *
      * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
      *
      * @product highcharts
@@ -162,8 +156,6 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
      * The width of the neck, the lower part of the funnel. A number defines
      * pixel width, a percentage string defines a percentage of the plot
      * area width.
-     *
-     * @type {number|string}
      *
      * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
      *
@@ -186,8 +178,6 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
     /**
      * The max width of the series compared to the width of the plot area,
      * or the pixel width if it is a number.
-     *
-     * @type {number|string}
      *
      * @sample {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
      *

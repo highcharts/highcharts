@@ -125,8 +125,6 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|null|*>}
-     *
      * @extends series.pie.data
      *
      * @excluding sliced
@@ -192,14 +190,6 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      * @excluding halo, marker, lineWidth, lineWidthPlus
      *
      * @apioption plotOptions.funnel.states.hover
-     */
-
-    /**
-     * Options for a selected funnel item.
-     *
-     * @excluding halo, marker, lineWidth, lineWidthPlus
-     *
-     * @apioption series.funnel.states.select
      */
 
     /**
