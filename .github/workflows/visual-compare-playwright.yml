@@ -179,5 +179,32 @@ jobs:
             echo "::error::Candidate visual test completion marker is missing."
             failures=1
           fi
+          if ! node <<'NODE'
+          const fs = require('node:fs');
+
+          try {
+              const results = JSON.parse(fs.readFileSync(
+                  'test/visual-test-results.json',
+                  'utf8'
+              ));
+              const key = 'highcharts/demo/area-missing';
+              if (
+                  results === null ||
+                  typeof results !== 'object' ||
+                  Array.isArray(results) ||
+                  !Object.prototype.hasOwnProperty.call(results, key) ||
+                  !Number.isInteger(results[key]) ||
+                  results[key] < 0
+              ) {
+                  throw new Error('Expected a non-negative integer result.');
+              }
+          } catch (error) {
+              console.error(`::error::Invalid visual test result: ${error.message}`);
+              process.exit(1);
+          }
+          NODE
+          then
+            failures=1
+          fi
 
           exit "$failures"

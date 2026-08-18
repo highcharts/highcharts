@@ -199,7 +199,6 @@
     window.VisualComparator = {
         CANVAS_WIDTH: CANVAS_WIDTH,
         CANVAS_HEIGHT: CANVAS_HEIGHT,
-        prepareShot: prepareShot,
         getSVG: getSVG,
         compare: compare,
         svgToPixels: svgToPixels,

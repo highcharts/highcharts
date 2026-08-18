@@ -592,12 +592,6 @@ if (window.QUnit) {
     });
 }
 
-Highcharts.prepareShot = VisualComparator.prepareShot;
-
-function getSVG(chart) {
-    return VisualComparator.getSVG(chart);
-}
-
 /**
  * Vanilla request for fetching an url using GET.
  * @param {String} url to fetch
@@ -662,7 +656,7 @@ function saveSVGSnapshot(svg, path) {
 function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
     return new Promise(function (resolve, reject) {
 
-        var candidateSVG = getSVG(chart);
+        var candidateSVG = VisualComparator.getSVG(chart);
         if (!candidateSVG || !path) {
             reject(new Error('No candidate SVG found for path: ' + path));
         }

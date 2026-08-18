@@ -31,8 +31,17 @@ type VisualComparator = {
     ) => Promise<Uint8ClampedArray>;
 };
 
+type BrowserRuntimeError = {
+    message: string;
+    stack?: string;
+};
+
 type VisualWindow = Window & {
     VisualComparator?: VisualComparator;
+    visualTestUnhandledRejection?: BrowserRuntimeError;
+    visualTestUnhandledRejectionListener?: (
+        event: PromiseRejectionEvent
+    ) => void;
 };
 
 type ComparisonResult = {
@@ -58,6 +67,20 @@ function transformVisualSampleScript(script: string | undefined): string {
     return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
+function throwRuntimeError(
+    runtimeError: BrowserRuntimeError | undefined
+): void {
+    if (runtimeError) {
+        throw new Error(
+            `${runtimeError.message}${
+                runtimeError.stack ?
+                    `\n${runtimeError.stack}` :
+                    ''
+            }`
+        );
+    }
+}
+
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
 const MAX_CHART_LOAD_ATTEMPTS = 100;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
@@ -65,6 +88,7 @@ const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
 const root = process.cwd();
 const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
+const runtimeErrorMode = process.env.VISUAL_TEST_RUNTIME_ERROR;
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
 
@@ -302,6 +326,15 @@ test.describe('Visual tests', () => {
             }
 
             let scriptHandle: Awaited<ReturnType<Page['addScriptTag']>> | undefined;
+            let pageError: BrowserRuntimeError | undefined;
+            const pageErrorListener = (error: Error): void => {
+                if (!pageError) {
+                    pageError = {
+                        message: error.message,
+                        stack: error.stack
+                    };
+                }
+            };
             try {
                 if (!page) {
                     throw new Error('Page not initialized');
@@ -352,32 +385,75 @@ test.describe('Visual tests', () => {
                             (el: HTMLStyleElement) => el.id = 'highcharts.css'
                         );
                     }
-
-                    // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
-                    if (sample.css) {
-                        const styleHandle = await page.addStyleTag({
-                            content: sample.css
-                        });
-                        await styleHandle.evaluate(
-                            (el: HTMLStyleElement) => el.id = 'demo.css'
-                        );
-                    }
-                } else {
-                    // For non-styled mode, add demo.css with standard id
-                    if (sample.css) {
-                        const styleHandle = await page.addStyleTag({
-                            content: sample.css
-                        });
-                        await styleHandle.evaluate(
-                            (el: HTMLStyleElement) => el.id = 'visual-test-styles'
-                        );
-                    }
+                }
+                if (sample.css) {
+                    // Use the styled mode ID for SVG injection.
+                    const styleHandle = await page.addStyleTag({
+                        content: sample.css
+                    });
+                    await styleHandle.evaluate(
+                        (el: HTMLStyleElement, id: string) => el.id = id,
+                        isStyledMode ? 'demo.css' : 'visual-test-styles'
+                    );
                 }
 
                 // Load script with timeout handling
+                page.on('pageerror', pageErrorListener);
+                await page.evaluate(() => {
+                    const visualWindow = window as VisualWindow;
+                    const listener = (event: PromiseRejectionEvent): void => {
+                        if (visualWindow.visualTestUnhandledRejection) {
+                            return;
+                        }
+
+                        const reason = event.reason;
+                        visualWindow.visualTestUnhandledRejection =
+                            reason instanceof Error ? {
+                                message: reason.message,
+                                stack: reason.stack
+                            } : {
+                                message: String(reason)
+                            };
+                    };
+                    visualWindow.visualTestUnhandledRejectionListener =
+                        listener;
+                    window.addEventListener(
+                        'unhandledrejection',
+                        listener
+                    );
+                });
                 scriptHandle = await page.addScriptTag({
                     content: transformedScript
                 });
+
+                if (runtimeErrorMode === 'pageerror') {
+                    const controlledPageError = page.waitForEvent('pageerror', {
+                        predicate: error =>
+                            error.message === 'Controlled visual pageerror'
+                    });
+                    await page.evaluate(() => {
+                        queueMicrotask(() => {
+                            throw new Error('Controlled visual pageerror');
+                        });
+                    });
+                    await controlledPageError;
+                } else if (runtimeErrorMode === 'unhandledrejection') {
+                    await page.evaluate(() => {
+                        const promise = Promise.resolve();
+                        window.dispatchEvent(
+                            new PromiseRejectionEvent('unhandledrejection', {
+                                promise,
+                                reason: new Error(
+                                    'Controlled visual unhandledrejection'
+                                )
+                            })
+                        );
+                    });
+                    await page.waitForFunction(
+                        () => !!(window as VisualWindow)
+                            .visualTestUnhandledRejection
+                    );
+                }
 
                 const candidateSVG = await page.evaluate(
                     async ({ maxAttempts, retryDelay, timeoutMs }) => {
@@ -427,6 +503,11 @@ test.describe('Visual tests', () => {
                 );
 
                 if (referenceMode) {
+                    const runtimeError = pageError ?? await page.evaluate(() =>
+                        (window as VisualWindow)
+                            .visualTestUnhandledRejection
+                    );
+                    throwRuntimeError(runtimeError);
                     writeReference(root, visualSamplePath, candidateSVG);
                 } else {
                     const referenceSVG = readReference(root, visualSamplePath);
@@ -469,6 +550,12 @@ test.describe('Visual tests', () => {
                         { candidateSVG, referenceSVG }
                     );
 
+                    const runtimeError = pageError ?? await page.evaluate(() =>
+                        (window as VisualWindow)
+                            .visualTestUnhandledRejection
+                    );
+                    throwRuntimeError(runtimeError);
+
                     if (comparison.difference) {
                         if (
                             !comparison.referencePixels ||
@@ -502,6 +589,23 @@ test.describe('Visual tests', () => {
                 );
                 throw error;
             } finally {
+                if (page) {
+                    page.off('pageerror', pageErrorListener);
+                    await page.evaluate(() => {
+                        const visualWindow = window as VisualWindow;
+                        const listener =
+                            visualWindow.visualTestUnhandledRejectionListener;
+                        if (listener) {
+                            window.removeEventListener(
+                                'unhandledrejection',
+                                listener
+                            );
+                        }
+                        delete visualWindow.visualTestUnhandledRejection;
+                        delete visualWindow
+                            .visualTestUnhandledRejectionListener;
+                    });
+                }
                 if (page && scriptHandle) {
                     await scriptHandle.evaluate(
                         (element: HTMLScriptElement) => {

@@ -570,7 +570,7 @@ module.exports = function (config) {
                     // Set reference image
                     if (argv.reference) {
                         assertion = `
-                            let svg = getSVG(chart);
+                            let svg = VisualComparator.getSVG(chart);
                             saveSVGSnapshot(svg, '${path}/reference.svg');
 
                             assert.ok(
