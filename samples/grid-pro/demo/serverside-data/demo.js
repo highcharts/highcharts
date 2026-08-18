@@ -4,10 +4,11 @@ const columns = [
 ].join(',');
 
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         providerType: 'remote',
         dataSource: {
-            urlTemplate: 'https://demo-data-server.highstage.dev/data' +
+            urlTemplate: 'https://demo-data-server.highsoftlabs.com/data' +
                 '?format={format}&dataset=large' +
                 '&columnsInclude=' + columns +
                 '&page={page}&pageSize={pageSize}' +

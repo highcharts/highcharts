@@ -9,8 +9,9 @@
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -40,8 +41,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type VennSeriesOptions from './VennSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import CU from '../../Core/Geometry/CircleUtilities.js';
@@ -511,19 +511,17 @@ class VennSeries extends ScatterSeries {
         const series = this,
             seriesOptions = series.options || {},
             pointOptions = point?.options || {},
-            stateOptions =
-                (state && (seriesOptions.states as any)[state as any]) || {},
+            stateOptions = (state && seriesOptions.states?.[state]) || {},
             options = merge(
                 seriesOptions,
-                { color: point?.color },
                 pointOptions,
                 stateOptions
             );
 
         // Return resulting values for the attributes.
         return {
-            'fill': color(options.color)
-                .brighten(options.brightness as any)
+            'fill': color(options.color || point.color)
+                .brighten(options.brightness || 0)
                 .get(),
             // Set opacity directly to the SVG element, not to pattern #14372.
             opacity: options.opacity,
@@ -542,7 +540,7 @@ class VennSeries extends ScatterSeries {
 
         // Process the data before passing it into the layout function.
         const relations = VennUtils.processVennData(
-            this.options.data as any,
+            this.dataTable,
             VennSeries.splitter
         );
 

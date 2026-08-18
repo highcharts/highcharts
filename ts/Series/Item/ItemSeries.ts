@@ -5,8 +5,9 @@
  *
  *  Item series type for Highcharts
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,8 +38,7 @@ import {
     extend,
     fireEvent,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -160,10 +160,7 @@ class ItemSeries extends PieSeries {
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions.symbol as any)
                 ),
-                r = pick(
-                    pointMarkerOptions.radius,
-                    seriesMarkerOptions.radius
-                ),
+                r = (pointMarkerOptions.radius ?? seriesMarkerOptions.radius),
                 size = defined(r) ? 2 * r : itemSize,
                 padding = size * (options.itemPadding as any);
 

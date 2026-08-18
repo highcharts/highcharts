@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,7 +34,9 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
-import { addEvent, getStyle, merge, pick } from '../../Shared/Utilities.js';
+import getIcon from '../../Shared/BaseFormUtils.js';
+import StockToolsIcons from './StockToolsIcons.js';
+import { addEvent, getStyle, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -163,9 +166,9 @@ function setOffset(chart: Chart): void {
         let dirty = false;
 
         if (offsetWidth < chart.plotWidth) {
-            const nextX = pick(
-                optionsChart.spacingLeft,
-                optionsChart.spacing && optionsChart.spacing[3],
+            const nextX = (
+                optionsChart.spacingLeft ??
+                (optionsChart.spacing && optionsChart.spacing[3]) ??
                 0
             ) + offsetWidth;
             const diff = nextX - chart.spacingBox.x;
@@ -228,15 +231,16 @@ function onChartRender(
         this.options.series &&
         button
     ) {
+        const { iconsURL } = stockTools;
         if (
             this.navigationBindings.utils
                 ?.isPriceIndicatorEnabled?.(this.series)
         ) {
             button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+                getIcon('current-price-hide.svg', iconsURL, StockToolsIcons);
         } else {
             button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+                getIcon('current-price-show.svg', iconsURL, StockToolsIcons);
         }
     }
 }

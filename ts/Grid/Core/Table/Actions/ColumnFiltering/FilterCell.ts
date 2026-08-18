@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -23,6 +24,7 @@
 
 import type Row from '../../Row.js';
 import type Column from '../../Column.js';
+import type { GroupedHeaderOptions } from '../../../Options';
 
 import HeaderCell from '../../Header/HeaderCell.js';
 import { fireEvent } from '../../../../../Shared/Utilities.js';
@@ -48,9 +50,12 @@ class FilterCell extends HeaderCell {
      * */
 
     constructor(row: Row, column: Column) {
-        const trueHeader = column.header;
+        // `super() (via syncColumns)` sets column.header = this. A filter cell
+        // must keep column.header pointing at the real header-row cell, so we
+        // snapshot it and restore it afterwards.
+        const originalHeader = column.header;
         super(row, column);
-        column.header = trueHeader;
+        column.header = originalHeader;
     }
 
 
@@ -84,6 +89,20 @@ class FilterCell extends HeaderCell {
         fireEvent(this, 'afterRender', { column, filtering: true });
     }
 
+    public override syncColumns(
+        column?: Column,
+        columnsTree?: GroupedHeaderOptions[]
+    ): void {
+        // `super.syncColumns()` sets column.header = this. A filter cell must
+        // keep column.header pointing at the real header-row cell, so we
+        // snapshot it and restore it afterwards.
+        const originalHeader = column?.header;
+        super.syncColumns(column, columnsTree);
+        if (column) {
+            column.header = originalHeader;
+        }
+    }
+
     public override onKeyDown(e: KeyboardEvent): void {
         if (e.target === this.htmlElement) {
             if (
@@ -91,7 +110,7 @@ class FilterCell extends HeaderCell {
                 this.column.viewport.grid.columnPolicy
                     .isColumnInlineFilteringEnabled(this.column.id)
             ) {
-                this.column.filtering?.filterSelect?.focus();
+                this.column.filtering?.focusFirstControl();
             } else {
                 super.onKeyDown(e);
             }

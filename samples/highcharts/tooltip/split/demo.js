@@ -18,7 +18,10 @@ Highcharts.chart('container', {
         valueSuffix: '°C',
         split: true,
         distance: 30,
-        padding: 5
+        padding: 5,
+        header: {
+            distance: 8
+        }
     },
 
     xAxis: {

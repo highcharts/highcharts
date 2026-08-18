@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,6 +40,12 @@ import type {
     SeriesOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
+import type {
+    OrganizationLinkOptions
+} from '../Organization/OrganizationSeriesOptions';
+import type {
+    TreegraphLinkOptions
+} from '../Treegraph/TreegraphLink';
 
 /* *
  *
@@ -49,6 +56,19 @@ import type {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateInactiveOptions {
         linkOpacity?: number;
+    }
+}
+
+// Prevent ColorType (link.color) getting loosened by DeepPartial in
+// StateGenericOptions, with care about inheritance.
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
+        link?: (
+            SeriesLinkOptionsBase &
+            NetworkgraphLinkOptions &
+            OrganizationLinkOptions &
+            TreegraphLinkOptions
+        );
     }
 }
 
@@ -90,13 +110,19 @@ export interface NetworkgraphEventsOptions extends SeriesEventsOptions {
  *
  * @optionparent series.networkgraph.link
  */
-export interface NetworkgraphLinkOptions {
-
+export interface SeriesLinkOptionsBase {
     /**
      * Color of the link between two nodes.
      */
     color?: ColorType;
+}
 
+/**
+ * @product highcharts
+ *
+ * @optionparent series.networkgraph.link
+ */
+export interface NetworkgraphLinkOptions extends SeriesLinkOptionsBase {
     /**
      * A name for the dash style to use for links.
      */
@@ -113,7 +139,6 @@ export interface NetworkgraphLinkOptions {
      * Width (px) of the link between two nodes.
      */
     width?: number;
-
 }
 
 /**
@@ -270,7 +295,7 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
-    states?: SeriesStatesOptions<NetworkgraphSeriesOptions>;
+    states?: NetworkgraphSeriesStatesOptions;
 
     /**
      * The opposite state of a hover for a single point link. Applied
@@ -285,6 +310,24 @@ export interface NetworkgraphSeriesOptions
 
     stickyTracking?: boolean;
 
+}
+
+type SeriesStatesOptionsAlias = SeriesStatesOptions<NetworkgraphSeriesOptions>;
+export interface NetworkgraphSeriesStatesOptions extends
+    SeriesStatesOptionsAlias {
+    inactive?: SeriesStatesOptionsAlias['inactive'] & {
+        /**
+         * Deprecated. Use
+         * [link.opacity](#series.networkgraph.states.inactive.link.opacity)
+         * instead.
+         *
+         * Opacity of inactive links.
+         *
+         * @deprecated 13.0.1
+         * @default 0.3
+         */
+        linkOpacity?: number;
+    };
 }
 
 export type NetworkgraphAfterSimulationCallback =

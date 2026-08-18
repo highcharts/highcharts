@@ -65,7 +65,8 @@ Highcharts.chart('container', {
                 format: '{point.name}'
             }, {
                 enabled: true,
-                distance: -15,
+                backgroundColor: 'contrast',
+                distance: -18,
                 format: '{point.percentage:.0f}%',
                 style: {
                     fontSize: '0.9em'

@@ -1,8 +1,4 @@
 ---
-name: Point and figure series interactive demo
-authors:
-  - Kamil Musialowski
+name: Demo of series options
 js_wrap: b
-tags:
-  - Highcharts Stock demo
 ...

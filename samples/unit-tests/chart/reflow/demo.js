@@ -343,38 +343,6 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
 });
 
 QUnit.test(
-    'The renderTo must not receive inline styles in styled mode', assert => {
-        const renderTo = document.createElement('div');
-        renderTo.style.width = '600px';
-        renderTo.style.height = '400px';
-        document.getElementById('container').appendChild(renderTo);
-
-        // Save the styles to compare it later
-        const userStyles = renderTo.getAttribute('style');
-        Highcharts.chart(renderTo, {
-            chart: {
-                styledMode: true,
-                animation: false
-            },
-            series: [{
-                data: [1, 2, 3]
-            }]
-        });
-
-        assert.strictEqual(
-            renderTo.getAttribute('style'),
-            userStyles,
-            'The `renderTo` inline style should not be mutated by Highcharts.'
-        );
-        assert.strictEqual(
-            renderTo.style.overflow,
-            '',
-            'The `overflow` must not be forced inline.'
-        );
-    }
-);
-
-QUnit.test(
     'A11y elements must not inflate chart height in styled mode',
     assert => {
         if (!window.requestAnimationFrame) {

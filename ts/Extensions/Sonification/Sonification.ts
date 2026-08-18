@@ -5,8 +5,9 @@
  *
  *  Sonification module.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -53,8 +54,7 @@ import {
     extend,
     fireEvent,
     internalClearTimeout,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 
@@ -620,7 +620,7 @@ class Sonification {
             );
             const sOpts = this.chart.options.sonification;
             this.timeline.setMasterVolume(
-                pick(sOpts && sOpts.masterVolume, 1)
+                ((sOpts && sOpts.masterVolume) ?? 1)
             );
         }
 

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -20,7 +21,7 @@
  * */
 
 import type { AnyRecord } from '../../Shared/Types';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type { JSONArray, JSONPrimitive } from '../JSON';
 
 import DataTable from '../../Data/DataTable.js';
@@ -100,7 +101,9 @@ function toJSON(
 
 export type ColumnJSON = JSONArray<JSONPrimitive>;
 
-export type JSON = (SerializableJSON<'Data.DataTable'> & DataTableOptions);
+export type JSON = (
+    SerializableJSON<'Data.DataTable'> & DataTableOptionsObject
+);
 
 /* *
  *

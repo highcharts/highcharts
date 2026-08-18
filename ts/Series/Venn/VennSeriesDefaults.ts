@@ -9,8 +9,9 @@
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,8 +25,6 @@
  * */
 
 import type VennSeriesOptions from './VennSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -61,7 +60,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  */
 const VennSeriesDefaults: VennSeriesOptions = {
 
-    borderColor: Palette.neutralColor20,
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     borderDashStyle: 'solid' as any,
 
@@ -118,7 +117,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
             opacity: 1,
 
-            borderColor: Palette.neutralColor80
+            borderColor: 'var(--highcharts-neutral-color-80)'
 
         },
 
@@ -129,12 +128,12 @@ const VennSeriesDefaults: VennSeriesOptions = {
             /**
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * @type {Highcharts.ColorType}
              */
-            borderColor: Palette.neutralColor100,
+            borderColor: 'var(--highcharts-neutral-color-100)',
 
             animation: false
 

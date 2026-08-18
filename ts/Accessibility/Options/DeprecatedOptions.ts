@@ -5,8 +5,9 @@
  *
  *  Default options for accessibility.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -81,7 +82,6 @@ import type Series from '../../Core/Series/Series';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
-import { pick } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /* *
@@ -154,7 +154,7 @@ declare module '../../Core/Series/SeriesOptions'{
          *
          * @requires   modules/accessibility
          * @since      11.1.0
-         * @deprecated next
+         * @deprecated 12.6.0
          */
         pointDescriptionFormat?:
         SeriesAccessibilityOptions['point']['descriptionFormat'];
@@ -201,7 +201,7 @@ function traverseSetOption<T>(
         i = 0;
     for (;i < optionAsArray.length - 1; ++i) {
         prop = optionAsArray[i];
-        opt = opt[prop] = pick(opt[prop], {}) as any;
+        opt = opt[prop] = (opt[prop] ?? {}) as any;
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;
 }

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -40,7 +39,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Error bars with data labels
  *
  * @extends      plotOptions.boxplot
- * @excluding    boostBlending, boostThreshold
+ * @excluding    borderRadius, boostBlending, boostThreshold
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
@@ -58,7 +57,24 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    color: Palette.neutralColor100,
+    color: 'var(--highcharts-neutral-color-100)',
+
+    dataLabels: {
+
+        /**
+         * Callback JavaScript function to format the data label. Note that if
+         * a `format` is defined, the format takes precedence and the formatter
+         * is ignored.
+         *
+         * The default formatter renders the value of the point key the label
+         * is [aligned to](#plotOptions.errorbar.dataLabels.alignToKey). Define
+         * a [format](#plotOptions.errorbar.dataLabels.format) or `formatter`
+         * to display other values.
+         *
+         * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+         */
+
+    },
 
     grouping: false,
 

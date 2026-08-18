@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -51,7 +52,6 @@ import {
     extend,
     isObject,
     merge,
-    pick,
     relativeLength,
     stableSort
 } from '../../Shared/Utilities.js';
@@ -189,16 +189,29 @@ class SankeySeries extends ColumnSeries {
      * Order the nodes, starting with the root node(s). (#9818)
      * @private
      */
-    public order(node: SankeyPoint, level: number): void {
+    public order(
+        node: SankeyPoint,
+        level: number,
+        visited?: Set<SankeyPoint>
+    ): void {
         const series = this;
-        // Prevents circular recursion:
-        if (typeof node.level === 'undefined') {
+
+        // Watch the visited nodes
+        if (!visited) {
+            visited = new Set();
+        }
+
+        // Prevents circular recursion, but updates level if a longer
+        // path is found from a different branch
+        if (typeof node.level === 'undefined' || node.level < level) {
             node.level = level;
+            visited.add(node);
             for (const link of node.linksFrom) {
-                if (link.toNode) {
-                    series.order(link.toNode, level + 1);
+                if (link.toNode && !visited.has(link.toNode)) {
+                    series.order(link.toNode, level + 1, visited);
                 }
             }
+            visited.delete(node);
         }
     }
     /**
@@ -286,19 +299,16 @@ class SankeySeries extends ColumnSeries {
                 obj: AnyRecord,
                 key: string
             ): AnyRecord => {
-                obj[key] = pick(
-                    stateOptions[key],
-                    (options as any)[key],
-                    levelOptions[key],
-                    (series.options as any)[key]
-                );
+                obj[key] =
+                    stateOptions[key] ??
+                    (options as any)[key] ??
+                    levelOptions[key] ??
+                    (series.options as any)[key];
                 return obj;
             }, {}),
-            color = pick(
-                stateOptions.color,
-                options.color,
-                values.colorByPoint ? point.color : levelOptions.color
-            );
+            color = stateOptions.color ??
+                options.color ??
+                (values.colorByPoint ? point.color : levelOptions.color);
 
         // Node attributes
         if (point.isNode) {
@@ -417,36 +427,43 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
-     * Run translation operations for one link.
-     * @private
+     * Get the Y position of a link.
+     * @internal
      */
-    public translateLink(point: SankeyPoint): void {
+    public getY(
+        point: SankeyPoint,
+        node: SankeyPoint,
+        fromOrTo: string,
+        linkHeight: number
+    ): number {
+        const linkTop =
+            (node.offset(point, fromOrTo) || 0) * this.translationFactor;
+        const y = Math.min(
+            node.nodeY + linkTop,
+            // Prevent links from spilling below the node (#12014)
+            node.nodeY + (
+                node.shapeArgs && node.shapeArgs.height || 0
+            ) - linkHeight
+        );
 
-        const getY = (
-            node: SankeyPoint,
-            fromOrTo: string
-        ): number => {
-            const linkTop = (
-                (node.offset(point, fromOrTo) as any) *
-                translationFactor
-            );
-            const y = Math.min(
-                node.nodeY + linkTop,
-                // Prevent links from spilling below the node (#12014)
-                node.nodeY + (
-                    node.shapeArgs && node.shapeArgs.height || 0
-                ) - linkHeight
-            );
-            return y;
-        };
+        return y;
+    }
 
+    /**
+     * Run translation operations for one link.
+     * @internal
+     */
+    public translateLink(
+        point: SankeyPoint,
+        linkToY?: number
+    ): void {
         const fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
             { inverted } = chart,
             translationFactor = this.translationFactor,
             options = this.options,
-            linkColorMode = pick(point.linkColorMode, options.linkColorMode),
+            linkColorMode = (point.linkColorMode ?? options.linkColorMode),
             curvy = (
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor as any)
@@ -456,12 +473,11 @@ class SankeySeries extends ColumnSeries {
             outgoing = point.outgoing;
 
         let linkHeight = Math.max(
-                (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any
-                )
+                (point.weight || 0) * translationFactor,
+                this.options.minLinkWidth || 0
             ),
-            fromY = getY(fromNode, 'linksFrom'),
-            toY = getY(toNode, 'linksTo'),
+            fromY = this.getY(point, fromNode, 'linksFrom', linkHeight),
+            toY = linkToY || this.getY(point, toNode, 'linksTo', linkHeight),
             nodeW = this.nodeWidth,
             straight = right > nodeLeft + nodeW;
 
@@ -612,7 +628,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Run translation operations for one node.
-     * @private
+     * @internal
      */
     public translateNode(
         node: SankeyPoint,
@@ -629,13 +645,10 @@ class SankeySeries extends ColumnSeries {
             ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeTop = crisp(pick(
-                (nodeOffset as any).absoluteTop,
-                (
-                    column.sankeyColumn.top(translationFactor) +
+            fromNodeTop = crisp(((nodeOffset as any).absoluteTop ?? (
+                column.sankeyColumn.top(translationFactor) +
                     (nodeOffset as any).relativeTop
-                )
-            ), borderWidth),
+            )), borderWidth),
             left = crisp(
                 this.colDistance * (node.column as any) +
                     borderWidth / 2,
@@ -664,11 +677,18 @@ class SankeySeries extends ColumnSeries {
 
             // Border radius should not greater than half the height of the node
             // #18956
-            const r = clamp(relativeLength((
-                typeof borderRadius === 'object' ?
-                    borderRadius.radius :
-                    borderRadius || 0
-            ), width), 0, nodeHeight / 2);
+            const r = clamp(
+                relativeLength(
+                    (
+                        isObject(borderRadius) ?
+                            borderRadius.radius :
+                            borderRadius
+                    ) || 0,
+                    width
+                ),
+                0,
+                nodeHeight / 2
+            );
 
             if (chart.inverted) {
                 x = nodeLeft - nodeWidth;
@@ -843,7 +863,7 @@ export default SankeySeries;
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *         Specified node offset
  *
- * @deprecated
+ * @deprecated 9.3.0
  * @name Highcharts.SankeyNodeObject#offset
  * @type {number|string}
  * @default 0

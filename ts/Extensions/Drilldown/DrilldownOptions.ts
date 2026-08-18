@@ -4,8 +4,9 @@
  *
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -158,7 +159,7 @@ export interface DrilldownOptions {
      *         Label styles
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
+     * @default { "cursor": "pointer", "color": "var(--highcharts-highlight-color-100)", "fontWeight": "bold", "textDecoration": "underline" }
      * @since   3.0.8
      * @product highcharts highmaps
      */
@@ -176,7 +177,7 @@ export interface DrilldownOptions {
      *         Label styles
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
+     * @default { "cursor": "pointer", "color": "var(--highcharts-highlight-color-100)", "fontWeight": "bold", "textDecoration": "underline" }
      * @since   3.0.8
      * @product highcharts highmaps
      */

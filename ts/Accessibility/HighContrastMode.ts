@@ -5,8 +5,9 @@
  *
  *  Handling for Windows High Contrast Mode.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -261,11 +262,12 @@ function setHighContrastTheme(
                     hasCustomColors &&
                     isFilledLineSeries &&
                     userPlotOpts.marker?.lineWidth === void 0
-                ) ? 1 : userPlotOpts.marker?.lineWidth;
+                ) ? 1 : pick(
+                        userPlotOpts.marker?.lineWidth,
+                        plotOpts.marker?.lineWidth
+                    );
 
-            const markerOptions: AnyRecord = (
-                plotOpts.marker || userPlotOpts.marker
-            ) && {
+            const markerOptions: AnyRecord = {
                 fillColor: hasCustomColors ?
                     seriesColor :
                     pick(
@@ -279,7 +281,7 @@ function setHighContrastTheme(
                 lineColor: markerLineColor
             };
 
-            if (markerOptions && markerLineWidth !== void 0) {
+            if (markerLineWidth !== void 0) {
                 markerOptions.lineWidth = markerLineWidth;
             }
 

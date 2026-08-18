@@ -3,6 +3,7 @@
 You can add technical indicators to your stock chart using dedicated indicator components:
 
 ```tsx
+import { PlotOptions } from "@highcharts/react";
 import { StockChart } from "@highcharts/react/Stock";
 import { CandlestickSeries } from "@highcharts/react/series/Candlestick";
 import { SMASeries } from "@highcharts/react/indicators/SMA";
@@ -17,30 +18,21 @@ const stockData = await fetch(
 
 export default function TechnicalIndicatorsChart() {
   return (
-    <StockChart
-      options={{
-        plotOptions: {
-          series: {
-            dataGrouping: {
-              enabled: false,
-            },
+    <StockChart>
+      <PlotOptions
+        series={{
+          dataGrouping: {
+            enabled: false,
           },
-        },
-      }}
-    >
-      <CandlestickSeries
-        id="price"
-        data={stockData}
-        options={{ name: "AAPL" }}
-      />
-      <SMASeries options={{ linkedTo: "price", params: { period: 14 } }} />
-      <EMASeries options={{ linkedTo: "price", params: { period: 26 } }} />
-      <RSISeries options={{ linkedTo: "price", params: { period: 14 } }} />
-      <MACDSeries
-        options={{
-          linkedTo: "price",
-          params: { shortPeriod: 12, longPeriod: 26, signalPeriod: 9 },
         }}
+      />
+      <CandlestickSeries id="price" data={stockData} name="AAPL" />
+      <SMASeries linkedTo="price" params={{ period: 14 }} />
+      <EMASeries linkedTo="price" params={{ period: 26 }} />
+      <RSISeries linkedTo="price" params={{ period: 14 }} />
+      <MACDSeries
+        linkedTo="price"
+        params={{ shortPeriod: 12, longPeriod: 26, signalPeriod: 9 }}
       />
     </StockChart>
   );

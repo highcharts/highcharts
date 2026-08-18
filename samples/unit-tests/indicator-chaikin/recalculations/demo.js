@@ -134,10 +134,10 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        mainSeries.points.length,
         chaikinSeries.points.length +
             chaikinSeries.options.params.periods[1] -
             1,
+        mainSeries.data.length,
         'After setData number of Chaikin points is correct'
     );
 

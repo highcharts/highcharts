@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,6 +23,7 @@ import type {
 } from '../Column/ColumnSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -30,6 +32,23 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
+
+export type BoxPlotPointValKey = 'low'|'q1'|'median'|'q3'|'high';
+
+export interface BoxPlotDataLabelOptions extends DataLabelOptions {
+    /**
+     * The point key to use for positioning this data label.
+     * Possible values are `low`, `q1`, `median`, `q3` and `high`.
+     *
+     * @sample {highcharts} highcharts/series-boxplot/data-labels/
+     *         Multiple data labels
+     *
+     * @default high
+     *
+     * @product highcharts
+     */
+    alignToKey?: BoxPlotPointValKey;
+}
 
 /**
  * A box plot is a convenient way of depicting groups of data through their
@@ -53,7 +72,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends   series,plotOptions.boxplot
  *
- * @excluding borderColor, borderRadius, borderWidth, groupZPadding,
+ * @excluding borderColor, borderWidth, groupZPadding,
  *                states, boostThreshold, boostBlending
  *
  * @excluding dataParser, dataURL, marker, stack, stacking, states,
@@ -160,6 +179,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      */
     data?: Array<(BoxPlotPointOptions|PointShortOptions)>;
 
+    dataLabels?: (BoxPlotDataLabelOptions|Array<BoxPlotDataLabelOptions>);
+
     /**
      * The fill color of the box.
      *
@@ -171,7 +192,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @type {Highcharts.ColorType}
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @since 3.0
      *

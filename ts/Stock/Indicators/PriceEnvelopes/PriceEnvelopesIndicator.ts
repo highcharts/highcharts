@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -86,6 +87,19 @@ class PriceEnvelopesIndicator extends SMAIndicator {
              */
             bottomBand: 0.1
         },
+
+        /**
+         * Option for fill color between lines in Price Envelopes Indicator.
+         *
+         * @sample {highstock} stock/indicators/indicator-area-fill
+         *      Background fill between lines.
+         *
+         * @type      {Highcharts.Color}
+         * @since 11.0.0
+         * @apioption plotOptions.priceenvelopes.fillColor
+         *
+         */
+
         /**
          * Bottom line options.
          */
@@ -118,17 +132,6 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-        /**
-         * Option for fill color between lines in Price Envelopes Indicator.
-         *
-         * @sample {highstock} stock/indicators/indicator-area-fill
-         *      Background fill between lines.
-         *
-         * @type      {Highcharts.Color}
-         * @since 11.0.0
-         * @apioption plotOptions.priceenvelopes.fillColor
-         *
-         */
     } as PriceEnvelopesOptions);
 
     /* *

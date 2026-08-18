@@ -30,10 +30,6 @@ Highcharts.chart('container', {
         x: -80
     },
 
-    pane: {
-        size: '80%'
-    },
-
     xAxis: {
         categories: [
             'Sales', 'Marketing', 'Development', 'Customer Support',

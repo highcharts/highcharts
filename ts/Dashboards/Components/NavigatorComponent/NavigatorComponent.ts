@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -49,7 +50,12 @@ import type {
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
 
-import { diffObjects, isNumber, isString, merge, pick } from '../../../Shared/Utilities.js';
+import {
+    diffObjects,
+    isNumber,
+    isString,
+    merge
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -169,10 +175,7 @@ class NavigatorComponent extends Component {
     /** @private */
     private adjustNavigator(): void {
         const chart = this.chart,
-            height = pick(
-                chart.chartHeight,
-                this.contentElement.clientHeight
-            ),
+            height = (chart.chartHeight ?? this.contentElement.clientHeight),
             width = this.contentElement.clientWidth,
             chartUpdates: DeepPartial<HighchartsOptions> = {};
 
@@ -416,7 +419,7 @@ class NavigatorComponent extends Component {
         }
 
         uniqueXValues.sort((a, b): number => (
-            pick(a, NaN) < pick(b, NaN) ? -1 : a === b ? 0 : 1
+            (a ?? NaN) < (b ?? NaN) ? -1 : a === b ? 0 : 1
         ));
 
         let filteredValues: (number | string)[];

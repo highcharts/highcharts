@@ -6,8 +6,9 @@
  *
  *  Author: Wojciech Chmiel
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,8 +23,6 @@
 
 import type MarkerClusterOptions from './MarkerClusterOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -257,7 +256,7 @@ const cluster: MarkerClusterOptions = {
         /**
          * @type {Highcharts.ColorType}
          */
-        lineColor: Palette.backgroundColor
+        lineColor: 'var(--highcharts-background-color)'
     },
 
     /**

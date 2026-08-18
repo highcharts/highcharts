@@ -5,8 +5,9 @@
  *
  *  Default options for sonification.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -685,7 +686,6 @@ declare module '../../Core/Options'{
          * The text for the MIDI download menu item in the export menu.
          *
          * @default "Download MIDI"
-         *
          * @since 11.0.0
          * @requires modules/sonification
          */
@@ -694,7 +694,6 @@ declare module '../../Core/Options'{
          * The text for the Play as sound menu item in the export menu.
          *
          * @default "Play as sound"
-         *
          * @since 11.0.0
          * @requires modules/sonification
          */
@@ -1692,6 +1691,7 @@ const Options: DeepPartial<OptionsType> = {
         /**
          * The text for the MIDI download menu item in the export menu.
          *
+         * @type {string}
          * @requires modules/sonification
          * @since 11.0.0
          * @apioption lang.downloadMIDI
@@ -1700,6 +1700,7 @@ const Options: DeepPartial<OptionsType> = {
         /**
          * The text for the Play as sound menu item in the export menu.
          *
+         * @type {string}
          * @requires modules/sonification
          * @since 11.0.0
          * @apioption lang.playAsSound

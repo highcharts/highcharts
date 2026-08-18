@@ -82,4 +82,21 @@ QUnit.test('Fixed tooltip', function (assert) {
     );
 
 
+    // #24293: With fixed+split+useHTML, the tooltip shouldn't shift vertically
+    // between renders.
+    chart.tooltip.update({
+        useHTML: true
+    });
+
+    tooltip.refresh([series[0].points[0]]);
+    const firstTranslateY = series[0].tt.translateY;
+
+    tooltip.refresh([series[0].points[1]]);
+
+    assert.strictEqual(
+        series[0].tt.translateY,
+        firstTranslateY,
+        'No vertical position correction on second render ' +
+            '(fixed + split + useHTML)'
+    );
 });

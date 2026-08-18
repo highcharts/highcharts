@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -42,7 +43,7 @@ import DataTable, {
     type ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
 import { DeepPartial } from '../../Shared/Types';
-import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -259,7 +260,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
 
         if (names.length) {
             return names.sort((a, b): number => (
-                pick(columns[a].index, 0) - pick(columns[b].index, 0)
+                (columns[a].index ?? 0) - (columns[b].index ?? 0)
             ));
         }
     }
@@ -353,6 +354,10 @@ abstract class DataConnector implements DataEventEmitter<Event> {
             const dataModifierOptions = tableOptionsArray?.find(
                 (dataTable): boolean => dataTable.key === key
             )?.dataModifier ?? this.options?.dataModifier;
+
+            if (!dataModifierOptions) {
+                continue;
+            }
 
             const ModifierClass = (
                 dataModifierOptions &&

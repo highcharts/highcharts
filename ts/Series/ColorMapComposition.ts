@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,8 +37,10 @@ import { addEvent, defined } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
+        /** @internal */
         dataLabelOnNull?: boolean;
     }
 }
@@ -51,6 +54,7 @@ declare module '../Core/Series/PointBase' {
 namespace ColorMapComposition {
 
     // These properties can be set as both attributes and CSS properties
+    /** @internal */
     interface ColorAttribsType {
         dashstyle?: DashStyleValue;
         fill?: ColorType;
@@ -66,6 +70,7 @@ namespace ColorMapComposition {
      *
      * */
 
+    /** @internal */
     export declare class PointComposition extends ScatterPoint {
         dataLabelOnNull?: boolean;
         moveToTopOnHover?: boolean;
@@ -74,6 +79,7 @@ namespace ColorMapComposition {
         isValid(): boolean;
     }
 
+    /** @internal */
     export declare class SeriesComposition extends ScatterSeries {
         colorProp?: 'fill'|'stroke';
         data: Array<PointComposition>;
@@ -90,12 +96,14 @@ namespace ColorMapComposition {
      *
      * */
 
+    /** @internal */
     export const pointMembers = {
         dataLabelOnNull: true,
         moveToTopOnHover: true,
         isValid: pointIsValid
     };
 
+    /** @internal */
     export const seriesMembers = {
         colorKey: 'value',
         axisTypes: ['xAxis', 'yAxis', 'colorAxis'] as
@@ -114,7 +122,7 @@ namespace ColorMapComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export function compose<T extends typeof ScatterSeries>(
         SeriesClass: T
@@ -128,7 +136,7 @@ namespace ColorMapComposition {
 
     /**
      * Move points to the top of the z-index order when hovered.
-     * @private
+     * @internal
      */
     function onPointAfterSetState(
         this: Point,
@@ -171,7 +179,7 @@ namespace ColorMapComposition {
     /**
      * Color points have a value option that determines whether or not it is
      * a null point
-     * @private
+     * @internal
      */
     function pointIsValid(
         this: PointComposition
@@ -187,7 +195,7 @@ namespace ColorMapComposition {
 
     /**
      * Get the color attributes to apply on the graphic
-     * @private
+     * @internal
      * @function Highcharts.colorMapSeriesMixin.colorAttribs
      * @param {Highcharts.Point} point
      * @return {Highcharts.SVGAttributes}
@@ -216,4 +224,5 @@ namespace ColorMapComposition {
  *
  * */
 
+/** @internal */
 export default ColorMapComposition;

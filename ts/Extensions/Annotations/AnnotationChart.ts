@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,7 +37,6 @@ import {
     fireEvent,
     isArray,
     isObject,
-    pick,
     wrap
 } from '../../Shared/Utilities.js';
 
@@ -165,7 +165,7 @@ function chartAddAnnotation(
 
     this.options.annotations.push(annotation.options);
 
-    if (pick(redraw, true)) {
+    if (redraw ?? true) {
         annotation.redraw();
         annotation.graphic.attr({
             opacity: 1

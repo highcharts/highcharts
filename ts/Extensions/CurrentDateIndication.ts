@@ -4,8 +4,9 @@
  *
  *  Author: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,7 +30,6 @@ import type Time from '../Core/Time';
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import { addEvent, merge, pushUnique, wrap } from '../Shared/Utilities.js';
 
@@ -126,7 +126,7 @@ const defaultOptions: CurrentDateIndicatorOptions = {
     /**
      * @type {Highcharts.ColorType}
      */
-    color: Palette.highlightColor20,
+    color: 'var(--highcharts-highlight-color-20)',
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions

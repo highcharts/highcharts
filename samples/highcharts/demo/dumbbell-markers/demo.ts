@@ -59,7 +59,7 @@ const createChart = (
             type: 'dumbbell',
             name: 'Increase',
             data: increasingData,
-            color: Highcharts.getOptions().colors[2],
+            color: 'var(--highcharts-color-2)',
             marker: {
                 enabled: true,
                 symbol: 'triangleRight'
@@ -72,7 +72,7 @@ const createChart = (
             type: 'dumbbell',
             name: 'Decrease',
             data: decreasingData,
-            color: Highcharts.getOptions().colors[5],
+            color: 'var(--highcharts-color-5)',
             marker: {
                 enabled: false
             },

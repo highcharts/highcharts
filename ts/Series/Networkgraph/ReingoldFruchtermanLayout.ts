@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,8 +37,7 @@ import {
     clamp,
     defined,
     fireEvent,
-    isFunction,
-    pick
+    isFunction
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -131,15 +131,13 @@ class ReingoldFruchtermanLayout {
 
         this.enableSimulation = options.enableSimulation;
 
-        this.attractiveForce = pick(
-            options.attractiveForce,
-            this.integration.attractiveForceFunction
-        );
+        this.attractiveForce =
+            options.attractiveForce ??
+            this.integration.attractiveForceFunction;
 
-        this.repulsiveForce = pick(
-            options.repulsiveForce,
-            this.integration.repulsiveForceFunction
-        );
+        this.repulsiveForce =
+            options.repulsiveForce ??
+            this.integration.repulsiveForceFunction;
 
         this.approximation = options.approximation;
     }
@@ -147,7 +145,7 @@ class ReingoldFruchtermanLayout {
     public updateSimulation(
         enable?: boolean
     ): void {
-        this.enableSimulation = pick(enable, this.options.enableSimulation);
+        this.enableSimulation = (enable ?? this.options.enableSimulation);
     }
 
     public start(): void {
@@ -325,10 +323,7 @@ class ReingoldFruchtermanLayout {
     public setMaxIterations(
         maxIterations?: number
     ): void {
-        this.maxIterations = pick(
-            maxIterations,
-            this.options.maxIterations
-        );
+        this.maxIterations = (maxIterations ?? this.options.maxIterations);
     }
 
     public setTemperature(): void {
@@ -431,14 +426,12 @@ class ReingoldFruchtermanLayout {
         // as a cluster in the middle
         for (let i = 0, iEnd = sortedNodes.length; i < iEnd; ++i) {
             node = sortedNodes[i];
-            node.plotX = node.prevX = pick(
-                node.plotX,
-                box.width / 2 + (radius as any) * Math.cos(i * angle)
-            );
-            node.plotY = node.prevY = pick(
-                node.plotY,
-                box.height / 2 + (radius as any) * Math.sin(i * angle)
-            );
+            node.plotX = node.prevX =
+                node.plotX ??
+                box.width / 2 + (radius as any) * Math.cos(i * angle);
+            node.plotY = node.prevY =
+                node.plotY ??
+                box.height / 2 + (radius as any) * Math.sin(i * angle);
 
             node.dispX = 0;
             node.dispY = 0;
@@ -466,14 +459,9 @@ class ReingoldFruchtermanLayout {
         // Initial positions:
         for (let i = 0, iEnd = nodes.length; i < iEnd; ++i) {
             node = nodes[i];
-            node.plotX = node.prevX = pick(
-                node.plotX,
-                box.width * unrandom(i)
-            );
-            node.plotY = node.prevY = pick(
-                node.plotY,
-                box.height * unrandom(nodesLength + i)
-            );
+            node.plotX = node.prevX = (node.plotX ?? box.width * unrandom(i));
+            node.plotY = node.prevY =
+                node.plotY ?? box.height * unrandom(nodesLength + i);
 
             node.dispX = 0;
             node.dispY = 0;

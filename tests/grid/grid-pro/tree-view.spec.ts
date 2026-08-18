@@ -30,7 +30,7 @@ async function getTreeColumnValues(
     return page
         .locator(
             `tbody .hcg-row td[data-column-id="${columnId}"] ` +
-            '.hcg-tree-value'
+            '.hcg-disclosure-value'
         )
         .evaluateAll((elements): string[] =>
             elements.map((element): string => element.textContent || '')
@@ -93,10 +93,11 @@ test.describe('Grid Pro - tree view', () => {
                         parentId: [null, 1, 1, 2],
                         name: ['Root', 'Sales', 'Marketing', 'EMEA']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
@@ -123,6 +124,52 @@ test.describe('Grid Pro - tree view', () => {
         ]);
     });
 
+    test('projects parentId rows without idColumn using original row indexes', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        parentId: [null, 0, 0, 1],
+                        name: ['Root', 'Sales', 'Marketing', 'EMEA'],
+                        sortKey: ['Z', 'B', 'A', 'C']
+                    }
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
+                },
+                columns: [{
+                    id: 'sortKey',
+                    sorting: {
+                        order: 'asc'
+                    }
+                }],
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all',
+                        virtualization: false
+                    }
+                }
+            }, true);
+        });
+
+        await expect(page.locator('tbody .hcg-row')).toHaveCount(4);
+        expect(await getVisibleRowIds(page)).toStrictEqual([
+            '0',
+            '2',
+            '1',
+            '3'
+        ]);
+        expect(await getTreeColumnValues(page, 'name')).toStrictEqual([
+            'Root',
+            'Marketing',
+            'Sales',
+            'EMEA'
+        ]);
+    });
+
     test('seeds explicit expandedRowIds without expanding every branch', async ({ page }) => {
         await loadGridPro(page);
 
@@ -134,14 +181,15 @@ test.describe('Grid Pro - tree view', () => {
                         parentId: [null, 1, 1, 2],
                         name: ['Root', 'Sales', 'Marketing', 'EMEA']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        expandedRowIds: [1],
-                        treeColumn: 'name'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedRowIds: [1],
                         virtualization: false
                     }
                 }
@@ -165,14 +213,15 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['A/a', 'A/b', 'B/c'],
                         name: ['a', 'b', 'c']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -189,6 +238,40 @@ test.describe('Grid Pro - tree view', () => {
         ]);
     });
 
+    test('detects path input without idColumn using original row indexes', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        path: ['A/a', 'A/b', 'B/c'],
+                        name: ['a', 'b', 'c']
+                    }
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
+                },
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all',
+                        virtualization: false
+                    }
+                }
+            }, true);
+        });
+
+        await expect(page.locator('tbody .hcg-row')).toHaveCount(5);
+        expect(await getVisibleRowIds(page)).toStrictEqual([
+            '__hcg_tree_path__:A',
+            '0',
+            '1',
+            '__hcg_tree_path__:B',
+            '2'
+        ]);
+    });
+
     test('prefers path input when both dataset columns exist', async ({ page }) => {
         await loadGridPro(page);
 
@@ -201,14 +284,15 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['A/a', 'A/b', 'B/c'],
                         name: ['a', 'b', 'c']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -236,14 +320,14 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['A/a', 'B/b'],
                         name: ['a', 'b']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path'
-                        },
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path'
+                    },
+                    treeColumn: 'name'
                 },
                 pagination: {
                     enabled: true,
@@ -251,6 +335,7 @@ test.describe('Grid Pro - tree view', () => {
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -286,21 +371,22 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['AaaBbbCcc', 'AaaBbbDdd'],
                         name: ['Ccc', 'Ddd']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path',
-                            separator: (path: string): string[] =>
-                                path.match(
-                                    /[A-Z]+(?![a-z])|[A-Z][a-z]*/g
-                                ) || []
-                        },
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        separator: (path: string): string[] =>
+                            path.match(
+                                /[A-Z]+(?![a-z])|[A-Z][a-z]*/g
+                            ) || []
+                    },
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -330,18 +416,19 @@ test.describe('Grid Pro - tree view', () => {
                             'Engineering/Frontend/Platform'
                         ]
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path',
-                            showFullPath: false
-                        },
-                        treeColumn: 'path',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        showFullPath: false
+                    },
+                    treeColumn: 'path'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -375,18 +462,19 @@ test.describe('Grid Pro - tree view', () => {
                         path: ['AaaBbbCcc', 'AaaBbbDdd'],
                         name: ['Ccc', 'Ddd']
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        input: {
-                            type: 'path',
-                            separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
-                        },
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
+                    },
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -430,14 +518,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -508,14 +597,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: true
                     }
                 }
@@ -584,14 +674,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: true
                     }
                 }
@@ -690,14 +781,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: true
                     }
                 }
@@ -770,14 +862,15 @@ test.describe('Grid Pro - tree view', () => {
                             (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
                         )
                     },
-                    idColumn: 'id',
-                    treeView: {
-                        treeColumn: 'name',
-                        expandedRowIds: 'all'
-                    }
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
                 },
                 rendering: {
                     rows: {
+                        expandedLevels: 'all',
                         virtualization: false
                     }
                 }
@@ -823,5 +916,113 @@ test.describe('Grid Pro - tree view', () => {
                 requireRowTop(topBeforeCollapse)
             )
         ).toBeLessThan(2);
+    });
+
+    test('refreshes aggregated sticky parent cells after editing a leaf', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            const container = document.getElementById('container');
+            const childCount = 20;
+            const ids = Array.from(
+                { length: childCount + 1 },
+                (_, i): number => i + 1
+            );
+
+            if (!container) {
+                return;
+            }
+
+            container.style.width = '520px';
+
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        id: ids,
+                        parentId: ids.map(
+                            (id): (number|null) => id === 1 ? null : 1
+                        ),
+                        name: ids.map(
+                            (id): string => id === 1 ? 'Root' : `Child ${id - 1}`
+                        ),
+                        value: ids.map(
+                            (id): (number|null) => id === 1 ? null : id - 1
+                        )
+                    },
+                    idColumn: 'id'
+                },
+                treeView: {
+                    enabled: true,
+                    treeColumn: 'name'
+                },
+                columns: [{
+                    id: 'name'
+                }, {
+                    id: 'value',
+                    rowAggregator: 'SUM'
+                }],
+                columnDefaults: {
+                    cells: {
+                        editMode: {
+                            enabled: true
+                        }
+                    }
+                },
+                rendering: {
+                    rows: {
+                        expandedLevels: 'all',
+                        stickyParents: true,
+                        virtualization: false
+                    }
+                }
+            }, true);
+        });
+
+        await constrainGridBodyHeight(page, 200);
+
+        const mainBody = page.locator(
+            'table > tbody:not(.hcg-tbody-sticky)'
+        );
+        const stickyValueCell = page.locator(
+            '.hcg-tbody-sticky tr[data-row-id="1"] td[data-column-id="value"]'
+        );
+        const editedLeafCell = page.locator(
+            'table > tbody:not(.hcg-tbody-sticky) ' +
+            'tr[data-row-id="6"] td[data-column-id="value"]'
+        );
+
+        await expect.poll(async () => mainBody.evaluate(
+            (tbody): boolean =>
+                (tbody as HTMLElement).scrollHeight >
+                (tbody as HTMLElement).clientHeight
+        )).toBe(true);
+
+        await mainBody.evaluate((tbody): void => {
+            (tbody as HTMLElement).scrollTop = 150;
+            tbody.dispatchEvent(new Event('scroll', { bubbles: true }));
+        });
+
+        await expect(stickyValueCell).toBeVisible();
+        await expect(stickyValueCell).toContainText('210');
+        await expect(editedLeafCell).toBeVisible();
+
+        await page.evaluate(async (): Promise<void> => {
+            const grid = (window as any).grid;
+            const row = grid?.viewport?.rows.find(
+                (viewportRow: any): boolean => viewportRow.id === 6
+            );
+            const cell = row?.cells.find(
+                (tableCell: any): boolean => tableCell.column.id === 'value'
+            );
+
+            if (!cell) {
+                throw new Error('Expected rendered leaf cell to be editable.');
+            }
+
+            await cell.editValue(100);
+        });
+
+        await expect(editedLeafCell).toContainText('100');
+        await expect(stickyValueCell).toContainText('305');
     });
 });

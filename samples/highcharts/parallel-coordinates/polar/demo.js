@@ -37,6 +37,9 @@ Highcharts.chart('container', {
         verticalAlign: 'middle',
         layout: 'vertical'
     },
+    pane: {
+        size: '85%'
+    },
     xAxis: {
         categories: [
             'Training date',

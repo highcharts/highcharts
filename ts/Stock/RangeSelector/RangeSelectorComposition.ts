@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,7 +32,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -127,7 +127,7 @@ function axisMinFromRange(
         }
     }
 
-    const dataMin = pick(this.dataMin, Number.MIN_VALUE);
+    const dataMin = (this.dataMin ?? Number.MIN_VALUE);
 
     if (!isNumber(min)) {
         min = dataMin;
@@ -140,7 +140,8 @@ function axisMinFromRange(
         }
         this.newMax = Math.min(
             min + range,
-            pick(this.dataMax, Number.MAX_VALUE)
+            (this.dataMax ?? Number.MAX_VALUE
+            )
         );
     }
 

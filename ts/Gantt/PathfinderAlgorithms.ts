@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,8 +23,6 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import PathUtilities from '../Series/PathUtilities.js';
-import { pick } from '../Shared/Utilities.js';
-
 /* *
  *
  *  Declarations
@@ -298,9 +297,9 @@ const simpleConnect = function (
         endObstacleIx = findObstacleFromPoint(chartObstacles, end);
 
     let endSegment: any,
-        dir = pick(
-            options.startDirectionX,
-            abs(end.x - start.x) > abs(end.y - start.y)
+        dir = (
+            options.startDirectionX ??
+            (abs(end.x - start.x) > abs(end.y - start.y))
         ) ? 'x' : 'y',
         startObstacle,
         endObstacle,
@@ -421,7 +420,7 @@ const simpleConnect = function (
     });
 
     // Finally add the endSegment
-    segments.push(endSegment);
+    endSegment && segments.push(endSegment);
 
     const path = PathUtilities.applyRadius(
         pathFromSegments(segments),
@@ -491,10 +490,8 @@ function fastAvoid(
             - When going around the end obstacle we should not always go the
                 shortest route, rather pick the one closer to the end point
     */
-    const dirIsX = pick(
-            options.startDirectionX,
-            abs(end.x - start.x) > abs(end.y - start.y)
-        ),
+    const dirIsX = options.startDirectionX ??
+            (abs(end.x - start.x) > abs(end.y - start.y)),
         dir = dirIsX ? 'x' : 'y',
         endSegments = [],
         // Boundaries to stay within. If beyond soft boundary, prefer to

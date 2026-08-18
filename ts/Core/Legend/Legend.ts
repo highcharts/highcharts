@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,11 +37,10 @@ import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -64,7 +64,6 @@ import {
     fireEvent,
     isNumber,
     merge,
-    pick,
     pushUnique,
     relativeLength,
     stableSort,
@@ -408,7 +407,7 @@ class Legend {
      */
     public setOptions(options: LegendOptions): void {
 
-        const padding = pick(options.padding, 8) as number;
+        const padding = (options.padding ?? 8) as number;
 
         /**
          * Legend options.
@@ -431,7 +430,7 @@ class Legend {
         this.itemMarginBottom = options.itemMarginBottom;
         this.padding = padding;
         this.initialItemY = padding - 5; // 5 is pixels above the text
-        this.symbolWidth = pick(options.symbolWidth, 16);
+        this.symbolWidth = (options.symbolWidth ?? 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
         // #12705: baseline has to be reset on every update
@@ -470,7 +469,7 @@ class Legend {
 
         this.destroy();
         chart.isDirtyLegend = chart.isDirtyBox = true;
-        if (pick(redraw, true)) {
+        if (redraw ?? true) {
             chart.redraw();
         }
 
@@ -509,7 +508,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, lineColor, marker } =
+                { fillColor, lineColor } =
                     (item as Series).options,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
@@ -526,14 +525,14 @@ class Legend {
 
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
-            if (symbol) {
-                // Apply marker options
-                symbol.attr(colorizeHidden(
-                    marker && symbol.isMarker ? // #585
-                        (item as Series).pointAttribs() :
-                        { fill: item.color }
-                ));
-            }
+            // Apply legend symbol attributes
+            symbol?.attr(colorizeHidden(
+                (item as Point).series ?
+                    // When `legendType` is `point`, like pie series
+                    (item as Point).series.pointAttribs?.(item as Point) :
+                    // When `legendType` is `series`, like line or column series
+                    (item as Series).pointAttribs?.() || { fill: item.color }
+            ));
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,
@@ -801,7 +800,7 @@ class Legend {
             symbolPadding = options.symbolPadding || 0,
             itemStyle = legend.itemStyle,
             itemHiddenStyle = legend.itemHiddenStyle,
-            itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
+            itemDistance = horizontal ? (options.itemDistance ?? 20) : 0,
             ltr = !options.rtl,
             isSeries = !(item as any).series,
             series = !isSeries && (item as any).series.drawLegendSymbol ?
@@ -875,13 +874,12 @@ class Legend {
                 label.attr('y', legend.baseline);
 
                 legend.symbolHeight =
-                    pick(options.symbolHeight, legend.fontMetrics.f);
+                    (options.symbolHeight ?? legend.fontMetrics.f);
 
                 if (options.squareSymbol) {
-                    legend.symbolWidth = pick(
-                        options.symbolWidth,
-                        Math.max(legend.symbolHeight, 16)
-                    );
+                    legend.symbolWidth =
+                        options.symbolWidth ??
+                        Math.max(legend.symbolHeight, 16);
 
                     itemExtraWidth = legend.symbolWidth + symbolPadding +
                         itemDistance + (showCheckbox ? 20 : 0);
@@ -968,7 +966,7 @@ class Legend {
             itemHeight = item.itemHeight,
             itemMarginBottom = this.itemMarginBottom,
             itemMarginTop = this.itemMarginTop,
-            itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
+            itemDistance = horizontal ? (options.itemDistance ?? 20) : 0,
             maxLegendWidth = this.maxLegendWidth,
             itemWidth = (
                 options.alignColumns &&
@@ -1047,10 +1045,13 @@ class Legend {
 
             // Handle showInLegend. If the series is linked to another series,
             // defaults to false.
-            if (series && pick(
-                seriesOptions.showInLegend,
-                !defined(seriesOptions.linkedTo) ? void 0 : false, true
-            )) {
+            if (
+                series &&
+                (
+                    seriesOptions.showInLegend ??
+                    (!defined(seriesOptions.linkedTo))
+                )
+            ) {
 
                 // Use points or series for the legend item depending on
                 // legendType
@@ -1444,7 +1445,7 @@ class Legend {
             padding = this.padding,
             maxHeight = options.maxHeight,
             navOptions = options.navigation,
-            animation = pick(navOptions.animation, true),
+            animation = (navOptions.animation ?? true),
             arrowSize = navOptions.arrowSize || 12,
             pages = this.pages,
             allItems = this.allItems,
@@ -1511,7 +1512,7 @@ class Legend {
 
             this.clipHeight = clipHeight =
                 Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
-            this.currentPage = pick(this.currentPage, 1);
+            this.currentPage = (this.currentPage ?? 1);
             this.fullHeight = legendHeight;
 
             // Fill pages with Y positions so that the top of each a legend item
@@ -1726,7 +1727,7 @@ class Legend {
 
             // Fire event after scroll animation is complete
             const animOptions = animObject(
-                pick(animation, chart.renderer.globalAnimation, true)
+                (animation ?? chart.renderer.globalAnimation ?? true)
             );
             syncTimeout((): void => {
                 fireEvent(this, 'afterScroll', { currentPage });
@@ -2020,7 +2021,7 @@ export default Legend;
  *//**
  * Related browser event.
  * @name Highcharts.LegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
+ * @type {PointerEvent}
  *//**
  * Prevent the default action of toggle the visibility of the series or point.
  * @name Highcharts.LegendItemClickEventObject#preventDefault
@@ -2073,7 +2074,7 @@ export default Legend;
  *//**
  * Related browser event.
  * @name Highcharts.PointLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
+ * @type {PointerEvent}
  *//**
  * Whether the default action has been prevented (`true`) or not.
  * @name Highcharts.PointLegendItemClickEventObject#defaultPrevented
@@ -2132,7 +2133,7 @@ export default Legend;
  *//**
  * Related browser event.
  * @name Highcharts.SeriesLegendItemClickEventObject#browserEvent
- * @type {Highcharts.PointerEvent}
+ * @type {PointerEvent}
  *//**
  * Whether the default action has been prevented (`true`) or not.
  * @name Highcharts.SeriesLegendItemClickEventObject#defaultPrevented

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Domas
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -45,18 +46,18 @@ import {
  **/
 const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (data: number[]): number {
-        return Math.ceil(Math.sqrt((data as any).length));
+        return Math.ceil(Math.sqrt(data.length));
     },
 
     'sturges': function (data: number[]): number {
         return Math.ceil(
-            Math.log((data as any).length) * Math.LOG2E
+            Math.log(data.length) * Math.LOG2E
         );
     },
 
     'rice': function (data: number[]): number {
         return Math.ceil(
-            2 * Math.pow((data as any).length, 1 / 3)
+            2 * Math.pow(data.length, 1 / 3)
         );
     }
 };
@@ -148,7 +149,7 @@ class HistogramSeries extends ColumnSeries {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        let alteredData;
+        let alteredData: Array<HistogramPointOptions> = [];
         if (typeof data !== 'undefined' && data.length > 0) {
             // Support data array of objects (#24073).
             data = data.map(function (

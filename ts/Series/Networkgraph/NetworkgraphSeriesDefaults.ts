@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -100,9 +101,22 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          */
         inactive: {
             /**
+             * Deprecated. Use
+             * [link.opacity](#series.networkgraph.states.inactive.link.opacity)
+             * instead.
+             *
              * Opacity of inactive links.
+             *
+             * @deprecated 13.0.1
              */
             linkOpacity: 0.3,
+
+            /**
+             * @extends plotOptions.networkgraph.link
+             */
+            link: {
+                opacity: 0.3
+            },
 
             /**
              * Animation when not hovering over the node.

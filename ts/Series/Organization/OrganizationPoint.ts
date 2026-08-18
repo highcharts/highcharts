@@ -5,8 +5,9 @@
  *  (c) 2018-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,7 +29,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sankey: { prototype: { pointClass: SankeyPointClass } }
 } = SeriesRegistry.seriesTypes;
-import { defined, find, pick } from '../../Shared/Utilities.js';
+import { defined, find } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -143,10 +144,8 @@ class OrganizationPoint extends SankeyPointClass {
 
             // Default all children of the hanging node
             // to have hanging layout
-            (node.options as any).layout = pick(
-                (node.options as any).layout,
-                'hanging'
-            );
+            (node.options as any).layout =
+                (node.options as any).layout ?? 'hanging';
             node.hangsFrom = fromNode;
 
             find(

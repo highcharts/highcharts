@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -173,8 +174,8 @@ export class ContextMenuButton implements Button {
         return this;
     }
 
-    public focus(): void {
-        this.buttonEl?.focus();
+    public focus(options?: FocusOptions): void {
+        this.buttonEl?.focus(options);
 
         const cm = this.contextMenu;
         if (cm) {

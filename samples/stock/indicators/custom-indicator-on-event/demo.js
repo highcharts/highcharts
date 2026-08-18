@@ -39,6 +39,12 @@ Highcharts.seriesType('customIndicator', 'sma', {}, {
 });
 
 Highcharts.stockChart('container', {
+    plotOptions: {
+        series: {
+            pointStart: '2025-01-01',
+            pointInterval: 24 * 36e5
+        }
+    },
     series: [{
         id: 'main',
         data: [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]

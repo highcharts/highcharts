@@ -11,14 +11,15 @@ modules to ensure it is rendered on the client.
 ```jsx
 "use client";
 
-import { Chart, Series, Title } from "@highcharts/react";
-import { Accessibility } from "@highcharts/react/options/Accessibility";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+import { Accessibility } from "@highcharts/react/modules/Accessibility";
 
 export default function ChartPage() {
   return (
     <Chart>
       <Title>Hello NextJS!</Title>
-      <Series data={[1, 2, 3, 4, 5]} />
+      <LineSeries data={[1, 2, 3, 4, 5]} />
       <Accessibility />
     </Chart>
   );
@@ -64,10 +65,10 @@ In combination with this `chart.tsx`:
 
 import { use } from "react";
 
+import { Title } from "@highcharts/react";
 import { StockChart } from "@highcharts/react/Stock";
 import { LineSeries } from "@highcharts/react/series/Line";
-import { Title } from "@highcharts/react/options";
-import { Accessibility } from "@highcharts/react/options/Accessibility";
+import { Accessibility } from "@highcharts/react/modules/Accessibility";
 
 export default function DataChart({ data }) {
   const allData = use(data);

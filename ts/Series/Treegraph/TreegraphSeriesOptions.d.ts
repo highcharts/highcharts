@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -111,7 +112,9 @@ export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkTextPath?: DataLabelOptions['textPath'];
 }
 
-export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
+type TreegraphSeriesLevelBase = TreemapSeriesLevelOptions &
+    Omit<TreegraphSeriesOptions, 'data' | 'levels'>;
+export interface TreegraphSeriesLevelOptions extends TreegraphSeriesLevelBase {
     collapseButton?: CollapseButtonOptions;
     collapsed?: boolean;
 }

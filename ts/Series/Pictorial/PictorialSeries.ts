@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Magdalena Gut
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,8 +40,7 @@ import {
     addEvent,
     defined,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -373,9 +373,9 @@ function renderStackShadow(
             series.getColumnMetrics().width,
             { height, y } = getStackMetrics(series.yAxis, shape),
             shadowOptions = options.stackShadow,
-            strokeWidth = pick(
-                shadowOptions && shadowOptions.borderWidth,
-                series.options.borderWidth,
+            strokeWidth = (
+                (shadowOptions && shadowOptions.borderWidth) ??
+                series.options.borderWidth ??
                 1
             );
 
@@ -402,7 +402,7 @@ function renderStackShadow(
                             path: {
                                 d: shape.definition,
                                 fill: shadowOptions.color ||
-                                    '#dedede',
+                                    'var(--highcharts-neutral-color-20)',
                                 strokeWidth: strokeWidth,
                                 stroke: shadowOptions.borderColor ||
                                 'transparent'
@@ -413,7 +413,7 @@ function renderStackShadow(
                             height: height,
                             patternContentUnits: 'objectBoundingBox',
                             backgroundColor: 'none',
-                            color: '#dedede'
+                            color: 'var(--highcharts-neutral-color-20)'
                         }
                     }
                 })
@@ -760,7 +760,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {Highcharts.ColorType}
- * @default   #dedede
+ * @default   var(--highcharts-neutral-color-20)
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow.color
@@ -771,7 +771,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {boolean}
- * @default   undefined
+ * @default   false
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow.enabled

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,12 +33,22 @@ export interface PageSizeSelectorOptions {
      * @default [10, 20, 50, 100]
      */
     options?: Array<number>;
+
+    /**
+     * Additional CSS class name(s) for the page size container.
+     */
+    className?: string;
 }
 
 /**
  * Controls options for pagination UI elements.
  */
 export interface PaginationControlsOptions {
+    /**
+     * Additional CSS class name(s) for the controls container.
+     */
+    className?: string;
+
     /**
      * Page size selector configuration including available options and enabled
      * state. Users can select from the options to change the number of items
@@ -155,6 +166,11 @@ export interface PaginationOptions {
     enabled?: boolean;
 
     /**
+     * Additional CSS class name(s) for the pagination container.
+     */
+    className?: string;
+
+    /**
      * The current page number.
      *
      * @default 1
@@ -219,6 +235,11 @@ export interface PageInfoOptions {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * Additional CSS class name(s) for the page info element.
+     */
+    className?: string;
 }
 
 /**

@@ -1,7 +1,6 @@
 Grid.grid('container', {
     data: {
         connector: {
-            id: 'employees-json',
             type: 'CSV',
             enablePolling: true,
             dataRefreshRate: 1,
@@ -23,8 +22,10 @@ Grid.grid('container', {
             format: '{value:0.2f}'
         },
         filtering: {
-            condition: 'greaterThan',
-            value: 0
+            rule: {
+                operator: 'greaterThan',
+                value: 0
+            }
         }
     }]
 });

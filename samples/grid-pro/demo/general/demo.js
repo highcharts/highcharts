@@ -169,6 +169,7 @@ const columnsConfig = [{
 }];
 
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: gridData
     },

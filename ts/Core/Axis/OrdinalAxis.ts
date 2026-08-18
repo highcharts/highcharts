@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,7 +35,6 @@ import {
     defined,
     isString,
     isNumber,
-    pick,
     css,
     addEvent
 } from '../../Shared/Utilities.js';
@@ -118,7 +118,7 @@ namespace OrdinalAxis {
             startOfWeek: number,
             positions?: Array<number>|TypedArray,
             closestDistance?: number,
-            findHigherRanks?: boolean
+            findBoundaryTicks?: boolean
         ): TickPositionsArray;
 
         /** @internal */
@@ -200,10 +200,10 @@ namespace OrdinalAxis {
         startOfWeek?: number,
         positions: Array<number> = [],
         closestDistance: number = 0,
-        findHigherRanks?: boolean
+        findBoundaryTicks?: boolean
     ): TickPositionsArray {
 
-        const higherRanks = {} as Record<string, string>,
+        const boundaryTicks = {} as Record<string, string>,
             tickPixelIntervalOption = this.options.tickPixelInterval,
             time = this.chart.time,
             // Record all the start positions of a segment, to use when
@@ -211,7 +211,7 @@ namespace OrdinalAxis {
             segmentStarts = [];
         let end,
             segmentPositions,
-            hasCrossedHigherRank,
+            hasCrossedBoundary,
             info,
             outsideMax,
             start = 0,
@@ -293,9 +293,9 @@ namespace OrdinalAxis {
         if (segmentPositions) {
             info = (segmentPositions as any).info;
 
-            // Optionally identify ticks with higher rank, for example
+            // Optionally identify ticks with boundary, for example
             // when the ticks have crossed midnight.
-            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+            if (findBoundaryTicks && info.unitRange <= timeUnits.hour) {
                 end = groupPositions.length - 1;
 
                 // Compare points two by two
@@ -304,17 +304,17 @@ namespace OrdinalAxis {
                         time.dateFormat('%d', groupPositions[start]) !==
                         time.dateFormat('%d', groupPositions[start - 1])
                     ) {
-                        higherRanks[groupPositions[start]] = 'day';
-                        hasCrossedHigherRank = true;
+                        boundaryTicks[groupPositions[start]] = 'day';
+                        hasCrossedBoundary = true;
                     }
                 }
 
                 // If the complete array has crossed midnight, we want
-                // to mark the first positions also as higher rank
-                if (hasCrossedHigherRank) {
-                    higherRanks[groupPositions[0]] = 'day';
+                // to mark the first positions also as boundary
+                if (hasCrossedBoundary) {
+                    boundaryTicks[groupPositions[0]] = 'day';
                 }
-                info.higherRanks = higherRanks;
+                info.boundaryTicks = boundaryTicks;
             }
 
             // Save the info
@@ -327,7 +327,7 @@ namespace OrdinalAxis {
         // Don't show ticks within a gap in the ordinal axis, where the
         // space between two points is greater than a portion of the tick
         // pixel interval
-        if (findHigherRanks && defined(tickPixelIntervalOption)) {
+        if (findBoundaryTicks && defined(tickPixelIntervalOption)) {
 
             const length = groupPositions.length,
                 translatedArr = [],
@@ -374,11 +374,11 @@ namespace OrdinalAxis {
                     (medianDistance === null || distance < medianDistance * 0.8)
                 ) {
 
-                    // Is this a higher ranked position with a normal
+                    // Is this a boundary position with a normal
                     // position to the right?
                     if (
-                        higherRanks[groupPositions[i]] &&
-                        !higherRanks[groupPositions[i + 1]]
+                        boundaryTicks[groupPositions[i]] &&
+                        !boundaryTicks[groupPositions[i + 1]]
                     ) {
 
                         // Yes: remove the lower ranked neighbor to the right
@@ -664,12 +664,18 @@ namespace OrdinalAxis {
                 (min <= dataMin && movedUnits <= 0) ||
                 (max >= dataMax + overscroll && movedUnits >= 0)
             ) {
-                e.preventDefault();
-                return;
-            }
+                // At the x-axis data edge, with vertical panning enabled, fall
+                // back to the base pan so the y-axis can still be panned,
+                // otherwise block panning past the edge, #24716
+                if (panning && /y/.test(panning.type)) {
+                    runBase = true;
+                } else {
+                    e.preventDefault();
+                    return;
+                }
 
             // We have an ordinal axis, but the data is equally spaced
-            if (!extendedAxis.ordinal.positions) {
+            } else if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
             } else if (Math.abs(movedUnits) > 1) {
@@ -1008,10 +1014,7 @@ namespace OrdinalAxis {
 
                         overscrollPointsRange = Math.min(
                             overscrollPointsRange,
-                            pick(
-                                // Check for a single-point series:
-                                series.closestPointRange,
-                                overscrollPointsRange
+                            (series.closestPointRange ?? overscrollPointsRange
                             )
                         );
 
@@ -1154,10 +1157,9 @@ namespace OrdinalAxis {
                     ordinal.offset = min - (minIndex * slope);
 
                 } else {
-                    ordinal.overscrollPointsRange = pick(
-                        axis.closestPointRange,
-                        ordinal.overscrollPointsRange
-                    );
+                    ordinal.overscrollPointsRange =
+                        axis.closestPointRange ??
+                        ordinal.overscrollPointsRange;
                     ordinal.positions = axis.ordinal.slope = ordinal.offset =
                         void 0;
                 }
@@ -1287,17 +1289,24 @@ namespace OrdinalAxis {
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
                         getColumn: series.getColumn,
+                        getX: H.noop,
                         applyGrouping: series.applyGrouping,
                         getProcessedData: series.getProcessedData,
                         reserveSpace: series.reserveSpace,
                         visible: series.visible
                     } as any;
 
-                    const xData = series.getColumn('x').concat(
-                        withOverscroll ?
-                            ordinal.getOverscrollPositions() :
-                            []
-                    );
+                    const xColumn = series.getColumn('x'),
+                        xData = (
+                            // No concat on TypedArrays, use Array.from
+                            Array.isArray(xColumn) ?
+                                xColumn :
+                                Array.from(xColumn) as number[]
+                        ).concat(
+                            withOverscroll ?
+                                ordinal.getOverscrollPositions() :
+                                []
+                        );
                     fakeSeries.dataTable = new DataTableCore({
                         columns: {
                             x: xData
@@ -1546,10 +1555,13 @@ namespace OrdinalAxis {
                     overscrollPercentage : number
                 ): number {
 
-                    return pick(
-                        ordinal.originalOrdinalRange,
-                        defined(axis.dataMax) && defined(axis.dataMin) ?
-                            axis.dataMax - axis.dataMin : 0
+                    return (
+                        ordinal.originalOrdinalRange ??
+                        (
+                            defined(axis.dataMax) && defined(axis.dataMin) ?
+                                axis.dataMax - axis.dataMin :
+                                0
+                        )
                     ) * overscrollPercentage;
 
                 };

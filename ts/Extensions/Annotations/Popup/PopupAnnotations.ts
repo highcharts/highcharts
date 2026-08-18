@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,12 +30,14 @@ const {
     doc,
     isFirefox
 } = H;
+import BaseFormIcons from '../../../Shared/BaseFormIcons.js';
+import getIcon from '../../../Shared/BaseFormUtils.js';
+
 import {
     createElement,
     isArray,
     isObject,
     objectEach,
-    pick,
     stableSort
 } from '../../../Shared/Utilities.js';
 
@@ -170,11 +173,9 @@ function addToolbar(
     label.setAttribute('aria-label', 'Annotation type');
     label.appendChild(
         doc.createTextNode(
-            pick(
-                // Advanced annotations:
-                lang[options.langKey as any] || options.langKey,
-                // Basic shapes:
-                options.shapes && options.shapes[0].type,
+            (
+                (lang[options.langKey as any] || options.langKey) ??
+                (options.shapes && options.shapes[0].type) ??
                 ''
             )
         )
@@ -202,7 +203,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}edit.svg)`
+        backgroundImage: getIcon('edit.svg', this.iconsURL, BaseFormIcons)
     }, button);
 
     button = this.addButton(
@@ -217,7 +218,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}destroy.svg)`
+        backgroundImage: getIcon('destroy.svg', this.iconsURL, BaseFormIcons)
     }, button);
 }
 

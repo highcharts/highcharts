@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,7 +27,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
-import { clamp, defined, extend, pick } from '../../Shared/Utilities.js';
+import { clamp, defined, extend } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -89,9 +90,8 @@ class HeatmapPoint extends ScatterPoint {
             yAxis = series.yAxis,
             markerOptions = point.options.marker || series.options.marker,
             pointPlacement = series.pointPlacementToXValue(), // #7860
-            pointPadding = pick(
-                point.pointPadding, seriesOptions.pointPadding, 0
-            ),
+            pointPadding =
+                point.pointPadding ?? seriesOptions.pointPadding ?? 0,
             cellAttr: HeatmapPoint.CellAttributes = {
                 x1: clamp(
                     Math.round(

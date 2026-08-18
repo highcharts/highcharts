@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,8 +28,7 @@ import {
     addEvent,
     correctFloat,
     defined,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -204,12 +204,10 @@ class NavigatorAxisAdditions {
         const axis = this.axis,
             halfPointRange = (axis.pointRange || 0) / 2;
 
-        let newMin = pick<number|undefined, number>(
-                fixedMin, axis.translate(pxMin as any, true, !axis.horiz)
-            ),
-            newMax = pick<number|undefined, number>(
-                fixedMax, axis.translate(pxMax as any, true, !axis.horiz)
-            );
+        let newMin =
+                fixedMin ?? axis.translate(pxMin as any, true, !axis.horiz),
+            newMax =
+                fixedMax ?? axis.translate(pxMax as any, true, !axis.horiz);
 
 
         // Add/remove half point range to/from the extremes (#1172)

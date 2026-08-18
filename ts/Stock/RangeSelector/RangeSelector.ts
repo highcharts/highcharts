@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,7 +38,6 @@ import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import RangeSelectorComposition from './RangeSelectorComposition.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import T from '../../Core/Templating.js';
@@ -50,7 +50,6 @@ import {
     isNumber,
     merge,
     objectEach,
-    pick,
     splat,
     discardElement,
     destroyObjectProperties,
@@ -402,7 +401,7 @@ class RangeSelector {
             baseAxis.setExtremes(
                 newMin,
                 newMax,
-                pick(redraw, true),
+                (redraw ?? true),
                 void 0, // Auto animation
                 {
                     trigger: 'rangeSelectorButton',
@@ -741,8 +740,8 @@ class RangeSelector {
             } as Record<string, number>)[type] * 24 * 36e5 * count;
         }
 
-        rangeOptions._offsetMin = pick(rangeOptions.offsetMin, 0);
-        rangeOptions._offsetMax = pick(rangeOptions.offsetMax, 0);
+        rangeOptions._offsetMin = (rangeOptions.offsetMin ?? 0);
+        rangeOptions._offsetMax = (rangeOptions.offsetMax ?? 0);
         (rangeOptions._range as any) +=
             (rangeOptions._offsetMax as any) - (rangeOptions._offsetMin as any);
     }
@@ -1050,7 +1049,7 @@ class RangeSelector {
             label.css(merge(chartStyle, options.labelStyle));
 
             dateBox.css(merge({
-                color: Palette.neutralColor80
+                color: 'var(--highcharts-neutral-color-80)'
             }, chartStyle, options.inputStyle));
 
             css(input, extend<CSSObject>({
@@ -1177,7 +1176,7 @@ class RangeSelector {
             options =
                 chartOptions.rangeSelector as RangeSelectorOptions,
             inputEnabled = options.inputEnabled,
-            inputsZIndex = pick(chartOptions.chart.style?.zIndex, 0) + 1;
+            inputsZIndex = (chartOptions.chart.style?.zIndex ?? 0) + 1;
 
         if (options.enabled === false) {
             return;
@@ -1373,18 +1372,16 @@ class RangeSelector {
             0,
             (): void => {},
             merge(buttonTheme, {
-                'stroke-width': pick(buttonTheme['stroke-width'], 0),
+                'stroke-width': (buttonTheme['stroke-width'] ?? 0),
                 width: 'auto',
-                paddingLeft: pick(
-                    options.buttonTheme.paddingLeft,
-                    userButtonTheme?.padding,
+                paddingLeft:
+                    options.buttonTheme.paddingLeft ??
+                    userButtonTheme?.padding ??
+                    8,
+                paddingRight:
+                    options.buttonTheme.paddingRight ??
+                    userButtonTheme?.padding ??
                     8
-                ),
-                paddingRight: pick(
-                    options.buttonTheme.paddingRight,
-                    userButtonTheme?.padding,
-                    8
-                )
             }),
             states && states.hover,
             states && states.select,
@@ -1674,7 +1671,7 @@ class RangeSelector {
                     !legendOptions.floating ?
                         (
                             chart.legend.legendHeight +
-                            pick(legendOptions.margin, 10)
+                            (legendOptions.margin ?? 10)
                         ) :
                         0
                 );
@@ -1870,7 +1867,7 @@ class RangeSelector {
             // Align button group
             buttonGroup.align({
                 y: buttonPosition.y,
-                width: pick(width, this.initialButtonGroupWidth),
+                width: (width ?? this.initialButtonGroupWidth),
                 align: buttonPosition.align,
                 x: translateX
             }, true, chart.spacingBox);
@@ -1897,7 +1894,7 @@ class RangeSelector {
         if (zoomText && zoomText.visibility !== 'hidden') {
             // #8769, allow dynamically updating margins
             zoomText[verb]({
-                x: pick(plotLeft + buttonPosition.x, plotLeft)
+                x: plotLeft + (buttonPosition.x ?? 0)
             });
 
             // Button start position

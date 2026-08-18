@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -38,7 +39,7 @@ import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
 import GoogleSheetsConverter from '../Converters/GoogleSheetsConverter.js';
-import { fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -329,7 +330,7 @@ export function buildQueryRange(
         (alphabet[startColumn || 0] || 'A') +
         (Math.max((startRow || 0), 0) + 1) +
         ':' +
-        (alphabet[pick(endColumn, 25)] || 'Z') +
+        (alphabet[(endColumn ?? 25)] || 'Z') +
         (
             endRow ?
                 Math.max(endRow, 0) :

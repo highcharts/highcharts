@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Hubert Kozik
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,7 +23,7 @@ import type GeoHeatmapSeries from './GeoHeatmap/GeoHeatmapSeries';
 import type Point from '../Core/Series/Point';
 
 import H from '../Core/Globals.js';
-import { defined, pick } from '../Shared/Utilities.js';
+import { defined } from '../Shared/Utilities.js';
 const {
     doc
 } = H;
@@ -61,12 +62,9 @@ function colorFromPoint(
             .split(')')[0]
             .split('(')[1]
             .split(',')
-            .map((s): number => pick(
-                parseFloat(s),
-                parseInt(s, 10)
-            ))
+            .map((s): number => (parseFloat(s) ?? parseInt(s, 10)))
         );
-        rgba[3] = pick(rgba[3], 1.0) * 255;
+        rgba[3] = (rgba[3] ?? 1.0) * 255;
         if (!defined(value) || !point.visible) {
             rgba[3] = 0;
         }

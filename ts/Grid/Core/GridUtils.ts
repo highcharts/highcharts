@@ -4,8 +4,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -16,6 +17,7 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
+import Globals from './Globals.js';
 import { isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
@@ -139,6 +141,30 @@ export function makeDiv(className: string, id?: string): HTMLElement {
 }
 
 /**
+ * Measures the horizontal paddings and borders of an element.
+ *
+ * @param el
+ * The element to measure.
+ *
+ * @returns
+ * The overhead in pixels.
+ */
+export function measureWidthOverhead(el?: HTMLElement): number {
+    if (!el) {
+        return 0;
+    }
+
+    const style = Globals.win.getComputedStyle(el);
+
+    return (
+        (parseFloat(style.paddingLeft) || 0) +
+        (parseFloat(style.paddingRight) || 0) +
+        (parseFloat(style.borderLeftWidth) || 0) +
+        (parseFloat(style.borderRightWidth) || 0)
+    );
+}
+
+/**
  * Check if there's a possibility that the given string is an HTML
  * (contains '<').
  *
@@ -252,6 +278,62 @@ export function formatText(
     return template.replace(/\{(\w+)\}/g, (match, key): string => (
         values[key] !== void 0 ? String(values[key]) : match
     ));
+}
+
+/**
+ * Joins class name parts into a single space-separated string.
+ *
+ * @param parts
+ * Class name parts to join.
+ *
+ * @returns
+ * A space-separated class name string.
+ */
+export function joinClassNames(
+    ...parts: Array<(string | undefined | null | false)>
+): string {
+    return parts.filter(Boolean).join(' ');
+}
+
+/**
+ * Replaces previously applied user class tokens on an element without touching
+ * other classes (e.g. Core `hcg-*` tokens).
+ *
+ * @param element
+ * The element to update.
+ *
+ * @param previous
+ * Previously applied user class name string.
+ *
+ * @param next
+ * New user class name string.
+ *
+ * @returns
+ * The class name string that was applied, or `undefined` when cleared.
+ */
+export function applyUserClassNames(
+    element: Element,
+    previous?: string,
+    next?: string
+): (string | undefined) {
+    if (previous) {
+        const prevTokens = previous.split(/\s+/g).filter(Boolean);
+        if (prevTokens.length) {
+            element.classList.remove(...prevTokens);
+        }
+    }
+
+    if (!next) {
+        return;
+    }
+
+    const nextTokens = next.split(/\s+/g).filter(Boolean);
+    if (!nextTokens.length) {
+        return;
+    }
+
+    element.classList.add(...nextTokens);
+    return nextTokens.join(' ');
 }
 
 /**
@@ -408,11 +490,14 @@ export function waitForAnimationFrame(): Promise<void> {
 export default {
     makeHTMLElement,
     makeDiv,
+    measureWidthOverhead,
     isHTML,
     sanitizeText,
     setHTMLContent,
     createOptionsProxy,
     formatText,
+    joinClassNames,
+    applyUserClassNames,
     isDeepEqual,
     resolveStyleValue,
     mergeStyleValues,

@@ -1,11 +1,14 @@
 ---
-name: Tiled web map with points of interest
+name: Tiled web map
 authors:
   - Hubert Kozik
 js_wrap: b
 use_png_thumbnail: true
 tags:
+  - Highcharts overview
   - Highcharts Maps demo
 categories:
+  - Basics:
+      priority: 12
   - General
 ...

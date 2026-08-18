@@ -845,17 +845,17 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         ]
     });
 
+    chart.series[0].setData([{
+        'hc-key': 'us',
+        value: 155
+    }]);
+
     const series = chart.series[0],
         mapView = chart.mapView,
         columnIds = Object.keys(series.dataTable.columns);
 
     let centerBeforeUpdate,
         zoomBeforeUpdate;
-
-    series.setData([{
-        'hc-key': 'us',
-        value: 155
-    }]);
 
     // Check both updates: "allAreas: true" and back to "allAreas: false"
     // The view should be changed.
@@ -948,10 +948,9 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'Making sure that picked point is actually ru.'
     );
 
-    assert.strictEqual(
-        ruPoint.graphic.attr('fill'),
-        'rgb(229,232,255)',
-        'The point\'s color should be correct.'
+    assert.ok(
+        /color-mix/.test(ruPoint.graphic.attr('fill')),
+        'The point\'s color should be a mix color'
     );
 
     mapView.update({
@@ -993,9 +992,8 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
         'Making sure that picked point is actually ru.'
     );
 
-    assert.strictEqual(
-        ruPoint.graphic.attr('fill'),
-        'rgb(229,232,255)',
+    assert.ok(
+        /color-mix/.test(ruPoint.graphic.attr('fill')),
         'The ru point should be added correctly (no nullColor), #17057.'
     );
 

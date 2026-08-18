@@ -1,7 +1,6 @@
 const grid = Grid.grid('container', {
     data: {
         columns: {
-            id: [1, 2, 3, 4, 5, 6, 7, 8],
             path: [
                 'Company',
                 'CompanySales',
@@ -42,15 +41,19 @@ const grid = Grid.grid('container', {
                 210,
                 190
             ]
+        }
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path',
+            separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
         },
-        idColumn: 'id',
-        treeView: {
-            input: {
-                type: 'path',
-                separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
-            },
-            treeColumn: 'name',
-            expandedRowIds: 'all'
+        treeColumn: 'name'
+    },
+    rendering: {
+        rows: {
+            expandedLevels: 'all'
         }
     },
     header: ['name', 'manager', 'budget', 'path']
@@ -58,10 +61,8 @@ const grid = Grid.grid('container', {
 
 document.getElementById('tree-view-enabled').addEventListener('change', e => {
     grid.update({
-        data: {
-            treeView: {
-                enabled: e.target.checked
-            }
+        treeView: {
+            enabled: e.target.checked
         }
     });
 });

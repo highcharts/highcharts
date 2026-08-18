@@ -1,6 +1,14 @@
 // Data retrieved from https://en.wikipedia.org/wiki/Winter_Olympic_Games
 Highcharts.chart('container', {
-
+    dataTable: {
+        columns: {
+            Medal: ['Gold', 'Silver', 'Bronze'],
+            Norway: [148, 133, 124],
+            Germany: [102, 98, 65],
+            'United States': [113, 122, 95],
+            Canada: [77, 72, 80]
+        }
+    },
     chart: {
         type: 'column'
     },
@@ -11,7 +19,7 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: ['Gold', 'Silver', 'Bronze']
+        type: 'category'
     },
 
     yAxis: {
@@ -29,25 +37,32 @@ Highcharts.chart('container', {
 
     plotOptions: {
         column: {
-            stacking: 'normal'
+            stacking: 'normal',
+            dataMapping: {
+                name: 'Medal'
+            }
         }
     },
 
     series: [{
-        name: 'Norway',
-        data: [148, 133, 124],
+        dataMapping: {
+            y: 'Norway'
+        },
         stack: 'Europe'
     }, {
-        name: 'Germany',
-        data: [102, 98, 65],
+        dataMapping: {
+            y: 'Germany'
+        },
         stack: 'Europe'
     }, {
-        name: 'United States',
-        data: [113, 122, 95],
+        dataMapping: {
+            y: 'United States'
+        },
         stack: 'North America'
     }, {
-        name: 'Canada',
-        data: [77, 72, 80],
+        dataMapping: {
+            y: 'Canada'
+        },
         stack: 'North America'
     }]
 });

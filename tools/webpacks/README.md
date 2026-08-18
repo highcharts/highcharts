@@ -65,8 +65,9 @@ Circular dependencies must be avoided.
  *
  * (c) 2009-2025 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * Integration of this software requires a license:
+ * - For commercial use, see www.highcharts.com/license
+ * - For non-commercial, see www.highcharts.com/license-eula
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -81,7 +82,7 @@ In our example the `example.src.ts` module requires the Highcharts namespace fro
 
 ### Adding a module with shared code
 
-If you module provides shared code required by other modules, you have to define the relationship in `externals.json`.
+If your module provides shared code required by other modules, you have to define the relationship in `externals.json`.
 This helps Webpack to make the correct decision when to bundle the code and when to expect the code on the product namespace.
 
 **Example:**
@@ -98,8 +99,9 @@ This helps Webpack to make the correct decision when to bundle the code and when
  *
  * (c) 2009-2025 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * Integration of this software requires a license:
+ * - For commercial use, see www.highcharts.com/license
+ * - For non-commercial, see www.highcharts.com/license-eula
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -121,8 +123,9 @@ export default Highcharts;
  *
  * (c) 2009-2025 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * Integration of this software requires a license:
+ * - For commercial use, see www.highcharts.com/license
+ * - For non-commercial, see www.highcharts.com/license-eula
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -146,7 +149,7 @@ Now an entry in `externals.json` is needed, to inform Webpack about the namespac
 Updating a module with shared code
 ----------------------------------
 
-Webpack provides an callback option where one can define dynamically, whether a file for the current bundle should be included.
+Webpack provides a callback option where one can define dynamically, whether a file for the current bundle should be included.
 Our callback system can be found in `externals.mjs` with the related definitions in `externals.json`.
 
 In `externals.json` you define which code files should go into which bundle and otherwise be accessible under a certain namespace path.
@@ -159,11 +162,11 @@ Each entry is an object with the following properties:
 * `included`: Defines the masters files that should bundle the covered file matches.
   An empty array defaults to the default product master (`highcharts`).
 
-* `namespacePath`: This point to the namespace property when the files are not bundled.
-  - It reflects the namespace assignment that happens in the masters files (the ones in `included`).
-  - A leading dot will be replaced with the shared product namespace.
-  - A `{name}` pattern will be replaced with the imports file name (without file extension).
-  - If the export of a file is merged into the namespace root itself, then you can keep the namespace empty.
+* `namespacePath`: This points to the namespace property when the files are not bundled.
+   - It reflects the namespace assignment that happens in the masters files (the ones in `included`).
+   - A leading dot will be replaced with the shared product namespace.
+   - A `{name}` pattern will be replaced with the imports file name (without file extension).
+   - If the export of a file is merged into the namespace root itself, then you can keep the namespacePath empty.
 
 **Examples:**
 
@@ -174,23 +177,16 @@ Each entry is an object with the following properties:
             "Stock/Indicators/SMA/SMAIndicator"
         ],
         "included": [
-            "module/stock"
+            "modules/stock"
         ],
-        "namespace": ".Series.types.sma"
-    },
-    {
-        "files": [
-            "Shared/TimeBase",
-        ],
-        "included": [], // = highcharts
-        "namespace": ".Time"
+        "namespacePath": ".Series.types.sma"
     },
     {
         "files": [
             "Core/Utilities"
         ],
         "included": [],
-        "namespace": "" // Utilities properties are part of the namespace itself.
+        "namespacePath": "" // Utilities properties are part of the namespace itself.
     }
 ]
 ```
@@ -218,7 +214,7 @@ const masterName = masterPath.replace(/(?:\.src)?\.js$/u, '');
 export default [{
     entry: masterFile,
     experiments: { outputModule: true },
-    externals = [(info) => {
+    externals: [(info) => {
         const contextPath = FSLib.path([info.context, info.request], true);
         if (contextPath.includes('masters')) {
             return makeExternals(

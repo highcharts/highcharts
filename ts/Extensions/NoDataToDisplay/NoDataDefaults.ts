@@ -6,8 +6,9 @@
  *
  *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,8 +23,6 @@
 
 import type { LangOptions } from '../../Core/Options';
 import type { NoDataOptions } from './NoDataOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -145,7 +144,7 @@ const noData: NoDataOptions = {
         /** @ignore */
         fontSize: '0.8em',
         /** @ignore */
-        color: Palette.neutralColor60
+        color: 'var(--highcharts-neutral-color-60)'
     }
 
 };
