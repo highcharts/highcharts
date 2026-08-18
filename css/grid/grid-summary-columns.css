@@ -1,0 +1,27 @@
+/* Grid Pro aggregating (summary) columns */
+
+.hcg-container .hcg-table {
+    /* Rules enclosing a summary column. As wide as a column border - the
+       default theme tells them apart by color, not by weight. */
+    --ig-summary-column-border-width: var(--hcg-summary-column-border-width, var(--ig-column-border-width, 1px));
+    --ig-summary-column-border-style: var(--hcg-summary-column-border-style, var(--ig-column-border-style, solid));
+    --ig-summary-column-border-color: var(--hcg-summary-column-border-color, var(--ig-column-border-color, #d1d5db));
+    --ig-summary-column-border: var(--ig-summary-column-border-width) var(--ig-summary-column-border-style) var(--ig-summary-column-border-color);
+}
+
+/* Only where the summary columns meet the data columns, so that a block of
+   them is enclosed once rather than divided cell by cell. Drawn on the cells
+   that already own that border, so that the column widths are untouched, and
+   left to the table border when no data column follows. */
+.hcg-container .hcg-table thead th:not(.hcg-summary-column):has(+ th.hcg-summary-column),
+.hcg-container .hcg-table thead th.hcg-summary-column:has(+ th:not(.hcg-summary-column)),
+.hcg-container .hcg-table tbody tr > :where(.hcg-cell):not(.hcg-summary-column):has(+ .hcg-summary-column),
+.hcg-container .hcg-table tbody tr > .hcg-summary-column:has(+ :where(.hcg-cell):not(.hcg-summary-column)) {
+    border-right: var(--ig-summary-column-border);
+}
+
+/* Same weight the summary rows carry, the other half of telling a derived
+   value apart from the data it aggregates. */
+.hcg-container .hcg-table tbody tr > .hcg-summary-column {
+    --ig-cell-column-font-weight: 600;
+}

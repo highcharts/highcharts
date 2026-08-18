@@ -148,6 +148,34 @@ shadow are shown to distinguish pinned rows from the scrollable area.
 Set `--hcg-pinned-top-shadow: none` and
 `--hcg-pinned-bottom-shadow: none` to disable shadows entirely.
 
+### Summary separators
+
+In Grid Pro, summary rows and summary columns are set apart by their own rules
+rather than by a background of their own: a summary section is separated from
+the data rows, and columns with a `columnAggregator` are separated from the data
+columns wherever the two meet - a block of neighbouring summary columns is
+enclosed once, not divided column by column. The rules are as wide as the row
+and column borders; `.hcg-theme-default` tells them apart by darkening the color
+well beyond those borders. Their cells also carry a heavier font weight.
+
+| Variable                          | Default Value                  | Valid Values                                                                  |
+| --------------------------------- | ------------------------------ | ----------------------------------------------------------------------------- |
+| --hcg-summary-row-border-width    | --hcg-row-border-width         | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-summary-row-border-style    | --hcg-row-border-style         | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-summary-row-border-color    | --hcg-row-border-color         | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-summary-column-border-width | --hcg-column-border-width      | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-summary-column-border-style | --hcg-column-border-style      | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-summary-column-border-color | --hcg-column-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+
+To tint a summary instead, set `--hcg-cell-background` on the `.hcg-summary-row`
+or `.hcg-summary-column` cells - it wins over the row parity background, so the
+tint stays even on striped rows.
+
+The row separator is declared with zero specificity, so class names given
+through `rendering.rows.summary.top.className` and
+`rendering.rows.summary.bottom.className` (utility classes, for example)
+override it without `!important`.
+
 ### Example
 
 ```css
