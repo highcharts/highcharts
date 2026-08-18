@@ -1,12 +1,12 @@
 const dataTable = new Highcharts.Data({
-    csv: document.getElementById('csv').innerHTML
+    csv: document.getElementById('csv').innerText
 }).getDataTable();
 
 const imports = dataTable.getColumn('Imports'),
     exports = dataTable.getColumn('Exports');
 
 dataTable.setColumns({
-    Balance: exports.map((x, i) => x + imports[i])
+    'Trade Balance': exports.map((x, i) => x + imports[i])
 });
 
 Highcharts.chart('container', {
@@ -21,6 +21,11 @@ Highcharts.chart('container', {
         text: 'Source: <a ' +
             'href="https://www.ssb.no/en/statbank/table/08792"' +
             ' target="_blank">SSB</a>'
+    },
+    tooltip: {
+        shared: true,
+        valuePrefix: 'NOK ',
+        valueSuffix: ' M'
     },
     xAxis: {
         type: 'datetime',
@@ -50,19 +55,21 @@ Highcharts.chart('container', {
         enabled: false
     },
     series: [{
-        name: 'Exports',
         dataMapping: {
             y: 'Exports'
         }
     }, {
-        name: 'Imports',
         dataMapping: {
             y: 'Imports'
         }
     }, {
-        name: 'Trade Balance',
         dataMapping: {
-            y: 'Balance'
+            y: 'Trade Balance'
         }
-    }]
+    }],
+    exporting: {
+        csv: {
+            dateFormat: '%b %Y'
+        }
+    }
 });
