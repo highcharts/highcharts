@@ -872,7 +872,6 @@ QUnit.test('The chart.events.pan event (#10833)', function (assert) {
 
     const chart = Highcharts.chart('container', {
             chart: {
-                animation: false,
                 events: {
                     pan: function (e) {
                         panEvents.push(e);
@@ -883,8 +882,7 @@ QUnit.test('The chart.events.pan event (#10833)', function (assert) {
                 },
                 height: 400,
                 panning: {
-                    enabled: true,
-                    type: 'x'
+                    enabled: true
                 },
                 width: 600
             },
@@ -894,7 +892,6 @@ QUnit.test('The chart.events.pan event (#10833)', function (assert) {
             },
             series: [
                 {
-                    animation: false,
                     data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 }
             ]
