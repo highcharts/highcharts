@@ -19,10 +19,13 @@
  * */
 
 import type { CellType as DataTableCellType } from '../../../Data/DataTable';
+import type {
+    TableCellAfterDataMutationEvent
+} from '../../Core/Table/Body/TableCell';
 import type PinnedTableRow from './PinnedTableRow';
 
 import TableCell from '../../Core/Table/Body/TableCell.js';
-import { defined } from '../../../Shared/Utilities.js';
+import { defined, fireEvent } from '../../../Shared/Utilities.js';
 
 class PinnedTableCell extends TableCell {
 
@@ -99,7 +102,17 @@ class PinnedTableCell extends TableCell {
             this.value
         );
 
-        if (vp.grid.querying.willNotModify()) {
+        const updateRowsEvent: TableCellAfterDataMutationEvent = {
+            requiresFullRowsUpdate: false,
+            rowId,
+            sourceColumnId
+        };
+        fireEvent(this, 'afterDataMutation', updateRowsEvent);
+
+        if (
+            vp.grid.querying.willNotModify() &&
+            !updateRowsEvent.requiresFullRowsUpdate
+        ) {
             await vp.rowPinningView?.syncRenderedMirrors(
                 rowId,
                 this.column.id,

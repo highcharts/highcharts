@@ -33,7 +33,7 @@ const options = {
 
     navigator: {
         series: {
-            color: '#000000'
+            color: 'var(--highcharts-neutral-color-80)'
         }
     },
 

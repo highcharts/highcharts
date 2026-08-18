@@ -34,7 +34,6 @@ import {
     addEvent,
     extend,
     isNumber,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -126,10 +125,8 @@ function onTooltipHeaderFormatter(
             );
         }
 
-        const groupStart = pick(
-                series.groupMap?.[point.index].groupStart,
-                point.key
-            ),
+        const groupStart =
+                series.groupMap?.[point.index].groupStart ?? point.key,
             groupEnd = groupStart + (currentDataGrouping?.totalRange || 0) - 1;
 
         formattedKey = time.dateFormat(xDateFormat, groupStart);
@@ -220,7 +217,7 @@ export default DataGroupingComposition;
  * @interface Highcharts.DataGroupingResultObject
  *//**
  * @name Highcharts.DataGroupingResultObject#modified
- * @type {Highcharts.DataTableCore}
+ * @type {Highcharts.DataTable}
  *//**
  * @name Highcharts.DataGroupingResultObject#groupMap
  * @type {Array<DataGroupingInfoObject>}

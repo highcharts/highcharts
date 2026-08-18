@@ -1,0 +1,7 @@
+---
+ name: Swedish healthcare instruments — volume and volatility
+ authors:
+   - Jedrzej Ruta
+ requiresManualTesting: true
+ js_wrap: b
+...

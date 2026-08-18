@@ -1,6 +1,5 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
 
@@ -11,8 +10,8 @@
 <div class="highcharts-controls-wrapper">
   <highcharts-controls>
     <highcharts-group header="Update options">
-      <highcharts-control type="text" path="xAxis.labels.format" value="{#if (eq boundary &quot;month&quot;)}{value: %b <b>%Y</b>}
-        {else}{value: %e of %b}{/if}"></highcharts-control>
+      <highcharts-control type="text" path="xAxis.labels.format" value="{#if (eq boundary &quot;year&quot;)}{value:%b<br>%Y}
+        {else}{value:%b}{/if}"></highcharts-control>
     </highcharts-group>
   </highcharts-controls>
 </div>

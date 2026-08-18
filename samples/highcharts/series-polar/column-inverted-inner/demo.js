@@ -2,8 +2,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'column',
         inverted: true,
-        polar: true,
-        marginTop: 40
+        polar: true
     },
     title: {
         text: 'Pane\'s innerSize'
@@ -14,7 +13,6 @@ Highcharts.chart('container', {
     pane: {
         startAngle: 0,
         endAngle: 270,
-        size: '80%',
         innerSize: '15%'
     },
     xAxis: {

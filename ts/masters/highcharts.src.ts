@@ -10,12 +10,19 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
+import type TimeBase from '../Shared/TimeBase';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
-import Animation from '../Core/Animation/AnimationUtilities.js';
+import {
+    animate,
+    animObject,
+    getDeferredAnimation,
+    setAnimation,
+    stop
+} from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import RendererUtilities from '../Core/Renderer/RendererUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -118,6 +125,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.Color = Color;
 G.DataLabel = DataLabel;
+G.DataTable = DataTableCore;
 G.DataTableCore = DataTableCore;
 G.Fx = Fx;
 G.HTMLElement = HTMLElement;
@@ -126,7 +134,6 @@ G.LegendSymbol = LegendSymbol;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
 G.Pointer = Pointer;
-G.RendererRegistry = RendererRegistry;
 G.Series = Series;
 G.SeriesRegistry = SeriesRegistry;
 G.StackItem = StackItem;
@@ -134,13 +141,22 @@ G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Templating = Templating;
 G.Tick = Tick;
-G.Time = Time;
+G.Time = class extends Time {
+    public constructor(options?: TimeBase.TimeOptions, lang?: LangOptionsCore) {
+        const defaultOptions = Defaults.getOptions();
+
+        super(
+            options ?? defaultOptions.time,
+            lang ?? defaultOptions.lang
+        );
+    }
+};
 G.Tooltip = Tooltip;
 
 // Utilities
 G.addEvent = addEvent;
-G.animObject = Animation.animObject;
-G.animate = Animation.animate;
+G.animObject = animObject;
+G.animate = animate;
 G.arrayMax = arrayMax;
 G.arrayMin = arrayMin;
 G.attr = attr;
@@ -167,7 +183,7 @@ G.fireEvent = fireEvent;
 G.format = Templating.format;
 G.getAlignFactor = getAlignFactor;
 G.getClosestDistance = getClosestDistance;
-G.getDeferredAnimation = Animation.getDeferredAnimation;
+G.getDeferredAnimation = getDeferredAnimation;
 G.getMagnitude = getMagnitude;
 G.getNestedProperty = getNestedProperty;
 G.getOptions = Defaults.getOptions;
@@ -194,11 +210,11 @@ G.relativeLength = relativeLength;
 G.removeEvent = removeEvent;
 G.replaceNested = replaceNested;
 G.seriesType = SeriesRegistry.seriesType;
-G.setAnimation = Animation.setAnimation;
+G.setAnimation = setAnimation;
 G.setOptions = Defaults.setOptions;
 G.splat = splat;
 G.stableSort = stableSort;
-G.stop = Animation.stop;
+G.stop = stop;
 G.syncTimeout = syncTimeout;
 G.time = Defaults.defaultTime;
 G.ucfirst = ucfirst;

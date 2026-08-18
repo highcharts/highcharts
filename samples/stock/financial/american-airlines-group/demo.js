@@ -169,10 +169,8 @@ function getTradesTable(rows) {
                 accessibility: {
                     keyboardNavigation: {
                         focusBorder: {
-                            enabled: true,
                             style: {
-                                color: 'var(--mstar-accent)',
-                                lineWidth: 2
+                                color: 'var(--mstar-accent)'
                             }
                         }
                     },

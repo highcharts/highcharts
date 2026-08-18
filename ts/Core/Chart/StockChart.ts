@@ -45,7 +45,6 @@ const { format } = F;
 import D from '../Defaults.js';
 const { getOptions } = D;
 import NavigatorDefaults from '../../Stock/Navigator/NavigatorDefaults.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import Point from '../Series/Point.js';
 import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaults.js';
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
@@ -61,7 +60,6 @@ import {
     isNumber,
     isString,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -167,11 +165,10 @@ function getForcedAxisOptions(
     if (type === 'xAxis') {
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
-        const navigatorEnabled = pick(
-            chartOptions.navigator?.enabled,
-            NavigatorDefaults.enabled,
-            true
-        );
+        const navigatorEnabled =
+            chartOptions.navigator?.enabled ??
+            NavigatorDefaults.enabled ??
+            true;
 
         const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
@@ -219,28 +216,27 @@ class StockChart extends Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
-     *
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      * @emits Highcharts.StockChart#event:init
      * @emits Highcharts.StockChart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
         const defaultOptions = getOptions(),
             xAxisOptions = userOptions.xAxis,
             yAxisOptions = userOptions.yAxis,
             // Always disable startOnTick:true on the main axis when the
             // navigator is enabled (#1090)
-            navigatorEnabled = pick(
-                userOptions.navigator?.enabled,
-                NavigatorDefaults.enabled,
-                true
-            );
+            navigatorEnabled =
+                userOptions.navigator?.enabled ??
+                NavigatorDefaults.enabled ??
+                true;
 
         // Avoid doing these twice
         userOptions.xAxis = userOptions.yAxis = void 0;
@@ -264,26 +260,18 @@ class StockChart extends Chart {
                 },
                 scrollbar: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(
-                        ScrollbarDefaults.enabled,
-                        true
-                    )
+                    enabled: (ScrollbarDefaults.enabled ?? true)
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(
-                        RangeSelectorDefaults.rangeSelector.enabled,
-                        true
-                    )
+                    enabled:
+                        RangeSelectorDefaults.rangeSelector.enabled ?? true
                 },
                 title: {
                     text: null
                 },
                 tooltip: {
-                    split: pick(
-                        defaultOptions.tooltip?.split,
-                        true
-                    ),
+                    split: (defaultOptions.tooltip?.split ?? true),
                     crosshairs: true
                 },
                 legend: {
@@ -509,8 +497,8 @@ namespace StockChart {
                 )
                 .attr({
                     align: options.align || align,
-                    padding: pick(options.padding, 8),
-                    r: pick(options.borderRadius, 3),
+                    padding: (options.padding ?? 8),
+                    r: (options.borderRadius ?? 3),
                     zIndex: 2
                 })
                 .add(axis.labelGroup);
@@ -521,12 +509,12 @@ namespace StockChart {
                     .attr({
                         fill: options.backgroundColor ||
                             point?.series?.color || // #14888
-                            Palette.neutralColor60,
+                            'var(--highcharts-neutral-color-60)',
                         stroke: options.borderColor || '',
                         'stroke-width': options.borderWidth || 0
                     })
                     .css(extend<CSSObject>({
-                        color: Palette.backgroundColor,
+                        color: 'var(--highcharts-background-color)',
                         fontWeight: 'normal',
                         fontSize: '0.7em',
                         textAlign: 'center'
@@ -821,9 +809,11 @@ namespace StockChart {
                 }
             }
 
-            transVal = pick(
-                translatedValue,
-                axis.translate(value || 0, void 0, void 0, e.old)
+            transVal = translatedValue ?? axis.translate(
+                value || 0,
+                void 0,
+                void 0,
+                e.old
             );
 
             if (isNumber(transVal)) {
@@ -938,7 +928,7 @@ namespace StockChart {
             groupingEnabled = (
                 series.allowDG !== false &&
                 dataGroupingOptions &&
-                pick(dataGroupingOptions.enabled, chart.options.isStock)
+                (dataGroupingOptions.enabled ?? chart.options.isStock)
             );
 
         return groupingEnabled;
@@ -981,9 +971,10 @@ namespace StockChart {
     export function stockChart(
         a: (string|HTMLDOMElement|Options),
         b?: (Chart.CallbackFunction|Options),
-        c?: Chart.CallbackFunction
-    ): StockChart {
-        return new StockChart(a as any, b as any, c);
+        c?: Chart.CallbackFunction|true
+    ): StockChart|Promise<StockChart> {
+        const chart = new StockChart(a as any, b as any, c);
+        return chart.promise ?? chart;
     }
 
     /* eslint-enable jsdoc/check-param-names */

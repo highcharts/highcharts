@@ -234,6 +234,20 @@ export interface ConnectorsMarkerOptions {
      * @apioption connectors.marker.width
      */
     width?: number;
+
+    /**
+     * The x offset of the marker.
+     *
+     * @since 13.0.0
+     */
+    xOffset?: number;
+
+    /**
+     * The y offset of the marker.
+     *
+     * @since 13.0.0
+     */
+    yOffset?: number;
 }
 
 /**

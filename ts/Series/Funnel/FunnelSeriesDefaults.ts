@@ -22,8 +22,6 @@
 
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -129,7 +127,21 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
      */
     size: true as any,
 
+    /**
+     * @declare Highcharts.SeriesFunnelDataLabelsOptionsObject
+     * @extends plotOptions.pie.dataLabels
+     */
     dataLabels: {
+
+        /**
+         * Whether to render the data label inside the funnel item instead of
+         * outside, connected by a connector line.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption plotOptions.funnel.dataLabels.inside
+         */
+
         connectorWidth: 1,
         verticalAlign: 'middle'
     },
@@ -156,14 +168,14 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
              *
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * A specific border color for the selected point.
              *
              * @type {Highcharts.ColorString}
              */
-            borderColor: Palette.neutralColor100
+            borderColor: 'var(--highcharts-neutral-color-100)'
 
         }
 

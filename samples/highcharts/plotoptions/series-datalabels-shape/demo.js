@@ -40,7 +40,8 @@ Highcharts.chart('container', {
                 format: 'January<br><span style="font-size: 1.3em">' +
                     'Dryest</span>',
                 verticalAlign: 'bottom',
-                y: -10
+                distance: 15,
+                padding: 5
             }
         }, {
             y: 71.5
@@ -64,8 +65,8 @@ Highcharts.chart('container', {
                     'Wettest</span>',
                 align: 'right',
                 verticalAlign: 'middle',
-                x: -35
-
+                distance: 30,
+                padding: 5
             }
         }, {
             y: 194.1

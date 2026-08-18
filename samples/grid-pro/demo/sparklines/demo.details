@@ -9,7 +9,7 @@ tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 70
+      priority: 70
 use_png_thumbnail: true
 is_pro: true
 ...

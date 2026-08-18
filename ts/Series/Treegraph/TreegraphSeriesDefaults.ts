@@ -20,8 +20,6 @@
 
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes';
-
 /* *
  *
  *  Constants
@@ -98,7 +96,7 @@ const TreegraphSeriesDefaults = {
          *
          * @type {Highcharts.ColorString}
          */
-        color: Palette.neutralColor60,
+        color: 'var(--highcharts-neutral-color-60)',
 
         cursor: 'default',
 

@@ -30,7 +30,6 @@ const {
     composed,
     noop
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -40,7 +39,6 @@ import {
     clamp,
     defined,
     isNumber,
-    pick,
     pushUnique,
     relativeLength
 } from '../../Shared/Utilities.js';
@@ -97,7 +95,7 @@ namespace ColumnDataLabel {
             dataLabel: SVGElement
         ): number {
             const pos = dataLabel.dataLabelPosition;
-            return series.getX(
+            return series.getXPos(
                 y < (pos?.top || 0) + 2 || y > (pos?.bottom || 0) - 2 ?
                     naturalY :
                     y,
@@ -551,7 +549,7 @@ namespace ColumnDataLabel {
                         labelPosition.computed.y = y - topOffset;
 
                         // Detect overflowing data labels
-                        if (pick(dataLabelOptions.crop, true)) {
+                        if (dataLabelOptions.crop ?? true) {
                             dataLabelWidth = dataLabel.getBBox().width;
 
                             let sideOverflow: number|undefined;
@@ -661,7 +659,7 @@ namespace ColumnDataLabel {
                                     'stroke': (
                                         connectorColor ||
                                         point.color ||
-                                        Palette.neutralColor60
+                                        'var(--highcharts-neutral-color-60)'
                                     )
                                 });
                             }

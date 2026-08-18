@@ -99,6 +99,11 @@ QUnit.test('Curve bell', function (assert) {
         'Curve bell should be visible after toggling visibility off and on'
     );
 
+    assert.ok(
+        chart.exporting.getSVG(),
+        'Bellcurve with baseSeries should be exportable via getSVG() (#24752).'
+    );
+
     baseSeries.remove();
     assert.ok(
         chart.series.indexOf(bellcurve) !== -1,

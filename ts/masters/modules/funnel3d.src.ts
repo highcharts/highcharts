@@ -16,7 +16,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import Funnel3DSeries from '../../Series/Funnel3D/Funnel3DSeries.js';
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-Funnel3DSeries.compose(RendererRegistry.getRendererType());
+Funnel3DSeries.compose(SVGRenderer);
 export default Highcharts;

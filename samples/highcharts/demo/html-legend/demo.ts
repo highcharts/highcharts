@@ -2,7 +2,6 @@ declare namespace Highcharts {
     interface ExtendedSeries {
         keepProps: string[];
     }
-
     interface Series {
         tr?: HTMLElement;
         trRefresh?: boolean;
@@ -147,9 +146,6 @@ declare namespace Highcharts {
         // Also update highlight when hovering over the point and series
         addEvent(Point, 'mouseOver', highlightRow);
         addEvent(Series, 'mouseOut', highlightRow);
-
-        // Design hack to allow rounded corners on the plot area
-        (this as any).plotBorder.attr({ r: 6 });
     });
 
     addEvent(Series, 'remove', function () {
@@ -175,6 +171,7 @@ Highcharts.chart({
     chart: {
         renderTo: 'container',
         plotBorderWidth: 1,
+        plotBorderRadius: 6,
         spacingTop: 0,
         spacingBottom: 0,
         height: 337

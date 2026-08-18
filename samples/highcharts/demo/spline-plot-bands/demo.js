@@ -140,7 +140,7 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Hestavollane',
+        name: 'Hestavollen',
         data: [
             12.9, 13.8, 10.2, 8.4, 10.0, 9.2, 10.0,
             12.2, 13.2, 12.7, 12.5, 11.4, 10.4,

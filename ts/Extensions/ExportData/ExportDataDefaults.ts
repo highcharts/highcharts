@@ -44,6 +44,7 @@ const exporting: ExportingOptions = {
      *
      * @type      {boolean | string}
      * @since     6.0.4
+     * @requires  modules/exporting
      * @requires  modules/export-data
      * @apioption exporting.tableCaption
      */
@@ -67,6 +68,7 @@ const exporting: ExportingOptions = {
      *          Using a third party XLSX converter
      *
      * @since    6.0.0
+     * @requires  modules/exporting
      * @requires modules/export-data
      */
     csv: {
@@ -75,6 +77,7 @@ const exporting: ExportingOptions = {
          * Options for annotations in the export-data table.
          *
          * @since    8.2.0
+         * @requires modules/exporting
          * @requires modules/export-data
          * @requires modules/annotations
          */
@@ -84,6 +87,8 @@ const exporting: ExportingOptions = {
              * combined in one export-data table cell.
              *
              * @since    8.2.0
+             * @requires modules/exporting
+             * @requires modules/export-data
              * @requires modules/annotations
              */
             itemDelimiter: '; ',
@@ -96,6 +101,8 @@ const exporting: ExportingOptions = {
              *         Concatenate point annotations with itemDelimiter set.
              *
              * @since    8.2.0
+             * @requires modules/exporting
+             * @requires modules/export-data
              * @requires modules/annotations
              */
             join: false
@@ -229,6 +236,7 @@ const exporting: ExportingOptions = {
      *         allow exporting it.
      *
      * @since    6.0.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     showTable: false,
@@ -242,6 +250,7 @@ const exporting: ExportingOptions = {
      *         Multiple table headers
      *
      * @since    6.0.4
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     useMultiLevelHeaders: true,
@@ -254,12 +263,12 @@ const exporting: ExportingOptions = {
      *         Multiple table headers
      *
      * @since    6.0.4
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     useRowspanHeaders: true
 };
 
-// TODO: no need to be a partial when Options are fully optional.
 /**
  * @optionparent lang
  * @internal
@@ -270,6 +279,7 @@ const lang: Partial<LangOptions> = {
      * The text for the menu item.
      *
      * @since    6.0.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     downloadCSV: 'Download CSV',
@@ -278,6 +288,7 @@ const lang: Partial<LangOptions> = {
      * The text for the menu item.
      *
      * @since    6.0.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     downloadXLS: 'Download XLS',
@@ -286,6 +297,7 @@ const lang: Partial<LangOptions> = {
      * The text for exported table.
      *
      * @since    8.1.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     exportData: {
@@ -309,6 +321,7 @@ const lang: Partial<LangOptions> = {
      * The text for the menu item.
      *
      * @since    6.0.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     viewData: 'View data table',
@@ -316,6 +329,7 @@ const lang: Partial<LangOptions> = {
      * The text for the menu item.
      *
      * @since    8.2.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     hideData: 'Hide data table',
@@ -323,6 +337,7 @@ const lang: Partial<LangOptions> = {
      * Text to show when export is in progress.
      *
      * @since    11.3.0
+     * @requires modules/exporting
      * @requires modules/export-data
      */
     exportInProgress: 'Exporting...'
@@ -370,6 +385,7 @@ export default ExportDataDefaults;
  *
  * @type      {boolean}
  * @since     7.1.0
+ * @requires modules/exporting
  * @requires  modules/export-data
  * @apioption plotOptions.series.includeInDataExport
  */

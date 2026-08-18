@@ -22,8 +22,6 @@ import type {
     MapViewOptions
 } from './MapViewOptions';
 
-import { Palette } from '../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -206,7 +204,7 @@ const MapViewDefaults: MapViewOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor20,
+        borderColor: 'var(--highcharts-neutral-color-20)',
 
         /**
          * The pixel border width of the insets.

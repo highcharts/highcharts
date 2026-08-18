@@ -5734,7 +5734,8 @@
   },
   {
     "name": "pane.background.backgroundColor",
-    "mainType": "ColorType"
+    "mainType": "ColorType",
+    "default": "#f7f7f7"
   },
   {
     "name": "pane.background.borderColor",
@@ -5743,13 +5744,12 @@
   },
   {
     "name": "pane.background.borderRadius",
-    "mainType": "number",
-    "default": 0
+    "mainType": "number"
   },
   {
     "name": "pane.background.borderWidth",
     "mainType": "number",
-    "default": 1
+    "default": 0
   },
   {
     "name": "pane.background.className",
@@ -5757,13 +5757,12 @@
   },
   {
     "name": "pane.background.innerRadius",
-    "mainType": "number",
-    "default": 0
+    "mainType": "number"
   },
   {
     "name": "pane.background.outerRadius",
     "mainType": "number",
-    "default": "105%"
+    "default": "100%"
   },
   {
     "name": "pane.background.shape",
@@ -5773,7 +5772,12 @@
       "circle",
       "solid"
     ],
-    "default": "circle"
+    "default": "arc"
+  },
+  {
+    "name": "pane.borderRadius",
+    "mainType": "number",
+    "default": 3
   },
   {
     "name": "pane.center",
@@ -5784,19 +5788,8 @@
     "mainType": "number"
   },
   {
-    "name": "pane.innerSize",
-    "mainType": "number",
-    "default": "0%"
-  },
-  {
-    "name": "pane.size",
-    "mainType": "number",
-    "default": "85%"
-  },
-  {
-    "name": "pane.startAngle",
-    "mainType": "number",
-    "default": 0
+    "name": "pane.margin",
+    "mainType": "number"
   },
   {
     "name": "plotOptions.abands.bottomLine.styles.lineWidth",
@@ -7391,21 +7384,6 @@
     "extendsPath": "plotOptions.xrange"
   },
   {
-    "name": "plotOptions.gauge.dataLabels.borderColor",
-    "mainType": "string",
-    "default": "#cccccc"
-  },
-  {
-    "name": "plotOptions.gauge.dataLabels.borderRadius",
-    "mainType": "number",
-    "default": 3
-  },
-  {
-    "name": "plotOptions.gauge.dataLabels.borderWidth",
-    "mainType": "number",
-    "default": 1
-  },
-  {
     "name": "plotOptions.gauge.dataLabels.crop",
     "mainType": "boolean",
     "default": false
@@ -7421,6 +7399,11 @@
     "default": true
   },
   {
+    "name": "plotOptions.gauge.dataLabels.style.fontSize",
+    "mainType": "number",
+    "default": "1.4em"
+  },
+  {
     "name": "plotOptions.gauge.dataLabels.verticalAlign",
     "mainType": "string",
     "default": "top"
@@ -7428,7 +7411,7 @@
   {
     "name": "plotOptions.gauge.dataLabels.y",
     "mainType": "number",
-    "default": 15
+    "default": 25
   },
   {
     "name": "plotOptions.gauge.dataLabels.zIndex",
@@ -7442,18 +7425,23 @@
   },
   {
     "name": "plotOptions.gauge.dial.baseLength",
-    "mainType": "string",
-    "default": "70%"
+    "mainType": "number",
+    "default": 0
   },
   {
     "name": "plotOptions.gauge.dial.baseWidth",
     "mainType": "number",
-    "default": 3
+    "default": "18%"
   },
   {
     "name": "plotOptions.gauge.dial.borderColor",
     "mainType": "ColorType",
     "default": "#cccccc"
+  },
+  {
+    "name": "plotOptions.gauge.dial.borderRadius",
+    "mainType": "number",
+    "default": "9%"
   },
   {
     "name": "plotOptions.gauge.dial.borderWidth",
@@ -7467,17 +7455,17 @@
   {
     "name": "plotOptions.gauge.dial.radius",
     "mainType": "string",
-    "default": "80%"
+    "default": "70%"
   },
   {
     "name": "plotOptions.gauge.dial.rearLength",
-    "mainType": "string",
-    "default": "10%"
+    "mainType": "number",
+    "default": "9%"
   },
   {
     "name": "plotOptions.gauge.dial.topWidth",
     "mainType": "number",
-    "default": 1
+    "default": "4%"
   },
   {
     "name": "plotOptions.gauge.overshoot",
@@ -7486,7 +7474,7 @@
   {
     "name": "plotOptions.gauge.pivot.backgroundColor",
     "mainType": "ColorType",
-    "default": "#000000"
+    "default": "#ffffff"
   },
   {
     "name": "plotOptions.gauge.pivot.borderColor",
@@ -7501,12 +7489,17 @@
   {
     "name": "plotOptions.gauge.pivot.radius",
     "mainType": "number",
-    "default": 5
+    "default": "4%"
   },
   {
     "name": "plotOptions.gauge.showInLegend",
     "mainType": "boolean",
     "default": false
+  },
+  {
+    "name": "plotOptions.gauge.threshold",
+    "mainType": "number",
+    "default": 0
   },
   {
     "name": "plotOptions.gauge.tooltip.headerFormat",
@@ -11185,6 +11178,11 @@
     "name": "plotOptions.solidgauge.colorByPoint",
     "mainType": "boolean",
     "default": true
+  },
+  {
+    "name": "plotOptions.solidgauge.dataLabels.verticalAlign",
+    "mainType": "string",
+    "default": "middle"
   },
   {
     "name": "plotOptions.solidgauge.dataLabels.y",

@@ -25,6 +25,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
+import type Series from '../Series/Series';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -61,6 +62,17 @@ export interface ChartAddSeriesEventObject {
     preventDefault: Function;
     target: Chart;
     type: 'addSeries';
+}
+
+export interface ChartAfterAddSeriesCallbackFunction {
+    (this: Chart, event: ChartAfterAddSeriesEventObject): void;
+}
+
+export interface ChartAfterAddSeriesEventObject {
+    series: Series;
+    preventDefault: Function;
+    target: Chart;
+    type: 'afterAddSeries';
 }
 
 export interface ChartClickCallbackFunction {
@@ -758,6 +770,21 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
 
     /**
+     * The corner radius of the plot area border in pixels. Also applies clip
+     * to the plot area background and data inside, like columns in a column
+     * series or fill in an area series.
+     *
+     * @sample highcharts/chart/plotborderradius/
+     *         Plot border radius
+     * @sample {highmaps} maps/chart/plotborder/
+     *         Map with plot border options
+     *
+     * @default   0
+     * @since     13.0.0
+     */
+    plotBorderRadius?: number;
+
+    /**
      * The pixel width of the plot area border.
      *
      * @sample {highcharts} highcharts/chart/plotborderwidth/
@@ -864,7 +891,7 @@ export interface ChartOptions {
      * @see In styled mode, the selection marker fill is set with the
      *      `.highcharts-selection-marker` class.
      *
-     * @default   rgba(51,92,173,0.25)
+     * @default   'color-mix(in srgb, var(--highcharts-highlight-color-80) 25%, transparent)'
      * @since     2.1.7
      */
     selectionMarkerFill?: ColorType;

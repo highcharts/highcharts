@@ -32,8 +32,7 @@ import {
     addEvent,
     fireEvent,
     getAlignFactor,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -281,7 +280,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label[label.isOld ? 'animate' : 'attr'](
+                label[label.isOld || label.placed ? 'animate' : 'attr'](
                     { opacity: newOpacity },
                     void 0,
                     complete
@@ -344,11 +343,10 @@ function onChartRender(
                         (point.dataLabels || []).forEach((label): void => {
                             const options = label.options || {};
 
-                            label.labelrank = pick(
-                                options.labelrank,
-                                (point as any).labelrank,
-                                point.shapeArgs?.height
-                            ); // #4118
+                            label.labelrank =
+                                options.labelrank ??
+                                (point as any).labelrank ??
+                                point.shapeArgs?.height; // #4118
 
                             // #21725: Sync target positions for generic overlap
                             // checking. During animations (e.g., toggling a
@@ -373,7 +371,10 @@ function onChartRender(
 
                                 // Pie labels outside have a separate placement
                                 // logic, skip the overlap logic
-                                Number(options.distance) > 0
+                                (
+                                    series.is('pie') &&
+                                    Number(options.distance) > 0
+                                )
                             ) {
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;

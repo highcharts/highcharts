@@ -29,11 +29,11 @@
                 color: 'transparent',
                 label: {
                     enabled: true,
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--highcharts-background-color)',
                     borderColor: '#2caffe',
                     borderWidth: 1,
                     style: {
-                        color: '#000000'
+                        color: 'var(--highcharts-neutral-color)'
                     }
                 }
             }

@@ -7,37 +7,48 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        marginTop: 60,
-        marginBottom: 80,
-        plotBorderWidth: 1
+        plotBorderColor: '#0443E1',
+        plotBorderWidth: 2,
+        plotBorderRadius: 5,
+        marginBottom: 25
     },
-
 
     title: {
         text: 'Simple heatmap',
-        style: {
-            fontSize: '1em'
-        }
+        align: 'left'
     },
 
     subtitle: {
         text: 'Sales per employee per weekday',
-        style: {
-            fontSize: '0.8em'
-        }
+        align: 'left'
     },
 
     xAxis: {
         categories: [
             'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas',
             'Maria', 'Leon', 'Anna', 'Tim', 'Laura'
-        ]
+        ],
+        opposite: true,
+        labels: {
+            autoRotation: [0, -90],
+            style: {
+                fontSize: '0.65em'
+            }
+        },
+        lineWidth: 1,
+        lineColor: '#0443E1'
     },
 
     yAxis: {
         categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         title: null,
-        reversed: true
+        reversed: true,
+        labels: {
+            rotation: -90,
+            style: {
+                fontSize: '0.65em'
+            }
+        }
     },
 
     accessibility: {
@@ -49,28 +60,49 @@ Highcharts.chart('container', {
     },
 
     colorAxis: {
-        min: 0,
-        minColor: 'var(--highcharts-background-color, #FFFFFF)',
-        maxColor: Highcharts.getOptions().colors[0]
+        min: -4,
+        max: 154,
+        startOnTick: false,
+        endOnTick: false,
+        tickPixelInterval: 50,
+        minColor: '#0443E111',
+        maxColor: '#0443E1',
+        // Dots for ticks, extended also by custom CSS
+        tickColor: '#ffffff',
+        tickLength: 0.1,
+        tickWidth: 6,
+        gridLineWidth: 0,
+        marker: {
+            symbol: 'circle',
+            color: 'transparent',
+            lineColor: '#fff',
+            lineWidth: 3
+        }
     },
 
     legend: {
         align: 'right',
         layout: 'vertical',
+        symbolRadius: 6,
         margin: 0,
-        verticalAlign: 'top',
-        y: 40,
-        symbolHeight: 260
+        verticalAlign: 'bottom',
+        symbolHeight: 270
     },
 
     tooltip: {
-        format: '<b>{series.xAxis.categories.(point.x)}</b> sold<br>' +
-            '<b>{point.value}</b> items on <br>' +
-            '<b>{series.yAxis.categories.(point.y)}</b>'
+        useHTML: true,
+        format: `<div
+                style="border-left: 3px solid {point.color}; padding-left: 8px;"
+            >
+            <b>{series.xAxis.categories.(point.x)}</b> sold
+            <b>{point.value}</b><br>
+            items on <b>{series.yAxis.categories.(point.y)}</b></div>`,
+        padding: 12
     },
 
     series: [{
         name: 'Sales per employee',
+        borderColor: '#0443E1',
         borderWidth: 1,
         data: [
             [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
@@ -86,7 +118,9 @@ Highcharts.chart('container', {
         ],
         dataLabels: {
             enabled: true,
-            color: 'contrast'
+            style: {
+                fontSize: '0.85em'
+            }
         }
     }],
 
@@ -98,11 +132,11 @@ Highcharts.chart('container', {
             chartOptions: {
                 yAxis: {
                     labels: {
+                        rotation: 0,
                         format: '{substr value 0 1}'
                     }
                 }
             }
         }]
     }
-
 });
