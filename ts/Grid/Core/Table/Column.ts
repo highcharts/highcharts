@@ -343,9 +343,11 @@ export class Column {
      * Element of the column (a header, body or filter cell).
      */
     public applyClassNames(element: HTMLElement): void {
-        if (this.classNames.length) {
-            element.classList.add(...this.classNames);
+        if (!this.classNames.length) {
+            return;
         }
+
+        element.classList.add(...this.classNames);
     }
 
     /**
