@@ -1777,7 +1777,6 @@ export class Exporting {
                         exportingOptions.filename.replace(/\//g, '-') :
                         this.getFilename(),
                     type: exportingOptions.type,
-                    width: exportingOptions.width,
                     scale: exportingOptions.scale,
                     svg
                 }, exportingOptions.fetchOptions);

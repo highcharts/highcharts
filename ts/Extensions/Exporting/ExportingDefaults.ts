@@ -272,10 +272,10 @@ const exporting: ExportingOptions = {
 
     /**
      * The pixel width of charts exported to PNG or JPG. Deprecated and
-     * without effect, as the export server does not apply it to the rendered
-     * SVG that the exporting module sends. The same result is achieved with
-     * [exporting.sourceWidth](#exporting.sourceWidth) combined with
-     * [exporting.scale](#exporting.scale).
+     * without effect, as the option is no longer forwarded to the export
+     * server. The same result is achieved with [exporting.sourceWidth](
+     * #exporting.sourceWidth) combined with [exporting.scale](
+     * #exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
