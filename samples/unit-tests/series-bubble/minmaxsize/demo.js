@@ -358,9 +358,11 @@ QUnit.test(
             );
         };
 
+        // A pixel of tolerance, as the correction settles within one and
+        // rounding out to a tick shifts the bubbles again
         assert.ok(
             chart.series[0].points.every(function (p) {
-                return withinBounds(p, 0);
+                return withinBounds(p, 1);
             }),
             'maxSize 100%, default axis: all bubbles within plot bounds'
         );
@@ -374,7 +376,7 @@ QUnit.test(
 
         assert.ok(
             chart.series[0].points.every(function (p) {
-                return withinBounds(p, 0);
+                return withinBounds(p, 1);
             }),
             'maxSize 100%, no tick snap: all bubbles within plot bounds'
         );
@@ -405,6 +407,76 @@ QUnit.test(
             }),
             'maxSize 20%, startOnTick/endOnTick true: all bubbles within ' +
             'plot bounds'
+        );
+
+        // Widening one end moves every bubble, so bubbles overflowing both
+        // ends at once are only seated by measuring again after the widening.
+        chart.update({
+            plotOptions: {
+                bubble: {
+                    maxSize: 100
+                }
+            },
+            series: [{
+                data: [
+                    { x: 0, y: 0, z: 30 },
+                    { x: 50, y: 50, z: 10 },
+                    { x: 100, y: 100, z: 30 }
+                ]
+            }]
+        });
+        chart.setSize(500, 320, false);
+
+        assert.ok(
+            chart.series[0].points.every(function (p) {
+                return withinBounds(p, 1);
+            }),
+            'Bubbles overflowing both ends: all bubbles within plot bounds'
+        );
+
+        // Bubbles this wide are only seated by zooming the axis out
+        // enormously, so the correction gives up. The listener runs after the
+        // bubble module's own, and so reads the padding that pass left behind.
+        let paddedRange;
+        const unbind = Highcharts.addEvent(
+            Highcharts.Axis,
+            'foundExtremes',
+            function () {
+                if (this.coll === 'xAxis') {
+                    paddedRange = this.max - this.min;
+                }
+            }
+        );
+
+        chart.update({
+            chart: {
+                width: 400,
+                height: 800
+            },
+            plotOptions: {
+                bubble: {
+                    minSize: 360,
+                    maxSize: 360
+                }
+            },
+            series: [{
+                data: [
+                    { x: 0, y: 0, z: 1 },
+                    { x: 10, y: 10, z: 2 }
+                ]
+            }]
+        });
+
+        unbind();
+
+        const xAxis = chart.xAxis[0];
+
+        assert.ok(
+            xAxis.max - xAxis.min < paddedRange * 1.5,
+            'Bubbles too wide to fit are left to the padding from ' +
+            'foundExtremes rather than zooming the axis out (' +
+            ((xAxis.max - xAxis.min) / paddedRange).toFixed(2) +
+            'x that padding)'
         );
     }
 );

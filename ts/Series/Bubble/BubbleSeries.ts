@@ -47,6 +47,7 @@ import {
     arrayMax,
     arrayMin,
     clamp,
+    correctFloat,
     defined,
     extend,
     isNumber,
@@ -60,14 +61,6 @@ import {
  *  Declarations
  *
  * */
-
-/** @internal */
-declare module '../../Core/Axis/AxisBase' {
-    interface AxisBase {
-        bubblePaddedMax?: number;
-        bubblePaddedMin?: number;
-    }
-}
 
 /** @internal */
 declare module '../../Core/Chart/ChartBase'{
@@ -185,110 +178,116 @@ function onAxisFoundExtremes(
                 (this as any)[keys[0]] += keys[2] / transA;
             }
         });
-
     }
 
-    // Record the padded extremes so `onAxisAfterSetTickPositions` can tell
-    // whether anything has moved them since. #24039
-    if (hasActiveSeries) {
-        this.bubblePaddedMin = this.min;
-        this.bubblePaddedMax = this.max;
-    }
 }
 
 /**
- * Pad the axis a second time. The padding from `foundExtremes` is applied
- * before the tick positions are known, and the extremes shift again while they
- * are computed, which can leave bubbles outside the plot area. Measure the
- * bubbles against the final extremes and widen min and max where they
- * overflow. #24039
+ * The padding above is applied before the tick positions are known, and the
+ * extremes shift again while they are computed, which can leave bubbles
+ * outside the plot area. Run it again against the final extremes, and repeat,
+ * since padding one end moves every bubble. #24039
  */
 function onAxisAfterSetTickPositions(
     this: Axis
 ): void {
-    const { coll, isXAxis } = this;
+    const paddedMin = this.min,
+        paddedMax = this.max,
+        { options, tickInterval, tickPositions } = this;
 
-    if (
-        coll !== 'xAxis' && coll !== 'yAxis' ||
-        this.logarithmic
-    ) {
+    if (!isNumber(paddedMin) || !isNumber(paddedMax)) {
         return;
     }
 
-    const axisLength = this.len,
-        hasUserMin = defined(pick(this.options.min, this.userMin)),
-        hasUserMax = defined(pick(this.options.max, this.userMax));
+    // Growing by whole ticks keeps `startOnTick` and `endOnTick` true, but
+    // only where they are evenly spaced and no tick count has been settled on
+    const firstTick = tickPositions[0],
+        lastTick = tickPositions[tickPositions.length - 1],
+        canSnap = (
+            tickInterval > 0 &&
+            tickPositions.length > 0 &&
+            !this.tickAmount &&
+            !this.categories &&
+            !this.dateTime
+        ),
+        snapStart = canSnap && options.startOnTick,
+        snapEnd = canSnap && options.endOnTick,
+        tickSteps = (value: number, atEnd: boolean): number => Math.max(
+            Math.ceil(
+                (atEnd ? value - lastTick : firstTick - value) / tickInterval
+            ),
+            0
+        );
 
-    if (hasUserMin && hasUserMax) {
-        return;
-    }
+    let passes = 5;
 
-    // Unchanged since `foundExtremes`, so its padding still applies. #24039
-    if (
-        this.min === this.bubblePaddedMin &&
-        this.max === this.bubblePaddedMax
-    ) {
-        return;
-    }
+    while (passes--) {
+        const { min, max } = this;
 
-    const axisMin = this.min || 0,
-        axisMax = this.max || 0;
+        onAxisFoundExtremes.call(this);
 
-    let requiredMin = axisMin,
-        requiredMax = axisMax,
-        hasActiveSeries = false;
+        // Rounding out moves every bubble too, so it belongs in the loop.
+        // Only where the padding moved something, or an axis with no bubbles
+        // to seat would lose the tick positions it settled on
+        if (this.min !== min || this.max !== max) {
+            const stepsMin = snapStart ? tickSteps(this.min || 0, false) : 0,
+                stepsMax = snapEnd ? tickSteps(this.max || 0, true) : 0;
 
-    this.series.forEach((series): void => {
-        if (!series.bubblePadding || !series.reserveSpace()) {
-            return;
-        }
-
-        hasActiveSeries = true;
-
-        const data = series.getColumn(isXAxis ? 'x' : 'y'),
-            // Bubbles rendered on a point of another series keep their radii
-            // on the `onPoint` object, like in `onAxisFoundExtremes`
-            radii = (series.onPoint || series).radii;
-
-        let i = data.length;
-        while (i--) {
-            const d = data[i];
-            if (!isNumber(d)) {
-                continue;
+            if (stepsMin) {
+                this.min = correctFloat(firstTick - stepsMin * tickInterval);
             }
-            const r = radii && radii[i] || 0;
-            if (r >= axisLength) {
-                continue;
-            }
-            const range = axisMax - axisMin,
-                pxPos = range > 0 ?
-                    (d - axisMin) / range * axisLength :
-                    axisLength / 2;
-
-            if (!hasUserMin && pxPos - r < -1) {
-                requiredMin = Math.min(
-                    requiredMin,
-                    (r * axisMax - d * axisLength) / (r - axisLength)
-                );
-            }
-            if (!hasUserMax && pxPos + r > axisLength + 1) {
-                requiredMax = Math.max(
-                    requiredMax,
-                    (d * axisLength - r * axisMin) / (axisLength - r)
-                );
+            if (stepsMax) {
+                this.max = correctFloat(lastTick + stepsMax * tickInterval);
             }
         }
-    });
 
-    if (!hasActiveSeries) {
+        // Bubbles near the width of the plot area are only seated by zooming
+        // far out. Rather than do that, give up past double the padded range
+        if ((this.max || 0) - (this.min || 0) > (paddedMax - paddedMin) * 2) {
+            this.min = paddedMin;
+            this.max = paddedMax;
+            break;
+        }
+
+        if (this.min === min && this.max === max) {
+            break;
+        }
+    }
+
+    // Leave a chart whose bubbles already fit exactly as it was, rather than
+    // nudging every bubble chart by a fraction of a pixel
+    const transA = this.len / ((paddedMax - paddedMin) || 1);
+
+    if (
+        Math.abs((this.min || 0) - paddedMin) * transA < 1 &&
+        Math.abs((this.max || 0) - paddedMax) * transA < 1
+    ) {
+        this.min = paddedMin;
+        this.max = paddedMax;
         return;
     }
 
-    if (!hasUserMin && requiredMin < axisMin) {
-        this.min = requiredMin;
-    }
-    if (!hasUserMax && requiredMax > axisMax) {
-        this.max = requiredMax;
+    for (const atEnd of [false, true]) {
+        if (
+            !(atEnd ? snapEnd : snapStart) ||
+            (atEnd ? this.max === paddedMax : this.min === paddedMin)
+        ) {
+            continue;
+        }
+        const steps = tickSteps((atEnd ? this.max : this.min) || 0, atEnd);
+
+        for (let i = 1; i <= steps; i++) {
+            const tick = correctFloat(
+                (atEnd ? lastTick : firstTick) +
+                (atEnd ? i : -i) * tickInterval
+            );
+
+            if (atEnd) {
+                tickPositions.push(tick);
+            } else {
+                tickPositions.unshift(tick);
+            }
+        }
     }
 }
 
