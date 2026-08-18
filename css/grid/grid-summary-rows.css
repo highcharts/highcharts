@@ -1,13 +1,5 @@
 /* Grid Pro flat summary (total) rows */
-
 .hcg-container .hcg-table {
-    /* Separator between a summary section and the data rows. As wide as a row
-       border - the default theme tells it apart by color, not by weight. */
-    --ig-summary-row-border-width: var(--hcg-summary-row-border-width, var(--ig-row-border-width, 1px));
-    --ig-summary-row-border-style: var(--hcg-summary-row-border-style, var(--ig-row-border-style, solid));
-    --ig-summary-row-border-color: var(--hcg-summary-row-border-color, var(--ig-row-border-color, #d1d5db));
-    --ig-summary-row-border: var(--ig-summary-row-border-width) var(--ig-summary-row-border-style) var(--ig-summary-row-border-color);
-
     > tbody.hcg-tbody-summary {
         height: auto;
         display: block;
@@ -20,10 +12,6 @@
         > tr {
             display: block;
             position: static;
-        }
-
-        .hcg-cell {
-            font-weight: 600;
         }
     }
 
@@ -46,12 +34,24 @@
     }
 }
 
-/* Zero specificity, so that the `rendering.rows.summary` class names (utility
-   classes, for example) override the default separator. */
-:where(.hcg-container .hcg-table > tbody.hcg-tbody-summary-bottom) {
+.hcg-themed {
+    .hcg-table {
+        --ig-summary-row-border-width: var(--hcg-summary-row-border-width, var(--ig-row-border-width));
+        --ig-summary-row-border-style: var(--hcg-summary-row-border-style, var(--ig-row-border-style));
+        --ig-summary-row-border-color: var(--hcg-summary-row-border-color, var(--ig-row-border-color));
+        --ig-summary-row-border: var(--ig-summary-row-border-width) var(--ig-summary-row-border-style) var(--ig-summary-row-border-color);
+        --ig-summary-row-font-weight: var(--hcg-summary-row-font-weight, var(--hcg-row-font-weight));
+    }
+
+    .hcg-table tbody tr.hcg-summary-row {
+        --ig-row-font-weight-current: var(--ig-summary-row-font-weight);
+    }
+}
+
+:where(.hcg-themed .hcg-table > tbody.hcg-tbody-summary-bottom) {
     border-top: var(--ig-summary-row-border);
 }
 
-:where(.hcg-container .hcg-table > tbody.hcg-tbody-summary-top) {
+:where(.hcg-themed .hcg-table > tbody.hcg-tbody-summary-top) {
     border-bottom: var(--ig-summary-row-border);
 }
