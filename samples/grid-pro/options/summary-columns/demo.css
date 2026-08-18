@@ -19,10 +19,3 @@
         min-height: 340px;
     }
 }
-
-/* Applied automatically to every column with a `columnAggregator`. The cells
-   are derived, so they are read-only by design. */
-.hcg-summary-column {
-    --hcg-cell-background: rgb(128 128 128 / 12%);
-    --hcg-cell-font-weight: 600;
-}

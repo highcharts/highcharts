@@ -30,7 +30,10 @@ import type {
     TableCellAfterDataMutationEvent
 } from '../../Core/Table/Body/TableCell';
 import type { DeepPartial } from '../../../Shared/Types';
-import type { SummaryOptions } from './SummaryRowsTypes';
+import type {
+    SummaryOptions,
+    SummarySectionsOptions
+} from './SummaryRowsTypes';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -276,8 +279,18 @@ declare module '../../Core/Options' {
          * for several.
          *
          * @sample grid-pro/options/summary-rows Summary rows
+         * @sample grid-pro/basic/summary-rows-and-columns
+         *         Aggregated in both directions
          */
         summaryRows?: SummaryOptions;
+    }
+
+    interface RowsSettings {
+        /**
+         * Options for the summary sections, the frozen `tbody` elements
+         * rendered above and below the scrollable table body.
+         */
+        summary?: SummarySectionsOptions;
     }
 }
 

@@ -655,6 +655,8 @@ declare module '../../Core/Options' {
          * and `summaryRows` do.
          *
          * @sample grid-pro/options/summary-columns Summary columns
+         * @sample grid-pro/basic/summary-rows-and-columns
+         *         Aggregated in both directions
          */
         columnAggregator?: ColumnAggregatorOption;
 

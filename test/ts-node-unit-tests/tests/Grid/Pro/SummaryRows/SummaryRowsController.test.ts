@@ -1000,4 +1000,72 @@ describe('SummaryRowsController', () => {
             'The row style survives an update.'
         );
     });
+
+    it('should apply the section className to the summary tbody', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    name: ['a', 'b', 'c'],
+                    sales: [10, 20, 30]
+                }
+            },
+            summaryRows: [
+                { aggregator: 'SUM', position: 'top' },
+                { aggregator: 'SUM' }
+            ],
+            rendering: {
+                rows: {
+                    summary: {
+                        top: { className: 'my-top-section' },
+                        bottom: { className: 'my-bottom-section' }
+                    }
+                }
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const summaryView = (grid as any).viewport.summaryView;
+
+        ok(
+            summaryView.top.tbodyElement.classList
+                .contains('my-top-section') &&
+            summaryView.bottom.tbodyElement.classList
+                .contains('my-bottom-section'),
+            'Each section gets the class names of its own position.'
+        );
+        ok(
+            summaryView.bottom.tbodyElement.classList
+                .contains('hcg-tbody-summary-bottom'),
+            'The Core section class survives.'
+        );
+
+        await grid.update({
+            rendering: {
+                rows: {
+                    summary: {
+                        bottom: { className: 'other-section' }
+                    }
+                }
+            }
+        });
+
+        const bottomElement = (grid as any).viewport.summaryView.bottom
+            .tbodyElement;
+
+        strictEqual(
+            bottomElement.classList.contains('my-bottom-section'), false,
+            'The previous class names are removed on an update.'
+        );
+        ok(
+            bottomElement.classList.contains('other-section'),
+            'The new class names are applied on an update.'
+        );
+    });
 });
