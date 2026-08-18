@@ -29,7 +29,7 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import { addEvent, pick } from '../Shared/Utilities.js';
+import { addEvent } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -269,7 +269,7 @@ namespace FocusBorderComposition {
         }
         // Add the border rect
         const bb = this.getBBox(),
-            pad = pick(margin, 3),
+            pad = (margin ?? 3),
             parent = this.parentGroup,
             scaleX = this.scaleX || parent && parent.scaleX,
             scaleY = this.scaleY || parent && parent.scaleY,

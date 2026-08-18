@@ -58,7 +58,6 @@ import {
     internalClearTimeout,
     isNumber,
     merge,
-    pick,
     wrap
 } from '../Shared/Utilities.js';
 
@@ -511,7 +510,7 @@ namespace BoostCanvas {
             fillColor = (
                 series.fillOpacity ?
                     Color.parse(series.color).setOpacity(
-                        pick((options as any).fillOpacity, 0.75)
+                        ((options as any).fillOpacity ?? 0.75)
                     ).get() :
                     series.color
             ),

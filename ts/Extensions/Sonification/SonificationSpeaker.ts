@@ -13,9 +13,6 @@
  * */
 
 'use strict';
-
-import { pick } from '../../Shared/Utilities.js';
-
 namespace SonificationSpeaker {
     /**
      * Configuration for a SonificationSpeaker.
@@ -117,9 +114,10 @@ class SonificationSpeaker {
             utterance.rate = options && options.rate || this.options.rate || 1;
             utterance.pitch = options && options.pitch ||
                 this.options.pitch || 1;
-            utterance.volume = pick(
-                options && options.volume,
-                this.options.volume, 1
+            utterance.volume = (
+                (options && options.volume) ??
+                this.options.volume ??
+                1
             ) * this.masterVolume;
 
             this.synthesis.speak(utterance);

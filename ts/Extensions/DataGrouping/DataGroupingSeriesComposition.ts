@@ -53,7 +53,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
@@ -396,7 +395,7 @@ function applyGrouping(
         options = series.options,
         dataGroupingOptions = options.dataGrouping,
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
-            pick(dataGroupingOptions.enabled, chart.options.isStock),
+            (dataGroupingOptions.enabled ?? chart.options.isStock),
         reserveSpace = series.reserveSpace(),
         lastDataGrouping = this.currentDataGrouping;
 
