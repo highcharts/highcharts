@@ -68,24 +68,6 @@ export interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
     states?: SeriesStatesOptions<ColumnPyramidSeriesOptions>;
 
     /**
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock
-     *
-     * @apioption series.columnpyramid.states.select
-     */
-
-    /**
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock
-     *
-     * @apioption series.columnpyramid.states.hover
-     */
-
-    /**
      * An array of data points for the series. For the `columnpyramid` series
      *  type,
      * points can be given in the following ways:
@@ -148,15 +130,11 @@ export interface ColumnPyramidSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
-     *
      * @extends series.line.data
      *
      * @excluding marker
      *
      * @product highcharts highstock
-     *
-     * @apioption series.columnpyramid.data
      */
     data?: Array<(ColumnPyramidPointOptions|PointShortOptions)>;
 

@@ -620,7 +620,7 @@ function wrapInit(
 
         // Add event for updating the categories of a treegrid.
         // NOTE Preferably these events should be set on the axis.
-        addEvent(chart, 'beforeRender', onBeforeRender);
+        addEvent(chart, 'beforeRender', onBeforeRender, { order: 0 });
         addEvent(chart, 'beforeRedraw', onBeforeRender);
 
         // Add new collapsed nodes on addSeries

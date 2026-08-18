@@ -50,7 +50,8 @@ import { defaultOptions } from './Defaults.js';
 import {
     makeHTMLElement,
     setHTMLContent,
-    createOptionsProxy
+    createOptionsProxy,
+    joinClassNames
 } from './GridUtils.js';
 import Table from './Table/Table.js';
 import QueryingController from './Querying/QueryingController.js';
@@ -61,8 +62,7 @@ import {
     diffObjects,
     extend,
     fireEvent,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../../Core/Utilities.js';
 
@@ -796,6 +796,36 @@ export class Grid {
             }
             delete diff.pagination;
 
+            if (diff.caption && 'className' in diff.caption) {
+                flags.add('classes');
+                delete diff.caption.className;
+                if (Object.keys(diff.caption).length < 1) {
+                    delete diff.caption;
+                }
+            }
+
+            if (diff.description && 'className' in diff.description) {
+                flags.add('classes');
+                delete diff.description.className;
+                if (Object.keys(diff.description).length < 1) {
+                    delete diff.description;
+                }
+            }
+
+            if (
+                diff.rendering?.table &&
+                'className' in diff.rendering.table
+            ) {
+                flags.add('classes');
+                delete diff.rendering.table.className;
+                if (Object.keys(diff.rendering.table).length < 1) {
+                    delete diff.rendering.table;
+                }
+                if (Object.keys(diff.rendering).length < 1) {
+                    delete diff.rendering;
+                }
+            }
+
             // TODO(update): Add more options that can be optimized here.
 
             if (Object.keys(diff).length > 0) {
@@ -883,7 +913,10 @@ export class Grid {
             'minWidth' in columnDiff ||
             'maxWidth' in columnDiff
         ) {
-            vp.columnResizing.isDirty = true;
+            const columnResizing = vp.columnResizing;
+            if (columnResizing) {
+                columnResizing.isDirty = true;
+            }
         }
         delete columnDiff.width;
         delete columnDiff.minWidth;
@@ -1012,10 +1045,36 @@ export class Grid {
                 }
             }
 
+            if (flagsToProcess.has('classes')) {
+                if (this.captionElement) {
+                    this.captionElement.className = joinClassNames(
+                        Globals.getClassName('captionElement'),
+                        this.options?.caption?.className
+                    );
+                }
+
+                if (this.descriptionElement) {
+                    this.descriptionElement.className = joinClassNames(
+                        Globals.getClassName('descriptionElement'),
+                        this.options?.description?.className
+                    );
+                }
+
+                if (vp) {
+                    vp.tableElement.className = joinClassNames(
+                        Globals.getClassName('tableElement'),
+                        vp.virtualRows &&
+                            Globals.getClassName('virtualization'),
+                        Globals.getClassName('scrollableContent'),
+                        this.options?.rendering?.table?.className
+                    );
+                }
+            }
+
             pagination?.redraw();
             delete colResizing?.isDirty;
 
-            for (const flag of ['sorting', 'filtering'] as const) {
+            for (const flag of ['sorting', 'filtering', 'classes'] as const) {
                 flags.delete(flag);
             }
 
@@ -1354,9 +1413,10 @@ export class Grid {
 
         const tag = captionOptions.htmlTag?.toLowerCase();
         const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
-        const defaultClass = Globals.getClassName('captionElement');
-        const className = captionOptions.className ?
-            `${defaultClass} ${captionOptions.className}` : defaultClass;
+        const className = joinClassNames(
+            Globals.getClassName('captionElement'),
+            captionOptions.className
+        );
 
         this.captionElement = new AST([{
             tagName,
@@ -1381,18 +1441,15 @@ export class Grid {
 
         // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            className: Globals.getClassName('descriptionElement'),
+            className: joinClassNames(
+                Globals.getClassName('descriptionElement'),
+                descriptionOptions.className
+            ),
             id: this.id + '-description'
         }, this.contentWrapper);
 
         // Render the description element content.
         setHTMLContent(this.descriptionElement, descriptionText);
-
-        if (descriptionOptions.className) {
-            this.descriptionElement.classList.add(
-                ...descriptionOptions.className.split(/\s+/g)
-            );
-        }
     }
 
     /**
@@ -1406,9 +1463,12 @@ export class Grid {
         }
 
         this.contentWrapper.innerHTML = AST.emptyHTML;
-        this.contentWrapper.className =
-            Globals.getClassName('container') + ' ' +
-            this.options?.rendering?.theme || '';
+        const theme = this.options?.rendering?.theme;
+        this.contentWrapper.className = joinClassNames(
+            Globals.getClassName('container'),
+            theme && Globals.getClassName('themed'),
+            theme
+        );
     }
 
     /**
@@ -1684,7 +1744,11 @@ export class Grid {
 
         setHTMLContent(
             loadingSpan,
-            pick(message, this.options?.lang?.loading, '')
+            (
+                message ??
+                this.options?.lang?.loading ??
+                ''
+            )
         );
     }
 
@@ -1776,7 +1840,7 @@ export type NonArrayOptions = Omit<Options, 'columns'> & {
  * @internal
  */
 export type GridDirtyFlags = (
-    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
+    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow' | 'classes'
 );
 
 /**
