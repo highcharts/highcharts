@@ -190,7 +190,7 @@ module.exports = {
                     'grid/frameworks/nextjs',
                     {
                         'React': [
-                            'grid/frameworks/react',
+                            'grid/frameworks/react/getting-started',
                             'grid/frameworks/react/grid',
                             'grid/frameworks/react/components',
                             'grid/frameworks/react/columns',

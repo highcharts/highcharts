@@ -204,7 +204,7 @@ export default function App() {
 For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 `<Grid options={options} />`.
 
-See [Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react) for the full guide.
+See [Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react/getting-started) for the full guide.
 
 ### Other Frameworks
 
