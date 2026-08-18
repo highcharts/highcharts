@@ -1,11 +1,14 @@
 ---
-sidebar_label: "React"
+sidebar_label: "Getting started"
 ---
 
 # Highcharts Grid with React
 Use the official React package for Grid Lite or Grid Pro. It is a self-contained
 component package that handles grid setup/cleanup and loads the Grid CSS for you.
 Requires React 18 or higher.
+
+Configure the grid with dedicated React components. You can still pass an
+`options` object when you need the Core options API.
 
 ## 1. Install the Grid React package
 ```bash
@@ -24,106 +27,104 @@ automatically.
   npm install @highcharts/grid-lite-react@latest
   ```
 
-## 2. Render the Grid component
-Grid Lite example:
+## 2. Create your grid
+Start with the `Grid` root and option components for data and columns:
 
 ```tsx
-import { useState } from 'react';
-import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
+import { Grid, Data, Column } from '@highcharts/grid-lite-react';
 
 export default function App() {
-    const [options] = useState<GridOptions>({
-        data: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo']
-            }
-        }
-    });
-
-    return <Grid options={options} />;
-}
-```
-
-For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
-`<Grid options={options} />`.
-
-See the [live Grid Lite example](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo).
-See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo).
-
-## 3. Access the Grid instance (optional)
-You can access the underlying Grid instance via the `gridRef` prop or a callback:
-
-```tsx
-import { useState, useRef } from 'react';
-import {
-    Grid,
-    type GridOptions,
-    type GridRefHandle,
-    type GridInstance
-} from '@highcharts/grid-lite-react';
-
-export default function App() {
-    const [options] = useState<GridOptions>({
-        data: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie'],
-                age: [23, 34, 45]
-            }
-        }
-    });
-    const gridRef = useRef<GridRefHandle<GridOptions> | null>(null);
-
-    const onGridReady = (grid: GridInstance<GridOptions>) => {
-        console.log('Grid instance:', grid);
-    };
-
-    return <Grid options={options} gridRef={gridRef} callback={onGridReady} />;
-}
-```
-
-## 4. Updating the Grid
-When the options object changes, the Grid component automatically updates. Use
-state to manage your options:
-
-```tsx
-import { useState } from 'react';
-import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
-
-export default function App() {
-    const [options, setOptions] = useState<GridOptions>({
-        data: {
-            columns: {
-                name: ['Alice', 'Bob'],
-                age: [23, 34]
-            }
-        }
-    });
-
-    const loadNewData = () => {
-        setOptions({
-            data: {
-                columns: {
-                    name: ['Charlie', 'Diana', 'Eve'],
-                    age: [45, 56, 67]
-                }
-            }
-        });
-    };
-
     return (
-        <>
-            <Grid options={options} />
-            <button onClick={loadNewData}>Load new data</button>
-        </>
+        <Grid>
+            <Data
+                columns={{
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo']
+                }}
+            />
+            <Column columnId="name" headerFormat="Name" />
+            <Column columnId="age" dataType="number" headerFormat="Age" />
+            <Column columnId="city" headerFormat="City" />
+        </Grid>
     );
 }
 ```
 
-> **Important:** Always store options in `useState` (not a plain object or `useMemo`).
-> This ensures the Grid only updates when you explicitly change the state, avoiding
-> unnecessary re-renders.
+For Grid Pro, swap the imports to `@highcharts/grid-pro-react`.
 
-## 5. Next.js
-For Next.js applications, see the dedicated [Next.js integration guide](https://www.highcharts.com/docs/grid/frameworks/nextjs).
+See the [live Grid Lite example](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo).
+See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo).
+
+## 3. Customize with components
+Add caption, shared column defaults, grouped headers, and pagination as sibling
+components of `Data` and `Column`:
+
+```tsx
+import {
+    Grid,
+    Data,
+    Column,
+    ColumnDefaults,
+    Caption,
+    Header,
+    Pagination
+} from '@highcharts/grid-lite-react';
+
+export default function App() {
+    return (
+        <Grid>
+            <Data
+                columns={{
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo']
+                }}
+            />
+            <ColumnDefaults sortingEnabled filteringEnabled />
+            <Caption>Team directory</Caption>
+            <Header
+                header={[
+                    'name',
+                    {
+                        format: 'Details',
+                        columns: ['age', 'city']
+                    }
+                ]}
+            />
+            <Column columnId="name" headerFormat="Name" />
+            <Column columnId="age" dataType="number" headerFormat="Age" />
+            <Column columnId="city" headerFormat="City" />
+            <Pagination pageSize={5} />
+        </Grid>
+    );
+}
+```
+
+## 4. Style with class names
+Pass `className` to the React mount container and `tableClassName` to the table.
+Set `theme` to an empty string when you want to style the grid with your own
+classes, for example Tailwind utilities, instead of the default Grid theme.
+
+```tsx
+<Grid
+    theme=""
+    className="rounded-xl border border-slate-200 bg-white p-4"
+    tableClassName="w-full"
+>
+    <Data columns={columns} />
+    <Column
+        columnId="name"
+        headerClassName="bg-slate-50 p-4 font-semibold"
+        cellClassName="p-4"
+    />
+</Grid>
+```
+
+## Next steps
+- [Grid](https://www.highcharts.com/docs/grid/frameworks/react/grid) for the root component, `options`, refs, and callbacks
+- [Option components](https://www.highcharts.com/docs/grid/frameworks/react/components) for the component catalog
+- [Columns](https://www.highcharts.com/docs/grid/frameworks/react/columns) for `Column`, `ColumnDefaults`, and `Header`
+- [Data](https://www.highcharts.com/docs/grid/frameworks/react/data) for data props and updates
+- [Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling) for themes, class names, and Tailwind
+- [Next.js](https://www.highcharts.com/docs/grid/frameworks/nextjs) for client-side rendering in Next.js
