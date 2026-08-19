@@ -1,14 +1,14 @@
-function createChart(ranges, averages) {
+function createChart(medians, quantiles) {
     Highcharts.chart('container', {
 
         title: {
-            text: 'April temperatures in Nesbyen, 2024',
+            text: 'Median earnings in Norway with quantiles',
             align: 'left'
         },
 
         subtitle: {
             text: 'Source: ' +
-                '<a href="https://www.yr.no/nb/historikk/graf/1-113585/Norge/Buskerud/Nesbyen/Nesbyen?q=2024-04"' +
+                '<a href="https://www.ssb.no/en/statbank/table/11419"' +
                 'target="_blank">YR</a>',
             align: 'left'
         },
@@ -16,7 +16,7 @@ function createChart(ranges, averages) {
         xAxis: {
             type: 'datetime',
             accessibility: {
-                rangeDescription: 'Range: April 1st 2022 to April 30th 2024.'
+                rangeDescription: 'Range: 2015 to 2025.'
             }
         },
 
@@ -29,19 +29,19 @@ function createChart(ranges, averages) {
         tooltip: {
             crosshairs: true,
             shared: true,
-            valueSuffix: '°C'
+            valueSuffix: 'NOK'
         },
 
         plotOptions: {
             series: {
-                pointStart: '2024-05-01',
-                pointIntervalUnit: 'day'
+                pointStart: '2015-01-01',
+                pointIntervalUnit: 'year'
             }
         },
 
         series: [{
-            name: 'Temperature',
-            data: averages,
+            name: 'Median earnings',
+            data: medians,
             zIndex: 1,
             marker: {
                 fillColor: 'var(--highcharts-background-color)',
@@ -49,8 +49,8 @@ function createChart(ranges, averages) {
                 lineColor: null
             }
         }, {
-            name: 'Range',
-            data: ranges,
+            name: 'Quantiles',
+            data: quantiles,
             type: 'arearange',
             lineWidth: 0,
             linkedTo: ':previous',
@@ -64,70 +64,32 @@ function createChart(ranges, averages) {
     });
 }
 
-const ranges = [
-        [-4.4, 13.1],
-        [-0.5, 8.9],
-        [-0.6, 5.4],
-        [-4.8, 1.0],
-        [-7.7, 2.5],
-        [-2.6, 6.4],
-        [1.1, 13.4],
-        [1.9, 13.0],
-        [0.6, 11.2],
-        [2.9, 10.4],
-        [2.5, 15.3],
-        [1.5, 17.0],
-        [0.3, 14.6],
-        [2.3, 10.5],
-        [-3.5, 11.0],
-        [-4.8, 12.6],
-        [-4.9, 8.7],
-        [-4.5, 9.1],
-        [1.5, 6.8],
-        [-1.9, 8.4],
-        [-4.2, 11.3],
-        [-4.7, 12.5],
-        [1.8, 10.0],
-        [0.2, 8.0],
-        [-1.0, 10.1],
-        [-0.2, 8.8],
-        [-1.7, 11.7],
-        [-3.4, 9.1],
-        [1.6, 13.8],
-        [-0.9, 14.5]
+const quantiles = [
+        [31600, 47480],
+        [32610, 48710],
+        [33330, 50000],
+        [34280, 51380],
+        [35520, 53380],
+        [36250, 54570],
+        [37580, 56890],
+        [39200, 59630],
+        [41630, 63280],
+        [43880, 66670],
+        [45650, 69940]
 
     ],
-    averages = [
-        [2.9],
-        [3.4],
-        [0.4],
-        [-3.5],
-        [-2.1],
-        [1.6],
-        [6.0],
-        [7.1],
-        [5.4],
-        [6.4],
-        [7.6],
-        [8.5],
-        [7.4],
-        [6.1],
-        [3.2],
-        [3.7],
-        [1.7],
-        [2.9],
-        [3.2],
-        [2.5],
-        [3.2],
-        [4.4],
-        [5.4],
-        [4.4],
-        [3.6],
-        [4.8],
-        [5.1],
-        [0.9],
-        [6.6],
-        [7.2]
+    medians = [
+        [38350],
+        [39490],
+        [40450],
+        [41560],
+        [43170],
+        [44150],
+        [45830],
+        [47680],
+        [50660],
+        [53490],
+        [55800]
     ];
 
-createChart(ranges, averages);
+createChart(medians, quantiles);
