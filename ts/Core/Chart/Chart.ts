@@ -4252,7 +4252,8 @@ class Chart {
                     len,
                     minPointOffset = 0,
                     options,
-                    reversed
+                    reversed,
+                    tickInterval
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
@@ -4357,22 +4358,41 @@ class Chart {
                     range,
                     safeDataMax - safeDataMin
                 ),
-                paddedMin = safeDataMin - padRange * (
-                    defined(optionsMin) ? 0 : options.minPadding
-                ),
-                paddedMax = safeDataMax + padRange * (
-                    defined(optionsMax) ? 0 : options.maxPadding
-                ),
 
                 // We're allowed to zoom outside the data extremes if we're
                 // dealing with a bubble chart, if we're panning, or if we're
                 // pinching or mousewheeling in.
                 allowZoomOutside = axis.allowZoomOutside ||
                     scale === 1 ||
-                    (trigger !== 'zoom' && scale > 1),
+                    (trigger !== 'zoom' && scale > 1);
 
-                // Calculate the floor and the ceiling
-                floor = Math.min(
+            let paddedMin = safeDataMin - padRange * (
+                    defined(optionsMin) ? 0 : options.minPadding
+                ),
+                paddedMax = safeDataMax + padRange * (
+                    defined(optionsMax) ? 0 : options.maxPadding
+                );
+
+            if (!axis.categories) {
+                const previousTick = (val: number): number => {
+                    const intv = tickInterval;
+                    if (val < 0) {
+                        val -= intv;
+                    }
+                    return Math.trunc(val / intv) * intv;
+                };
+
+                if (options.startOnTick) {
+                    paddedMin = previousTick(paddedMin);
+                }
+
+                if (options.endOnTick) {
+                    paddedMax = previousTick(paddedMax) + tickInterval;
+                }
+            }
+
+            // Calculate the floor and the ceiling
+            const floor = Math.min(
                     optionsMin ?? paddedMin,
                     paddedMin,
                     allowZoomOutside ? min : paddedMin
