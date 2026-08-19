@@ -4,7 +4,7 @@ sidebar_label: "Components"
 
 # Components
 
-Pass these components as children of
+Pass these components inside
 [`Grid`](https://www.highcharts.com/docs/grid/frameworks/react/grid). `Grid`
 itself is documented on that page. `Data`, `Column`, `ColumnDefaults`, and
 `Header` have their own articles; the tables below cover the remaining
@@ -30,6 +30,11 @@ export default function App() {
 }
 ```
 
+Components take class names. `Grid` also has `theme`, including an empty
+string that turns off the default theme for utility classes such as Tailwind.
+See [Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling)
+for class-name mapping, themes, and Tailwind.
+
 <!-- Sample placeholder: grid/react/components
 <iframe src="https://www.highcharts.com/samples/embed/grid/react/components?force-light-theme" allow="fullscreen"></iframe>
 -->
@@ -52,7 +57,7 @@ for the props, column IDs, unbound columns, and grouped headers.
 
 ## Caption
 
-Table caption. Children become the caption text.
+Table caption. The text inside `<Caption>` is the caption.
 
 ```tsx
 import { Grid, Data, Caption } from '@highcharts/grid-lite-react';
@@ -74,13 +79,12 @@ export default function App() {
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `children` | `ReactNode` | Caption text. |
 | `className` | `string` | Class names on the caption. |
 | `htmlTag` | `string` | HTML tag for the caption element. |
 
 ## Description
 
-Table description. Children become the description text.
+Table description. The text inside `<Description>` is the description.
 
 ```tsx
 import { Grid, Data, Description } from '@highcharts/grid-lite-react';
@@ -102,13 +106,12 @@ export default function App() {
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `children` | `ReactNode` | Description text. |
 | `className` | `string` | Class names on the description. |
 
 ## Pagination
 
 Page size and pagination controls. Rendering `<Pagination />` sets `enabled` to
-`true` unless you pass `false`. Place it before the other children to render
+`true` unless you pass `false`. Place it before the other components to render
 controls above the table, or after them to render controls below. See
 [Row pagination](https://www.highcharts.com/docs/grid/rows/pagination).
 
@@ -147,6 +150,3 @@ export default function App() {
 | `infoClassName` | `string` | Class names on the page info element. |
 | `controlsClassName` | `string` | Class names on the controls container. |
 | `sizeClassName` | `string` | Class names on the page-size container. |
-
-Class names on these components are covered in
-[Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling).
