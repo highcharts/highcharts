@@ -39,8 +39,7 @@ import {
     clamp,
     createElement,
     extend,
-    fireEvent,
-    pick
+    fireEvent
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -302,10 +301,9 @@ class Popup extends BaseForm {
         const optionParamList = option.split('.'),
             optionName = optionParamList[optionParamList.length - 1],
             lang = this.lang,
-            inputName = 'highcharts-' + indicatorType + '-' + pick(
-                inputAttributes.htmlFor,
-                optionName
-            );
+            inputName =
+                'highcharts-' + indicatorType + '-' +
+                (inputAttributes.htmlFor ?? optionName);
 
         if (!optionName.match(/^\d+$/)) {
             // Add label
