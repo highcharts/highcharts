@@ -165,103 +165,45 @@ function setActiveRowStyle() {
     });
 }
 
-function getMinMax(datasets) {
-    let min = Infinity;
-    let max = -Infinity;
-
-    for (const dataset of datasets) {
-        for (const row of dataset) {
-            if (row[1] < min) {
-                min = row[1];
-            }
-            if (row[1] > max) {
-                max = row[1];
-            }
-        }
-    }
-    return [min, max];
-}
-
-const minMax = getMinMax(datasets);
-
 function updateChart() {
     if (activeRow === null) {
         // Revert chart options
         chart.update({
+            chart: {
+                inverted: false
+            },
             xAxis: {
-                categories: [
-                    'Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5'
-                ],
                 min: undefined,
-                max: undefined,
-                plotLines: undefined
+                max: undefined
             },
             yAxis: {
-                title: {
-                    text: 'Measurements'
-                }
-            },
-            plotOptions: {
-                scatter: {
-                    cursor: 'pointer',
-                    jitter: {
-                        x: 0.24,
-                        y: 0
-                    },
-                    marker: {
-                        radius: 2
-                    }
-                }
-            },
-            series: datasets.map((dataset, i) => ({
-                name: 'Sample ' + (i + 1),
-                data: dataset,
-                colorIndex: i
-            }))
-        }, true, true);
+                plotLines: []
+            }
+        });
     } else {
-        // Set new chart options
+        // Zoom the x-axis to the selected sample and add a plot line for the
+        // mean value.
+        const meanValue = gridData.getCell('mean', activeRow);
         chart.update({
+            chart: {
+                inverted: true
+            },
             xAxis: {
-                categories: undefined,
-                min: minMax[0],
-                max: minMax[1],
+                min: activeRow,
+                max: activeRow
+            },
+            yAxis: {
                 plotLines: [{
                     value: gridData.getCell('mean', activeRow),
                     width: 2,
                     label: {
-                        text: 'mean',
-                        allign: 'top'
+                        text: `Mean: ${meanValue.toFixed(3)}`,
+                        align: 'top'
                     },
                     dashStyle: 'dot',
                     zIndex: 5
                 }]
-            },
-            yAxis: {
-                title: {
-                    text: 'Dataset ID'
-                }
-            },
-            plotOptions: {
-                scatter: {
-                    cursor: 'default',
-                    showInLegend: false,
-                    jitter: {
-                        x: 0,
-                        y: 0.3
-                    },
-                    marker: {
-                        radius: 5
-                    },
-                    tooltip: {
-                        pointFormat: 'Measurement: {point.x:.3f}'
-                    }
-                }
-            },
-            series: {
-                data: datasets[activeRow].map(row => [row[1], row[0]]),
-                colorIndex: activeRow
             }
-        }, true, true);
+        });
     }
 }
