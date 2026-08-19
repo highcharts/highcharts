@@ -6,9 +6,8 @@ sidebar_label: "Components"
 
 Pass these components inside
 [`Grid`](https://www.highcharts.com/docs/grid/frameworks/react/grid). `Grid`
-itself is documented on that page. `Data`, `Column`, `ColumnDefaults`, and
-`Header` have their own articles; the tables below cover the remaining
-components.
+itself is documented on that page. `Data`, `Column`, and `ColumnDefaults`
+have their own articles; the tables below cover the remaining components.
 
 ```tsx
 import { Grid, Data, Column, Caption } from '@highcharts/grid-lite-react';
@@ -32,6 +31,7 @@ export default function App() {
 
 Components take class names. `Grid` also has `theme`, including an empty
 string that turns off the default theme for utility classes such as Tailwind.
+
 See [Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling)
 for class-name mapping, themes, and Tailwind.
 
@@ -49,11 +49,58 @@ props, updates, `autogenerateColumns`, and remote data.
 
 ## Columns
 
-`ColumnDefaults` sets shared column behavior, `Column` configures one column,
-and `Header` sets order, inclusion, and grouping.
+`ColumnDefaults` sets shared column behavior and `Column` configures one
+column.
 
 See [Columns](https://www.highcharts.com/docs/grid/frameworks/react/columns)
-for the props, column IDs, unbound columns, and grouped headers.
+for the props, column IDs, and unbound columns.
+
+## Header
+
+`<Header>` maps to `header`. Use it to set order, hide columns, or group
+headers. Each entry is a column ID string or a group object.
+
+```tsx
+import { Grid, Data, Column, Header } from '@highcharts/grid-lite-react';
+
+export default function App() {
+    return (
+        <Grid>
+            <Data
+                columns={{
+                    name: ['Alice', 'Bob'],
+                    age: [23, 34],
+                    city: ['New York', 'Oslo']
+                }}
+            />
+            <Header
+                header={[
+                    'name',
+                    {
+                        format: 'Details',
+                        columns: ['age', 'city']
+                    }
+                ]}
+            />
+            <Column columnId="name" headerFormat="Name" />
+            <Column columnId="age" dataType="number" headerFormat="Age" />
+            <Column columnId="city" headerFormat="City" />
+        </Grid>
+    );
+}
+```
+
+When `header` is set, list every column you want visible. Columns missing from
+the tree are excluded. Per-column header text still comes from `headerFormat`
+or `headerFormatter` on
+[`Column`](https://www.highcharts.com/docs/grid/frameworks/react/columns).
+
+See [Column headers](https://www.highcharts.com/docs/grid/columns/header) and
+[Grouped headers](https://www.highcharts.com/docs/grid/columns/grouping).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `header` | `Array<string \| object>` | Header tree. A string is a column ID. An object can group or configure a header cell (`columnId`, `format`, `className`, `columns`, `accessibility`). |
 
 ## Caption
 
