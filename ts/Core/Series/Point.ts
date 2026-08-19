@@ -245,6 +245,15 @@ class Point {
      */
     public key: string|number;
 
+    /**
+     * Decides which data label is kept when two of them overlap. The label
+     * with the highest rank wins. Series where the point value is not a
+     * measure of size set this explicitly.
+     *
+     * @internal
+     */
+    public labelrank?: number;
+
     /** @internal */
     public marker?: PointMarkerOptions;
 

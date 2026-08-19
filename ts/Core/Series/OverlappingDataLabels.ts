@@ -32,8 +32,7 @@ import {
     addEvent,
     fireEvent,
     getAlignFactor,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -344,21 +343,15 @@ function onChartRender(
                         (point.dataLabels || []).forEach((label): void => {
                             const options = label.options || {};
 
-                            label.labelrank = pick(
-                                options.labelrank,
-                                (point as any).labelrank,
-                                // Prefer the height before pixel rounding,
-                                // so ranking does not depend on which side
-                                // of a rounding boundary a sub-pixel column
-                                // happens to fall on. Ignore it once the
-                                // shape it was measured from has been
-                                // replaced, as in series that build on the
-                                // column translation (#23585)
-                                point.unroundedHeightShape === point.shapeArgs ?
-                                    point.unroundedHeight :
-                                    void 0,
-                                point.shapeArgs?.height
-                            ); // #4118
+                            label.labelrank =
+                                options.labelrank ??
+                                point.labelrank ??
+                                Math.abs(
+                                    // #4118, #23585
+                                    (point as any)[
+                                        series.pointValKey || 'y'
+                                    ] || 0
+                                );
 
                             // #21725: Sync target positions for generic overlap
                             // checking. During animations (e.g., toggling a
