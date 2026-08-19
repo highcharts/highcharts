@@ -54,6 +54,24 @@ for the props, column IDs, unbound columns, and grouped headers.
 
 Table caption. Children become the caption text.
 
+```tsx
+import { Grid, Data, Caption } from '@highcharts/grid-lite-react';
+
+export default function App() {
+    return (
+        <Grid>
+            <Caption htmlTag="h2">Team directory</Caption>
+            <Data
+                columns={{
+                    name: ['Alice', 'Bob'],
+                    age: [23, 34]
+                }}
+            />
+        </Grid>
+    );
+}
+```
+
 | Prop | Type | Description |
 | --- | --- | --- |
 | `children` | `ReactNode` | Caption text. |
@@ -63,6 +81,24 @@ Table caption. Children become the caption text.
 ## Description
 
 Table description. Children become the description text.
+
+```tsx
+import { Grid, Data, Description } from '@highcharts/grid-lite-react';
+
+export default function App() {
+    return (
+        <Grid>
+            <Description>Employees by name and age.</Description>
+            <Data
+                columns={{
+                    name: ['Alice', 'Bob'],
+                    age: [23, 34]
+                }}
+            />
+        </Grid>
+    );
+}
+```
 
 | Prop | Type | Description |
 | --- | --- | --- |
@@ -75,6 +111,24 @@ Page size and pagination controls. Rendering `<Pagination />` sets `enabled` to
 `true` unless you pass `false`. Place it before the other children to render
 controls above the table, or after them to render controls below. See
 [Row pagination](https://www.highcharts.com/docs/grid/rows/pagination).
+
+```tsx
+import { Grid, Data, Pagination } from '@highcharts/grid-lite-react';
+
+export default function App() {
+    return (
+        <Grid>
+            <Data
+                columns={{
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56]
+                }}
+            />
+            <Pagination pageSize={2} />
+        </Grid>
+    );
+}
+```
 
 | Prop | Type | Description |
 | --- | --- | --- |
