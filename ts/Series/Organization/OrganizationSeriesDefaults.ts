@@ -240,8 +240,13 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
             }
 
             if (title) {
-                html += '<p ' + styleAttr(titleStyle) + '>' +
-                    (title || '') + '</p>';
+                html += '<p ' + styleAttr(titleStyle) + '>' + title + '</p>';
+            } else {
+                // Required to prevent a glitch in iOS Safari, where text would
+                // flow outside the box if the title is missing (#25043)
+                html += `<p aria-hidden="true"
+                        style="line-height:0;margin:1px;font-size:1px;opacity:0"
+                    >.</p>`;
             }
 
             if (description) {
@@ -305,9 +310,10 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @sample highcharts/series-organization/hanging-shrink
      *         Every indent decreases the nodes' width
      *
-     * @type {Highcharts.OrganizationHangingIndentTranslationValue}
-     * @since 10.0.0
+     * @declare Highcharts.OrganizationHangingIndentTranslationValue
      * @default inherit
+     * @since   10.0.0
+     * @type    {"inherit"|"cumulative"|"shrink"}
      *
      * @private
      */

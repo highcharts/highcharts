@@ -2161,6 +2161,9 @@ const defaultOptions: DefaultOptions = {
          * below the column, but as `followTouchMove` is true, the tooltip will
          * jump from column to column as the user swipes across the plot area.
          *
+         * @sample {highcharts} highcharts/tooltip/followtouchmove/
+         *         Tooltip follows touch move
+         *
          * @type      {boolean}
          * @default   {highcharts} true
          * @default   {highstock} true
@@ -2978,12 +2981,16 @@ const defaultOptions: DefaultOptions = {
          * @type {Highcharts.CSSObject}
          */
         style: {
-            /** @type {Highcharts.ColorType} */
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: 'var(--highcharts-neutral-color-80)',
 
             cursor: 'default',
 
-            /** @type {number|string} */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
