@@ -600,8 +600,8 @@ class Pointer {
                     axis.series.some((s): boolean|undefined => s.boosted)
                 ) {
                     const { tickInterval } = axis,
-                        userMin = axis.userMin ?? 0,
-                        userMax = axis.userMax ?? 0,
+                        userMin = axis.userMin ?? NaN,
+                        userMax = axis.userMax ?? NaN,
                         round = (val: number): number =>
                             Math.round(val / tickInterval) * tickInterval;
 
