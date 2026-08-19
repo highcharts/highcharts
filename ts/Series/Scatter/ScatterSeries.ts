@@ -114,14 +114,13 @@ class ScatterSeries extends LineSeries {
                     if (jitter[dim] && !point.isNull) {
                         const plotProp: 'plotX'|'plotY' =
                                 `plot${dim.toUpperCase() as 'X'|'Y'}`,
-                            axis = series[`${dim}Axis`],
-                            translatedJitter = jitter[dim] * axis.transA;
+                            axis = series[`${dim}Axis`];
 
                         if (axis && !axis.logarithmic) {
 
                             // Identify the outer bounds of the jitter range
                             // (#25054)
-                            const
+                            const translatedJitter = jitter[dim] * axis.transA,
                                 min = (point[plotProp] || 0) - translatedJitter,
                                 max = (point[plotProp] || 0) + translatedJitter;
 
