@@ -34,7 +34,7 @@ import QuadTreeNode from './QuadTreeNode.js';
  * The QuadTree class. Used in Networkgraph chart as a base for Barnes-Hut
  * approximation.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.QuadTree
  *
