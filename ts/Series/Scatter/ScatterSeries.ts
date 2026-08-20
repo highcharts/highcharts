@@ -120,7 +120,8 @@ class ScatterSeries extends LineSeries {
 
                             // Identify the outer bounds of the jitter range
                             // (#25054)
-                            const translatedJitter = jitter[dim] * axis.transA,
+                            const translatedJitter = jitter[dim] * axis.transA *
+                                    (axis.reversed ? 1 : -1),
                                 min = (point[plotProp] || 0) - translatedJitter,
                                 max = (point[plotProp] || 0) + translatedJitter;
 
