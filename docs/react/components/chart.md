@@ -61,6 +61,23 @@ export default function ChartComponent() {
 
 > **Note:** These props cover only selected chart options. Configure all other options through the `options` prop.
 
+The `options` prop is available on the chart components (`Chart`, `StockChart`, `MapsChart`, `GanttChart`) and series components only. Axis components and other chart-element components expose every option as a direct prop, with no `options` fallback.
+
+The `title`, `subtitle`, `caption`, and `credits` props set text content only. Each maps to the `.text` property of its corresponding option. To configure other properties such as alignment or style, use the dedicated `Title`, `Subtitle`, and `Credits` components.
+
+The `height` and `width` props size the chart's inner `.highcharts-container` element. To size the outer `<div>` wrapper, use `containerProps.style`. Both can be set independently.
+
+### Option precedence
+
+When the same option is set in more than one place, this merge order determines which value wins, from lowest to highest priority:
+
+1. Component defaults
+2. `options` prop
+3. Direct props
+4. Options from children
+
+Children win over direct props, which win over `options`. This rule applies to all chart components.
+
 ## Highcharts Stock
 
 Use the `StockChart` component to create Stock charts:
@@ -85,6 +102,20 @@ export default function StockChartComponent() {
 ```
 
 **Note:** Shares the exact same [props](#props) as the `Chart` component.
+
+Options for the range selector, navigator, and scrollbar have no dedicated components or direct props. Pass them through the `options` prop:
+
+```tsx
+<StockChart
+  options={{
+    rangeSelector: { selected: 1 },
+    navigator: { enabled: false },
+    scrollbar: { enabled: false },
+  }}
+>
+  ...
+</StockChart>
+```
 
 You can also use **technical indicators** with your Stock charts. See the [Technical indicators](https://www.highcharts.com/docs/react/components/technical-indicators) documentation.
 
