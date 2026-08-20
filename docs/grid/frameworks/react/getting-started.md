@@ -152,7 +152,7 @@ Continue with:
 - [Components](https://www.highcharts.com/docs/grid/frameworks/react/components)
   for the component catalog
 - [Columns](https://www.highcharts.com/docs/grid/frameworks/react/columns) for
-  `Column`, `ColumnDefaults`, and `Header`
+  `Column` and `ColumnDefaults`
 - [Data](https://www.highcharts.com/docs/grid/frameworks/react/data) for loading
   and updating row data
 - [Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling) for
