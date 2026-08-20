@@ -778,6 +778,158 @@ QUnit.test('High contrast theme should preserve responsive state', function (
     });
 });
 
+QUnit.test('High contrast theme should not swallow direct updates', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            legend: {
+                enabled: true,
+                itemStyle: {
+                    color: '#0000ff'
+                }
+            },
+            tooltip: {
+                backgroundColor: '#0000ff'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        forcedColors.set(true);
+
+        // `Legend#update` and `Tooltip#update` write into `chart.options`
+        // without going through `chart.update`
+        chart.legend.update({
+            itemStyle: {
+                color: '#ff0000'
+            }
+        });
+        chart.tooltip.update({
+            backgroundColor: '#ff0000'
+        });
+
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.options.legend.itemStyle.color,
+            '#ff0000',
+            'Legend update should survive the theme being removed'
+        );
+
+        assert.strictEqual(
+            chart.options.tooltip.backgroundColor,
+            '#ff0000',
+            'Tooltip update should survive the theme being removed'
+        );
+    });
+});
+
+QUnit.test('High contrast theme removal after a quiet update', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            chart: {
+                backgroundColor: '#123456'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        const getBackground = () => chart.container
+            .querySelector('.highcharts-background')
+            .getAttribute('fill');
+
+        forcedColors.set(true);
+
+        // An update that does not redraw leaves the theme painted, but rolled
+        // back from the options
+        chart.update({
+            chart: {
+                backgroundColor: '#654321'
+            }
+        }, false);
+
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            '#654321',
+            'Update should survive the theme being removed'
+        );
+
+        assert.strictEqual(
+            getBackground(),
+            '#654321',
+            'Chart should be repainted when forced colors stop'
+        );
+    });
+});
+
+QUnit.test('High contrast theme should not leak into user options', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            chart: {
+                backgroundColor: '#123456'
+            },
+            yAxis: {
+                gridLineColor: '#0000ff'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        const topLevelKeys = Object.keys(chart.userOptions).sort();
+
+        forcedColors.set(true);
+        forcedColors.set(false);
+
+        assert.deepEqual(
+            Object.keys(chart.userOptions).sort(),
+            topLevelKeys,
+            'User options should not gain the keys the theme touched'
+        );
+
+        assert.deepEqual(
+            chart.userOptions.yAxis[0],
+            {
+                gridLineColor: '#0000ff'
+            },
+            'Axis user options should be handed back untouched'
+        );
+
+        assert.strictEqual(
+            chart.userOptions.chart.backgroundColor,
+            '#123456',
+            'Chart user options should be handed back untouched'
+        );
+
+        assert.strictEqual(
+            chart.userOptions.isResponsiveOptions,
+            undefined,
+            'The internal responsive flag should not be left behind'
+        );
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            '#123456',
+            'Resolved options should still be restored'
+        );
+
+        assert.strictEqual(
+            chart.yAxis[0].options.gridLineColor,
+            '#0000ff',
+            'Axis options should still be restored'
+        );
+    });
+});
+
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {

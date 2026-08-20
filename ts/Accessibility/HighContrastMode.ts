@@ -40,7 +40,11 @@ const {
 import {
     diffObjects,
     find,
-    merge
+    isArray,
+    isObject,
+    merge,
+    objectEach,
+    splat
 } from '../Shared/Utilities.js';
 
 /* *
@@ -73,11 +77,16 @@ interface SeriesRestore {
 }
 
 interface HighContrastState {
+    // The theme should be in effect
     active?: boolean;
+    // The theme is currently merged into the chart options
+    applied?: boolean;
+    // The theme is being applied or removed right now
     applying?: boolean;
     chartOptions?: Partial<Options>;
     removeMediaQueryListener?: Function;
     seriesRestore?: Array<SeriesRestore>;
+    userOptions?: Partial<Options>;
 }
 
 declare module '../Core/Chart/ChartBase'{
@@ -244,6 +253,106 @@ function findPointRestore(
 }
 
 /**
+ * Pick the entries that can safely be handed back from a remembered set of
+ * options. An entry is only restored when the value in effect is still the one
+ * the theme set, so that changes made in the meantime survive. This also covers
+ * the options that are written straight into `chart.options`, the way
+ * `Chart#setTitle`, `Legend#update` and `Tooltip#update` do, without having to
+ * listen for each of them.
+ *
+ * @private
+ * @param {Highcharts.Dictionary<*>} stored The remembered options.
+ * @param {Highcharts.Dictionary<*>} theme The options the theme applied.
+ * @param {Highcharts.Dictionary<*>} current The options in effect.
+ * @param {Array<string>} [collections] Collections to match item by item.
+ * @return {Highcharts.Dictionary<*>} The options to hand back.
+ */
+function getRestorableOptions(
+    stored: AnyRecord,
+    theme: AnyRecord,
+    current: AnyRecord,
+    collections?: Array<string>
+): AnyRecord {
+    const restorable: AnyRecord = isArray(stored) ? [] : {};
+
+    objectEach(stored, function (storedValue, key): void {
+        const themeValue = isArray(storedValue) && collections &&
+            collections.indexOf(key) > -1 ?
+                // Collections were remembered item by item
+                splat(theme[key]) :
+                theme[key],
+            currentValue = current[key];
+
+        if (isObject(storedValue) && isObject(themeValue)) {
+            const nested = getRestorableOptions(
+                storedValue,
+                themeValue,
+                isObject(currentValue) ? currentValue as AnyRecord : {}
+            );
+
+            if (Object.keys(nested).length) {
+                restorable[key] = nested;
+            }
+        } else if (currentValue === themeValue) {
+            restorable[key] = storedValue;
+        }
+    });
+
+    return restorable;
+}
+
+/**
+ * Hand the remembered user options back, removing the keys the theme added.
+ * The theme is transient, and should not leave the resolved defaults it was
+ * measured against behind in `chart.userOptions`.
+ *
+ * @private
+ * @param {Highcharts.Dictionary<*>} target The user options to write to.
+ * @param {Highcharts.Dictionary<*>} source The remembered user options.
+ * @param {Array<string>} [collections] Collections to match item by item.
+ * @return {void}
+ */
+function restoreUserOptions(
+    target: AnyRecord,
+    source: AnyRecord,
+    collections?: Array<string>
+): void {
+    objectEach(source, function (value, key): void {
+        const targetValue = target[key],
+            // Collections are matched item by item, so that the chart and its
+            // axes and series keep sharing the same user options objects.
+            // Other arrays are handed back as they are.
+            matchItems = isArray(value) && isArray(targetValue) &&
+                !!collections && collections.indexOf(key) > -1;
+
+        if (matchItems) {
+            restoreUserOptions(targetValue, value);
+
+        } else if (isObject(value, true)) {
+            const nested: AnyRecord = isObject(targetValue, true) ?
+                targetValue :
+                {};
+
+            restoreUserOptions(nested, value);
+
+            // Objects that hold nothing the user set are dropped, so that the
+            // theme does not leave empty structures behind
+            if (Object.keys(nested).length) {
+                target[key] = nested;
+            } else if (!isArray(target)) {
+                delete target[key];
+            }
+
+        } else if (value === void 0) {
+            delete target[key];
+
+        } else {
+            target[key] = value;
+        }
+    });
+}
+
+/**
  * Update the chart without resetting responsive rules. High contrast options
  * are transient and must be applied on top of the current responsive state.
  *
@@ -259,6 +368,10 @@ function updateChart(
     chart.update(merge(options, {
         isResponsiveOptions: true
     }), false);
+
+    // The flag only tells `update` to leave the responsive rules alone, and has
+    // no business staying behind in the user options
+    delete chart.userOptions.isResponsiveOptions;
 }
 
 /**
@@ -276,6 +389,7 @@ function setHighContrastTheme(
     const highContrastState = getHighContrastState(chart);
 
     highContrastState.active = true;
+    highContrastState.applied = true;
     highContrastState.applying = true;
 
     try {
@@ -291,6 +405,15 @@ function setHighContrastTheme(
             highContrastState.chartOptions = diffObjects(
                 theme,
                 chart.options,
+                true,
+                chart.collectionsWithUpdate
+            );
+            // The same for the user options, which hold only what the user has
+            // actually set. They are handed back separately, so that the
+            // resolved defaults above do not end up there (#15567).
+            highContrastState.userOptions = diffObjects(
+                theme,
+                chart.userOptions,
                 true,
                 chart.collectionsWithUpdate
             );
@@ -382,38 +505,67 @@ function unsetHighContrastTheme(
     redraw: boolean = true
 ): void {
     const highContrastState = getHighContrastState(chart),
-        chartOptions = highContrastState.chartOptions,
-        seriesRestore = highContrastState.seriesRestore;
+        applied = highContrastState.applied;
 
-    highContrastState.active = false;
-
-    if (!chartOptions && !seriesRestore) {
+    // The theme may already have been rolled back for a pending update, in
+    // which case there is nothing to hand back, but the chart is still painted
+    // with it and needs the redraw
+    if (!applied && !redraw) {
         return;
     }
 
+    highContrastState.applied = false;
     highContrastState.applying = true;
 
     try {
-        if (chartOptions) {
-            updateChart(chart, chartOptions);
-        }
+        if (applied) {
+            const theme: AnyRecord = (
+                    chart.options.accessibility.highContrastTheme
+                ),
+                collections = chart.collectionsWithUpdate,
+                chartOptions = highContrastState.chartOptions,
+                userOptions = highContrastState.userOptions;
 
-        (seriesRestore || []).forEach(function (restore): void {
-            const series = restore.series;
-
-            // The series may have been removed while the theme was applied
-            if (!series.chart) {
-                return;
+            if (chartOptions) {
+                updateChart(chart, getRestorableOptions(
+                    chartOptions,
+                    theme,
+                    chart.options,
+                    collections
+                ));
             }
 
-            series.update(restore.options, false);
+            // The user options are handed back in full. Anything the user has
+            // changed in the meantime has been through `chart.update`, which
+            // rolls the theme back first, and is therefore part of the
+            // remembered options already.
+            if (userOptions) {
+                restoreUserOptions(chart.userOptions, userOptions, collections);
+            }
 
-            restore.points.forEach(function (pointRestore): void {
-                if (pointRestore.point.series) {
-                    pointRestore.point.update(pointRestore.options, false);
+            (highContrastState.seriesRestore || []).forEach(
+                function (restore): void {
+                    const series = restore.series;
+
+                    // The series may have been removed while the theme was
+                    // applied
+                    if (!series.chart) {
+                        return;
+                    }
+
+                    series.update(restore.options, false);
+
+                    restore.points.forEach(function (pointRestore): void {
+                        if (pointRestore.point.series) {
+                            pointRestore.point.update(
+                                pointRestore.options,
+                                false
+                            );
+                        }
+                    });
                 }
-            });
-        });
+            );
+        }
 
         if (redraw) {
             chart.redraw();
@@ -421,6 +573,7 @@ function unsetHighContrastTheme(
     } finally {
         delete highContrastState.applying;
         delete highContrastState.chartOptions;
+        delete highContrastState.userOptions;
         delete highContrastState.seriesRestore;
     }
 }
@@ -522,6 +675,7 @@ function updateHighContrastMode(
     ) {
         setHighContrastTheme(chart);
     } else if (highContrastState.active) {
+        highContrastState.active = false;
         unsetHighContrastTheme(chart);
     }
 }
@@ -530,6 +684,9 @@ function updateHighContrastMode(
  * Roll back the high contrast theme before a chart update is applied, so that
  * the user options the update is merged into are the original ones. The theme
  * is applied again from the accessibility update that follows the redraw.
+ *
+ * The rollback runs a nested `chart.update`, which other listeners on the
+ * chart `update` event can tell apart by `chart.highContrastState.applying`.
  *
  * @private
  * @param {Highcharts.AccessibilityChart} chart The chart being updated.
@@ -543,7 +700,7 @@ function onChartUpdate(
     const highContrastState = chart.highContrastState;
 
     if (
-        highContrastState?.active &&
+        highContrastState?.applied &&
         !highContrastState.applying
     ) {
         const currentResponsive = options?.isResponsiveOptions &&
@@ -581,7 +738,7 @@ function onSeriesUpdate(
 ): void {
     const highContrastState = series.chart?.highContrastState;
 
-    if (!options || !highContrastState?.active || highContrastState.applying) {
+    if (!options || !highContrastState?.applied || highContrastState.applying) {
         return;
     }
 
@@ -606,7 +763,7 @@ function onPointUpdate(
 ): void {
     const highContrastState = point.series?.chart?.highContrastState;
 
-    if (!highContrastState?.active || highContrastState.applying) {
+    if (!highContrastState?.applied || highContrastState.applying) {
         return;
     }
 
