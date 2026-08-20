@@ -181,8 +181,8 @@ function updateChart() {
             }
         });
     } else {
-        // Zoom the x-axis to the selected sample and add a plot line for the
-        // mean value.
+        // Zoom the x-axis to the selected sample, flip it, and add a plot line
+        // for the mean value.
         const meanValue = gridData.getCell('mean', activeRow);
         chart.update({
             chart: {
