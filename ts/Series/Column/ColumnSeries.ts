@@ -638,7 +638,6 @@ class ColumnSeries extends Series {
             // `shapeType` defined on `pointClass` level.
             point.shapeType = series.pointClass.prototype.shapeType ||
                 'roundedRect';
-
             point.shapeArgs = series.crispCol(
                 barX,
                 // #3169, drilldown from null must have a position to work from.
