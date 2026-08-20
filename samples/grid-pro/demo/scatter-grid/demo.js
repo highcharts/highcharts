@@ -1,46 +1,8 @@
-// Generate test data with discrete X values and continuous Y values.
-const getTestData = x => {
-    const off = 0.2 + 0.2 * Math.random();
-    const varMult = 0.5 + (0.5 * Math.random());
-    return new Array(200).fill(1).map(() => [
-        x,
-        off + (Math.random() - 0.5) * (varMult * (Math.random() - 0.5))
-    ]);
-};
-
-// Generate statistics from the test data
-const getTestStatistics = datasets => {
-    const columns = {
-        sample: [],
-        mean: [],
-        var: [],
-        sd: []
-    };
-    let i = 1;
-    for (const dataset of datasets) {
-        const mean = dataset.map(x => x[1])
-            .reduce((sum, num) => sum + num, 0) / dataset.length;
-        const variance = dataset.map(x => x[1])
-            .reduce((sum, num) => sum + ((num - mean) ** 2)) /
-            (dataset.length - 1);
-        const standardDeviation = Math.sqrt(variance);
-
-        columns.sample.push(i);
-        columns.mean.push(mean);
-        columns.var.push(variance);
-        columns.sd.push(standardDeviation);
-        i++;
-    }
-    return new Grid.DataTable({ columns });
-};
-
-const datasets = new Array(5).fill(1).map((_, i) =>
-    getTestData(i)
-);
-
+// Keep track of the currently selected row in the grid
 let activeRow = null;
 
-const fullChartOptions = {
+// Create the jittered scatter chart
+const createChart = datasets => Highcharts.chart('chart-container', {
     chart: {
         type: 'scatter'
     },
@@ -51,7 +13,9 @@ const fullChartOptions = {
         text: 'Scatter chart connected to a Grid'
     },
     xAxis: {
-        categories: ['Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5']
+        categories: [
+            'Sample 1', 'Sample 2', 'Sample 3', 'Sample 4', 'Sample 5'
+        ]
     },
     yAxis: {
         title: {
@@ -72,8 +36,8 @@ const fullChartOptions = {
             point: {
                 events: {
                     click: function () {
-                        // In the single-sample view there is only one series,
-                        // and it is already the selected one.
+                        // In the single-sample view there is only one
+                        // series, and it is already the selected one.
                         if (activeRow === null) {
                             selectRow(this.series.index);
                         }
@@ -90,15 +54,12 @@ const fullChartOptions = {
         data: dataset,
         colorIndex: i
     }))
-};
+});
 
-const chart = Highcharts.chart('chart-container', fullChartOptions);
-
-const gridData = getTestStatistics(datasets);
-
-const grid = Grid.grid('grid-container', {
+// Create the grid connected to the scatter chart
+const createGrid = (dataTable, chart) => Grid.grid('grid-container', {
     data: {
-        dataTable: gridData
+        dataTable
     },
     rendering: {
         rows: {
@@ -144,6 +105,52 @@ const grid = Grid.grid('grid-container', {
     }
 });
 
+// Generate test data with discrete X values and continuous Y values.
+const getTestData = x => {
+    const off = 0.2 + 0.2 * Math.random();
+    const varMult = 0.5 + (0.5 * Math.random());
+    return new Array(200).fill(1).map(() => [
+        x,
+        off + (Math.random() - 0.5) * (varMult * (Math.random() - 0.5))
+    ]);
+};
+
+// Generate statistics from the test data
+const getTestStatistics = datasets => {
+    const columns = {
+        sample: [],
+        mean: [],
+        var: [],
+        sd: []
+    };
+    let i = 1;
+    for (const dataset of datasets) {
+        const mean = dataset.map(x => x[1])
+            .reduce((sum, num) => sum + num, 0) / dataset.length;
+        const variance = dataset.map(x => x[1])
+            .reduce((sum, num) => sum + ((num - mean) ** 2)) /
+            (dataset.length - 1);
+        const standardDeviation = Math.sqrt(variance);
+
+        columns.sample.push(i);
+        columns.mean.push(mean);
+        columns.var.push(variance);
+        columns.sd.push(standardDeviation);
+        i++;
+    }
+    return new Grid.DataTable({ columns });
+};
+
+const datasets = new Array(5).fill(1).map((_, i) =>
+    getTestData(i)
+);
+
+const chart = createChart(datasets);
+
+const gridDataTable = getTestStatistics(datasets);
+
+const grid = createGrid(gridDataTable, chart);
+
 document.getElementById('reset-selection')
     .addEventListener('click', () => {
         selectRow(null);
@@ -183,7 +190,7 @@ function updateChart() {
     } else {
         // Zoom the x-axis to the selected sample, flip it, and add a plot line
         // for the mean value.
-        const meanValue = gridData.getCell('mean', activeRow);
+        const meanValue = gridDataTable.getCell('mean', activeRow);
         chart.update({
             chart: {
                 inverted: true
@@ -194,7 +201,7 @@ function updateChart() {
             },
             yAxis: {
                 plotLines: [{
-                    value: gridData.getCell('mean', activeRow),
+                    value: gridDataTable.getCell('mean', activeRow),
                     width: 2,
                     label: {
                         text: `Mean: ${meanValue.toFixed(3)}`,
