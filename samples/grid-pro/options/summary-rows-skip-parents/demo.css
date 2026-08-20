@@ -17,10 +17,6 @@
 #container {
     padding: 12px;
 
-    .hcg-summary-row .hcg-cell {
-        font-weight: 600;
-    }
-
     .hcg-container {
         min-height: 320px;
     }
