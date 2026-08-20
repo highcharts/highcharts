@@ -14,6 +14,10 @@
 import type ColorType from '../../../Core/Color/ColorType';
 import type { AnnotationPointType } from '../AnnotationSeries';
 import type Controllable from '../Controllables/Controllable';
+import type {
+    AnnotationOptions,
+    AnnotationTypeOptions
+} from '../AnnotationOptions';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
@@ -144,11 +148,11 @@ namespace ElliottWave {
      * @product      highstock
      * @optionparent annotations.types.elliottWave
      */
-    export interface Options extends CrookedLine.Options {
+    export interface Options extends AnnotationOptions {
         labelOptions: LabelOptions;
         typeOptions: TypeOptions;
     }
-    export interface TypeOptions extends CrookedLine.TypeOptions {
+    export interface TypeOptions extends AnnotationTypeOptions {
         /** @internal */
         labels: Array<string>;
     }

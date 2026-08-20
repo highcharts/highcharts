@@ -278,7 +278,7 @@ export interface SankeySeriesNodeOptions {
  *
  * @product highcharts
  *
- * @excluding animationLimit, boostThreshold, borderRadius,
+ * @excluding animationLimit, boostThreshold,
  *            crisp, cropThreshold, colorAxis, colorKey, depth, dragDrop,
  *            edgeColor, edgeWidth, findNearestPointBy, grouping,
  *            groupPadding, groupZPadding, maxPointWidth, negativeColor,
@@ -288,7 +288,7 @@ export interface SankeySeriesNodeOptions {
  *            zones, minPointLength, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderRadius, borderWidth, crisp, cropThreshold, dataParser,
+ *            borderWidth, crisp, cropThreshold, dataParser,
  *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
