@@ -187,6 +187,11 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
 export interface BubbleSeriesTooltipOptions
     extends ScatterSeriesTooltipOptions {
     /**
+     * @default '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>'
+     */
+    headerFormat?: ScatterSeriesTooltipOptions['headerFormat'];
+
+    /**
      * @default '({point.x}, {point.y}), Size: {point.z}'
      */
     pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
