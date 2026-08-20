@@ -177,6 +177,29 @@ QUnit.test('Tiled Web Map on the chart', assert => {
         Object.keys(series.tiles).length > 0,
         'Map should be loaded from custom URL entered by user.'
     );
+
+    let protoDrawPointsCount = 0;
+    const twmProto = Highcharts.seriesTypes.tiledwebmap.prototype,
+        protoDrawPoints = twmProto.drawPoints;
+    twmProto.drawPoints = function () {
+        protoDrawPointsCount++;
+        return protoDrawPoints.apply(this, arguments);
+    };
+
+    series.update({
+        provider: {
+            type: 'TestProvider',
+            url: void 0
+        }
+    });
+
+    twmProto.drawPoints = protoDrawPoints;
+
+    assert.strictEqual(
+        protoDrawPointsCount,
+        1,
+        'Series update should redraw tiles once, #24867.'
+    );
 });
 
 QUnit.test('Tiled Web Map should stop tile animations on pan', assert => {

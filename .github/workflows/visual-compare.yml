@@ -170,10 +170,17 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --single-run --browsercount 2 --visualcompare || true
+      - name: Compare Highcharts visual tests
+        run: node .github/scripts/runVisualCompare.js "Highcharts" "highcharts/*/*"
+
+      - name: Compare Stock visual tests
+        run: node .github/scripts/runVisualCompare.js "Stock" "stock/*/*"
+
+      - name: Compare Maps visual tests
+        run: node .github/scripts/runVisualCompare.js "Maps" "maps/*/*"
+
+      - name: Compare Gantt visual tests
+        run: node .github/scripts/runVisualCompare.js "Gantt" "gantt/*/*"
 
       - name: Generate visual test report
         run: |
@@ -262,5 +269,16 @@ jobs:
           name: visual-test-results
           path: |
             test/visual-test-results.json
+            test/visual-test-errors.log
             test/review-pr-*.json
             tmp/pr-visual-test-comment.json
+
+      - name: Fail on visual test execution errors
+        if: ${{ always() }}
+        run: |
+          error_file=test/visual-test-errors.log
+          if [ -s "$error_file" ]; then
+            echo "Visual test execution errors:"
+            cat "$error_file"
+            exit 1
+          fi

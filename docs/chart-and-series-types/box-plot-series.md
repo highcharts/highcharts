@@ -9,12 +9,16 @@ A box plot is a convenient way of depicting groups of data through their five-nu
 
 Each point in a box plot has five values: low, q1, median, q3 and high. Highcharts recognizes three ways of defining a point:
 
-*   Object literal. The X value is optional.  
+*   Object literal. The X value is optional.
     `{ x: Date.UTC(2013, 1, 7), low: 0, q1: 1, median: 2, q3: 3, high: 4 }`
-*   Array of 5 values. The X value is inferred.  
+*   Array of 5 values. The X value is inferred.
     `[0, 1, 2, 3, 4]`
-*   Array of 6 values. The X value is the first position.  
+*   Array of 6 values. The X value is the first position.
     `[Date.UTC(2013, 1, 7), 0, 1, 2, 3, 4]`
+
+### Data labels
+
+Box plots support data labels for the individual statistics of each point. Use the [dataLabels](https://api.highcharts.com/highcharts/plotOptions.boxplot.dataLabels) options to enable labels, and set `dataLabels.alignToKey` to choose the statistic that anchors the label. Possible values are `low`, `q1`, `median`, `q3` and `high`, with `high` as the default. To show several statistics on the same point, define `dataLabels` as an array, with one label configuration for each statistic. See the [box plot data labels](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-boxplot/data-labels/) sample for a demonstration.
 
 ### Styling the boxes
 
