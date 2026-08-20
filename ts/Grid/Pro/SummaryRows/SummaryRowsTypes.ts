@@ -227,6 +227,33 @@ export interface SummaryRowOptions {
 }
 
 /**
+ * Options for one summary section, the frozen `tbody` holding the summary rows
+ * of one position.
+ */
+export interface SummarySectionOptions {
+    /**
+     * Additional class names applied to the section element (`<tbody>`), which
+     * carries the separator border between the summary and the data rows.
+     */
+    className?: string;
+}
+
+/**
+ * Options for the summary sections, keyed by their position.
+ */
+export interface SummarySectionsOptions {
+    /**
+     * Options for the section stuck above the scrollable body.
+     */
+    top?: SummarySectionOptions;
+
+    /**
+     * Options for the section stuck below the scrollable body.
+     */
+    bottom?: SummarySectionOptions;
+}
+
+/**
  * Placement of a summary row relative to the scrollable body.
  */
 export type SummaryRowPosition = ('top' | 'bottom');
