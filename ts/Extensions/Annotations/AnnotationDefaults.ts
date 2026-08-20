@@ -494,7 +494,7 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * @see [defs](#defs)
      *
-     * @sample {highcharts} highcharts/annotations/custom-markers/
+     * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
      *
      * @type      {string}

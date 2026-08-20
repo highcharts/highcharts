@@ -777,7 +777,7 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      *
      * @see [defs](#defs)
      *
-     * @sample {highcharts} highcharts/annotations/custom-markers/
+     * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
      */
     markerStart?: string;
