@@ -1384,6 +1384,14 @@ class Navigator {
                     offset: 0,
                     index: yAxisIndex,
                     isInternal: true,
+                    uniqueNames: (
+                        (
+                            navigatorOptions.yAxis &&
+                            navigatorOptions.yAxis.uniqueNames
+                        ) ??
+                        (chart.yAxis[0] && chart.yAxis[0].uniqueNames) ??
+                        false
+                    ),
                     reversed: (
                         (
                             navigatorOptions.yAxis &&
