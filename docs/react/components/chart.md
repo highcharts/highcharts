@@ -156,4 +156,25 @@ export default function GanttChartComponent() {
 
 **Note:** Shares the exact same [props](#props) as the `Chart` component.
 
+## Series-type charts
+
+Each series module also exports a chart component as its default export, with [`chart.type`](https://api.highcharts.com/highcharts/chart.type) set to that series type. `Column` from `@highcharts/react/series/Column` is a chart already configured as a column chart:
+
+```tsx
+import Column from "@highcharts/react/series/Column";
+import { Series } from "@highcharts/react";
+
+export default function ColumnChart() {
+  return (
+    <Column>
+      <Series data={[1, 2, 3]} />
+    </Column>
+  );
+}
+```
+
+For series types that belong to a single product, the component also uses that product's chart constructor, so `<Candlestick />` is a stock chart, `<Map />` a map chart, and `<Gantt />` a gantt chart.
+
+Each dedicated series component has a matching series-type chart component with the `Series` suffix removed: `LineSeries` and `Line`, `ColumnSeries` and `Column`, etc. See the [available dedicated series components](https://www.highcharts.com/docs/react/components/series-types#available-dedicated-series-components) table.
+
 To learn more about series components, see the [Series types](https://www.highcharts.com/docs/react/components/series-types#other-chart-types) documentation.
