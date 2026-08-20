@@ -1,0 +1,176 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    gap: 16px;
+    background-color: #f4f3ee;
+    padding: 24px;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 {
+    font-size: 23px;
+    color: #1e1e1e;
+    font-weight: 600;
+}
+
+.navbar {
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.navbar ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 1px solid #dcdbd2;
+    background-color: #dcdbd2;
+    border-radius: 38px;
+    height: 38px;
+    list-style: none;
+    padding: 0;
+    color: #5a5d5c;
+    overflow: hidden;
+}
+
+.navbar li {
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.navbar li.selected {
+    color: #000;
+    background-color: #fff;
+}
+
+.dropdown-mock {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    border: 1px solid #dcdbd2;
+    font-size: 16px;
+    font-weight: 500;
+    height: 38px;
+    border-radius: 38px;
+    padding: 0 16px;
+    background-color: #fff;
+}
+
+.chart-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.chart-row div {
+    flex: 1 0 0;
+}
+
+#portfolio-grid .hcg-container div {
+    flex: none;
+}
+
+.chart-container {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #dcdbd2;
+    border-radius: 10px;
+    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.chart-container.risk-return {
+    display: flex;
+    flex-direction: row;
+}
+
+.holdings-container {
+    display: flex;
+    min-width: 0;
+    flex: 1 0 0;
+}
+
+.holdings-container #current-holdings-chart,
+.holdings-container #current-holdings-chart {
+    min-width: 0;
+    flex: 1;
+}
+
+.theme-custom {
+    --hcg-font-size: 15px;
+    --hcg-color: #000;
+    --hcg-header-color: #474554;
+    --hcg-header-padding: 14px;
+    --hcg-background: #fff;
+    --hcg-padding: 10px;
+    --hcg-row-even-background: #fff;
+    --hcg-cell-hovered-row-background: #f2f3f4;
+    --hcg-border-width: 1px;
+    --hcg-border-color: #adadad;
+    --hcg-header-background: #f4f3ee;
+    --hcg-caption-font-size: 19px;
+    --hcg-caption-font-weight: bold;
+}
+
+.theme-custom .numeric-val-col {
+    text-align: right;
+}
+
+.highcharts-dashboards-cell > .highcharts-dashboards-component {
+    box-shadow: none;
+}
+
+/* Add styles for the loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+        visibility 0s,
+        opacity 0.3s;
+}
+
+.loading-overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
