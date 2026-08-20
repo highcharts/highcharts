@@ -128,7 +128,8 @@ module.exports = {
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
                     'grid/columns/sorting',
-                    'grid/columns/filtering'
+                    'grid/columns/filtering',
+                    'grid/columns/virtualization'
                 ]
             },
             {
@@ -136,6 +137,7 @@ module.exports = {
                     'grid/rows/index',
                     'grid/rows/data',
                     'grid/rows/tree-view',
+                    'grid/rows/grouping',
                     'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
@@ -283,31 +285,48 @@ module.exports = {
             {
                 'Morningstar Connectors': [
                     'morningstar/morningstar',
-                    'morningstar/goal-analysis',
-                    'morningstar/risk-score',
-                    'morningstar/regulatory-news-announcements',
-                    'morningstar/security-details',
-                    'morningstar/security-compare',
-                    'morningstar/x-ray',
-                    'morningstar/performance',
-                    'morningstar/hypo-performance',
-                    'morningstar/dws-connector',
                     {
-                        'Time Series': [
-                            'morningstar/time-series/time-series',
-                            'morningstar/time-series/cumulative-return',
-                            'morningstar/time-series/dividend',
-                            'morningstar/time-series/growth',
-                            'morningstar/time-series/ohlcv',
-                            'morningstar/time-series/price'
-                        ],
-                        'Screeners': [
-                            'morningstar/screeners/screener',
-                            'morningstar/screeners/esg-screener',
-                            'morningstar/screeners/find-similar-screener',
-                            'morningstar/screeners/investment-screener',
-                            'morningstar/screeners/investor-preferences',
-                            'morningstar/screeners/regulatory-screener',
+                        'Direct Web Services': [
+                            'morningstar/dws/time-series-connector',
+                            {
+                                'Investment Details Connector': [
+                                    'morningstar/dws/investments-details-connector',
+                                    'morningstar/dws/asset-allocation-breakdown',
+                                    'morningstar/dws/country-and-regional-exposure-breakdown',
+                                    'morningstar/dws/equity-style-box',
+                                    'morningstar/dws/equity-residual-risk',
+                                    'morningstar/dws/equity-aggregates-residual-risk',
+                                    'morningstar/dws/equity-sectors-breakdown',
+                                    'morningstar/dws/fixed-income-sectors-breakdown',
+                                    'morningstar/dws/prospectus-fees'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'Enterprise Component APIs': [
+                            'morningstar/goal-analysis',
+                            'morningstar/risk-score',
+                            'morningstar/security-details',
+                            'morningstar/security-compare',
+                            'morningstar/x-ray',
+                            'morningstar/performance',
+                            'morningstar/hypo-performance',
+                            {
+                                'Time Series': [
+                                    'morningstar/time-series/time-series',
+                                    'morningstar/time-series/cumulative-return',
+                                    'morningstar/time-series/dividend',
+                                    'morningstar/time-series/growth',
+                                    'morningstar/time-series/ohlcv',
+                                    'morningstar/time-series/price'
+                                ],
+                                'Screeners': [
+                                    'morningstar/screeners/screener',
+                                    'morningstar/screeners/find-similar-screener',
+                                    'morningstar/screeners/investment-screener'
+                                ]
+                            }
                         ]
                     }
                 ]
@@ -378,6 +397,7 @@ module.exports = {
                             'react/components/modules/drilldown',
                             'react/components/modules/brokenaxis',
                             'react/components/modules/draggablepoints',
+                            'react/components/modules/serieslabel',
                             'react/components/modules/stocktools',
                         ]
                     },

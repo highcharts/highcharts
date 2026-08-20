@@ -36,7 +36,6 @@ import {
     crisp,
     extend,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
@@ -242,16 +241,16 @@ class ArcDiagramSeries extends SankeySeries {
             translationFactor = series.translationFactor,
             pointOptions = point.options,
             seriesOptions = series.options,
-            linkWeight = pick(
-                pointOptions.linkWeight,
-                seriesOptions.linkWeight,
+            linkWeight = (
+                pointOptions.linkWeight ??
+                seriesOptions.linkWeight ??
                 Math.max(
                     (point.weight || 0) *
-                    translationFactor *
-                    fromNode.scale,
-                    (series.options.minLinkWidth || 0
-                    )
-                )),
+                        translationFactor *
+                        fromNode.scale,
+                    series.options.minLinkWidth || 0
+                )
+            ),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
 
@@ -301,13 +300,10 @@ class ArcDiagramSeries extends SankeySeries {
 
         const linkRadius = (
             (toX + linkWeight - fromX) / Math.abs(toX + linkWeight - fromX)
-        ) * pick(
-            seriesOptions.linkRadius,
-            Math.min(
-                Math.abs(toX + linkWeight - fromX) / 2,
-                fromNode.nodeY - Math.abs(linkWeight)
-            )
-        );
+        ) * (seriesOptions.linkRadius ?? Math.min(
+            Math.abs(toX + linkWeight - fromX) / 2,
+            fromNode.nodeY - Math.abs(linkWeight)
+        ));
 
         point.shapeArgs = {
             d: [
@@ -392,13 +388,10 @@ class ArcDiagramSeries extends SankeySeries {
                 ),
             lineWidth = options.marker?.lineWidth || 0,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeLeft = crisp(pick(
-                nodeOffset && nodeOffset.absoluteLeft,
-                (
-                    (column.sankeyColumn.left(translationFactor) || 0) +
+            fromNodeLeft = crisp(((nodeOffset && nodeOffset.absoluteLeft) ?? (
+                (column.sankeyColumn.left(translationFactor) || 0) +
                     (nodeOffset && nodeOffset.relativeLeft || 0)
-                )
-            ), lineWidth),
+            )), lineWidth),
             markerOptions = merge(options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             markerRadius = markerOptions.radius,

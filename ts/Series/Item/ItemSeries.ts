@@ -38,8 +38,7 @@ import {
     extend,
     fireEvent,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -161,10 +160,7 @@ class ItemSeries extends PieSeries {
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions.symbol as any)
                 ),
-                r = pick(
-                    pointMarkerOptions.radius,
-                    seriesMarkerOptions.radius
-                ),
+                r = (pointMarkerOptions.radius ?? seriesMarkerOptions.radius),
                 size = defined(r) ? 2 * r : itemSize,
                 padding = size * (options.itemPadding as any);
 

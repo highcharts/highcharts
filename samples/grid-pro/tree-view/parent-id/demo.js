@@ -32,11 +32,15 @@ const grid = Grid.grid('container', {
                 'Project', 'Project', 'Project', 'Project', 'Project'
             ]
         },
-        idColumn: 'id',
-        treeView: {
-            enabled: true,
-            treeColumn: 'name',
-            expandedRowIds: 'all'
+        idColumn: 'id'
+    },
+    treeView: {
+        enabled: true,
+        treeColumn: 'name'
+    },
+    rendering: {
+        rows: {
+            expandedLevels: 'all'
         }
     },
     columnDefaults: {
@@ -50,10 +54,8 @@ const grid = Grid.grid('container', {
 
 document.getElementById('tree-view-enabled').addEventListener('change', e => {
     grid.update({
-        data: {
-            treeView: {
-                enabled: e.target.checked
-            }
+        treeView: {
+            enabled: e.target.checked
         }
     });
 });

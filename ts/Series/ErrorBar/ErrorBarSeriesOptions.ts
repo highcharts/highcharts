@@ -69,7 +69,7 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @default #000000
+     * @default var(--highcharts-neutral-color-100)
      *
      * @since 3.0
      *
