@@ -28,9 +28,11 @@ As the user scrolls, rows entering the viewport are rendered and rows leaving it
 
 Alternatively, if you prefer to display data in discrete pages rather than continuous scrolling, you can use [Pagination](https://www.highcharts.com/docs/grid/rows/pagination) to also avoid rendering all rows at once.
 
+For data sets that are wide rather than long, the same technique is applied horizontally. See [Column virtualization](https://www.highcharts.com/docs/grid/columns/virtualization).
+
 ## Virtualization threshold
 
-By default, virtualization turns on when the row count exceeds 50. Below that, the grid renders as a normal HTML table with no virtualization.
+By default, virtualization turns on when the row count reaches 50. Below that, the grid renders as a normal HTML table with no virtualization.
 
 Raising the threshold favors smaller datasets by keeping all rows in the DOM, which can improve copy/paste and browser search. Lowering the threshold favors larger datasets by keeping memory use predictable and avoiding long initial renders, but fewer rows exist in the DOM at any one time.
 

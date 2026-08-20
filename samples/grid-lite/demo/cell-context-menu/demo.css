@@ -26,11 +26,13 @@ body {
 }
 
 .event-log {
+    --log-border-color: color-mix(in srgb, var(--highcharts-neutral-color-100) 12%, transparent);
+
     margin: 12px 0 8px;
     padding: 10px 12px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--log-border-color);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.6);
+    background: color-mix(in srgb, var(--highcharts-neutral-color-100) 4%, var(--highcharts-background-color));
 }
 
 .event-log-header {
@@ -45,8 +47,9 @@ body {
 .event-log-header button {
     padding: 4px 10px;
     border-radius: 6px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid color-mix(in srgb, var(--highcharts-neutral-color-100) 20%, transparent);
+    background: color-mix(in srgb, var(--highcharts-neutral-color-100) 8%, var(--highcharts-background-color));
+    color: inherit;
     cursor: pointer;
 }
 
@@ -71,7 +74,7 @@ body {
 
 .event-log-list li {
     padding: 4px 0;
-    border-top: 1px dashed rgba(0, 0, 0, 0.12);
+    border-top: 1px dashed var(--log-border-color);
     overflow-wrap: anywhere;
 }
 

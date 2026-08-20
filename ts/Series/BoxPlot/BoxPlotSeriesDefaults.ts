@@ -58,7 +58,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      *
      * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
      * @default 0
-     * @since   next
+     * @since   13.0.1
      * @product highcharts
      */
     borderRadius: 0,
@@ -288,6 +288,26 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
     /**
      * @default   high
      * @apioption plotOptions.boxplot.colorKey
+     */
+
+    /**
+     * The point key used to position a box plot data label.
+     *
+     * @typedef {"low"|"q1"|"median"|"q3"|"high"} Highcharts.BoxPlotPointValKey
+     */
+
+    /**
+     * The point key to use for positioning this data label.
+     * Possible values are `low`, `q1`, `median`, `q3` and `high`.
+     *
+     * @sample {highcharts} highcharts/series-boxplot/data-labels/
+     *         Multiple data labels
+     *
+     * @type      {Highcharts.BoxPlotPointValKey}
+     * @default   high
+     * @validvalue ["low", "q1", "median", "q3", "high"]
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.dataLabels.alignToKey
      */
 
     /**

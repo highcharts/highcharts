@@ -71,7 +71,7 @@ QUnit.test(
         );
 
         assert.ok(
-            /^[0-9]{1,2}:00$/.test(text.textContent),
+            /^[0-9]{1,2}(?::00)?(?: [AP]M)?$/.test(text.textContent),
             'Initial time should be set (actual time varies with timezone)'
         );
 

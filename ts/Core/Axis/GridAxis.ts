@@ -47,7 +47,6 @@ import {
     isNumber,
     isObject as isObjectUtils,
     merge,
-    pick,
     wrap,
     addEvent
 } from '../../Shared/Utilities.js';
@@ -218,7 +217,7 @@ function applyGridOptions(axis: Axis): void {
         options.labels = {};
     }
     */
-    options.labels.align = pick(options.labels.align, 'center');
+    options.labels.align = (options.labels.align ?? 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc
 
@@ -987,8 +986,8 @@ function onAfterSetOptions(
                             _________________________
             Into this:    |_____|_____|_____|_____|
                                 ^                 ^    */
-            options.minPadding = pick(userOptions.minPadding, 0);
-            options.maxPadding = pick(userOptions.maxPadding, 0);
+            options.minPadding = (userOptions.minPadding ?? 0);
+            options.maxPadding = (userOptions.maxPadding ?? 0);
         }
 
         // If borderWidth is set, then use its value for tick and
@@ -1078,6 +1077,12 @@ function onDestroy(
         grid
     } = this as GridAxisComposition;
 
+    // Axes created before the Gantt module was loaded have no grid
+    // additions to be destroyed (#24644).
+    if (!grid) {
+        return;
+    }
+
     (grid.columns || []).forEach(
         (column): void => column.destroy(e.keepEvents)
     );
@@ -1111,7 +1116,9 @@ function onInit(
 
     axis.hiddenLabels = [];
     axis.hiddenMarks = [];
-    axis.clippable = false;
+    if (gridOptions.enabled) {
+        axis.clippable = false;
+    }
 }
 
 /**

@@ -23,8 +23,7 @@ import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 
-import A from '../../Animation/AnimationUtilities.js';
-const { getDeferredAnimation } = A;
+import { getDeferredAnimation } from '../../Animation/AnimationUtilities.js';
 import Axis from '../Axis.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
@@ -36,8 +35,7 @@ import {
     destroyObjectProperties,
     fireEvent,
     isNumber,
-    objectEach,
-    pick
+    objectEach
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -148,7 +146,7 @@ function chartGetStacks(
         if (series.options.stacking && series.reserveSpace()) {
             series.stackKey = [
                 series.type,
-                pick(series.options.stack, ''),
+                (series.options.stack ?? ''),
                 inverted ? xAxisOptions.top : xAxisOptions.left,
                 inverted ? xAxisOptions.height : xAxisOptions.width
             ].join(',');
@@ -411,7 +409,7 @@ function seriesSetStackedPoints(
         stack = stacks[key][x];
         if (y !== null) {
             stack.points[pointKey] = stack.points[series.index] = [
-                pick(stack.cumulative, stackThreshold)
+                (stack.cumulative ?? stackThreshold)
             ];
 
             // Record the base of the stack
@@ -465,7 +463,7 @@ function seriesSetStackedPoints(
             stack.cumulative = (total || 1) - 1;
         } else {
             stack.cumulative = correctFloat(
-                pick(stack.cumulative, stackThreshold) + yNumber
+                (stack.cumulative ?? stackThreshold) + yNumber
             );
         }
         stack.total = total;

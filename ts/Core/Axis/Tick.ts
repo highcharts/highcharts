@@ -45,7 +45,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     destroyObjectProperties,
     getAlignFactor,
     fireEvent
@@ -263,10 +262,8 @@ class Tick {
             log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions: AxisLabelOptions = pick(
-                tick.options?.labels,
-                options.labels
-            ) as any,
+            labelOptions: AxisLabelOptions =
+                (tick.options?.labels ?? options.labels) as any,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
@@ -281,7 +278,7 @@ class Tick {
         // The context value
         let value = this.parameters.category || (
             categories ?
-                pick(categories[pos], names[pos], pos) :
+                (categories[pos] ?? names[pos] ?? pos) :
                 pos
         );
         if (log && isNumber(value)) {
@@ -636,10 +633,7 @@ class Tick {
         }
 
         x = x +
-            pick(
-                labelOptions.x,
-                [0, 1, 0, -1][side] * distance
-            ) +
+            (labelOptions.x ?? [0, 1, 0, -1][side] * distance) +
             labelOffsetCorrection +
             rotCorr.x -
             (
@@ -720,17 +714,12 @@ class Tick {
             pxPos = xy.x,
             chartWidth = axis.chart.chartWidth,
             spacing = axis.chart.spacing,
-            leftBound = pick(
-                axis.labelLeft,
-                Math.min(axis.pos as any, spacing[3])
-            ),
-            rightBound = pick(
-                axis.labelRight,
-                Math.max(
-                    !axis.isRadial ? (axis.pos as any) + axis.len : 0,
-                    (chartWidth as any) - spacing[1]
-                )
-            ),
+            leftBound =
+                axis.labelLeft ?? Math.min(axis.pos as any, spacing[3]),
+            rightBound = (axis.labelRight ?? Math.max(
+                !axis.isRadial ? (axis.pos as any) + axis.len : 0,
+                (chartWidth as any) - spacing[1]
+            )),
             label = this.label,
             rotation = label?.rotation,
             factor = getAlignFactor(
@@ -837,7 +826,7 @@ class Tick {
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
@@ -897,7 +886,7 @@ class Tick {
             attribs: SVGAttributes = {},
             pos = tick.pos,
             type = tick.type,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             { renderer, styledMode } = axis.chart;
 
         let gridLine = tick.gridLine,
@@ -979,10 +968,9 @@ class Tick {
             tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'),
             x = xy.x,
             y = xy.y,
-            tickWidth = pick(
-                options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'],
-                !type && axis.isXAxis ? 1 : 0
-            ), // X axis defaults to 1
+            tickWidth = options[
+                type !== 'minor' ? 'tickWidth' : 'minorTickWidth'
+            ] ?? (!type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
             tickColor = options[
                 type !== 'minor' ? 'tickColor' : 'minorTickColor'
             ];
@@ -1056,7 +1044,7 @@ class Tick {
             label = tick.label,
             labelOptions = options.labels,
             step = labelOptions.step,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             x = xy.x,
             y = xy.y;
 

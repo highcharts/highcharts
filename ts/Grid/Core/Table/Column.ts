@@ -314,7 +314,7 @@ export class Column {
      * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        return this.viewport.columnResizing.getColumnWidth(this);
+        return this.viewport.columnLayout.getColumnWidth(this);
     }
 
     /**

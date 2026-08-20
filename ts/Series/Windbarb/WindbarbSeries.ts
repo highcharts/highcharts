@@ -27,8 +27,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -38,7 +37,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import WindbarbPoint from './WindbarbPoint.js';
 import WindbarbSeriesDefaults from './WindbarbSeriesDefaults.js';
-import { extend, merge, pick } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -261,7 +260,7 @@ class WindbarbSeries extends ColumnSeries {
                         .addClass(
                             'highcharts-point ' +
                             'highcharts-color-' +
-                            pick(point.colorIndex, point.series.colorIndex)
+                            (point.colorIndex ?? point.series.colorIndex)
                         );
                 }
 

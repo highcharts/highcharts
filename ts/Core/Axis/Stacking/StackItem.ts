@@ -37,8 +37,7 @@ import {
     destroyObjectProperties,
     fireEvent,
     getAlignFactor,
-    isNumber,
-    pick
+    isNumber
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -249,7 +248,7 @@ class StackItem {
                 r: options.borderRadius || 0,
                 text: str,
                 // Set default padding to 5 as it is in dataLabels #12308
-                padding: pick(options.padding, 5),
+                padding: (options.padding ?? 5),
                 visibility: 'hidden' // Hidden until setOffset is called
             };
 
@@ -320,7 +319,7 @@ class StackItem {
         if (label && stackBox) {
             const labelBox = label.getBBox(void 0, 0),
                 padding = label.padding;
-            let isJustify = pick(options.overflow, 'justify') === 'justify',
+            let isJustify = (options.overflow ?? 'justify') === 'justify',
                 visible;
 
             // Calculate the adjusted Stack position, to take into consideration
@@ -370,7 +369,7 @@ class StackItem {
             });
 
             // Check if the dataLabel should be visible.
-            if (pick(!isJustify && options.crop, true)) {
+            if (((!isJustify && options.crop) ?? true)) {
                 visible =
                     isNumber(label.x) &&
                     isNumber(label.y) &&
@@ -424,10 +423,10 @@ class StackItem {
             } = stackBoxProps,
             totalStackValue = axis.stacking.usePercentage ?
                 100 :
-                pick(boxTop, this.total, 0),
+                (boxTop ?? this.total ?? 0),
             y = axis.toPixels(totalStackValue),
             xAxis = stackBoxProps.xAxis || chart.xAxis[0],
-            x = pick(defaultX, xAxis.translate(this.x)) + xOffset,
+            x = (defaultX ?? xAxis.translate(this.x)) + xOffset,
             yZero = axis.toPixels(
                 boxBottom ||
                 (
