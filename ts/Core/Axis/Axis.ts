@@ -1247,6 +1247,19 @@ class Axis {
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
             }
+
+            // A value sitting exactly on an axis extreme translates to
+            // `-(max - min) * (len / (max - min)) + len`, which should cancel
+            // out to 0 but can land on a residue of about 1 ulp of the axis
+            // length, e.g. -2.8e-14. `correctFloat` cannot absorb it at the
+            // zero edge, where the error is the leading digit. Left in place,
+            // both `Series#isPointInside` and `Chart#isInsidePlot` read the
+            // point as outside the plot area, so it loses its marker and its
+            // tooltip while the graph path still runs to it. A sub-nanopixel
+            // offset carries no information, so snapping is safe.
+            if (Math.abs(returnValue) < 1e-9) {
+                returnValue = 0;
+            }
         }
 
         return returnValue;
