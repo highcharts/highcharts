@@ -30,7 +30,7 @@ import type {
 
 import SummaryTableRow from './SummaryTableRow.js';
 import Globals from '../../Core/Globals.js';
-import { makeHTMLElement } from '../../Core/GridUtils.js';
+import { applyUserClassNames, makeHTMLElement } from '../../Core/GridUtils.js';
 
 
 /* *
@@ -40,8 +40,15 @@ import { makeHTMLElement } from '../../Core/GridUtils.js';
  * */
 
 interface SummarySection {
+    position: SummaryRowPosition;
     tbodyElement: HTMLElement;
     rows: SummaryTableRow[];
+
+    /**
+     * Class names applied to the section element from options, tracked so that
+     * an update removes the previous ones.
+     */
+    className?: string;
 }
 
 
@@ -113,7 +120,7 @@ class SummaryView {
             className: prefix + 'tbody-summary ' + prefix +
                 'tbody-summary-' + position
         });
-        const section: SummarySection = { tbodyElement, rows: [] };
+        const section: SummarySection = { position, tbodyElement, rows: [] };
 
         this.viewport.registerBodySection({
             id: 'summary-' + position,
@@ -171,6 +178,14 @@ class SummaryView {
     ): Promise<void> {
         const tableElement = this.viewport.tableElement;
         const { tbodyElement, rows } = section;
+
+        section.className = applyUserClassNames(
+            tbodyElement,
+            section.className,
+            this.viewport.grid.options?.rendering?.rows?.summary?.[
+                section.position
+            ]?.className
+        );
 
         if (
             summaryRows.length &&
