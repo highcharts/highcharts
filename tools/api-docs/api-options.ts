@@ -156,6 +156,95 @@ function addDefaultOptions(
 }
 
 
+/**
+ * Registers members, that are narrowed down to `undefined`, as excluded
+ * options of the given node.
+ *
+ * @param node
+ * Option node to add the exclusions to.
+ *
+ * @param members
+ * Members of the related interface.
+ */
+function addExcludedMembers(
+    node: TreeLib.Option,
+    members: Array<TSLib.CodeInfo>
+): void {
+
+    for (const _member of members) {
+
+        if (
+            _member.kind !== 'Property' ||
+            !isExcludedMember(_member)
+        ) {
+            continue;
+        }
+
+        addExcludedNames(node, [Utilities.getOptionName(_member.name)]);
+
+    }
+
+}
+
+
+/**
+ * Adds option names to the exclusions of the given node.
+ *
+ * @param node
+ * Option node to add the exclusions to.
+ *
+ * @param names
+ * Option names to exclude.
+ */
+function addExcludedNames(
+    node: TreeLib.Option,
+    names: Array<string>
+): void {
+    const _doclet = node.doclet;
+    const _exclude = _doclet.exclude = (
+        typeof _doclet.exclude === 'string' ?
+            (_doclet.exclude as string).split(',').map(_name => _name.trim()) :
+            _doclet.exclude || []
+    );
+
+    for (const _name of names) {
+
+        const _trimmed = _name.trim();
+
+        if (
+            _trimmed &&
+            !_exclude.includes(_trimmed)
+        ) {
+            _exclude.push(_trimmed);
+        }
+
+    }
+
+}
+
+
+/**
+ * Tells whether a member is narrowed down to `undefined`, which marks an
+ * inherited option as no longer available.
+ *
+ * @param info
+ * Code information to test.
+ *
+ * @return
+ * Whether the member is excluded.
+ */
+function isExcludedMember(
+    info: TSLib.CodeInfo
+): boolean {
+    return (
+        info.kind === 'Property' &&
+        !!info.type &&
+        info.type.length === 1 &&
+        info.type[0] === 'undefined'
+    );
+}
+
+
 function addTreeNode(
     sourceInfo: TSLib.SourceInfo,
     parentNode: TreeLib.Option,
@@ -195,6 +284,9 @@ function addTreeNode(
             break;
 
         case 'Interface':
+            // Exclusions are part of the type, not of the doclet, and have
+            // to be collected also from interfaces without a doclet.
+            addExcludedMembers(parentNode, info.members);
             if (
                 !info.doclet ||
                 !info.name.endsWith('Options')
@@ -220,6 +312,11 @@ function addTreeNode(
 
         case 'Property':
         case 'Variable':
+            // Excluded properties are registered on the parent node and
+            // must not become options of their own.
+            if (isExcludedMember(info)) {
+                return;
+            }
             if (
                 info.kind === 'Property' &&
                 _parentName
@@ -360,6 +457,14 @@ function addTreeNode(
                         _infoDoclet.tags[_tag].slice();
                 } else {
                     _nodeDoclet[_tag] = _infoDoclet.tags[_tag][0];
+                }
+                break;
+
+            case 'exclude':
+                // Keep the same shape as exclusions collected from types,
+                // instead of the comma-separated text of the tag.
+                for (const _text of _infoDoclet.tags[_tag]) {
+                    addExcludedNames(_treeNode, _text.split(','));
                 }
                 break;
 
