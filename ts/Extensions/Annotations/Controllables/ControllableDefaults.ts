@@ -14,7 +14,12 @@
 import type AST from '../../../Core/Renderer/HTML/AST';
 
 /**
- * Options for configuring markers for annotations.
+ * A collection of SVG marker definitions used by annotations. Each key is a
+ * marker id that can be referenced from an annotation shape's
+ * [markerEnd](#annotations.shapes.markerEnd) or
+ * [markerStart](#annotations.shapes.markerStart) option.
+ *
+ * Two markers are available by default: `arrow` and `reverse-arrow`.
  *
  * An example of the arrow marker:
  * <pre>
@@ -49,6 +54,11 @@ import type AST from '../../../Core/Renderer/HTML/AST';
  */
 const defaultMarkers: Record<string, AST.Node> = {
     /**
+     * The default `arrow` marker, rendered as a filled triangle pointing
+     * towards the end of the path. Reference it by id in
+     * [markerEnd](#annotations.shapes.markerEnd) or
+     * [markerStart](#annotations.shapes.markerStart).
+     *
      * @type {Highcharts.ASTNode}
      */
     arrow: {
@@ -60,9 +70,6 @@ const defaultMarkers: Record<string, AST.Node> = {
             markerWidth: 10,
             markerHeight: 10
         },
-        /**
-         * @type {Array<Highcharts.DefsOptions>}
-         */
         children: [{
             tagName: 'path',
             attributes: {
@@ -72,6 +79,11 @@ const defaultMarkers: Record<string, AST.Node> = {
         }]
     },
     /**
+     * The default `reverse-arrow` marker, rendered as a filled triangle
+     * pointing towards the start of the path. Reference it by id in
+     * [markerEnd](#annotations.shapes.markerEnd) or
+     * [markerStart](#annotations.shapes.markerStart).
+     *
      * @type {Highcharts.ASTNode}
      */
     'reverse-arrow': {

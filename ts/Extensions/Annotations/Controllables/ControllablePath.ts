@@ -46,7 +46,12 @@ declare module './ControllableBase' {
 declare module '../../../Core/Options'{
     interface Options {
         /**
-         * Options for configuring markers for annotations.
+         * A collection of SVG marker definitions used by annotations. Each key
+         * is a marker id that can be referenced from an annotation shape's
+         * [markerEnd](#annotations.shapes.markerEnd) or
+         * [markerStart](#annotations.shapes.markerStart) option.
+         *
+         * Two markers are available by default: `arrow` and `reverse-arrow`.
          *
          * An example of the arrow marker:
          * <pre>
