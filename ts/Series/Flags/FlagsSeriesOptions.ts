@@ -82,8 +82,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     /**
      * The fill color for the flags.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @product highstock
      */
     fillColor?: ColorType;
@@ -91,8 +89,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     /**
      * Fixed height of the flag's shape. By default, height is
      * autocalculated according to the flag's title.
-     *
-     * @type {number}
      *
      * @product highstock
      */
@@ -103,7 +99,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * series, the default is `flag-icon`, a pole with a pennant.
      *
      * @default flag-icon
-     * @apioption plotOptions.flags.legendSymbol
      */
     legendSymbol?: string;
 
@@ -112,8 +107,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
-     *
-     * @type {Highcharts.ColorType}
      *
      * @default #000000
      *
@@ -137,8 +130,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags-onkey/
      *         Range series, flag on high
      *
-     * @type {string}
-     *
      * @default y
      *
      * @since 4.2.2
@@ -156,8 +147,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags/
      *         Flags on series and on x axis
      *
-     * @type {string}
-     *
      * @product highstock
      */
     onSeries?: string;
@@ -169,8 +158,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/plotoptions/flags/
      *         Different shapes
-     *
-     * @type {Highcharts.FlagsShapeValue}
      *
      * @product highstock
      */
@@ -195,8 +182,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the styles are set in the
      * `.highcharts-flag-series .highcharts-point` rule.
      *
-     * @type {Highcharts.CSSObject}
-     *
      * @default {"fontSize": "11px", "fontWeight": "bold"}
      *
      * @product highstock
@@ -218,8 +203,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * The text to display on each flag. This can be defined on series
      * level, or individually for each point. Defaults to `"A"`.
      *
-     * @type {string}
-     *
      * @default A
      *
      * @product highstock
@@ -231,8 +214,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * advanced formatting, images and reliable bi-directional text
      * rendering. Note that exported images won't respect the HTML, and that
      * HTML won't respect Z-index settings.
-     *
-     * @type {boolean}
      *
      * @default false
      *
@@ -248,8 +229,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/demo/flags-shapes/
      *         Flags with fixed width
-     *
-     * @type {number}
      *
      * @product highstock
      */
@@ -287,22 +266,14 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *    }]
      *    ```
      *
-     * @type {Array<*>}
-     *
      * @extends series.line.data
      *
      * @excluding dataLabels, marker, name, y
      *
      * @product highstock
-     *
-     * @apioption series.flags.data
      */
     data?: Array<FlagsPointOptions>;
 
-    /**
-     *
-     * @type {number|null}
-     */
     threshold?: number|null;
 
     /**
