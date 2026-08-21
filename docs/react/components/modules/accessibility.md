@@ -17,6 +17,6 @@ export default function AccessibilityChart() {
 }
 ```
 
-The `Accessibility` component accepts all [accessibility API options](https://api.highcharts.com/highcharts/accessibility) as props.
+The `Accessibility` component accepts all [accessibility API options](https://api.highcharts.com/highcharts/accessibility) as props. Sub-options such as `screenReaderSection`, `point`, `series`, and `keyboardNavigation` are passed as direct props.
 
 To learn more, explore [Highcharts Accessibility](https://www.highcharts.com/accessibility/).
