@@ -1342,7 +1342,9 @@ class Navigator {
             xAxisIndex = chart.xAxis.length,
             yAxisIndex = chart.yAxis.length,
             baseXaxis = baseSeries && baseSeries[0] && baseSeries[0].xAxis ||
-                chart.xAxis[0] || { options: {} };
+                chart.xAxis[0] || { options: {} },
+            baseYaxis = baseSeries && baseSeries[0] && baseSeries[0].yAxis ||
+                chart.yAxis[0];
 
         chart.isDirtyBox = true;
 
@@ -1389,7 +1391,7 @@ class Navigator {
                             navigatorOptions.yAxis &&
                             navigatorOptions.yAxis.uniqueNames
                         ) ??
-                        (chart.yAxis[0] && chart.yAxis[0].uniqueNames) ??
+                        (baseYaxis && baseYaxis.uniqueNames) ??
                         false
                     ),
                     reversed: (

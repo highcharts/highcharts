@@ -821,9 +821,11 @@
 
     QUnit.test('Navigator inherits Gantt uniqueNames (#24975)', assert => {
         const chart = Highcharts.ganttChart('container', {
-                yAxis: {
+                yAxis: [{
+                    uniqueNames: false
+                }, {
                     uniqueNames: true
-                },
+                }],
                 navigator: {
                     enabled: true,
                     series: {
@@ -836,6 +838,7 @@
                     }
                 },
                 series: [{
+                    yAxis: 1,
                     data: [
                         'Prototyping',
                         'Development',
@@ -859,7 +862,7 @@
         assert.strictEqual(
             navigator.yAxis.uniqueNames,
             true,
-            'Navigator should inherit uniqueNames from the main axis.'
+            'Navigator should inherit uniqueNames from the base series axis.'
         );
         assert.deepEqual(
             navigatorSeries.dataTable.getColumn('y'),
