@@ -26,14 +26,6 @@ import type CandlestickPointOptions from '../Candlestick/CandlestickPointOptions
 
 export interface HeikinAshiPointOptions extends CandlestickPointOptions {
 
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    y?: undefined;
-
 }
 
 /* *

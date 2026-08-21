@@ -109,15 +109,6 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
     dataGrouping?: HeikinAshiSeriesDataGroupingOptions;
 
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
-    marker?: undefined;
 
 }
 

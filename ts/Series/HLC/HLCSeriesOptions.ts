@@ -167,6 +167,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     dataParser?: undefined;
     dataURL?: undefined;
+    marker?: undefined;
 
 }
 
