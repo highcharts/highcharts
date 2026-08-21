@@ -309,6 +309,70 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     // When all tests pass the QUnit messages get collapsed and the tooltip
     // moves out of position. This is not a bug as long as this usage has
     // no sensible value.
+
+    // Label taller than the plot area, #24860
+    chart.update({
+        chart: {
+            height: 300
+        },
+        tooltip: {
+            distance: 16,
+            style: {
+                width: '200px',
+                whiteSpace: 'normal',
+                fontSize: '16px'
+            },
+            formatter: function () {
+                return [
+                    'HEADER',
+                    'This tooltip contains a long example text designed to ' +
+                    'be about 300 characters long so you can see how the ' +
+                    'tooltip behaves with more content. It should wrap ' +
+                    'across multiple lines and remain readable even when ' +
+                    'the text is quite long and detailed.'
+                ];
+            }
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'line'
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    const labelBox = chart.series[0].tt,
+        headerBox = chart.tooltip.tt;
+
+    assert.notEqual(
+        labelBox.element.getAttribute('visibility'),
+        'hidden',
+        `Split tooltip label taller than the plot area should still be visible
+        when rendered outside (#24860).`
+    );
+
+    assert.close(
+        headerBox.attr('y'),
+        chart.plotTop + chart.plotHeight,
+        10,
+        `The header should stay on the X axis when the label is taller than the
+        plot area (#24860).`
+    );
+
+    chart.update({
+        tooltip: {
+            outside: false
+        }
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.notEqual(
+        chart.series[0].tt.element.getAttribute('visibility'),
+        'hidden',
+        `Split tooltip label taller than the plot area should be visible within
+        the chart also without the outside option (#24860).`
+    );
 });
 
 QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
