@@ -1638,20 +1638,20 @@ class Tooltip {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
 
-        // Outside tooltips may use the whole viewport, not just the plot area,
-        // so tall labels have room instead of being hidden (#24860).
-        const distributionLength = tooltip.outside ?
-            Math.max(
-                adjustedPlotHeight,
-                tooltip.getPlayingField().height - chartTop - distributionBoxTop
-            ) :
-            adjustedPlotHeight;
+        // Labels may be placed outside the plot area, in the chart or in the
+        // whole viewport, so tall labels have room instead of being hidden
+        // (#24860).
+        const distributionLength = Math.max(
+            adjustedPlotHeight,
+            tooltip.getPlayingField().height -
+                (tooltip.outside ? chartTop : 0) - distributionBoxTop
+        );
 
         // Distribute and put in place
         distribute(boxes, distributionLength);
 
         // Keep the header on the axis (#24860)
-        if (tooltip.outside) {
+        if (distributionLength > adjustedPlotHeight) {
             boxes.forEach((box): void => {
                 if (box.point.isHeader && isNumber(box.pos)) {
                     box.pos = headerTop ? 0 : adjustedPlotHeight - box.size;

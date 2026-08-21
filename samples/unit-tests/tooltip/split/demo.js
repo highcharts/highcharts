@@ -358,6 +358,21 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         `The header should stay on the X axis when the label is taller than the
         plot area (#24860).`
     );
+
+    chart.update({
+        tooltip: {
+            outside: false
+        }
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    assert.notEqual(
+        chart.series[0].tt.element.getAttribute('visibility'),
+        'hidden',
+        `Split tooltip label taller than the plot area should be visible within
+        the chart also without the outside option (#24860).`
+    );
 });
 
 QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
