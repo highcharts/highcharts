@@ -320,6 +320,15 @@
     stroke: none;
 }
 
+/* Invisible hit area for tooltip.stickOnContact, the stroke is the tolerance */
+.highcharts-tooltip .highcharts-tooltip-tracker {
+    fill: rgba(192, 192, 192, 0.0001);
+    pointer-events: auto;
+    stroke: rgba(192, 192, 192, 0.0001);
+    stroke-linejoin: round;
+    stroke-width: 10px;
+}
+
 .highcharts-tooltip text,
 .highcharts-tooltip foreignObject div:not(foreignObject > div) {
     fill: var(--highcharts-neutral-color-80);

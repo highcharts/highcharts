@@ -23,7 +23,6 @@ import type Point from './Series/Point';
 import type Pointer from './Pointer';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
-import type RectangleObject from './Renderer/RectangleObject';
 import type Series from './Series/Series';
 import type SizeObject from './Renderer/SizeObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
@@ -156,6 +155,17 @@ class Tooltip {
      *
      * */
     public allowShared: boolean = true;
+
+    /**
+     * Anchor of the latest position update, in chart coordinates. The tracker
+     * needs it also when the label itself has no anchor (#24255).
+     *
+     * @internal
+     */
+    private anchorX?: number;
+
+    /** @internal */
+    private anchorY?: number;
 
     /**
      * Chart of the tooltip.
@@ -370,6 +380,9 @@ class Tooltip {
      */
     public destroy(): void {
         // Destroy and clear local variables
+        if (this.tracker) {
+            this.tracker = this.tracker.destroy();
+        }
         if (this.label) {
             this.label = this.label.destroy();
         }
@@ -1096,6 +1109,9 @@ class Tooltip {
             skipAnchor = followPointer || (this.len || 0) > 1,
             attr: SVGAttributes = { x, y };
 
+        this.anchorX = anchorX;
+        this.anchorY = anchorY;
+
         if (!skipAnchor) {
             attr.anchorX = anchorX;
             attr.anchorY = anchorY;
@@ -1757,51 +1773,43 @@ class Tooltip {
         const chart = tooltip.chart;
         const label = tooltip.label;
         const points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint;
+        const box = label?.box;
 
-        if (!label || !points) {
+        if (!box || !points) {
             return;
         }
 
-        const box: RectangleObject = {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        };
+        const { height, r, width, x, y } = box;
 
-        // Combine anchor and tooltip
-        const anchorPos = this.getAnchor(points);
-        const labelBBox = label.getBBox();
+        let { anchorX, anchorY } = box;
 
-        anchorPos[0] += chart.plotLeft - (label.translateX || 0);
-        anchorPos[1] += chart.plotTop - (label.translateY || 0);
+        // Shared tooltips clear the label anchor (#22295), so fall back to the
+        // anchor the position was calculated from
+        if (!isNumber(anchorX)) {
+            anchorX = (tooltip.anchorX || 0) - (label.translateX || 0);
+            anchorY = (tooltip.anchorY || 0) - (label.translateY || 0);
+        }
 
-        // When the mouse pointer is between the anchor point and the label,
-        // the label should stick.
-        box.x = Math.min(0, anchorPos[0]);
-        box.y = Math.min(0, anchorPos[1]);
-        box.width = (
-            anchorPos[0] < 0 ?
-                Math.max(
-                    Math.abs(anchorPos[0]), labelBBox.width - anchorPos[0]
-                ) :
-                Math.max(Math.abs(anchorPos[0]), labelBBox.width)
-        );
-        box.height = (
-            anchorPos[1] < 0 ?
-                Math.max(
-                    Math.abs(anchorPos[1]),
-                    labelBBox.height - Math.abs(anchorPos[1])
-                ) :
-                Math.max(Math.abs(anchorPos[1]), labelBBox.height)
-        );
+        // Match the tooltip shape, but stretch the connector all the way to the
+        // point, so that the pointer can travel between the two without losing
+        // contact. (#24255)
+        const d = label.renderer.symbols.callout(x, y, width, height, {
+            anchorX,
+            anchorY,
+            arrowLength: Math.max(
+                anchorX - width,
+                -anchorX,
+                anchorY - height,
+                -anchorY,
+                0
+            ),
+            r
+        });
 
-        if (tooltip.tracker) {
-            tooltip.tracker.attr(box);
-        } else {
+        if (!tooltip.tracker) {
             tooltip.tracker = label.renderer
-                .rect(box)
-                .addClass('highcharts-tracker')
+                .path()
+                .addClass('highcharts-tracker highcharts-tooltip-tracker')
                 .add(label);
 
             // For a rapid move going outside of the elements keeping the
@@ -1814,10 +1822,15 @@ class Tooltip {
 
             if (!chart.styledMode) {
                 tooltip.tracker.attr({
-                    fill: 'rgba(0,0,0,0)'
+                    fill: 'rgba(0,0,0,0)',
+                    stroke: 'rgba(0,0,0,0)',
+                    'stroke-linejoin': 'round',
+                    'stroke-width': 10
                 });
             }
         }
+
+        tooltip.tracker.attr({ d });
     }
 
     /** @internal */
