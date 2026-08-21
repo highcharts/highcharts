@@ -47,7 +47,7 @@ import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The vector series class.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.vector
  *
@@ -90,7 +90,7 @@ class VectorSeries extends ScatterSeries {
 
     /**
      * Fade in the arrows on initializing series.
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (init) {
@@ -107,7 +107,7 @@ class VectorSeries extends ScatterSeries {
     /**
      * Create a single arrow. It is later rotated around the zero
      * centerpoint.
-     * @private
+     * @internal
      */
     public arrow(point: VectorPoint): SVGPath {
         const fraction: number = (point.length as any) / this.lengthMax,
@@ -160,7 +160,7 @@ class VectorSeries extends ScatterSeries {
     */
 
     /**
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const chart = this.chart;
@@ -210,7 +210,7 @@ class VectorSeries extends ScatterSeries {
 
     /**
      * Get presentational attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: VectorPoint,
@@ -234,7 +234,7 @@ class VectorSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         Series.prototype.translate.call(this);
@@ -250,6 +250,7 @@ class VectorSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface VectorSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -289,6 +290,7 @@ extend(VectorSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vector: typeof VectorSeries;
@@ -303,4 +305,5 @@ SeriesRegistry.registerSeriesType('vector', VectorSeries);
  *
  * */
 
+/** @internal */
 export default VectorSeries;
