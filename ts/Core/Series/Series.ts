@@ -3472,7 +3472,7 @@ class Series {
 
         // Destroy all points with their elements
         for (const point of series.points || []) {
-            point?.destroy(true);
+            point?.destroy?.(true);
         }
 
         for (const zone of series.zones || []) {
