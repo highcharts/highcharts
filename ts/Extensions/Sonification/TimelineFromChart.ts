@@ -29,6 +29,7 @@ import {
     getNestedProperty,
     merge
 } from '../../Shared/Utilities.js';
+import type * as Sonification from './SonificationTypes';
 const {
     format
 } = T;
