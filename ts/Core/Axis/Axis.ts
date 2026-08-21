@@ -3960,8 +3960,10 @@ class Axis {
 
             axisOffset[side] = Math.max(
                 axisOffset[side],
-                (axis.axisTitleMargin || 0) + titleOffset +
-                directionFactor * axis.offset,
+                Math.max(
+                    (axis.axisTitleMargin || 0) + titleOffset,
+                    labelOffsetPadded
+                ) + directionFactor * axis.offset, // #6967
                 labelOffsetPadded, // #3027
                 tickPositions?.length && tickSize ?
                     tickSize[0] + directionFactor * axis.offset :
