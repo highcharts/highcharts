@@ -48,7 +48,7 @@ Local columns, `DataTable`, connectors, and remote querying are documented in
 The sections below cover the `Data` component only.
 
 <!-- Sample placeholder: grid/react/data
-<iframe src="https://www.highcharts.com/samples/embed/grid/react/data?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="" allow="fullscreen"></iframe>
 -->
 
 ## `columns`

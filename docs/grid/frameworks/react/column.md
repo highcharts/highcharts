@@ -10,7 +10,7 @@ flattened, so `sortingEnabled` becomes `sorting.enabled` and `cellFormat`
 becomes `cells.format`. The option tree is in
 [Columns overview](https://www.highcharts.com/docs/grid/columns/index).
 
-`Header` sets column order, inclusion, and grouping. See
+`Header` sets column order and grouping. See
 [Header](https://www.highcharts.com/docs/grid/frameworks/react/components#header)
 in Components.
 
@@ -51,7 +51,7 @@ export default function App() {
 ```
 
 <!-- Sample placeholder: grid/react/columns
-<iframe src="https://www.highcharts.com/samples/embed/grid/react/columns?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="" allow="fullscreen"></iframe>
 -->
 
 ## Column IDs

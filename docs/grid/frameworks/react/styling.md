@@ -69,7 +69,7 @@ or any other classes. If you leave `theme` out, Grid keeps
 ```
 
 <!-- Sample placeholder: grid/react/styling
-<iframe src="https://www.highcharts.com/samples/embed/grid/react/styling?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="" allow="fullscreen"></iframe>
 -->
 
 ## Columns and rows

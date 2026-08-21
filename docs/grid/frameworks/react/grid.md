@@ -27,7 +27,7 @@ return <Grid options={options} />;
 ```
 
 <!-- Sample placeholder: grid/react/grid-options
-<iframe src="https://www.highcharts.com/samples/embed/grid/react/grid-options?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="" allow="fullscreen"></iframe>
 -->
 
 ## Combining components and options

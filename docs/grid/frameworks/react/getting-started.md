@@ -84,7 +84,7 @@ See the [live Grid Lite example](https://stackblitz.com/edit/highcharts-grid-lit
 See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo).
 
 <!-- Sample placeholder: grid/react/getting-started
-<iframe src="https://www.highcharts.com/samples/embed/grid/react/getting-started?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="" allow="fullscreen"></iframe>
 -->
 
 ## 3. Customize your grid

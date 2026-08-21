@@ -37,7 +37,7 @@ See [Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling)
 for class-name mapping, themes, and Tailwind.
 
 <!-- Sample placeholder: grid/react/components
-<iframe src="https://www.highcharts.com/samples/embed/grid/react/components?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="" allow="fullscreen"></iframe>
 -->
 
 ## Data
