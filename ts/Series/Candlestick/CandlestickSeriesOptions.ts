@@ -27,28 +27,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *  Declarations
  *
  * */
-
-/**
- * A candlestick chart is a style of financial chart used to describe
- * price movements over time.
- *
- * A `candlestick` series. If the [type](#series.candlestick.type)
- * option is not specified, it is inherited from [chart.type](
- * #chart.type).
- *
- * @sample stock/demo/candlestick/
- *         Candlestick chart
- *
- * @extends plotOptions.ohlc
- *
- * @extends series,plotOptions.candlestick
- *
- * @excluding borderColor,borderRadius,borderWidth
- *
- * @excluding dataParser, dataURL, marker
- *
- * @product highstock
- */
 export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
 
     /**
@@ -74,7 +52,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * rectangular body.
      *
      * @default candlestick
-     * @apioption plotOptions.candlestick.legendSymbol
      */
     legendSymbol?: string;
 
@@ -92,15 +69,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @product highstock
      */
     upLineColor?: ColorType;
-
-    /**
-     *
-     * @extends plotOptions.column.states.hover
-     *
-     * @product highstock
-     *
-     * @apioption series.candlestick.upLineColor.hover
-     */
 
     /**
      * An array of data points for the series. For the `candlestick` series
@@ -154,8 +122,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *    }]
      *    ```
      *
-     * @extends series.ohlc.data
-     *
      * @excluding y
      *
      * @product highstock
@@ -201,6 +167,16 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @product highstock
      */
     threshold?: (number|null);
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataParser?: undefined;
+    dataURL?: undefined;
+    marker?: undefined;
 
 }
 

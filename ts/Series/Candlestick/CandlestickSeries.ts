@@ -41,7 +41,7 @@ import { crisp, merge } from '../../Shared/Utilities.js';
 /**
  * The candlestick series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.candlestick
  *
@@ -82,7 +82,7 @@ class CandlestickSeries extends OHLCSeries {
     /**
      * Postprocess mapping between options and SVG attributes
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     public pointAttribs(
@@ -120,7 +120,7 @@ class CandlestickSeries extends OHLCSeries {
 
     /**
      * Create the SVGPath of the point based on the plot positions
-     * @private
+     * @internal
      */
     protected getPointPath(point: CandlestickPoint): SVGPath {
         // Crisp vector coordinates
@@ -187,7 +187,8 @@ class CandlestickSeries extends OHLCSeries {
 
 }
 
-interface CandlestickSeries{
+/** @internal */
+interface CandlestickSeries {
     pointClass: typeof CandlestickPoint;
 }
 
@@ -197,7 +198,8 @@ interface CandlestickSeries{
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+/** @internal */
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         candlestick: typeof CandlestickSeries;
     }
@@ -211,4 +213,5 @@ SeriesRegistry.registerSeriesType('candlestick', CandlestickSeries);
  *
  * */
 
+/** @internal */
 export default CandlestickSeries;
