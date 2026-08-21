@@ -32,6 +32,7 @@ G.KeyboardNavigationHandler = KeyboardNavigationHandler;
 G.SeriesAccessibilityDescriber = SeriesDescriber;
 // Compositions
 Accessibility.compose(
+    G.Axis,
     G.Chart,
     G.Legend,
     G.Point,
