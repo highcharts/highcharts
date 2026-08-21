@@ -865,3 +865,67 @@ QUnit.test(
         assert.strictEqual(actualMin, -75, 'Min must be -75; not panning');
     }
 );
+
+QUnit.test('The chart.events.pan event (#10833)', function (assert) {
+    const panEvents = [];
+    let prevented = false;
+
+    const chart = Highcharts.chart('container', {
+            chart: {
+                events: {
+                    pan: function (e) {
+                        panEvents.push(e);
+                        if (prevented) {
+                            e.preventDefault();
+                        }
+                    }
+                },
+                height: 400,
+                panning: {
+                    enabled: true
+                },
+                width: 600
+            },
+            xAxis: {
+                max: 6,
+                min: 3
+            },
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                }
+            ]
+        }),
+        controller = new TestController(chart);
+
+    controller.pan([400, 200], [300, 200]);
+
+    assert.ok(
+        panEvents.length > 0,
+        'The event should fire while dragging'
+    );
+    assert.strictEqual(
+        panEvents[0].target,
+        chart,
+        'The event target should be the chart'
+    );
+    assert.ok(
+        Highcharts.isNumber(panEvents[0].originalEvent.chartX),
+        'The event should expose the originating pointer event'
+    );
+    assert.ok(
+        chart.xAxis[0].min > 3,
+        'The default action should pan the axis'
+    );
+
+    const panned = chart.xAxis[0].getExtremes();
+
+    prevented = true;
+    controller.pan([400, 200], [300, 200]);
+
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max],
+        [panned.min, panned.max],
+        'Calling preventDefault should leave the extremes unchanged'
+    );
+});
