@@ -13,20 +13,23 @@ Import just the components you use in JSX:
 import { Chart, LineSeries, Title } from "@highcharts/react";
 ```
 
-If you use components for Highcharts modules (for example [Accessibility](https://www.highcharts.com/docs/react/components/modules/accessibility) or
-[Exporting](https://www.highcharts.com/docs/react/components/modules/exporting)), directly import only the modules you need:
+Eight Highcharts modules have dedicated components: `Accessibility`, `Boost`, `BrokenAxis`, `Data`, `DraggablePoints`, `Drilldown`, `Exporting`, and `StockTools`. Import only the ones you use:
 
 ```jsx
 import { Accessibility } from "@highcharts/react/modules/Accessibility";
 import { Exporting } from "@highcharts/react/modules/Exporting";
 ```
 
-If you use modules without a dedicated Highcharts React component, import only those you need using the `/es-modules/masters` path to use ESM:
+Each component bundles the Highcharts module it needs, so no additional bare import is required alongside it.
+
+For modules and themes without a dedicated component, use the `/es-modules/masters` path:
 
 ```tsx
 import "highcharts/es-modules/masters/modules/venn.src.js";
-import "highcharts/es-modules/masters/modules/draggable-points.src.js";
+import "highcharts/es-modules/masters/modules/series-label.src.js";
 ```
+
+Place bare module imports after your `@highcharts/react` imports. Module files run setup code at evaluation time, and ES modules evaluate in source order, so importing them first can run that setup before Highcharts is ready.
 
 ## Keep Highcharts lean with core + modules
 
@@ -45,6 +48,14 @@ you need to keep the bundle lean:
 
 ```jsx
 import { VennSeries } from "@highcharts/react/series/Venn";
+```
+
+## Styled mode
+
+A chart using `styledMode` must import `highcharts/css/highcharts.css` from the component file:
+
+```tsx
+import "highcharts/css/highcharts.css";
 ```
 
 ## Bundler configuration matters
