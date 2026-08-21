@@ -1,0 +1,55 @@
+
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/dumbbell.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://code.highcharts.com/connectors/morningstar/connectors-morningstar.js"></script>
+
+<header>
+    <nav class="navbar">
+        <ul>
+            <li class="selected">Summary</li>
+            <li>Allocation TBD</li>
+            <li>Composition</li>
+            <li>Characteristics</li>
+            <li>Risk</li>
+            <li>Simulated Risk</li>
+            <li>Correlations</li>
+            <li>Scenarios</li>
+        </ul>
+    </nav>
+    <div class="dropdown-mock">Account ▼</div>
+</header>
+<div class="chart-row">
+    <div class="chart-container" id="stress-chart"></div>
+    <div class="chart-container" id="growth-chart"></div>
+</div>
+<div class="chart-row">
+    <div class="chart-container risk-return">
+        <div id="risk-return-wrapper">
+            <div id="risk-return-chart"></div>
+        </div>
+        <div class="data-grids">
+            <div class="data-grid" id="assets-grid"></div>
+            <div class="data-grid" id="models-grid"></div>
+        </div>
+    </div>
+    <div class="chart-container holdings-container">
+        <div id="current-holdings-chart"></div>
+        <div id="proposed-holdings-chart"></div>
+    </div>
+</div>
+<div class="chart-row">
+    <div class="chart-container" id="portfolio-chart"></div>
+    <div class="chart-container" id="portfolio-grid"></div>
+</div>
+<div class="chart-row">
+    <div class="chart-container" id="map-chart"></div>
+</div>
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+</div>
+
