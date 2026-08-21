@@ -824,7 +824,7 @@ class Tick {
     ): void {
         const tick = this,
             axis = tick.axis,
-            horiz = axis.horiz,
+            horiz = (old ? axis.old?.horiz : void 0) ?? axis.horiz,
             pos = tick.pos,
             tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),

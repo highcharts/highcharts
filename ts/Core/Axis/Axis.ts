@@ -466,6 +466,7 @@ class Axis {
 
     /** @internal */
     public old?: { // @todo create a type
+        horiz?: boolean;
         len: number;
         max?: number;
         min?: number;
@@ -1322,15 +1323,11 @@ class Axis {
         options: Axis.PlotLinePathOptions
     ): (SVGPath|undefined) {
         const axis = this,
-            chart = axis.chart,
-            axisLeft = axis.left,
-            axisTop = axis.top,
-            old = options.old,
-            value = options.value,
-            lineWidth = options.lineWidth,
+            { chart, left, top, transB } = axis,
+            { lineWidth, old, value } = options,
+            horiz = (old ? axis.old?.horiz : void 0) ?? axis.horiz,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
-            cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
-            transB = axis.transB;
+            cWidth = (old && chart.oldChartWidth) || chart.chartWidth;
 
         let translatedValue = options.translatedValue,
             force = options.force,
@@ -1384,21 +1381,21 @@ class Axis {
             if (!isNumber(translatedValue)) { // No min or max
                 skip = true;
                 force = false; // #7175, don't force it when path is invalid
-            } else if (axis.horiz) {
-                y1 = axisTop;
+            } else if (horiz) {
+                y1 = top;
                 y2 = cHeight - axis.bottom + (axis.options.isInternal ?
                     0 :
                     (chart.scrollablePixelsY || 0)
                 ); // #20354, scrollablePixelsY shouldn't be used for navigator
 
 
-                x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+                x1 = x2 = between(x1, left, left + axis.width);
 
             } else {
-                x1 = axisLeft;
+                x1 = left;
                 x2 = cWidth - axis.right + (chart.scrollablePixelsX || 0);
 
-                y1 = y2 = between(y1, axisTop, axisTop + axis.height);
+                y1 = y2 = between(y1, top, top + axis.height);
             }
             e.path = skip && !force ?
                 void 0 :
@@ -4432,6 +4429,7 @@ class Axis {
      */
     public saveOld(): void {
         this.old = isNumber(this.min) ? {
+            horiz: this.horiz,
             len: this.len,
             max: this.max,
             min: this.min,
