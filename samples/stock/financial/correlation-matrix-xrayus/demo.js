@@ -62,6 +62,7 @@ async function renderChart() {
 
     // Create a chart
     const chart = Highcharts.chart('container', {
+        dataTable,
         chart: {
             type: 'heatmap',
             marginTop: 70,
@@ -147,8 +148,11 @@ async function renderChart() {
             name: 'Correlation',
             borderWidth: 1,
             borderColor: '#FFFFFF',
-            keys: ['x', 'y', 'value'],
-            data: dataTable.getRows(void 0, void 0, ['x', 'y', 'Year3']),
+            dataMapping: {
+                x: 'x',
+                y: 'y',
+                value: 'Year3'
+            },
             dataLabels: {
                 enabled: true,
                 format: '{point.value:.2f}'
@@ -163,12 +167,10 @@ async function renderChart() {
             return;
         }
 
-        chart.series[0].setData(
-            dataTable.getRows(void 0, void 0, ['x', 'y', `Year${periodIndex}`]),
-            false,
-            void 0,
-            false
-        );
+        chart.series[0].update({
+            dataMapping: { value: `Year${periodIndex}` }
+        }, false);
+        chart.series[0].setData(void 0, false, void 0, false);
 
         chart.update({
             subtitle: {
