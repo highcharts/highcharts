@@ -46,8 +46,6 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  * @product highstock
  *
  * @requires modules/heikinashi
- *
- * @excluding dataParser, dataURL, marker
  */
 export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
@@ -103,11 +101,7 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
      *    }]
      *    ```
      *
-     * @type {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
-     *
      * @extends series.candlestick.data
-     *
-     * @excluding y
      *
      * @product highstock
      */
@@ -115,11 +109,9 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
     dataGrouping?: HeikinAshiSeriesDataGroupingOptions;
 
+
 }
 
-/**
- * @optionparent series.heikinashi.dataGrouping
- */
 interface HeikinAshiSeriesDataGroupingOptions extends DataGroupingOptions {
 
     groupAll?: boolean;
