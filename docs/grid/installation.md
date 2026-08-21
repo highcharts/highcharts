@@ -178,33 +178,9 @@ npm install @highcharts/grid-lite-react
 npm install @highcharts/grid-pro-react
 ```
 
-The React package is self-contained, so a single install is enough to render the grid.
-Requires React 18 or higher.
-
-**App.tsx:**
-```tsx
-import { useState } from 'react';
-import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
-
-export default function App() {
-    const [options] = useState<GridOptions>({
-        data: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
-            }
-        }
-    });
-
-    return <Grid options={options} />;
-}
-```
-
-For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
-`<Grid options={options} />`.
-
-See [Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react) for the full guide.
+The React package is self-contained and requires React 18 or higher. See
+[Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react/getting-started)
+for how to start, including child components and the `options` object.
 
 ### Other Frameworks
 
