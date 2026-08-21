@@ -1,0 +1,7 @@
+---
+name: DWS Equity Aggregates Residual Risk
+description: Shows monthly equity Alpha and Beta residual risk as column charts.
+tags:
+  - Morningstar
+js_wrap: b
+...

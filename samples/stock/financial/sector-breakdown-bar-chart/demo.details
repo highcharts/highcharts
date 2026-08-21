@@ -1,0 +1,7 @@
+---
+name: Sector Breakdown Bar Chart
+description: Compares global stock sector breakdown between two securities as a grouped column chart.
+tags:
+  - Morningstar
+js_wrap: b
+...
