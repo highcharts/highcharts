@@ -128,7 +128,7 @@ class RSIIndicator extends SMAIndicator {
             i: number,
             values: Array<number>;
 
-        if ((xVal.length < period)) {
+        if (xVal.length < period) {
             return;
         }
 

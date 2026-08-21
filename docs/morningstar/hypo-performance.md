@@ -1,16 +1,23 @@
 # Hypothetical Performance
 
-Using historical performance data, financial advisors can demonstrate how a portfolio personalized to a client’s needs might perform over time. The Portfolio X-Ray API’s Hypothetical Performance capability uses historical performance data to help you calculate hypothetical performance for the portfolios specified in the request body.
-For standard performance, see the Performance connector.
+Using Morningstar **Historical Performance** data, financial advisors can
+demonstrate how a portfolio personalized to a client’s needs might perform over
+time. The Portfolio X-Ray API’s Hypothetical Performance capability uses
+historical performance data to help you calculate hypothetical performance for
+the portfolios specified in the request body. For standard performance, see the
+Performance Connector.
 
-## How to use HypoPerformance
+## How to use Hypothetical Performance Connector
 
-You can use the HypoPerformance Connector to fetch return and hypothetical performances for multiple portfolios and benchmarks.
-The returned data depends on the selected view and the various options set in the `hypoCalculationsSettings`.
+You can use the `HypoPerformanceConnector` to fetch return and hypothetical
+performances for multiple portfolios and benchmarks. The returned data depends
+on the selected view and the various options set in the
+`hypoCalculationsSettings`.
 
 ## Available data converters
 
-Currently the following data points are supported in the Hypo Performance connector:
+Currently the following data points are supported in the Hypo Performance
+Connector:
 
 - **GrowthConverter**
 
@@ -114,6 +121,9 @@ Example request:
     await connector.load();
 ```
 
+## Morningstar API Reference
+
 For more details, see [Morningstar's Hypothetical Performance API].
 
-[Morningstar's Hypothetical Performance API]: https://developer.morningstar.com/direct-web-services/documentation/direct-web-services/portfolio-analysis-americas/hypothetical-performance
+<!-- Links -->
+[Morningstar's Hypothetical Performance API]: https://developer.morningstar.com/direct-web-services/documentation/direct-web-services/portfolio-hypothetical-performance/overview
