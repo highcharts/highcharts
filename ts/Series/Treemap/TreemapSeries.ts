@@ -109,7 +109,7 @@ let treemapAxisDefaultValues = false;
  *
  * */
 
-/** @private */
+/** @internal */
 function onSeriesAfterBindAxes(
     this: Series
 ): void {
@@ -174,7 +174,7 @@ function onSeriesAfterBindAxes(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.treemap
  *
@@ -433,7 +433,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Over the alignment method by setting z index.
-     * @private
+     * @internal
      */
     public alignDataLabel(
         point: TreemapPoint,
@@ -562,7 +562,7 @@ class TreemapSeries extends ScatterSeries {
      * Recursive function which calculates the area for all children of a
      * node.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#calculateChildrenAreas
      *
      * @param {Object} parent
@@ -792,7 +792,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Create level list.
-     * @private
+     * @internal
      */
     public createList(e: any): any {
         const chart = this.chart,
@@ -844,7 +844,7 @@ class TreemapSeries extends ScatterSeries {
      * - Width of the dataLabel is set to match the width of the point
      *   shape.
      *
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
         const series = this,
@@ -931,7 +931,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Override drawPoints
-     * @private
+     * @internal
      */
     public drawPoints(points: Array<TreemapPoint> = this.points): void {
         const series = this,
@@ -1025,7 +1025,7 @@ class TreemapSeries extends ScatterSeries {
     /**
      * Finds the drill id for a parent node. Returns false if point should
      * not have a click event.
-     * @private
+     * @internal
      */
     public drillToByGroup(point: TreemapPoint): (boolean|string) {
         return (!point.node.isLeaf || point.node.isGroup) ?
@@ -1035,7 +1035,7 @@ class TreemapSeries extends ScatterSeries {
     /**
      * Finds the drill id for a leaf node. Returns false if point should not
      * have a click event
-     * @private
+     * @internal
      */
     public drillToByLeaf(point: TreemapPoint): (boolean|string) {
         const { traverseToLeaf } = point.series.options;
@@ -1066,7 +1066,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * @todo remove this function at a suitable version.
-     * @private
+     * @internal
      */
     public drillToNode(
         id: string,
@@ -1108,7 +1108,7 @@ class TreemapSeries extends ScatterSeries {
     /**
      * Creates an object map from parent id to children index.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getListOfParents
      *
      * @param {Highcharts.SeriesTreemapDataOptions} [data]
@@ -1158,7 +1158,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Creates a tree structured object from the series points.
-     * @private
+     * @internal
      */
     public getTree(): this['tree'] {
         const series = this,
@@ -1238,7 +1238,7 @@ class TreemapSeries extends ScatterSeries {
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.dataTable.rowCount;
@@ -1372,7 +1372,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Add drilling on the suitable points.
-     * @private
+     * @internal
      */
     public onClickDrillToNode(event: { point: TreemapPoint }): void {
         const series = this,
@@ -1388,7 +1388,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Get presentational attributes
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: TreemapPoint,
@@ -1454,7 +1454,7 @@ class TreemapSeries extends ScatterSeries {
 
     /**
      * Set the node's color recursively, from the parent down.
-     * @private
+     * @internal
      */
     public setColorRecursive(
         node: TreemapNode,
@@ -1574,7 +1574,7 @@ class TreemapSeries extends ScatterSeries {
     /**
      * Sets a new root node for the series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#setRootNode
      *
      * @param {string} id
@@ -1621,7 +1621,7 @@ class TreemapSeries extends ScatterSeries {
         /**
          * The default functionality of the setRootNode event.
          *
-         * @private
+         * @internal
          * @param {Object} args The event arguments.
          * @param {string} args.newRootId Id of the new root.
          * @param {string} args.previousRootId Id of the previous root.
@@ -1661,7 +1661,7 @@ class TreemapSeries extends ScatterSeries {
      * Workaround for `inactive` state. Since `series.opacity` option is
      * already reserved, don't use that state at all by disabling
      * `inactiveOtherPoints` and not inheriting states by points.
-     * @private
+     * @internal
      */
     public setState(state: StatesOptionsKey): void {
         this.options.inactiveOtherPoints = true;

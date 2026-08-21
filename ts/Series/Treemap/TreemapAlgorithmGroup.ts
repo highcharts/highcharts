@@ -28,6 +28,7 @@ import type TreemapNode from './TreemapNode';
  *
  * */
 
+/** @internal */
 class TreemapAlgorithmGroup {
 
     /* *
@@ -151,6 +152,7 @@ namespace TreemapAlgorithmGroup {
      *
      * */
 
+    /** @internal */
     export interface LPObject {
         lH: number;
         lR: number;
@@ -162,6 +164,7 @@ namespace TreemapAlgorithmGroup {
         aspectRatio(w: number, h: number): number;
     }
 
+    /** @internal */
     export interface PlotObject extends PositionObject {
         parent: TreemapNode.NodeValuesObject;
     }
@@ -174,4 +177,5 @@ namespace TreemapAlgorithmGroup {
  *
  * */
 
+/** @internal */
 export default TreemapAlgorithmGroup;
