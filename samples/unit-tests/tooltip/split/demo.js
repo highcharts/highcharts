@@ -384,6 +384,74 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
 });
 
 QUnit.test(
+    'Split tooltip boxes are distributed per pane (per xAxis), so a ' +
+        'crowded pane does not push tooltips in an unrelated, ' +
+        'side-by-side pane out of place',
+    function (assert) {
+        // One chart, so layout (legend, margins) is identical for both
+        // refresh() calls below - only the set of active points changes.
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 600,
+                height: 400
+            },
+            legend: {
+                enabled: false
+            },
+            xAxis: [{
+                left: '0%',
+                width: '48%'
+            }, {
+                left: '52%',
+                width: '48%'
+            }],
+            tooltip: {
+                split: true
+            },
+            series: [
+                // Left pane: three points sharing the exact same value,
+                // so their tooltip boxes have identical target positions
+                // and distribute() must spread them apart within the
+                // pane.
+                { xAxis: 0, data: [[0, 50]] },
+                { xAxis: 0, data: [[0, 50]] },
+                { xAxis: 0, data: [[0, 50]] },
+                // Right pane: a single point at the very same value, so
+                // its box's target coincides with the left pane's
+                // cluster, even though it renders in a disjoint pane and
+                // cannot visually collide with it.
+                { xAxis: 1, data: [[0, 50]] }
+            ]
+        });
+
+        const rightPoint = chart.series[3].points[0],
+            leftPoints = [
+                chart.series[0].points[0],
+                chart.series[1].points[0],
+                chart.series[2].points[0]
+            ];
+
+        // Right pane in isolation first, to establish its natural,
+        // undistorted box position.
+        chart.tooltip.refresh([rightPoint]);
+        const naturalY = chart.series[3].tt.attr('y');
+
+        // Same right-pane point, now alongside the crowded, side-by-side
+        // left pane.
+        chart.tooltip.refresh(leftPoints.concat(rightPoint));
+
+        assert.close(
+            chart.series[3].tt.attr('y'),
+            naturalY,
+            5,
+            'The right pane\'s uncontested tooltip box should stay at ' +
+                'its natural position, unaffected by the three ' +
+                'colliding boxes in the unrelated left pane'
+        );
+    }
+);
+
+QUnit.test(
     'Split tooltip on flags, having noSharedTooltip flag',
     function (assert) {
         var chart = Highcharts.chart('container', {
