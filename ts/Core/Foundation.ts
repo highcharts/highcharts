@@ -29,7 +29,10 @@ import Legend from './Legend/Legend.js';
 import Series from './Series/Series.js';
 import {
     addEvent,
+    find,
     isFunction,
+    isNumber,
+    isString,
     objectEach,
     removeEvent
 } from '../Shared/Utilities.js';
@@ -49,6 +52,24 @@ namespace Foundation {
      *
      * */
 
+
+    /**
+     * Resolve the `linkedTo` option of an axis or series to another item in
+     * the same collection. A string is matched against the item ids, a number
+     * is used as an index, and a self-reference is ignored.
+     * @internal
+     */
+    export function getLinkedParent<T extends Axis|Series>(
+        item: T,
+        collection: Array<T>,
+        linkedTo?: (number|string)
+    ): (T|undefined) {
+        const parent = isString(linkedTo) ?
+            find(collection, (i): boolean => i.options.id === linkedTo) :
+            (isNumber(linkedTo) ? collection[linkedTo] : void 0);
+
+        return parent === item ? void 0 : parent;
+    }
 
     /**
      * Register event options. If an event handler is set on the options, it

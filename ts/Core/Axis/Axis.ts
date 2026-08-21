@@ -2012,8 +2012,8 @@ class Axis {
             time = chart.time,
             threshold = isNumber(axis.threshold) ? axis.threshold : void 0,
             minRange = axis.minRange || 0,
-            { ceiling, floor, linkedTo, softMax, softMin } = options,
-            linkedParent = isNumber(linkedTo) && chart[axis.coll]?.[linkedTo],
+            { ceiling, floor, softMax, softMin } = options,
+            linkedParent = axis.getLinkedParent(),
             tickPixelIntervalOption = options.tickPixelInterval;
 
         let maxPadding = options.maxPadding,
@@ -2038,8 +2038,8 @@ class Axis {
         hardMax = (axis.userMax ?? time.parse(options.max));
 
         // Linked axis gets the extremes from the parent axis
+        axis.linkedParent = linkedParent;
         if (linkedParent) {
-            axis.linkedParent = linkedParent as Axis;
             linkedParentExtremes = linkedParent.getExtremes();
             axis.min =
                 linkedParentExtremes.min ?? linkedParentExtremes.dataMin;
@@ -2893,6 +2893,21 @@ class Axis {
     }
 
     /**
+     * Resolve the axis referenced by `linkedTo`, given as an index or id.
+     * A self-reference returns `undefined`.
+     *
+     * @private
+     * @function Highcharts.Axis#getLinkedParent
+     */
+    public getLinkedParent(): (Axis|undefined) {
+        return F.getLinkedParent(
+            this,
+            this.chart[this.coll] || [],
+            this.options.linkedTo
+        );
+    }
+
+    /**
      * Set the scale based on data min and max, user set min and max or options.
      *
      * @internal
@@ -2902,7 +2917,14 @@ class Axis {
      */
     public setScale(): void {
         const axis = this,
-            { coll, stacking } = axis;
+            { chart, coll, stacking } = axis,
+            axes = chart[coll] || [],
+            index = axes.indexOf(axis),
+            linkedParent = axis.getLinkedParent();
+        axis.isLinked = !!linkedParent;
+        if (linkedParent && index > -1 && axes.indexOf(linkedParent) > index) {
+            linkedParent.setScale();
+        }
 
         let isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
