@@ -9,8 +9,7 @@ To fix the error, consider
   would be blocked as it is a misspelling for `linearGradient`.
 * Is it allowed in Highcharts? For example, `onclick` attributes are blocked as
   they pose a real security threat.
-* Does your style load an external resource? For example,
-  `url(https://example.com)` would be blocked as it calls an external host.
+* Does a style load an external resource? An external `url()` is blocked.
 
 This error occurs because attributes, tag names and styles are sanitized of
 potentially harmful content from the chart configuration before being added to
