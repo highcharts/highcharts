@@ -1,0 +1,12 @@
+---
+name: Generate parliament
+authors:
+  - Johannes Aasen Nesheim
+js_wrap: b
+alt_text: >-
+  Create parliament from data grid selections
+tags:
+  - Highcharts Grid demo
+use_png_thumbnail: true
+is_pro: true
+...
