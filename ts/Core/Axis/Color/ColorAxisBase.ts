@@ -42,7 +42,7 @@ interface ColorAxisBase extends AxisComposition {
     chart: Chart;
 
     /** @internal */
-    dataClasses: Array<ColorAxisDataClassOptions>;
+    dataClasses?: Array<ColorAxisDataClassOptions>;
 
     /** @internal */
     index: number;
