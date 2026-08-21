@@ -137,10 +137,15 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * What type of legend symbol to render for this series. For HLC series,
-     * the default is `hlc`, a vertical stem with a tick on the right
+     * the default is `hlc`, showing two stems, each with a tick on the right
      * representing the closing value.
      *
-     * @default hlc
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Candlestick, OHLC and HLC legend symbols
+     *
+     * @default   hlc
+     * @product   highstock
+     * @apioption plotOptions.hlc.legendSymbol
      */
     legendSymbol?: string;
 
