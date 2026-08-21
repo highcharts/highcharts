@@ -193,7 +193,7 @@ module.exports = {
                             'grid/frameworks/react/getting-started',
                             'grid/frameworks/react/grid',
                             'grid/frameworks/react/components',
-                            'grid/frameworks/react/columns',
+                            'grid/frameworks/react/column',
                             'grid/frameworks/react/data',
                             'grid/frameworks/react/styling'
                         ]

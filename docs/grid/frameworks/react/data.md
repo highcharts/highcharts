@@ -55,7 +55,7 @@ The sections below cover the `Data` component only.
 
 `columns` is an object of arrays. Each key is a column ID, the same value as
 `columnId` on
-[`Column`](https://www.highcharts.com/docs/grid/frameworks/react/columns).
+[`Column`](https://www.highcharts.com/docs/grid/frameworks/react/column).
 
 Keep this object in `useState` when it can change. A new object created during
 render will update the grid on every render.

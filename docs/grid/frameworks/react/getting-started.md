@@ -151,7 +151,7 @@ Continue with:
   root component, the options object, refs, and `gridKey`
 - [Components](https://www.highcharts.com/docs/grid/frameworks/react/components)
   for the component catalog
-- [Columns](https://www.highcharts.com/docs/grid/frameworks/react/columns) for
+- [Column](https://www.highcharts.com/docs/grid/frameworks/react/column) for
   `Column` and `ColumnDefaults`
 - [Data](https://www.highcharts.com/docs/grid/frameworks/react/data) for loading
   and updating row data

@@ -98,7 +98,7 @@ own classes; the two lists are merged.
 ```
 
 `rowClassName` and `evenRowClassName` exist only on `ColumnDefaults`. See
-[Columns](https://www.highcharts.com/docs/grid/frameworks/react/columns) for
+[Column](https://www.highcharts.com/docs/grid/frameworks/react/column) for
 the full prop list, and
 [Cells: styling and theming](https://www.highcharts.com/docs/grid/cells/styling-and-theming)
 for CSS on cell elements.

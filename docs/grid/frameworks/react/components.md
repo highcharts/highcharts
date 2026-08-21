@@ -6,8 +6,9 @@ sidebar_label: "Components"
 
 Pass these components inside
 [`Grid`](https://www.highcharts.com/docs/grid/frameworks/react/grid). `Grid`
-itself is documented on that page. `Data`, `Column`, and `ColumnDefaults`
-have their own articles; the tables below cover the remaining components.
+itself is documented on that page. `Data` and `Column` have their own
+articles; `ColumnDefaults` is on the Column page. The tables below cover the
+remaining components.
 
 ```tsx
 import { Grid, Data, Column, Caption } from '@highcharts/grid-lite-react';
@@ -47,12 +48,12 @@ change that data in React state, the grid updates.
 See [Data](https://www.highcharts.com/docs/grid/frameworks/react/data) for the
 props, updates, `autogenerateColumns`, and remote data.
 
-## Columns
+## Column
 
-`ColumnDefaults` sets shared column behavior and `Column` configures one
-column.
+`<Column>` configures one column. `ColumnDefaults` sets shared options for
+every column.
 
-See [Columns](https://www.highcharts.com/docs/grid/frameworks/react/columns)
+See [Column](https://www.highcharts.com/docs/grid/frameworks/react/column)
 for the props, column IDs, and unbound columns.
 
 ## Header
@@ -93,7 +94,7 @@ export default function App() {
 When `header` is set, list every column you want visible. Columns missing from
 the tree are excluded. Per-column header text still comes from `headerFormat`
 or `headerFormatter` on
-[`Column`](https://www.highcharts.com/docs/grid/frameworks/react/columns).
+[`Column`](https://www.highcharts.com/docs/grid/frameworks/react/column).
 
 See [Column headers](https://www.highcharts.com/docs/grid/columns/header) and
 [Grouped headers](https://www.highcharts.com/docs/grid/columns/grouping).
