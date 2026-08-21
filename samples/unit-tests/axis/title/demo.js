@@ -445,8 +445,8 @@ QUnit.test('yAxis label space with small title.offset (#6967)', function (
         'Outer yAxis labels should stay inside the container.'
     );
 
-    // At offset 0 the title sits on top of the labels, so plotLeft is just
-    // the label width (76px), with nothing added for it.
+    // At offset 0 the title overlaps the labels and reserves no space, so
+    // removing the title entirely must not change plotLeft.
     const single = Highcharts.chart('container', {
         yAxis: {
             title: {
@@ -457,10 +457,13 @@ QUnit.test('yAxis label space with small title.offset (#6967)', function (
             { data: [0.0001, 0.0002, 0.0003] }
         ]
     });
+    const offsetPlotLeft = single.plotLeft;
+
+    single.update({ yAxis: { title: { text: null } } });
 
     assert.strictEqual(
+        offsetPlotLeft,
         single.plotLeft,
-        76,
         'title.offset: 0 reserves label width only, not label + title.'
     );
 });
