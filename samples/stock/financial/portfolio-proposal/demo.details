@@ -5,4 +5,5 @@ tags:
   - Dashboards
   - Morningstar
 js_wrap: b
+requiresManualTesting: true
 ...
