@@ -19,7 +19,7 @@
 * */
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import PointAndFigureSeries from './PointAndFigureSeries.js';
+import type PointAndFigureSeries from './PointAndFigureSeries.js';
 const {
     seriesTypes: {
         scatter: {
@@ -37,7 +37,7 @@ const {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class PointAndFigurePoint extends ScatterPoint {
@@ -58,6 +58,9 @@ class PointAndFigurePoint extends ScatterPoint {
      *
      * */
 
+    /**
+     * @internal
+     */
     public resolveMarker(): void {
         const seriesOptions = this.series.options;
         this.marker = this.options.marker =
@@ -66,6 +69,9 @@ class PointAndFigurePoint extends ScatterPoint {
         this.color = this.options.marker.lineColor;
     }
 
+    /**
+     * @internal
+     */
     public resolveColor(): void {
         super.resolveColor();
         this.resolveMarker();
@@ -73,7 +79,7 @@ class PointAndFigurePoint extends ScatterPoint {
 
     /**
      * Extend the parent method by adding up or down to the class name.
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.pointandfigure#getClassName
      */
     public getClassName(): string {
@@ -93,4 +99,5 @@ class PointAndFigurePoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 export default PointAndFigurePoint;
