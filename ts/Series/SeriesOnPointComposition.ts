@@ -47,6 +47,7 @@ import {
 type CenterObject = { positions: Array<number> };
 type zData = Array<number|null>;
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         onPoint?: SeriesOnPointComposition.Additions;
@@ -88,6 +89,7 @@ namespace SeriesOnPointComposition {
      *
      * */
 
+    /** @internal */
     export declare class SeriesComposition extends Series {
         onPoint: Additions;
     }
@@ -101,7 +103,7 @@ namespace SeriesOnPointComposition {
     /**
      * Extends the series with a small addition.
      *
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T,
@@ -148,7 +150,7 @@ namespace SeriesOnPointComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export class Additions {
 
@@ -159,7 +161,7 @@ namespace SeriesOnPointComposition {
          * */
 
         /**
-         * @private
+         * @internal
          */
         public constructor(series: SeriesComposition) {
             this.chart = series.chart;
@@ -213,7 +215,7 @@ namespace SeriesOnPointComposition {
         /**
          * Draw connector line that starts from the initial point's position
          * and ends in the center of the series.
-         * @private
+         * @internal
          */
         public drawConnector(): void {
             if (!this.connector) {
@@ -233,7 +235,7 @@ namespace SeriesOnPointComposition {
         /**
          * Get connector line path and styles that connects series and point.
          *
-         * @private
+         * @internal
          *
          * @return {Highcharts.SVGAttributes} attribs - the path and styles.
          */
@@ -431,6 +433,7 @@ namespace SeriesOnPointComposition {
  *
  * */
 
+/** @internal */
 export default SeriesOnPointComposition;
 
 /* *
