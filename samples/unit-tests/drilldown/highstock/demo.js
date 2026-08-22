@@ -126,3 +126,52 @@ QUnit.test(
             'scrolling'
         );
     });
+
+QUnit.test(
+    'Navigator base series restored after drillup (#24987)',
+    function (assert) {
+        const chart = Highcharts.stockChart('container', {
+            navigator: {
+                enabled: true
+            },
+            series: [{
+                id: 'parent',
+                name: 'Parent',
+                data: [{
+                    name: 'Cars',
+                    y: 4,
+                    drilldown: 'cars'
+                }],
+                animation: false
+            }],
+            drilldown: {
+                series: [{
+                    id: 'cars',
+                    name: 'Cars',
+                    data: [
+                        ['Electric', 3],
+                        ['ICE', 4]
+                    ],
+                    animation: false
+                }]
+            }
+        });
+
+        chart.series[0].points[0].doDrilldown();
+        chart.drillUp();
+
+        assert.deepEqual(
+            chart.navigator.baseSeries.map(series => series.options.id),
+            ['parent'],
+            'Parent series should be the navigator\'s base series again ' +
+            'after drilling up'
+        );
+
+        assert.notStrictEqual(
+            chart.navigator.series.length,
+            0,
+            'Navigator should not be left without any series after ' +
+            'drilling up'
+        );
+    }
+);
