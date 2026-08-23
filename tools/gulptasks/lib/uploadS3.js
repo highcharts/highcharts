@@ -574,11 +574,9 @@ async function uploadFile(
     }
 
     if (session.dryrun) {
-        const fsLib = require('../../libs/fs');
-
         targetPath = Path.join('tmp', 's3', session.bucket, targetPath);
 
-        fsLib.makePath(Path.dirname(targetPath));
+        FS.mkdirSync(Path.dirname(targetPath), { recursive: true });
 
         FS.writeFileSync(targetPath, fileContent, { encoding: 'binary' });
 

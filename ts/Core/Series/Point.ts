@@ -57,7 +57,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     removeEvent
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../Utilities.js';
@@ -1467,7 +1466,7 @@ class Point {
             series = point.series,
             chart = series.chart;
 
-        selected = pick(selected, !point.selected);
+        selected = (selected ?? !point.selected);
 
         this.selectedStaging = selected;
 
@@ -1845,7 +1844,7 @@ class Point {
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
-                    pick(point.colorIndex, series.colorIndex) +
+                    (point.colorIndex ?? series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
                 'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276
