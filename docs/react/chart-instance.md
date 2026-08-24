@@ -26,7 +26,7 @@ function RefExample() {
 
 ## Updates on re-render
 
-Highcharts React creates the chart once and then applies your options to that same instance with `chart.update()` on every later render. The chart is not torn down and rebuilt, which is what lets you drive it from React state.
+Highcharts React creates the chart once and then applies your options to that same instance with `chart.update()` on every later render. The chart is not torn down and rebuilt, which is what lets you drive it from React state. This is the library updating itself from the props you pass, which is not the same as calling chart methods yourself: see [Update chart data](https://www.highcharts.com/docs/react/data-handling#update-chart-data) for why reaching for the instance to change what the chart shows is discouraged.
 
 One consequence is worth knowing: a parent component that re-renders for reasons unrelated to the chart still triggers a chart update. If that happens often, wrap the chart component in [`React.memo`](https://react.dev/reference/react/memo) so those renders stop at the component boundary.
 
