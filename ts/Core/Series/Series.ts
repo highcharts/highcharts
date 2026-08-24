@@ -1062,9 +1062,13 @@ class Series {
         oldOptions: DeepPartial<SeriesOptions>
     ): boolean | undefined {
         const marker = options.marker,
-            oldMarker = oldOptions.marker || {};
+            oldMarker = oldOptions.marker;
 
-        return marker && (
+        // Note that `marker` holds the full, merged object including
+        // `plotOptions`, while `oldMarker` is the user-defined series-level
+        // options only. We may need to refactor that in the future if more
+        // issues like #24057 arise.
+        return marker && oldMarker && (
             (oldMarker.enabled && !marker.enabled) ||
             oldMarker.symbol !== marker.symbol || // #10870, #15946
             oldMarker.height !== marker.height || // #16274
