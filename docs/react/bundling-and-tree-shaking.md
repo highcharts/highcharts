@@ -31,6 +31,12 @@ import "highcharts/es-modules/masters/modules/series-label.src.js";
 
 Place bare module imports after your `@highcharts/react` imports. Module files run setup code at evaluation time, and ES modules evaluate in source order, so importing them first can run that setup before Highcharts is ready.
 
+```tsx
+import { Chart } from "@highcharts/react";
+import { Exporting } from "@highcharts/react/modules/Exporting";
+import "highcharts/es-modules/masters/modules/series-label.src.js";
+```
+
 ## Keep Highcharts lean with core + modules
 
 Prefer the core Highcharts build plus only the modules you need. Avoid product
@@ -52,10 +58,20 @@ import { VennSeries } from "@highcharts/react/series/Venn";
 
 ## Styled mode
 
-A chart using `styledMode` must import `highcharts/css/highcharts.css` from the component file:
+In styled mode Highcharts omits presentational SVG attributes and takes styling from CSS instead, so the component file has to import the Highcharts stylesheet alongside enabling the mode:
 
 ```tsx
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 import "highcharts/css/highcharts.css";
+
+function StyledChart() {
+  return (
+    <Chart styledMode>
+      <LineSeries data={[3, 4, 1, 5, 2]} />
+    </Chart>
+  );
+}
 ```
 
 ## Bundler configuration matters
