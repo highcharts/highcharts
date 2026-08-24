@@ -22,11 +22,13 @@ import { Exporting } from "@highcharts/react/modules/Exporting";
 
 Each component bundles the Highcharts module it needs, so no additional bare import is required alongside it.
 
-Polar charts are the exception. Setting [`chart.polar`](https://api.highcharts.com/highcharts/chart.polar) needs `highcharts-more`, which the standard Cartesian series components do not bundle, so import it yourself:
+Bundling follows components, so an option that needs a module has nothing to pull it in and you import it yourself. Setting [`chart.polar`](https://api.highcharts.com/highcharts/chart.polar) needs `highcharts-more`, which the Cartesian series components do not bundle:
 
 ```tsx
 import "highcharts/es-modules/masters/highcharts-more.src.js";
 ```
+
+Other options behave the same way, including `chart.options3d`, `annotations`, and `sonification`. Each option's **Requires** line in the [API reference](https://api.highcharts.com/highcharts/) names the module it needs.
 
 For modules and themes without a dedicated component, use the `/es-modules/masters` path:
 
