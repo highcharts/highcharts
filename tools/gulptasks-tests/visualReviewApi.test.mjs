@@ -118,6 +118,7 @@ test('builds the exact pull-request manifest', () => {
 test('uploads manifest and all artifacts before finalizing', async () => {
     const sampleRoot = await createSampleRoot();
     const calls = [];
+    const progress = [];
     try {
         const result = await submitPullRequestVisualReview({
             apiKey: 'test-api-key',
@@ -137,6 +138,7 @@ test('uploads manifest and all artifacts before finalizing', async () => {
             runNumber: '789',
             sampleRoot,
             samples: sample(),
+            onProgress: event => progress.push(event),
             testReport: { status: 'complete' }
         });
 
@@ -168,6 +170,26 @@ test('uploads manifest and all artifacts before finalizing', async () => {
         assert.equal(calls[4].url, 'https://vrevs.highdev.dev/api/ingestion/submissions/456/attempts/2/finalize');
         assert.equal(calls[4].options.method, 'POST');
         assert.equal(calls[0].options.headers.authorization, 'Bearer test-api-key');
+        assert.deepEqual(progress, [
+            {
+                completed: 1,
+                total: 3,
+                sampleName: 'highcharts/demo/line-basic',
+                role: 'reference'
+            },
+            {
+                completed: 2,
+                total: 3,
+                sampleName: 'highcharts/demo/line-basic',
+                role: 'candidate'
+            },
+            {
+                completed: 3,
+                total: 3,
+                sampleName: 'highcharts/demo/line-basic',
+                role: 'difference'
+            }
+        ]);
     } finally {
         await rm(sampleRoot, { recursive: true, force: true });
     }

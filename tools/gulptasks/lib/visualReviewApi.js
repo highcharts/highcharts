@@ -198,6 +198,7 @@ async function request(url, options, dependencies = {}, requestState = {
  * Uploads and finalizes a pull-request visual review submission.
  *
  * @param {object} options Submission options.
+ * @param {function} [options.onProgress] Called after each artifact upload.
  * @return {Promise<{submissionId: string, state: string}>} Submission result.
  */
 async function submitPullRequestVisualReview(options) {
@@ -222,6 +223,13 @@ async function submitPullRequestVisualReview(options) {
         authorization: `Bearer ${apiKey}`
     };
     const dependencies = options.dependencies || {};
+    const onProgress = typeof options.onProgress === 'function' ?
+        options.onProgress :
+        null;
+    const totalArtifacts = onProgress ?
+        samples.length * Object.keys(ARTIFACTS).length :
+        0;
+    let uploadedArtifacts = 0;
     const requestState = { lastRequestAt: 0 };
 
     await request(submissionUrl, {
@@ -244,6 +252,14 @@ async function submitPullRequestVisualReview(options) {
                 },
                 body: sample.artifacts[role]
             }, dependencies, requestState);
+            if (onProgress) {
+                onProgress({
+                    completed: ++uploadedArtifacts,
+                    total: totalArtifacts,
+                    sampleName: sample.name,
+                    role
+                });
+            }
         }
     }
 

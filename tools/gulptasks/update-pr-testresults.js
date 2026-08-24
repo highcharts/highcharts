@@ -14,6 +14,37 @@ const {
 } = require('./lib/visualReviewApi');
 
 const DEFAULT_COMMENT_TITLE = 'Visual test results';
+const PROGRESS_BAR_WIDTH = 30;
+
+function createUploadProgressBar(output = process.stderr) {
+    const isTTY = output.isTTY === true;
+
+    let rendered = false;
+
+    function update({ completed, total }) {
+        if (!isTTY || !total) {
+            return;
+        }
+
+        const progress = Math.min(Math.max(completed / total, 0), 1);
+        const completedWidth = Math.round(progress * PROGRESS_BAR_WIDTH);
+        const progressText =
+            'Uploading visual test artifacts [' +
+            `${'#'.repeat(completedWidth)}${'-'.repeat(PROGRESS_BAR_WIDTH - completedWidth)}] ` +
+            `${completed}/${total}`;
+
+        output.write(`\r${progressText}`);
+        rendered = true;
+    }
+
+    function finish() {
+        if (isTTY && rendered) {
+            output.write('\n');
+        }
+    }
+
+    return { finish, update };
+}
 
 function getVisualReviewApiUrl() {
     return argv.visualReviewApiUrl || process.env.VISUAL_REVIEW_API_URL;
@@ -159,7 +190,16 @@ async function submitReview(testResults, prNumber) {
         return false;
     }
 
-    const result = await submitPullRequestVisualReview(getSubmissionOptions(testResults, prNumber));
+    const progressBar = createUploadProgressBar();
+    let result;
+    try {
+        result = await submitPullRequestVisualReview({
+            ...getSubmissionOptions(testResults, prNumber),
+            onProgress: progressBar.update
+        });
+    } finally {
+        progressBar.finish();
+    }
     logLib.message(`Visual review submission ${result.submissionId} finalized.`);
     return true;
 }
@@ -235,6 +275,7 @@ gulp.task('update-pr-testresults', commentOnPR);
 
 module.exports = {
     createSubmissionSamples,
+    createUploadProgressBar,
     default: commentOnPR,
     hasVisualTestErrors,
     writeCommentFile

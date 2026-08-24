@@ -25,6 +25,7 @@ function response(status = 200, body = '') {
 const updatePrTestResults = await import('../gulptasks/update-pr-testresults.js');
 const {
     createSubmissionSamples,
+    createUploadProgressBar,
     hasVisualTestErrors,
     writeCommentFile
 } = updatePrTestResults;
@@ -193,6 +194,36 @@ test('creates API samples from positive visual differences', () => {
             comparisonValue: 12
         }]
     );
+});
+
+test('renders upload progress in interactive terminals', () => {
+    const writes = [];
+    const output = {
+        isTTY: true,
+        write: text => writes.push(text)
+    };
+    const progressBar = createUploadProgressBar(output);
+
+    progressBar.update({ completed: 1, total: 3 });
+    progressBar.update({ completed: 3, total: 3 });
+    progressBar.finish();
+
+    assert.match(writes[0], /^\rUploading visual test artifacts \[#+-+\] 1\/3$/u);
+    assert.match(writes[1], /^\rUploading visual test artifacts \[#+\] 3\/3$/u);
+    assert.equal(writes[2], '\n');
+});
+
+test('does not render upload progress in non-interactive output', () => {
+    const writes = [];
+    const progressBar = createUploadProgressBar({
+        isTTY: false,
+        write: text => writes.push(text)
+    });
+
+    progressBar.update({ completed: 1, total: 3 });
+    progressBar.finish();
+
+    assert.deepEqual(writes, []);
 });
 
 test('detects visual test errors without requiring the file to exist', async () => {
