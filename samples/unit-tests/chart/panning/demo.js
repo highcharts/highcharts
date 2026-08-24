@@ -880,11 +880,9 @@ QUnit.test('The chart.events.pan event (#10833)', function (assert) {
                         }
                     }
                 },
-                height: 400,
                 panning: {
                     enabled: true
-                },
-                width: 600
+                }
             },
             xAxis: {
                 max: 6,

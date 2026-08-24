@@ -25,7 +25,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
-import type { PointerEvent as PointerEventImport } from '../PointerEvent';
+import type { PointerEvent } from '../PointerEvent';
 import type Series from '../Series/Series';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
@@ -178,7 +178,10 @@ export interface ChartEventsOptions {
      * in Highcharts Stock, the panning is applied outside the default
      * action and is not prevented.
      *
-     * Panning by touch does not fire this event.
+     * Panning by touch does not fire this event, unless
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch) is enabled and
+     * no zoom type is set. Single-finger drags are then handled as mouse
+     * drags and fire this event.
      *
      * @since     7.0.2
      */
@@ -1194,7 +1197,7 @@ export interface ChartPanCallbackFunction {
 }
 
 export interface ChartPanEventObject {
-    originalEvent: PointerEventImport;
+    originalEvent: PointerEvent;
     preventDefault: Function;
     target: Chart;
     type: 'pan';

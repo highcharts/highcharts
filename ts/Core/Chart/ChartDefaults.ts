@@ -260,7 +260,10 @@ const ChartDefaults: ChartOptions = {
      * in Highcharts Stock, the panning is applied outside the default
      * action and is not prevented.
      *
-     * Panning by touch does not fire this event.
+     * Panning by touch does not fire this event, unless
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch) is enabled and
+     * no zoom type is set. Single-finger drags are then handled as mouse
+     * drags and fire this event.
      *
      * @type      {Highcharts.ChartPanCallbackFunction}
      * @since     7.0.2
