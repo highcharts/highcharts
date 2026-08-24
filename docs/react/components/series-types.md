@@ -47,6 +47,10 @@ You can provide the most common options as direct props, and all of them via the
 
 ### Props
 
+Both dedicated and generic series components accept these props. The generic
+`Series` component accepts one more, `type`, described under
+[Additional props](#additional-props).
+
 | Prop      | Type     | Default | Description                                                                                                                                      |
 | --------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | data      | `array`  | -       | Data points for the series. Format depends on the series type (see [series.line.data](https://api.highcharts.com/highcharts/series.line.data)).  |
@@ -184,7 +188,7 @@ export default function VennChart() {
 
 To determine which module is needed, refer to the **Requires** section under each [series](https://api.highcharts.com/highcharts/series).
 
-### Props
+### Additional props
 
 The generic `Series` component accepts the same [props](#props) as dedicated components, with the addition of `type`:
 
