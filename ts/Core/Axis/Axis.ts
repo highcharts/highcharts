@@ -72,6 +72,7 @@ import {
     destroyObjectProperties,
     erase,
     extend,
+    find,
     fireEvent,
     getClosestDistance,
     isArray,
@@ -2900,11 +2901,14 @@ class Axis {
      * @function Highcharts.Axis#getLinkedParent
      */
     public getLinkedParent(): (Axis|undefined) {
-        return F.getLinkedParent(
-            this,
-            this.chart[this.coll] || [],
-            this.options.linkedTo
-        );
+        const axis = this,
+            { linkedTo } = axis.options,
+            axes = axis.chart[axis.coll] || [],
+            parent = isString(linkedTo) ?
+                find(axes, (a: Axis): boolean => a.options.id === linkedTo) :
+                (isNumber(linkedTo) ? axes[linkedTo] : void 0);
+
+        return parent === axis ? void 0 : parent;
     }
 
     /**

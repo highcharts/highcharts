@@ -2924,9 +2924,7 @@ class Chart {
                 linkedParent = isString(linkedTo) && (
                     linkedTo === ':previous' ?
                         chartSeries[series.index - 1] :
-                        Foundation.getLinkedParent(
-                            series, chartSeries, linkedTo
-                        )
+                        chart.get(linkedTo) as Series | undefined
                 );
 
             if (
