@@ -206,6 +206,4 @@ export default function ColumnChart() {
 
 For series types that belong to a single product, the component also uses that product's chart constructor, so `<Candlestick />` is a stock chart, `<Map />` a map chart, and `<Gantt />` a gantt chart.
 
-Each dedicated series component has a matching series-type chart component with the `Series` suffix removed: `LineSeries` and `Line`, `ColumnSeries` and `Column`, etc. See the [available dedicated series components](https://www.highcharts.com/docs/react/components/series-types#available-dedicated-series-components) table.
-
-To learn more about series components, see the [Series types](https://www.highcharts.com/docs/react/components/series-types#other-chart-types) documentation.
+Each dedicated series component has a matching series-type chart component with the `Series` suffix removed: `LineSeries` and `Line`, `ColumnSeries` and `Column`, etc. See the [available dedicated series components](https://www.highcharts.com/docs/react/components/series-types#available-dedicated-series-components) table, or the [Series types](https://www.highcharts.com/docs/react/components/series-types) documentation for series components in general.
