@@ -48,6 +48,43 @@ function sample() {
     }];
 }
 
+async function submitWithRetryAfter(retryAfter) {
+    const sleeps = [];
+    let requests = 0;
+
+    await submitPullRequestVisualReview({
+        apiKey: 'test-api-key',
+        dependencies: {
+            fetchImpl: async () => {
+                requests++;
+                return requests === 1 ? response(429, '', retryAfter) : response();
+            },
+            sleep: async delay => sleeps.push(delay)
+        },
+        minRequestInterval: 0,
+        prNumber: 123,
+        prSha: sha,
+        productVersion: '13.0.1',
+        runAttempt: '1',
+        runId: '456',
+        runNumber: '789',
+        samples: [],
+        testReport: {}
+    });
+
+    return { requests, sleeps };
+}
+
+async function withCurrentTime(currentTime, callback) {
+    const originalNow = Date.now;
+    Date.now = () => currentTime;
+    try {
+        return await callback();
+    } finally {
+        Date.now = originalNow;
+    }
+}
+
 test('builds the exact pull-request manifest', () => {
     assert.deepEqual(
         buildSubmissionManifest({
@@ -209,32 +246,39 @@ test('retries transient responses and does not retry client errors', async () =>
     );
 });
 
-test('honors the full Retry-After value', async () => {
-    const sleeps = [];
-    let attempts = 0;
+test('honors numeric Retry-After seconds', async () => {
+    const { requests, sleeps } = await submitWithRetryAfter('60');
 
-    await submitPullRequestVisualReview({
-        apiKey: 'test-api-key',
-        dependencies: {
-            fetchImpl: async () => {
-                attempts++;
-                return attempts === 1 ? response(429, '', '60') : response();
-            },
-            minRequestInterval: 0,
-            sleep: async delay => sleeps.push(delay)
-        },
-        prNumber: 123,
-        prSha: sha,
-        productVersion: '13.0.1',
-        runAttempt: '1',
-        runId: '456',
-        runNumber: '789',
-        samples: [],
-        testReport: {}
-    });
-
-    assert.equal(attempts, 3);
+    assert.equal(requests, 3);
     assert.equal(sleeps[0], 60000);
+});
+
+test('uses the date-relative delay for future HTTP-date Retry-After', async () => {
+    const currentTime = Date.parse('Wed, 21 Oct 2015 07:28:00 GMT');
+    const retryAfter = new Date(currentTime + 5000).toUTCString();
+    const { sleeps } = await withCurrentTime(
+        currentTime,
+        () => submitWithRetryAfter(retryAfter)
+    );
+
+    assert.equal(sleeps[0], 5000);
+});
+
+test('uses the fallback delay for past HTTP-date Retry-After', async () => {
+    const currentTime = Date.parse('Wed, 21 Oct 2015 07:28:00 GMT');
+    const retryAfter = new Date(currentTime - 5000).toUTCString();
+    const { sleeps } = await withCurrentTime(
+        currentTime,
+        () => submitWithRetryAfter(retryAfter)
+    );
+
+    assert.equal(sleeps[0], 1000);
+});
+
+test('uses the fallback delay for invalid Retry-After', async () => {
+    const { sleeps } = await submitWithRetryAfter('not-a-date');
+
+    assert.equal(sleeps[0], 1000);
 });
 
 test('does not create a request when an artifact is missing', async () => {

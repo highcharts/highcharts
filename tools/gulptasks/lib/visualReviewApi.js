@@ -120,6 +120,13 @@ function retryDelay(response, attempt) {
     if (Number.isFinite(seconds) && seconds >= 0) {
         return seconds * 1000;
     }
+    const retryAt = Date.parse(retryAfter);
+    if (Number.isFinite(retryAt)) {
+        const delay = retryAt - Date.now();
+        if (delay > 0) {
+            return delay;
+        }
+    }
     return 2 ** attempt * 1000;
 }
 

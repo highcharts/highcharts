@@ -130,6 +130,7 @@ function getPullRequestSha() {
 
 function getSubmissionOptions(testResults, prNumber) {
     const runId = process.env.GITHUB_RUN_ID || String(Date.now());
+    const runNumber = process.env.GITHUB_RUN_NUMBER || runId;
     return {
         apiKey: argv.visualReviewApiKey || process.env.VISUAL_REVIEW_API_KEY,
         apiUrl: getVisualReviewApiUrl(),
@@ -138,7 +139,7 @@ function getSubmissionOptions(testResults, prNumber) {
         productVersion: highchartsVersion,
         runAttempt: process.env.GITHUB_RUN_ATTEMPT || '1',
         runId,
-        runNumber: runId,
+        runNumber,
         samples: createSubmissionSamples(testResults),
         testReport: testResults
     };
@@ -147,15 +148,16 @@ function getSubmissionOptions(testResults, prNumber) {
 async function submitReview(testResults, prNumber) {
     if (argv.dryrun) {
         logLib.message('Dryrun (skipping visual review API submission)..');
-        return;
+        return true;
     }
     if (hasVisualTestErrors()) {
         logLib.warn('Visual test errors found; skipping visual review API finalization.');
-        return;
+        return false;
     }
 
     const result = await submitPullRequestVisualReview(getSubmissionOptions(testResults, prNumber));
     logLib.message(`Visual review submission ${result.submissionId} finalized.`);
+    return true;
 }
 
 async function writeCommentFile(content) {
@@ -197,14 +199,17 @@ async function commentOnPR() {
 
     const diffingSamples = createSubmissionSamples(testResults);
     try {
-        await submitReview(testResults, prNumber);
+        const reviewSubmitted = await submitReview(testResults, prNumber);
+        if (reviewSubmitted === false) {
+            return false;
+        }
         return writeCommentFile(createPRCommentBody(diffingSamples, prNumber));
     } catch (err) {
         if (!argv.failSilently) {
             throw err;
         }
         logLib.warn(`Visual review submission failed: ${err.message}`);
-        return writeCommentFile(createPRCommentBody(diffingSamples, prNumber));
+        return false;
     }
 }
 
