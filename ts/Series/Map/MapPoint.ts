@@ -37,8 +37,7 @@ const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import {
     extend,
     internalClearTimeout,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -182,16 +181,14 @@ class MapPoint extends ScatterPoint {
                     propMiddleY = properties?.['hc-middle-y'];
 
                 bounds.midX = (
-                    bounds.x1 + (bounds.x2 - bounds.x1) * pick(
-                        this.middleX,
-                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                    bounds.x1 + (bounds.x2 - bounds.x1) * (
+                        this.middleX ??
+                        (isNumber(propMiddleX) ? propMiddleX : 0.5)
                     )
                 );
 
-                let middleYFraction = pick(
-                    this.middleY,
-                    isNumber(propMiddleY) ? propMiddleY : 0.5
-                );
+                let middleYFraction = this.middleY ??
+                    (isNumber(propMiddleY) ? propMiddleY : 0.5);
                 // No geographic geometry, only path given => flip
                 if (!this.geometry) {
                     middleYFraction = 1 - middleYFraction;
