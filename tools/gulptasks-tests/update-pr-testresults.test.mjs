@@ -48,6 +48,7 @@ async function runComment({
     failSilently = false,
     fetchImplementation = async () => response(),
     immediateTimers = false,
+    changedFilesProvider = () => '',
     testResults,
     visualTestErrors = false
 }) {
@@ -130,7 +131,7 @@ async function runComment({
         let comment;
         let result;
         try {
-            result = await commentOnPR();
+            result = await commentOnPR({ changedFilesProvider });
         } catch (error) {
             try {
                 error.commentAfterAttempt = await readFile(commentPath, 'utf8');

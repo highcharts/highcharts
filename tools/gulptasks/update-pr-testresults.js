@@ -68,8 +68,8 @@ function createMarkdownLink(link, message = 'link') {
  *
  * @return {string} Markdown template.
  */
-function createTemplateForChangedSamples() {
-    const gitChangedFiles = getFilesChanged();
+function createTemplateForChangedSamples(changedFilesProvider = getFilesChanged) {
+    const gitChangedFiles = changedFilesProvider();
     logLib.message(`Changed files:\n${gitChangedFiles}`);
 
     const changedPaths = new Set(
@@ -89,7 +89,11 @@ function createTemplateForChangedSamples() {
     return samplesChangedTemplate;
 }
 
-function createPRCommentBody(diffingSamples, prNumber) {
+function createPRCommentBody(
+    diffingSamples,
+    prNumber,
+    changedFilesProvider = getFilesChanged
+) {
     const reviewUrl = `${normalizeApiUrl(getVisualReviewApiUrl())}/pr/${prNumber}/review`;
     let commentTemplate = `${DEFAULT_COMMENT_TITLE} - No difference found`;
     if (diffingSamples.length > 0) {
@@ -99,7 +103,7 @@ function createPRCommentBody(diffingSamples, prNumber) {
                 'Please review the differences.'
             )}\n`;
     }
-    const changedSamplesTemplate = createTemplateForChangedSamples();
+    const changedSamplesTemplate = createTemplateForChangedSamples(changedFilesProvider);
     commentTemplate += `\n\n${changedSamplesTemplate}`;
 
     return commentTemplate;
@@ -182,7 +186,7 @@ async function writeCommentFile(content) {
  *
  * @return {Promise<*>} Promise to keep.
  */
-async function commentOnPR() {
+async function commentOnPR({ changedFilesProvider = getFilesChanged } = {}) {
     const {
         pr,
         resultsPath = 'test/visual-test-results.json'
@@ -203,7 +207,11 @@ async function commentOnPR() {
         if (reviewSubmitted === false) {
             return false;
         }
-        return writeCommentFile(createPRCommentBody(diffingSamples, prNumber));
+        return writeCommentFile(createPRCommentBody(
+            diffingSamples,
+            prNumber,
+            changedFilesProvider
+        ));
     } catch (err) {
         if (!argv.failSilently) {
             throw err;
