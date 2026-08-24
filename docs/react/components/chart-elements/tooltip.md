@@ -22,7 +22,7 @@ The `Tooltip` component accepts all [tooltip API options](https://api.highcharts
 
 JSX elements and bare string literals follow different paths. A bare string literal is passed directly to Highcharts as `tooltip.format`, where Highcharts renders HTML tags because `useHTML` is `true`. JSX elements are first converted to an HTML string by the renderer: string literals nested inside those elements are HTML-escaped, so HTML tags within them appear as visible text. Format expressions such as `{point.y}` and conditionals such as `{#if}` and `{#each}` are not escaped in either case.
 
-To include HTML markup in tooltip children, use JSX elements rather than string literals:
+When using JSX elements as children, write the markup as elements rather than putting tags inside a string:
 
 ```tsx
 <Tooltip>
