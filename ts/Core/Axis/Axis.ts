@@ -4478,14 +4478,12 @@ class Axis {
         ].forEach(destroyObjectProperties as any);
 
         // Destroy elements and clear reference
-        [
+        ([
             'axisLine', 'axisTitle', 'axisGroup',
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'
-        ].forEach(
-            function (prop: string): void {
-                if ((axis as any)[prop]) {
-                    (axis as any)[prop] = (axis as any)[prop].destroy();
-                }
+        ] as const).forEach(
+            (prop): void => {
+                axis[prop] = axis[prop]?.destroy();
             }
         );
 
