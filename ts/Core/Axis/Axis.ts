@@ -4459,22 +4459,19 @@ class Axis {
      * @function Highcharts.Axis#destroy
      */
     public destroy(): void {
-        const axis = this,
-            eventOptions = this.eventOptions;
-
         fireEvent(this, 'destroy');
 
         // Remove the events
-        removeEvent(axis);
+        removeEvent(this);
 
         // Destroy collections
         [
-            axis.ticks,
-            axis.minorTicks,
-            axis.alternateBands,
-            axis.plotBands,
-            axis.plotLines,
-            axis.plotLinesAndBandsGroups
+            this.ticks,
+            this.minorTicks,
+            this.alternateBands,
+            this.plotBands,
+            this.plotLines,
+            this.plotLinesAndBandsGroups
         ].forEach(destroyObjectProperties as any);
 
         // Destroy elements and clear reference
@@ -4483,17 +4480,16 @@ class Axis {
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'
         ] as const).forEach(
             (prop): void => {
-                axis[prop] = axis[prop]?.destroy();
+                this[prop] = this[prop]?.destroy();
             }
         );
 
         // Delete all properties and fall back to the prototype.
-        objectEach(axis, function (_val: any, key: string): void {
-            if (axis.getKeepProps().indexOf(key) === -1) {
-                delete (axis as any)[key];
+        objectEach(this, (_val: any, key: string): void => {
+            if (this.getKeepProps().indexOf(key) === -1) {
+                delete (this as any)[key];
             }
         });
-        this.eventOptions = eventOptions;
     }
 
     /**
