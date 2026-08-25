@@ -288,10 +288,26 @@ class TableCell extends Cell {
             vp.grid.querying.willNotModify() &&
             !updateRowsEvent.requiresFullRowsUpdate
         ) {
+            await this.updateDerivedCells();
             return false;
         }
         await vp.updateRows();
         return true;
+    }
+
+    /**
+     * Re-resolves the cells of the same row that derive their value from it, so
+     * a summary column (for example a row total) follows an edited source cell.
+     * A full rows update covers them already.
+     */
+    protected async updateDerivedCells(): Promise<void> {
+        for (let i = 0, iEnd = this.row.cells.length; i < iEnd; ++i) {
+            const cell = this.row.cells[i] as TableCell;
+
+            if (cell !== this && cell.column?.isDerived()) {
+                await cell.setValue();
+            }
+        }
     }
 
     /**

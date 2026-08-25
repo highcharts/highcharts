@@ -1,5 +1,4 @@
 /* Grid Pro flat summary (total) rows */
-
 .hcg-container .hcg-table {
     > tbody.hcg-tbody-summary {
         height: auto;
@@ -14,26 +13,14 @@
             display: block;
             position: static;
         }
-
-        .hcg-cell {
-            font-weight: 600;
-        }
     }
 
     > tbody.hcg-tbody-summary-bottom {
         order: 1;
-        border-top:
-            var(--ig-row-border-width, 1px)
-            var(--ig-row-border-style, solid)
-            var(--ig-row-border-color, #d1d5db);
     }
 
     > tbody.hcg-tbody-summary-top {
         order: -1;
-        border-bottom:
-            var(--ig-row-border-width, 1px)
-            var(--ig-row-border-style, solid)
-            var(--ig-row-border-color, #d1d5db);
     }
 
     /* Keep the header above the top summary section (which sits above any
@@ -45,4 +32,26 @@
     &:has(> tbody.hcg-tbody-summary) > tbody:not(.hcg-tbody-summary) {
         height: auto;
     }
+}
+
+.hcg-themed {
+    .hcg-table {
+        --ig-summary-row-border-width: var(--hcg-summary-row-border-width, var(--ig-row-border-width));
+        --ig-summary-row-border-style: var(--hcg-summary-row-border-style, var(--ig-row-border-style));
+        --ig-summary-row-border-color: var(--hcg-summary-row-border-color, var(--ig-row-border-color));
+        --ig-summary-row-border: var(--ig-summary-row-border-width) var(--ig-summary-row-border-style) var(--ig-summary-row-border-color);
+        --ig-summary-row-font-weight: var(--hcg-summary-row-font-weight, var(--hcg-row-font-weight));
+    }
+
+    .hcg-table tbody tr.hcg-summary-row {
+        --ig-row-font-weight-current: var(--ig-summary-row-font-weight);
+    }
+}
+
+:where(.hcg-themed .hcg-table > tbody.hcg-tbody-summary-bottom) {
+    border-top: var(--ig-summary-row-border);
+}
+
+:where(.hcg-themed .hcg-table > tbody.hcg-tbody-summary-top) {
+    border-bottom: var(--ig-summary-row-border);
 }
