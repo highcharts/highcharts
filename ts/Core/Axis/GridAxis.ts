@@ -1070,8 +1070,7 @@ function onChartAfterSetChartSize(this: Chart): void {
 
 /** @internal */
 function onDestroy(
-    this: Axis,
-    e: { keepEvents: boolean }
+    this: Axis
 ): void {
     const {
         grid
@@ -1084,7 +1083,7 @@ function onDestroy(
     }
 
     (grid.columns || []).forEach(
-        (column): void => column.destroy(e.keepEvents)
+        (column): void => column.destroy()
     );
     grid.columns = void 0;
 }

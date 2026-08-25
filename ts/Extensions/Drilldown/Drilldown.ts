@@ -812,7 +812,7 @@ class ChartAdditions {
             // (#19725)
             if (!chart.hasCartesianSeries) {
                 chart.axes.forEach((axis): void => {
-                    axis.destroy(true);
+                    axis.destroy();
                     axis.init(chart, merge(axis.userOptions, axis.options));
                 });
             }

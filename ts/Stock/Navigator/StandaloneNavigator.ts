@@ -250,10 +250,8 @@ class StandaloneNavigator {
         axis.setExtremes(min, max);
 
         // Unbind the axis before it's destroyed
-        addEvent(axis, 'destroy', (e: AnyRecord): void => {
-            if (!e.keepEvents) {
-                this.unbind(axis);
-            }
+        addEvent(axis, 'destroy', (): void => {
+            this.unbind(axis);
         });
     }
 

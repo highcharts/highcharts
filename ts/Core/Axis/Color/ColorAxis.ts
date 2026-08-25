@@ -831,7 +831,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
         this.chart.isDirtyLegend = true;
 
         this.destroyItems();
-        super.destroy(...[].slice.call(arguments));
+        super.destroy();
     }
 
     /**

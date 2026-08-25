@@ -171,14 +171,9 @@ function onAxisAfterRender(
  * @internal
  */
 function onAxisDestroy(
-    this: Axis,
-    e: { keepEvents: boolean }
+    this: Axis
 ): void {
-    const axis = this;
-
-    if (!e.keepEvents && axis.resizer) {
-        axis.resizer.destroy();
-    }
+    this.resizer?.destroy();
 }
 
 /**

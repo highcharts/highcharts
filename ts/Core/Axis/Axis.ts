@@ -4457,20 +4457,15 @@ class Axis {
      *
      * @internal
      * @function Highcharts.Axis#destroy
-     *
-     * @param {boolean} [keepEvents]
-     * Whether to preserve events, used internally in Axis.update.
      */
-    public destroy(keepEvents?: boolean): void {
+    public destroy(): void {
         const axis = this,
             eventOptions = this.eventOptions;
 
-        fireEvent(this, 'destroy', { keepEvents: keepEvents });
+        fireEvent(this, 'destroy');
 
         // Remove the events
-        if (!keepEvents) {
-            removeEvent(axis);
-        }
+        removeEvent(axis);
 
         // Destroy collections
         [
