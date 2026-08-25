@@ -402,6 +402,8 @@ function createAndAttachRenderer(
         target.boost as Required<BoostTargetAdditions> ||
         {} as Required<BoostTargetAdditions>;
 
+    BoostChart.addPixelRatioListener(chart as BoostChartComposition);
+
     // Support for foreignObject is flimsy as best.
     // IE does not support it, and Chrome has a bug which messes up
     // the canvas draw order.

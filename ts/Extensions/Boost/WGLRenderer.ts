@@ -34,7 +34,7 @@ const { getBoostClipRect } = BoostChart;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const { doc, win } = H;
+const { doc } = H;
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLShader from './WGLShader.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
@@ -352,17 +352,19 @@ class WGLRenderer {
 
     /** @internal */
     private getPixelRatio(): number {
-        return this.settings.pixelRatio || win.devicePixelRatio || 1;
+        return this.settings.pixelRatio ||
+            (this.gl?.canvas as HTMLCanvasElement)?.ownerDocument
+                .defaultView?.devicePixelRatio || 1;
     }
 
     /** @internal */
     public setOptions(options: BoostOptions): void {
 
-        // The pixelRatio defaults to 1. This is an antipattern, we should
+        // The pixelRatio defaults to 0. This is an antipattern, we should
         // refactor the Boost options to include an object of default options as
         // base for the merge, like other components.
         if (!('pixelRatio' in options)) {
-            options.pixelRatio = 1;
+            options.pixelRatio = 0;
         }
         merge(true, this.settings, options);
     }

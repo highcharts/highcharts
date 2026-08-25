@@ -32,7 +32,7 @@ import type { TypedArray } from '../../Shared/Types';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
-const { composed } = H;
+const { composed, win } = H;
 import { addEvent, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
@@ -47,6 +47,7 @@ interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;
+    pixelRatioUnbind?: Function;
 }
 
 /** @internal */
@@ -81,6 +82,44 @@ function compose<T extends typeof Chart>(
     }
 
     return ChartClass;
+}
+
+/**
+ * Redraw the chart when the device pixel ratio changes.
+ *
+ * @internal
+ */
+function addPixelRatioListener(
+    chart: BoostChartComposition
+): void {
+    const boost = chart.boost,
+        chartWindow = chart.renderTo.ownerDocument.defaultView || win;
+
+    if (
+        !boost.pixelRatioUnbind &&
+        !chart.options.boost?.pixelRatio &&
+        chartWindow.matchMedia
+    ) {
+        let unbindChange: Function;
+
+        const bindChange = (): void => {
+            unbindChange?.();
+            unbindChange = addEvent(
+                chartWindow.matchMedia(
+                    `(resolution: ${chartWindow.devicePixelRatio}dppx)`
+                ),
+                'change',
+                (): void => {
+                    bindChange();
+                    chart.redraw(false);
+                }
+            );
+        };
+
+        bindChange();
+        boost.pixelRatioUnbind = (): void => unbindChange();
+        addEvent(chart, 'destroy', boost.pixelRatioUnbind);
+    }
 }
 
 /**
@@ -413,6 +452,7 @@ function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
 
 /** @internal */
 const BoostChart = {
+    addPixelRatioListener,
     compose,
     getBoostClipRect,
     isChartSeriesBoosting
