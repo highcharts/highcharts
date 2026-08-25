@@ -16,6 +16,6 @@ export default function TooltipChart() {
 }
 ```
 
-The `Tooltip` component accepts all [tooltip API options](https://api.highcharts.com/highcharts/tooltip) as props. The [tooltip format](https://api.highcharts.com/highcharts/tooltip.format) can be passed as `children`.
+The `Tooltip` component renders as HTML (via the [useHTML](https://api.highcharts.com/highcharts/tooltip.useHTML) option, defaulting to `true`). It accepts all [tooltip API options](https://api.highcharts.com/highcharts/tooltip) as props, with the [tooltip format](https://api.highcharts.com/highcharts/tooltip.format) passed as `children`.
 
 **Note:** For a more structured tooltip, it's a good practice to use the `data-hc-option` attribute to map child elements to specific tooltip options. See the [Option binding](https://www.highcharts.com/docs/react/options-component-format#option-binding) documentation for more details.

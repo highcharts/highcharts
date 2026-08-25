@@ -26,6 +26,9 @@ import type {
     SankeySeriesOptions
 } from '../Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesLinkOptionsBase
+} from '../Networkgraph/NetworkgraphSeriesOptions';
 
 /* *
  *
@@ -48,13 +51,13 @@ export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'orthogonal';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
-export interface OrganizationLinkOptions {
-    linkOpacity?: number;
+export interface OrganizationLinkOptions extends SeriesLinkOptionsBase {
     curveFactor?: number;
-    color?: ColorString;
     lineWidth?: number;
-    type?: OrganizationLinkTypeValues;
+    linkOpacity?: number;
+    offset?: number;
     radius?: number;
+    type?: OrganizationLinkTypeValues;
 }
 
 export type OrganizationHangingIndentTranslationValue = (

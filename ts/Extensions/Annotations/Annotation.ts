@@ -45,8 +45,9 @@ import type NavigationBindings from './NavigationBindings.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { getDeferredAnimation } = A;
+import {
+    getDeferredAnimation
+} from '../../Core/Animation/AnimationUtilities.js';
 import AnnotationChart from './AnnotationChart.js';
 import AnnotationDefaults from './AnnotationDefaults.js';
 import ControllableRect from './Controllables/ControllableRect.js';
@@ -68,7 +69,6 @@ import {
     erase,
     fireEvent,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -710,7 +710,7 @@ class Annotation extends EventEmitter implements ControlTarget {
             }
 
             item.redraw(
-                pick(animation, true) && item.graphic.placed
+                (animation ?? true) && item.graphic.placed
             );
 
             if (item.points.length) {
@@ -917,7 +917,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     ): void {
         const options = this.options,
             navigation = this.chart.navigationBindings,
-            visibility = pick(visible, !options.visible);
+            visibility = (visible ?? !options.visible);
 
         this.graphic.attr(
             'visibility',
@@ -978,7 +978,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         chart.options.annotations[userOptionsIndex] = this.options;
 
         this.isUpdating = true;
-        if (pick(redraw, true)) {
+        if (redraw ?? true) {
             chart.drawAnnotations();
         }
 

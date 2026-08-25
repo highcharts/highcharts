@@ -35,10 +35,10 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
-import A from '../Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../Animation/AnimationUtilities.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
@@ -57,7 +57,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     removeEvent
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../Utilities.js';
@@ -711,9 +710,14 @@ class Point {
      *
      * @internal
      * @function Highcharts.Point#destroy
+     *
+     * @param {boolean} [sync]
+     *        Whether to destroy the point synchronously. Used internally from
+     *        series.destroy, where condemned points may cause animation errors
+     *        (#24976).
      */
-    public destroy(): void {
-        if (!this.condemned) {
+    public destroy(sync?: boolean): void {
+        if (!this.destroyed && !this.condemned) {
             const point = this,
                 series = point.series,
                 chart = series.chart,
@@ -740,6 +744,8 @@ class Point {
                 for (const prop in point) { // eslint-disable-line guard-for-in
                     delete point[prop];
                 }
+
+                this.destroyed = true;
             };
 
             if (point.legendItem) {
@@ -760,7 +766,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (duration && series.condemnedPoints) {
+            if (duration && !sync && series.condemnedPoints) {
                 series.condemnedPoints.push(this);
                 this.graphic?.addClass('highcharts-point-condemned');
                 setTimeout(destroyPoint, duration);
@@ -913,10 +919,10 @@ class Point {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
+     * @return {Highcharts.SeriesZonesOptionsObject|undefined}
+     *         The zone item, or `undefined` if the series has no zones.
      */
-    public getZone(): Series.ZoneObject {
+    public getZone(): Series.ZoneObject|undefined {
         const series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y';
@@ -924,7 +930,10 @@ class Point {
             i = 0;
 
         zone = zones[i];
-        while ((this as any)[zoneAxis] >= (zone.value as any)) {
+        while (
+            i < zones.length &&
+            (this as any)[zoneAxis] >= (zone.value as any)
+        ) {
             zone = zones[++i];
         }
 
@@ -1457,7 +1466,7 @@ class Point {
             series = point.series,
             chart = series.chart;
 
-        selected = pick(selected, !point.selected);
+        selected = (selected ?? !point.selected);
 
         this.selectedStaging = selected;
 
@@ -1633,27 +1642,22 @@ class Point {
         const point = this,
             series = point.series,
             previousState = point.state,
-            stateOptions = (
-                (series.options.states as any)[state || 'normal'] ||
-                {}
-            ),
+            stateOptions = series.options.states?.[state || 'normal'] || {},
             markerOptions = (
-                (defaultOptions.plotOptions as any)[
-                    series.type as any
-                ].marker &&
+                defaultOptions.plotOptions?.[series.type]?.marker &&
                 series.options.marker
             ),
-            normalDisabled = (markerOptions && markerOptions.enabled === false),
+            normalDisabled = markerOptions?.enabled === false,
             markerStateOptions = markerOptions?.states?.[state || 'normal'] ||
                 {},
-            stateDisabled = (markerStateOptions as any).enabled === false,
+            stateDisabled = markerStateOptions.enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
             hasMarkers = (markerOptions && series.markerAttribs);
         let halo = series.halo,
             markerAttribs,
             pointAttribs: SVGAttributes,
-            pointAttribsAnimation: AnimationOptions,
+            pointAttribsAnimation: (boolean|DeepPartial<AnimationOptions>|undefined),
             stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
@@ -1672,16 +1676,13 @@ class Point {
             // General point marker's state options is disabled
             (state && (
                 stateDisabled ||
-                (normalDisabled &&
-                (markerStateOptions as any).enabled === false)
+                (normalDisabled && markerStateOptions.enabled === false)
             )) ||
 
             // Individual point marker's state options is disabled
             (
                 state &&
-                pointMarker.states &&
-                (pointMarker.states as any)[state] &&
-                (pointMarker.states as any)[state].enabled === false
+                pointMarker.states?.[state]?.enabled === false
             ) // #1610
 
         ) {
@@ -1707,8 +1708,8 @@ class Point {
 
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
-                pointAttribsAnimation = pick(
-                    chart.options.chart.animation,
+                pointAttribsAnimation = (
+                    chart.options.chart.animation ??
                     stateOptions.animation
                 );
                 const opacity = pointAttribs.opacity;
@@ -1744,10 +1745,10 @@ class Point {
             if (markerAttribs) {
                 point.graphic.animate(
                     markerAttribs,
-                    pick(
+                    (
                         // Turn off globally:
-                        chart.options.chart.animation,
-                        (markerStateOptions as any).animation,
+                        chart.options.chart.animation ??
+                        markerStateOptions.animation ??
                         (markerOptions as any).animation
                     )
                 );
@@ -1821,12 +1822,14 @@ class Point {
         }
 
         // Show me your halo
-        const haloOptions = stateOptions.halo;
+        const haloOptions = isObject(stateOptions.halo) ?
+            stateOptions.halo :
+            {};
         const markerGraphic = (point.graphic || stateMarkerGraphic);
         const markerVisibility = markerGraphic?.visibility || 'inherit';
 
         if (
-            haloOptions?.size &&
+            haloOptions.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
             !point.isCluster
@@ -1837,11 +1840,11 @@ class Point {
                     .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
-                d: point.haloPath(haloOptions.size) as any
+                d: point.haloPath(haloOptions.size)
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
-                    pick(point.colorIndex, series.colorIndex) +
+                    (point.colorIndex ?? series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
                 'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276

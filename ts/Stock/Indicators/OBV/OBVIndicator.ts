@@ -25,7 +25,7 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import Series from '../../../Core/Series/Series';
+import type Series from '../../../Core/Series/Series';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;

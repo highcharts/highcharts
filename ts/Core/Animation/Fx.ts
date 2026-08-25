@@ -21,7 +21,6 @@
 import type AnimationOptions from './AnimationOptions';
 import type FxBase from './FxBase';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type HTMLElement from '../Renderer/HTML/HTMLElement';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
@@ -79,7 +78,7 @@ class Fx {
      * */
 
     public constructor(
-        elem: (HTMLElement|SVGElement),
+        elem: HTMLDOMElement|SVGElement|undefined,
         options: Partial<AnimationOptions>,
         prop: string
     ) {
@@ -98,7 +97,7 @@ class Fx {
      * The element to animate.
      * @internal
      */
-    public elem: (HTMLElement|SVGElement);
+    public elem?: HTMLDOMElement|SVGElement;
 
     /**
      * The end value, value to land on.
@@ -226,7 +225,7 @@ class Fx {
             path = end;
         }
 
-        this.elem.attr('d', path, void 0, true);
+        (this.elem as SVGElement).attr('d', path, void 0, true);
     }
 
     /**
@@ -238,7 +237,7 @@ class Fx {
     public update(): void {
         const elem = this.elem,
             prop = this.prop, // If destroyed, it is null
-            now: number = this.now as any,
+            now: number = this.now ?? 1,
             step = this.options.step;
 
         // Animation setter defined from outside
@@ -246,19 +245,17 @@ class Fx {
             (this as any)[prop + 'Setter']();
 
         // Other animations on SVGElement
-        } else if (elem.attr) {
-            if (elem.element) {
-                elem.attr(prop, now, null as any, true);
+        } else if (elem && (elem as SVGElement).attr) {
+            if ((elem as SVGElement).element) {
+                (elem as SVGElement).attr(prop, now, void 0, true);
             }
 
         // HTML styles, raw HTML content like container size
-        } else {
-            elem.style[prop as any] = now + (this.unit as any);
+        } else if (elem) {
+            elem.style[prop] = now + (this.unit || '');
         }
 
-        if (step) {
-            step.call(elem, now, this);
-        }
+        step?.call(elem, now, this);
 
     }
 
@@ -278,17 +275,16 @@ class Fx {
      *
      */
     public run(from: number, to: number, unit: string): void {
-        const self = this,
-            options = self.options,
-            timer: Fx.Timer = function (gotoEnd?: boolean): boolean {
-                return timer.stopped ? false : self.step(gotoEnd);
-            },
+        const { elem, options } = this,
+            { complete, curAnim = {} } = options,
+            timer: Fx.Timer = (gotoEnd?: boolean): boolean =>
+                (timer.stopped ? false : this.step(gotoEnd)),
             requestAnimationFrame =
                 win.requestAnimationFrame ||
                 function (step: Function): void {
                     setTimeout(step, 13);
                 },
-            step = function (): void {
+            step = (): void => {
                 for (let i = 0; i < Fx.timers.length; i++) {
                     if (!Fx.timers[i]()) {
                         Fx.timers.splice(i--, 1);
@@ -300,13 +296,13 @@ class Fx {
                 }
             };
 
-        if (from === to && !this.elem['forceAnimate:' + this.prop]) {
-            delete (options.curAnim as any)[this.prop];
+        if (from === to && !(elem as SVGElement)['forceAnimate:' + this.prop]) {
+            delete curAnim[this.prop];
             if (
-                options.complete &&
-                Object.keys(options.curAnim as any).length === 0
+                complete &&
+                Object.keys(curAnim).length === 0
             ) {
-                options.complete.call(this.elem);
+                complete.call(elem);
             }
         } else { // #7166
             this.startTime = +new Date();
@@ -316,7 +312,7 @@ class Fx {
             this.now = this.start;
             this.pos = 0;
 
-            timer.elem = this.elem;
+            timer.elem = elem;
             timer.prop = this.prop;
 
             if (timer() && Fx.timers.push(timer) === 1) {
@@ -346,7 +342,8 @@ class Fx {
         let ret,
             done;
 
-        if (!!elem.attr && !elem.element) { // #2616, element is destroyed
+        // #2616, element is destroyed
+        if ((elem as SVGElement)?.attr && !(elem as SVGElement).element) {
             ret = false;
 
         } else if (gotoEnd || t >= duration + (this.startTime as any)) {
@@ -570,7 +567,7 @@ class Fx {
      *
      */
     public strokeSetter(): void {
-        this.elem.attr(
+        (this.elem as SVGElement).attr(
             this.prop,
             color(this.start as any).tweenTo(
                 color(this.end as any),
