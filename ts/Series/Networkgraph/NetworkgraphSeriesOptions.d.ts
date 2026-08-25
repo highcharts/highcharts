@@ -323,7 +323,7 @@ export interface NetworkgraphSeriesStatesOptions extends
          *
          * Opacity of inactive links.
          *
-         * @deprecated next
+         * @deprecated 13.0.1
          * @default 0.3
          */
         linkOpacity?: number;

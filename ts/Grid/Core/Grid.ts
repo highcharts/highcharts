@@ -62,8 +62,7 @@ import {
     diffObjects,
     extend,
     fireEvent,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../../Core/Utilities.js';
 
@@ -914,7 +913,10 @@ export class Grid {
             'minWidth' in columnDiff ||
             'maxWidth' in columnDiff
         ) {
-            vp.columnResizing.isDirty = true;
+            const columnResizing = vp.columnResizing;
+            if (columnResizing) {
+                columnResizing.isDirty = true;
+            }
         }
         delete columnDiff.width;
         delete columnDiff.minWidth;
@@ -1742,7 +1744,11 @@ export class Grid {
 
         setHTMLContent(
             loadingSpan,
-            pick(message, this.options?.lang?.loading, '')
+            (
+                message ??
+                this.options?.lang?.loading ??
+                ''
+            )
         );
     }
 
