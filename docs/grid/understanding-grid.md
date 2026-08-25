@@ -138,6 +138,7 @@ Start with:
 - [Row data](https://www.highcharts.com/docs/grid/rows/data)
 - [Pagination](https://www.highcharts.com/docs/grid/rows/pagination)
 - [Pinning](https://www.highcharts.com/docs/grid/rows/pinning)
+- [Selection](https://www.highcharts.com/docs/grid/rows/selection)
 - [Tree view](https://www.highcharts.com/docs/grid/rows/tree-view)
 - [Virtualization](https://www.highcharts.com/docs/grid/rows/virtualization)
 - [Performance and rendering](https://www.highcharts.com/docs/grid/rows/performance)

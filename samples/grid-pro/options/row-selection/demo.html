@@ -1,0 +1,39 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+
+<div class="controls">
+    <label for="mode">
+        Mode
+        <select id="mode">
+            <option value="single">single</option>
+            <option value="multiple" selected>multiple</option>
+        </select>
+    </label>
+    <label for="trigger">
+        Trigger
+        <select id="trigger">
+            <option value="both" selected>both</option>
+            <option value="row">row</option>
+            <option value="checkbox">checkbox</option>
+        </select>
+    </label>
+    <label for="click-behavior">
+        Click behavior
+        <select id="click-behavior">
+            <option value="toggle" selected>toggle</option>
+            <option value="replace">replace</option>
+        </select>
+    </label>
+    <label for="checkbox-column">
+        Checkbox
+        <select id="checkbox-column">
+            <option value="dedicated" selected>dedicated column</option>
+            <option value="name">in the name column</option>
+            <option value="none">none</option>
+        </select>
+    </label>
+    <button type="button" id="clear">Clear selection</button>
+</div>
+
+<div id="container"></div>
+
+<p id="selection-output">Selected row ids: <span id="selected">(none)</span></p>

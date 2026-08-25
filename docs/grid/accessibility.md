@@ -29,6 +29,25 @@ Setting `accessibility.enabled: false` disables all Grid accessibility features,
 
 All `accessibility` options are optional. Use `announcements` to enable or disable specific live announcements while accessibility is enabled.
 
+## Row selection
+
+In Grid Pro, [selected rows](https://www.highcharts.com/docs/grid/rows/selection)
+carry `aria-selected`, and the table is marked `aria-multiselectable` when
+`rowSelection.mode` is `multiple`. Keyboard users toggle the focused row with
+`Space`; `Enter` stays reserved for cell editing.
+
+The selection checkbox label is localized with `lang.rowSelection.selectRow`:
+
+```js
+{
+    lang: {
+        rowSelection: {
+            selectRow: 'Select row'
+        }
+    }
+}
+```
+
 ## Row pinning announcements
 
 In Grid Pro, row pinning live announcements are enabled by default and can be
