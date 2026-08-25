@@ -51,6 +51,10 @@ Highcharts.navigator('container', {
 });
 ```
 
+The `chartOptions` option replaces the deprecated `chart` option, which is still
+supported but logs [error #32](https://www.highcharts.com/errors/32/). If both
+are set, `chartOptions` takes precedence.
+
 The `height` option applies to the navigator series area only. The scrollbar is
 a separate component with its own `scrollbar.height`, and it is rendered below
 the navigator, so the chart height must leave room for both. When the navigator
