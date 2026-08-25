@@ -20,22 +20,10 @@ The `Title` component accepts all [title API options](https://api.highcharts.com
 
 ## Formatting the title text
 
-The title is drawn as SVG text, and the SVG text renderer handles a small set of inline tags, so basic formatting needs no extra options:
-
-| Tag                  | Effect                                     |
-| -------------------- | ------------------------------------------ |
-| `<b>`, `<strong>`    | Bold                                       |
-| `<i>`, `<em>`        | Italic                                     |
-| `<br>`               | Line break                                 |
-| `<a href="...">`     | Link                                       |
-| `<span style="...">` | Applies its style to the text it encloses  |
-
-Pass the markup as a single string:
+The title is drawn as SVG text, so it supports the [subset of HTML that Highcharts renders in SVG](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting) without any extra options. Pass the markup as a single string:
 
 ```tsx
 <Title>{"Monthly Sales <b>2026</b>"}</Title>
 ```
-
-Tags outside this set are reduced to plain text, keeping any `style` attribute they carry.
 
 To use markup the SVG renderer does not handle, set [`useHTML`](https://api.highcharts.com/highcharts/title.useHTML). The title is then rendered as an HTML element layered over the chart rather than as SVG text, so set it only when you need that.

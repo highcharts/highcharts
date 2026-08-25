@@ -26,4 +26,4 @@ The subtitle is drawn as SVG text and takes the same inline tags as the title, p
 <Subtitle>{"Sales <i>overview</i>"}</Subtitle>
 ```
 
-See [formatting the title text](https://www.highcharts.com/docs/react/components/chart-elements/title#formatting-the-title-text) for the supported tags and for when to reach for `useHTML`.
+The tags it supports are the [subset of HTML that Highcharts renders in SVG](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting). As with the title, set [`useHTML`](https://api.highcharts.com/highcharts/subtitle.useHTML) for markup outside that subset, which renders the subtitle as an HTML element layered over the chart rather than as SVG text.

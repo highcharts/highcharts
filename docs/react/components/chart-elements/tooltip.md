@@ -40,4 +40,16 @@ When a tooltip format needs separate `headerFormat`, `pointFormat`, and `footerF
 />
 ```
 
-For structured tooltips where each section is well-formed JSX, use the `data-hc-option` attribute to bind child elements to `headerFormat`, `pointFormat`, and `footerFormat`. See the [Option binding](https://www.highcharts.com/docs/react/options-component-format#option-binding) documentation.
+For structured tooltips where each section is well-formed JSX, use the `data-hc-option` attribute to bind child elements to `headerFormat`, `pointFormat`, and `footerFormat`. See the [Option binding](https://www.highcharts.com/docs/react/options-component-format#option-binding) documentation. For a tooltip that sets a single section, a direct prop is simpler and is the recommended form; reach for `data-hc-option` children when binding two or more.
+
+## Rendering as SVG text
+
+`useHTML` defaults to `true` on this component so that JSX children can be rendered. When a tooltip uses only format strings, that default still applies, and it changes how the text is drawn: Highcharts renders the tooltip as HTML rather than as SVG text, so line breaks take their spacing from the browser's `line-height` instead of the SVG renderer's, which gives noticeably taller gaps.
+
+So if there are no JSX children, and the markup you use is handled by the SVG text renderer, you can turn the default off:
+
+```tsx
+<Tooltip useHTML={false} headerFormat="..." pointFormat="..." />
+```
+
+The tags available in that mode are the [subset of HTML that Highcharts renders in SVG](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting).
