@@ -44,7 +44,7 @@ For structured tooltips where each section is well-formed JSX, use the `data-hc-
 
 ## Rendering as SVG text
 
-`useHTML` defaults to `true` on this component so that JSX children can be rendered. When a tooltip uses only format strings, that default still applies, and it changes how the text is drawn: Highcharts renders the tooltip as HTML rather than as SVG text, so line breaks take their spacing from the browser's `line-height` instead of the SVG renderer's, which gives noticeably taller gaps.
+`useHTML` defaults to `true` on this component so that JSX children can be rendered. When a tooltip uses only format strings, that default still applies, and it changes how the text is drawn: Highcharts renders the tooltip as HTML rather than as SVG text, so line breaks take their spacing from the browser's `line-height` rather than the SVG renderer's.
 
 So if there are no JSX children, and the markup you use is handled by the SVG text renderer, you can turn the default off:
 

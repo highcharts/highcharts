@@ -66,7 +66,7 @@ import { VennSeries } from "@highcharts/react/series/Venn";
 
 ## Styled mode
 
-In styled mode Highcharts omits presentational SVG attributes and takes styling from CSS instead, so the component file has to import the Highcharts stylesheet alongside enabling the mode:
+In styled mode Highcharts omits presentational SVG attributes and takes styling from CSS instead, so the Highcharts stylesheet has to be imported alongside enabling the mode:
 
 ```tsx
 import { Chart } from "@highcharts/react";
@@ -81,6 +81,10 @@ function StyledChart() {
   );
 }
 ```
+
+The stylesheet is not scoped to styled mode. It sets properties such as `fill-opacity` and `stroke-width` on Highcharts class names, and CSS wins over the SVG presentation attributes that options produce, so it restyles every chart on the page once loaded. A chart that is not in styled mode loses any option that sets one of those properties: a `fillOpacity` of `0.3` renders at the stylesheet's `0.75`, and an x-axis `gridLineWidth` of `1` disappears.
+
+Where you import it does not change this. A stylesheet's rules apply document-wide once loaded, so the import location affects only when it loads, not what it affects. If every chart in your app uses styled mode, load it wherever suits your build.
 
 ## Bundler configuration matters
 
