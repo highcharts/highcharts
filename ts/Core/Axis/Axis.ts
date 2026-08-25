@@ -4487,12 +4487,6 @@ class Axis {
             }
         );
 
-        // Destroy each generated group for plotlines and plotbands
-        for (const plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
-            axis.plotLinesAndBandsGroups[plotGroup].destroy();
-            delete axis.plotLinesAndBandsGroups[plotGroup];
-        }
-
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (_val: any, key: string): void {
             if (axis.getKeepProps().indexOf(key) === -1) {
