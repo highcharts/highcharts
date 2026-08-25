@@ -255,4 +255,5 @@ addEvent(TreegraphPoint, 'click', function (): void {
  *
  * */
 
+/** @internal */
 export default TreegraphPoint;

@@ -415,4 +415,5 @@ class TreegraphLayout {
  *
  * */
 
+/** @internal */
 export default TreegraphLayout;

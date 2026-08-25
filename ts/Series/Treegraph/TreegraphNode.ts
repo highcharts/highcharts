@@ -228,6 +228,7 @@ class TreegraphNode extends TreemapNode {
  *
  * */
 
+/** @internal */
 interface TreegraphNode {
     point: TreegraphPoint;
     ancestor: TreegraphNode;

@@ -1904,6 +1904,7 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
@@ -1913,8 +1914,10 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof TreemapPoint;
+    /** @internal */
     NodeClass: typeof TreemapNode;
     trackerGroups: Array<string>;
+    /** @internal */
     utils: {
         recursive: typeof TreemapUtilities.recursive;
     };
@@ -1942,6 +1945,7 @@ ColorMapComposition.compose(TreemapSeries);
  *
  * */
 
+/** @internal */
 namespace TreemapSeries {
     export interface AreaObject {
         direction: number;
@@ -1962,6 +1966,7 @@ namespace TreemapSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treemap: typeof TreemapSeries;
@@ -1975,4 +1980,5 @@ SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
  *
  * */
 
+/** @internal */
 export default TreemapSeries;

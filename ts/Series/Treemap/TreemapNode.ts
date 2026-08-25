@@ -85,6 +85,7 @@ class TreemapNode {
  *
  * */
 
+/** @internal */
 interface TreemapNode {
     height: number;
     i: number;
@@ -102,6 +103,7 @@ interface TreemapNode {
  *
  * */
 
+/** @internal */
 namespace TreemapNode {
 
     /* *

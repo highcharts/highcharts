@@ -40,6 +40,7 @@ import { extend, isNumber } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class TreemapPoint extends ScatterPoint {
 
     /* *
@@ -152,6 +153,7 @@ class TreemapPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
@@ -166,4 +168,5 @@ extend(TreemapPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default TreemapPoint;
