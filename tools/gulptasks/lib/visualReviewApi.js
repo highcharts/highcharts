@@ -11,6 +11,8 @@ const DEFAULT_WORKFLOW = 'Visual tests';
 const MAX_ATTEMPTS = 3;
 const MIN_REQUEST_INTERVAL_MS = 350;
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+const MAX_BATCH_ARTIFACTS = 100;
+const MAX_BATCH_BYTES = 7 * 1024 * 1024;
 const ARTIFACTS = {
     reference: {
         contentType: 'image/svg+xml',
@@ -91,6 +93,47 @@ function readSampleArtifacts(sample, sampleRoot) {
     }
 
     return artifacts;
+}
+
+function buildArtifactBatches(samples) {
+    const batches = [];
+    let artifacts = [];
+    let batchBytes = 0;
+
+    function flushBatch() {
+        if (artifacts.length > 0) {
+            batches.push(artifacts);
+            artifacts = [];
+            batchBytes = 0;
+        }
+    }
+
+    for (const sample of samples) {
+        for (const role of Object.keys(ARTIFACTS)) {
+            const bytes = sample.artifacts[role];
+            if (bytes.length > MAX_BATCH_BYTES) {
+                throw new VisualReviewApiError(
+                    `${role} artifact for ${sample.name} exceeds the batch size limit`
+                );
+            }
+            if (
+                artifacts.length >= MAX_BATCH_ARTIFACTS ||
+                (artifacts.length > 0 &&
+                batchBytes + bytes.length > MAX_BATCH_BYTES)
+            ) {
+                flushBatch();
+            }
+            artifacts.push({
+                sampleName: sample.name,
+                role,
+                data: bytes.toString('base64')
+            });
+            batchBytes += bytes.length;
+        }
+    }
+    flushBatch();
+
+    return batches;
 }
 
 function buildSubmissionManifest(options) {
@@ -231,6 +274,7 @@ async function submitPullRequestVisualReview(options) {
         0;
     let uploadedArtifacts = 0;
     const requestState = { lastRequestAt: 0 };
+    const artifactBatches = buildArtifactBatches(samples);
 
     await request(submissionUrl, {
         method: 'PUT',
@@ -241,28 +285,26 @@ async function submitPullRequestVisualReview(options) {
         body: JSON.stringify(manifest)
     }, dependencies, requestState);
 
-    for (const sample of samples) {
-        for (const [role, definition] of Object.entries(ARTIFACTS)) {
-            const artifactUrl = `${submissionUrl}/artifacts/${role}?sampleName=${encodeURIComponent(sample.name)}`;
-            await request(artifactUrl, {
-                method: 'PUT',
-                headers: {
-                    ...headers,
-                    'content-type': definition.contentType
-                },
-                body: sample.artifacts[role]
-            }, dependencies, requestState);
-            if (onProgress) {
+    for (const artifacts of artifactBatches) {
+        await request(`${submissionUrl}/artifacts`, {
+            method: 'PUT',
+            headers: {
+                ...headers,
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({ artifacts })
+        }, dependencies, requestState);
+        if (onProgress) {
+            for (const artifact of artifacts) {
                 onProgress({
                     completed: ++uploadedArtifacts,
                     total: totalArtifacts,
-                    sampleName: sample.name,
-                    role
+                    sampleName: artifact.sampleName,
+                    role: artifact.role
                 });
             }
         }
     }
-
     await request(`${submissionUrl}/finalize`, {
         method: 'POST',
         headers,

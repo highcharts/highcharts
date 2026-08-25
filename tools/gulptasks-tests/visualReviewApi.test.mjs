@@ -11,7 +11,8 @@ import {
 
 const sha = 'a'.repeat(40);
 
-function response(status = 200, body = '', retryAfter) {
+function response(status = 200, body = '', ...retryAfterValues) {
+    const retryAfter = retryAfterValues[0];
     return {
         ok: status >= 200 && status < 300,
         status,
@@ -26,13 +27,25 @@ function response(status = 200, body = '', retryAfter) {
     };
 }
 
-async function createSampleRoot() {
+async function createSampleRoot(samplesToCreate) {
     const root = await mkdtemp(join(tmpdir(), 'highcharts-visual-review-'));
-    const samplePath = join(root, 'highcharts', 'demo', 'line-basic');
-    await mkdir(samplePath, { recursive: true });
-    await writeFile(join(samplePath, 'reference.svg'), '<svg/>');
-    await writeFile(join(samplePath, 'candidate.svg'), '<svg/>');
-    await writeFile(join(samplePath, 'diff.gif'), 'GIF89a');
+    await Promise.all(samplesToCreate.map(async sampleDefinition => {
+        const samplePath = join(root, ...sampleDefinition.name.split('/'));
+        const artifacts = sampleDefinition.artifacts || {};
+        await mkdir(samplePath, { recursive: true });
+        await writeFile(
+            join(samplePath, artifacts.reference || 'reference.svg'),
+            '<svg/>'
+        );
+        await writeFile(
+            join(samplePath, artifacts.candidate || 'candidate.svg'),
+            '<svg/>'
+        );
+        await writeFile(
+            join(samplePath, artifacts.difference || 'diff.gif'),
+            'GIF89a'
+        );
+    }));
     return root;
 }
 
@@ -46,6 +59,13 @@ function sample() {
             difference: 'diff.gif'
         }
     }];
+}
+
+function createSamples(count) {
+    return Array.from({ length: count }, (_, index) => ({
+        name: `highcharts/demo/line-basic-${index}`,
+        comparisonValue: index
+    }));
 }
 
 async function submitWithRetryAfter(retryAfter) {
@@ -116,7 +136,7 @@ test('builds the exact pull-request manifest', () => {
 });
 
 test('uploads manifest and all artifacts before finalizing', async () => {
-    const sampleRoot = await createSampleRoot();
+    const sampleRoot = await createSampleRoot(sample());
     const calls = [];
     const progress = [];
     try {
@@ -146,8 +166,11 @@ test('uploads manifest and all artifacts before finalizing', async () => {
             submissionId: '456:2',
             state: 'current'
         });
-        assert.equal(calls.length, 5);
-        assert.equal(calls[0].url, 'https://vrevs.highdev.dev/api/ingestion/submissions/456/attempts/2');
+        assert.equal(calls.length, 3);
+        assert.equal(
+            calls[0].url,
+            'https://vrevs.highdev.dev/api/ingestion/submissions/456/attempts/2'
+        );
         assert.deepEqual(JSON.parse(calls[0].options.body), {
             repository: 'highcharts/highcharts',
             workflow: 'Visual tests',
@@ -161,14 +184,36 @@ test('uploads manifest and all artifacts before finalizing', async () => {
                 artifactRoles: ['reference', 'candidate', 'difference']
             }]
         });
-        assert.match(calls[1].url, /artifacts\/reference\?sampleName=highcharts%2Fdemo%2Fline-basic/u);
-        assert.match(calls[2].url, /artifacts\/candidate\?sampleName=highcharts%2Fdemo%2Fline-basic/u);
-        assert.match(calls[3].url, /artifacts\/difference\?sampleName=highcharts%2Fdemo%2Fline-basic/u);
-        assert.equal(calls[1].options.headers['content-type'], 'image/svg+xml');
-        assert.equal(calls[2].options.headers['content-type'], 'image/svg+xml');
-        assert.equal(calls[3].options.headers['content-type'], 'image/gif');
-        assert.equal(calls[4].url, 'https://vrevs.highdev.dev/api/ingestion/submissions/456/attempts/2/finalize');
-        assert.equal(calls[4].options.method, 'POST');
+        assert.equal(
+            calls[1].url,
+            'https://vrevs.highdev.dev/api/ingestion/submissions/456/attempts/2/artifacts'
+        );
+        assert.equal(calls[1].options.method, 'PUT');
+        assert.equal(calls[1].options.headers['content-type'], 'application/json');
+        assert.deepEqual(JSON.parse(calls[1].options.body), {
+            artifacts: [
+                {
+                    sampleName: 'highcharts/demo/line-basic',
+                    role: 'reference',
+                    data: Buffer.from('<svg/>').toString('base64')
+                },
+                {
+                    sampleName: 'highcharts/demo/line-basic',
+                    role: 'candidate',
+                    data: Buffer.from('<svg/>').toString('base64')
+                },
+                {
+                    sampleName: 'highcharts/demo/line-basic',
+                    role: 'difference',
+                    data: Buffer.from('GIF89a').toString('base64')
+                }
+            ]
+        });
+        assert.equal(
+            calls[2].url,
+            'https://vrevs.highdev.dev/api/ingestion/submissions/456/attempts/2/finalize'
+        );
+        assert.equal(calls[2].options.method, 'POST');
         assert.equal(calls[0].options.headers.authorization, 'Bearer test-api-key');
         assert.deepEqual(progress, [
             {
@@ -190,6 +235,58 @@ test('uploads manifest and all artifacts before finalizing', async () => {
                 role: 'difference'
             }
         ]);
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+    }
+});
+
+test('splits artifact uploads into endpoint-sized batches', async () => {
+    const samples = createSamples(34);
+    const sampleRoot = await createSampleRoot(samples);
+    const calls = [];
+    const progress = [];
+    try {
+        await submitPullRequestVisualReview({
+            apiKey: 'test-api-key',
+            dependencies: {
+                fetchImpl: async (url, options) => {
+                    calls.push({ url, options });
+                    return response(
+                        options.method === 'PUT' && calls.length === 1 ? 201 : 200
+                    );
+                },
+                sleep: async () => {}
+            },
+            prNumber: 123,
+            prSha: sha,
+            productVersion: '13.0.1',
+            runAttempt: '1',
+            runId: '456',
+            runNumber: '789',
+            sampleRoot,
+            samples,
+            onProgress: event => progress.push(event),
+            testReport: {}
+        });
+
+        assert.equal(calls.length, 4);
+        const batchCalls = calls.slice(1, -1);
+        assert.deepEqual(
+            batchCalls.map(call => JSON.parse(call.options.body).artifacts.length),
+            [100, 2]
+        );
+        const batchUrl =
+            'https://vrevs.highsoft.com/api/ingestion/submissions/456/attempts/1/artifacts';
+        assert.ok(batchCalls.every(call => call.url === batchUrl &&
+            call.options.headers['content-type'] === 'application/json'));
+        const artifacts = batchCalls.flatMap(call =>
+            JSON.parse(call.options.body).artifacts);
+        assert.equal(artifacts.length, 102);
+        assert.equal(artifacts[0].sampleName, samples[0].name);
+        assert.equal(artifacts[101].sampleName, samples[33].name);
+        assert.equal(artifacts[101].role, 'difference');
+        assert.equal(progress.length, 102);
+        assert.equal(progress[101].completed, 102);
     } finally {
         await rm(sampleRoot, { recursive: true, force: true });
     }
@@ -221,7 +318,7 @@ test('finalizes empty submissions', async () => {
 });
 
 test('retries transient responses and does not retry client errors', async () => {
-    const sampleRoot = await createSampleRoot();
+    const sampleRoot = await createSampleRoot(sample());
     let attempts = 0;
     try {
         await submitPullRequestVisualReview({
@@ -243,7 +340,7 @@ test('retries transient responses and does not retry client errors', async () =>
             samples: sample(),
             testReport: {}
         });
-        assert.equal(attempts, 6);
+        assert.equal(attempts, 4);
     } finally {
         await rm(sampleRoot, { recursive: true, force: true });
     }
