@@ -1247,6 +1247,10 @@ class Axis {
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
             }
+
+            if (Math.abs(returnValue) < 1e-9) {
+                returnValue = 0;
+            }
         }
 
         return returnValue;
