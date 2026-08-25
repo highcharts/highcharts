@@ -367,9 +367,6 @@ class Axis {
     public isDirty?: boolean;
 
     /** @internal */
-    public isLinked!: boolean;
-
-    /** @internal */
     public isOrdinal?: boolean;
 
     /** @internal */
@@ -794,9 +791,6 @@ class Axis {
 
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
-
-        // Flag, if axis is linked to another axis
-        axis.isLinked = defined(options.linkedTo);
 
         /**
          * List of major ticks mapped by position on axis.
@@ -2468,7 +2462,7 @@ class Axis {
         // Reset min/max or remove extremes based on start/end on tick
         this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
         this.trimTicks(tickPositions, startOnTick, endOnTick);
-        if (!this.isLinked && isNumber(this.min) && isNumber(this.max)) {
+        if (!this.linkedParent && isNumber(this.min) && isNumber(this.max)) {
 
             // Subtract half a unit (#2619, #2846, #2515, #3390), but not in
             // case of multiple ticks (#6897)
@@ -2520,7 +2514,7 @@ class Axis {
         fireEvent(this, 'trimTicks');
 
         if (
-            !this.isLinked ||
+            !this.linkedParent ||
             // Linked non-grid axes should trim ticks, #21743.
             // Grid axis has custom handling of ticks.
             !this.grid
@@ -2925,7 +2919,7 @@ class Axis {
             axes = chart[coll] || [],
             index = axes.indexOf(axis),
             linkedParent = axis.getLinkedParent();
-        axis.isLinked = !!linkedParent;
+
         if (linkedParent && index > -1 && axes.indexOf(linkedParent) > index) {
             linkedParent.setScale();
         }
@@ -2954,7 +2948,7 @@ class Axis {
             isDirtyAxisLength ||
             isDirtyData ||
             isXAxisDirty ||
-            axis.isLinked ||
+            axis.linkedParent ||
             axis.forceRedraw ||
             axis.userMin !== axis.old?.userMin ||
             axis.userMax !== axis.old?.userMax ||
@@ -3841,7 +3835,7 @@ class Axis {
 
         axis.createGroups();
 
-        if (hasData || axis.isLinked) {
+        if (hasData || axis.linkedParent) {
 
             // Shuffle existing category ticks
             axis.shuffleTicks();
@@ -4188,12 +4182,11 @@ class Axis {
      */
     public renderTick(pos: number, i: number, slideIn?: boolean): void {
         const axis = this,
-            isLinked = axis.isLinked,
             ticks = axis.ticks;
 
         // Linked axes need an extra check to find out if
         if (
-            !isLinked ||
+            !axis.linkedParent ||
             (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
             axis.grid?.isColumn
         ) {
@@ -4228,7 +4221,6 @@ class Axis {
             log = axis.logarithmic,
             renderer = chart.renderer,
             options = axis.options,
-            isLinked = axis.isLinked,
             tickPositions = axis.tickPositions,
             axisTitle = axis.axisTitle,
             ticks = axis.ticks,
@@ -4272,7 +4264,7 @@ class Axis {
         }
 
         // If the series has data draw the ticks. Else only the line and title
-        if (axis.hasData() || isLinked) {
+        if (axis.hasData() || axis.linkedParent) {
 
             const slideInTicks = axis.chart.hasRendered &&
                 axis.old && isNumber(axis.old.min);
