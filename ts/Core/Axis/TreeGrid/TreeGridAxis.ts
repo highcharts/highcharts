@@ -782,7 +782,7 @@ function wrapSetTickInterval(
     const axis = this,
         options = axis.options,
         time = axis.chart.time,
-        linkedParent = axis.getLinkedParent(),
+        linkedParent = axis.linkedParent,
         isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {
