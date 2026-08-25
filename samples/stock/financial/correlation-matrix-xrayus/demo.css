@@ -1,5 +1,6 @@
 body {
     font-family: sans-serif;
+    color: var(--highcharts-neutral-color-100, #000);
 }
 
 #container {
@@ -21,7 +22,7 @@ body {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    border: 2px solid #e1e1e1;
+    border: 2px solid var(--highcharts-neutral-color-20, #ccc);
     border-radius: 5px;
     gap: 10px;
     padding: 2px;
@@ -30,7 +31,8 @@ body {
 .tab {
     padding: 6px 10px;
     border-radius: 5px;
-    background-color: white;
+    background-color: var(--highcharts-neutral-color-5, #f2f2f2);
+    color: var(--highcharts-neutral-color-100, #000);
     border: none;
     cursor: pointer;
     font-size: 12px;
@@ -38,11 +40,11 @@ body {
 }
 
 .tab:hover {
-    background-color: #f2f1f4;
+    background-color: var(--highcharts-neutral-color-10, #e6e6e6);
 }
 
 .tab.active {
     background-color: #ea293c;
-    color: white;
+    color: #fff;
     border: none;
 }

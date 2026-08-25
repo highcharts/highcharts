@@ -157,7 +157,22 @@ async function renderChart() {
                 enabled: true,
                 format: '{point.value:.2f}'
             }
-        }]
+        }],
+        responsive: {
+            rules: [{
+                chartOptions: {
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        layout: 'horizontal',
+                        y: 0
+                    }
+                },
+                condition: {
+                    maxWidth: 500
+                }
+            }]
+        }
     });
 
     function updateChart(timePeriod) {
