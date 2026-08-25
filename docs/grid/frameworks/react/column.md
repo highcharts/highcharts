@@ -10,10 +10,6 @@ flattened, so `sortingEnabled` becomes `sorting.enabled` and `cellFormat`
 becomes `cells.format`. The option tree is in
 [Columns overview](https://www.highcharts.com/docs/grid/columns/index).
 
-`Header` sets column order and grouping. See
-[Header](https://www.highcharts.com/docs/grid/frameworks/react/components#header)
-in Components.
-
 ```tsx
 import {
     Grid,
