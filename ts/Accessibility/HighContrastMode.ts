@@ -318,6 +318,11 @@ function restoreUserOptions(
     collections?: Array<string>
 ): void {
     objectEach(source, function (value, key): void {
+        // Prototype pollution (#14883)
+        if (key === '__proto__' || key === 'constructor') {
+            return;
+        }
+
         const targetValue = target[key],
             // Collections are matched item by item, so that the chart and its
             // axes and series keep sharing the same user options objects.
@@ -685,8 +690,9 @@ function updateHighContrastMode(
  * the user options the update is merged into are the original ones. The theme
  * is applied again from the accessibility update that follows the redraw.
  *
- * The rollback runs a nested `chart.update`, which other listeners on the
- * chart `update` event can tell apart by `chart.highContrastState.applying`.
+ * The rollback runs a `chart.update` of its own, which runs to completion
+ * before the update that triggered it starts. Other listeners on the chart
+ * `update` event can tell it apart by `chart.highContrastState.applying`.
  *
  * @private
  * @param {Highcharts.AccessibilityChart} chart The chart being updated.

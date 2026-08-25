@@ -483,10 +483,6 @@ namespace Accessibility {
         this: ChartComposition,
         e: { options: Options }
     ): void {
-        // Roll back the high contrast theme before the new options are merged
-        // in, so that it does not swallow them (#15567)
-        whcm.onChartUpdate(this, e.options);
-
         // Merge new options
         const newOptions = e.options.accessibility;
         if (newOptions) {
@@ -506,6 +502,26 @@ namespace Accessibility {
 
         // Mark dirty for update
         this.a11yDirty = true;
+    }
+
+    /**
+     * Roll back the high contrast theme before a chart update, so that the new
+     * options are merged into the original ones rather than into the theme.
+     * The theme is applied again from the accessibility update that follows
+     * the redraw.
+     *
+     * The rollback is done from a wrap rather than from the `update` event, so
+     * that its own `chart.update` runs to completion before the update that
+     * triggered it starts, instead of interleaving with it (#15567).
+     * @private
+     */
+    function chartUpdateWrap(
+        this: ChartComposition,
+        proceed: Function,
+        ...args: Parameters<Chart['update']>
+    ): void {
+        whcm.onChartUpdate(this, args[0]);
+        proceed.apply(this, args);
     }
 
     /**
@@ -605,6 +621,7 @@ namespace Accessibility {
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
 
             wrap(AxisClass.prototype, 'update', axisOnUpdate);
+            wrap(chartProto, 'update', chartUpdateWrap);
 
             addEvent(
                 ChartClass as typeof ChartComposition,

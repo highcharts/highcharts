@@ -930,6 +930,72 @@ QUnit.test('High contrast theme should not leak into user options', function (
     });
 });
 
+QUnit.test('High contrast rollback should not nest chart updates', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            chart: {
+                backgroundColor: '#123456'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        forcedColors.set(true);
+
+        let depth = 0,
+            maxDepth = 0;
+
+        // Ahead of the accessibility module's own listener, the way the
+        // listeners of the modules composed before it are
+        const removeUpdate = Highcharts.addEvent(
+                chart,
+                'update',
+                function () {
+                    maxDepth = Math.max(maxDepth, ++depth);
+                },
+                {
+                    order: -1
+                }
+            ),
+            removeAfterUpdate = Highcharts.addEvent(
+                chart,
+                'afterUpdate',
+                function () {
+                    depth--;
+                }
+            );
+
+        try {
+            // Without a redraw, the only nested update in play is the theme
+            // rollback. The theme is re-applied from the next render.
+            chart.update({
+                chart: {
+                    backgroundColor: '#654321'
+                }
+            }, false);
+        } finally {
+            removeUpdate();
+            removeAfterUpdate();
+        }
+
+        assert.strictEqual(
+            maxDepth,
+            1,
+            'The rollback update should run before the update that triggered ' +
+                'it, not inside it'
+        );
+
+        assert.strictEqual(
+            chart.options.chart.backgroundColor,
+            '#654321',
+            'The update should still be applied on top of the rollback'
+        );
+    });
+});
+
 QUnit.test('pointNavigationThreshold', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
