@@ -10,64 +10,6 @@ body {
     padding: 24px;
 }
 
-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-h1 {
-    font-size: 23px;
-    color: #1e1e1e;
-    font-weight: 600;
-}
-
-.navbar {
-    flex-shrink: 1;
-    min-width: 0;
-}
-
-.navbar ul {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border: 1px solid #dcdbd2;
-    background-color: #dcdbd2;
-    border-radius: 38px;
-    height: 38px;
-    list-style: none;
-    padding: 0;
-    color: #5a5d5c;
-    overflow: hidden;
-}
-
-.navbar li {
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.navbar li.selected {
-    color: #000;
-    background-color: #fff;
-}
-
-.dropdown-mock {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    border: 1px solid #dcdbd2;
-    font-size: 16px;
-    font-weight: 500;
-    height: 38px;
-    border-radius: 38px;
-    padding: 0 16px;
-    background-color: #fff;
-}
-
 .chart-row {
     display: flex;
     flex-direction: row;
@@ -102,7 +44,6 @@ h1 {
     flex: 1 0 0;
 }
 
-.holdings-container #current-holdings-chart,
 .holdings-container #current-holdings-chart {
     min-width: 0;
     flex: 1;
@@ -158,7 +99,7 @@ h1 {
 
 .loading-spinner {
     border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid white;
+    border-top: 4px solid #fff;
     border-radius: 50%;
     width: 40px;
     height: 40px;
