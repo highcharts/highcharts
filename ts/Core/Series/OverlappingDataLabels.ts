@@ -25,6 +25,7 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type Point from '../Series/Point';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
+import { stop } from '../Animation/AnimationUtilities.js';
 import Chart from '../Chart/Chart.js';
 import GeometryUtilities from '../Geometry/GeometryUtilities.js';
 const { pointInPolygon } = GeometryUtilities;
@@ -252,38 +253,41 @@ export function composeOverlappingDataLabels(
  * Whether label is affected
  */
 function hideOrShow(label: SVGElement, chart: Chart): boolean {
-    let complete: (Function|undefined),
-        newOpacity: number,
-        isLabelAffected = false;
+    let isLabelAffected = false;
 
     if (label) {
-        newOpacity = label.newOpacity;
+        const newOpacity = label.newOpacity,
+            isDataLabel = label.hasClass('highcharts-data-label');
+
+        // For tick labels, we need to stop running animations otherwise they
+        // may continue to run after we set the new opacity
+        if (!isDataLabel) {
+            stop(label, 'opacity');
+        }
 
         if (label.oldOpacity !== newOpacity) {
 
             // Toggle data labels
-            if (label.hasClass('highcharts-data-label')) {
+            if (isDataLabel) {
 
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
                 label[
                     newOpacity ? 'removeClass' : 'addClass'
                 ]('highcharts-data-label-hidden');
-                complete = function (): void {
-                    if (!chart.styledMode) {
-                        label.css({
-                            pointerEvents: newOpacity ? 'auto' : 'none'
-                        });
-                    }
-                };
-
                 isLabelAffected = true;
 
                 // Animate or set the opacity
                 label[label.isOld || label.placed ? 'animate' : 'attr'](
                     { opacity: newOpacity },
                     void 0,
-                    complete
+                    (): void => {
+                        if (!chart.styledMode) {
+                            label.css({
+                                pointerEvents: newOpacity ? 'auto' : 'none'
+                            });
+                        }
+                    }
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
 

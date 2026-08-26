@@ -458,7 +458,6 @@ class Tick {
             }
 
             label.textPxLength ??= label.getBBox().width;
-            label.opacity = 1; // Reset for overlap logic
 
             // Apply the white-space setting after we read the full text width
             if (!styledMode && whiteSpace) {
