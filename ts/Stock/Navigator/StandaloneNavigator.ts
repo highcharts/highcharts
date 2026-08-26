@@ -51,8 +51,8 @@ interface BoundAxis {
  * */
 
 /**
- * Support for the deprecated `chart` option, renamed to `chartOptions` in
- * v13.1.0. The new option takes precedence. #24715
+ * Support for the deprecated `chart` option, renamed to `chartOptions`.
+ * The new option takes precedence. #24715
  *
  * @internal
  */

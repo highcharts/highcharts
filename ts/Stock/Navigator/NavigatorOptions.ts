@@ -430,7 +430,7 @@ export interface StandaloneNavigatorOptions extends BaseNavigatorOptions {
     /**
      * Deprecated. Use [chartOptions](#chartOptions) instead.
      *
-     * @deprecated 13.1.0
+     * @deprecated next
      */
     chart?: Partial<Options>;
 
@@ -440,7 +440,7 @@ export interface StandaloneNavigatorOptions extends BaseNavigatorOptions {
      * component, while the `height` option sets the height of the navigator
      * itself.
      *
-     * @since 13.1.0
+     * @since next
      */
     chartOptions?: Partial<Options>;
 }
