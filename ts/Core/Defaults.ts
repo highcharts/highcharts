@@ -1464,6 +1464,29 @@ const defaultOptions: DefaultOptions = {
              */
 
             /**
+             * The direction to page the legend in. By default the items wrap
+             * onto new lines, paged with up and down arrows below the legend.
+             *
+             * With `horizontal`, the items are kept on a single line and paged
+             * with left and right arrows beside them. This requires
+             * [legend.layout](#legend.layout) to be `horizontal`, and is
+             * ignored in right-to-left legends. Set
+             * [legend.maxWidth](#legend.maxWidth) or
+             * [legend.width](#legend.width) to page within a narrower box than
+             * the chart. Disabling the navigation makes the items wrap as
+             * usual, so that static exports keep them all visible.
+             *
+             * @sample {highcharts} highcharts/legend/navigation-horizontal/
+             *         Horizontal legend paging
+             *
+             * @type       {string}
+             * @default    vertical
+             * @validvalue ["horizontal", "vertical"]
+             * @since      13.1.0
+             * @apioption  legend.navigation.direction
+             */
+
+            /**
              * Whether to enable the legend navigation. In most cases, disabling
              * the navigation results in an unwanted overflow.
              *

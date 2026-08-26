@@ -252,12 +252,19 @@ class LegendComponent extends AccessibilityComponent {
 
                 if (hasPages) {
                     const itemPage = legendItem.pageIx || 0;
-                    const y = legendItem.y || 0;
-                    const h = legendItem.label ?
-                        Math.round(legendItem.label.getBBox().height) :
-                        0;
-                    hide = y + h - legend.pages[itemPage] > clipHeight ||
-                        itemPage !== curPage - 1;
+
+                    if (legend.horizontalNav) {
+                        // Pages are clipped to whole items, so the page an item
+                        // was assigned to is all that matters
+                        hide = itemPage !== curPage - 1;
+                    } else {
+                        const y = legendItem.y || 0;
+                        const h = legendItem.label ?
+                            Math.round(legendItem.label.getBBox().height) :
+                            0;
+                        hide = y + h - legend.pages[itemPage] > clipHeight ||
+                            itemPage !== curPage - 1;
+                    }
                 }
 
                 if (hide) {
