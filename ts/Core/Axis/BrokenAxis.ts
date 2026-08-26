@@ -27,13 +27,16 @@ import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
+import H from '../Globals.js';
+const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import {
     addEvent,
     find,
     fireEvent,
     isArray,
-    isNumber
+    isNumber,
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -248,8 +251,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (!AxisClass.keepProps.includes('brokenAxis')) {
-            AxisClass.keepProps.push('brokenAxis');
+        if (pushUnique(composed, 'Axis.Broken')) {
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);

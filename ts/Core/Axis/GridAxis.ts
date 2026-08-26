@@ -37,7 +37,7 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const { dateFormats } = H;
+const { composed, dateFormats } = H;
 import Tick from './Tick.js';
 import {
     defined,
@@ -48,7 +48,8 @@ import {
     isObject as isObjectUtils,
     merge,
     wrap,
-    addEvent
+    addEvent,
+    pushUnique
 } from '../../Shared/Utilities.js';
 import { timeUnits } from '../Utilities.js';
 
@@ -249,9 +250,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (!AxisClass.keepProps.includes('grid')) {
-        AxisClass.keepProps.push('grid');
-
+    if (pushUnique(composed, 'Axis.Grid')) {
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);

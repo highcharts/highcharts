@@ -45,6 +45,8 @@ import type {
 
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
@@ -56,6 +58,7 @@ import {
     isObject,
     isString,
     merge,
+    pushUnique,
     removeEvent,
     wrap
 } from '../../../Shared/Utilities.js';
@@ -877,10 +880,8 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (!AxisClass.keepProps.includes('treeGrid')) {
+        if (pushUnique(composed, 'Axis.TreeGrid')) {
             const axisProps = AxisClass.prototype;
-
-            AxisClass.keepProps.push('treeGrid');
 
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);

@@ -189,22 +189,6 @@ class Axis {
      *
      * */
 
-    /**
-     * Properties to survive after destroy, needed for Axis.update (#4317,
-     * #5773, #5881).
-     * @internal
-     */
-    public static keepProps = [
-        'coll',
-        'extKey',
-        'hcEvents',
-        'len',
-        'names',
-        'series',
-        'userMax',
-        'userMin'
-    ];
-
     /* *
      *
      *  Constructors
@@ -380,9 +364,6 @@ class Axis {
 
     /** @internal */
     public isZAxis?: boolean;
-
-    /** @internal */
-    public keepProps?: Array<string>;
 
     /** @internal */
     public labelAlign?: AlignValue;
@@ -4441,17 +4422,6 @@ class Axis {
     }
 
     /**
-     * Returns an array of axis properties, that should be untouched during
-     * reinitialization.
-     *
-     * @internal
-     * @function Highcharts.Axis#getKeepProps
-     */
-    public getKeepProps(): Array<string> {
-        return (this.keepProps || Axis.keepProps);
-    }
-
-    /**
      * Destroys an Axis instance. See {@link Axis#remove} for the API endpoint
      * to fully remove the axis.
      *
@@ -4485,10 +4455,8 @@ class Axis {
         );
 
         // Delete all properties and fall back to the prototype.
-        objectEach(this, (_val: any, key: string): void => {
-            if (this.getKeepProps().indexOf(key) === -1) {
-                delete (this as any)[key];
-            }
+        objectEach(this, (_val: any, key: keyof this): void => {
+            delete this[key];
         });
     }
 

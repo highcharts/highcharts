@@ -131,11 +131,6 @@ class ColorAxis extends Axis implements ColorAxisBase {
     /** @internal */
     public static defaultLegendLength: number = 200;
 
-    /** @internal */
-    public static keepProps: Array<string> = [
-        'legendItem'
-    ];
-
     /* *
      *
      *  Static Functions
@@ -1021,15 +1016,6 @@ namespace ColorAxis {
     }
 
 }
-
-/* *
- *
- *  Registry
- *
- * */
-
-// Properties to preserve after destroy, for Axis.update (#5881, #6025).
-Array.prototype.push.apply(Axis.keepProps, ColorAxis.keepProps);
 
 /* *
  *

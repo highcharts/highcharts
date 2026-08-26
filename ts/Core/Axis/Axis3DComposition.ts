@@ -31,7 +31,7 @@ import Axis3DDefaults from './Axis3DDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const { deg2rad } = H;
+const { composed, deg2rad } = H;
 import Math3D from '../Math3D.js';
 const {
     perspective,
@@ -39,7 +39,7 @@ const {
     shapeArea
 } = Math3D;
 import Tick3D from './Tick3DComposition.js';
-import { addEvent, merge, wrap } from '../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -405,10 +405,8 @@ class Axis3DAdditions {
 
         Tick3D.compose(TickClass);
 
-        if (!AxisClass.keepProps.includes('axis3D')) {
+        if (pushUnique(composed, 'Axis.3D')) {
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
-
-            AxisClass.keepProps.push('axis3D');
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);

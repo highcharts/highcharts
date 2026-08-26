@@ -29,7 +29,9 @@ import AxisResizer from './AxisResizer.js';
 import AxisResizerDefaults from './AxisResizerDefaults.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { addEvent, merge, wrap } from '../../Shared/Utilities.js';
+import H from '../../Core/Globals.js';
+const { composed } = H;
+import { addEvent, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -107,11 +109,8 @@ function compose(
     PointerClass: typeof Pointer
 ): void {
 
-    if (!AxisClass.keepProps.includes('resizer')) {
+    if (pushUnique(composed, 'Axis.DragPanes')) {
         merge(true, defaultOptions.yAxis, AxisResizerDefaults);
-
-        // Keep resizer reference on axis update
-        AxisClass.keepProps.push('resizer');
 
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
         addEvent(AxisClass, 'destroy', onAxisDestroy);
