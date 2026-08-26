@@ -140,7 +140,7 @@ export function composeArrowSymbols(
     const symbols = SVGRendererClass.prototype.symbols;
 
     symbols.arrow = arrow;
-    symbols['arrow-filled'] = symbols['triangle-left'];
+    symbols['arrow-filled'] = Symbols['triangle-left'];
     symbols['arrow-filled-half'] = triangleLeftHalf;
     symbols['arrow-half'] = arrowHalf;
     symbols['triangle-left-half'] = triangleLeftHalf;

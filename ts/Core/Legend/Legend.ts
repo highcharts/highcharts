@@ -984,7 +984,7 @@ class Legend {
         const options = this.options,
             padding = this.padding,
             horizontal = options.layout === 'horizontal',
-            itemHeight = item.itemHeight,
+            itemHeight = item.itemHeight || 0,
             itemMarginBottom = this.itemMarginBottom,
             itemMarginTop = this.itemMarginTop,
             itemDistance = horizontal ? (options.itemDistance ?? 20) : 0,
@@ -995,14 +995,14 @@ class Legend {
                     this.totalItemWidth > maxLegendWidth
             ) ?
                 this.maxItemWidth :
-                item.itemWidth,
+                (item.itemWidth || 0),
             legendItem = item.legendItem || {};
 
         // If the item exceeds the width, start a new line
         if (
             horizontal &&
             wrap &&
-            this.itemX - padding + (itemWidth as any) > maxLegendWidth
+            this.itemX - padding + itemWidth > maxLegendWidth
         ) {
             this.itemX = padding;
             if (this.lastLineHeight) { // Not for the first line (#10167)
@@ -1018,7 +1018,7 @@ class Legend {
         // Set the edge positions
         this.lastItemY = itemMarginTop + this.itemY + itemMarginBottom;
         this.lastLineHeight = Math.max( // #915
-            itemHeight as any,
+            itemHeight,
             this.lastLineHeight
         );
 
@@ -1028,12 +1028,11 @@ class Legend {
 
         // Advance
         if (horizontal) {
-            this.itemX += (itemWidth as any);
+            this.itemX += itemWidth;
 
         } else {
-            this.itemY +=
-                itemMarginTop + (itemHeight as any) + itemMarginBottom;
-            this.lastLineHeight = itemHeight as any;
+            this.itemY += itemMarginTop + itemHeight + itemMarginBottom;
+            this.lastLineHeight = itemHeight;
         }
 
         // The width of the widest item
@@ -1043,7 +1042,7 @@ class Legend {
                     // Decrease by itemDistance only when no checkbox #4853
                     0 :
                     itemDistance
-                ) : itemWidth as any
+                ) : itemWidth
             ) + padding,
             this.offsetWidth
         );
@@ -1258,7 +1257,7 @@ class Legend {
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
-            options.width as any,
+            options.width || 0,
             chartSpacingBoxWidth - padding
         );
 
@@ -1482,14 +1481,15 @@ class Legend {
             animation = (navOptions.animation ?? true),
             arrowSize = navOptions.arrowSize || 12,
             horizontal = this.horizontalNav,
-            // Room for the two arrows and the pager between them
+            // Room for the two arrows and the pager between them. The pager
+            // width is unknown until the pages are counted, so it is estimated.
             navSize = 2 * arrowSize + 32,
             itemDistance = options.itemDistance ?? 20,
             pages = this.pages,
             allItems = this.allItems,
             clipToSize = function (size?: number): void {
                 if (typeof size === 'number') {
-                    (clipRect as any).attr(
+                    clipRect?.attr(
                         horizontal ? { width: size } : { height: size }
                     );
                 } else if (clipRect) { // Reset (#5912)
@@ -1497,18 +1497,21 @@ class Legend {
                     legend.contentGroup.clip();
                 }
             },
-            addTracker = function (key: string): SVGElement {
-                (legend as any)[key] = renderer
+            addTracker = function (
+                key: ('downTracker'|'upTracker')
+            ): SVGElement {
+                const tracker = legend[key] = renderer
                     .circle(0, 0, arrowSize * 1.3)
                     .translate(arrowSize / 2, arrowSize / 2)
                     .add(nav);
+
                 if (!chart.styledMode) {
-                    (legend as any)[key].attr('fill', 'rgba(0,0,0,0.0001)');
+                    tracker.attr('fill', 'rgba(0,0,0,0.0001)');
                 }
-                return (legend as any)[key];
+                return tracker;
             };
         let clipSize: number,
-            last: number,
+            lastPos: number,
             legendItem: LegendItemObject|undefined,
             lastLegendItem: LegendItemObject|undefined,
             spaceHeight = (
@@ -1565,24 +1568,24 @@ class Legend {
             allItems.forEach((item, i): void => {
                 legendItem = item.legendItem || {};
                 const pos = (horizontal ? legendItem.x : legendItem.y) || 0,
-                    size = horizontal ?
+                    extent = horizontal ?
                         (item.itemWidth || 0) - itemDistance :
                         Math.round(
-                            (legendItem as any).label.getBBox().height
+                            legendItem?.label?.getBBox().height || 0
                         );
                 let len = pages.length;
 
                 if (
                     !len || (pos - pages[len - 1] > clipSize &&
-                        (last || pos) !== pages[len - 1])
+                        (lastPos || pos) !== pages[len - 1])
                 ) {
-                    pages.push(last || pos);
+                    pages.push(lastPos || pos);
                     len++;
                 }
 
                 // Keep track of which page each item is on
                 legendItem.pageIx = len - 1;
-                if (last && lastLegendItem) {
+                if (lastPos && lastLegendItem) {
                     lastLegendItem.pageIx = len - 1;
                 }
 
@@ -1591,15 +1594,15 @@ class Legend {
                     // Check the last item
                     i === allItems.length - 1 &&
                     // If adding next page is needed (#18768)
-                    pos + size - pages[len - 1] > clipSize &&
+                    pos + extent - pages[len - 1] > clipSize &&
                     pos > pages[len - 1]
                 ) {
                     pages.push(pos);
                     legendItem.pageIx = len;
                 }
 
-                if (pos !== last) {
-                    last = pos;
+                if (pos !== lastPos) {
+                    lastPos = pos;
                 }
                 lastLegendItem = legendItem;
             });
@@ -1717,7 +1720,7 @@ class Legend {
                 setAnimation(animation, chart);
             }
 
-            (this.nav as any).attr({
+            this.nav?.attr({
                 // Beside the items when paging horizontally, below them
                 // otherwise. Horizontally the pager text, drawn at y 10, lines
                 // up with the item labels.
@@ -1728,52 +1731,43 @@ class Legend {
                     clipSize + padding + 7 + this.titleHeight,
                 visibility: 'inherit'
             });
-            [this.up, this.upTracker].forEach(function (elem): void {
-                (elem as any).attr({
+            [this.up, this.upTracker].forEach((elem): void => {
+                elem?.attr({
                     'class': currentPage === 1 ?
                         'highcharts-legend-nav-inactive' :
                         'highcharts-legend-nav-active'
                 });
             });
-            (pager as any).attr({
+            pager?.attr({
                 text: currentPage + '/' + pageCount
             });
-            [this.down, this.downTracker].forEach(function (
-                this: Legend,
-                elem: (SVGElement|undefined)
-            ): void {
-                (elem as any).attr({
+            [this.down, this.downTracker].forEach((elem): void => {
+                elem?.attr({
                     // Adjust to text width
-                    x: 18 + (this.pager as any).getBBox().width,
+                    x: 18 + (pager?.getBBox().width || 0),
                     'class': currentPage === pageCount ?
                         'highcharts-legend-nav-inactive' :
                         'highcharts-legend-nav-active'
                 });
-            }, this);
+            });
 
             if (!chart.styledMode) {
-                (this.up as any)
-                    .attr({
-                        fill: currentPage === 1 ?
-                            (navOptions as any).inactiveColor :
-                            (navOptions as any).activeColor
-                    });
-                (this.upTracker as any)
-                    .css({
-                        cursor: currentPage === 1 ? 'default' : 'pointer'
-                    });
-                (this.down as any)
-                    .attr({
-                        fill: currentPage === pageCount ?
-                            (navOptions as any).inactiveColor :
-                            (navOptions as any).activeColor
-                    });
-                (this.downTracker as any)
-                    .css({
-                        cursor: currentPage === pageCount ?
-                            'default' :
-                            'pointer'
-                    });
+                this.up?.attr({
+                    fill: currentPage === 1 ?
+                        navOptions.inactiveColor :
+                        navOptions.activeColor
+                });
+                this.upTracker?.css({
+                    cursor: currentPage === 1 ? 'default' : 'pointer'
+                });
+                this.down?.attr({
+                    fill: currentPage === pageCount ?
+                        navOptions.inactiveColor :
+                        navOptions.activeColor
+                });
+                this.downTracker?.css({
+                    cursor: currentPage === pageCount ? 'default' : 'pointer'
+                });
             }
 
             if (horizontal) {
