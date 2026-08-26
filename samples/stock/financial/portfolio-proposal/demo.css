@@ -24,6 +24,20 @@ body {
     flex: none;
 }
 
+#stress-chart,
+#growth-chart,
+#risk-return-chart,
+#current-holdings-chart,
+#proposed-holdings-chart,
+#portfolio-chart,
+#map-chart {
+    min-height: 400px;
+}
+
+#portfolio-grid {
+    min-height: 400px !important;
+}
+
 .chart-container {
     flex: 1;
     background: #fff;
@@ -113,5 +127,23 @@ body {
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        padding: 16px;
+    }
+
+    .chart-row {
+        flex-direction: column;
+    }
+
+    .chart-container.risk-return {
+        flex-direction: column;
+    }
+
+    .holdings-container {
+        flex-direction: column;
     }
 }

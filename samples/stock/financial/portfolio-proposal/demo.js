@@ -43,7 +43,7 @@ const predefinedHoldings = [
             0.341273,
             1.482696
         ],
-        health: 0 - 0, // No dividend
+        health: 0, // No dividend
         rating: 5
     },
     // Bonds
@@ -66,7 +66,7 @@ const predefinedHoldings = [
             10.441094,
             14.269209
         ],
-        health: 0 - 0, // No dividend
+        health: 0, // No dividend
         rating: 4
     },
     {
@@ -88,7 +88,7 @@ const predefinedHoldings = [
             7.843792,
             -2.295266
         ],
-        health: 0 - 0, // No dividend
+        health: 0, // No dividend
         rating: 4
     },
     // Stocks
@@ -111,7 +111,7 @@ const predefinedHoldings = [
             -17.20206
         ],
         // Health is calculated as DividendGrowth 1y vs 3y
-        health: 1 - 0.043 / 0.049,
+        health: 0.043 / 0.049 - 1,
         rating: 3
     },
     {
@@ -153,8 +153,8 @@ const predefinedHoldings = [
             14.536989,
             12.150886
         ],
-        rating: 2,
-        health: 0.171 / 0.081 - 1
+        health: 0.171 / 0.081 - 1,
+        rating: 2
     },
     {
         id: 'US92826C8394', // Visa Inc Class A
@@ -216,8 +216,8 @@ const predefinedHoldings = [
             20.565983,
             2.137759
         ],
-        rating: 3,
-        health: 0.241 / 0.161 - 1
+        health: 0.241 / 0.161 - 1,
+        rating: 3
     },
     {
         id: 'US7265031051', // Plains All American Pipeline LP
@@ -676,7 +676,7 @@ function renderHoldingsCharts(currentXRay, proposedXRay) {
         series: [{
             name: 'Holdings',
             showInLegend: true,
-            data: data
+            data
         }]
     });
 
@@ -821,7 +821,7 @@ function renderPortfolioChart() {
             name: 'Decrease',
             type: 'dumbbell',
             data: decreasingData,
-            color: 'red',
+            color: '#ff0000',
             marker: {
                 enabled: false
             },
@@ -893,8 +893,8 @@ function setupGrid() {
                         health === 0 ?
                             'black' :
                             health < 0 ?
-                                'red' :
-                                'green';
+                                '#ff0000' :
+                                '#008000';
 
                     return `<span style="color: ${color}">
                         ${healthMap[healthState] || ''}${sign}
