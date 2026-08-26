@@ -1482,7 +1482,7 @@ const defaultOptions: DefaultOptions = {
              * @type       {string}
              * @default    vertical
              * @validvalue ["horizontal", "vertical"]
-             * @since      13.1.0
+             * @since      next
              * @apioption  legend.navigation.direction
              */
 

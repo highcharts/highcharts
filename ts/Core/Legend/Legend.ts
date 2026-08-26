@@ -1489,12 +1489,8 @@ class Legend {
             allItems = this.allItems,
             clipToSize = function (size?: number): void {
                 if (typeof size === 'number') {
-                    // Horizontally the width is set per page in scroll, and the
-                    // cross axis is left unbounded
                     (clipRect as any).attr(
-                        horizontal ?
-                            { x: padding, y: -9999, height: 19998 } :
-                            { x: 0, y: padding - 2, width: 9999, height: size }
+                        horizontal ? { width: size } : { height: size }
                     );
                 } else if (clipRect) { // Reset (#5912)
                     legend.clipRect = clipRect.destroy();
@@ -1611,7 +1607,10 @@ class Legend {
             // Only apply clipping if needed. Clipping causes blurred legend in
             // PDF export (#1787)
             if (!clipRect) {
-                clipRect = legend.clipRect =
+                // Open along the axis we don't page in. The clipped one starts
+                // at zero and is set by clipToSize below.
+                clipRect = legend.clipRect = horizontal ?
+                    renderer.clipRect(padding, padding - 2, 0, 9999) :
                     renderer.clipRect(0, padding - 2, 9999, 0);
                 legend.contentGroup.clip(clipRect);
             }

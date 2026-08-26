@@ -52,8 +52,7 @@ QUnit.test('Horizontal legend paging (#7513)', function (assert) {
         },
         legend: {
             navigation: {
-                direction: 'horizontal',
-                animation: false
+                direction: 'horizontal'
             }
         },
         series: [
