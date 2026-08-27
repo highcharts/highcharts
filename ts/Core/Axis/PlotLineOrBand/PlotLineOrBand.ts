@@ -19,6 +19,7 @@
  * */
 
 import type Chart from '../../Chart/Chart';
+import type ColorType from '../../Color/ColorType';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -37,10 +38,14 @@ import {
     addEvent,
     arrayMax,
     arrayMin,
+    clamp,
+    correctFloat,
     defined,
     destroyObjectProperties,
     erase,
     fireEvent,
+    isArray,
+    isNumber,
     merge,
     objectEach
 } from '../../../Shared/Utilities.js';
@@ -165,6 +170,9 @@ class PlotLineOrBand {
     /** @internal */
     public eventsAdded?: boolean;
 
+    /** @internal */
+    public gradientTransform?: string;
+
     /**
      * SVG element of the label.
      *
@@ -244,7 +252,8 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // Plot band
-                attribs.fill = color || 'var(--highcharts-highlight-color-10)';
+                attribs.fill = this.getBandFill(from, to) ||
+                    'var(--highcharts-highlight-color-10)';
                 if (borderWidth) {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;
@@ -351,6 +360,66 @@ class PlotLineOrBand {
 
         // Chainable
         return this;
+    }
+
+    /**
+     * Get the fill for a plot band. A gradient is relative to the bounding box
+     * of the band, so when the band is cut at the edge of the plot area, the
+     * gradient must be transformed to keep spanning the full range (#6257).
+     * @internal
+     * @function Highcharts.PlotLineOrBand#getBandFill
+     */
+    public getBandFill(from: number, to: number): (ColorType|undefined) {
+        const { axis, svgElem } = this,
+            { color } = this.options,
+            { horiz, len, pos } = axis;
+
+        let fill = color,
+            gradientTransform: (string|undefined);
+
+        if (typeof color === 'object' && 'stops' in color && !axis.isRadial) {
+            const gradName = color.radialGradient ?
+                    'radialGradient' :
+                    'linearGradient',
+                grad = color[gradName];
+
+            // Only relative units without a transform of their own can be
+            // remapped
+            if (
+                grad &&
+                !isArray(grad) &&
+                !grad.gradientUnits &&
+                !grad.gradientTransform
+            ) {
+                const fromPx = axis.toPixels(from),
+                    toPx = axis.toPixels(to),
+                    lo = Math.min(fromPx, toPx),
+                    hi = Math.max(fromPx, toPx),
+                    span = hi - lo,
+                    // The bounding box of the cut band
+                    boxLo = clamp(lo, pos, pos + len),
+                    boxLen = clamp(hi, pos, pos + len) - boxLo;
+
+                if (isNumber(span) && boxLen > 0 && span > boxLen) {
+                    const scale = correctFloat(span / boxLen),
+                        shift = correctFloat((lo - boxLo) / boxLen);
+
+                    gradientTransform = horiz ?
+                        `translate(${shift} 0) scale(${scale} 1)` :
+                        `translate(0 ${shift}) scale(1 ${scale})`;
+                    fill = merge(color, { [gradName]: { gradientTransform } });
+                }
+            }
+        }
+
+        // The attributes are only applied on creation, so reapply the fill
+        // when the cut changes
+        if (gradientTransform !== this.gradientTransform) {
+            this.gradientTransform = gradientTransform;
+            svgElem?.attr({ fill });
+        }
+
+        return fill;
     }
 
     /**

@@ -1066,3 +1066,89 @@ QUnit.test(
         opacityTester([1, 1, 1]);
     }
 );
+
+QUnit.test(
+    '#6257: Gradient on a plot band reaching outside the axis',
+    function (assert) {
+        // Deliberately shared between the bands, like in the issue
+        const linearGrad = {
+                linearGradient: { x1: 0, x2: 1, y1: 0, y2: 0 },
+                stops: [[0, '#04A6DB'], [1, '#006D91']]
+            },
+            chart = Highcharts.chart('container', {
+                xAxis: {
+                    max: 8,
+                    min: 0,
+                    plotBands: [{
+                        color: linearGrad,
+                        from: 2,
+                        to: 5
+                    }, {
+                        color: linearGrad,
+                        from: 7,
+                        to: 10
+                    }, {
+                        color: linearGrad,
+                        from: -2,
+                        to: 1
+                    }]
+                },
+                yAxis: {
+                    max: 8,
+                    min: 0,
+                    plotBands: [{
+                        color: linearGrad,
+                        from: 7,
+                        to: 10
+                    }]
+                },
+                series: [{
+                    data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                }]
+            }),
+            bands = chart.xAxis[0].plotLinesAndBands,
+            transformOf = band => document.getElementById(
+                band.svgElem.element.getAttribute('fill')
+                    .replace(/^.*#|\)$/g, '')
+            ).getAttribute('gradientTransform');
+
+        assert.strictEqual(
+            transformOf(bands[0]),
+            null,
+            'A band inside the axis should keep the gradient untransformed'
+        );
+
+        assert.strictEqual(
+            transformOf(bands[1]),
+            'translate(0 0) scale(3 1)',
+            'A band reaching past the max should scale the gradient up to its' +
+                ' full range'
+        );
+
+        assert.strictEqual(
+            transformOf(bands[2]),
+            'translate(-2 0) scale(3 1)',
+            'A band reaching past the min should also shift the gradient'
+        );
+
+        assert.strictEqual(
+            transformOf(chart.yAxis[0].plotLinesAndBands[0]),
+            'translate(0 -2) scale(1 3)',
+            'A band on a vertical axis should be transformed along the y axis'
+        );
+
+        assert.strictEqual(
+            linearGrad.linearGradient.gradientTransform,
+            undefined,
+            'The color object given in the options should not be mutated'
+        );
+
+        chart.xAxis[0].setExtremes(-5, 15);
+
+        assert.strictEqual(
+            transformOf(bands[1]),
+            null,
+            'The transform should be removed when the band no longer is cut'
+        );
+    }
+);

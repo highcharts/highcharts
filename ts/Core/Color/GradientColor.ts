@@ -37,14 +37,20 @@ export interface GradientColorStop {
     color?: Color;
 }
 
-export interface LinearGradientColor {
+/** @internal */
+export interface GradientAttributes {
+    gradientTransform?: string;
+    gradientUnits?: 'userSpaceOnUse';
+}
+
+export interface LinearGradientColor extends GradientAttributes {
     x1: number;
     x2: number;
     y1: number;
     y2: number;
 }
 
-export interface RadialGradientColor {
+export interface RadialGradientColor extends GradientAttributes {
     cx: number;
     cy: number;
     r: number;
