@@ -28,6 +28,7 @@ import type { DeepPartial } from '../../Shared/Types';
 import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
+import type ForcedMarkers from './SeriesComponent/ForcedMarkers';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
@@ -741,7 +742,15 @@ namespace LegendComponent {
     ): void {
         const chart: Accessibility.ChartComposition = this.chart as any,
             a11yOptions = chart.options.accessibility,
-            legendItem = e.item;
+            legendItem = e.item,
+            series = legendItem as ForcedMarkers.SeriesComposition,
+            markerOptions = series.resetA11yMarkerOptions;
+
+        if (a11yOptions.enabled && series.a11yMarkersForced) {
+            series.legendItem?.symbol?.attr({
+                opacity: markerOptions?.states?.normal?.opacity ?? 1
+            });
+        }
 
         if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
             legendItem.a11yProxyElement.innerElement.setAttribute(
