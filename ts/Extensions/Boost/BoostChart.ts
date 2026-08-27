@@ -85,7 +85,10 @@ function compose<T extends typeof Chart>(
 }
 
 /**
- * Redraw the chart when the device pixel ratio changes.
+ * When the `boost.pixelRatio` option is 0, the device pixel ratio decides how
+ * sharp the canvas is rendered. That ratio changes when the page is zoomed or
+ * the window is moved to a display with a different resolution, so redraw the
+ * chart to pick up the new ratio.
  *
  * @internal
  */
@@ -97,7 +100,7 @@ function addPixelRatioListener(
 
     if (
         !boost.pixelRatioUnbind &&
-        !chart.options.boost?.pixelRatio &&
+        chart.options.boost?.pixelRatio === 0 &&
         chartWindow.matchMedia
     ) {
         let unbindChange: Function;

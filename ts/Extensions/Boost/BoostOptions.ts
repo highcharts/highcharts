@@ -143,6 +143,10 @@ export interface BoostOptions {
      * `window.devicePixelRatio` is used. This ensures sharp graphics on high
      * DPI displays like Apple's Retina, as well as when a page is zoomed.
      *
+     * The default is left at 1 for now, as this is a new feature that has the
+     * potential to break existing setups. Over time, when it has been battle
+     * tested, the intention is to set it to 0 by default.
+     *
      * Another use case for this option is to set it to 2 in order to make
      * exported and upscaled charts render sharp.
      *
@@ -158,7 +162,7 @@ export interface BoostOptions {
      *
      * @type      {number}
      * @since 10.0.0
-     * @default   0
+     * @default   1
      * @apioption boost.pixelRatio
      */
     pixelRatio?: number;
