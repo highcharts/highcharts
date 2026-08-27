@@ -747,6 +747,8 @@ namespace LegendComponent {
             markerOptions = series.resetA11yMarkerOptions;
 
         if (a11yOptions.enabled && series.a11yMarkersForced) {
+            // Forced accessibility markers use zero opacity. Restore the
+            // original marker opacity so rectangle legend symbols stay visible.
             series.legendItem?.symbol?.attr({
                 opacity: markerOptions?.states?.normal?.opacity ?? 1
             });
