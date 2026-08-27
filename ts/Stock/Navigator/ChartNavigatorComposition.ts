@@ -93,6 +93,7 @@ function compose(
         chartProto.callbacks.push(onChartCallback);
 
         addEvent(ChartClass, 'afterAddSeries', onChartAfterAddSeries);
+        addEvent(ChartClass, 'afterDrillUp', onChartAfterDrillUp);
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
         addEvent(ChartClass, 'afterUpdate', onChartAfterUpdate);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
@@ -110,6 +111,19 @@ function onChartAfterAddSeries(
 ): void {
     if (this.navigator) {
         // Recompute which series should be shown in navigator, and add them
+        this.navigator.setBaseSeries(null as any, false);
+    }
+}
+
+/**
+ * Handle series added or removed as part of a drillup, e.g. when the parent
+ * series is restored after the drilldown series is removed (#24987).
+ * @internal
+ */
+function onChartAfterDrillUp(
+    this: Chart
+): void {
+    if (this.navigator) {
         this.navigator.setBaseSeries(null as any, false);
     }
 }
