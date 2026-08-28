@@ -135,6 +135,11 @@ jobs:
         with:
           ref: master
 
+      - name: Use Firefox 153.0.4
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
