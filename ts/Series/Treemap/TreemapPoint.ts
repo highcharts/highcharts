@@ -40,6 +40,7 @@ import { extend, isNumber } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class TreemapPoint extends ScatterPoint {
 
     /* *
@@ -122,7 +123,7 @@ class TreemapPoint extends ScatterPoint {
      * A tree point is valid if it has han id too, assume it may be a parent
      * item.
      *
-     * @private
+     * @internal
      * @function Highcharts.Point#isValid
      */
     public isValid(): boolean {
@@ -152,6 +153,7 @@ class TreemapPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface TreemapPoint extends ColorMapComposition.PointComposition {
     setVisible: typeof PiePoint.prototype.setVisible;
 }
@@ -166,4 +168,5 @@ extend(TreemapPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default TreemapPoint;

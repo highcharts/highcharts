@@ -38,11 +38,50 @@ export interface TimelineDataLabelsFormatterCallbackFunction extends DataLabelsF
 }
 
 export interface TimelineDataLabelOptions extends DataLabelOptions {
+    /**
+     * Whether to position data labels alternately. For example, if
+     * [distance](#plotOptions.timeline.dataLabels.distance)
+     * is set equal to `100`, then data labels will be positioned
+     * alternately (on both sides of the point) at a distance of 100px.
+     *
+     * @sample {highcharts} highcharts/series-timeline/alternate-disabled
+     *         Alternate disabled
+     */
     alternate?: boolean;
+
+    /**
+     * The color of the line connecting the data label to the point.
+     * The default color is the same as the point's color.
+     *
+     * In styled mode, the connector stroke is given in the
+     * `.highcharts-data-label-connector` class.
+     *
+     * @sample {highcharts} highcharts/series-timeline/connector-styles
+     *         Custom connector width and color
+     */
     connectorColor?: ColorType;
+
+    /**
+     * The width of the line connecting the data label to the point.
+     *
+     * In styled mode, the connector stroke width is given in the
+     * `.highcharts-data-label-connector` class.
+     *
+     * @sample {highcharts} highcharts/series-timeline/connector-styles
+     *         Custom connector width and color
+     */
     connectorWidth?: number;
+
+    /**
+     * A pixel value defining the distance between the data label and
+     * the point. Negative numbers puts the label on top of the point in a
+     * non-inverted chart. Defaults to 100 for horizontal and 20 for
+     * vertical timeline (`chart.inverted: true`).
+     */
     distance?: number;
+
     formatter?: TimelineDataLabelsFormatterCallbackFunction;
+
     width?: number;
 
     style?: DataLabelOptions['style'] & {
