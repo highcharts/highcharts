@@ -23,6 +23,8 @@ import type ScatterSeriesOptions from './ScatterSeriesOptions';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { DeepPartial } from '../../Shared/Types';
 
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -103,10 +105,25 @@ class ScatterSeries extends LineSeries {
 
         const options = super.setOptions(itemOptions);
 
+        const tooltipOptions = this.tooltipOptions;
+
         this.noSharedTooltip = !(
             this.isCartesian &&
-            this.tooltipOptions.shared
+            tooltipOptions.shared
         );
+
+        // The header is rendered once, from the first point's series, so the
+        // series name that scatter-like series show there is misleading when
+        // the tooltip lists several series. Fall back to the generic key
+        // header, unless a header format was explicitly set (#22967).
+        if (
+            !this.noSharedTooltip &&
+            tooltipOptions.headerFormat ===
+                ScatterSeriesDefaults.tooltip?.headerFormat
+        ) {
+            tooltipOptions.headerFormat =
+                defaultOptions.tooltip?.headerFormat || '';
+        }
 
         return options;
     }

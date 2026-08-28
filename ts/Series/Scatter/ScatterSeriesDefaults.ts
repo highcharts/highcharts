@@ -19,6 +19,7 @@
  * */
 
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
+import type Point from '../../Core/Series/Point';
 import type ScatterSeries from './ScatterSeries';
 
 /* *
@@ -132,7 +133,31 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
          */
         headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
             '<span style="font-size: 0.8em"> {series.name}</span><br/>',
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
+
+        /**
+         * @ignore-option
+         */
+        pointFormatter: function (
+            this: Point,
+            pointFormat: string
+        ): string {
+
+            // When the tooltip lists points from more than one series, prefix
+            // each entry with the series color and name so they can be told
+            // apart, the way the default series tooltip does. Scatter-like
+            // series define their own `pointFormat`, so compose it rather
+            // than replace it (#22967).
+            if (pointFormat && !this.series.noSharedTooltip) {
+                return this.tooltipFormatter(
+                    '<span style="color:{point.color}">\u25CF</span> ' +
+                    '{series.name}: ' + pointFormat +
+                    (pointFormat.endsWith('<br/>') ? '' : '<br/>')
+                );
+            }
+
+            return this.tooltipFormatter(pointFormat);
+        }
     }
 
 };

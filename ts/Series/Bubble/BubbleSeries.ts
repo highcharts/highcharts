@@ -456,24 +456,7 @@ class BubbleSeries extends ScatterSeries {
         },
 
         tooltip: {
-            headerFormat:
-                '<span style="font-size: 0.8em">{ucfirst point.key}' +
-                '</span><br/>',
-            pointFormat: '({point.x}, {point.y}), Size: {point.z}',
-            pointFormatter: function (this: Point): string {
-                const { tooltipOptions } = this.series,
-                    pointFormat = tooltipOptions.pointFormat;
-
-                // In shared and split tooltips, prefix the value with the
-                // series color and name so points from different series can
-                // be told apart, like the default series tooltip (#22967)
-                return this.tooltipFormatter(
-                    tooltipOptions.shared || tooltipOptions.split ?
-                        '<span style="color:{point.color}">●</span> ' +
-                        `{series.name}: <b>${pointFormat}</b><br/>` :
-                        pointFormat
-                );
-            }
+            pointFormat: '({point.x}, {point.y}), Size: {point.z}'
         },
 
         turboThreshold: 0,
