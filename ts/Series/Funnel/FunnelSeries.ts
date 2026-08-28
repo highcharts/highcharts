@@ -70,7 +70,7 @@ const baseAlignDataLabel = SeriesRegistry.series.prototype.alignDataLabel;
 /**
  * Get positions - either an integer or a percentage string must be
  * given.
- * @private
+ * @internal
  * @param {number|string|undefined} length
  *        Length
  * @param {number} relativeTo
@@ -94,7 +94,7 @@ function getLength(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.funnel
  *
@@ -134,9 +134,7 @@ class FunnelSeries extends PieSeries {
      * */
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public alignDataLabel(
         point: FunnelPoint,
         dataLabel: SVGLabel,
@@ -235,7 +233,7 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Extend the data label method.
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
         (
@@ -245,7 +243,7 @@ class FunnelSeries extends PieSeries {
         ).prototype.drawDataLabels.call(this);
     }
 
-    /** @private */
+    /** @internal */
     public getDataLabelPosition(
         point: FunnelPoint,
         distance: number
@@ -284,7 +282,7 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Overrides the pie translate method.
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -658,7 +656,7 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Funnel items don't have angles (#2289).
-     * @private
+     * @internal
      */
     public sortByAngle(points: Array<FunnelPoint>): void {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
@@ -700,7 +698,7 @@ namespace FunnelSeries {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -715,7 +713,7 @@ namespace FunnelSeries {
 
     }
 
-    /** @private */
+    /** @internal */
     function onChartAfterHideAllOverlappingLabels(
         this: Chart
     ): void {
