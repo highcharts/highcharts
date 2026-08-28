@@ -585,15 +585,43 @@ class Pointer {
         // block it. After the touch has ended, we undo this and render again.
         let redraw: true|undefined;
         for (const axis of chart.axes) {
+            const { startOnTick, endOnTick } = axis.options;
+
             if (axis.isPanning) {
                 axis.isPanning = false;
+
                 if (
-                    axis.options.startOnTick ||
-                    axis.options.endOnTick ||
+                    startOnTick ||
+                    endOnTick ||
                     axis.series.some((s): boolean|undefined => s.boosted)
                 ) {
+                    const { tickInterval } = axis,
+                        userMin = axis.userMin ?? NaN,
+                        userMax = axis.userMax ?? NaN,
+                        round = (val: number): number =>
+                            Math.round(val / tickInterval) * tickInterval;
+
+                    let newMin = userMin,
+                        newMax = userMax;
+
+                    if (startOnTick) {
+                        newMin = round(userMin);
+
+                        if (!endOnTick) {
+                            newMax += newMin - userMin;
+                        }
+                    }
+
+                    if (endOnTick) {
+                        newMax = round(userMax);
+
+                        if (!startOnTick) {
+                            newMin += newMax - userMax;
+                        }
+                    }
+
                     axis.forceRedraw = true;
-                    axis.setExtremes(axis.userMin, axis.userMax, false);
+                    axis.setExtremes(newMin, newMax, false);
                     redraw = true;
                 }
             }
