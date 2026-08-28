@@ -139,25 +139,24 @@
      * Checks that the default and custom label formats are applied
      */
     QUnit.test('Format', function (assert) {
-        // %a, %b %d %Y, %H:%M:%S
-        var formatRegex = new RegExp(
-                // 'Tue, 6 Dec 2016'
-                /^[A-Z][a-z]{2}, [0-9]{1,2} [A-Z][a-z]{2,3} [0-9]{4}/.source +
-                    // ', 21:35:12' or ' at 21:35:12' (Safari renders "at")
-                    /(,| at) [0-9]{2}:[0-9]{2}$/.source
-            ),
-            customFormat,
+        var customFormat,
             chart = Highcharts.chart('container', defaultConfig),
             axis = chart.xAxis[0],
-            cdi = axis.plotLinesAndBands[0];
+            cdi = axis.plotLinesAndBands[0],
+            defaultFormat = chart.time.dateFormat(
+                '%[abdYHM]',
+                cdi.options.value,
+                true
+            );
 
-        assert.ok(
-            formatRegex.test(cdi.label.textStr),
-            `Default format should match expected regex: "${cdi.label.textStr}"`
+        assert.strictEqual(
+            cdi.label.textStr,
+            defaultFormat,
+            'Default format should match current date indicator label format'
         );
 
         // Custom format
-        formatRegex = new RegExp(
+        var formatRegex = new RegExp(
             /^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/.source
         );
         customFormat = '%Y-%d-%m %H:%M:%S';

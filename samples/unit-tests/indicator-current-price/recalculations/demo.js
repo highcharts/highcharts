@@ -143,6 +143,35 @@ QUnit.test(
             'There should only be two price labels rendered, #17790.'
         );
 
+        const compared = chart.addSeries({
+            compare: 'percent',
+            data: [100, 150, 200],
+            lastPrice: {
+                enabled: true,
+                label: {
+                    enabled: true
+                }
+            }
+        });
+
+        assert.close(
+            compared.lastPrice?.pathArray[0][2],
+            compared.yAxis.toPixels(
+                compared.dataModify.modifyValue(compared.getColumn('y').at(-1))
+            ),
+            1,
+            `The lastPrice line should follow the compared value, not the raw
+            one, #23212.`
+        );
+
+        assert.notEqual(
+            compared.lastPriceLabel?.visibility,
+            'hidden',
+            'The lastPrice label should be visible with compare set, #23212.'
+        );
+
+        compared.remove();
+
         const lvpLabel = chart.series[0].lastVisiblePriceLabel,
             lpLabel = chart.series[0].lastPriceLabel;
 

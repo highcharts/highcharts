@@ -41,7 +41,7 @@ const { defaultOptions } = D;
  * @sample {highcharts} highcharts/series-solidgauge/pane-borderradius
  *         Solid gauge with background settings
  *
- * @type         {*|Array<*>}
+ * @type         {null|*|Array<*>}
  * @requires     highcharts-more
  * @optionparent pane.background
  */

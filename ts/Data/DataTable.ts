@@ -1325,6 +1325,26 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
 export type CellType = (boolean|number|null|string|undefined);
 
 /**
+ * Type guard narrowing an arbitrary value to a valid table cell value.
+ *
+ * @param {*} value
+ * Candidate value.
+ *
+ * @return {boolean}
+ * `true` when the value is a valid `CellType`.
+ */
+export function isCellValue(value: unknown): value is CellType {
+    const valueType = typeof value;
+    return (
+        value === null ||
+        valueType === 'undefined' ||
+        valueType === 'boolean' ||
+        valueType === 'number' ||
+        valueType === 'string'
+    );
+}
+
+/**
  * Conventional array of table cells typed as `CellType`.
  */
 export interface BasicColumn extends Array<CellType> {

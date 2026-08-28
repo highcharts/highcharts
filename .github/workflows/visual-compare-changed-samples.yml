@@ -1,0 +1,101 @@
+name: Highcharts Visual Comparison (Changed Samples Runtime)
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'samples/highcharts/**'
+      - 'samples/stock/**'
+      - 'samples/maps/**'
+      - 'samples/gantt/**'
+      - '.github/workflows/visual-compare-changed-samples.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  visual_compare_changed_samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Select changed runnable samples
+        id: changed_samples
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          changed_products=()
+
+          diff_file="$RUNNER_TEMP/changed-samples-diff.txt"
+          git diff --name-status --diff-filter=ACMR -M -C "$BASE_SHA" HEAD -- \
+            samples/highcharts samples/stock samples/maps samples/gantt > "$diff_file"
+
+          while IFS=$'\t' read -r status old_path new_path; do
+            case "$status" in
+              A*|M*) path="$old_path" ;;
+              R*|C*) path="$new_path" ;;
+              *) continue ;;
+            esac
+
+            if [[ "$path" =~ ^samples/(highcharts|stock|maps|gantt)/ ]]; then
+              changed_products+=("${BASH_REMATCH[1]}")
+            fi
+          done < "$diff_file"
+
+          products_file="$RUNNER_TEMP/changed-products.txt"
+          : > "$products_file"
+          if ((${#changed_products[@]})); then
+            printf '%s\n' "${changed_products[@]}" | LC_ALL=C sort -u > "$products_file"
+          fi
+
+          product_globs=''
+          while IFS= read -r product; do
+            if [[ -n "$product_globs" ]]; then
+              product_globs+=','
+            fi
+            product_globs+="$product/*/*"
+          done < "$products_file"
+
+          has_products=false
+          if [[ -n "$product_globs" ]]; then
+            has_products=true
+            printf 'Selected changed product scopes: %s\n' "$product_globs"
+          else
+            printf '%s\n' 'No supported changed products selected.'
+          fi
+          printf 'has_products=%s\n' "$has_products" >> "$GITHUB_OUTPUT"
+          printf 'product_globs=%s\n' "$product_globs" >> "$GITHUB_OUTPUT"
+
+      - name: Use Node.js lts/*
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        run: npm ci
+
+      - name: Build Highcharts
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        run: npx gulp scripts
+
+      - name: Generate changed samples
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        env:
+          PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
+        run: npx gulp generate-samples --samples "$PRODUCT_GLOBS"
+
+      - name: Render changed samples
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        env:
+          PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
+        run: npx karma start test/karma-conf.js --tests "$PRODUCT_GLOBS" --ts --reference --browsercount 2
