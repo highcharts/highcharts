@@ -6,6 +6,7 @@ import test from 'node:test';
 
 import {
     buildSubmissionManifest,
+    submitNightlyVisualReview,
     submitPullRequestVisualReview
 } from '../gulptasks/lib/visualReviewApi.js';
 
@@ -133,6 +134,81 @@ test('builds the exact pull-request manifest', () => {
             }]
         }
     );
+});
+
+test('builds the exact nightly manifest', () => {
+    assert.deepEqual(
+        buildSubmissionManifest({
+            productVersion: '13.0.1',
+            runNumber: '456',
+            samples: sample(),
+            subjectKind: 'nightly',
+            testReport: { meta: { version: '13.0.1' } }
+        }),
+        {
+            repository: 'highcharts/highcharts',
+            workflow: 'Nightly visual tests',
+            runNumber: '456',
+            productVersion: '13.0.1',
+            subject: { kind: 'nightly' },
+            testReport: { meta: { version: '13.0.1' } },
+            sampleResults: [{
+                name: 'highcharts/demo/line-basic',
+                comparisonValue: 42,
+                artifactRoles: ['reference', 'candidate', 'difference']
+            }]
+        }
+    );
+});
+
+test('uploads a nightly submission without pull-request fields', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-review-'));
+    const samplePath = join(root, 'highcharts', 'demo', 'line-basic');
+    const calls = [];
+    try {
+        await mkdir(samplePath, { recursive: true });
+        await writeFile(join(samplePath, 'reference.svg'), '<svg/>');
+
+        await submitNightlyVisualReview({
+            apiKey: 'test-api-key',
+            dependencies: {
+                fetchImpl: async (url, options) => {
+                    calls.push({ url, options });
+                    return response();
+                },
+                sleep: async () => {}
+            },
+            productVersion: '13.0.1',
+            runAttempt: '1',
+            runId: '456',
+            runNumber: '789',
+            sampleRoot: root,
+            samples: [{
+                name: 'highcharts/demo/line-basic',
+                comparisonValue: 0,
+                artifacts: {
+                    candidate: 'reference.svg',
+                    difference: Buffer.from('GIF89a')
+                }
+            }],
+            testReport: {}
+        });
+
+        const manifest = JSON.parse(calls[0].options.body);
+        assert.deepEqual(manifest.subject, { kind: 'nightly' });
+        assert.equal(manifest.workflow, 'Nightly visual tests');
+        const artifacts = JSON.parse(calls[1].options.body).artifacts;
+        assert.deepEqual(
+            artifacts.map(artifact => [artifact.role, artifact.data]),
+            [
+                ['reference', Buffer.from('<svg/>').toString('base64')],
+                ['candidate', Buffer.from('<svg/>').toString('base64')],
+                ['difference', Buffer.from('GIF89a').toString('base64')]
+            ]
+        );
+    } finally {
+        await rm(root, { recursive: true, force: true });
+    }
 });
 
 test('uploads manifest and all artifacts before finalizing', async () => {

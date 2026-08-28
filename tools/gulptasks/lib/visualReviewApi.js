@@ -7,7 +7,8 @@ const path = require('node:path');
 
 const DEFAULT_API_URL = 'https://vrevs.highsoft.com';
 const DEFAULT_REPOSITORY = 'highcharts/highcharts';
-const DEFAULT_WORKFLOW = 'Visual tests';
+const DEFAULT_PULL_REQUEST_WORKFLOW = 'Visual tests';
+const DEFAULT_NIGHTLY_WORKFLOW = 'Nightly visual tests';
 const MAX_ATTEMPTS = 3;
 const MIN_REQUEST_INTERVAL_MS = 350;
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
@@ -73,18 +74,26 @@ function safeSamplePath(sampleName, root = 'samples') {
     return samplePath;
 }
 
+function readArtifactSource(source, filePath) {
+    if (Buffer.isBuffer(source)) {
+        return source;
+    }
+    return fs.readFileSync(filePath);
+}
+
 function readSampleArtifacts(sample, sampleRoot) {
     const samplePath = safeSamplePath(sample.name, sampleRoot);
     const artifacts = {};
 
     for (const [role, definition] of Object.entries(ARTIFACTS)) {
-        const filename = sample.artifacts?.[role] || definition.filename;
+        const source = sample.artifacts?.[role];
+        const filename = typeof source === 'string' ? source : definition.filename;
         const filePath = path.resolve(samplePath, filename);
         if (!filePath.startsWith(`${samplePath}${path.sep}`)) {
             throw new VisualReviewApiError(`Invalid artifact path for ${sample.name}`);
         }
         try {
-            artifacts[role] = fs.readFileSync(filePath);
+            artifacts[role] = readArtifactSource(source, filePath);
         } catch (error) {
             throw new VisualReviewApiError(
                 `Missing ${role} artifact for ${sample.name}: ${error.message}`
@@ -136,18 +145,44 @@ function buildArtifactBatches(samples) {
     return batches;
 }
 
+function getSubjectKind(options) {
+    return options.subjectKind || options.subject?.kind || 'pull_request';
+}
+
+function buildSubmissionSubject(options) {
+    const kind = getSubjectKind(options);
+    if (kind === 'nightly') {
+        return { kind };
+    }
+    if (kind !== 'pull_request') {
+        throw new VisualReviewApiError(
+            'subjectKind must be pull_request or nightly'
+        );
+    }
+    return {
+        kind,
+        prNumber: pullRequestNumber(options.prNumber),
+        sha: pullRequestSha(options.prSha)
+    };
+}
+
+function getWorkflow(options) {
+    if (options.workflow) {
+        return options.workflow;
+    }
+    return getSubjectKind(options) === 'nightly' ?
+        DEFAULT_NIGHTLY_WORKFLOW :
+        DEFAULT_PULL_REQUEST_WORKFLOW;
+}
+
 function buildSubmissionManifest(options) {
     const samples = options.samples || [];
     return {
         repository: options.repository || DEFAULT_REPOSITORY,
-        workflow: options.workflow || DEFAULT_WORKFLOW,
+        workflow: getWorkflow(options),
         runNumber: positiveInteger(options.runNumber, 'runNumber'),
         productVersion: String(options.productVersion),
-        subject: {
-            kind: 'pull_request',
-            prNumber: pullRequestNumber(options.prNumber),
-            sha: pullRequestSha(options.prSha)
-        },
+        subject: buildSubmissionSubject(options),
         testReport: options.testReport,
         sampleResults: samples.map(sample => ({
             name: sample.name,
@@ -238,13 +273,13 @@ async function request(url, options, dependencies = {}, requestState = {
 }
 
 /**
- * Uploads and finalizes a pull-request visual review submission.
+ * Uploads and finalizes a visual review submission.
  *
  * @param {object} options Submission options.
  * @param {function} [options.onProgress] Called after each artifact upload.
  * @return {Promise<{submissionId: string, state: string}>} Submission result.
  */
-async function submitPullRequestVisualReview(options) {
+async function submitVisualReview(options) {
     const apiKey = options.apiKey || process.env.VISUAL_REVIEW_API_KEY;
     if (!apiKey) {
         throw new VisualReviewApiError(
@@ -316,9 +351,24 @@ async function submitPullRequestVisualReview(options) {
         state: 'current'
     };
 }
+async function submitPullRequestVisualReview(options) {
+    return submitVisualReview({
+        ...options,
+        subjectKind: 'pull_request'
+    });
+}
+
+async function submitNightlyVisualReview(options) {
+    return submitVisualReview({
+        ...options,
+        subjectKind: 'nightly'
+    });
+}
 
 module.exports = {
     buildSubmissionManifest,
     normalizeApiUrl,
-    submitPullRequestVisualReview
+    submitNightlyVisualReview,
+    submitPullRequestVisualReview,
+    submitVisualReview
 };
