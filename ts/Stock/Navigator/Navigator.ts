@@ -1395,13 +1395,10 @@ class Navigator {
                         false
                     ), // #14060
                     uniqueNames: (
-                        (
-                            navigatorOptions.yAxis &&
-                            navigatorOptions.yAxis.uniqueNames
-                        ) ??
-                        (baseYaxis && baseYaxis.uniqueNames) ??
+                        navigatorOptions.yAxis?.uniqueNames ??
+                        baseYaxis?.userOptions.uniqueNames ??
                         false
-                    ),
+                    ), // #24975
                     zoomEnabled: false
                 }, chart.inverted ? {
                     width: height
