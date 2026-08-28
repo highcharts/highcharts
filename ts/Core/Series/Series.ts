@@ -2150,8 +2150,26 @@ class Series {
                         } else {
                             if (point) {
                                 point.update(row, false);
-                            } else {
+                            } else if (rowIndex > this.dataTable.rowCount) {
                                 this.addPoint(row, false);
+                            } else {
+                                if (this.dataTable !== dataTable) {
+                                    this.dataTable.setRow(row, rowIndex);
+                                }
+                                if (this.options.data) {
+                                    this.options.data[rowIndex] = row;
+                                }
+                                if (defined(row.x)) {
+                                    if (isString(row.x)) {
+                                        this.xColumnIsNumbers = void 0;
+                                    }
+                                    if (this.xColumn) {
+                                        this.xColumn[rowIndex] = this.getX(
+                                            (row as AnyRecord).x
+                                        );
+                                    }
+                                }
+                                this.isDirtyData = true;
                             }
                             queueRedraw();
                         }
