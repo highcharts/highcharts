@@ -64,6 +64,7 @@ declare module '../Core/Series/PointBase' {
 
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         dataModify?: DataModifyComposition.Additions;
         setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
@@ -118,6 +119,7 @@ namespace DataModifyComposition {
     }
 
     export declare class SeriesComposition extends Series {
+        /** @internal */
         dataModify: Additions;
         setCompare(
             this: Series,
@@ -141,7 +143,7 @@ namespace DataModifyComposition {
      * Extends the series, axis and point classes with
      * compare and cumulative support.
      *
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T,
@@ -179,7 +181,7 @@ namespace DataModifyComposition {
     /**
      * Shared code for the axis.setCompare() and the axis.setCumulative()
      * methods. Inits the 'compare' or the 'cumulative' mode.
-     * @private
+     * @internal
      */
     function setModifier(
         this: Axis,
@@ -292,7 +294,7 @@ namespace DataModifyComposition {
 
     /**
      * Adjust the extremes (compare and cumulative modify the data).
-     * @private
+     * @internal
      */
     function afterGetExtremes(this: Series, e: AnyRecord|Event): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
@@ -523,7 +525,7 @@ namespace DataModifyComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export class Additions {
 
@@ -534,7 +536,7 @@ namespace DataModifyComposition {
          * */
 
         /**
-         * @private
+         * @internal
          */
         public constructor(series: SeriesComposition) {
             this.series = series;
@@ -562,7 +564,7 @@ namespace DataModifyComposition {
         * */
 
         /**
-         * @private
+         * @internal
          */
         public modifyValue(): number {
             return 0;
