@@ -21,3 +21,17 @@
     padding: 8px 16px;
     margin: 2em 10px 1em;
 }
+
+@media (max-width: 600px) {
+    #container-values,
+    #container-companies {
+        display: block;
+    }
+
+    #container-values-alpha,
+    #container-values-beta,
+    #container-companies-alpha,
+    #container-companies-beta {
+        width: 100%;
+    }
+}

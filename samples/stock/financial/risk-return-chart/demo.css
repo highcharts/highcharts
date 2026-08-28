@@ -19,6 +19,7 @@ span {
     justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
+    margin-top: 16px;
     margin-bottom: 30px;
 }
 
@@ -26,7 +27,7 @@ span {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    border: 2px solid #e1e1e1;
+    border: none;
     border-radius: 5px;
     gap: 10px;
     padding: 2px;
@@ -35,7 +36,8 @@ span {
 .tab {
     padding: 6px 10px;
     border-radius: 5px;
-    background-color: white;
+    color: light-dark(#272727, #b6bcc1);
+    background-color: light-dark(#b6bcc1, #272727);
     border: none;
     cursor: pointer;
     font-size: 12px;
@@ -43,13 +45,14 @@ span {
 }
 
 .tab:hover {
-    background-color: #f2f1f4;
+    background-color: #ea293c;
+    color: #fff;
 }
 
 .tab.active {
     background-color: #ea293c;
     border: 2px solid #ce1023;
-    color: white;
+    color: #fff;
 }
 
 .highcharts-description {
@@ -60,4 +63,26 @@ span {
     font-style: italic;
     padding: 8px 16px;
     margin: 2em 10px 1em;
+}
+
+@media (max-width: 550px) {
+    .tab-container {
+        gap: 0;
+    }
+
+    .tab-container span {
+        display: none;
+    }
+
+    .tabs {
+        gap: 0;
+        padding: 0;
+        border: 2px solid light-dark(#d6d6d6, #252525);
+    }
+
+    .tab {
+        padding: 6px 4px;
+        background-color: transparent;
+        font-size: 0.9rem;
+    }
 }

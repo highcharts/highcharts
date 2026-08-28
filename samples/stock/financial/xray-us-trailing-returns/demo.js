@@ -108,7 +108,20 @@ async function renderChart() {
                 ['Value_Benchmark']
             ),
             color: '#E1E1E6'
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 600
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true,
+                        height: 600
+                    }
+                }
+            }]
+        }
     });
 }
 

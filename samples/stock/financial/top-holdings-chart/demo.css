@@ -1,36 +1,45 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-#container {
-    --highcharts-neutral-color-5: #fff;
+:root {
+    --hover-col: light-dark(#f2f3f4, #202124);
+}
 
-    min-width: 450px;
+#container {
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .theme-custom {
     --hcg-font-size: 15px;
-    --hcg-color: #000;
-    --hcg-header-color: #474554;
     --hcg-header-padding: 14px;
-    --hcg-background: #fff;
     --hcg-padding: 10px;
-    --hcg-header-background: #fff;
-    --hcg-row-even-background: #fff;
-    --hcg-cell-hovered-row-background: #f2f3f4;
     --hcg-border-width: 1px;
-    --hcg-border-color: #f1f1f3;
+    --hcg-border-color: light-dark(#f1f1f3, #323232);
+
+    /* Hovered colors */
+    --hcg-cell-hovered-background: var(--hover-col);
+    --hcg-row-hovered-background: var(--hover-col);
+    --hcg-column-hovered-background: var(--hover-col);
+    --hcg-header-column-hovered-background: var(--hover-col);
+    --hcg-header-cell-hovered-background: var(--hover-col);
+    --hcg-cell-hovered-row-background: var(--hover-col);
 }
 
 .theme-custom .numeric-val-col {
     text-align: right;
 }
 
-.highcharts-light .highcharts-dashboards-cell > .highcharts-dashboards-component {
+#container .highcharts-dashboards-cell > .highcharts-dashboards-component {
     box-shadow: none;
 }
 
 .highcharts-description {
     padding: 0 20px;
+}
+
+@media (max-width: 700px) {
+    .theme-custom {
+        --hcg-font-size: 10px;
+    }
 }

@@ -65,8 +65,8 @@
 
 #range-selector button {
     border: none;
-    background: white;
-    color: #141414;
+    background: transparent;
+    color: light-dark(#141414, #efeeee);
     flex: 1 0 0;
     padding: 10px;
     display: flex;
@@ -84,7 +84,7 @@
 #range-selector button.selected {
     border-radius: 4px 4px 0 0;
     border-bottom: 1px solid #274fe0;
-    background: rgba(0, 0, 0, 0.05);
+    background: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.1));
 }
 
 #range-selector button .change {

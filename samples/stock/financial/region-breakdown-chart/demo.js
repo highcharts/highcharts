@@ -129,7 +129,30 @@ async function renderChart() {
             name: 'BlackRock Income and Growth Ord',
             color: '#274FE0',
             data: data.N_EUCA000550
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    xAxis: [{
+                        grid: {
+                            enabled: false
+                        }
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 550
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true
+                    }
+                }
+            }]
+        }
     });
 }
 

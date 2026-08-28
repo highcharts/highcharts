@@ -83,8 +83,7 @@ async function renderChart() {
     Highcharts.chart('container', {
         chart: {
             polar: true,
-            type: 'line',
-            ignoreHiddenSeries: false
+            type: 'line'
         },
         title: {
             text: 'Sector Breakdown Chart'

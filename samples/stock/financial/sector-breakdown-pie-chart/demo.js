@@ -136,8 +136,8 @@ async function renderChart() {
                         ],
                         states: {
                             hover: {
-                                color: '#014CE5',
-                                borderColor: '#014CE5'
+                                color: 'light-dark(#014ce5, #dd6503)',
+                                borderColor: 'light-dark(#014ce5, #dd6503)'
                             }
                         },
                         dataLabels: {

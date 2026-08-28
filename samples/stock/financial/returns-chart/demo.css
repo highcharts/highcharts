@@ -7,3 +7,7 @@
     padding: 8px 16px;
     margin: 2em 10px 1em;
 }
+
+#container {
+    height: 600px;
+}

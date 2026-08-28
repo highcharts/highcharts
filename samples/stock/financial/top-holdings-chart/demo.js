@@ -186,7 +186,6 @@ async function renderChart() {
             chartOptions: {
                 chart: {
                     type: 'bubble',
-                    plotBorderColor: '#E1E1E1',
                     plotBorderWidth: 1,
                     events: {
                         load() {
@@ -201,7 +200,7 @@ async function renderChart() {
                 },
                 colors: [
                     '#8132F8',
-                    '#000',
+                    '#F5E727',
                     '#10B981',
                     '#EA293C',
                     '#014CE5'
@@ -226,32 +225,15 @@ async function renderChart() {
                     startOnTick: false,
                     endOnTick: false,
                     title: {
-                        text: 'Market Value (GBP)',
-                        style: {
-                            color: '#141414'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            color: '#141414'
-                        }
+                        text: 'Market Value (GBP)'
                     }
                 },
                 xAxis: {
                     title: {
-                        text: 'Number of Shares',
-                        style: {
-                            color: '#141414'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            color: '#141414'
-                        }
+                        text: 'Number of Shares'
                     },
                     lineWidth: 0,
                     tickColor: '#E1E1E1',
-                    gridLineColor: '#F5F5F5',
                     tickInterval: 20000
                 },
                 plotOptions: {

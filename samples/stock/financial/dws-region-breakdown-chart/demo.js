@@ -112,7 +112,30 @@ async function renderChart() {
             name: 'Anfield Universal Fixed Income Fund',
             color: '#274FE0',
             data: data.PercLongRescaled
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    xAxis: [{
+                        grid: {
+                            enabled: false
+                        }
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 600
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true
+                    }
+                }
+            }]
+        }
     });
 }
 

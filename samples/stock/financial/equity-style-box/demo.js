@@ -89,7 +89,7 @@ async function renderChart() {
             }, {
                 from: 0,
                 to: 9,
-                color: '#fafafa',
+                color: '#0443E111',
                 name: '0-9'
             }]
         },
@@ -113,10 +113,29 @@ async function renderChart() {
                 format: '{value:.0f}%',
                 style: {
                     fontSize: '1rem',
+                    color: 'light-dark(#000, #fff)',
                     textOutline: 'none'
                 }
             }
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 400
+                },
+                chartOptions: {
+                    chart: {
+                        height: 450
+                    },
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        layout: 'horizontal',
+                        y: null
+                    }
+                }
+            }]
+        }
     });
 }
 

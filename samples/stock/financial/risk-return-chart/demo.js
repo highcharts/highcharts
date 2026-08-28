@@ -219,7 +219,21 @@ async function renderCharts() {
             marker: {
                 symbol: 'circle'
             }
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 650
+                },
+                chartOptions: {
+                    legend: {
+                        align: 'left',
+                        verticalAlign: 'bottom',
+                        floating: false
+                    }
+                }
+            }]
+        }
     });
 
     function updateChart(timePeriod) {

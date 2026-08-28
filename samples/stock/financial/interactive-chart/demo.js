@@ -72,7 +72,7 @@ setInterval(() => {
 // Create chart
 const chart = Highcharts.stockChart('container', {
     chart: {
-        plotBorderColor: '#E1E1E1',
+        plotBorderColor: 'light-dark(#E1E1E1, #393939)',
         plotBorderWidth: 2,
         height: 600,
         marginTop: 0,
@@ -115,7 +115,7 @@ const chart = Highcharts.stockChart('container', {
         minRange: 36e6,
         lineWidth: 0,
         lineColor: 'blue',
-        tickColor: '#E1E1E1',
+        tickColor: 'light-dark(#E1E1E1, #393939)',
         events: {
             afterSetExtremes: function (e) {
                 if (e.trigger === 'navigator') {
@@ -127,7 +127,8 @@ const chart = Highcharts.stockChart('container', {
         }
     },
     yAxis: {
-        gridLineColor: 'rgba(0, 0, 0, 0.04)',
+        gridLineColor:
+            'light-dark(rgba(0, 0, 0, 0.04), rgba(255, 255, 255, 0.04))',
         opposite: false,
         showLastLabel: true,
         startOnTick: false,
@@ -166,7 +167,7 @@ const chart = Highcharts.stockChart('container', {
     }],
     navigator: {
         maskFill: '#274FE026',
-        outlineColor: '#C0C0C0',
+        outlineColor: 'light-dark(#E1E1E1, #393939)',
         series: {
             type: 'area',
             fillColor: {

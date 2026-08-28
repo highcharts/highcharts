@@ -124,7 +124,22 @@ async function renderChart() {
             name: 'Aviva Investors - Emerging Markets Bond Fund K USD Acc',
             color: '#274FE0',
             data: data.N_F00000YG2F
-        }]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 700
+                },
+                chartOptions: {
+                    xAxis: [{
+                        grid: {
+                            enabled: false
+                        }
+                    }]
+                }
+            }]
+        }
     });
 }
 

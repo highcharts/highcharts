@@ -405,7 +405,31 @@ async function renderChart() {
             name: 'SPDR® MSCI Europe UCITS ETF',
             color: '#274FE0',
             data: dataset.values
-        }]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    xAxis: [{
+                        grid: {
+                            enabled: false
+                        }
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 600
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true
+                    }
+                }
+            }]
+        }
     });
 }
 

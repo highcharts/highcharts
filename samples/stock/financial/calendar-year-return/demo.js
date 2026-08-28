@@ -105,6 +105,27 @@ async function renderChart() {
             layout: 'horizontal',
             align: 'center',
             verticalAlign: 'bottom'
+        },
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    chart: {
+                        height: 500
+                    },
+                    plotOptions: {
+                        column: {
+                            pointMaxWidth: 4
+                        }
+                    },
+                    yAxis: [{
+                        title: null
+                    }]
+                }
+            }]
         }
     });
 }

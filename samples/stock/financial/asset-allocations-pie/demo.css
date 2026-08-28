@@ -49,10 +49,7 @@
     --hcg-horizontal-padding: 4px;
     --hcg-border-width: 0;
     --hcg-header-column-border-width: 0;
-    --hcg-header-background: transparent;
     --hcg-font-size: 16px;
-    --hcg-header-row-border-color: transparent;
-    --hcg-row-border-color: transparent;
 
     /* Hovered colors */
     --hcg-cell-hovered-background: var(--hover-col);

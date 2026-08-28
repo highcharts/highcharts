@@ -6,16 +6,11 @@
     margin: 0 auto;
 }
 
-:root,
-.highcharts-light {
-    --highcharts-neutral-color-5: transparent;
-}
-
 .theme-custom {
     --hcg-background: var(--highcharts-background-color);
     --hcg-color: var(--highcharts-neutral-color-100);
     --hcg-padding: 5px 20px;
-    --hcg-cell-hovered-row-background: #014ce5;
+    --hcg-cell-hovered-row-background: light-dark(#014ce5, #dd6503);
     --hcg-cell-hovered-row-color: #fff;
     --hcg-row-even-background: var(--highcharts-neutral-color-3);
     --hcg-header-row-border-color: #474554;
@@ -34,10 +29,10 @@
 }
 
 .theme-custom .name-col {
-    --ig-color: #525252;
-    --ig-row-even-color: #525252;
-    --ig-cell-hovered-column-color: #525252;
-    --ig-cell-hovered-column-even-color: #525252;
+    --ig-color: var(--highcharts-neutral-color-60);
+    --ig-row-even-color: var(--highcharts-neutral-color-60);
+    --ig-cell-hovered-column-color: var(--highcharts-neutral-color-60);
+    --ig-cell-hovered-column-even-color: var(--highcharts-neutral-color-60);
 }
 
 .highcharts-light .highcharts-dashboards-cell > .highcharts-dashboards-component {

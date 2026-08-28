@@ -47,6 +47,19 @@ async function renderChart() {
             series: {
                 minPointLength: 2
             }
+        },
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 350
+                },
+                chartOptions: {
+                    yAxis: {
+                        title: null
+                    }
+                }
+            }]
         }
     });
 

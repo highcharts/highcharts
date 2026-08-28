@@ -167,7 +167,7 @@ async function renderChart() {
                 fill: 'none',
                 r: 5,
                 style: {
-                    color: '#272727',
+                    color: 'light-dark(#272727, #b6bcc1)',
                     fontWeight: 'bold'
                 },
                 states: {
@@ -210,11 +210,11 @@ async function renderChart() {
                 title: 'View all'
             }],
             inputStyle: {
-                color: '#272727',
+                color: 'light-dark(#272727, #b6bcc1)',
                 fontWeight: 'bold'
             },
             labelStyle: {
-                color: '#272727'
+                color: 'light-dark(#272727, #b6bcc1)'
             }
         },
         xAxis: {
@@ -226,16 +226,11 @@ async function renderChart() {
             }
         },
         yAxis: {
-            gridLineColor: '#E1E1E1',
+            gridLineColor: 'light-dark(#e1e1e1,#474747)',
             opposite: false,
             labels: {
                 format: '${value:,.0f}'
-            },
-            plotLines: [{
-                value: 10000,
-                width: 1,
-                color: '#A7A7A7'
-            }]
+            }
         },
         navigator: {
             maskFill: '#274FE026',
@@ -260,7 +255,6 @@ async function renderChart() {
                 }
             },
             handles: {
-                backgroundColor: '#F7F7F7',
                 borderColor: '#C0C0C0',
                 borderRadius: 2,
                 width: 9,
@@ -324,7 +318,7 @@ async function renderChart() {
                 'Date',
                 'Value_NetAmountInvested'
             ]).slice(0, -1), // Remove trailing 0
-            color: '#2F2E38'
+            color: 'light-dark(#2F2E38,#afabd2)'
         }],
         legend: {
             enabled: true,

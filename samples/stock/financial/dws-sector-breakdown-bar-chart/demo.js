@@ -93,7 +93,30 @@ async function renderChart() {
             name: 'Capital Group Global Equity Fund (LUX) B',
             color: '#274FE0',
             data
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 700
+                },
+                chartOptions: {
+                    xAxis: [{
+                        grid: {
+                            enabled: false
+                        }
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 550
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true
+                    }
+                }
+            }]
+        }
     });
 }
 
