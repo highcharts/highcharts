@@ -601,7 +601,7 @@ function parseFormula(
         // Check for a number value
         match = next.match(decimalRegExp);
         if (match) {
-            let number = parseFloat(match[0]);
+            let number = parseFloat(match[0].replace(',', '.'));
             // If the current value is multiplication-related and the previous
             // one is a minus sign, set the current value to negative and remove
             // the minus sign.
