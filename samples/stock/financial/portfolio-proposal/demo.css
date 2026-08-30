@@ -1,12 +1,23 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
+:root {
+    color-scheme: light dark;
+
+    --page-background: light-dark(#f4f3ee, #1b1b1b);
+    --card-background: light-dark(#fff, #141414);
+    --card-border: light-dark(#dcdbd2, #2c2c2c);
+    --text-color: light-dark(#1e1e1e, #d0d0d0);
+    --card-shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+}
+
 body {
     display: flex;
     flex-direction: column;
     margin: 0;
     font-family: Arial, sans-serif;
     gap: 16px;
-    background-color: #f4f3ee;
+    background-color: var(--page-background);
+    color: var(--text-color);
     padding: 24px;
 }
 
@@ -40,10 +51,10 @@ body {
 
 .chart-container {
     flex: 1;
-    background: #fff;
-    border: 1px solid #dcdbd2;
+    background: var(--card-background);
+    border: 1px solid var(--card-border);
     border-radius: 10px;
-    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 1px var(--card-shadow);
     padding: 20px;
 }
 
@@ -65,16 +76,16 @@ body {
 
 .theme-custom {
     --hcg-font-size: 15px;
-    --hcg-color: #000;
-    --hcg-header-color: #474554;
+    --hcg-color: var(--text-color);
+    --hcg-header-color: light-dark(#474554, #a1a1a1);
     --hcg-header-padding: 14px;
-    --hcg-background: #fff;
+    --hcg-background: var(--card-background);
     --hcg-padding: 10px;
-    --hcg-row-even-background: #fff;
-    --hcg-cell-hovered-row-background: #f2f3f4;
+    --hcg-row-even-background: var(--card-background);
+    --hcg-cell-hovered-row-background: light-dark(#f2f3f4, #202020);
     --hcg-border-width: 1px;
-    --hcg-border-color: #adadad;
-    --hcg-header-background: #f4f3ee;
+    --hcg-border-color: light-dark(#adadad, #434343);
+    --hcg-header-background: light-dark(#f4f3ee, #202020);
     --hcg-caption-font-size: 19px;
     --hcg-caption-font-weight: bold;
 }

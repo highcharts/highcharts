@@ -410,7 +410,7 @@ function renderRiskReturnChart(currentXRay, proposedXRay) {
     Highcharts.chart('risk-return-chart', {
         chart: {
             type: 'scatter',
-            plotBorderColor: '#E1E1E1',
+            plotBorderColor: 'var(--highcharts-neutral-color-20)',
             plotBorderWidth: 1
         },
         credits: {
@@ -429,14 +429,14 @@ function renderRiskReturnChart(currentXRay, proposedXRay) {
         },
         xAxis: {
             lineWidth: 0,
-            tickColor: '#E1E1E1',
+            tickColor: 'var(--highcharts-neutral-color-20)',
             title: {
                 text: 'Standard Deviation'
             },
             plotLines: [{
                 value: columns.StandardDeviation[periodIndex],
                 dashStyle: 'Dash',
-                color: '#2F2E38',
+                color: 'var(--highcharts-neutral-color-60)',
                 id: 'plot-line-std-dev'
             }],
             labels: {
@@ -444,14 +444,14 @@ function renderRiskReturnChart(currentXRay, proposedXRay) {
             }
         },
         yAxis: {
-            gridLineColor: '#0000000A',
+            gridLineColor: 'var(--highcharts-neutral-color-10)',
             title: {
                 text: 'Total Return %'
             },
             plotLines: [{
                 value: columns.Return[periodIndex],
                 dashStyle: 'Dash',
-                color: '#2F2E38',
+                color: 'var(--highcharts-neutral-color-60)',
                 id: 'plot-line-risk'
             }],
             labels: {
@@ -651,7 +651,7 @@ function renderHoldingsCharts(currentXRay, proposedXRay) {
             style: {
                 fontSize: '16px',
                 fontWeight: 'bold',
-                color: '#000'
+                color: 'var(--highcharts-neutral-color-100)'
             }
         },
         legend: {
@@ -891,7 +891,7 @@ function setupGrid() {
                     const sign = health > 0 ? '+' : '';
                     const color =
                         health === 0 ?
-                            'black' :
+                            'var(--highcharts-neutral-color-100)' :
                             health < 0 ?
                                 '#ff0000' :
                                 '#008000';
