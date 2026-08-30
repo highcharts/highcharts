@@ -138,13 +138,15 @@ class DataPool implements DataEventEmitter<Event> {
 
         // Start loading
         if (!waitingList) {
-            waitingList = this.waiting[connectorId] = [];
-
             const connectorOptions = this.getConnectorOptions(connectorId);
 
             if (!connectorOptions) {
-                throw new Error(`Connector '${connectorId}' not found.`);
+                return Promise.reject(
+                    new Error(`Connector '${connectorId}' not found.`)
+                );
             }
+
+            waitingList = this.waiting[connectorId] = [];
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             this
