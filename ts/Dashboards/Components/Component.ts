@@ -295,11 +295,8 @@ abstract class Component {
      */
     public sync: Sync;
 
-    /**
-     * Timeouts for calls to `Component.resizeTo()`.
-     * @internal
-     */
-    protected resizeTimeouts: number[] = [];
+    /** @internal */
+    private resizeAnimationFrame?: number;
 
     /**
      * Timeouts for resizing the content. I.e. `chart.setSize()`.
@@ -485,13 +482,7 @@ abstract class Component {
      * @internal
      */
     private attachCellListeners(): void {
-        // Remove old listeners
-        while (this.cellListeners.length) {
-            const destroy = this.cellListeners.pop();
-            if (destroy) {
-                destroy();
-            }
-        }
+        this.detachCellListeners();
 
         if (
             this.cell &&
@@ -523,6 +514,13 @@ abstract class Component {
                 )
             );
 
+        }
+    }
+
+    /** @internal */
+    private detachCellListeners(): void {
+        while (this.cellListeners.length) {
+            this.cellListeners.pop()?.();
         }
     }
 
@@ -668,13 +666,11 @@ abstract class Component {
      * HTML element that is resized.
      */
     public resizeTo(element: HTMLElement): void {
-        while (this.resizeTimeouts.length) {
-            const timeout = this.resizeTimeouts.pop();
-            if (timeout) {
-                cancelAnimationFrame(timeout);
-            }
+        if (this.resizeAnimationFrame !== void 0) {
+            cancelAnimationFrame(this.resizeAnimationFrame);
         }
-        const timeoutID = requestAnimationFrame((): void => {
+        this.resizeAnimationFrame = requestAnimationFrame((): void => {
+            this.resizeAnimationFrame = void 0;
             const { width, height } = element.getBoundingClientRect();
             const padding = getPaddings(element);
             const margins = getMargins(element);
@@ -683,8 +679,6 @@ abstract class Component {
                 height - padding.y - margins.y
             );
         });
-
-        this.resizeTimeouts.push(timeoutID);
     }
 
     /**
@@ -921,6 +915,15 @@ abstract class Component {
 
         if (this.sync.isSyncing) {
             this.sync.stop();
+        }
+
+        this.resizeObserver?.disconnect();
+        this.resizeObserver = void 0;
+        this.detachCellListeners();
+
+        if (this.resizeAnimationFrame !== void 0) {
+            cancelAnimationFrame(this.resizeAnimationFrame);
+            this.resizeAnimationFrame = void 0;
         }
 
         while (this.element.firstChild) {

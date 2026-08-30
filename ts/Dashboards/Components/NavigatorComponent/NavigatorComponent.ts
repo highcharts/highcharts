@@ -165,6 +165,9 @@ class NavigatorComponent extends Component {
      */
     private categories?: string[];
 
+    /** @private */
+    private redrawTimeout?: number;
+
 
     /* *
      *
@@ -316,18 +319,12 @@ class NavigatorComponent extends Component {
 
     /** @private */
     private redrawNavigator(): void {
-        const timeouts = this.resizeTimeouts;
-
-        for (let i = 0, iEnd = timeouts.length; i < iEnd; ++i) {
-            clearTimeout(timeouts[i]);
-        }
-
-        timeouts.length = 0;
-
-        timeouts.push(setTimeout((): void => {
+        clearTimeout(this.redrawTimeout);
+        this.redrawTimeout = setTimeout((): void => {
+            this.redrawTimeout = void 0;
             this.adjustNavigator();
             this.chart.redraw();
-        }, 33));
+        }, 33);
     }
 
 
@@ -536,6 +533,17 @@ class NavigatorComponent extends Component {
 
     public getOptionsOnDrop(): Partial<Options> {
         return {};
+    }
+
+    /**
+     * Destroys the navigator component and its chart.
+     */
+    public override destroy(): void {
+        clearTimeout(this.redrawTimeout);
+        this.redrawTimeout = void 0;
+        this.chart.destroy();
+        this.chart = void 0 as any;
+        super.destroy();
     }
 }
 
