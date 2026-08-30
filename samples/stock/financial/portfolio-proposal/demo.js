@@ -823,12 +823,13 @@ function renderPortfolioChart() {
             data: decreasingData,
             color: '#ff0000',
             marker: {
-                enabled: false
+                radius: 0
             },
             lowColor: undefined,
             lowMarker: {
                 enabled: true,
-                symbol: 'triangleLeft'
+                symbol: 'triangleLeft',
+                radius: 5
             }
         }]
     });
