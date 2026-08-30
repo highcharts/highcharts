@@ -130,8 +130,8 @@ class RangeModifier extends DataModifier {
         modifier.emit({ type: 'modify', detail: eventDetail, table });
 
         let { start, end } = modifier.options;
-        start = Math.max(0, start || 0);
-        end = Math.min(end || Infinity, table.getRowCount());
+        start = Math.max(0, start ?? 0);
+        end = Math.min(end ?? Infinity, table.getRowCount());
         const length = Math.max(end - start, 0);
 
         const modified = table.getModified();
