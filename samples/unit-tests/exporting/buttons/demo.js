@@ -226,6 +226,34 @@ QUnit.test('View/hide data table button, #14338.', function (assert) {
     );
 });
 
+QUnit.test('Export buttons preserve zero symbol options', function (assert) {
+    const chart = Highcharts.chart('container', {
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        symbolSize: 0,
+                        symbolStrokeWidth: 0
+                    }
+                }
+            },
+            series: [{
+                data: [1]
+            }]
+        }),
+        symbol = chart.exporting.svgElements[1];
+
+    assert.strictEqual(
+        symbol.width,
+        0,
+        'The configured zero symbol size is preserved'
+    );
+    assert.strictEqual(
+        symbol.attr('stroke-width'),
+        0,
+        'The configured zero stroke width is preserved'
+    );
+});
+
 QUnit.test(
     'When chart initialized with the table, show a proper button for hiding ' +
     'the table, #14352.',

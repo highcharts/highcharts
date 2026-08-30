@@ -984,7 +984,7 @@ export class Exporting {
             ),
             onclick = btnOptions.onclick,
             menuItems = btnOptions.menuItems,
-            symbolSize = btnOptions.symbolSize || 12;
+            symbolSize = btnOptions.symbolSize ?? 12;
         let symbol;
 
         if (btnOptions.enabled === false || !btnOptions.theme) {
@@ -1093,7 +1093,7 @@ export class Exporting {
                 symbol.attr({
                     stroke: btnOptions.symbolStroke,
                     fill: btnOptions.symbolFill,
-                    'stroke-width': btnOptions.symbolStrokeWidth || 1
+                    'stroke-width': btnOptions.symbolStrokeWidth ?? 1
                 });
             }
         }
