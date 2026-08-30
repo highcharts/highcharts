@@ -146,13 +146,7 @@ namespace BoostCanvas {
 
     const CHUNK_SIZE = 50000;
 
-    /* *
-     *
-     *  Variables
-     *
-     * */
-
-    let destroyLoadingDiv: number;
+    const loadingDestroyTimers = new WeakMap<Chart, number>();
 
     /* *
      *
@@ -583,7 +577,11 @@ namespace BoostCanvas {
                     opacity: 1
                 }
             });
-            internalClearTimeout(destroyLoadingDiv);
+            const loadingDestroyTimer = loadingDestroyTimers.get(chart);
+            if (typeof loadingDestroyTimer !== 'undefined') {
+                internalClearTimeout(loadingDestroyTimer);
+                loadingDestroyTimers.delete(chart);
+            }
             chart.showLoading('Drawing...');
             chart.options.loading = loadingOptions; // Reset
         }
@@ -907,12 +905,16 @@ namespace BoostCanvas {
                 loadingDiv.style.transition = 'opacity 250ms';
                 loadingDiv.opacity = 0 as any;
                 chart.loadingShown = false;
-                destroyLoadingDiv = setTimeout(function (): void {
-                    if (loadingDiv.parentNode) { // In exporting it is falsy
-                        loadingDiv.parentNode.removeChild(loadingDiv);
-                    }
-                    chart.loadingDiv = chart.loadingSpan = null as any;
-                }, 250);
+                loadingDestroyTimers.set(
+                    chart,
+                    setTimeout(function (): void {
+                        if (loadingDiv.parentNode) { // In exporting it is falsy
+                            loadingDiv.parentNode.removeChild(loadingDiv);
+                        }
+                        chart.loadingDiv = chart.loadingSpan = null as any;
+                        loadingDestroyTimers.delete(chart);
+                    }, 250)
+                );
             }
 
             // Go back to prototype, ready to build
