@@ -124,7 +124,7 @@ describe('MathModifier', () => {
 
             deepStrictEqual(
                 table.getModified().getColumn('ColumnE'),
-                [176040, 281000, 3842000, 63625, 161201],
+                [176640, 281500, 3842000, 63625, 161201],
                 'The advanced aggregate functions formula is properly calculated.'
             );
         });

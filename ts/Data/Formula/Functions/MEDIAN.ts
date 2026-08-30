@@ -106,6 +106,8 @@ function MEDIAN(
         return NaN;
     }
 
+    median.sort((a, b): number => a - b);
+
     const half = Math.floor(count / 2); // Floor because index starts at 0
 
     return (
