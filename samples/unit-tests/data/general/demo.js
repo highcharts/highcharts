@@ -447,3 +447,69 @@ QUnit.test('Updating with firstRowAsNames and dataGrouping', function (assert) {
         'having data grouping options.'
     );
 });
+
+QUnit.test('Destroy clears live data polling timeout', function (assert) {
+    const win = Highcharts.win,
+        OriginalXMLHttpRequest = win.XMLHttpRequest,
+        originalSetTimeout = win.setTimeout,
+        originalClearTimeout = win.clearTimeout,
+        pendingPollingTimeouts = new Set();
+
+    let nextTimeoutId = 1,
+        pollingTimeoutId;
+
+    function FakeXMLHttpRequest() {
+        this.readyState = 0;
+        this.status = 0;
+        this.responseText = '';
+    }
+
+    FakeXMLHttpRequest.prototype.open = function () {};
+    FakeXMLHttpRequest.prototype.setRequestHeader = function () {};
+    FakeXMLHttpRequest.prototype.send = function () {
+        this.readyState = 4;
+        this.status = 200;
+        this.responseText = 'x,y\n1,2';
+        this.onreadystatechange();
+    };
+
+    win.XMLHttpRequest = FakeXMLHttpRequest;
+    win.setTimeout = function (callback, delay) {
+        if (delay === 1000) {
+            pollingTimeoutId = nextTimeoutId++;
+            pendingPollingTimeouts.add(pollingTimeoutId);
+            return pollingTimeoutId;
+        }
+        return originalSetTimeout.apply(this, arguments);
+    };
+    win.clearTimeout = function (timeoutId) {
+        pendingPollingTimeouts.delete(timeoutId);
+        return originalClearTimeout(timeoutId);
+    };
+
+    try {
+        const chart = Highcharts.chart('container', {
+            data: {
+                csvURL: '/fake.csv',
+                enablePolling: true,
+                dataRefreshRate: 1
+            }
+        });
+
+        assert.ok(
+            pendingPollingTimeouts.has(pollingTimeoutId),
+            'Polling timeout should be scheduled'
+        );
+
+        chart.destroy();
+
+        assert.notOk(
+            pendingPollingTimeouts.has(pollingTimeoutId),
+            'Polling timeout should be cleared'
+        );
+    } finally {
+        win.XMLHttpRequest = OriginalXMLHttpRequest;
+        win.setTimeout = originalSetTimeout;
+        win.clearTimeout = originalClearTimeout;
+    }
+});
