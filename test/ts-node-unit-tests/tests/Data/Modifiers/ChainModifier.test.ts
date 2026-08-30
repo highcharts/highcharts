@@ -3,6 +3,7 @@ import { strictEqual, deepStrictEqual } from 'node:assert';
 
 import DataTable from '../../../../../ts/Data/DataTable.js';
 import ChainModifier from '../../../../../ts/Data/Modifiers/ChainModifier.js';
+import DataModifier from '../../../../../ts/Data/Modifiers/DataModifier.js';
 // Import these to register them with DataModifier.types
 import '../../../../../ts/Data/Modifiers/FilterModifier.js';
 import '../../../../../ts/Data/Modifiers/RangeModifier.js';
@@ -69,6 +70,46 @@ describe('ChainModifier', () => {
                 (table.getModified() as any).originalRowIndexes,
                 [1, 2, 3],
                 'Modified table should have expected original row indexes.'
+            );
+        });
+
+        it('keeps a reversed chain order stable between executions', () => {
+            const calls: string[] = [];
+
+            class TrackingModifier extends DataModifier {
+                public readonly options = { type: 'Tracking' };
+
+                public constructor(private readonly id: string) {
+                    super();
+                }
+
+                public modifyTable(table: DataTable): DataTable {
+                    calls.push(this.id);
+                    return table;
+                }
+            }
+
+            const first = new TrackingModifier('first'),
+                second = new TrackingModifier('second'),
+                modifier = new ChainModifier(
+                    { reverse: true },
+                    first,
+                    second
+                ),
+                table = new DataTable();
+
+            modifier.modifyTable(table);
+            modifier.modifyTable(table);
+
+            deepStrictEqual(
+                calls,
+                ['second', 'first', 'second', 'first'],
+                'Every execution should use the configured reverse order.'
+            );
+            deepStrictEqual(
+                modifier.chain,
+                [first, second],
+                'Executing the chain should not mutate its configured order.'
             );
         });
     });

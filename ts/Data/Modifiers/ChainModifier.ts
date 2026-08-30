@@ -264,7 +264,7 @@ class ChainModifier extends DataModifier {
 
         const modifiers = (
             chain.options.reverse ?
-                chain.chain.reverse() :
+                chain.chain.slice().reverse() :
                 chain.chain.slice()
         );
 
