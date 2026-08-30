@@ -49,3 +49,47 @@ QUnit.test('Heading auto detection works as expected', function (assert) {
         'Parent previous sibling h1 should give h2.'
     );
 });
+
+QUnit.test('Axis range descriptions preserve zero data bounds', assert => {
+    const getRangeDescription =
+        Highcharts.A11yChartUtilities.getAxisRangeDescription;
+    let chart = Highcharts.chart('container', {
+        xAxis: {
+            categories: ['A', 'B', 'C']
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.strictEqual(
+        getRangeDescription(chart.xAxis[0]),
+        'Data range: 3 categories.',
+        'Category ranges should include a zero-based first category'
+    );
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            data: [[0, 1], [10, 2]]
+        }]
+    });
+    assert.strictEqual(
+        getRangeDescription(chart.xAxis[0]),
+        'Data ranges from 0 to 10.',
+        'Numeric ranges should start at the zero data minimum'
+    );
+
+    chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'datetime'
+        },
+        series: [{
+            data: [[0, 1], [24 * 60 * 60 * 1000, 2]]
+        }]
+    });
+    assert.strictEqual(
+        getRangeDescription(chart.xAxis[0]),
+        'Data range: 24 hours.',
+        'Time ranges should start at the zero timestamp'
+    );
+});
