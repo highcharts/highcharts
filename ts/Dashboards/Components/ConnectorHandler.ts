@@ -379,6 +379,8 @@ class ConnectorHandler {
      */
     public destroy(): void {
         this.destroyed = true;
+        clearTimeout(this.tableEventTimeout);
+        this.tableEventTimeout = void 0;
         this.removeConnectorAssignment();
         this.removeTableEvents();
     }
