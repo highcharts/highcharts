@@ -288,6 +288,24 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     );
 });
 
+QUnit.test('Unknown prototype-named annotation types', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1]
+        }]
+    });
+
+    const annotations = ['toString', '__proto__'].map(type => (
+        chart.addAnnotation({ type }, false)
+    ));
+
+    assert.deepEqual(
+        annotations.map(annotation => annotation.constructor),
+        [Highcharts.Annotation, Highcharts.Annotation],
+        'Unknown types fall back to the base annotation class'
+    );
+});
+
 QUnit.test(
     'Hiding and showing annotations with linked points',
     function (assert) {
