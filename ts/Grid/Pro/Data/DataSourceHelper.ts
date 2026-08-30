@@ -277,15 +277,21 @@ export async function dataSourceFetch(
         const url = buildUrl(options, state);
         const controller = fetchTimeout > 0 ? new AbortController() : null;
         const externalSignal = state.signal;
-        let timeoutId: ReturnType<typeof setTimeout> | undefined;
+        let externalAbortHandler: (() => void) | undefined,
+            timeoutId: ReturnType<typeof setTimeout> | undefined;
 
         if (controller && externalSignal) {
             if (externalSignal.aborted) {
                 controller.abort();
             } else {
-                externalSignal.addEventListener('abort', (): void => {
+                externalAbortHandler = (): void => {
                     controller.abort();
-                }, { once: true });
+                };
+                externalSignal.addEventListener(
+                    'abort',
+                    externalAbortHandler,
+                    { once: true }
+                );
             }
         }
 
@@ -305,8 +311,14 @@ export async function dataSourceFetch(
 
             return data;
         } finally {
-            if (timeoutId) {
+            if (typeof timeoutId !== 'undefined') {
                 clearTimeout(timeoutId);
+            }
+            if (externalSignal && externalAbortHandler) {
+                externalSignal.removeEventListener(
+                    'abort',
+                    externalAbortHandler
+                );
             }
         }
     } catch (err: unknown) {
