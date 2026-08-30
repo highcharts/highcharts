@@ -437,3 +437,50 @@ QUnit.test('#14397: Updating networkgraph series', assert => {
         'series.layout should be preserved through update()'
     );
 });
+
+QUnit.test('Destroying a network graph during node drag', assert => {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'networkgraph'
+            },
+            plotOptions: {
+                networkgraph: {
+                    layoutAlgorithm: {
+                        enableSimulation: false
+                    }
+                }
+            },
+            series: [{
+                data: [['A', 'B']]
+            }]
+        }),
+        controller = new TestController(chart),
+        node = chart.series[0].nodes[0],
+        mouseupListenersBeforeDrag = document.hcEvents.mouseup.slice();
+
+    controller.moveTo(
+        chart.plotLeft + node.plotX,
+        chart.plotTop + node.plotY
+    );
+    controller.mouseDown(
+        chart.plotLeft + node.plotX,
+        chart.plotTop + node.plotY
+    );
+
+    assert.strictEqual(
+        document.hcEvents.mouseup.length,
+        mouseupListenersBeforeDrag.length + 1,
+        'Dragging should add a document mouseup listener'
+    );
+
+    const dragMouseupListener = document.hcEvents.mouseup.find(
+        listener => !mouseupListenersBeforeDrag.includes(listener)
+    );
+
+    chart.destroy();
+
+    assert.notOk(
+        document.hcEvents.mouseup.includes(dragMouseupListener),
+        'Destroying should remove the active drag listener'
+    );
+});

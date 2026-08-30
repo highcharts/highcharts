@@ -117,10 +117,16 @@ function onChartLoad(
 ): void {
     const chart = this as DragNodesChart;
 
-    let mousedownUnbinder: Function,
-        mousemoveUnbinder: Function,
-        mouseupUnbinder: Function,
-        point: DragNodesPoint;
+    let mousedownUnbinder: (Function|undefined),
+        mousemoveUnbinder: (Function|undefined),
+        mouseupUnbinder: (Function|undefined),
+        point: (DragNodesPoint|undefined);
+
+    const unbindDragEvents = (): void => {
+        mousemoveUnbinder?.();
+        mouseupUnbinder?.();
+        mousemoveUnbinder = mouseupUnbinder = void 0;
+    };
 
     if (chart.container) {
         mousedownUnbinder = addEvent(
@@ -128,13 +134,7 @@ function onChartLoad(
             'mousedown',
             (event: PointerEvent): void => {
 
-                if (mousemoveUnbinder) {
-                    mousemoveUnbinder();
-                }
-
-                if (mouseupUnbinder) {
-                    mouseupUnbinder();
-                }
+                unbindDragEvents();
 
                 point = chart.hoverPoint;
 
@@ -158,9 +158,8 @@ function onChartLoad(
                         chart.container.ownerDocument,
                         'mouseup',
                         (e: PointerEvent): void => {
-                            mousemoveUnbinder();
-                            mouseupUnbinder();
-                            return point &&
+                            unbindDragEvents();
+                            point &&
                                 point.series &&
                                 point.series.onMouseUp(point, e);
                         }
@@ -171,7 +170,9 @@ function onChartLoad(
     }
 
     addEvent(chart, 'destroy', function (): void {
-        mousedownUnbinder();
+        mousedownUnbinder?.();
+        unbindDragEvents();
+        point = void 0;
     });
 }
 
