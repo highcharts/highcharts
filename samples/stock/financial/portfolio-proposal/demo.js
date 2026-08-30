@@ -751,7 +751,8 @@ function renderPortfolioChart() {
             align: 'left'
         },
         tooltip: {
-            shared: true
+            shared: true,
+            valueSuffix: '%'
         },
         xAxis: [{
             type: 'category',
@@ -802,7 +803,8 @@ function renderPortfolioChart() {
                     enabled: true,
                     color: 'contrast',
                     crop: false,
-                    overflow: 'allow'
+                    overflow: 'allow',
+                    format: '{y}%'
                 }
             }
         },
@@ -1140,7 +1142,8 @@ function renderStaticCharts() {
             }
         },
         tooltip: {
-            split: true
+            split: true,
+            valueSuffix: '%'
         },
         series: [{
             name: 'Current',
