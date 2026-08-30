@@ -846,6 +846,42 @@ function setupGrid() {
                 virtualization: false
             }
         },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 560
+                },
+                gridOptions: {
+                    columns: [{
+                        id: 'performance',
+                        enabled: false
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 340
+                },
+                gridOptions: {
+                    columns: [{
+                        id: 'performance',
+                        enabled: false
+                    }, {
+                        id: 'health',
+                        enabled: false
+                    }, {
+                        id: 'weight',
+                        header: {
+                            format: 'Current %'
+                        }
+                    }, {
+                        id: 'proposedWeight',
+                        header: {
+                            format: 'Proposed %'
+                        }
+                    }]
+                }
+            }]
+        },
         dataTable: {
             columns: {
                 name: predefinedHoldings.map(holding => holding.name),

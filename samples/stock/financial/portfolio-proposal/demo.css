@@ -7,6 +7,7 @@
     --card-background: light-dark(#fff, #141414);
     --card-border: light-dark(#dcdbd2, #2c2c2c);
     --text-color: light-dark(#1e1e1e, #d0d0d0);
+    --muted-text-color: light-dark(#5a5d5c, #a1a1a1);
     --card-shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
 }
 
@@ -19,6 +20,25 @@ body {
     background-color: var(--page-background);
     color: var(--text-color);
     padding: 24px;
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+header p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--muted-text-color);
 }
 
 .chart-row {
