@@ -840,7 +840,11 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         }
 
         // Typed array
-        if (defined(cellValue) && Number.isFinite(cellValue)) {
+        if (
+            column &&
+            defined(cellValue) &&
+            Number.isFinite(cellValue)
+        ) {
             return (column.indexOf(+cellValue) !== -1);
         }
 

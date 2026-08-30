@@ -512,6 +512,14 @@ describe('DataTable', () => {
         });
     });
 
+    describe('hasRowWith', () => {
+        it('should return false for a missing numeric column', () => {
+            const table = new DataTable({ columns: { x: [1] } });
+
+            strictEqual(table.hasRowWith('missing', 1), false);
+        });
+    });
+
     describe('setRows', () => {
         it('should maintain row data when cloning and resetting', () => {
             const table = new DataTable({
