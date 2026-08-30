@@ -570,6 +570,45 @@ describe('DataTable', () => {
             );
         });
 
+        it('should apply all values from a nonzero row index', () => {
+            const table = new DataTable({
+                columns: {
+                    x: [0, 1, 2]
+                }
+            });
+
+            table.setColumns({ x: [8, 9] }, 1);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                [0, 8, 9],
+                'Replacement values should start at the requested row.'
+            );
+        });
+
+        it('should extend typed columns for offset values', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setColumns({
+                x: new Float32Array([3, 4])
+            }, 2);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 3, 4]),
+                'The typed column should grow through the destination range.'
+            );
+            strictEqual(
+                table.getRowCount(),
+                4,
+                'The row count should include the offset values.'
+            );
+        });
+
         it('should truncate columns when setting shorter columns', () => {
             const table = new DataTable({
                 columns: {
