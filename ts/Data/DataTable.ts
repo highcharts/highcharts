@@ -1253,6 +1253,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             columns = table.columns,
             columnIds = Object.keys(columns),
             modifier = table.modifier,
+            originalRowCount = table.rowCount,
             rowCount = rows.length;
 
         table.emit({
@@ -1285,7 +1286,15 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 }
             } else if (Array.isArray(row)) {
                 for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
-                    columns[columnIds[j]][i2] = row[j];
+                    const columnId = columnIds[j];
+
+                    if (insert) {
+                        columns[columnId] = splice(
+                            columns[columnId], i2, 0, true, [row[j]]
+                        ).array;
+                    } else {
+                        columns[columnId][i2] = row[j];
+                    }
                 }
             } else {
                 super.setRow(row, i2, insert, { silent: true });
@@ -1293,7 +1302,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         }
 
         const indexRowCount = insert ?
-            rowCount + rows.length :
+            originalRowCount + rowCount :
             rowIndex + rowCount;
         if (indexRowCount > table.rowCount) {
             table.rowCount = indexRowCount;
