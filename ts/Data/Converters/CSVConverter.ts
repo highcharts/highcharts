@@ -128,8 +128,14 @@ class CSVConverter extends DataConverter {
         options: Partial<CSVConverterOptions>,
         eventDetail?: DataEventDetail
     ): DataTableColumnCollection {
-        const converter = this,
-            dataTypes = converter.dataTypes,
+        const converter = this;
+
+        converter.headers = [];
+        converter.dataTypes = [];
+        converter.guessedItemDelimiter = void 0;
+        converter.guessedDecimalPoint = void 0;
+
+        const dataTypes = converter.dataTypes,
             parserOptions = merge(this.options, options),
             {
                 beforeParse,
