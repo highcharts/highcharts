@@ -1,0 +1,14 @@
+---
+name: Bubble Sales Pipeline Funnel
+authors:
+  - Nancy Dillon
+js_wrap: b
+alt_text: >-
+  Bubble chart representing a sales pipeline inside a funnel-shaped layout.
+  Opportunities are grouped into the stages Scoping, Proposal, Committed, and
+  Won, with bubble size indicating relative deal value.
+tags:
+  - Highcharts demo
+categories:
+  - Scatter and bubble charts
+...
