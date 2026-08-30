@@ -188,6 +188,11 @@ class SidebarPopup extends BaseForm {
     public isVisible = false;
 
     /**
+     * Pending timeout that applies the sidebar's visible-position class.
+     */
+    private showClassTimeout?: number;
+
+    /**
      * List of components that can be added to the board.
      */
     private componentsList: Array<AddComponentDetails> = [];
@@ -240,6 +245,9 @@ class SidebarPopup extends BaseForm {
         const classNames = EditGlobals.classNames,
             classList = this.container.classList;
 
+        clearTimeout(this.showClassTimeout);
+        delete this.showClassTimeout;
+
         classList.remove(classNames.editSidebarShow);
         classList.remove(classNames.editSidebarRightShow);
     }
@@ -264,7 +272,9 @@ class SidebarPopup extends BaseForm {
             );
         }
 
-        setTimeout((): void => {
+        clearTimeout(this.showClassTimeout);
+        this.showClassTimeout = setTimeout((): void => {
+            delete this.showClassTimeout;
             classList.add(EditGlobals.classNames[
                 isRightSidebar ? 'editSidebarRightShow' : 'editSidebarShow'
             ]
