@@ -200,5 +200,15 @@ describe('Formula.basicOperation(`=`)', () => {
                 'Formula `"A" = "a"` test should return TRUE, because comparisons are case insensitive.'
             );
         });
+
+        it('"AB" = "AC" should return FALSE', () => {
+            strictEqual(
+                Formula.processFormula(
+                    Formula.parseFormula('"AB" = "AC"', false)
+                ),
+                false,
+                'Formula `"AB" = "AC"` test should compare the full strings.'
+            );
+        });
     });
 });

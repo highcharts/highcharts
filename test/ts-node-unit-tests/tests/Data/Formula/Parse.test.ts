@@ -39,4 +39,14 @@ describe('Formula.parseFormula', () => {
             'Processing should result in a value of -10.'
         );
     });
+
+    it('should preserve complete quoted string literals', () => {
+        strictEqual(
+            Formula.processFormula(
+                Formula.parseFormula('"Highcharts"', false)
+            ),
+            'Highcharts',
+            'Processing should return the complete quoted string.'
+        );
+    });
 });

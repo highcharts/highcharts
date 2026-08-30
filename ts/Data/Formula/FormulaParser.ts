@@ -620,7 +620,7 @@ function parseFormula(
         if (next[0] === '"') {
             const string = extractString(next);
 
-            formula.push(string.substring(1, -1));
+            formula.push(string);
 
             next = next.substring(string.length + 2).trim();
 
