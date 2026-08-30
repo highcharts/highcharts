@@ -566,6 +566,8 @@ class Sonification {
      */
     destroy(): void {
         this.unbindKeydown();
+        internalClearTimeout(this.scheduledUpdate);
+        delete this.scheduledUpdate;
         if (this.timeline) {
             this.timeline.destroy();
             delete this.timeline;
