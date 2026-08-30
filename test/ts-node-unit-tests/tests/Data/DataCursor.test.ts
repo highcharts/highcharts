@@ -88,6 +88,41 @@ describe('DataCursor', () => {
             deepStrictEqual(test3Event?.cursors, [expectedCursor3], 'Lasting event should have cursors array with cursor.');
             strictEqual(test3Event?.table, table, 'Lasting event should have correct table.');
         });
+
+        it('should support prototype-named table IDs and states', () => {
+            const cursor = new DataCursor(),
+                table = new DataTable({ id: 'toString' }),
+                state = '__proto__';
+            let calls = 0;
+            const listener = (): void => {
+                calls++;
+            };
+
+            cursor.addListener(table.id, state, listener);
+            cursor.emitCursor(table, {
+                type: 'position',
+                state
+            }, void 0, true);
+
+            strictEqual(calls, 1, 'The listener should receive the cursor.');
+            strictEqual(
+                cursor.stateMap[table.id][state].length,
+                1,
+                'The lasting cursor should be stored under its exact keys.'
+            );
+
+            cursor.remitCursor(table.id, {
+                type: 'position',
+                state
+            });
+            cursor.removeListener(table.id, state, listener);
+            cursor.emitCursor(table, {
+                type: 'position',
+                state
+            });
+
+            strictEqual(calls, 1, 'The listener should be removable.');
+        });
     });
 
     describe('isEqual', () => {

@@ -57,10 +57,10 @@ class DataCursor {
 
 
     public constructor(
-        stateMap: StateMap = {}
+        stateMap: StateMap = Object.create(null)
     ) {
         this.emittingRegister = [];
-        this.listenerMap = {};
+        this.listenerMap = Object.create(null);
         this.stateMap = stateMap;
     }
 
@@ -129,12 +129,12 @@ class DataCursor {
         listener: Listener
     ): this {
         const listenerMap = this.listenerMap[tableId] = (
-            this.listenerMap[tableId] ||
-            {}
+            hasOwn(this.listenerMap, tableId) ?
+                this.listenerMap[tableId] :
+                Object.create(null)
         );
         const listeners = listenerMap[state] = (
-            listenerMap[state] ||
-            []
+            hasOwn(listenerMap, state) ? listenerMap[state] : []
         );
 
         listeners.push(listener);
@@ -209,16 +209,21 @@ class DataCursor {
         const tableId = table.id,
             state = cursor.state,
             listeners = (
-                this.listenerMap[tableId] &&
-                this.listenerMap[tableId][state]
+                hasOwn(this.listenerMap, tableId) &&
+                hasOwn(this.listenerMap[tableId], state) ?
+                    this.listenerMap[tableId][state] :
+                    void 0
             );
 
         if (listeners) {
             const stateMap = this.stateMap[tableId] = (
-                this.stateMap[tableId] ?? {}
+                hasOwn(this.stateMap, tableId) ?
+                    this.stateMap[tableId] :
+                    Object.create(null)
             );
 
-            const cursors = stateMap[cursor.state] || [];
+            const cursors = hasOwn(stateMap, cursor.state) ?
+                stateMap[cursor.state] : [];
 
             if (lasting) {
 
@@ -287,8 +292,10 @@ class DataCursor {
         cursor: Type
     ): this {
         const cursors = (
-            this.stateMap[tableId] &&
-            this.stateMap[tableId][cursor.state]
+            hasOwn(this.stateMap, tableId) &&
+            hasOwn(this.stateMap[tableId], cursor.state) ?
+                this.stateMap[tableId][cursor.state] :
+                void 0
         );
 
         if (cursors) {
@@ -326,8 +333,10 @@ class DataCursor {
         listener: Listener
     ): this {
         const listeners = (
-            this.listenerMap[tableId] &&
-            this.listenerMap[tableId][state]
+            hasOwn(this.listenerMap, tableId) &&
+            hasOwn(this.listenerMap[tableId], state) ?
+                this.listenerMap[tableId][state] :
+                void 0
         );
 
         if (listeners) {
@@ -398,6 +407,18 @@ export type TableMap = Record<TableId, DataTable>;
  *  Functions
  *
  * */
+
+
+/**
+ * Checks whether a registry owns a key.
+ * @private
+ */
+function hasOwn(
+    registry: object,
+    key: PropertyKey
+): boolean {
+    return Object.prototype.hasOwnProperty.call(registry, key);
+}
 
 
 /**
