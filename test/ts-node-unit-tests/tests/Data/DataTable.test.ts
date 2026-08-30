@@ -138,6 +138,43 @@ describe('DataTable', () => {
                     'Result has correct amount of column cells.'
                 ));
         });
+
+        it('should support prototype-named column IDs', () => {
+            const table = new DataTable();
+
+            strictEqual(
+                table.hasColumns(['toString']),
+                false,
+                'Inherited object properties should not count as columns.'
+            );
+
+            table.setColumn('toString', [1]);
+            table.setColumn('__proto__', [2]);
+
+            deepStrictEqual(
+                table.getColumnIds(),
+                ['toString', '__proto__'],
+                'Both prototype-named columns should be enumerable.'
+            );
+            deepStrictEqual(table.getColumn('toString'), [1]);
+            deepStrictEqual(table.getColumn('__proto__'), [2]);
+
+            const columns = table.getColumns();
+            const row = table.getRowObject(0)!;
+
+            strictEqual(Object.hasOwn(columns, '__proto__'), true);
+            strictEqual(Object.hasOwn(row, '__proto__'), true);
+            strictEqual(row['toString'], 1);
+            strictEqual(row['__proto__'], 2);
+
+            table.setRow({ ordinary: 3 }, 1);
+
+            strictEqual(
+                table.getCell('toString', 1),
+                void 0,
+                'Inherited row properties should not become cell values.'
+            );
+        });
     });
 
     describe('Events', () => {

@@ -41,6 +41,35 @@ import { uniqueKey } from '../Core/Utilities.js';
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+
+/**
+ * Sets an own enumerable record property without invoking `__proto__`.
+ * @private
+ */
+export function setRecordValue<T>(
+    record: Record<string, T>,
+    key: string,
+    value: T
+): void {
+    if (key === '__proto__') {
+        Object.defineProperty(record, key, {
+            configurable: true,
+            enumerable: true,
+            value,
+            writable: true
+        });
+    } else {
+        record[key] = value;
+    }
+}
+
+
+/* *
+ *
  *  Class
  *
  * */
@@ -83,7 +112,10 @@ class DataTableCore {
         options: DataTableOptionsObject = {}
     ) {
         this.autoId = !options.id;
-        this.columns = {};
+        this.columns = Object.create(null) as Record<
+            string,
+            DataTableColumn
+        >;
         this.id = (options.id || uniqueKey());
         this.rowCount = 0;
         this.versionTag = uniqueKey();
@@ -247,7 +279,7 @@ class DataTableCore {
     ): DataTableColumnCollection {
         return (columnIds || Object.keys(this.columns)).reduce(
             (columns, columnId): DataTableColumnCollection => {
-                columns[columnId] = this.columns[columnId];
+                setRecordValue(columns, columnId, this.columns[columnId]);
                 return columns;
             },
             {} as DataTableColumnCollection
@@ -278,7 +310,11 @@ class DataTableCore {
         columnNames ??= Object.keys(this.columns);
 
         for (const columnName of columnNames) {
-            row[columnName] = columns[columnName]?.[rowIndex];
+            setRecordValue(
+                row,
+                columnName,
+                columns[columnName]?.[rowIndex]
+            );
         }
         return row;
     }
@@ -399,20 +435,25 @@ class DataTableCore {
 
         objectEach(columns, (column, columnId): void => {
             if (column) {
+                const hasValue = Object.prototype.hasOwnProperty.call(
+                    row,
+                    columnId
+                );
+
                 if (insert) {
                     column = splice(
                         column,
                         rowIndex,
                         0,
                         true,
-                        [row[columnId]]
+                        [hasValue ? row[columnId] : void 0]
                     ).array;
                 } else {
                     column[rowIndex] =
                         // Preserve explicit null and undefined but fall back
                         // to existing value if the new row does not have the
                         // key
-                        columnId in row ?
+                        hasValue ?
                             row[columnId] :
                             column[rowIndex];
                 }
