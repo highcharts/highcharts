@@ -35,10 +35,13 @@ format: '{add 1 2}' // => prints 3
 format: '{add point.index 1}' // => prints a 1-based index from zero-based
 ```
 
-**Block helpers** include a block that is executed conditionally. Block helpers start with a `#`, and end with a closing expression. They may also include an `{else}` expression to execute if the condition is falsy.
+**Block helpers** include a block that is executed conditionally. Block helpers start with a `#`, and end with a closing expression. They may also include an `{else}` expression to execute if the condition is falsy, or `{else if condition}` for additional branches.
 ```js
 // A simple #if helper
 format: '{#if point.isNull}Null{else}{point.y:.2f} USD{/if}'
+
+// Additional branches with else-if
+format: '{#if (lt value 70)}Green{else if (lt value 90)}Yellow{else}Red{/if}'
 
 // A block helper looping through points, with nested expressions
 format: '{#each points}{add this.index 1}) {this.name}<br>{/each}
@@ -102,7 +105,7 @@ format: '{log}'
 * **#each**. Iterate over an array of items. The context of each child is given as `{this}` in the block body. Additional variables in the block body are `@index`, `@first` and `@last`. Example `{#each points}{@index}) {name}, {#if @last}and {/if}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/format-shared).
 * **ge**. Greater than or equal, JavaScript `>=`. Doubles as block helper and subexpression.
 * **gt**. Greater than, JavaScript `>`. Doubles as block helper and subexpression.
-* **#if**. Conditional block helper. `{#if point.isNull}The point is null{else}The value is {point.y}{/if}`.
+* **#if**. Conditional block helper. `{#if point.isNull}The point is null{else if point.isEstimate}The value is estimated{else}The value is {point.y}{/if}`.
 * **le**. Less than or equal, JavaScript `<=`. Doubles as block helper and subexpression.
 * **lt**. Less than, JavaScript `<`. Doubles as block helper and subexpression.
 * **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
