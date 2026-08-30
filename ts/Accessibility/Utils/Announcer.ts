@@ -89,6 +89,8 @@ class Announcer {
      * */
 
     public destroy(): void {
+        internalClearTimeout(this.clearAnnouncementRegionTimer);
+        delete this.clearAnnouncementRegionTimer;
         this.domElementProvider.destroyCreatedElements();
     }
 
