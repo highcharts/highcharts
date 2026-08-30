@@ -728,3 +728,31 @@ QUnit.test(
             'px from the third point.'
         );
     });
+
+QUnit.test('Stock Tools attraction to a zero-valued point', assert => {
+    const chart = Highcharts.stockChart('container', {
+            series: [{
+                data: [[0, 0], [1, 1]]
+            }]
+        }),
+        point = chart.series[0].points[0];
+
+    chart.navigationBindings.options.bindings.verticalLabel.start.call(
+        chart.navigationBindings,
+        {
+            chartX: chart.plotLeft + point.plotX,
+            chartY: chart.plotTop + point.plotY
+        }
+    );
+
+    assert.deepEqual(
+        chart.annotations[0]?.options.typeOptions.point,
+        {
+            x: 0,
+            xAxis: 0,
+            y: 0,
+            yAxis: 0
+        },
+        'A point at zero should remain available to annotation tools'
+    );
+});

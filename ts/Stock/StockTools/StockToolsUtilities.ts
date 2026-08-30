@@ -288,7 +288,11 @@ function attractToPoint(
         }
     });
 
-    if (closestPoint && closestPoint.x && closestPoint.y) {
+    if (
+        closestPoint &&
+        defined(closestPoint.x) &&
+        defined(closestPoint.y)
+    ) {
         return {
             x: closestPoint.x,
             y: closestPoint.y,
