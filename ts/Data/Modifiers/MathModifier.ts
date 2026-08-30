@@ -155,19 +155,25 @@ class MathModifier extends DataModifier {
             ++i
         ) {
             columnFormula = columnFormulas[i];
+            const rowStart = Math.max(columnFormula.rowStart ?? 0, 0),
+                column = Array.from(
+                    modified.getColumn(columnFormula.column, true) ||
+                    new Array(table.getRowCount())
+                );
             formula = FormulaParser.parseFormula(
                 columnFormula.formula,
                 alternativeSeparators
             );
-            modified.setColumn(
-                columnFormula.column,
-                modifier.processColumnFormula(
-                    formula,
-                    table,
-                    columnFormula.rowStart,
-                    columnFormula.rowEnd
-                )
+            const values = modifier.processColumnFormula(
+                formula,
+                table,
+                rowStart,
+                columnFormula.rowEnd
             );
+            for (let j = 0, jEnd = values.length; j < jEnd; ++j) {
+                column[rowStart + j] = values[j];
+            }
+            modified.setColumn(columnFormula.column, column);
         }
 
         modifier.emit({ type: 'afterModify', detail: eventDetail, table });
@@ -273,6 +279,13 @@ class MathModifier extends DataModifier {
         const column = [],
             modified = table.getModified();
 
+        if (rowStart) {
+            formula = FormulaProcessor.translateReferences(
+                formula,
+                0,
+                rowStart
+            );
+        }
 
         for (let i = 0, iEnd = (rowEnd - rowStart); i < iEnd; ++i) {
             try {

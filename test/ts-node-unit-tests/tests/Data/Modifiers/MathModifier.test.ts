@@ -94,6 +94,35 @@ describe('MathModifier', () => {
                 'Opposite celsius is a negative value.'
             );
         });
+
+        it('should apply column formulas within their configured rows', async () => {
+            const table = new DataTable({
+                columns: {
+                    Kelvin: [273.15, 283.15, 293.15, 303.15, 313.15],
+                    Celsius: [0, 10, 0, 0, 40]
+                }
+            });
+
+            await table.setModifier(new MathModifier({
+                columnFormulas: [{
+                    column: 'Celsius',
+                    formula: 'A1 - 273.15',
+                    rowStart: 2,
+                    rowEnd: 4
+                }]
+            }));
+
+            deepStrictEqual(
+                table.getModified().getColumn('Celsius'),
+                [0, 10, 20, 30, 40],
+                'Only rows in the configured range should be replaced.'
+            );
+            strictEqual(
+                table.getModified().getRowCount(),
+                table.getRowCount(),
+                'A partial column formula should not truncate the table.'
+            );
+        });
     });
 
     describe('advanced formulas', () => {
