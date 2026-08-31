@@ -285,8 +285,14 @@ class VennSeries extends ScatterSeries {
             mapOfIdToShape: Record<string, (CircleObject|IntersectionObject)>;
             mapOfIdToLabelValues: Record<string, (VennLabelValuesObject)>;
         }) {
-        const mapOfIdToShape: Record<string, (CircleObject|IntersectionObject)> = {};
-        const mapOfIdToLabelValues: Record<string, (VennLabelValuesObject)> = {};
+        const mapOfIdToShape: Record<
+                string,
+                (CircleObject|IntersectionObject)
+            > = Object.create(null),
+            mapOfIdToLabelValues: Record<
+                string,
+                VennLabelValuesObject
+            > = Object.create(null);
 
         // Calculate best initial positions by using greedy layout.
         if (relations.length > 0) {
