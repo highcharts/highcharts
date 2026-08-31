@@ -15,6 +15,10 @@ describe('FilterModifier', () => {
                 }
             });
             const modifier = new FilterModifier();
+            const events: string[] = [];
+
+            modifier.on('modify', (): void => events.push('modify'));
+            modifier.on('afterModify', (): void => events.push('afterModify'));
 
             await modifier.modify(table);
 
@@ -22,6 +26,11 @@ describe('FilterModifier', () => {
                 table.getModified().getColumns(),
                 { x: [1, 2, 3], name: ['A', 'B', 'C'] },
                 'With no condition, all rows are kept.'
+            );
+            deepStrictEqual(
+                events,
+                ['modify', 'afterModify'],
+                'The no-op path should complete the modifier event lifecycle.'
             );
         });
 

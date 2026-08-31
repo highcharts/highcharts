@@ -211,6 +211,7 @@ class FilterModifier extends DataModifier {
         const { condition } = modifier.options;
         if (!condition) {
             // If no condition is set, return the unmodified table.
+            modifier.emit({ type: 'afterModify', detail: eventDetail, table });
             return table;
         }
 
