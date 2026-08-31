@@ -1,6 +1,4 @@
 ---
- name: Axis crossing
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of axis crossing options
+js_wrap: b
 ...
