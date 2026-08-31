@@ -141,7 +141,7 @@ function columnSeriesTranslate3dShapes(
             (seriesOptions.stack || 0) :
             series.index; // #4743
 
-    let z = (stack as any) * (depth + (seriesOptions.groupZPadding || 1)),
+    let z = (stack as any) * (depth + (seriesOptions.groupZPadding ?? 1)),
         borderCrisp = series.borderWidth % 2 ? 0.5 : 0,
         point2dPos; // Position of point in 2D, used for 3D position calculation
 
@@ -153,7 +153,7 @@ function columnSeriesTranslate3dShapes(
         z = 0;
     }
 
-    z += (seriesOptions.groupZPadding || 1);
+    z += (seriesOptions.groupZPadding ?? 1);
     for (const point of series.points) {
         // #7103 Reset outside3dPlot flag
         point.outside3dPlot = null;
