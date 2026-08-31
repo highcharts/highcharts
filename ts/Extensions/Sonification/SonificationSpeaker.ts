@@ -112,8 +112,7 @@ class SonificationSpeaker {
             }
 
             utterance.rate = options && options.rate || this.options.rate || 1;
-            utterance.pitch = options && options.pitch ||
-                this.options.pitch || 1;
+            utterance.pitch = options?.pitch ?? this.options.pitch ?? 1;
             utterance.volume = (
                 (options && options.volume) ??
                 this.options.volume ??
