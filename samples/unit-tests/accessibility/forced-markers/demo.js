@@ -28,6 +28,41 @@ QUnit.test('No series markers', function (assert) {
     assert.strictEqual(hasVisibleMarker(point), false, 'Marker hidden');
 });
 
+QUnit.test(
+    'Forced markers do not hide rectangle legend symbols',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                plotOptions: {
+                    line: {
+                        legendSymbol: 'rectangle',
+                        marker: {
+                            enabled: false
+                        }
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            series = chart.series[0],
+            symbol = series.legendItem.symbol;
+
+        series.hide();
+        assert.strictEqual(
+            symbol.opacity,
+            1,
+            'Legend symbol should remain visible when the series is hidden'
+        );
+
+        series.show();
+        assert.strictEqual(
+            symbol.opacity,
+            1,
+            'Legend symbol should remain visible when the series is shown'
+        );
+    }
+);
+
 QUnit.test('Too many points for markers', function (assert) {
     const chart = Highcharts.chart('container', {
             series: [
