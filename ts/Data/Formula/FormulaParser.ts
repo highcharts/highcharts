@@ -110,7 +110,7 @@ const rangeA1RegExp = /^(\$?[A-Z]+)(\$?\d+)\:(\$?[A-Z]+)(\$?\d+)/;
  * @private
  */
 const rangeR1C1RegExp =
-    /^R(\d*|\[\d+\])C(\d*|\[\d+\])\:R(\d*|\[\d+\])C(\d*|\[\d+\])/;
+    /^R(\[-?\d+\]|\d*)C(\[-?\d+\]|\d*):R(\[-?\d+\]|\d*)C(\[-?\d+\]|\d*)/;
 
 
 /**
@@ -126,7 +126,7 @@ const referenceA1RegExp = /^(\$?[A-Z]+)(\$?\d+)(?![\:C])/;
  * - Group 2: Column
  * @private
  */
-const referenceR1C1RegExp = /^R(\d*|\[\d+\])C(\d*|\[\d+\])(?!\:)/;
+const referenceR1C1RegExp = /^R(\[-?\d+\]|\d*)C(\[-?\d+\]|\d*)(?!:)/;
 
 
 /* *
@@ -274,22 +274,22 @@ function parseArgument(
             type: 'range',
             beginColumn: (
                 beginColumnRelative ?
-                    parseInt(match[2].substring(1, -1) || '0', 10) :
+                    parseInt(match[2].slice(1, -1) || '0', 10) :
                     parseInt(match[2], 10) - 1
             ),
             beginRow: (
                 beginRowRelative ?
-                    parseInt(match[1].substring(1, -1) || '0', 10) :
+                    parseInt(match[1].slice(1, -1) || '0', 10) :
                     parseInt(match[1], 10) - 1
             ),
             endColumn: (
                 endColumnRelative ?
-                    parseInt(match[4].substring(1, -1) || '0', 10) :
+                    parseInt(match[4].slice(1, -1) || '0', 10) :
                     parseInt(match[4], 10) - 1
             ),
             endRow: (
                 endRowRelative ?
-                    parseInt(match[3].substring(1, -1) || '0', 10) :
+                    parseInt(match[3].slice(1, -1) || '0', 10) :
                     parseInt(match[3], 10) - 1
             )
         };
@@ -507,12 +507,12 @@ function parseFormula(
                 type: 'reference',
                 column: (
                     columnRelative ?
-                        parseInt(match[2].substring(1, -1) || '0', 10) :
+                        parseInt(match[2].slice(1, -1) || '0', 10) :
                         parseInt(match[2], 10) - 1
                 ),
                 row: (
                     rowRelative ?
-                        parseInt(match[1].substring(1, -1) || '0', 10) :
+                        parseInt(match[1].slice(1, -1) || '0', 10) :
                         parseInt(match[1], 10) - 1
                 )
             };
