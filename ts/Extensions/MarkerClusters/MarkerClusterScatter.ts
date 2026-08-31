@@ -1430,7 +1430,7 @@ function seriesGetRealExtremes(
         }),
         p2 = pixelsToValues(this, {
             x: x + chart.plotWidth,
-            y: x + chart.plotHeight
+            y: y + chart.plotHeight
         }),
         realMinX = p1.x,
         realMaxX = p2.x,
