@@ -1009,7 +1009,8 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            columnIds = Object.keys(columns);
+            columnIds = Object.keys(columns),
+            columnStart = rowIndex || 0;
 
         let rowCount = table.rowCount;
 
@@ -1032,6 +1033,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 let i = 0,
                     iEnd = columnIds.length,
                     column: Column,
+                    columnEnd: number,
                     tableColumn: Column,
                     columnId: string,
                     ArrayConstructor: (
@@ -1043,6 +1045,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             ) {
                 columnId = columnIds[i];
                 column = columns[columnId];
+                columnEnd = columnStart + column.length;
                 tableColumn = tableColumns[columnId];
 
                 ArrayConstructor = Object.getPrototypeOf(
@@ -1050,14 +1053,18 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 ).constructor;
 
                 if (!tableColumn) {
-                    tableColumn = new ArrayConstructor(rowCount);
+                    tableColumn = new ArrayConstructor(
+                        Math.max(rowCount, columnEnd)
+                    );
                 } else if (ArrayConstructor === Array) {
                     if (!Array.isArray(tableColumn)) {
                         tableColumn = Array.from(tableColumn);
                     }
-                } else if (tableColumn.length < rowCount) {
+                } else if (tableColumn.length < columnEnd) {
                     tableColumn =
-                        new ArrayConstructor(rowCount) as TypedArray;
+                        new ArrayConstructor(
+                            Math.max(rowCount, columnEnd)
+                        ) as TypedArray;
                     tableColumn.set(
                         tableColumns[columnId] as ArrayLike<number>
                     );
@@ -1065,15 +1072,15 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 tableColumns[columnId] = tableColumn;
 
                 for (
-                    let i = (rowIndex || 0),
+                    let i = 0,
                         iEnd = column.length;
                     i < iEnd;
                     ++i
                 ) {
-                    tableColumn[i] = column[i];
+                    tableColumn[columnStart + i] = column[i];
                 }
 
-                rowCount = Math.max(rowCount, column.length);
+                rowCount = Math.max(rowCount, columnEnd);
             }
 
             this.applyRowCount(rowCount);
