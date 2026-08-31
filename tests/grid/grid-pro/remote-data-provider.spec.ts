@@ -98,6 +98,79 @@ async function openRemoteProviderFixture(page: Page): Promise<void> {
 }
 
 test.describe('RemoteDataProvider', () => {
+    test('releases completed data source abort listeners', async ({ page }) => {
+        await page.route('https://example.test/data*', async (route) => {
+            await route.fulfill({
+                json: {
+                    data: {
+                        id: [0],
+                        name: ['name-0']
+                    },
+                    meta: {
+                        rowIds: ['row-0'],
+                        totalRowCount: 1
+                    }
+                }
+            });
+        });
+        await openRemoteProviderFixture(page);
+
+        const listenerCounts = await page.evaluate(async () => {
+            const signalPrototype = AbortSignal.prototype;
+            // Preserve the native methods while instrumenting their receiver.
+            // eslint-disable-next-line @typescript-eslint/unbound-method
+            const nativeAdd = signalPrototype.addEventListener;
+            // eslint-disable-next-line @typescript-eslint/unbound-method
+            const nativeRemove = signalPrototype.removeEventListener;
+            let added = 0,
+                removed = 0;
+
+            signalPrototype.addEventListener = function (
+                type,
+                listener,
+                options
+            ): void {
+                if (type === 'abort') {
+                    ++added;
+                }
+                nativeAdd.call(this, type, listener, options);
+            };
+            signalPrototype.removeEventListener = function (
+                type,
+                listener,
+                options
+            ): void {
+                if (type === 'abort') {
+                    ++removed;
+                }
+                nativeRemove.call(this, type, listener, options);
+            };
+
+            const Grid = (window as any).Grid,
+                grid = await Grid.grid('container', {
+                    data: {
+                        providerType: 'remote',
+                        chunkSize: 1,
+                        dataSource: {
+                            fetchTimeout: 60000,
+                            urlTemplate: 'https://example.test/data'
+                        }
+                    }
+                }, true);
+
+            await grid.dataProvider.getValue('name', 0);
+            grid.destroy();
+
+            signalPrototype.addEventListener = nativeAdd;
+            signalPrototype.removeEventListener = nativeRemove;
+
+            return { added, removed };
+        });
+
+        expect(listenerCounts.added).toBeGreaterThan(0);
+        expect(listenerCounts.removed).toBe(listenerCounts.added);
+    });
+
     test('caches chunks and reuses them for reads', async ({ page }) => {
         const result = await runRemoteScenario(
             page,
