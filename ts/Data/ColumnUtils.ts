@@ -140,16 +140,34 @@ export function splice(
     const Constructor = Object.getPrototypeOf(column)
         .constructor as TypedArrayConstructor;
 
+    const normalizedStart = isNaN(start) ? 0 : Math.trunc(start),
+        normalizedDeleteCount = isNaN(deleteCount) ? 0 : Math.trunc(
+            deleteCount
+        ),
+        startIndex = Math.min(
+            normalizedStart < 0 ?
+                Math.max(column.length + normalizedStart, 0) :
+                normalizedStart,
+            column.length
+        ),
+        removedCount = Math.min(
+            Math.max(normalizedDeleteCount, 0),
+            column.length - startIndex
+        );
+
     const removed = column[
         removedAsSubarray ? 'subarray' : 'slice'
-    ](start, start + deleteCount);
+    ](startIndex, startIndex + removedCount);
 
-    const newLength = column.length - deleteCount + items.length;
+    const newLength = column.length - removedCount + items.length;
     const result = new Constructor(newLength);
 
-    result.set(column.subarray(0, start), 0);
-    result.set(items as (number[]|TypedArray), start);
-    result.set(column.subarray(start + deleteCount), start + items.length);
+    result.set(column.subarray(0, startIndex), 0);
+    result.set(items as (number[]|TypedArray), startIndex);
+    result.set(
+        column.subarray(startIndex + removedCount),
+        startIndex + items.length
+    );
 
     return {
         removed: removed,
