@@ -570,6 +570,31 @@ describe('DataTable', () => {
             );
         });
 
+        it('should use the longest replacement column for row count', () => {
+            const table = new DataTable();
+
+            table.setColumns({
+                long: [1, 2, 3],
+                short: [4]
+            });
+
+            strictEqual(
+                table.getRowCount(),
+                3,
+                'The longest column should determine the row count.'
+            );
+            deepStrictEqual(
+                table.getColumn('long'),
+                [1, 2, 3],
+                'Column order should not truncate longer replacement data.'
+            );
+            strictEqual(
+                table.getColumn('short')?.length,
+                3,
+                'The shorter column should be padded to the table length.'
+            );
+        });
+
         it('should truncate columns when setting shorter columns', () => {
             const table = new DataTable({
                 columns: {

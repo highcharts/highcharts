@@ -340,12 +340,15 @@ class DataTableCore {
         rowIndex?: number,
         eventDetail?: DataEventDetail
     ): void {
-        let rowCount = this.rowCount;
+        let hasColumns = false,
+            rowCount = 0;
+
         objectEach(columns, (column, columnId): void => {
+            hasColumns = true;
             this.columns[columnId] = column.slice();
-            rowCount = column.length;
+            rowCount = Math.max(rowCount, column.length);
         });
-        this.applyRowCount(rowCount);
+        this.applyRowCount(hasColumns ? rowCount : this.rowCount);
 
         if (!eventDetail?.silent) {
             fireEvent(this, 'afterSetColumns');
