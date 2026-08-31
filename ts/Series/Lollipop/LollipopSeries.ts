@@ -21,6 +21,7 @@
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
 
 import LollipopPoint from './LollipopPoint.js';
+import LollipopSeriesDefaults from './LollipopSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Series from '../../Core/Series/Series.js';
 const {
@@ -58,7 +59,7 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * Lollipop series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.lollipop
  *
@@ -73,72 +74,10 @@ class LollipopSeries extends Series {
      *
      * */
 
-    /**
-     * The lollipop series is a cartesian series with a line anchored from
-     * the x axis and a dot at the end to mark the value.
-     * Requires `highcharts-more.js`, `modules/dumbbell.js` and
-     * `modules/lollipop.js`.
-     *
-     * @sample {highcharts} highcharts/demo/lollipop/
-     *         Lollipop chart
-     * @sample {highcharts} highcharts/series-dumbbell/styled-mode-dumbbell/
-     *         Styled mode
-     *
-     * @extends      plotOptions.dumbbell
-     * @product      highcharts highstock
-     * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
-     *               lowColor, stickyTracking, trackByArea
-     * @since        8.0.0
-     * @optionparent plotOptions.lollipop
-     */
     public static defaultOptions: LollipopSeriesOptions = merge(
         Series.defaultOptions,
-        {
-            /** @ignore-option */
-            threshold: 0,
-            /** @ignore-option */
-            connectorWidth: 1,
-            /** @ignore-option */
-            groupPadding: 0.2,
-
-            /**
-             * Whether to group non-stacked lollipop points or to let them
-             * render independent of each other. Non-grouped lollipop points
-             * will be laid out individually and overlap each other.
-             *
-             * @sample highcharts/series-lollipop/enabled-grouping/
-             *         Multiple lollipop series with grouping
-             * @sample highcharts/series-lollipop/disabled-grouping/
-             *         Multiple lollipop series with disabled grouping
-             *
-             * @type      {boolean}
-             * @default   true
-             * @since     8.0.0
-             * @product   highcharts highstock
-             * @apioption plotOptions.lollipop.grouping
-             */
-
-            /** @ignore-option */
-            pointPadding: 0.1,
-            /** @ignore-option */
-            states: {
-                hover: {
-                    /** @ignore-option */
-                    lineWidthPlus: 0,
-                    /** @ignore-option */
-                    connectorWidthPlus: 1,
-                    /** @ignore-option */
-                    halo: false
-                }
-            },
-            /** @ignore-option */
-            lineWidth: 0,
-            dataLabels: {
-                align: void 0,
-                verticalAlign: void 0
-            },
-            pointRange: 1
-        } as LollipopSeriesOptions);
+        LollipopSeriesDefaults
+    );
 
     /* *
      *
@@ -153,7 +92,7 @@ class LollipopSeries extends Series {
     /**
      * Extend the series' drawPoints method by applying a connector
      * and coloring markers.
-     * @private
+     * @internal
      *
      * @function Highcharts.Series#drawPoints
      */
@@ -176,7 +115,7 @@ class LollipopSeries extends Series {
 
     /**
      * Extend the series' translate method to use grouping option.
-     * @private
+     * @internal
      *
      * @function Highcharts.Series#translate
      *
@@ -204,6 +143,7 @@ class LollipopSeries extends Series {
  *
  * */
 
+/** @internal */
 interface LollipopSeries {
     alignDataLabel: typeof colProto['alignDataLabel'];
     crispCol: typeof colProto['crispCol'];
@@ -231,7 +171,7 @@ extend(LollipopSeries.prototype, {
  * */
 
 /**
- * @private
+ * @internal
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
