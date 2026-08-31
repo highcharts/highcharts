@@ -227,21 +227,32 @@ class TreegraphSeries extends TreemapSeries {
             node.nodeSizeX = nodeSizeX;
             node.nodeSizeY = nodeSizeY;
 
-            if (node.xPosition <= minX) {
+            const nodeSizeWithLineX = nodeSizeX + lineWidth,
+                nodeSizeWithLineY = nodeSizeY + lineWidth;
+
+            if (node.xPosition < minX) {
                 minX = node.xPosition;
-                minXSize = Math.max(nodeSizeX + lineWidth, minXSize);
+                minXSize = nodeSizeWithLineX;
+            } else if (node.xPosition === minX) {
+                minXSize = Math.max(nodeSizeWithLineX, minXSize);
             }
-            if (node.xPosition >= maxX) {
+            if (node.xPosition > maxX) {
                 maxX = node.xPosition;
-                maxXSize = Math.max(nodeSizeX + lineWidth, maxXSize);
+                maxXSize = nodeSizeWithLineX;
+            } else if (node.xPosition === maxX) {
+                maxXSize = Math.max(nodeSizeWithLineX, maxXSize);
             }
-            if (node.yPosition <= minY) {
+            if (node.yPosition < minY) {
                 minY = node.yPosition;
-                minYSize = Math.max(nodeSizeY + lineWidth, minYSize);
+                minYSize = nodeSizeWithLineY;
+            } else if (node.yPosition === minY) {
+                minYSize = Math.max(nodeSizeWithLineY, minYSize);
             }
-            if (node.yPosition >= maxY) {
+            if (node.yPosition > maxY) {
                 maxY = node.yPosition;
-                maxYSize = Math.max(nodeSizeY + lineWidth, maxYSize);
+                maxYSize = nodeSizeWithLineY;
+            } else if (node.yPosition === maxY) {
+                maxYSize = Math.max(nodeSizeWithLineY, maxYSize);
             }
         });
 
@@ -253,7 +264,7 @@ class TreegraphSeries extends TreemapSeries {
             by = maxY === minY ? plotSizeY / 2 : -ay * minY + minYSize / 2,
             ax = maxX === minX ?
                 1 :
-                (plotSizeX - (maxXSize + maxXSize) / 2) / (maxX - minX),
+                (plotSizeX - (minXSize + maxXSize) / 2) / (maxX - minX),
             bx = maxX === minX ? plotSizeX / 2 : -ax * minX + minXSize / 2;
 
         return { ax, bx, ay, by };
