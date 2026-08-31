@@ -328,6 +328,42 @@ QUnit.test('Kmeans algorithm tests.', function (assert) {
     );
 });
 
+QUnit.test('Custom algorithm with zero coordinates', function (assert) {
+    const chart = Highcharts.chart('container', {
+            series: [{
+                type: 'scatter',
+                cluster: {
+                    enabled: true,
+                    animation: false,
+                    layoutAlgorithm: {
+                        type: function () {
+                            return {
+                                zero: [{
+                                    x: 0,
+                                    y: 0,
+                                    index: 0
+                                }, {
+                                    x: 0,
+                                    y: 1,
+                                    index: 1
+                                }]
+                            };
+                        }
+                    }
+                },
+                data: [[0, 0], [0, 1]]
+            }]
+        }),
+        cluster = chart.series[0].markerClusterInfo?.clusters[0];
+
+    assert.ok(cluster, 'Zero coordinates should produce a valid cluster');
+    assert.deepEqual(
+        [cluster?.x, cluster?.y],
+        [0, 0.5],
+        'The cluster should preserve its zero x coordinate'
+    );
+});
+
 QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
     var chart = Highcharts.chart('container', options),
         series = chart.series[0],
