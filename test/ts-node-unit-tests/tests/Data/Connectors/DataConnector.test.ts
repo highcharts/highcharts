@@ -142,4 +142,35 @@ describe('DataConnector', () => {
             });
         }
     });
+
+    describe('data tables', () => {
+        it('should support empty and prototype-named table keys', () => {
+            const connector = new CSVConnector({
+                dataTables: [
+                    { key: '' },
+                    { key: '__proto__' },
+                    { key: 'toString' }
+                ]
+            });
+
+            strictEqual(
+                connector.getTable(),
+                connector.getTable(''),
+                'The empty key should identify the first table.'
+            );
+            deepStrictEqual(
+                Object.keys(connector.dataTables),
+                ['', '__proto__', 'toString'],
+                'Every configured key should identify its own table.'
+            );
+            ok(
+                connector.getTable('__proto__') !== connector.getTable(''),
+                'The __proto__ key should identify its own table.'
+            );
+            ok(
+                connector.getTable('toString') !== connector.getTable(''),
+                'The toString key should identify its own table.'
+            );
+        });
+    });
 });
