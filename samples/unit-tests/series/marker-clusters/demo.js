@@ -233,6 +233,32 @@ QUnit.test('Grid algorithm tests.', function (assert) {
     assert.ok(result, 'Clusters should not overlap when allowOverlap = false.');
 });
 
+QUnit.test('Grid offset with zero data extremes', function (assert) {
+    const chart = Highcharts.chart('container', {
+            series: [{
+                type: 'scatter',
+                cluster: {
+                    enabled: true,
+                    animation: false,
+                    layoutAlgorithm: {
+                        type: 'grid'
+                    }
+                },
+                data: [[0, 0], [1, 1]]
+            }]
+        }),
+        series = chart.series[0];
+
+    assert.deepEqual(
+        series.getGridOffset(),
+        {
+            plotLeft: series.xAxis.toPixels(series.dataMinX),
+            plotTop: series.yAxis.toPixels(series.dataMaxY)
+        },
+        'Zero should be treated as a valid data boundary'
+    );
+});
+
 QUnit.test('Kmeans algorithm tests.', function (assert) {
     var chart = Highcharts.chart('container', options),
         series = chart.series[0],
