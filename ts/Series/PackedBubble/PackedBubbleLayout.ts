@@ -186,10 +186,10 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
             }
 
             node.plotX = node.prevX = (node.plotX ?? (centerX as any) +
-                (radius as any) * Math.cos(node.index || index * angle));
+                (radius as any) * Math.cos(index * angle));
 
             node.plotY = node.prevY = (node.plotY ?? (centerY as any) +
-                (radius as any) * Math.sin(node.index || index * angle));
+                (radius as any) * Math.sin(index * angle));
 
             node.dispX = 0;
             node.dispY = 0;
