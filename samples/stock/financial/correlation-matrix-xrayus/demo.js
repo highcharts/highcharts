@@ -155,7 +155,11 @@ async function renderChart() {
             },
             dataLabels: {
                 enabled: true,
-                format: '{point.value:.2f}'
+                format: '{point.value:.2f}',
+                style: {
+                    fontSize: '1em',
+                    textOutline: 'none'
+                }
             }
         }],
         responsive: {
@@ -166,6 +170,15 @@ async function renderChart() {
                         verticalAlign: 'bottom',
                         layout: 'horizontal',
                         y: 0
+                    },
+                    yAxis: {
+                        labels: {
+                            style: {
+                                width: '90px',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                            }
+                        }
                     }
                 },
                 condition: {
