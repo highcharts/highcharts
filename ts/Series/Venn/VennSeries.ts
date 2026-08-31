@@ -580,7 +580,9 @@ class VennSeries extends ScatterSeries {
 
         // Iterate all points and calculate and draw their graphics.
         for (const point of this.points) {
-            const sets: Array<string> = isArray(point.sets) ? point.sets : [],
+            const sets: Array<string> = isArray(point.sets) ?
+                    point.sets.slice().sort() :
+                    [],
                 id = sets.join(),
                 shape = mapOfIdToShape[id],
                 dataLabelValues = mapOfIdToLabelValues[id] || {},
@@ -589,6 +591,8 @@ class VennSeries extends ScatterSeries {
             let shapeArgs: (SVGAttributes|undefined),
                 dataLabelWidth = dataLabelValues.width,
                 dataLabelPosition = dataLabelValues.position;
+
+            point.sets = sets;
 
             if (shape) {
                 if ((shape as any).r) {
