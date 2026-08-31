@@ -533,7 +533,7 @@ function renderRiskReturnChart(currentXRay, proposedXRay) {
         rendering: {
             theme: 'theme-custom'
         },
-        dataTable: {
+        data: {
             columns: {
                 name: ['Current', 'Proposed'],
                 value: [
@@ -565,7 +565,7 @@ function renderRiskReturnChart(currentXRay, proposedXRay) {
         rendering: {
             theme: 'theme-custom'
         },
-        dataTable: {
+        data: {
             columns: {
                 name: [
                     'Conservative',
@@ -885,7 +885,7 @@ function setupGrid() {
                 }
             }]
         },
-        dataTable: {
+        data: {
             columns: {
                 name: predefinedHoldings.map(holding => holding.name),
                 symbol: predefinedHoldings.map(holding => holding.symbol),
