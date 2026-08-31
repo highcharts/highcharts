@@ -210,3 +210,21 @@ describe('Formula.basicOperation(`>`)', () => {
         });
     });
 });
+
+describe('Formula.basicOperation(`>=`)', () => {
+    it('2 >= 1 should return TRUE', () => {
+        strictEqual(
+            Formula.processFormula(Formula.parseFormula('2 >= 1', false)),
+            true,
+            'Formula `2 >= 1` test should return TRUE.'
+        );
+    });
+
+    it('1 >= 2 should return FALSE', () => {
+        strictEqual(
+            Formula.processFormula(Formula.parseFormula('1 >= 2', false)),
+            false,
+            'Formula `1 >= 2` test should return FALSE.'
+        );
+    });
+});

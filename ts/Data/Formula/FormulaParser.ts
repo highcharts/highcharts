@@ -89,7 +89,7 @@ const functionRegExp = /^([A-Z][A-Z\d\.]*)\(/;
 /**
  * @private
  */
-const operatorRegExp = /^(?:[+\-*\/^<=>]|<=|=>)/;
+const operatorRegExp = /^(?:<=|>=|[+\-*\/^<=>])/;
 
 
 /**
