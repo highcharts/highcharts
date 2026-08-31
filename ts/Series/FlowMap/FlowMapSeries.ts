@@ -545,8 +545,8 @@ class FlowMapSeries extends MapLineSeries {
                     // trigger series redraw for the linked point (in flow).
                     if (
                         (foundPoint instanceof Point) &&
-                        foundPoint.plotX &&
-                        foundPoint.plotY
+                        defined(foundPoint.plotX) &&
+                        defined(foundPoint.plotY)
                     ) {
                         // After linked point update flowmap point should
                         // be also updated
