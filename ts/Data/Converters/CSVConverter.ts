@@ -161,9 +161,10 @@ class CSVConverter extends DataConverter {
         }
 
         if (csv) {
-            lines = csv
-                .replace(/\r\n|\r/g, '\n') // Windows | Mac
-                .split(lineDelimiter || '\n');
+            lines = converter.parseCSVLines(
+                csv.replace(/\r\n|\r/g, '\n'), // Windows | Mac
+                lineDelimiter || '\n'
+            );
 
             if (!startRow || startRow < 0) {
                 startRow = 0;
@@ -253,6 +254,42 @@ class CSVConverter extends DataConverter {
         return DataConverterUtils.getColumnsCollection(
             columnsArray, converter.headers
         );
+    }
+
+    /**
+     * Splits CSV into logical rows without breaking quoted multiline fields.
+     */
+    private parseCSVLines(
+        csv: string,
+        lineDelimiter: string
+    ): string[] {
+        const lines: string[] = [];
+        let inQuotes = false,
+            line = '';
+
+        for (let i = 0; i < csv.length; ++i) {
+            const character = csv[i];
+
+            if (character === '"') {
+                if (inQuotes && csv[i + 1] === '"') {
+                    line += '""';
+                    ++i;
+                    continue;
+                }
+                inQuotes = !inQuotes;
+            }
+
+            if (!inQuotes && csv.startsWith(lineDelimiter, i)) {
+                lines.push(line);
+                line = '';
+                i += lineDelimiter.length - 1;
+            } else {
+                line += character;
+            }
+        }
+        lines.push(line);
+
+        return lines;
     }
 
     /**
