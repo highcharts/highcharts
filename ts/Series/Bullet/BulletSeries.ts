@@ -92,7 +92,7 @@ class BulletSeries extends ColumnSeries {
         const series = this,
             chart = series.chart,
             options = series.options,
-            animationLimit = options.animationLimit || 250;
+            animationLimit = options.animationLimit ?? 250;
 
         super.drawPoints.apply(this, arguments);
 

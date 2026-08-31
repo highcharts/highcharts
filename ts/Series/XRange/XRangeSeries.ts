@@ -644,7 +644,7 @@ class XRangeSeries extends ColumnSeries {
      */
     public getAnimationVerb(): ('animate'|'attr') {
         return (
-            this.chart.pointCount < (this.options.animationLimit || 250) ?
+            this.chart.pointCount < (this.options.animationLimit ?? 250) ?
                 'animate' :
                 'attr'
         );
