@@ -954,11 +954,7 @@ function setupGrid() {
                 format: 'Proposed % of Portfolio'
             },
             cells: {
-                format: '{value:.2f}%',
-                validationRules: ['notEmpty', 'number'],
-                editMode: {
-                    enabled: true
-                }
+                format: '{value:.2f}%'
             }
         }, {
             id: 'performance',
@@ -1005,18 +1001,7 @@ function setupGrid() {
             cells: {
                 editable: false
             }
-        }],
-        columnDefaults: {
-            cells: {
-                events: {
-                    afterEdit: function () {
-                        predefinedHoldings[this.row.index].proposedWeight =
-                            this.value;
-                        renderCharts();
-                    }
-                }
-            }
-        }
+        }]
     });
 }
 
