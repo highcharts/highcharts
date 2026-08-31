@@ -37,7 +37,7 @@ import type {
 } from './DataTableOptions';
 import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
 
-import DataTableCore from './DataTableCore.js';
+import DataTableCore, { setRecordValue } from './DataTableCore.js';
 
 import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
@@ -211,8 +211,12 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 columnId = columnIds[i];
                 column = columns[columnId];
                 if (column) {
-                    deletedColumns[columnId] = column;
-                    modifiedColumns[columnId] = new Array(rowCount);
+                    setRecordValue(deletedColumns, columnId, column);
+                    setRecordValue(
+                        modifiedColumns,
+                        columnId,
+                        new Array(rowCount)
+                    );
                 }
                 delete columns[columnId];
             }
@@ -501,11 +505,11 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
 
             if (column) {
                 if (asReference) {
-                    columns[columnId] = column;
+                    setRecordValue(columns, columnId, column);
                 } else if (asBasicColumns && !Array.isArray(column)) {
-                    columns[columnId] = Array.from(column);
+                    setRecordValue(columns, columnId, Array.from(column));
                 } else {
-                    columns[columnId] = column.slice();
+                    setRecordValue(columns, columnId, column.slice());
                 }
             }
         }
@@ -711,7 +715,11 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
 
             for (const columnId of columnIds) {
                 column = columns[columnId];
-                row[columnId] = (column ? column[i] : void 0);
+                setRecordValue(
+                    row,
+                    columnId,
+                    column ? column[i] : void 0
+                );
             }
         }
 
