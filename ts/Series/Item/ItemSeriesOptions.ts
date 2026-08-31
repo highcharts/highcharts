@@ -168,8 +168,6 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
     /**
      * The padding between the items, given in relative size where the size
      * of the item is 1.
-     *
-     * @type {number}
      */
     itemPadding?: number;
 
@@ -210,6 +208,26 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
     startAngle?: number;
 
     states?: SeriesStatesOptions<ItemSeriesOptions>;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    borderWidth?: undefined;
+    dataParser?: undefined;
+    dataSorting?: undefined;
+    dataURL?: undefined;
+    depth?: undefined;
+    linecap?: undefined;
+    shadow?: undefined;
+    slicedOffset?: undefined;
+    stack?: undefined;
+    xAxis?: undefined;
+    yAxis?: undefined;
 
 }
 

@@ -340,8 +340,6 @@ export interface HeatmapPointOptions extends ScatterPointOptions {
      * @sample maps/plotoptions/tilemap-pointpadding
      *         Point padding on tiles
      *
-     * @type {number}
-     *
      * @product highcharts highmaps
      *
      * @apioption series.heatmap.data.pointPadding
