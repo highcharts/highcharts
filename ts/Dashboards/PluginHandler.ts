@@ -73,7 +73,7 @@ export type EventCallback = (e: Event) => void;
  * */
 
 /** @internal */
-export const registry: Record<string, DashboardsPlugin> = {};
+export const registry: Record<string, DashboardsPlugin> = Object.create(null);
 
 /**
  * Revision of the Dashboard plugin API.
