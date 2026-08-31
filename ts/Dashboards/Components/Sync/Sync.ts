@@ -63,8 +63,8 @@ class Sync {
             predefinedSyncConfig,
             component.options.sync
         );
-        this.registeredSyncHandlers = {};
-        this.registeredSyncEmitters = {};
+        this.registeredSyncHandlers = Object.create(null);
+        this.registeredSyncEmitters = Object.create(null);
         this.isSyncing = false;
         this.listeners = [];
     }
@@ -84,7 +84,8 @@ class Sync {
      * different Components, where default syncs are added. Allows overwriting
      * the configuration before creating the dashboard.
      */
-    public static defaultHandlers: Record<string, OptionsEntry> = {};
+    public static defaultHandlers: Record<string, OptionsEntry> =
+        Object.create(null);
 
     /**
      * Registry for the sync handlers used within the component.
@@ -142,8 +143,14 @@ class Sync {
         return Object.keys(componentSyncOptions).reduce(
             (acc: OptionsRecord, syncName): OptionsRecord => {
                 if (syncName) {
-                    const defaultPair = defaultPairs[syncName];
-                    const defaultOptions = defaultOptionsList[syncName];
+                    const defaultPair = Object.hasOwnProperty.call(
+                            defaultPairs,
+                            syncName
+                        ) ? defaultPairs[syncName] : void 0,
+                        defaultOptions = Object.hasOwnProperty.call(
+                            defaultOptionsList,
+                            syncName
+                        ) ? defaultOptionsList[syncName] : void 0;
                     const entry = componentSyncOptions[syncName];
 
                     const preparedOptions: OptionsEntry = merge(
@@ -174,7 +181,7 @@ class Sync {
 
                 return acc;
             },
-            {}
+            Object.create(null)
         );
     }
 
