@@ -20,7 +20,90 @@
 
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import type ScatterSeries from './ScatterSeries';
+
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const seriesNamePrefix =
+    '<span style="color:{point.color}">\u25CF</span> {series.name}: ';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Whether this series moves the series name out of the tooltip header and onto
+ * each of its own tooltip lines.
+ *
+ * The header is rendered once, from the first point's series, so the series
+ * name that scatter-like series show there is misleading as soon as the
+ * tooltip lists several series. Instead each line is prefixed with its own
+ * series - but only when the format being composed is still the one the series
+ * type ships with. A format written by the user may be a fragment of a larger
+ * structure, or empty, and prefixing it would corrupt it (#22967).
+ *
+ * @private
+ */
+function prefixesSeriesName(series: Series): boolean {
+    const { pointFormat, pointFormatter } = series.tooltipOptions,
+        typeDefaults = defaultOptions.plotOptions?.[series.type]?.tooltip;
+
+    return !!(
+        // The tooltip lists more than this one series
+        !series.noSharedTooltip &&
+        // The point format is this series type's own, and has room for a name
+        pointFormat &&
+        pointFormat === typeDefaults?.pointFormat &&
+        // The series has neither overridden nor opted out of the prefixing
+        pointFormatter === scatterPointFormatter
+    );
+}
+
+/**
+ * Compose the given format with the series color and name, the way the default
+ * series tooltip does.
+ * @private
+ */
+function prefixed(point: Point, format: string): string {
+    return point.tooltipFormatter(
+        seriesNamePrefix + format +
+        (/<br\s*\/?>\s*$/.test(format) ? '' : '<br/>')
+    );
+}
+
+/**
+ * @private
+ */
+function scatterClusterFormatter(
+    this: Point,
+    clusterFormat: string
+): string {
+    return prefixesSeriesName(this.series) ?
+        prefixed(this, clusterFormat) :
+        this.tooltipFormatter(clusterFormat);
+}
+
+/**
+ * @private
+ */
+function scatterPointFormatter(
+    this: Point,
+    pointFormat: string
+): string {
+    return prefixesSeriesName(this.series) ?
+        prefixed(this, pointFormat) :
+        this.tooltipFormatter(pointFormat);
+}
 
 /* *
  *
@@ -138,26 +221,12 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @ignore-option
          */
-        pointFormatter: function (
-            this: Point,
-            pointFormat: string
-        ): string {
+        clusterFormatter: scatterClusterFormatter,
 
-            // When the tooltip lists points from more than one series, prefix
-            // each entry with the series color and name so they can be told
-            // apart, the way the default series tooltip does. Scatter-like
-            // series define their own `pointFormat`, so compose it rather
-            // than replace it (#22967).
-            if (pointFormat && !this.series.noSharedTooltip) {
-                return this.tooltipFormatter(
-                    '<span style="color:{point.color}">\u25CF</span> ' +
-                    '{series.name}: ' + pointFormat +
-                    (pointFormat.endsWith('<br/>') ? '' : '<br/>')
-                );
-            }
-
-            return this.tooltipFormatter(pointFormat);
-        }
+        /**
+         * @ignore-option
+         */
+        pointFormatter: scatterPointFormatter
     }
 
 };
@@ -244,3 +313,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  * */
 
 export default ScatterSeriesDefaults;
+
+export {
+    prefixesSeriesName
+};

@@ -21,6 +21,7 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type F from '../../Core/Templating';
 import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
@@ -86,6 +87,15 @@ declare module '../../Core/TooltipOptions' {
          * @requires  modules/marker-clusters
          */
         clusterFormat?: string;
+
+        /**
+         * Callback function to format the text of the tooltip for a cluster
+         * point. Like the `clusterFormat` string, but with more flexibility.
+         *
+         * @requires  modules/marker-clusters
+         * @apioption tooltip.clusterFormatter
+         */
+        clusterFormatter?: F.FormatterCallback<Point>;
     }
 }
 

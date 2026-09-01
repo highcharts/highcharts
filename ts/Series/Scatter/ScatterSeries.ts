@@ -25,7 +25,9 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
+import ScatterSeriesDefaults, {
+    prefixesSeriesName
+} from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -101,25 +103,25 @@ class ScatterSeries extends LineSeries {
     public setOptions(
         itemOptions: DeepPartial<SeriesTypeOptions>
     ): this['options'] {
+        // Set before calling super, so that the shared-tooltip default for
+        // `stickyTracking` is resolved with the right value
         this.noSharedTooltip = !this.isCartesian;
 
-        const options = super.setOptions(itemOptions);
-
-        const tooltipOptions = this.tooltipOptions;
+        const options = super.setOptions(itemOptions),
+            tooltipOptions = this.tooltipOptions,
+            typeDefaults = defaultOptions.plotOptions?.[this.type]?.tooltip;
 
         this.noSharedTooltip = !(
             this.isCartesian &&
             tooltipOptions.shared
         );
 
-        // The header is rendered once, from the first point's series, so the
-        // series name that scatter-like series show there is misleading when
-        // the tooltip lists several series. Fall back to the generic key
-        // header, unless a header format was explicitly set (#22967).
+        // Give the series name up from the header only when the point lines
+        // are going to carry it instead, and only when the header is still
+        // this series type's own (#22967).
         if (
-            !this.noSharedTooltip &&
-            tooltipOptions.headerFormat ===
-                ScatterSeriesDefaults.tooltip?.headerFormat
+            prefixesSeriesName(this) &&
+            tooltipOptions.headerFormat === typeDefaults?.headerFormat
         ) {
             tooltipOptions.headerFormat =
                 defaultOptions.tooltip?.headerFormat || '';
@@ -128,7 +130,6 @@ class ScatterSeries extends LineSeries {
         return options;
     }
 
-    /* eslint-disable valid-jsdoc */
     /**
      * Optionally add the jitter effect.
      * @private
