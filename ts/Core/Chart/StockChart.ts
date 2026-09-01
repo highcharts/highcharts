@@ -701,7 +701,7 @@ namespace StockChart {
         const axis = this,
             axisOptions = axis.options,
             series = (
-                axis.isLinked && !axis.series && axis.linkedParent ?
+                !axis.series && axis.linkedParent ?
                     axis.linkedParent.series :
                     axis.series
             ),

@@ -135,6 +135,21 @@ jobs:
         with:
           ref: master
 
+      - name: Use Firefox 153.0.4
+        id: reference-firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.reference-firefox.outputs.firefox-path }}
+        run: |
+          firefox_dir="$(dirname "$FIREFOX_PATH")"
+          mkdir -p "$firefox_dir/distribution"
+          printf '%s\n' '{ "policies": { "DisableAppUpdate": true } }' \
+            > "$firefox_dir/distribution/policies.json"
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
@@ -157,6 +172,21 @@ jobs:
         with:
           clean: false
           fetch-depth: 0
+
+      - name: Use Firefox 153.0.4
+        id: candidate-firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.candidate-firefox.outputs.firefox-path }}
+        run: |
+          firefox_dir="$(dirname "$FIREFOX_PATH")"
+          mkdir -p "$firefox_dir/distribution"
+          printf '%s\n' '{ "policies": { "DisableAppUpdate": true } }' \
+            > "$firefox_dir/distribution/policies.json"
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6

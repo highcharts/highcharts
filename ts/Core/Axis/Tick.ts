@@ -590,7 +590,7 @@ class Tick {
         const axis = this.axis,
             transA = axis.transA,
             reversed = ( // #7911
-                axis.isLinked && axis.linkedParent ?
+                axis.linkedParent ?
                     axis.linkedParent.reversed :
                     axis.reversed
             ),
