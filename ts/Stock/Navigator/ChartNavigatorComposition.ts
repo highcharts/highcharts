@@ -103,7 +103,7 @@ function compose(
 }
 
 /**
- * Remove all the base series.
+ * Reset the base series.
  * @internal
  */
 function resetBaseSeries(
