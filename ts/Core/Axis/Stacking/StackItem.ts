@@ -220,54 +220,52 @@ class StackItem {
             options = axis.options.stackLabels || {},
             formatOption = options.format,
             // Format the text in the label.
-            str = (
+            text = (
                 formatOption ?
                     format(formatOption, this, chart) :
                     options.formatter?.call(this, this)
-            ) || '';
+            ) || '',
+            verb = this.label ? 'animate' : 'attr';
 
-        // Change the text to reflect the new total and set visibility to hidden
-        // in case the series is hidden
-        if (this.label) {
-            this.label.attr({ text: str, visibility: 'hidden' });
-        } else {
-            // Create new label
-            this.label = chart.renderer.label(
-                str,
-                0,
-                void 0,
-                options.shape,
-                void 0,
-                void 0,
-                options.useHTML,
-                false,
-                'stack-labels'
-            );
+        // Create new label
+        this.label ||= chart.renderer.label(
+            text,
+            0,
+            void 0,
+            options.shape,
+            void 0,
+            void 0,
+            options.useHTML,
+            false,
+            'stack-labels'
+        );
 
-            const attr: SVGAttributes = {
+        const label = this.label,
+            animatableAttribs: SVGAttributes = {
                 r: options.borderRadius || 0,
-                text: str,
                 // Set default padding to 5 as it is in dataLabels #12308
-                padding: (options.padding ?? 5),
-                visibility: 'hidden' // Hidden until setOffset is called
+                padding: (options.padding ?? 5)
             };
 
-            if (!chart.styledMode) {
-                attr.fill = options.backgroundColor;
-                attr.stroke = options.borderColor;
-                attr['stroke-width'] = options.borderWidth;
-                this.label.css(options.style || {});
-            }
+        if (!chart.styledMode) {
+            animatableAttribs.fill = options.backgroundColor;
+            animatableAttribs.stroke = options.borderColor;
+            animatableAttribs['stroke-width'] = options.borderWidth;
+            label.css(options.style || {});
+        }
 
-            this.label.attr(attr);
+        label
+            .attr({
+                text,
+                visibility: 'hidden' // Hidden until setOffset is called
+            })[verb](animatableAttribs);
 
-            if (!this.label.added) {
-                this.label.add(group); // Add to the labels-group
-            }
+        if (!label.added) {
+            label.add(group); // Add to the labels-group
         }
 
         // Rank it higher than data labels (#8742)
-        this.label.labelrank = chart.plotSizeY;
+        label.labelrank = chart.plotSizeY;
         fireEvent(this, 'afterRender');
     }
 

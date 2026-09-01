@@ -325,6 +325,7 @@ class SVGElement implements SVGElementBase {
             (this as AnyRecord)[key + 'Value'] ??
             (this as AnyRecord)[key] ??
             (this.element ? this.element.getAttribute(key) : null) ??
+            this.box?.[key] ?? // For labels, when animating border radius
             0
         );
 
