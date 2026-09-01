@@ -358,6 +358,52 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         `The header should stay on the X axis when the label is taller than the
         plot area (#24860).`
     );
+
+    // With the axis on top, the space below the plot area is used, and the
+    // labels are kept off the header, #24860
+    chart.update({
+        chart: {
+            height: 290
+        },
+        xAxis: {
+            opposite: true
+        },
+        tooltip: {
+            formatter: function () {
+                return ['HEADER'].concat(
+                    this.points.map(point => point.series.name)
+                );
+            }
+        }
+    }, false);
+
+    while (chart.series.length < 6) {
+        chart.addSeries({ data: [1, 2, 3] }, false);
+    }
+    chart.series.forEach(series => series.setData([1, 2, 3], false));
+    chart.redraw();
+
+    chart.tooltip.refresh(chart.series.map(series => series.points[1]));
+
+    const topHeader = chart.tooltip.tt,
+        headerBottom = topHeader.attr('y') + topHeader.getBBox().height,
+        visible = chart.series.filter(
+            series => series.tt &&
+                series.tt.element.getAttribute('visibility') !== 'hidden'
+        );
+
+    assert.strictEqual(
+        visible.length,
+        chart.series.length,
+        `All labels should fit when the area is expanded into the space below
+        the plot area (#24860).`
+    );
+
+    assert.ok(
+        visible.every(series => series.tt.attr('y') >= headerBottom - 1),
+        `Labels should be kept below an opposite axis header, not covering it
+        (#24860).`
+    );
 });
 
 QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
