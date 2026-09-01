@@ -961,8 +961,8 @@ class Tick {
     ): void {
         const tick = this,
             axis = tick.axis,
-            options = axis.options,
-            renderer = axis.chart.renderer,
+            { chart, options } = axis,
+            renderer = chart.renderer,
             type = tick.type,
             tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'),
             x = xy.x,
@@ -976,7 +976,7 @@ class Tick {
 
         let mark = tick.mark;
 
-        const isNewMark = !mark;
+        const verb = mark ? 'animate' : 'attr';
 
         if (tickSize || mark) {
 
@@ -995,16 +995,16 @@ class Tick {
                 tick.mark = mark = renderer.path()
                     .addClass('highcharts-' + (type ? type + '-' : '') + 'tick')
                     .add(axis.axisGroup);
-
-                if (!axis.chart.styledMode) {
-                    mark.attr({
-                        stroke: tickColor,
-                        'stroke-width': tickWidth
-                    });
-                }
             }
 
-            mark[isNewMark ? 'attr' : 'animate']({
+            if (!chart.styledMode) {
+                mark[verb]({
+                    stroke: tickColor,
+                    'stroke-width': tickWidth
+                });
+            }
+
+            mark[verb]({
                 d: tick.getMarkPath(
                     x,
                     y,

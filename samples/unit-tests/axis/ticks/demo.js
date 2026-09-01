@@ -1300,4 +1300,15 @@ QUnit.test('Tick and label overflow (#16307)', assert => {
         'After redraw, the last tick mark should still not be visible'
     );
 
+    chart.update({
+        xAxis: {
+            tickWidth: 3
+        }
+    });
+    assert.strictEqual(
+        chart.xAxis[0].ticks['11'].mark.attr('stroke-width'),
+        3,
+        'After update, the last tick mark should have a stroke width of 3'
+    );
+
 });
