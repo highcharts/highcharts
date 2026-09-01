@@ -190,6 +190,68 @@ QUnit.test('Respect reversed-flag of linked axis (#7911)', function (assert) {
 });
 
 QUnit.test(
+    'Linked axis with a different pixel length than its parent ' +
+        'translates values proportionally (multi-pane layouts)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 600,
+                height: 400
+            },
+            xAxis: [{
+                left: '0%',
+                width: '60%'
+            }, {
+                left: '65%',
+                width: '30%'
+            }],
+            series: [{
+                xAxis: 0,
+                data: [1, 2, 3, 4, 5]
+            }, {
+                xAxis: 1,
+                data: [6, 7, 8, 9, 10]
+            }]
+        });
+
+        // Link after creation, so the fix is also exercised through the
+        // axis update/re-render path, not just initial chart construction.
+        chart.xAxis[1].update({ linkedTo: 0 });
+
+        const master = chart.xAxis[0],
+            linked = chart.xAxis[1],
+            value = (master.min + master.max) / 2;
+
+        assert.notEqual(
+            master.len,
+            linked.len,
+            'Sanity check: the two panes should have different pixel widths'
+        );
+
+        const lenRatio = linked.len / master.len,
+            masterPixel = master.toPixels(value, true),
+            linkedPixel = linked.toPixels(value, true);
+
+        assert.close(
+            linkedPixel,
+            masterPixel * lenRatio,
+            0.5,
+            'A value on the linked axis should be placed at a pixel position ' +
+                'scaled to its own (narrower) pane width, not the ' +
+                'parent\'s pixel position'
+        );
+
+        assert.close(
+            linked.toValue(linkedPixel, true),
+            value,
+            1e-6,
+            'Translating back from pixels to a value on the linked axis ' +
+                'should return the original value'
+        );
+    }
+);
+
+QUnit.test(
     'Show last label hiding interrupted by animation (#5332)',
     function (assert) {
         var done = assert.async();
