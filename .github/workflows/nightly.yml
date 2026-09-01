@@ -279,57 +279,23 @@ jobs:
   nightly_dist:
     runs-on: ubuntu-latest
     needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
+    if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
     steps:
-      - name: Checkout highcharts
-        uses: actions/checkout@v6
+      - name: Dispatch nightly distribution build
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
-          path: highcharts
-
-      - name: Checkout highcharts-dist
-        uses: actions/checkout@v6
-        with:
-          repository: highcharts/highcharts-dist
-          token: ${{ secrets.PR_COMMENT_TOKEN }}
-          path: highcharts-dist
-          ref: 'nightly'
-          fetch-depth: 0
-
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-          cache-dependency-path: ./highcharts/package-lock.json
-
-      - name: Set git config
-        working-directory: ./highcharts-dist
-        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
-        run: |
-          git config --global user.name "CircleCI"
-          git config --global user.email "technical+circleci_mu@highsoft.com"
-          git config --global core.editor vi
-
-      - name: Reset nightly branch to master
-        working-directory: ./highcharts-dist
-        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
-        run: git reset --hard origin/master
-
-      - name: Install and build
-        working-directory: ./highcharts
-        run: |
-          npm ci
-          npm run build -- --CI true
-          npx gulp scripts-es5
-          npx gulp dist-verify
-          npx gulp dist-release --force-yes
-
-      - name: Upload to github
-        working-directory: ./highcharts-dist
-        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
-        run: |
-          git add .
-          git commit -m "Nightly build - ${{github.run_id}}"
-          git push --force-with-lease -u origin nightly
+          github-token: ${{ secrets.DIST_WORKFLOW_DISPATCH_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'highcharts',
+              repo: 'highcharts-dist',
+              workflow_id: 'nightly.yml',
+              ref: 'master',
+              inputs: {
+                source_run_id: String(context.runId),
+                source_sha: context.sha
+              }
+            });
 
   nightly_changelog:
     runs-on: ubuntu-latest
