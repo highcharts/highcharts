@@ -444,6 +444,8 @@ class Tick {
                 .add(axis.labelGroup);
         } else if (label) {
             label = label.destroy();
+            // Reset so it doesn't animate when re-enabled
+            this.isNewLabel = true;
         }
 
         // Un-rotated length
