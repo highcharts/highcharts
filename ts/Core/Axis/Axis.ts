@@ -838,7 +838,7 @@ class Axis {
          * @type {boolean|Highcharts.AxisCrosshairOptions}
          */
         const crosshair = options.crosshair ?? splat(
-            (chart.options.tooltip as any).crosshairs
+            chart.options.tooltip?.crosshairs
         )[isXAxis ? 0 : 1];
         axis.crosshair = crosshair === true ? {} : crosshair;
 
@@ -4583,30 +4583,26 @@ class Axis {
 
                     // Presentational attributes
                     if (!chart.styledMode) {
-                        cross.attr({
-                            stroke: options.color ||
-                                (
-                                    categorized ?
-                                        color(
-                                            // eslint-disable-next-line max-len
-                                            'var(--highcharts-highlight-color-20)'
-                                        ).setOpacity(0.25).get() :
-                                        'var(--highcharts-neutral-color-20)'
-                                ),
-                            'stroke-width': (options.width ?? 1)
-                        }).css({
+                        cross.css({
                             'pointer-events': 'none'
                         });
-                        if (options.dashStyle) {
-                            cross.attr({
-                                dashstyle: options.dashStyle
-                            });
-                        }
                     }
                 }
 
                 cross
-                    .show()
+                    .attr({
+                        dashstyle: options.dashStyle || 'Solid',
+                        stroke: options.color ||
+                            (
+                                categorized ?
+                                    color(
+                                        // eslint-disable-next-line max-len
+                                        'var(--highcharts-highlight-color-20)'
+                                    ).setOpacity(0.25).get() :
+                                    'var(--highcharts-neutral-color-20)'
+                            ),
+                        'stroke-width': (options.width ?? 1)
+                    }).show()
                     .animate(
                         { d: path as SVGPath },
                         animObject(options?.animation)
