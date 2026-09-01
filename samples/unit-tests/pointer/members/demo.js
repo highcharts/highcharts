@@ -436,3 +436,133 @@ QUnit.test(
         }
     }
 );
+
+QUnit.test(
+    'Shared tooltip opt-in is limited to scatter and bubble',
+    function (assert) {
+        [
+            {
+                type: 'scatter',
+                data: [[0, 1], [1, 2]],
+                supported: true
+            },
+            {
+                type: 'bubble',
+                data: [[0, 1, 1], [1, 2, 1]],
+                supported: true
+            },
+            {
+                type: 'polygon',
+                data: [[0, 1], [1, 2], [2, 1]],
+                supported: false
+            }
+        ].forEach(function (testCase) {
+            const chart = Highcharts.chart('container', {
+                chart: {
+                    type: testCase.type
+                },
+                tooltip: {
+                    shared: true
+                },
+                series: [{
+                    data: testCase.data
+                }]
+            });
+
+            assert.strictEqual(
+                chart.series[0].noSharedTooltip,
+                !testCase.supported,
+                `${testCase.type} should ${
+                    testCase.supported ? 'support' : 'ignore'
+                } shared tooltips`
+            );
+
+            chart.destroy();
+        });
+
+        const splitChart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter'
+            },
+            tooltip: {
+                split: true
+            },
+            series: [{
+                data: [[0, 1], [1, 2]]
+            }]
+        });
+
+        assert.strictEqual(
+            splitChart.series[0].noSharedTooltip,
+            true,
+            'Split-only tooltips should keep the existing scatter opt-out'
+        );
+
+        splitChart.destroy();
+    }
+);
+
+QUnit.test(
+    'Global scatter tooltip formats are preserved',
+    function (assert) {
+        const tooltipDefaults =
+                Highcharts.defaultOptions.plotOptions.scatter.tooltip,
+            headerFormat = tooltipDefaults.headerFormat,
+            pointFormat = tooltipDefaults.pointFormat,
+            customHeaderFormat = '<table>',
+            customPointFormat = '<tr><td>{point.y}</td></tr>';
+        let chart;
+
+        Highcharts.setOptions({
+            plotOptions: {
+                scatter: {
+                    tooltip: {
+                        headerFormat: customHeaderFormat,
+                        pointFormat: customPointFormat
+                    }
+                }
+            }
+        });
+
+        try {
+            chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'scatter'
+                },
+                tooltip: {
+                    shared: true
+                },
+                series: [{
+                    data: [[0, 1], [1, 2]]
+                }]
+            });
+
+            assert.strictEqual(
+                chart.series[0].tooltipOptions.headerFormat,
+                customHeaderFormat,
+                'A global series header format should not be replaced'
+            );
+            assert.strictEqual(
+                chart.tooltip.bodyFormatter([
+                    chart.series[0].points[0]
+                ])[0],
+                '<tr><td>1</td></tr>',
+                'A global series point format should not be prefixed'
+            );
+        } finally {
+            if (chart) {
+                chart.destroy();
+            }
+            Highcharts.setOptions({
+                plotOptions: {
+                    scatter: {
+                        tooltip: {
+                            headerFormat,
+                            pointFormat
+                        }
+                    }
+                }
+            });
+        }
+    }
+);

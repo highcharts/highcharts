@@ -226,10 +226,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     tooltip: {
         headerFormat: '',
         pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
-        clusterFormat: '+ {point.groupedPointsAmount} more...<br/>',
-        // Points are nested rather than listed side by side, so the series
-        // name prefix inherited from scatter would only add noise (#22967)
-        pointFormatter: void 0
+        clusterFormat: '+ {point.groupedPointsAmount} more...<br/>'
     },
 
     /**

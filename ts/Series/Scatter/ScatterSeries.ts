@@ -26,7 +26,9 @@ import type { DeepPartial } from '../../Shared/Types';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ScatterSeriesDefaults, {
-    prefixesSeriesName
+    prefixesSeriesName,
+    scatterHeaderFormat,
+    supportsSharedTooltip
 } from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -105,14 +107,13 @@ class ScatterSeries extends LineSeries {
     ): this['options'] {
         // Set before calling super, so that the shared-tooltip default for
         // `stickyTracking` is resolved with the right value
-        this.noSharedTooltip = !this.isCartesian;
+        this.noSharedTooltip = !supportsSharedTooltip(this);
 
         const options = super.setOptions(itemOptions),
-            tooltipOptions = this.tooltipOptions,
-            typeDefaults = defaultOptions.plotOptions?.[this.type]?.tooltip;
+            tooltipOptions = this.tooltipOptions;
 
         this.noSharedTooltip = !(
-            this.isCartesian &&
+            supportsSharedTooltip(this) &&
             tooltipOptions.shared
         );
 
@@ -121,7 +122,7 @@ class ScatterSeries extends LineSeries {
         // this series type's own (#22967).
         if (
             prefixesSeriesName(this) &&
-            tooltipOptions.headerFormat === typeDefaults?.headerFormat
+            tooltipOptions.headerFormat === scatterHeaderFormat
         ) {
             tooltipOptions.headerFormat =
                 defaultOptions.tooltip?.headerFormat || '';
@@ -201,6 +202,8 @@ class ScatterSeries extends LineSeries {
 
 interface ScatterSeries {
     pointClass: typeof ScatterPoint;
+    sharedTooltipPointFormat: string;
+    sharedTooltipType: string;
 }
 extend(ScatterSeries.prototype, {
     allowOutsidePlotInteraction: true,
@@ -208,6 +211,8 @@ extend(ScatterSeries.prototype, {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
+    sharedTooltipPointFormat: ScatterSeriesDefaults.tooltip?.pointFormat,
+    sharedTooltipType: 'scatter',
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 

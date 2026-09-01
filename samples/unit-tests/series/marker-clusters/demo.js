@@ -420,3 +420,39 @@ QUnit.test('OptimizedKmeans algorithm tests.', function (assert) {
         'greater than on chart init.'
     );
 });
+
+QUnit.test('Shared tooltip names clustered scatter points.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter',
+                width: 500
+            },
+            tooltip: {
+                shared: true
+            },
+            plotOptions: {
+                scatter: {
+                    cluster: {
+                        enabled: true,
+                        animation: false,
+                        minimumClusterSize: 2
+                    }
+                }
+            },
+            series: [{
+                name: 'Readings',
+                data: [[1, 1], [1.05, 1.05], [1.1, 1], [5, 5]]
+            }]
+        }),
+        cluster = chart.series[0].points.find(function (point) {
+            return point.isCluster;
+        });
+
+    assert.ok(cluster, 'A cluster point should be created');
+    assert.ok(
+        chart.tooltip.bodyFormatter([cluster])[0].indexOf('Readings:') > -1,
+        'The cluster tooltip should include its series name'
+    );
+
+    chart.destroy();
+});

@@ -51,10 +51,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
           '<b> {series.name}</b><br/>' +
           'Close: {point.y:.2f}<br/>',
-        headerFormat: '',
-        // The series name is already part of the point format, so opt out of
-        // the shared-tooltip prefix inherited from scatter (#22967)
-        pointFormatter: void 0
+        headerFormat: ''
     },
     turboThreshold: 0,
     groupPadding: 0.2,

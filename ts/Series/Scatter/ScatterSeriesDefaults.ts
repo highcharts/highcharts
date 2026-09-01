@@ -20,11 +20,10 @@
 
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
 import type ScatterSeries from './ScatterSeries';
-
-import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
+import type {
+    ScatterSeriesTooltipOptions
+} from './ScatterSeriesOptions';
 
 /* *
  *
@@ -32,8 +31,13 @@ const { defaultOptions } = D;
  *
  * */
 
-const seriesNamePrefix =
-    '<span style="color:{point.color}">\u25CF</span> {series.name}: ';
+const scatterHeaderFormat =
+        '<span style="color:{point.color}">\u25CF</span> ' +
+        '<span style="font-size: 0.8em"> {series.name}</span><br/>',
+    seriesNamePrefix =
+        '<span style="color:{point.color}">\u25CF</span> {series.name}: ',
+    scatterPointFormat =
+        'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>';
 
 /* *
  *
@@ -54,18 +58,25 @@ const seriesNamePrefix =
  *
  * @private
  */
-function prefixesSeriesName(series: Series): boolean {
-    const { pointFormat, pointFormatter } = series.tooltipOptions,
-        typeDefaults = defaultOptions.plotOptions?.[series.type]?.tooltip;
+function prefixesSeriesName(series: ScatterSeries): boolean {
+    const { pointFormat, pointFormatter } = series.tooltipOptions;
 
     return !!(
-        // The tooltip lists more than this one series
         !series.noSharedTooltip &&
-        // The point format is this series type's own, and has room for a name
         pointFormat &&
-        pointFormat === typeDefaults?.pointFormat &&
-        // The series has neither overridden nor opted out of the prefixing
+        pointFormat === series.sharedTooltipPointFormat &&
         pointFormatter === scatterPointFormatter
+    );
+}
+
+/**
+ * Whether the series type supports explicitly enabled shared tooltips.
+ * @private
+ */
+function supportsSharedTooltip(series: ScatterSeries): boolean {
+    return !!(
+        series.isCartesian &&
+        series.type === series.sharedTooltipType
     );
 }
 
@@ -88,7 +99,7 @@ function scatterClusterFormatter(
     this: Point,
     clusterFormat: string
 ): string {
-    return prefixesSeriesName(this.series) ?
+    return prefixesSeriesName(this.series as ScatterSeries) ?
         prefixed(this, clusterFormat) :
         this.tooltipFormatter(clusterFormat);
 }
@@ -100,9 +111,14 @@ function scatterPointFormatter(
     this: Point,
     pointFormat: string
 ): string {
-    return prefixesSeriesName(this.series) ?
+    return prefixesSeriesName(this.series as ScatterSeries) ?
         prefixed(this, pointFormat) :
         this.tooltipFormatter(pointFormat);
+}
+
+/** @private */
+interface SharedScatterTooltipOptions extends ScatterSeriesTooltipOptions {
+    clusterFormatter: typeof scatterClusterFormatter;
 }
 
 /* *
@@ -214,9 +230,8 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
-        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
+        headerFormat: scatterHeaderFormat,
+        pointFormat: scatterPointFormat,
 
         /**
          * @ignore-option
@@ -227,7 +242,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
          * @ignore-option
          */
         pointFormatter: scatterPointFormatter
-    }
+    } as SharedScatterTooltipOptions
 
 };
 
@@ -315,5 +330,7 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
 export default ScatterSeriesDefaults;
 
 export {
-    prefixesSeriesName
+    prefixesSeriesName,
+    scatterHeaderFormat,
+    supportsSharedTooltip
 };
