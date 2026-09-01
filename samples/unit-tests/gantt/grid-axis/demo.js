@@ -1754,7 +1754,7 @@ QUnit.test('Chart.update', assert => {
 
     assert.deepEqual(
         getYAxisLabels(),
-        ['Column 1', 'Column 2'],
+        ['Column 2', 'Column 1'],
         'should have two labels after init.'
     );
 

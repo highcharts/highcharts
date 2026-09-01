@@ -3674,10 +3674,8 @@ class Axis {
 
         const createGroup = (
             name: string,
-            suffix: string,
-            zIndex: number
+            suffix: string
         ): SVGElement => renderer.g(name)
-            .attr({ zIndex })
             .addClass(
                 `highcharts-${coll.toLowerCase()}${suffix} ` +
                 (this.isRadial ? `highcharts-radial-axis${suffix} ` : '') +
@@ -3685,23 +3683,10 @@ class Axis {
             )
             .add(axisParent);
 
-        if (!this.axisGroup) {
-            this.gridGroup = createGroup(
-                'grid',
-                '-grid',
-                options.gridZIndex
-            ).clip(this.clippable ? chart.plotClipInner : void 0);
-            this.axisGroup = createGroup(
-                'axis',
-                '',
-                options.zIndex
-            );
-            this.labelGroup = createGroup(
-                'axis-labels',
-                '-labels',
-                options.labels.zIndex
-            );
-        }
+        this.gridGroup ||= createGroup('grid', '-grid')
+            .clip(this.clippable ? chart.plotClipInner : void 0);
+        this.axisGroup ||= createGroup('axis', '');
+        this.labelGroup ||= createGroup('axis-labels', '-labels');
     }
 
     /**
@@ -4201,6 +4186,11 @@ class Axis {
         // Reset
         axis.labelEdge.length = 0;
         axis.overlap = false;
+
+        // Set z-indices
+        this.axisGroup?.attr({ zIndex: options.zIndex });
+        this.gridGroup?.attr({ zIndex: options.gridZIndex });
+        this.labelGroup?.attr({ zIndex: options.labels.zIndex });
 
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
