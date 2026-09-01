@@ -140,10 +140,8 @@ test('rejects overlapping sample and reference roots', () => {
 test('fails when results or error logs cannot be read safely', async () => {
     const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-errors-'));
     const malformedResults = join(root, 'malformed.json');
-    const nonDirectory = join(root, 'file');
     try {
         await writeFile(malformedResults, '{');
-        await writeFile(nonDirectory, '');
 
         assert.throws(
             () => readTestResultsFile(join(root, 'missing.json')),
@@ -154,8 +152,8 @@ test('fails when results or error logs cannot be read safely', async () => {
             SyntaxError
         );
         assert.throws(
-            () => hasVisualTestErrors(join(nonDirectory, 'errors.log')),
-            error => error.code === 'ENOTDIR'
+            () => hasVisualTestErrors('\0'),
+            error => error.code === 'ERR_INVALID_ARG_VALUE'
         );
     } finally {
         await rm(root, { recursive: true, force: true });
