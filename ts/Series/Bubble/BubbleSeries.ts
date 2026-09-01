@@ -966,6 +966,9 @@ extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],
+    defaultPointFormat: bubblePointFormat,
+    // Bubble's own point format is a single line already, so compose that
+    // rather than inheriting the compact one scatter names (#22967)
     sharedTooltipPointFormat: bubblePointFormat,
     sharedTooltipType: 'bubble',
     trackerGroups: ['group', 'dataLabelsGroup'],

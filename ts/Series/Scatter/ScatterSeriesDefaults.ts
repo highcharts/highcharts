@@ -37,7 +37,8 @@ const scatterHeaderFormat =
     seriesNamePrefix =
         '<span style="color:{point.color}">\u25CF</span> {series.name}: ',
     scatterPointFormat =
-        'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>';
+        'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
+    scatterSharedPointFormat = '({point.x}, {point.y})';
 
 /* *
  *
@@ -64,7 +65,7 @@ function prefixesSeriesName(series: ScatterSeries): boolean {
     return !!(
         !series.noSharedTooltip &&
         pointFormat &&
-        pointFormat === series.sharedTooltipPointFormat &&
+        pointFormat === series.defaultPointFormat &&
         pointFormatter === scatterPointFormatter
     );
 }
@@ -111,8 +112,14 @@ function scatterPointFormatter(
     this: Point,
     pointFormat: string
 ): string {
-    return prefixesSeriesName(this.series as ScatterSeries) ?
-        prefixed(this, pointFormat) :
+    const series = this.series as ScatterSeries;
+
+    // Scatter labels both coordinates on their own lines, which leaves the
+    // second line unattributed once the first one carries the series name.
+    // Series types that read badly composed this way name a single-line
+    // format to compose instead (#22967).
+    return prefixesSeriesName(series) ?
+        prefixed(this, series.sharedTooltipPointFormat || pointFormat) :
         this.tooltipFormatter(pointFormat);
 }
 
@@ -332,5 +339,6 @@ export default ScatterSeriesDefaults;
 export {
     prefixesSeriesName,
     scatterHeaderFormat,
+    scatterSharedPointFormat,
     supportsSharedTooltip
 };

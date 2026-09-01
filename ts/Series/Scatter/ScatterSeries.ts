@@ -28,6 +28,7 @@ const { defaultOptions } = D;
 import ScatterSeriesDefaults, {
     prefixesSeriesName,
     scatterHeaderFormat,
+    scatterSharedPointFormat,
     supportsSharedTooltip
 } from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -201,8 +202,9 @@ class ScatterSeries extends LineSeries {
  * */
 
 interface ScatterSeries {
+    defaultPointFormat: string;
     pointClass: typeof ScatterPoint;
-    sharedTooltipPointFormat: string;
+    sharedTooltipPointFormat?: string;
     sharedTooltipType: string;
 }
 extend(ScatterSeries.prototype, {
@@ -211,7 +213,8 @@ extend(ScatterSeries.prototype, {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
-    sharedTooltipPointFormat: ScatterSeriesDefaults.tooltip?.pointFormat,
+    defaultPointFormat: ScatterSeriesDefaults.tooltip?.pointFormat,
+    sharedTooltipPointFormat: scatterSharedPointFormat,
     sharedTooltipType: 'scatter',
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
