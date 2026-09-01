@@ -254,8 +254,12 @@ class PlotLineOrBand {
              */
             this.svgElem = svgElem = renderer
                 .path()
-                .attr(attribs)
-                .add(group);
+                .attr(attribs);
+        }
+
+        // Add it to the correct index while allowing dynamic z-index update
+        if (svgElem.parentGroup !== group) {
+            svgElem.add(group);
         }
 
         // Set the path or return
