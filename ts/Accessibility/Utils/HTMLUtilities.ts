@@ -183,13 +183,26 @@ function escapeStringForHTML(str: string): string {
 
 
 /**
- * Get an element by ID
+ * Get the shadow root the element lives in, if any. Lookups in the main
+ * document do not cross a shadow boundary. (#22682)
+ * @private
+ */
+function getShadowRoot(el?: DOMElementType): (ShadowRoot|undefined) {
+    const root = el?.getRootNode() as ShadowRoot|undefined;
+
+    return root?.host ? root : void 0;
+}
+
+
+/**
+ * Get an element by ID, from the reference element's shadow root if it has one.
  * @private
  */
 function getElement(
-    id: string
+    id: string,
+    referenceElement?: DOMElementType
 ): (DOMElementType|null) {
-    return doc.getElementById(id);
+    return (getShadowRoot(referenceElement) || doc).getElementById(id);
 }
 
 
@@ -402,6 +415,7 @@ const HTMLUtilities = {
     getElement,
     getFakeMouseEvent,
     getHeadingTagNameForElement,
+    getShadowRoot,
     removeChildNodes,
     removeClass,
     removeElement,
