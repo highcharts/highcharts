@@ -137,10 +137,8 @@ namespace FinancialSymbols {
                     ];
 
                 if (isOhlc) {
-                    // The up bar opens at the height the down bar closes,
-                    // weaving the two bars together as in the design
                     const open1 = crisp(y + h * 0.2, 1),
-                        open2 = close1;
+                        open2 = close1 - 1;
 
                     path.push(
                         ['M', x1 - tick, open1], ['L', x1, open1],
