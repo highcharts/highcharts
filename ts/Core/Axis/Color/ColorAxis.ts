@@ -317,8 +317,17 @@ class ColorAxis extends Axis implements ColorAxisBase {
             }
         );
 
+        const marker = options.marker || {};
+
         super.setOptions(options);
-        this.options.crosshair = this.options.marker;
+
+        // Translate marker options to crosshair options
+        this.options.crosshair = merge(
+            marker, {
+                color: marker.lineColor,
+                width: marker.lineWidth
+            }
+        );
     }
 
     /** @internal */
@@ -660,8 +669,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             plotX = point?.plotX,
             plotY = point?.plotY,
             axisPos = axis.pos,
-            axisLen = axis.len,
-            markerOptions = axis.options.marker || {};
+            axisLen = axis.len;
 
         let crossPos;
 
@@ -683,28 +691,23 @@ class ColorAxis extends Axis implements ColorAxisBase {
             point.plotX = plotX;
             point.plotY = plotY;
 
-            if (
-                axis.cross &&
-                !axis.cross.addedToColorAxis &&
-                legendItem.group
-            ) {
-                axis.cross
-                    .addClass('highcharts-coloraxis-marker')
-                    .add(legendItem.group);
-
-                axis.cross.addedToColorAxis = true;
-
+            if (axis.cross && typeof axis.crosshair === 'object') {
                 if (
-                    !axis.chart.styledMode &&
-                    typeof axis.crosshair === 'object'
+                    !axis.cross.addedToColorAxis &&
+                    legendItem.group
                 ) {
-                    axis.cross.attr({
-                        fill: markerOptions.color,
-                        stroke: markerOptions.lineColor,
-                        'stroke-width': markerOptions.lineWidth
-                    });
+                    axis.cross
+                        .addClass('highcharts-coloraxis-marker')
+                        .add(legendItem.group);
+
+                    axis.cross.addedToColorAxis = true;
                 }
 
+                if (!axis.chart.styledMode) {
+                    axis.cross.attr({
+                        fill: axis.options.marker?.color
+                    });
+                }
             }
         }
     }

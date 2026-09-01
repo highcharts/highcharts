@@ -4570,29 +4570,29 @@ class Axis {
                                 chart.plotClipInner
                         )
                         .add();
-
-                    // Presentational attributes
-                    if (!chart.styledMode) {
-                        cross.css({
-                            'pointer-events': 'none'
-                        });
-                    }
                 }
 
-                cross
-                    .attr({
-                        dashstyle: options.dashStyle || 'Solid',
-                        stroke: options.color ||
-                            (
+                // Presentational attributes
+                if (!chart.styledMode) {
+                    cross
+                        .attr({
+                            dashstyle: options.dashStyle || 'Solid',
+                            stroke: options.color || (
                                 categorized ?
                                     color(
-                                        // eslint-disable-next-line max-len
                                         'var(--highcharts-highlight-color-20)'
                                     ).setOpacity(0.25).get() :
                                     'var(--highcharts-neutral-color-20)'
                             ),
-                        'stroke-width': (options.width ?? 1)
-                    }).show()
+                            'stroke-width': options.width ?? 1
+                        })
+                        .css({
+                            'pointer-events': 'none'
+                        });
+                }
+
+                cross
+                    .show()
                     .animate(
                         { d: path as SVGPath },
                         animObject(options?.animation)
@@ -4603,9 +4603,8 @@ class Axis {
                         'stroke-width': this.transA
                     });
                 }
-                if (this.cross) {
-                    this.cross.e = e;
-                }
+
+                cross.e = e;
             },
             // Only use delay if the crosshair is currently hidden
             (!graphic || graphic.attr('visibility') === 'hidden') ?
