@@ -100,6 +100,7 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/update-vendor',
     'unsorted/upload-files',
     'update-pr-testresults',
+    'update-nightly-testresults',
     'pr-size-table'
 ]));
 
