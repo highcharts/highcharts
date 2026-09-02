@@ -1477,7 +1477,7 @@ const defaultOptions: DefaultOptions = {
              * usual, so that static exports keep them all visible.
              *
              * @sample {highcharts} highcharts/legend/navigation-horizontal/
-             *         Horizontal legend paging
+             *         Horizontal legend page navigation
              *
              * @type       {string}
              * @default    vertical
