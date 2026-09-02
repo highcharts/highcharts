@@ -39,4 +39,14 @@ describe('Formula.parseFormula', () => {
             'Processing should result in a value of -10.'
         );
     });
+
+    it('should process comma decimals with alternative separators', () => {
+        strictEqual(
+            Formula.processFormula(
+                Formula.parseFormula('SUM(1,5;2,25)', true)
+            ),
+            3.75,
+            'Comma decimals should retain their fractional values.'
+        );
+    });
 });
