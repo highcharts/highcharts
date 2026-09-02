@@ -29,8 +29,7 @@ import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
@@ -45,7 +44,6 @@ import {
     addEvent,
     fireEvent,
     isNumber,
-    pick,
     syncTimeout
 } from '../../Shared/Utilities.js';
 const {
@@ -222,7 +220,7 @@ class LegendComponent extends AccessibilityComponent {
                     (): void => component.proxyProvider
                         .updateGroupProxyElementPositions('legend'),
                     animObject(
-                        pick(this.chart.renderer.globalAnimation, true)
+                        (this.chart.renderer.globalAnimation ?? true)
                     ).duration
                 );
             }

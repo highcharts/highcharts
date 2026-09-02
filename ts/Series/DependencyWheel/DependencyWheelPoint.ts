@@ -38,6 +38,7 @@ import { pInt, wrap } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class DependencyWheelPoint extends SankeyPoint {
 
     /* *
@@ -91,7 +92,7 @@ class DependencyWheelPoint extends SankeyPoint {
 
     /**
      * Return a text path that the data label uses.
-     * @private
+     * @internal
      */
     public getDataLabelPath(label: SVGLabel): SVGElement {
         const point = this,
@@ -156,4 +157,5 @@ class DependencyWheelPoint extends SankeyPoint {
  *
  * */
 
+/** @internal */
 export default DependencyWheelPoint;

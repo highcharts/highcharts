@@ -85,7 +85,6 @@ import {
     isObject,
     merge,
     objectEach,
-    pick,
     pushUnique,
     removeEvent,
     splat,
@@ -484,8 +483,8 @@ export class Exporting {
 
     /** @internal */
     /**
-     * Collects all unique font family names used inline
-     * within <text> and <tspan> elements of an SVG by inspecting
+     * Collects all unique font family names used inline within the root
+     * SVG element and its <text> and <tspan> elements by inspecting
      * their style attributes and font-family attributes.
      *
      * @param {SVGSVGElement} svg
@@ -497,9 +496,12 @@ export class Exporting {
         svg: SVGSVGElement,
         usedFontFamilies: Set<string>
     ): void {
-        const textNodes = svg.querySelectorAll('text, tspan');
+        // Include the root SVG element itself, since the chart-wide
+        // `chart.style.fontFamily` is applied there rather than on the
+        // individual text nodes (#24722).
+        const nodes = [svg, ...Array.from(svg.querySelectorAll('text, tspan'))];
 
-        for (const textNode of Array.from(textNodes)) {
+        for (const textNode of nodes) {
             const styleAttr = textNode.getAttribute('style') || '';
             const inlineFontFamily = textNode.getAttribute('font-family') || '';
 
@@ -534,18 +536,6 @@ export class Exporting {
                 return;
             }
             visited.add(href);
-
-            try {
-                const sheetOrigin = new URL(href, doc.baseURI).origin;
-                if (sheetOrigin !== win.location.origin) {
-                    // We skip all cross-origin stylesheets on purpose.
-                    // This prevents DOM SecurityErrors and unhandled network
-                    // rejections when the browser blocks cssRules access.
-                    return;
-                }
-            } catch {
-                // URL parsing failed, proceed to try/catch
-            }
         }
 
         try {
@@ -839,6 +829,13 @@ export class Exporting {
         /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
         options?: Options
     ): string {
+        // Remove any HTML added to the container after the SVG, like the
+        // Stock Tools GUI wrapper (#894, #9087, #24754)
+        const split = svg.lastIndexOf('</svg>');
+        if (split > -1) {
+            svg = svg.substr(0, split + 6);
+        }
+
         svg = svg
             // Some tags needs to be closed in xhtml (#13726)
             .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
@@ -1033,7 +1030,7 @@ export class Exporting {
         }
 
         if (btnOptions.text && btnOptions.symbol) {
-            theme.paddingLeft = pick(theme.paddingLeft, 30);
+            theme.paddingLeft = (theme.paddingLeft ?? 30);
         } else if (!btnOptions.text) {
             extend(theme, {
                 width: btnOptions.width,
@@ -1057,10 +1054,10 @@ export class Exporting {
             )
             .addClass(options.className || '')
             .attr({
-                title: pick(chart.options.lang[
+                title: (chart.options.lang[
                     (btnOptions._titleKey ||
                     btnOptions.titleKey) as keyof LangOptions
-                ] as string, '')
+                ] as string ?? '')
             });
 
         button.menuClassName = (
@@ -1105,7 +1102,7 @@ export class Exporting {
             .add(exporting.group)
             .align(extend(btnOptions, {
                 width: button.width,
-                x: pick(btnOptions.x, exporting.buttonOffset) // #1654
+                x: (btnOptions.x ?? exporting.buttonOffset) // #1654
             }), true, 'spacingBox');
 
         exporting.buttonOffset += (
@@ -1952,6 +1949,7 @@ export class Exporting {
      * The SVG representation of the rendered chart.
      *
      * @emits Highcharts.Chart#event:getSVG
+     * @emits Highcharts.Chart#event:afterGetSVG
      *
      * @requires modules/exporting
      */
@@ -2126,15 +2124,17 @@ export class Exporting {
                 this.applyShadowDOMStyles(chartCopy);
             }
 
+            fireEvent(chart, 'getSVG', { chartCopy });
+
             // Get the SVG from the container's innerHTML
             svg = exporting?.getChartHTML(
                 chart.styledMode ||
                 options?.exporting?.applyStyleSheets
             ) || '';
 
-            fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
-
             svg = Exporting.sanitizeSVG(svg, options);
+
+            fireEvent(chart, 'afterGetSVG', { chartCopy, svg });
 
             // Free up memory
             options = void 0;
@@ -2213,13 +2213,13 @@ export class Exporting {
         rootNode?.querySelectorAll('style').forEach(
             (style: HTMLStyleElement): void => {
                 const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
-                chartCopy.container.appendChild(clonedStyle);
+                chartCopy.renderer.defs.element.appendChild(clonedStyle);
 
                 // Store for the later removal
                 shadowStyles.push(clonedStyle);
             });
 
-        addEvent(chart, 'getSVG', (): void => {
+        addEvent(chart, 'afterGetSVG', (): void => {
             // Remove temporary Shadow DOM styles
             shadowStyles.forEach((style): void => {
                 style.remove();
@@ -2631,8 +2631,9 @@ export class Exporting {
             return;
         }
 
-        // Hook into getSVG to get a copy of the chart copy's container (#8273)
-        const unbindGetSVG = addEvent(chart, 'getSVG', (
+        // Hook into afterGetSVG to get a copy of the chart copy's container
+        // (#8273)
+        const unbindGetSVG = addEvent(chart, 'afterGetSVG', (
             e: { chartCopy: Chart }
         ): void => {
             chartCopyOptions = e.chartCopy.options;
@@ -2886,7 +2887,7 @@ export class Exporting {
     ): void {
         this.isDirty = true;
         merge(true, this.options, exportingOptions);
-        if (pick(redraw, true)) {
+        if (redraw ?? true) {
             this.chart.redraw();
         }
     }
@@ -3260,7 +3261,7 @@ export namespace Exporting {
                     if (chart.exporting) {
                         chart.exporting.isDirty = true;
                         merge(true, chart.options.navigation, options);
-                        if (pick(redraw, true)) {
+                        if (redraw ?? true) {
                             chart.redraw();
                         }
                     }

@@ -36,8 +36,7 @@ import {
     clamp,
     extend,
     fireEvent,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -72,12 +71,6 @@ declare module '../../Core/Series/SeriesBase' {
 
         /** @internal */
         updateTotals?(): void;
-    }
-}
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        brightness?: number;
     }
 }
 
@@ -154,10 +147,8 @@ class PieSeries extends Series {
                 // Start values
                     graphic.attr({
                     // Animate from inner radius (#779)
-                        r: pick(
-                            point.startR,
-                            (series.center && series.center[3] / 2
-                            )),
+                        r: point.startR ??
+                            (series.center && series.center[3] / 2),
                         start: startAngleRad,
                         end: startAngleRad
                     });

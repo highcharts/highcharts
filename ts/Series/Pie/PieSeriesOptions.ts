@@ -109,7 +109,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @type {Highcharts.ColorType}
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highcharts highmaps
      */
@@ -127,7 +127,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @type {number|string|Highcharts.BorderRadiusOptionsObject}
      */
-    borderRadius?: (number|string|BorderRadiusOptionsObject);
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * The width of the border surrounding each slice.

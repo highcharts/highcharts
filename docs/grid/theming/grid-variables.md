@@ -16,6 +16,8 @@ Most variables follow this pattern:
 2. Override with section-specific variables where needed.
 3. Fall back to global values when section variables are not defined.
 
+In the tables below, **Default Value** is the value provided by `.hcg-theme-default` (including light/dark pairs where shown). Without the default theme, unset tokens fall back to neutral values so custom themes and utility CSS are not fighting baked-in visuals. See [Applying themes with the API](https://www.highcharts.com/docs/grid/theming/index#applying-themes-with-the-api).
+
 Example:
 
 ```css
@@ -44,6 +46,7 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 | --hcg-font-weight | normal          | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
 | --hcg-color       | #000000/#ffffff | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)           |
 | --hcg-text-align  | left            | [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align)   |
+| --hcg-loader-color | light-dark(#000, #fff); falls back to `--hcg-color` | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color)           |
 
 \* System fonts: `-apple-system`, `BlinkMacSystemFont`, `Segoe UI`, `Roboto`, `Helvetica`, `Arial`, `Apple Color Emoji`, `Segoe UI Emoji`, `Segoe UI Symbol`, `sans-serif`.
 
@@ -107,6 +110,8 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 
 ## Borders
 
+Without these tokens, table border properties are not applied. `.hcg-theme-default` sets `--hcg-border-width: 1px`, `--hcg-border-radius: 5px`, and a derived `--hcg-border-color`.
+
 ### Globals
 
 | Variable           | Default Value   | Valid Values                                                                    |
@@ -114,7 +119,7 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 | --hcg-border-width | 0               | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width)   |
 | --hcg-border-style | solid           | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style)   |
 | --hcg-border-color | #000000/#ffffff | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color)   |
-| --hcg-border-radius *| 0               | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
+| --hcg-border-radius *| 0             | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
 
 \* `--hcg-border-radius` controls the outer table radius only.
 
@@ -143,6 +148,42 @@ shadow are shown to distinguish pinned rows from the scrollable area.
 Set `--hcg-pinned-top-shadow: none` and
 `--hcg-pinned-bottom-shadow: none` to disable shadows entirely.
 
+### Summary separators
+
+In Grid Pro, summary rows and summary columns are set apart by their own rules
+rather than by a background of their own: a summary section is separated from
+the data rows, and columns with a `columnAggregator` are separated from the data
+columns wherever the two meet - a block of neighbouring summary columns is
+enclosed once, not divided column by column. Every token below falls back to the
+row or column border, so a theme that sets none still gets a separator in its own
+border color. `.hcg-theme-default` darkens the color well beyond those borders
+and adds a heavier font weight.
+
+| Variable                          | Default Value                  | Valid Values                                                                  |
+| --------------------------------- | ------------------------------ | ----------------------------------------------------------------------------- |
+| --hcg-summary-row-border-width    | --hcg-row-border-width         | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-summary-row-border-style    | --hcg-row-border-style         | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-summary-row-border-color    | --hcg-row-border-color         | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-summary-column-border-width | --hcg-column-border-width      | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-summary-column-border-style | --hcg-column-border-style      | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-summary-column-border-color | --hcg-column-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-summary-row-font-weight     | --hcg-row-font-weight (600 in the default theme) | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
+| --hcg-summary-column-font-weight  | --hcg-column-font-weight (600 in the default theme) | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
+
+To tint a summary instead, set `--hcg-cell-background` on the `.hcg-summary-row`
+or `.hcg-summary-column` cells - it wins over the row parity background, so the
+tint stays even on striped rows.
+
+The row separator is declared with zero specificity, so class names given
+through `rendering.rows.summary.top.className` and
+`rendering.rows.summary.bottom.className` (utility classes, for example)
+override it without `!important`.
+
+`.hcg-themed` only wires these tokens to properties, and the values live in the
+theme, so an empty `rendering.theme` renders the summary rows and columns
+unstyled and leaves them entirely to your own classes. Only the layout that
+keeps the sections stuck to the body stays unconditional.
+
 ### Example
 
 ```css
@@ -157,6 +198,8 @@ Set `--hcg-pinned-top-shadow: none` and
 ```
 
 ## Padding
+
+Without these tokens, cell padding is not applied. `.hcg-theme-default` sets `--hcg-padding: 15px` (and `--hcg-header-vertical-padding: 10px`).
 
 ### Globals
 

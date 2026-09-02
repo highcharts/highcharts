@@ -426,10 +426,11 @@ class Board {
         // Cancel all data connectors pending requests.
         this.dataPool.cancelPendingRequests();
 
-        // Destroy layouts.
+        // Destroy layouts. Iterate over a copy, since each layout removes
+        // itself from `board.layouts` on destroy (#24857).
         if (this.guiEnabled) {
-            for (let i = 0, iEnd = board.layouts?.length; i < iEnd; ++i) {
-                board.layouts[i].destroy();
+            for (const layout of (board.layouts || []).slice()) {
+                layout.destroy();
             }
         } else {
             for (const mountedComponent of board.mountedComponents) {
@@ -483,8 +484,12 @@ class Board {
      *
      * @param newOptions
      * The new options to apply to the dashboard.
+     *
+     * @returns
+     * A promise that resolves with the board instance once all components are
+     * mounted.
      */
-    public update(newOptions: DeepPartial<Options>): void {
+    public update(newOptions: DeepPartial<Options>): Promise<Board> {
         const board = this;
 
         // Merge new options with existing ones
@@ -515,8 +520,10 @@ class Board {
 
         // Destroy existing layouts if GUI is enabled
         if (board.guiEnabled && board.layouts) {
-            for (let i = 0, iEnd = board.layouts.length; i < iEnd; ++i) {
-                board.layouts[i].destroy();
+            // Iterate over a copy, since each layout removes itself from
+            // `board.layouts` on destroy (#24857).
+            for (const layout of board.layouts.slice()) {
+                layout.destroy();
             }
             board.layouts = [];
 
@@ -566,11 +573,12 @@ class Board {
         }
 
         // Add new components
-        if (board.options.components) {
-            void board.setComponents(
+        const componentPromises = board.options.components ?
+            board.setComponents(
                 board.options.components as Array<Partial<ComponentType['options']>>
-            );
-        }
+            ) : [];
+
+        return Promise.all(componentPromises).then((): Board => board);
     }
 
     /**

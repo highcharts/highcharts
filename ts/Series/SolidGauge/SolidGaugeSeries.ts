@@ -25,7 +25,7 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import { optionsToObject } from '../../Extensions/BorderRadius.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     gauge: GaugeSeries,
@@ -38,7 +38,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -117,7 +116,7 @@ class SolidGaugeSeries extends GaugeSeries {
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
             rounded = options.rounded,
-            borderRadius = optionsToObject(
+            borderRadius = borderRadiusObject(
                 rounded ? '50%' : (
                     options.borderRadius ??
                     yAxis.pane.options.borderRadius
@@ -139,9 +138,7 @@ class SolidGaugeSeries extends GaugeSeries {
                 true
             );
         }
-        this.thresholdAngleRad = pick(
-            thresholdAngleRad, yAxis.startAngleRad
-        );
+        this.thresholdAngleRad = (thresholdAngleRad ?? yAxis.startAngleRad);
 
         for (const point of series.points) {
             // #10630 null point should not be draw

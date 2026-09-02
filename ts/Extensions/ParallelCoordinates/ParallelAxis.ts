@@ -30,8 +30,7 @@ import {
     arrayMax,
     arrayMin,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -242,8 +241,7 @@ namespace ParallelAxis {
                     axis.chart.options.chart.parallelAxes,
                     e.userOptions
                 );
-                parallelCoordinates.position = pick(
-                    parallelCoordinates.position,
+                parallelCoordinates.position = parallelCoordinates.position ?? (
                     axisIndex >= 0 ? axisIndex : chart.yAxis.length
                 );
                 parallelCoordinates.setPosition(axisPosition, axis.options);

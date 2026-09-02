@@ -64,6 +64,7 @@ function onSeriesAfterSetOptions(
 
     if (
         dataGrouping &&
+        !dataGrouping.approximation &&
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
     ) {
@@ -245,7 +246,6 @@ class OHLCSeries extends HLCSeries {
 
 interface OHLCSeries {
     pointClass: typeof OHLCPoint;
-    pointAttrToOptions: Record<string, string>;
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {

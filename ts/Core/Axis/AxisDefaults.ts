@@ -584,6 +584,7 @@ namespace AxisDefaults {
          */
         dateTimeLabelFormats: {
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             millisecond: {
@@ -610,6 +611,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             second: {
@@ -636,6 +638,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             minute: {
@@ -662,6 +665,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             hour: {
@@ -695,6 +699,7 @@ namespace AxisDefaults {
                 range: false
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             day: {
@@ -718,6 +723,7 @@ namespace AxisDefaults {
                 boundary: '%[eb]'
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             week: {
@@ -734,6 +740,7 @@ namespace AxisDefaults {
                 main: '%[eb]'
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             month: {
@@ -757,6 +764,7 @@ namespace AxisDefaults {
                 boundary: void 0
             },
             /**
+             * @type {Highcharts.AxisDateTimeLabelFormatsOptionsObject|string}
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
              */
             year: {
@@ -1318,18 +1326,18 @@ namespace AxisDefaults {
          */
 
         /**
-         * Index of another axis that this axis is linked to. When an axis is
-         * linked to a master axis, it will take the same extremes as
-         * the master, but as assigned by min or max or by setExtremes.
-         * It can be used to show additional info, or to ease reading the
-         * chart by duplicating the scales.
+         * Index or [id](#xAxis.id) of another axis that this axis is linked to.
+         * When an axis is linked to a master axis, it will take the same
+         * extremes as the master, but as assigned by min or max or by
+         * `setExtremes`. It can be used to show additional info, or to ease
+         * reading the chart by duplicating the scales.
          *
          * @sample {highcharts} highcharts/xaxis/linkedto/
          *         Different string formats of the same date
          * @sample {highcharts} highcharts/yaxis/linkedto/
          *         Y values on both sides
          *
-         * @type      {number}
+         * @type      {number|string}
          * @since     2.0.2
          * @product   highcharts highstock gantt
          * @apioption xAxis.linkedTo
@@ -1624,7 +1632,7 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
-         * @type {number}
+         * @type {number|string}
          */
         offset: void 0,
 
@@ -3384,7 +3392,9 @@ namespace AxisDefaults {
              * @product highcharts
              */
             style: {
-                /** @type {Highcharts.ColorType} */
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: 'var(--highcharts-neutral-color-100)',
 
                 /**

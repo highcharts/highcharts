@@ -25,7 +25,7 @@ import type Time from '../Core/Time';
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
 const { format } = F;
-import { getNestedProperty, pick } from '../Shared/Utilities.js';
+import { getNestedProperty } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -159,13 +159,13 @@ namespace A11yI18nComposition {
 
             switch (num) {
                 case 0:
-                    result = pick(pluralArguments[4], pluralArguments[1]);
+                    result = (pluralArguments[4] ?? pluralArguments[1]);
                     break;
                 case 1:
-                    result = pick(pluralArguments[2], pluralArguments[1]);
+                    result = (pluralArguments[2] ?? pluralArguments[1]);
                     break;
                 case 2:
-                    result = pick(pluralArguments[3], pluralArguments[1]);
+                    result = (pluralArguments[3] ?? pluralArguments[1]);
                     break;
                 default:
                     result = pluralArguments[1];
