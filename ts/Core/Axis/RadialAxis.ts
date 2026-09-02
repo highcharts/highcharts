@@ -1814,12 +1814,8 @@ namespace RadialAxis {
                 axis.center[2] / 2 + tickLength
             );
             ret = [
-                'M',
-                x,
-                y,
-                'L',
-                endPoint.x,
-                endPoint.y
+                ['M', x, y],
+                ['L', endPoint.x, endPoint.y]
             ];
         } else {
             ret = proceed.call(
