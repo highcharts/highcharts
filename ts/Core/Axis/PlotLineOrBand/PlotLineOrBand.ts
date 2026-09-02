@@ -367,7 +367,8 @@ class PlotLineOrBand {
     ): void {
         const plotLine = this,
             axis = plotLine.axis,
-            renderer = axis.chart.renderer,
+            chart = axis.chart,
+            renderer = chart.renderer,
             inside = (optionsLabel as PlotBandLabelOptions).inside;
 
         let label = plotLine.label;
@@ -394,13 +395,13 @@ class PlotLineOrBand {
                 '-label ' + (optionsLabel.className || '')
         });
 
-        if (!axis.chart.styledMode) {
+        if (!chart.styledMode) {
             label.css(merge({
                 // To allow theming, and in lack of a general place to set
                 // default options for plot lines and bands, default to the
                 // title color. If we expose the palette, we should use that
                 // instead.
-                color: axis.chart.options.title?.style?.color,
+                color: chart.options.title?.style?.color,
                 fontSize: '0.8em',
                 textOverflow: (isBand && !inside) ? '' : 'ellipsis'
             }, optionsLabel.style));
@@ -448,13 +449,15 @@ class PlotLineOrBand {
                                     ) : (
                                         optionsLabel.clip ?
                                             (axis.width + axis.left) :
-                                            axis.chart.chartWidth
+                                            chart.chartWidth
                                     ) - label.alignAttr.x
                             ) :
                             bBoxWidth
                     )
                 ) + 'px'
             });
+        } else if (label.textWidth) {
+            label.css({ width: 'auto' });
         }
 
         label.show(true);
