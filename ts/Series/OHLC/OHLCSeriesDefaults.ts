@@ -49,11 +49,11 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
 
     /**
      * What type of legend symbol to render for this series. For OHLC series,
-     * the default is `ohlc`, showing two stems, each with an open tick on the
-     * left and a close tick on the right.
+     * the default is `ohlc`, showing two stems, one down and one up, each
+     * with an open tick on the left and a close tick on the right.
      *
      * @sample {highstock} stock/plotoptions/financial-legend-symbols/
-     *         Candlestick, OHLC and HLC legend symbols
+     *         Financial series legend symbols
      *
      * @default   ohlc
      * @product   highstock

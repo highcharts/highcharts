@@ -5,8 +5,7 @@
         'https://demo-live-data.highcharts.com/aapl-ohlc.json'
     ).then(response => response.json());
 
-    // One chart, three financial series types sharing the data, each in its
-    // own pane. The legend shows their distinct symbols side by side.
+    // Four financial series types share the data, each in its own pane
     Highcharts.stockChart('container', {
 
         title: {
@@ -14,7 +13,8 @@
         },
 
         subtitle: {
-            text: 'Candlestick, OHLC and HLC sharing the same AAPL data'
+            text: 'Candlestick, OHLC, HLC and hollow candlestick sharing ' +
+                'the same AAPL data'
         },
 
         legend: {
@@ -38,13 +38,16 @@
         },
 
         yAxis: [{
-            height: '33%'
+            height: '25%'
         }, {
-            top: '33%',
-            height: '33%'
+            top: '25%',
+            height: '25%'
         }, {
-            top: '66%',
-            height: '34%'
+            top: '50%',
+            height: '25%'
+        }, {
+            top: '75%',
+            height: '25%'
         }],
 
         series: [{
@@ -63,6 +66,11 @@
             useOhlcData: true,
             data: data,
             yAxis: 2
+        }, {
+            type: 'hollowcandlestick',
+            name: 'AAPL',
+            data: data,
+            yAxis: 3
         }]
     });
 })();

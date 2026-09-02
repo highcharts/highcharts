@@ -20,13 +20,16 @@
  *
  * */
 
+import type Legend from '../../Core/Legend/Legend';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type OHLCSeriesOptions from './OHLCSeriesOptions';
 import type Series from '../../Core/Series/Series';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import FinancialSymbols from '../FinancialSymbols.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import OHLCPoint from './OHLCPoint.js';
@@ -147,6 +150,8 @@ class OHLCSeries extends HLCSeries {
 
     public data!: Array<OHLCPoint>;
 
+    public legendSymbolUp?: SVGElement;
+
     public options!: OHLCSeriesOptions;
 
     public points!: Array<OHLCPoint>;
@@ -156,6 +161,32 @@ class OHLCSeries extends HLCSeries {
      *  Functions
      *
      * */
+
+    /**
+     * Pair the legend symbol, the down point, with an element for the up one.
+     * `FinancialSymbols` colors both (#24567).
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.ohlc#drawLegendSymbol
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        super.drawLegendSymbol(legend, item);
+
+        const { group, symbol } = item.legendItem || {},
+            upPath = FinancialSymbols.upPaths[symbol?.symbolName || ''];
+
+        if (symbol && upPath) {
+            const { x = 0, y = 0, width = 0, height = 0 } = symbol;
+
+            symbol.addClass('highcharts-point-down');
+
+            this.legendSymbolUp = this.chart.renderer
+                .path(upPath(x, y, width, height))
+                .addClass('highcharts-point highcharts-point-up')
+                .attr({ zIndex: 3 })
+                .add(group);
+        }
+    }
 
     protected getPointPath(point: OHLCPoint): SVGPath {
         const path = super.getPointPath(point),

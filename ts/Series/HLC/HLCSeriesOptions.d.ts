@@ -141,7 +141,7 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      * representing the closing value.
      *
      * @sample {highstock} stock/plotoptions/financial-legend-symbols/
-     *         Candlestick, OHLC and HLC legend symbols
+     *         Financial series legend symbols
      *
      * @default   hlc
      * @product   highstock
