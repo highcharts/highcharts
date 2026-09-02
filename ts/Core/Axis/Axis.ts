@@ -3683,10 +3683,13 @@ class Axis {
             )
             .add(axisParent);
 
-        this.gridGroup ||= createGroup('grid', '-grid')
-            .clip(this.clippable ? chart.plotClipInner : void 0);
-        this.axisGroup ||= createGroup('axis', '');
-        this.labelGroup ||= createGroup('axis-labels', '-labels');
+        (this.axisGroup ||= createGroup('axis', ''))
+            .attr({ zIndex: options.zIndex });
+        (this.gridGroup ||= createGroup('grid', '-grid'))
+            .clip(this.clippable ? chart.plotClipInner : void 0)
+            .attr({ zIndex: options.gridZIndex });
+        (this.labelGroup ||= createGroup('axis-labels', '-labels'))
+            .attr({ zIndex: options.labels.zIndex });
     }
 
     /**
@@ -4195,10 +4198,8 @@ class Axis {
         axis.labelEdge.length = 0;
         axis.overlap = false;
 
-        // Set z-indices
-        this.axisGroup?.attr({ zIndex: options.zIndex });
-        this.gridGroup?.attr({ zIndex: options.gridZIndex });
-        this.labelGroup?.attr({ zIndex: options.labels.zIndex });
+        // Update z-indices
+        this.createGroups();
 
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
