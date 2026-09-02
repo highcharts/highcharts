@@ -1643,9 +1643,8 @@ class Tooltip {
         // instead of being hidden (#24860).
         const spaceAbove = distributionBoxTop,
             // The height that is missing for all labels to fit
-            deficit = tooltip.outside ?
-                boxes.reduce((sum, box): number => sum + box.size, 0) -
-                    adjustedPlotHeight : 0,
+            deficit = boxes.reduce((sum, box): number => sum + box.size, 0) -
+                adjustedPlotHeight,
             spaceBelow = deficit > 0 ?
                 tooltip.getPlayingField().height - spaceAbove -
                     adjustedPlotHeight : 0,
