@@ -3696,8 +3696,16 @@ class Axis {
      */
     public shuffleTicks(): void {
         const ticks = this.ticks,
-            oldNames = this.old?.names;
-        if (this.type === 'category' && oldNames) {
+            oldNames = this.old?.names,
+            hasDuplicates = (arr: any[]): boolean =>
+                new Set(arr).size !== arr.length;
+
+        if (
+            this.type === 'category' &&
+            oldNames &&
+            !hasDuplicates(oldNames) &&
+            !hasDuplicates(this.names)
+        ) {
             oldNames.forEach((name, oldPos): void => {
                 const pos = this.namesMap[name];
                 if (defined(pos) && oldPos !== pos) {
