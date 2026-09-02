@@ -386,14 +386,16 @@ class PlotLineOrBand {
                 .attr({ zIndex });
         }
 
-        label.attr({
-            opacity: 1,
-            text: this.getLabelText(optionsLabel),
-            align: optionsLabel.textAlign || optionsLabel.align,
-            rotation: optionsLabel.rotation,
-            'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
-                '-label ' + (optionsLabel.className || '')
-        });
+        label
+            .attr({
+                text: this.getLabelText(optionsLabel),
+                align: optionsLabel.textAlign || optionsLabel.align,
+                'class': 'highcharts-plot-' + (isBand ? 'band' : 'line') +
+                    '-label ' + (optionsLabel.className || '')
+            })[label.placed ? 'animate' : 'attr']({
+                opacity: 1,
+                rotation: optionsLabel.rotation
+            });
 
         if (!chart.styledMode) {
             label.css(merge({
