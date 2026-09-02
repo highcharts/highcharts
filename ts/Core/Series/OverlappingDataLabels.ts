@@ -291,9 +291,9 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
 
-            // Toggle other labels, tick labels
+            // Toggle other labels - tick labels, stack labels
             } else {
-                label.attr({
+                label[label.placed ? 'animate' : 'attr']({
                     opacity: newOpacity
                 });
             }
@@ -314,7 +314,21 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 function onChartRender(
     this: Chart
 ): void {
-    const chart = this;
+    const chart = this,
+        // Helper function for data labels and stack labels when dynamicly
+        // toggling the allowOverlap option
+        toggle = (label: SVGElement, allowOverlap?: boolean): void => {
+            // Allow overlap, reset opacity and show
+            if (allowOverlap) {
+                label.oldOpacity = label.opacity;
+                label.newOpacity = 1;
+                hideOrShow(label, chart);
+
+            // Do not allow overlap
+            } else {
+                labels.push(label);
+            }
+        };
 
     let labels: Array<SVGElement|undefined> = [];
 
@@ -323,22 +337,21 @@ function onChartRender(
         labels = labels.concat(collector());
     }
 
-    for (const yAxis of (chart.yAxis || [])) {
-        if (
-            yAxis.stacking &&
-            yAxis.options.stackLabels &&
-            !yAxis.options.stackLabels.allowOverlap
-        ) {
-            objectEach(yAxis.stacking.stacks, (stack): void => {
-                objectEach(stack, (stackItem): void => {
-                    if (stackItem.label) {
-                        labels.push(stackItem.label);
-                    }
-                });
+    // Stack labels
+    for (const { options, stacking } of (chart.yAxis || [])) {
+        objectEach(stacking?.stacks, (stack): void => {
+            objectEach(stack, ({ label }): void => {
+                if (label) {
+                    toggle(
+                        label,
+                        options.stackLabels?.allowOverlap
+                    );
+                }
             });
-        }
+        });
     }
 
+    // Series data labels
     for (const series of (chart.series || [])) {
         if (series.visible && series.hasDataLabels?.()) { // #3866
             const push = (points: Point[]): void => {
@@ -369,7 +382,7 @@ function onChartRender(
                             }
                             */
                             // Allow overlap if the option is explicitly true
-                            if (
+                            toggle(label, (
                                 // #13449
                                 options.allowOverlap ??
 
@@ -379,15 +392,7 @@ function onChartRender(
                                     series.is('pie') &&
                                     Number(options.distance) > 0
                                 )
-                            ) {
-                                label.oldOpacity = label.opacity;
-                                label.newOpacity = 1;
-                                hideOrShow(label, chart);
-
-                            // Do not allow overlap
-                            } else {
-                                labels.push(label);
-                            }
+                            ));
                         });
                     }
                 }

@@ -622,7 +622,10 @@ class AxisAdditions {
         });
     }
 
-    /** @internal */
+    /**
+     * Create the stack totals group and render the individual labels into it
+     * @internal
+     */
     public renderStackTotals(): void {
         const stacking = this,
             axis = stacking.axis,
