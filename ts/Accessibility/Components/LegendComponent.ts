@@ -254,8 +254,8 @@ class LegendComponent extends AccessibilityComponent {
                     const itemPage = legendItem.pageIx || 0;
 
                     if (legend.horizontalNav) {
-                        // Pages are clipped to whole items, so the page an item
-                        // was assigned to is all that matters
+                        // Pages are clipped at item boundaries, so the page
+                        // index is enough
                         hide = itemPage !== curPage - 1;
                     } else {
                         const y = legendItem.y || 0;

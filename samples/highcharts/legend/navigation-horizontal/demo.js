@@ -1,7 +1,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Horizontal legend paging'
+        text: 'Horizontal legend navigation'
     },
 
     accessibility: {

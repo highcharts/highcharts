@@ -1,5 +1,5 @@
 ---
- name: Horizontal legend paging
+ name: Horizontal legend navigation
  authors:
    - Andrzej Bułeczka
  js_wrap: b

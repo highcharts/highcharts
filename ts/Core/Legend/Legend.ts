@@ -439,8 +439,7 @@ class Legend {
         this.symbolWidth = (options.symbolWidth ?? 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
-        // A single line of items, paged sideways. Without navigation, or in
-        // right-to-left, the items wrap as usual (#7513)
+        // A single line of items, paged sideways (#7513)
         this.horizontalNav = options.layout === 'horizontal' &&
             options.navigation.direction === 'horizontal' &&
             options.navigation.enabled !== false &&
@@ -693,7 +692,6 @@ class Legend {
             translateY = alignAttr.translateY;
             this.allItems.forEach(function (this: Legend, item): void {
                 const checkbox = item.checkbox,
-                    // Applies along the axis we page in
                     offset = this.scrollOffset || 0;
 
                 if (checkbox) {
@@ -989,9 +987,9 @@ class Legend {
             itemMarginTop = this.itemMarginTop,
             itemDistance = horizontal ? (options.itemDistance ?? 20) : 0,
             maxLegendWidth = this.maxLegendWidth,
-            wrap = !this.horizontalNav,
+            shouldWrap = !this.horizontalNav,
             itemWidth = (
-                options.alignColumns && wrap &&
+                options.alignColumns && shouldWrap &&
                     this.totalItemWidth > maxLegendWidth
             ) ?
                 this.maxItemWidth :
@@ -1001,7 +999,7 @@ class Legend {
         // If the item exceeds the width, start a new line
         if (
             horizontal &&
-            wrap &&
+            shouldWrap &&
             this.itemX - padding + itemWidth > maxLegendWidth
         ) {
             this.itemX = padding;
@@ -1349,7 +1347,7 @@ class Legend {
         legendHeight = legend.lastItemY + legend.lastLineHeight +
             legend.titleHeight;
 
-        // The horizontal clip in handleOverflow is measured from it
+        // Set before handleOverflow, which measures the horizontal clip from it
         legend.legendWidth = legendWidth;
 
         legendHeight = legend.handleOverflow(legendHeight);
@@ -1481,8 +1479,7 @@ class Legend {
             animation = (navOptions.animation ?? true),
             arrowSize = navOptions.arrowSize || 12,
             horizontal = this.horizontalNav,
-            // Room for the two arrows and the pager between them. The pager
-            // width is unknown until the pages are counted, so it is estimated.
+            // Room for the arrows and the pager, whose width is not yet known
             navSize = 2 * arrowSize + 32,
             itemDistance = options.itemDistance ?? 20,
             pages = this.pages,
@@ -1534,8 +1531,7 @@ class Legend {
             spaceHeight = Math.min(spaceHeight, maxHeight);
         }
 
-        // The extent of the items and the space available, along the axis we
-        // page in (#7513)
+        // Item extent and available space, along the axis we page in (#7513)
         const fullSize = horizontal ?
                 this.itemX - itemDistance - padding :
                 legendHeight,
@@ -1610,8 +1606,7 @@ class Legend {
             // Only apply clipping if needed. Clipping causes blurred legend in
             // PDF export (#1787)
             if (!clipRect) {
-                // Open along the axis we don't page in. The clipped one starts
-                // at zero and is set by clipToSize below.
+                // Open along the axis we don't page in, zero along the other
                 clipRect = legend.clipRect = horizontal ?
                     renderer.clipRect(padding, padding - 2, 0, 9999) :
                     renderer.clipRect(0, padding - 2, 9999, 0);
@@ -1721,10 +1716,9 @@ class Legend {
             }
 
             this.nav?.attr({
-                // Beside the items when paging horizontally, below them
-                // otherwise. Horizontally the pager text, drawn at y 10, lines
-                // up with the item labels.
                 translateX: horizontal ? padding + clipSize : padding,
+                // The pager text is drawn at y 10, so subtract that to align
+                // it with the item labels
                 translateY: horizontal ?
                     this.titleHeight + this.initialItemY +
                         (this.baseline || 0) - 10 :
