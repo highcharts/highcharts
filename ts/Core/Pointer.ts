@@ -1727,7 +1727,7 @@ class Pointer {
                     false
             );
 
-        if (!p && e) {
+        if (!p && e && shared) {
             const directTouchPoint = pointer.getPointFromEvent(e as Event);
 
             // Series that opt into shared tooltips are hovered by proximity
