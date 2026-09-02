@@ -49,6 +49,7 @@ import {
     merge,
     objectEach
 } from '../../../Shared/Utilities.js';
+import { uniqueKey } from '../../Utilities.js';
 
 /* *
  *
@@ -171,7 +172,7 @@ class PlotLineOrBand {
     public eventsAdded?: boolean;
 
     /** @internal */
-    public gradientTransform?: string;
+    public gradientClass?: string;
 
     /**
      * SVG element of the label.
@@ -374,49 +375,59 @@ class PlotLineOrBand {
             { color } = this.options,
             { horiz, len, pos } = axis;
 
-        let fill = color,
-            gradientTransform: (string|undefined);
+        let fill = color;
 
         if (typeof color === 'object' && 'stops' in color && !axis.isRadial) {
-            const gradName = color.radialGradient ?
+            const gradientName = color.radialGradient ?
                     'radialGradient' :
                     'linearGradient',
-                grad = color[gradName];
+                gradient = color[gradientName];
 
             // Only relative units without a transform of their own can be
             // remapped
             if (
-                grad &&
-                !isArray(grad) &&
-                !grad.gradientUnits &&
-                !grad.gradientTransform
+                gradient &&
+                !isArray(gradient) &&
+                !gradient.gradientUnits &&
+                !gradient.gradientTransform
             ) {
                 const fromPx = axis.toPixels(from),
                     toPx = axis.toPixels(to),
-                    lo = Math.min(fromPx, toPx),
-                    hi = Math.max(fromPx, toPx),
-                    span = hi - lo,
+                    low = Math.min(fromPx, toPx),
+                    high = Math.max(fromPx, toPx),
+                    span = high - low,
                     // The bounding box of the cut band
-                    boxLo = clamp(lo, pos, pos + len),
-                    boxLen = clamp(hi, pos, pos + len) - boxLo;
+                    boxLow = clamp(low, pos, pos + len),
+                    boxLength = clamp(high, pos, pos + len) - boxLow;
 
-                if (isNumber(span) && boxLen > 0 && span > boxLen) {
-                    const scale = correctFloat(span / boxLen),
-                        shift = correctFloat((lo - boxLo) / boxLen);
+                // Identity keeps the config stable across redraws
+                let gradientTransform = 'translate(0 0) scale(1 1)';
+
+                if (isNumber(span) && boxLength > 0 && span > boxLength) {
+                    const scale = correctFloat(span / boxLength),
+                        shift = correctFloat((low - boxLow) / boxLength);
 
                     gradientTransform = horiz ?
                         `translate(${shift} 0) scale(${scale} 1)` :
                         `translate(0 ${shift}) scale(1 ${scale})`;
-                    fill = merge(color, { [gradName]: { gradientTransform } });
+                }
+
+                // Gradients are cached by config, so claim one for this band
+                // alone (#1282)
+                fill = merge(color, {
+                    [gradientName]: {
+                        'class': this.gradientClass ||= uniqueKey(),
+                        gradientTransform
+                    }
+                });
+
+                // The fill is only applied on creation, so update in place
+                const gradientKey = svgElem?.element.gradient;
+                if (gradientKey) {
+                    axis.chart.renderer.gradients[gradientKey]
+                        ?.attr({ gradientTransform });
                 }
             }
-        }
-
-        // The attributes are only applied on creation, so reapply the fill
-        // when the cut changes
-        if (gradientTransform !== this.gradientTransform) {
-            this.gradientTransform = gradientTransform;
-            svgElem?.attr({ fill });
         }
 
         return fill;
@@ -549,6 +560,15 @@ class PlotLineOrBand {
     public destroy(): void {
         // Remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
+
+        // No other band can reuse the claimed gradient (#6257)
+        const gradients = this.axis.chart.renderer.gradients,
+            gradientKey = this.gradientClass && this.svgElem?.element.gradient;
+
+        if (gradientKey && gradients) {
+            gradients[gradientKey]?.destroy();
+            delete gradients[gradientKey];
+        }
 
         delete (this as Partial<this>).axis;
         destroyObjectProperties(this);

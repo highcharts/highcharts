@@ -39,6 +39,7 @@ export interface GradientColorStop {
 
 /** @internal */
 export interface GradientAttributes {
+    'class'?: string;
     gradientTransform?: string;
     gradientUnits?: 'userSpaceOnUse';
 }

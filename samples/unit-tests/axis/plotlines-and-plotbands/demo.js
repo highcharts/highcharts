@@ -1103,18 +1103,20 @@ QUnit.test(
                     }]
                 },
                 series: [{
-                    data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                    data: [1, 2, 3]
                 }]
             }),
             bands = chart.xAxis[0].plotLinesAndBands,
             transformOf = band => document.getElementById(
                 band.svgElem.element.getAttribute('fill')
                     .replace(/^.*#|\)$/g, '')
-            ).getAttribute('gradientTransform');
+            ).getAttribute('gradientTransform'),
+            gradientCount = () => chart.container
+                .querySelectorAll('defs linearGradient').length;
 
         assert.strictEqual(
             transformOf(bands[0]),
-            null,
+            'translate(0 0) scale(1 1)',
             'A band inside the axis should keep the gradient untransformed'
         );
 
@@ -1143,12 +1145,36 @@ QUnit.test(
             'The color object given in the options should not be mutated'
         );
 
+        const gradientsBefore = gradientCount();
+
+        chart.xAxis[0].setExtremes(3, 9);
         chart.xAxis[0].setExtremes(-5, 15);
 
         assert.strictEqual(
+            gradientCount(),
+            gradientsBefore,
+            'Redrawing should transform the gradient in place, not add a new' +
+                ' element to the defs on each redraw'
+        );
+
+        assert.strictEqual(
             transformOf(bands[1]),
-            null,
-            'The transform should be removed when the band no longer is cut'
+            'translate(0 0) scale(1 1)',
+            'The transform should be reset when the band no longer is cut'
+        );
+
+        chart.xAxis[0].addPlotBand({
+            color: linearGrad,
+            from: 7,
+            id: 'added',
+            to: 10
+        });
+        chart.xAxis[0].removePlotBand('added');
+
+        assert.strictEqual(
+            gradientCount(),
+            gradientsBefore,
+            'Removing a band should release its gradient element'
         );
     }
 );
