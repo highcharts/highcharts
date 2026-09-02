@@ -72,6 +72,7 @@ import {
     destroyObjectProperties,
     erase,
     extend,
+    find,
     fireEvent,
     getClosestDistance,
     isArray,
@@ -364,9 +365,6 @@ class Axis {
 
     /** @internal */
     public isDirty?: boolean;
-
-    /** @internal */
-    public isLinked!: boolean;
 
     /** @internal */
     public isOrdinal?: boolean;
@@ -793,9 +791,6 @@ class Axis {
 
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
-
-        // Flag, if axis is linked to another axis
-        axis.isLinked = defined(options.linkedTo);
 
         /**
          * List of major ticks mapped by position on axis.
@@ -1246,6 +1241,10 @@ class Axis {
 
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
+            }
+
+            if (Math.abs(returnValue) < 1e-9) {
+                returnValue = 0;
             }
         }
 
@@ -2012,8 +2011,8 @@ class Axis {
             time = chart.time,
             threshold = isNumber(axis.threshold) ? axis.threshold : void 0,
             minRange = axis.minRange || 0,
-            { ceiling, floor, linkedTo, softMax, softMin } = options,
-            linkedParent = isNumber(linkedTo) && chart[axis.coll]?.[linkedTo],
+            { ceiling, floor, softMax, softMin } = options,
+            linkedParent = axis.linkedParent,
             tickPixelIntervalOption = options.tickPixelInterval;
 
         let maxPadding = options.maxPadding,
@@ -2039,7 +2038,6 @@ class Axis {
 
         // Linked axis gets the extremes from the parent axis
         if (linkedParent) {
-            axis.linkedParent = linkedParent as Axis;
             linkedParentExtremes = linkedParent.getExtremes();
             axis.min =
                 linkedParentExtremes.min ?? linkedParentExtremes.dataMin;
@@ -2467,7 +2465,7 @@ class Axis {
         // Reset min/max or remove extremes based on start/end on tick
         this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
         this.trimTicks(tickPositions, startOnTick, endOnTick);
-        if (!this.isLinked && isNumber(this.min) && isNumber(this.max)) {
+        if (!this.linkedParent && isNumber(this.min) && isNumber(this.max)) {
 
             // Subtract half a unit (#2619, #2846, #2515, #3390), but not in
             // case of multiple ticks (#6897)
@@ -2519,7 +2517,7 @@ class Axis {
         fireEvent(this, 'trimTicks');
 
         if (
-            !this.isLinked ||
+            !this.linkedParent ||
             // Linked non-grid axes should trim ticks, #21743.
             // Grid axis has custom handling of ticks.
             !this.grid
@@ -2902,7 +2900,21 @@ class Axis {
      */
     public setScale(): void {
         const axis = this,
-            { coll, stacking } = axis;
+            { chart, coll, options, stacking } = axis,
+            { linkedTo } = options,
+            axes = chart[coll] || [],
+            index = axes.indexOf(axis),
+            parent = isString(linkedTo) ?
+                find(axes, (a: Axis): boolean => a.options.id === linkedTo) :
+                (isNumber(linkedTo) ? axes[linkedTo] : void 0),
+            linkedParent = axis.linkedParent =
+                parent === axis ? void 0 : parent;
+
+        // Scale a later-ordered parent first so its extremes are ready. Skip
+        // grid column axes, which live outside the collection (#24658).
+        if (linkedParent && index > -1 && axes.indexOf(linkedParent) > index) {
+            linkedParent.setScale();
+        }
 
         let isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
@@ -2928,7 +2940,7 @@ class Axis {
             isDirtyAxisLength ||
             isDirtyData ||
             isXAxisDirty ||
-            axis.isLinked ||
+            axis.linkedParent ||
             axis.forceRedraw ||
             axis.userMin !== axis.old?.userMin ||
             axis.userMax !== axis.old?.userMax ||
@@ -3815,7 +3827,7 @@ class Axis {
 
         axis.createGroups();
 
-        if (hasData || axis.isLinked) {
+        if (hasData || axis.linkedParent) {
 
             // Shuffle existing category ticks
             axis.shuffleTicks();
@@ -4162,12 +4174,11 @@ class Axis {
      */
     public renderTick(pos: number, i: number, slideIn?: boolean): void {
         const axis = this,
-            isLinked = axis.isLinked,
             ticks = axis.ticks;
 
         // Linked axes need an extra check to find out if
         if (
-            !isLinked ||
+            !axis.linkedParent ||
             (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
             axis.grid?.isColumn
         ) {
@@ -4202,7 +4213,6 @@ class Axis {
             log = axis.logarithmic,
             renderer = chart.renderer,
             options = axis.options,
-            isLinked = axis.isLinked,
             tickPositions = axis.tickPositions,
             axisTitle = axis.axisTitle,
             ticks = axis.ticks,
@@ -4246,7 +4256,7 @@ class Axis {
         }
 
         // If the series has data draw the ticks. Else only the line and title
-        if (axis.hasData() || isLinked) {
+        if (axis.hasData() || axis.linkedParent) {
 
             const slideInTicks = axis.chart.hasRendered &&
                 axis.old && isNumber(axis.old.min);

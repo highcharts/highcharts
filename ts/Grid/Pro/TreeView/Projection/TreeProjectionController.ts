@@ -392,6 +392,20 @@ class TreeProjectionController {
     }
 
     /**
+     * Returns whether TreeView or row grouping is configured.
+     *
+     * Resolved from the options alone, so unlike `options` it answers before
+     * `sync()` has run for the current query.
+     */
+    public isEnabled(): boolean {
+        return !!normalizeTreeViewOptions(
+            this.grid.options,
+            // TODO: Remove deprecated option before releasing next major
+            this.getDataOptions()?.treeView
+        );
+    }
+
+    /**
      * Warns once when row grouping is ignored, because tree view is enabled at
      * the same time.
      *
@@ -429,6 +443,81 @@ class TreeProjectionController {
      */
     public hasColumnAggregation(columnId: string): boolean {
         return this.aggregationResolver.hasColumnAggregation(columnId);
+    }
+
+    /**
+     * Row indexes of a table whose values roll up other rows of the same table,
+     * so that aggregating both would count them twice. A feature aggregating
+     * whole columns (summary rows) skips them.
+     *
+     * A parent row is only reported when at least one of its descendants is
+     * part of the table, so a parent a filter left on its own keeps counting
+     * with its own value.
+     *
+     * @param table
+     * Table the row indexes address.
+     */
+    public getRollupRowIndexes(table: DataTable): Set<number> | undefined {
+        try {
+            // The index is built from the source table and cached by its
+            // version, so this reuses the build of the surrounding query.
+            this.sync();
+        } catch {
+            return;
+        }
+
+        const index = this.indexCache;
+        if (!index) {
+            return;
+        }
+
+        const idColumn = this.getDataOptions()?.idColumn;
+        const idValues = idColumn ? table.columns[idColumn] : void 0;
+        if (idColumn && !idValues) {
+            return;
+        }
+
+        const rowIndexById = new Map<RowId, number>();
+        for (
+            let rowIndex = 0, rowCount = table.getRowCount();
+            rowIndex < rowCount;
+            ++rowIndex
+        ) {
+            const rowId = (idValues && idColumn) ?
+                normalizeRowIdValue(idValues[rowIndex], idColumn, rowIndex) :
+                table.getOriginalRowIndex(rowIndex);
+
+            if (defined(rowId)) {
+                rowIndexById.set(rowId, rowIndex);
+            }
+        }
+
+        const rollupRowIndexes = new Set<number>();
+        const nodes = index.nodes;
+
+        for (const rowId of rowIndexById.keys()) {
+            let ancestorId = nodes.get(rowId)?.parentId ?? null;
+            // Bounds a parent chain that cycles, without a per-row visited set.
+            let steps = nodes.size;
+
+            while (ancestorId !== null && steps-- > 0) {
+                const ancestorRowIndex = rowIndexById.get(ancestorId);
+
+                if (ancestorRowIndex !== void 0) {
+                    // An ancestor in the table walks up on its own turn, so
+                    // everything above it is covered already.
+                    if (rollupRowIndexes.has(ancestorRowIndex)) {
+                        break;
+                    }
+
+                    rollupRowIndexes.add(ancestorRowIndex);
+                }
+
+                ancestorId = nodes.get(ancestorId)?.parentId ?? null;
+            }
+        }
+
+        return rollupRowIndexes;
     }
 
     /**

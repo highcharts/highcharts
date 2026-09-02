@@ -1445,7 +1445,7 @@ export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
 /**
  * Return the first value that is not null or undefined.
  *
- * @deprecated next
+ * @deprecated 13.0.2
  * Use nullish coalescing (`??`) or explicit fallback logic instead.
  *
  * @function Highcharts.pick<T>

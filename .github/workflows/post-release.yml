@@ -19,10 +19,6 @@ jobs:
   generate_release_reference_images:
     runs-on: ubuntu-latest
     env:
-      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
       BROWSER_COUNT: 2
     steps:
       - uses: actions/checkout@v6
@@ -39,36 +35,27 @@ jobs:
       - run: |
           npx karma start test/karma-conf.js \
             --tests highcharts/*/* \
-            --reference --browsercount $BROWSERCOUNT \
+            --reference --browsercount "${BROWSER_COUNT}" \
             --no-fail-on-empty-test-suite
           npx karma start test/karma-conf.js \
             --tests stock/*/* \
-            --reference --browsercount $BROWSERCOUNT \
+            --reference --browsercount "${BROWSER_COUNT}" \
             --no-fail-on-empty-test-suite
           npx karma start test/karma-conf.js \
             --tests maps/*/* \
-            --reference --browsercount $BROWSERCOUNT \
+            --reference --browsercount "${BROWSER_COUNT}" \
             --no-fail-on-empty-test-suite
           npx karma start test/karma-conf.js \
             --tests gantt/*/* \
-            --reference --browsercount $BROWSERCOUNT \
+            --reference --browsercount "${BROWSER_COUNT}" \
             --no-fail-on-empty-test-suite
 
-      - run: mkdir -p tmp/latest
 
-      - name: Delete existing references
+      - name: Publish release reference images
         if: ${{ github.event_name == 'push' || inputs.dryrun == false }}
-        run: |
-          aws s3 sync \
-            tmp/latest \
-            s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest \
-            --delete
+        env:
+          VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
+        run: npx gulp update-nightly-testresults --tag "${{github.ref_name}}"
 
-      - name: Upload test results
-        if: ${{ github.event_name == 'push' || inputs.dryrun == false }}
-        run: |
-          npx gulp dist-testresults \
-            --tag ${{github.ref_name}} \
-            --bucket ${{ secrets.VISUAL_TESTS_S3_BUCKET }}
 
 
