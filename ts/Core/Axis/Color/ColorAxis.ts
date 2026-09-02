@@ -330,22 +330,25 @@ class ColorAxis extends Axis implements ColorAxisBase {
         );
     }
 
-    /** @internal */
+    /**
+     * Set the axis sizing properties based on the legend symbol
+     * @internal
+     */
     public setAxisSize(): void {
         const axis = this,
             chart = axis.chart,
-            symbol = axis.legendItem?.symbol;
+            bBox = axis.legendItem?.symbolBBox;
 
         let {
             width,
             height
         } = axis.getSize();
 
-        if (symbol) {
-            this.left = +symbol.attr('x');
-            this.top = +symbol.attr('y');
-            this.width = width = +symbol.attr('width');
-            this.height = height = +symbol.attr('height');
+        if (bBox) {
+            this.left = bBox.x;
+            this.top = bBox.y;
+            this.width = width = bBox.width;
+            this.height = height = bBox.height;
             this.right = chart.chartWidth - this.left - width;
             this.bottom = chart.chartHeight - this.top - height;
             this.pos = this.horiz ? this.left : this.top;
@@ -501,9 +504,10 @@ class ColorAxis extends Axis implements ColorAxisBase {
             titleWidth = titleBBox.width;
         }
 
-        const titleOptions = axis.options.title || {};
-        const titleMargin = axis.axisTitle ? (titleOptions.margin ?? 0) : 0;
-        const yShift = horiz ? (titleHeight + titleMargin) : 0;
+        const titleOptions = axis.options.title || {},
+            titleMargin = axis.axisTitle ? (titleOptions.margin ?? 0) : 0,
+            yShift = horiz ? (titleHeight + titleMargin) : 0,
+            verb = legendItem.symbol ? 'animate' : 'attr';
 
         // Create the gradient
         if (!legendItem.symbol) {
@@ -514,12 +518,13 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 }).add(legendItem.group);
         }
 
-        legendItem.symbol.attr({
+        legendItem.symbolBBox = {
             x: 0,
             y: (legend.baseline || 0) - 11 + yShift,
-            width: width,
-            height: height
-        });
+            width,
+            height
+        };
+        legendItem.symbol[verb](legendItem.symbolBBox);
 
         // Set how much space this legend item takes up
         if (horiz) {
