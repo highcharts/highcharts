@@ -178,3 +178,14 @@ header p {
         flex-direction: column;
     }
 }
+
+@media (max-width: 560px) {
+    body {
+        gap: 4px;
+        padding: 0;
+    }
+
+    .chart-container {
+        padding: 0;
+    }
+}

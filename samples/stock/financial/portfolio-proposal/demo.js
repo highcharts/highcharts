@@ -1138,7 +1138,19 @@ function renderStaticCharts() {
             name: 'Proposed',
             data: [-20, -15, -20, -10, -30, -20],
             color: '#5409DA'
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 560
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true
+                    }
+                }
+            }]
+        }
     });
 
     createMap();
