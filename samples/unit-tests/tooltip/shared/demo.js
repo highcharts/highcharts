@@ -386,8 +386,8 @@ QUnit.test(
                 type: 'scatter',
                 data: [[[1, 12]], [[1, 33]]],
                 expected: [
-                    '● Temperature: (1, 12)',
-                    '● Humidity: (1, 33)'
+                    'Temperature: (1, 12)<br/>',
+                    'Humidity: (1, 33)<br/>'
                 ]
             },
             {
@@ -396,8 +396,8 @@ QUnit.test(
                 type: 'bubble',
                 data: [[[1, 12, 2]], [[1, 33, 2]]],
                 expected: [
-                    '● Temperature: (1, 12), Size: 2',
-                    '● Humidity: (1, 33), Size: 2'
+                    'Temperature: (1, 12), Size: 2<br/>',
+                    'Humidity: (1, 33), Size: 2<br/>'
                 ]
             }
         ].forEach(function (testCase) {
@@ -425,23 +425,23 @@ QUnit.test(
                 points = chart.series.map(function (series) {
                     return series.points[0];
                 }),
-                lines = chart.tooltip.bodyFormatter(points)
-                    .map(function (line) {
-                        return line
-                            .replace(/<br\s*\/?>\s*$/, '')
-                            .replace(/<[^>]*>/g, '');
-                    });
+                lines = chart.tooltip.bodyFormatter(points),
+                expected = testCase.expected.map(function (line, i) {
+                    return '<span style="color:' + points[i].color +
+                        '">\u25CF</span> ' + line;
+                });
 
+            // Assert the whole generated markup, so that a stray tag or a
+            // missing line break is caught rather than stripped away
             assert.deepEqual(
                 lines,
-                testCase.expected,
+                expected,
                 `Every ${testCase.type} line should carry its own series name`
             );
 
             assert.strictEqual(
-                chart.tooltip.headerFooterFormatter(points[0])
-                    .indexOf('Temperature'),
-                -1,
+                chart.tooltip.headerFooterFormatter(points[0]),
+                '<span style="font-size: 0.8em">1</span><br/>',
                 `The ${testCase.type} header should give the series name up`
             );
 

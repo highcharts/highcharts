@@ -130,7 +130,12 @@ test('Shared tooltip keeps the directly hovered bubble point', async ({
     ]);
 });
 
-test('Bubble demo points stay individually hoverable', async ({ page }) => {
+// The shared-tooltip fix must not cost the bubble demo its ordinary
+// point-by-point hovering. Without `shared` the pointer never takes the
+// direct target, so that case is master's behaviour and not asserted here.
+test('Shared tooltip keeps every bubble individually hoverable', async ({
+    page
+}) => {
     await page.setContent(localScripts);
     await page.waitForFunction(() => !!window.Highcharts);
 
@@ -146,7 +151,8 @@ test('Bubble demo points stay individually hoverable', async ({ page }) => {
                 }
             },
             tooltip: {
-                followPointer: true
+                followPointer: true,
+                shared: true
             },
             plotOptions: {
                 series: {
@@ -219,6 +225,8 @@ test('Bubble demo points stay individually hoverable', async ({ page }) => {
 
         return targets;
     });
+
+    expect(targets.length).toBe(15);
 
     const results: Array<{
         actual: string;

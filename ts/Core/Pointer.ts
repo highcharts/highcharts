@@ -51,7 +51,6 @@ import {
     isObject,
     objectEach,
     offset,
-    pick,
     pushUnique,
     splat
 } from '../Shared/Utilities.js';
@@ -1731,13 +1730,16 @@ class Pointer {
         if (!p && e) {
             const directTouchPoint = pointer.getPointFromEvent(e as Event);
 
+            // Series that opt into shared tooltips are hovered by proximity
+            // rather than by direct touch, so a large point can hand the
+            // hover to a neighbour whose centre happens to be closer. Keep
+            // the point the pointer is actually inside. Only the opted-in
+            // series need this - `noSharedTooltip` is explicitly false on
+            // those alone - and everything else is left to the proximity
+            // search as before (#22967).
             if (
-                directTouchPoint &&
-                directTouchPoint.series.isCartesian &&
-                pick(
-                    directTouchPoint.series.options.enableMouseTracking,
-                    true
-                )
+                directTouchPoint?.series.noSharedTooltip === false &&
+                (directTouchPoint.series.options.enableMouseTracking ?? true)
             ) {
                 p = directTouchPoint;
             }
