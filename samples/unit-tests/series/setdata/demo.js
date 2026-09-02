@@ -298,6 +298,37 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         'should be updated from existing (#8995)'
     );
 
+    // A point already claimed by an earlier row must not be matched again,
+    // or the rows collapse onto it and the data of all but the last is lost
+    scatterS.setData(
+        [
+            // reset
+            [0, 1],
+            [0, 2],
+            [1, 3],
+            [1, 4]
+        ],
+        true,
+        false,
+        false
+    );
+    scatterS.setData([
+        [0, 10],
+        [0, 20],
+        [1, 30],
+        [1, 40]
+    ]);
+    assert.deepEqual(
+        scatterS.points
+            .map(function (p) {
+                return [p.x, p.y].join(':');
+            })
+            .sort(),
+        ['0:10', '0:20', '1:30', '1:40'],
+        'Array with duplicated X - every row should keep its own point, ' +
+        'none dropped or duplicated (#25083)'
+    );
+
     // Identify by id
     scatterS.setData(
         [
