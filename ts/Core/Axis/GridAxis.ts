@@ -1347,7 +1347,7 @@ function onTrimTicks(this: Axis): void {
     if (
         gridOptions.enabled === true &&
         !categoryAxis &&
-        (axis.isXAxis || axis.isLinked)
+        (axis.isXAxis || axis.linkedParent)
     ) {
         if (
             (endMoreThanMin || startLessThanMin) && !options.startOnTick

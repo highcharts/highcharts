@@ -584,7 +584,7 @@ class Tick {
                 transA
             } = axis,
             reversed = ( // #7911
-                axis.isLinked && axis.linkedParent ?
+                axis.linkedParent ?
                     axis.linkedParent.reversed :
                     axis.reversed
             ),
