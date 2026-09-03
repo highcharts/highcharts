@@ -389,13 +389,16 @@ class ColorAxis extends Axis implements ColorAxisBase {
             // The labels will be truncated inside these bounds by the
             // `Tick.handleOverflow` method. Add some leeway to avoid too heavy
             // truncation.
-            const leeway = (
-                legendOptions.backgroundColor || legendOptions.borderWidth
+            const leeway = Math.max(0, (
+                legendOptions.backgroundColor ||
+                legendOptions.borderWidth ||
+                chart.styledMode
             ) ?
                 (legendOptions.padding ?? 8) / 2 :
                 // Without a visible legend box, let the labels use the full
                 // width of the chart
-                (chart.spacingBox.width - axis.width) / 2;
+                (chart.spacingBox.width - axis.width) / 2
+            );
             axis.labelLeft = -leeway;
             axis.labelRight = axis.width + leeway;
 
