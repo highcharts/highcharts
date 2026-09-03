@@ -207,8 +207,8 @@ jobs:
       - name: Generate visual test report
         run: |
           npx gulp update-pr-testresults \
-          --fail-silently \
-          --pr ${{github.event.pull_request.number}}
+          --pr ${{github.event.pull_request.number}} \
+          --fail-silently
         if: ${{ always() }}
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
