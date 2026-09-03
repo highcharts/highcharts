@@ -1419,3 +1419,72 @@ test.describe('Highcharts Component', () => {
         expect(result.tableModifiedRowCount, 'DataTable should have 1 row after extremes changed.').toBe(1);
     });
 });
+
+test.describe('Navigator Component', () => {
+    test('destroys its chart with the component', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, {
+            waitUntil: 'networkidle'
+        });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'navigator-cell' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'navigator-cell',
+                    type: 'Navigator'
+                }]
+            }, true);
+
+            const component = dashboard.mountedComponents[0].component;
+            const chart = component.chart;
+            const redraw = chart.redraw;
+            const resize = component.resize;
+            let delayedRedraws = 0;
+            let delayedResizes = 0;
+            let destroyed = false;
+
+            chart.redraw = function (): void {
+                delayedRedraws++;
+                redraw.call(this);
+            };
+            component.resize = function (...args: any[]): void {
+                if (destroyed) {
+                    delayedResizes++;
+                }
+                resize.apply(this, args);
+            };
+
+            component.resize();
+            component.resizeTo(component.parentElement);
+            component.destroy();
+            destroyed = true;
+            Highcharts.fireEvent(dashboard, 'cellResize');
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            return {
+                chartDestroyed: typeof chart.index === 'undefined',
+                chartStillRegistered: Highcharts.charts.includes(chart),
+                delayedRedraws,
+                delayedResizes
+            };
+        });
+
+        expect(result.chartDestroyed).toBe(true);
+        expect(result.chartStillRegistered).toBe(false);
+        expect(result.delayedRedraws).toBe(0);
+        expect(result.delayedResizes).toBe(0);
+    });
+});
