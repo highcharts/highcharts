@@ -18,6 +18,7 @@
 
 import type TimelineChannel from './TimelineChannel';
 import SonificationInstrument from './SonificationInstrument.js';
+import type * as Sonification from './SonificationTypes';
 /** @internal */
 interface MIDIEvent {
     timeMS: number;
