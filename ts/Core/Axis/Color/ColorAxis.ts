@@ -347,12 +347,12 @@ class ColorAxis extends Axis implements ColorAxisBase {
         if (bBox) {
             this.left = bBox.x;
             this.top = bBox.y;
-            this.width = width = bBox.width;
-            this.height = height = bBox.height;
-            this.right = chart.chartWidth - this.left - width;
-            this.bottom = chart.chartHeight - this.top - height;
-            this.pos = this.horiz ? this.left : this.top;
         }
+        this.width = width = bBox?.width ?? width;
+        this.height = height = bBox?.height ?? height;
+        this.right = chart.chartWidth - this.left - width;
+        this.bottom = chart.chartHeight - this.top - height;
+        this.pos = this.horiz ? this.left : this.top;
 
         // Fake length for disabled legend to avoid tick issues
         // and such (#5205)
@@ -796,6 +796,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
         if (newOptions.dataClasses && legend.allItems || axis.dataClasses) {
             axis.destroyItems();
         }
+
+        delete axis.legendItem?.symbolBBox;
 
         super.update(newOptions, redraw);
 
