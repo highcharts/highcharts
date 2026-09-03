@@ -144,11 +144,7 @@ jobs:
       - name: Disable Firefox updates
         env:
           FIREFOX_PATH: ${{ steps.reference-firefox.outputs.firefox-path }}
-        run: |
-          firefox_dir="$(dirname "$FIREFOX_PATH")"
-          mkdir -p "$firefox_dir/distribution"
-          printf '%s\n' '{ "policies": { "DisableAppUpdate": true } }' \
-            > "$firefox_dir/distribution/policies.json"
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -182,11 +178,7 @@ jobs:
       - name: Disable Firefox updates
         env:
           FIREFOX_PATH: ${{ steps.candidate-firefox.outputs.firefox-path }}
-        run: |
-          firefox_dir="$(dirname "$FIREFOX_PATH")"
-          mkdir -p "$firefox_dir/distribution"
-          printf '%s\n' '{ "policies": { "DisableAppUpdate": true } }' \
-            > "$firefox_dir/distribution/policies.json"
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -215,46 +207,12 @@ jobs:
       - name: Generate visual test report
         run: |
           npx gulp update-pr-testresults \
-          --fail-silently \
-          --pr ${{github.event.pull_request.number}}
+          --pr ${{github.event.pull_request.number}} \
+          --fail-silently
         if: ${{ always() }}
         env:
-          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
-          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-
-      - name: Purge references with no candidate
-        if: ${{ always() }}
-        run: |
-          find ./samples -type f -name "reference.svg" \
-            -exec sh -c '
-              for f do
-                dir="$(dirname "$f")"
-                candidate_path="$dir/candidate.svg"
-                if [ ! -f "$candidate_path" ]; then
-                  echo "Deleting unpaired reference: $f"
-                  rm "$f"
-                fi
-              done
-            ' sh {} +
-
-      - name: Upload visual test images
-        if: ${{ always() }}
-        run: |
-          aws s3 sync ./samples \
-          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/pullrequests/$PR_NUMBER/" \
-          --exclude "*" \
-          --include "*/reference.svg" \
-          --include "*/candidate.svg" \
-          --include "*/diff.gif"
-        env:
-          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-          PR_NUMBER: ${{github.event.pull_request.number}}
+          VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
+          VISUAL_REVIEW_PR_SHA: ${{github.event.pull_request.head.sha}}
 
       - name: Comment on PR
         uses: actions/github-script@v8
@@ -300,7 +258,6 @@ jobs:
           path: |
             test/visual-test-results.json
             test/visual-test-errors.log
-            test/review-pr-*.json
             tmp/pr-visual-test-comment.json
 
       - name: Fail on visual test execution errors
