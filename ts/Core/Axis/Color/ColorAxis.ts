@@ -916,6 +916,10 @@ class ColorAxis extends Axis implements ColorAxisBase {
                             }
                             chart.legend.colorizeItem(this as any, vis);
                             affectedSeries.forEach((series): void => {
+                                // Points that were hidden have no graphic
+                                // or data label yet, so draw them (#25083)
+                                series.drawPoints();
+                                series.drawDataLabels?.();
                                 fireEvent(series, 'afterDataClassLegendClick');
                             });
                         }
