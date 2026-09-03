@@ -359,7 +359,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
             chart = axis.chart,
             group = axis.legendItem?.group,
             sideOffset = chart.axisOffset[axis.side],
-            { clipOffset, legend } = chart;
+            { clipOffset, legend } = chart,
+            legendOptions = legend.options;
 
         if (group) {
 
@@ -385,8 +386,19 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 axis.added = true;
             }
 
-            axis.labelLeft = 0;
-            axis.labelRight = axis.width;
+            // The labels will be truncated inside these bounds by the
+            // `Tick.handleOverflow` method. Add some leeway to avoid too heavy
+            // truncation.
+            const leeway = (
+                legendOptions.backgroundColor || legendOptions.borderWidth
+            ) ?
+                (legendOptions.padding ?? 8) / 2 :
+                // Without a visible legend box, let the labels use the full
+                // width of the chart
+                (chart.spacingBox.width - axis.width) / 2;
+            axis.labelLeft = -leeway;
+            axis.labelRight = axis.width + leeway;
+
             // Reset it to avoid color axis reserving space
             chart.axisOffset[axis.side] = sideOffset;
             chart.clipOffset = clipOffset;
