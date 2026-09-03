@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 class GaugePoint extends Point {
 
     /* *
@@ -62,7 +63,7 @@ class GaugePoint extends Point {
 
     /**
      * Don't do any hover colors or anything
-     * @private
+     * @internal
      */
     public setState(state?: StatesOptionsKey): void {
         this.state = state;
@@ -76,4 +77,5 @@ class GaugePoint extends Point {
  *
  * */
 
+/** @internal */
 export default GaugePoint;
