@@ -219,6 +219,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Use Firefox 153.0.4
+        id: nightly-firefox
+        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.nightly-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
+
       - name: Use Node.js
         uses: actions/setup-node@v6
         with:
