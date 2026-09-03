@@ -417,7 +417,7 @@ const AnnotationDefaults: AnnotationOptions = {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @type      {string|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationMockPointFunction}
+     * @type      {Highcharts.AnnotationMockPointOptions}
      * @requires  modules/annotations
      * @apioption annotations.labels.point
      */
@@ -452,7 +452,7 @@ const AnnotationDefaults: AnnotationOptions = {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @type      {string|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationMockPointFunction}
+     * @type      {Highcharts.AnnotationMockPointOptions}
      * @extends   annotations.labels.point
      * @requires  modules/annotations
      * @apioption annotations.shapes.point
@@ -468,7 +468,7 @@ const AnnotationDefaults: AnnotationOptions = {
      *
      * @see [annotations.shapes.point](#annotations.shapes.point)
      *
-     * @type      {Array<(string|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationMockPointFunction)>}
+     * @type      {Array<Highcharts.AnnotationMockPointOptions>}
      * @extends   annotations.labels.point
      * @apioption annotations.shapes.points
      */

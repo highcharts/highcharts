@@ -797,7 +797,6 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @type      {string|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationMockPointFunction}
      * @extends   annotations.labels.point
      * @requires  modules/annotations
      * @apioption annotations.shapes.point
@@ -814,7 +813,6 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
      *
      * @see [annotations.shapes.point](#annotations.shapes.point)
      *
-     * @type      {Array<(string|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationMockPointFunction)>}
      * @extends   annotations.labels.point
      * @apioption annotations.shapes.points
      */
@@ -852,7 +850,6 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {string | Highcharts.AnnotationMockPointOptionsObject}
      * @apioption annotations.typeOptions.point
      */
     point?: (string | AnnotationMockPointOptionsObject);
@@ -863,7 +860,6 @@ export interface AnnotationTypeOptions {
      * point's id - or a new point with defined x, y properties
      * and optionally axes.
      *
-     * @type {Array<(string | Highcharts.AnnotationMockPointOptionsObject)>}
      * @apioption annotations.typeOptions.points
      */
     points?: Array<(string | AnnotationMockPointOptionsObject)>;
