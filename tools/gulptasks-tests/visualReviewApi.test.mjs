@@ -368,6 +368,63 @@ test('splits artifact uploads into endpoint-sized batches', async () => {
     }
 });
 
+test('uploads artifacts larger than a batch through the binary endpoint', async () => {
+    const largeReference = Buffer.alloc(7 * 1024 * 1024 + 1);
+    largeReference.write('<svg>');
+    const calls = [];
+    const progress = [];
+
+    await submitPullRequestVisualReview({
+        apiKey: 'test-api-key',
+        dependencies: {
+            fetchImpl: async (url, options) => {
+                calls.push({ url, options });
+                return response();
+            },
+            sleep: async () => {}
+        },
+        prNumber: 123,
+        prSha: sha,
+        productVersion: '13.0.1',
+        runAttempt: '1',
+        runId: '456',
+        runNumber: '789',
+        samples: [{
+            name: 'maps/series-geoheatmap/geoheatmap-equalearth',
+            comparisonValue: 42,
+            artifacts: {
+                reference: largeReference,
+                candidate: Buffer.from('<svg/>'),
+                difference: Buffer.from('GIF89a')
+            }
+        }],
+        onProgress: event => progress.push(event),
+        testReport: {}
+    });
+
+    assert.equal(calls.length, 4);
+    assert.equal(
+        calls[1].url,
+        'https://vrevs.highsoft.com/api/ingestion/submissions/456/attempts/1/' +
+        'artifacts/reference?sampleName=maps%2Fseries-geoheatmap%2F' +
+        'geoheatmap-equalearth'
+    );
+    assert.equal(calls[1].options.headers['content-type'], 'image/svg+xml');
+    assert.strictEqual(calls[1].options.body, largeReference);
+    assert.deepEqual(
+        JSON.parse(calls[2].options.body).artifacts.map(artifact => artifact.role),
+        ['candidate', 'difference']
+    );
+    assert.deepEqual(
+        progress.map(({ completed, role }) => [completed, role]),
+        [
+            [1, 'reference'],
+            [2, 'candidate'],
+            [3, 'difference']
+        ]
+    );
+});
+
 test('finalizes empty submissions', async () => {
     const calls = [];
     await submitPullRequestVisualReview({

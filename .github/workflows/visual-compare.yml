@@ -144,11 +144,7 @@ jobs:
       - name: Disable Firefox updates
         env:
           FIREFOX_PATH: ${{ steps.reference-firefox.outputs.firefox-path }}
-        run: |
-          firefox_dir="$(dirname "$FIREFOX_PATH")"
-          mkdir -p "$firefox_dir/distribution"
-          printf '%s\n' '{ "policies": { "DisableAppUpdate": true } }' \
-            > "$firefox_dir/distribution/policies.json"
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -182,11 +178,7 @@ jobs:
       - name: Disable Firefox updates
         env:
           FIREFOX_PATH: ${{ steps.candidate-firefox.outputs.firefox-path }}
-        run: |
-          firefox_dir="$(dirname "$FIREFOX_PATH")"
-          mkdir -p "$firefox_dir/distribution"
-          printf '%s\n' '{ "policies": { "DisableAppUpdate": true } }' \
-            > "$firefox_dir/distribution/policies.json"
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -215,8 +207,8 @@ jobs:
       - name: Generate visual test report
         run: |
           npx gulp update-pr-testresults \
-          --fail-silently \
-          --pr ${{github.event.pull_request.number}}
+          --pr ${{github.event.pull_request.number}} \
+          --fail-silently
         if: ${{ always() }}
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
