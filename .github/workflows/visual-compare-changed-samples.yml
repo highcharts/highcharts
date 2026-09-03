@@ -73,6 +73,19 @@ jobs:
           printf 'has_products=%s\n' "$has_products" >> "$GITHUB_OUTPUT"
           printf 'product_globs=%s\n' "$product_globs" >> "$GITHUB_OUTPUT"
 
+      - name: Use Firefox 153.0.4
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        id: changed-samples-firefox
+        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        env:
+          FIREFOX_PATH: ${{ steps.changed-samples-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
+
       - name: Use Node.js lts/*
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         uses: actions/setup-node@v6
