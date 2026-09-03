@@ -47,6 +47,7 @@ import {
     arrayMax,
     arrayMin,
     clamp,
+    correctFloat,
     defined,
     extend,
     isNumber,
@@ -178,6 +179,115 @@ function onAxisFoundExtremes(
         });
     }
 
+}
+
+/**
+ * The padding above is applied before the tick positions are known, and the
+ * extremes shift again while they are computed, which can leave bubbles
+ * outside the plot area. Run it again against the final extremes, and repeat,
+ * since padding one end moves every bubble. #24039
+ */
+function onAxisAfterSetTickPositions(
+    this: Axis
+): void {
+    const paddedMin = this.min,
+        paddedMax = this.max,
+        { options, tickInterval, tickPositions } = this;
+
+    if (!isNumber(paddedMin) || !isNumber(paddedMax)) {
+        return;
+    }
+
+    // Growing by whole ticks keeps `startOnTick` and `endOnTick` true, but
+    // only where they are evenly spaced and no tick count has been settled on
+    const firstTick = tickPositions[0],
+        lastTick = tickPositions[tickPositions.length - 1],
+        canSnap = (
+            tickInterval > 0 &&
+            tickPositions.length > 0 &&
+            !this.tickAmount &&
+            !this.categories &&
+            !this.dateTime
+        ),
+        snapStart = canSnap && options.startOnTick,
+        snapEnd = canSnap && options.endOnTick,
+        tickSteps = (value: number, atEnd: boolean): number => Math.max(
+            Math.ceil(
+                (atEnd ? value - lastTick : firstTick - value) / tickInterval
+            ),
+            0
+        );
+
+    let passes = 5;
+
+    while (passes--) {
+        const { min, max } = this;
+
+        onAxisFoundExtremes.call(this);
+
+        // Rounding out moves every bubble too, so it belongs in the loop.
+        // Only where the padding moved something, or an axis with no bubbles
+        // to seat would lose the tick positions it settled on
+        if (this.min !== min || this.max !== max) {
+            const stepsMin = snapStart ? tickSteps(this.min || 0, false) : 0,
+                stepsMax = snapEnd ? tickSteps(this.max || 0, true) : 0;
+
+            if (stepsMin) {
+                this.min = correctFloat(firstTick - stepsMin * tickInterval);
+            }
+            if (stepsMax) {
+                this.max = correctFloat(lastTick + stepsMax * tickInterval);
+            }
+        }
+
+        // Bubbles near the width of the plot area are only seated by zooming
+        // far out. Rather than do that, give up past double the padded range
+        if ((this.max || 0) - (this.min || 0) > (paddedMax - paddedMin) * 2) {
+            this.min = paddedMin;
+            this.max = paddedMax;
+            break;
+        }
+
+        if (this.min === min && this.max === max) {
+            break;
+        }
+    }
+
+    // Leave a chart whose bubbles already fit exactly as it was, rather than
+    // nudging every bubble chart by a fraction of a pixel
+    const transA = this.len / ((paddedMax - paddedMin) || 1);
+
+    if (
+        Math.abs((this.min || 0) - paddedMin) * transA < 1 &&
+        Math.abs((this.max || 0) - paddedMax) * transA < 1
+    ) {
+        this.min = paddedMin;
+        this.max = paddedMax;
+        return;
+    }
+
+    for (const atEnd of [false, true]) {
+        if (
+            !(atEnd ? snapEnd : snapStart) ||
+            (atEnd ? this.max === paddedMax : this.min === paddedMin)
+        ) {
+            continue;
+        }
+        const steps = tickSteps((atEnd ? this.max : this.min) || 0, atEnd);
+
+        for (let i = 1; i <= steps; i++) {
+            const tick = correctFloat(
+                (atEnd ? lastTick : firstTick) +
+                (atEnd ? i : -i) * tickInterval
+            );
+
+            if (atEnd) {
+                tickPositions.push(tick);
+            } else {
+                tickPositions.unshift(tick);
+            }
+        }
+    }
 }
 
 /**
@@ -529,6 +639,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(
                 AxisClass,
                 'afterRender',
