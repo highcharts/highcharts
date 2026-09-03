@@ -9,12 +9,12 @@
  * (c) 2016-2026 Highsoft AS
  * Author: Torstein Hønsi, Lars A. V. Cabrera
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import StaticScale from '../../Extensions/StaticScale.js';
+import { composeStaticScale } from '../../Extensions/StaticScale.js';
 const G: AnyRecord = Highcharts;
-StaticScale.compose(G.Axis, G.Chart);
+composeStaticScale(G.Axis, G.Chart);
 export default Highcharts;

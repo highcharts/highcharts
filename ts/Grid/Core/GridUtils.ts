@@ -4,8 +4,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -16,7 +17,8 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import { isObject } from '../../Shared/Utilities.js';
+import Globals from './Globals.js';
+import { defined, isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -139,6 +141,30 @@ export function makeDiv(className: string, id?: string): HTMLElement {
 }
 
 /**
+ * Measures the horizontal paddings and borders of an element.
+ *
+ * @param el
+ * The element to measure.
+ *
+ * @returns
+ * The overhead in pixels.
+ */
+export function measureWidthOverhead(el?: HTMLElement): number {
+    if (!el) {
+        return 0;
+    }
+
+    const style = Globals.win.getComputedStyle(el);
+
+    return (
+        (parseFloat(style.paddingLeft) || 0) +
+        (parseFloat(style.paddingRight) || 0) +
+        (parseFloat(style.borderLeftWidth) || 0) +
+        (parseFloat(style.borderRightWidth) || 0)
+    );
+}
+
+/**
  * Check if there's a possibility that the given string is an HTML
  * (contains '<').
  *
@@ -255,6 +281,138 @@ export function formatText(
 }
 
 /**
+ * Joins class name parts into a single space-separated string.
+ *
+ * @param parts
+ * Class name parts to join.
+ *
+ * @returns
+ * A space-separated class name string.
+ */
+export function joinClassNames(
+    ...parts: Array<(string | undefined | null | false)>
+): string {
+    return parts.filter(Boolean).join(' ');
+}
+
+/**
+ * Replaces previously applied user class tokens on an element without touching
+ * other classes (e.g. Core `hcg-*` tokens).
+ *
+ * @param element
+ * The element to update.
+ *
+ * @param previous
+ * Previously applied user class name string.
+ *
+ * @param next
+ * New user class name string.
+ *
+ * @returns
+ * The class name string that was applied, or `undefined` when cleared.
+ */
+export function applyUserClassNames(
+    element: Element,
+    previous?: string,
+    next?: string
+): (string | undefined) {
+    if (previous) {
+        const prevTokens = previous.split(/\s+/g).filter(Boolean);
+        if (prevTokens.length) {
+            element.classList.remove(...prevTokens);
+        }
+    }
+
+    if (!next) {
+        return;
+    }
+
+    const nextTokens = next.split(/\s+/g).filter(Boolean);
+    if (!nextTokens.length) {
+        return;
+    }
+
+    element.classList.add(...nextTokens);
+    return nextTokens.join(' ');
+}
+
+/**
+ * Checks whether two objects have the same own keys and values.
+ *
+ * Supports nested plain objects and arrays. Functions are compared by
+ * reference.
+ *
+ * @param left
+ * The first object to compare.
+ *
+ * @param right
+ * The second object to compare.
+ *
+ * @returns
+ * `true` when both objects are equal, otherwise `false`.
+ */
+export function isDeepEqual(left: unknown, right: unknown): boolean {
+    if (left === right) {
+        return true;
+    }
+
+    if (left instanceof RegExp || right instanceof RegExp) {
+        return (
+            left instanceof RegExp &&
+            right instanceof RegExp &&
+            left.source === right.source &&
+            left.flags === right.flags
+        );
+    }
+
+    if (!isObject(left) || !isObject(right)) {
+        return false;
+    }
+
+    const leftRecord = left as Record<string, unknown>;
+    const rightRecord = right as Record<string, unknown>;
+
+    if ('nodeType' in leftRecord || 'nodeType' in rightRecord) {
+        return false;
+    }
+
+    if (Array.isArray(left) || Array.isArray(right)) {
+        if (!Array.isArray(left) || !Array.isArray(right)) {
+            return false;
+        }
+
+        if (left.length !== right.length) {
+            return false;
+        }
+    }
+
+    const leftKeys = Object.keys(left).filter(function (key): boolean {
+        return key !== '__proto__' && key !== 'constructor';
+    });
+    const rightKeys = Object.keys(right).filter(function (key): boolean {
+        return key !== '__proto__' && key !== 'constructor';
+    });
+
+    if (leftKeys.length !== rightKeys.length) {
+        return false;
+    }
+
+    for (let i = 0, iEnd = leftKeys.length; i < iEnd; ++i) {
+        const key = leftKeys[i];
+
+        if (!(key in rightRecord)) {
+            return false;
+        }
+
+        if (!isDeepEqual(leftRecord[key], rightRecord[key])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * Resolves a style value that can be static or callback based.
  *
  * @param style
@@ -313,6 +471,68 @@ export function mergeStyleValues<T>(
     return mergedStyle;
 }
 
+/**
+ * Applies inline styles from options to an element, removing the properties
+ * applied by the previous call so that updates stay deterministic and leave
+ * layout styles set elsewhere on the element untouched.
+ *
+ * @param element
+ * Element to style.
+ *
+ * @param previousProperties
+ * CSS property names applied by the previous call.
+ *
+ * @param styles
+ * Style object to apply.
+ *
+ * @returns
+ * CSS property names applied by this call, to pass to the next one.
+ */
+export function applyTrackedStyles(
+    element: HTMLElement,
+    previousProperties?: string[],
+    styles?: CSSObject
+): (string[] | undefined) {
+    const elementStyle = element.style;
+
+    if (previousProperties) {
+        for (const property of previousProperties) {
+            elementStyle.removeProperty(property);
+        }
+    }
+
+    if (!styles) {
+        return;
+    }
+
+    const appliedProperties: string[] = [];
+
+    for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
+        const value = styles[key];
+        if (!defined(value)) {
+            continue;
+        }
+
+        const property = key.indexOf('-') > -1 ?
+            key :
+            key.replace(/[A-Z]/g, '-$&').toLowerCase();
+
+        elementStyle.setProperty(property, String(value));
+        appliedProperties.push(property);
+    }
+
+    return appliedProperties;
+}
+
+/**
+ * Waits for the next animation frame.
+ */
+export function waitForAnimationFrame(): Promise<void> {
+    return new Promise((resolve): void => {
+        requestAnimationFrame((): void => resolve());
+    });
+}
+
 
 /* *
  *
@@ -323,11 +543,17 @@ export function mergeStyleValues<T>(
 export default {
     makeHTMLElement,
     makeDiv,
+    measureWidthOverhead,
     isHTML,
     sanitizeText,
     setHTMLContent,
     createOptionsProxy,
     formatText,
+    joinClassNames,
+    applyUserClassNames,
+    isDeepEqual,
     resolveStyleValue,
-    mergeStyleValues
+    mergeStyleValues,
+    applyTrackedStyles,
+    waitForAnimationFrame
 } as const;

@@ -1,5 +1,5 @@
 ---
-name: Cell context menu actions
+name: Cell context menu actions and submenus
 authors:
   - Mikkel Espolin Birkeland
 js_wrap: b

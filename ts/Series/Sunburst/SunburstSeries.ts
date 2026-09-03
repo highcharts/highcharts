@@ -6,8 +6,9 @@
  *
  *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -55,7 +56,7 @@ const {
 import SunburstNode from './SunburstNode.js';
 import SunburstSeriesDefaults from './SunburstSeriesDefaults.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     defined,
     extend,
@@ -67,7 +68,7 @@ import {
     splat
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -145,6 +146,9 @@ function getDlOptions(
         )[0],
         options = merge<SunburstDataLabelOptions>(optionsLevel, optionsPoint),
         style = options.style = options.style || {},
+        padding: Array<number> = splat(options.padding || 0),
+        paddingLeft = padding[3 % padding.length],
+        paddingRight = padding[1 % padding.length],
         { innerArcLength = 0, outerArcLength = 0 } = point;
 
     let rotationRad: (number|undefined),
@@ -251,7 +255,7 @@ function getDlOptions(
 
         // Apply padding (#8515)
         width = Math.max(
-            (width || 0) - 2 * (options.padding || 0),
+            (width || 0) - paddingLeft - paddingRight,
             1
         );
 
@@ -281,8 +285,8 @@ function getDlOptions(
             options.textPath.enabled = false;
             // Setting width and padding
             width = Math.max(
-                (point.shapeExisting.r * 2) -
-                2 * (options.padding || 0), 1
+                (point.shapeExisting.r * 2) - paddingLeft - paddingRight,
+                1
             );
         } else if (
             point.dlOptions?.textPath &&
@@ -298,7 +302,8 @@ function getDlOptions(
             // Setting width and padding
             width = Math.max(
                 (outerArcLength + innerArcLength) / 2 -
-                2 * (options.padding || 0), 1
+                    paddingLeft - paddingRight,
+                1
             );
             style.whiteSpace = 'nowrap';
         }
@@ -665,6 +670,9 @@ class SunburstSeries extends TreemapSeries {
                 }),
                 zIndex: void 0
             };
+            // Delete so it doesn't override anything on merge.
+            delete point.dlOptions.zIndex;
+
             if (!addedHack && visible) {
                 addedHack = true;
                 onComplete = animateLabels;

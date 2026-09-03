@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,8 +38,7 @@ import {
     extend,
     fireEvent,
     isString,
-    objectEach,
-    pick
+    objectEach
 } from '../../../Shared/Utilities.js';
 
 // Function used to test string length including an ellipsis
@@ -122,7 +122,7 @@ class TextBuilder {
         const wrapper = this.svgElement,
             textNode = wrapper.element,
             renderer = wrapper.renderer,
-            textStr = pick(wrapper.textStr, '').toString() as string,
+            textStr = (wrapper.textStr ?? '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
             childNodes = textNode.childNodes,
             tempParent = !wrapper.added && renderer.box,

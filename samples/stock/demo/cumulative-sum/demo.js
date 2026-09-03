@@ -12,11 +12,30 @@ Highcharts.stockChart('container', {
         align: 'left'
     },
 
+    dataTable: {
+        columns: {
+            Date: [
+                '2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04',
+                '2023-01-05', '2023-01-06', '2023-01-07', '2023-01-08',
+                '2023-01-09', '2023-01-10'
+            ],
+            'The Local Bakery': [
+                678.78, 545.33, 788.72, 406.2, 744.87, 466.03, 822.7, 337.52,
+                396.67, 470.89
+            ],
+            'The Local Fishmarket': [
+                1340.72, 982.43, 1437.99, 1476.2, 670.23, 429.58, 897.52,
+                845.11, 1275.79, 1843.01
+            ]
+        }
+    },
+
     plotOptions: {
         series: {
             cumulative: true,
-            pointStart: '2023-01-01',
-            pointIntervalUnit: 'day'
+            dataMapping: {
+                x: 'Date'
+            }
         }
     },
 
@@ -39,16 +58,12 @@ Highcharts.stockChart('container', {
     },
 
     series: [{
-        name: 'The Local Bakery',
-        data: [
-            678.78, 545.33, 788.72, 406.2, 744.87, 466.03, 822.7, 337.52,
-            396.67, 470.89
-        ]
+        dataMapping: {
+            y: 'The Local Bakery'
+        }
     }, {
-        name: 'The Local Fishmarket',
-        data: [
-            1340.72, 982.43, 1437.99, 1476.2, 670.23, 429.58, 897.52, 845.11,
-            1275.79, 1843.01
-        ]
+        dataMapping: {
+            y: 'The Local Fishmarket'
+        }
     }]
 });

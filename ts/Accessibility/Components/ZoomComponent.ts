@@ -5,8 +5,9 @@
  *
  *  Accessibility component for chart zoom.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,7 +37,7 @@ const { unhideChartElementFromAT } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 const { getFakeMouseEvent } = HU;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import { attr, pick } from '../../Shared/Utilities.js';
+import { attr } from '../../Shared/Utilities.js';
 
 
 /* *
@@ -437,7 +438,7 @@ class ZoomComponent extends AccessibilityComponent {
                         this: KeyboardNavigationHandler
                     ): void {
                         const res = onClick(this, chart);
-                        return pick(res, this.response.success);
+                        return (res ?? this.response.success);
                     }
                 ]
             ],

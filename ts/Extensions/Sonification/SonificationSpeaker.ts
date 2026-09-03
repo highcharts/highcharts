@@ -5,16 +5,14 @@
  *
  *  Class representing a speech synthesis voice.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
 
 'use strict';
-
-import { pick } from '../../Shared/Utilities.js';
-
 namespace SonificationSpeaker {
     /**
      * Configuration for a SonificationSpeaker.
@@ -25,32 +23,37 @@ namespace SonificationSpeaker {
         /**
          * Name of the voice synthesis to use. If not found, reverts to the
          * default voice for the language chosen.
-         *         */
+         *
+         */
         name?: string;
         /**
          * The language of the voice synthesis.
          *
          * @default "en-US"
-         *         */
+         *
+         */
         language?: string;
         /**
          * The pitch modifier of the voice. Set higher for a higher
          * voice pitch.
          *
          * @default 1
-         *         */
+         *
+         */
         pitch?: number;
         /**
          * The speech rate modifier.
          *
          * @default 1
-         *         */
+         *
+         */
         rate?: number;
         /**
          * The speech volume, from 0 to 1.
          *
          * @default 1
-         *         */
+         *
+         */
         volume?: number;
     }
 }
@@ -111,9 +114,10 @@ class SonificationSpeaker {
             utterance.rate = options && options.rate || this.options.rate || 1;
             utterance.pitch = options && options.pitch ||
                 this.options.pitch || 1;
-            utterance.volume = pick(
-                options && options.volume,
-                this.options.volume, 1
+            utterance.volume = (
+                (options && options.volume) ??
+                this.options.volume ??
+                1
             ) * this.masterVolume;
 
             this.synthesis.speak(utterance);

@@ -6,9 +6,6 @@ module.exports = {
         'Getting started': [
             'getting-started/system-requirements',
             'getting-started/installation',
-            'getting-started/installation-with-esm',
-            'getting-started/install-from-npm',
-            'getting-started/installation-with-amd-commonjs',
             'getting-started/your-first-chart',
             'getting-started/how-to-set-options',
             'getting-started/frequently-asked-questions',
@@ -102,7 +99,6 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -122,6 +118,7 @@ module.exports = {
         'Grid': [
             'grid/general',
             'grid/installation',
+            'grid/grid-key',
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -131,13 +128,17 @@ module.exports = {
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
                     'grid/columns/sorting',
-                    'grid/columns/filtering'
+                    'grid/columns/filtering',
+                    'grid/columns/virtualization'
                 ]
             },
             {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
+                    'grid/rows/tree-view',
+                    'grid/rows/grouping',
+                    'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -147,7 +148,8 @@ module.exports = {
                 'Cells': [
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
-                    'grid/cells/formatting'
+                    'grid/cells/formatting',
+                    'grid/cell-context-menu'
                 ]
             },
             {
@@ -273,6 +275,7 @@ module.exports = {
         'Working with data': [
             'working-with-data/data-intro',
             'working-with-data/data-compression',
+            'working-with-data/using-datatables-in-series',
             'working-with-data/data-module',
             'working-with-data/custom-preprocessing',
             'working-with-data/live-data',
@@ -282,37 +285,55 @@ module.exports = {
             {
                 'Morningstar Connectors': [
                     'morningstar/morningstar',
-                    'morningstar/goal-analysis',
-                    'morningstar/risk-score',
-                    'morningstar/regulatory-news-announcements',
-                    'morningstar/security-details',
-                    'morningstar/security-compare',
-                    'morningstar/x-ray',
-                    'morningstar/performance',
-                    'morningstar/hypo-performance',
-                    'morningstar/dws-connector',
                     {
-                        'Time Series': [
-                            'morningstar/time-series/time-series',
-                            'morningstar/time-series/cumulative-return',
-                            'morningstar/time-series/dividend',
-                            'morningstar/time-series/growth',
-                            'morningstar/time-series/ohlcv',
-                            'morningstar/time-series/price'
-                        ],
-                        'Screeners': [
-                            'morningstar/screeners/screener',
-                            'morningstar/screeners/esg-screener',
-                            'morningstar/screeners/find-similar-screener',
-                            'morningstar/screeners/investment-screener',
-                            'morningstar/screeners/investor-preferences',
-                            'morningstar/screeners/regulatory-screener',
+                        'Direct Web Services': [
+                            'morningstar/dws/time-series-connector',
+                            {
+                                'Investment Details Connector': [
+                                    'morningstar/dws/investments-details-connector',
+                                    'morningstar/dws/asset-allocation-breakdown',
+                                    'morningstar/dws/country-and-regional-exposure-breakdown',
+                                    'morningstar/dws/equity-style-box',
+                                    'morningstar/dws/equity-residual-risk',
+                                    'morningstar/dws/equity-aggregates-residual-risk',
+                                    'morningstar/dws/equity-sectors-breakdown',
+                                    'morningstar/dws/fixed-income-sectors-breakdown',
+                                    'morningstar/dws/prospectus-fees'
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'Enterprise Component APIs': [
+                            'morningstar/goal-analysis',
+                            'morningstar/risk-score',
+                            'morningstar/security-details',
+                            'morningstar/security-compare',
+                            'morningstar/x-ray',
+                            'morningstar/performance',
+                            'morningstar/hypo-performance',
+                            {
+                                'Time Series': [
+                                    'morningstar/time-series/time-series',
+                                    'morningstar/time-series/cumulative-return',
+                                    'morningstar/time-series/dividend',
+                                    'morningstar/time-series/growth',
+                                    'morningstar/time-series/ohlcv',
+                                    'morningstar/time-series/price'
+                                ],
+                                'Screeners': [
+                                    'morningstar/screeners/screener',
+                                    'morningstar/screeners/find-similar-screener',
+                                    'morningstar/screeners/investment-screener'
+                                ]
+                            }
                         ]
                     }
                 ]
             }
         ],
         'Chart design and style': [
+            'chart-design-and-style/branding',
             'chart-design-and-style/design-and-style',
             'chart-design-and-style/colors',
             'chart-design-and-style/pattern-fills',
@@ -349,7 +370,7 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration': [
+        'React': [
             'react/getting-started',
             {
                 'Components': [
@@ -357,18 +378,27 @@ module.exports = {
                     'react/components/series-types',
                     {
                         'Chart elements': [
-                            'react/components/chart-elements/accessibility',
-                            'react/components/chart-elements/credits',
-                            'react/components/chart-elements/data',
-                            'react/components/chart-elements/drilldown',
-                            'react/components/chart-elements/exporting',
-                            'react/components/chart-elements/legend',
-                            'react/components/chart-elements/plot-options',
-                            'react/components/chart-elements/subtitle',
                             'react/components/chart-elements/title',
+                            'react/components/chart-elements/subtitle',
+                            'react/components/chart-elements/credits',
+                            'react/components/chart-elements/legend',
+                            'react/components/chart-elements/plotoptions',
+                            'react/components/chart-elements/palette',
                             'react/components/chart-elements/tooltip',
-                            'react/components/chart-elements/x-axis',
-                            'react/components/chart-elements/y-axis'
+                            'react/components/chart-elements/datatable',
+                            'react/components/chart-elements/xaxis',
+                            'react/components/chart-elements/yaxis'
+                        ],
+                        'Modules': [
+                            'react/components/modules/accessibility',
+                            'react/components/modules/exporting',
+                            'react/components/modules/data',
+                            'react/components/modules/boost',
+                            'react/components/modules/drilldown',
+                            'react/components/modules/brokenaxis',
+                            'react/components/modules/draggablepoints',
+                            'react/components/modules/serieslabel',
+                            'react/components/modules/stocktools',
                         ]
                     },
                     'react/components/technical-indicators'
@@ -376,11 +406,15 @@ module.exports = {
             },
             'react/data-handling',
             'react/chart-instance',
+            'react/typescript',
+            'react/component-wrapping',
+            'react/highcharts-instance',
             'react/options-component-format',
             'react/nextjs',
             'react/bundling-and-tree-shaking',
             'react/component-children',
-            'react/v4-migration-guide'
+            'react/v4-migration-guide',
+            'react/v5-migration-guide'
         ]
     }
 };

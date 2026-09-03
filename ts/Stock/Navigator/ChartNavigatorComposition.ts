@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,7 +26,7 @@ import type Series from '../../Core/Series/Series';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import { addEvent, merge, pick, pushUnique } from '../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -33,6 +34,7 @@ import { addEvent, merge, pick, pushUnique } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         navigator?: Navigator;
@@ -41,12 +43,14 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         baseSeries?: Series;
@@ -76,9 +80,7 @@ let NavigatorConstructor: typeof Navigator;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     NavigatorClass: typeof Navigator
@@ -90,7 +92,8 @@ function compose(
 
         chartProto.callbacks.push(onChartCallback);
 
-        addEvent(ChartClass, 'afterAddSeries', onChartAfterAddSeries);
+        addEvent(ChartClass, 'afterAddSeries', resetBaseSeries);
+        addEvent(ChartClass, 'afterDrillUp', resetBaseSeries);
         addEvent(ChartClass, 'afterSetChartSize', onChartAfterSetChartSize);
         addEvent(ChartClass, 'afterUpdate', onChartAfterUpdate);
         addEvent(ChartClass, 'beforeRender', onChartBeforeRender);
@@ -100,15 +103,14 @@ function compose(
 }
 
 /**
- * Handle adding new series.
- * @private
+ * Reset the base series.
+ * @internal
  */
-function onChartAfterAddSeries(
+function resetBaseSeries(
     this: Chart
 ): void {
     if (this.navigator) {
-        // Recompute which series should be shown in navigator, and add them
-        this.navigator.setBaseSeries(null as any, false);
+        this.navigator.setBaseSeries(void 0, false);
     }
 }
 
@@ -117,7 +119,7 @@ function onChartAfterAddSeries(
  * final top position of the navigator once the height of the chart, including
  * the legend, is determined. #367. We can't use Chart.getMargins, because
  * labels offsets are not calculated yet.
- * @private
+ * @internal
  */
 function onChartAfterSetChartSize(
     this: Chart
@@ -146,10 +148,7 @@ function onChartAfterSetChartSize(
                 this.spacing[3] + scrollbarHeight;
             navigator.top = this.plotTop + scrollButtonSize;
         } else {
-            navigator.left = pick(
-                xAxis.left,
-                this.plotLeft + scrollButtonSize
-            );
+            navigator.left = (xAxis.left ?? this.plotLeft + scrollButtonSize);
             navigator.top = (navigator.navigatorOptions.top as any) ||
                 this.chartHeight -
                 navigator.height -
@@ -170,7 +169,7 @@ function onChartAfterSetChartSize(
                         !legendOptions.floating
                     ) ?
                         legend.legendHeight +
-                        pick(legendOptions.margin, 10) :
+                        (legendOptions.margin ?? 10) :
                         0
                 ) -
                 (
@@ -194,7 +193,7 @@ function onChartAfterSetChartSize(
 
 /**
  * Initialize navigator, if no scrolling exists yet.
- * @private
+ * @internal
  */
 function onChartAfterUpdate(
     this: Chart,
@@ -208,7 +207,7 @@ function onChartAfterUpdate(
     ) {
         this.scroller = this.navigator = new NavigatorConstructor(this);
 
-        if (pick(event.redraw, true)) {
+        if (event.redraw ?? true) {
             this.redraw(event.animation); // #7067
         }
     }
@@ -217,7 +216,7 @@ function onChartAfterUpdate(
 
 /**
  * Initialize navigator for stock charts
- * @private
+ * @internal
  */
 function onChartBeforeRender(
     this: Chart
@@ -236,7 +235,7 @@ function onChartBeforeRender(
  * For Stock charts. For x only zooming, do not to create the zoom button
  * because X axis zooming is already allowed by the Navigator and Range
  * selector. (#9285)
- * @private
+ * @internal
  */
 function onChartBeforeShowResetZoom(
     this: Chart
@@ -256,9 +255,7 @@ function onChartBeforeShowResetZoom(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartCallback(
     chart: Chart
 ): void {
@@ -273,7 +270,7 @@ function onChartCallback(
 
 /**
  * Merge options, if no scrolling exists yet
- * @private
+ * @internal
  */
 function onChartUpdate(
     this: Chart,
@@ -302,8 +299,10 @@ function onChartUpdate(
  *
  * */
 
+/** @internal */
 const ChartNavigatorComposition = {
     compose
 };
 
+/** @internal */
 export default ChartNavigatorComposition;

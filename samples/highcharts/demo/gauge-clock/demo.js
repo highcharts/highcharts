@@ -31,12 +31,13 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'The Highcharts clock'
+        text: 'The Highcharts Clock'
     },
 
     pane: {
         background: [{
-            // default background
+            borderWidth: 1,
+            outerRadius: '105%'
         }, {
             // reflex for supported browsers
             backgroundColor: {
@@ -50,7 +51,10 @@ Highcharts.chart('container', {
                     [0.5, 'rgba(200, 200, 200, 0.2)']
                 ]
             }
-        }]
+        }],
+        startAngle: 0,
+        endAngle: 360,
+        innerSize: 0
     },
 
     yAxis: {
@@ -64,11 +68,13 @@ Highcharts.chart('container', {
         max: 12,
         lineWidth: 0,
         showFirstLabel: false,
+        offset: 0,
 
         minorTickInterval: 'auto',
         minorTickWidth: 3,
         minorTickLength: 5,
         minorTickPosition: 'inside',
+        minorTicksPerMajor: 5,
         minorGridLineWidth: 0,
 
         tickInterval: 1,
@@ -97,16 +103,21 @@ Highcharts.chart('container', {
             y: now.hours,
             dial: {
                 radius: '60%',
-                baseWidth: 4,
+                baseWidth: 6,
                 baseLength: '95%',
-                rearLength: 0
+                rearLength: 0,
+                topWidth: 1,
+                borderRadius: 0
             }
         }, {
             id: 'minute',
             y: now.minutes,
             dial: {
                 baseLength: '95%',
-                rearLength: 0
+                baseWidth: 4,
+                rearLength: 0,
+                topWidth: 1,
+                borderRadius: 0
             }
         }, {
             id: 'second',
@@ -114,6 +125,7 @@ Highcharts.chart('container', {
             dial: {
                 radius: '100%',
                 baseWidth: 1,
+                topWidth: 1,
                 rearLength: '20%'
             }
         }],

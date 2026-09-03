@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,54 +39,75 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 /**
- * Extended data labels for range series types. Range series data labels use
- * no `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and
- * `yHigh` options to allow the higher and lower data label sets individually.
- *
- * TODO: `x` and `y` are still inherited from `DataLabelOptions`, because
- * `AreaRangeSeries.drawDataLabels` temporarily maps the range-specific offsets
- * to these base properties while rendering. Tighten this to
- * `Omit<DataLabelOptions, 'x' | 'y'>` when that flow can be refactored.
+ * Extended data labels for range series types. Range series data labels can be
+ * positioned individually by defining them as an array and setting
+ * `alignToKey` to `high` or `low`.
  */
 export interface AreaRangeDataLabelOptions extends DataLabelOptions {
 
     /**
+     * The point key to use for positioning this data label.
+     * Possible values are `low` and `high`.
+     *
+     * @default `high` for the first label, `low` for the second label
+     *
+     * @product highcharts highstock
+     */
+    alignToKey?: 'low'|'high';
+
+    /**
      * X offset of the higher data labels relative to the point value.
+     *
+     * Deprecated. Use a data labels array with `alignToKey: 'high'` and the
+     * regular `x` option instead.
      *
      * @sample highcharts/plotoptions/arearange-datalabels/
      *         Data labels on range series
      *
      * @default 0
+     * @deprecated 13.0.1
      */
     xHigh?: number;
 
     /**
      * X offset of the lower data labels relative to the point value.
      *
+     * Deprecated. Use a data labels array with `alignToKey: 'low'` and the
+     * regular `x` option instead.
+     *
      * @sample highcharts/plotoptions/arearange-datalabels/
      *         Data labels on range series
      *
      * @default 0
+     * @deprecated 13.0.1
      */
     xLow?: number;
 
     /**
      * Y offset of the higher data labels relative to the point value.
      *
+     * Deprecated. Use a data labels array with `alignToKey: 'high'` and the
+     * regular `y` option instead.
+     *
      * @sample highcharts/plotoptions/arearange-datalabels/
      *         Data labels on range series
      *
      * @default 0
+     * @deprecated 13.0.1
      */
     yHigh?: number;
 
     /**
      * Y offset of the lower data labels relative to the point value.
      *
+     * Deprecated. Use a data labels array with `alignToKey: 'low'` and the
+     * regular `y` option instead.
+     *
      * @sample highcharts/plotoptions/arearange-datalabels/
      *         Data labels on range series
      *
      * @default 0
+     * @deprecated 13.0.1
      */
     yLow?: number;
 }
@@ -97,14 +119,11 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
 export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
 
     /**
-     * Extended data labels for range series types. Range series data labels
-     * use no `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow`
-     * and `yHigh` options to allow the higher and lower data label sets
-     * individually.
+     * Extended data labels for range series types. Range series data labels can
+     * be positioned individually by defining them as an array and setting
+     * `alignToKey` to `high` or `low`.
      *
      * @declare Highcharts.SeriesAreaRangeDataLabelsOptionsObject
-     *
-     * @exclude x, y
      *
      * @since 2.3.0
      *
@@ -225,6 +244,8 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
+     * @basic
+     *
      * @type {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
      *
      * @extends series.line.data
@@ -236,6 +257,7 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
     data?: Array<(AreaRangePointOptions|PointShortOptions)>;
 
     /**
+     * @basic
      *
      * @see [fillColor](#series.arearange.fillColor)
      *

@@ -5,8 +5,9 @@
  *
  *  Small MIDI file writer for sonification export.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,8 +18,6 @@
 
 import type TimelineChannel from './TimelineChannel';
 import SonificationInstrument from './SonificationInstrument.js';
-import { pick } from '../../Shared/Utilities.js';
-
 /** @internal */
 interface MIDIEvent {
     timeMS: number;
@@ -68,7 +67,7 @@ const freqToNote = (f: number): number => Math.round(
         events.forEach((e): void => {
             const o = e.instrumentEventOptions || {},
                 t = e.time,
-                dur = cachedDur = pick(o.noteDuration, cachedDur),
+                dur = cachedDur = (o.noteDuration ?? cachedDur),
                 tNOF = dur && e.time + dur,
                 ctrl = [{
                     valMap: (n: number): number => 64 + 63 * n & 0x7F,
@@ -92,7 +91,7 @@ const freqToNote = (f: number): number => Math.round(
                     }
                 }],
                 v = cachedVel = o.volume === void 0 ?
-                    pick(cachedVel, 127) : 127 * o.volume & 0x7F,
+                    (cachedVel ?? 127) : 127 * o.volume & 0x7F,
                 freq = o.frequency,
                 note = o.note || 0,
                 noteVal = 12 + (freq ? freqToNote(freq) : // MIDI note #0 is C-1

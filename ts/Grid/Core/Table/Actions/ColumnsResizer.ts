@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -133,7 +134,10 @@ class ColumnsResizer {
      * @param cell
      * The reference to rendered cell, where hadles should be added
      */
-    public renderColumnDragHandles(column: Column, cell: Cell): void {
+    public renderColumnDragHandles(
+        column: Column,
+        cell: Cell
+    ): HTMLElement | undefined {
         const vp = column.viewport;
 
         if (vp.columnsResizer) {
@@ -146,6 +150,8 @@ class ColumnsResizer {
             vp.columnsResizer?.addHandleListeners(
                 handle, column
             );
+
+            return handle;
         }
     }
 
@@ -207,8 +213,13 @@ class ColumnsResizer {
 
         const diff = pageX - (this.dragStartX || 0);
         const vp = this.viewport;
+        const columnResizing = vp.columnResizing;
 
-        vp.columnResizing.resize(this, diff);
+        if (!columnResizing) {
+            return;
+        }
+
+        columnResizing.resize(this, diff);
 
         vp.reflow();
 
@@ -328,12 +339,44 @@ class ColumnsResizer {
         document.removeEventListener('touchend', this.onDocumentDragEnd);
         document.removeEventListener('touchcancel', this.onDocumentDragEnd);
 
+        this.clearHandles();
+    }
+
+    /**
+     * Removes all handle event listeners.
+     */
+    public clearHandles(): void {
         for (let i = 0, iEnd = this.handles.length; i < iEnd; i++) {
             const [handle, listeners] = this.handles[i];
 
             for (const { eventName, listener } of listeners) {
                 handle.removeEventListener(eventName, listener);
             }
+        }
+
+        this.handles.length = 0;
+    }
+
+    /**
+     * Removes the event listeners for a single resize handle.
+     *
+     * @param handle
+     * The handle element to remove.
+     */
+    public removeHandle(handle: HTMLElement): void {
+        for (let i = this.handles.length - 1; i >= 0; --i) {
+            const [registeredHandle, listeners] = this.handles[i];
+
+            if (registeredHandle !== handle) {
+                continue;
+            }
+
+            for (const { eventName, listener } of listeners) {
+                registeredHandle.removeEventListener(eventName, listener);
+            }
+
+            this.handles.splice(i, 1);
+            return;
         }
     }
 }

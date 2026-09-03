@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -109,10 +110,11 @@ declare module '../Exporting/NavigationOptions' {
 
         /**
          * Path where Highcharts will look for icons. Change this to use icons
-         * from a different server.
+         * from a different server. When undefined, icons are loaded from
+         * the library's internal source.
          *
-         * @type      {string}
-         * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         * @type      {string|undefined}
+         * @default   undefined
          * @since     7.1.3
          * @apioption navigation.iconsURL
          */

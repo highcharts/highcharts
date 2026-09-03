@@ -117,10 +117,37 @@ test.describe('Column Header Toolbar', () => {
             'th[data-column-id="weight"] .hcg-header-cell-menu-icon button'
         );
 
+        await expect(weightMenuButton).toBeVisible();
         await expect(weightMenuButton).toHaveAttribute(
             'aria-label',
             /menu.*weight/i
         );
+    });
+
+    test('Blank filter row cells support ArrowUp and ArrowDown navigation', async ({
+        page
+    }) => {
+        const productHeaderCell = page.locator(
+            'th[data-column-id="product"]'
+        ).first();
+        const blankProductFilterCell = page.locator(
+            'th[data-column-id="product"]'
+        ).nth(1);
+        const firstProductBodyCell = page.locator(
+            'td[data-column-id="product"]'
+        ).first();
+
+        await blankProductFilterCell.focus();
+        await expect(blankProductFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(firstProductBodyCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(blankProductFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productHeaderCell).toBeFocused();
     });
 
     test('Clicking menu icon opens menu', async ({ page }) => {

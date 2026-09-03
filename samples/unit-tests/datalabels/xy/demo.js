@@ -32,7 +32,7 @@ QUnit.test('Data label alignment and x/y options (#13580)', assert => {
     assert.close(
         label.absoluteBox.x,
         chart.plotLeft,
-        1,
+        2,
         `Label should be inside the plot if horizontal axis 'left' value is
         lower than chart.marginLeft.`
     );

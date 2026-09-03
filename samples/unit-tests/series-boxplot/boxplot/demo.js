@@ -82,6 +82,100 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
         'blue',
         'Generic fill'
     );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: true,
+            alignToKey: 'high',
+            format: 'High: {point.high}'
+        }, {
+            enabled: true,
+            alignToKey: 'median',
+            format: 'Median: {point.median}'
+        }, {
+            enabled: true,
+            alignToKey: 'low',
+            format: 'Low: {point.low}'
+        }]
+    });
+
+    let point = chart.series[0].points[0];
+
+    assert.deepEqual(
+        point.dataLabels.map(label => label.text.textStr),
+        ['High: 965', 'Median: 848', 'Low: 760'],
+        'Labels render text for individual box plot values (#23904)'
+    );
+
+    assert.ok(
+        point.dataLabels[0].y < point.dataLabels[1].y &&
+            point.dataLabels[1].y < point.dataLabels[2].y,
+        'Labels align to their selected box plot values (#23904)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    point = chart.series[0].points[0];
+
+    assert.ok(
+        point.dataLabels[0].x > point.dataLabels[2].x,
+        'Inverted: high label is right of the low label (#23904)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+    point = chart.series[0].points[0];
+
+    assert.ok(
+        point.dataLabels[0].y >= point.highPlot - 1 &&
+            point.dataLabels[2].y + point.dataLabels[2].height <=
+                point.lowPlot + 1,
+        'Reversed: high label below the high whisker, low label above low ' +
+            '(#23904)'
+    );
+    // borderRadius rounds the corners of the box
+    chart.series[0].update({ borderRadius: 5 });
+
+    const arcs = chart.series[0].points[0].box.pathArray.filter(
+        segment => segment[0] === 'A'
+    );
+    assert.strictEqual(
+        arcs.length,
+        4,
+        'A borderRadius should round the four corners of the box'
+    );
+    assert.strictEqual(
+        arcs[0][1],
+        5,
+        'The corner radius should match the borderRadius option'
+    );
+
+    chart.series[0].update({ borderRadius: '50%' });
+    const pctArcs = chart.series[0].points[0].box.pathArray.filter(
+        segment => segment[0] === 'A'
+    );
+    assert.ok(
+        pctArcs.length === 4 && pctArcs[0][1] > 0,
+        'A percentage borderRadius is resolved to a relative pixel radius'
+    );
+
+    chart.series[0].update({ borderRadius: 0 });
+    assert.deepEqual(
+        chart.series[0].points[0].box.pathArray.find(
+            segment => segment[0] === 'A'
+        ).slice(0, 3),
+        ['A', 0, 0],
+        'A borderRadius of 0 should fall back to sharp corners'
+    );
 });
 
 QUnit.test('Individual options and Point.update', function (assert) {

@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,7 +35,7 @@ import { isNumber, merge } from '../../../Shared/Utilities.js';
 /**
  * The CMO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cmo
  *
@@ -53,7 +54,7 @@ class CMOIndicator extends SMAIndicator {
      * requires the `linkedTo` option to be set and should be loaded after
      * the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/cmo
+     * @sample {highstock} stock/indicators/cmo
      *         CMO indicator
      *
      * @extends      plotOptions.sma
@@ -189,6 +190,7 @@ class CMOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CMOIndicator {
     pointClass: typeof CMOPoint;
 }
@@ -199,6 +201,7 @@ interface CMOIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;
@@ -213,6 +216,7 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  *
  * */
 
+/** @internal */
 export default CMOIndicator;
 
 /* *

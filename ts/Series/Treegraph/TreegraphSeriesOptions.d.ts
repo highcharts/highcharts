@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Paweł Lysy Grzegorz Blachliński
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,10 +18,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
@@ -111,10 +109,12 @@ export interface TreegraphDataLabelFormatterContext {
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
     linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
-    linkTextPath?: DataLabelTextPathOptions;
+    linkTextPath?: DataLabelOptions['textPath'];
 }
 
-export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
+type TreegraphSeriesLevelBase = TreemapSeriesLevelOptions &
+    Omit<TreegraphSeriesOptions, 'data' | 'levels'>;
+export interface TreegraphSeriesLevelOptions extends TreegraphSeriesLevelBase {
     collapseButton?: CollapseButtonOptions;
     collapsed?: boolean;
 }
@@ -125,8 +125,6 @@ export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
  * and descendants with a clear parent - child relation.
  * The best examples of the dataStructures, which best reflect this chart
  * are e.g. genealogy tree or directory structure.
- *
- * TODO change back the demo path
  *
  * @sample highcharts/demo/treegraph-chart
  *         Treegraph Chart
@@ -144,11 +142,8 @@ export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *            zones
  *
  * @product highcharts
- *
  * @since 10.3.0
- *
  * @requires modules/treemap
- *
  * @requires modules/treegraph
  */
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {

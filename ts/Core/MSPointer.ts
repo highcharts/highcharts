@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,7 +38,6 @@ import {
     css,
     defined,
     objectEach,
-    pick,
     pushUnique,
     removeEvent
 } from '../Shared/Utilities.js';
@@ -318,7 +318,7 @@ class MSPointer extends Pointer {
 
         if (
             this.hasZoom ||
-            pick((tooltip?.options.followTouchMove), true)
+            ((tooltip?.options.followTouchMove) ?? true)
         ) {
             this.batchMSEvents(addEvent);
         }

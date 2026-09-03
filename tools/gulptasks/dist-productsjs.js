@@ -46,7 +46,13 @@ function getZipLocation(productName, version) {
 }
 
 function fetchCurrentProducts() {
-    return global.fetch('https://code.highcharts.com/products.js')
+    return global
+        .fetch('https://code.highcharts.com/products.js', {
+            // Avoid blocking from lack of referer
+            headers: {
+                Referer: 'https://www.highcharts.com/'
+            }
+        })
         .then(response => response.text())
         .then(content => {
             try {

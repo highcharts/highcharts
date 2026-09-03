@@ -27,7 +27,7 @@ test.describe('Grid sorting', () => {
 
         const priceData = await page.evaluate(() => {
             const grid = (window as any).grid;
-            return grid.presentationTable.columns.price;
+            return grid.dataProvider.getDataTable(true).columns.price;
         });
         expect(priceData, 'Price column should be sorted.').toEqual([1.5, 2.53, 4.5, 5]);
 
@@ -40,7 +40,7 @@ test.describe('Grid sorting', () => {
 
         const priceData = await page.evaluate(() => {
             const grid = (window as any).grid;
-            return grid.presentationTable.columns.price;
+            return grid.dataProvider.getDataTable(true).columns.price;
         });
         expect(priceData, 'Weight column should be sorted.').toEqual([1.5, 2.53, 5, 4.5]);
 
@@ -54,7 +54,7 @@ test.describe('Grid sorting', () => {
 
         const priceData = await page.evaluate(() => {
             const grid = (window as any).grid;
-            return grid.presentationTable.columns.price;
+            return grid.dataProvider.getDataTable(true).columns.price;
         });
 
         expect(priceData, 'Weight column should be sorted.').toEqual([1.5, 2.53, 5, 4.5]);
@@ -67,8 +67,11 @@ test.describe('Grid sorting', () => {
         const result = await page.evaluate(() => {
             const grid = (window as any).grid;
             return {
-                weightData: grid.presentationTable.columns.weight,
-                order: grid.columnOptionsMap.weight.options.sorting.order
+                weightData: grid.dataProvider.getDataTable(true).columns.weight,
+                order: grid.columnPolicy
+                    .getIndividualColumnOptions('weight')
+                    .sorting
+                    .order
             };
         });
         expect(result.weightData, 'Weight column should be sorted.').toEqual([200, 100, 40, 0.5]);
@@ -84,7 +87,7 @@ test.describe('Grid sorting', () => {
 
         const metaData = await page.evaluate(() => {
             const grid = (window as any).grid;
-            return grid.presentationTable.columns.metaData;
+            return grid.dataProvider.getDataTable(true).columns.metaData;
         });
         expect(metaData, 'Icon column should be sorted.').toEqual(['a', 'd', 'b', 'c']);
 
@@ -377,7 +380,7 @@ test.describe('Grid sorting', () => {
             const lastRow = rows[rows.length - 1];
             return {
                 lastRowValue: lastRow.cells[0].value,
-                weightData: grid.presentationTable.columns.weight
+                weightData: grid.dataProvider.getDataTable(true).columns.weight
             };
         });
 

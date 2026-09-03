@@ -20,32 +20,9 @@ export default {
         chart: {
             type: 'solidgauge'
         },
-        pane: {
-            center: ['50%', '85%'],
-            size: '140%',
-            startAngle: -90,
-            endAngle: 90,
-            background: {
-                backgroundColor: '#EEE',
-                innerRadius: '60%',
-                outerRadius: '100%',
-                shape: 'arc'
-            }
-        },
         yAxis: {
             min: 0,
-            max: 100,
-            lineWidth: 0,
-            minorTickInterval: null,
-            tickAmount: 2,
-            tickWidth: 0,
-            title: {
-                y: -70
-            },
-            labels: {
-                distance: '80%',
-                y: 20
-            }
+            max: 100
         }
     }
 } satisfies SampleGeneratorConfig;

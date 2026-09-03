@@ -3,13 +3,14 @@
 You can customize the [chart title](https://www.highcharts.com/docs/chart-concepts/title-and-subtitle) using the `Title` component:
 
 ```tsx
-import { Chart, Series, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function TitleChart() {
   return (
     <Chart>
       <Title>Monthly Sales</Title>
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }

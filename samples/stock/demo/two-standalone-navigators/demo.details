@@ -6,7 +6,6 @@ js_wrap: b
 tags:
   - Highcharts Stock demo
   - Morningstar
-requiresManualTesting: true
 categories:
   - Various features:
       priority: 1

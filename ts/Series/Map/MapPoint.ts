@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,8 +37,7 @@ const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import {
     extend,
     internalClearTimeout,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -123,11 +123,12 @@ class MapPoint extends ScatterPoint {
      */
     public applyOptions(
         options: (MapPointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): MapPoint {
 
         const series = this.series,
-            point = super.applyOptions(options, x) as MapPoint,
+            point = super.applyOptions(options, x, isMock) as MapPoint,
             joinBy = series.joinBy;
 
         if (series.mapData && series.mapMap) {
@@ -180,16 +181,14 @@ class MapPoint extends ScatterPoint {
                     propMiddleY = properties?.['hc-middle-y'];
 
                 bounds.midX = (
-                    bounds.x1 + (bounds.x2 - bounds.x1) * pick(
-                        this.middleX,
-                        isNumber(propMiddleX) ? propMiddleX : 0.5
+                    bounds.x1 + (bounds.x2 - bounds.x1) * (
+                        this.middleX ??
+                        (isNumber(propMiddleX) ? propMiddleX : 0.5)
                     )
                 );
 
-                let middleYFraction = pick(
-                    this.middleY,
-                    isNumber(propMiddleY) ? propMiddleY : 0.5
-                );
+                let middleYFraction = this.middleY ??
+                    (isNumber(propMiddleY) ? propMiddleY : 0.5);
                 // No geographic geometry, only path given => flip
                 if (!this.geometry) {
                     middleYFraction = 1 - middleYFraction;

@@ -47,7 +47,7 @@ test.describe('Grid multi-column sorting', () => {
             const sortings = grid.querying.sorting.currentSortings || [];
             return {
                 columnIds: sortings.map((sorting: any) => sorting.columnId),
-                rowOrder: grid.presentationTable.columns.id
+                rowOrder: grid.dataProvider.getDataTable(true).columns.id
             };
         });
 

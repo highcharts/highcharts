@@ -1,0 +1,23 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+
+<div class="content">
+    <p>
+        Both grids below use the same 400-row data set. The left one has
+        <code>rendering.rows.virtualization: true</code>, so it keeps only a
+        small number of body rows in the DOM.
+    </p>
+
+    <div class="grid-layout">
+        <section class="grid-panel">
+            <h2>Virtualization enabled</h2>
+            <p>Rendered body rows: <strong id="virtualized-count">0</strong></p>
+            <div id="virtualized-container" class="grid-host"></div>
+        </section>
+
+        <section class="grid-panel">
+            <h2>Virtualization disabled</h2>
+            <p>Rendered body rows: <strong id="regular-count">0</strong></p>
+            <div id="regular-container" class="grid-host"></div>
+        </section>
+    </div>
+</div>

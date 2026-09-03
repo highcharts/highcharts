@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -25,11 +26,49 @@
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
-import type { FilteringCondition } from '../Options.js';
+import type {
+    ColumnFilteringOptions,
+    FilteringCondition
+} from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
-import { isString } from '../../../Shared/Utilities.js';
+import type { Condition } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
+import { operatorAliases } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
+import { fireEvent, isString } from '../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * Event that allows data projection features to redirect a filter condition
+ * built for a column, e.g. from a generated column to its source columns.
+ */
+export interface ResolveFilterConditionEvent {
+    /**
+     * Grid column id the filter is applied to.
+     */
+    columnId: string;
+
+    /**
+     * Condition built from the filtering options. Can be replaced.
+     */
+    condition?: FilterCondition;
+
+    /**
+     * Filtering options the condition was built from.
+     */
+    options: ColumnFilteringOptions;
+
+    /**
+     * Source column id resolved for the Grid column.
+     */
+    sourceColumnId: string;
+}
 
 
 /* *
@@ -99,9 +138,18 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringCondition
+        options: ColumnFilteringOptions
     ): FilterCondition | undefined {
-        const { condition, value } = options;
+        const condition = options.rule?.operator ?? options.condition;
+        let operator: Condition | undefined;
+        if (condition) {
+            // TODO: Remove, deprecated.
+            // Legacy `before`/`after` → `lessThan`/`greaterThan` aliases.
+            const alias =
+                operatorAliases[condition as keyof typeof operatorAliases];
+            operator = (alias ?? condition) as Condition;
+        }
+        const value = options.rule?.value ?? options.value;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
         const nonValueConditions = ['empty', 'notEmpty', 'true', 'false'];
@@ -110,12 +158,12 @@ class FilteringController {
             (
                 typeof value === 'undefined' ||
                 (isStringValue && !stringifiedValue)
-            ) && !nonValueConditions.includes(condition ?? '')
+            ) && !nonValueConditions.includes(operator ?? '')
         ) {
             return;
         }
 
-        switch (condition) {
+        switch (operator) {
             case 'contains':
                 return {
                     columnId,
@@ -189,20 +237,6 @@ class FilteringController {
                     value
                 };
 
-            case 'before':
-                return {
-                    columnId,
-                    operator: '<',
-                    value
-                };
-
-            case 'after':
-                return {
-                    columnId,
-                    operator: '>',
-                    value
-                };
-
             case 'empty':
                 return {
                     columnId,
@@ -237,6 +271,72 @@ class FilteringController {
     }
 
     /**
+     * Compares two serializable filter conditions produced from Grid options.
+     *
+     * @param left
+     * The current filter condition.
+     *
+     * @param right
+     * The next filter condition.
+     */
+    public static filterConditionsEqual(
+        left?: FilterCondition,
+        right?: FilterCondition
+    ): boolean {
+        if (left === right) {
+            return true;
+        }
+
+        if (!left || !right) {
+            return false;
+        }
+
+        if (
+            typeof left === 'function' ||
+            typeof right === 'function' ||
+            left.operator !== right.operator
+        ) {
+            return false;
+        }
+
+        if ('condition' in left || 'condition' in right) {
+            return (
+                'condition' in left &&
+                'condition' in right &&
+                FilteringController.filterConditionsEqual(
+                    left.condition,
+                    right.condition
+                )
+            );
+        }
+
+        if ('conditions' in left || 'conditions' in right) {
+            return (
+                'conditions' in left &&
+                'conditions' in right &&
+                left.conditions.length === right.conditions.length &&
+                left.conditions.every((condition, index): boolean =>
+                    FilteringController.filterConditionsEqual(
+                        condition,
+                        right.conditions[index]
+                    )
+                )
+            );
+        }
+
+        return (
+            'columnId' in left &&
+            'columnId' in right &&
+            left.columnId === right.columnId &&
+            left.value === right.value &&
+            (
+                ('ignoreCase' in left ? left.ignoreCase : void 0) ===
+                ('ignoreCase' in right ? right.ignoreCase : void 0)
+            )
+        );
+    }
+
+    /**
      * Loads filtering options from the data grid options.
      */
     public loadOptions(): void {
@@ -254,11 +354,15 @@ class FilteringController {
                 .getIndividualColumnOptions(columnId)
                 ?.filtering;
 
-            if (!filteringOptions || !sourceColumnId) {
+            if (
+                !filteringOptions ||
+                !sourceColumnId
+            ) {
                 continue;
             }
 
-            const condition = FilteringController.mapOptionsToFilter(
+            const condition = this.createColumnCondition(
+                columnId,
                 sourceColumnId,
                 filteringOptions
             );
@@ -294,7 +398,8 @@ class FilteringController {
             return;
         }
 
-        const condition = FilteringController.mapOptionsToFilter(
+        const condition = this.createColumnCondition(
+            columnId,
             sourceColumnId,
             options
         );
@@ -326,6 +431,39 @@ class FilteringController {
         this.updateModifier();
     }
 
+
+    /**
+     * Builds the filter condition for a column, letting data projection
+     * features redirect it to the columns actually backing the data.
+     *
+     * @param columnId
+     * Grid column id.
+     *
+     * @param sourceColumnId
+     * Source column id resolved for the Grid column.
+     *
+     * @param options
+     * Filtering options of the column.
+     */
+    private createColumnCondition(
+        columnId: string,
+        sourceColumnId: string,
+        options: ColumnFilteringOptions
+    ): FilterCondition | undefined {
+        const e: ResolveFilterConditionEvent = {
+            columnId,
+            condition: FilteringController.mapOptionsToFilter(
+                sourceColumnId,
+                options
+            ),
+            options,
+            sourceColumnId
+        };
+
+        fireEvent(this.querying.grid, 'resolveFilterCondition', e);
+
+        return e.condition;
+    }
 
     /**
      * Updates the modifier based on the current column conditions.

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,6 +20,7 @@
 
 import type ErrorBarPoint from './ErrorBarPoint';
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
+import type { BoxPlotPointValKey } from '../BoxPlot/BoxPlotSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
@@ -29,6 +31,7 @@ const {
     arearange: AreaRangeSeries
 } = SeriesRegistry.seriesTypes;
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
+import RangeDataLabel from '../RangeDataLabel.js';
 
 /* *
  *
@@ -39,7 +42,7 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 /**
  * Errorbar series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.errorbar
  *
@@ -55,7 +58,8 @@ class ErrorBarSeries extends BoxPlotSeries {
 
     public static defaultOptions: ErrorBarSeriesOptions = merge(
         BoxPlotSeries.defaultOptions,
-        ErrorBarSeriesDefaults
+        ErrorBarSeriesDefaults,
+        { dataLabels: { formatter: RangeDataLabel.formatter } }
     );
 
     /* *
@@ -86,16 +90,9 @@ class ErrorBarSeries extends BoxPlotSeries {
     }
 
     public drawDataLabels(): void {
-        const series = this,
-            valKey = series.pointValKey;
-
+        // Error bars draw upper/lower labels via the area range option adapter.
         if (AreaRangeSeries) {
-            AreaRangeSeries.prototype.drawDataLabels.call(series);
-            // Arearange drawDataLabels does not reset point.y to high,
-            // but to low after drawing (#4133)
-            for (const point of series.points) {
-                point.y = (point as any)[valKey];
-            }
+            AreaRangeSeries.prototype.drawDataLabels.call(this);
         }
     }
 
@@ -118,12 +115,13 @@ addEvent(ErrorBarSeries, 'afterTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface ErrorBarSeries extends BoxPlotSeries {
     pointClass: typeof ErrorBarPoint;
     doQuartiles: boolean;
     linkedParent: ErrorBarSeries;
-    pointArrayMap: Array<string>;
-    pointValKey: string;
+    pointArrayMap: Array<BoxPlotPointValKey>;
+    pointValKey: BoxPlotPointValKey;
 }
 
 extend(ErrorBarSeries.prototype, {
@@ -138,6 +136,7 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
@@ -152,4 +151,5 @@ SeriesRegistry.registerSeriesType('errorbar', ErrorBarSeries);
  *
  * */
 
+/** @internal */
 export default ErrorBarSeries;

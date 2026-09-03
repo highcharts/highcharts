@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -22,26 +23,30 @@
  *
  * */
 
-import type TableRow from './Body/TableRow';
-import type DataTable from '../../../Data/DataTable';
+import type TableCell from './Body/TableCell';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
 import ColumnResizing from './ColumnResizing/ColumnResizing.js';
 import ColumnResizingMode from './ColumnResizing/ResizingMode.js';
 import Column from './Column.js';
+import TableRow from './Body/TableRow.js';
 import TableHeader from './Header/TableHeader.js';
 import Grid from '../Grid.js';
 import RowsVirtualizer from './Actions/RowsVirtualizer.js';
+import ColumnsVirtualizer from './Actions/ColumnsVirtualizer.js';
 import ColumnsResizer from './Actions/ColumnsResizer.js';
 import Globals from '../Globals.js';
-import type TableCell from './Body/TableCell';
+import ColumnLayout from './Layout/ColumnLayout.js';
 
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
-import CellContextMenu from './Body/CellContextMenu.js';
+import CellContextMenu from './CellContextMenu/CellContextMenu.js';
+import CellContextMenuBuiltInActions from './CellContextMenu/CellContextMenuBuiltInActions.js';
+import { CellContextMenuLongPress } from './CellContextMenu/CellContextMenuLongPress.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, applyUserClassNames } = GridUtils;
+
 
 /* *
  *
@@ -91,9 +96,24 @@ class Table {
     public columns: Column[] = [];
 
     /**
+     * Columns indexed by ID.
+     */
+    private columnsById: Record<string, Column> = {};
+
+    /**
+     * The columns that are currently rendered in the DOM.
+     */
+    public renderedColumns: Column[] = [];
+
+    /**
      * The visible rows of the table.
      */
     public rows: TableRow[] = [];
+
+    /**
+     * Additional rendered body sections composed into the table.
+     */
+    private readonly bodySections: TableBodySection[] = [];
 
     /**
      * The resize observer for the table container.
@@ -109,9 +129,22 @@ class Table {
     public rowsVirtualizer: RowsVirtualizer;
 
     /**
+     * The columns virtualizer instance that handles horizontal column
+     * rendering.
+     * @internal
+     */
+    public columnsVirtualizer: ColumnsVirtualizer;
+
+    /**
      * The column distribution.
      */
-    public readonly columnResizing: ColumnResizingMode;
+    public readonly columnResizing?: ColumnResizingMode;
+
+    /**
+     * Cached horizontal layout for all columns.
+     * @internal
+     */
+    public readonly columnLayout: ColumnLayout;
 
     /**
      * The columns resizer instance that handles the columns resizing logic.
@@ -127,10 +160,15 @@ class Table {
     public rowsWidth?: number;
 
     /**
-     * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
-     * table cell is not focused.
+     * The focus cursor position or `undefined` if no table cell is focused.
      */
-    public focusCursor?: [number, number];
+    public focusCursor?: FocusCursor;
+
+    /**
+     * Pending focus target used while virtualization scrolls a body row into
+     * the render window.
+     */
+    public pendingFocusCursor?: [number, number];
 
     /**
      * The only cell that is to be focusable using tab key - a table focus
@@ -144,9 +182,31 @@ class Table {
     public virtualRows: boolean = true;
 
     /**
+     * The flag that indicates if the table columns are virtualized.
+     */
+    public virtualColumns: boolean = false;
+
+    /**
      * Cell context menu instance (lazy created).
      */
     private cellContextMenu?: CellContextMenu;
+
+    /**
+     * The iOS long-press polyfill for cell context menus.
+     */
+    private cellContextMenuLongPress?: CellContextMenuLongPress;
+
+
+    /**
+     * Async hooks executed after the main row update cycle.
+     * @internal
+     */
+    public readonly afterUpdateRowsHooks: Array<() => Promise<void>> = [];
+
+    /**
+     * Whether the table body min-height was set by the grid.
+     */
+    private tbodyMinHeightManaged = false;
 
     /* *
     *
@@ -170,7 +230,11 @@ class Table {
         this.grid = grid;
         this.tableElement = tableElement;
 
-        this.columnResizing = ColumnResizing.initMode(this);
+        this.columnLayout = new ColumnLayout(this);
+
+        if (!grid.options?.rendering?.columns?.strictWidths) {
+            this.columnResizing = ColumnResizing.initMode(this);
+        }
 
         if (grid.options?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
@@ -178,6 +242,7 @@ class Table {
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
+        this.columnsVirtualizer = new ColumnsVirtualizer(this);
 
         fireEvent(this, 'beforeInit');
 
@@ -186,19 +251,19 @@ class Table {
         this.resizeObserver.observe(tableElement);
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
-        this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
-
-        // Delegated cell events
-        this.tbodyElement.addEventListener('click', this.onCellClick);
-        this.tbodyElement.addEventListener('dblclick', this.onCellDblClick);
-        this.tbodyElement.addEventListener(
-            'contextmenu',
-            this.onCellContextMenu
+        this.theadElement?.addEventListener('wheel', this.onHeaderWheel, {
+            passive: false
+        });
+        this.addBodyEventListeners(this.tbodyElement);
+        if (this.isContextMenuLongPressed()) {
+            this.cellContextMenuLongPress!.addEvents(this.tableElement);
+        }
+        document.addEventListener('focusin', this.onDocumentFocusIn, true);
+        document.addEventListener(
+            'pointerdown',
+            this.onDocumentPointerDown,
+            true
         );
-        this.tbodyElement.addEventListener('mousedown', this.onCellMouseDown);
-        this.tbodyElement.addEventListener('mouseover', this.onCellMouseOver);
-        this.tbodyElement.addEventListener('mouseout', this.onCellMouseOut);
-        this.tbodyElement.addEventListener('keydown', this.onCellKeyDown);
     }
 
     /* *
@@ -208,26 +273,12 @@ class Table {
     * */
 
     /**
-     * The presentation version of the data table. It has applied modifiers
-     * and is ready to be rendered.
-     *
-     * @deprecated Use `grid.dataProvider` instead.
-     */
-    public get dataTable(): DataTable | undefined {
-        const dp = this.grid.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable(true);
-        }
-    }
-
-    /**
      * Initializes the table. Should be called after creation so that the table
      * can be asynchronously initialized.
      */
     public async init(): Promise<void> {
         try {
             this.grid.showLoading();
-
             const { tableElement } = this;
             const renderingOptions = this.grid.options?.rendering;
             const customClassName = renderingOptions?.table?.className;
@@ -240,18 +291,27 @@ class Table {
                 );
             }
 
-            if (renderingOptions?.columns?.resizing?.enabled) {
+            if (
+                !renderingOptions?.columns?.strictWidths &&
+                renderingOptions?.columns?.resizing?.enabled
+            ) {
                 this.columnsResizer = new ColumnsResizer(this);
             }
 
             if (customClassName) {
-                tableElement.classList.add(...customClassName.split(/\s+/g));
+                applyUserClassNames(
+                    tableElement,
+                    void 0,
+                    customClassName
+                );
             }
             tableElement.classList.add(
                 Globals.getClassName('scrollableContent')
             );
 
             await this.loadColumns();
+            this.reflowColumns();
+            this.columnsVirtualizer.initialize();
             this.setTbodyMinHeight();
 
             // Load & render head
@@ -264,12 +324,105 @@ class Table {
             // this.footer = new TableFooter(this);
             // this.footer.render();
 
+            // Ensure row widths are ready before first row render to prevent
+            // initial pinned-row misalignment.
+            this.reflowColumns();
             await this.rowsVirtualizer.initialRender();
         } finally {
             fireEvent(this, 'afterInit');
             this.reflow();
             this.grid.hideLoading();
         }
+    }
+
+    private addBodyEventListeners(body: HTMLElement): void {
+        body.addEventListener('focus', this.onTBodyFocus);
+        body.addEventListener('click', this.onCellClick);
+        body.addEventListener('dblclick', this.onCellDblClick);
+        body.addEventListener('contextmenu', this.onCellContextMenu);
+        body.addEventListener('mousedown', this.onCellMouseDown);
+        body.addEventListener('mouseover', this.onCellMouseOver);
+        body.addEventListener('mouseout', this.onCellMouseOut);
+        body.addEventListener('keydown', this.onCellKeyDown);
+    }
+
+    private removeBodyEventListeners(body: HTMLElement): void {
+        body.removeEventListener('focus', this.onTBodyFocus);
+        body.removeEventListener('click', this.onCellClick);
+        body.removeEventListener('dblclick', this.onCellDblClick);
+        body.removeEventListener('contextmenu', this.onCellContextMenu);
+        body.removeEventListener('mousedown', this.onCellMouseDown);
+        body.removeEventListener('mouseover', this.onCellMouseOver);
+        body.removeEventListener('mouseout', this.onCellMouseOut);
+        body.removeEventListener('keydown', this.onCellKeyDown);
+    }
+
+    private isContextMenuLongPressed(): boolean {
+        if (!Globals.isIos) {
+            return false;
+        }
+
+        if (!this.cellContextMenuLongPress) {
+            this.cellContextMenuLongPress = new CellContextMenuLongPress({
+                getTableCellFromTarget: (target): TableCell | undefined =>
+                    this.getTableCellFromTarget(target),
+                openCellContextMenu: (cell, clientX, clientY): boolean =>
+                    this.openCellContextMenu(cell, clientX, clientY),
+                isCellInEditMode: (cell): boolean =>
+                    (this as unknown as {
+                        cellEditing?: { editedCell?: TableCell };
+                    }).cellEditing?.editedCell === cell
+            });
+        }
+
+        return true;
+    }
+
+    private getTableCellFromTarget(
+        target: EventTarget | null
+    ): TableCell | undefined {
+        const cell = this.getCellFromElement(target);
+        if (!cell || !('column' in cell) || !('row' in cell)) {
+            return;
+        }
+
+        return cell as TableCell;
+    }
+
+    /**
+     * Registers an auxiliary table body section.
+     *
+     * @param section
+     * Body section descriptor.
+     *
+     * @internal
+     */
+    public registerBodySection(section: TableBodySection): void {
+        this.unregisterBodySection(section.id);
+        this.bodySections.push(section);
+        this.addBodyEventListeners(section.tbodyElement);
+    }
+
+    /**
+     * Unregisters an auxiliary table body section.
+     *
+     * @param sectionId
+     * Body section ID.
+     *
+     * @internal
+     */
+    public unregisterBodySection(sectionId: string): void {
+        const sectionIndex = this.bodySections.findIndex(
+            (section): boolean => section.id === sectionId
+        );
+        if (sectionIndex < 0) {
+            return;
+        }
+
+        this.removeBodyEventListeners(
+            this.bodySections[sectionIndex].tbodyElement
+        );
+        this.bodySections.splice(sectionIndex, 1);
     }
 
     /**
@@ -280,14 +433,32 @@ class Table {
         const minVisibleRows = options?.rendering?.rows?.minVisibleRows;
 
         const tbody = this.tbodyElement;
-        if (
-            defined(minVisibleRows) &&
-            !getStyle(tbody, 'min-height', true)
-        ) {
-            tbody.style.minHeight = (
-                minVisibleRows * this.rowsVirtualizer.defaultRowHeight
-            ) + 'px';
+        if (!defined(minVisibleRows)) {
+            if (this.tbodyMinHeightManaged) {
+                tbody.style.minHeight = '';
+                this.tbodyMinHeightManaged = false;
+            }
+            return;
         }
+
+        const hasUserMinHeight = !!getStyle(tbody, 'min-height', true);
+        if (!this.tbodyMinHeightManaged && hasUserMinHeight) {
+            return;
+        }
+
+        const extraRowsCount = this.bodySections.reduce(
+            (count, section): number => count + section.getRows().length,
+            0
+        );
+        const minScrollableRows = Math.max(
+            0,
+            minVisibleRows - extraRowsCount
+        );
+
+        tbody.style.minHeight = (
+            minScrollableRows * this.rowsVirtualizer.defaultRowHeight
+        ) + 'px';
+        this.tbodyMinHeightManaged = true;
     }
 
     /**
@@ -303,8 +474,6 @@ class Table {
             return rows.virtualization;
         }
 
-        // Consider changing this to use the presentation table row count
-        // instead of the original data table row count.
         const rowCount = (await this.grid.dataProvider?.getRowCount()) ?? 0;
         const threshold = rows?.virtualizationThreshold ?? 50;
 
@@ -330,9 +499,10 @@ class Table {
             const column = new Column(this, columnId, i);
             await column.init();
             this.columns.push(column);
+            this.columnsById[columnId] = column;
         }
 
-        this.columnResizing.loadColumns();
+        this.columnResizing?.loadColumns();
     }
 
     /**
@@ -344,8 +514,7 @@ class Table {
         if (!dp) {
             return;
         }
-
-        vp.grid.querying.pagination.clampPage();
+        const { focusCursor } = vp;
 
         try {
             this.grid.showLoading();
@@ -355,6 +524,10 @@ class Table {
                 (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
                 0;
             await vp.grid.querying.proceed();
+            vp.grid.querying.pagination.clampPage();
+            if (vp.grid.querying.shouldBeUpdated) {
+                await vp.grid.querying.proceed();
+            }
             for (const column of vp.columns) {
                 column.loadData();
             }
@@ -387,9 +560,17 @@ class Table {
                 }
             }
 
+            for (const hook of vp.afterUpdateRowsHooks) {
+                await hook();
+            }
+
             // Update the pagination controls
             vp.grid.pagination?.updateControls();
             vp.reflow();
+
+            if (focusCursor) {
+                vp.focusCellFromCursor(focusCursor, true);
+            }
         } finally {
             this.grid.hideLoading();
         }
@@ -401,13 +582,21 @@ class Table {
      * Reflows the table's content dimensions.
      */
     public reflow(): void {
-        this.columnResizing.reflow();
+        this.reflowColumns();
+        this.columnsVirtualizer.refresh();
 
         // Reflow the head
         this.header?.reflow();
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+        const measuredRowHeight = (
+            this.rowsVirtualizer.measureRenderedRowHeight()
+        );
+        if (defined(measuredRowHeight)) {
+            this.rowsVirtualizer.applyMeasuredRowHeight(measuredRowHeight);
+        }
+        this.setTbodyMinHeight();
 
         // Reflow the pagination
         this.grid.pagination?.reflow();
@@ -418,6 +607,22 @@ class Table {
         });
 
         this.grid.dirtyFlags.delete('reflow');
+        fireEvent(this, 'afterReflow');
+    }
+
+    /**
+     * Reflows column dimensions.
+     */
+    private reflowColumns(): void {
+        const columnResizing = this.columnResizing;
+
+        if (columnResizing) {
+            columnResizing.reflow();
+            return;
+        }
+
+        this.columnLayout.reflow();
+        this.rowsWidth = this.columnLayout.totalWidth;
     }
 
     /**
@@ -428,9 +633,7 @@ class Table {
      */
     private onTBodyFocus = (e: FocusEvent): void => {
         e.preventDefault();
-
-        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
-            ?.cells[0]?.htmlElement.focus();
+        this.getRenderedRows()[0]?.cells[0]?.htmlElement.focus();
     };
 
     /**
@@ -448,7 +651,119 @@ class Table {
             void this.rowsVirtualizer.scroll();
         }
 
+        if (this.virtualColumns) {
+            this.columnsVirtualizer.scroll();
+        }
+
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
+        fireEvent(this, 'bodyScroll', {
+            scrollLeft: this.tbodyElement.scrollLeft,
+            scrollTop: this.tbodyElement.scrollTop
+        });
+    };
+
+    /**
+     * Handles wheel scrolling over the table header.
+     *
+     * @param e
+     * The wheel event.
+     */
+    private onHeaderWheel = (e: WheelEvent): void => {
+        if (e.ctrlKey) {
+            return;
+        }
+
+        const tbody = this.tbodyElement;
+        let deltaX = e.deltaX;
+        let deltaY = e.deltaY;
+
+        if (e.shiftKey && !deltaX) {
+            deltaX = deltaY;
+            deltaY = 0;
+        }
+
+        if (!deltaX && !deltaY) {
+            return;
+        }
+
+        if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+            deltaX *= this.rowsVirtualizer.defaultRowHeight;
+            deltaY *= this.rowsVirtualizer.defaultRowHeight;
+        } else if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+            deltaX *= tbody.clientWidth;
+            deltaY *= tbody.clientHeight;
+        }
+
+        const maxScrollLeft = Math.max(
+            tbody.scrollWidth - tbody.clientWidth,
+            0
+        );
+        const maxScrollTop = Math.max(
+            tbody.scrollHeight - tbody.clientHeight,
+            0
+        );
+        const scrollLeft = Math.max(
+            0,
+            Math.min(tbody.scrollLeft + deltaX, maxScrollLeft)
+        );
+        const scrollTop = Math.max(
+            0,
+            Math.min(tbody.scrollTop + deltaY, maxScrollTop)
+        );
+
+        if (
+            scrollLeft === tbody.scrollLeft &&
+            scrollTop === tbody.scrollTop
+        ) {
+            return;
+        }
+
+        e.preventDefault();
+        tbody.scrollLeft = scrollLeft;
+        tbody.scrollTop = scrollTop;
+    };
+
+    /**
+     * Handles document focus changes while a logically focused cell is
+     * temporarily detached by virtualization.
+     *
+     * @param e
+     * The focus event.
+     */
+    private onDocumentFocusIn = (e: FocusEvent): void => {
+        if (!this.focusCursor?.detached) {
+            return;
+        }
+
+        const target = e.target;
+        const isTableTarget = target instanceof Node &&
+            this.tableElement.contains(target);
+
+        this.clearDetachedFocus(!isTableTarget);
+    };
+
+    /**
+     * Clears detached logical focus when the user interacts outside of the
+     * table while the focused cell is not rendered.
+     *
+     * @param e
+     * The pointer event.
+     */
+    private onDocumentPointerDown = (e: PointerEvent): void => {
+        if (!this.focusCursor?.detached) {
+            return;
+        }
+
+        const target = e.target;
+
+        if (
+            target instanceof Node &&
+            this.tableElement.contains(target)
+        ) {
+            return;
+        }
+
+        this.clearDetachedFocus(true);
     };
 
     /**
@@ -479,12 +794,11 @@ class Table {
      * @param e Mouse event
      */
     private onCellContextMenu = (e: MouseEvent): void => {
-        const cell = this.getCellFromElement(e.target);
-        if (!cell || !('column' in cell) || !('row' in cell)) {
+        const tableCell = this.getTableCellFromTarget(e.target);
+        if (!tableCell) {
             return;
         }
 
-        const tableCell = cell as TableCell;
         if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
             e.preventDefault();
         }
@@ -533,27 +847,24 @@ class Table {
             return;
         }
 
-        // Disabled until meaningful functionality is ready.
+        const isContextMenuKey = (
+            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
+        );
 
-
-        // const isContextMenuKey = (
-        //     e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
-        // );
-
-        // if (isContextMenuKey && 'column' in cell && 'row' in cell) {
-        //     const tableCell = cell as TableCell;
-        //     const rect = tableCell.htmlElement.getBoundingClientRect();
-        //     const opened = this.openCellContextMenu(
-        //         tableCell,
-        //         rect.left + 4,
-        //         rect.bottom - 2
-        //     );
-        //     if (opened) {
-        //         e.preventDefault();
-        //         e.stopPropagation();
-        //         return;
-        //     }
-        // }
+        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
+            const tableCell = cell as TableCell;
+            const rect = tableCell.htmlElement.getBoundingClientRect();
+            const opened = this.openCellContextMenu(
+                tableCell,
+                rect.left + 4,
+                rect.bottom - 2
+            );
+            if (opened) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+        }
 
         (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };
@@ -584,7 +895,10 @@ class Table {
             return false;
         }
 
-        const items = options?.items || [];
+        const items =
+            CellContextMenuBuiltInActions.resolveCellContextMenuItems(
+                tableCell
+            );
         if (!items.length) {
             return false; // Keep native browser menu
         }
@@ -619,22 +933,293 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
+        const viewportTopInset = this.getViewportTopInset();
+
         if (this.virtualRows) {
-            this.tbodyElement.scrollTop =
-                index * this.rowsVirtualizer.defaultRowHeight;
+            this.tbodyElement.scrollTop = Math.max(
+                0,
+                index * this.rowsVirtualizer.defaultRowHeight -
+                viewportTopInset
+            );
             return;
         }
 
         const rowClass = '.' + Globals.getClassName('rowElement');
-        const firstRowTop = this.tbodyElement
-            .querySelectorAll(rowClass)[0]
-            .getBoundingClientRect().top;
+        const rows = this.tbodyElement.querySelectorAll(rowClass);
+        const firstRow = rows[0];
+        const safeIndex = Math.min(
+            Math.max(0, index),
+            Math.max(0, rows.length - 1)
+        );
+        const targetRow = rows[safeIndex];
 
-        this.tbodyElement.scrollTop = (
-            this.tbodyElement
-                .querySelectorAll(rowClass)[index]
-                .getBoundingClientRect().top
-        ) - firstRowTop;
+        if (!firstRow || !targetRow) {
+            return;
+        }
+
+        const firstRowTop = firstRow.getBoundingClientRect().top;
+
+        this.tbodyElement.scrollTop = Math.max(
+            0,
+            targetRow.getBoundingClientRect().top -
+            firstRowTop -
+            viewportTopInset
+        );
+    }
+
+    /**
+     * Scrolls the table to the specified column.
+     *
+     * @param index
+     * The global index of the column to scroll to.
+     *
+     * @internal
+     */
+    public scrollToColumn(index: number): void {
+        this.ensureColumnFullyVisible(index);
+    }
+
+    /**
+     * Ensures that a column is fully visible inside the scrollable body.
+     *
+     * @param index
+     * The global index of the column to reveal.
+     *
+     * @internal
+     */
+    public ensureColumnFullyVisible(index: number): void {
+        const column = this.getColumnByIndex(index);
+
+        if (!column) {
+            return;
+        }
+
+        const left = this.columnLayout.getColumnLeft(column.index);
+        const right = this.columnLayout.getColumnRight(column.index);
+        const { tbodyElement } = this;
+        const visibleLeft = tbodyElement.scrollLeft;
+        const visibleRight = visibleLeft + tbodyElement.clientWidth;
+        let nextScrollLeft = visibleLeft;
+
+        if (left < visibleLeft) {
+            nextScrollLeft = left;
+        } else if (right > visibleRight) {
+            nextScrollLeft = Math.max(
+                0,
+                right - tbodyElement.clientWidth
+            );
+        }
+
+        if (nextScrollLeft !== visibleLeft) {
+            tbodyElement.scrollLeft = nextScrollLeft;
+            this.header?.scrollHorizontally(tbodyElement.scrollLeft);
+        }
+    }
+
+    /**
+     * Returns the top inset of the visible table body area. Composed modules
+     * can extend this via the `getViewportTopInset` event.
+     */
+    public getViewportTopInset(): number {
+        const eventObject = {
+            top: 0
+        };
+
+        fireEvent(this, 'getViewportTopInset', eventObject);
+        return eventObject.top;
+    }
+
+    /**
+     * Ensures that a row is fully visible inside the scrollable body.
+     *
+     * @param row
+     * The row to reveal.
+     */
+    public ensureRowFullyVisible(row: TableRow): void {
+        if (
+            !row.htmlElement.isConnected ||
+            row.htmlElement.parentElement !== this.tbodyElement
+        ) {
+            return;
+        }
+
+        const tbodyRect = this.tbodyElement.getBoundingClientRect();
+        const rowRect = row.htmlElement.getBoundingClientRect();
+        const visibleTop = tbodyRect.top + this.getViewportTopInset();
+        const visibleBottom = tbodyRect.bottom;
+        const visibleHeight = Math.max(visibleBottom - visibleTop, 0);
+        const maxScrollTop = Math.max(
+            this.tbodyElement.scrollHeight - this.tbodyElement.clientHeight,
+            0
+        );
+        let nextScrollTop = this.tbodyElement.scrollTop;
+
+        if (rowRect.top < visibleTop) {
+            nextScrollTop -= visibleTop - rowRect.top;
+        } else if (rowRect.bottom > visibleBottom) {
+            if (rowRect.height >= visibleHeight) {
+                nextScrollTop += rowRect.top - visibleTop;
+            } else {
+                nextScrollTop += rowRect.bottom - visibleBottom;
+            }
+        }
+
+        this.tbodyElement.scrollTop = Math.max(
+            0,
+            Math.min(nextScrollTop, maxScrollTop)
+        );
+    }
+
+    /**
+     * Focuses a body cell by its row index in the rendered table order.
+     *
+     * @param rowIndex
+     * The target row index.
+     *
+     * @param columnIndex
+     * The target column index.
+     */
+    public focusCellByRowIndex(rowIndex: number, columnIndex: number): void {
+        if (
+            columnIndex < 0 ||
+            columnIndex >= this.columns.length ||
+            rowIndex < 0 ||
+            rowIndex >= this.rowsVirtualizer.rowCount
+        ) {
+            return;
+        }
+
+        const targetRow = this.rows.find(
+            (row): boolean => row.index === rowIndex
+        );
+        if (!this.isColumnRendered(columnIndex)) {
+            this.pendingFocusCursor = [rowIndex, columnIndex];
+            this.scrollToColumn(columnIndex);
+            this.scrollToRow(rowIndex);
+            return;
+        }
+
+        const targetCell = targetRow?.getCellByColumnIndex(columnIndex);
+
+        if (targetCell) {
+            delete this.pendingFocusCursor;
+            this.clearDetachedFocus();
+            targetCell.htmlElement.focus({
+                preventScroll: true
+            });
+            this.ensureColumnFullyVisible(columnIndex);
+
+            if (targetRow?.htmlElement.parentElement === this.tbodyElement) {
+                this.ensureRowFullyVisible(targetRow);
+            }
+            return;
+        }
+
+        this.pendingFocusCursor = [rowIndex, columnIndex];
+        this.scrollToRow(rowIndex);
+    }
+
+    /**
+     * Marks the current logical focus as temporarily detached by
+     * virtualization.
+     *
+     * @param cursor
+     * Focus cursor to restore when the cell is rendered again.
+     */
+    public preserveFocusDuringDetach(cursor?: FocusCursor): void {
+        if (cursor) {
+            this.focusCursor = {
+                ...cursor,
+                detached: true
+            };
+        } else if (this.focusCursor) {
+            this.focusCursor.detached = true;
+        }
+    }
+
+    /**
+     * Returns whether the provided cell currently owns detached logical focus.
+     *
+     * @param rowId
+     * Target row ID.
+     *
+     * @param columnIndex
+     * Target column index.
+     */
+    public hasDetachedFocusAt(
+        rowId: RowId | undefined,
+        columnIndex: number
+    ): boolean {
+        const { focusCursor } = this;
+
+        return !!(
+            rowId !== void 0 &&
+            focusCursor &&
+            focusCursor.detached &&
+            focusCursor.type !== 'header' &&
+            focusCursor.rowId === rowId &&
+            focusCursor.columnIndex === columnIndex
+        );
+    }
+
+    /**
+     * Clears detached logical focus state and optionally the logical focus
+     * cursor itself.
+     *
+     * @param clearFocusCursor
+     * Whether to also clear the logical focus cursor.
+     */
+    public clearDetachedFocus(clearFocusCursor: boolean = false): void {
+        if (clearFocusCursor) {
+            delete this.focusCursor;
+        } else if (this.focusCursor) {
+            delete this.focusCursor.detached;
+        }
+    }
+
+    /**
+     * Restores focus to a rendered body cell. Composed modules can prevent the
+     * default focus transfer via the `beforeRestoreCellFocus` event.
+     *
+     * @param cell
+     * Rendered body cell to focus.
+     *
+     * @param rowIndex
+     * Target row index in the rendered/projected order.
+     *
+     * @param columnIndex
+     * Target column index.
+     *
+     * @param ensureVisible
+     * Whether to scroll the target column fully into view. Should be `false`
+     * for passive focus re-attachment during scroll-driven virtualization
+     * re-renders, so the user's scroll position is not fought.
+     */
+    public restoreRenderedCellFocus(
+        cell: Cell | undefined,
+        rowIndex: number,
+        columnIndex: number,
+        ensureVisible: boolean = true
+    ): void {
+        if (!cell) {
+            return;
+        }
+
+        const eventObject: RestoreCellFocusEvent = {
+            cell,
+            columnIndex,
+            rowIndex
+        };
+
+        fireEvent(this, 'beforeRestoreCellFocus', eventObject, (): void => {
+            this.clearDetachedFocus();
+            cell.htmlElement.focus({
+                preventScroll: true
+            });
+            if (ensureVisible) {
+                this.ensureColumnFullyVisible(columnIndex);
+            }
+        });
     }
 
     /**
@@ -694,15 +1279,26 @@ class Table {
         if (!tr) {
             return;
         }
-
-        const rowIndexAttr = tr.getAttribute('data-row-index');
-        if (rowIndexAttr === null) {
+        const tbody = tr.parentElement;
+        if (!tbody) {
             return;
         }
 
-        const rowIndex = parseInt(rowIndexAttr, 10);
-        const firstRowIndex = this.rows[0]?.index ?? 0;
-        const row = this.rows[rowIndex - firstRowIndex];
+        let row: TableRow | undefined;
+        if (tbody === this.tbodyElement) {
+            const rowIndexAttr = tr.getAttribute('data-row-index');
+            if (rowIndexAttr === null) {
+                return;
+            }
+
+            const rowIndex = parseInt(rowIndexAttr, 10);
+            row = this.getRenderedRowByIndex(rowIndex);
+        } else {
+            row = this.bodySections.find(
+                (section): boolean => section.tbodyElement === tbody
+            )?.getRowByElement(tr);
+        }
+
         if (!row) {
             return;
         }
@@ -719,27 +1315,28 @@ class Table {
      * Destroys the grid table.
      */
     public destroy(): void {
-        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
-        this.tbodyElement.removeEventListener('click', this.onCellClick);
-        this.tbodyElement.removeEventListener('dblclick', this.onCellDblClick);
-        this.tbodyElement.removeEventListener(
-            'contextmenu',
-            this.onCellContextMenu
+        this.theadElement?.removeEventListener('wheel', this.onHeaderWheel);
+        document.removeEventListener('focusin', this.onDocumentFocusIn, true);
+        document.removeEventListener(
+            'pointerdown',
+            this.onDocumentPointerDown,
+            true
         );
-        this.tbodyElement.removeEventListener(
-            'mousedown', this.onCellMouseDown
-        );
-        this.tbodyElement.removeEventListener(
-            'mouseover', this.onCellMouseOver
-        );
-        this.tbodyElement.removeEventListener('mouseout', this.onCellMouseOut);
-        this.tbodyElement.removeEventListener('keydown', this.onCellKeyDown);
+        this.removeBodyEventListeners(this.tbodyElement);
+        for (const section of this.bodySections) {
+            this.removeBodyEventListeners(
+                section.tbodyElement
+            );
+        }
+        this.bodySections.length = 0;
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
         this.cellContextMenu?.hide();
         delete this.cellContextMenu;
+        this.cellContextMenuLongPress?.removeEvents();
+        delete this.cellContextMenuLongPress;
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i]?.destroy();
@@ -776,11 +1373,16 @@ class Table {
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
+        this.columnsVirtualizer.refresh();
+
+        this.header?.scrollHorizontally(meta.scrollLeft);
+        fireEvent(this, 'bodyScroll', {
+            scrollLeft: meta.scrollLeft,
+            scrollTop: meta.scrollTop
+        });
 
         if (meta.focusCursor) {
-            const [rowIndex, columnIndex] = meta.focusCursor;
-            const row = this.rows[rowIndex - this.rows[0].index];
-            row?.cells[columnIndex]?.htmlElement.focus();
+            this.focusCellFromCursor(meta.focusCursor);
         }
     }
 
@@ -803,17 +1405,137 @@ class Table {
      * The ID of the column.
      */
     public getColumn(id: string): Column | undefined {
-        const columns = this.grid.enabledColumns;
+        return this.columnsById[id];
+    }
 
-        if (!columns) {
-            return;
-        }
-        const columnIndex = columns.indexOf(id);
-        if (columnIndex < 0) {
-            return;
+    /**
+     * Returns the column with the provided global index.
+     *
+     * @param index
+     * The global column index.
+     *
+     * @internal
+     */
+    public getColumnByIndex(index: number): Column | undefined {
+        return this.columns[index];
+    }
+
+    /**
+     * Returns columns that are currently rendered.
+     *
+     * @internal
+     */
+    public getRenderedColumns(): Column[] {
+        return (
+            this.renderedColumns.length || this.virtualColumns ?
+                this.renderedColumns :
+                this.columns
+        );
+    }
+
+    /**
+     * Returns whether the column is rendered.
+     *
+     * @param column
+     * Column ID or global column index.
+     *
+     * @internal
+     */
+    public isColumnRendered(column: string|number): boolean {
+        const columnObject = typeof column === 'number' ?
+            this.getColumnByIndex(column) :
+            this.getColumn(column);
+
+        if (!columnObject) {
+            return false;
         }
 
-        return this.columns[columnIndex];
+        if (!this.virtualColumns) {
+            return true;
+        }
+
+        return (
+            columnObject.index >= this.columnsVirtualizer.columnCursor &&
+            columnObject.index <= this.columnsVirtualizer.columnEnd
+        );
+    }
+
+    /**
+     * Returns the horizontal offset of the first rendered column.
+     *
+     * @internal
+     */
+    public getRenderedColumnOffset(): number {
+        return this.virtualColumns ?
+            this.columnLayout.getColumnLeft(
+                this.columnsVirtualizer.columnCursor
+            ) :
+            0;
+    }
+
+    /**
+     * Synchronizes rendered column cells and headers with the current range.
+     *
+     * @internal
+     */
+    public async updateRenderedColumns(): Promise<void> {
+        for (const row of this.getRenderedRows()) {
+            if (row.rendered) {
+                await row.syncRenderedCells();
+            }
+        }
+
+        if (this.grid.options?.rendering?.header?.enabled) {
+            if (!this.header) {
+                this.header = new TableHeader(this);
+                await this.header.render();
+            } else {
+                await this.header.syncRenderedColumns();
+            }
+        }
+
+        this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
+        this.header?.reflow();
+        this.rowsVirtualizer.reflowRows();
+        const { focusCursor } = this;
+
+        if (
+            focusCursor?.detached &&
+            focusCursor.type === 'header'
+        ) {
+            this.restoreHeaderFocusFromCursor(focusCursor, false);
+        }
+
+        if (this.pendingFocusCursor) {
+            const [rowIndex, columnIndex] = this.pendingFocusCursor;
+            const row = this.getRenderedRowByIndex(rowIndex);
+            const cell = row?.getCellByColumnIndex(columnIndex);
+
+            if (cell) {
+                delete this.pendingFocusCursor;
+                this.restoreRenderedCellFocus(cell, rowIndex, columnIndex);
+            }
+        } else if (
+            focusCursor &&
+            focusCursor.type !== 'header' &&
+            !focusCursor.bodySectionId
+        ) {
+            const rowIndex = await this.grid.dataProvider?.getRowIndex(
+                focusCursor.rowId
+            );
+            const row = defined(rowIndex) ?
+                this.getRenderedRowByIndex(rowIndex) :
+                void 0;
+
+            if (defined(rowIndex)) {
+                this.restoreRenderedCellFocus(
+                    row?.getCellByColumnIndex(focusCursor.columnIndex),
+                    rowIndex,
+                    focusCursor.columnIndex,
+                    false
+                );
+            }
+        }
     }
 
     /**
@@ -823,9 +1545,206 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: RowId): TableRow | undefined {
-        return this.rows.find((row): boolean => row.id === id);
+        return this.rows.find((row): boolean => row.id === id) ||
+            this.getRenderedRows().find((row): boolean => row.id === id);
     }
+
+    /**
+     * Returns all rendered rows in visual order.
+     *
+     * @internal
+     */
+    public getRenderedRows(): TableRow[] {
+        return [
+            ...([] as TableRow[]).concat(
+                ...this.bodySections
+                    .filter((section): boolean => section.position === 'before')
+                    .map((section): TableRow[] => section.getRows())
+            ),
+            ...this.rows,
+            ...([] as TableRow[]).concat(
+                ...this.bodySections
+                    .filter((section): boolean => section.position === 'after')
+                    .map((section): TableRow[] => section.getRows())
+            )
+        ];
+    }
+
+    /**
+     * Returns the rendered row with the provided presentation index.
+     *
+     * @param index
+     * The row index in the presentation table.
+     *
+     * @internal
+     */
+    public getRenderedRowByIndex(index: number): TableRow | undefined {
+        return this.rows.find((row): boolean => row.index === index);
+    }
+
+    public async syncAriaRowIndexes(): Promise<void> {
+        const headerRowsCount = this.header?.rows.length ?? 0;
+        const rows = this.getRenderedRows();
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            this.grid.accessibility?.setRowIndex(
+                rows[i].htmlElement,
+                i + headerRowsCount + 1
+            );
+        }
+
+        const baseRowCount = await this.grid.dataProvider?.getRowCount() || 0;
+        const tableElement = this.grid.tableElement;
+        if (tableElement) {
+            tableElement.setAttribute(
+                'aria-rowcount',
+                (
+                    baseRowCount +
+                    this.bodySections.reduce(
+                        (count, section): number =>
+                            count + section.getRows().length,
+                        0
+                    ) +
+                    headerRowsCount
+                ) + ''
+            );
+        }
+    }
+
+    private focusCellFromCursor(
+        cursor: FocusCursor,
+        defer: boolean = false
+    ): void {
+        const focus = (): void => {
+            if (cursor.type === 'header') {
+                this.restoreHeaderFocusFromCursor(cursor);
+                return;
+            }
+
+            if (cursor.bodySectionId) {
+                this.bodySections.find(
+                    (section): boolean => section.id === cursor.bodySectionId
+                )?.getRowById(cursor.rowId)
+                    ?.getCellByColumnIndex(cursor.columnIndex)
+                    ?.htmlElement.focus();
+                return;
+            }
+
+            void this.grid.dataProvider?.getRowIndex(cursor.rowId).then((
+                rowIndex
+            ): void => {
+                if (rowIndex === void 0) {
+                    return;
+                }
+
+                if (defer) {
+                    this.focusCellByRowIndex(rowIndex, cursor.columnIndex);
+                    return;
+                }
+
+                const row = this.getRenderedRowByIndex(rowIndex);
+                this.restoreRenderedCellFocus(
+                    row?.getCellByColumnIndex(cursor.columnIndex),
+                    rowIndex,
+                    cursor.columnIndex
+                );
+            });
+        };
+
+        if (defer) {
+            setTimeout(focus);
+        } else {
+            focus();
+        }
+    }
+
+    /**
+     * Restores focus to a rendered header cell when its logical focus was
+     * detached by column virtualization.
+     *
+     * @param cursor
+     * Focus cursor to restore.
+     *
+     * @param ensureVisible
+     * Whether to scroll the target column fully into view. Should be `false`
+     * for passive focus re-attachment during scroll-driven virtualization
+     * re-renders, so the user's scroll position is not fought.
+     */
+    private restoreHeaderFocusFromCursor(
+        cursor: FocusCursor | undefined = this.focusCursor,
+        ensureVisible: boolean = true
+    ): void {
+        if (cursor?.type !== 'header') {
+            return;
+        }
+
+        const rowIndex = this.header ?
+            this.header.rows.length + (cursor.rowIndex || 0) :
+            -1;
+        const cell = this.header?.rows[rowIndex]?.getCellByKey(
+            cursor.cellKey
+        );
+
+        if (!cell) {
+            return;
+        }
+
+        this.clearDetachedFocus(true);
+
+        if (cursor.toolbarButtonIndex !== void 0) {
+            const button = cell.toolbar?.buttons[cursor.toolbarButtonIndex];
+
+            if (button) {
+                button.focus({
+                    preventScroll: true
+                });
+                if (ensureVisible) {
+                    this.ensureColumnFullyVisible(cursor.columnIndex);
+                }
+                return;
+            }
+        }
+
+        cell.htmlElement.focus({
+            preventScroll: true
+        });
+        if (ensureVisible) {
+            this.ensureColumnFullyVisible(cursor.columnIndex);
+        }
+    }
+
 }
+
+export type FocusCursor = {
+    columnIndex: number;
+    detached?: boolean;
+    type?: 'body';
+    rowId: RowId;
+    bodySectionId?: string;
+} | {
+    cellKey: string;
+    columnIndex: number;
+    detached?: boolean;
+    rowIndex: number;
+    toolbarButtonIndex?: number;
+    type: 'header';
+};
+
+export interface TableBodySection {
+    id: string;
+    position: 'before'|'after';
+    tbodyElement: HTMLElement;
+    getRows: () => TableRow[];
+    getRowByElement: (rowElement: HTMLElement) => TableRow | undefined;
+    getRowById: (rowId: RowId) => TableRow | undefined;
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Represents the metadata of the viewport state. It is used to save the
@@ -834,8 +1753,19 @@ class Table {
 export interface ViewportStateMetadata {
     scrollTop: number;
     scrollLeft: number;
-    columnResizing: ColumnResizingMode;
-    focusCursor?: [number, number];
+    columnResizing?: ColumnResizingMode;
+    focusCursor?: FocusCursor;
+}
+
+/**
+ * Event object emitted before focus is restored to a rendered body cell.
+ */
+export interface RestoreCellFocusEvent {
+    cell: Cell;
+    columnIndex: number;
+    rowIndex: number;
+    defaultPrevented?: boolean;
+    preventDefault?: () => void;
 }
 
 

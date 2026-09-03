@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,7 +34,6 @@ import {
     addEvent,
     extend,
     isNumber,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -125,10 +125,8 @@ function onTooltipHeaderFormatter(
             );
         }
 
-        const groupStart = pick(
-                series.groupMap?.[point.index].groupStart,
-                point.key
-            ),
+        const groupStart =
+                series.groupMap?.[point.index].groupStart ?? point.key,
             groupEnd = groupStart + (currentDataGrouping?.totalRange || 0) - 1;
 
         formattedKey = time.dateFormat(xDateFormat, groupStart);
@@ -219,7 +217,7 @@ export default DataGroupingComposition;
  * @interface Highcharts.DataGroupingResultObject
  *//**
  * @name Highcharts.DataGroupingResultObject#modified
- * @type {Highcharts.DataTableCore}
+ * @type {Highcharts.DataTable}
  *//**
  * @name Highcharts.DataGroupingResultObject#groupMap
  * @type {Array<DataGroupingInfoObject>}
@@ -490,6 +488,12 @@ export default DataGroupingComposition;
  */
 
 /**
+ * Deprecated. Use
+ * [anchor](#plotOptions.series.dataGrouping.anchor), or
+ * [firstAnchor](#plotOptions.series.dataGrouping.firstAnchor) and
+ * [lastAnchor](#plotOptions.series.dataGrouping.lastAnchor)
+ * instead.
+ *
  * Normally, a group is indexed by the start of that group, so for example
  * when 30 daily values are grouped into one month, that month's x value
  * will be the 1st of the month. This apparently shifts the data to
@@ -499,7 +503,7 @@ export default DataGroupingComposition;
  *
  * @type      {boolean}
  * @default   false
- * @deprecated
+ * @deprecated 9.1.0
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
 

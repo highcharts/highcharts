@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,7 +39,7 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The APO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.apo
  *
@@ -173,6 +174,7 @@ class APOIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface APOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -190,6 +192,7 @@ extend(APOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         apo: typeof APOIndicator;
@@ -204,6 +207,7 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
  *
  * */
 
+/** @internal */
 export default APOIndicator;
 
 /* *

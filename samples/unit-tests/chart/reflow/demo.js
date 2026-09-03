@@ -71,7 +71,7 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
             container.style.width = '300px';
 
             if (navigator.userAgent.indexOf('Edge') === -1) {
-                // triggers page reload on BrowserStack
+                // Triggers page reload on BrowserStack
                 Highcharts.fireEvent(window, 'resize');
             }
         }, 0);
@@ -341,3 +341,71 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
         );
     }
 });
+
+QUnit.test(
+    'A11y elements must not inflate chart height in styled mode',
+    assert => {
+        if (!window.requestAnimationFrame) {
+            assert.ok(true, 'Skipped: requestAnimationFrame unavailable.');
+            return;
+        }
+
+        const done = assert.async();
+        const renderTo = document.createElement('div');
+        renderTo.style.width = '600px';
+
+        // No explicit height, renderTo height becomes content-driven, which
+        // is the configuration that used to enter the loop
+        document.getElementById('container').appendChild(renderTo);
+
+        const chart = Highcharts.chart(renderTo, {
+            chart: {
+                styledMode: true,
+                animation: false
+            },
+            accessibility: {
+                enabled: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        // Announcer container must be layout-hidden inline
+        assert.ok(
+            chart.announcerContainer,
+            'A11y announcer container should exist.'
+        );
+
+        const initialHeight = chart.chartHeight;
+
+        // Force content into the live regions. Without the fix this pushed
+        // renderTo taller on every ResizeObserver cycle
+        chart.announcerContainer
+            .querySelectorAll('div')
+            .forEach(div => {
+                div.innerHTML =
+                    'announcement text that would push renderTo taller';
+            });
+
+        // Allow ResizeObserver callbacks and the 100 ms reflowTimeout to settle
+        setTimeout(() => {
+            try {
+                assert.strictEqual(
+                    chart.chartHeight,
+                    initialHeight,
+                    'Chart height should stay stable (no setSize loop).'
+                );
+
+                assert.ok(
+                    chart.announcerContainer.getBoundingClientRect()
+                        .height <= 1,
+                    'Announcer container should not take vertical space in ' +
+                    'renderTo.'
+                );
+            } finally {
+                done();
+            }
+        }, 300);
+    }
+);

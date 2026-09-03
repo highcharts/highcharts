@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Askel Eirik Johansson, Piotr Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,7 +35,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import { isNumber, isString, pick } from '../../Shared/Utilities.js';
+import { isNumber, isString } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -73,15 +74,13 @@ class FlowMapPoint extends MapLinePoint {
             .forEach(function (toOrFrom): void {
                 valid = !!(valid && (toOrFrom && (
                     isString(toOrFrom) || ( // Point id or has lat/lon coords
-                        isNumber(pick(
-                            (toOrFrom as LonLatArray)[0],
+                        isNumber(
+                            (toOrFrom as LonLatArray)[0] ??
                             (toOrFrom as MapLonLatObject).lat
-                        )
                         ) &&
-                        isNumber(pick(
-                            (toOrFrom as LonLatArray)[1],
+                        isNumber(
+                            (toOrFrom as LonLatArray)[1] ??
                             (toOrFrom as MapLonLatObject).lon
-                        )
                         )
                     )
                 )));

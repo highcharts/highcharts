@@ -6,6 +6,7 @@
 const gulp = require('gulp');
 const log = require('../libs/log');
 const fs = require('fs-extra');
+const glob = require('glob');
 // const fs = require('fs');
 // const fsLib = require('../libs/fs');
 const { join } = require('path');
@@ -23,6 +24,30 @@ const releaseRepos = {
     },
     Dashboards: 'dashboards-dist'
 };
+
+const releaseRepositoryMetadata = [
+    '^[.]git($|/)',
+    '^[.]github($|/)',
+    '^[.]gitignore$',
+    '^[.]npmignore$',
+    '^README[.]md$',
+    '^LICENSE[.]txt$',
+    '^SECURITY[.]md$',
+    '^package[.]json$',
+    '^bower[.]json$'
+];
+
+function getFilesForReleaseCleanup(folder) {
+    return glob.sync('**/*', {
+        cwd: folder,
+        dot: true,
+        follow: false,
+        ignore: {
+            childrenIgnored: path => /^[.]git(?:hub)?$/u.test(path.relativePosix())
+        },
+        nodir: true
+    }).map(file => file.replace(/\\/gu, '/'));
+}
 
 /**
  * Asks user a question, and waits for input.
@@ -163,12 +188,59 @@ async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
  * @return {Promise<Array<*>>} result
  */
 async function removeFilesInFolder(folder, exceptions) {
-    const files = getFilesInFolder(folder, true, '');
+    const files = getFilesForReleaseCleanup(folder);
     const promises = files
     // Filter out files that should be kept
         .filter(file => !exceptions.some(pattern => file.match(pattern)))
         .map(file => removeFile(join(folder, file)));
     return Promise.all(promises);
+}
+
+/**
+ * Synchronize release package metadata before versioning.
+ * @param {Record<string, any>} json
+ * JSON object to update.
+ * @param {string} [productName] The product name.
+ * @return {Record<string, any>}
+ * Updated JSON object.
+ */
+function updateReleaseJSON(json, productName) {
+    if (productName === 'Highcharts') {
+        // The UMD submodules in `modules/*.js` read the shared namespace from
+        // `window._Highcharts`, which only the UMD bundle assigns. Declaring an
+        // ESM entry point makes bundlers resolve the bare specifier to the pure
+        // ESM bundle, while subpath imports keep loading UMD, leaving the
+        // namespace unassigned (#25072). Until subpath resolution follows the
+        // same bundle, the release package must not advertise one.
+        delete json.module;
+
+        json.types = (
+            json.main ?
+                json.main.replace(/\.js$/u, '.d.ts') :
+                'highcharts.d.ts'
+        );
+
+        if (json.dependencies) {
+            delete json.dependencies.jspdf;
+            delete json.dependencies['svg2pdf.js'];
+        }
+
+        json.peerDependencies = Object.assign({}, json.peerDependencies, {
+            jspdf: '^4.1.0',
+            'svg2pdf.js': '^2.7.0'
+        });
+
+        json.peerDependenciesMeta = Object.assign(
+            {},
+            json.peerDependenciesMeta,
+            {
+                jspdf: { optional: true },
+                'svg2pdf.js': { optional: true }
+            }
+        );
+    }
+
+    return json;
 }
 
 /**
@@ -186,32 +258,7 @@ function updateJSONFiles(version, files, productName) {
         files.forEach(function (file) {
             const fileData = fs.readFileSync('../' + releaseRepo + '/' + file + '.json');
             const json = JSON.parse(fileData);
-            if (productName === 'Highcharts') {
-                json.types = (
-                    json.main ?
-                        json.main.replace(/\.js$/u, '.d.ts') :
-                        'highcharts.d.ts'
-                );
-
-                if (json.dependencies) {
-                    delete json.dependencies.jspdf;
-                    delete json.dependencies['svg2pdf.js'];
-                }
-
-                json.peerDependencies = Object.assign({}, json.peerDependencies, {
-                    jspdf: '^4.1.0',
-                    'svg2pdf.js': '^2.7.0'
-                });
-
-                json.peerDependenciesMeta = Object.assign(
-                    {},
-                    json.peerDependenciesMeta,
-                    {
-                        jspdf: { optional: true },
-                        'svg2pdf.js': { optional: true }
-                    }
-                );
-            }
+            updateReleaseJSON(json, productName);
             json.version = version;
             const outputJson = JSON.stringify(json, null, '  ');
             fs.writeFileSync('../' + releaseRepo + '/' + file + '.json', outputJson);
@@ -237,6 +284,7 @@ function copyFiles() {
     }];
 
     const files = {
+        'SECURITY.md': join(pathToDistRepo, 'SECURITY.md')
         // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
         // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
         // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
@@ -520,8 +568,7 @@ async function release() {
             cwd: pathToDistRepo
         });
 
-        const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt'];
-        await removeFilesInFolder(pathToDistRepo, keepFiles);
+        await removeFilesInFolder(pathToDistRepo, releaseRepositoryMetadata);
         log.message('Successfully removed content of ' + pathToDistRepo);
     }
 
@@ -557,3 +604,9 @@ release.flags = {
 };
 
 gulp.task('dist-release', release);
+
+module.exports = {
+    releaseRepositoryMetadata,
+    removeFilesInFolder,
+    updateReleaseJSON
+};

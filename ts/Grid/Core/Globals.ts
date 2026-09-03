@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -36,9 +37,10 @@ export type ClassNameKey = keyof typeof rawClassNames;
 
 export const classNamePrefix: string = 'hcg-';
 export const version = '@product.version@';
-
+export const buildDate = '@product.date@';
 export const rawClassNames = {
     container: 'container',
+    themed: 'themed',
     tableElement: 'table',
     captionElement: 'caption',
     descriptionElement: 'description',
@@ -55,9 +57,11 @@ export const rawClassNames = {
     syncedCell: 'synced-cell',
     syncedColumn: 'synced-column',
     editedCell: 'edited-cell',
+    cellEditingContainer: 'cell-editing-container',
     mockedRow: 'mocked-row',
     rowsContentNowrap: 'rows-content-nowrap',
     virtualization: 'virtualization',
+    columnVirtualization: 'column-virtualization',
     scrollableContent: 'scrollable-content',
     headerCell: 'header-cell',
     headerCellContainer: 'header-cell-container',
@@ -92,9 +96,9 @@ export const rawClassNames = {
     icon: 'icon',
     iconSelected: 'icon-selected',
     iconHighlighted: 'icon-highlighted',
-    iconSearch: 'icon-search',
     popupContent: 'popup-content',
     columnFilterWrapper: 'column-filter-wrapper',
+    columnFilterOperatorSpacer: 'column-filter-operator-spacer',
     menuContainer: 'menu-container',
     menuItem: 'menu-item',
     menuHeader: 'menu-header',
@@ -120,11 +124,26 @@ export const rawClassNames = {
     leftAlign: 'left'
 } as const;
 
-export const win = window;
+export const win = (
+    typeof window !== 'undefined' ?
+        window :
+        {}
+) as (Window&typeof globalThis);
 export const composed: Array<string> = [];
 export const userAgent = (win.navigator && win.navigator.userAgent) || '';
 export const isChrome = userAgent.indexOf('Chrome') !== -1;
 export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
+export const isIos = !!win.navigator && (
+    /iPhone|iPod|iPad/i.test(userAgent) ||
+    (
+        win.navigator.platform === 'MacIntel' &&
+        win.navigator.maxTouchPoints > 1
+    )
+);
+export const isTouchDevice = !!(
+    'ontouchstart' in win ||
+    (win.navigator && win.navigator.maxTouchPoints > 0)
+);
 export const getClassName = (classNameKey: ClassNameKey): string =>
     classNamePrefix + rawClassNames[classNameKey];
 
@@ -138,11 +157,14 @@ export const getClassName = (classNameKey: ClassNameKey): string =>
 export default {
     classNamePrefix,
     version,
+    buildDate,
     rawClassNames,
     win,
     composed,
     userAgent,
     isChrome,
     isSafari,
+    isIos,
+    isTouchDevice,
     getClassName
 } as const;

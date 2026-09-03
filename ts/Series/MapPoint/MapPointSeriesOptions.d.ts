@@ -108,13 +108,22 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
      */
     data?: Array<MapPointPointOptions>;
 
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: (
+        MapPointSeriesDataLabelsOptions|Array<MapPointSeriesDataLabelsOptions>
+    );
 
     legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     states?: SeriesStatesOptions<MapPointSeriesOptions>;
 
     tooltip?: MapPointSeriesTooltipOptions;
+}
+
+export interface MapPointSeriesDataLabelsOptions extends DataLabelOptions {
+    style?: DataLabelOptions['style'] & {
+        /** @default ${palette.neutralColor100} */
+        color?: Required<DataLabelOptions>['style']['color'];
+    };
 }
 
 export interface MapPointSeriesTooltipOptions

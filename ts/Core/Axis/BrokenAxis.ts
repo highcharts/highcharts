@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,8 +36,7 @@ import {
     find,
     fireEvent,
     isArray,
-    isNumber,
-    pick
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -365,7 +365,7 @@ namespace BrokenAxis {
     /** @internal */
     function onSeriesAfterRender(this: Series): void {
         this.drawBreaks(this.xAxis, ['x']);
-        this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
+        this.drawBreaks(this.yAxis, (this.pointArrayMap ?? ['y']));
     }
 
     /** @internal */
@@ -388,7 +388,7 @@ namespace BrokenAxis {
                 breaks = brokenAxis?.breakArray || [];
                 threshold = axis.isXAxis ?
                     axis.min :
-                    pick(series.options.threshold, axis.min);
+                    (series.options.threshold ?? axis.min);
 
                 points.forEach(function (point: Point): void {
                     y = (point as any)['stack' + key.toUpperCase()] ??
@@ -783,10 +783,8 @@ namespace BrokenAxis {
                     if (Additions.isInBreak(breaks[i], val)) {
                         inbrk = true;
                         if (!keep) {
-                            keep = pick(
-                                (breaks as any)[i].showPoints,
-                                !axis.isXAxis
-                            );
+                            keep =
+                                (breaks as any)[i].showPoints ?? !axis.isXAxis;
                         }
                     }
                 }
@@ -1054,7 +1052,7 @@ namespace BrokenAxis {
                 };
             }
 
-            if (pick(redraw, true)) {
+            if (redraw ?? true) {
                 axis.chart.redraw();
             }
         }

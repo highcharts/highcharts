@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,21 +29,22 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 export interface GaugeSeriesDialOptions {
     backgroundColor: ColorType;
-    baseLength: string;
-    baseWidth: number;
+    baseLength: number|string;
+    baseWidth: number|string;
     borderColor: ColorType;
+    borderRadius: number|string;
     borderWidth: number;
     path?: SVGPath;
-    radius: string;
-    rearLength: string;
-    topWidth: number;
+    radius: number|string;
+    rearLength: number|string;
+    topWidth: number|string;
 }
 
 export interface GaugeSeriesPivotOptions {
     backgroundColor: ColorType;
     borderColor: ColorType;
     borderWidth: number;
-    radius: number;
+    radius: number|string;
 }
 
 export interface GaugeSeriesOptions extends LineSeriesOptions {

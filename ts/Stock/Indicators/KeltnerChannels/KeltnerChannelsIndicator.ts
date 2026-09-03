@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,7 +39,7 @@ import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Keltner Channels series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.keltnerchannels
  *
@@ -247,6 +248,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface KeltnerChannelsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -270,6 +272,7 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
@@ -283,6 +286,7 @@ SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
  *
  * */
 
+/** @internal */
 export default KeltnerChannelsIndicator;
 
 /* *

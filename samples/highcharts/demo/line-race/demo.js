@@ -39,7 +39,7 @@ const chart = Highcharts.chart('container', {
             // Store the data for later use, and remove it from the series
             for (let i = 0; i < options.series.length; i++) {
                 formatPoints[i] = arrToAssociative(options.series[i].data);
-                options.series[i].data = null;
+                options.series[i].data = [];
             }
         }
     },

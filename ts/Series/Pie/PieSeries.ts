@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,7 +27,6 @@ const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';
@@ -36,8 +36,7 @@ import {
     clamp,
     extend,
     fireEvent,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -72,12 +71,6 @@ declare module '../../Core/Series/SeriesBase' {
 
         /** @internal */
         updateTotals?(): void;
-    }
-}
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        brightness?: number;
     }
 }
 
@@ -154,10 +147,8 @@ class PieSeries extends Series {
                 // Start values
                     graphic.attr({
                     // Animate from inner radius (#779)
-                        r: pick(
-                            point.startR,
-                            (series.center && series.center[3] / 2
-                            )),
+                        r: point.startR ??
+                            (series.center && series.center[3] / 2),
                         start: startAngleRad,
                         end: startAngleRad
                     });
@@ -216,7 +207,8 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || Palette.neutralColor20
+                    stroke: options.color ||
+                        'var(--highcharts-neutral-color-20)'
                 });
             }
 
@@ -265,7 +257,7 @@ class PieSeries extends Series {
      * logic in data labels.
      * @internal
      */
-    public getX(
+    public getXPos(
         y: number,
         left: boolean,
         point: PiePoint,
@@ -287,7 +279,10 @@ class PieSeries extends Series {
             (Math.cos(angle) * (radius + distance)) +
             (
                 distance > 0 ?
-                    (left ? -1 : 1) * (dataLabel.padding || 0) :
+                    // 5 is the horizontal part pointing out of the label. It
+                    // used to be the `padding` setting, but that doesn't make
+                    // sense
+                    (left ? -5 : 5) :
                     0
             );
         return x;

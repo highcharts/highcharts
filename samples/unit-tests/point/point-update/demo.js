@@ -264,23 +264,21 @@ QUnit.test(
 QUnit.test(
     'Preserve point config initial array type in options.data',
     function (assert) {
-        var chart = $('#container')
-            .highcharts({
-                accessibility: {
-                    enabled: false // Forces markers
-                },
-                series: [
-                    {
-                        data: [
-                            [0, 1],
-                            [1, 2],
-                            [2, 3]
-                        ],
-                        turboThreshold: 2
-                    }
-                ]
-            })
-            .highcharts();
+        const chart = Highcharts.chart('container', {
+            accessibility: {
+                enabled: false // Forces markers
+            },
+            series: [
+                {
+                    data: [
+                        [0, 1],
+                        [1, 2],
+                        [2, 3]
+                    ],
+                    turboThreshold: 2
+                }
+            ]
+        });
 
         assert.strictEqual(
             chart.series[0].options.data
@@ -370,6 +368,15 @@ QUnit.test(
                 'pointArrayMap series'
         );
 
+        chart.series[0].setData([3, null, 1]);
+
+        assert.deepEqual(
+            chart.series[0].getColumn('y'),
+            chart.options.series[0].data,
+            'Values of null should be reflected correctly in' +
+            'options.series.data after setData call (#20412).'
+        );
+
         Highcharts.Series.types.line.prototype.pointArrayMap = map;
     }
 );
@@ -390,7 +397,10 @@ QUnit.test(
                         [1, 2],
                         [3, 4],
                         [5, 6]
-                    ]
+                    ],
+                    marker: {
+                        lineWidth: 3
+                    }
                 }
             ]
         });

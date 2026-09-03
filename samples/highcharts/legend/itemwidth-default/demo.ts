@@ -3,10 +3,11 @@ Highcharts.chart('container', {
         width: 500
     },
     title: {
-        text: 'Demo of <em>legend.itemWidth</em> and <em>alignColumns</em>'
+        text: 'Demo of <em>legend</em> options'
     },
     legend: {
         alignColumns: true,
+        itemDistance: 40,
         itemWidth: 0
     },
     series: [{

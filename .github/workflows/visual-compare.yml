@@ -135,6 +135,17 @@ jobs:
         with:
           ref: master
 
+      - name: Use Firefox 153.0.4
+        id: reference-firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.reference-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
@@ -158,6 +169,17 @@ jobs:
           clean: false
           fetch-depth: 0
 
+      - name: Use Firefox 153.0.4
+        id: candidate-firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.candidate-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
@@ -170,10 +192,17 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --single-run --browsercount 2 --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --single-run --browsercount 2 --visualcompare || true
+      - name: Compare Highcharts visual tests
+        run: node .github/scripts/runVisualCompare.js "Highcharts" "highcharts/*/*"
+
+      - name: Compare Stock visual tests
+        run: node .github/scripts/runVisualCompare.js "Stock" "stock/*/*"
+
+      - name: Compare Maps visual tests
+        run: node .github/scripts/runVisualCompare.js "Maps" "maps/*/*"
+
+      - name: Compare Gantt visual tests
+        run: node .github/scripts/runVisualCompare.js "Gantt" "gantt/*/*"
 
       - name: Generate visual test report
         run: |
@@ -182,42 +211,8 @@ jobs:
           --pr ${{github.event.pull_request.number}}
         if: ${{ always() }}
         env:
-          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
-          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-
-      - name: Purge references with no candidate
-        if: ${{ always() }}
-        run: |
-          find ./samples -type f -name "reference.svg" \
-            -exec sh -c '
-              for f do
-                dir="$(dirname "$f")"
-                candidate_path="$dir/candidate.svg"
-                if [ ! -f "$candidate_path" ]; then
-                  echo "Deleting unpaired reference: $f"
-                  rm "$f"
-                fi
-              done
-            ' sh {} +
-
-      - name: Upload visual test images
-        if: ${{ always() }}
-        run: |
-          aws s3 sync ./samples \
-          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/pullrequests/$PR_NUMBER/" \
-          --exclude "*" \
-          --include "*/reference.svg" \
-          --include "*/candidate.svg" \
-          --include "*/diff.gif"
-        env:
-          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-          PR_NUMBER: ${{github.event.pull_request.number}}
+          VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
+          VISUAL_REVIEW_PR_SHA: ${{github.event.pull_request.head.sha}}
 
       - name: Comment on PR
         uses: actions/github-script@v8
@@ -262,5 +257,15 @@ jobs:
           name: visual-test-results
           path: |
             test/visual-test-results.json
-            test/review-pr-*.json
+            test/visual-test-errors.log
             tmp/pr-visual-test-comment.json
+
+      - name: Fail on visual test execution errors
+        if: ${{ always() }}
+        run: |
+          error_file=test/visual-test-errors.log
+          if [ -s "$error_file" ]; then
+            echo "Visual test execution errors:"
+            cat "$error_file"
+            exit 1
+          fi

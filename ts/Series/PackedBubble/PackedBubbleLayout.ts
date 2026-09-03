@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,7 +28,7 @@ import type Series from '../../Core/Series/Series';
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
-import { addEvent, defined, pick } from '../../Shared/Utilities.js';
+import { addEvent, defined } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -184,17 +185,11 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                 centerY = box.height / 2;
             }
 
-            node.plotX = node.prevX = pick(
-                node.plotX,
-                (centerX as any) +
-                (radius as any) * Math.cos(node.index || index * angle)
-            );
+            node.plotX = node.prevX = (node.plotX ?? (centerX as any) +
+                (radius as any) * Math.cos(node.index || index * angle));
 
-            node.plotY = node.prevY = pick(
-                node.plotY,
-                (centerY as any) +
-                (radius as any) * Math.sin(node.index || index * angle)
-            );
+            node.plotY = node.prevY = (node.plotY ?? (centerY as any) +
+                (radius as any) * Math.sin(node.index || index * angle));
 
             node.dispX = 0;
             node.dispY = 0;

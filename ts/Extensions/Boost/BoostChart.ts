@@ -33,7 +33,7 @@ import type { TypedArray } from '../../Shared/Types';
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
+import { addEvent, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,6 +43,7 @@ import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /** @internal */
 interface BoostChartAdditions extends BoostTargetAdditions {
+    cssVars?: Record<string, string>;
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;
@@ -134,6 +135,14 @@ function getBoostClipRect(
         const verticalAxes =
             chart.inverted ? chart.xAxis : chart.yAxis; // #14444
 
+        // Use chart.clipBox dimensions to match what createAndAttachRenderer
+        // compares against. Fractional clipOffset shrinks chart.clipBox below
+        // plotWidth/Height, breaking that check. #22949
+        if (!chart.inverted && !navigator && chart.clipBox) {
+            clipBox.width = chart.clipBox.width;
+            clipBox.height = chart.clipBox.height;
+        }
+
         if (verticalAxes.length <= 1) {
             clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
             clipBox.height = (
@@ -162,7 +171,7 @@ function isChartSeriesBoosting(
     const allSeries = chart.series,
         boost = chart.boost = chart.boost || {},
         boostOptions = chart.options.boost || {},
-        threshold = pick(boostOptions.seriesThreshold, 50);
+        threshold = (boostOptions.seriesThreshold ?? 50);
 
     if (allSeries.length >= threshold) {
         return true;
@@ -178,8 +187,8 @@ function isChartSeriesBoosting(
         allowBoostForce = true;
         for (const axis of chart.xAxis) {
             if (
-                pick(axis.min, -Infinity) > pick(axis.dataMin, -Infinity) ||
-                pick(axis.max, Infinity) < pick(axis.dataMax, Infinity)
+                (axis.min ?? -Infinity) > (axis.dataMin ?? -Infinity) ||
+                (axis.max ?? Infinity) < (axis.dataMax ?? Infinity)
             ) {
                 allowBoostForce = false;
                 break;
@@ -197,6 +206,7 @@ function isChartSeriesBoosting(
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
     let canBoostCount = 0,
+        eligibleCount = 0,
         needBoostCount = 0,
         seriesOptions: SeriesOptions;
 
@@ -221,13 +231,15 @@ function isChartSeriesBoosting(
             continue;
         }
 
+        ++eligibleCount;
+
         if (BoostableMap[series.type]) {
             ++canBoostCount;
         }
 
         if (patientMax(
             series.getColumn('x', true),
-            seriesOptions.data as any,
+            seriesOptions.data || [],
             /// series.xData,
             series.points
         ) >= (seriesOptions.boostThreshold || Number.MAX_VALUE)) {
@@ -241,6 +253,15 @@ function isChartSeriesBoosting(
             // to 5, force a chart boost when all series are to be boosted.
             // See #18815
             canBoostCount === allSeries.length &&
+            needBoostCount === canBoostCount
+        ) ||
+        // Preserve chart-level boost when it was already active (markerGroup
+        // exists) and all remaining visible eligible series still need boost,
+        // so that hiding a series does not drop out of chart-boost mode
+        // and break the shared halo (#23338).
+        (
+            !!boost.markerGroup &&
+            canBoostCount === eligibleCount &&
             needBoostCount === canBoostCount
         ) ||
         needBoostCount > 5

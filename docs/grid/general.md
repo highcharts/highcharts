@@ -10,8 +10,6 @@ Highcharts Grid provides a fast way to work with tabular data in the browser. St
 
 **Highcharts Grid Pro** is the commercial edition. It includes everything in Grid Lite plus features such as cell editing, data validation, sparklines, and events.
 
-In Dashboards versions prior to 4.0.0, Grid Pro was bundled with Dashboards. See the [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration) for upgrade details.
-
 ## Your first Grid
 
 This minimal example creates a working **Grid Lite** instance:
@@ -86,6 +84,6 @@ Add an HTML element to the `body` with the ID you specified as the first argumen
 
 With the configuration above, your Grid should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/demo/minimal-grid?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/demo/minimal?force-light-theme" allow="fullscreen"></iframe>
 
 Continue with [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) for more on the Grid structure and configuration options.

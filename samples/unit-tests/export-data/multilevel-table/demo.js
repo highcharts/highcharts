@@ -116,35 +116,63 @@ Chart title</caption>
 <thead>
 <tr>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" valign=\"top\" rowspan=\"2\">
-Year</th>
+<button>
+Year</button>
+</th>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\">
-Bullet Series 1</th>
+<button>
+Bullet Series 1</button>
+</th>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\">
-Bullet Series 2</th>
+<button>
+Bullet Series 2</button>
+</th>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" valign=\"top\" rowspan=\"2\">
-Line series</th>
+<button>
+Line series</button>
+</th>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\">
-Bullet Series 3</th>
+<button>
+Bullet Series 3</button>
+</th>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\">
-Bullet Series 4</th>
+<button>
+Bullet Series 4</button>
+</th>
 </tr>
 <tr>
 <th class=\"highcharts-text\" scope=\"col\">
-y</th>
+<button>
+y</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-target</th>
+<button>
+target</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-y</th>
+<button>
+y</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-target</th>
+<button>
+target</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-y</th>
+<button>
+y</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-target</th>
+<button>
+target</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-y</th>
+<button>
+y</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-target</th>
+<button>
+target</button>
+</th>
 </tr>
 </thead>
 <tbody>
@@ -262,25 +290,45 @@ Chart title</caption>
 <thead>
 <tr>
 <th class=\"highcharts-text\" scope=\"col\">
-Year</th>
+<button>
+Year</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 1 (y)</th>
+<button>
+Bullet Series 1 (y)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 1 (target)</th>
+<button>
+Bullet Series 1 (target)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 2 (y)</th>
+<button>
+Bullet Series 2 (y)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 2 (target)</th>
+<button>
+Bullet Series 2 (target)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Line series</th>
+<button>
+Line series</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 3 (y)</th>
+<button>
+Bullet Series 3 (y)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 3 (target)</th>
+<button>
+Bullet Series 3 (target)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 4 (y)</th>
+<button>
+Bullet Series 4 (y)</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Bullet Series 4 (target)</th>
+<button>
+Bullet Series 4 (target)</button>
+</th>
 </tr>
 </thead>
 <tbody>
@@ -422,9 +470,13 @@ WEBAIM survey</caption>
 <thead>
 <tr>
 <th class=\"highcharts-text\" scope=\"col\">
-Category</th>
+<button>
+Category</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Percentage usage</th>
+<button>
+Percentage usage</button>
+</th>
 </tr>
 </thead>
 <tbody>
@@ -523,19 +575,31 @@ Chart title</caption>
 <thead>
 <tr>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\">
-Day</th>
+<button>
+Day</button>
+</th>
 <th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"3\">
-Temperature</th>
+<button>
+Temperature</button>
+</th>
 </tr>
 <tr>
 <th class=\"highcharts-empty\" scope=\"col\">
+<button>
+</button>
 </th>
 <th class=\"highcharts-text\" scope=\"col\">
-avg</th>
+<button>
+avg</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-low</th>
+<button>
+low</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-high</th>
+<button>
+high</button>
+</th>
 </tr>
 </thead>
 <tbody>
@@ -646,13 +710,21 @@ Chart title</caption>
 <thead>
 <tr>
 <th class=\"highcharts-text\" scope=\"col\">
-Category</th>
+<button>
+Category</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Series 1</th>
+<button>
+Series 1</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-DateTime</th>
+<button>
+DateTime</button>
+</th>
 <th class=\"highcharts-text\" scope=\"col\">
-Test series</th>
+<button>
+Test series</button>
+</th>
 </tr>
 </thead>
 <tbody>
@@ -785,46 +857,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation ' +
-        'labels in export-data table.</caption><thead><tr><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Category</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Series 1</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Series 2</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Annotations 1</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Annotations 2</th></tr>' +
-        '</thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">' +
-        '0</th><td class=\"highcharts-number\">29</td><td ' +
-        'class=\"highcharts-number\">2</td><td class=\"highcharts-empty\">' +
-        '</td><td class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">1</th><td ' +
-        'class=\"highcharts-number\">71</td><td class=\"highcharts-number\">' +
-        '11</td><td class=\"highcharts-text\">Annotation I for pointI</td>' +
-        '<td class=\"highcharts-text\">Annotation II connected with axis</td>' +
-        '</tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td ' +
-        'class=\"highcharts-number\">106</td><td class=\"highcharts-number\">' +
-        '60</td><td class=\"highcharts-empty\"></td><td ' +
-        'class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">3</th><td ' +
-        'class=\"highcharts-number\">129</td><td class=\"highcharts-number\">' +
-        '44</td><td class=\"highcharts-text\">Annotation II for pointII</td>' +
-        '<td class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">4</th><td ' +
-        'class=\"highcharts-number\">144</td><td class=\"highcharts-number\">' +
-        '44</td><td class=\"highcharts-empty\"></td><td ' +
-        'class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">1.5</th><td ' +
-        'class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td>' +
-        '<td class=\"highcharts-text\">Annotation I connected with axis</td>' +
-        '<td class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-empty\" scope=\"row\"></th><td ' +
-        'class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td>' +
-        '<td class=\"highcharts-text\">Freestanding annotation</td><td ' +
-        'class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">2.5</th><td ' +
-        'class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td>' +
-        '<td class=\"highcharts-text\">Annotation I connected with axis, and ' +
-        'having the same point as other annotation.</td><td ' +
-        'class=\"highcharts-empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\"><button>Category</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Series 1</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Series 2</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Annotations 1</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Annotations 2</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">Annotation I for pointI</td><td class=\"highcharts-text\">Annotation II connected with axis</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-text\">Annotation II for pointII</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1.5</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Annotation I connected with axis</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-empty\" scope=\"row\"></th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Freestanding annotation</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2.5</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Annotation I connected with axis, and having the same point as other annotation.</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
         'Table should look like this with annotations (12789).'
     );
 
@@ -863,28 +896,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation ' +
-        'labels in export-data table.</caption><thead><tr><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Category</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Series 1</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Series 2</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Annotations 1</th></tr>' +
-        '</thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">' +
-        '0</th><td class=\"highcharts-number\">29</td><td ' +
-        'class=\"highcharts-number\">2</td><td class=\"highcharts-empty\">' +
-        '</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th>' +
-        '<td class=\"highcharts-number\">71</td><td ' +
-        'class=\"highcharts-number\">11</td><td class=\"highcharts-text\">' +
-        'This is my annotation I</td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">2</th><td ' +
-        'class=\"highcharts-number\">106</td><td class=\"highcharts-number\">' +
-        '60</td><td class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">3</th><td ' +
-        'class=\"highcharts-number\">129</td><td class=\"highcharts-number\">' +
-        '44</td><td class=\"highcharts-empty\"></td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">4</th><td ' +
-        'class=\"highcharts-number\">144</td><td class=\"highcharts-number\">' +
-        '44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\"><button>Category</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Series 1</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Series 2</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Annotations 1</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">This is my annotation I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
         'Table should look like this with includeInDataExport set (12789).'
     );
 
@@ -927,29 +939,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation ' +
-        'labels in export-data table.</caption><thead><tr><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Category</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Series 1</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Series 2</th><th ' +
-        'class=\"highcharts-text\" scope=\"col\">Annotations 1</th></tr>' +
-        '</thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">' +
-        '0</th><td class=\"highcharts-number\">29</td><td ' +
-        'class=\"highcharts-number\">2</td><td class=\"highcharts-empty\">' +
-        '</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th>' +
-        '<td class=\"highcharts-number\">71</td><td ' +
-        'class=\"highcharts-number\">11</td><td class=\"highcharts-text\">' +
-        'This is my annotation I for point I / This is my annotation II for ' +
-        'point I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">' +
-        '2</th><td class=\"highcharts-number\">106</td><td ' +
-        'class=\"highcharts-number\">60</td><td class=\"highcharts-empty\">' +
-        '</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th>' +
-        '<td class=\"highcharts-number\">129</td><td ' +
-        'class=\"highcharts-number\">44</td><td class=\"highcharts-text\">' +
-        'This is my annotation I for point II</td></tr><tr><th ' +
-        'class=\"highcharts-number\" scope=\"row\">4</th><td ' +
-        'class=\"highcharts-number\">144</td><td class=\"highcharts-number\">' +
-        '44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\"><button>Category</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Series 1</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Series 2</button></th><th class=\"highcharts-text\" scope=\"col\"><button>Annotations 1</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-text\">This is my annotation I for point II</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
         'Table should look like this with set join and itemDelimiter (12789).'
     );
 });

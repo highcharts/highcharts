@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,7 +39,7 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Aroon Oscillator series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.aroonoscillator
  *
@@ -136,6 +137,7 @@ class AroonOscillatorIndicator extends AroonIndicator {
  *
  * */
 
+/** @internal */
 interface AroonOscillatorIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof AroonOscillatorPoint>;
@@ -155,6 +157,7 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof AroonOscillatorIndicator;
@@ -169,6 +172,7 @@ SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
  *
  * */
 
+/** @internal */
 export default AroonOscillatorIndicator;
 
 /* *

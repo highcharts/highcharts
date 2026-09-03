@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -324,7 +325,7 @@ export interface AnnotationLabelOptionsOptions {
      * @sample highcharts/annotations/label-presentation/
      *         Set labels graphic options
      *
-     * @default ${palette.neutralColor100}
+     * @default var(--highcharts-neutral-color-100)
      */
     borderColor?: ColorType;
 
@@ -868,24 +869,24 @@ export interface AnnotationTypeOptions {
     type?: string;
 
     /**
-     * This number defines which `xAxis` the point is connected to.
+     * This option defines which `xAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis
      * in the `xAxis` array.
      *
-     * @type {number}
+     * @type {number|string}
      * @apioption annotations.typeOptions.xAxis
      */
-    xAxis?: number;
+    xAxis?: (number|string);
 
     /**
-     * This number defines which `yAxis` the point is connected to.
+     * This option defines which `yAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis
      * in the `yAxis` array.
      *
-     * @type {number}
+     * @type {number|string}
      * @apioption annotations.typeOptions.yAxis
      */
-    yAxis?: number;
+    yAxis?: (number|string);
 
     /** @internal */
     yOffset?: number;

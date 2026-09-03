@@ -3,8 +3,9 @@
  *  (c) 2021-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -41,21 +42,15 @@ export interface GeoJSONGeometryPoint extends BaseGeometry {
 
 /**
  * A latitude/longitude object.
- *
- * @interface Highcharts.MapLonLatObject
  */
 export interface MapLonLatObject {
     /**
      * The latitude.
-     * @name Highcharts.MapLonLatObject#lat
-     * @type {number}
      */
     lat: number;
 
     /**
      * The longitude.
-     * @name Highcharts.MapLonLatObject#lon
-     * @type {number}
      */
     lon: number;
 }

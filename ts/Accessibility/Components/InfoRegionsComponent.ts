@@ -5,8 +5,9 @@
  *
  *  Accessibility component for chart info region and table.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -57,7 +58,7 @@ const {
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HU;
-import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
+import { attr, replaceNested } from '../../Shared/Utilities.js';
 
 
 /* *
@@ -444,10 +445,11 @@ class InfoRegionsComponent extends AccessibilityComponent {
             sectionDiv.appendChild(hiddenDiv);
             region.insertIntoDOM(sectionDiv, chart);
 
+            // Apply inline hidden styles too as the class alone depends on
+            // `highcharts.css` being loaded
+            visuallyHideElement(hiddenDiv);
             if (chart.styledMode) {
                 addClass(hiddenDiv, 'highcharts-visually-hidden');
-            } else {
-                visuallyHideElement(hiddenDiv);
             }
             unhideChartElementFromAT(chart, hiddenDiv);
             if (region.afterInserted) {
@@ -813,12 +815,14 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 defaultCondition: boolean
             ): boolean {
                 const axes = chart[collectionKey];
-                return axes.length > 1 || axes[0] &&
-                pick(
-                    axes[0].options.accessibility &&
-                    axes[0].options.accessibility.enabled,
-                    defaultCondition
-                );
+                const axisA11yEnabled = axes[0] ?
+                    (
+                        axes[0].options.accessibility &&
+                        axes[0].options.accessibility.enabled
+                    ) :
+                    void 0;
+
+                return axes.length > 1 || (axisA11yEnabled ?? defaultCondition);
             },
             hasNoMap = !!chart.types &&
                 chart.types.indexOf('map') < 0 &&

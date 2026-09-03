@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,8 +22,7 @@ import type Axis from './Axis';
 
 import {
     addEvent,
-    normalizeTickInterval,
-    pick
+    normalizeTickInterval
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -254,12 +254,10 @@ namespace LogarithmicAxis {
                         axisLength / axis.tickPositions.length :
                         axisLength;
 
-                interval = pick(
-                    filteredTickIntervalOption,
-                    log.minorAutoInterval,
-                    (realMax - realMin) *
-                        tickPixelIntervalOption / (totalPixelLength || 1)
-                );
+                interval = filteredTickIntervalOption ??
+                    log.minorAutoInterval ??
+                    (realMax - realMin) * tickPixelIntervalOption /
+                        (totalPixelLength || 1);
 
                 interval = normalizeTickInterval(interval);
 

@@ -84,6 +84,13 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 </html>
 ```
 
+For Grid Pro, swap the filenames:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
+```
+
 > **TIP:** Want to lock to a specific version? Use: `https://cdn.jsdelivr.net/npm/@highcharts/grid-lite@2.0.0/grid-lite.js`
 
 ---
@@ -113,6 +120,7 @@ For Grid Pro, swap the filenames:
 ## Use Grid Pro
 
 Switch to Grid Pro for editing, validation, sparklines, and advanced features.
+Note that [Grid Pro requires a Grid Key](https://www.highcharts.com/docs/grid/grid-key).
 
 ### Install Grid Pro
 
@@ -129,6 +137,7 @@ import '@highcharts/grid-pro/css/grid-pro.css';
 
 // Create grid with Pro features
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             product: ['Apple', 'Pear', 'Plum', 'Banana'],
@@ -212,5 +221,3 @@ Now that Grid is installed, explore what you can build:
 - **[Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid)** – Configure columns, data sources, and events
 - **[Theming guide](https://www.highcharts.com/docs/grid/theming/index)** – Customize the look and feel
 - **[API reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation
-
-> **Upgrading from an older version?** See the [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration) for detailed upgrade instructions from Grid 1.x or Dashboards 3.x.

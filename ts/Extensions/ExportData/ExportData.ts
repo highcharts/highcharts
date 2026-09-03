@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -60,7 +61,6 @@ import {
     find,
     fireEvent,
     isNumber,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -679,15 +679,13 @@ namespace ExportData {
         let csv = '';
         const rows = this.getDataRows(),
             csvOptions = this.options?.csv,
-            decimalPoint = pick(
-                csvOptions?.decimalPoint,
+            decimalPoint = csvOptions?.decimalPoint ?? (
                 csvOptions?.itemDelimiter !== ',' && useLocalDecimalPoint ?
                     (1.1).toLocaleString()[1] :
                     '.'
             ),
             // Use ';' for direct to Excel
-            itemDelimiter = pick(
-                csvOptions?.itemDelimiter,
+            itemDelimiter = csvOptions?.itemDelimiter ?? (
                 decimalPoint === ',' ? ';' : ','
             ),
             // '\n' isn't working with the js csv data extraction
@@ -948,9 +946,15 @@ namespace ExportData {
                     xAxis: series.xAxis
                 };
 
-                // Export directly from options.data because we need the
-                // uncropped data (#7913), and we need to support Boost (#7026).
-                series.options.data?.forEach(function eachData(
+                // Export raw data because we need the uncropped data (#7913),
+                // and we need to support Boost (#7026).
+                const data = new Array(series.dataTable.rowCount)
+                        .fill(void 0).map((_, i): PointOptions =>
+                            series.dataTable.getRowObject(i) as PointOptions
+                        ),
+                    xColumn = series.getColumn('x');
+
+                (data || []).forEach(function eachData(
                     options: (PointOptions | PointShortOptions),
                     pIdx: number
                 ): void {
@@ -970,9 +974,10 @@ namespace ExportData {
                         );
                     }
 
-                    series.pointClass.prototype.applyOptions.apply(
+                    series.pointClass.prototype.applyOptions.call(
                         mockPoint,
-                        [options]
+                        options,
+                        xColumn[pIdx]
                     );
 
                     const name = series.data[pIdx] && series.data[pIdx].name;
@@ -1045,16 +1050,18 @@ namespace ExportData {
                                 [prop]
                             ) as number;
                         // Allow values from nested properties (#20470)
-                        rows[key][i + j] = pick(
-                            // Y axis category if present
-                            categoryAndDatetimeMap.categoryMap[prop][val],
-                            // Datetime yAxis
-                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
-                                time.dateFormat(csvOptions.dateFormat, val) :
-                                null,
-                            // Linear/log yAxis
-                            val
-                        );
+                        rows[key][i + j] =
+                            categoryAndDatetimeMap.categoryMap[prop][val] ??
+                            (
+                                categoryAndDatetimeMap
+                                    .dateTimeValueAxisMap[prop] ?
+                                    time.dateFormat(
+                                        csvOptions.dateFormat,
+                                        val
+                                    ) :
+                                    null
+                            ) ??
+                            val;
                         j++;
                     }
                 });
@@ -1114,11 +1121,10 @@ namespace ExportData {
                             row.x
                         );
                     } else if (xAxis.categories) {
-                        category = pick(
-                            xAxis.names[row.x],
-                            xAxis.categories[row.x],
-                            row.x
-                        );
+                        category =
+                            xAxis.names[row.x] ??
+                            xAxis.categories[row.x] ??
+                            row.x;
                     } else {
                         category = row.x;
                     }
@@ -1220,10 +1226,9 @@ namespace ExportData {
             chart = exporting.chart,
             options = chart.options,
             decimalPoint =
-                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
-            useMultiLevelHeaders = pick(
-                exporting.options.useMultiLevelHeaders, true
-            ),
+                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : void 0,
+            useMultiLevelHeaders =
+                exporting.options.useMultiLevelHeaders ?? true,
             rows = exporting.getDataRows(useMultiLevelHeaders),
             topHeaders = useMultiLevelHeaders ? rows.shift() : null,
             subHeaders = rows.shift(),
@@ -1252,7 +1257,9 @@ namespace ExportData {
                 attributes: HTMLAttributes,
                 value: (number | string)
             ): AST.Node {
-                let textContent = pick(value, ''),
+                const children: Array<AST.Node> = [];
+
+                let textContent = (value ?? ''),
                     className =
                         'highcharts-text' + (classes ? ' ' + classes : '');
 
@@ -1270,17 +1277,39 @@ namespace ExportData {
                     className = 'highcharts-empty';
                 }
 
+                if (tagName === 'th' && attributes.scope === 'col') {
+                    children.push({
+                        tagName: 'button',
+                        textContent,
+                        style: {
+                            color: 'inherit',
+                            borderWidth: 0,
+                            backgroundColor: 'transparent',
+                            cursor: 'pointer',
+                            padding: 0,
+                            fontSize: 'inherit',
+                            fontWeight: 'inherit'
+                        }
+                    });
+                }
+
                 attributes = extend(
                     { 'class': className },
                     attributes
                 );
 
-                return {
+                const result: AST.Node = {
                     tagName,
-                    attributes,
-                    textContent
+                    attributes
                 };
 
+                if (children.length > 0) {
+                    result.children = children;
+                } else {
+                    result.textContent = textContent;
+                }
+
+                return result;
             },
             // Get table header markup from row data
             getTableHeaderHTML = function (
@@ -1372,7 +1401,12 @@ namespace ExportData {
                         if (typeof subheaders[i] !== 'undefined') {
                             trChildren.push(
                                 getCellHTMLFromValue(
-                                    'th', null, { scope: 'col' }, subheaders[i]
+                                    'th',
+                                    null,
+                                    {
+                                        scope: 'col'
+                                    },
+                                    subheaders[i]
                                 )
                             );
                         }
@@ -1487,7 +1521,7 @@ namespace ExportData {
         const chart = this.chart,
             // Create the div
             createContainer =
-                (show = pick(show, !this.isDataTableVisible)) &&
+                (show = (show ?? !this.isDataTableVisible)) &&
                 !this.dataTableDiv;
 
         if (createContainer) {
@@ -1614,21 +1648,38 @@ namespace ExportData {
     ): void {
         const exporting = this.exporting,
             dataTableDiv = exporting?.dataTableDiv,
-            getCellValue =
-                (tr: HTMLDOMElement, index: number): (string | null) =>
-                    tr.children[index].textContent,
+            langOptions = this.options.lang,
+            decimalPoint = langOptions?.decimalPoint || '.',
+            thousandsSep = langOptions?.thousandsSep || ',',
+
+            getCellValue = (tr: HTMLDOMElement, index: number): string =>
+                tr.children[index].textContent || '',
+
+            parseNumber = (value: string): number | null => {
+                if (!value) {
+                    return null;
+                }
+
+                let normalized = value;
+                if (thousandsSep) {
+                    normalized = normalized.split(thousandsSep).join('');
+                }
+                normalized = normalized.replace(decimalPoint, '.');
+
+                const number = Number(normalized);
+                return isNumber(number) ? number : null;
+            },
+
             comparer = (index: number, ascending: boolean) =>
                 (a: HTMLDOMElement, b: HTMLDOMElement): number => {
-                    const sort = (v1: any, v2: any): number => (
-                        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
-                            v1 - v2 :
-                            v1.toString().localeCompare(v2)
-                    );
+                    const valA = getCellValue(ascending ? a : b, index),
+                        valB = getCellValue(ascending ? b : a, index),
+                        numA = parseNumber(valA),
+                        numB = parseNumber(valB);
 
-                    return sort(
-                        getCellValue(ascending ? a : b, index),
-                        getCellValue(ascending ? b : a, index)
-                    );
+                    return numA !== null && numB !== null ?
+                        numA - numB :
+                        valA.localeCompare(valB);
                 };
 
         if (dataTableDiv && exporting.options.allowTableSorting) {
@@ -1654,21 +1705,32 @@ namespace ExportData {
                                 tableBody?.appendChild(tr);
                             });
 
-                            headers.forEach((th): void => {
+                            headers.forEach((header): void => {
                                 [
                                     'highcharts-sort-ascending',
                                     'highcharts-sort-descending'
                                 ].forEach((className): void => {
-                                    if (th.classList.contains(className)) {
-                                        th.classList.remove(className);
+                                    if (header.classList.contains(className)) {
+                                        header.classList.remove(className);
                                     }
                                 });
+
+                                if (header !== th) {
+                                    header.removeAttribute('aria-sort');
+                                }
                             });
 
                             th.classList.add(
                                 exporting.ascendingOrderInTable ?
                                     'highcharts-sort-ascending' :
                                     'highcharts-sort-descending'
+                            );
+
+                            th.setAttribute(
+                                'aria-sort',
+                                exporting.ascendingOrderInTable ?
+                                    'ascending' :
+                                    'descending'
                             );
                         }
                     });
@@ -1729,6 +1791,11 @@ export default ExportData;
  *  API Declarations
  *
  * */
+
+/**
+ * @class
+ * @name Highcharts.Exporting
+ */
 
 /**
  * Function callback to execute while data rows are processed for exporting.

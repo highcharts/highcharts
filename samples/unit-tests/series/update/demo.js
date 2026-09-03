@@ -144,21 +144,21 @@ QUnit.test('Series.update', function (assert) {
     // Color
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('stroke'),
-        Highcharts.getOptions().colors[0],
+        'var(--highcharts-color-0)',
         'Color initial'
     );
     chart.series[0].update({
-        color: color ? null : Highcharts.getOptions().colors[1]
+        color: color ? null : 'var(--highcharts-color-1)'
     });
     color = !color;
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('stroke'),
-        Highcharts.getOptions().colors[1],
+        'var(--highcharts-color-1)',
         'Color changed - graph'
     );
     assert.strictEqual(
         chart.series[0].points[0].graphic.element.getAttribute('fill'),
-        Highcharts.getOptions().colors[1],
+        'var(--highcharts-color-1)',
         'Color changed - marker'
     );
 
@@ -638,7 +638,7 @@ QUnit.test('Series.update and setData', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].options.data[0].customProp,
+        chart.series[0].points[0].options.customProp,
         true,
         'Custom property should be available in options after update (#11244)'
     );

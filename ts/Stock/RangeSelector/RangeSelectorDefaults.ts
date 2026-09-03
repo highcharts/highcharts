@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type RangeSelectorOptions from './RangeSelectorOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -384,7 +383,7 @@ const rangeSelector: RangeSelectorOptions = {
      * Deprecated. The height of the range selector. Currently it is
      * calculated dynamically.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @type  {number|undefined}
      * @since 2.1.9
      */
@@ -578,7 +577,7 @@ const rangeSelector: RangeSelectorOptions = {
      */
     inputStyle: {
         /** @ignore */
-        color: Palette.highlightColor80,
+        color: 'var(--highcharts-highlight-color-80)',
         /** @ignore */
         cursor: 'pointer',
         /** @ignore */
@@ -598,7 +597,7 @@ const rangeSelector: RangeSelectorOptions = {
      */
     labelStyle: {
         /** @ignore */
-        color: Palette.neutralColor60,
+        color: 'var(--highcharts-neutral-color-60)',
         /** @ignore */
         fontSize: '0.8em'
     }
@@ -610,9 +609,11 @@ const rangeSelector: RangeSelectorOptions = {
  *
  * */
 
+/** @internal */
 const RangeSelectorDefaults = {
     lang,
     rangeSelector
 };
 
+/** @internal */
 export default RangeSelectorDefaults;

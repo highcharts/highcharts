@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -30,13 +31,10 @@ import type {
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
+import type { RowId } from './Data/DataProvider';
 import type { DataProviderType } from './Data/DataProviderType';
-import type {
-    CellType as DataTableCellType,
-    Column as DataTableColumn
-} from '../../Data/DataTable';
 import type Column from './Table/Column';
-import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
+import type { NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
@@ -47,11 +45,13 @@ import ColumnPolicyResolver, {
 } from './ColumnPolicyResolver.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import DataTable from '../../Data/DataTable.js';
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import { defaultOptions } from './Defaults.js';
 import {
     makeHTMLElement,
     setHTMLContent,
-    createOptionsProxy
+    createOptionsProxy,
+    joinClassNames
 } from './GridUtils.js';
 import Table from './Table/Table.js';
 import QueryingController from './Querying/QueryingController.js';
@@ -59,15 +59,12 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 import {
-    defined,
     diffObjects,
     extend,
     fireEvent,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../../Core/Utilities.js';
-
 
 /* *
  *
@@ -180,16 +177,6 @@ export class Grid {
      */
     public readonly columnPolicy: ColumnPolicyResolver =
         new ColumnPolicyResolver();
-
-    /**
-     * Backward-compatible access to column options map.
-     *
-     * @deprecated
-     * Use `columnPolicy` methods instead.
-     */
-    public get columnOptionsMap(): Record<string, ColumnOptionsMapItemLike> {
-        return this.columnPolicy.columnOptionsMap;
-    }
 
     /**
      * The container of the grid.
@@ -313,6 +300,11 @@ export class Grid {
     public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
 
     /**
+     * Per-row metadata shared across Grid modules.
+     */
+    public readonly rowMeta: Map<RowId, RowMetaRecord> = new Map();
+
+    /**
      * Internal redraw queue used to prevent concurrent `redraw()` calls from
      * interleaving async DOM work and corrupting the state (for example
      * rendering duplicate pagination controls when `update()` is called
@@ -320,6 +312,10 @@ export class Grid {
      */
     private redrawQueue: Promise<void> = Promise.resolve();
 
+    /**
+     * The data provider of the Grid. The interface between the Grid renderer
+     * and the data source.
+     */
     public dataProvider?: DataProviderType;
 
 
@@ -375,33 +371,6 @@ export class Grid {
      *
      * */
 
-    /**
-     * The data source of the Grid. It contains the original data table
-     * that was passed to the Grid.
-     *
-     * @deprecated Use `dataProvider` instead.
-     */
-    public get dataTable(): DataTable | undefined {
-        const dp = this.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable();
-        }
-    }
-
-    /**
-     * The presentation table of the Grid. It contains a modified version
-     * of the data table that is used for rendering the Grid content. If
-     * not modified, just a reference to the original data table.
-     *
-     * @deprecated Use `dataProvider` instead.
-     */
-    public get presentationTable(): DataTable | undefined {
-        const dp = this.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable(true);
-        }
-    }
-
     /*
      * Initializes the accessibility controller.
      */
@@ -456,7 +425,7 @@ export class Grid {
 
     /**
      * Loads the new user options to all the important fields (`userOptions`,
-     * `options` and `columnOptionsMap`).
+     * `options` and column policy state).
      *
      * @param newOptions
      * The options that were declared by the user.
@@ -475,6 +444,7 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+        warnIfDeprecatedOptions(newOptions);
 
         const diff: DeepPartial<NonArrayOptions> = {};
         const preserveIdOnlyColumnOptions = (
@@ -508,6 +478,7 @@ export class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
+            // TODO: Investigate if it should be always only `defaultOptions`
             this.options ?? defaultOptions,
             this.userOptions
         );
@@ -554,11 +525,18 @@ export class Grid {
 
     /**
      * Refreshes the cached source column ids available in the data provider.
+     *
+     * A feature that materializes its own column into the queried table can add
+     * its id to the event payload, so that the column counts as bound (and is
+     * therefore sortable, filterable and exportable).
      */
     private async refreshAvailableSourceColumnIds(): Promise<void> {
-        this.columnPolicy.setAvailableSourceColumnIds(
-            (await this.dataProvider?.getColumnIds()) || []
-        );
+        const event: GridRefreshSourceColumnIdsEvent = {
+            columnIds: (await this.dataProvider?.getColumnIds()) || []
+        };
+        fireEvent(this, 'refreshSourceColumnIds', event);
+
+        this.columnPolicy.setAvailableSourceColumnIds(event.columnIds);
     }
 
     /**
@@ -594,6 +572,9 @@ export class Grid {
 
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
+            if (!newOptions) {
+                continue;
+            }
             const colOptionsIndex =
                 this.columnPolicy.getColumnOptionIndex(newOptions.id) ?? -1;
 
@@ -740,14 +721,16 @@ export class Grid {
         const { viewport } = this;
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
-
         if (viewport) {
+            // Let modules preprocess the diff before it sets dirty flags
+            fireEvent(this, 'processUpdateDiff', { diff, flags });
+
             if (
                 !this.dataProvider ||
                 ('data' in diff) ||
                 ('dataTable' in diff)
             ) {
-                if ( // Handle backward compatibility
+                if ( // Preserve legacy root-level `dataTable` option
                     diff.dataTable &&
                     this.options?.dataTable &&
                     this.options?.data?.providerType === 'local'
@@ -819,6 +802,36 @@ export class Grid {
                 this.pagination?.update(paginationDiff);
             }
             delete diff.pagination;
+
+            if (diff.caption && 'className' in diff.caption) {
+                flags.add('classes');
+                delete diff.caption.className;
+                if (Object.keys(diff.caption).length < 1) {
+                    delete diff.caption;
+                }
+            }
+
+            if (diff.description && 'className' in diff.description) {
+                flags.add('classes');
+                delete diff.description.className;
+                if (Object.keys(diff.description).length < 1) {
+                    delete diff.description;
+                }
+            }
+
+            if (
+                diff.rendering?.table &&
+                'className' in diff.rendering.table
+            ) {
+                flags.add('classes');
+                delete diff.rendering.table.className;
+                if (Object.keys(diff.rendering.table).length < 1) {
+                    delete diff.rendering.table;
+                }
+                if (Object.keys(diff.rendering).length < 1) {
+                    delete diff.rendering;
+                }
+            }
 
             // TODO(update): Add more options that can be optimized here.
 
@@ -902,14 +915,22 @@ export class Grid {
         }
         delete columnDiff.cells;
 
-        if ('width' in columnDiff) {
-            vp.columnResizing.isDirty = true;
+        if (
+            'width' in columnDiff ||
+            'minWidth' in columnDiff ||
+            'maxWidth' in columnDiff
+        ) {
+            const columnResizing = vp.columnResizing;
+            if (columnResizing) {
+                columnResizing.isDirty = true;
+            }
         }
         delete columnDiff.width;
+        delete columnDiff.minWidth;
+        delete columnDiff.maxWidth;
 
         if ('sorting' in columnDiff) {
             const sortingDiff = columnDiff.sorting ?? {};
-
             if (
                 'compare' in sortingDiff ||
                 'order' in sortingDiff
@@ -930,15 +951,23 @@ export class Grid {
 
         if ('filtering' in columnDiff) {
             const filteringDiff = columnDiff.filtering ?? {};
-
+            const ruleDiff = filteringDiff.rule ?? {};
             if (
-                'condition' in filteringDiff ||
-                'value' in filteringDiff
+                'condition' in filteringDiff || // TODO: Remove, deprecated
+                'value' in filteringDiff || // TODO: Remove, deprecated
+                'conditions' in filteringDiff || // TODO: Remove, deprecated
+                'operators' in filteringDiff ||
+                'rule' in filteringDiff ||
+                'operator' in ruleDiff ||
+                'value' in ruleDiff
             ) {
                 flags.add('filtering');
             }
-            delete filteringDiff.condition;
-            delete filteringDiff.value;
+            delete filteringDiff.condition; // TODO: Remove, deprecated
+            delete filteringDiff.value; // TODO: Remove, deprecated
+            delete filteringDiff.conditions; // TODO: Remove, deprecated
+            delete filteringDiff.operators;
+            delete filteringDiff.rule;
 
             if (Object.keys(filteringDiff).length > 0) {
                 flags.add('grid');
@@ -1023,10 +1052,36 @@ export class Grid {
                 }
             }
 
+            if (flagsToProcess.has('classes')) {
+                if (this.captionElement) {
+                    this.captionElement.className = joinClassNames(
+                        Globals.getClassName('captionElement'),
+                        this.options?.caption?.className
+                    );
+                }
+
+                if (this.descriptionElement) {
+                    this.descriptionElement.className = joinClassNames(
+                        Globals.getClassName('descriptionElement'),
+                        this.options?.description?.className
+                    );
+                }
+
+                if (vp) {
+                    vp.tableElement.className = joinClassNames(
+                        Globals.getClassName('tableElement'),
+                        vp.virtualRows &&
+                            Globals.getClassName('virtualization'),
+                        Globals.getClassName('scrollableContent'),
+                        this.options?.rendering?.table?.className
+                    );
+                }
+            }
+
             pagination?.redraw();
             delete colResizing?.isDirty;
 
-            for (const flag of ['sorting', 'filtering'] as const) {
+            for (const flag of ['sorting', 'filtering', 'classes'] as const) {
                 flags.delete(flag);
             }
 
@@ -1261,19 +1316,18 @@ export class Grid {
      * The index of the row.
      */
     public hoverRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.hoveredRowIndex !== void 0) {
-            rows[this.hoveredRowIndex - firstRowIndex]?.setHoveredState(false);
+            viewport.getRenderedRowByIndex(this.hoveredRowIndex)
+                ?.setHoveredState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setHoveredState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setHoveredState(true);
         }
 
         this.hoveredRowIndex = rowIndex;
@@ -1312,19 +1366,18 @@ export class Grid {
      * The index of the row.
      */
     public syncRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.syncedRowIndex !== void 0) {
-            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+            viewport.getRenderedRowByIndex(this.syncedRowIndex)
+                ?.setSyncedState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setSyncedState(true);
         }
 
         this.syncedRowIndex = rowIndex;
@@ -1367,15 +1420,17 @@ export class Grid {
 
         const tag = captionOptions.htmlTag?.toLowerCase();
         const tagName = tag && AST.allowedTags.includes(tag) ? tag : 'div';
-        const defaultClass = Globals.getClassName('captionElement');
-        const className = captionOptions.className ?
-            `${defaultClass} ${captionOptions.className}` : defaultClass;
+        const className = joinClassNames(
+            Globals.getClassName('captionElement'),
+            captionOptions.className
+        );
 
         this.captionElement = new AST([{
             tagName,
-            attributes: { 'class': className, id: this.id + '-caption' },
-            textContent: captionOptions.text
+            attributes: { 'class': className, id: this.id + '-caption' }
         }]).addToDOM(this.contentWrapper) as HTMLElement;
+
+        setHTMLContent(this.captionElement, captionOptions.text);
     }
 
     /**
@@ -1393,18 +1448,15 @@ export class Grid {
 
         // Create a description element.
         this.descriptionElement = makeHTMLElement('div', {
-            className: Globals.getClassName('descriptionElement'),
+            className: joinClassNames(
+                Globals.getClassName('descriptionElement'),
+                descriptionOptions.className
+            ),
             id: this.id + '-description'
         }, this.contentWrapper);
 
         // Render the description element content.
         setHTMLContent(this.descriptionElement, descriptionText);
-
-        if (descriptionOptions.className) {
-            this.descriptionElement.classList.add(
-                ...descriptionOptions.className.split(/\s+/g)
-            );
-        }
     }
 
     /**
@@ -1418,9 +1470,12 @@ export class Grid {
         }
 
         this.contentWrapper.innerHTML = AST.emptyHTML;
-        this.contentWrapper.className =
-            Globals.getClassName('container') + ' ' +
-            this.options?.rendering?.theme || '';
+        const theme = this.options?.rendering?.theme;
+        this.contentWrapper.className = joinClassNames(
+            Globals.getClassName('container'),
+            theme && Globals.getClassName('themed'),
+            theme
+        );
     }
 
     /**
@@ -1557,7 +1612,7 @@ export class Grid {
             dataTable: userDT ?? {}
         };
 
-        // Just for the backward compatibility, remove in the future
+        // Preserve legacy root-level `dataTable` option for now.
         if (
             dataOptions.providerType === 'local' &&
             !dataOptions.dataTable && userDT
@@ -1565,7 +1620,6 @@ export class Grid {
             dataOptions.dataTable = 'clone' in userDT ?
                 userDT : new DataTable(userDT);
         }
-        // End of backward compatibility snippet
 
         const DataProviderConstructor =
             DataProviderRegistry.types[dataOptions.providerType ?? 'local'] ??
@@ -1627,7 +1681,7 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
-        fireEvent(this, 'beforeDestroy');
+        fireEvent(this, 'beforeDestroy', { onlyDOM });
 
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
@@ -1697,7 +1751,11 @@ export class Grid {
 
         setHTMLContent(
             loadingSpan,
-            pick(message, this.options?.lang?.loading, '')
+            (
+                message ??
+                this.options?.lang?.loading ??
+                ''
+            )
         );
     }
 
@@ -1707,85 +1765,6 @@ export class Grid {
     public hideLoading(): void {
         this.loadingWrapper?.remove();
         delete this.loadingWrapper;
-    }
-
-    /**
-     * Returns the grid data as a JSON string.
-     *
-     * **Note:** This method only works with `LocalDataProvider`.
-     * For other data providers, use your data source directly.
-     *
-     * @deprecated
-     *
-     * @param modified
-     * Whether to return the modified data table (after filtering/sorting/etc.)
-     * or the unmodified, original one. Default value is set to `true`.
-     *
-     * @return
-     * JSON representation of the data
-     */
-    public getData(modified: boolean = true): string {
-        if (!this.dataProvider || !('getDataTable' in this.dataProvider)) {
-            // eslint-disable-next-line no-console
-            console.warn('getData() works only with LocalDataProvider.');
-            return JSON.stringify({
-                error: 'getData() works only with LocalDataProvider.'
-            }, null, 2);
-        }
-
-        const dataTable = this.dataProvider.getDataTable(modified);
-        const tableColumns = dataTable?.columns;
-        const outputColumns: Record<string, DataTableColumn> = {};
-
-        if (!this.enabledColumns || !tableColumns) {
-            return '{}';
-        }
-
-        const typeParser = (type: ColumnDataType) => {
-            const TypeMap: Record<
-                ColumnDataType,
-                (value: DataTableCellType) => DataTableCellType
-            > = {
-                number: Number,
-                datetime: Number,
-                string: String,
-                'boolean': Boolean
-            };
-
-            return (value: DataTableCellType): DataTableCellType | null => (
-                defined(value) ? TypeMap[type](value) : null
-            );
-        };
-
-        for (const columnId of this.enabledColumns) {
-            const column = this.viewport?.getColumn(columnId);
-            const sourceColumnId =
-                this.columnPolicy.getColumnSourceId(columnId);
-
-            if (
-                !column ||
-                !sourceColumnId ||
-                !this.columnPolicy.isColumnExportable(columnId)
-            ) {
-                continue;
-            }
-
-            const columnData = tableColumns[sourceColumnId];
-            if (!columnData) {
-                continue;
-            }
-
-            const parser = typeParser(column.dataType);
-            outputColumns[columnId] = ((): DataTableColumn => {
-                const result = [];
-                for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
-                    result.push(parser(columnData[i]));
-                }
-                return result;
-            })();
-        }
-
-        return JSON.stringify(outputColumns, null, 2);
     }
 
     /**
@@ -1868,12 +1847,43 @@ export type NonArrayOptions = Omit<Options, 'columns'> & {
  * @internal
  */
 export type GridDirtyFlags = (
-    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
+    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow' | 'classes'
 );
+
+/**
+ * Payload of the `processUpdateDiff` event: modules can consume the option
+ * keys they own from `diff` (and add `flags`) to avoid a full re-render.
+ * @internal
+ */
+export interface ProcessUpdateDiffEvent {
+    diff: DeepPartial<NonArrayOptions>;
+    flags: Set<GridDirtyFlags>;
+}
+
+/**
+ * Payload of the `refreshSourceColumnIds` event, letting a feature declare the
+ * columns it materializes into the queried table.
+ */
+export interface GridRefreshSourceColumnIdsEvent {
+    columnIds: string[];
+}
 
 /**
  * Resolved data binding for a Grid column.
  */
+export interface ColumnOptionsMapItem {
+    index: number;
+    options: NoIdColumnOptions
+}
+
+/**
+ * Per-row metadata object shared across Grid modules.
+ *
+ * Empty before module extensions.
+ */
+export interface RowMetaRecord {}
+
+
 /* *
  *
  *  Default Export

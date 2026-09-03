@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,11 +37,17 @@ import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
  *
  * */
 
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        borderWidth?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
-        borderRadius?: (number|string|BorderRadiusOptionsObject);
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
         borderWidth?: number;
         centerInCategory?: boolean;
         fillColor?: ColorType;
@@ -59,19 +66,18 @@ declare module '../../Core/Series/SeriesOptions' {
          */
         pointRange?: (number|null);
     }
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        brightness?: number;
-        color?: ColorType;
-        dashStyle?: DashStyleValue;
-    }
     interface SeriesZonesOptions {
         borderColor?: ColorType;
         borderWidth?: number;
         color?: ColorType;
+    }
+}
+
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
+        borderDashStyle?: DashStyleValue;
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
+        borderWidth?: number;
     }
 }
 
@@ -107,7 +113,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @default #ffffff
+     * @default var(--highcharts-background-color)
      *
      * @product highcharts highstock gantt
      */
@@ -127,7 +133,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @product highcharts highstock gantt
      */
-    borderRadius?: (number|string|BorderRadiusOptionsObject);
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * The width of the border surrounding each column or bar. Defaults to
@@ -274,15 +280,13 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
+     * @basic
+     *
      * @extends series.line.data
      *
      * @excluding marker
      *
-     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
-     *
      * @product highcharts highstock
-     *
-     * @apioption series.column.data
      */
     data?: Array<(ColumnPointOptions|PointShortOptions)>;
 
@@ -371,6 +375,9 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
      *
+     * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
+     *         Pie point padding plugin
+     *
      * @product highcharts highstock gantt
      */
     pointPadding?: number;
@@ -423,32 +430,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     states?: SeriesStatesOptions<ColumnSeriesOptions>;
 
     /**
-     * Options for the hovered point. These settings override the normal
-     * state options when a point is moused over or touched.
-     *
-     * @extends plotOptions.series.states.hover
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.hover
-     */
-
-    /**
-     * Options for the selected point. These settings override the
-     * normal state options when a point is selected.
-     *
-     * @extends plotOptions.series.states.select
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.select
-     */
-
-    /**
      * The Y axis value to serve as the base for the columns, for
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
@@ -460,6 +441,15 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     threshold?: (number|null);
 
     tooltip?: ColumnSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataParser?: undefined;
+    dataURL?: undefined;
 }
 
 export interface ColumnSeriesTooltipOptions extends SeriesTooltipOptions {

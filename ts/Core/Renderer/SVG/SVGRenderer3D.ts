@@ -5,8 +5,9 @@
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,8 +33,7 @@ import type SVGElement from './SVGElement';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 
-import A from '../../Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Animation/AnimationUtilities.js';
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Globals.js';
@@ -47,7 +47,7 @@ const {
     shapeArea
 } = Math3D;
 import SVGElement3D from './SVGElement3D.js';
-import { defined, extend, merge, pick } from '../../../Shared/Utilities.js';
+import { defined, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -300,12 +300,10 @@ namespace SVGRenderer3D {
                     defined(hash.insidePlotArea)
                 )
             ) {
-                this.enabled = pick(hash.enabled, this.enabled);
-                this.vertexes = pick(hash.vertexes, this.vertexes);
-                this.insidePlotArea = pick(
-                    hash.insidePlotArea,
-                    this.insidePlotArea
-                );
+                this.enabled = (hash.enabled ?? this.enabled);
+                this.vertexes = (hash.vertexes ?? this.vertexes);
+                this.insidePlotArea =
+                    hash.insidePlotArea ?? this.insidePlotArea;
                 delete hash.enabled;
                 delete hash.vertexes;
                 delete hash.insidePlotArea;
@@ -338,12 +336,10 @@ namespace SVGRenderer3D {
                     defined(params.insidePlotArea)
                 )
             ) {
-                this.enabled = pick(params.enabled, this.enabled);
-                this.vertexes = pick(params.vertexes, this.vertexes);
-                this.insidePlotArea = pick(
-                    params.insidePlotArea,
-                    this.insidePlotArea
-                );
+                this.enabled = (params.enabled ?? this.enabled);
+                this.vertexes = (params.vertexes ?? this.vertexes);
+                this.insidePlotArea =
+                    params.insidePlotArea ?? this.insidePlotArea;
                 delete params.enabled;
                 delete params.vertexes;
                 delete params.insidePlotArea;
@@ -917,7 +913,7 @@ namespace SVGRenderer3D {
             delete params.z;
 
             const anim = animObject(
-                pick(animation, this.renderer.globalAnimation)
+                (animation ?? this.renderer.globalAnimation)
             );
 
             if (anim.duration) {
@@ -935,14 +931,14 @@ namespace SVGRenderer3D {
                             pos: number
                         ): number => (
                             (from as any)[key] + (
-                                pick(to[key], (from as any)[key]) -
+                                (to[key] ?? (from as any)[key]) -
                                 (from as any)[key]
                             ) * pos
                         );
 
                     anim.step = function (a: unknown, fx: Fx): void {
-                        if (fx.prop === randomProp) {
-                            fx.elem.setPaths(merge(from, {
+                        if (fx.prop === randomProp && fx.elem) {
+                            (fx.elem as SVGElement).setPaths(merge(from, {
                                 x: interpolate('x', fx.pos),
                                 y: interpolate('y', fx.pos),
                                 r: interpolate('r', fx.pos),
@@ -1183,7 +1179,7 @@ namespace SVGRenderer3D {
         angleStart = toZeroPIRange(angleStart);
         angleMid = toZeroPIRange(angleMid);
 
-        // *1e5 is to compensate pInt in zIndexSetter
+        // Keep angle-derived z-indices well spaced.
         const incPrecision = 1e5,
             a1 = angleMid * incPrecision,
             a2 = angleStart * incPrecision,

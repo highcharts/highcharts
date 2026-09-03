@@ -40,22 +40,34 @@ function getNextColumnId(existingIds) {
     let id = '';
 
     do {
-        id = 'new column ' + newColumnCount;
+        id = 'New Column #' + newColumnCount;
         newColumnCount += 1;
     } while (existingIds.indexOf(id) !== -1);
 
     return id;
 }
 
-function addRowBelow(cell) {
+function getSourceRowIndex(cell) {
+    const rowId = cell.row.id;
+
+    if (typeof rowId === 'number') {
+        return rowId;
+    }
+
+    if (typeof cell.row.index === 'number') {
+        return cell.row.index;
+    }
+}
+
+async function addRowBelow(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
     }
 
-    const insertAt = cell.row.id;
+    const insertAt = getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -67,24 +79,24 @@ function addRowBelow(cell) {
     );
 
     dt.setRow({
-        product: 'New item',
-        weight: null,
-        price: null
+        Product: 'New Item',
+        Weight: null,
+        Price: null
     }, insertAtIndex, true);
 
     // Re-apply modifiers (if any) and update rendering.
     void grid.viewport.updateRows();
 }
 
-function addRowAbove(cell) {
+async function addRowAbove(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
     }
 
-    const insertAt = cell.row.id;
+    const insertAt = getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -94,9 +106,9 @@ function addRowAbove(cell) {
     );
 
     dt.setRow({
-        product: 'New item',
-        weight: null,
-        price: null
+        Product: 'New Item',
+        Weight: null,
+        Price: null
     }, insertAt, true);
 
     // Re-apply modifiers (if any) and update rendering.
@@ -105,7 +117,7 @@ function addRowAbove(cell) {
 
 function addColumnLeft(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
@@ -127,17 +139,13 @@ function addColumnLeft(cell) {
     logEvent('Added column "' + newColumnId + '" to the left.');
 
     void grid.update({
-        rendering: {
-            columns: {
-                included: columnIds
-            }
-        }
+        header: columnIds
     });
 }
 
 function addColumnRight(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
@@ -161,23 +169,19 @@ function addColumnRight(cell) {
     logEvent('Added column "' + newColumnId + '" to the right.');
 
     void grid.update({
-        rendering: {
-            columns: {
-                included: columnIds
-            }
-        }
+        header: columnIds
     });
 }
 
 function deleteRow(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
     }
 
-    const deleteAt = cell.row.id;
+    const deleteAt = getSourceRowIndex(cell);
     if (typeof deleteAt !== 'number') {
         return;
     }
@@ -192,57 +196,74 @@ function deleteRow(cell) {
     void grid.viewport.updateRows();
 }
 
+function clipboardOnClick(cell) {
+    const value = String(cell.value);
+    copyToClipboard(value)
+        .then(function () {
+            logEvent('Copied "' + value + '" to clipboard!');
+        })
+        .catch(function () {
+            logEvent('Could not copy "' + value + '" to clipboard.');
+        });
+}
+
 const menuItems = [{
     label: 'Copy cell content',
     icon: 'clipboard',
-    onClick: function (cell) {
-        const value = String(cell.value);
-
-        copyToClipboard(value)
-            .then(function () {
-                logEvent('Copied "' + value + '" to clipboard!');
-            })
-            .catch(function () {
-                logEvent('Could not copy "' + value + '" to clipboard.');
-            });
-    }
+    onClick: clipboardOnClick
 }, {
     separator: true
 }, {
-    label: 'Add row above',
-    icon: 'addRowAbove',
-    onClick: addRowAbove
-}, {
-    label: 'Add row below',
-    icon: 'addRowBelow',
-    onClick: addRowBelow
-}, {
-    label: 'Add column left',
-    icon: 'addColumnLeft',
-    onClick: addColumnLeft
-}, {
-    label: 'Add column right',
-    icon: 'addColumnRight',
-    onClick: addColumnRight
-}, {
-    label: 'Delete row',
-    icon: 'trash',
-    onClick: deleteRow
+    type: 'submenu',
+    label: 'Edit',
+    items: [{
+        type: 'submenu',
+        label: 'Rows',
+        items: [{
+            label: 'Add row above',
+            icon: 'addRowAbove',
+            onClick: addRowAbove
+        }, {
+            label: 'Add row below',
+            icon: 'addRowBelow',
+            onClick: addRowBelow
+        }, {
+            label: 'Delete row',
+            icon: 'trash',
+            onClick: deleteRow
+        }]
+    }, {
+        type: 'submenu',
+        label: 'Columns',
+        items: [{
+            label: 'Add column left',
+            icon: 'addColumnLeft',
+            onClick: addColumnLeft
+        }, {
+            label: 'Add column right',
+            icon: 'addColumnRight',
+            onClick: addColumnRight
+        }]
+    }]
 }];
+
+const dataTable = new Grid.DataTable({
+    columns: {
+        Product: [
+            'Apples',
+            'Pears',
+            'Plums',
+            'Bananas',
+            'Oranges'
+        ],
+        Weight: [100, 40, 0.5, 200, 120],
+        Price: [1.5, 2.53, 5, 4.5, 3.2]
+    }
+});
 
 Grid.grid('container', {
     data: {
-        columns: {
-            product: [
-                'Apples',
-                'Pears',
-                'Plums',
-                'Bananas',
-                'Oranges'
-            ],
-            weight: [100, 40, 0.5, 200, 120],
-            price: [1.5, 2.53, 5, 4.5, 3.2]
-        }
+        dataTable: dataTable
     },
     columnDefaults: {
         cells: {
@@ -253,4 +274,6 @@ Grid.grid('container', {
     }
 });
 
-logEvent('Ready. Right-click a cell to open the menu.');
+logEvent(
+    'Ready. Right-click a cell to open the menu with nested items.'
+);

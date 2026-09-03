@@ -15,8 +15,8 @@ start with `data.columns`, an existing `data.dataTable`, or
 [`data.connector`](https://www.highcharts.com/docs/grid/data-handling/connectors),
 Grid works with a `DataTable` internally.
 
-For backward compatibility, `grid.dataTable` is still available, but new code
-should use `grid.dataProvider.getDataTable()` instead.
+To access the underlying table in client-side mode, use
+`grid.dataProvider.getDataTable()` when the provider is local.
 
 For a full description of `DataTable`, see the [Dashboards article on
 DataTable](https://www.highcharts.com/docs/dashboards/data-table).

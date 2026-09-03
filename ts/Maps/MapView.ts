@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -62,7 +63,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     pushUnique,
     relativeLength
 } from '../Shared/Utilities.js';
@@ -328,7 +328,7 @@ class MapView {
          * The current center of the view in terms of `[longitude, latitude]`.
          * @name Highcharts.MapView#center
          * @readonly
-         * @type {LonLatArray}
+         * @type {Highcharts.LonLatArray}
          */
         this.center = o.center;
         this.options = o;
@@ -495,7 +495,9 @@ class MapView {
 
         if (b) {
 
-            const pad = pick(padding, bounds ? 0 : this.options.padding),
+            const pad = padding ?? (
+                    bounds ? 0 : this.options.padding
+                ),
                 fullField = this.getField(false),
                 padArr = isArray(pad) ? pad : [pad, pad, pad, pad];
 
@@ -1413,7 +1415,7 @@ class MapView {
         }
 
         if (redraw) {
-            this.chart.redraw(animation);
+            this.redraw(animation);
         }
     }
 

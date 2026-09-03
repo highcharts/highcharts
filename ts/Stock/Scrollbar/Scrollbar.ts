@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -43,7 +44,6 @@ import {
     extend,
     fireEvent,
     merge,
-    pick,
     pushUnique,
     removeEvent
 } from '../../Shared/Utilities.js';
@@ -54,6 +54,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         scrollbarsOffsets?: [number, number];
@@ -72,7 +73,7 @@ declare module '../../Core/Chart/ChartBase'{
  * A reusable scrollbar, internally used in Highcharts Stock's
  * navigator and optionally on individual axes.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Scrollbar
  * @param {Highcharts.SVGRenderer} renderer
@@ -238,7 +239,7 @@ class Scrollbar {
     /**
      * Set up the mouse and touch events for the Scrollbar
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#addEvents
      */
     public addEvents(): void {
@@ -287,7 +288,7 @@ class Scrollbar {
         const scroller = this;
         const range = (
             (scroller.to - scroller.from) *
-            pick(scroller.options.step, 0.2)
+            (scroller.options.step ?? 0.2)
         );
 
         scroller.updatePosition(scroller.from + range, scroller.to + range);
@@ -302,7 +303,7 @@ class Scrollbar {
     private buttonToMinClick(e: PointerEvent): void {
         const scroller = this;
         const range = correctFloat(scroller.to - scroller.from) *
-            pick(scroller.options.step, 0.2);
+            (scroller.options.step ?? 0.2);
 
         scroller.updatePosition(
             correctFloat(scroller.from - range),
@@ -319,7 +320,7 @@ class Scrollbar {
     /**
      * Get normalized (0-1) cursor position over the scrollbar
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#cursorToScrollbarPosition
      *
      * @param  {*} normalizedEvent
@@ -351,7 +352,7 @@ class Scrollbar {
     /**
      * Destroys allocated elements.
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#destroy
      */
     public destroy(): void {
@@ -389,7 +390,7 @@ class Scrollbar {
     /**
      * Draw the scrollbar buttons with arrows
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#drawScrollbarButton
      * @param {number} index
      *        0 is left, 1 is right
@@ -456,7 +457,7 @@ class Scrollbar {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#init
      * @param {Highcharts.SVGRenderer} renderer
      * @param {Highcharts.ScrollbarOptions} options
@@ -479,15 +480,13 @@ class Scrollbar {
             defaultOptions.scrollbar,
             options
         );
-        scroller.options.margin = pick(scroller.options.margin, 10);
+        scroller.options.margin = (scroller.options.margin ?? 10);
 
         scroller.chart = chart;
 
         // Backward compatibility
-        scroller.size = pick(
-            scroller.options.size,
-            scroller.options.height as any
-        );
+        scroller.size = scroller.options.size ??
+            scroller.options.height as any;
 
         // Init
         if (options.enabled) {
@@ -512,7 +511,7 @@ class Scrollbar {
 
     /**
      * Event handler for the mouse move event.
-     * @private
+     * @internal
      */
     private mouseMoveHandler(e: PointerEvent): void {
         const scroller = this,
@@ -561,7 +560,7 @@ class Scrollbar {
 
     /**
      * Event handler for the mouse up event.
-     * @private
+     * @internal
      */
     private mouseUpHandler(e: PointerEvent): void {
         const scroller = this;
@@ -584,7 +583,7 @@ class Scrollbar {
      * Position the scrollbar, method called from a parent with defined
      * dimensions.
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#position
      * @param {number} x
      *        x-position on the chart
@@ -651,7 +650,7 @@ class Scrollbar {
     /**
      * Removes the event handlers attached previously with addEvents.
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#removeEvents
      */
     public removeEvents(): void {
@@ -664,7 +663,7 @@ class Scrollbar {
     /**
      * Render scrollbar with all required items.
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#render
      */
     public render(): void {
@@ -757,7 +756,7 @@ class Scrollbar {
     /**
      * Set scrollbar size, with a given scale.
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#setRange
      * @param {number} from
      *        scale (0-1) where bar should start
@@ -851,17 +850,16 @@ class Scrollbar {
      * Checks if the extremes should be updated in response to a scrollbar
      * change event.
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#shouldUpdateExtremes
      */
     public shouldUpdateExtremes(eventType?: string): boolean {
         return (
-            pick(
-                this.options.liveRedraw,
+            (this.options.liveRedraw ?? (
                 H.svg &&
                 !H.isTouchDevice &&
                 !this.chart.boosted
-            ) ||
+            )) ||
             // Mouseup always should change extremes
             eventType === 'mouseup' ||
             eventType === 'touchend' ||
@@ -905,7 +903,7 @@ class Scrollbar {
     /**
      * Update the scrollbar with new options
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#update
      * @param  {Highcharts.ScrollbarOptions} options
      */
@@ -921,7 +919,7 @@ class Scrollbar {
     /**
      * Update position option in the Scrollbar, with normalized 0-1 scale
      *
-     * @private
+     * @internal
      * @function Highcharts.Scrollbar#updatePosition
      * @param  {number} from
      * @param  {number} to
@@ -948,6 +946,7 @@ class Scrollbar {
  *
  * */
 
+/** @internal */
 namespace Scrollbar {
     export interface ChangedEvent {
         from: number;
@@ -967,4 +966,5 @@ namespace Scrollbar {
  *
  * */
 
+/** @internal */
 export default Scrollbar;

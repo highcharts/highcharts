@@ -5,8 +5,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 
 
@@ -30,6 +30,8 @@ import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
+import CellContextMenuBuiltInActions
+    from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
@@ -62,6 +64,7 @@ import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 const G = {
     AST,
+    CellContextMenuBuiltInActions,
     ColumnResizing,
     DataConnector,
     DataConverter,
@@ -98,6 +101,7 @@ ResponsiveComposition.compose(G.Grid);
 
 export {
     AST,
+    CellContextMenuBuiltInActions,
     ColumnResizing,
     DataConnector,
     DataConverter,

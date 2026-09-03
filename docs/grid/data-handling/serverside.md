@@ -49,7 +49,9 @@ Grid.grid('container', {
             return {
                 columns: result.columns,
                 totalRowCount: result.totalRowCount,
-                rowIds: result.rowIds
+                rowIds: result.rowIds,
+                // Optional: effective page size used by the backend.
+                pageSize: result.pageSize
             };
         },
         setValueCallback: async (columnId, rowId, value) => {
@@ -76,7 +78,10 @@ backend. The callback receives the current query state plus `offset`, `limit`,
 and an optional `AbortSignal`. In the example above, `offset` and `limit` are
 sent as request parameters, `query` is used to forward sorting and filtering
 state, `signal` is passed to `fetch`, and the callback returns the expected
-`columns`, `totalRowCount`, and optional `rowIds`.
+`columns`, `totalRowCount`, optional `rowIds`, and optional `pageSize`.
+
+Return `pageSize` when the backend can clamp or otherwise adjust the requested
+page size. This keeps the Grid chunk indexing aligned with the actual response.
 
 ## Data Source helper
 
@@ -129,13 +134,15 @@ dataSource: {
     // Removes empty query parameters from the URL.
     omitEmpty: true,
     parseResponse: async (res) => {
-        // Parse the response into { columns, totalRowCount, rowIds? }.
+        // Parse the response into
+        // { columns, totalRowCount, rowIds?, pageSize? }.
         const { data, meta } = await res.json();
 
         return {
             columns: data || {},
             totalRowCount: meta?.totalRowCount || 0,
-            rowIds: meta?.rowIds
+            rowIds: meta?.rowIds,
+            pageSize: meta?.pageSize
         };
     },
     // Request timeout in ms (use 0 to disable).

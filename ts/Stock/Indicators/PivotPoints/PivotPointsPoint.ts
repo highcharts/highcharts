@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,9 +28,7 @@ const SMAPoint: typeof SMAPointType =
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function destroyExtraLabels(
     point: PivotPointsPoint,
     functionName: string
@@ -58,6 +57,7 @@ function destroyExtraLabels(
  *
  * */
 
+/** @internal */
 class PivotPointsPoint extends SMAPoint {
 
     /* *
@@ -97,4 +97,5 @@ class PivotPointsPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 export default PivotPointsPoint;

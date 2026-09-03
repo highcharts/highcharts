@@ -71,7 +71,6 @@
 
     &:focus-visible {
         outline: none;
-        border-color: transparent;
     }
 
     &[type="checkbox"] {
@@ -93,19 +92,14 @@
         }
     }
 
-    &.hcg-icon-search {
-        padding-left: 25px;
-        appearance: none;
-        background-repeat: no-repeat;
-        background-position: left 10px center;
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3e%3cpath d='M10.5 10.5L7.50005 7.5M8.5 5C8.5 6.933 6.933 8.5 5 8.5C3.067 8.5 1.5 6.933 1.5 5C1.5 3.067 3.067 1.5 5 1.5C6.933 1.5 8.5 3.067 8.5 5Z' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
-    }
-
     select& {
         appearance: none;
         background-image: url("data:image/svg+xml,%3csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M3.5 7.5L6 10L8.5 7.5M3.5 4.5L6 2L8.5 4.5' stroke='%23767676' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
         background-repeat: no-repeat;
         background-position: right 5px center;
+
+        /* Reserve space for the chevron (functional shell, not theme). */
+        padding-inline-end: 1.25rem;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
@@ -148,7 +142,6 @@
 
     &:focus-visible {
         outline: none;
-        border-color: transparent;
     }
 
     &:disabled {
@@ -181,36 +174,46 @@
         display: block;
     }
 
+    &.hcg-column-virtualization thead tr {
+        display: block;
+        overflow: visible;
+    }
+
+    &.hcg-column-virtualization thead th .hcg-header-cell-container {
+        height: 100%;
+    }
+
     thead th {
         position: relative;
     }
 
-    &.hcg-scrollable-content tbody {
+    /* <tbody> */
+    &.hcg-scrollable-content > tbody {
         height: 100%;
         overflow: auto;
         min-height: 0;
         flex: 1;
     }
 
-    &.hcg-virtualization tbody {
+    &.hcg-virtualization > tbody {
         display: block;
         position: relative;
     }
 
-    tbody tr {
+    > tbody > tr {
         overflow: hidden;
         width: 100%;
     }
 
-    tbody tr > :where(.hcg-cell) {
+    > tbody > tr > :where(.hcg-cell) {
         position: relative;
         line-height: 1em;
         overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    tbody tr.hcg-mocked-row > :where(.hcg-cell) {
+    > tbody > tr.hcg-mocked-row > :where(.hcg-cell) {
         white-space: nowrap;
-        text-overflow: ellipsis;
     }
 
     .hcg-last-header-cell-in-row,
@@ -222,20 +225,24 @@
         border-bottom: none;
     }
 
-    &.hcg-scrollable-content tbody tr {
+    &.hcg-scrollable-content > tbody > tr {
         display: block;
     }
 
-    &.hcg-virtualization tbody tr {
+    &.hcg-column-virtualization :is(thead tr, tbody tr) > :where(.hcg-cell, .hcg-header-cell) {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    &.hcg-virtualization > tbody > tr {
         position: absolute;
     }
 
-    tbody.hcg-rows-content-nowrap :where(.hcg-cell) {
+    > tbody.hcg-rows-content-nowrap > tr > :where(.hcg-cell) {
         white-space: nowrap;
-        text-overflow: ellipsis;
     }
 
-    tbody :where(.hcg-cell):focus {
+    > tbody > tr > :where(.hcg-cell):focus {
         outline: none;
     }
 }
@@ -268,6 +275,7 @@
         align-items: center;
         max-width: 0;
         opacity: 0;
+        z-index: 11;
         cursor: pointer;
         transition: max-width 0.3s ease, opacity 0.3s ease;
     }
@@ -324,6 +332,8 @@
     .hcg-column-resizer.hovered::after {
         content: "";
         height: 100%;
+        width: max(3px, calc(var(--hcg-header-column-border-width, var(--hcg-border-width, 1px)) + 2px));
+        background: var(--hcg-header-color, var(--hcg-color, currentColor));
     }
 }
 
@@ -334,7 +344,6 @@
 .hcg-container .hcg-pagination {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
     flex-wrap: nowrap;
 
     > * {
@@ -350,36 +359,31 @@
 
     .hcg-pagination-controls {
         justify-content: center;
-        gap: 2px;
 
         .hcg-pagination-pages {
             display: flex;
             flex-wrap: nowrap;
-            gap: 2px;
 
             .hcg-button {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                min-width: 30px;
             }
 
             span {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                min-width: 20px;
             }
         }
     }
 
     .hcg-pagination-page-size {
         justify-content: flex-end;
-        text-align: right;
 
+        /* Override global `.hcg-input { width: 100% }` — themed sets explicit width. */
         select.hcg-input {
-            width: 60px;
-            margin-left: 8px;
+            width: auto;
         }
     }
 
@@ -414,6 +418,9 @@
     .hcg-container .hcg-pagination {
         flex-direction: column;
         align-items: stretch;
+
+        /* Row gap when stacked — honor theme token when set. */
+        gap: var(--hcg-pagination-gap, 0.5rem);
         --ig-pagination-stacked-align: center;
 
         &.hcg-pagination-left { --ig-pagination-stacked-align: flex-start; }
@@ -430,8 +437,22 @@
             justify-content: var(--ig-pagination-stacked-align);
         }
 
+        .hcg-pagination-controls {
+            /* Keep one row; scroll if controls still overflow. */
+            flex-wrap: nowrap;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .hcg-pagination-pages {
+            flex-wrap: nowrap;
+        }
+
         .hcg-pagination-page-size {
             text-align: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
         &.hcg-pagination-left .hcg-pagination-page-size { text-align: left; }
         &.hcg-pagination-right .hcg-pagination-page-size { text-align: right; }
@@ -488,20 +509,12 @@
 .hcg-container .hcg-popup {
     position: absolute;
     z-index: 1000;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08), 0 7px 7px 0 rgba(0, 0, 0, 0.07), 0 17px 10px 0 rgba(0, 0, 0, 0.04), 0 30px 12px 0 rgba(0, 0, 0, 0.01);
     min-width: 200px;
     overflow: auto;
     border-width: 1px;
     border-style: solid;
 
-    .hcg-popup-content {
-        padding: 5px;
-    }
-
     .hcg-menu-header {
-        font-size: 0.75rem;
-        padding: 3px;
         margin-bottom: 5px;
     }
 
@@ -520,7 +533,6 @@
     display: flex;
     flex-direction: column;
     list-style: none;
-    row-gap: 5px;
     padding: 0;
 
     .hcg-menu-item {
@@ -529,13 +541,8 @@
         gap: 2px;
         width: 100%;
         min-width: 185px;
-        min-height: 2rem;
-        padding: 8px 8px 8px 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
         background-color: transparent;
         border: 1px solid transparent;
-        border-radius: 5px;
     }
 
     .hcg-menu-item:not(:disabled) {
@@ -592,6 +599,12 @@
     flex-flow: column;
     row-gap: 5px;
     min-width: 50px;
+}
+
+.hcg-column-filter-operator-spacer {
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
 }
 
 .hcg-clear-filter-button {
@@ -656,13 +669,13 @@
     width: 100%;
     height: 100%;
     gap: 10px;
-    color: light-dark(#000000, #ffffff);
+    color: var(--ig-loader-color);
 }
 
 .hcg-loading-wrapper .hcg-spinner {
     border-top-width: 5px;
     border-top-style: solid;
-    border-top-color: light-dark(#000000, #ffffff);
+    border-top-color: var(--ig-loader-color);
     border-radius: 50%;
     width: 30px;
     height: 30px;

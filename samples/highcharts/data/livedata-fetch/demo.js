@@ -26,7 +26,7 @@ window.addEventListener('load', function () {
     chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
-            defaultSeriesType: 'spline',
+            type: 'spline',
             events: {
                 load: requestData
             }

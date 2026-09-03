@@ -11,6 +11,7 @@ const chart = Highcharts.stockChart('container', {
     },
     series: [
         {
+            pointStart: '2025-01-01',
             pointInterval: 24 * 3600 * 1000,
             data: [1, 3, 2, 4, 3, 5, 4, 6, 3, 4, 2, 3, 1, 2, 1]
         }

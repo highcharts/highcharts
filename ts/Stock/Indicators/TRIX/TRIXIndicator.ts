@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,7 +32,7 @@ import { correctFloat, merge } from '../../../Shared/Utilities.js';
 /**
  * The TRIX series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.trix
  *
@@ -107,6 +108,7 @@ class TRIXIndicator extends TEMAIndicator {
  *
  * */
 
+/** @internal */
 interface TRIXIndicator {
     pointClass: typeof TRIXPoint;
 }
@@ -117,6 +119,7 @@ interface TRIXIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trix: typeof TRIXIndicator;
@@ -131,6 +134,7 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
  *
  * */
 
+/** @internal */
 export default TRIXIndicator;
 
 /* *
@@ -151,6 +155,7 @@ export default TRIXIndicator;
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/tema
+ * @requires  stock/indicators/trix
  * @apioption series.trix
  */
 

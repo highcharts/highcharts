@@ -9,6 +9,7 @@ Frequently asked questions
 *   [Can I export multiple charts to the same image or PDF?](#can-i-export-multiple-charts-to-the-same-image-or-pdf)
 *   [My non-English characters don't display right in my charts](#my-non-english-characters-don39t-display-right-in-my-charts)
 *   [Can I generate charts on the server without using a browser?](#can-i-generate-charts-on-the-server-without-using-a-browser)
+*   [Why do charts show a white screen in iOS WKWebView?](#why-do-charts-show-a-white-screen-in-ios-wkwebview)
 *   [How do I define irregular time data?](#how-do-i-define-irregular-time-data)
 *   [How do I add data from a MySQL database?](#how-do-i-add-data-from-a-mysql-database)
 *   [Your map of my country does not include a disputed area](#your-map-of-my-country-does-not-include-a-disputed-area)
@@ -109,6 +110,34 @@ Can I generate charts on the server without using a browser?
 ------------------------------------------------------------
 
 Yes. See our article, [Render charts on the server](https://highcharts.com/docs/export-module/render-charts-serverside).
+
+* * *
+
+Why do charts show a white screen in iOS WKWebView?
+---------------------------------------------------
+
+This issue is usually related to how resources are loaded in a native iOS
+integration.
+
+For native iOS apps, the historical Highcharts iOS wrapper is
+community-supported:
+[highcharts/highcharts-ios](https://github.com/highcharts/highcharts-ios)
+
+For the issue reported on iOS 26.4 (white screen), see:
+[highcharts/highcharts-ios#465](https://github.com/highcharts/highcharts-ios/issues/465)
+
+The reported working setup is:
+
+1. Keep Highcharts JavaScript resources in the main app bundle.
+2. Use the main bundle as `baseURL` in `WKWebView`:
+   `Bundle.main.bundleURL` (Swift) or
+   `[[NSBundle mainBundle] bundleURL]` (Objective-C).
+3. Keep relative script paths in HTML, for example:
+   `<script src="js/highcharts.js"></script>`.
+
+If `WKWebView` loads HTML with `loadHTMLString:baseURL:` and `baseURL` points
+to an embedded framework bundle, JavaScript resources may fail to load on iOS
+26.4, which can result in a white screen.
 
 * * *
 

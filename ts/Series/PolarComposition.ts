@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,10 +45,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type Tick from '../Core/Axis/Tick';
 
-import A from '../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
-import BorderRadius from '../Extensions/BorderRadius.js';
-const { optionsToObject } = BorderRadius;
+import { animObject } from '../Core/Animation/AnimationUtilities.js';
+import { borderRadiusObject } from '../Extensions/BorderRadius.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
@@ -63,7 +62,6 @@ import {
     isNumber,
     isObject,
     merge,
-    pick,
     pushUnique,
     relativeLength,
     splat,
@@ -681,7 +679,7 @@ function onSeriesAfterColumnTranslate(
         const seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
-            { scope, where = 'end' } = optionsToObject(
+            { scope, where = 'end' } = borderRadiusObject(
                 options.borderRadius,
                 isObject(seriesDefault) ? seriesDefault : {}
             );
@@ -750,7 +748,7 @@ function onSeriesAfterTranslate(
                 !series.yAxis.reversed
             ) {
                 if (
-                    pick(points[i].y, Number.MIN_VALUE) < yAxis.min ||
+                    (points[i].y ?? Number.MIN_VALUE) < yAxis.min ||
                     points[i].x < xAxis.min ||
                     points[i].x > xAxis.max
                 ) {
@@ -904,7 +902,7 @@ function wrapColumnSeriesAlignDataLabel(
     isNew?: boolean
 ): void {
     const chart = this.chart,
-        inside = pick(options.inside, !!this.options.stacking);
+        inside = (options.inside ?? !!this.options.stacking);
 
     let angle,
         shapeArgs,
@@ -952,9 +950,9 @@ function wrapColumnSeriesAlignDataLabel(
                 });
             }
 
-            options.align = pick(options.align, 'center');
+            options.align = (options.align ?? 'center');
             options.verticalAlign =
-                pick(options.verticalAlign, 'middle');
+                (options.verticalAlign ?? 'middle');
         }
 
         Series.prototype.alignDataLabel.call(
@@ -985,15 +983,10 @@ function onAfterColumnTranslate(
     this: (ColumnSeries&PolarSeriesComposition)
 ): void {
     const series = this,
-        options = series.options,
+        { chart, options, xAxis, yAxis } = series,
         stacking = options.stacking,
-        chart = series.chart,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
-        reversed = yAxis.reversed,
-        center = yAxis.center,
-        startAngleRad = xAxis.startAngleRad,
-        endAngleRad = xAxis.endAngleRad,
+        { center, reversed } = yAxis,
+        { endAngleRad, startAngleRad } = xAxis,
         visibleRange = endAngleRad - startAngleRad;
 
     let threshold = options.threshold,
@@ -1124,10 +1117,10 @@ function onAfterColumnTranslate(
                 r = Math.max(barX + (point.pointWidth || 0), 0);
 
                 // Handle border radius
-                const brOption = options.borderRadius,
-                    brValue = typeof brOption === 'object' ?
-                        brOption.radius : brOption,
-                    borderRadius = relativeLength(brValue || 0, r - innerR);
+                const brOption = borderRadiusObject(
+                        options.borderRadius
+                    ),
+                    borderRadius = relativeLength(brOption.radius, r - innerR);
 
                 point.shapeArgs = {
                     x: center[0],
@@ -1360,10 +1353,8 @@ function wrapSeriesAnimate(
         if (series.isRadialBar) {
             if (!init) {
                 // Run the pie animation for radial bars
-                series.startAngleRad = pick(
-                    series.translatedThreshold,
-                    series.xAxis.startAngleRad
-                );
+                series.startAngleRad =
+                    series.translatedThreshold ?? series.xAxis.startAngleRad;
                 H.seriesTypes.pie.prototype.animate.call(series, init);
             }
         } else {
@@ -1490,25 +1481,24 @@ function wrapPointPos(
     this: PolarPoint,
     proceed: Function,
     chartCoordinates?: boolean,
+    plotX: number|undefined = this.plotX,
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
-    if (!this.destroyed) {
-        const { plotX, series } = this,
-            { chart } = series;
+    const { series } = this,
+        { chart } = series || {};
 
-        if (
-            chart.polar &&
-            isNumber(plotX) &&
-            isNumber(plotY)
-        ) {
-            return [
-                plotX + (chartCoordinates ? chart.plotLeft : 0),
-                plotY + (chartCoordinates ? chart.plotTop : 0)
-            ];
-        }
-
-        return proceed.call(this, chartCoordinates, plotY);
+    if (
+        chart?.polar &&
+        isNumber(plotX) &&
+        isNumber(plotY)
+    ) {
+        return [
+            plotX + (chartCoordinates ? chart.plotLeft : 0),
+            plotY + (chartCoordinates ? chart.plotTop : 0)
+        ];
     }
+
+    return proceed.call(this, chartCoordinates, plotX, plotY);
 }
 
 /* *
@@ -1542,7 +1532,7 @@ class PolarAdditions {
         LineSeriesClass: typeof LineSeries,
         SplineSeriesClass: typeof SplineSeries
     ): void {
-        Pane.compose(ChartClass, PointerClass, SeriesClass);
+        Pane.compose(ChartClass, PointerClass);
         RadialAxis.compose(AxisClass, TickClass);
 
         if (pushUnique(composed, 'Polar')) {
@@ -1679,7 +1669,7 @@ class PolarAdditions {
             paneInnerR = center[3] / 2;
 
         let r = len - high + paneInnerR,
-            innerR = len - pick(low, len) + paneInnerR;
+            innerR = len - (low ?? len) + paneInnerR;
 
         // Prevent columns from shooting through the pane's center
         if (series.yAxis.reversed) {
@@ -1752,7 +1742,7 @@ class PolarAdditions {
         // in two dimensions.
         if (series.kdByAngle) {
             clientX = (
-                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
+                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle || 0)
             ) % 360;
             if (clientX < 0) { // #2665
                 clientX += 360;

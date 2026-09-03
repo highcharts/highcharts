@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -32,6 +33,7 @@ import Row from './Row';
 import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
 import { fireEvent } from '../../../Shared/Utilities.js';
+import { applyTrackedStyles, applyUserClassNames } from '../GridUtils.js';
 
 
 /* *
@@ -195,7 +197,10 @@ abstract class Cell {
      * Handles the blur event on the cell.
      */
     protected onBlur(): void {
-        delete this.row.viewport.focusCursor;
+        const vp = this.row.viewport;
+        if (!vp.focusCursor?.detached) {
+            delete vp.focusCursor;
+        }
     }
 
     /**
@@ -217,7 +222,14 @@ abstract class Cell {
 
         const getVerticalPos = (): number => {
             if ((row as TableRow).index !== void 0) {
-                return (row as TableRow).index - vp.rows[0].index;
+                const renderedRowIndex = vp.getRenderedRows()
+                    .indexOf(row as TableRow);
+
+                if (renderedRowIndex !== -1) {
+                    return renderedRowIndex;
+                }
+
+                return (row as TableRow).index - (vp.rows[0]?.index ?? 0);
             }
 
             const level = (row as unknown as HeaderRow).level;
@@ -248,22 +260,48 @@ abstract class Cell {
             const { header } = vp;
             const localRowIndex = getVerticalPos();
             const nextVerticalDir = localRowIndex + dir[0];
+            const nextColumnIndex = column.index + dir[1];
+            const focusCell = (cell: Cell): void => {
+                cell.htmlElement.focus({
+                    preventScroll: true
+                });
+                vp.ensureColumnFullyVisible(nextColumnIndex);
+
+                if ((cell.row as TableRow).index !== void 0) {
+                    vp.ensureRowFullyVisible(cell.row as TableRow);
+                }
+            };
 
             if (nextVerticalDir < 0 && header) {
                 const extraRowIdx = header.rows.length + nextVerticalDir;
-                if (extraRowIdx + 1 > header.levels) {
+                const nextCell = extraRowIdx + 1 > header.levels ? (
                     header.rows[extraRowIdx]
-                        .cells[column.index + dir[1]]?.htmlElement.focus();
-                } else {
-                    vp.columns[column.index + dir[1]]
-                        ?.header?.htmlElement.focus();
+                        ?.getCellByColumnIndex(nextColumnIndex)
+                ) : (
+                    vp.getColumnByIndex(nextColumnIndex)?.header
+                );
+
+                if (nextCell) {
+                    focusCell(nextCell);
                 }
+
                 return;
             }
 
-            const nextRow = vp.rows[nextVerticalDir];
+            const nextRow = vp.getRenderedRows()[nextVerticalDir];
             if (nextRow) {
-                nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
+                const nextCell = nextRow.getCellByColumnIndex(
+                    nextColumnIndex
+                );
+
+                if (nextCell) {
+                    focusCell(nextCell);
+                } else if ((nextRow as TableRow).index !== void 0) {
+                    vp.focusCellByRowIndex(
+                        (nextRow as TableRow).index,
+                        nextColumnIndex
+                    );
+                }
             }
         }
     }
@@ -337,25 +375,20 @@ abstract class Cell {
      * The template string.
      */
     protected setCustomClassName(template?: string): void {
-        const element = this.htmlElement;
-
-        if (this.customClassName) {
-            element.classList.remove(...this.customClassName.split(/\s+/g));
-        }
-
         if (!template) {
-            delete this.customClassName;
+            this.customClassName = applyUserClassNames(
+                this.htmlElement,
+                this.customClassName
+            );
             return;
         }
 
         const newClassName = this.format(template);
-        if (!newClassName) {
-            delete this.customClassName;
-            return;
-        }
-
-        element.classList.add(...newClassName.split(/\s+/g));
-        this.customClassName = newClassName;
+        this.customClassName = applyUserClassNames(
+            this.htmlElement,
+            this.customClassName,
+            newClassName || void 0
+        );
     }
 
     /**
@@ -366,38 +399,11 @@ abstract class Cell {
      * A style object to apply.
      */
     protected setCustomStyles(styles?: CSSObject): void {
-        const elementStyle = this.htmlElement.style;
-        const getCSSPropertyName = (property: string): string => (
-            property.indexOf('-') > -1 ?
-                property :
-                property.replace(/[A-Z]/g, '-$&').toLowerCase()
+        this.customStyleProperties = applyTrackedStyles(
+            this.htmlElement,
+            this.customStyleProperties,
+            styles
         );
-
-        if (this.customStyleProperties) {
-            for (const property of this.customStyleProperties) {
-                elementStyle.removeProperty(property);
-            }
-        }
-
-        if (!styles) {
-            delete this.customStyleProperties;
-            return;
-        }
-
-        const appliedProperties: string[] = [];
-
-        for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
-            const value = styles[key];
-            if (value === void 0 || value === null) {
-                continue;
-            }
-
-            const property = getCSSPropertyName(String(key));
-            elementStyle.setProperty(property, String(value));
-            appliedProperties.push(property);
-        }
-
-        this.customStyleProperties = appliedProperties;
     }
 
     /**

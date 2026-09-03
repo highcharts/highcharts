@@ -5,8 +5,9 @@
  *
  *  Build a timeline from a chart.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,8 +27,7 @@ import {
     defined,
     extend,
     getNestedProperty,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 const {
     format
@@ -362,8 +362,8 @@ function getMappingParameterValue(
     if (typeof mappingOptions === 'object') {
         mapTo = mappingOptions.mapTo;
         mapFunc = mappingOptions.mapFunction || mapFunc;
-        min = pick(mappingOptions.min, min);
-        max = pick(mappingOptions.max, max);
+        min = (mappingOptions.min ?? min);
+        max = (mappingOptions.max ?? max);
         within = mappingOptions.within || defaultMapping.within;
         scale = (
             mappingOptions as Sonification.PitchMappingParameterOptions
@@ -471,7 +471,7 @@ function getParamValWithDefault(
     defaults?: Partial<Sonification.MappingParameterOptions>,
     contextValueProp?: string
 ): number {
-    return pick(getMappingParameterValue(
+    return (getMappingParameterValue(
         context,
         propMetrics,
         useSeriesExtremes,
@@ -482,7 +482,7 @@ function getParamValWithDefault(
         ),
         mappingParamOptions,
         contextValueProp
-    ), fallback);
+    ) ?? fallback);
 }
 
 
@@ -598,7 +598,8 @@ function addTimelineChannelFromTrack(
 
     return timeline.addChannel(
         options.type || 'instrument', engine,
-        pick(options.showPlayMarker, true)
+        (options.showPlayMarker ?? true
+        )
     );
 }
 
@@ -824,10 +825,8 @@ function addMappedEventForPoint(
             context, channel, trackOptions.mapping as
             Sonification.InstrumentTrackMappingOptions,
             propMetrics,
-            pick(
-                (trackOptions as Sonification.InstrumentTrackOptions)
-                    .roundToMusicalNotes,
-                true
+            ((trackOptions as Sonification.InstrumentTrackOptions)
+                .roundToMusicalNotes ?? true
             ));
     }
     return eventsAdded;
@@ -907,8 +906,7 @@ function isActive(
     }
     if (typeof activeWhen === 'object') {
         const prop = activeWhen.prop,
-            val = pick(
-                context.value,
+            val = context.value ?? (
                 context.point && getPointPropValue(context.point, prop)
             );
         if (typeof val !== 'number') {
@@ -936,8 +934,8 @@ function isActive(
             );
         }
 
-        const max = pick(activeWhen.max, Infinity),
-            min = pick(activeWhen.min, -Infinity);
+        const max = (activeWhen.max ?? Infinity),
+            min = (activeWhen.min ?? -Infinity);
 
         return val <= max && val >= min && crossingOk;
     }
@@ -1192,7 +1190,7 @@ function timelineFromChart(
                             addMappedInstrumentEvent(
                                 { time, value },
                                 contextChannel, mergedOpts.mapping, propMetrics,
-                                pick(mergedOpts.roundToMusicalNotes, true),
+                                (mergedOpts.roundToMusicalNotes ?? true),
                                 valueProp
                             );
                         }

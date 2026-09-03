@@ -1,0 +1,13 @@
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+#container {
+    height: 400px;
+    min-width: 310px;
+}
+
+#csv {
+    display: none;
+}

@@ -15,6 +15,7 @@ assignees: ''
 
 #### Live demo with steps to reproduce
 <!-- template: https://jsfiddle.net/highcharts/LLExL/ -->
+<!-- ESM template: https://jsfiddle.net/highcharts/edctw0j3/ -->
 
 #### Product version
 <!-- Highcharts Core, Stock, Maps, Gantt, or Dashboards, plus version number -->

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,8 +28,7 @@ import {
     fireEvent,
     isNumber,
     isString,
-    objectEach,
-    pick
+    objectEach
 } from '../Shared/Utilities.js';
 import H from './Globals.js';
 const {
@@ -163,8 +163,8 @@ export function insertItem(
             // Handle index option, the element to insert has lower index
             (
                 isNumber(indexOption) &&
-                indexOption < pick(
-                    (collection[i] as Series).options.index,
+                indexOption < (
+                    (collection[i] as Series).options.index ??
                     (collection[i] as Series)._i
                 )
             ) ||
@@ -263,7 +263,7 @@ export const uniqueKey = (function (): () => string {
  * State of the serial mode.
  */
 export function useSerialIds(mode?: boolean): (boolean|undefined) {
-    return (serialMode = pick(mode, serialMode));
+    return (serialMode = (mode ?? serialMode));
 }
 
 /* *
@@ -302,11 +302,12 @@ if ((win as any).jQuery) {
      * @param {Highcharts.Options} [options]
      *        The chart options structure.
      *
-     * @param {Highcharts.ChartCallbackFunction} [callback]
+     * @param {Highcharts.ChartCallbackFunction|true} [callback]
      *        Function to run when the chart has loaded and all external
      *        images are loaded. Defining a
      *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
-     *        handler is equivalent.
+     *        handler is equivalent. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      * @return {JQuery}
      *         The current JQuery selector.
@@ -518,7 +519,7 @@ export interface ErrorMessageEventObject {
  * Generic dictionary in TypeScript notation.
  * Use the native `AnyRecord` instead.
  *
- * @deprecated
+ * @deprecated 8.1.2
  * @interface Highcharts.Dictionary<T>
  *//**
  * @name Highcharts.Dictionary<T>#[key:string]

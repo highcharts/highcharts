@@ -6,8 +6,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
@@ -30,7 +30,7 @@ const G: AnyRecord = Highcharts;
 G.RadialAxis = RadialAxis;
 BubbleSeries.compose(G.Axis, G.Chart, G.Legend);
 PackedBubbleSeries.compose(G.Axis, G.Chart, G.Legend);
-Pane.compose(G.Chart, G.Pointer, G.Series);
+Pane.compose(G.Chart, G.Pointer);
 PolarAdditions.compose(
     G.Axis,
     G.Chart,

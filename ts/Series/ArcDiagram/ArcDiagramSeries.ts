@@ -5,8 +5,9 @@
  *  (c) 2021-2026 Highsoft AS
  *  Author: Piotr Madej, Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,15 +31,14 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     crisp,
     extend,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 const { prototype: { symbols } } = SVGRenderer;
 const {
@@ -241,16 +241,16 @@ class ArcDiagramSeries extends SankeySeries {
             translationFactor = series.translationFactor,
             pointOptions = point.options,
             seriesOptions = series.options,
-            linkWeight = pick(
-                pointOptions.linkWeight,
-                seriesOptions.linkWeight,
+            linkWeight = (
+                pointOptions.linkWeight ??
+                seriesOptions.linkWeight ??
                 Math.max(
                     (point.weight || 0) *
-                    translationFactor *
-                    fromNode.scale,
-                    (series.options.minLinkWidth || 0
-                    )
-                )),
+                        translationFactor *
+                        fromNode.scale,
+                    series.options.minLinkWidth || 0
+                )
+            ),
             centeredLinks = point.series.options.centeredLinks,
             nodeTop = fromNode.nodeY;
 
@@ -300,13 +300,10 @@ class ArcDiagramSeries extends SankeySeries {
 
         const linkRadius = (
             (toX + linkWeight - fromX) / Math.abs(toX + linkWeight - fromX)
-        ) * pick(
-            seriesOptions.linkRadius,
-            Math.min(
-                Math.abs(toX + linkWeight - fromX) / 2,
-                fromNode.nodeY - Math.abs(linkWeight)
-            )
-        );
+        ) * (seriesOptions.linkRadius ?? Math.min(
+            Math.abs(toX + linkWeight - fromX) / 2,
+            fromNode.nodeY - Math.abs(linkWeight)
+        ));
 
         point.shapeArgs = {
             d: [
@@ -391,13 +388,10 @@ class ArcDiagramSeries extends SankeySeries {
                 ),
             lineWidth = options.marker?.lineWidth || 0,
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeLeft = crisp(pick(
-                nodeOffset && nodeOffset.absoluteLeft,
-                (
-                    (column.sankeyColumn.left(translationFactor) || 0) +
+            fromNodeLeft = crisp(((nodeOffset && nodeOffset.absoluteLeft) ?? (
+                (column.sankeyColumn.left(translationFactor) || 0) +
                     (nodeOffset && nodeOffset.relativeLeft || 0)
-                )
-            ), lineWidth),
+            )), lineWidth),
             markerOptions = merge(options.marker, node.options.marker),
             symbol = markerOptions.symbol,
             markerRadius = markerOptions.radius,
@@ -445,6 +439,8 @@ class ArcDiagramSeries extends SankeySeries {
                     }),
                     zIndex: void 0
                 };
+                // Delete so it doesn't override anything on merge.
+                delete node.dlOptions.zIndex;
             }
 
             // Pass test in drawPoints

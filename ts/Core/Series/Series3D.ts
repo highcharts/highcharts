@@ -5,8 +5,9 @@
  *
  *  Extension to the Series object in 3D charts.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,7 +33,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -116,7 +116,7 @@ class Series3D extends Series {
         const series = this,
             seriesOptions = series.options,
             chart = series.chart,
-            zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
+            zAxis: ZAxis = (series.zAxis ?? (chart.options.zAxis as any)[0]),
             rawPoints = [] as Array<Position3DObject>,
             rawPointsX: Array<number> = [],
             stack = seriesOptions.stacking ?

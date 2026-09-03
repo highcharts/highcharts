@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,8 +31,7 @@ const {
 import {
     correctFloat,
     extend,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -42,9 +42,7 @@ import {
 
 // Utils:
 
-/**
- * @private
- */
+/** @internal */
 function accumulatePoints(
     sum: number,
     yVal: (Array<number> | Array<Array<number>>),
@@ -52,10 +50,8 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any
-    )
-    );
+    const price = ((yVal[i] as any)[index] ?? (yVal[i] as any
+    ));
 
     if (subtract) {
         return correctFloat(sum - price);
@@ -72,7 +68,7 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -176,10 +172,8 @@ class DPOIndicator extends SMAIndicator {
 
             // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
-            price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
-            )
-            );
+            price = (yVal[rangeIndex] as any)[index] ??
+                (yVal[rangeIndex] as any);
 
             oscillator = price - sum / period;
 
@@ -205,6 +199,7 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -219,6 +214,7 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -233,6 +229,7 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
+/** @internal */
 export default DPOIndicator;
 
 /* *
