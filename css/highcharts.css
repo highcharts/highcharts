@@ -326,16 +326,11 @@
     transition: stroke 150ms;
 }
 
-.highcharts-tooltip .highcharts-tracker {
-    fill: none;
-    stroke: none;
-}
-
 /* Invisible hit area for tooltip.stickOnContact, the stroke is the tolerance */
-.highcharts-tooltip .highcharts-tooltip-tracker {
-    fill: rgba(192, 192, 192, 0.0001);
+.highcharts-tooltip .highcharts-tracker {
+    fill: rgba(0, 0, 0, 0);
     pointer-events: auto;
-    stroke: rgba(192, 192, 192, 0.0001);
+    stroke: rgba(0, 0, 0, 0);
     stroke-linejoin: round;
     stroke-width: 10px;
 }

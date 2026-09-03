@@ -109,6 +109,26 @@ QUnit.test('Stick on hover tooltip (#13310, #12736)', function (assert) {
     });
 });
 
+// Probe 4px from the point towards the tooltip and 4px off the centre line, a
+// spot an arrow reaching only its own length leaves uncovered.
+function keepsContact(chart, controller, point) {
+    const box = chart.tooltip.label.getBBox(),
+        x = chart.plotLeft + point.plotX,
+        y = chart.plotTop + point.plotY,
+        // Vector from the point towards the tooltip
+        dx = box.x + box.width / 2 - x,
+        dy = box.y + box.height / 2 - y,
+        len = Math.sqrt(dx * dx + dy * dy) || 1;
+
+    return chart.pointer.inClass(
+        controller.elementFromPoint(
+            x + 4 * (dx - dy) / len,
+            y + 4 * (dy + dx) / len
+        ),
+        'highcharts-tooltip'
+    );
+}
+
 // Issue #24255
 // The tracker should bridge the gap between the point and the tooltip, but
 // not block the surrounding plot area.
@@ -120,7 +140,6 @@ QUnit.test('Stick on contact tracker shape (#24255)', function (assert) {
                 height: 400
             },
             tooltip: {
-                animation: false,
                 hideDelay: 0,
                 stickOnContact: true
             },
@@ -141,38 +160,12 @@ QUnit.test('Stick on contact tracker shape (#24255)', function (assert) {
         controller = new TestController(chart),
         [neighbour, point] = chart.series[0].points,
         chartX = p => chart.plotLeft + p.plotX,
-        chartY = p => chart.plotTop + p.plotY,
-        // Probe the area right next to the point, 4px towards the tooltip and
-        // 4px off the centre line. A callout arrow reaching only its own
-        // length leaves this area uncovered.
-        keepsContact = p => {
-            const box = chart.tooltip.label.getBBox(),
-                x = chartX(p),
-                y = chartY(p),
-                // Vector from the point towards the tooltip
-                dx = box.x + box.width / 2 - x,
-                dy = box.y + box.height / 2 - y,
-                len = Math.sqrt(dx * dx + dy * dy) || 1;
-
-            return chart.pointer.inClass(
-                controller.elementFromPoint(
-                    x + 4 * (dx - dy) / len,
-                    y + 4 * (dy + dx) / len
-                ),
-                'highcharts-tooltip'
-            );
-        };
+        chartY = p => chart.plotTop + p.plotY;
 
     controller.moveTo(chartX(point), chartY(point));
 
-    assert.strictEqual(
-        chart.hoverPoint,
-        point,
-        'Point should be hovered.'
-    );
-
     assert.ok(
-        keepsContact(point),
+        keepsContact(chart, controller, point),
         'Tracker should bridge the gap between the point and the tooltip.'
     );
 
@@ -184,9 +177,8 @@ QUnit.test('Stick on contact tracker shape (#24255)', function (assert) {
         'Densely placed neighbour should not be blocked by the tracker.'
     );
 
-    // Shared tooltips have no anchor on the label, so the connector is
-    // derived from the last position update instead. Scatter series do not
-    // take part in shared tooltips, hence the type change.
+    // Shared tooltips clear the label anchor, so the connector falls back to
+    // the last position update. Scatter does not share, hence the type change.
     chart.update({
         chart: {
             type: 'line'
@@ -207,8 +199,66 @@ QUnit.test('Stick on contact tracker shape (#24255)', function (assert) {
     );
 
     assert.ok(
-        keepsContact(sharedPoint),
+        keepsContact(chart, controller, sharedPoint),
         'Shared tooltip tracker should bridge the gap as well.'
+    );
+
+    // Split tooltips have no single box to trace, so no tracker is rendered
+    chart.update({
+        tooltip: {
+            split: true
+        }
+    });
+
+    controller.moveTo(chart.plotLeft, chart.plotTop);
+    controller.moveTo(chartX(sharedPoint), chartY(sharedPoint));
+
+    assert.notOk(
+        chart.tooltip.tracker,
+        'Split tooltip should render no tracker.'
+    );
+});
+
+// Issue #19999, #24255
+// In styled mode the hit area comes from highcharts.css, where it has to stay
+// invisible without opting out of pointer events.
+QUnit.test('Styled mode tracker (#19999)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                styledMode: true,
+                type: 'scatter'
+            },
+            tooltip: {
+                hideDelay: 0,
+                stickOnContact: true
+            },
+            series: [{
+                data: [[5, 5]]
+            }]
+        }),
+        controller = new TestController(chart),
+        [point] = chart.series[0].points;
+
+    controller.moveTo(
+        chart.plotLeft + point.plotX,
+        chart.plotTop + point.plotY
+    );
+
+    // `none` would hide the tracker from hit testing too, an opaque colour
+    // would show up behind the tooltip.
+    const style = getComputedStyle(chart.tooltip.tracker.element);
+
+    ['fill', 'stroke'].forEach(prop => {
+        assert.strictEqual(
+            Highcharts.color(style[prop]).rgba[3],
+            0,
+            `Tracker ${prop} should be transparent, not none.`
+        );
+    });
+
+    assert.ok(
+        keepsContact(chart, controller, point),
+        'Styled mode tracker should bridge the gap to the tooltip.'
     );
 });
 

@@ -160,8 +160,8 @@ class Tooltip {
     public allowShared: boolean = true;
 
     /**
-     * Anchor of the latest position update, in chart coordinates. The tracker
-     * needs it also when the label itself has no anchor (#24255).
+     * Anchor of the latest position update. The tracker needs it also when
+     * the label itself has no anchor (#24255).
      *
      * @internal
      */
@@ -383,17 +383,11 @@ class Tooltip {
      */
     public destroy(): void {
         // Destroy and clear local variables
-        if (this.tracker) {
-            this.tracker = this.tracker.destroy();
-        }
-        if (this.label) {
-            this.label = this.label.destroy();
-        }
+        this.tracker = this.tracker?.destroy();
+        this.label = this.label?.destroy();
         if (this.split) {
             this.cleanSplit(true);
-            if (this.tt) {
-                this.tt = this.tt.destroy();
-            }
+            this.tt = this.tt?.destroy();
         }
         if (this.renderer) {
             this.renderer = this.renderer.destroy() as any;
@@ -1760,17 +1754,15 @@ class Tooltip {
     private drawTracker(): void {
         const tooltip = this;
 
-        if (!this.shouldStickOnContact()) {
-            if (tooltip.tracker) {
-                tooltip.tracker = tooltip.tracker.destroy();
-            }
+        if (!tooltip.shouldStickOnContact()) {
+            tooltip.tracker = tooltip.tracker?.destroy();
             return;
         }
 
-        const chart = tooltip.chart;
-        const label = tooltip.label;
-        const points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint;
-        const box = label?.box;
+        const { chart, label } = tooltip,
+            points = tooltip.shared ? chart.hoverPoints : chart.hoverPoint,
+            // Split tooltips render into a plain group, with no box to trace
+            box = label?.box;
 
         if (!box || !points) {
             return;
@@ -1789,7 +1781,8 @@ class Tooltip {
 
         // Match the tooltip shape, but stretch the connector all the way to the
         // point, so that the pointer can travel between the two without losing
-        // contact. (#24255)
+        // contact. Only the side facing the anchor overshoots the box, so the
+        // largest of the four distances is the one to cover. (#24255)
         const d = label.renderer.symbols.callout(x, y, width, height, {
             anchorX,
             anchorY,
@@ -1806,7 +1799,7 @@ class Tooltip {
         if (!tooltip.tracker) {
             tooltip.tracker = label.renderer
                 .path()
-                .addClass('highcharts-tracker highcharts-tooltip-tracker')
+                .addClass('highcharts-tracker')
                 .add(label);
 
             // For a rapid move going outside of the elements keeping the
