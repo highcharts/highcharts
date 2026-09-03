@@ -188,6 +188,16 @@ function getNewPoint(i, data) {
     ];
 }
 
+// csSeries is captured in the chart's load event and goes stale as soon as
+// that chart is destroyed. A destroyed series keeps its options object, so
+// the options check below does not notice, and pushing data into it renders
+// at NaN coordinates -- which the price indicator then tries to draw a
+// crosshair at. Detached from its chart is the reliable signal.
+function csIsDestroyed() {
+    const chart = csSeries && csSeries.chart;
+    return !chart || chart.series.indexOf(csSeries) === -1;
+}
+
 function animateCS() {
     if (!csSeries || !csSeries.options || !csSeries.options.data) {
         return;
@@ -195,8 +205,18 @@ function animateCS() {
 
     let i = 0;
     csInterval = setInterval(() => {
-        if (!csSeries || !csSeries.options || !csSeries.options.data) {
+        if (
+            !csSeries || !csSeries.options || !csSeries.options.data ||
+            csIsDestroyed()
+        ) {
             clearInterval(csInterval);
+            return;
+        }
+
+        // Mid-rebuild, or the slide is hidden, so there is nothing to
+        // measure against yet. Skip the tick rather than stopping, since
+        // this state is transient.
+        if (csSeries.chart.plotWidth <= 0) {
             return;
         }
 
@@ -251,7 +271,22 @@ function cs() {
         },
 
         yAxis: {
-            visible: false,
+            // Kept in the layout rather than visible: false. The lastPrice
+            // label is a crosshair label anchored to this axis, and on a
+            // hidden axis it has no x to anchor to: it rendered as
+            // transform="translate(NaN,<price>)", logged an SVG attribute
+            // error on every redraw, and fell back to x=0 so the price
+            // badge sat in the top left instead of beside the series.
+            // Switching the parts off individually looks the same.
+            visible: true,
+            labels: {
+                enabled: false
+            },
+            lineWidth: 0,
+            gridLineWidth: 0,
+            title: {
+                text: null
+            },
             height: '80%'
         },
         credits: {
@@ -1303,7 +1338,7 @@ function stockWithAnnotations() {
         const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
         const data = cols[name].map((value, i) => [cols.Date[i], value]);
 
-        Highcharts.chart('container', {
+        currentChart = Highcharts.chart('container', {
             chart: {
                 type: 'area',
                 zooming: {
@@ -2009,12 +2044,7 @@ const gantt = {
 // Dashboards personal finance
 function dashboards() {
 
-    Highcharts.setOptions({
-        chart: {
-            styledMode: true
-        }
-    });
-    Dashboards.board('dash-container', {
+    return Dashboards.board('dash-container', {
         dataPool: {
             connectors: [{
                 id: 'transactions',
@@ -2757,7 +2787,7 @@ function grid() {
 
 /* DEMO VIEWER */
 // product info for demo viewer
-const products = [
+let products = [
     {
         name: 'Highcharts Stock',
         tagline: 'Financial visualization and analysis tools',
@@ -2884,6 +2914,15 @@ const products = [
     }
 ];
 
+// The Grid demo renders 30 rows of sparklines, which is 90 charts built in
+// one go. Small screens only ever see its first two columns anyway, and
+// building it there has been enough to crash mobile browsers, so drop that
+// slide below the tablet breakpoint.
+const isSmallScreen = window.matchMedia('(max-width: 767px)').matches;
+if (isSmallScreen) {
+    products = products.filter(p => p.chart !== grid);
+}
+
 const carousel = document.getElementById('carousel');
 const chartWrapper = document.getElementById('chart-wrapper');
 
@@ -2910,7 +2949,8 @@ products.forEach((p, index) => {
     titleInner.appendChild(item);
 });
 const clone = titleInner.firstElementChild.cloneNode(true);
-clone.id = 'title-6';
+clone.id = 'title-clone';
+clone.setAttribute('aria-hidden', 'true');
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
@@ -2928,6 +2968,11 @@ let isResetting = false;
 const dots = document.querySelectorAll('.dot');
 
 dots.forEach((dot, i) => {
+    if (i >= products.length) {
+        dot.style.display = 'none';
+        return;
+    }
+
     dot.addEventListener('click', function () {
         goTo(i);
         if (!isPaused) {
@@ -2964,7 +3009,8 @@ function updateView() {
     if (currentIndex === products.length) {
         currentIndex = 0;
         isResetting = true;
-        titleInner.style.transform = 'translateY(-240px)';
+        titleInner.style.transform =
+            `translateY(-${products.length * 40}px)`;
         titleInner.style.opacity = 1;
 
         updateFooter(currentIndex);
@@ -3161,12 +3207,19 @@ function stopMapAnimation() {
     logAnim('Map animation stopped');
 }
 // --- Animation Failsafe ---
+// Looked up rather than hardcoded: every one of these indices was stale,
+// and the order shifts again when a demo is dropped on small screens. A
+// wrong number here starts the wrong chart's interval.
+function slideIndexOf(chartFn) {
+    return products.findIndex(p => p.chart === chartFn);
+}
+
 function ensureCorrectAnimationState() {
     // When resuming, respect each chart's individual animation preference
     Object.keys(chartAnimationState).forEach(key => {
         const isActive = chartAnimationState[key];
-        // stock chart
-        if (key === 'stock' && currentIndex === 0) { // stock index is 0
+        // Candlestick chart
+        if (key === 'stock' && currentIndex === slideIndexOf(cs)) {
             if (isActive) {
                 startStockChartAnimation();
                 logAnim('Stock animation resumed');
@@ -3175,8 +3228,8 @@ function ensureCorrectAnimationState() {
                 logAnim('Stock animation paused');
             }
         }
-        // map chart
-        if (key === 'maps' && currentIndex === 4) { // maps index is 4
+        // Map chart
+        if (key === 'maps' && currentIndex === slideIndexOf(animatedMap)) {
             if (isActive) {
                 startMapAnimation();
                 logAnim('Map animation resumed');
@@ -3185,9 +3238,9 @@ function ensureCorrectAnimationState() {
                 logAnim('Map animation paused');
             }
         }
-        // grid
-        // eslint-disable-next-line max-len
-        if (key === 'grid' && gridControls && currentIndex === 1) { // grid index is 1
+        // Grid sparklines, absent on small screens
+        const onGridSlide = currentIndex === slideIndexOf(grid);
+        if (key === 'grid' && gridControls && onGridSlide) {
             if (isActive) {
                 if (typeof gridControls.resumeGridUpdates === 'function') {
                     gridControls.resumeGridUpdates();
@@ -3216,6 +3269,67 @@ function announceChange(announcement) {
         newElem.textContent = announcement;
         announce.appendChild(newElem);
     }
+}
+
+
+/* The Dashboards and Grid demos are only built while their slide is
+   showing. Building them up front left ~95 charts alive in hidden
+   containers, and the Grid kept re-rendering its 30 rows of sparklines
+   off-screen, which cost roughly half the frame budget on every other
+   slide. */
+// A board owns its components, their charts and their DOM, so destroying
+// it is the entire teardown -- verified to take the container from 5
+// charts / 502 nodes to 0 / 102. Nothing else may touch that DOM first,
+// or the components have nothing left to clean up.
+// Dashboards.board() is async, so the resolved board is kept separately
+// from the in-flight promise; that way the common case (already built)
+// tears down synchronously.
+let dashBoard = null;
+let dashPending = null;
+
+function buildDashboards() {
+    if (dashBoard || dashPending) {
+        return;
+    }
+    dashPending = Promise.resolve(dashboards()).then(board => {
+        dashPending = null;
+        dashBoard = board;
+    });
+}
+
+function destroyDashboards() {
+    if (dashBoard) {
+        dashBoard.destroy();
+        dashBoard = null;
+    } else if (dashPending) {
+        // left the slide before the board finished loading; dashPending
+        // stays set so buildDashboards() cannot start a second board
+        dashPending.then(destroyDashboards);
+    }
+}
+
+function buildGrid() {
+    if (gridControls) {
+        return;
+    }
+    gridControls = grid();
+}
+
+function destroyGrid() {
+    if (!gridControls) {
+        return;
+    }
+    // stops the per-row update timers, and tags the container as paused
+    gridControls.clearGridUpdates();
+
+    // Grid.grid() is synchronous, and the Grid owns its 90 sparkline
+    // charts and their DOM the same way the board does
+    gridControls.gridInstance.destroy();
+
+    // drop the paused tag so a rebuilt grid does not start out paused
+    document.getElementById('grid-container')
+        .classList.remove('paused-grid');
+    gridControls = null;
 }
 
 function updateChart(i) {
@@ -3256,13 +3370,19 @@ function updateChart(i) {
                     document.getElementById('grid-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'block';
+                    destroyGrid();
+                    buildDashboards();
                 } else if (p.chart === grid) {
                     document.getElementById('container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('grid-container').style.display = 'block';
+                    destroyDashboards();
+                    buildGrid();
                 } else {
+                    destroyDashboards();
+                    destroyGrid();
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
@@ -3272,6 +3392,8 @@ function updateChart(i) {
                     p.chart();
                 }
             } else {
+                destroyDashboards();
+                destroyGrid();
                 // eslint-disable-next-line max-len
                 document.getElementById('dash-container').style.display = 'none';
                 // eslint-disable-next-line max-len
@@ -3490,8 +3612,14 @@ document.addEventListener('DOMContentLoaded', function () {
     initializePauseButtonState();
 
     // --- Start carousel setup ---
-    dashboards();
-    gridControls = grid();
+    // Dashboards and Grid are built when their slide is first shown.
+    // dashboards() used to apply this as a side effect of running at
+    // load, and every demo relies on it, so it is set here instead.
+    Highcharts.setOptions({
+        chart: {
+            styledMode: true
+        }
+    });
 
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
