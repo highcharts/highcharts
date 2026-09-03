@@ -176,6 +176,9 @@ class NewDataAnnouncer {
      * @private
      */
     public destroy(): void {
+        internalClearTimeout(this.queuedAnnouncementTimer);
+        delete this.queuedAnnouncement;
+        delete this.queuedAnnouncementTimer;
         this.eventProvider.removeAddedEvents();
         this.announcer.destroy();
     }
