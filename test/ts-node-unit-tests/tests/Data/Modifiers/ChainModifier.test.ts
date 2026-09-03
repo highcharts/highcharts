@@ -3,11 +3,28 @@ import { strictEqual, deepStrictEqual } from 'node:assert';
 
 import DataTable from '../../../../../ts/Data/DataTable.js';
 import ChainModifier from '../../../../../ts/Data/Modifiers/ChainModifier.js';
+import DataModifier from '../../../../../ts/Data/Modifiers/DataModifier.js';
 // Import these to register them with DataModifier.types
 import '../../../../../ts/Data/Modifiers/FilterModifier.js';
 import '../../../../../ts/Data/Modifiers/RangeModifier.js';
 
 describe('ChainModifier', () => {
+
+    class RecordingModifier extends DataModifier {
+        public readonly options = { type: 'Chain' as const };
+
+        public constructor(
+            private readonly name: string,
+            private readonly calls: string[]
+        ) {
+            super();
+        }
+
+        public modifyTable(table: DataTable): DataTable {
+            this.calls.push(this.name);
+            return table;
+        }
+    }
 
     // Note: benchmark test requires browser environment (uses window.performance)
     // Skipped in Node.js environment
@@ -70,6 +87,62 @@ describe('ChainModifier', () => {
                 [1, 2, 3],
                 'Modified table should have expected original row indexes.'
             );
+        });
+
+        it('should preserve a reversed chain across repeated modifications', () => {
+            const calls: string[] = [];
+            const first = new RecordingModifier('first', calls);
+            const second = new RecordingModifier('second', calls);
+            const modifier = new ChainModifier(
+                { reverse: true },
+                first,
+                second
+            );
+            const table = new DataTable();
+
+            modifier.modifyTable(table);
+            modifier.modifyTable(table);
+
+            deepStrictEqual(calls, [
+                'second', 'first', 'second', 'first'
+            ]);
+            deepStrictEqual(modifier.chain, [first, second]);
+        });
+    });
+
+    describe('chain management', () => {
+        it('should emit the after-add event', () => {
+            const events: string[] = [];
+            const modifier = new ChainModifier();
+            const added = new RecordingModifier('added', []);
+
+            modifier.on('addModifier', (): void => {
+                events.push('addModifier');
+            });
+            modifier.on('afterAddModifier', (): void => {
+                events.push('afterAddModifier');
+            });
+            modifier.add(added);
+
+            deepStrictEqual(events, ['addModifier', 'afterAddModifier']);
+        });
+
+        it('should remove every matching modifier and ignore an absent one', () => {
+            const first = new RecordingModifier('first', []);
+            const second = new RecordingModifier('second', []);
+            const absent = new RecordingModifier('absent', []);
+            const modifier = new ChainModifier(
+                void 0,
+                first,
+                second,
+                first
+            );
+
+            modifier.remove(first);
+            deepStrictEqual(modifier.chain, [second]);
+
+            modifier.remove(absent);
+            deepStrictEqual(modifier.chain, [second]);
         });
     });
 
