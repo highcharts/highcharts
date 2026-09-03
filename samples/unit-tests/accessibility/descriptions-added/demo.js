@@ -45,6 +45,50 @@ QUnit.test('Accessible chart with multiple series', function (assert) {
     );
 });
 
+QUnit.test('Series-specific accessible value affixes', function (assert) {
+    var chart = Highcharts.chart('container', {
+            accessibility: {
+                point: {
+                    valuePrefix: 'chart-prefix-',
+                    valueSuffix: '-chart-suffix'
+                }
+            },
+            series: [{
+                accessibility: {
+                    point: {
+                        valuePrefix: 'series-prefix-',
+                        valueSuffix: '-series-suffix'
+                    }
+                },
+                data: [1]
+            }, {
+                accessibility: {
+                    point: {
+                        valuePrefix: '',
+                        valueSuffix: ''
+                    }
+                },
+                data: [2]
+            }]
+        }),
+        firstLabel = chart.series[0].points[0].graphic.element.getAttribute(
+            'aria-label'
+        ),
+        secondLabel = chart.series[1].points[0].graphic.element.getAttribute(
+            'aria-label'
+        );
+
+    assert.ok(
+        firstLabel.includes('series-prefix-1-series-suffix'),
+        'Series options should override chart options'
+    );
+    assert.notOk(
+        secondLabel.includes('chart-prefix-') ||
+            secondLabel.includes('-chart-suffix'),
+        'Empty series affixes should suppress chart fallbacks'
+    );
+});
+
 QUnit.test('Empty chart', function (assert) {
     var chart = Highcharts.chart('container', {});
     assert.ok(

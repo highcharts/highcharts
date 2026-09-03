@@ -415,16 +415,15 @@ function getPointValue(
 ): string {
     const series = point.series,
         a11yPointOpts = series.chart.options.accessibility.point || {},
-        seriesA11yPointOpts = series.chart.options.accessibility &&
-            series.chart.options.accessibility.point || {},
+        seriesA11yPointOpts = series.options.accessibility?.point || {},
         tooltipOptions = series.tooltipOptions || {},
-        valuePrefix = seriesA11yPointOpts.valuePrefix ||
-            a11yPointOpts.valuePrefix ||
-            tooltipOptions.valuePrefix ||
+        valuePrefix = seriesA11yPointOpts.valuePrefix ??
+            a11yPointOpts.valuePrefix ??
+            tooltipOptions.valuePrefix ??
             '',
-        valueSuffix = seriesA11yPointOpts.valueSuffix ||
-            a11yPointOpts.valueSuffix ||
-            tooltipOptions.valueSuffix ||
+        valueSuffix = seriesA11yPointOpts.valueSuffix ??
+            a11yPointOpts.valueSuffix ??
+            tooltipOptions.valueSuffix ??
             '',
         fallbackKey: ('value'|'y') = (
             typeof point.value !==
