@@ -675,6 +675,61 @@ test.describe('Highcharts Component', () => {
         ]);
     });
 
+    test('ConnectorHandler does not emit after component destruction', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const board = await Dashboards.board('container', {
+                dataPool: {
+                    connectors: [{
+                        id: 'connector',
+                        type: 'JSON',
+                        data: [['x', 'y'], [1, 2]]
+                    }]
+                },
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'cell' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'cell',
+                    type: 'Highcharts',
+                    connector: { id: 'connector' }
+                }]
+            }, true);
+            const component = board.mountedComponents[0].component;
+            const table = component.connectorHandlers[0].connector.getTable();
+            const originalEmit = component.emit;
+            let destroyed = false;
+            let emissionsAfterDestroy = 0;
+
+            component.emit = function (...args: any[]): void {
+                if (destroyed) {
+                    ++emissionsAfterDestroy;
+                }
+                originalEmit.apply(this, args);
+            };
+
+            table.setCell('y', 0, 3);
+            component.destroy();
+            destroyed = true;
+            await new Promise((resolve): number => setTimeout(resolve, 20));
+
+            return emissionsAfterDestroy;
+        });
+
+        expect(result).toBe(0);
+    });
+
     test('HighchartsComponent resizing', async ({ page }) => {
         await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
 
