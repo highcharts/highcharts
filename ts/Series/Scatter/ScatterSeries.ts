@@ -20,8 +20,16 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type { DeepPartial } from '../../Shared/Types';
 
-import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
+import D from '../../Core/Defaults.js';
+const { defaultOptions } = D;
+import ScatterSeriesDefaults, {
+    prefixesSeriesName,
+    scatterSharedPointFormat,
+    supportsSharedTooltip
+} from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -90,6 +98,41 @@ class ScatterSeries extends LineSeries {
 
     /* eslint-disable valid-jsdoc */
     /**
+     * Honor explicit shared-tooltip opt-in for cartesian scatter-like
+     * series while keeping the default behavior unchanged.
+     * @private
+     */
+    public setOptions(
+        itemOptions: DeepPartial<SeriesTypeOptions>
+    ): this['options'] {
+        // Set before calling super, so that the shared-tooltip default for
+        // `stickyTracking` is resolved with the right value
+        this.noSharedTooltip = !supportsSharedTooltip(this);
+
+        const options = super.setOptions(itemOptions),
+            tooltipOptions = this.tooltipOptions;
+
+        this.noSharedTooltip = !(
+            supportsSharedTooltip(this) &&
+            tooltipOptions.shared
+        );
+
+        // Give the series name up from the header only when the point lines
+        // are going to carry it instead, and only when the header is still
+        // this series type's own (#22967).
+        if (
+            prefixesSeriesName(this) &&
+            tooltipOptions.headerFormat ===
+                ScatterSeriesDefaults.tooltip?.headerFormat
+        ) {
+            tooltipOptions.headerFormat =
+                defaultOptions.tooltip?.headerFormat || '';
+        }
+
+        return options;
+    }
+
+    /**
      * Optionally add the jitter effect.
      * @private
      */
@@ -150,8 +193,6 @@ class ScatterSeries extends LineSeries {
             this.graph = this.graph.destroy();
         }
     }
-
-
 }
 
 /* *
@@ -161,7 +202,10 @@ class ScatterSeries extends LineSeries {
  * */
 
 interface ScatterSeries {
+    defaultPointFormat: string;
     pointClass: typeof ScatterPoint;
+    sharedTooltipPointFormat?: string;
+    sharedTooltipType: string;
 }
 extend(ScatterSeries.prototype, {
     allowOutsidePlotInteraction: true,
@@ -169,6 +213,9 @@ extend(ScatterSeries.prototype, {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
+    defaultPointFormat: ScatterSeriesDefaults.tooltip?.pointFormat,
+    sharedTooltipPointFormat: scatterSharedPointFormat,
+    sharedTooltipType: 'scatter',
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 

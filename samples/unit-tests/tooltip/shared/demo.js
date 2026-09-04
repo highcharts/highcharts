@@ -377,3 +377,75 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
         'Tooltip should NOT have anchorY for multiple points'
     );
 });
+
+QUnit.test(
+    'Scatter-like series name themselves on each shared tooltip line',
+    function (assert) {
+        [
+            {
+                type: 'scatter',
+                data: [[[1, 12]], [[1, 33]]],
+                expected: [
+                    'Temperature: (1, 12)<br/>',
+                    'Humidity: (1, 33)<br/>'
+                ]
+            },
+            {
+                // Bubble composes its own single-line format, rather than
+                // inheriting the compact one scatter names
+                type: 'bubble',
+                data: [[[1, 12, 2]], [[1, 33, 2]]],
+                expected: [
+                    'Temperature: (1, 12), Size: 2<br/>',
+                    'Humidity: (1, 33), Size: 2<br/>'
+                ]
+            }
+        ].forEach(function (testCase) {
+            const chart = Highcharts.chart('container', {
+                    chart: {
+                        animation: false,
+                        type: testCase.type
+                    },
+                    plotOptions: {
+                        series: {
+                            animation: false
+                        }
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    series: [{
+                        name: 'Temperature',
+                        data: testCase.data[0]
+                    }, {
+                        name: 'Humidity',
+                        data: testCase.data[1]
+                    }]
+                }),
+                points = chart.series.map(function (series) {
+                    return series.points[0];
+                }),
+                lines = chart.tooltip.bodyFormatter(points),
+                expected = testCase.expected.map(function (line, i) {
+                    return '<span style="color:' + points[i].color +
+                        '">\u25CF</span> ' + line;
+                });
+
+            // Assert the whole generated markup, so that a stray tag or a
+            // missing line break is caught rather than stripped away
+            assert.deepEqual(
+                lines,
+                expected,
+                `Every ${testCase.type} line should carry its own series name`
+            );
+
+            assert.strictEqual(
+                chart.tooltip.headerFooterFormatter(points[0]),
+                '<span style="font-size: 0.8em">1</span><br/>',
+                `The ${testCase.type} header should give the series name up`
+            );
+
+            chart.destroy();
+        });
+    }
+);

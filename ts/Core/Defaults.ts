@@ -2777,9 +2777,10 @@ const defaultOptions: DefaultOptions = {
          * Shows information in the tooltip for all points with the same X
          * value. When the tooltip is shared, the entire plot area will capture
          * mouse movement or touch events. Tooltip texts for series types with
-         * ordered data (not pie, scatter, flags etc) will be shown in a single
-         * bubble. This is recommended for single series charts and for
-         * tablet/mobile optimized charts.
+         * ordered data, as well as scatter and bubble, will be shown in a
+         * single bubble. Series types that have no shared X value, like pie
+         * and flags, show only the hovered point. This is recommended for
+         * single series charts and for tablet/mobile optimized charts.
          *
          * See also [tooltip.split](#tooltip.split), that is better suited for
          * charts with many series, especially line-type series. The

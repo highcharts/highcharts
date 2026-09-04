@@ -1727,6 +1727,24 @@ class Pointer {
                     false
             );
 
+        if (!p && e && shared) {
+            const directTouchPoint = pointer.getPointFromEvent(e as Event);
+
+            // Series that opt into shared tooltips are hovered by proximity
+            // rather than by direct touch, so a large point can hand the
+            // hover to a neighbour whose centre happens to be closer. Keep
+            // the point the pointer is actually inside. Only the opted-in
+            // series need this - `noSharedTooltip` is explicitly false on
+            // those alone - and everything else is left to the proximity
+            // search as before (#22967).
+            if (
+                directTouchPoint?.series.noSharedTooltip === false &&
+                (directTouchPoint.series.options.enableMouseTracking ?? true)
+            ) {
+                p = directTouchPoint;
+            }
+        }
+
         let hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint?.series || chart.hoverSeries;
 

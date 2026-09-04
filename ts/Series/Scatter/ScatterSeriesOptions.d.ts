@@ -254,6 +254,8 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
 }
 
 export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {
+    clusterFormatter?: SeriesTooltipOptions['pointFormatter'];
+
     /**
      * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.8em"> {series.name}</span><br/>'
      */
