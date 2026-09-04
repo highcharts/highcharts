@@ -395,8 +395,8 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         getTextContent(text2),
         'Consistent result between different strings. #6258'
     );
-    // TODO 0px does not work, because ellipsis and breaks are not applied
-    // when width is considered falsy.
+
+    // In accordance with HTML/CSS, 0px does not work
     style.width = '1px';
     text1.destroy();
     text1 = ren.text('01234567', 0, 100).css(style).add();
@@ -404,6 +404,14 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         getTextContent(text1),
         '',
         'Width was too small for ellipsis.'
+    );
+
+    text1.destroy();
+    text1 = ren.text('0123-4567', 0, 100).css({ lineClamp: 1, ...style }).add();
+    assert.strictEqual(
+        getTextContent(text1),
+        '',
+        'Width was too small for ellipsis (with lineClamp and hyphenation).'
     );
 
     /**
