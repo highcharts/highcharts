@@ -232,6 +232,9 @@ class Legend {
     public clipRect?: SVGElement;
 
     /** @internal */
+    public clipWidth?: number;
+
+    /** @internal */
     public contentGroup!: SVGElement;
 
     /** @internal */
@@ -256,6 +259,9 @@ class Legend {
     public fullHeight?: number;
 
     public group!: SVGElement;
+
+    /** @internal */
+    public horizontalNav?: boolean;
 
     /** @internal */
     public initialItemY: number = 0;
@@ -433,6 +439,11 @@ class Legend {
         this.symbolWidth = (options.symbolWidth ?? 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
+        // A single line of items, paged sideways (#7513)
+        this.horizontalNav = options.layout === 'horizontal' &&
+            options.navigation.direction === 'horizontal' &&
+            options.navigation.enabled !== false &&
+            !options.rtl;
         // #12705: baseline has to be reset on every update
         this.baseline = void 0;
 
@@ -672,6 +683,7 @@ class Legend {
      */
     public positionCheckboxes(): void {
         const alignAttr = this.group?.alignAttr,
+            horizontal = this.horizontalNav,
             clipHeight = this.clipHeight || this.legendHeight,
             titleHeight = this.titleHeight;
         let translateY: number;
@@ -679,19 +691,26 @@ class Legend {
         if (alignAttr) {
             translateY = alignAttr.translateY;
             this.allItems.forEach(function (this: Legend, item): void {
-                const checkbox = item.checkbox;
-                let top;
+                const checkbox = item.checkbox,
+                    offset = this.scrollOffset || 0;
 
                 if (checkbox) {
-                    top = translateY + titleHeight + checkbox.y +
-                        (this.scrollOffset || 0) + 3;
+                    const left = alignAttr.translateX + item.checkboxOffset +
+                            checkbox.x - 20 + (horizontal ? offset : 0),
+                        top = translateY + titleHeight + checkbox.y + 3 +
+                            (horizontal ? 0 : offset);
+
                     css(checkbox, {
-                        left: (alignAttr.translateX + item.checkboxOffset +
-                            checkbox.x - 20) + 'px',
+                        left: left + 'px',
                         top: top + 'px',
                         display: this.proximate || (
-                            top > translateY - 6 &&
-                            top < translateY + clipHeight - 6
+                            horizontal ?
+                                // Pages hold whole items only
+                                !this.pages.length ||
+                                item.legendItem?.pageIx ===
+                                    (this.currentPage ?? 1) - 1 :
+                                top > translateY - 6 &&
+                                top < translateY + clipHeight - 6
                         ) ?
                             '' :
                             'none'
@@ -963,23 +982,25 @@ class Legend {
         const options = this.options,
             padding = this.padding,
             horizontal = options.layout === 'horizontal',
-            itemHeight = item.itemHeight,
+            itemHeight = item.itemHeight || 0,
             itemMarginBottom = this.itemMarginBottom,
             itemMarginTop = this.itemMarginTop,
             itemDistance = horizontal ? (options.itemDistance ?? 20) : 0,
             maxLegendWidth = this.maxLegendWidth,
+            shouldWrap = !this.horizontalNav,
             itemWidth = (
-                options.alignColumns &&
+                options.alignColumns && shouldWrap &&
                     this.totalItemWidth > maxLegendWidth
             ) ?
                 this.maxItemWidth :
-                item.itemWidth,
+                (item.itemWidth || 0),
             legendItem = item.legendItem || {};
 
         // If the item exceeds the width, start a new line
         if (
             horizontal &&
-            this.itemX - padding + (itemWidth as any) > maxLegendWidth
+            shouldWrap &&
+            this.itemX - padding + itemWidth > maxLegendWidth
         ) {
             this.itemX = padding;
             if (this.lastLineHeight) { // Not for the first line (#10167)
@@ -995,7 +1016,7 @@ class Legend {
         // Set the edge positions
         this.lastItemY = itemMarginTop + this.itemY + itemMarginBottom;
         this.lastLineHeight = Math.max( // #915
-            itemHeight as any,
+            itemHeight,
             this.lastLineHeight
         );
 
@@ -1005,12 +1026,11 @@ class Legend {
 
         // Advance
         if (horizontal) {
-            this.itemX += (itemWidth as any);
+            this.itemX += itemWidth;
 
         } else {
-            this.itemY +=
-                itemMarginTop + (itemHeight as any) + itemMarginBottom;
-            this.lastLineHeight = itemHeight as any;
+            this.itemY += itemMarginTop + itemHeight + itemMarginBottom;
+            this.lastLineHeight = itemHeight;
         }
 
         // The width of the widest item
@@ -1020,7 +1040,7 @@ class Legend {
                     // Decrease by itemDistance only when no checkbox #4853
                     0 :
                     itemDistance
-                ) : itemWidth as any
+                ) : itemWidth
             ) + padding,
             this.offsetWidth
         );
@@ -1235,7 +1255,7 @@ class Legend {
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
         legend.widthOption = relativeLength(
-            options.width as any,
+            options.width || 0,
             chartSpacingBoxWidth - padding
         );
 
@@ -1318,8 +1338,18 @@ class Legend {
                 ) :
                 (legend.widthOption || legend.offsetWidth)
         ) + padding;
+
+        // Without wrapping, nothing else caps the box (#7513)
+        if (legend.horizontalNav) {
+            legendWidth = Math.min(legendWidth, allowedWidth + padding);
+        }
+
         legendHeight = legend.lastItemY + legend.lastLineHeight +
             legend.titleHeight;
+
+        // Set before handleOverflow, which measures the horizontal clip from it
+        legend.legendWidth = legendWidth;
+
         legendHeight = legend.handleOverflow(legendHeight);
         legendHeight += padding;
 
@@ -1430,7 +1460,8 @@ class Legend {
 
     /**
      * Set up the overflow handling by adding navigation with up and down arrows
-     * below the legend.
+     * below the legend, or with left and right arrows beside it when paging
+     * horizontally.
      *
      * @internal
      * @function Highcharts.Legend#handleOverflow
@@ -1447,38 +1478,37 @@ class Legend {
             navOptions = options.navigation,
             animation = (navOptions.animation ?? true),
             arrowSize = navOptions.arrowSize || 12,
+            horizontal = this.horizontalNav,
+            // Room for the arrows and the pager, whose width is not yet known
+            navSize = 2 * arrowSize + 32,
+            itemDistance = options.itemDistance ?? 20,
             pages = this.pages,
             allItems = this.allItems,
-            clipToHeight = function (height?: number): void {
-                if (typeof height === 'number') {
-                    (clipRect as any).attr({
-                        height: height
-                    });
+            clipToSize = function (size?: number): void {
+                if (typeof size === 'number') {
+                    clipRect?.attr(
+                        horizontal ? { width: size } : { height: size }
+                    );
                 } else if (clipRect) { // Reset (#5912)
                     legend.clipRect = clipRect.destroy();
                     legend.contentGroup.clip();
                 }
-
-                // Use HTML
-                if (legend.contentGroup.div) {
-                    legend.contentGroup.div.style.clip = height ?
-                        'rect(' + padding + 'px,9999px,' +
-                            (padding + height) + 'px,0)' :
-                        'auto';
-                }
             },
-            addTracker = function (key: string): SVGElement {
-                (legend as any)[key] = renderer
+            addTracker = function (
+                key: ('downTracker'|'upTracker')
+            ): SVGElement {
+                const tracker = legend[key] = renderer
                     .circle(0, 0, arrowSize * 1.3)
                     .translate(arrowSize / 2, arrowSize / 2)
                     .add(nav);
+
                 if (!chart.styledMode) {
-                    (legend as any)[key].attr('fill', 'rgba(0,0,0,0.0001)');
+                    tracker.attr('fill', 'rgba(0,0,0,0.0001)');
                 }
-                return (legend as any)[key];
+                return tracker;
             };
-        let clipHeight: number,
-            lastY: number,
+        let clipSize: number,
+            lastPos: number,
             legendItem: LegendItemObject|undefined,
             lastLegendItem: LegendItemObject|undefined,
             spaceHeight = (
@@ -1501,41 +1531,57 @@ class Legend {
             spaceHeight = Math.min(spaceHeight, maxHeight);
         }
 
+        // Item extent and available space, along the axis we page in (#7513)
+        const fullSize = horizontal ?
+                this.itemX - itemDistance - padding :
+                legendHeight,
+            spaceSize = horizontal ?
+                this.legendWidth - 2 * padding :
+                spaceHeight;
+
         // Reset the legend height and adjust the clipping rectangle
         pages.length = 0;
         if (
-            legendHeight &&
-            spaceHeight > 0 &&
-            legendHeight > spaceHeight &&
+            fullSize &&
+            spaceSize > 0 &&
+            fullSize > spaceSize &&
             navOptions.enabled !== false
         ) {
 
-            this.clipHeight = clipHeight =
-                Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
+            clipSize = Math.max(
+                horizontal ?
+                    spaceSize - navSize :
+                    spaceHeight - 20 - this.titleHeight - padding,
+                0
+            );
+            this.clipHeight = horizontal ? 0 : clipSize;
+            this.clipWidth = horizontal ? clipSize : 0;
             this.currentPage = (this.currentPage ?? 1);
             this.fullHeight = legendHeight;
 
-            // Fill pages with Y positions so that the top of each a legend item
-            // defines the scroll top for each page (#2098)
+            // Fill pages with positions so that the leading edge of a legend
+            // item defines the scroll offset for each page (#2098)
             allItems.forEach((item, i): void => {
                 legendItem = item.legendItem || {};
-                const y = legendItem.y || 0,
-                    h = Math.round(
-                        (legendItem as any).label.getBBox().height
-                    );
+                const pos = (horizontal ? legendItem.x : legendItem.y) || 0,
+                    extent = horizontal ?
+                        (item.itemWidth || 0) - itemDistance :
+                        Math.round(
+                            legendItem?.label?.getBBox().height || 0
+                        );
                 let len = pages.length;
 
                 if (
-                    !len || (y - pages[len - 1] > clipHeight &&
-                        (lastY || y) !== pages[len - 1])
+                    !len || (pos - pages[len - 1] > clipSize &&
+                        (lastPos || pos) !== pages[len - 1])
                 ) {
-                    pages.push(lastY || y);
+                    pages.push(lastPos || pos);
                     len++;
                 }
 
                 // Keep track of which page each item is on
                 legendItem.pageIx = len - 1;
-                if (lastY && lastLegendItem) {
+                if (lastPos && lastLegendItem) {
                     lastLegendItem.pageIx = len - 1;
                 }
 
@@ -1544,15 +1590,15 @@ class Legend {
                     // Check the last item
                     i === allItems.length - 1 &&
                     // If adding next page is needed (#18768)
-                    y + h - pages[len - 1] > clipHeight &&
-                    y > pages[len - 1]
+                    pos + extent - pages[len - 1] > clipSize &&
+                    pos > pages[len - 1]
                 ) {
-                    pages.push(y);
+                    pages.push(pos);
                     legendItem.pageIx = len;
                 }
 
-                if (y !== lastY) {
-                    lastY = y;
+                if (pos !== lastPos) {
+                    lastPos = pos;
                 }
                 lastLegendItem = legendItem;
             });
@@ -1560,12 +1606,14 @@ class Legend {
             // Only apply clipping if needed. Clipping causes blurred legend in
             // PDF export (#1787)
             if (!clipRect) {
-                clipRect = legend.clipRect =
+                // Open along the axis we don't page in, zero along the other
+                clipRect = legend.clipRect = horizontal ?
+                    renderer.clipRect(padding, padding - 2, 0, 9999) :
                     renderer.clipRect(0, padding - 2, 9999, 0);
                 legend.contentGroup.clip(clipRect);
             }
 
-            clipToHeight(clipHeight);
+            clipToSize(clipSize);
 
             // Add navigation elements
             if (!nav) {
@@ -1575,7 +1623,7 @@ class Legend {
 
                 this.up = renderer
                     .symbol(
-                        'triangle',
+                        horizontal ? 'triangle-left' : 'triangle',
                         0,
                         0,
                         arrowSize,
@@ -1597,7 +1645,7 @@ class Legend {
 
                 this.down = renderer
                     .symbol(
-                        'triangle-down',
+                        horizontal ? 'triangle-right' : 'triangle-down',
                         0,
                         0,
                         arrowSize,
@@ -1614,16 +1662,20 @@ class Legend {
             // Set initial position
             legend.scroll(0);
 
-            legendHeight = spaceHeight;
+            if (!horizontal) {
+                legendHeight = spaceHeight;
+            }
 
         // Reset
         } else if (nav) {
-            clipToHeight();
+            clipToSize();
             this.nav = nav.destroy(); // #6322
             this.scrollGroup.attr({
+                translateX: 0,
                 translateY: 1
             });
             this.clipHeight = 0; // #1379
+            this.clipWidth = 0;
         }
 
         return legendHeight;
@@ -1645,7 +1697,8 @@ class Legend {
         const chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,
-            clipHeight = this.clipHeight,
+            horizontal = this.horizontalNav,
+            clipSize = (horizontal ? this.clipWidth : this.clipHeight) || 0,
             navOptions = this.options.navigation,
             pager = this.pager,
             padding = this.padding;
@@ -1662,65 +1715,74 @@ class Legend {
                 setAnimation(animation, chart);
             }
 
-            (this.nav as any).attr({
-                translateX: padding,
-                translateY:
-                    (clipHeight as any) + this.padding + 7 + this.titleHeight,
+            this.nav?.attr({
+                translateX: horizontal ? padding + clipSize : padding,
+                // The pager text is drawn at y 10, so subtract that to align
+                // it with the item labels
+                translateY: horizontal ?
+                    this.titleHeight + this.initialItemY +
+                        (this.baseline || 0) - 10 :
+                    clipSize + padding + 7 + this.titleHeight,
                 visibility: 'inherit'
             });
-            [this.up, this.upTracker].forEach(function (elem): void {
-                (elem as any).attr({
+            [this.up, this.upTracker].forEach((elem): void => {
+                elem?.attr({
                     'class': currentPage === 1 ?
                         'highcharts-legend-nav-inactive' :
                         'highcharts-legend-nav-active'
                 });
             });
-            (pager as any).attr({
+            pager?.attr({
                 text: currentPage + '/' + pageCount
             });
-            [this.down, this.downTracker].forEach(function (
-                this: Legend,
-                elem: (SVGElement|undefined)
-            ): void {
-                (elem as any).attr({
+            [this.down, this.downTracker].forEach((elem): void => {
+                elem?.attr({
                     // Adjust to text width
-                    x: 18 + (this.pager as any).getBBox().width,
+                    x: 18 + (pager?.getBBox().width || 0),
                     'class': currentPage === pageCount ?
                         'highcharts-legend-nav-inactive' :
                         'highcharts-legend-nav-active'
                 });
-            }, this);
+            });
 
             if (!chart.styledMode) {
-                (this.up as any)
-                    .attr({
-                        fill: currentPage === 1 ?
-                            (navOptions as any).inactiveColor :
-                            (navOptions as any).activeColor
-                    });
-                (this.upTracker as any)
-                    .css({
-                        cursor: currentPage === 1 ? 'default' : 'pointer'
-                    });
-                (this.down as any)
-                    .attr({
-                        fill: currentPage === pageCount ?
-                            (navOptions as any).inactiveColor :
-                            (navOptions as any).activeColor
-                    });
-                (this.downTracker as any)
-                    .css({
-                        cursor: currentPage === pageCount ?
-                            'default' :
-                            'pointer'
-                    });
+                this.up?.attr({
+                    fill: currentPage === 1 ?
+                        navOptions.inactiveColor :
+                        navOptions.activeColor
+                });
+                this.upTracker?.css({
+                    cursor: currentPage === 1 ? 'default' : 'pointer'
+                });
+                this.down?.attr({
+                    fill: currentPage === pageCount ?
+                        navOptions.inactiveColor :
+                        navOptions.activeColor
+                });
+                this.downTracker?.css({
+                    cursor: currentPage === pageCount ? 'default' : 'pointer'
+                });
             }
 
-            this.scrollOffset = -pages[currentPage - 1] + this.initialItemY;
+            if (horizontal) {
+                // Clip to the page, so that no item is cut in half (#7513)
+                this.clipRect?.attr({
+                    width: Math.min(
+                        (pages[currentPage] ?? Infinity) -
+                            pages[currentPage - 1],
+                        clipSize
+                    )
+                });
+            }
 
-            this.scrollGroup.animate({
-                translateY: this.scrollOffset
-            });
+            this.scrollOffset = -pages[currentPage - 1] +
+                (horizontal ? padding : this.initialItemY);
+
+            this.scrollGroup.animate(
+                horizontal ?
+                    { translateX: this.scrollOffset } :
+                    { translateY: this.scrollOffset }
+            );
 
             this.currentPage = currentPage;
             this.positionCheckboxes();
