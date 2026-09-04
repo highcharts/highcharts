@@ -110,6 +110,12 @@ namespace ForcedMarkersComposition {
                 states: {
                     normal: {
                         opacity: 0
+                    },
+                    hover: {
+                        opacity: 0
+                    },
+                    select: {
+                        opacity: 0
                     }
                 }
             }
