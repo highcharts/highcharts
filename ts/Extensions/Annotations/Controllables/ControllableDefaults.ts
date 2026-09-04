@@ -14,12 +14,15 @@
 import type AST from '../../../Core/Renderer/HTML/AST';
 
 /**
- * A collection of SVG marker definitions used by annotations. Each key is a
- * marker id that can be referenced from an annotation shape's
- * [markerEnd](#annotations.shapes.markerEnd) or
- * [markerStart](#annotations.shapes.markerStart) option.
+ * A collection of SVG definitions for reusable elements such as markers,
+ * gradients, filters and patterns. Used mostly in styled mode - see
+ * [gradients, shadows and
+ * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
  *
- * Two markers are available by default: `arrow` and `reverse-arrow`.
+ * Annotations use it to define arrow markers, referenced from a shape's
+ * [markerEnd](#annotations.shapes.markerEnd) or
+ * [markerStart](#annotations.shapes.markerStart) option. Two markers are
+ * available by default: `arrow` and `reverse-arrow`.
  *
  * An example of the arrow marker:
  * <pre>
