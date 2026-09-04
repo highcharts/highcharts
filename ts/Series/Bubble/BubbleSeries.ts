@@ -81,14 +81,6 @@ type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
 
-/* *
- *
- *  Constants
- *
- * */
-
-const bubblePointFormat = '({point.x}, {point.y}), Size: {point.z}';
-
 /** @internal */
 interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
@@ -464,7 +456,7 @@ class BubbleSeries extends ScatterSeries {
         },
 
         tooltip: {
-            pointFormat: bubblePointFormat
+            pointFormat: '({point.x}, {point.y}), Size: {point.z}'
         },
 
         turboThreshold: 0,
@@ -966,10 +958,10 @@ extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],
-    defaultPointFormat: bubblePointFormat,
+    defaultPointFormat: BubbleSeries.defaultOptions.tooltip?.pointFormat,
     // Bubble's own point format is a single line already, so compose that
     // rather than inheriting the compact one scatter names (#22967)
-    sharedTooltipPointFormat: bubblePointFormat,
+    sharedTooltipPointFormat: BubbleSeries.defaultOptions.tooltip?.pointFormat,
     sharedTooltipType: 'bubble',
     trackerGroups: ['group', 'dataLabelsGroup'],
     specialGroup: 'group', // To allow clipping (#6296)

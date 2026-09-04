@@ -21,9 +21,6 @@
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type ScatterSeries from './ScatterSeries';
-import type {
-    ScatterSeriesTooltipOptions
-} from './ScatterSeriesOptions';
 
 /* *
  *
@@ -31,13 +28,8 @@ import type {
  *
  * */
 
-const scatterHeaderFormat =
-        '<span style="color:{point.color}">\u25CF</span> ' +
-        '<span style="font-size: 0.8em"> {series.name}</span><br/>',
-    seriesNamePrefix =
+const seriesNamePrefix =
         '<span style="color:{point.color}">\u25CF</span> {series.name}: ',
-    scatterPointFormat =
-        'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
     scatterSharedPointFormat = '({point.x}, {point.y})';
 
 /* *
@@ -121,11 +113,6 @@ function scatterPointFormatter(
     return prefixesSeriesName(series) ?
         prefixed(this, series.sharedTooltipPointFormat || pointFormat) :
         this.tooltipFormatter(pointFormat);
-}
-
-/** @private */
-interface SharedScatterTooltipOptions extends ScatterSeriesTooltipOptions {
-    clusterFormatter: typeof scatterClusterFormatter;
 }
 
 /* *
@@ -237,19 +224,43 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
-        headerFormat: scatterHeaderFormat,
-        pointFormat: scatterPointFormat,
+        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
+        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
 
         /**
-         * @ignore-option
+         * A callback function for formatting the HTML output for a cluster of
+         * points in the tooltip. Like the `clusterFormat` string, but with
+         * more flexibility.
+         *
+         * In a shared tooltip, the default prefixes the line with the color
+         * and name of its own series, since the tooltip header is rendered
+         * only once, from the first point's series. A `pointFormat` other
+         * than the default one is rendered as given, without the prefix.
+         *
+         * @product  highcharts highstock
+         * @requires modules/marker-clusters
+         * @since    next
          */
         clusterFormatter: scatterClusterFormatter,
 
         /**
-         * @ignore-option
+         * A callback function for formatting the HTML output for a single
+         * point in the tooltip. Like the `pointFormat` string, but with more
+         * flexibility.
+         *
+         * In a shared tooltip, the default prefixes each line with the color
+         * and name of its own series, since the tooltip header is rendered
+         * only once, from the first point's series. The two coordinate lines
+         * are joined into `({point.x}, {point.y})` so that the series name
+         * covers the whole line. A `pointFormat` other than the default one
+         * is rendered as given, without the prefix.
+         *
+         * @product highcharts highstock
+         * @since   next
          */
         pointFormatter: scatterPointFormatter
-    } as SharedScatterTooltipOptions
+    }
 
 };
 
@@ -338,7 +349,6 @@ export default ScatterSeriesDefaults;
 
 export {
     prefixesSeriesName,
-    scatterHeaderFormat,
     scatterSharedPointFormat,
     supportsSharedTooltip
 };

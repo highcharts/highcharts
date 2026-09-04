@@ -27,7 +27,6 @@ import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ScatterSeriesDefaults, {
     prefixesSeriesName,
-    scatterHeaderFormat,
     scatterSharedPointFormat,
     supportsSharedTooltip
 } from './ScatterSeriesDefaults.js';
@@ -123,7 +122,8 @@ class ScatterSeries extends LineSeries {
         // this series type's own (#22967).
         if (
             prefixesSeriesName(this) &&
-            tooltipOptions.headerFormat === scatterHeaderFormat
+            tooltipOptions.headerFormat ===
+                ScatterSeriesDefaults.tooltip?.headerFormat
         ) {
             tooltipOptions.headerFormat =
                 defaultOptions.tooltip?.headerFormat || '';
