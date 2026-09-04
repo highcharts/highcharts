@@ -91,7 +91,7 @@ h1 {
 .theme-piechart {
     --hcg-background: var(--highcharts-background-color);
     --hcg-color: var(--highcharts-neutral-color-100);
-    --hcg-padding: 5px 20px;
+    --hcg-padding: 9px 20px;
     --hcg-cell-hovered-row-background: #014ce5;
     --hcg-cell-hovered-row-color: var(--highcharts-neutral-color-3);
     --hcg-row-even-background: var(--table-row-even-background);
@@ -213,6 +213,10 @@ h1 {
 }
 
 @container dashboard (max-width: 400px) {
+    #barometer {
+        height: 300px;
+    }
+
     .theme-holdings {
         --hcg-font-size: 13px;
         --hcg-padding: 6px;
