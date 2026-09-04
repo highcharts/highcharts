@@ -66,13 +66,13 @@
     "preview-docs": "npm run start --workspace=docs-preview"
   },
   "devDependencies": {
-    "@actions/github": "^6.0.1",
+    "@actions/github": "9.1.1",
     "@aws-sdk/client-s3": "^3.592.0",
     "@aws-sdk/credential-providers": "^3.592.0",
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
-    "@cypress-audit/lighthouse": "1.4.2",
+    "@cypress-audit/lighthouse": "1.2.0",
     "@eslint/plugin-kit": "0.6.0",
     "@highcharts/connectors-morningstar": "3.2.0",
     "@highcharts/eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.1.2",
@@ -97,12 +97,12 @@
     "@webgpu/types": "^0.1.64",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
-    "chatgpt": "^5.2.5",
+    "chatgpt": "0.4.2",
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
     "cspell": "^8.16.0",
     "css-loader": "7.1.3",
-    "cypress": "^13.11.0",
+    "cypress": "15.21.1",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
     "eslint-config-eslint": "7.0.0",
@@ -119,9 +119,9 @@
     "gzip-size": "6.0.0",
     "husky": "^8.0.3",
     "jquery": "^3.7.1",
-    "js-yaml": "3.14.1",
+    "js-yaml": "3.15.2",
     "jsdom": "^21.1.0",
-    "jspdf": "4.1.0",
+    "jspdf": "4.2.1",
     "karma": "^6.4.3",
     "karma-browserstack-launcher": "^1.6.0",
     "karma-chrome-launcher": "^3.2.0",
@@ -174,7 +174,7 @@
     }
   },
   "engines": {
-    "node": ">=14.14.0"
+    "node": ">=20.0.0"
   },
   "lint-staged": {
     "*.js": [
