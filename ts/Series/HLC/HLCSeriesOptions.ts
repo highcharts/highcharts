@@ -48,8 +48,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @excluding borderColor, borderRadius, borderWidth, crisp, stacking,
  *            stack
  *
- * @excluding dataParser, dataURL
- *
  * @product highstock
  */
 export interface HLCSeriesOptions extends ColumnSeriesOptions {
@@ -108,8 +106,6 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *    }]
      *    ```
      *
-     * @type {Array<Array<(number|string),number,number>|Array<(number|string),number,number,number>|*>}
-     *
      * @extends series.arearange.data
      *
      * @excluding y, marker
@@ -119,28 +115,11 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
     data?: Array<(HLCPointOptions|PointShortOptions)>;
 
     /**
-     * The approximate pixel width of each group. If for example a series
-     * with 30 points is displayed over a 600 pixel wide plot area, no
-     * grouping is performed. If however the series contains so many points
-     * that the spacing is less than the groupPixelWidth, Highcharts will
-     * try to group it into appropriate groups so that each is more or less
-     * two pixels wide. Defaults to `5`.
-     *
-     * @type {number}
-     *
-     * @default 5
-     *
-     * @product highstock
-     *
-     * @apioption plotOptions.hlc.dataGrouping.groupPixelWidth
-     */
-
-    /**
      * What type of legend symbol to render for this series. For HLC series,
      * the default is `hlc`, a vertical stem with a tick on the right
      * representing the closing value.
      *
-     * @default hlc
+     * @default 'hlc'
      */
     legendSymbol?: string;
 
@@ -179,6 +158,16 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
     threshold?: number|null;
 
     tooltip?: HLCSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataParser?: undefined;
+    dataURL?: undefined;
+    marker?: undefined;
 
 }
 
