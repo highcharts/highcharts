@@ -206,6 +206,7 @@ namespace Globals {
             // events - instead of using polyfill, we can exclude IE totally.
             if (!isMS) {
                 const opts = Object.defineProperty({}, 'passive', {
+                    enumerable: true,
                     get: function (): void {
                         supportsPassive = true;
                     }
