@@ -5,12 +5,15 @@
 const gulp = require('gulp');
 const fs = require('fs');
 const path = require('path');
+const childProcess = require('node:child_process');
+const os = require('node:os');
+const util = require('node:util');
 const glob = require('glob');
 const logLib = require('../libs/log');
 const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
 const {
-    normalizeApiUrl,
+    downloadLatestNightlyArchive,
     submitNightlyVisualReview
 } = require('./lib/visualReviewApi');
 
@@ -20,6 +23,7 @@ const TRANSPARENT_GIF = Buffer.from(
 );
 const PROGRESS_BAR_WIDTH = 30;
 const DEFAULT_REFERENCE_ROOT = 'tmp/nightly-reference-samples';
+const unzip = util.promisify(childProcess.execFile);
 
 function createUploadProgressBar(output = process.stderr) {
     const isTTY = output.isTTY === true;
@@ -119,60 +123,91 @@ function getVisualReviewApiUrl() {
     return argv.visualReviewApiUrl || process.env.VISUAL_REVIEW_API_URL;
 }
 
-async function fetchCurrentReference(sampleName, apiUrl, fetchImpl = fetch) {
-    const encodedSampleName = sampleName
-        .split('/')
-        .map(encodeURIComponent)
-        .join('/');
-    const url = `${normalizeApiUrl(apiUrl)}/api/assets/visualtests/reference/latest/${encodedSampleName}/reference.svg`;
-    const response = await fetchImpl(url, {
-        headers: {
-            accept: 'image/svg+xml'
-        }
-    });
-    if (response.status === 404) {
-        return null;
-    }
-    if (!response.ok) {
-        throw new Error(
-            `Failed to fetch current reference for ${sampleName}: ${response.status} ${await response.text()}`
-        );
-    }
-    return Buffer.from(await response.arrayBuffer());
+function getVisualReviewApiKey() {
+    return argv.visualReviewApiKey || process.env.VISUAL_REVIEW_API_KEY;
 }
 
 async function syncNightlyReferences({
+    apiKey = getVisualReviewApiKey(),
     apiUrl = getVisualReviewApiUrl(),
-    fetchImpl = fetch,
+    dependencies,
+    fetchImpl,
     referenceRoot = DEFAULT_REFERENCE_ROOT,
-    sampleRoot = 'samples'
+    sampleRoot = 'samples',
+    unzipImpl = unzip
 } = {}) {
     const referenceFiles = glob
         .sync(path.join(referenceRoot, '**', 'reference.svg').replace(/\\/gu, '/'))
         .sort();
+    if (referenceFiles.length === 0) {
+        logLib.message(
+            'Synced 0 current reference image(s) from the Visual Review API; ' +
+            '0 new reference image(s) kept.'
+        );
+        return;
+    }
+
+    const apiDependencies = { ...dependencies };
+    if (fetchImpl) {
+        apiDependencies.fetchImpl = fetchImpl;
+    }
+    const archive = await downloadLatestNightlyArchive({
+        apiKey,
+        apiUrl,
+        dependencies: apiDependencies
+    });
+    if (archive === null) {
+        logLib.message(
+            'Synced 0 current reference image(s) from the Visual Review API; ' +
+            `${referenceFiles.length} new reference image(s) kept.`
+        );
+        return;
+    }
+
+    const temporaryRoot = fs.mkdtempSync(path.join(
+        os.tmpdir(),
+        'highcharts-nightly-references-'
+    ));
     let synced = 0;
     let missing = 0;
+    try {
+        const archivePath = path.join(temporaryRoot, 'artifacts.zip');
+        const archiveRoot = path.join(temporaryRoot, 'artifacts');
+        fs.writeFileSync(archivePath, archive);
+        fs.mkdirSync(archiveRoot, { recursive: true });
+        await unzipImpl('unzip', [
+            '-q',
+            '-o',
+            archivePath,
+            '-d',
+            archiveRoot
+        ]);
 
-    for (const file of referenceFiles) {
-        const sampleName = normalizeSampleName(file, referenceRoot);
-        const currentReference = await fetchCurrentReference(
-            sampleName,
-            apiUrl,
-            fetchImpl
-        );
-        if (currentReference === null) {
-            missing++;
-            continue;
+        for (const file of referenceFiles) {
+            const sampleName = normalizeSampleName(file, referenceRoot);
+            const archivedReference = path.join(
+                archiveRoot,
+                ...sampleName.split('/'),
+                'reference.svg'
+            );
+            if (
+                !fs.existsSync(archivedReference) ||
+                !fs.lstatSync(archivedReference).isFile()
+            ) {
+                missing++;
+                continue;
+            }
+            const destination = path.join(
+                sampleRoot,
+                ...sampleName.split('/'),
+                'reference.svg'
+            );
+            fs.mkdirSync(path.dirname(destination), { recursive: true });
+            fs.copyFileSync(archivedReference, destination);
+            synced++;
         }
-        fs.mkdirSync(
-            path.join(sampleRoot, ...sampleName.split('/')),
-            { recursive: true }
-        );
-        fs.writeFileSync(
-            path.join(sampleRoot, ...sampleName.split('/'), 'reference.svg'),
-            currentReference
-        );
-        synced++;
+    } finally {
+        fs.rmSync(temporaryRoot, { recursive: true, force: true });
     }
 
     logLib.message(
@@ -242,10 +277,6 @@ function createNightlySubmissionSamples({
     });
 }
 
-
-function getVisualReviewApiKey() {
-    return argv.visualReviewApiKey || process.env.VISUAL_REVIEW_API_KEY;
-}
 
 function getRunOptions() {
     const runId = process.env.GITHUB_RUN_ID || String(Date.now());
@@ -324,7 +355,7 @@ updateNightlyTestResults.flags = {
     '--sample-root': 'Root folder containing sample reference images.',
     '--tag': 'Product version label. Kept for parity with dist-testresults.',
     '--visual-review-api-url': 'Use VISUAL_REVIEW_API_URL to select the service origin. Defaults to https://vrevs.highsoft.com.',
-    '--visual-review-api-key': 'Use VISUAL_REVIEW_API_KEY to authenticate with the ingestion API.'
+    '--visual-review-api-key': 'Use VISUAL_REVIEW_API_KEY to authenticate with the Visual Review API.'
 };
 
 gulp.task('update-nightly-testresults', updateNightlyTestResults);
@@ -335,6 +366,7 @@ gulp.task('copy-nightly-references', async () => {
     });
 });
 gulp.task('sync-nightly-references', () => syncNightlyReferences({
+    apiKey: getVisualReviewApiKey(),
     apiUrl: getVisualReviewApiUrl(),
     referenceRoot: argv.referenceRoot || DEFAULT_REFERENCE_ROOT,
     sampleRoot: argv.sampleRoot || 'samples'
@@ -347,7 +379,6 @@ module.exports = {
     createNightlySubmissionSamples,
     createTestReport,
     default: updateNightlyTestResults,
-    fetchCurrentReference,
     hasVisualTestErrors,
     readTestResultsFile,
     syncNightlyReferences,
