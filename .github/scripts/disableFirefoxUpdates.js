@@ -1,5 +1,6 @@
 const {
     accessSync,
+    appendFileSync,
     constants,
     mkdirSync,
     statSync,
@@ -12,10 +13,14 @@ const {
 } = require('node:path');
 
 const firefoxPath = process.env.FIREFOX_PATH;
+const githubEnvPath = process.env.GITHUB_ENV;
 
 if (!firefoxPath) {
-    console.error('FIREFOX_PATH is required.');
-    process.exit(1);
+    throw new Error('FIREFOX_PATH is required.');
+}
+
+if (!githubEnvPath) {
+    throw new Error('GITHUB_ENV is required.');
 }
 
 const resolvedFirefoxPath = resolve(firefoxPath);
@@ -26,8 +31,7 @@ try {
     }
     accessSync(resolvedFirefoxPath, constants.X_OK);
 } catch {
-    console.error('FIREFOX_PATH must point to an executable file.');
-    process.exit(1);
+    throw new Error('FIREFOX_PATH must point to an executable file.');
 }
 
 const distributionPath = join(dirname(resolvedFirefoxPath), 'distribution');
@@ -37,3 +41,4 @@ writeFileSync(
     join(distributionPath, 'policies.json'),
     '{ "policies": { "DisableAppUpdate": true } }\n'
 );
+appendFileSync(githubEnvPath, `FIREFOX_BIN=${resolvedFirefoxPath}\n`);
