@@ -402,6 +402,8 @@ function createAndAttachRenderer(
         target.boost as Required<BoostTargetAdditions> ||
         {} as Required<BoostTargetAdditions>;
 
+    BoostChart.addPixelRatioListener(chart as BoostChartComposition);
+
     // Support for foreignObject is flimsy as best.
     // IE does not support it, and Chrome has a bug which messes up
     // the canvas draw order.
@@ -1360,6 +1362,13 @@ function seriesRenderCanvas(this: Series): void {
     fireEvent(this, 'renderCanvas');
 
     if (chartBoost && lineWidth > 1 && this.is('line')) {
+        // WebGL clamps the line width to a single canvas pixel, so fatter
+        // lines are emulated by dilating the rendered canvas. The dilate
+        // radius is given in CSS pixels, while the line it widens is one
+        // canvas pixel, or `1 / pixelRatio` CSS pixels. Compensate for that,
+        // so that the line width does not depend on the pixel ratio (#25087).
+        const pixelRatio = renderer ? renderer.getPixelRatio(chart) : 1;
+
         chartBoost.lineWidthFilter?.remove();
         chartBoost.lineWidthFilter = chart.renderer.definition({
             tagName: 'filter',
@@ -1368,7 +1377,8 @@ function seriesRenderCanvas(this: Series): void {
                     tagName: 'feMorphology',
                     attributes: {
                         operator: 'dilate',
-                        radius: 0.25 * lineWidth
+                        radius: 0.25 * lineWidth +
+                            (1 - 1 / pixelRatio) / 2
                     }
                 }
             ],

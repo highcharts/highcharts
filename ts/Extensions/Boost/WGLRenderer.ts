@@ -34,7 +34,7 @@ const { getBoostClipRect } = BoostChart;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const { doc, win } = H;
+const { doc } = H;
 import WGLDrawMode from './WGLDrawMode.js';
 import WGLShader from './WGLShader.js';
 import WGLVertexBuffer from './WGLVertexBuffer.js';
@@ -350,9 +350,37 @@ class WGLRenderer {
      *
      * */
 
-    /** @internal */
-    private getPixelRatio(): number {
-        return this.settings.pixelRatio || win.devicePixelRatio || 1;
+    /**
+     * Get the pixel ratio to render at. When the `pixelRatio` option is 0, the
+     * device pixel ratio of the window that holds the chart is used, so that
+     * graphics stay sharp on high DPI displays and when the page is zoomed.
+     *
+     * The ratio is capped so that the resulting canvas stays within the limits
+     * of the browser and the GPU. Exceeding either leaves the canvas blank, so
+     * a slightly less sharp chart is preferred over no chart at all.
+     *
+     * @internal
+     */
+    public getPixelRatio(chart: Chart): number {
+        const gl = this.gl,
+            ratio = this.settings.pixelRatio ||
+                (gl?.canvas as HTMLCanvasElement)?.ownerDocument
+                    .defaultView?.devicePixelRatio ||
+                1,
+            size = Math.max(chart.chartWidth, chart.chartHeight);
+
+        if (gl && ratio > 1 && size) {
+            const maxSize = Math.min(
+                gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0],
+                gl.getParameter(gl.MAX_TEXTURE_SIZE)
+            );
+
+            if (size * ratio > maxSize) {
+                return Math.max(maxSize / size, 1);
+            }
+        }
+
+        return ratio;
     }
 
     /** @internal */
@@ -469,7 +497,7 @@ class WGLRenderer {
             cullYThreshold = 1,
             chartDestroyed = typeof chart.index === 'undefined',
             drawAsBar = asBar[series.type],
-            pixelRatio = this.getPixelRatio(),
+            pixelRatio = this.getPixelRatio(chart),
             colors = chart.options.colors || [];
 
         let plotWidth = series.chart.plotWidth,
@@ -1309,7 +1337,7 @@ class WGLRenderer {
             return;
         }
 
-        const pixelRatio = this.getPixelRatio();
+        const pixelRatio = this.getPixelRatio(axis.chart);
 
         shader.setUniform('xAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('xAxisMin', axis.min as any);
@@ -1337,7 +1365,7 @@ class WGLRenderer {
             return;
         }
 
-        const pixelRatio = this.getPixelRatio();
+        const pixelRatio = this.getPixelRatio(axis.chart);
 
         shader.setUniform('yAxisTrans', axis.transA * pixelRatio);
         shader.setUniform('yAxisMin', axis.min as any);
@@ -1384,13 +1412,14 @@ class WGLRenderer {
 
         colorCache = {};
 
-        const pixelRatio = this.getPixelRatio();
-        if (chart) {
-            this.width = chart.chartWidth * pixelRatio;
-            this.height = chart.chartHeight * pixelRatio;
-        } else {
+        if (!chart) {
             return false;
         }
+
+        const pixelRatio = this.getPixelRatio(chart);
+
+        this.width = chart.chartWidth * pixelRatio;
+        this.height = chart.chartHeight * pixelRatio;
 
         const height = this.height,
             width = this.width,
