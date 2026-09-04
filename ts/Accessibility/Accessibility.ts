@@ -21,10 +21,15 @@
  * */
 
 import type AccessibilityComponent from './AccessibilityComponent';
+import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Legend from '../Core/Legend/Legend';
 import type { Options } from '../Core/Options';
 import type Point from '../Core/Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
 import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
@@ -60,7 +65,13 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
-import { addEvent, extend, fireEvent, merge } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    extend,
+    fireEvent,
+    merge,
+    wrap
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -252,18 +263,7 @@ class Accessibility {
         this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
-        // Reapply after updates while HC mode is active, but avoid recursion
-        // while the theme itself is being applied through chart.update.
-        if (
-            !chart.highContrastState?.applying &&
-            a11yOptions.highContrastMode !== false && (
-                chart.highContrastState?.active ||
-                whcm.isHighContrastModeActive() ||
-                a11yOptions.highContrastMode === true
-            )
-        ) {
-            whcm.setHighContrastTheme(chart);
-        }
+        whcm.updateHighContrastMode(chart);
 
         fireEvent(chart, 'afterA11yUpdate', {
             accessibility: this
@@ -276,6 +276,10 @@ class Accessibility {
      */
     public destroy(): void {
         const chart: Chart = this.chart || {};
+
+        whcm.removeHighContrastModeListener(
+            chart as Accessibility.ChartComposition
+        );
 
         // Destroy components
         const components = this.components;
@@ -501,6 +505,42 @@ namespace Accessibility {
     }
 
     /**
+     * Roll back the high contrast theme before a chart update, so that the new
+     * options are merged into the original ones rather than into the theme.
+     * The theme is applied again from the accessibility update that follows
+     * the redraw.
+     *
+     * The rollback is done from a wrap rather than from the `update` event, so
+     * that its own `chart.update` runs to completion before the update that
+     * triggered it starts, instead of interleaving with it (#15567).
+     * @private
+     */
+    function chartUpdateWrap(
+        this: ChartComposition,
+        proceed: Function,
+        ...args: Parameters<Chart['update']>
+    ): void {
+        whcm.onChartUpdate(this, args[0]);
+        proceed.apply(this, args);
+    }
+
+    /**
+     * Roll back the high contrast theme before an axis update. The theme is
+     * applied again from the accessibility update that follows the redraw.
+     * @private
+     */
+    function axisOnUpdate(
+        this: Axis,
+        proceed: Function,
+        ...args: Parameters<Axis['update']>
+    ): void {
+        whcm.onChartUpdate(
+            this.chart as Accessibility.ChartComposition
+        );
+        proceed.apply(this, args);
+    }
+
+    /**
      * @private
      */
     function chartUpdateA11yEnabled(
@@ -552,6 +592,7 @@ namespace Accessibility {
      * @private
      */
     export function compose(
+        AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         LegendClass: typeof Legend,
         PointClass: typeof Point,
@@ -578,6 +619,9 @@ namespace Accessibility {
 
         if (!chartProto.updateA11yEnabled) {
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
+
+            wrap(AxisClass.prototype, 'update', axisOnUpdate);
+            wrap(chartProto, 'update', chartUpdateWrap);
 
             addEvent(
                 ChartClass as typeof ChartComposition,
@@ -631,7 +675,7 @@ namespace Accessibility {
             );
 
             // Mark dirty for update
-            ['update', 'updatedData', 'remove'].forEach((event): void => {
+            ['updatedData', 'remove'].forEach((event): void => {
                 addEvent(
                     SeriesClass as typeof SeriesComposition,
                     event,
@@ -642,19 +686,43 @@ namespace Accessibility {
                     }
                 );
             });
+
+            addEvent(
+                SeriesClass as typeof SeriesComposition,
+                'update',
+                seriesOnUpdate
+            );
         }
 
     }
 
     /**
-     * Mark dirty for update.
+     * Keep high contrast mode in sync, and mark dirty for update.
      * @private
      */
     function pointOnUpdate(
-        this: PointComposition
+        this: PointComposition,
+        e: { options: (PointOptions|PointShortOptions) }
     ): void {
+        whcm.onPointUpdate(this, e.options);
+
         if (this.series.chart.accessibility) {
             this.series.chart.a11yDirty = true;
+        }
+    }
+
+    /**
+     * Keep high contrast mode in sync, and mark dirty for update.
+     * @private
+     */
+    function seriesOnUpdate(
+        this: SeriesComposition,
+        e: { options: SeriesOptions }
+    ): void {
+        whcm.onSeriesUpdate(this, e.options);
+
+        if (this.chart.accessibility) {
+            this.chart.a11yDirty = true;
         }
     }
 
