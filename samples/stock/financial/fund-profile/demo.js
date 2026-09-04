@@ -1,20 +1,3 @@
-// Add fillOpacity handler for hovered bubble points
-(function (H) {
-    H.wrap(
-        H.Series.types.bubble.prototype,
-        'pointAttribs',
-        function (proceed, _point, state) {
-            this.options.marker.fillOpacity = state === 'hover' ? 1 : 0.6;
-            const ret = proceed.apply(
-                this,
-                Array.prototype.slice.call(arguments, 1)
-            );
-
-            return ret;
-        }
-    );
-}(Highcharts));
-
 const countryExposureMap = {
     AUS: 'Australia',
     AUT: 'Austria',
@@ -258,8 +241,7 @@ async function renderDashboard() {
             margin: 30
         },
         legend: {
-            align: 'right',
-            verticalAlign: 'top'
+            enabled: false
         },
         xAxis: [{
             grid: {
@@ -351,6 +333,10 @@ async function renderDashboard() {
                 id: 'layout',
                 rows: [{
                     cells: [{
+                        id: 'growth'
+                    }]
+                }, {
+                    cells: [{
                         id: 'pie-chart'
                     }, {
                         id: 'year-return'
@@ -366,8 +352,6 @@ async function renderDashboard() {
                 }, {
                     cells: [{
                         id: 'underlying-holdings-table'
-                    }, {
-                        id: 'bubble-chart'
                     }]
                 }, {
                     cells: [{
@@ -376,10 +360,6 @@ async function renderDashboard() {
                 }, {
                     cells: [{
                         id: 'country-exposure'
-                    }]
-                }, {
-                    cells: [{
-                        id: 'growth'
                     }]
                 }]
             }]
@@ -766,12 +746,6 @@ async function renderDashboard() {
         }, {
             type: 'Grid',
             renderTo: 'underlying-holdings-table',
-            sync: {
-                highlight: {
-                    enabled: true,
-                    group: 'Second'
-                }
-            },
             connector: {
                 id: 'portfolio-holdings'
             },
@@ -799,21 +773,6 @@ async function renderDashboard() {
                     format: 'Market Value'
                 }],
                 columns: [{
-                    id: 'name',
-                    cells: {
-                        className: 'name-col',
-                        formatter: function () {
-                            const component = Dashboards.boards[0]
-                                    .getComponentByCellId('bubble-chart'),
-                                points = component.chart.series[0].points,
-                                color = points.find(
-                                    point => point.name === this.value
-                                ).color;
-                            return `<span style="color:${color};
-                                font-size: 18px">\u25CF</span> ${this.value}`;
-                        }
-                    }
-                }, {
                     id: 'weight',
                     cells: {
                         className: 'numeric-val-col',
@@ -828,141 +787,6 @@ async function renderDashboard() {
                             'var(--highcharts-neutral-color-60)">GBP</span>'
                     }
                 }]
-            }
-        }, {
-            type: 'Highcharts',
-            renderTo: 'bubble-chart',
-            sync: {
-                highlight: {
-                    enabled: true,
-                    group: 'Second'
-                }
-            },
-            connector: {
-                id: 'portfolio-holdings',
-                columnAssignment: [{
-                    seriesId: 'Aviva Investors Multi-asset Plus Fund III',
-                    data: {
-                        y: 'marketValue',
-                        z: 'weight',
-                        name: 'name'
-                    }
-                }]
-            },
-            chartOptions: {
-                chart: {
-                    type: 'bubble',
-                    plotBorderColor: 'var(--highcharts-neutral-color-20)',
-                    height: 500,
-                    plotBorderWidth: 1,
-                    events: {
-                        load() {
-                            if (!this.hasLoaded) {
-                                this.plotBorder.attr({
-                                    rx: 10,
-                                    ry: 10
-                                });
-                            }
-                        }
-                    }
-                },
-                colors: [
-                    '#8132F8',
-                    '#5A6B7D',
-                    '#10B981',
-                    '#EA293C',
-                    '#014CE5'
-                ],
-                credits: {
-                    enabled: false
-                },
-                title: {
-                    text: 'Underlying Holdings',
-                    x: 60
-                },
-                subtitle: {
-                    text: 'By Portfolio Weight',
-                    x: 60
-                },
-                legend: {
-                    enabled: false
-                },
-                yAxis: {
-                    startOnTick: false,
-                    endOnTick: false,
-                    title: {
-                        text: 'Market Value (GBP)',
-                        style: {
-                            color: 'var(--highcharts-neutral-color-80)'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            color: 'var(--highcharts-neutral-color-80)'
-                        }
-                    }
-                },
-                xAxis: {
-                    title: {
-                        text: 'Index Position',
-                        style: {
-                            color: 'var(--highcharts-neutral-color-80)'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            color: 'var(--highcharts-neutral-color-80)'
-                        }
-                    },
-                    lineWidth: 0,
-                    tickColor: 'var(--highcharts-neutral-color-20)',
-                    gridLineColor: 'var(--highcharts-neutral-color-10)'
-                },
-                plotOptions: {
-                    series: {
-                        maxSize: '12%',
-                        minSize: '5%',
-                        colorByPoint: true,
-                        states: {
-                            hover: {
-                                halo: {
-                                    size: 8
-                                }
-                            }
-                        }
-                    }
-                },
-                tooltip: {
-                    useHTML: true,
-                    shape: 'rect',
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: 'var(--highcharts-neutral-color-20)',
-                    shadow: false,
-                    headerFormat: '<span style="color:{point.color}; ' +
-                    'font-size: 18px;">\u25CF</span> <b>{point.name}</b>' +
-                    '<br/><br/>',
-                    pointFormat: `
-                        <div style="display: flex;
-                            justify-content: space-between;">
-                          <span>Market value</span>
-                          <span style="color:
-                            var(--highcharts-neutral-color-60);
-                            margin-left: 20px">
-                            {point.y} GBP
-                          </span>
-                        </div>
-                        <div style="display: flex;
-                            justify-content: space-between;">
-                          <span>Weighting</span>
-                          <span style="color:
-                            var(--highcharts-neutral-color-60);
-                            margin-left: 20px">
-                            {point.z:.2f}%
-                          </span>
-                        </div>
-                    `
-                }
             }
         }, {
             type: 'Highcharts',
@@ -1090,9 +914,10 @@ async function renderDashboard() {
                     }
                 },
                 rangeSelector: {
+                    // Sits in the space the legend used to take.
                     inputPosition: {
-                        align: 'left',
-                        x: 5,
+                        align: 'right',
+                        x: -5,
                         y: 4
                     },
                     buttonPosition: {
@@ -1241,25 +1066,10 @@ async function renderDashboard() {
                     }
                 },
                 legend: {
-                    enabled: true,
-                    rtl: true,
-                    floating: true,
-                    align: 'right',
-                    verticalAlign: 'top',
-                    layout: 'vertical',
-                    y: -80
+                    enabled: false
                 },
                 responsive: {
                     rules: [{
-                        condition: {
-                            maxWidth: 650
-                        },
-                        chartOptions: {
-                            legend: {
-                                enabled: false
-                            }
-                        }
-                    }, {
                         condition: {
                             maxWidth: 400
                         },
