@@ -3033,7 +3033,7 @@ class Chart {
                     (labels.reserveSpace ?? !isNumber(options.crossing))
                 ) {
                     expectedSpace = label.getBBox().height +
-                        labels.distance +
+                        (labels.distance ?? 15) +
                         Math.max(isNumber(offset) ? offset : 0, 0);
                 }
 

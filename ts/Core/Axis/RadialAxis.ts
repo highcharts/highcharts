@@ -403,6 +403,8 @@ namespace RadialAxis {
          */
         setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;
 
+        /** @internal */
+        unmodifiedProps?: Record<string, unknown>;
     }
 
     export declare class TickComposition extends Tick {
@@ -1104,6 +1106,51 @@ namespace RadialAxis {
     }
 
     /**
+     * Before modifying the axis properities, save references to the unmodified
+     * properties so that they can be restored when switching back from radial
+     * to cartesian.
+     */
+    function saveUnmodified(axis: AxisComposition): void {
+        axis.unmodifiedProps ||= ([
+            'beforeSetTickPositions',
+            'createLabelCollector',
+            'getCrosshairPosition',
+            'getLinePath',
+            'getOffset',
+            'getPlotBandPath',
+            'getPlotLinePath',
+            'getPosition',
+            'getTitlePosition',
+            'isHidden',
+            'postTranslate',
+            'redraw',
+            'render',
+            'setAxisSize',
+            'setAxisTranslation',
+            'setCategories',
+            'setOptions',
+            'setScale',
+            'setTitle'
+        ] as Array<keyof AxisComposition>).reduce(
+            (obj, fnName): Record<string, unknown> => {
+                obj[fnName] = axis[fnName];
+                return obj;
+            },
+            {} as Record<string, unknown>
+        );
+    }
+
+    /**
+     * Restore unmodified axis properties.
+     */
+    function unmodify(axis: AxisComposition): void {
+        const props = axis.unmodifiedProps;
+        if (isObject(props)) {
+            extend(axis, props);
+            delete axis.unmodifiedProps;
+        }
+    }
+    /**
      * Modify radial axis.
      * @internal
      */
@@ -1280,6 +1327,7 @@ namespace RadialAxis {
         }
 
         // Before prototype.init
+        saveUnmodified(this);
         if (angular) {
 
             if (isHidden) {
@@ -1294,6 +1342,8 @@ namespace RadialAxis {
 
             // Check which axis is circular
             isCircular = this.horiz;
+        } else {
+            unmodify(this);
         }
 
         // Disable certain features on angular and polar axes
@@ -1375,7 +1425,7 @@ namespace RadialAxis {
                 this.pos,
                 (axis.center[2] / 2) +
                     relativeLength(
-                        labelOptions.distance ?? -25,
+                        labelOptions.distance ?? 15,
                         axis.center[2] / 2
                     ) +
                     axis.offset
@@ -1614,9 +1664,12 @@ namespace RadialAxis {
                 center[0] = start.x - this.chart.plotLeft;
                 center[1] = start.y - this.chart.plotTop;
 
+                // After updating chart.inverted
+                delete this.sector;
+
                 // Axis len is used to lay out the ticks
                 this.len = this.width = this.height =
-                    (center[2] - center[3]) / 2;
+                    (center[2] - center[3]) * (this.sector ?? 1) / 2;
             }
         }
     }
@@ -1761,12 +1814,8 @@ namespace RadialAxis {
                 axis.center[2] / 2 + tickLength
             );
             ret = [
-                'M',
-                x,
-                y,
-                'L',
-                endPoint.x,
-                endPoint.y
+                ['M', x, y],
+                ['L', endPoint.x, endPoint.y]
             ];
         } else {
             ret = proceed.call(

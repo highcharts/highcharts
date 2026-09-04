@@ -531,7 +531,7 @@ export interface AxisLabelOptions {
      * @default 15
      * @product highcharts gantt
      */
-    distance: number;
+    distance?: number;
 
     /**
      * Enable or disable the axis labels.

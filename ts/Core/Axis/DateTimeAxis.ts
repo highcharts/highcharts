@@ -24,10 +24,13 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 import type { TypedArray } from '../../Shared/Types';
 
+import H from '../Globals.js';
+const { composed } = H;
 import {
     addEvent,
     getMagnitude,
-    normalizeTickInterval
+    normalizeTickInterval,
+    pushUnique
 } from '../../Shared/Utilities.js';
 import { timeUnits } from '../Utilities.js';
 
@@ -166,8 +169,7 @@ namespace DateTimeAxis{
         AxisClass: T
     ): (typeof Composition&T) {
 
-        if (!AxisClass.keepProps.includes('dateTime')) {
-            AxisClass.keepProps.push('dateTime');
+        if (pushUnique(composed, 'Axis.DateTime')) {
 
             const axisProto = AxisClass.prototype as DateTimeAxis.Composition;
 

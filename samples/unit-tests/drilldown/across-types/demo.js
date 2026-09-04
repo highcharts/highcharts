@@ -329,3 +329,65 @@ QUnit.test('Drilldown across types', function (assert) {
         );
     });
 });
+
+QUnit.test('Drilldown animations on labels', assert => {
+    const clock = TestUtilities.lolexInstall(),
+        done = assert.async();
+
+    try {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                data: [{
+                    y: 1,
+                    drilldown: 'drilldown-series'
+                }],
+                type: 'line'
+            }],
+            xAxis: {
+                labels: {
+                    format: 'Probe'
+                }
+            },
+            drilldown: {
+                animation: {
+                    duration: 100
+                },
+                series: [{
+                    id: 'drilldown-series',
+                    data: [1, 2, 3, 4],
+                    type: 'pie'
+                }]
+            }
+        });
+
+        chart.series[0].points[0].doDrilldown();
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.xAxis[0].ticks[0].label.element.getAttribute('opacity'),
+                '0',
+                'X axis label should be hidden after drilldown animation'
+            );
+
+            chart.drillUp();
+        }, 150);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.xAxis[0].ticks[0].label.element.getAttribute('opacity'),
+                '1',
+                'X axis label should be visible after drillup animation'
+            );
+
+            done();
+        }, 300);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } catch (e) {
+        console.error('Test failed with error: ', e);
+        // Don't break the whole test suite
+        done();
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});

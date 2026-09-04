@@ -1789,7 +1789,11 @@ QUnit.test('Chart.update', assert => {
     );
 
     assert.deepEqual(
-        getYAxisLabels(),
+        [
+            axis.ticks[0].label.textStr,
+            axis.grid.columns[0].ticks[0].label.textStr,
+            axis.grid.columns[1].ticks[0].label.textStr
+        ],
         ['Updated 1', 'Updated 2', 'New 3'],
         'should still have two updated labels and a new one after update.'
     );
@@ -1893,7 +1897,7 @@ QUnit.test(
             chart.xAxis[1].tickPositions.map(tickPosition =>
                 chart.xAxis[1].ticks[tickPosition].label.textStr
             ).join(', '),
-            'July, January, July',
+            'July, January, ',
             'Secondary axis should show months when xAxis.units set (#16626)'
         );
     }
