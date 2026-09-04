@@ -278,6 +278,65 @@ async function request(url, options, dependencies = {}, requestState = {
     throw new VisualReviewApiError('Visual review request exhausted its retry attempts');
 }
 
+async function downloadLatestNightlyArchive(options = {}) {
+    const baseUrl = normalizeApiUrl(options.apiUrl);
+    const dependencies = options.dependencies || {};
+    const requestState = { lastRequestAt: 0 };
+    const response = await request(
+        `${baseUrl}/api/reviews/nightly/latest`,
+        {
+            headers: {
+                accept: 'application/json'
+            }
+        },
+        dependencies,
+        requestState
+    );
+    let submissions;
+    try {
+        submissions = await response.json();
+    } catch (error) {
+        throw new VisualReviewApiError(
+            `Invalid latest nightly submissions response: ${error.message}`
+        );
+    }
+    if (!Array.isArray(submissions)) {
+        throw new VisualReviewApiError(
+            'Invalid latest nightly submissions response: expected an array'
+        );
+    }
+    if (submissions.length === 0) {
+        return null;
+    }
+
+    const apiKey = options.apiKey || process.env.VISUAL_REVIEW_API_KEY;
+    if (!apiKey) {
+        throw new VisualReviewApiError(
+            'Missing VISUAL_REVIEW_API_KEY for nightly reference download'
+        );
+    }
+    const submission = submissions[0];
+    const runId = positiveInteger(submission?.runId, 'nightly runId');
+    const runAttempt = positiveInteger(
+        submission?.runAttempt,
+        'nightly runAttempt'
+    );
+    const archiveResponse = await request(
+        `${baseUrl}/api/ingestion/nightly/submissions/${runId}/` +
+        `attempts/${runAttempt}/artifacts.zip`,
+        {
+            headers: {
+                accept: 'application/zip',
+                authorization: `Bearer ${apiKey}`
+            }
+        },
+        dependencies,
+        requestState
+    );
+
+    return Buffer.from(await archiveResponse.arrayBuffer());
+}
+
 /**
  * Uploads and finalizes a visual review submission.
  *
@@ -383,6 +442,7 @@ async function submitNightlyVisualReview(options) {
 
 module.exports = {
     buildSubmissionManifest,
+    downloadLatestNightlyArchive,
     normalizeApiUrl,
     submitNightlyVisualReview,
     submitPullRequestVisualReview,

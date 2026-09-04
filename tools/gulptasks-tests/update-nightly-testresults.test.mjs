@@ -1,5 +1,12 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+    access,
+    mkdtemp,
+    mkdir,
+    readFile,
+    rm,
+    writeFile
+} from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -34,6 +41,9 @@ function response(status = 200, body = '') {
                 bytes.byteOffset,
                 bytes.byteOffset + bytes.byteLength
             );
+        },
+        async json() {
+            return JSON.parse(bytes.toString());
         },
         async text() {
             return bytes.toString();
@@ -160,10 +170,11 @@ test('fails when results or error logs cannot be read safely', async () => {
     }
 });
 
-test('syncs current references from the Visual Review API', async () => {
+test('syncs current references from the latest nightly archive', async () => {
     const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-sync-'));
     const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
     const requests = [];
+    let archiveRoot;
     try {
         await writeSample(referenceRoot, 'highcharts/demo/basic-line', {
             'reference.svg': '<svg>new</svg>'
@@ -179,20 +190,57 @@ test('syncs current references from the Visual Review API', async () => {
         });
 
         await syncNightlyReferences({
+            apiKey: 'test-api-key',
             apiUrl: 'https://vrevs.test',
-            fetchImpl: async url => {
-                requests.push(url);
-                return url.includes('basic-line') ?
-                    response(200, '<svg>current</svg>') :
-                    response(404, 'missing');
+            dependencies: {
+                minRequestInterval: 0,
+                sleep: async () => {}
+            },
+            unzipImpl: async (command, args) => {
+                assert.equal(command, 'unzip');
+                assert.deepEqual(args.slice(0, 2), ['-q', '-o']);
+                const archivePath = args[2];
+                archiveRoot = args[4];
+                assert.equal(args[3], '-d');
+                assert.equal(await readFile(archivePath, 'utf8'), 'archive-bytes');
+                await writeSample(archiveRoot, 'highcharts/demo/basic-line', {
+                    'reference.svg': '<svg>current</svg>',
+                    'candidate.svg': '<svg>candidate</svg>'
+                });
+                await writeSample(archiveRoot, 'retired/sample', {
+                    'reference.svg': '<svg>retired</svg>'
+                });
+            },
+            fetchImpl: async (url, options) => {
+                requests.push({ options, url });
+                return requests.length === 1 ?
+                    response(200, JSON.stringify([{
+                        version: '13.0.1',
+                        runId: '9007199254740994',
+                        runAttempt: '2',
+                        runNumber: '1234',
+                        finalizedTs: 0,
+                        sampleCount: 2
+                    }])) :
+                    response(200, 'archive-bytes');
             },
             referenceRoot,
             sampleRoot
         });
 
-        assert.deepEqual(requests, [
-            'https://vrevs.test/api/assets/visualtests/reference/latest/highcharts/demo/basic-line/reference.svg',
-            'https://vrevs.test/api/assets/visualtests/reference/latest/highcharts/demo/new%20sample%231/reference.svg'
+        assert.deepEqual(requests.map(request => request.url), [
+            'https://vrevs.test/api/reviews/nightly/latest',
+            'https://vrevs.test/api/ingestion/nightly/submissions/' +
+                '9007199254740994/attempts/2/artifacts.zip'
+        ]);
+        assert.deepEqual(requests.map(request => request.options.headers), [
+            {
+                accept: 'application/json'
+            },
+            {
+                accept: 'application/zip',
+                authorization: 'Bearer test-api-key'
+            }
         ]);
         assert.equal(
             await readFile(
@@ -208,6 +256,100 @@ test('syncs current references from the Visual Review API', async () => {
             ),
             '<svg>new-only</svg>'
         );
+        await assert.rejects(
+            access(join(sampleRoot, 'retired', 'sample', 'reference.svg')),
+            error => error.code === 'ENOENT'
+        );
+        await assert.rejects(
+            access(archiveRoot),
+            error => error.code === 'ENOENT'
+        );
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(referenceRoot, { recursive: true, force: true });
+    }
+});
+
+test('keeps generated references when no prior nightly archive exists', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-sync-'));
+    const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
+    const requests = [];
+    try {
+        await writeSample(referenceRoot, 'highcharts/demo/new-sample', {
+            'reference.svg': '<svg>new</svg>'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/new-sample', {
+            'reference.svg': '<svg>new</svg>'
+        });
+
+        await syncNightlyReferences({
+            apiKey: null,
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                fetchImpl: async (url, options) => {
+                    requests.push({ options, url });
+                    return response(200, '[]');
+                }
+            },
+            unzipImpl: async () => {
+                assert.fail('No archive should be extracted');
+            },
+            referenceRoot,
+            sampleRoot
+        });
+
+        assert.deepEqual(requests, [{
+            options: { headers: { accept: 'application/json' } },
+            url: 'https://vrevs.test/api/reviews/nightly/latest'
+        }]);
+        assert.equal(
+            await readFile(
+                join(sampleRoot, 'highcharts', 'demo', 'new-sample', 'reference.svg'),
+                'utf8'
+            ),
+            '<svg>new</svg>'
+        );
+    } finally {
+        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(referenceRoot, { recursive: true, force: true });
+    }
+});
+
+test('fails when the selected nightly archive is no longer current', async () => {
+    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-sync-'));
+    const referenceRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-reference-'));
+    let requests = 0;
+    try {
+        await writeSample(referenceRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>new</svg>'
+        });
+        await writeSample(sampleRoot, 'highcharts/demo/basic-line', {
+            'reference.svg': '<svg>new</svg>'
+        });
+
+        await assert.rejects(syncNightlyReferences({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                minRequestInterval: 0,
+                sleep: async () => {}
+            },
+            unzipImpl: async () => {
+                assert.fail('A missing archive should not be extracted');
+            },
+            fetchImpl: async () => ++requests === 1 ?
+                response(200, JSON.stringify([{
+                    runId: '9007199254740994',
+                    runAttempt: '2'
+                }])) :
+                response(404, 'Nightly artifact archive not found'),
+            referenceRoot,
+            sampleRoot
+        }), error => (
+            error.name === 'VisualReviewApiError' &&
+            error.status === 404
+        ));
+        assert.equal(requests, 2);
     } finally {
         await rm(sampleRoot, { recursive: true, force: true });
         await rm(referenceRoot, { recursive: true, force: true });
