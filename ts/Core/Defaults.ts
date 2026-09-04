@@ -3344,6 +3344,43 @@ export default DefaultOptions;
  */
 
 /**
+ * Gets fired while the chart is panned by mouse drag. Calling
+ * `event.preventDefault()` or returning `false` prevents the default panning
+ * of the axes.
+ *
+ * @callback Highcharts.ChartPanCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occurred.
+ *
+ * @param {Highcharts.ChartPanEventObject} event
+ *        The event that occurred.
+ */
+
+/**
+ * Contains common event information. Through the `originalEvent` property you
+ * can access the pointer event that triggered the panning.
+ *
+ * @interface Highcharts.ChartPanEventObject
+ *//**
+ * The pointer event that triggered the panning.
+ * @name Highcharts.ChartPanEventObject#originalEvent
+ * @type {Highcharts.PointerEventObject}
+ *//**
+ * Prevents the default behavior of the event.
+ * @name Highcharts.ChartPanEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The event target.
+ * @name Highcharts.ChartPanEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.ChartPanEventObject#type
+ * @type {"pan"}
+ */
+
+/**
  * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
  * after an axis, series or point is modified with the `redraw` option set to
  * `true`.

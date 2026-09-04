@@ -15,7 +15,6 @@ const argv = require('yargs').argv;
 const childProcess = require('child_process');
 const { getFilesInFolder } = require('@highcharts/highcharts-assembler/src/build.js');
 const { removeFile } = require('@highcharts/highcharts-assembler/src/utilities.js');
-const sourcePackageJSON = require('../../package.json');
 
 const releaseRepos = {
     Highcharts: 'highcharts-dist',
@@ -207,9 +206,13 @@ async function removeFilesInFolder(folder, exceptions) {
  */
 function updateReleaseJSON(json, productName) {
     if (productName === 'Highcharts') {
-        if (sourcePackageJSON.module) {
-            json.module = sourcePackageJSON.module;
-        }
+        // The UMD submodules in `modules/*.js` read the shared namespace from
+        // `window._Highcharts`, which only the UMD bundle assigns. Declaring an
+        // ESM entry point makes bundlers resolve the bare specifier to the pure
+        // ESM bundle, while subpath imports keep loading UMD, leaving the
+        // namespace unassigned (#25072). Until subpath resolution follows the
+        // same bundle, the release package must not advertise one.
+        delete json.module;
 
         json.types = (
             json.main ?
@@ -604,5 +607,6 @@ gulp.task('dist-release', release);
 
 module.exports = {
     releaseRepositoryMetadata,
-    removeFilesInFolder
+    removeFilesInFolder,
+    updateReleaseJSON
 };

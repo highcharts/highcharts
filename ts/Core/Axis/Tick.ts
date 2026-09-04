@@ -24,7 +24,6 @@ import type {
     AxisLabelOptions,
     AxisOptions
 } from './AxisOptions';
-import type CSSObject from '../Renderer/CSSObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type PositionObject from '../Renderer/PositionObject';
 import type TickBase from './TickBase';
@@ -590,7 +589,7 @@ class Tick {
         const axis = this.axis,
             transA = axis.transA,
             reversed = ( // #7911
-                axis.isLinked && axis.linkedParent ?
+                axis.linkedParent ?
                     axis.linkedParent.reversed :
                     axis.reversed
             ),
@@ -704,26 +703,21 @@ class Tick {
      */
     public handleOverflow(xy: PositionObject): void {
         const tick = this,
-            axis = this.axis,
+            { axis, label, rotation = 0 } = this,
             labelOptions = axis.options.labels,
             pxPos = xy.x,
-            chartWidth = axis.chart.chartWidth,
-            spacing = axis.chart.spacing,
-            leftBound =
-                axis.labelLeft ?? Math.min(axis.pos as any, spacing[3]),
+            { chartWidth, spacing } = axis.chart,
+            leftBound = axis.labelLeft ?? Math.min(axis.pos, spacing[3]),
             rightBound = (axis.labelRight ?? Math.max(
-                !axis.isRadial ? (axis.pos as any) + axis.len : 0,
-                (chartWidth as any) - spacing[1]
+                !axis.isRadial ? axis.pos + axis.len : 0,
+                chartWidth - spacing[1]
             )),
-            label = this.label,
-            rotation = this.rotation,
             factor = getAlignFactor(
-                axis.labelAlign || (label as any).attr('align')
+                axis.labelAlign || label?.attr('align') as any
             ),
-            labelWidth = (label as any).getBBox().width,
-            slotWidth = axis.getSlotWidth(tick as any),
-            xCorrection = factor,
-            css: CSSObject = {};
+            labelWidth = label?.getBBox().width || 0,
+            slotWidth = axis.getSlotWidth(tick),
+            xCorrection = factor;
 
         let modifiedSlotWidth = slotWidth,
             goRight = 1,
@@ -773,19 +767,19 @@ class Tick {
         // Add ellipsis to prevent rotated labels to be clipped against the edge
         // of the chart
         } else if (
-            (rotation as any) < 0 &&
+            rotation < 0 &&
             pxPos - factor * labelWidth < leftBound
         ) {
             textWidth = Math.round(
-                pxPos / Math.cos((rotation as any) * deg2rad) - leftBound
+                pxPos / Math.cos(rotation * deg2rad) - leftBound
             );
         } else if (
-            (rotation as any) > 0 &&
+            rotation > 0 &&
             pxPos + factor * labelWidth > rightBound
         ) {
             textWidth = Math.round(
-                ((chartWidth as any) - pxPos) /
-                Math.cos((rotation as any) * deg2rad)
+                (chartWidth - pxPos) /
+                Math.cos(rotation * deg2rad)
             );
         }
 
@@ -793,10 +787,10 @@ class Tick {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                label.css(extend(css, {
+                label.css({
                     width: Math.floor(textWidth) + 'px',
                     lineClamp: axis.isRadial ? 0 : 1
-                }));
+                });
             }
         }
     }
