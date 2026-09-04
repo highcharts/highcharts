@@ -1,0 +1,8 @@
+---
+name: Fund Profile
+description: A comprehensive fund profile dashboard combining multiple charts and tables for a single fund.
+tags:
+  - Dashboards
+requiresManualTesting: true
+js_wrap: b
+...
