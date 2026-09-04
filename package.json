@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "13.0.0",
+  "version": "13.0.2",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "esm/highcharts.js",
@@ -95,7 +95,6 @@
     "@typescript-eslint/eslint-plugin": "8.39.1",
     "@typescript-eslint/parser": "8.39.1",
     "@webgpu/types": "^0.1.64",
-    "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
     "chatgpt": "^5.2.5",

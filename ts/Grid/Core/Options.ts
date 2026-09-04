@@ -586,6 +586,12 @@ export interface ColumnCellOptions {
      * Callback function to resolve the value of an unbound column cell.
      * For bound columns, overrides only the rendered content - sorting,
      * filtering, and export remain unaffected.
+     *
+     * Use it with `dataId: null` to derive the value from the other columns of
+     * the same row. Such a column is unbound, so it is never editable, and it
+     * is re-resolved whenever a cell of its row is edited. For plain
+     * aggregation, prefer the declarative `columnAggregator` option, which this
+     * callback overrides when both are set.
      */
     valueGetter?: CellValueGetterCallback;
 

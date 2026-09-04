@@ -26,7 +26,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import { clamp, merge, pick } from '../../Shared/Utilities.js';
+import { clamp, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -84,13 +84,11 @@ class ColumnPyramidSeries extends ColumnSeries {
             options = series.options,
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
-            borderWidth = series.borderWidth = pick(
-                options.borderWidth,
-                dense ? 0 : 1 // #3635
-            ),
+            borderWidth = series.borderWidth =
+                options.borderWidth ?? (dense ? 0 : 1),
             yAxis = series.yAxis,
             threshold = options.threshold,
-            minPointLength = pick(options.minPointLength, 5),
+            minPointLength = (options.minPointLength ?? 5),
             metrics = series.getColumnMetrics(),
             pointWidth = metrics.width,
             pointXOffset = series.pointXOffset = metrics.offset;
@@ -118,9 +116,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
         // Record the new values
         for (const point of series.points) {
-            const yBottom = pick<number|undefined, number>(
-                    point.yBottom, translatedThreshold as any
-                ),
+            const yBottom = (point.yBottom ?? translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotY = clamp(
                     point.plotY as any,
