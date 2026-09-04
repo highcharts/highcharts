@@ -34,6 +34,7 @@ import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import {
     diffObjects,
     extend,
+    isNumber,
     merge,
     normalizeTickInterval
 } from '../../Shared/Utilities.js';
@@ -767,10 +768,10 @@ export default class ContourSeries extends ScatterSeries {
         const series = this;
 
         let min = series.valueMin;
-        if (isNaN(min || NaN)) {
+        if (!isNumber(min)) {
             min = series.colorAxis?.min;
 
-            if (isNaN(min || NaN)) {
+            if (!isNumber(min)) {
                 min = Math.min(...series.points.map(
                     (point): number => point.value || 0
                 ));
@@ -778,10 +779,10 @@ export default class ContourSeries extends ScatterSeries {
         }
 
         let max = series.valueMax;
-        if (isNaN(max || NaN)) {
+        if (!isNumber(max)) {
             max = series.colorAxis?.max;
 
-            if (isNaN(max || NaN)) {
+            if (!isNumber(max)) {
                 max = Math.max(...series.points.map(
                     (point): number => point.value || 0
                 ));
