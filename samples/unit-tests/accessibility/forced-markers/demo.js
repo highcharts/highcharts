@@ -237,6 +237,21 @@ QUnit.test('Dynamic markers on update', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointA), true, 'Series marker visible');
     assert.strictEqual(hasMarker(pointB), true, 'Point marker exists');
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
+
+    series.update({
+        marker: {
+            enabled: false
+        },
+        lowMarker: {
+            enabled: true
+        }
+    });
+
+    assert.strictEqual(
+        pointA.graphics[0].opacity !== 0,
+        true,
+        'Explicitly enabled lowMarker should be visible (#25279).'
+    );
 });
 
 // #16624, temporarily skipped due to #23783

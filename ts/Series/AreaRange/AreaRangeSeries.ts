@@ -525,6 +525,33 @@ class AreaRangeSeries extends AreaSeries {
 
             series.options.marker = merge(marker, lowMarker);
 
+            // A11y forces marker opacity to 0 when disabled.
+            // That force should not affect the `lowMarker`
+            // unless it, too, is disabled (#25279).
+            const a11ySeries = series as unknown as {
+                a11yMarkersForced?: boolean;
+                resetA11yMarkerOptions?: PointMarkerOptions;
+            };
+
+            if (a11ySeries.a11yMarkersForced && lowMarker.enabled === true) {
+                const resetStates = a11ySeries.resetA11yMarkerOptions
+                    ?.states;
+
+                series.options.marker = merge(series.options.marker, {
+                    states: {
+                        normal: {
+                            opacity: resetStates?.normal?.opacity ?? 1
+                        },
+                        hover: {
+                            opacity: resetStates?.hover?.opacity ?? 1
+                        },
+                        select: {
+                            opacity: resetStates?.select?.opacity ?? 1
+                        }
+                    }
+                });
+            }
+
             if (lowMarker.symbol) {
                 series.symbol = lowMarker.symbol;
             }
