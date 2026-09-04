@@ -645,6 +645,12 @@ class Point {
 
             point.isNull = point.isValid && !point.isValid();
 
+            // Discard the a11y mock graphic when no longer null (#25299)
+            if (point.hasMockGraphic && !point.isNull) {
+                point.graphic = point.graphic?.destroy();
+                delete point.hasMockGraphic;
+            }
+
             // #9233, #10874
             point.formatPrefix = point.isNull ? 'null' : 'point';
         }
