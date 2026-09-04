@@ -884,9 +884,11 @@ class Measure extends Annotation {
                 crop: true,
                 xAxis: 0,
                 yAxis: 0,
-                point: function (target: any): MockPointOptions {
-                    const annotation: Measure = target.annotation,
-                        options = target.options;
+                point: function (
+                    target: Controllable
+                ): MockPointOptions {
+                    const annotation = target.annotation as Measure,
+                        options = target.options as ControllableLabelOptions;
 
                     return {
                         x: annotation.xAxisMin,
@@ -894,7 +896,7 @@ class Measure extends Annotation {
                         xAxis: (typeOptions.xAxis ?? options.xAxis),
                         yAxis: (typeOptions.yAxis ?? options.yAxis)
                     };
-                } as any,
+                },
                 text: (
                     formatter?.call(this, this) ||
                     defaultFormatter.call(this)
