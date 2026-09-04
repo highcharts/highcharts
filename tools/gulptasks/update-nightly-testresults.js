@@ -141,7 +141,7 @@ async function syncNightlyReferences({
         .sort();
     if (referenceFiles.length === 0) {
         logLib.message(
-            'Synced 0 current reference image(s) from the Visual Review API; ' +
+            'Synced 0 current reference image(s) from the nightly artifacts archive; ' +
             '0 new reference image(s) kept.'
         );
         return;
@@ -158,7 +158,7 @@ async function syncNightlyReferences({
     });
     if (archive === null) {
         logLib.message(
-            'Synced 0 current reference image(s) from the Visual Review API; ' +
+            'Synced 0 current reference image(s) from the nightly artifacts archive; ' +
             `${referenceFiles.length} new reference image(s) kept.`
         );
         return;
@@ -175,13 +175,21 @@ async function syncNightlyReferences({
         const archiveRoot = path.join(temporaryRoot, 'artifacts');
         fs.writeFileSync(archivePath, archive);
         fs.mkdirSync(archiveRoot, { recursive: true });
-        await unzipImpl('unzip', [
-            '-q',
-            '-o',
-            archivePath,
-            '-d',
-            archiveRoot
-        ]);
+        try {
+            await unzipImpl('unzip', [
+                '-q',
+                '-o',
+                archivePath,
+                '-d',
+                archiveRoot
+            ]);
+        } catch (error) {
+            throw new Error(
+                'Failed to extract nightly artifacts.zip with "unzip". ' +
+                'Ensure unzip is installed and the downloaded archive is valid: ' +
+                error.message
+            );
+        }
 
         for (const file of referenceFiles) {
             const sampleName = normalizeSampleName(file, referenceRoot);
@@ -211,7 +219,7 @@ async function syncNightlyReferences({
     }
 
     logLib.message(
-        `Synced ${synced} current reference image(s) from the Visual Review API; ` +
+        `Synced ${synced} current reference image(s) from the nightly artifacts archive; ` +
         `${missing} new reference image(s) kept.`
     );
 }

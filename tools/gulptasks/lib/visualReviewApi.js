@@ -316,15 +316,6 @@ async function downloadLatestNightlyArchive(options = {}) {
         );
     }
     const submission = submissions[0];
-    if (
-        typeof submission?.runId !== 'string' ||
-        typeof submission?.runAttempt !== 'string'
-    ) {
-        throw new VisualReviewApiError(
-            'Invalid latest nightly submissions response: ' +
-            'runId and runAttempt must be strings'
-        );
-    }
     const runId = positiveInteger(submission?.runId, 'nightly runId');
     const runAttempt = positiveInteger(
         submission?.runAttempt,

@@ -24,6 +24,9 @@ if (!githubEnvPath) {
 }
 
 const resolvedFirefoxPath = resolve(firefoxPath);
+if (/[\r\n]/u.test(resolvedFirefoxPath)) {
+    throw new Error('FIREFOX_PATH must not contain newline characters.');
+}
 
 try {
     if (!statSync(resolvedFirefoxPath).isFile()) {
