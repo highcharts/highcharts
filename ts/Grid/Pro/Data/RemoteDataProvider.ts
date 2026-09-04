@@ -140,6 +140,11 @@ export class RemoteDataProvider extends DataProvider {
     private pendingControllers: Set<AbortController> = new Set();
 
     /**
+     * Whether the positional row id warning was already emitted.
+     */
+    private warnedAboutPositionalRowIds = false;
+
+    /**
      * Returns the configured chunk size for the current query.
      * When pagination is enabled, one chunk always equals one page.
      */
@@ -181,6 +186,39 @@ export class RemoteDataProvider extends DataProvider {
             controller.abort();
         }
         this.pendingControllers.clear();
+    }
+
+    /**
+     * Warns once that row ids are being derived from row positions.
+     *
+     * Positional ids only identify a row within the current query result, so
+     * any feature keyed by row id - selection, pinning, tree view expansion -
+     * silently follows a different row once the data is sorted or filtered.
+     *
+     * @param idColumn
+     * The configured `idColumn`, when the response did not contain it.
+     */
+    private warnAboutPositionalRowIds(idColumn?: string): void {
+        if (this.warnedAboutPositionalRowIds) {
+            return;
+        }
+
+        this.warnedAboutPositionalRowIds = true;
+
+        // eslint-disable-next-line no-console
+        console.warn(
+            'Highcharts Grid: ' + (
+                idColumn ?
+                    'the response does not contain the configured `idColumn` ' +
+                    `("${idColumn}"), so row ids are derived from row ` +
+                    'positions.' :
+                    'row ids are derived from row positions, because no ' +
+                    '`data.idColumn` is set and the response contains no ' +
+                    '`rowIds`.'
+            ) + ' Row ids then only hold within the current query result, so ' +
+            'sorting or filtering moves row selection, row pinning and tree ' +
+            'view state onto different rows.'
+        );
     }
 
     private async getChunkForRowIndex(rowIndex: number): Promise<DataChunk> {
@@ -455,7 +493,11 @@ export class RemoteDataProvider extends DataProvider {
                     idColumn = result.columns[idColId] as RowId[] | undefined;
                 }
                 if (!idColumn) {
-                    idColumn = result.rowIds ?? Array.from(
+                    idColumn = result.rowIds;
+                }
+                if (!idColumn) {
+                    this.warnAboutPositionalRowIds(idColId);
+                    idColumn = Array.from(
                         { length: chunkRowCount },
                         (_, i): number => i + requestOffset
                     );
