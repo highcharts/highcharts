@@ -722,8 +722,7 @@ class Tick {
             ),
             labelWidth = (label as any).getBBox().width,
             slotWidth = axis.getSlotWidth(tick as any),
-            xCorrection = factor,
-            css: CSSObject = {};
+            xCorrection = factor;
 
         let modifiedSlotWidth = slotWidth,
             goRight = 1,
@@ -792,11 +791,6 @@ class Tick {
         if (textWidth && label) {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
-            } else {
-                label.css(extend(css, {
-                    width: Math.floor(textWidth) + 'px',
-                    lineClamp: axis.isRadial ? 0 : 1
-                }));
             }
         }
     }
