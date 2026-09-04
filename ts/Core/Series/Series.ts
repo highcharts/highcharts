@@ -1565,6 +1565,7 @@ class Series {
                 id = newIdColumn?.[i] as string|undefined,
                 name = newNameColumn?.[i] as string|undefined,
                 index = newIndexColumn?.[i] as number|undefined,
+                matchedById = !!(id && oldIdColumn),
                 [needle, haystack]: [
                     string|number,
                     Column
@@ -1584,6 +1585,12 @@ class Series {
             if (haystack) {
 
                 pointIndex = haystack.indexOf(needle as any, lastIndex);
+
+                // Matching point already used by an earlier row, don't
+                // use it twice (#25083)
+                if (!matchedById && oldData[pointIndex]?.touched) {
+                    pointIndex = -1;
+                }
 
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
