@@ -27,7 +27,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
-import { extend, merge, pick } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -210,7 +210,8 @@ namespace LegendSymbol {
 
             // Do not allow the marker to be larger than the symbolHeight
             let radius = Math.min(
-                pick(markerOptions.radius, generalRadius),
+                (
+                    markerOptions.radius ?? generalRadius),
                 generalRadius
             );
 

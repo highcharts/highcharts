@@ -432,6 +432,17 @@ const MapSeriesDefaults: MapSeriesOptions = {
  */
 
 /**
+ * Whether to apply a drop shadow to the map shapes. The shadow can be an
+ * object configuration containing `color`, `offsetX`, `offsetY`, `opacity`
+ * and `width`.
+ *
+ * @type      {boolean|Highcharts.ShadowOptionsObject}
+ * @default   false
+ * @product   highmaps
+ * @apioption plotOptions.map.shadow
+ */
+
+/**
  * Individual color for the point. By default the color is either used
  * to denote the value, or pulled from the global `colors` array.
  *
