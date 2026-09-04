@@ -27,7 +27,11 @@ Highcharts.chart('container', {
     }],
 
     exporting: {
-        width: 200
+        // The `width` option is deprecated and has no effect. Use
+        // `sourceWidth` combined with `scale` to control the width of the
+        // exported image.
+        sourceWidth: 200,
+        scale: 1
     }
 
 });
