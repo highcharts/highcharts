@@ -18,6 +18,15 @@ body {
     font-family: sans-serif;
 }
 
+h1 {
+    /* Line the heading up with the content inside the dashboard card,
+       rather than letting it sit flush against the card edge. */
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 8px 12px 16px;
+    font-size: 1.6rem;
+}
+
 #container {
     min-width: 280px;
     max-width: 1300px;
@@ -156,15 +165,6 @@ body {
     }
 
     #underlying-holdings-table {
-        order: 1;
-    }
-
-    #bubble-chart {
-        order: 0;
-    }
-
-    #underlying-holdings-table,
-    #bubble-chart {
         flex: 1 1 100%;
     }
 }
