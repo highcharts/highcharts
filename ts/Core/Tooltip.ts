@@ -1648,8 +1648,32 @@ class Tooltip {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
 
+        // When `tooltip.outside: true` labels may be placed outside the plot
+        // area, in the chart or in the whole viewport, so tall labels have room
+        // instead of being hidden (#24860).
+        const spaceAbove = distributionBoxTop,
+            // The height that is missing for all labels to fit
+            deficit = boxes.reduce((sum, box): number => sum + box.size, 0) -
+                adjustedPlotHeight,
+            spaceBelow = deficit > 0 ?
+                tooltip.getPlayingField().height - spaceAbove -
+                    adjustedPlotHeight : 0,
+            below = headerHeight && !headerTop ?
+                0 : clamp(deficit, 0, spaceBelow),
+            above = headerTop ? 0 : clamp(deficit - below, 0, spaceAbove),
+            headerBand = below && headerTop ? headerHeight : 0;
+
         // Distribute and put in place
-        distribute(boxes, adjustedPlotHeight);
+        distribute(boxes, adjustedPlotHeight + above + below);
+        distributionBoxTop -= above;
+
+        if (headerBand) {
+            boxes.forEach((box): void => {
+                if (!box.point.isHeader && isNumber(box.pos)) {
+                    box.pos = Math.max(box.pos, headerBand);
+                }
+            });
+        }
         const boxExtremes = {
             left: chartLeft,
             right: chartLeft
