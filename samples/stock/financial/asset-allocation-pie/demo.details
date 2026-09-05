@@ -1,0 +1,8 @@
+---
+name: DWS Asset Allocation Pie
+description: Shows DWS fund asset allocation as two pie charts with synchronized data grids.
+tags:
+  - DWS Dashboards
+requiresManualTesting: true
+js_wrap: b
+...
