@@ -34,8 +34,7 @@ Prefer the core Highcharts build plus only the modules you need. Avoid product
 bundles (Stock, Maps, Gantt) unless you need their full feature set.
 
 ```jsx
-import Highcharts from "highcharts";
-import { Chart, Series } from "@highcharts/react";
+import { Chart, Series, Highcharts } from "@highcharts/react";
 import { Exporting } from "@highcharts/react/modules/Exporting";
 ```
 

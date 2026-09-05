@@ -1,3 +1,18 @@
+QUnit.test(
+    'Only one body element in the document when using useHTML (#24839)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {});
+
+        chart.renderer.text('Hello', 10, 10, true).add();
+
+        assert.strictEqual(
+            document.querySelectorAll('body').length,
+            1,
+            'There should only be one body element in the document'
+        );
+    }
+);
+
 QUnit.test('Hide label with useHTML (#4938)', function (assert) {
     var chart = Highcharts.chart('container', {}),
         renderer = chart.renderer,
@@ -18,6 +33,27 @@ QUnit.test('Hide label with useHTML (#4938)', function (assert) {
         'Group element is hidden'
     );
 });
+
+QUnit.test(
+    'hide() must visually hide a useHTML element (#24606)',
+    function (assert) {
+        const renderer = new Highcharts.Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
+            text = renderer.text('Label', 100, 100, true).add();
+
+        text.hide();
+
+        assert.strictEqual(
+            window.getComputedStyle(text.element).visibility,
+            'hidden',
+            'Text element is hidden'
+        );
+
+        renderer.destroy();
+    });
 
 QUnit.test('Legend rtl and useHTML (#4449)', function (assert) {
     var ren = new Highcharts.Renderer(
@@ -47,12 +83,10 @@ QUnit.test('Legend rtl and useHTML (#4449)', function (assert) {
     });
 
     assert.strictEqual(
-        text.foreignObject ?
-            text.foreignObject.attr('x') +
-                text.foreignObject.attr('width') -
-                // 3 is the static margin of the body inside the foreignObject
-                3 :
-            text.element.offsetLeft + text.element.offsetWidth,
+        text.foreignObject.attr('x') +
+            text.foreignObject.attr('width') -
+            // 4 is the additional width of the foreign object
+            4,
         100,
         'Text should be right aligned'
     );

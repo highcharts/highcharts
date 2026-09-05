@@ -358,7 +358,7 @@ class IKHIndicator extends SMAIndicator {
                     /**
                      * Color of the area between Senkou Span A and B.
                      *
-                     * @deprecated
+                     * @deprecated 7.0.0
                      * @type {Highcharts.ColorType}
                      */
                     fill: 'rgba(255, 0, 0, 0.5)'

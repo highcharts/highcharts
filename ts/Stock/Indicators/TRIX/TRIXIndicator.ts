@@ -155,6 +155,7 @@ export default TRIXIndicator;
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/tema
+ * @requires  stock/indicators/trix
  * @apioption series.trix
  */
 

@@ -39,9 +39,9 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Arvid',
-        data: [11, 11, 8, 13, 12, 14, 4, 12]
+        data: [11, 11, 8, 13, 12, 14, 4, 12, 17, 9]
     }, {
         name: 'Yasin',
-        data: [10, 10, 8, null, 8, 6, 4, 8]
+        data: [10, 10, 8, null, 8, 6, 4, 8, 13, 11]
     }]
 });

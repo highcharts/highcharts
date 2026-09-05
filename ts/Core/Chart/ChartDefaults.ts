@@ -20,8 +20,6 @@
 
 import type ChartOptions from './ChartOptions';
 
-import { Palette } from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -247,6 +245,30 @@ const ChartDefaults: ChartOptions = {
      * @type      {Highcharts.ChartLoadCallbackFunction}
      * @context   Highcharts.Chart
      * @apioption chart.events.load
+     */
+
+    /**
+     * Fires while the chart is panned by mouse drag. Panning must be
+     * enabled through [chart.panning](#chart.panning). One parameter,
+     * `event`, is passed to the function, containing common event
+     * information as well as `event.originalEvent`, the underlying pointer
+     * event. Note that the event fires for every mouse move during the
+     * drag, not once per gesture.
+     *
+     * Calling `event.preventDefault()` or returning false prevents the
+     * default panning of the axes. In Highcharts Maps, and on ordinal axes
+     * in Highcharts Stock, the panning is applied outside the default
+     * action and is not prevented.
+     *
+     * Panning by touch does not fire this event, unless
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch) is enabled and
+     * no zoom type is set. Single-finger drags are then handled as mouse
+     * drags and fire this event.
+     *
+     * @type      {Highcharts.ChartPanCallbackFunction}
+     * @since     7.0.2
+     * @context   Highcharts.Chart
+     * @apioption chart.events.pan
      */
 
     /**
@@ -753,6 +775,22 @@ const ChartDefaults: ChartOptions = {
     },
 
     /**
+     * The corner radius of the plot area border in pixels. Also applies clip
+     * to the plot area background and data inside, like columns in a column
+     * series or fill in an area series.
+     *
+     * @sample highcharts/chart/plotborderradius/
+     *         Plot border radius
+     * @sample {highmaps} maps/chart/plotborder/
+     *         Map with plot border options
+     *
+     * @type      {number}
+     * @default   0
+     * @since     13.0.0
+     * @apioption chart.plotBorderRadius
+     */
+
+    /**
      * The pixel width of the plot area border.
      *
      * @sample {highcharts} highcharts/chart/plotborderwidth/
@@ -854,10 +892,9 @@ const ChartDefaults: ChartOptions = {
      *      `.highcharts-selection-marker` class.
      *
      * @type      {Highcharts.ColorType}
-     * @default   rgba(51,92,173,0.25)
      * @since     2.1.7
-     * @apioption chart.selectionMarkerFill
      */
+    selectionMarkerFill: 'color-mix(in srgb, var(--highcharts-highlight-color-80) 25%, transparent)', // eslint-disable-line max-len
 
     /**
      * Whether to apply a drop shadow to the global series group. This causes
@@ -1293,7 +1330,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    borderColor: Palette.highlightColor80,
+    borderColor: 'var(--highcharts-highlight-color-80)',
 
     /**
      * The pixel width of the outer chart border.
@@ -1334,7 +1371,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    backgroundColor: Palette.backgroundColor,
+    backgroundColor: 'var(--highcharts-background-color)',
 
     /**
      * The background color or gradient for the plot area. If not set, the
@@ -1394,7 +1431,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    plotBorderColor: Palette.neutralColor20
+    plotBorderColor: 'var(--highcharts-neutral-color-20)'
 
 };
 

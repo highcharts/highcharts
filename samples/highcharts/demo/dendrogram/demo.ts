@@ -148,3 +148,8 @@ document.querySelectorAll('.button-row button').forEach(btn => {
         btn.classList.add('active');
     });
 });
+
+// Safari layout hack (see demo.css)
+if ((Highcharts as any).isSafari) {
+    document.getElementById('container').classList.add('safari');
+}

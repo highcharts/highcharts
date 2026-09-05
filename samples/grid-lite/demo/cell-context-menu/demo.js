@@ -40,7 +40,7 @@ function getNextColumnId(existingIds) {
     let id = '';
 
     do {
-        id = 'new column ' + newColumnCount;
+        id = 'New Column #' + newColumnCount;
         newColumnCount += 1;
     } while (existingIds.indexOf(id) !== -1);
 
@@ -79,9 +79,9 @@ async function addRowBelow(cell) {
     );
 
     dt.setRow({
-        product: 'New item',
-        weight: null,
-        price: null
+        Product: 'New Item',
+        Weight: null,
+        Price: null
     }, insertAtIndex, true);
 
     // Re-apply modifiers (if any) and update rendering.
@@ -106,9 +106,9 @@ async function addRowAbove(cell) {
     );
 
     dt.setRow({
-        product: 'New item',
-        weight: null,
-        price: null
+        Product: 'New Item',
+        Weight: null,
+        Price: null
     }, insertAt, true);
 
     // Re-apply modifiers (if any) and update rendering.
@@ -139,11 +139,7 @@ function addColumnLeft(cell) {
     logEvent('Added column "' + newColumnId + '" to the left.');
 
     void grid.update({
-        rendering: {
-            columns: {
-                included: columnIds
-            }
-        }
+        header: columnIds
     });
 }
 
@@ -173,11 +169,7 @@ function addColumnRight(cell) {
     logEvent('Added column "' + newColumnId + '" to the right.');
 
     void grid.update({
-        rendering: {
-            columns: {
-                included: columnIds
-            }
-        }
+        header: columnIds
     });
 }
 
@@ -222,8 +214,10 @@ const menuItems = [{
 }, {
     separator: true
 }, {
+    type: 'submenu',
     label: 'Edit',
     items: [{
+        type: 'submenu',
         label: 'Rows',
         items: [{
             label: 'Add row above',
@@ -239,6 +233,7 @@ const menuItems = [{
             onClick: deleteRow
         }]
     }, {
+        type: 'submenu',
         label: 'Columns',
         items: [{
             label: 'Add column left',
@@ -252,19 +247,23 @@ const menuItems = [{
     }]
 }];
 
+const dataTable = new Grid.DataTable({
+    columns: {
+        Product: [
+            'Apples',
+            'Pears',
+            'Plums',
+            'Bananas',
+            'Oranges'
+        ],
+        Weight: [100, 40, 0.5, 200, 120],
+        Price: [1.5, 2.53, 5, 4.5, 3.2]
+    }
+});
+
 Grid.grid('container', {
     data: {
-        columns: {
-            product: [
-                'Apples',
-                'Pears',
-                'Plums',
-                'Bananas',
-                'Oranges'
-            ],
-            weight: [100, 40, 0.5, 200, 120],
-            price: [1.5, 2.53, 5, 4.5, 3.2]
-        }
+        dataTable: dataTable
     },
     columnDefaults: {
         cells: {

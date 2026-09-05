@@ -54,7 +54,7 @@ const columns = [{
 }, {
     id: 'Notes'
 }, {
-    id: 'Due date',
+    id: 'Due Date',
     dataType: 'datetime',
     cells: {
         formatter: function () {
@@ -95,6 +95,7 @@ const columns = [{
 
 // Grid setup
 const todoGrid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     time: {
         locale: ''
     },
@@ -109,7 +110,7 @@ const todoGrid = Grid.grid('container', {
                 'Use gentle cycle', 'Get milk and eggs', '',
                 'In the kitchen use 2 cups of water'
             ],
-            'Due date': [
+            'Due Date': [
                 Date.UTC(2025, 6, 1),
                 Date.UTC(2025, 6, 2),
                 Date.UTC(2025, 6, 3),
@@ -132,6 +133,7 @@ const todoGrid = Grid.grid('container', {
 });
 
 const doneGrid = Grid.grid('container-done', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             Done: [true, true, true],
@@ -140,7 +142,7 @@ const doneGrid = Grid.grid('container-done', {
             Notes: [
                 'Try new pasta recipe', 'Backyard only', 'Check under sink'
             ],
-            'Due date': [
+            'Due Date': [
                 Date.UTC(2025, 6, 8),
                 Date.UTC(2025, 6, 9),
                 Date.UTC(2025, 6, 10)

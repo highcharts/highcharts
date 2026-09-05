@@ -47,8 +47,7 @@ import {
     extend,
     fireEvent,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
@@ -82,7 +81,7 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.heatmap
  *
@@ -134,7 +133,7 @@ class HeatmapSeries extends ScatterSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const
@@ -269,7 +268,15 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * Override to use rectangle by default
+     * @internal
+     */
+    getSymbol(): void {
+        this.symbol = this.options.marker?.symbol || 'rect';
+    }
+
+    /**
+     * @internal
      */
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
@@ -290,7 +297,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * Override to also allow null points, used when building the k-d-tree for
      * tooltips in boost mode.
-     * @private
+     * @internal
      */
     getValidPoints(
         points?: Array<HeatmapPoint>,
@@ -307,7 +314,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.dataTable.rowCount;
@@ -315,7 +322,7 @@ class HeatmapSeries extends ScatterSeries {
 
     /**
      * Override the init method to add point ranges on both axes.
-     * @private
+     * @internal
      */
     public init(): void {
         super.init.apply(this, arguments);
@@ -323,7 +330,7 @@ class HeatmapSeries extends ScatterSeries {
         const options = this.options;
 
         // #3758, prevent resetting in setData
-        options.pointRange = pick(options.pointRange, options.colsize || 1);
+        options.pointRange = options.pointRange ?? (options.colsize || 1);
         // General point range
         this.yAxis.axisPointRange = options.rowsize || 1;
 
@@ -350,7 +357,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public markerAttribs(
         point: HeatmapPoint,
@@ -411,7 +418,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: HeatmapPoint,
@@ -468,7 +475,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -578,13 +585,11 @@ extend(HeatmapSeries.prototype, {
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
-     * @private
+     * @internal
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    getSymbol: Series.prototype.getSymbol
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs
 
 });
 ColorMapComposition.compose(HeatmapSeries);

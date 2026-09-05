@@ -34,7 +34,12 @@ import type { TypedArray } from '../Shared/Types';
 /**
  * Options to initialize a new DataTable instance.
  */
-export interface DataTableOptions {
+export interface DataTableOptionsObject {
+    /**
+     * For type-safe check against a DataTable instance.
+     * @internal
+     */
+    isDataTable?: never;
 
     /**
      * Initial columns with their values.
@@ -69,4 +74,4 @@ export type DataTableValue = (boolean|null|number|string|undefined);
  * */
 
 
-export default DataTableOptions;
+export default DataTableOptionsObject;

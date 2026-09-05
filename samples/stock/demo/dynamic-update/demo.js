@@ -48,6 +48,10 @@ Highcharts.stockChart('container', {
         enabled: false
     },
 
+    xAxis: {
+        tickPixelInterval: 120
+    },
+
     series: [{
         name: 'Random data',
         data: (function () {

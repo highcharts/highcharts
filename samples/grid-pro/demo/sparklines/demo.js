@@ -126,6 +126,7 @@ const percentageZones = [{
 
 // Create the grid with the data table and configure the columns.
 const grid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: { dataTable: data },
     rendering: {
         rows: {

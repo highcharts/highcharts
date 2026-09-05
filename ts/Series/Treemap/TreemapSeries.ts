@@ -79,7 +79,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     pushUnique,
     splat,
     stableSort
@@ -580,14 +579,11 @@ class TreemapSeries extends ScatterSeries {
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick(
-                (
-                    level?.layoutAlgorithm &&
+            algorithm = ((
+                level?.layoutAlgorithm &&
                     series[level?.layoutAlgorithm] &&
                     level.layoutAlgorithm
-                ),
-                options.layoutAlgorithm
-            ),
+            ) ?? options.layoutAlgorithm),
             alternate = options.alternateStartingDirection,
             // Collect all children which should be included
             children = parent.children.filter((n): boolean =>
@@ -899,7 +895,9 @@ class TreemapSeries extends ScatterSeries {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
                     const dataLabelWidth = width -
-                        2 * (options.padding || padding || 0);
+                        2 * (
+                            splat(options.padding)[0] || splat(padding)[0] || 0
+                        );
                     style.width = `${dataLabelWidth}px`;
                     style.lineClamp ??= Math.floor(height / 16);
                     // Only set this in traversal mode, with zooming data labels
@@ -1133,7 +1131,7 @@ class TreemapSeries extends ScatterSeries {
                 curr: TreemapPoint,
                 i: number
             ): TreemapSeries.ListOfParentsObject {
-                const parent = pick(curr.parent, '');
+                const parent = (curr.parent ?? '');
 
                 if (typeof prev[parent] === 'undefined') {
                     prev[parent] = [];
@@ -1402,23 +1400,23 @@ class TreemapSeries extends ScatterSeries {
                     series.mapOptionsToLevel :
                     {}
             ),
-            level = point && mapOptionsToLevel[point.node.level] || {},
+            level = point?.node && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
             stateOptions =
                 state && options.states && options.states[state] || {},
-            className = point?.getClassName() || '',
+            className = point?.node && point.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
-            // Stroke width uses pick because it can be 0.
+            // Stroke width uses nullish coalescing because it can be 0.
             attr: SVGAttributes = {
                 'stroke':
                     (point && (point as any).borderColor) ||
                     level.borderColor ||
                     stateOptions.borderColor ||
                     options.borderColor,
-                'stroke-width': pick(
-                    point && (point as any).borderWidth,
-                    level.borderWidth,
-                    stateOptions.borderWidth,
+                'stroke-width': (
+                    (point && (point as any).borderWidth) ??
+                    level.borderWidth ??
+                    stateOptions.borderWidth ??
                     options.borderWidth
                 ),
                 'dashstyle':
@@ -1616,7 +1614,7 @@ class TreemapSeries extends ScatterSeries {
                 extend<TreemapSeries.SetRootNodeObject>({
                     newRootId: id,
                     previousRootId: series.rootNode,
-                    redraw: pick(redraw, true),
+                    redraw: (redraw ?? true),
                     series: series
                 }, eventArguments as any);
 
@@ -1701,11 +1699,8 @@ class TreemapSeries extends ScatterSeries {
         ));
 
         // Set the values
-        let val = pick(
-            point?.simulatedValue,
-            point?.options.value,
-            childrenTotal
-        );
+        let val =
+            point?.simulatedValue ?? point?.options.value ?? childrenTotal;
 
         if (point) {
             point.value = val;
@@ -1725,7 +1720,7 @@ class TreemapSeries extends ScatterSeries {
             children: children,
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
-            ignore: !(pick(point?.visible, true) && (val > 0)),
+            ignore: !((point?.visible ?? true) && (val > 0)),
             isLeaf: tree.visible && !(
                 series.type === 'treegraph' ?
                     children.length > 0 :
@@ -1735,8 +1730,8 @@ class TreemapSeries extends ScatterSeries {
             levelDynamic: (
                 tree.level - (levelIsConstant ? 0 : nodeRoot.level)
             ),
-            name: pick(point?.name, ''),
-            sortIndex: pick(point?.sortIndex, -val),
+            name: (point?.name ?? ''),
+            sortIndex: (point?.sortIndex ?? -val),
             val: val
         });
         return tree;

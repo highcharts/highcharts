@@ -24,8 +24,6 @@
 import type { LangOptions } from '../../Core/Options';
 import type { NoDataOptions } from './NoDataOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -146,7 +144,7 @@ const noData: NoDataOptions = {
         /** @ignore */
         fontSize: '0.8em',
         /** @ignore */
-        color: Palette.neutralColor60
+        color: 'var(--highcharts-neutral-color-60)'
     }
 
 };

@@ -1,0 +1,8 @@
+---
+ name: High Contrast Theme
+ authors:
+   - Øystein Moseng
+   - Torstein Hønsi
+ js_wrap: b
+ skipTest: true
+...

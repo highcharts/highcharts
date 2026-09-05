@@ -4,11 +4,14 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 alt_text: >-
-  Highcharts basic pie chart JavaScript example compares Chrome Firefox Safari
-  browser market share as proportional segments.
+  Highcharts basic pie chart JavaScript example compares support requests of
+  different channels as proportional segments.
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 4
   - Pie charts:
       priority: 1
 ...

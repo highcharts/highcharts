@@ -46,25 +46,25 @@ import {
  **/
 const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (data: number[]): number {
-        return Math.ceil(Math.sqrt((data as any).length));
+        return Math.ceil(Math.sqrt(data.length));
     },
 
     'sturges': function (data: number[]): number {
         return Math.ceil(
-            Math.log((data as any).length) * Math.LOG2E
+            Math.log(data.length) * Math.LOG2E
         );
     },
 
     'rice': function (data: number[]): number {
         return Math.ceil(
-            2 * Math.pow((data as any).length, 1 / 3)
+            2 * Math.pow(data.length, 1 / 3)
         );
     }
 };
 
 /**
  * Returns a function for mapping number to the closed (right opened) bins
- * @private
+ * @internal
  * @param {Array<number>} bins
  * Width of the bins
  */
@@ -87,7 +87,7 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
 
 /**
  * Histogram class
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
@@ -127,6 +127,9 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
+    /**
+     * @internal
+     */
     public binsNumber(data?: number[]): number {
         const binsNumberOption = this.options.binsNumber;
         const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
@@ -143,13 +146,16 @@ class HistogramSeries extends ColumnSeries {
         );
     }
 
+    /**
+     * @internal
+     */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        let alteredData;
+        let alteredData: Array<HistogramPointOptions> = [];
         if (typeof data !== 'undefined' && data.length > 0) {
             // Support data array of objects (#24073).
             data = data.map(function (
@@ -174,6 +180,9 @@ class HistogramSeries extends ColumnSeries {
         );
     }
 
+    /**
+     * @internal
+     */
     public derivedData(
         baseData: Array<number>,
         binsNumber: number,
@@ -256,6 +265,9 @@ class HistogramSeries extends ColumnSeries {
         return data;
     }
 
+    /**
+     * @internal
+     */
     public setDerivedData(): void {
         const yData = this.baseSeries?.getColumn('y');
 

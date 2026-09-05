@@ -25,6 +25,8 @@ import type CSSObject from '../Renderer/CSSObject';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
+import type { PointerEvent } from '../PointerEvent';
+import type Series from '../Series/Series';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -61,6 +63,17 @@ export interface ChartAddSeriesEventObject {
     preventDefault: Function;
     target: Chart;
     type: 'addSeries';
+}
+
+export interface ChartAfterAddSeriesCallbackFunction {
+    (this: Chart, event: ChartAfterAddSeriesEventObject): void;
+}
+
+export interface ChartAfterAddSeriesEventObject {
+    series: Series;
+    preventDefault: Function;
+    target: Chart;
+    type: 'afterAddSeries';
 }
 
 export interface ChartClickCallbackFunction {
@@ -152,6 +165,27 @@ export interface ChartEventsOptions {
      *         Add series on chart load
      */
     load?: ChartLoadCallbackFunction;
+    /**
+     * Fires while the chart is panned by mouse drag. Panning must be
+     * enabled through [chart.panning](#chart.panning). One parameter,
+     * `event`, is passed to the function, containing common event
+     * information as well as `event.originalEvent`, the underlying pointer
+     * event. Note that the event fires for every mouse move during the
+     * drag, not once per gesture.
+     *
+     * Calling `event.preventDefault()` or returning false prevents the
+     * default panning of the axes. In Highcharts Maps, and on ordinal axes
+     * in Highcharts Stock, the panning is applied outside the default
+     * action and is not prevented.
+     *
+     * Panning by touch does not fire this event, unless
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch) is enabled and
+     * no zoom type is set. Single-finger drags are then handled as mouse
+     * drags and fire this event.
+     *
+     * @since     7.0.2
+     */
+    pan?: ChartPanCallbackFunction;
     /**
      * Fires when the chart is redrawn, either after a call to
      * `chart.redraw()` or after an axis, series or point is modified with
@@ -758,6 +792,21 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
 
     /**
+     * The corner radius of the plot area border in pixels. Also applies clip
+     * to the plot area background and data inside, like columns in a column
+     * series or fill in an area series.
+     *
+     * @sample highcharts/chart/plotborderradius/
+     *         Plot border radius
+     * @sample {highmaps} maps/chart/plotborder/
+     *         Map with plot border options
+     *
+     * @default   0
+     * @since     13.0.0
+     */
+    plotBorderRadius?: number;
+
+    /**
      * The pixel width of the plot area border.
      *
      * @sample {highcharts} highcharts/chart/plotborderwidth/
@@ -864,7 +913,7 @@ export interface ChartOptions {
      * @see In styled mode, the selection marker fill is set with the
      *      `.highcharts-selection-marker` class.
      *
-     * @default   rgba(51,92,173,0.25)
+     * @default   'color-mix(in srgb, var(--highcharts-highlight-color-80) 25%, transparent)'
      * @since     2.1.7
      */
     selectionMarkerFill?: ColorType;
@@ -1140,7 +1189,18 @@ export interface ChartOptions {
      *
      * @deprecated 10.2.1
      */
-    zoomType?: 'x' | 'xy' | 'y';
+    zoomType?: ('x'|'xy'|'y');
+}
+
+export interface ChartPanCallbackFunction {
+    (this: Chart, event: ChartPanEventObject): void;
+}
+
+export interface ChartPanEventObject {
+    originalEvent: PointerEvent;
+    preventDefault: Function;
+    target: Chart;
+    type: 'pan';
 }
 
 export interface ChartPanningOptions {

@@ -33,6 +33,7 @@ type FunctionsOf<T> = {
 };
 
 type FunctionNamesOf<T> = keyof FunctionsOf<T>;
+type NullType = null|undefined;
 
 /**
  * Add an event listener.
@@ -599,7 +600,7 @@ export function extend<T>(a: (T|undefined), b: Partial<T>): T {
 /**
  * Extend a prototyped class by new members.
  *
- * @deprecated
+ * @deprecated 11.0.0
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -948,7 +949,7 @@ export function getStyle(
     const css = win.getComputedStyle(el, void 0); // eslint-disable-line no-undefined
     if (css) {
         style = css.getPropertyValue(prop);
-        if (pick(toInt, prop !== 'opacity')) {
+        if (toInt ?? prop !== 'opacity') {
             style = pInt(style);
         }
     }
@@ -1238,7 +1239,7 @@ export function merge<T>(
 /**
  * Take an interval and normalize it to multiples of round numbers.
  *
- * @deprecated
+ * @deprecated 5.0.3
  * @function Highcharts.normalizeTickInterval
  *
  * @param {number} interval
@@ -1275,7 +1276,7 @@ export function normalizeTickInterval(
         retInterval = interval;
 
     // Round to a tenfold of 1, 2, 2.5 or 5
-    magnitude = pick(magnitude, getMagnitude(interval));
+    magnitude = (magnitude ?? getMagnitude(interval));
     const normalized = interval / magnitude;
 
     // Multiples for a linear scale
@@ -1440,29 +1441,33 @@ T1 extends NullType ?
 export function pick<T1>(...args: [T1]):
 T1 extends NullType ? undefined : T1;
 export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
-/* eslint-disable jsdoc/check-param-names */
+/* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
  *
+ * @deprecated 13.0.2
+ * Use nullish coalescing (`??`) or explicit fallback logic instead.
+ *
  * @function Highcharts.pick<T>
  *
- * @param {...Array<T|null|undefined>} items
+ * @param {...(T|null|undefined)} args
  *        Variable number of arguments to inspect.
  *
  * @return {T}
  *         The value of the first argument that is not null or undefined.
  */
-export function pick<T>(): T|undefined {
-    const args = arguments;
+export function pick<T>(...args: Array<T|null|undefined>): T|undefined {
     const length = args.length;
+
     for (let i = 0; i < length; i++) {
         const arg = args[i];
+
         if (typeof arg !== 'undefined' && arg !== null) {
             return arg;
         }
     }
 }
-/* eslint-enable jsdoc/check-param-names */
+/* eslint-enable valid-jsdoc */
 
 /**
  * Shortcut for parseInt
@@ -1817,7 +1822,6 @@ export const enum RegexLimits {
  *  Declarations
  *
  * */
-type NullType = (null|undefined);
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 export interface FindCallback<T> {

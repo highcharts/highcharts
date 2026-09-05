@@ -285,6 +285,17 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
     dataLabels?: Partial<TreemapDataLabelOptions>;
 
     /**
+     * Can set the groupPadding on all points which lies on the same level.
+     * See also the `nodeSizeBy` option that controls how the leaf nodes'
+     * size is affected by the padding.
+     *
+     * @since 12.2.0
+     *
+     * @product highcharts
+     */
+    groupPadding?: number;
+
+    /**
      * Can set the layoutAlgorithm option on a specific level.
      *
      * @since 4.1.0
@@ -318,6 +329,16 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
      * @product highcharts
      */
     level?: number;
+
+    /**
+     * Used together with the levels and allowTraversingTree options. When
+     * set to false the first level visible to be level one, which is
+     * dynamic when traversing the tree. Otherwise the level will be the
+     * same as the tree structure.
+     *
+     * @since 4.1.0
+     */
+    levelIsConstant?: boolean;
 
 }
 
@@ -355,7 +376,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
      *         Enabled
      *
-     * @deprecated
+     * @deprecated 7.0.3
      *
      * @type {boolean}
      *

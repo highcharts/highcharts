@@ -134,6 +134,7 @@
         "@highcharts/highcharts/no-private-constructor-doclet": 0,
         "@highcharts/highcharts/no-wrap": 0, // @todo
         "@highcharts/highcharts/quote-members": 2,
+        "@highcharts/highcharts/doclet-versioned-tags": 2,
         "jsdoc/check-alignment": 0,
         "jsdoc/check-param-names": 2,
         "jsdoc/check-tag-names": [

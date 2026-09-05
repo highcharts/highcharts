@@ -27,6 +27,7 @@
                     shape: 'callout',
                     backgroundColor: 'rgba(0, 0, 0, 0.7)',
                     borderRadius: 5,
+                    padding: 5,
                     style: {
                         color: '#FFFFFF'
                     }

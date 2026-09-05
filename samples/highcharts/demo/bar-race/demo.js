@@ -115,6 +115,10 @@ function getSubtitle() {
         </span>`;
 }
 
+const linearEasing = function (pos) {
+    return pos;
+};
+
 (async () => {
 
     dataset = await fetch(
@@ -125,7 +129,8 @@ function getSubtitle() {
     chart = Highcharts.chart('container', {
         chart: {
             animation: {
-                duration: 500
+                duration: 500,
+                easing: linearEasing
             },
             marginRight: 50
         },
@@ -238,16 +243,9 @@ function update(increment) {
         pause(btn);
     }
 
-    chart.update(
-        {
-            subtitle: {
-                text: getSubtitle()
-            }
-        },
-        false,
-        false,
-        false
-    );
+    chart.setTitle(void 0, {
+        text: getSubtitle()
+    }, false);
 
     chart.series[0].update({
         name: input.value,

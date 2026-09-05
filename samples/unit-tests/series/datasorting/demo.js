@@ -200,6 +200,65 @@ QUnit.test('Data sorting with sortKey', function (assert) {
     );
 });
 
+QUnit.test('Data sorting and animations', function (assert) {
+    const names = [
+        'Anna', 'Tim', 'Laura'
+    ];
+
+    let run = 0;
+    function getRandomData() {
+        const data = [];
+
+        for (let i = 0; i < names.length; i++) {
+            const y = (run === 0 ? i + 1 : 3.1 - i);
+            data.push([names[i], y]);
+        }
+        run++;
+        return data;
+    }
+
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'bar'
+        },
+
+        xAxis: {
+            type: 'category',
+            min: 0,
+            labels: {
+                animate: true
+            }
+        },
+
+        series: [{
+            dataSorting: {
+                enabled: true,
+                sortKey: 'y'
+            },
+            data: getRandomData()
+        }]
+
+    });
+
+    chart.series[0].points.forEach(point => {
+        point.graphic.pointName = point.name;
+    });
+
+    chart.series[0].setData(
+        getRandomData(),
+        true
+    );
+
+    chart.series[0].points.forEach(point => {
+        assert.strictEqual(
+            point.graphic.pointName,
+            point.name,
+            'Point should be matched by name and keep the same graphic.'
+        );
+    });
+});
+
 QUnit.test('Data sorting with drilldown', function (assert) {
     Highcharts.chart(
         'container',

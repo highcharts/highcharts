@@ -136,6 +136,15 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      */
 
     /**
+     * What type of legend symbol to render for this series. For HLC series,
+     * the default is `hlc`, a vertical stem with a tick on the right
+     * representing the closing value.
+     *
+     * @default hlc
+     */
+    legendSymbol?: string;
+
+    /**
      * The pixel width of the line/border. Defaults to `1`.
      *
      * @sample {highstock} stock/plotoptions/hlc-linewidth/

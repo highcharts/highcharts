@@ -150,6 +150,15 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      */
 
     /**
+     * Whether the `level` number is absolute, or relative to the currently
+     * visible root. Overrides the series option of the same name for this
+     * level.
+     *
+     * @type      {boolean}
+     * @apioption plotOptions.sunburst.levels.levelIsConstant
+     */
+
+    /**
      * Can set a `levelSize` on all points which lies on the same level.
      *
      * @type      {Object}
@@ -161,7 +170,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      * zoom in on its children. Deprecated and replaced by
      * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
      *
-     * @deprecated
+     * @deprecated 7.0.3
      * @type      {boolean}
      * @default   false
      * @since     6.0.0
@@ -312,7 +321,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      *
      * @extends   plotOptions.treemap.traverseUpButton
      * @since     6.0.0
-     * @deprecated
+     * @deprecated 9.3.3
      * @apioption plotOptions.sunburst.traverseUpButton
      *
      */

@@ -4,6 +4,7 @@ const columns = [
 ].join(',');
 
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         providerType: 'remote',
         dataSource: {

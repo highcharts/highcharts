@@ -251,7 +251,7 @@ const langOptions: DeepPartial<LangOptions> = {
         /**
          * Stock tools language options for accessibility.
          *
-         * @since next
+         * @since 12.6.0
          */
         stockTools: {
             groupLabel: 'Stock chart tools',
@@ -398,7 +398,7 @@ const langOptions: DeepPartial<LangOptions> = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'View chart menu, {chartTitle}'
+            menuButtonLabel: 'View chart context menu, {chartTitle}'
         },
 
         /**

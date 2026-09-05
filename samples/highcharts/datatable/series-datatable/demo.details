@@ -1,0 +1,7 @@
+---
+ name: Series data table
+ authors:
+   - Torstein Hønsi
+ skipTest: true
+ js_wrap: b
+...
