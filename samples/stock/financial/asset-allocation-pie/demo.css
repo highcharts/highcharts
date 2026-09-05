@@ -1,0 +1,113 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+body {
+    font-family: sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+/* Themes */
+.theme-custom {
+    --hcg-border-radius: 5px;
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-vertical-padding: 9px;
+    --hcg-horizontal-padding: 4px;
+    --hcg-border-width: 0;
+    --hcg-border-color: var(--highcharts-neutral-color-20);
+    --hcg-background: transparent;
+    --hcg-header-column-border-width: 0;
+    --hcg-header-background: transparent;
+    --hcg-font-size: 16px;
+    --hcg-header-row-border-color: transparent;
+    --hcg-row-border-color: transparent;
+
+    /* Hovered colors */
+    --hcg-cell-hovered-background: var(--highcharts-neutral-color-5);
+    --hcg-row-hovered-background: var(--highcharts-neutral-color-5);
+    --hcg-column-hovered-background: var(--highcharts-neutral-color-5);
+    --hcg-header-column-hovered-background: var(--highcharts-neutral-color-5);
+    --hcg-header-cell-hovered-background: var(--highcharts-neutral-color-5);
+    --hcg-cell-hovered-row-background: var(--highcharts-neutral-color-5);
+
+    /* Loader */
+    --hcg-loader-color: var(--highcharts-neutral-color-60);
+}
+
+#container .highcharts-dashboards-wrapper {
+    border: 1px solid var(--highcharts-neutral-color-20);
+    border-radius: 6px;
+    background-color: var(--highcharts-background-color);
+    padding: 10px 15px 0;
+    max-width: 1000px;
+    margin: 0 auto 30px;
+}
+
+#container .highcharts-dashboards-cell > .highcharts-dashboards-component {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+.highcharts-dashboards-layouts-wrapper {
+    height: 100%;
+}
+
+th:not(:first-child) .hcg-header-cell-content,
+td:not(:first-child) {
+    text-align: right !important;
+}
+
+td:first-child {
+    z-index: 1;
+}
+
+td,
+th {
+    text-wrap: nowrap;
+    overflow: visible !important;
+}
+
+.hcg-row {
+    border-top: 1px solid var(--highcharts-neutral-color-10);
+}
+
+#basic-datagrid,
+#can-datagrid {
+    flex: 3;
+    height: 100%;
+}
+
+#basic-pie-chart,
+#can-pie-chart {
+    flex: 2;
+    min-height: 280px;
+}
+
+.highcharts-dashboards-component-title {
+    color: var(--highcharts-neutral-color-100);
+    margin: 0 0 20px;
+}
+
+@media (max-width: 768px) {
+    #container .highcharts-dashboards-wrapper {
+        padding: 10px 10px 0;
+    }
+
+    #basic-datagrid,
+    #can-datagrid,
+    #basic-pie-chart,
+    #can-pie-chart {
+        flex: 1 1 100%;
+    }
+
+    .hcg-container {
+        overflow-x: auto;
+    }
+
+    td,
+    th {
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+}

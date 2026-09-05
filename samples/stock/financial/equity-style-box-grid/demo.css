@@ -1,0 +1,12 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+body {
+    font-family: sans-serif;
+    padding: 10px;
+}
+
+#container {
+    max-width: 1000px;
+    margin: 0 auto;
+}

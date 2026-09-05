@@ -1,0 +1,8 @@
+---
+name: DWS Equity Style Box Time Series
+description: Shows DWS equity style box positions over time as sparkline heatmap cells.
+tags:
+  - DWS components
+requiresManualTesting: true
+js_wrap: b
+...
