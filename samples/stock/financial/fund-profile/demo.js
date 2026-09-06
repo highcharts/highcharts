@@ -248,7 +248,7 @@ async function renderDashboard() {
                 enabled: true,
                 borderColor: 'var(--highcharts-neutral-color-20)'
             },
-            categories: categories,
+            categories,
             labels: {
                 format: '{value.name}'
             }
@@ -257,7 +257,7 @@ async function renderDashboard() {
                 enabled: true,
                 borderColor: 'var(--highcharts-neutral-color-20)'
             },
-            categories: categories,
+            categories,
             labels: {
                 format: '{value.y:.2f}%',
                 align: 'right',
@@ -523,8 +523,8 @@ async function renderDashboard() {
                 },
                 tooltip: {
                     shared: true,
-                    pointFormat: '<span style="color:{series.color}">' +
-                    '{series.name}</span>: <b>{point.y:.2f}%</b><br/>'
+                    valueDecimals: 2,
+                    valueSuffix: '%'
                 },
                 plotOptions: {
                     column: {
@@ -574,7 +574,8 @@ async function renderDashboard() {
                             fontSize: '1rem',
                             color: 'var(--highcharts-neutral-color-60)'
                         }
-                    }
+                    },
+                    height: '70%'
                 },
                 legend: {
                     layout: 'vertical',
@@ -665,8 +666,8 @@ async function renderDashboard() {
                 },
                 tooltip: {
                     shared: true,
-                    pointFormat: '<span style="color:{series.color}">' +
-                    '{series.name}</span>: <b>{point.y:.2f}%</b><br/>'
+                    valueDecimals: 2,
+                    valueSuffix: '%'
                 },
                 legend: {
                     enabled: false
@@ -824,6 +825,9 @@ async function renderDashboard() {
                 yAxis: {
                     title: {
                         text: 'Country weight'
+                    },
+                    labels: {
+                        format: '{value:.2f}%'
                     }
                 },
                 series: [{
@@ -1041,12 +1045,8 @@ async function renderDashboard() {
                     style: {
                         textAlign: 'right'
                     },
-                    headerFormat: '<strong>{point.key}</strong><br/>',
-                    pointFormat: `<b>{series.name} <span style="color:
-                            var(--highcharts-neutral-color-60)">
-                        $ {point.y:,.2f}</span></b> <span style="
-                            color:{series.color}; font-weight:bold;">&#8213;
-                        </span><br/>`
+                    valueDecimals: 2,
+                    valuePrefix: '$'
                 },
                 plotOptions: {
                     series: {
