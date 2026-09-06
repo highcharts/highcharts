@@ -63,7 +63,6 @@ h1 {
 
 #barometer {
     order: 2;
-    height: 350px;
 }
 
 #sector-breakdown-table {
@@ -122,13 +121,14 @@ h1 {
     --hcg-color: var(--highcharts-neutral-color-100);
     --hcg-header-color: var(--table-header-color);
     --hcg-header-padding: 14px;
-    --hcg-background: var(--highcharts-neutral-color-3);
+    --hcg-background: transparent;
     --hcg-padding: 10px;
-    --hcg-header-background: var(--highcharts-neutral-color-3);
-    --hcg-row-even-background: var(--highcharts-neutral-color-3);
+    --hcg-header-background: transparent;
+    --hcg-row-even-background: var(--table-row-even-background);
     --hcg-cell-hovered-row-background: var(--table-row-hover-background);
     --hcg-border-width: 1px;
-    --hcg-border-color: var(--table-border-color);
+    --hcg-border-color: transparent;
+    --hcg-row-border-color: var(--table-border-color);
 
     max-height: 350px;
 }
@@ -146,7 +146,6 @@ h1 {
     #barometer {
         order: 3;
         flex: 0 0 35%;
-        height: 350px;
     }
 
     #sector-breakdown-table {
