@@ -95,7 +95,47 @@ async function renderChart() {
                     }
                 }
             }
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 650
+                },
+                gridOptions: {
+                    header: [
+                        'Date',
+                        'Box',
+                        'Style Box',
+                        'Growth Score',
+                        'Size Score',
+                        'Style Score',
+                        'Value Score'
+                    ],
+                    columns: [{
+                        id: 'Box',
+                        width: 46,
+                        cells: {
+                            renderer: {
+                                chartOptions: {
+                                    chart: {
+                                        width: 46,
+                                        height: 46,
+                                        margin: 3
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 500
+                },
+                gridOptions: {
+                    header: ['Date', 'Box', 'Style Box', 'Style Score']
+                }
+            }]
+        }
     });
 }
 
