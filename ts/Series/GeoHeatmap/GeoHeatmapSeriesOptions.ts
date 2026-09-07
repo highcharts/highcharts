@@ -41,6 +41,8 @@ export interface InterpolationObject {
      *         Simple demo of GeoHeatmap interpolation
      *
      * @since 11.2.0
+     *
+     * @default 1
      */
     blur: number;
 
@@ -48,6 +50,8 @@ export interface InterpolationObject {
      * Enable or disable the interpolation of the geoheatmap series.
      *
      * @since 11.2.0
+     *
+     * @default false
      */
     enabled: boolean;
 }
@@ -113,6 +117,8 @@ interface GeoHeatmapSeriesOptions extends MapSeriesOptions {
      * @sample maps/demo/geoheatmap-europe/
      *         1 by default, set to 5
      *
+     * @default 1
+     *
      * @product highmaps
      */
     colsize?: number;
@@ -132,15 +138,35 @@ interface GeoHeatmapSeriesOptions extends MapSeriesOptions {
     interpolation: boolean|InterpolationObject;
 
     /**
+     * The color to apply to null points.
+     *
+     * @default 'transparent'
+     *
+     * @product highmaps
+     */
+    nullColor?: ColorType;
+
+    /**
      * The rowsize size - how many latitude units each row in the
      * geoheatmap should span.
      *
      * @sample maps/demo/geoheatmap-europe/
      *         1 by default, set to 5
      *
+     * @default 1
+     *
      * @product highmaps
      */
     rowsize?: number;
+
+    /**
+     * Sticky tracking of mouse events.
+     *
+     * @default true
+     *
+     * @product highmaps
+     */
+    stickyTracking?: boolean;
 
     /* *
      *

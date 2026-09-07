@@ -156,9 +156,6 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * A `gantt` series.
  *
  * @extends   series,plotOptions.gantt
- * @excluding boostThreshold, dashStyle, findNearestPointBy,
- *            getExtremesFromAll, marker, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPlacement, pointStart
  * @product   gantt
  * @requires  highcharts-gantt
  * @apioption series.gantt
@@ -176,64 +173,6 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.data
  */
 
-/**
- * Whether the grid node belonging to this point should start as collapsed. Used
- * in axes of type treegrid.
- *
- * @sample {gantt} gantt/treegrid-axis/collapsed/
- *         Start as collapsed
- *
- * @type      {boolean}
- * @default   false
- * @product   gantt
- * @apioption series.gantt.data.collapsed
- */
-
-/**
- * The start time of a task. May be a timestamp or a date string.
- *
- * @type      {number|string}
- * @product   gantt
- * @apioption series.gantt.data.start
- */
-
-/**
- * The end time of a task. May be a timestamp or a date string.
- *
- * @type      {number|string}
- * @product   gantt
- * @apioption series.gantt.data.end
- */
-
-/**
- * The Y value of a task.
- *
- * @type      {number}
- * @product   gantt
- * @apioption series.gantt.data.y
- */
-
-/**
- * The name of a task. If a `treegrid` y-axis is used (default in Gantt charts),
- * this will be picked up automatically, and used to calculate the y-value.
- *
- * @type      {string}
- * @product   gantt
- * @apioption series.gantt.data.name
- */
-
-/**
- * Progress indicator, how much of the task completed. When set as a number,
- * works as `{ amount: number }`.
- *
- * @sample {gantt} gantt/demo/progress-indicator
- *         Progress indicator
- *
- * @type      {number|*}
- * @extends   series.xrange.data.partialFill
- * @product   gantt
- * @apioption series.gantt.data.completed
- */
 
 /**
  * The amount of the progress indicator, ranging from 0 (not started) to 1
@@ -252,48 +191,6 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.data.completed.fill
  */
 
-/**
- * The ID of the point (task) that this point depends on in Gantt charts.
- * Aliases [connect](series.xrange.data.connect). Can also be an object,
- * specifying further connecting [options](series.gantt.connectors) between the
- * points. Multiple connections can be specified by providing an array.
- *
- * @sample gantt/demo/project-management
- *         Dependencies
- * @sample gantt/pathfinder/demo
- *         Different connection types
- *
- * @type      {string|Array<string|*>|*}
- * @extends   series.xrange.data.connect
- * @since     6.2.0
- * @product   gantt
- * @apioption series.gantt.data.dependency
- */
-
-/**
- * Whether this point is a milestone. If so, only the `start` option is handled,
- * while `end` is ignored.
- *
- * @sample gantt/gantt/milestones
- *         Milestones
- *
- * @type      {boolean}
- * @since     6.2.0
- * @product   gantt
- * @apioption series.gantt.data.milestone
- */
-
-/**
- * The ID of the parent point (task) of this point in Gantt charts.
- *
- * @sample gantt/demo/subtasks
- *         Gantt chart with subtasks
- *
- * @type      {string}
- * @since     6.2.0
- * @product   gantt
- * @apioption series.gantt.data.parent
- */
 
 ''; // Keep above doclets in JS file
 

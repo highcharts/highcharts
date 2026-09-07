@@ -85,8 +85,6 @@ export interface GanttPointOptions extends XRangePointOptions {
      * @since 6.2.0
      *
      * @product gantt
-     *
-     * @apioption series.gantt.data.dependency
      */
     dependency?: GanttDependencyOptions;
 
