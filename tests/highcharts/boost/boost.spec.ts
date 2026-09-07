@@ -8,7 +8,7 @@ const boostModules = { modules: ['modules/boost.src.js'] };
 
 async function boostedAreaSampleHasContent(
     page: Page,
-    seriesType: 'area' | 'arearange',
+    seriesType: 'area' | 'areaspline' | 'arearange',
     boostShape: 'lines' | 'triangles'
 ): Promise<boolean> {
     const data = Array.from({ length: 24 }, (_, i) => {
@@ -285,6 +285,36 @@ test.describe('Boost Module', () => {
         expect(
             hasContent,
             'Boosted area should not fill the center in lines mode'
+        ).toBe(false);
+    });
+
+    test('Boosted areaspline renders a filled band in triangles mode', async ({
+        page
+    }) => {
+        const hasContent = await boostedAreaSampleHasContent(
+            page,
+            'areaspline',
+            'triangles'
+        );
+
+        expect(
+            hasContent,
+            'Boosted areaspline should fill the center in triangles mode'
+        ).toBe(true);
+    });
+
+    test('Boosted areaspline keeps the center empty in lines mode', async ({
+        page
+    }) => {
+        const hasContent = await boostedAreaSampleHasContent(
+            page,
+            'areaspline',
+            'lines'
+        );
+
+        expect(
+            hasContent,
+            'Boosted areaspline should not fill the center in lines mode'
         ).toBe(false);
     });
 });

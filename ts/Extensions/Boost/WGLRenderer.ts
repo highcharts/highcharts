@@ -274,6 +274,7 @@ class WGLRenderer {
                 s *= 6;
             } else if (
                 series.type === 'area' ||
+                series.type === 'areaspline' ||
                 series.type === 'arearange'
             ) {
                 s *= drawMode === 'TRIANGLES' ? 6 : 2;
@@ -423,6 +424,7 @@ class WGLRenderer {
     private static seriesDrawMode(series: Series): WGLDrawModeValue {
         if (
             series.type === 'area' ||
+            series.type === 'areaspline' ||
             series.type === 'arearange'
         ) {
             const boostShape = series.options.boostShape as (
@@ -503,6 +505,7 @@ class WGLRenderer {
             colors = chart.options.colors || [],
             isBandSeries = (
                 series.type === 'area' ||
+                series.type === 'areaspline' ||
                 series.type === 'arearange'
             ),
             drawAsBand = isBandSeries && inst.drawMode === 'TRIANGLES',
@@ -1016,7 +1019,11 @@ class WGLRenderer {
                     yAxis.logarithmic
                 ) {
                     low = Math.max(
-                        (typeof threshold !== 'undefined' ? threshold as number : yMin as number),
+                        (
+                            typeof threshold !== 'undefined' ?
+                                threshold as number :
+                                yMin as number
+                        ),
                         yMin as number
                     );
                 }
