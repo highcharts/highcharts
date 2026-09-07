@@ -28,6 +28,7 @@ import type VariablePieSeries from './VariablePieSeries';
  *
  * */
 
+/** @internal */
 declare class VariablePiePoint extends PiePoint {
     public options: VariablePiePointOptions;
     public series: VariablePieSeries;
@@ -39,4 +40,5 @@ declare class VariablePiePoint extends PiePoint {
  *
  * */
 
+/** @internal */
 export default VariablePiePoint;

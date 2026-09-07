@@ -43,6 +43,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         maxPxSize?: number;
@@ -59,7 +60,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * The variablepie series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.variablepie
  *
@@ -101,7 +102,7 @@ class VariablePieSeries extends PieSeries {
     /**
      * Before standard translate method for pie chart it is needed to calculate
      * min/max radius of each pie slice based on its Z value.
-     * @private
+     * @internal
      */
     calculateExtremes(): void {
         const series = this,
@@ -152,7 +153,7 @@ class VariablePieSeries extends PieSeries {
      * Finding radius of series points based on their Z value and min/max Z
      * value for all series.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getRadii
      *
      * @param {number} zMin
@@ -215,14 +216,14 @@ class VariablePieSeries extends PieSeries {
     /**
      * It is needed to null series.center on chart redraw. Probably good idea
      * will be to add this option in directly in pie series.
-     * @private
+     * @internal
      */
     public redraw(): void {
         this.center = null as any;
         super.redraw();
     }
 
-    /** @private */
+    /** @internal */
     getDataLabelPosition(
         point: VariablePiePoint,
         distance: number
@@ -273,7 +274,7 @@ class VariablePieSeries extends PieSeries {
     /**
      * Extend translate by updating radius for each pie slice instead of using
      * one global radius.
-     * @private
+     * @internal
      */
     public translate(positions?: Array<number>): void {
 
@@ -374,7 +375,7 @@ class VariablePieSeries extends PieSeries {
      * For arrayMin and arrayMax calculations array shouldn't have
      * null/undefined/string values. In this case it is needed to check if
      * points Z value is a Number.
-     * @private
+     * @internal
      */
     public zValEval(zVal: (number|string|undefined)): (boolean|null) {
         if (typeof zVal === 'number' && !isNaN(zVal)) {
@@ -391,6 +392,7 @@ class VariablePieSeries extends PieSeries {
  *
  * */
 
+/** @internal */
 interface VariablePieSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -409,6 +411,7 @@ extend(VariablePieSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variablepie: typeof VariablePieSeries;
@@ -423,6 +426,7 @@ SeriesRegistry.registerSeriesType('variablepie', VariablePieSeries);
  *
  * */
 
+/** @internal */
 export default VariablePieSeries;
 
 /* *
