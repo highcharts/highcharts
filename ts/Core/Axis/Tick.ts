@@ -718,7 +718,7 @@ class Tick {
                 !axis.isRadial ? axis.pos + axis.len : 0,
                 chartWidth - spacing[1]
             )),
-            rotation = label?.rotation,
+            rotation = label?.rotation || 0,
             factor = getAlignFactor(
                 axis.labelAlign || label?.attr('align') as any
             ),
