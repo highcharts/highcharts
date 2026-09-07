@@ -18,9 +18,7 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type OHLCSeries from './OHLC/OHLCSeries';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type { SymbolFunction } from '../Core/Renderer/SVG/SymbolType';
@@ -44,26 +42,6 @@ declare module '../Core/Renderer/SVG/SymbolType' {
         hlc: SymbolFunction;
         ohlc: SymbolFunction;
     }
-}
-
-/**
- * A financial series in the legend. The down glyph is the legend symbol, the
- * up one an element of its own (#24567).
- * @internal
- */
-interface FinancialLegendSeries {
-    color?: ColorType;
-    /** Overrides `upAttribs` where `upColor` alone does not apply. */
-    legendSymbolAttribs?(): SVGAttributes;
-    legendSymbolUp?: SVGElement;
-    options: {
-        legendSymbol?: string;
-        legendSymbolColor?: ColorType;
-        lineColor?: ColorType;
-        lineWidth?: number;
-        upColor?: ColorType;
-        upLineColor?: ColorType;
-    };
 }
 
 /* *
@@ -109,11 +87,11 @@ namespace FinancialSymbols {
         if (pushUnique(composed, 'Series.FinancialSymbols')) {
             const symbols = SVGRendererClass.prototype.symbols;
 
-            // The wrappers drop the symbol options, which would land on `up`
+            // The wrappers drop the symbol options, which would bind to `up`
             symbols.candlestick = (x, y, w, h): SVGPath => candle(x, y, w, h);
             symbols.ohlc = (x, y, w, h): SVGPath => stem(x, y, w, h, true);
 
-            // Both HLC stems belong to one symbol, there being no up point
+            // HLC has no up point, so both stems belong to one symbol
             symbols.hlc = (x, y, w, h): SVGPath => [
                 ...stem(x, y, w, h),
                 ...stem(x, y, w, h, false, true)
@@ -122,14 +100,13 @@ namespace FinancialSymbols {
             // The legend itself colors the down glyph
             addEvent(Legend, 'afterColorizeItem', function (e): void {
                 const { item, visible } = e as {
-                        item: FinancialLegendSeries;
+                        item: OHLCSeries;
                         visible: boolean;
                     },
                     symbol = item.legendSymbolUp;
 
                 if (symbol && !this.chart.styledMode) {
-                    const attribs =
-                            item.legendSymbolAttribs?.() || upAttribs(item),
+                    const attribs = item.legendSymbolAttribs(),
                         hidden = visible ?
                             void 0 :
                             this.itemHiddenStyle?.color;
@@ -177,31 +154,6 @@ namespace FinancialSymbols {
         }
 
         return path;
-    }
-
-    /**
-     * Colors of the up glyph, as `pointAttribs` gives them to an up point;
-     * OHLC takes `upColor` on the stroke rather than the fill. Calling
-     * `pointAttribs` needs a point, which breaks on zoned series.
-     * @internal
-     */
-    function upAttribs(series: FinancialLegendSeries): SVGAttributes {
-        const {
-                legendSymbol, legendSymbolColor, lineColor, lineWidth,
-                upColor, upLineColor
-            } = series.options,
-            color = legendSymbolColor || series.color;
-
-        return legendSymbol === 'candlestick' ?
-            {
-                fill: upColor || color,
-                stroke: upLineColor || lineColor || color,
-                'stroke-width': lineWidth
-            } :
-            {
-                stroke: upColor || color,
-                'stroke-width': lineWidth
-            };
     }
 
     /**

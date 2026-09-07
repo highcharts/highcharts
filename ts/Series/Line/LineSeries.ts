@@ -54,7 +54,8 @@ class LineSeries extends Series {
         {
             /**
              * What type of legend symbol to render for this series. Can be one
-             * of `areaMarker`, `lineMarker` or `rectangle`.
+             * of `areaMarker`, `lineMarker` or `rectangle`. The financial
+             * series of Highcharts Stock add `candlestick`, `hlc` and `ohlc`.
              *
              * @sample {highcharts} highcharts/series/legend-symbol/
              *         Change the legend symbol

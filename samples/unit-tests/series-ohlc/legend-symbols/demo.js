@@ -21,10 +21,13 @@ QUnit.test(
                 type: 'hollowcandlestick',
                 // The first point is an up one, the legend must not follow it
                 data: [[0, 2, 4, 1, 3], [1, 3, 5, 2, 4]]
+            }, {
+                type: 'heikinashi',
+                data: [[0, 2, 4, 1, 3]]
             }]
         });
 
-        const [hlc, ohlc, candlestick, hollow] = chart.series,
+        const [hlc, ohlc, candlestick, hollow, heikinashi] = chart.series,
             // The down glyph is the legend symbol, the up one its own element
             down = series => series.legendItem.symbol.element,
             up = series => series.legendSymbolUp.element,
@@ -125,6 +128,17 @@ QUnit.test(
             down(hollow).getAttribute('fill'),
             hollow.options.color,
             'Hollow candlestick down candle should take the falling color'
+        );
+
+        // Heikin Ashi has no up attribs of its own, it takes the candlestick's
+        heikinashi.update({ upColor: '#ff00ff', upLineColor: '#00e272' });
+        assert.deepEqual(
+            [
+                up(heikinashi).getAttribute('fill'),
+                up(heikinashi).getAttribute('stroke')
+            ],
+            ['#ff00ff', '#00e272'],
+            'Heikin Ashi up candle should take the candlestick up colors'
         );
 
         candlestick.update({ legendSymbolColor: '#0000ff' });

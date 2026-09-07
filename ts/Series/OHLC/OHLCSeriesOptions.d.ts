@@ -129,16 +129,17 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
     data?: Array<(OHLCPointOptions|PointShortOptions)>;
 
     /**
-     * What type of legend symbol to render for this series. For OHLC series,
-     * the default is `ohlc`, showing two stems, one down and one up, each
-     * with an open tick on the left and a close tick on the right.
+     * What type of legend symbol to render for this series. The default
+     * `ohlc` shows two stems, each with an open tick on the left and a close
+     * tick on the right. The first stands for a falling point, the second
+     * for a rising one.
      *
      * @sample {highstock} stock/plotoptions/financial-legend-symbols/
      *         Financial series legend symbols
      *
-     * @default   ohlc
-     * @product   highstock
-     * @apioption plotOptions.ohlc.legendSymbol
+     * @default ohlc
+     *
+     * @product highstock
      */
     legendSymbol?: string;
 

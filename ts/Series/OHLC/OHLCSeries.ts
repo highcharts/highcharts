@@ -208,6 +208,22 @@ class OHLCSeries extends HLCSeries {
     }
 
     /**
+     * Colors of the up glyph, as `pointAttribs` gives them to an up point.
+     * `pointAttribs` needs a point, which breaks on zoned series.
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.ohlc#legendSymbolAttribs
+     */
+    public legendSymbolAttribs(): SVGAttributes {
+        const { legendSymbolColor, lineWidth, upColor } = this.options;
+
+        return {
+            stroke: upColor || legendSymbolColor || this.color,
+            'stroke-width': lineWidth
+        };
+    }
+
+    /**
      * Postprocess mapping between options and SVG attributes
      * @private
      */

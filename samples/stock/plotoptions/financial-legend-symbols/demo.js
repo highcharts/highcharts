@@ -5,7 +5,6 @@
         'https://demo-live-data.highcharts.com/aapl-ohlc.json'
     ).then(response => response.json());
 
-    // Four financial series types share the data, each in its own pane
     Highcharts.stockChart('container', {
 
         title: {
@@ -13,8 +12,8 @@
         },
 
         subtitle: {
-            text: 'Candlestick, OHLC, HLC and hollow candlestick sharing ' +
-                'the same AAPL data'
+            text: 'Candlestick, OHLC, HLC, hollow candlestick and Heikin ' +
+                'Ashi sharing the same AAPL data'
         },
 
         legend: {
@@ -29,48 +28,57 @@
             series: {
                 accessibility: {
                     point: {
-                        valueDescriptionFormat: '{xDescription}. High: ' +
-                            '{point.high}, low: {point.low}, close: ' +
-                            '{point.close}.'
+                        // Heikin Ashi values are computed, so round them
+                        valueDescriptionFormat: '{xDescription}. Open: ' +
+                            '{point.open:.2f}, high: {point.high:.2f}, low: ' +
+                            '{point.low:.2f}, close: {point.close:.2f}.'
                     }
                 }
             }
         },
 
         yAxis: [{
-            height: '25%'
+            height: '20%'
         }, {
-            top: '25%',
-            height: '25%'
+            top: '20%',
+            height: '20%'
         }, {
-            top: '50%',
-            height: '25%'
+            top: '40%',
+            height: '20%'
         }, {
-            top: '75%',
-            height: '25%'
+            top: '60%',
+            height: '20%'
+        }, {
+            top: '80%',
+            height: '20%'
         }],
 
         series: [{
             type: 'candlestick',
-            name: 'AAPL',
+            name: 'Candlestick',
             data: data,
             yAxis: 0
         }, {
             type: 'ohlc',
-            name: 'AAPL',
+            name: 'OHLC',
             data: data,
             yAxis: 1
         }, {
             type: 'hlc',
-            name: 'AAPL',
+            name: 'HLC',
             useOhlcData: true,
             data: data,
             yAxis: 2
         }, {
             type: 'hollowcandlestick',
-            name: 'AAPL',
+            name: 'Hollow Candlestick',
             data: data,
             yAxis: 3
+        }, {
+            type: 'heikinashi',
+            name: 'Heikin Ashi',
+            data: data,
+            yAxis: 4
         }]
     });
 })();
