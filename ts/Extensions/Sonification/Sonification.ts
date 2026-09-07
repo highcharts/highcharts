@@ -25,6 +25,7 @@ import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type { Options } from '../../Core/Options';
 import type { PropMetrics } from './TimelineFromChart';
+import type * as SonificationTypes from './SonificationTypes';
 
 /* *
  *
@@ -56,7 +57,6 @@ import {
     internalClearTimeout,
     merge
 } from '../../Shared/Utilities.js';
-import type * as SonificationTypes from './SonificationTypes';
 
 
 declare module '../../Core/Chart/ChartBase' {

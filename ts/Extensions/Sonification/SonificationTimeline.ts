@@ -17,6 +17,7 @@
 import type SonificationSpeaker from './SonificationSpeaker';
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
+import type * as Sonification from './SonificationTypes';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
@@ -24,7 +25,6 @@ import {
     downloadURL
 } from '../../Shared/DownloadURL.js';
 import { defined, find, merge } from '../../Shared/Utilities.js';
-import type * as Sonification from './SonificationTypes';
 
 export interface TimelineFilterCallback {
     (
@@ -457,7 +457,7 @@ class SonificationTimeline {
             e.relatedPoint);
 
         let closestValDiff: number = Infinity,
-            closestEvent: Sonification.TimelineEvent|null = null;
+            closestEvent: Sonification.TimelineEvent|undefined;
         (this.playingChannels || this.channels).forEach((channel): void => {
             const events = channel.events;
             let i = events.length;
@@ -487,9 +487,7 @@ class SonificationTimeline {
             this.playingChannels = this.playingChannels || this.channels;
             this.isPaused = true;
             this.isPlaying = false;
-            this.resumeFromTime = (
-                closestEvent as Sonification.TimelineEvent
-            ).time;
+            this.resumeFromTime = closestEvent.time;
         } else if (onBoundaryHit) {
             onBoundaryHit({ chart: this.chart, timeline: this });
         }

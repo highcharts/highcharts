@@ -18,6 +18,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type TimelineChannel from './TimelineChannel';
+import type * as Sonification from './SonificationTypes';
 import SonificationTimeline from './SonificationTimeline.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import SonificationSpeaker from './SonificationSpeaker.js';
@@ -29,7 +30,6 @@ import {
     getNestedProperty,
     merge
 } from '../../Shared/Utilities.js';
-import type * as Sonification from './SonificationTypes';
 const {
     format
 } = T;
