@@ -819,6 +819,74 @@
         });
     });
 
+    QUnit.test('Navigator inherits axis uniqueNames (#24975)', assert => {
+        const chart = Highcharts.ganttChart('container', {
+                yAxis: {
+                    uniqueNames: true
+                },
+                navigator: {
+                    enabled: true,
+                    series: {
+                        type: 'gantt'
+                    },
+                    yAxis: {
+                        type: 'treegrid'
+                    }
+                },
+                series: [{
+                    name: 'Series 1',
+                    data: [{
+                        start: Date.UTC(2026, 2, 1),
+                        end: Date.UTC(2026, 6, 1),
+                        name: 'Development'
+                    }, {
+                        start: Date.UTC(2026, 6, 1),
+                        end: Date.UTC(2026, 7, 15),
+                        name: 'Testing'
+                    }, {
+                        start: Date.UTC(2026, 6, 15),
+                        end: Date.UTC(2026, 8, 30),
+                        name: 'Development'
+                    }, {
+                        start: Date.UTC(2026, 9, 1),
+                        end: Date.UTC(2026, 9, 20),
+                        name: 'Testing'
+                    }]
+                }]
+            }),
+            nav = chart.navigator,
+            series = chart.series[0],
+            navSeries = nav.series[0];
+
+        assert.strictEqual(
+            nav.yAxis.uniqueNames,
+            true,
+            'Navigator should inherit uniqueNames from the base series axis.'
+        );
+
+        navSeries.points.forEach((_, i) => {
+            assert.strictEqual(
+                navSeries.points[i].y,
+                series.points[i].y,
+                'Navigator and main series should use the same Y positions.'
+            );
+        });
+
+        chart.update({
+            navigator: {
+                yAxis: {
+                    uniqueNames: false
+                }
+            }
+        });
+
+        assert.strictEqual(
+            nav.yAxis.uniqueNames,
+            false,
+            'Explicit navigator uniqueNames should override the main axis.'
+        );
+    });
+
     QUnit.test('Gantt using the keys feature #13768', function (assert) {
         var chart = Highcharts.ganttChart('container', {
             series: [
