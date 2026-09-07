@@ -17,7 +17,11 @@
 import type SonificationSpeaker from './SonificationSpeaker';
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
-import type * as Sonification from './SonificationTypes';
+import type {
+    BoundaryHitCallback,
+    ChartCallback
+} from './Options';
+import type { TimelineEvent } from './TimelineChannel';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
@@ -28,16 +32,16 @@ import { defined, find, merge } from '../../Shared/Utilities.js';
 
 export interface TimelineFilterCallback {
     (
-        e: Sonification.TimelineEvent,
+        e: TimelineEvent,
         ix: number,
-        arr: Sonification.TimelineEvent[]
+        arr: TimelineEvent[]
     ): boolean;
 }
 
 interface SonificationTimelineOptions {
-    onPlay?: Sonification.ChartCallback;
-    onEnd?: Sonification.ChartCallback;
-    onStop?: Sonification.ChartCallback;
+    onPlay?: ChartCallback;
+    onEnd?: ChartCallback;
+    onStop?: ChartCallback;
     showTooltip?: boolean;
     showCrosshair?: boolean;
     skipThreshold?: number;
@@ -55,7 +59,7 @@ function filterChannels(
 ): TimelineChannel[] {
     interface FilteredChannel {
         channel: TimelineChannel;
-        filteredEvents: Sonification.TimelineEvent[];
+        filteredEvents: TimelineEvent[];
     }
     const filtered = channels.map(
             (channel): FilteredChannel => {
@@ -75,7 +79,7 @@ function filterChannels(
     return filtered.map((c): TimelineChannel => (
         new TimelineChannel(
             c.channel.type, c.channel.engine, c.channel.showPlayMarker,
-            c.filteredEvents.map((e): Sonification.TimelineEvent =>
+            c.filteredEvents.map((e): TimelineEvent =>
                 merge(e, { time: e.time - minTime })
             ),
             c.channel.muted
@@ -98,7 +102,7 @@ class SonificationTimeline {
     private options: SonificationTimelineOptions;
     private playTimestamp = 0;
     private resumeFromTime = 0;
-    private onEndArgument?: Sonification.ChartCallback;
+    private onEndArgument?: ChartCallback;
 
 
     constructor(options?: SonificationTimelineOptions, private chart?: Chart) {
@@ -112,7 +116,7 @@ class SonificationTimeline {
         type: 'instrument'|'speech',
         engine: SonificationInstrument|SonificationSpeaker,
         showPlayMarker = false,
-        events?: Sonification.TimelineEvent[]
+        events?: TimelineEvent[]
     ): TimelineChannel {
         if (
             type === 'instrument' &&
@@ -140,7 +144,7 @@ class SonificationTimeline {
         filter?: TimelineFilterCallback,
         filterPersists = true,
         resetAfter = true,
-        onEnd?: Sonification.ChartCallback
+        onEnd?: ChartCallback
     ): void {
         if (this.isPlaying) {
             this.cancel();
@@ -160,7 +164,7 @@ class SonificationTimeline {
             channels = filter ?
                 filterChannels(filter, this.playingChannels || this.channels) :
                 this.channels,
-            getEventKeysSignature = (e: Sonification.TimelineEvent): string =>
+            getEventKeysSignature = (e: TimelineEvent): string =>
                 Object.keys(e.speechOptions || {})
                     .concat(Object.keys(e.instrumentEventOptions || {}))
                     .join(),
@@ -346,7 +350,7 @@ class SonificationTimeline {
     // event's time.
     anchorPlayMoment(
         eventFilter: TimelineFilterCallback,
-        onEnd?: Sonification.ChartCallback
+        onEnd?: ChartCallback
     ): void {
         if (this.isPlaying) {
             this.pause();
@@ -373,8 +377,8 @@ class SonificationTimeline {
     // Play event(s) occurring next/prev from paused state.
     playAdjacent(
         next: boolean,
-        onEnd?: Sonification.ChartCallback,
-        onBoundaryHit?: Sonification.BoundaryHitCallback,
+        onEnd?: ChartCallback,
+        onBoundaryHit?: BoundaryHitCallback,
         eventFilter?: TimelineFilterCallback
     ): void {
         if (this.isPlaying) {
@@ -444,20 +448,20 @@ class SonificationTimeline {
     playClosestToPropValue(
         prop: keyof Point,
         targetVal: number,
-        onEnd?: Sonification.ChartCallback,
-        onBoundaryHit?: Sonification.BoundaryHitCallback,
+        onEnd?: ChartCallback,
+        onBoundaryHit?: BoundaryHitCallback,
         eventFilter?: TimelineFilterCallback
     ): void {
         const filter = (
-            e: Sonification.TimelineEvent,
+            e: TimelineEvent,
             ix: number,
-            arr: Sonification.TimelineEvent[]
+            arr: TimelineEvent[]
         ): boolean => !!(eventFilter ?
             eventFilter(e, ix, arr) && e.relatedPoint :
             e.relatedPoint);
 
         let closestValDiff: number = Infinity,
-            closestEvent: Sonification.TimelineEvent|undefined;
+            closestEvent: TimelineEvent|undefined;
         (this.playingChannels || this.channels).forEach((channel): void => {
             const events = channel.events;
             let i = events.length;
@@ -497,13 +501,13 @@ class SonificationTimeline {
     // Get timeline events that are related to a certain point.
     // Note: Point grouping may cause some points not to have a
     //  related point in the timeline.
-    getEventsForPoint(point: Point): Sonification.TimelineEvent[] {
+    getEventsForPoint(point: Point): TimelineEvent[] {
         return this.channels.reduce(
-            (events, channel): Sonification.TimelineEvent[] => {
+            (events, channel): TimelineEvent[] => {
                 const pointEvents = channel.events
                     .filter((e): boolean => e.relatedPoint === point);
                 return events.concat(pointEvents);
-            }, [] as Sonification.TimelineEvent[]
+            }, [] as TimelineEvent[]
         );
     }
 
@@ -511,7 +515,7 @@ class SonificationTimeline {
     // Divide timeline into 100 parts of equal time, and play one of them.
     // Used for scrubbing.
     // Note: Should be optimized?
-    playSegment(segment: number, onEnd?: Sonification.ChartCallback): void {
+    playSegment(segment: number, onEnd?: ChartCallback): void {
         const numSegments = 100;
         const eventTimes = {
             first: Infinity,

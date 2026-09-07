@@ -18,7 +18,24 @@ import type Chart from '../../Core/Chart/Chart';
 import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type TimelineChannel from './TimelineChannel';
-import type * as Sonification from './SonificationTypes';
+import type {
+    ChartSonificationOptions,
+    ContextTrackOptions,
+    InstrumentTrackMappingOptions,
+    InstrumentTrackOptions,
+    MappingParameter,
+    MappingParameterOptions,
+    PitchMappingParameterOptions,
+    PointGroupingOptions,
+    SeriesSonificationOptions,
+    SpeechTrackMappingOptions,
+    SpeechTrackOptions,
+    TimelineEventContext,
+    TrackPredicateCallback,
+    TrackStringCallback,
+    ValueConstraints
+} from './Options';
+import type { TimelineEvent } from './TimelineChannel';
 import SonificationTimeline from './SonificationTimeline.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import SonificationSpeaker from './SonificationSpeaker.js';
@@ -148,11 +165,11 @@ function getChartExtremesForProps(
  * @internal
  */
 function getPropMetrics(chart: Chart): PropMetrics {
-    type MappingOpts = Sonification.InstrumentTrackMappingOptions|
-    Sonification.SpeechTrackMappingOptions;
+    type MappingOpts = InstrumentTrackMappingOptions|
+    SpeechTrackMappingOptions;
 
     const globalOpts = chart.options.sonification ||
-            {} as Sonification.ChartSonificationOptions,
+            {} as ChartSonificationOptions,
         defaultInstrMapping = (globalOpts.defaultInstrumentOptions || {})
             .mapping || { time: 'x', pitch: 'y' },
         defaultSpeechMapping = globalOpts.defaultSpeechOptions &&
@@ -189,8 +206,7 @@ function getPropMetrics(chart: Chart): PropMetrics {
                 props[removeInvertedFlag(val)] = true;
                 return;
             }
-            const paramOpts = val as Sonification
-                .MappingParameterOptions | undefined;
+            const paramOpts = val as MappingParameterOptions | undefined;
             if (
                 paramOpts && paramOpts.mapTo &&
                 typeof paramOpts.mapTo === 'string'
@@ -227,7 +243,7 @@ function getPropMetrics(chart: Chart): PropMetrics {
                 ));
         },
         addPropsFromContextTracks = (
-            tracks: Sonification.ContextTrackOptions
+            tracks: ContextTrackOptions
         ): void => tracks.forEach((track): void => {
             props[track.valueProp || 'x'] =
                 perSeriesProps[track.valueProp || 'x'] = true;
@@ -340,11 +356,11 @@ function mapToVirtualAxis(
  * @internal
  */
 function getMappingParameterValue(
-    context: Sonification.TimelineEventContext,
+    context: TimelineEventContext,
     propMetrics: PropMetrics,
     useSeriesExtremes: boolean,
-    defaultMapping: Required<Sonification.MappingParameterOptions>,
-    mappingOptions?: Sonification.MappingParameter,
+    defaultMapping: Required<MappingParameterOptions>,
+    mappingOptions?: MappingParameter,
     contextValueProp?: string
 ): number|null {
     if (typeof mappingOptions === 'number') {
@@ -367,7 +383,7 @@ function getMappingParameterValue(
         max = (mappingOptions.max ?? max);
         within = mappingOptions.within || defaultMapping.within;
         scale = (
-            mappingOptions as Sonification.PitchMappingParameterOptions
+            mappingOptions as PitchMappingParameterOptions
         ).scale;
     }
 
@@ -385,7 +401,7 @@ function getMappingParameterValue(
         contextValueProp;
     if (!useContextValue) {
         const fixedValue = (
-            mappingOptions as Sonification.MappingParameterOptions
+            mappingOptions as MappingParameterOptions
         ).value;
         if (fixedValue !== void 0) {
             value = fixedValue;
@@ -464,12 +480,12 @@ function getMappingParameterValue(
  * @internal
  */
 function getParamValWithDefault(
-    context: Sonification.TimelineEventContext,
+    context: TimelineEventContext,
     propMetrics: PropMetrics,
     useSeriesExtremes: boolean,
-    mappingParamOptions: Sonification.MappingParameter,
+    mappingParamOptions: MappingParameter,
     fallback: number,
-    defaults?: Partial<Sonification.MappingParameterOptions>,
+    defaults?: Partial<MappingParameterOptions>,
     contextValueProp?: string
 ): number {
     return (getMappingParameterValue(
@@ -478,8 +494,8 @@ function getParamValWithDefault(
         useSeriesExtremes,
         extend({
             min: 0, max: 1, mapTo: 'y', mapFunction: 'linear', within: 'chart'
-        } as Required<Sonification.MappingParameterOptions>,
-        (defaults || {}) as Required<Sonification.MappingParameterOptions>
+        } as Required<MappingParameterOptions>,
+        (defaults || {}) as Required<MappingParameterOptions>
         ),
         mappingParamOptions,
         contextValueProp
@@ -495,7 +511,7 @@ function getPointTime(
     point: Point,
     startTime: number,
     duration: number,
-    timeMappingOptions: Sonification.MappingParameter,
+    timeMappingOptions: MappingParameter,
     propMetrics: PropMetrics,
     useSeriesExtremes: boolean
 ): number {
@@ -570,14 +586,14 @@ function addTimelineChannelFromTrack(
     audioContext: AudioContext,
     destinationNode: AudioDestinationNode,
     options: (
-        Sonification.InstrumentTrackOptions|
-        Sonification.SpeechTrackOptions
+        InstrumentTrackOptions|
+        SpeechTrackOptions
     )
 ): TimelineChannel {
-    const speechOpts = (options as Sonification.SpeechTrackOptions),
+    const speechOpts = (options as SpeechTrackOptions),
         instrMappingOpts = (
             options.mapping || {}
-        ) as Sonification.InstrumentTrackMappingOptions,
+        ) as InstrumentTrackMappingOptions,
         engine = options.type === 'speech' ?
             new SonificationSpeaker({
                 language: speechOpts.language,
@@ -610,17 +626,17 @@ function addTimelineChannelFromTrack(
  * @internal
  */
 function addMappedInstrumentEvent(
-    context: Sonification.TimelineEventContext,
+    context: TimelineEventContext,
     channel: TimelineChannel,
-    mappingOptions: Sonification.InstrumentTrackMappingOptions,
+    mappingOptions: InstrumentTrackMappingOptions,
     propMetrics: PropMetrics,
     roundToMusicalNotes: boolean,
     contextValueProp?: string
-): Sonification.TimelineEvent[] {
+): TimelineEvent[] {
     const getParam = (
         param: string,
         fallback: number,
-        defaults: Partial<Sonification.MappingParameterOptions>,
+        defaults: Partial<MappingParameterOptions>,
         parent?: AnyRecord
     ): number => getParamValWithDefault(
         context, propMetrics, false,
@@ -628,7 +644,7 @@ function addMappedInstrumentEvent(
         fallback, defaults, contextValueProp
     );
 
-    const eventsAdded: Sonification.TimelineEvent[] = [],
+    const eventsAdded: TimelineEvent[] = [],
         eventOpts: SonificationInstrument.ScheduledEventOptions = {
             noteDuration: getParam('noteDuration', 200, { min: 40, max: 1000 }),
             pan: getParam('pan', 0, { min: -1, max: 1 }),
@@ -676,11 +692,11 @@ function addMappedInstrumentEvent(
         playDelay = getParam('playDelay', 0, { max: 200 });
 
     const addNoteEvent = (
-        noteDef: string|number|Sonification.PitchMappingParameterOptions,
+        noteDef: string|number|PitchMappingParameterOptions,
         ix = 0
     ): void => {
-        let opts = noteDef as Sonification.MappingParameter;
-        if ((noteDef as Sonification.PitchMappingParameterOptions).mapTo) {
+        let opts = noteDef as MappingParameter;
+        if ((noteDef as PitchMappingParameterOptions).mapTo) {
             // Transform the pitch mapping options to normal mapping options
             if (typeof (noteDef as AnyRecord).min === 'string') {
                 (opts as AnyRecord).min = SonificationInstrument
@@ -722,7 +738,7 @@ function addMappedInstrumentEvent(
     } else if (mappingOptions.pitch) {
         addNoteEvent(
             mappingOptions.pitch as string|number|
-            Sonification.PitchMappingParameterOptions
+            PitchMappingParameterOptions
         );
     } else if (mappingOptions.frequency) {
         eventsAdded.push(
@@ -743,8 +759,8 @@ function addMappedInstrumentEvent(
  * @internal
  */
 function getSpeechMessageValue(
-    context: Sonification.TimelineEventContext,
-    messageParam: string|Sonification.TrackStringCallback
+    context: TimelineEventContext,
+    messageParam: string|TrackStringCallback
 ): string {
     return format(
         typeof messageParam === 'function' ?
@@ -761,16 +777,16 @@ function getSpeechMessageValue(
  * @internal
  */
 function addMappedSpeechEvent(
-    context: Sonification.TimelineEventContext,
+    context: TimelineEventContext,
     channel: TimelineChannel,
-    mappingOptions: Sonification.SpeechTrackMappingOptions,
+    mappingOptions: SpeechTrackMappingOptions,
     propMetrics: PropMetrics,
     contextValueProp?: string
-): Sonification.TimelineEvent|undefined {
+): TimelineEvent|undefined {
     const getParam = (
         param: string,
         fallback: number,
-        defaults: Partial<Sonification.MappingParameterOptions>
+        defaults: Partial<MappingParameterOptions>
     ): number => getParamValWithDefault(
         context, propMetrics, false,
         (mappingOptions as AnyRecord)[param],
@@ -803,15 +819,15 @@ function addMappedSpeechEvent(
  * @internal
  */
 function addMappedEventForPoint(
-    context: Sonification.TimelineEventContext,
+    context: TimelineEventContext,
     channel: TimelineChannel,
     trackOptions: (
-        Sonification.InstrumentTrackOptions|
-        Sonification.SpeechTrackOptions
+        InstrumentTrackOptions|
+        SpeechTrackOptions
     ),
     propMetrics: PropMetrics
-): Sonification.TimelineEvent[] {
-    let eventsAdded: Sonification.TimelineEvent[] = [];
+): TimelineEvent[] {
+    let eventsAdded: TimelineEvent[] = [];
 
     if (trackOptions.type === 'speech' && trackOptions.mapping) {
         const eventAdded = addMappedSpeechEvent(
@@ -824,9 +840,9 @@ function addMappedEventForPoint(
     } else if (trackOptions.mapping) {
         eventsAdded = addMappedInstrumentEvent(
             context, channel, trackOptions.mapping as
-            Sonification.InstrumentTrackMappingOptions,
+            InstrumentTrackMappingOptions,
             propMetrics,
-            ((trackOptions as Sonification.InstrumentTrackOptions)
+            ((trackOptions as InstrumentTrackOptions)
                 .roundToMusicalNotes ?? true
             ));
     }
@@ -839,7 +855,7 @@ function addMappedEventForPoint(
  * @internal
  */
 function getGroupedPoints(
-    pointGroupOpts: Sonification.PointGroupingOptions,
+    pointGroupOpts: PointGroupingOptions,
     points: PointGroupItem[]
 ): Point[] {
     const alg = pointGroupOpts.algorithm || 'minmax',
@@ -897,9 +913,9 @@ function getGroupedPoints(
  * @internal
  */
 function isActive(
-    context: Sonification.TimelineEventContext,
-    activeWhen?: Sonification.TrackPredicateCallback|
-    Sonification.ValueConstraints,
+    context: TimelineEventContext,
+    activeWhen?: TrackPredicateCallback|
+    ValueConstraints,
     lastPropValue?: number
 ): boolean {
     if (typeof activeWhen === 'function') {
@@ -954,7 +970,7 @@ function timelineFromChart(
     chart: Chart
 ): SonificationTimeline {
     const options = chart.options.sonification ||
-            {} as Sonification.ChartSonificationOptions,
+            {} as ChartSonificationOptions,
         defaultInstrOpts = options.defaultInstrumentOptions,
         defaultSpeechOpts = options.defaultSpeechOptions,
         defaultPointGroupOpts = merge({
@@ -987,7 +1003,7 @@ function timelineFromChart(
     let startTime = 0;
     chart.series.forEach((series, seriesIx): void => {
         const sOptions = series.options.sonification ||
-            {} as Sonification.SeriesSonificationOptions;
+            {} as SeriesSonificationOptions;
         if (series.visible && sOptions.enabled !== false) {
             const seriesDuration = isSequential ? getAvailableDurationForSeries(
                     series, totalDuration, propMetrics, afterSeriesWait
@@ -1007,7 +1023,7 @@ function timelineFromChart(
                 contextTracks = hasAddedSeries && !isSequential ?
                     sOptions.contextTracks || [] :
                     (sOptions.contextTracks || []).concat(globalContextTracks),
-                eventsAdded: Sonification.TimelineEvent[] = [];
+                eventsAdded: TimelineEvent[] = [];
 
             // For crossing threshold notifications
             let lastPropValue: number|undefined;
@@ -1129,11 +1145,11 @@ function timelineFromChart(
 
             // Add callbacks to first/last events
             const firstEvent = eventsAdded.reduce(
-                (first, e): Sonification.TimelineEvent => (
+                (first, e): TimelineEvent => (
                     e.time < first.time ? e : first
                 ), { time: Infinity });
             const lastEvent = eventsAdded.reduce(
-                (last, e): Sonification.TimelineEvent => (
+                (last, e): TimelineEvent => (
                     e.time > last.time ? e : last
                 ), { time: -Infinity });
             firstEvent.callback = eventOptions.onSeriesStart ?

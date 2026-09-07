@@ -25,7 +25,8 @@ import type Series from '../../Core/Series/Series';
 import type Point from '../../Core/Series/Point';
 import type { Options } from '../../Core/Options';
 import type { PropMetrics } from './TimelineFromChart';
-import type * as SonificationTypes from './SonificationTypes';
+import type { ChartCallback } from './Options';
+import type { TimelineFilterCallback } from './SonificationTimeline';
 
 /* *
  *
@@ -75,7 +76,7 @@ declare module '../../Core/Chart/ChartBase' {
          *
          * @requires modules/sonification
          */
-        sonify: (onEnd?: SonificationTypes.ChartCallback) => void;
+        sonify: (onEnd?: ChartCallback) => void;
         /**
          * Play/pause sonification of a chart.
          *
@@ -88,7 +89,7 @@ declare module '../../Core/Chart/ChartBase' {
          */
         toggleSonify: (
             reset?: boolean,
-            onEnd?: SonificationTypes.ChartCallback
+            onEnd?: ChartCallback
         ) => void;
         /**
          * @internal
@@ -107,7 +108,7 @@ declare module '../../Core/Series/SeriesBase' {
          *
          * @requires modules/sonification
          */
-        sonify: (onEnd?: SonificationTypes.ChartCallback) => void;
+        sonify: (onEnd?: ChartCallback) => void;
     }
 }
 declare module '../../Core/Series/PointBase' {
@@ -120,7 +121,7 @@ declare module '../../Core/Series/PointBase' {
          *
          * @requires modules/sonification
          */
-        sonify: (onEnd?: SonificationTypes.ChartCallback) => void;
+        sonify: (onEnd?: ChartCallback) => void;
     }
 }
 
@@ -246,7 +247,7 @@ class Sonification {
      * @param {Highcharts.SonificationChartEventCallback} [onEnd] Callback to call after play completed
      */
     playSegment(
-        segment: number, onEnd?: SonificationTypes.ChartCallback
+        segment: number, onEnd?: ChartCallback
     ): void {
         if (!this.ready(this.playSegment.bind(this, segment, onEnd))) {
             return;
@@ -272,8 +273,8 @@ class Sonification {
      */
     playAdjacent(
         next: boolean,
-        onEnd?: SonificationTypes.ChartCallback,
-        eventFilter?: SonificationTypes.TimelineFilterCallback
+        onEnd?: ChartCallback,
+        eventFilter?: TimelineFilterCallback
     ): void {
         if (!this.ready(
             this.playAdjacent.bind(this, next, onEnd, eventFilter)
@@ -312,7 +313,7 @@ class Sonification {
     playAdjacentSeries(
         next?: boolean,
         prop: keyof Point = 'x',
-        onEnd?: SonificationTypes.ChartCallback
+        onEnd?: ChartCallback
     ): Series|null {
         const lastPlayed = this.getLastPlayedPoint();
         if (lastPlayed) {
@@ -344,8 +345,8 @@ class Sonification {
     playClosestToProp(
         prop: keyof Point,
         targetValue: number,
-        targetFilter?: SonificationTypes.TimelineFilterCallback,
-        onEnd?: SonificationTypes.ChartCallback
+        targetFilter?: TimelineFilterCallback,
+        onEnd?: ChartCallback
     ): void {
         if (!this.ready(this.playClosestToProp.bind(
             this, prop, targetValue, targetFilter, onEnd
@@ -489,7 +490,7 @@ class Sonification {
      * @internal
      */
     sonifyChart(
-        resetAfter?: boolean, onEnd?: SonificationTypes.ChartCallback
+        resetAfter?: boolean, onEnd?: ChartCallback
     ): void {
         if (!this.ready(this.sonifyChart.bind(this, resetAfter, onEnd))) {
             return;
@@ -509,7 +510,7 @@ class Sonification {
      */
     sonifySeries(
         series: Series, resetAfter?: boolean,
-        onEnd?: SonificationTypes.ChartCallback
+        onEnd?: ChartCallback
     ): void {
         if (!this.ready(this.sonifySeries.bind(
             this, series, resetAfter, onEnd
@@ -533,7 +534,7 @@ class Sonification {
      * @internal
      */
     sonifyPoint(
-        point: Point, onEnd?: SonificationTypes.ChartCallback
+        point: Point, onEnd?: ChartCallback
     ): void {
         if (!this.ready(this.sonifyPoint.bind(this, point, onEnd))) {
             return;
@@ -825,14 +826,14 @@ namespace Sonification {
             extend(ChartClass.prototype, {
                 updateSonificationEnabled,
                 sonify: function (
-                    onEnd?: SonificationTypes.ChartCallback
+                    onEnd?: ChartCallback
                 ): void {
                     if (this.sonification) {
                         this.sonification.sonifyChart(false, onEnd);
                     }
                 },
                 toggleSonify: function (
-                    reset = true, onEnd?: SonificationTypes.ChartCallback
+                    reset = true, onEnd?: ChartCallback
                 ): void {
                     if (!this.sonification) {
                         return;
@@ -863,7 +864,7 @@ namespace Sonification {
         if (composedClasses.indexOf(SeriesClass) === -1) {
             composedClasses.push(SeriesClass);
             SeriesClass.prototype.sonify = function (
-                onEnd?: SonificationTypes.ChartCallback
+                onEnd?: ChartCallback
             ): void {
                 if (this.chart.sonification) {
                     this.chart.sonification.sonifySeries(this, false, onEnd);
@@ -875,7 +876,7 @@ namespace Sonification {
         if (composedClasses.indexOf(PointClass) === -1) {
             composedClasses.push(PointClass);
             PointClass.prototype.sonify = function (
-                onEnd?: SonificationTypes.ChartCallback
+                onEnd?: ChartCallback
             ): void {
                 if (this.series.chart.sonification) {
                     this.series.chart.sonification.sonifyPoint(this, onEnd);

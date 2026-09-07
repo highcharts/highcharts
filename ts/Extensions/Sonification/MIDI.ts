@@ -17,7 +17,7 @@
 'use strict';
 
 import type TimelineChannel from './TimelineChannel';
-import type * as Sonification from './SonificationTypes';
+import type { TimelineEvent } from './TimelineChannel';
 import SonificationInstrument from './SonificationInstrument.js';
 /** @internal */
 interface MIDIEvent {
@@ -57,7 +57,7 @@ const freqToNote = (f: number): number => Math.round(
         }
         return res;
     },
-    toMIDIEvents = (events: Sonification.TimelineEvent[]): MIDIEvent[] => {
+    toMIDIEvents = (events: TimelineEvent[]): MIDIEvent[] => {
         let cachedVel: number|undefined, cachedDur: number|undefined;
         const res: MIDIEvent[] = [],
             add = (el: MIDIEvent): void => { // Insert sorted by time
@@ -151,7 +151,7 @@ const freqToNote = (f: number): number => Math.round(
         return events;
     },
     getTrackChunk = (
-        events: Sonification.TimelineEvent[], addTimeInfo: boolean,
+        events: TimelineEvent[], addTimeInfo: boolean,
         midiTrackName?: string, midiInstrument?: number
     ): number[] => {
         let prevTime = 0;
