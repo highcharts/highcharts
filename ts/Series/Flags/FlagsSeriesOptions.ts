@@ -138,7 +138,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @validvalue ["y", "open", "high", "low", "close"]
      */
-    onKey?: string;
+    onKey?: 'close'|'high'|'low'|'open'|'y';
 
     /**
      * The id of the series that the flags should be drawn on. If no id
@@ -274,7 +274,16 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      */
     data?: Array<FlagsPointOptions>;
 
-    threshold?: number|null;
+    /**
+     * The Y axis value to serve as the base for the columns, for
+     * distinguishing between values above and below a threshold. If `null`,
+     * the columns extend from the padding Y axis minimum.
+     *
+     * @default null
+     *
+     * @product highstock
+     */
+    threshold?: ColumnSeriesOptions['threshold'];
 
     /**
      * Specific tooltip options for flag series. Flag series tooltips are
