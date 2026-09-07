@@ -1160,7 +1160,7 @@ QUnit.test(
         assert.strictEqual(
             transformOf(bands[1]),
             'translate(0 0) scale(1 1)',
-            'The transform should be reset when the band no longer is cut'
+            'The transform should be reset when the band is no longer cut'
         );
 
         chart.xAxis[0].addPlotBand({
