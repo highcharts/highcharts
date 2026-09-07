@@ -128,7 +128,6 @@ function onRecommendMapView(
 /**
  * The series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.tiledwebmap
  *
@@ -816,7 +815,6 @@ class TiledWebMapSeries extends MapSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tiledwebmap: typeof TiledWebMapSeries;
@@ -831,5 +829,4 @@ SeriesRegistry.registerSeriesType('tiledwebmap', TiledWebMapSeries);
  *
  * */
 
-/** @internal */
 export default TiledWebMapSeries;

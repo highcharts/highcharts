@@ -58,7 +58,6 @@ import {
 /**
  * The timeline series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.timeline
  *
@@ -468,8 +467,8 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
  *
  * */
 
-/** @internal */
 interface TimelineSeries {
+    /** @internal */
     pointClass: typeof TimelinePoint;
     trackerGroups: Array<string>;
 }
@@ -486,7 +485,6 @@ extend(TimelineSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         timeline: typeof TimelineSeries;
@@ -500,5 +498,4 @@ SeriesRegistry.registerSeriesType('timeline', TimelineSeries);
  *
  * */
 
-/** @internal */
 export default TimelineSeries;
