@@ -676,6 +676,40 @@ QUnit.test('High contrast theme should not swallow updates', function (assert) {
     });
 });
 
+QUnit.test('High contrast should restore recreated points', function (assert) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            series: [{
+                data: [{
+                    color: '#ff0000',
+                    y: 1
+                }, {
+                    color: '#00ff00',
+                    y: 2
+                }]
+            }]
+        });
+
+        forcedColors.set(true);
+        chart.series[0].update({
+            type: 'column'
+        });
+        forcedColors.set(false);
+
+        assert.deepEqual(
+            chart.series[0].points.map(point => point.color),
+            ['#ff0000', '#00ff00'],
+            'Point colors should survive a series update that recreates points'
+        );
+
+        assert.deepEqual(
+            chart.series[0].userOptions.data.map(point => point.color),
+            ['#ff0000', '#00ff00'],
+            'Point colors should be restored in the series user options'
+        );
+    });
+});
+
 QUnit.test('High contrast theme should not swallow axis updates', function (
     assert
 ) {
@@ -706,6 +740,50 @@ QUnit.test('High contrast theme should not swallow axis updates', function (
             chart.yAxis[0].options.gridLineColor,
             '#ff0000',
             'Axis update should survive the theme being removed'
+        );
+    });
+});
+
+QUnit.test('High contrast should restore an axis after removal', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            accessibility: {
+                highContrastTheme: {
+                    yAxis: [{
+                        gridLineColor: 'windowText'
+                    }, {
+                        gridLineColor: 'windowText'
+                    }]
+                }
+            },
+            yAxis: [{
+                gridLineColor: '#0000ff',
+                id: 'first'
+            }, {
+                gridLineColor: '#00ff00',
+                id: 'second'
+            }],
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        forcedColors.set(true);
+        chart.get('first').remove();
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.yAxis[0].options.id,
+            'second',
+            'The second axis should remain after removing the first'
+        );
+
+        assert.strictEqual(
+            chart.yAxis[0].options.gridLineColor,
+            '#00ff00',
+            'The remaining axis should keep its own color'
         );
     });
 });
@@ -822,6 +900,66 @@ QUnit.test('High contrast theme should not swallow direct updates', function (
             chart.options.tooltip.backgroundColor,
             '#ff0000',
             'Tooltip update should survive the theme being removed'
+        );
+    });
+});
+
+QUnit.test('Direct updates matching the theme should survive', function (
+    assert
+) {
+    withForcedColors(function (forcedColors) {
+        const chart = forcedColors.chart({
+            legend: {
+                itemStyle: {
+                    color: '#0000ff'
+                }
+            },
+            title: {
+                style: {
+                    color: '#0000ff'
+                },
+                text: 'Chart title'
+            },
+            tooltip: {
+                backgroundColor: '#0000ff'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        forcedColors.set(true);
+        chart.legend.update({
+            itemStyle: {
+                color: 'windowText'
+            }
+        }, false);
+        chart.tooltip.update({
+            backgroundColor: 'window'
+        });
+        chart.setTitle({
+            style: {
+                color: 'windowText'
+            }
+        }, void 0, false);
+        forcedColors.set(false);
+
+        assert.strictEqual(
+            chart.options.legend.itemStyle.color,
+            'windowText',
+            'Legend update should not be mistaken for an untouched theme value'
+        );
+
+        assert.strictEqual(
+            chart.options.tooltip.backgroundColor,
+            'window',
+            'Tooltip update should not be mistaken for an untouched theme value'
+        );
+
+        assert.strictEqual(
+            chart.options.title.style.color,
+            'windowText',
+            'Title update should not be mistaken for an untouched theme value'
         );
     });
 });

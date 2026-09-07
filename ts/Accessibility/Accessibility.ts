@@ -34,6 +34,7 @@ import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type Tooltip from '../Core/Tooltip';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -525,18 +526,32 @@ namespace Accessibility {
     }
 
     /**
-     * Roll back the high contrast theme before an axis update. The theme is
-     * applied again from the accessibility update that follows the redraw.
+     * Roll back the high contrast theme before a direct chart method updates
+     * options. The theme is applied again from the accessibility update that
+     * follows the redraw.
      * @private
      */
-    function axisOnUpdate(
-        this: Axis,
+    function chartMethodWrap(
+        this: ChartComposition,
         proceed: Function,
-        ...args: Parameters<Axis['update']>
+        ...args: Array<unknown>
     ): void {
-        whcm.onChartUpdate(
-            this.chart as Accessibility.ChartComposition
-        );
+        whcm.onChartUpdate(this);
+        proceed.apply(this, args);
+    }
+
+    /**
+     * Roll back the high contrast theme before a chart component updates or is
+     * removed. The theme is applied again from the accessibility update that
+     * follows the redraw.
+     * @private
+     */
+    function chartComponentMethodWrap(
+        this: { chart: Chart },
+        proceed: Function,
+        ...args: Array<unknown>
+    ): void {
+        whcm.onChartUpdate(this.chart as Accessibility.ChartComposition);
         proceed.apply(this, args);
     }
 
@@ -598,6 +613,7 @@ namespace Accessibility {
         PointClass: typeof Point,
         SeriesClass: typeof Series,
         SVGElementClass: typeof SVGElement,
+        TooltipClass: typeof Tooltip,
         RangeSelectorClass?: typeof RangeSelector
     ): void {
 
@@ -620,7 +636,12 @@ namespace Accessibility {
         if (!chartProto.updateA11yEnabled) {
             chartProto.updateA11yEnabled = chartUpdateA11yEnabled;
 
-            wrap(AxisClass.prototype, 'update', axisOnUpdate);
+            wrap(AxisClass.prototype, 'remove', chartComponentMethodWrap);
+            wrap(AxisClass.prototype, 'update', chartComponentMethodWrap);
+            wrap(LegendClass.prototype, 'update', chartComponentMethodWrap);
+            wrap(SeriesClass.prototype, 'update', chartComponentMethodWrap);
+            wrap(TooltipClass.prototype, 'update', chartComponentMethodWrap);
+            wrap(chartProto, 'setTitle', chartMethodWrap);
             wrap(chartProto, 'update', chartUpdateWrap);
 
             addEvent(
@@ -716,11 +737,8 @@ namespace Accessibility {
      * @private
      */
     function seriesOnUpdate(
-        this: SeriesComposition,
-        e: { options: SeriesOptions }
+        this: SeriesComposition
     ): void {
-        whcm.onSeriesUpdate(this, e.options);
-
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

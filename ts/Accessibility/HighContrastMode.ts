@@ -255,10 +255,8 @@ function findPointRestore(
 /**
  * Pick the entries that can safely be handed back from a remembered set of
  * options. An entry is only restored when the value in effect is still the one
- * the theme set, so that changes made in the meantime survive. This also covers
- * the options that are written straight into `chart.options`, the way
- * `Chart#setTitle`, `Legend#update` and `Tooltip#update` do, without having to
- * listen for each of them.
+ * the theme set, so that changes made in the meantime survive. This also
+ * provides a fallback for options written straight into `chart.options`.
  *
  * @private
  * @param {Highcharts.Dictionary<*>} stored The remembered options.
@@ -730,32 +728,6 @@ function onChartUpdate(
 }
 
 /**
- * Keep the remembered series colors in sync with user updates, so that turning
- * off high contrast mode does not roll the updates back.
- *
- * @private
- * @param {Highcharts.Series} series The series being updated.
- * @param {Highcharts.SeriesOptions} options The options passed to `update`.
- * @return {void}
- */
-function onSeriesUpdate(
-    series: Series,
-    options?: Partial<SeriesOptions>
-): void {
-    const highContrastState = series.chart?.highContrastState;
-
-    if (!options || !highContrastState?.applied || highContrastState.applying) {
-        return;
-    }
-
-    const restore = findSeriesRestore(highContrastState, series);
-
-    if (restore) {
-        mergeColorOptions(restore.options, options, seriesColorProps);
-    }
-}
-
-/**
  * Keep the remembered point colors in sync with user updates.
  *
  * @private
@@ -795,7 +767,6 @@ const whcm = {
     isHighContrastModeActive,
     onChartUpdate,
     onPointUpdate,
-    onSeriesUpdate,
     removeHighContrastModeListener,
     setHighContrastTheme,
     unsetHighContrastTheme,

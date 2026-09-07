@@ -556,8 +556,7 @@ const Options: DeepPartial<A11yOptions> = {
          * are turned off. The chart follows the system setting without
          * requiring a page reload.
          *
-         * Set to `true` to always apply the theme, or `false` to never apply
-         * it.
+         * `true` always applies the theme, while `false` never applies it.
          *
          * @sample highcharts/accessibility/high-contrast-mode
          *         High contrast mode enabled

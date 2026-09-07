@@ -38,6 +38,7 @@ Accessibility.compose(
     G.Point,
     G.Series,
     G.SVGElement,
+    G.Tooltip,
     G.RangeSelector
 );
 export default Highcharts;
