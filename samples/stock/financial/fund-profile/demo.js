@@ -804,7 +804,7 @@ async function renderDashboard() {
                     }
                 },
                 title: {
-                    text: 'Region Breakdown Chart'
+                    text: 'Region Breakdown'
                 },
                 series: [{
                     name: 'Aviva Investors Multi-asset Plus Fund III',
@@ -817,7 +817,7 @@ async function renderDashboard() {
             chartOptions: {
                 ...chartSharedOptions(countryExposureData),
                 title: {
-                    text: 'Country Exposure Chart'
+                    text: 'Country Exposure'
                 },
                 subtitle: {
                     text: 'Top 15 countries by equity weight'
@@ -841,7 +841,7 @@ async function renderDashboard() {
             connector: {
                 id: 'growth-series',
                 columnAssignment: [{
-                    seriesId: 'Aviva Investors Multi-asset Plus Fund III time',
+                    seriesId: 'Aviva Investors Multi-asset Plus Fund III',
                     data: {
                         x: 'Date',
                         y: 'F0GBR052QA'
@@ -993,7 +993,7 @@ async function renderDashboard() {
                     gridLineColor: 'var(--highcharts-neutral-color-20)',
                     opposite: false,
                     labels: {
-                        format: '${value:,.0f}'
+                        format: '£{value:,.0f}'
                     },
                     plotLines: [{
                         value: 10000,
@@ -1046,7 +1046,7 @@ async function renderDashboard() {
                         textAlign: 'right'
                     },
                     valueDecimals: 2,
-                    valuePrefix: '$'
+                    valuePrefix: '£'
                 },
                 plotOptions: {
                     series: {
@@ -1082,7 +1082,7 @@ async function renderDashboard() {
                             },
                             yAxis: {
                                 labels: {
-                                    format: '${value:,.0f}',
+                                    format: '£{value:,.0f}',
                                     align: 'left',
                                     x: 0,
                                     y: -4
