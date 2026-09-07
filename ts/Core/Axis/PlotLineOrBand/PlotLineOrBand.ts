@@ -421,7 +421,8 @@ class PlotLineOrBand {
                     }
                 });
 
-                // The fill is only applied on creation, so update in place
+                // The fill is only applied on creation, so update the gradient
+                // element directly
                 const gradientKey = svgElem?.element.gradient;
                 if (gradientKey) {
                     axis.chart.renderer.gradients[gradientKey]
