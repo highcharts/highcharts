@@ -233,6 +233,40 @@ QUnit.test('Grid algorithm tests.', function (assert) {
     assert.ok(result, 'Clusters should not overlap when allowOverlap = false.');
 });
 
+QUnit.test('Real Y extremes use the plot area', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                margin: [100, 20, 30, 150]
+            },
+            series: [{
+                type: 'scatter',
+                cluster: {
+                    enabled: true
+                },
+                data: [[0, 0], [1, 1]]
+            }]
+        }),
+        series = chart.series[0],
+        extremes = series.getRealExtremes(),
+        yValues = [
+            series.yAxis.toValue(chart.plotTop),
+            series.yAxis.toValue(chart.plotTop + chart.plotHeight)
+        ];
+
+    assert.close(
+        extremes.minY,
+        Math.min(...yValues),
+        1e-8,
+        'The minimum should come from a vertical plot boundary'
+    );
+    assert.close(
+        extremes.maxY,
+        Math.max(...yValues),
+        1e-8,
+        'The maximum should come from a vertical plot boundary'
+    );
+});
+
 QUnit.test('Kmeans algorithm tests.', function (assert) {
     var chart = Highcharts.chart('container', options),
         series = chart.series[0],
