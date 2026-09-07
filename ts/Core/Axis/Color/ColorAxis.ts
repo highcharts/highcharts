@@ -405,7 +405,6 @@ class ColorAxis extends Axis implements ColorAxisBase {
     }
 
     /**
-     * Create the color gradient.
      * @internal
      */
     public createGroups(): void {

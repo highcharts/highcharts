@@ -1669,7 +1669,7 @@ namespace RadialAxis {
 
                 // Axis len is used to lay out the ticks
                 this.len = this.width = this.height =
-                    (center[2] - center[3]) * (this.sector ?? 1) / 2;
+                    (center[2] - center[3]) / 2;
             }
         }
     }
