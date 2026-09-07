@@ -456,7 +456,10 @@ class TreemapSeries extends ScatterSeries {
             minimumClusterSize = cluster?.minimumClusterSize || 5;
 
         if (cluster?.enabled) {
-            const parentGroups: {[key: string]: TreemapNode[]} = {};
+            const parentGroups = Object.create(null) as Record<
+                string,
+                TreemapNode[]
+            >;
 
             const checkIfHide = (node: TreemapNode): void => {
                 if (node?.point?.shapeArgs) {
@@ -549,7 +552,7 @@ class TreemapSeries extends ScatterSeries {
                 }
             }
 
-            series.nodeMap = {};
+            series.nodeMap = Object.create(null);
             series.nodeList = [];
             series.parentList = parentList;
             const tree = series.buildTree('', -1, 0, series.parentList);
@@ -1126,21 +1129,20 @@ class TreemapSeries extends ScatterSeries {
     ): TreemapSeries.ListOfParentsObject {
         const arr = isArray(data) ? data : [],
             ids = isArray(existingIds) ? existingIds : [],
-            listOfParents = arr.reduce(function (
-                prev: TreemapSeries.ListOfParentsObject,
-                curr: TreemapPoint,
-                i: number
-            ): TreemapSeries.ListOfParentsObject {
-                const parent = (curr.parent ?? '');
+            listOfParents = Object.create(
+                null
+            ) as TreemapSeries.ListOfParentsObject;
 
-                if (typeof prev[parent] === 'undefined') {
-                    prev[parent] = [];
-                }
-                prev[parent].push(i);
-                return prev;
-            }, {
-                '': [] // Root of tree
-            });
+        listOfParents[''] = []; // Root of tree
+
+        arr.forEach(function (curr: TreemapPoint, i: number): void {
+            const parent = (curr.parent ?? '');
+
+            if (typeof listOfParents[parent] === 'undefined') {
+                listOfParents[parent] = [];
+            }
+            listOfParents[parent].push(i);
+        });
 
         // If parent does not exist, hoist parent to root of tree.
         for (const parent of Object.keys(listOfParents)) {
@@ -1170,7 +1172,7 @@ class TreemapSeries extends ScatterSeries {
 
         series.parentList = series.getListOfParents(this.data, allIds);
 
-        series.nodeMap = {};
+        series.nodeMap = Object.create(null);
         series.nodeList = [];
         return series.buildTree('', -1, 0, series.parentList || {});
     }

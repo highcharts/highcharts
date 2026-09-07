@@ -880,7 +880,7 @@ class SunburstSeries extends TreemapSeries {
         let mapIdToNode = series.nodeMap,
             mapOptionsToLevel: Record<string, SunburstSeriesLevelOptions>,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
-            nodeIds: Record<string, boolean> = {};
+            nodeIds = Object.create(null) as Record<string, boolean>;
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
 
