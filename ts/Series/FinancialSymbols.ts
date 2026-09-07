@@ -8,7 +8,6 @@ const { composed } = H;
 
 /* *
  * Declarations
- * @internal
  * */
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
@@ -21,6 +20,7 @@ declare module '../Core/Renderer/SVG/SymbolType' {
 /* *
  * Composition
  * */
+/** @internal */
 namespace FinancialSymbols {
 
     /** @internal */

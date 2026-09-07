@@ -62,16 +62,68 @@ declare module '../Core/Series/SeriesOptions' {
 }
 
 interface OnPoint {
+
+    /**
+     * Options for the connector in the _Series on point_ feature.
+     *
+     * In styled mode, the connector can be styled with the
+     * `.highcharts-connector-seriesonpoint` class name.
+     *
+     * @since 10.2.0
+     */
     connectorOptions?: SVGAttributes;
+
+    /**
+     * The `id` of the point that we connect the series to. Only points with a
+     * given `plotX` and `plotY` values and map points are valid.
+     *
+     * @since 10.2.0
+     */
     id: string;
+
+    /**
+     * Options allowing to set a position and an offset of the series in the
+     * _Series on point_ feature.
+     *
+     * @since 10.2.0
+     */
     position?: Position;
+
     z?: number;
 }
 
 interface Position {
+
+    /**
+     * X position of the series center. By default, the series is displayed on
+     * the point that it is connected to.
+     *
+     * @since 10.2.0
+     */
     x?: number
+
+    /**
+     * Y position of the series center. By default, the series is displayed on
+     * the point that it is connected to.
+     *
+     * @since 10.2.0
+     */
     y?: number;
+
+    /**
+     * Series center offset from the original x position. If defined, the
+     * connector line is drawn connecting original position with new position.
+     *
+     * @since 10.2.0
+     */
     offsetX?: number;
+
+    /**
+     * Series center offset from the original y position. If defined, the
+     * connector line is drawn from original position to a new position.
+     *
+     * @since 10.2.0
+     */
     offsetY?: number;
 }
 

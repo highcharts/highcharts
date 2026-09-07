@@ -31,6 +31,7 @@ import {
  *
  * */
 
+/** @internal */
 namespace RangeDataLabel {
 
     /** @internal */
