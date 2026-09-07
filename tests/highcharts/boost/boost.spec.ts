@@ -5,11 +5,15 @@ import { test, expect, createChart } from '~/fixtures.ts';
 // Equivalent of test/typescript-karma/masters/modules/boost.test.js
 
 const boostModules = { modules: ['modules/boost.src.js'] };
+const boostMoreModules = {
+    modules: ['highcharts-more.src.js', ...boostModules.modules]
+};
 
 async function boostedAreaSampleHasContent(
     page: Page,
     seriesType: 'area' | 'areaspline' | 'arearange',
-    boostShape: 'lines' | 'triangles'
+    boostShape: 'lines' | 'triangles',
+    moduleConfig = boostModules
 ): Promise<boolean> {
     const data = Array.from({ length: 24 }, (_, i) => {
         if (seriesType === 'arearange') {
@@ -46,7 +50,7 @@ async function boostedAreaSampleHasContent(
             }]
         },
         {
-            ...boostModules,
+            ...moduleConfig,
             css: '#container { width: 600px; height: 400px; }'
         }
     );
@@ -234,7 +238,8 @@ test.describe('Boost Module', () => {
         const hasContent = await boostedAreaSampleHasContent(
             page,
             'arearange',
-            'triangles'
+            'triangles',
+            boostMoreModules
         );
 
         expect(
@@ -249,7 +254,8 @@ test.describe('Boost Module', () => {
         const hasContent = await boostedAreaSampleHasContent(
             page,
             'arearange',
-            'lines'
+            'lines',
+            boostMoreModules
         );
 
         expect(
