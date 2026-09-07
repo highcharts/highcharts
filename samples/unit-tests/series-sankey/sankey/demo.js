@@ -164,6 +164,25 @@ QUnit.test('Sankey', function (assert) {
     );
 });
 
+QUnit.test('Built-in-named node IDs', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'sankey',
+            keys: ['from', 'to', 'weight'],
+            data: [
+                ['toString', 'middle', 1],
+                ['middle', '__proto__', 1]
+            ]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].nodes.map(node => node.id).sort(),
+        ['__proto__', 'middle', 'toString'].sort(),
+        'Built-in object property names should work as node IDs'
+    );
+});
+
 QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

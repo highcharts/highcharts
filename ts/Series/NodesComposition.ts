@@ -292,7 +292,10 @@ namespace NodesComposition {
         this: SeriesComposition
     ): void {
         const chart = this.chart,
-            nodeLookup = {} as Record<string, PointComposition>;
+            nodeLookup = Object.create(null) as Record<
+                string,
+                PointComposition
+            >;
 
         seriesProto.generatePoints.call(this);
 
