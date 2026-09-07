@@ -1,8 +1,10 @@
 ---
 name: DWS Equity Style Box Time Series
+authors:
+  - Pawel Dalek
 description: Shows DWS equity style box positions over time as sparkline heatmap cells.
 tags:
-  - DWS components
+  - Morningstar
 requiresManualTesting: true
 js_wrap: b
 ...

@@ -3,6 +3,7 @@
 
 body {
     font-family: sans-serif;
+    padding: 10px;
     background: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
 }

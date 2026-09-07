@@ -1,8 +1,10 @@
 ---
 name: DWS Asset Allocation Pie
+authors:
+  - Askel Eirik Johansson
 description: Shows DWS fund asset allocation as two pie charts with synchronized data grids.
 tags:
-  - DWS Dashboards
+  - Morningstar
 requiresManualTesting: true
 js_wrap: b
 ...

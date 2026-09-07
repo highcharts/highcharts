@@ -43,14 +43,23 @@ const pieColors = [
     '#29D36A',
     '#EA293C',
     'var(--highcharts-neutral-color-100, #000)',
-    '#ABABAB'
+    '#F99406'
 ];
 
-function getTypeColor(types, type) {
-    return pieColors[types.indexOf(type) % pieColors.length];
+function getTypeColors(types) {
+    let colorIndex = -1;
+    return types.map(type => (
+        type === 'Other' ?
+            '#ABABAB' :
+            pieColors[++colorIndex % pieColors.length]
+    ));
 }
 
-const pieChartOptions = {
+function getTypeColor(types, type) {
+    return getTypeColors(types)[types.indexOf(type)];
+}
+
+const getPieChartOptions = types => ({
     chart: {
         type: 'pie',
         backgroundColor: 'transparent'
@@ -81,7 +90,7 @@ const pieChartOptions = {
             innerSize: '90%',
             borderWidth: 4,
             borderRadius: '50%',
-            colors: pieColors,
+            colors: getTypeColors(types),
             dataLabels: {
                 enabled: false
             },
@@ -103,7 +112,7 @@ const pieChartOptions = {
     credits: {
         enabled: false
     }
-};
+});
 
 const getGridOptions = types => ({
     rendering: {
@@ -219,7 +228,7 @@ async function renderBoard() {
             },
             renderTo: 'basic-pie-chart',
             type: 'Highcharts',
-            chartOptions: pieChartOptions
+            chartOptions: getPieChartOptions(basicTypes)
         }, {
             renderTo: 'basic-datagrid',
             connector: {
@@ -258,7 +267,7 @@ async function renderBoard() {
             },
             renderTo: 'can-pie-chart',
             type: 'Highcharts',
-            chartOptions: pieChartOptions
+            chartOptions: getPieChartOptions(canadianTypes)
         }, {
             renderTo: 'can-datagrid',
             connector: {
