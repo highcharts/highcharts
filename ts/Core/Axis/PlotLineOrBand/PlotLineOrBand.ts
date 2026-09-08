@@ -171,8 +171,11 @@ class PlotLineOrBand {
     /** @internal */
     public eventsAdded?: boolean;
 
-    /** @internal */
-    public gradientClass?: string;
+    /**
+     * Unique token that keeps this band's gradient out of the shared cache.
+     * @internal
+     */
+    public gradientKey?: string;
 
     /**
      * SVG element of the label.
@@ -416,16 +419,17 @@ class PlotLineOrBand {
                 // alone (#1282)
                 fill = merge(color, {
                     [gradientName]: {
-                        'class': this.gradientClass ||= uniqueKey(),
+                        'data-highcharts-band':
+                            this.gradientKey ||= uniqueKey(),
                         gradientTransform
                     }
                 });
 
                 // The fill is only applied on creation, so update the gradient
                 // element directly
-                const gradientKey = svgElem?.element.gradient;
-                if (gradientKey) {
-                    axis.chart.renderer.gradients[gradientKey]
+                const cacheKey = svgElem?.element.gradient;
+                if (cacheKey) {
+                    axis.chart.renderer.gradients[cacheKey]
                         ?.attr({ gradientTransform });
                 }
             }
@@ -564,11 +568,11 @@ class PlotLineOrBand {
 
         // No other band can reuse the claimed gradient (#6257)
         const gradients = this.axis.chart.renderer.gradients,
-            gradientKey = this.gradientClass && this.svgElem?.element.gradient;
+            cacheKey = this.gradientKey && this.svgElem?.element.gradient;
 
-        if (gradientKey && gradients) {
-            gradients[gradientKey]?.destroy();
-            delete gradients[gradientKey];
+        if (cacheKey && gradients) {
+            gradients[cacheKey]?.destroy();
+            delete gradients[cacheKey];
         }
 
         delete (this as Partial<this>).axis;

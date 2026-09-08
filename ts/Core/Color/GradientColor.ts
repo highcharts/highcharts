@@ -39,7 +39,7 @@ export interface GradientColorStop {
 
 /** @internal */
 export interface GradientAttributes {
-    'class'?: string;
+    'data-highcharts-band'?: string;
     gradientTransform?: string;
     gradientUnits?: 'userSpaceOnUse';
 }
