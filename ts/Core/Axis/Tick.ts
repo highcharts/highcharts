@@ -457,8 +457,8 @@ class Tick {
                 renderer
                     .text(
                         str,
-                        xy?.x,
-                        xy?.y,
+                        xy?.x ?? 0,
+                        xy?.y ?? 0,
                         labelOptions.useHTML
                     )
                     .add(axis.labelGroup) :

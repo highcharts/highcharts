@@ -760,3 +760,29 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('HTML tick labels should have an initial position', function (
+    assert
+) {
+    const chart = Highcharts.chart('container', {
+            xAxis: {
+                labels: {
+                    useHTML: true
+                }
+            },
+            series: [{
+                data: [1]
+            }]
+        }),
+        axis = chart.xAxis[0],
+        tick = axis.ticks[axis.tickPositions[0]],
+        label = tick.createLabel('Test', axis.options.labels);
+
+    assert.deepEqual(
+        [label.attr('x'), label.attr('y')],
+        [0, 0],
+        'The label should not be initialized with NaN coordinates'
+    );
+
+    label.destroy();
+});
