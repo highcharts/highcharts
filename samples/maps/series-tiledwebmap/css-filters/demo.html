@@ -1,0 +1,44 @@
+<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://code.highcharts.com/maps/modules/tiledwebmap.js"></script>
+<script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
+
+<div class="demo-wrap">
+    <div class="controls">
+        <div class="presets" role="group" aria-label="Tile filter preset">
+            <button type="button" data-filter="" aria-pressed="true">
+                None
+            </button>
+            <button type="button" data-filter="f-grayscale" aria-pressed="false">
+                Grayscale
+            </button>
+            <button type="button" data-filter="f-night" aria-pressed="false">
+                Night
+            </button>
+            <button type="button" data-filter="f-sepia" aria-pressed="false">
+                Sepia
+            </button>
+            <button type="button" data-filter="f-blueprint" aria-pressed="false">
+                Blueprint
+            </button>
+            <button type="button" data-filter="f-muted" aria-pressed="false">
+                Muted
+            </button>
+            <button type="button" data-filter="f-blur" aria-pressed="false">
+                Blur
+            </button>
+        </div>
+
+        <div class="intensity">
+            <label for="amount">Intensity</label>
+            <input type="range" id="amount" min="0" max="100" step="5"
+                value="100" disabled>
+            <output id="amount-value" for="amount">100%</output>
+        </div>
+    </div>
+
+    <div id="container"></div>
+
+    <pre id="css-output" aria-live="polite"></pre>
+</div>

@@ -1,0 +1,122 @@
+.demo-wrap {
+    /* Set by the intensity slider, scales every preset below */
+    --amount: 1;
+
+    max-width: 800px;
+    min-width: 310px;
+    margin: 0 auto;
+    font-family: system-ui, sans-serif;
+    color: var(--highcharts-neutral-color-100, #000);
+}
+
+#container {
+    height: 500px;
+    max-height: calc(100vw - 20px);
+    margin: 0 auto;
+}
+
+/* The filter targets the tiled web map series group only, so tiles are
+   restyled while the data series on top keep their own colors. */
+.highcharts-tiledwebmap-series {
+    transition: filter 250ms ease-out;
+}
+
+.f-grayscale .highcharts-tiledwebmap-series {
+    filter: grayscale(var(--amount));
+}
+
+.f-night .highcharts-tiledwebmap-series {
+    filter:
+        invert(var(--amount))
+        hue-rotate(calc(180deg * var(--amount)))
+        brightness(calc(1 - 0.1 * var(--amount)))
+        contrast(calc(1 - 0.15 * var(--amount)));
+}
+
+/* Partial sepia keeps some of the original hue, so water and land stay
+   distinguishable instead of flattening into one tone */
+.f-sepia .highcharts-tiledwebmap-series {
+    filter:
+        saturate(calc(1 + 0.5 * var(--amount)))
+        sepia(calc(0.55 * var(--amount)))
+        contrast(calc(1 + 0.08 * var(--amount)))
+        brightness(calc(1 + 0.04 * var(--amount)));
+}
+
+.f-blueprint .highcharts-tiledwebmap-series {
+    filter:
+        grayscale(var(--amount))
+        sepia(var(--amount))
+        hue-rotate(calc(190deg * var(--amount)))
+        saturate(calc(1 + 3 * var(--amount)))
+        brightness(calc(1 - 0.05 * var(--amount)));
+}
+
+.f-muted .highcharts-tiledwebmap-series {
+    filter:
+        saturate(calc(1 - 0.75 * var(--amount)))
+        brightness(calc(1 + 0.12 * var(--amount)))
+        contrast(calc(1 - 0.2 * var(--amount)));
+}
+
+/* Filtering the group rather than each image keeps blur seamless across
+   tile edges */
+.f-blur .highcharts-tiledwebmap-series {
+    filter:
+        blur(calc(3px * var(--amount)))
+        saturate(calc(1 - 0.4 * var(--amount)));
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.presets button {
+    padding: 0.35rem 0.7rem;
+    font: inherit;
+    color: inherit;
+    background: var(--highcharts-background-color, #fff);
+    border: 1px solid var(--highcharts-neutral-color-20, #ccc);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.presets button:hover {
+    border-color: var(--highcharts-neutral-color-60, #666);
+}
+
+.presets button[aria-pressed="true"] {
+    color: #fff;
+    background: var(--highcharts-color-0, #2caffe);
+    border-color: var(--highcharts-color-0, #2caffe);
+}
+
+.intensity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.intensity output {
+    min-width: 3.5em;
+    font-variant-numeric: tabular-nums;
+}
+
+#css-output {
+    margin: 0.75rem 0 0;
+    padding: 0.6rem 0.75rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    background: var(--highcharts-neutral-color-3, #f7f7f7);
+    border-radius: 4px;
+}
