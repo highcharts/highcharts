@@ -42,7 +42,14 @@ async function renderChart() {
                         if (data[code - 1]) {
                             data[code - 1][2] = 100;
                         }
-                        return JSON.stringify(data);
+                        // Workaround for heatmap update issue (while sorting)
+                        // columns in Grid, #25312.
+                        return JSON.stringify(data.map(([x, y, value]) => ({
+                            id: `x${x}y${y}`,
+                            x,
+                            y,
+                            value
+                        })));
                     }),
                 'Style Box': dataTable.getColumn('StyleBox'),
                 'Growth Score': dataTable.getColumn('GrowthScore'),
