@@ -277,6 +277,7 @@ namespace PlotLineOrBandAxis {
                                 // Update
                                 if (pItem) {
                                     pItem.update(pOptions, false);
+                                    options[coll]![i] = pItem.options;
 
                                 // Add
                                 } else {

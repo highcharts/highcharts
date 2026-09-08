@@ -1124,6 +1124,11 @@ QUnit.test(
             greenBand,
             'The first plot band should be the same instance'
         );
+        assert.ok(
+            chart.xAxis[0].plotBands[0].options ===
+            chart.xAxis[0].options.plotBands[0],
+            'The axis options should be kept in sync with the plot band options'
+        );
         assert.strictEqual(
             chart.xAxis[0].plotBands[1],
             blueBand,
@@ -1249,7 +1254,7 @@ QUnit.test(
             'The "color" option of the plot band should be updated'
         );
 
-        // Update without idea should match id'ed band
+        // Update without id should match id'ed band
         chart.update({
             xAxis: {
                 plotBands: [
@@ -1273,6 +1278,19 @@ QUnit.test(
             blueBand.options.from,
             3,
             'The "from" option of the plot band should be updated'
+        );
+
+        // Remove all plot bands
+        chart.xAxis[0].removePlotBand('blue-band');
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            0,
+            'There should be no plot bands after removePlotBand'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].options.plotBands.length,
+            0,
+            'The axis options should be kept in sync with the plot band options'
         );
     }
 );
