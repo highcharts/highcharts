@@ -1,7 +1,8 @@
 QUnit.test('Credits href should be run through the allow list', function (
     assert
 ) {
-    const errors = [],
+    const done = assert.async(),
+        errors = [],
         unbindError = Highcharts.addEvent(
             Highcharts,
             'displayError',
@@ -12,27 +13,29 @@ QUnit.test('Credits href should be run through the allow list', function (
             }
         );
 
-    try {
-        const chart = Highcharts.chart('container', {
-            credits: {
-                // eslint-disable-next-line no-script-url
-                href: 'javascript:window.creditsXss = true;',
-                text: 'Credits'
-            },
-            series: [{
-                data: [1, 2, 3]
-            }]
-        });
+    const chart = Highcharts.chart('container', {
+        credits: {
+            // eslint-disable-next-line no-script-url
+            href: 'javascript:window.creditsXss = true;',
+            text: 'Credits'
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
 
-        assert.ok(
-            errors.indexOf(33) !== -1,
-            'A warning should be reported for a disallowed credits URL'
-        );
+    assert.ok(
+        errors.indexOf(33) !== -1,
+        'A warning should be reported for a disallowed credits URL'
+    );
 
-        chart.credits.element.dispatchEvent(
-            new MouseEvent('click', { bubbles: true })
-        );
+    chart.credits.element.dispatchEvent(
+        new MouseEvent('click', { bubbles: true })
+    );
 
+    // Navigation to a javascript: URL runs in a later task, so the result is
+    // only visible asynchronously
+    setTimeout(function () {
         assert.strictEqual(
             window.creditsXss,
             void 0,
@@ -50,8 +53,9 @@ QUnit.test('Credits href should be run through the allow list', function (
             -1,
             'An allowed credits URL should pass through the filter'
         );
-    } finally {
+
         unbindError();
         delete window.creditsXss;
-    }
+        done();
+    }, 100);
 });
