@@ -74,37 +74,50 @@ class FilterRow extends HeaderRow {
 
     public override async renderContent(): Promise<void> {
         const vp = this.viewport;
-        const enabledColumns = vp.grid.enabledColumns || [];
+        const desiredKeys: Record<string, boolean> = {};
+        const orderedCells: FilterCell[] = [];
 
-        vp.theadElement?.appendChild(this.htmlElement);
+        if (!this.htmlElement.parentElement) {
+            vp.theadElement?.appendChild(this.htmlElement);
+        }
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
+        this.clearPositionClasses();
 
-        for (let i = 0, iEnd = vp.columns.length; i < iEnd; i++) {
-            const column = vp.columns[i];
-            if (enabledColumns?.indexOf(column.id) < 0) {
-                continue;
-            }
+        const columns = vp.getRenderedColumns();
+        const firstColumn = columns[0];
 
-            const cell = this.createCell(column);
-
-            await cell.render();
-
-            if (
-                vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
-            ) {
-                column.filtering?.renderFilteringContent(cell.htmlElement);
-            }
-        }
-
-        const firstCell = this.cells[0];
-        if (firstCell.column?.index === 0) {
-            // Add class to disable left border on first column
-            this.cells[0].htmlElement.classList.add(
-                Globals.getClassName('columnFirst')
+        for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
+            const column = columns[i];
+            const { cell, isNew } = this.syncHeaderCell(
+                this.getColumnCellKey(column.id),
+                desiredKeys,
+                orderedCells,
+                column
             );
+
+            if (column === firstColumn) {
+                cell.htmlElement.classList.add(
+                    Globals.getClassName('columnFirst')
+                );
+            }
+
+            if (isNew) {
+                await cell.render();
+
+                if (
+                    vp.grid.columnPolicy
+                        .isColumnInlineFilteringEnabled(column.id)
+                ) {
+                    column.filtering?.renderFilteringContent(cell.htmlElement);
+                }
+            }
         }
 
+        this.destroyStaleCells(desiredKeys);
+        this.syncCellElements(orderedCells);
+        this.cells = orderedCells;
         this.setLastCellClass();
+        this.reflowPosition();
     }
 
 }

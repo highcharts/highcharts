@@ -9,7 +9,48 @@
 import * as Highcharts from 'highcharts';
 import 'highcharts/highcharts-more';
 
+test_pane();
 test_seriesAreaRange();
+test_seriesBubble();
+
+/**
+ * Tests the documented `null` value of `pane.background`, which disables the
+ * default backgrounds. #24856
+ */
+function test_pane() {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'gauge'
+        },
+        pane: {
+            background: null,
+            startAngle: -150,
+            endAngle: 150
+        },
+        series: [{
+            type: 'gauge',
+            data: [80]
+        }]
+    });
+}
+
+/**
+ * Tests the documented `colorByPoint` option on bubble series. #24856
+ */
+function test_seriesBubble() {
+    Highcharts.chart('container', {
+        plotOptions: {
+            bubble: {
+                colorByPoint: true
+            }
+        },
+        series: [{
+            type: 'bubble',
+            colorByPoint: true,
+            data: [[1, 1, 10], [2, 2, 20]]
+        }]
+    });
+}
 
 /**
  * Tests Highcharts.seriesTypes.arearange in a complex use case.

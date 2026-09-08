@@ -113,13 +113,13 @@ export function getPathSegments(
 
     if (isFunction(separator)) {
         throw new Error(
-            'TreeView: `data.treeView.input.separator` callback must ' +
+            'TreeView: `treeView.input.separator` callback must ' +
             'return an array.'
         );
     }
 
     throw new Error(
-        'TreeView: `data.treeView.input.separator` must not be empty.'
+        'TreeView: `treeView.input.separator` must not be empty.'
     );
 }
 

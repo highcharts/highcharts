@@ -117,6 +117,7 @@ test.describe('Column Header Toolbar', () => {
             'th[data-column-id="weight"] .hcg-header-cell-menu-icon button'
         );
 
+        await expect(weightMenuButton).toBeVisible();
         await expect(weightMenuButton).toHaveAttribute(
             'aria-label',
             /menu.*weight/i

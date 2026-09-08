@@ -2001,6 +2001,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
+         * @type  {number|Array<number>}
          * @since 2.2.1
          */
         padding: [1, 3],

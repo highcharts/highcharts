@@ -32,8 +32,7 @@ import {
     addEvent,
     fireEvent,
     getAlignFactor,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -344,11 +343,10 @@ function onChartRender(
                         (point.dataLabels || []).forEach((label): void => {
                             const options = label.options || {};
 
-                            label.labelrank = pick(
-                                options.labelrank,
-                                (point as any).labelrank,
-                                point.shapeArgs?.height
-                            ); // #4118
+                            label.labelrank =
+                                options.labelrank ??
+                                (point as any).labelrank ??
+                                point.shapeArgs?.height; // #4118
 
                             // #21725: Sync target positions for generic overlap
                             // checking. During animations (e.g., toggling a

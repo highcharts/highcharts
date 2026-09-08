@@ -203,9 +203,10 @@ const getCurrentTotal = arrOfArr => {
 
     const riskScoreKPIOptions = {
         chart: {
-            height: 186,
+            height: 200,
             type: 'solidgauge',
-            className: 'hidden-title'
+            className: 'hidden-title',
+            marginTop: 30
         },
         title: {
             text: 'Risk score',
@@ -214,8 +215,8 @@ const getCurrentTotal = arrOfArr => {
         pane: {
             innerSize: '85%',
             borderRadius: '50%',
-            endAngle: 80,
-            startAngle: -80
+            startAngle: -100,
+            endAngle: 100
         },
         tooltip: {
             enabled: false
@@ -223,9 +224,8 @@ const getCurrentTotal = arrOfArr => {
         plotOptions: {
             series: {
                 dataLabels: {
-                    format: '<div style="text-align:center; ' +
-                        'margin-top: -20px">' +
-                    '<div style="font-size:1.6em;">{y:.0f}</div>' +
+                    format: '<div style="text-align:center">' +
+                    '<div style="font-size:1.4em;">{y:.0f}</div>' +
                     '<div style="font-size:14px; opacity:0.5; ' +
                     'text-align: center;">Risk score</div>' +
                     '</div>',
@@ -247,19 +247,21 @@ const getCurrentTotal = arrOfArr => {
             visible: true,
             tickPositions: [23, 40, 60, 78, 90],
             minorTickWidth: 0,
-            tickLength: 50,
+            gridLineWidth: 2,
             min: 0,
             max: 100,
             labels: {
                 enabled: false
             },
-            zIndex: 10
+            gridZIndex: 10,
+            startOnTick: false,
+            endOnTick: false
         }
     };
 
     const goalAnalysisKPIOptions = {
         chart: {
-            height: 186,
+            height: 200,
             type: 'solidgauge',
             className: 'hidden-title'
         },
@@ -268,8 +270,6 @@ const getCurrentTotal = arrOfArr => {
             floating: true
         },
         pane: {
-            startAngle: 0,
-            endAngle: 360,
             innerSize: '80%',
             borderRadius: '50%'
         },
@@ -294,10 +294,9 @@ const getCurrentTotal = arrOfArr => {
         },
         series: [{
             dataLabels: {
-                format: '<div style="text-align:center; ' +
-                    'margin-top: -40px">' +
-                    '<div style="font-size:1.4em;">{y}%</div>' +
-                    '<div style="font-size:14px; opacity:0.5; ' +
+                format: '<div style="text-align:center">' +
+                    '<div style="font-size:1.2em;">{y:.0f}</div>' +
+                    '<div style="font-size:10px; opacity:0.5; ' +
                     'text-align: center;">Goal probability</div>' +
                     '</div>',
                 useHTML: true

@@ -19,7 +19,7 @@ import { error } from '../../Core/Utilities.js';
  * */
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
-import { clamp, pick } from '../../Shared/Utilities.js';
+import { clamp } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -519,14 +519,14 @@ class WGLShader {
 
             const pxSizes = series.getPxExtremes();
 
-            zMin = pick(seriesOptions.zMin, clamp(
+            zMin = (seriesOptions.zMin ?? clamp(
                 zCalcMin,
                 seriesOptions.displayNegative === false ?
                     (seriesOptions.zThreshold as any) : -Number.MAX_VALUE,
                 zMin
             ));
 
-            zMax = pick(seriesOptions.zMax, Math.max(zMax, zCalcMax));
+            zMax = (seriesOptions.zMax ?? Math.max(zMax, zCalcMax));
 
             this.gl.uniform1i(this.isBubbleUniform as any, 1);
             this.gl.uniform1i(this.isCircleUniform as any, 1);

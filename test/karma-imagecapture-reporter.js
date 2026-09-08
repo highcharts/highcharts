@@ -9,23 +9,31 @@
 const fs = require('fs');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
 const version = require('../package.json').version;
+const {
+    classifyRunResult,
+    classifySpecResult,
+    formatRunFailure,
+    formatSpecFailure
+} = require('./karma-imagecapture-result');
 
 /* eslint-disable require-jsdoc */
 function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     baseReporterDecorator(this);
     const LOG = logger.create('reporter.imagecapture');
     const gitSha = getLatestCommitShaSync();
+    const reportRunComplete = this.onRunComplete;
 
     // eslint-disable-next-line func-style
     let fileWritingFinished = function () {};
     let pendingFileWritings = 0;
 
-    const {
-        imageCapture = {
-            resultsOutputPath: 'test/visual-test-results.json'
-        },
-        referenceRun = false
-    } = config;
+    const { imageCapture = {}, referenceRun = false } = config;
+    const resultsOutputPath = imageCapture.resultsOutputPath ||
+        'test/visual-test-results.json';
+    const errorsOutputPath = imageCapture.errorsOutputPath ||
+        'test/visual-test-errors.log';
+    const completionOutputPath = imageCapture.completionOutputPath ||
+        'test/visual-test-complete';
 
 
     /**
@@ -75,16 +83,34 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         if (existingFile && existingFile.length !== 0) {
             try {
                 return JSON.parse(existingFile.toString());
-            } catch (e) {
+            } catch {
                 LOG.warn('Failed to parse existing visual test results.');
             }
         }
         return {}; // empty object
     }
 
+    function appendError(error) {
+        try {
+            fs.appendFileSync(errorsOutputPath, error);
+        } catch (err) {
+            LOG.error(`Failed to write ${errorsOutputPath}\n\n${err}`);
+        }
+    }
+
+    function writeCompletionMarker() {
+        try {
+            fs.writeFileSync(completionOutputPath, '');
+        } catch (err) {
+            LOG.error(
+                `Failed to write ${completionOutputPath}\n\n${err}`
+            );
+        }
+    }
+
     // "browser_start" - a test run is beginning in _this_ browser
     this.onBrowserStart = function (browser) {
-        const filename = imageCapture.resultsOutputPath;
+        const filename = resultsOutputPath;
         LOG.info('Starting visual tests. Results stored in ' + filename);
         const now = new Date();
         const today = now.toISOString().slice(0, 10);
@@ -111,24 +137,32 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
             // no need to log results test results if the test run is for references/baselines
             return;
         }
-        const { log = [], skipped, success } = testResult;
-        const filename = imageCapture.resultsOutputPath;
+        const filename = resultsOutputPath;
         const diffResults = readExistingResult(filename);
+        const result = classifySpecResult(testResult);
 
-        if (skipped) {
+        if (result.type === 'skip') {
             diffResults[testResult.description] = undefined;
-        } else if (success) {
+        } else if (result.type === 'success') {
             diffResults[testResult.description] = 0;
-        } else if (!success && log.length > 0) {
-            const matches = log[0].match(/Actual: (\d+)/);
-            if (matches && matches[1]) {
-                LOG.info(`Test ${testResult.description} differs with ${matches[1]} pixels`);
-                diffResults[testResult.description] = parseInt(matches[1], 10);
-            } else {
-                LOG.warn(`Test ${testResult.description} failed, but unable to determine the diff. Has the test assert(..) changed?`);
-            }
+        } else if (result.type === 'pixel-diff') {
+            LOG.info(`Test ${testResult.description} differs with ${result.pixels} pixels`);
+            diffResults[testResult.description] = result.pixels;
+        } else {
+            appendError(formatSpecFailure(browser, testResult));
+            return;
         }
         fs.writeFileSync(filename, JSON.stringify(diffResults, null, ' '));
+    };
+
+    this.onRunComplete = function (browsers, results) {
+        reportRunComplete.call(this, browsers, results);
+        if (!referenceRun) {
+            if (classifyRunResult(results).type !== 'success') {
+                appendError(formatRunFailure(browsers, results));
+            }
+            writeCompletionMarker();
+        }
     };
 
     /**

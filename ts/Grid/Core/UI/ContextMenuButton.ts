@@ -174,8 +174,8 @@ export class ContextMenuButton implements Button {
         return this;
     }
 
-    public focus(): void {
-        this.buttonEl?.focus();
+    public focus(options?: FocusOptions): void {
+        this.buttonEl?.focus(options);
 
         const cm = this.contextMenu;
         if (cm) {

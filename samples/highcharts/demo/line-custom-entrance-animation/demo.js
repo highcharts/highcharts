@@ -158,11 +158,19 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        yAxis: 0
+        yAxis: 0,
+        tooltip: {
+            valueDecimals: 1,
+            valueSuffix: '%'
+        }
     }, {
         yAxis: 1,
         animation: {
             defer: 1000
+        },
+        tooltip: {
+            valueDecimals: 1,
+            valueSuffix: '%'
         }
     }, {
         yAxis: 2,

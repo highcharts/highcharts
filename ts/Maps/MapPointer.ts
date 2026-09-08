@@ -27,7 +27,6 @@ import {
     defined,
     extend,
     internalClearTimeout,
-    pick,
     wrap
 } from '../Shared/Utilities.js';
 
@@ -224,7 +223,7 @@ namespace MapPointer {
         // Pinch status
         if (
             mapNavigation &&
-            pick(mapNavigation.enableTouchZoom, mapNavigation.enabled)
+            (mapNavigation.enableTouchZoom ?? mapNavigation.enabled)
         ) {
             this.chart.zooming.pinchType = 'xy';
         }

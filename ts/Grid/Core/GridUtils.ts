@@ -17,7 +17,8 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import { isObject } from '../../Shared/Utilities.js';
+import Globals from './Globals.js';
+import { defined, isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -137,6 +138,30 @@ export function makeHTMLElement<T extends HTMLElement>(
  */
 export function makeDiv(className: string, id?: string): HTMLElement {
     return makeHTMLElement('div', { className, id });
+}
+
+/**
+ * Measures the horizontal paddings and borders of an element.
+ *
+ * @param el
+ * The element to measure.
+ *
+ * @returns
+ * The overhead in pixels.
+ */
+export function measureWidthOverhead(el?: HTMLElement): number {
+    if (!el) {
+        return 0;
+    }
+
+    const style = Globals.win.getComputedStyle(el);
+
+    return (
+        (parseFloat(style.paddingLeft) || 0) +
+        (parseFloat(style.paddingRight) || 0) +
+        (parseFloat(style.borderLeftWidth) || 0) +
+        (parseFloat(style.borderRightWidth) || 0)
+    );
 }
 
 /**
@@ -447,6 +472,59 @@ export function mergeStyleValues<T>(
 }
 
 /**
+ * Applies inline styles from options to an element, removing the properties
+ * applied by the previous call so that updates stay deterministic and leave
+ * layout styles set elsewhere on the element untouched.
+ *
+ * @param element
+ * Element to style.
+ *
+ * @param previousProperties
+ * CSS property names applied by the previous call.
+ *
+ * @param styles
+ * Style object to apply.
+ *
+ * @returns
+ * CSS property names applied by this call, to pass to the next one.
+ */
+export function applyTrackedStyles(
+    element: HTMLElement,
+    previousProperties?: string[],
+    styles?: CSSObject
+): (string[] | undefined) {
+    const elementStyle = element.style;
+
+    if (previousProperties) {
+        for (const property of previousProperties) {
+            elementStyle.removeProperty(property);
+        }
+    }
+
+    if (!styles) {
+        return;
+    }
+
+    const appliedProperties: string[] = [];
+
+    for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
+        const value = styles[key];
+        if (!defined(value)) {
+            continue;
+        }
+
+        const property = key.indexOf('-') > -1 ?
+            key :
+            key.replace(/[A-Z]/g, '-$&').toLowerCase();
+
+        elementStyle.setProperty(property, String(value));
+        appliedProperties.push(property);
+    }
+
+    return appliedProperties;
+}
+
+/**
  * Waits for the next animation frame.
  */
 export function waitForAnimationFrame(): Promise<void> {
@@ -465,6 +543,7 @@ export function waitForAnimationFrame(): Promise<void> {
 export default {
     makeHTMLElement,
     makeDiv,
+    measureWidthOverhead,
     isHTML,
     sanitizeText,
     setHTMLContent,
@@ -475,5 +554,6 @@ export default {
     isDeepEqual,
     resolveStyleValue,
     mergeStyleValues,
+    applyTrackedStyles,
     waitForAnimationFrame
 } as const;

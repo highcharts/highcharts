@@ -48,6 +48,94 @@ Grid.grid('container', {
 This example fetches data through a JSON connector, but pagination still runs
 client-side after the data has been loaded.
 
+## Multiple data tables
+
+Some connectors expose multiple data tables. Set `dataTableKey` next to the
+connector options to use a specific connector table as the Grid data source.
+If omitted, Grid uses the first connector table.
+
+```js
+Grid.grid('container', {
+    data: {
+        connector: {
+            type: 'JSON',
+            dataUrl: '/api/products.json',
+            dataTables: [{
+                key: 'products'
+            }, {
+                key: 'summary'
+            }]
+        },
+        dataTableKey: 'products'
+    }
+});
+```
+
+## Using Morningstar connectors
+
+Grid can also use built-in Morningstar connector types through
+`data.connector`, for example `MorningstarDWSInvestments`.
+
+Some Morningstar connectors expose multiple data tables. In that case, use
+`dataTableKey` to choose which returned table Grid should render.
+
+```js
+Grid.grid('container', {
+    data: {
+        connector: {
+            type: 'MorningstarDWSInvestments',
+            api: {
+                url: 'https://demo-live-data.highcharts.com',
+                access: {
+                    url: 'https://demo-live-data.highcharts.com/token/oauth',
+                    token: 'token'
+                }
+            },
+            security: {
+                id: '0P00002QN3'
+            },
+            converters: {
+                FixedIncomeSectorsBreakdown: {}
+            }
+        },
+        dataTableKey: 'IncAllSectors'
+    }
+});
+```
+
+For connector-specific setup, authentication, converters, and available table
+keys, see the [Morningstar documentation](https://www.highcharts.com/docs/morningstar/morningstar).
+
+## Using non-bundled connectors
+
+You can also use connectors that are not available as Grid `data.connector`
+types. In that case, load the connector separately and pass the resulting
+`DataTable` to Grid through `data.dataTable`.
+
+```js
+const securityDetailsConnector =
+    new HighchartsConnectors.Morningstar.SecurityDetailsConnector({
+        api: {
+            access: {
+                token: 'your_access_token'
+            }
+        },
+        security: {
+            id: 'F0GBR050DD',
+            idType: 'MSID'
+        },
+        converters: ['PortfolioHoldings']
+    });
+
+await securityDetailsConnector.load();
+
+Grid.grid('container', {
+    data: {
+        dataTable: securityDetailsConnector.dataTables.PortfolioHoldings
+    }
+});
+```
+
 ## When to use connectors
 
 Use connectors when:
@@ -65,3 +153,4 @@ documentation on [Data handling / DataConnector](https://www.highcharts.com/docs
 
 - [`data`](https://api.highcharts.com/grid/data)
 - [`data.local.connector`](https://api.highcharts.com/grid/data.local.connector)
+- [`data.local.dataTableKey`](https://api.highcharts.com/grid/data.local.dataTableKey)
