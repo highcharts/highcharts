@@ -10,13 +10,13 @@
  *
  * */
 
-import type ScatterPoint from '../Scatter/ScatterPoint';
-
 /* *
  *
  *  Imports
  *
  * */
+
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 
 /* *
  *
@@ -24,7 +24,7 @@ import type ScatterPoint from '../Scatter/ScatterPoint';
  *
  * */
 
-interface PointAndFigurePointOptions extends ScatterPoint {
+export interface PointAndFigurePointOptions extends ScatterPointOptions {
 }
 
 /* *

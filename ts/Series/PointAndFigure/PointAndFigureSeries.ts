@@ -29,7 +29,7 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
-import Series from '../../Core/Series/Series.js';
+import type Series from '../../Core/Series/Series.js';
 import {
     extend,
     isNumber,
@@ -69,7 +69,7 @@ const {
 /**
  * The series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pointandfigure
  *
@@ -94,6 +94,9 @@ class PointAndFigureSeries extends ScatterSeries {
      *
      * */
 
+    /**
+     * @internal
+     */
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -124,12 +127,18 @@ class PointAndFigureSeries extends ScatterSeries {
      *
      * */
 
+    /**
+     * @internal
+     */
     public init(): void {
         super.init.apply(this, arguments);
 
         this.pnfDataGroups = [];
     }
 
+    /**
+     * @internal
+     */
     public getProcessedData(): Series.ProcessedDataObject {
         if (!this.pnfDataGroups) {
             return {
@@ -160,7 +169,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         /**
          * Get the Y value of last data point, from the last PNF group.
-         * @private
+         * @internal
          * @function Highcharts.seriesTypes.pointandfigure#getLastPoint
          */
         function getLastPoint(pnfDataGroups: Array<PointAndFigureGroup>): number {
@@ -170,7 +179,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         /**
          * Push new data point to the last PNF group.
-         * @private
+         * @internal
          * @function Highcharts.seriesTypes.pointandfigure#pushNewPoint
          */
         function pushNewPoint(
@@ -283,6 +292,9 @@ class PointAndFigureSeries extends ScatterSeries {
         };
     }
 
+    /**
+     * @internal
+     */
     public markerAttribs(
         point: Point
     ): SVGAttributes {
@@ -305,6 +317,9 @@ class PointAndFigureSeries extends ScatterSeries {
         return attribs;
     }
 
+    /**
+     * @internal
+     */
     public translate(): void {
         const metrics = this.getColumnMetrics(),
             calculatedBoxSize = this.calculatedBoxSize;
@@ -323,12 +338,14 @@ class PointAndFigureSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface PointAndFigureGroup {
     x: number;
     y: Array<number>;
     upTrend: boolean;
 }
 
+/** @internal */
 interface PointAndFigureSeries {
     takeOrdinalPosition: boolean;
     pnfDataGroups: Array<PointAndFigureGroup>;
@@ -352,6 +369,7 @@ extend(PointAndFigureSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pointandfigure: typeof PointAndFigureSeries;
@@ -366,4 +384,5 @@ SeriesRegistry.registerSeriesType('pointandfigure', PointAndFigureSeries);
  *
  * */
 
+/** @internal */
 export default PointAndFigureSeries;
