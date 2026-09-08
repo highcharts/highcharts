@@ -293,9 +293,10 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         scatterS.points.map(function (p) {
             return p.wasThere;
         }),
-        [true, true, undefined, undefined],
-        'Array with X, duplicated X, requireSorting is false - some points ' +
-        'should be updated from existing (#8995)'
+        [true, true, true, true],
+        'Array with X, duplicated X, requireSorting is false - all points ' +
+        'should be updated from existing, matching subsequent occurrences ' +
+        '(#8995, #25083)'
     );
 
     // A point already claimed by an earlier row must not be matched again,
@@ -327,6 +328,36 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         ['0:10', '0:20', '1:30', '1:40'],
         'Array with duplicated X - every row should keep its own point, ' +
         'none dropped or duplicated (#25083)'
+    );
+
+    // A point already claimed by an earlier row, unsorted x-values pattern
+    scatterS.setData(
+        [
+            // reset with unsorted pattern [0, 1, 0, 1]
+            [0, 10],
+            [1, 30],
+            [0, 20],
+            [1, 40]
+        ],
+        true,
+        false,
+        false
+    );
+    scatterS.setData([
+        [0, 2],
+        [0, 8],
+        [1, 4],
+        [1, 6]
+    ]);
+    assert.deepEqual(
+        scatterS.points
+            .map(function (p) {
+                return [p.x, p.y].join(':');
+            })
+            .sort(),
+        ['0:2', '0:8', '1:4', '1:6'],
+        'Unsorted duplicate X pattern - all rows should keep their own ' +
+        'point, matching next occurrence (#25083)'
     );
 
     // Identify by id

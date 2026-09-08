@@ -1586,10 +1586,14 @@ class Series {
 
                 pointIndex = haystack.indexOf(needle as any, lastIndex);
 
-                // Matching point already used by an earlier row, don't
-                // use it twice (#25083)
-                if (!matchedById && oldData[pointIndex]?.touched) {
-                    pointIndex = -1;
+                // Matching point already used by an earlier row, look
+                // for the next occurrence instead of using it twice
+                // (#25083)
+                while (!matchedById && oldData[pointIndex]?.touched) {
+                    pointIndex = haystack.indexOf(
+                        needle as any,
+                        pointIndex + 1
+                    );
                 }
 
                 // Matching X not found or used already due to non-unique x
