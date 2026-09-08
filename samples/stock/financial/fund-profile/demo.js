@@ -394,27 +394,15 @@ async function renderDashboard() {
                     index`
                 },
                 tooltip: {
-                    backgroundColor: '#001A33',
-                    shadow: false,
-                    borderRadius: 8,
-                    padding: 10,
-                    useHTML: true,
-                    animation: 0,
                     format: `
-                        <span style="color: #9CA6B0; font-size: 1.1em;">
+                        <span>
                             {translateGlobalSector point.name}
                         </span>
-                        <br/>
-                        <div style="height: 4px;"></div>
                         <b>
-                            <span style="color: #FFFFFF; font-size: 1.3em;">
-                                {#unless point.isNull}{point.y:.2f}%{/unless}
-                            </span>
+                            {#unless point.isNull}{point.y:.2f}%{/unless}
                         </b>
-                    `,
-                    style: {
-                        color: '#FFFFFF'
-                    }
+                    `
+
                 },
                 plotOptions: {
                     pie: {
@@ -444,9 +432,6 @@ async function renderDashboard() {
                             enabled: false
                         }
                     }
-                },
-                credits: {
-                    enabled: false
                 }
             }
         }, {
@@ -588,7 +573,7 @@ async function renderDashboard() {
                 },
                 colorAxis: {
                     dataClasses: [{
-                        from: 59,
+                        from: 49,
                         color: '#014ce5',
                         name: '50+'
                     }, {
@@ -879,13 +864,18 @@ async function renderDashboard() {
                                     .add();
                             }
 
+                            const collapsed = !!rangeSelector.dropdown &&
+                                rangeSelector.dropdown.style
+                                    .visibility !== 'hidden';
+
                             rangeSelector.buttonsBorder.attr({
                                 x: zoomBBox.x + zoomBBox.width + 3,
                                 y: group.translateY -
                                     3 +
                                     zoomBBox.height / 2,
                                 width: buttonsBBox.width - zoomBBox.width,
-                                height: buttonsBBox.height + 4
+                                height: buttonsBBox.height + 4,
+                                visibility: collapsed ? 'hidden' : 'inherit'
                             });
 
                             // Create or update input border
@@ -906,9 +896,6 @@ async function renderDashboard() {
                             });
                         }
                     }
-                },
-                credits: {
-                    enabled: false
                 },
                 title: {
                     text: 'Performance Trends Over Time',
