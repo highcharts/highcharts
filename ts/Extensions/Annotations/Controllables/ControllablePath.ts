@@ -43,31 +43,47 @@ declare module './ControllableBase' {
     }
 }
 
+/**
+ * A collection of SVG definitions for reusable elements such as markers,
+ * gradients, filters and patterns. Used mostly in styled mode - see
+ * [gradients, shadows and
+ * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
+ *
+ * Each key is an id that can be referenced from other options. Annotations
+ * use it to define arrow markers, referenced from a shape's
+ * [markerEnd](#annotations.shapes.markerEnd) or
+ * [markerStart](#annotations.shapes.markerStart) option. Two markers are
+ * available by default: `arrow` and `reverse-arrow`.
+ */
+export interface DefsOptions {
+
+    /**
+     * The default `arrow` marker definition, a filled triangle pointing
+     * towards the end of the path.
+     */
+    arrow?: AST.Node;
+
+    /**
+     * The default `reverse-arrow` marker definition, a filled triangle
+     * pointing towards the start of the path.
+     */
+    'reverse-arrow'?: AST.Node;
+
+    [key: string]: (AST.Node | undefined);
+}
+
 declare module '../../../Core/Options'{
     interface Options {
         /**
-         * Options for configuring markers for annotations.
+         * A collection of SVG definitions for reusable elements such as
+         * markers, gradients, filters and patterns. Used mostly in styled
+         * mode - see [gradients, shadows and
+         * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
          *
-         * An example of the arrow marker:
-         * <pre>
-         * {
-         *   arrow: {
-         *     id: 'arrow',
-         *     tagName: 'marker',
-         *     refY: 5,
-         *     refX: 5,
-         *     markerWidth: 10,
-         *     markerHeight: 10,
-         *     children: [{
-         *       tagName: 'path',
-         *       attrs: {
-         *         d: 'M 0 0 L 10 5 L 0 10 Z',
-         *         'stroke-width': 0
-         *       }
-         *     }]
-         *   }
-         * }
-         * </pre>
+         * Annotations use it to define arrow markers, referenced from a
+         * shape's [markerEnd](#annotations.shapes.markerEnd) or
+         * [markerStart](#annotations.shapes.markerStart) option. Two markers
+         * are available by default: `arrow` and `reverse-arrow`.
          *
          * @sample highcharts/annotations/custom-markers/
          *         Define a custom marker for annotations
@@ -75,11 +91,10 @@ declare module '../../../Core/Options'{
          * @sample highcharts/css/annotations-markers/
          *         Define markers in a styled mode
          *
-         * @type         {Highcharts.Dictionary<Highcharts.ASTNode>}
          * @since        6.0.0
          * @optionparent defs
          */
-        defs?: Record<string, AST.Node>;
+        defs?: DefsOptions;
     }
 }
 
