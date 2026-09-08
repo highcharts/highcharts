@@ -3100,6 +3100,10 @@ const defaultOptions: DefaultOptions = {
         /**
          * The URL for the credits label.
          *
+         * URLs that do not start with one of the
+         * [AST.allowedReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedReferences),
+         * for example `javascript:` URLs, are ignored.
+         *
          * @sample {highcharts} highcharts/credits/href/
          *         Custom URL and text
          * @sample {highmaps} maps/credits/customized/
