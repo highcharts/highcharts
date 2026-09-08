@@ -1,8 +1,10 @@
 ---
 name: Fund Profile
+authors:
+  - Jedrzej Ruta
 description: A comprehensive fund profile dashboard combining multiple charts and tables for a single fund.
 tags:
-  - Dashboards
+  - Morningstar
 requiresManualTesting: true
 js_wrap: b
 ...
