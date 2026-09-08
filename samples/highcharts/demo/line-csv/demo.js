@@ -41,7 +41,8 @@ Highcharts.chart('container', {
     chart: {
         scrollablePlotArea: {
             minWidth: 700
-        }
+        },
+        spacingBottom: 22
     },
 
     data: {
