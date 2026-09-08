@@ -104,14 +104,14 @@ function readSampleArtifacts(sample, sampleRoot) {
     return artifacts;
 }
 
-function buildArtifactBatches(samples) {
-    const batches = [];
+function buildArtifactUploads(samples) {
+    const uploads = [];
     let artifacts = [];
     let batchBytes = 0;
 
     function flushBatch() {
         if (artifacts.length > 0) {
-            batches.push(artifacts);
+            uploads.push({ artifacts });
             artifacts = [];
             batchBytes = 0;
         }
@@ -121,9 +121,15 @@ function buildArtifactBatches(samples) {
         for (const role of Object.keys(ARTIFACTS)) {
             const bytes = sample.artifacts[role];
             if (bytes.length > MAX_BATCH_BYTES) {
-                throw new VisualReviewApiError(
-                    `${role} artifact for ${sample.name} exceeds the batch size limit`
-                );
+                flushBatch();
+                uploads.push({
+                    artifact: {
+                        bytes,
+                        role,
+                        sampleName: sample.name
+                    }
+                });
+                continue;
             }
             if (
                 artifacts.length >= MAX_BATCH_ARTIFACTS ||
@@ -142,7 +148,7 @@ function buildArtifactBatches(samples) {
     }
     flushBatch();
 
-    return batches;
+    return uploads;
 }
 
 function getSubjectKind(options) {
@@ -309,7 +315,7 @@ async function submitVisualReview(options) {
         0;
     let uploadedArtifacts = 0;
     const requestState = { lastRequestAt: 0 };
-    const artifactBatches = buildArtifactBatches(samples);
+    const artifactUploads = buildArtifactUploads(samples);
 
     await request(submissionUrl, {
         method: 'PUT',
@@ -320,22 +326,32 @@ async function submitVisualReview(options) {
         body: JSON.stringify(manifest)
     }, dependencies, requestState);
 
-    for (const artifacts of artifactBatches) {
-        await request(`${submissionUrl}/artifacts`, {
+    for (const upload of artifactUploads) {
+        const artifact = upload.artifact;
+        const artifacts = upload.artifacts || [artifact];
+        const url = artifact ?
+            `${submissionUrl}/artifacts/${artifact.role}` +
+                `?sampleName=${encodeURIComponent(artifact.sampleName)}` :
+            `${submissionUrl}/artifacts`;
+        await request(url, {
             method: 'PUT',
             headers: {
                 ...headers,
-                'content-type': 'application/json'
+                'content-type': artifact ?
+                    ARTIFACTS[artifact.role].contentType :
+                    'application/json'
             },
-            body: JSON.stringify({ artifacts })
+            body: artifact ?
+                artifact.bytes :
+                JSON.stringify({ artifacts })
         }, dependencies, requestState);
         if (onProgress) {
-            for (const artifact of artifacts) {
+            for (const uploadedArtifact of artifacts) {
                 onProgress({
                     completed: ++uploadedArtifacts,
                     total: totalArtifacts,
-                    sampleName: artifact.sampleName,
-                    role: artifact.role
+                    sampleName: uploadedArtifact.sampleName,
+                    role: uploadedArtifact.role
                 });
             }
         }
