@@ -485,10 +485,6 @@ export default StackItem;
  * @name Highcharts.StackItemObject#cumulative
  * @type {number}
  *//**
- * True if on the negative side
- * @name Highcharts.StackItemObject#isNegative
- * @type {boolean}
- *//**
  * Related SVG element
  * @name Highcharts.StackItemObject#label
  * @type {Highcharts.SVGElement}
