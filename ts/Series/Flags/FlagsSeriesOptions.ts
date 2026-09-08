@@ -98,7 +98,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * What type of legend symbol to render for this series. For flags
      * series, the default is `flag-icon`, a pole with a pennant.
      *
-     * @default flag-icon
+     * @default 'flag-icon'
      */
     legendSymbol?: string;
 
@@ -182,7 +182,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the styles are set in the
      * `.highcharts-flag-series .highcharts-point` rule.
      *
-     * @default {"fontSize": "11px", "fontWeight": "bold"}
+     * @default { "color": "var(--highcharts-neutral-color-100)", "fontSize": "0.7em", "fontWeight": "bold" }
      *
      * @product highstock
      */
