@@ -24,7 +24,6 @@ import type {
     AxisLabelOptions,
     AxisOptions
 } from './AxisOptions';
-import type CSSObject from '../Renderer/CSSObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type PositionObject from '../Renderer/PositionObject';
 import type TickBase from './TickBase';
@@ -45,7 +44,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     destroyObjectProperties,
     getAlignFactor,
     fireEvent
@@ -266,10 +264,8 @@ class Tick {
             log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions: AxisLabelOptions = pick(
-                tick.options?.labels,
-                options.labels
-            ) as any,
+            labelOptions: AxisLabelOptions =
+                (tick.options?.labels ?? options.labels) as any,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
@@ -285,7 +281,7 @@ class Tick {
         // The context value
         let value = this.parameters.category || (
             categories ?
-                pick(categories[pos], names[pos], pos) :
+                (categories[pos] ?? names[pos] ?? pos) :
                 pos
         );
         if (log && isNumber(value)) {
@@ -593,7 +589,7 @@ class Tick {
         const axis = this.axis,
             transA = axis.transA,
             reversed = ( // #7911
-                axis.isLinked && axis.linkedParent ?
+                axis.linkedParent ?
                     axis.linkedParent.reversed :
                     axis.reversed
             ),
@@ -631,10 +627,7 @@ class Tick {
         }
 
         x = x +
-            pick(
-                labelOptions.x,
-                [0, 1, 0, -1][axis.side] * distance
-            ) +
+            (labelOptions.x ?? [0, 1, 0, -1][axis.side] * distance) +
             labelOffsetCorrection +
             rotCorr.x -
             (
@@ -710,31 +703,21 @@ class Tick {
      */
     public handleOverflow(xy: PositionObject): void {
         const tick = this,
-            axis = this.axis,
+            { axis, label, rotation = 0 } = this,
             labelOptions = axis.options.labels,
             pxPos = xy.x,
-            chartWidth = axis.chart.chartWidth,
-            spacing = axis.chart.spacing,
-            leftBound = pick(
-                axis.labelLeft,
-                Math.min(axis.pos as any, spacing[3])
-            ),
-            rightBound = pick(
-                axis.labelRight,
-                Math.max(
-                    !axis.isRadial ? (axis.pos as any) + axis.len : 0,
-                    (chartWidth as any) - spacing[1]
-                )
-            ),
-            label = this.label,
-            rotation = this.rotation,
+            { chartWidth, spacing } = axis.chart,
+            leftBound = axis.labelLeft ?? Math.min(axis.pos, spacing[3]),
+            rightBound = (axis.labelRight ?? Math.max(
+                !axis.isRadial ? axis.pos + axis.len : 0,
+                chartWidth - spacing[1]
+            )),
             factor = getAlignFactor(
-                axis.labelAlign || (label as any).attr('align')
+                axis.labelAlign || label?.attr('align') as any
             ),
-            labelWidth = (label as any).getBBox().width,
-            slotWidth = axis.getSlotWidth(tick as any),
-            xCorrection = factor,
-            css: CSSObject = {};
+            labelWidth = label?.getBBox().width || 0,
+            slotWidth = axis.getSlotWidth(tick),
+            xCorrection = factor;
 
         let modifiedSlotWidth = slotWidth,
             goRight = 1,
@@ -784,19 +767,19 @@ class Tick {
         // Add ellipsis to prevent rotated labels to be clipped against the edge
         // of the chart
         } else if (
-            (rotation as any) < 0 &&
+            rotation < 0 &&
             pxPos - factor * labelWidth < leftBound
         ) {
             textWidth = Math.round(
-                pxPos / Math.cos((rotation as any) * deg2rad) - leftBound
+                pxPos / Math.cos(rotation * deg2rad) - leftBound
             );
         } else if (
-            (rotation as any) > 0 &&
+            rotation > 0 &&
             pxPos + factor * labelWidth > rightBound
         ) {
             textWidth = Math.round(
-                ((chartWidth as any) - pxPos) /
-                Math.cos((rotation as any) * deg2rad)
+                (chartWidth - pxPos) /
+                Math.cos(rotation * deg2rad)
             );
         }
 
@@ -804,10 +787,10 @@ class Tick {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                label.css(extend(css, {
+                label.css({
                     width: Math.floor(textWidth) + 'px',
                     lineClamp: axis.isRadial ? 0 : 1
-                }));
+                });
             }
         }
     }
@@ -832,7 +815,7 @@ class Tick {
             axis = tick.axis,
             horiz = axis.horiz,
             pos = tick.pos,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
             x = xy.x,
             y = xy.y,
@@ -840,11 +823,7 @@ class Tick {
             axisEnd = axisStart + axis.len,
             pxPos = horiz ? x : y;
 
-        const labelOpacity = pick(
-            opacity,
-            tick.label?.newOpacity, // #15528
-            1
-        );
+        const labelOpacity = (opacity ?? tick.label?.newOpacity ?? 1);
 
         // Anything that is not between `axis.pos` and `axis.pos + axis.length`
         // should not be visible (#20166). The `correctFloat` is for reversed
@@ -891,7 +870,7 @@ class Tick {
             attribs: SVGAttributes = {},
             pos = tick.pos,
             type = tick.type,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             renderer = axis.chart.renderer;
 
         let gridLine = tick.gridLine,
@@ -974,10 +953,9 @@ class Tick {
             tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'),
             x = xy.x,
             y = xy.y,
-            tickWidth = pick(
-                options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'],
-                !type && axis.isXAxis ? 1 : 0
-            ), // X axis defaults to 1
+            tickWidth = options[
+                type !== 'minor' ? 'tickWidth' : 'minorTickWidth'
+            ] ?? (!type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
             tickColor = options[
                 type !== 'minor' ? 'tickColor' : 'minorTickColor'
             ];
@@ -1051,7 +1029,7 @@ class Tick {
             label = tick.label,
             labelOptions = options.labels,
             step = labelOptions.step,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            tickmarkOffset = (tick.tickmarkOffset ?? axis.tickmarkOffset),
             x = xy.x,
             y = xy.y;
 

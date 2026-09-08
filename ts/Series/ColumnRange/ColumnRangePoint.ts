@@ -46,6 +46,7 @@ import { extend, isNumber } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class ColumnRangePoint extends AreaRangePoint {
 
     /* *
@@ -75,6 +76,7 @@ class ColumnRangePoint extends AreaRangePoint {
  *
  * */
 
+/** @internal */
 interface ColumnRangePoint {
     barX: typeof columnProto.barX;
     pointWidth: typeof columnProto.pointWidth;
@@ -91,4 +93,5 @@ extend(ColumnRangePoint.prototype, {
  *
  * */
 
+/** @internal */
 export default ColumnRangePoint;

@@ -1,0 +1,196 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+#container {
+    height: 600px;
+}
+
+.hcg-pagination-controls .hcg-pagination-pages {
+    gap: 0.5rem;
+}
+
+.hcg-pagination-controls .hcg-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.25rem;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+    line-height: 1;
+    color: #334155;
+}
+
+.hcg-pagination-controls .hcg-button:hover:not(:disabled) {
+    background: #e2e8f0;
+}
+
+.hcg-pagination-controls .hcg-button-selected,
+.hcg-pagination-controls .hcg-button-selected:hover:not(:disabled) {
+    background: #0f766e;
+    color: #fff;
+}
+
+.demo-pag-size select.hcg-input {
+    border-radius: 0.25rem;
+    border: 1px solid #cbd5e1;
+    background-color: #fff;
+    padding: 0.25rem 1.25rem 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: #334155;
+}
+
+.demo-grid .hcg-popup {
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    font-size: 0.875rem;
+    color: #334155;
+    box-shadow:
+        0 10px 15px -3px rgb(15 23 42 / 0.1),
+        0 4px 6px -4px rgb(15 23 42 / 0.1);
+}
+
+.demo-grid .hcg-menu-header {
+    margin-bottom: 0.5rem;
+    padding-inline: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.demo-grid .hcg-column-filter-wrapper {
+    gap: 0.5rem;
+}
+
+.demo-grid .hcg-column-filter-wrapper .hcg-input {
+    width: 100%;
+    border-radius: 0.25rem;
+    border: 1px solid #cbd5e1;
+    background-color: #fff;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+    color: #334155;
+}
+
+.demo-grid .hcg-column-filter-wrapper select.hcg-input {
+    padding-inline-end: 1.25rem;
+}
+
+.demo-grid .hcg-clear-filter-button {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #475569;
+    text-decoration: none;
+}
+
+.demo-grid .hcg-clear-filter-button:hover:not(:disabled) {
+    color: #0f172a;
+    text-decoration: underline;
+}
+
+@container hcg (max-width: 800px) {
+    .hcg-pagination-controls {
+        justify-content: center;
+        border-left-width: 0;
+        border-right-width: 0;
+        margin-block: 0.5rem;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not(.highcharts-light) {
+        color-scheme: dark;
+    }
+
+    :root:not(.highcharts-light) .hcg-pagination-controls .hcg-button {
+        color: #e2e8f0;
+    }
+
+    :root:not(.highcharts-light) .hcg-pagination-controls .hcg-button:hover:not(:disabled) {
+        background: #334155;
+    }
+
+    :root:not(.highcharts-light) .hcg-pagination-controls .hcg-button-selected,
+    :root:not(.highcharts-light) .hcg-pagination-controls .hcg-button-selected:hover:not(:disabled) {
+        background: #0d9488;
+        color: #fff;
+    }
+
+    :root:not(.highcharts-light) .demo-pag-size select.hcg-input {
+        border-color: #475569;
+        background-color: #0f172a;
+        color: #e2e8f0;
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-popup {
+        border-color: #334155;
+        background: #0f172a;
+        color: #e2e8f0;
+        box-shadow:
+            0 10px 15px -3px rgb(0 0 0 / 0.4),
+            0 4px 6px -4px rgb(0 0 0 / 0.3);
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-menu-header {
+        color: #94a3b8;
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-column-filter-wrapper .hcg-input {
+        border-color: #475569;
+        background-color: #0f172a;
+        color: #e2e8f0;
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-clear-filter-button {
+        color: #cbd5e1;
+    }
+
+    :root:not(.highcharts-light) .demo-grid .hcg-clear-filter-button:hover:not(:disabled) {
+        color: #f8fafc;
+    }
+}
+
+.highcharts-dark .hcg-pagination-controls .hcg-button {
+    color: #e2e8f0;
+}
+
+.highcharts-dark .hcg-pagination-controls .hcg-button:hover:not(:disabled) {
+    background: #334155;
+}
+
+.highcharts-dark .hcg-pagination-controls .hcg-button-selected,
+.highcharts-dark .hcg-pagination-controls .hcg-button-selected:hover:not(:disabled) {
+    background: #0d9488;
+    color: #fff;
+}
+
+.highcharts-dark .demo-pag-size select.hcg-input {
+    border-color: #475569;
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+.highcharts-dark .demo-grid .hcg-popup {
+    border-color: #334155;
+    background: #0f172a;
+    color: #e2e8f0;
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.4),
+        0 4px 6px -4px rgb(0 0 0 / 0.3);
+}
+
+.highcharts-dark .demo-grid .hcg-menu-header {
+    color: #94a3b8;
+}
+
+.highcharts-dark .demo-grid .hcg-column-filter-wrapper .hcg-input {
+    border-color: #475569;
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+.highcharts-dark .demo-grid .hcg-clear-filter-button {
+    color: #cbd5e1;
+}
+
+.highcharts-dark .demo-grid .hcg-clear-filter-button:hover:not(:disabled) {
+    color: #f8fafc;
+}

@@ -46,7 +46,7 @@ Grid.grid('container', {
         header: { format: 'Last Name' }
     }, {
         id: 'email',
-        header: { format: 'E-mail' }
+        header: { format: 'Email' }
     }, {
         id: 'mobile',
         header: { format: 'Mobile' }

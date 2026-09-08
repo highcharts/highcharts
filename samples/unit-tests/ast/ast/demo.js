@@ -55,3 +55,36 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'AST preserves camelCase SVG tag names (#24702)',
+    assert => {
+        const container = document.createElement('div');
+
+        new Highcharts.AST(
+            '<svg><linearGradient id="grad">' +
+                '<stop offset="0" stop-color="red" stop-opacity="1"></stop>' +
+            '</linearGradient></svg>'
+        ).addToDOM(container);
+
+        const gradient = container.querySelector('#grad');
+
+        assert.strictEqual(
+            gradient && gradient.localName,
+            'linearGradient',
+            'Created element should keep the camelCase, so that the SVG ' +
+            'gradient resolves.'
+        );
+
+        const stop = container.querySelector('stop');
+
+        assert.deepEqual(
+            stop && {
+                color: stop.getAttribute('stop-color'),
+                opacity: stop.getAttribute('stop-opacity')
+            },
+            { color: 'red', opacity: '1' },
+            'stop-color and stop-opacity should survive attribute filtering.'
+        );
+    }
+);

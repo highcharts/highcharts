@@ -45,8 +45,7 @@ import {
     isNumber,
     isObject,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -611,7 +610,7 @@ extend(WaterfallSeries.prototype, {
 addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
     const series = this,
         { options, points, yAxis } = series,
-        minPointLength = pick(options.minPointLength, 5),
+        minPointLength = (options.minPointLength ?? 5),
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,

@@ -61,7 +61,7 @@ Highcharts.mapChart('container', {
             var(--highcharts-background-color, white),
             transparent 15%
         )`,
-        float: true,
+        floating: true,
         borderRadius: 12,
         itemMarginBottom: 10,
         itemMarginTop: 10,

@@ -541,3 +541,32 @@ QUnit.test('series.data[].collapsed', assert => {
         the unnecessary label icons should be removed, 16673.`
     );
 });
+
+QUnit.test('Linking a treegrid axis by id (#24658)', function (assert) {
+    const chart = Highcharts.ganttChart('container', {
+        yAxis: [
+            { type: 'treegrid', id: 'main' },
+            { type: 'treegrid', linkedTo: 'main', opposite: true }
+        ],
+        series: [{
+            data: [
+                { name: 'A', start: 1, end: 5, y: 0 },
+                { name: 'B', start: 3, end: 8, y: 1 }
+            ]
+        }]
+    });
+
+    const main = chart.get('main'),
+        linked = chart.yAxis[1];
+
+    assert.strictEqual(
+        linked.linkedParent?.options.id,
+        'main',
+        'Treegrid axis resolves linkedTo by id.'
+    );
+    assert.strictEqual(
+        linked.max,
+        main.max,
+        'Linked treegrid axis inherits the parent extremes.'
+    );
+});

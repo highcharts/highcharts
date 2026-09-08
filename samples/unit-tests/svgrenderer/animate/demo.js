@@ -490,7 +490,7 @@ QUnit.test(
                             type: 'column',
                             data: [1, 2],
                             pointPadding: 0,
-                            groupPAdding: 0,
+                            groupPadding: 0,
 
                             borderColor: 'rgb(255,0,0)',
                             color: 'rgb(255,255,255)',
@@ -589,7 +589,7 @@ QUnit.test(
                             type: 'column',
                             data: [1, 2],
                             pointPadding: 0,
-                            groupPAdding: 0,
+                            groupPadding: 0,
 
                             borderColor: 'rgb(255,0,0)',
                             color: 'rgb(255,255,255)',

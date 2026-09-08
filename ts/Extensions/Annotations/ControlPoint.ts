@@ -17,7 +17,7 @@ import type ControlTarget from './ControlTarget';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import EventEmitter from './EventEmitter.js';
-import { merge, pick } from '../../Shared/Utilities.js';
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -80,7 +80,7 @@ class ControlPoint extends EventEmitter {
         this.chart = chart;
         this.target = target;
         this.options = options;
-        this.index = pick((options as any).index, index);
+        this.index = ((options as any).index ?? index);
     }
 
     /* *

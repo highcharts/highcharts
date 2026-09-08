@@ -109,7 +109,7 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @type {Highcharts.ColorType}
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highcharts highmaps
      */

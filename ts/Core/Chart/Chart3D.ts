@@ -42,7 +42,6 @@ import {
     addEvent,
     isArray,
     merge,
-    pick,
     wrap
 } from '../../Shared/Utilities.js';
 
@@ -1741,8 +1740,8 @@ namespace Chart3D {
                 }
 
                 return {
-                    size: pick(options.size, 1),
-                    color: pick(options.color, 'none'),
+                    size: (options.size ?? 1),
+                    color: (options.color ?? 'none'),
                     frontFacing: faceOrientation > 0,
                     visible: isVisible
                 };

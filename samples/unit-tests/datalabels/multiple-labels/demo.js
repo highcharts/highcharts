@@ -122,7 +122,6 @@ QUnit.test('Multiple data labels general tests.', function (assert) {
             inverted: false
         },
         yAxis: {
-            xreversed: undefined,
             reversed: false
         },
         series: [

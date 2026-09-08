@@ -137,7 +137,6 @@ Highcharts.chart('container', {
         text: 'Canadian provinces and territories by area'
     },
     subtitle: {
-        useHTMl: true,
         text:
       'Source:<a href="https://en.wikipedia.org/wiki/List_of_Canadian_provinces_and_territories_by_area">Wikipedia</a>'
     },

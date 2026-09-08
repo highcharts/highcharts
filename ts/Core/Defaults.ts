@@ -2161,6 +2161,9 @@ const defaultOptions: DefaultOptions = {
          * below the column, but as `followTouchMove` is true, the tooltip will
          * jump from column to column as the user swipes across the plot area.
          *
+         * @sample {highcharts} highcharts/tooltip/followtouchmove/
+         *         Tooltip follows touch move
+         *
          * @type      {boolean}
          * @default   {highcharts} true
          * @default   {highstock} true
@@ -2978,12 +2981,16 @@ const defaultOptions: DefaultOptions = {
          * @type {Highcharts.CSSObject}
          */
         style: {
-            /** @type {Highcharts.ColorType} */
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: 'var(--highcharts-neutral-color-80)',
 
             cursor: 'default',
 
-            /** @type {number|string} */
+            /**
+             * @type {number|string}
+             */
             fontSize: '0.8em'
         },
 
@@ -3333,6 +3340,43 @@ export default DefaultOptions;
  *
  * @param {global.Event} event
  *        The event that occurred.
+ */
+
+/**
+ * Gets fired while the chart is panned by mouse drag. Calling
+ * `event.preventDefault()` or returning `false` prevents the default panning
+ * of the axes.
+ *
+ * @callback Highcharts.ChartPanCallbackFunction
+ *
+ * @param {Highcharts.Chart} this
+ *        The chart on which the event occurred.
+ *
+ * @param {Highcharts.ChartPanEventObject} event
+ *        The event that occurred.
+ */
+
+/**
+ * Contains common event information. Through the `originalEvent` property you
+ * can access the pointer event that triggered the panning.
+ *
+ * @interface Highcharts.ChartPanEventObject
+ *//**
+ * The pointer event that triggered the panning.
+ * @name Highcharts.ChartPanEventObject#originalEvent
+ * @type {Highcharts.PointerEventObject}
+ *//**
+ * Prevents the default behavior of the event.
+ * @name Highcharts.ChartPanEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * The event target.
+ * @name Highcharts.ChartPanEventObject#target
+ * @type {Highcharts.Chart}
+ *//**
+ * The event type.
+ * @name Highcharts.ChartPanEventObject#type
+ * @type {"pan"}
  */
 
 /**

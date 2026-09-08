@@ -159,6 +159,8 @@ class AST {
         'src',
         'startOffset',
         'stdDeviation',
+        'stop-color',
+        'stop-opacity',
         'stroke-linecap',
         'stroke-width',
         'stroke',
@@ -618,7 +620,9 @@ class AST {
             node: ChildNode,
             addTo: Array<AST.Node>
         ): void => {
-            const tagName = node.nodeName.toLowerCase();
+            // Preserve the camelCase of SVG tags via localName (#24702).
+            const tagName = (node as Element).localName ||
+                node.nodeName.toLowerCase();
 
             // Add allowed tags
             const astNode: AST.Node = {

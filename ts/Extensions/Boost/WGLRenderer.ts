@@ -42,8 +42,7 @@ import {
     isNumber,
     isObject,
     objectEach,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -1440,15 +1439,14 @@ class WGLRenderer {
                 hasThreshold = isNumber(threshold),
                 yBottom = s.series.yAxis.getThreshold(threshold),
                 translatedThreshold = yBottom,
-                showMarkers = pick(
-                    options.marker ? options.marker.enabled : null,
-                    s.series.xAxis.isRadial ? true : null,
-                    (s.series.closestPointRangePx as any) >
-                        2 * ((
-                            options.marker ?
-                                options.marker.radius :
-                                10
-                        ) || 10)
+                showMarkers = (
+                    (options.marker ? options.marker.enabled : null) ??
+                    (s.series.xAxis.isRadial ? true : null) ??
+                    (s.series.closestPointRangePx as any) > 2 * ((
+                        options.marker ?
+                            options.marker.radius :
+                            10
+                    ) || 10)
                 ),
                 shapeTexture = this.textureHandles[
                     (shapeOptions && shapeOptions.symbol) ||
@@ -1511,7 +1509,7 @@ class WGLRenderer {
                 fillColor
             ) {
                 fillColor = new Color(fillColor).setOpacity(
-                    pick((options as any).fillOpacity, 1.0)
+                    ((options as any).fillOpacity ?? 1.0)
                 ).get();
             }
 
@@ -1587,10 +1585,10 @@ class WGLRenderer {
             this.setThreshold(hasThreshold, translatedThreshold as any);
 
             if (s.drawMode === 'POINTS') {
-                shader.setPointSize(pick(
-                    options.marker && options.marker.radius,
-                    0.5
-                ) * 2 * pixelRatio);
+                shader.setPointSize(
+                    ((options.marker && options.marker.radius) ?? 0.5) *
+                    2 * pixelRatio
+                );
             }
 
             // If set to true, the toPixels translations in the shader
@@ -1638,10 +1636,10 @@ class WGLRenderer {
             }
 
             if (s.hasMarkers && showMarkers) {
-                shader.setPointSize(pick(
-                    options.marker && options.marker.radius,
-                    5
-                ) * 2 * pixelRatio);
+                shader.setPointSize(
+                    ((options.marker && options.marker.radius) ?? 5) *
+                    2 * pixelRatio
+                );
 
                 shader.setDrawAsCircle(true);
                 for (sindex = 0; sindex < s.segments.length; sindex++) {

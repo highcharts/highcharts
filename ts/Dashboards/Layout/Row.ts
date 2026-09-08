@@ -31,8 +31,7 @@ import {
     defined,
     fireEvent,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /**
@@ -154,10 +153,11 @@ class Row extends GUIElement {
     public setCells(): void {
         const row = this,
             cellClassName = (row.layout.options || {}).cellClassName || '',
-            cellsElements = pick(
-                row.options.cells,
-                row.container && row.container.getElementsByClassName(
-                    cellClassName
+            cellsElements = (
+                row.options.cells ??
+                (
+                    row.container &&
+                    row.container.getElementsByClassName(cellClassName)
                 )
             ) || [];
 
