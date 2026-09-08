@@ -161,7 +161,8 @@ function tickPostTranslate(
         if (!axis.horiz) {
             pos = axis.len - pos;
         }
-        pos = (axis.series[0] as VariwideSeries).postTranslate?.(index, pos);
+        pos = (axis.series[0] as VariwideSeries|undefined)
+            ?.postTranslate?.(index, pos) ?? pos;
 
         if (!axis.horiz) {
             pos = axis.len - pos;
