@@ -114,7 +114,15 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
 interface HeikinAshiSeriesDataGroupingOptions extends DataGroupingOptions {
 
-    groupAll?: boolean;
+    /**
+     * Whether to force data grouping to calculate all grouped points for
+     * a given dataset, rather than only the ones within the visible
+     * range. Enabled by default for Heikin Ashi, as each point depends
+     * on the values of the previous one.
+     *
+     * @default true
+     */
+    groupAll?: DataGroupingOptions['groupAll'];
 
 }
 

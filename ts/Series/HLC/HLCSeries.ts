@@ -296,9 +296,37 @@ extend(
 
 declare module '../../Core/Options'{
     interface LangOptions {
+        /**
+         * The tooltip label for a point's opening value, used in the
+         * default `pointFormat` of the `ohlc` series.
+         *
+         * @default Open
+         * @product highstock
+         */
         stockOpen?: string;
+        /**
+         * The tooltip label for a point's highest value, used in the
+         * default `pointFormat` of the `hlc` and `ohlc` series.
+         *
+         * @default High
+         * @product highstock
+         */
         stockHigh?: string;
+        /**
+         * The tooltip label for a point's lowest value, used in the
+         * default `pointFormat` of the `hlc` and `ohlc` series.
+         *
+         * @default Low
+         * @product highstock
+         */
         stockLow?: string;
+        /**
+         * The tooltip label for a point's closing value, used in the
+         * default `pointFormat` of the `hlc` and `ohlc` series.
+         *
+         * @default Close
+         * @product highstock
+         */
         stockClose?: string;
     }
 }

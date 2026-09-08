@@ -17,6 +17,7 @@
  * */
 
 import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
+import type ColorType from '../../Core/Color/ColorType';
 
 /* *
  *
@@ -24,7 +25,64 @@ import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptio
  *
  * */
 
+
+/**
+ *
+ * @product highstock
+ */
 export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions {
+
+    /**
+     * The fill color of the candlestick when the current
+     * close is lower than the previous one.
+     *
+     * @sample stock/plotoptions/hollow-candlestick-color/
+     *     Custom colors
+     * @sample {highstock} highcharts/css/hollow-candlestick/
+     *         Colors in styled mode
+     *
+     * @default var(--highcharts-negative-color)
+     */
+    color?: ColorType;
+
+    /**
+     * The color of the line/border of the hollow candlestick when
+     * the current close is lower than the previous one.
+     *
+     * @sample stock/plotoptions/hollow-candlestick-color/
+     *     Custom colors
+     * @sample {highstock} highcharts/css/hollow-candlestick/
+     *         Colors in styled mode
+     *
+     * @default var(--highcharts-negative-color)
+     */
+    lineColor?: CandlestickSeriesOptions['lineColor'];
+
+    /**
+     * The fill color of the candlestick when the current
+     * close is higher than the previous one.
+     *
+     * @sample stock/plotoptions/hollow-candlestick-color/
+     *     Custom colors
+     * @sample {highstock} highcharts/css/hollow-candlestick/
+     *         Colors in styled mode
+     *
+     * @default var(--highcharts-positive-color)
+     */
+    upColor?: CandlestickSeriesOptions['upColor'];
+
+    /**
+     * The color of the line/border of the hollow candlestick when
+     * the current close is higher than the previous one.
+     *
+     * @sample stock/plotoptions/hollow-candlestick-color/
+     *     Custom colors
+     * @sample {highstock} highcharts/css/hollow-candlestick/
+     *         Colors in styled mode
+     *
+     * @default var(--highcharts-positive-color)
+     */
+    upLineColor?: CandlestickSeriesOptions['upLineColor'];
 
 }
 
