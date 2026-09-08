@@ -395,3 +395,32 @@ QUnit.test(
             'exist again'
         );
     });
+
+QUnit.test('Point markers preserve explicit zero opacity', function (assert) {
+    const chart = Highcharts.chart('container', {
+            series: [{
+                data: [{
+                    y: 1,
+                    marker: {
+                        enabled: true,
+                        states: {
+                            normal: {
+                                opacity: 0
+                            }
+                        }
+                    }
+                }]
+            }]
+        }),
+        point = chart.series[0].points[0];
+
+    assert.strictEqual(
+        point.options.marker.states.normal.opacity,
+        0,
+        'The accessibility marker handling should retain zero opacity'
+    );
+    assert.notOk(
+        hasVisibleMarker(point),
+        'The point marker should stay hidden'
+    );
+});
