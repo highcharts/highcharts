@@ -122,7 +122,8 @@ class PlotLineOrBand {
 
     public constructor(
         axis: PlotLineOrBandAxis.Composition,
-        options: (PlotBandOptions|PlotLineOptions)
+        options: (PlotBandOptions|PlotLineOptions),
+        coll: 'plotLines'|'plotBands'
     ) {
         /**
          * Related axis.
@@ -140,8 +141,7 @@ class PlotLineOrBand {
         this.options = options;
         this.id = options.id;
 
-        this.coll = defined((options as PlotLineOptions).value) ?
-            'plotLines' : 'plotBands';
+        this.coll = coll;
     }
 
     /* *
@@ -264,13 +264,13 @@ class PlotLineOrBand {
 
         // Set the path or return
         let path: SVGPath | undefined;
-        if (defined(value)) { // Plot line
+        if (!isBand && defined(value)) { // Plot line
             path = axis.getPlotLinePath({
                 value: logarithmic?.log2lin(value) ?? value,
                 lineWidth: svgElem.strokeWidth(),
                 acrossPanes: options.acrossPanes
             });
-        } else if (defined(from) && defined(to)) { // Plot band
+        } else if (isBand && defined(from) && defined(to)) { // Plot band
             path = axis.getPlotBandPath(
                 logarithmic?.log2lin(from) ?? from,
                 logarithmic?.log2lin(to) ?? to,

@@ -1308,7 +1308,9 @@ QUnit.test('Plot band labels', function (assert) {
                     label: {
                         text: 'After'
                     }
-                },
+                }
+            ],
+            plotLines: [
                 {
                     value: 11,
                     label: {
@@ -1368,8 +1370,8 @@ QUnit.test('Plot band labels', function (assert) {
         'Highcharts - after'
     );
 
-    const line = chart.xAxis[0].plotBands[3].svgElem.getBBox(),
-        label = chart.xAxis[0].plotBands[3].label;
+    const line = chart.xAxis[0].plotLines[0].svgElem.getBBox(),
+        label = chart.xAxis[0].plotLines[0].label;
 
     assert.close(
         line.x,

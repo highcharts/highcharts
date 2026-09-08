@@ -81,23 +81,6 @@ namespace PlotLineOrBandAxis {
         ): (PlotLineOrBand|undefined);
 
         /**
-         * Add a plot band or plot line after render time. Called from
-         * addPlotBand and addPlotLine internally.
-         *
-         * @internal
-         * @function Highcharts.Axis#addPlotBandOrLine
-         * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
-         * The plotBand or plotLine configuration object.
-         */
-        addPlotBandOrLine(
-            options: PlotBandOptions
-        ): (PlotLineOrBand);
-        /** @internal */
-        addPlotBandOrLine(
-            options: PlotLineOptions
-        ): (PlotLineOrBand);
-
-        /**
          * Add a plot line after render time.
          *
          * @sample highcharts/members/axis-addplotline/
@@ -195,38 +178,34 @@ namespace PlotLineOrBandAxis {
      *
      * */
 
-    /**
-     * Add a plot band or plot line after render time. Called from
-     * addPlotBand and addPlotLine internally.
-     *
-     * @internal
-     * @function Highcharts.Axis#addPlotBandOrLine
-     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
-     * The plotBand or plotLine configuration object.
-     */
-    function addPlotBandOrLine<T extends PlotBandOptions|PlotLineOptions>(
-        this: Composition,
-        options: T
-    ): PlotLineOrBand {
+    const getAdderFunction = (coll: 'plotLines'|'plotBands') =>
+        /**
+         * Add a plot band or plot line after render time. Called from
+         * addPlotBand and addPlotLine internally.
+         *
+         * @internal
+         * @function Highcharts.Axis#addPlotBandOrLine
+         * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
+         *        The `plotBand` or `plotLine` configuration object.
+         */
+        function addPlotLineOrBand<T extends PlotBandOptions|PlotLineOptions>(
+            this: Composition,
+            options: T
+        ): PlotLineOrBand {
 
-        const plotItem = new PlotLineOrBandClass(this, options),
-            coll = plotItem.coll;
+            const plotItem = new PlotLineOrBandClass(this, options, coll);
 
-        if (this.visible) {
-            plotItem.render();
-        }
+            if (this.visible) {
+                plotItem.render();
+            }
 
-        // Add it to the user options for exporting and Axis.update.
-        // Axis.options[coll] and Axis.userOptions[coll] are always the same
-        // object, because there are no default options for plot lines and plot
-        // bands.
-        this.options[coll] ||= this.userOptions[coll] = [];
-        this.options[coll].push(options);
+            this.options[coll] ||= this.userOptions[coll] = [];
+            this.options[coll].push(options);
 
-        this[coll].push(plotItem);
+            this[coll].push(plotItem);
 
-        return plotItem;
-    }
+            return plotItem;
+        };
 
     /** @internal */
     export function compose<T extends typeof Axis>(
@@ -239,13 +218,11 @@ namespace PlotLineOrBandAxis {
             PlotLineOrBandClass = PlotLineOrBandType;
 
             extend(axisProto, {
-                addPlotBand: addPlotBandOrLine,
-                addPlotLine: addPlotBandOrLine,
-                addPlotBandOrLine,
+                addPlotBand: getAdderFunction('plotBands'),
+                addPlotLine: getAdderFunction('plotLines'),
                 getPlotBandPath,
                 removePlotBand: removePlotBandOrLine,
-                removePlotLine: removePlotBandOrLine,
-                removePlotBandOrLine
+                removePlotLine: removePlotBandOrLine
             });
 
             addEvent(AxisClass, 'afterInit', function (): void {
@@ -264,7 +241,8 @@ namespace PlotLineOrBandAxis {
                         ) {
                             this[coll].push(new PlotLineOrBandClass(
                                 this as Composition,
-                                pOptions
+                                pOptions,
+                                coll
                             ));
                         }
                     }
@@ -302,12 +280,13 @@ namespace PlotLineOrBandAxis {
 
                                 // Add
                                 } else {
-                                    pItem = (this as Composition)
-                                        .addPlotBandOrLine(
-                                            pOptions as PlotBandOptions
-                                        );
+                                    pItem = (this as Composition)[
+                                        coll === 'plotBands' ?
+                                            'addPlotBand' :
+                                            'addPlotLine'
+                                    ](pOptions as PlotBandOptions);
                                 }
-                                pItem.isActive = true;
+                                pItem!.isActive = true;
                             }
                         );
 
