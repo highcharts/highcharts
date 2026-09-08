@@ -1660,20 +1660,12 @@ class Tooltip {
                     adjustedPlotHeight : 0,
             below = headerHeight && !headerTop ?
                 0 : clamp(deficit, 0, spaceBelow),
-            above = headerTop ? 0 : clamp(deficit - below, 0, spaceAbove),
-            headerBand = below && headerTop ? headerHeight : 0;
+            above = headerTop ? 0 : clamp(deficit - below, 0, spaceAbove);
 
         // Distribute and put in place
         distribute(boxes, adjustedPlotHeight + above + below);
         distributionBoxTop -= above;
 
-        if (headerBand) {
-            boxes.forEach((box): void => {
-                if (!box.point.isHeader && isNumber(box.pos)) {
-                    box.pos = Math.max(box.pos, headerBand);
-                }
-            });
-        }
         const boxExtremes = {
             left: chartLeft,
             right: chartLeft
