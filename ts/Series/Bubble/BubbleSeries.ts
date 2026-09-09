@@ -223,7 +223,6 @@ function onAxisAfterRender(this: Axis): void {
  * */
 
 /**
- * @internal
  */
 class BubbleSeries extends ScatterSeries {
 
@@ -940,7 +939,6 @@ class BubbleSeries extends ScatterSeries {
  *
  * */
 
-/** @internal */
 interface BubbleSeries {
     alignDataLabel: typeof columnProto.alignDataLabel;
     bubblePadding: boolean;
@@ -989,7 +987,6 @@ addEvent(BubbleSeries, 'update', (e): void => {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bubble: typeof BubbleSeries;
@@ -1003,7 +1000,6 @@ SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
  *
  * */
 
-/** @internal */
 export default BubbleSeries;
 
 /* *

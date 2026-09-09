@@ -50,7 +50,6 @@ import {
 /**
  * The boxplot series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes#boxplot
  *
@@ -410,7 +409,6 @@ class BoxPlotSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<BoxPlotPointValKey>;
@@ -434,7 +432,6 @@ RangeDataLabel.compose(BoxPlotSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof BoxPlotSeries;

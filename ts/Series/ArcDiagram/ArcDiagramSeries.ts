@@ -55,7 +55,6 @@ const {
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.arcdiagram
  *
@@ -530,7 +529,6 @@ class ArcDiagramSeries extends SankeySeries {
  *
  * */
 
-/** @internal */
 interface ArcDiagramSeries {
     orderNodes: false;
     pointClass: typeof ArcDiagramPoint;
@@ -545,7 +543,6 @@ extend(ArcDiagramSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arcdiagram: typeof ArcDiagramSeries;
@@ -560,5 +557,4 @@ SeriesRegistry.registerSeriesType('arcdiagram', ArcDiagramSeries);
  *
  * */
 
-/** @internal */
 export default ArcDiagramSeries;

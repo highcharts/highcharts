@@ -850,7 +850,6 @@ extend(ContourSeries.prototype, {
 });
 
 // Registry
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;

@@ -46,7 +46,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dependencywheel
  *
@@ -390,7 +389,6 @@ class DependencyWheelSeries extends SankeySeries {
  *
  * */
 
-/** @internal */
 interface DependencyWheelSeries {
     getCenter: typeof PieSeries.prototype.getCenter;
     orderNodes: boolean;
@@ -408,7 +406,6 @@ extend(DependencyWheelSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof DependencyWheelSeries;
@@ -423,5 +420,4 @@ SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
  *
  * */
 
-/** @internal */
 export default DependencyWheelSeries;

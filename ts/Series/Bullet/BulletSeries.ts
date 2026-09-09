@@ -41,7 +41,6 @@ import {
 /**
  * The bullet series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bullet
  *
@@ -262,7 +261,6 @@ class BulletSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface BulletSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -281,7 +279,6 @@ BulletSeries.prototype.pointClass = BulletPoint;
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof BulletSeries;
@@ -296,5 +293,4 @@ SeriesRegistry.registerSeriesType('bullet', BulletSeries);
  *
  * */
 
-/** @internal */
 export default BulletSeries;

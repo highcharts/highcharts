@@ -290,7 +290,6 @@ function getRangeDataLabelOptions(
 /**
  * The AreaRange series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.arearange
  *
@@ -706,7 +705,6 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
  *
  * */
 
-/** @internal */
 interface AreaRangeSeries {
     deferTranslatePolar: boolean;
     pointArrayMap: Array<string>;
@@ -730,7 +728,6 @@ RangeDataLabel.compose(AreaRangeSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;
@@ -746,5 +743,4 @@ SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
  *
  * */
 
-/** @internal */
 export default AreaRangeSeries;
