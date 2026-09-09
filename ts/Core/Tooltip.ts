@@ -1651,7 +1651,8 @@ class Tooltip {
         // When `tooltip.outside: true` labels may be placed outside the plot
         // area, in the chart or in the whole viewport, so tall labels have room
         // instead of being hidden (#24860).
-        const spaceAbove = distributionBoxTop,
+        const spaceAbove = distributionBoxTop +
+                (tooltip.outside ? chartTop : 0),
             // The height that is missing for all labels to fit
             deficit = boxes.reduce((sum, box): number => sum + box.size, 0) -
                 adjustedPlotHeight,
@@ -1691,6 +1692,8 @@ class Tooltip {
             }
         });
 
+        const containerOffset = Math.max(-distributionBoxTop, 0);
+
         boxes.forEach(function (box: BoxObject): void {
             const {
                 x,
@@ -1709,9 +1712,10 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: (pos || 0) + distributionBoxTop + (fixed && position.y || 0),
+                y: (pos || 0) + distributionBoxTop + containerOffset +
+                    (fixed && position.y || 0),
                 anchorX,
-                anchorY
+                anchorY: anchorY + containerOffset
             };
 
             // Handle left-aligned tooltips overflowing the chart area
@@ -1752,7 +1756,7 @@ class Tooltip {
 
             // Position the tooltip container to the chart container
             container.style.left = boxExtremes.left + 'px';
-            container.style.top = chartTop + 'px';
+            container.style.top = chartTop - containerOffset + 'px';
         }
 
         // Workaround for #18927, artefacts left by the shadows of split
