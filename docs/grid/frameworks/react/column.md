@@ -34,26 +34,27 @@ export default function App() {
                 headerClassName="bg-slate-50 p-4 font-semibold"
                 cellClassName="p-4"
             />
-            <Column columnId="name" headerFormat="Name" />
+            <Column id="name" headerFormat="Name" />
             <Column
-                columnId="age"
+                id="age"
                 dataType="number"
                 headerFormat="Age"
             />
-            <Column columnId="city" headerFormat="City" />
+            <Column id="city" headerFormat="City" />
         </Grid>
     );
 }
 ```
 
-<!-- Sample placeholder: grid/react/columns
-<iframe src="" allow="fullscreen"></iframe>
--->
 
 ## Column IDs
 
-`columnId` is the data field the column configures. In the Grid options object
-it is `columns[].id`.
+`id` is required. It is the column identity in Grid (`columns[].id`), not an
+HTML id — `<Column>` does not render a DOM node.
+
+By default the column reads data from the field with the same name as `id`.
+Set `dataId` when the data field is different, or `dataId={null}` for an
+unbound (virtual) column that is not tied to a data field.
 
 Which columns are shown when you mix `<Column>` with generated columns is
 controlled by `autogenerateColumns` on
@@ -76,7 +77,7 @@ Each `<Column>` becomes one entry in `columns[]`.
 
 ```tsx
 <Column
-    columnId="salary"
+    id="salary"
     dataType="number"
     width="20%"
     sortingEnabled
@@ -86,10 +87,13 @@ Each `<Column>` becomes one entry in `columns[]`.
 />
 ```
 
-Omit `columnId` for an unbound column, for example a row index:
+For an unbound column, for example a row index, pass `id` and
+`dataId={null}`:
 
 ```tsx
 <Column
+    id="index"
+    dataId={null}
     headerFormat="#"
     width={40}
     cellValueGetter={function () {
@@ -112,15 +116,18 @@ and [Cell formatting](https://www.highcharts.com/docs/grid/cells/formatting).
 ## Props
 
 `Column` and `ColumnDefaults` share most props. `rowClassName` and
-`evenRowClassName` exist only on `ColumnDefaults`. `columnId`, `enabled`,
-`className`, and `id` exist only on `Column`.
+`evenRowClassName` exist only on `ColumnDefaults`. `id`, `dataId`, `enabled`,
+and `className` exist only on `Column`. Both also accept an `options` prop
+with the same JSON as Core (`columnDefaults` or `columns[]`). Flattened props
+override that object.
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `columnId` | `string` | Data field this column configures. Becomes `columns[].id`. `Column` only. |
+| `id` | `string` | Column identity. Maps to `columns[].id`. Required. `Column` only. |
+| `dataId` | `string \| null` | Data-source column id. Defaults to `id`. `null` makes the column unbound. `Column` only. |
 | `enabled` | `boolean` | Whether the column is rendered. `Column` only. |
 | `className` | `string` | Class names on the column. `Column` only. |
-| `id` | `string` | HTML `id` for styling hooks. Not passed into Grid options. `Column` only. |
+| `options` | `object` | Core JSON for this column (or `columnDefaults`). Flattened props override this object. |
 | `dataType` | `'string' \| 'number' \| 'boolean' \| 'datetime'` | Column data type. |
 | `width` | `number \| string` | Column width. |
 | `exportable` | `boolean` | Include the column in export. |

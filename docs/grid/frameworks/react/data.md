@@ -29,8 +29,8 @@ export default function App() {
         <>
             <Grid>
                 <Data columns={columns} />
-                <Column columnId="name" headerFormat="Name" />
-                <Column columnId="age" dataType="number" headerFormat="Age" />
+                <Column id="name" headerFormat="Name" />
+                <Column id="age" dataType="number" headerFormat="Age" />
             </Grid>
             <button type="button" onClick={loadMore}>Load more</button>
         </>
@@ -47,14 +47,11 @@ Local columns, `DataTable`, connectors, and remote querying are documented in
 [Data handling](https://www.highcharts.com/docs/grid/data-handling/overview).
 The sections below cover the `Data` component only.
 
-<!-- Sample placeholder: grid/react/data
-<iframe src="" allow="fullscreen"></iframe>
--->
 
 ## `columns`
 
 `columns` is an object of arrays. Each key is a column ID, the same value as
-`columnId` on
+`id` on
 [`Column`](https://www.highcharts.com/docs/grid/frameworks/react/column).
 
 Keep this object in `useState` when it can change. A new object created during
@@ -141,8 +138,11 @@ filtering, or loading more data.
 
 ## The options object
 
+`<Data>` also accepts an `options` prop with the same JSON as Core `data`.
+Flattened props override that object.
+
 Data can also go on `Grid`'s `options.data` instead of `<Data>`. If both are
-set, `options` wins. See
+set, `Grid`'s `options` wins. See
 [Grid](https://www.highcharts.com/docs/grid/frameworks/react/grid#combining-components-and-options).
 
 ## Props
@@ -156,3 +156,4 @@ set, `options` wins. See
 | `autogenerateColumns` | `boolean` | `true` (`false` when `<Column>` is used) | Whether to render columns from the data keys automatically. |
 | `updateOnChange` | `boolean` | `false` | Update the grid when the same `DataTable` instance changes. |
 | `idColumn` | `string` | - | Column ID that holds a stable unique row ID. |
+| `options` | `object` | - | Core `data` JSON. Flattened props override this object. |

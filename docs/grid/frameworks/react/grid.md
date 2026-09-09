@@ -26,9 +26,6 @@ const [options] = useState<GridOptions>({ /* ... */ });
 return <Grid options={options} />;
 ```
 
-<!-- Sample placeholder: grid/react/grid-options
-<iframe src="" allow="fullscreen"></iframe>
--->
 
 ## Combining components and options
 
@@ -47,7 +44,7 @@ const [options] = useState<GridOptions>({
 return (
     <Grid options={options}>
         <Data columns={columns} />
-        <Column columnId="name" headerFormat="Name" />
+        <Column id="name" headerFormat="Name" />
     </Grid>
 );
 ```

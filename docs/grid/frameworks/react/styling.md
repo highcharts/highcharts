@@ -64,13 +64,10 @@ or any other classes. If you leave `theme` out, Grid keeps
         rowClassName="hover:bg-slate-50"
         evenRowClassName="bg-slate-50/50"
     />
-    <Column columnId="name" headerFormat="Name" />
+    <Column id="name" headerFormat="Name" />
 </Grid>
 ```
 
-<!-- Sample placeholder: grid/react/styling
-<iframe src="" allow="fullscreen"></iframe>
--->
 
 ## Columns and rows
 
@@ -85,12 +82,12 @@ own classes; the two lists are merged.
     evenRowClassName="bg-slate-50/50"
 />
 <Column
-    columnId="name"
+    id="name"
     headerFormat="Name"
     cellClassName="font-semibold"
 />
 <Column
-    columnId="salary"
+    id="salary"
     headerFormat="Salary"
     headerClassName="text-right"
     cellClassName="text-right tabular-nums"

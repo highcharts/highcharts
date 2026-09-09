@@ -43,9 +43,9 @@ export default function App() {
                     city: ['New York', 'Oslo', 'Paris', 'Tokyo']
                 }}
             />
-            <Column columnId="name" headerFormat="Name" />
-            <Column columnId="age" dataType="number" headerFormat="Age" />
-            <Column columnId="city" headerFormat="City" />
+            <Column id="name" headerFormat="Name" />
+            <Column id="age" dataType="number" headerFormat="Age" />
+            <Column id="city" headerFormat="City" />
         </Grid>
     );
 }
@@ -83,10 +83,6 @@ with
 See the [live Grid Lite example](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo).
 See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo).
 
-<!-- Sample placeholder: grid/react/getting-started
-<iframe src="" allow="fullscreen"></iframe>
--->
-
 ## 3. Customize your grid
 
 The same Grid features are available as child components or as keys on the
@@ -107,9 +103,9 @@ export default function App() {
                     city: ['New York', 'Oslo', 'Paris', 'Tokyo']
                 }}
             />
-            <Column columnId="name" headerFormat="Name" />
-            <Column columnId="age" dataType="number" headerFormat="Age" />
-            <Column columnId="city" headerFormat="City" />
+            <Column id="name" headerFormat="Name" />
+            <Column id="age" dataType="number" headerFormat="Age" />
+            <Column id="city" headerFormat="City" />
         </Grid>
     );
 }
