@@ -39,7 +39,7 @@ const {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreegraphNode extends TreemapNode {
@@ -228,6 +228,7 @@ class TreegraphNode extends TreemapNode {
  *
  * */
 
+/** @internal */
 interface TreegraphNode {
     point: TreegraphPoint;
     ancestor: TreegraphNode;
@@ -247,4 +248,5 @@ interface TreegraphNode {
  *
  * */
 
+/** @internal */
 export default TreegraphNode;
