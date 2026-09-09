@@ -1662,7 +1662,11 @@ class Tooltip {
                 0 : clamp(deficit, 0, spaceBelow),
             above = headerTop ? 0 : clamp(deficit - below, 0, spaceAbove);
 
-        // Distribute and put in place
+        // Distribute and put in place. Shift the targets to keep the header
+        // anchored to the axis (#24860).
+        boxes.forEach((box): void => {
+            box.target += above;
+        });
         distribute(boxes, adjustedPlotHeight + above + below);
         distributionBoxTop -= above;
 
