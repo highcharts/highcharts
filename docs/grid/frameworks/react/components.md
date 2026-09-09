@@ -23,8 +23,8 @@ export default function App() {
                     age: [23, 34, 45]
                 }}
             />
-            <Column columnId="name" headerFormat="Name" />
-            <Column columnId="age" dataType="number" headerFormat="Age" />
+            <Column id="name" headerFormat="Name" />
+            <Column id="age" dataType="number" headerFormat="Age" />
         </Grid>
     );
 }
@@ -36,9 +36,13 @@ string that turns off the default theme for utility classes such as Tailwind.
 See [Styling](https://www.highcharts.com/docs/grid/frameworks/react/styling)
 for class-name mapping, themes, and Tailwind.
 
-<!-- Sample placeholder: grid/react/components
-<iframe src="" allow="fullscreen"></iframe>
--->
+Every component also accepts an `options` prop. Use the same JSON as in Core
+(`caption`, `data`, `columns[]`, `header`, `pagination`, and so on). Props
+overwrite `options`. For Caption and Description, children overwrite
+`options.text`.
+
+On `Grid`, the `options` prop overwrites children. See
+[Grid](https://www.highcharts.com/docs/grid/frameworks/react/grid#combining-components-and-options).
 
 ## Data
 
@@ -59,7 +63,8 @@ for the props, column IDs, and unbound columns.
 ## Header
 
 `<Header>` maps to `header`. Use it to set order, hide columns, or group
-headers. Each entry is a column ID string or a group object.
+headers. Pass the header tree as `options`: an array of column IDs or group
+objects. Use Core `columnId` inside a group object; use `id` on `<Column>`.
 
 ```tsx
 import { Grid, Data, Column, Header } from '@highcharts/grid-lite-react';
@@ -75,7 +80,7 @@ export default function App() {
                 }}
             />
             <Header
-                header={[
+                options={[
                     'name',
                     {
                         format: 'Details',
@@ -83,15 +88,15 @@ export default function App() {
                     }
                 ]}
             />
-            <Column columnId="name" headerFormat="Name" />
-            <Column columnId="age" dataType="number" headerFormat="Age" />
-            <Column columnId="city" headerFormat="City" />
+            <Column id="name" headerFormat="Name" />
+            <Column id="age" dataType="number" headerFormat="Age" />
+            <Column id="city" headerFormat="City" />
         </Grid>
     );
 }
 ```
 
-When `header` is set, list every column you want visible. Columns missing from
+When `options` is set, list every column you want visible. Columns missing from
 the tree are excluded. Per-column header text still comes from `headerFormat`
 or `headerFormatter` on
 [`Column`](https://www.highcharts.com/docs/grid/frameworks/react/column).
@@ -101,7 +106,7 @@ See [Column headers](https://www.highcharts.com/docs/grid/columns/header) and
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| `header` | `Array<string \| object>` | Header tree. A string is a column ID. An object can group or configure a header cell (`columnId`, `format`, `className`, `columns`, `accessibility`). |
+| `options` | `Array<string \| object>` | Header tree (Core `header`). A string is a column ID. An object can group or configure a header cell (`columnId`, `format`, `className`, `columns`, `accessibility`). |
 
 ## Caption
 
@@ -129,6 +134,7 @@ export default function App() {
 | --- | --- | --- |
 | `className` | `string` | Class names on the caption. |
 | `htmlTag` | `string` | HTML tag for the caption element. |
+| `options` | `object` | Core `caption` JSON. Flattened props and children override this object. |
 
 ## Description
 
@@ -155,6 +161,7 @@ export default function App() {
 | Prop | Type | Description |
 | --- | --- | --- |
 | `className` | `string` | Class names on the description. |
+| `options` | `object` | Core `description` JSON. Flattened props and children override this object. |
 
 ## Pagination
 
@@ -198,3 +205,4 @@ export default function App() {
 | `infoClassName` | `string` | Class names on the page info element. |
 | `controlsClassName` | `string` | Class names on the controls container. |
 | `sizeClassName` | `string` | Class names on the page-size container. |
+| `options` | `object` | Core `pagination` JSON. Flattened props override this object. |
