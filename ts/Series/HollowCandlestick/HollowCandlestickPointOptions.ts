@@ -16,7 +16,7 @@
  *
  * */
 
-import CandlestickPointOptions from '../Candlestick/CandlestickPointOptions';
+import type CandlestickPointOptions from '../Candlestick/CandlestickPointOptions';
 
 /* *
  *
