@@ -198,12 +198,19 @@ class SVGElement implements SVGElementBase {
 
     /** @internal */
     public imgwidth?: number;
+
     /** @internal */
     public imgheight?: number;
+
     /** @internal */
     public inverted: undefined;
+
+    /** @internal */
+    public labelStyle?: CSSObject;
+
     /** @internal */
     public matrix?: Array<number>;
+
     /** @internal */
     public onEvents: Record<string, Function> = {};
 

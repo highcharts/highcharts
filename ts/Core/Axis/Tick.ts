@@ -428,7 +428,8 @@ class Tick {
     ): (SVGElement|undefined) {
         const axis = this.axis,
             { renderer, styledMode } = axis.chart,
-            whiteSpace = labelOptions.style.whiteSpace;
+            style = labelOptions.style,
+            whiteSpace = style.whiteSpace;
 
         let label = this.label;
 
@@ -448,14 +449,20 @@ class Tick {
         }
 
         // Un-rotated length
-        if (label) {
+        if (label && (label.labelStyle !== style || text !== label.textStr)) {
+
+            // Store a reference to the current style object to avoid running
+            // this block on every render call unless something actually
+            // changes.
+            label.labelStyle = style;
+
             if (text !== label.textStr) {
                 label.attr({ text });
                 delete label.textPxLength;
             }
 
             if (!styledMode) {
-                label.css(merge(labelOptions.style));
+                label.css(merge(style));
             }
 
             label.textPxLength ??= label.getBBox().width;
