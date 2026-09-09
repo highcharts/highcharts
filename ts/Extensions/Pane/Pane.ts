@@ -327,7 +327,7 @@ class Pane {
                         parseFloat(fontSize) * 12 :
                         12
                 ) * 1.2, // 1.2 is a line height approximation
-                m = Math.max(labels.distance || 0, 0) + lineHeightGuess / 2;
+                m = Math.max(labels.distance ?? 15, 0) + lineHeightGuess / 2;
 
             axisLabelMargin = m;
         }

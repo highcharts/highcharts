@@ -24,13 +24,16 @@ import type Axis from '../../Core/Axis/Axis';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type ParallelCoordinates from './ParallelCoordinates';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import {
     addEvent,
     arrayMax,
     arrayMin,
     isNumber,
-    merge
+    merge,
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -194,11 +197,8 @@ namespace ParallelAxis {
         AxisClass: typeof Axis
     ): void {
 
-        if (!AxisClass.keepProps.includes('parallel')) {
+        if (pushUnique(composed, 'Axis.ParallelCoordinates')) {
             const axisCompo = AxisClass as typeof Composition;
-
-            // On update, keep parallel additions.
-            AxisClass.keepProps.push('parallel');
 
             addEvent(axisCompo, 'init', onInit);
             addEvent(axisCompo, 'afterSetOptions', onAfterSetOptions);
@@ -300,6 +300,8 @@ namespace ParallelAxis {
         this: Composition
     ): void {
         const axis = this;
+
+        delete this.type; // After Axis.update
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(axis);
         }

@@ -120,7 +120,7 @@ Highcharts.chart('container', {
             style: {
                 fontSize: '1.2em'
             },
-            format: '{#if isNegative}Min{else}Max{/if}: {total}'
+            format: '{#if (lt total 0)}Min{else}Max{/if}: {total}'
         },
         startOnTick: false,
         endOnTick: false

@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Paweł Dalek
- js_wrap: b
+name: Demo of xAxis.angle
+js_wrap: b
 ...

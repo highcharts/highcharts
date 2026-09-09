@@ -19,7 +19,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Renderer/AlignObject';
-import type ColorString from '../../Color/ColorString';
+import type { ColorType } from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type DashStyleValue from '../../Renderer/DashStyleValue';
 import type Templating from '../../Templating';
@@ -215,7 +215,7 @@ export interface PlotLineOptions {
      *
      * @default var(--highcharts-neutral-color-40)
      */
-    color?: ColorString;
+    color?: ColorType;
 
     /**
      * The dashing or dot style for the plot line. For possible values see

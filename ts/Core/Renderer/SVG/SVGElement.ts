@@ -198,12 +198,19 @@ class SVGElement implements SVGElementBase {
 
     /** @internal */
     public imgwidth?: number;
+
     /** @internal */
     public imgheight?: number;
+
     /** @internal */
     public inverted: undefined;
+
+    /** @internal */
+    public labelStyle?: CSSObject;
+
     /** @internal */
     public matrix?: Array<number>;
+
     /** @internal */
     public onEvents: Record<string, Function> = {};
 
@@ -325,6 +332,7 @@ class SVGElement implements SVGElementBase {
             (this as AnyRecord)[key + 'Value'] ??
             (this as AnyRecord)[key] ??
             (this.element ? this.element.getAttribute(key) : null) ??
+            this.box?.[key] ?? // For labels, when animating border radius
             0
         );
 

@@ -20,9 +20,13 @@
 
 import type Axis from './Axis';
 
+
+import H from '../Globals.js';
+const { composed } = H;
 import {
     addEvent,
-    normalizeTickInterval
+    normalizeTickInterval,
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -78,8 +82,7 @@ namespace LogarithmicAxis {
         AxisClass: T
     ): (T&typeof Composition) {
 
-        if (!AxisClass.keepProps.includes('logarithmic')) {
-            AxisClass.keepProps.push('logarithmic');
+        if (pushUnique(composed, 'Axis.Logarithmic')) {
 
             addEvent(AxisClass, 'afterSetType', onAfterSetType);
             addEvent(AxisClass, 'afterInit', onAfterInit);

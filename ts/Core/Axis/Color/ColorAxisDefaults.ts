@@ -71,11 +71,13 @@ import type { DeepPartial } from '../../../Shared/Types';
  *               Min color and max color
  *
  * @extends      xAxis
- * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
- *               categories, crosshair, dateTimeLabelFormats, left,
+ * @excluding    alignTicks, allowDecimals, alternateGridColor, angle, breaks,
+ *               categories, crosshair, crossing, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
- *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
+ *               offset, opposite, pane, panningEnabled, plotBands, plotLines,
+ *               reversedStacks, scrollbar, showEmpty, startOfWeek,
+ *               tickPlacement, title, top, uniqueNames, units,
+ *               zoomEnabled
  * @product      highcharts highstock highmaps
  * @requires     modules/coloraxis
  * @type         {*|Array<*>}
