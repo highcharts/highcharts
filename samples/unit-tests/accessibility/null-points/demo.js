@@ -85,6 +85,16 @@ QUnit.test('Dynamic null points', function (assert) {
         'point.'
     );
 
+    // Without a redraw in between, so that the marker is not re-created
+    nullPoint.update({
+        y: null
+    }, false);
+
+    assert.ok(
+        nullPoint.graphic,
+        'Updating a null point to null should keep the dummy marker, #12718.'
+    );
+
     nullPoint.select(true, true);
 
     assert.notStrictEqual(

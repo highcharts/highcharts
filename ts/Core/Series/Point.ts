@@ -645,12 +645,6 @@ class Point {
 
             point.isNull = point.isValid && !point.isValid();
 
-            // Discard the a11y mock graphic when no longer null (#25299)
-            if (point.hasMockGraphic && !point.isNull) {
-                point.graphic = point.graphic?.destroy();
-                delete point.hasMockGraphic;
-            }
-
             // #9233, #10874
             point.formatPrefix = point.isNull ? 'null' : 'point';
         }
@@ -1318,17 +1312,13 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
+
+            const index = point.index;
 
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
