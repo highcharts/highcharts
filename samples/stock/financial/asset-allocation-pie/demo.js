@@ -1,20 +1,3 @@
-// TEMPORARY: Remove this once the demo-live-data dataset is renamed to
-// lowercase `asset-allocation-breakdown`.
-const originalFetch = window.fetch;
-window.fetch = function (input, init) {
-    const url = String(input && input.url || input);
-    if (url.includes('/asset-allocation-breakdown')) {
-        return originalFetch(
-            url.replace(
-                '/asset-allocation-breakdown',
-                '/asset-Allocation-Breakdown'
-            ),
-            init
-        );
-    }
-    return originalFetch(input, init);
-};
-
 const assetAllocationTypes = {
     Stock: 'Stock',
     Bond: 'Bond',
