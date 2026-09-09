@@ -949,7 +949,14 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
         ],
         yAxis: [
             {
-                height: '50%'
+                height: '50%',
+                // Reaches below the pane (#6257)
+                plotBands: [
+                    {
+                        from: -100,
+                        to: 1
+                    }
+                ]
             },
             {
                 height: '50%',
@@ -987,6 +994,14 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
     assert.ok(
         bands[1].height > bands[0].height,
         'plotBand with acrossPanes = true has greater height'
+    );
+
+    assert.close(
+        Number(chart.yAxis[0].plotBandClip.attr('height')),
+        chart.yAxis[0].len,
+        1,
+        '#6257: a band should be clipped to its own pane, not to the whole ' +
+            'plot area'
     );
 });
 
@@ -1068,113 +1083,105 @@ QUnit.test(
 );
 
 QUnit.test(
-    '#6257: Gradient on a plot band reaching outside the axis',
+    '#6257: Plot band reaching outside the axis is clipped, not fitted',
     function (assert) {
-        // Deliberately shared between the bands, like in the issue
-        const linearGrad = {
-                linearGradient: { x1: 0, x2: 1, y1: 0, y2: 0 },
-                stops: [[0, '#04A6DB'], [1, '#006D91']]
-            },
-            chart = Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
                 xAxis: {
                     max: 8,
                     min: 0,
                     plotBands: [{
-                        color: linearGrad,
-                        from: 2,
-                        to: 5
-                    }, {
-                        color: linearGrad,
                         from: 7,
-                        to: 10
-                    }, {
-                        color: linearGrad,
-                        from: -2,
-                        to: 1
+                        label: {
+                            text: 'Cut'
+                        },
+                        to: 12
                     }]
                 },
                 yAxis: {
                     max: 8,
                     min: 0,
                     plotBands: [{
-                        color: linearGrad,
-                        from: 7,
-                        to: 10
+                        from: -5,
+                        to: 3
                     }]
                 },
                 series: [{
                     data: [1, 2, 3]
                 }]
             }),
-            bands = chart.xAxis[0].plotLinesAndBands,
-            transformOf = band => document.getElementById(
-                band.svgElem.element.getAttribute('fill')
-                    .replace(/^.*#|\)$/g, '')
-            ).getAttribute('gradientTransform'),
-            gradientCount = () => chart.container
-                .querySelectorAll('defs linearGradient').length;
+            xAxis = chart.xAxis[0],
+            yAxis = chart.yAxis[0],
+            bands = xAxis.plotLinesAndBands,
+            // Rendered band corners, index 1 for x and 2 for y
+            corners = (band, index) => band.svgElem.pathArray
+                .filter(segment => segment.length === 3)
+                .map(segment => segment[index]);
 
-        assert.strictEqual(
-            transformOf(bands[0]),
-            'translate(0 0) scale(1 1)',
-            'A band inside the axis should keep the gradient untransformed'
+        assert.close(
+            Math.max(...corners(bands[0], 1)),
+            xAxis.toPixels(12),
+            1,
+            'A band reaching past the max should keep its real coordinates, ' +
+                'so that a gradient fill spans the full band'
         );
 
-        assert.strictEqual(
-            transformOf(bands[1]),
-            'translate(0 0) scale(3 1)',
-            'A band reaching past the max should scale the gradient up to its' +
-                ' full range'
+        assert.ok(
+            bands[0].svgElem.element.getAttribute('clip-path'),
+            'The band should be clipped to the axis instead of being fitted'
         );
 
-        assert.strictEqual(
-            transformOf(bands[2]),
-            'translate(-2 0) scale(3 1)',
-            'A band reaching past the min should also shift the gradient'
+        const labelBox = bands[0].label.getBBox();
+
+        assert.ok(
+            labelBox.x + labelBox.width / 2 < xAxis.pos + xAxis.len,
+            'The label of a cut band should stay within the visible part'
         );
 
-        assert.strictEqual(
-            transformOf(chart.yAxis[0].plotLinesAndBands[0]),
-            'translate(0 -2) scale(1 3)',
-            'A band on a vertical axis should be transformed along the y axis'
+        assert.close(
+            Math.max(...corners(yAxis.plotLinesAndBands[0], 2)),
+            yAxis.toPixels(-5),
+            1,
+            'A band on a vertical axis should keep its real coordinates too'
         );
 
-        assert.strictEqual(
-            linearGrad.linearGradient.gradientTransform,
-            undefined,
-            'The color object given in the options should not be mutated'
+        chart.setSize(400, 300, false);
+
+        assert.close(
+            Number(xAxis.plotBandClip.attr('width')),
+            xAxis.len,
+            1,
+            'The clip should follow the axis when the chart is resized'
         );
+    }
+);
 
-        const gradientsBefore = gradientCount();
+QUnit.test(
+    '#6257: Plot band clip across a scrollable plot area',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    height: 300,
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                xAxis: {
+                    plotBands: [{
+                        from: 1,
+                        to: 2
+                    }]
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            axis = chart.xAxis[0];
 
-        chart.xAxis[0].setExtremes(3, 9);
-        chart.xAxis[0].setExtremes(-5, 15);
-
-        assert.strictEqual(
-            gradientCount(),
-            gradientsBefore,
-            'Redrawing should transform the gradient in place, not add a new' +
-                ' element to the defs on each redraw'
-        );
-
-        assert.strictEqual(
-            transformOf(bands[1]),
-            'translate(0 0) scale(1 1)',
-            'The transform should be reset when the band is no longer cut'
-        );
-
-        chart.xAxis[0].addPlotBand({
-            color: linearGrad,
-            from: 7,
-            id: 'added',
-            to: 10
-        });
-        chart.xAxis[0].removePlotBand('added');
-
-        assert.strictEqual(
-            gradientCount(),
-            gradientsBefore,
-            'Removing a band should release its gradient element'
+        assert.ok(
+            Number(axis.plotBandClip.attr('height')) >=
+                chart.plotTop + chart.plotHeight,
+            'The clip should not cut the band where the plot area reaches ' +
+                'below the chart height'
         );
     }
 );

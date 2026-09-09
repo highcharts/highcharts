@@ -37,21 +37,14 @@ export interface GradientColorStop {
     color?: Color;
 }
 
-/** @internal */
-export interface GradientAttributes {
-    'data-highcharts-band'?: string;
-    gradientTransform?: string;
-    gradientUnits?: 'userSpaceOnUse';
-}
-
-export interface LinearGradientColor extends GradientAttributes {
+export interface LinearGradientColor {
     x1: number;
     x2: number;
     y1: number;
     y2: number;
 }
 
-export interface RadialGradientColor extends GradientAttributes {
+export interface RadialGradientColor {
     cx: number;
     cy: number;
     r: number;

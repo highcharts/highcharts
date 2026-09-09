@@ -19,7 +19,6 @@
  * */
 
 import type Chart from '../../Chart/Chart';
-import type ColorType from '../../Color/ColorType';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -39,17 +38,13 @@ import {
     arrayMax,
     arrayMin,
     clamp,
-    correctFloat,
     defined,
     destroyObjectProperties,
     erase,
     fireEvent,
-    isArray,
-    isNumber,
     merge,
     objectEach
 } from '../../../Shared/Utilities.js';
-import { uniqueKey } from '../../Utilities.js';
 
 /* *
  *
@@ -172,12 +167,6 @@ class PlotLineOrBand {
     public eventsAdded?: boolean;
 
     /**
-     * Unique token that keeps this band's gradient out of the shared cache.
-     * @internal
-     */
-    public gradientKey?: string;
-
-    /**
      * SVG element of the label.
      *
      * @name Highcharts.PlotLineOrBand#label
@@ -256,8 +245,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // Plot band
-                attribs.fill = this.getBandFill(from, to) ||
-                    'var(--highcharts-highlight-color-10)';
+                attribs.fill = color || 'var(--highcharts-highlight-color-10)';
                 if (borderWidth) {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                     attribs['stroke-width'] = borderWidth;
@@ -289,6 +277,23 @@ class PlotLineOrBand {
                 .path()
                 .attr(attribs)
                 .add(group);
+        }
+
+        // Clip the band to the axis, as it isn't fitted to it. Only along the
+        // axis, to leave `acrossPanes` bands and the navigator alone (#6257).
+        if (isBand) {
+            const { len, pos } = axis,
+                // Left wide open across the axis, so that a scrollable plot
+                // area isn't cut off
+                clipBox = horiz ?
+                    { height: 1e5, width: len, x: pos, y: 0 } :
+                    { height: len, width: 1e5, x: 0, y: pos },
+                clip = axis.plotBandClip ||= renderer.clipRect(clipBox);
+
+            clip.attr(clipBox);
+            if (isNew) {
+                svgElem.clip(clip);
+            }
         }
 
         // Set the path or return
@@ -367,78 +372,6 @@ class PlotLineOrBand {
     }
 
     /**
-     * Get the fill for a plot band. A gradient is relative to the bounding box
-     * of the band, so when the band is cut at the edge of the plot area, the
-     * gradient must be transformed to keep spanning the full range (#6257).
-     * @internal
-     * @function Highcharts.PlotLineOrBand#getBandFill
-     */
-    public getBandFill(from: number, to: number): (ColorType|undefined) {
-        const { axis, svgElem } = this,
-            { color } = this.options,
-            { horiz, len, pos } = axis;
-
-        let fill = color;
-
-        if (typeof color === 'object' && 'stops' in color && !axis.isRadial) {
-            const gradientName = color.radialGradient ?
-                    'radialGradient' :
-                    'linearGradient',
-                gradient = color[gradientName];
-
-            // Only relative units without a transform of their own can be
-            // remapped
-            if (
-                gradient &&
-                !isArray(gradient) &&
-                !gradient.gradientUnits &&
-                !gradient.gradientTransform
-            ) {
-                const fromPx = axis.toPixels(from),
-                    toPx = axis.toPixels(to),
-                    low = Math.min(fromPx, toPx),
-                    high = Math.max(fromPx, toPx),
-                    span = high - low,
-                    // The bounding box of the cut band
-                    boxLow = clamp(low, pos, pos + len),
-                    boxLength = clamp(high, pos, pos + len) - boxLow;
-
-                // Identity keeps the config stable across redraws
-                let gradientTransform = 'translate(0 0) scale(1 1)';
-
-                if (isNumber(span) && boxLength > 0 && span > boxLength) {
-                    const scale = correctFloat(span / boxLength),
-                        shift = correctFloat((low - boxLow) / boxLength);
-
-                    gradientTransform = horiz ?
-                        `translate(${shift} 0) scale(${scale} 1)` :
-                        `translate(0 ${shift}) scale(1 ${scale})`;
-                }
-
-                // Gradients are cached by config, so claim one for this band
-                // alone (#1282)
-                fill = merge(color, {
-                    [gradientName]: {
-                        'data-highcharts-band':
-                            this.gradientKey ||= uniqueKey(),
-                        gradientTransform
-                    }
-                });
-
-                // The fill is only applied on creation, so update the gradient
-                // element directly
-                const cacheKey = svgElem?.element.gradient;
-                if (cacheKey) {
-                    axis.chart.renderer.gradients[cacheKey]
-                        ?.attr({ gradientTransform });
-                }
-            }
-        }
-
-        return fill;
-    }
-
-    /**
      * Render and align label for plot line or band.
      * @internal
      * @function Highcharts.PlotLineOrBand#renderLabel
@@ -496,19 +429,24 @@ class PlotLineOrBand {
 
         // Get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
-        const xBounds = path.xBounds ||
+        const { horiz, len, pos } = axis,
+            xBounds = path.xBounds ||
                 [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])],
             yBounds = path.yBounds ||
                 [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])],
-            x = arrayMin(xBounds),
-            y = arrayMin(yBounds),
-            bBoxWidth = arrayMax(xBounds) - x;
+            // Align within the visible part of a clipped band (#6257)
+            bounds = horiz ? xBounds : yBounds,
+            low = clamp(arrayMin(bounds), pos, pos + len),
+            high = clamp(arrayMax(bounds), pos, pos + len),
+            x = horiz ? low : arrayMin(xBounds),
+            y = horiz ? arrayMin(yBounds) : low,
+            bBoxWidth = horiz ? high - low : arrayMax(xBounds) - x;
 
         label.align(optionsLabel, false, {
             x,
             y,
             width: bBoxWidth,
-            height: arrayMax(yBounds) - y
+            height: horiz ? arrayMax(yBounds) - y : high - low
         });
 
         label.alignAttr.y -= renderer.fontMetrics(label).b;
@@ -565,15 +503,6 @@ class PlotLineOrBand {
     public destroy(): void {
         // Remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
-
-        // No other band can reuse the claimed gradient (#6257)
-        const gradients = this.axis.chart.renderer.gradients,
-            cacheKey = this.gradientKey && this.svgElem?.element.gradient;
-
-        if (cacheKey && gradients) {
-            gradients[cacheKey]?.destroy();
-            delete gradients[cacheKey];
-        }
 
         delete (this as Partial<this>).axis;
         destroyObjectProperties(this);
