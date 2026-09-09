@@ -384,50 +384,6 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
 });
 
 QUnit.test(
-    'Split tooltip boxes are distributed per pane, not chart-wide',
-    function (assert) {
-        const chart = Highcharts.chart('container', {
-            xAxis: [
-                { width: '50%' },
-                { left: '50%', width: '50%' }
-            ],
-            tooltip: {
-                split: true
-            },
-            series: [
-                // Left pane: 3 points at the same value, so their boxes
-                // collide and distribute() has to spread them apart.
-                { xAxis: 0, data: [[0, 50]] },
-                { xAxis: 0, data: [[0, 50]] },
-                { xAxis: 0, data: [[0, 50]] },
-                // Right pane: 1 point at the same value as the left pane
-                // points, but in a separate pane, so it can't visually
-                // collide with them.
-                { xAxis: 1, data: [[0, 50]] }
-            ]
-        });
-
-        const rightPoint = chart.series[3].points[0],
-            leftPoints = chart.series.slice(0, 3).map(s => s.points[0]);
-
-        // Show the right pane's tooltip alone first, to get its natural,
-        // undistorted position.
-        chart.tooltip.refresh([rightPoint]);
-        const naturalY = chart.series[3].tt.attr('y');
-
-        // Show it again, now together with the crowded left pane.
-        chart.tooltip.refresh([...leftPoints, rightPoint]);
-
-        assert.strictEqual(
-            chart.series[3].tt.attr('y'),
-            naturalY,
-            'The right pane\'s tooltip should stay in place, unaffected ' +
-                'by the collisions in the unrelated left pane'
-        );
-    }
-);
-
-QUnit.test(
     'Split tooltip on flags, having noSharedTooltip flag',
     function (assert) {
         var chart = Highcharts.chart('container', {
@@ -505,10 +461,7 @@ QUnit.test(
 QUnit.test('positioning', assert => {
     const axisHeight = 150;
     const data = [85, 82, 84, 87, 92];
-    const {
-        series: [series1, series2],
-        yAxis: [, /* yAxis1 */ yAxis2]
-    } = Highcharts.stockChart('container', {
+    const chart = Highcharts.stockChart('container', {
         chart: {
             height: axisHeight * 3
         },
@@ -542,6 +495,8 @@ QUnit.test('positioning', assert => {
             { data: data, yAxis: 1 }
         ]
     });
+    const [series1, series2] = chart.series;
+    const yAxis2 = chart.yAxis[1];
     const isInsideAxis = ({ pos, len }, { anchorY }) =>
         pos <= anchorY && anchorY <= pos + len;
 
@@ -559,6 +514,37 @@ QUnit.test('positioning', assert => {
         isInsideAxis(yAxis2, tooltip),
         'Should have Series 2 tooltip anchorY aligned within yAxis when ' +
         'point is inside plot area'
+    );
+
+    // Add a 2nd xAxis pane with one series colliding with series1 and one
+    // lone series, to check boxes are distributed per pane, not chart-wide.
+    chart.update({
+        xAxis: [
+            { width: '50%' },
+            { left: '50%', width: '50%' }
+        ],
+        series: [
+            { data: [[3, 87]], yAxis: 0 },
+            { data: [[3, 87]], yAxis: 1 },
+            { xAxis: 0, data: [[3, 87]] },
+            { xAxis: 1, data: [[3, 87]] }
+        ]
+    }, true, true);
+    const leftPoint = chart.series[2].points[0];
+    const rightPoint = chart.series[3].points[0];
+
+    // Show the right pane's tooltip alone first, to get its natural position.
+    chart.tooltip.refresh([rightPoint]);
+    const naturalY = chart.series[3].tt.attr('y');
+
+    // Show it again, now together with the crowded left pane.
+    chart.tooltip.refresh([series1.points[0], leftPoint, rightPoint]);
+
+    assert.strictEqual(
+        chart.series[3].tt.attr('y'),
+        naturalY,
+        'The right pane\'s tooltip should stay in place, unaffected by ' +
+            'the collisions in the unrelated crowded left pane'
     );
 });
 

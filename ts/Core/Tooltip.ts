@@ -1530,8 +1530,8 @@ class Tooltip {
             labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
-        // Boxes grouped by xAxis (pane), for per-pane distribute() below.
-        const paneGroups = new Map<number, Array<BoxObject>>();
+        // Boxes grouped by pane position, for per-pane distribute() below.
+        const paneGroups = new Map<string, Array<BoxObject>>();
         let boxes = labels.slice(0, points.length + 1).reduce(function (
             boxes: Array<BoxObject>,
             str: (boolean|string),
@@ -1597,7 +1597,8 @@ class Tooltip {
                         // Bucket by pane (xAxis) as boxes are created, so
                         // renderSplit doesn't need a second pass over
                         // `boxes` just to group them before distribute().
-                        key = point.series?.xAxis?.index || 0,
+                        xAxis = point.series?.xAxis,
+                        key = xAxis ? `${xAxis.pos}+${xAxis.len}` : '0',
                         group = paneGroups.get(key) || [];
 
                     boxes.push(box);
@@ -1651,12 +1652,16 @@ class Tooltip {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        paneGroups.forEach((group): void => {
-            distribute(group, adjustedPlotHeight);
-        });
-        // Restore the global target order distribute() used to produce, now
-        // that it only sorts within each pane.
-        stableSort(boxes, (a, b): number => a.target - b.target);
+        if (paneGroups.size <= 1) {
+            // Single pane: sorts `boxes` in place, no extra work needed.
+            distribute(boxes, adjustedPlotHeight);
+        } else {
+            paneGroups.forEach((group): void => {
+                distribute(group, adjustedPlotHeight);
+            });
+            // Restore target order on boxes` too, needed by boxExtremes below.
+            stableSort(boxes, (a, b): number => a.target - b.target);
+        }
         const boxExtremes = {
             left: chartLeft,
             right: chartLeft
