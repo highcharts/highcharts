@@ -39,7 +39,7 @@ const {
 /**
  * The pyramid3d series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pyramid3d
  * @augments seriesTypes.funnel3d
@@ -81,6 +81,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
  *
  * */
 
+/** @internal */
 interface Pyramid3DSeries {
     pointClass: typeof Pyramid3DPoint;
 }

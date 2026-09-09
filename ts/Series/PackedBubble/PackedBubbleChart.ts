@@ -27,6 +27,7 @@ import type PackedBubblePoint from './PackedBubblePoint';
  *
  * */
 
+/** @internal */
 declare class PackedBubbleChart extends Chart {
     diffX: number;
     diffY: number;
@@ -43,6 +44,7 @@ declare class PackedBubbleChart extends Chart {
  *
  * */
 
+/** @internal */
 interface PackedBubbleChart extends NetworkgraphChart {
     graphLayoutsLookup: Array<GraphLayoutType>;
 }
@@ -53,4 +55,5 @@ interface PackedBubbleChart extends NetworkgraphChart {
  *
  * */
 
+/** @internal */
 export default PackedBubbleChart;
