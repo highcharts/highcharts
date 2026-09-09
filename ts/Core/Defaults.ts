@@ -18,7 +18,7 @@
  *
  * */
 
-import type { DeepPartial } from '../Shared/Types';
+import type { AnyRecord, DeepPartial } from '../Shared/Types';
 import type { DefaultOptions, Options } from './Options';
 import type Legend from './Legend/Legend';
 
@@ -29,7 +29,7 @@ const {
 } = H;
 import PaletteDefaults from './Color/PaletteDefaults.js';
 import Time from './Time.js';
-import { fireEvent, merge } from '../Shared/Utilities.js';
+import { diffObjects, fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -3182,9 +3182,14 @@ export function getOptions(): DefaultOptions {
 }
 
 /**
- * Plot options from the `setOptions` calls, kept apart from `defaultOptions`
- * where user set and built in options can no longer be told apart (#20716).
- *
+ * The built in plot options per series type, saved when each type registers,
+ * before `setOptions` can change them (#20716).
+ * @internal
+ */
+const builtinPlotOptions: Options['plotOptions'] = {};
+
+/**
+ * The plot options the user set through `setOptions` (#20716).
  * @internal
  */
 const globalUserPlotOptions: Options['plotOptions'] = {};
@@ -3211,10 +3216,16 @@ function setOptions(
     // Copy in the default options
     merge(true, defaultOptions, options);
 
-    // Keep track of the user set plot options (#20716).
-    if (options.plotOptions) {
-        merge(true, globalUserPlotOptions, options.plotOptions);
-    }
+    // Set the user's global plot options fresh each time, to difference them
+    // from the built in defaults (#20716)
+    Object.keys(globalUserPlotOptions).forEach((key): void => {
+        delete (globalUserPlotOptions as AnyRecord)[key];
+    });
+    merge(
+        true,
+        globalUserPlotOptions,
+        diffObjects(defaultOptions.plotOptions, builtinPlotOptions)
+    );
 
     // Update the time object
     if (options.time) {
@@ -3243,6 +3254,7 @@ function setOptions(
  * */
 
 const DefaultOptions = {
+    builtinPlotOptions,
     defaultOptions,
     defaultTime,
     getOptions,
