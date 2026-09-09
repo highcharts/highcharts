@@ -39,7 +39,6 @@ import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Keltner Channels series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.keltnerchannels
  *
@@ -248,7 +247,6 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface KeltnerChannelsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -272,7 +270,6 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
@@ -286,7 +283,6 @@ SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
  *
  * */
 
-/** @internal */
 export default KeltnerChannelsIndicator;
 
 /* *

@@ -83,7 +83,6 @@ function populateAverage(
 /**
  * The ROC series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.roc
  *
@@ -193,7 +192,6 @@ class ROCIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ROCIndicator {
     nameBase: string;
     pointClass: typeof ROCPoint;
@@ -209,7 +207,6 @@ extend(ROCIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         roc: typeof ROCIndicator;
@@ -224,7 +221,6 @@ SeriesRegistry.registerSeriesType('roc', ROCIndicator);
  *
  * */
 
-/** @internal */
 export default ROCIndicator;
 
 /* *

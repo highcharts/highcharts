@@ -37,7 +37,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Trend line series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.trendline
  *
@@ -169,7 +168,6 @@ class TrendLineIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface TrendLineIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -187,7 +185,6 @@ extend(TrendLineIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof TrendLineIndicator;
@@ -202,7 +199,6 @@ SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
  *
  * */
 
-/** @internal */
 export default TrendLineIndicator;
 
 /* *

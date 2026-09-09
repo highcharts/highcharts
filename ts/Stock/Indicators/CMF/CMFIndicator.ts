@@ -45,7 +45,6 @@ const {
 /**
  * The CMF series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cmf
  *
@@ -324,7 +323,6 @@ class CMFIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CMFIndicator {
     pointClass: typeof CMFPoint;
 }
@@ -335,7 +333,6 @@ interface CMFIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmf: typeof CMFIndicator;
@@ -350,7 +347,6 @@ SeriesRegistry.registerSeriesType('cmf', CMFIndicator);
  *
  * */
 
-/** @internal */
 export default CMFIndicator;
 
 /* *

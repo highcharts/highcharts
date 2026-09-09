@@ -42,7 +42,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * Linear regression series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearregression
  *
@@ -365,7 +364,6 @@ class LinearRegressionIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
     nameBase: string;
@@ -382,7 +380,6 @@ extend(LinearRegressionIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregression: typeof LinearRegressionIndicator;
@@ -407,7 +404,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionIndicator;
 
 /* *

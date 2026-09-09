@@ -39,7 +39,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The AD series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ad
  *
@@ -197,7 +196,6 @@ class ADIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ADIndicator {
     pointClass: typeof ADPoint;
     nameComponents: Array<string>;
@@ -214,7 +212,6 @@ extend(ADIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ad: typeof ADIndicator;
@@ -228,7 +225,6 @@ SeriesRegistry.registerSeriesType('ad', ADIndicator);
  *
  * */
 
-/** @internal */
 export default ADIndicator;
 
 /* *

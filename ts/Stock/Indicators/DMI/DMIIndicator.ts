@@ -49,7 +49,6 @@ import {
 /**
  * The Directional Movement Index (DMI) series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dmi
  *
@@ -353,7 +352,6 @@ class DMIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof DMIPoint>;
@@ -378,7 +376,6 @@ MultipleLinesComposition.compose(DMIIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dmi: typeof DMIIndicator;
@@ -392,7 +389,6 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  *
  * */
 
-/** @internal */
 export default DMIIndicator;
 
 /* *

@@ -39,7 +39,6 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The EMA series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ema
  *
@@ -212,7 +211,6 @@ class EMAIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface EMAIndicator {
     pointClass: typeof EMAPoint;
 }
@@ -223,7 +221,6 @@ interface EMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ema: typeof EMAIndicator;
@@ -237,7 +234,6 @@ SeriesRegistry.registerSeriesType('ema', EMAIndicator);
  *
  * */
 
-/** @internal */
 export default EMAIndicator;
 
 /* *

@@ -62,7 +62,6 @@ interface MACDZonesObject {
 /**
  * The MACD series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.macd
  *
@@ -510,7 +509,6 @@ class MACDIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface MACDIndicator {
     crispCol: typeof ColumnSeries.prototype.crispCol;
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
@@ -540,7 +538,6 @@ extend(MACDIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof MACDIndicator;
@@ -555,7 +552,6 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  *
  * */
 
-/** @internal */
 export default MACDIndicator;
 
 /* *

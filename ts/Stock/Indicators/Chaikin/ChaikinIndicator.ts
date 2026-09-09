@@ -40,7 +40,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Chaikin series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.chaikin
  *
@@ -195,7 +194,6 @@ class ChaikinIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface ChaikinIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -212,7 +210,6 @@ extend(ChaikinIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
@@ -225,7 +222,6 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  *  Default Export
  *
  * */
-/** @internal */
 export default ChaikinIndicator;
 
 /* *

@@ -266,7 +266,6 @@ class ZigzagIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ZigzagIndicator {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -286,7 +285,6 @@ extend(ZigzagIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         zigzag: typeof ZigzagIndicator;
@@ -301,7 +299,6 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
-/** @internal */
 export default ZigzagIndicator;
 
 /* *

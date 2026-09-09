@@ -39,7 +39,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Channel series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pc
  *
@@ -194,7 +193,6 @@ class PCIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -218,7 +216,6 @@ MultipleLinesComposition.compose(PCIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pc: typeof PCIndicator;
@@ -233,7 +230,6 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  *
  * */
 
-/** @internal */
 export default PCIndicator;
 
 /* *

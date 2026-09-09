@@ -116,7 +116,6 @@ function arrayExtremesOHLC(
 /**
  * The Volume By Price (VBP) series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.vbp
  *
@@ -896,7 +895,6 @@ class VBPIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -952,7 +950,6 @@ namespace VBPIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vbp: typeof VBPIndicator;

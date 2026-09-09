@@ -166,7 +166,6 @@ function getPSAR(
 /**
  * The Parabolic SAR series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.psar
  *
@@ -407,7 +406,6 @@ class PSARIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
     nameComponents: Array<string>|undefined;
@@ -419,7 +417,6 @@ interface PSARIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         psar: typeof PSARIndicator;
@@ -434,7 +431,6 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  *
  * */
 
-/** @internal */
 export default PSARIndicator;
 
 /* *

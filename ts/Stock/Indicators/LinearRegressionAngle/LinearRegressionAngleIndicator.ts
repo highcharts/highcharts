@@ -39,7 +39,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Linear Regression Angle series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionAngle
  *
@@ -120,7 +119,6 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionAngleIndicator {
     pointClass: typeof LinearRegressionAnglePoint;
     nameBase: string;
@@ -136,7 +134,6 @@ extend(LinearRegressionAngleIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregressionangle: typeof LinearRegressionAngleIndicator;
@@ -161,7 +158,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionAngleIndicator;
 
 /**

@@ -41,7 +41,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The OBV series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.obv
  *
@@ -193,7 +192,6 @@ class OBVIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface OBVIndicator {
     nameComponents: Array<string>|undefined;
     pointClass: typeof OBVPoint;
@@ -209,7 +207,6 @@ extend(OBVIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         obv: typeof OBVIndicator;
@@ -224,7 +221,6 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  *
  * */
 
-/** @internal */
 export default OBVIndicator;
 
 /* *

@@ -44,7 +44,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Volume Weighted Average Price (VWAP) series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.vwap
  *
@@ -247,7 +246,6 @@ class VWAPIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface VWAPIndicator {
     pointClass: typeof VWAPPoint;
 }
@@ -258,7 +256,6 @@ interface VWAPIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vwap: typeof VWAPIndicator;
@@ -273,7 +270,6 @@ SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
  *
  * */
 
-/** @internal */
 export default VWAPIndicator;
 
 /* *

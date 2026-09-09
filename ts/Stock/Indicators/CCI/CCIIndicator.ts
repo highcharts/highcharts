@@ -65,7 +65,6 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 /**
  * The CCI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cci
  *
@@ -187,7 +186,6 @@ class CCIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CCIIndicator {
     pointClass: typeof CCIPoint;
 }
@@ -198,7 +196,6 @@ interface CCIIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cci: typeof CCIIndicator;
@@ -213,7 +210,6 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  *
  * */
 
-/** @internal */
 export default CCIIndicator;
 
 /* *

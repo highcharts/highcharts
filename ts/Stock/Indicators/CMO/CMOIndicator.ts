@@ -35,7 +35,6 @@ import { isNumber, merge } from '../../../Shared/Utilities.js';
 /**
  * The CMO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cmo
  *
@@ -190,7 +189,6 @@ class CMOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CMOIndicator {
     pointClass: typeof CMOPoint;
 }
@@ -201,7 +199,6 @@ interface CMOIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;
@@ -216,7 +213,6 @@ SeriesRegistry.registerSeriesType('cmo', CMOIndicator);
  *
  * */
 
-/** @internal */
 export default CMOIndicator;
 
 /* *

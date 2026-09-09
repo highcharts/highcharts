@@ -39,7 +39,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The PPO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ppo
  *
@@ -180,7 +179,6 @@ class PPOIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface PPOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -198,7 +196,6 @@ extend(PPOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ppo: typeof PPOIndicator;
@@ -213,7 +210,6 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
  *
  * */
 
-/** @internal */
 export default PPOIndicator;
 
 /* *

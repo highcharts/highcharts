@@ -91,7 +91,6 @@ function populateAverage(
 /**
  * The ATR series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.atr
  *
@@ -217,7 +216,6 @@ class ATRIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ATRIndicator {
     pointClass: typeof ATRPoint;
 }
@@ -228,7 +226,6 @@ interface ATRIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         atr: typeof ATRIndicator;
@@ -243,7 +240,6 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  *
  * */
 
-/** @internal */
 export default ATRIndicator;
 
 /* *

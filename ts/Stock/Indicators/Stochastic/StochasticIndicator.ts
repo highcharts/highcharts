@@ -39,7 +39,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Stochastic series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.stochastic
  *
@@ -258,7 +257,6 @@ class StochasticIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -287,7 +285,6 @@ MultipleLinesComposition.compose(StochasticIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
@@ -301,7 +298,6 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  *
  * */
 
-/** @internal */
 export default StochasticIndicator;
 
 /* *

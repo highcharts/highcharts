@@ -64,7 +64,6 @@ function getPointLB(low: number, base: number): number {
 /**
  * The ABands series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.abands
  *
@@ -260,7 +259,6 @@ class ABandsIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ABandsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -284,7 +282,6 @@ MultipleLinesComposition.compose(ABandsIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         abands: typeof ABandsIndicator;
@@ -298,7 +295,6 @@ SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
  *
  * */
 
-/** @internal */
 export default ABandsIndicator;
 
 /* *

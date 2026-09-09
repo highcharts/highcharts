@@ -98,7 +98,6 @@ function populateAverage(
 /**
  * The SMA series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.wma
  *
@@ -218,7 +217,6 @@ class WMAIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface WMAIndicator {
     pointClass: typeof WMAPoint;
 }
@@ -229,7 +227,6 @@ interface WMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
@@ -244,7 +241,6 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  *
  * */
 
-/** @internal */
 export default WMAIndicator;
 
 /* *

@@ -174,7 +174,6 @@ function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
 /**
  * The IKH series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ikh
  *
@@ -926,7 +925,6 @@ class IKHIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface IKHIndicator {
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;
@@ -954,7 +952,6 @@ extend(IKHIndicator.prototype, {
 
 ApproximationRegistry['ichimoku-averages'] = ichimokuAverages;
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
@@ -968,7 +965,6 @@ SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
  *
  * */
 
-/** @internal */
 export default IKHIndicator;
 
 /* *

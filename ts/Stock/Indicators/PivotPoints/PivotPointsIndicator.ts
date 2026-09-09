@@ -42,7 +42,6 @@ import { defined, extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Pivot Points series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pivotpoints
  *
@@ -416,7 +415,6 @@ class PivotPointsIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface PivotPointsIndicator{
     nameBase: string;
     pointArrayMap: Array<string>;
@@ -444,7 +442,6 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  *
  * */
 
-/** @internal */
 export default PivotPointsIndicator;
 
 /* *

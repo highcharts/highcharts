@@ -49,7 +49,6 @@ import {
 /**
  * The Disparity Index series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.disparityindex
  *
@@ -196,7 +195,6 @@ class DisparityIndexIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -214,7 +212,6 @@ extend(DisparityIndexIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         disparityindex: typeof DisparityIndexIndicator;
@@ -229,7 +226,6 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
-/** @internal */
 export default DisparityIndexIndicator;
 
 /* *

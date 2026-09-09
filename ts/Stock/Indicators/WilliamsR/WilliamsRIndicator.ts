@@ -38,7 +38,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Williams %R series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.williamsr
  *
@@ -167,7 +166,6 @@ class WilliamsRIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface WilliamsRIndicator {
     nameBase: string;
     pointClass: typeof WilliamsRPoint;
@@ -182,7 +180,6 @@ extend(WilliamsRIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         williamsr: typeof WilliamsRIndicator;
@@ -197,7 +194,6 @@ SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
  *
  * */
 
-/** @internal */
 export default WilliamsRIndicator;
 
 /* *

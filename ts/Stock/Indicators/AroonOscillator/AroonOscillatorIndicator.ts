@@ -39,7 +39,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Aroon Oscillator series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.aroonoscillator
  *
@@ -137,7 +136,6 @@ class AroonOscillatorIndicator extends AroonIndicator {
  *
  * */
 
-/** @internal */
 interface AroonOscillatorIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof AroonOscillatorPoint>;
@@ -157,7 +155,6 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof AroonOscillatorIndicator;
@@ -172,7 +169,6 @@ SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
  *
  * */
 
-/** @internal */
 export default AroonOscillatorIndicator;
 
 /* *

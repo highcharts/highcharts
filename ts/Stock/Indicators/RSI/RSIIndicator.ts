@@ -51,7 +51,6 @@ function toFixed(a: number, n: number): number {
 /**
  * The RSI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.rsi
  *
@@ -217,7 +216,6 @@ class RSIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface RSIIndicator {
     pointClass: typeof RSIPoint;
 }
@@ -228,7 +226,6 @@ interface RSIIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -243,7 +240,6 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  *
  * */
 
-/** @internal */
 export default RSIIndicator;
 
 /* *

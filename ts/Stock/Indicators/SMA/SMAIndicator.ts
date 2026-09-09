@@ -94,7 +94,6 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 /**
  * The SMA series type.
  *
- * @internal
  */
 class SMAIndicator extends LineSeries {
 
@@ -571,7 +570,6 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
-/** @internal */
 interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
@@ -597,7 +595,6 @@ extend(SMAIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof SMAIndicator;
@@ -611,7 +608,6 @@ SeriesRegistry.registerSeriesType('sma', SMAIndicator);
  *
  * */
 
-/** @internal */
 export default SMAIndicator;
 
 /* *

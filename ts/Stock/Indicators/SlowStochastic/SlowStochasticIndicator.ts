@@ -39,7 +39,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Slow Stochastic series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.slowstochastic
  *
@@ -165,7 +164,6 @@ class SlowStochasticIndicator extends StochasticIndicator {
  *
  * */
 
-/** @internal */
 interface SlowStochasticIndicator {
     pointClass: typeof SlowStochasticPoint;
     nameBase: string;
@@ -180,7 +178,6 @@ extend(SlowStochasticIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         slowstochastic: typeof SlowStochasticIndicator;
@@ -195,7 +192,6 @@ SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
  *
  * */
 
-/** @internal */
 export default SlowStochasticIndicator;
 
 /* *

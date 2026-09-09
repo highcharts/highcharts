@@ -39,7 +39,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The APO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.apo
  *
@@ -174,7 +173,6 @@ class APOIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface APOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -192,7 +190,6 @@ extend(APOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         apo: typeof APOIndicator;
@@ -207,7 +204,6 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
  *
  * */
 
-/** @internal */
 export default APOIndicator;
 
 /* *

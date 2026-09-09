@@ -47,7 +47,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Klinger oscillator series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.klinger
  *
@@ -377,7 +376,6 @@ class KlingerIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -404,7 +402,6 @@ MultipleLinesComposition.compose(KlingerIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;
@@ -418,7 +415,6 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  *
  * */
 
-/** @internal */
 export default KlingerIndicator;
 
 /* *
