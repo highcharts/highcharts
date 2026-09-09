@@ -19,6 +19,8 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
+import type { DataLabelTextPathOptions } from '../../Extensions/TextPath';
+import type { DeepPartial } from '../../Shared/Types';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
@@ -98,10 +100,11 @@ export interface CollapseButtonOptions {
 
 export interface TreegraphDataLabelsFormatterCallbackFunction {
     (
-        this: (TreegraphPoint|Point)
+        this: Point
     ): (string|undefined);
 }
 
+/** @internal */
 export interface TreegraphDataLabelFormatterContext {
     point: TreegraphPoint
 }
@@ -109,7 +112,7 @@ export interface TreegraphDataLabelFormatterContext {
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
     linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
-    linkTextPath?: DataLabelOptions['textPath'];
+    linkTextPath?: DeepPartial<DataLabelTextPathOptions>;
 }
 
 type TreegraphSeriesLevelBase = TreemapSeriesLevelOptions &

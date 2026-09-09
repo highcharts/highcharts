@@ -201,6 +201,7 @@ class LinkPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 interface LinkPoint {
     options: LinkPointOptions;
     fromNode: TreegraphPoint;
@@ -213,4 +214,5 @@ interface LinkPoint {
  *
  * */
 
+/** @internal */
 export default LinkPoint;

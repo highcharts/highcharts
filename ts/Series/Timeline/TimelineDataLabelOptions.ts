@@ -25,7 +25,6 @@ import type {
     DataLabelOptions
 } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
-import type TimelinePoint from './TimelinePoint';
 
 /* *
  *
@@ -34,7 +33,7 @@ import type TimelinePoint from './TimelinePoint';
  * */
 
 export interface TimelineDataLabelsFormatterCallbackFunction extends DataLabelsFormatterCallbackFunction {
-    (this: (Point|TimelinePoint)): string;
+    (this: Point): string;
 }
 
 export interface TimelineDataLabelOptions extends DataLabelOptions {
