@@ -69,12 +69,16 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
     lineColor?: ColorType;
 
     /**
-     * What type of legend symbol to render for this series. For candlestick
-     * series, the default is `candlestick`, a vertical line (wick) with a
-     * rectangular body.
+     * What type of legend symbol to render for this series. The default
+     * `candlestick` shows two candles, each a wick with a rectangular body.
+     * The first stands for a falling point, the second for a rising one.
+     *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
      *
      * @default candlestick
-     * @apioption plotOptions.candlestick.legendSymbol
+     *
+     * @product highstock
      */
     legendSymbol?: string;
 
