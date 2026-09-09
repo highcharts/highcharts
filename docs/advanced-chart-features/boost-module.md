@@ -90,7 +90,8 @@ Caveats
 The Boost module contains a WebGL renderer that replaces parts of the SVG renderer. Additionally, it bypasses and simplifies some of the resource-hungry aspects of handling big data. As such, certain features are not available for boosted charts. Most of these features deal with interactivity, such as animation support. But there are a few that relate to visuals as well.
 
 * The largest caveat is that rectangles for column and bar charts are always drawn as a single 1 pixel wide line. This will likely not be the desired outcome when zoomed in to the level where each column/bar is visible as an individual entity. Thus, column and bar charts are more suited to series-level boosting.
-* The area of area and areaspline series are drawn as 1px columns. This works well with the intended way of using the Boost module, which is that it kicks in when the number of data points crosses the `boostThreshold`. But if the boost threshold is set too low, an area and areaspline charts will look like a column chart. This is a limitation that we are considering fixing. In addition to this, the _line_ itself is not rendered in area and areaspline series.
+* The area of areaspline series is drawn as 1px columns. This works well with the intended way of using the Boost module, which is that it kicks in when the number of data points crosses the `boostThreshold`. But if the boost threshold is set too low, an areaspline chart will look like a column chart. This is a limitation that we are considering fixing. In addition to this, the _line_ itself is not rendered in areaspline series.
+* Area, areaspline and arearange series can be rendered as filled areas by setting `boostShape` to `triangles`. Leaving the shape at the default `lines` keeps the legacy 1px stick rendering.
 * Marker shapes, apart from circles, are not supported.
 * Dash style for lines is not supported.
 * Stacking, and negative colors are not supported.
