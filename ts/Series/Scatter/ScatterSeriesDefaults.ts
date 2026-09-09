@@ -19,101 +19,7 @@
  * */
 
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
-import type Point from '../../Core/Series/Point';
 import type ScatterSeries from './ScatterSeries';
-
-/* *
- *
- *  Constants
- *
- * */
-
-const seriesNamePrefix =
-        '<span style="color:{point.color}">\u25CF</span> {series.name}: ',
-    scatterSharedPointFormat = '({point.x}, {point.y})';
-
-/* *
- *
- *  Functions
- *
- * */
-
-/**
- * Whether this series moves the series name out of the tooltip header and onto
- * each of its own tooltip lines.
- *
- * The header is rendered once, from the first point's series, so the series
- * name that scatter-like series show there is misleading as soon as the
- * tooltip lists several series. Instead each line is prefixed with its own
- * series - but only when the format being composed is still the one the series
- * type ships with. A format written by the user may be a fragment of a larger
- * structure, or empty, and prefixing it would corrupt it (#22967).
- *
- * @private
- */
-function prefixesSeriesName(series: ScatterSeries): boolean {
-    const { pointFormat, pointFormatter } = series.tooltipOptions;
-
-    return !!(
-        !series.noSharedTooltip &&
-        pointFormat &&
-        pointFormat === series.defaultPointFormat &&
-        pointFormatter === scatterPointFormatter
-    );
-}
-
-/**
- * Whether the series type supports explicitly enabled shared tooltips.
- * @private
- */
-function supportsSharedTooltip(series: ScatterSeries): boolean {
-    return !!(
-        series.isCartesian &&
-        series.type === series.sharedTooltipType
-    );
-}
-
-/**
- * Compose the given format with the series color and name, the way the default
- * series tooltip does.
- * @private
- */
-function prefixed(point: Point, format: string): string {
-    return point.tooltipFormatter(
-        seriesNamePrefix + format +
-        (/<br\s*\/?>\s*$/.test(format) ? '' : '<br/>')
-    );
-}
-
-/**
- * @private
- */
-function scatterClusterFormatter(
-    this: Point,
-    clusterFormat: string
-): string {
-    return prefixesSeriesName(this.series as ScatterSeries) ?
-        prefixed(this, clusterFormat) :
-        this.tooltipFormatter(clusterFormat);
-}
-
-/**
- * @private
- */
-function scatterPointFormatter(
-    this: Point,
-    pointFormat: string
-): string {
-    const series = this.series as ScatterSeries;
-
-    // Scatter labels both coordinates on their own lines, which leaves the
-    // second line unattributed once the first one carries the series name.
-    // Series types that read badly composed this way name a single-line
-    // format to compose instead (#22967).
-    return prefixesSeriesName(series) ?
-        prefixed(this, series.sharedTooltipPointFormat || pointFormat) :
-        this.tooltipFormatter(pointFormat);
-}
 
 /* *
  *
@@ -211,12 +117,13 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
      */
 
     /**
-     * A configuration object for the tooltip rendering of each single
-     * series. Properties are inherited from [tooltip](#tooltip).
-     * Overridable properties are `headerFormat`, `pointFormat`,
-     * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
-     * series, in a scatter plot the series.name by default shows in the
-     * headerFormat and point.x and point.y in the pointFormat.
+     * The tooltip options for each individual series. Properties are inherited
+     * from [tooltip](#tooltip). Overridable properties are `headerFormat`,
+     * `pointFormat`, `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`.
+     *
+     * By default, the header displays the point name, category or datetime
+     * value. A lone value on a linear x-axis is omitted. The body displays the
+     * series name and both the x and y values.
      *
      * @product highcharts highstock highmaps
      */
@@ -224,42 +131,12 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
-        headerFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<span style="font-size: 0.8em"> {series.name}</span><br/>',
-        pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
-
-        /**
-         * A callback function for formatting the HTML output for a cluster of
-         * points in the tooltip. Like the `clusterFormat` string, but with
-         * more flexibility.
-         *
-         * In a shared tooltip, the default prefixes the line with the color
-         * and name of its own series, since the tooltip header is rendered
-         * only once, from the first point's series. A `pointFormat` other
-         * than the default one is rendered as given, without the prefix.
-         *
-         * @product  highcharts highstock
-         * @requires modules/marker-clusters
-         * @since    next
-         */
-        clusterFormatter: scatterClusterFormatter,
-
-        /**
-         * A callback function for formatting the HTML output for a single
-         * point in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility.
-         *
-         * In a shared tooltip, the default prefixes each line with the color
-         * and name of its own series, since the tooltip header is rendered
-         * only once, from the first point's series. The two coordinate lines
-         * are joined into `({point.x}, {point.y})` so that the series name
-         * covers the whole line. A `pointFormat` other than the default one
-         * is rendered as given, without the prefix.
-         *
-         * @product highcharts highstock
-         * @since   next
-         */
-        pointFormatter: scatterPointFormatter
+        headerFormat: '<span style="font-size: 0.8em">' +
+            '{ucfirst point.key}</span><br/>',
+        pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+            '{series.name}:<br/>' +
+            '<span style="color:transparent">\u25CF</span> ' +
+            'x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
     }
 
 };
@@ -346,9 +223,3 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
  * */
 
 export default ScatterSeriesDefaults;
-
-export {
-    prefixesSeriesName,
-    scatterSharedPointFormat,
-    supportsSharedTooltip
-};

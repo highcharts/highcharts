@@ -254,15 +254,13 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
 }
 
 export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {
-    clusterFormatter?: SeriesTooltipOptions['pointFormatter'];
-
     /**
-     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.8em"> {series.name}</span><br/>'
+     * @default {highcharts|highstock} '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>'
      */
     headerFormat?: SeriesTooltipOptions['headerFormat'];
 
     /**
-     * @default {highcharts|highstock} 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/><span style="color:transparent">\u25CF</span> x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
      */
     pointFormat?: SeriesTooltipOptions['pointFormat'];
 }

@@ -379,25 +379,33 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
 });
 
 QUnit.test(
-    'Scatter-like series name themselves on each shared tooltip line',
+    'Scatter and bubble use the same format for shared tooltip lines',
     function (assert) {
         [
             {
                 type: 'scatter',
                 data: [[[1, 12]], [[1, 33]]],
                 expected: [
-                    'Temperature: (1, 12)<br/>',
-                    'Humidity: (1, 33)<br/>'
+                    'Temperature:<br/>' +
+                        '<span style="color:transparent">\u25CF</span> ' +
+                        'x = <b>1</b>, y = <b>12</b><br/>',
+                    'Humidity:<br/>' +
+                        '<span style="color:transparent">\u25CF</span> ' +
+                        'x = <b>1</b>, y = <b>33</b><br/>'
                 ]
             },
             {
-                // Bubble composes its own single-line format, rather than
-                // inheriting the compact one scatter names
                 type: 'bubble',
                 data: [[[1, 12, 2]], [[1, 33, 2]]],
                 expected: [
-                    'Temperature: (1, 12), Size: 2<br/>',
-                    'Humidity: (1, 33), Size: 2<br/>'
+                    'Temperature:<br/>' +
+                        '<span style="color:transparent">\u25CF</span> ' +
+                        'x = <b>1</b>, y = <b>12</b>, ' +
+                        'Size: <b>2</b><br/>',
+                    'Humidity:<br/>' +
+                        '<span style="color:transparent">\u25CF</span> ' +
+                        'x = <b>1</b>, y = <b>33</b>, ' +
+                        'Size: <b>2</b><br/>'
                 ]
             }
         ].forEach(function (testCase) {
@@ -436,16 +444,74 @@ QUnit.test(
             assert.deepEqual(
                 lines,
                 expected,
-                `Every ${testCase.type} line should carry its own series name`
+                `Every ${testCase.type} line should use the default format`
             );
 
             assert.strictEqual(
                 chart.tooltip.headerFooterFormatter(points[0]),
-                '<span style="font-size: 0.8em">1</span><br/>',
-                `The ${testCase.type} header should give the series name up`
+                '',
+                `The ${testCase.type} header should omit a lone linear x value`
             );
 
             chart.destroy();
         });
     }
 );
+
+QUnit.test('Scatter tooltip headers reflect the x-axis context', function (
+    assert
+) {
+    [
+        {
+            name: 'point name',
+            series: {
+                data: [{ x: 1, y: 2, name: 'Named point' }]
+            },
+            expected: 'Named point'
+        },
+        {
+            name: 'category',
+            xAxis: {
+                categories: ['Category A']
+            },
+            series: {
+                data: [2]
+            },
+            expected: 'Category A'
+        },
+        {
+            name: 'datetime',
+            xAxis: {
+                type: 'datetime'
+            },
+            tooltip: {
+                xDateFormat: '%Y-%m-%d'
+            },
+            series: {
+                data: [[Date.UTC(2026, 0, 2), 2]]
+            },
+            expected: '2026-01-02'
+        }
+    ].forEach(function (testCase) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'scatter'
+                },
+                xAxis: testCase.xAxis || {},
+                tooltip: testCase.tooltip || {},
+                series: [testCase.series]
+            }),
+            header = chart.tooltip.headerFooterFormatter(
+                chart.series[0].points[0]
+            );
+
+        assert.strictEqual(
+            header,
+            '<span style="font-size: 0.8em">' + testCase.expected +
+                '</span><br/>',
+            `The header should display the ${testCase.name}`
+        );
+
+        chart.destroy();
+    });
+});

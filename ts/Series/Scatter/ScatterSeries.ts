@@ -23,19 +23,71 @@ import type ScatterSeriesOptions from './ScatterSeriesOptions';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { DeepPartial } from '../../Shared/Types';
 
-import D from '../../Core/Defaults.js';
-const { defaultOptions } = D;
-import ScatterSeriesDefaults, {
-    prefixesSeriesName,
-    scatterSharedPointFormat,
-    supportsSharedTooltip
-} from './ScatterSeriesDefaults.js';
+import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
+import Tooltip from '../../Core/Tooltip.js';
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const seriesHeaderFormat =
+    '<span style="color:{point.color}">\u25CF</span> ' +
+    '<span style="font-size: 0.8em"> {series.name}</span><br/>';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Whether the series type supports explicitly enabled shared tooltips.
+ * @private
+ */
+function supportsSharedTooltip(series: ScatterSeries): boolean {
+    return !!(
+        series.isCartesian &&
+        series.type === series.sharedTooltipType
+    );
+}
+
+/**
+ * @private
+ */
+function onTooltipHeaderFormatter(
+    this: Tooltip,
+    e: Event&Tooltip.HeaderFormatterEventObject
+): void {
+    const point = e.point,
+        series = point.series;
+
+    if (
+        !e.isFooter &&
+        series instanceof ScatterSeries &&
+        series.tooltipOptions.headerFormat ===
+            ScatterSeriesDefaults.tooltip?.headerFormat
+    ) {
+        if (!supportsSharedTooltip(series)) {
+            e.text = point.tooltipFormatter(seriesHeaderFormat);
+            e.preventDefault();
+        } else if (
+            !point.name &&
+            !series.xAxis.categories &&
+            series.xAxis.type === 'linear'
+        ) {
+            e.text = '';
+            e.preventDefault();
+        }
+    }
+}
 
 /* *
  *
@@ -109,25 +161,12 @@ class ScatterSeries extends LineSeries {
         // `stickyTracking` is resolved with the right value
         this.noSharedTooltip = !supportsSharedTooltip(this);
 
-        const options = super.setOptions(itemOptions),
-            tooltipOptions = this.tooltipOptions;
+        const options = super.setOptions(itemOptions);
 
         this.noSharedTooltip = !(
             supportsSharedTooltip(this) &&
-            tooltipOptions.shared
+            this.tooltipOptions.shared
         );
-
-        // Give the series name up from the header only when the point lines
-        // are going to carry it instead, and only when the header is still
-        // this series type's own (#22967).
-        if (
-            prefixesSeriesName(this) &&
-            tooltipOptions.headerFormat ===
-                ScatterSeriesDefaults.tooltip?.headerFormat
-        ) {
-            tooltipOptions.headerFormat =
-                defaultOptions.tooltip?.headerFormat || '';
-        }
 
         return options;
     }
@@ -202,9 +241,7 @@ class ScatterSeries extends LineSeries {
  * */
 
 interface ScatterSeries {
-    defaultPointFormat: string;
     pointClass: typeof ScatterPoint;
-    sharedTooltipPointFormat?: string;
     sharedTooltipType: string;
 }
 extend(ScatterSeries.prototype, {
@@ -213,8 +250,6 @@ extend(ScatterSeries.prototype, {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
-    defaultPointFormat: ScatterSeriesDefaults.tooltip?.pointFormat,
-    sharedTooltipPointFormat: scatterSharedPointFormat,
     sharedTooltipType: 'scatter',
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
@@ -230,6 +265,8 @@ extend(ScatterSeries.prototype, {
 addEvent(ScatterSeries, 'afterTranslate', function (): void {
     this.applyJitter();
 });
+
+addEvent(Tooltip, 'headerFormatter', onTooltipHeaderFormatter);
 
 /* eslint-enable no-invalid-this */
 

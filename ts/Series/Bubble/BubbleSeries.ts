@@ -456,7 +456,11 @@ class BubbleSeries extends ScatterSeries {
         },
 
         tooltip: {
-            pointFormat: '({point.x}, {point.y}), Size: {point.z}'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
+                '{series.name}:<br/>' +
+                '<span style="color:transparent">\u25CF</span> ' +
+                'x = <b>{point.x}</b>, y = <b>{point.y}</b>, ' +
+                'Size: <b>{point.z}</b><br/>'
         },
 
         turboThreshold: 0,
@@ -958,10 +962,6 @@ extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],
-    defaultPointFormat: BubbleSeries.defaultOptions.tooltip?.pointFormat,
-    // Bubble's own point format is a single line already, so compose that
-    // rather than inheriting the compact one scatter names (#22967)
-    sharedTooltipPointFormat: BubbleSeries.defaultOptions.tooltip?.pointFormat,
     sharedTooltipType: 'bubble',
     trackerGroups: ['group', 'dataLabelsGroup'],
     specialGroup: 'group', // To allow clipping (#6296)
