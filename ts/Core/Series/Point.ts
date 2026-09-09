@@ -1050,23 +1050,6 @@ class Point {
             }
         }
 
-        // Data keys like `__proto__` and `constructor` must not be carried
-        // on, as assigning them would modify `Object.prototype` or the
-        // `Object` constructor and thereby affect unrelated objects on the
-        // page
-        if (
-            Object.hasOwnProperty.call(ret, '__proto__') ||
-            Object.hasOwnProperty.call(ret, 'constructor')
-        ) {
-            const safeOptions = {} as AnyRecord;
-            for (const key of Object.keys(ret)) {
-                if (key !== '__proto__' && key !== 'constructor') {
-                    safeOptions[key] = ret[key];
-                }
-            }
-            ret = safeOptions;
-        }
-
         // Handle nested keys, e.g. ['color.pattern.image'], but only if we're
         // using keys or `dataTable`
         if (keys || !series.options.data) {
