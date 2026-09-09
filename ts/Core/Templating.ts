@@ -38,7 +38,6 @@ import {
     isNumber,
     isObject,
     isString,
-    pick,
     ucfirst
 } from '../Shared/Utilities.js';
 
@@ -407,7 +406,7 @@ function format(
                 replacement = `"${replacement}"`;
             }
         }
-        str = str.replace(match.find, pick(replacement, ''));
+        str = str.replace(match.find, (replacement ?? ''));
     });
     return hasSub ? format(str, ctx, owner) : str;
 }

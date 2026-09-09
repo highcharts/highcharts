@@ -38,6 +38,7 @@ const {
  *
  * */
 
+/** @internal */
 class FlagsPoint extends ColumnPoint {
 
     /* *
@@ -75,7 +76,7 @@ class FlagsPoint extends ColumnPoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public isValid(): boolean {
         // #9233 - Prevent from treating flags as null points (even if
@@ -84,7 +85,7 @@ class FlagsPoint extends ColumnPoint {
     }
 
     /**
-     * @private
+     * @internal
      */
     public hasNewShapeType(): (boolean|undefined) {
         const shape = this.options.shape || this.series.options.shape;
@@ -100,4 +101,5 @@ class FlagsPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default FlagsPoint;

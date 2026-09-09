@@ -214,14 +214,21 @@ jobs:
   nightly_visual_diff:
     runs-on: ubuntu-latest
     env:
-      HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-      AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-      AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
       BROWSER_COUNT: 2
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Use Firefox 153.0.4
+        id: nightly-firefox
+        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.nightly-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -234,46 +241,33 @@ jobs:
 
       - name: Set application version env var
         run: |
-          echo "HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
-          echo ${HIGHCHARTS_VERSION}
+          HIGHCHARTS_VERSION="$(node -p "require('./package.json').version")"
+          echo "HIGHCHARTS_VERSION=${HIGHCHARTS_VERSION}" >> "$GITHUB_ENV"
+          echo "${HIGHCHARTS_VERSION}"
 
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount ${BROWSER_COUNT} --no-fail-on-empty-test-suite
-
-      - name: Sync references from S3
-        run: |
-          aws s3 sync s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/ ./samples/ \
-          --exclude "*" \
-          --include "*/reference.svg"
-
-      - name: Upload new reference images
-        run: |
-          npx gulp dist-testresults \
-          --tag ${HIGHCHARTS_VERSION} \
-          --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
+      - name: Preserve generated reference images
+        run: npx gulp copy-nightly-references
 
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount ${BROWSER_COUNT} --visualcompare || true
+      - name: Sync references from Visual Review API
+        run: npx gulp sync-nightly-references
 
-      - run: sudo apt-get update -y
-      - run: sudo apt-get install -y librsvg2-bin
+      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
+      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
 
-      - name: "Generate PNGs and diff"
-        run: |
-          find . -name reference.svg -print -execdir rsvg-convert -o reference.png {} \;
-          find . -name candidate.svg -print -execdir rsvg-convert -o candidate.png {} \;
-          find . -name reference.png -print -execdir npx pixelmatch candidate.png reference.png diff.png 0 \;
-
-      - name: Upload reference images
-        run: npx gulp dist-testresults --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
+      - name: Publish nightly visual results
+        env:
+          VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
+        run: npx gulp update-nightly-testresults --tag "${HIGHCHARTS_VERSION}" --reference-root tmp/nightly-reference-samples
 
 
   nightly_dist:
@@ -355,13 +349,13 @@ jobs:
       - name: Generate and upload nightly changelog
         run: |
           node changelog/generate --review
-          aws s3 cp ./changelog/review.html s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html
+          aws s3 cp ./changelog/review.html "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/changelog/nightly-changelog.html"
 
       - name: create list of merge commits
         id: makelist
         run: |
           git log --since "24 hours ago" --oneline --grep "^.*Merge pull" > 24hoursofhighcharts.list
-          echo "lines=$(cat 24hoursofhighcharts.list | grep -e "Merge" -c)" >> $GITHUB_OUTPUT
+          echo "lines=$(cat 24hoursofhighcharts.list | grep -e "Merge" -c)" >> "$GITHUB_OUTPUT"
 
       - name: Convert to JSON
         if: ${{ steps.makelist.outputs.lines > 0 }}

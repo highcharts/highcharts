@@ -398,6 +398,7 @@ module.exports = function (config) {
             'samples/highcharts/demo/synchronized-charts/demo.js',
 
             // Visual test fails due to external library used
+            'samples/highcharts/blog/ternary-blade-steels/demo.js',
             'samples/highcharts/demo/combo-regression/demo.js',
         ],
         reporters: ['progress'],

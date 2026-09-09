@@ -468,7 +468,9 @@ export default Color;
 
 /**
  * A valid color type than can be parsed and handled by Highcharts. It can be a
- * color string, a gradient object, or a pattern object.
+ * color string (including CSS expressions), a gradient object, or a pattern
+ * object. Read more about colors in the [Highcharts
+ * documentation](https://www.highcharts.com/docs/chart-design-and-style/colors).
  *
  * @typedef {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject} Highcharts.ColorType
  */

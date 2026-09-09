@@ -1813,6 +1813,7 @@ describe('TreeProjectionController', () => {
             data: {
                 columns: {
                     region: ['EMEA', 'EMEA', 'APAC'],
+                    account: ['Luma', 'Mercury', 'Harbor'],
                     revenue: [10, 20, 30],
                     units: [1, 2, 3]
                 }
@@ -1848,6 +1849,27 @@ describe('TreeProjectionController', () => {
             presentationTable.columns.units,
             [null, 1, 2, null, 3],
             'A column with `rowAggregator: false` should not aggregate.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.account,
+            [0, 'Luma', 'Mercury', 0, 'Harbor'],
+            'The projection keeps the raw aggregated value for a text column.'
+        );
+
+        // The numeric aggregator reaches the text column and resolves to 0. The
+        // cell must still hand a string to the column's formatters.
+        const groupRow = (grid as any).viewport.rows[0];
+        const accountCell = groupRow.cells.find(
+            (cell: any): boolean => cell.column.id === 'account'
+        );
+
+        strictEqual(
+            accountCell.column.dataType, 'string',
+            'The account column is a text column.'
+        );
+        strictEqual(
+            accountCell.value, '0',
+            'An aggregated value conforms to the column dataType.'
         );
 
         grid.destroy();
