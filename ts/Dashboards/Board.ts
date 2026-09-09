@@ -484,8 +484,12 @@ class Board {
      *
      * @param newOptions
      * The new options to apply to the dashboard.
+     *
+     * @returns
+     * A promise that resolves with the board instance once all components are
+     * mounted.
      */
-    public update(newOptions: DeepPartial<Options>): void {
+    public update(newOptions: DeepPartial<Options>): Promise<Board> {
         const board = this;
 
         // Merge new options with existing ones
@@ -569,11 +573,12 @@ class Board {
         }
 
         // Add new components
-        if (board.options.components) {
-            void board.setComponents(
+        const componentPromises = board.options.components ?
+            board.setComponents(
                 board.options.components as Array<Partial<ComponentType['options']>>
-            );
-        }
+            ) : [];
+
+        return Promise.all(componentPromises).then((): Board => board);
     }
 
     /**

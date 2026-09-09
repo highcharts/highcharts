@@ -37,8 +37,7 @@ import {
     defined,
     extend,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -206,10 +205,7 @@ class AreaSeries extends LineSeries {
             translatedThreshold = Math.round( // #10909
                 yAxis.getThreshold(options.threshold as any)
             ),
-            connectNulls = pick( // #10574
-                options.connectNulls,
-                stacking === 'percent'
-            ),
+            connectNulls = (options.connectNulls ?? stacking === 'percent'),
             // To display null points in underlying stacked series, this
             // series graph must be broken, and the area also fall down to
             // fill the gap left by the null point. #2069
@@ -288,9 +284,9 @@ class AreaSeries extends LineSeries {
             // Treat points with undefined plotY as null (e.g. non-positive
             // values on logarithmic axis, #18422)
             isNull = points[i].isNull || !defined(points[i].plotY);
-            plotX = pick(points[i].rectPlotX, points[i].plotX);
+            plotX = (points[i].rectPlotX ?? points[i].plotX);
             yBottom = stacking ?
-                pick(points[i].yBottom, translatedThreshold) :
+                (points[i].yBottom ?? translatedThreshold) :
                 translatedThreshold;
 
             if (!isNull || connectNulls) {
