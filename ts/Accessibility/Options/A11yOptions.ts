@@ -92,6 +92,8 @@ export interface AccessibilityAnnounceNewDataOptions {
      *
      * @sample highcharts/accessibility/accessible-dynamic
      *         Dynamic data accessible
+     *
+     * @default false
      */
     enabled: boolean;
 
@@ -100,6 +102,8 @@ export interface AccessibilityAnnounceNewDataOptions {
      * screen reader. If not enabled, the user will be notified once
      * idle. It is recommended not to enable this setting unless
      * there is a specific reason to do so.
+     *
+     * @default false
      */
     interruptUser: boolean;
 
@@ -111,6 +115,8 @@ export interface AccessibilityAnnounceNewDataOptions {
      * dropped, and the latest announcement is queued instead. Set
      * to 0 to allow all announcements, but be warned that frequent
      * announcements are disturbing to users.
+     *
+     * @default 5000
      */
     minAnnounceInterval: number;
 }
@@ -120,21 +126,24 @@ export interface AccessibilityKeyboardNavigationFocusBorderOptions {
     /**
      * Enable/disable focus border for chart.
      *
-     * @since 6.0.3
+     * @default true
+     * @since   6.0.3
      */
     enabled: boolean;
 
     /**
      * Hide the browser's default focus indicator.
      *
-     * @since 6.0.4
+     * @default true
+     * @since   6.0.4
      */
     hideBrowserFocusOutline: boolean;
 
     /**
      * Focus border margin around the elements.
      *
-     * @since 6.0.3
+     * @default 2
+     * @since   6.0.3
      */
     margin: number;
 
@@ -157,7 +166,8 @@ export interface AccessibilityKeyboardNavigationOptions {
     /**
      * Enable keyboard navigation for the chart.
      *
-     * @since 5.0.0
+     * @default true
+     * @since   5.0.0
      */
     enabled: boolean;
 
@@ -184,7 +194,8 @@ export interface AccessibilityKeyboardNavigationOptions {
      * @sample highcharts/accessibility/custom-component
      *         Custom order is set
      *
-     * @since 7.1.0
+     * @default ['series', 'zoom', 'rangeSelector', 'navigator', 'legend', 'chartMenu']
+     * @since   7.1.0
      */
     order: Array<string>;
 
@@ -201,7 +212,8 @@ export interface AccessibilityKeyboardNavigationOptions {
      * Whether or not to wrap around when reaching the end of arrow-key
      * navigation for an element in the chart.
      *
-     * @since 7.1.0
+     * @default true
+     * @since   7.1.0
      */
     wrapAround: boolean;
 }
@@ -222,7 +234,7 @@ export interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
      * unifying navigation behavior with/without screen readers
      * enabled.
      *
-     * @default    normal
+     * @default    'normal'
      * @since      8.0.0
      * @validvalue ["normal", "serialize"]
      */
@@ -234,7 +246,8 @@ export interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
      *
      * Set to `false` to disable.
      *
-     * @since 8.0.0
+     * @default false
+     * @since   8.0.0
      */
     pointNavigationEnabledThreshold: (boolean|number);
 
@@ -243,7 +256,8 @@ export interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
      * keyboard. By default this is the opposite of
      * [series.nullInteraction](https://api.highcharts.com/highcharts/plotOptions.series.nullInteraction).
      *
-     * @since 8.0.0
+     * @default undefined
+     * @since   8.0.0
      */
     skipNullPoints: boolean;
 
@@ -252,7 +266,8 @@ export interface AccessibilityKeyboardNavigationSeriesNavigationOptions {
      * from the series, so that when navigating back to the series
      * you start at the last focused point.
      *
-     * @since 10.1.0
+     * @default false
+     * @since   10.1.0
      */
     rememberPointFocus: boolean;
 }
@@ -324,7 +339,8 @@ export interface AccessibilityOptions {
      * Once the module is loaded, setting this option to `false`
      * will disable the module for this chart.
      *
-     * @since 5.0.0
+     * @default true
+     * @since   5.0.0
      */
     enabled: boolean;
 
@@ -338,7 +354,8 @@ export interface AccessibilityOptions {
      * @sample highcharts/accessibility/high-contrast-mode
      *         High contrast mode enabled
      *
-     * @since 11.4.0
+     * @default 'auto'
+     * @since   11.4.0
      */
     highContrastMode: boolean | 'auto';
 
@@ -368,6 +385,7 @@ export interface AccessibilityOptions {
      *  - `one`: Adds a single landmark per chart.
      *  - `disabled`: No landmarks are added.
      *
+     * @default    'all'
      * @since      7.1.0
      * @validvalue ["all", "one", "disabled"]
      */
@@ -410,7 +428,8 @@ export interface AccessibilityOptions {
      * @sample highcharts/accessibility/accessible-line
      *         Accessible line chart
      *
-     * @since 8.0.0
+     * @default '*[data-highcharts-chart="{index}"] + .highcharts-description'
+     * @since   8.0.0
      */
     linkedDescription: (string|HTMLDOMElement);
 
@@ -490,7 +509,8 @@ export interface AccessibilityPointOptions {
      * @sample {highmaps} maps/demo/all-areas-as-null
      *         Accessible map with null points
      *
-     * @since 10.1.0
+     * @default true
+     * @since   10.1.0
      */
     describeNull: boolean;
 
@@ -555,7 +575,8 @@ export interface AccessibilityPointOptions {
      * @see [point.accessibility.description](#series.line.data.accessibility.description)
      * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
      *
-     * @since 8.0.1
+     * @default '{xDescription}{separator}{value}.'
+     * @since   8.0.1
      */
     valueDescriptionFormat: string;
 
@@ -582,7 +603,8 @@ export interface AccessibilityScreenReaderSectionOptions {
      * Format for the screen reader information region after the chart.
      * Analogous to [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
      *
-     * @since 8.0.0
+     * @default '{endOfChartMarker}'
+     * @since   8.0.0
      */
     afterChartFormat: string;
 
@@ -607,7 +629,8 @@ export interface AccessibilityScreenReaderSectionOptions {
      *
      * @see [point.dateFormat](#accessibility.point.dateFormat)
      *
-     * @since 8.0.0
+     * @default '%Y-%m-%d %H:%M:%S'
+     * @since   8.0.0
      */
     axisRangeDateFormat: string;
 
@@ -629,7 +652,8 @@ export interface AccessibilityScreenReaderSectionOptions {
      * @sample highcharts/accessibility/before-chart-format
      *         beforeChartFormat
      *
-     * @since 8.0.0
+     * @default '<{headingTagName}>{chartTitle}</{headingTagName}><div>{typeDescription}</div><div>{chartSubtitle}</div><div>{chartLongdesc}</div><div>{playAsSoundButton}</div><div>{viewTableButton}</div><div>{xAxisDescription}</div><div>{yAxisDescription}</div><div>{annotationsTitle}{annotationsList}</div>'
+     * @since   8.0.0
      */
     beforeChartFormat: string;
 
@@ -699,7 +723,8 @@ export interface AccessibilitySeriesOptions {
      * @sample highcharts/accessibility/advanced-accessible
      *         Accessible low-medium-high chart
      *
-     * @since 10.1.0
+     * @default '{seriesDescription}{authorDescription}{axisDescription}'
+     * @since   10.1.0
      */
     descriptionFormat: string;
 
@@ -723,7 +748,8 @@ export interface AccessibilitySeriesOptions {
      * Whether or not to add series descriptions to charts with a single
      * series.
      *
-     * @since 8.0.0
+     * @default false
+     * @since   8.0.0
      */
     describeSingleSeries: boolean;
 
@@ -738,7 +764,8 @@ export interface AccessibilitySeriesOptions {
      * @sample highcharts/accessibility/point-description-enabled-threshold
      *         pointDescriptionEnabledThreshold
      *
-     * @since 8.0.0
+     * @default 200
+     * @since   8.0.0
      */
     pointDescriptionEnabledThreshold: (boolean|number);
 }
@@ -801,7 +828,8 @@ export interface ExportingAccessibilityOptions {
     /**
      * Enable accessibility support for the export menu.
      *
-     * @since 7.1.0
+     * @default true
+     * @since   7.1.0
      */
     enabled: boolean;
 }
@@ -811,14 +839,27 @@ export interface NavigatorAccessibilityOptions {
     /**
      * Enable accessibility support for the navigator.
      *
-     * @since 11.2.0
+     * @default true
+     * @since   11.2.0
      */
     enabled: boolean;
 }
 
 export interface FocusBorderStyleObject {
+
+    /**
+     * @default 3
+     */
     borderRadius?: number;
+
+    /**
+     * @default 'var(--highcharts-highlight-color-80)'
+     */
     color?: ColorType;
+
+    /**
+     * @default 2
+     */
     lineWidth?: number;
 }
 
@@ -829,7 +870,8 @@ export interface LegendAccessibilityKeyboardNavigationOptions {
      *
      * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.enabled)
      *
-     * @since 7.1.0
+     * @default true
+     * @since   7.1.0
      */
     enabled: boolean;
 }
@@ -839,7 +881,8 @@ export interface LegendAccessibilityOptions {
     /**
      * Enable accessibility support for the legend.
      *
-     * @since 7.1.0
+     * @default true
+     * @since   7.1.0
      */
     enabled: boolean;
 
