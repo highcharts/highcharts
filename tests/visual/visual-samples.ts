@@ -15,7 +15,7 @@ export function selectVisualSamples(
 
     const samples = new Map<string, VisualSample>();
     const scripts = globSync(
-        'samples/{highcharts,stock,maps,gantt}/*/*/demo.{js,mjs,ts}',
+        'samples/{highcharts,stock,maps,gantt}/*/*/demo.{js,ts}',
         { cwd: root, absolute: true, nodir: true }
     ).sort();
 

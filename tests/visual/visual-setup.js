@@ -74,7 +74,7 @@
                 JSON.stringify(Highcharts.defaultOptions);
         }
 
-        var cleanupMode = 'fast';
+        var cleanupMode = 'strict';
         var protoSnapshots = null;
 
         function createPrototypeSnapshot() {

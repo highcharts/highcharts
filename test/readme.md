@@ -44,10 +44,9 @@ npx karma start test/karma-conf.js --tests highcharts/*/* --reference
 npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
 ```
 
-During the Playwright visual diagnostic rollout, the bounded manifest in
-`tests/visual/samples.json` is run with the same shared Karma exclusions. Karma
-still provides full visual coverage. Same-repository PR runs also publish the
-bounded Playwright results to production Visual Review; the latest published
+The Playwright manifest in `tests/visual/samples.json` covers the same eligible
+sample set as Karma, using shared exclusions. Same-repository PR runs publish
+the Playwright results to production Visual Review; the latest published
 run replaces the current review for that PR. Generate references and compare
 candidates with:
 

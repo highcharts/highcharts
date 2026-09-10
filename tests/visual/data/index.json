@@ -1,0 +1,89 @@
+[
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=US88160R1014&idType=ISIN&currencyId=USD&endDate=2025-03-17&startDate=2017-01-01&outputType=json",
+        "filename": "tesla-price.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=US0079031078&idType=ISIN&currencyId=EUR&endDate=2022-12-31&startDate=2021-01-01&outputType=json",
+        "filename": "amd-price-2021-2022.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/timeseries/price?id=US0079031078&idType=ISIN&currencyId=EUR&outputType=json",
+        "filename": "amd-price.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/ecint/v1/timeseries/ohlcv?id=0P000003RE&idType=MSID&currencyId=EUR&outputType=compactjson",
+        "filename": "nvidia-ohlcv.json",
+        "method": "GET"
+    },
+    {
+        "url": "https://demo-live-data.highcharts.com/portfolioanalysis/v1/xray?langcult=en-US&outputType=json",
+        "filename": "correlation-matrix.json",
+        "method": "POST",
+        "postData": {
+            "view": {
+                "id": "All"
+            },
+            "config": {
+                "id": "Default"
+            },
+            "requestSettings": {
+                "returnDataSections": [
+                    "CorrelationMatrix",
+                    "RollingReturns"
+                ],
+                "outputCurrency": "USD",
+                "analysisDateTimePeriod": "MonthEnd",
+                "assetClassGroupConfigs": {
+                    "assetClassGroupConfig": [
+                        {
+                            "id": "ACG-USBROAD"
+                        }
+                    ]
+                }
+            },
+            "portfolios": [
+                {
+                    "name": "Portfolio",
+                    "totalValue": 10000,
+                    "currency": "USD",
+                    "holdings": [
+                        {
+                            "securityId": "F00000VCTT",
+                            "weight": 20
+                        },
+                        {
+                            "securityId": "0P00002NW8",
+                            "weight": 10
+                        },
+                        {
+                            "tradingSymbol": "AAPL",
+                            "weight": 15
+                        },
+                        {
+                            "isin": "US09251T1034",
+                            "weight": 35
+                        },
+                        {
+                            "cusip": "256219106",
+                            "weight": 20
+                        }
+                    ],
+                    "benchmark": {
+                        "type": "Standard",
+                        "holdings": [
+                            {
+                                "securityId": "XIUSA04G92",
+                                "type": "XI",
+                                "weight": 100
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]

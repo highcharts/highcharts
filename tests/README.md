@@ -23,7 +23,7 @@ This directory contains the Playwright test suite for Highcharts products.
 - [Debugging](#debugging)
   - [QUnit browser logs](#qunit-browser-logs)
 - [Environment Variables](#environment-variables)
-- [Playwright Visual Diagnostic](#playwright-visual-diagnostic)
+- [Playwright Visual Comparisons](#playwright-visual-comparisons)
 - [FAQ](#faq)
 - [Common Issues](#common-issues)
 - [Resources](#resources)
@@ -751,35 +751,44 @@ QUNIT_TEST_PATH=unit-tests/rangeselector/update npx playwright test --project=qu
 # Run single visual test
 VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
 
-# Run the bounded visual manifest
+# Run the full visual manifest
 VISUAL_TEST_MANIFEST=tests/visual/samples.json npx playwright test --project=visual
 
 # Test against live CDN
 NO_REWRITES=1 npx playwright test
 ```
 
-## Playwright Visual Diagnostic
+## Playwright Visual Comparisons
 
-> **Note:** This is a bounded run during the Playwright rollout. Karma still
-> provides full visual coverage. Successful Playwright runs for same-repository
+> **Note:** Playwright and Karma run the same eligible sample set in different
+> browsers. Successful Playwright runs for same-repository
 > PRs publish to production Visual Review and can replace the current Karma
 > review for that PR with results for the selected manifest only.
 
 The `visual` Playwright project (`tests/visual/visual.spec.ts`) renders samples to
 SVG, compares them against references, and records a pixel-difference count. It
 runs on Chromium only. Sample discovery uses the shared Karma visual exclusions.
-The CI workflow uses the exact IDs in `tests/visual/samples.json` to keep the
-diagnostic bounded. An explicit manifest entry that is excluded by Karma is
-rejected; it cannot be used to run an ignored sample. `VISUAL_TEST_PATH` remains
+The CI workflow starts with the IDs in `tests/visual/samples.json`. A selection
+test checks that this manifest contains every eligible candidate sample. CI
+compares the subset present and eligible on both revisions, matching Karma's
+handling of samples without master references. The selected IDs are saved in
+the workflow artifacts as `visual-samples.json`. An entry excluded
+by Karma is rejected; it cannot be used to run an ignored sample. `VISUAL_TEST_PATH` remains
 a substring filter for focused local runs and cannot be combined with a
 manifest.
 
-The manifest currently covers 100 samples across Highcharts, Stock, Maps, and
+The manifest currently covers 2,034 samples across Highcharts, Stock, Maps, and
 Gantt, including both demos and focused API-option samples. It includes
 multi-chart rendering, polar and range series, network diagrams, stock
 navigation and indicators, map projections and color axes, and Gantt progress,
 hierarchy, and grid columns. New entries must pass reference
 generation and comparison with the existing offline routes and Karma exclusions.
+Discovery includes `demo.js` and TypeScript sources compiled by Karma's `--ts`
+mode. Module-only `demo.mjs` samples are not loaded by Karma and are excluded.
+The visual runner preloads the Morningstar connector, as Karma does. Its five
+API-backed samples use recorded responses in `tests/visual/data`; these routes
+are limited to the visual project and retain offline execution. See the
+[fixture provenance](visual/data/README.md) before refreshing those responses.
 
 ### Workflow
 

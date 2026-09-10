@@ -50,6 +50,24 @@ test.beforeEach(async ({ page }) => {
     await page.addScriptTag({ path: 'test/visual-comparator.js' });
 });
 
+test('visual cleanup restores direct prototype mutations between samples', async ({ page }) => {
+    await page.setContent('<div data-test-container></div>');
+    await page.addScriptTag({ path: 'code/highcharts.src.js' });
+    await page.addScriptTag({ path: 'code/highcharts-more.src.js' });
+    await page.addScriptTag({ path: 'tests/visual/visual-setup.js' });
+
+    const restored = await page.evaluate(() => {
+        const prototype = window.Highcharts.SVGRenderer.prototype;
+        const original = prototype.html;
+        window.HCVisualSetup.beforeSample();
+        prototype.html = function () { throw new Error('Sample override'); };
+        window.HCVisualSetup.afterSample();
+        return prototype.html === original;
+    });
+
+    expect(restored).toBe(true);
+});
+
 test('Visual comparator: identical SVGs have no numeric difference', async ({
     page
 }) => {

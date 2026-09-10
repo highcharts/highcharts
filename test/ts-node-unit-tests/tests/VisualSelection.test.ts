@@ -1,8 +1,10 @@
 import { strictEqual, deepStrictEqual, throws } from 'node:assert';
 import { test } from 'node:test';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
+import { runInNewContext } from 'node:vm';
+import { load } from 'js-yaml';
 import { selectVisualSamples } from '../../../tests/visual/visual-samples.ts';
 import { getSample } from '../../../tests/utils.ts';
 
@@ -33,6 +35,8 @@ test('CI manifest covers demos and API samples from all four products', () => {
     const samples = selectVisualSamples(root, {
         manifest: 'tests/visual/samples.json'
     });
+    deepStrictEqual(samples.map(sample => sample.id).sort(),
+        selectVisualSamples(root).map(sample => sample.id).sort());
     for (const demos of [true, false]) {
         const products = samples.filter(sample =>
             (sample.id.split('/')[1] === 'demo') === demos
@@ -106,5 +110,51 @@ test('source and generated script produce one sample and filters cannot bypass i
             dirname(samples[0].path), true, basename(samples[0].path)
         );
         strictEqual(sample.script?.includes('const value: number'), false);
+    });
+});
+
+test('discovery excludes module-only samples that Karma does not load', () => {
+    withSamples(root => {
+        const dir = join(root, 'samples/highcharts/demo/module-only');
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(join(dir, 'demo.mjs'), 'export default {};');
+        throws(() => selectVisualSamples(root, {
+            filter: 'module-only'
+        }), /No eligible Karma/);
+    });
+});
+
+test('CI selects only samples eligible in both revisions', () => {
+    const workflow = load(readFileSync(join(__dirname,
+        '../../../.github/workflows/visual-compare-playwright.yml'), 'utf8')) as {
+        jobs: { visual_playwright_compare: {
+            steps: { name?: string; run?: string }[];
+        } };
+    };
+    const command = workflow.jobs.visual_playwright_compare.steps.find(step =>
+        step.name === 'Select comparable visual samples'
+    )?.run || '';
+    const script = command.split("<<'NODE'\n")[1].replace(/\nNODE\s*$/, '');
+
+    withSamples(root => {
+        const modules = {
+            'node:fs': { writeFileSync },
+            'node:path': { join },
+            './tests/visual/visual-samples.ts': { selectVisualSamples },
+            './tests/visual/samples.json': [
+                'highcharts/demo/area-missing',
+                'highcharts/demo/candidate-only',
+                'highcharts/demo/manual',
+                'highcharts/demo/gauge-clock'
+            ]
+        };
+        runInNewContext(script, {
+            require: (name: string) => modules[name],
+            process: { cwd: () => root, env: { RUNNER_TEMP: root } },
+            console: { log() {} }
+        });
+        deepStrictEqual(JSON.parse(readFileSync(
+            join(root, 'visual-samples.json'), 'utf8'
+        )), ['highcharts/demo/area-missing']);
     });
 });

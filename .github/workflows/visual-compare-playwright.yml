@@ -116,11 +116,27 @@ jobs:
             tests/package-lock.json \
             tools/docs-preview/package.json
 
+      - name: Select comparable visual samples
+        run: |
+          node --import tsx <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const { selectVisualSamples } = require('./tests/visual/visual-samples.ts');
+          const requested = new Set(require('./tests/visual/samples.json'));
+          const comparable = selectVisualSamples(process.cwd())
+            .map(sample => sample.id)
+            .filter(id => requested.has(id));
+          if (!comparable.length) throw new Error('No comparable visual samples');
+          fs.writeFileSync(path.join(process.env.RUNNER_TEMP, 'visual-samples.json'),
+            JSON.stringify(comparable));
+          console.log(`Comparing ${comparable.length} of ${requested.size} candidate samples present and eligible in both revisions.`);
+          NODE
+
       - name: Generate master reference
         id: reference
         continue-on-error: true
         env:
-          VISUAL_TEST_MANIFEST: tests/visual/samples.json
+          VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
           VISUAL_TEST_REFERENCE: '1'
         run: npx playwright test tests/visual/visual.spec.ts --project=visual
 
@@ -175,8 +191,8 @@ jobs:
         id: candidate
         continue-on-error: true
         env:
-          VISUAL_TEST_MANIFEST: tests/visual/samples.json
-        run: npx playwright test tests/visual/visual.spec.ts --project=visual
+          VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
+        run: npx playwright test --project=visual
 
       - name: Verify visual run outcomes
         if: always()
@@ -243,6 +259,7 @@ jobs:
           name: playwright-visual-${{ github.run_id }}
           if-no-files-found: ignore
           path: |
+            ${{ runner.temp }}/visual-samples.json
             ${{ runner.temp }}/visual-reference
             samples/**/reference.svg
             samples/**/candidate.svg

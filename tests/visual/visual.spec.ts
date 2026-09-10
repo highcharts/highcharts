@@ -160,6 +160,8 @@ test.describe('Visual tests', () => {
 
         const scripts = [
             ...(await getKarmaScripts()),
+            join('node_modules', '@highcharts', 'connectors-morningstar',
+                'connectors-morningstar.js'),
             join('tmp', 'json-sources.js'),
             join('test', 'visual-comparator.js'),
             join('tests', 'visual', 'visual-setup.js')
@@ -176,7 +178,6 @@ test.describe('Visual tests', () => {
                 !!(window as VisualWindow).VisualComparator
         );
         await page.evaluate(() => {
-            window.HCVisualSetup?.configure({ mode: 'fast' });
             window.HCVisualSetup?.markOptionsClean();
         });
     });
