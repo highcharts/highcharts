@@ -9,9 +9,21 @@ on:
       - 'samples/**'
       - 'ts/**'
       - 'css/**'
-      - 'tests/visual/**'
+      - 'test/karma-files.json'
+      - 'test/visual-comparator.js'
+      - 'test/visual-test-samples.js'
       - 'tests/fixtures.ts'
+      - 'tests/globals.d.ts'
+      - 'tests/qunit/utils/browser-log-note-reporter.ts'
+      - 'tests/setup-highcharts.mts'
+      - 'tests/tsconfig.json'
       - 'tests/utils.ts'
+      - 'tests/visual/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tests/package.json'
+      - 'tests/package-lock.json'
+      - 'tools/docs-preview/package.json'
       - 'playwright.config.ts'
       - '.github/workflows/visual-compare-playwright.yml'
 
@@ -33,22 +45,38 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Save candidate revision
-        id: candidate_revision
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Resolve revisions
+        id: revisions
+        run: |
+          {
+            echo "candidate_sha=$(git rev-parse HEAD)"
+            echo "reference_sha=$(git rev-parse origin/master)"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Preserve candidate visual harness
         run: |
           tar -czf "$RUNNER_TEMP/visual-harness.tar.gz" \
+            package.json \
+            package-lock.json \
+            playwright.config.ts \
+            test/karma-files.json \
             test/visual-comparator.js \
-            tests/visual/visual.spec.ts \
-            tests/visual/visual-setup.js \
-            tests/visual/visual-results.ts
+            test/visual-test-samples.js \
+            tests/fixtures.ts \
+            tests/globals.d.ts \
+            tests/qunit/utils/browser-log-note-reporter.ts \
+            tests/setup-highcharts.mts \
+            tests/package.json \
+            tests/package-lock.json \
+            tests/tsconfig.json \
+            tests/utils.ts \
+            tools/docs-preview/package.json \
+            tests/visual
 
-      - name: Checkout master
+      - name: Checkout pinned master reference
         uses: actions/checkout@v6
         with:
-          ref: master
+          ref: ${{ steps.revisions.outputs.reference_sha }}
           clean: true
           fetch-depth: 0
 
@@ -64,98 +92,103 @@ jobs:
             package-lock.json
             tests/package-lock.json
 
-      - name: Install dependencies
+      - name: Install candidate toolchain for reference
         run: npm ci
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Restore reference package metadata
+        env:
+          REFERENCE_SHA: ${{ steps.revisions.outputs.reference_sha }}
+        run: |
+          git restore --source "$REFERENCE_SHA" -- \
+            package.json \
+            package-lock.json \
+            tests/package.json \
+            tests/package-lock.json \
+            tools/docs-preview/package.json
+
       - name: Generate master reference
         id: reference
         continue-on-error: true
-        run: VISUAL_TEST_PATH=samples/highcharts/demo/area-missing VISUAL_TEST_REFERENCE=1 npx playwright test tests/visual/visual.spec.ts --project=visual
+        env:
+          VISUAL_TEST_MANIFEST: tests/visual/samples.json
+          VISUAL_TEST_REFERENCE: '1'
+        run: npx playwright test tests/visual/visual.spec.ts --project=visual
+
+      - name: Preserve reference visual evidence
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/visual-reference"
+          mkdir -p "$RUNNER_TEMP/visual-reference"
+
+          find samples -type f -name reference.svg -print0 |
+          while IFS= read -r -d '' file; do
+            target="$RUNNER_TEMP/visual-reference/$file"
+            mkdir -p "$(dirname "$target")"
+            cp "$file" "$target"
+          done
+
+          for file in \
+            test/visual-test-results.json \
+            test/visual-test-errors.log; do
+            if [ -f "$file" ]; then
+              target="$RUNNER_TEMP/visual-reference/$file"
+              mkdir -p "$(dirname "$target")"
+              cp "$file" "$target"
+            fi
+          done
+
+          for directory in playwright-report test-results; do
+            if [ -d "$directory" ]; then
+              mkdir -p "$RUNNER_TEMP/visual-reference/$directory"
+              cp -R "$directory/." "$RUNNER_TEMP/visual-reference/$directory"
+            fi
+          done
 
       - name: Checkout candidate revision
         uses: actions/checkout@v6
         with:
-          ref: ${{ steps.candidate_revision.outputs.sha }}
-          clean: false
+          ref: ${{ steps.revisions.outputs.candidate_sha }}
+          clean: true
           fetch-depth: 0
 
-      - name: Remove stale candidate evidence
+      - name: Restore reference renderings
         run: |
-          rm -f \
-            test/visual-test-results.json \
-            test/visual-test-errors.log \
-            test/visual-test-complete \
-            samples/highcharts/demo/area-missing/candidate.svg \
-            samples/highcharts/demo/area-missing/diff.gif
+          if [ -d "$RUNNER_TEMP/visual-reference/samples" ]; then
+            mkdir -p samples
+            cp -R "$RUNNER_TEMP/visual-reference/samples/." samples
+          fi
+
+      - name: Install candidate toolchain
+        run: npm ci
 
       - name: Run candidate visual comparison
         id: candidate
         continue-on-error: true
-        run: VISUAL_TEST_PATH=samples/highcharts/demo/area-missing npx playwright test tests/visual/visual.spec.ts --project=visual
+        env:
+          VISUAL_TEST_MANIFEST: tests/visual/samples.json
+        run: npx playwright test tests/visual/visual.spec.ts --project=visual
 
       - name: Upload Playwright visual evidence
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: playwright-visual-area-missing-${{ github.run_id }}
+          name: playwright-visual-${{ github.run_id }}
           if-no-files-found: ignore
           path: |
-            samples/highcharts/demo/area-missing/reference.svg
-            samples/highcharts/demo/area-missing/candidate.svg
-            samples/highcharts/demo/area-missing/diff.gif
+            ${{ runner.temp }}/visual-reference
+            samples/**/reference.svg
+            samples/**/candidate.svg
+            samples/**/diff.gif
             test/visual-test-results.json
             test/visual-test-errors.log
             test/visual-test-complete
             playwright-report
             test-results
 
-      - name: Summarize Playwright visual diagnostic
-        if: always()
-        env:
-          REFERENCE_OUTCOME: ${{ steps.reference.outcome }}
-          CANDIDATE_OUTCOME: ${{ steps.candidate.outcome }}
-        run: |
-          node <<'NODE'
-          const fs = require('node:fs');
-
-          const resultsPath = 'test/visual-test-results.json';
-          const errorPath = 'test/visual-test-errors.log';
-          const completionPath = 'test/visual-test-complete';
-          let difference = 'unavailable';
-
-          if (fs.existsSync(resultsPath)) {
-              try {
-                  const results = JSON.parse(fs.readFileSync(resultsPath, 'utf8'));
-                  const value = results['highcharts/demo/area-missing'];
-                  difference = Number.isInteger(value) && value >= 0 ?
-                      String(value) : 'unavailable';
-              } catch (error) {
-                  difference = `invalid JSON: ${error.message}`;
-              }
-          }
-
-          const errorPresent = fs.existsSync(errorPath) &&
-              fs.statSync(errorPath).size > 0;
-          const completionPresent = fs.existsSync(completionPath) &&
-              fs.statSync(completionPath).isFile();
-          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
-              '### Playwright visual diagnostic',
-              '',
-              '| Check | Result |',
-              '| --- | --- |',
-              `| Reference outcome | ${process.env.REFERENCE_OUTCOME} |`,
-              `| Candidate outcome | ${process.env.CANDIDATE_OUTCOME} |`,
-              `| Completion marker | ${completionPresent ? 'present' : 'absent'} |`,
-              `| Error log | ${errorPresent ? 'non-empty' : 'empty or absent'} |`,
-              `| Pixel difference | ${difference} |`,
-              ''
-          ].join('\n'));
-          NODE
-
-      - name: Fail on execution or completion errors
+      - name: Verify visual run outcomes
         if: always()
         env:
           REFERENCE_OUTCOME: ${{ steps.reference.outcome }}
@@ -171,39 +204,8 @@ jobs:
             echo "::error::Candidate step outcome: $CANDIDATE_OUTCOME"
             failures=1
           fi
-          if [ -s test/visual-test-errors.log ]; then
-            echo "::error::Visual test execution errors were recorded."
-            failures=1
-          fi
           if [ ! -f test/visual-test-complete ]; then
             echo "::error::Candidate visual test completion marker is missing."
-            failures=1
-          fi
-          if ! node <<'NODE'
-          const fs = require('node:fs');
-
-          try {
-              const results = JSON.parse(fs.readFileSync(
-                  'test/visual-test-results.json',
-                  'utf8'
-              ));
-              const key = 'highcharts/demo/area-missing';
-              if (
-                  results === null ||
-                  typeof results !== 'object' ||
-                  Array.isArray(results) ||
-                  !Object.prototype.hasOwnProperty.call(results, key) ||
-                  !Number.isInteger(results[key]) ||
-                  results[key] < 0
-              ) {
-                  throw new Error('Expected a non-negative integer result.');
-              }
-          } catch (error) {
-              console.error(`::error::Invalid visual test result: ${error.message}`);
-              process.exit(1);
-          }
-          NODE
-          then
             failures=1
           fi
 

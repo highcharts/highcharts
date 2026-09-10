@@ -1,0 +1,12 @@
+[
+    "highcharts/demo/area-missing",
+    "highcharts/demo/line-labels",
+    "highcharts/demo/column-stacked",
+    "highcharts/demo/heatmap",
+    "highcharts/demo/treemap-coloraxis",
+    "highcharts/demo/3d-column-interactive",
+    "highcharts/demo/styled-mode-column",
+    "highcharts/demo/accessible-line",
+    "highcharts/demo/renderer",
+    "highcharts/demo/waterfall"
+]

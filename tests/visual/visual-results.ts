@@ -47,7 +47,36 @@ function readResults(resultsPath: string): VisualResults {
         throw new Error('Visual test results must be a JSON object.');
     }
 
+    for (const [samplePath, pixels] of Object.entries(results)) {
+        if (!Number.isInteger(pixels) || pixels < 0) {
+            throw new Error(
+                `Visual test result for ${samplePath} must be a non-negative integer.`
+            );
+        }
+    }
+
     return results as VisualResults;
+}
+
+function requireSamplePaths(samplePaths: string[]): string[] {
+    if (
+        !samplePaths.length ||
+        samplePaths.some(samplePath =>
+            typeof samplePath !== 'string' || !samplePath.trim()
+        )
+    ) {
+        throw new Error('Visual sample paths must contain non-empty IDs.');
+    }
+
+    if (new Set(samplePaths).size !== samplePaths.length) {
+        throw new Error('Visual sample paths must be unique.');
+    }
+
+    return samplePaths;
+}
+
+function sharedFile(root: string, filename: string): string {
+    return join(root, 'test', filename);
 }
 
 export function writeReference(
@@ -103,13 +132,81 @@ export function recordCandidateResult(
 }
 
 export function appendError(root: string, message: string): void {
-    const errorPath = join(root, 'test', 'visual-test-errors.log');
+    const errorPath = sharedFile(root, 'visual-test-errors.log');
     ensureParent(errorPath);
     appendFileSync(errorPath, message.endsWith('\n') ? message : `${message}\n`);
 }
 
+export function resetVisualRun(
+    root: string,
+    samplePaths: string[],
+    referenceMode = false
+): void {
+    const selectedSamples = requireSamplePaths(samplePaths);
+
+    rmSync(sharedFile(root, 'visual-test-results.json'), { force: true });
+    rmSync(sharedFile(root, 'visual-test-errors.log'), { force: true });
+    rmSync(sharedFile(root, 'visual-test-complete'), { force: true });
+
+    for (const samplePath of selectedSamples) {
+        rmSync(sampleFile(root, samplePath, 'candidate.svg'), { force: true });
+        rmSync(sampleFile(root, samplePath, 'diff.gif'), { force: true });
+
+        if (referenceMode) {
+            rmSync(sampleFile(root, samplePath, 'reference.svg'), { force: true });
+        }
+    }
+}
+
+export function validateVisualRun(
+    root: string,
+    samplePaths: string[],
+    referenceMode = false
+): void {
+    const expectedSamples = requireSamplePaths(samplePaths);
+    const errorPath = sharedFile(root, 'visual-test-errors.log');
+
+    if (existsSync(errorPath) && readFileSync(errorPath, 'utf8').length > 0) {
+        throw new Error('Visual test errors log is non-empty.');
+    }
+
+    for (const samplePath of expectedSamples) {
+        requireReference(root, samplePath);
+    }
+
+    if (referenceMode) {
+        return;
+    }
+
+    const results = readResults(sharedFile(root, 'visual-test-results.json'));
+    const resultPaths = Object.keys(results);
+    if (
+        resultPaths.length !== expectedSamples.length ||
+        expectedSamples.some(samplePath =>
+            !Object.prototype.hasOwnProperty.call(results, samplePath)
+        )
+    ) {
+        throw new Error(
+            'Visual test results must contain exactly one result for each expected sample.'
+        );
+    }
+
+    for (const samplePath of expectedSamples) {
+        const pixels = results[samplePath];
+        if (pixels > 0) {
+            const candidatePath = sampleFile(root, samplePath, 'candidate.svg');
+            const diffPath = sampleFile(root, samplePath, 'diff.gif');
+            if (!existsSync(candidatePath) || !existsSync(diffPath)) {
+                throw new Error(
+                    `Positive visual difference for ${samplePath} requires candidate SVG and GIF artifacts.`
+                );
+            }
+        }
+    }
+}
+
 export function writeCandidateCompletion(root: string): void {
-    const completionPath = join(root, 'test', 'visual-test-complete');
+    const completionPath = sharedFile(root, 'visual-test-complete');
     ensureParent(completionPath);
     writeFileSync(completionPath, '');
 }

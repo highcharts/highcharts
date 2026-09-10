@@ -8,16 +8,15 @@ import {
     setTestingOptions,
     transpileTS
 } from '~/utils.ts';
-import { join, dirname, relative } from 'node:path';
-import { glob } from 'glob';
+import { basename, join, dirname } from 'node:path';
 import { GIFEncoder, applyPalette, quantize } from 'gifenc';
 import {
     appendError,
     readReference,
     recordCandidateResult,
-    writeCandidateCompletion,
     writeReference
 } from './visual-results.ts';
+import { selectVisualSamples } from './visual-samples.ts';
 
 type VisualComparator = {
     CANVAS_WIDTH: number;
@@ -124,12 +123,12 @@ function createAnimatedGif(
 
 test.describe('Visual tests', () => {
     test.describe.configure({
-        timeout: 5_000,
+        mode: 'default',
+        timeout: 15_000,
     });
 
     let page: Page | undefined;
     let context: BrowserContext | undefined;
-    let initialized = false;
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once('SIGINT', async () => {
@@ -180,7 +179,6 @@ test.describe('Visual tests', () => {
             window.HCVisualSetup?.configure({ mode: 'fast' });
             window.HCVisualSetup?.markOptionsClean();
         });
-        initialized = true;
     });
 
     test.afterEach(async () => {
@@ -206,123 +204,26 @@ test.describe('Visual tests', () => {
             await context.close();
             context = undefined;
         }
-        if (!referenceMode && initialized) {
-            writeCandidateCompletion(root);
-        }
     });
 
-    const pathEnv = process.env.VISUAL_TEST_PATH ?? '';
-    const pathFilters = pathEnv
-        .split(/[,;\n]/)
-        .map((value) => value.trim())
-        .filter(Boolean)
-        .map((value) => value.replace(/\\/g, '/'));
-
-    const samples = glob.sync(['samples/**/demo.{js,mjs,ts}'], {
-        ignore: [
-            'samples/unit-tests/**',
-            'samples/issues/**',
-            'samples/mapdata/**',
-            // --- VISUAL TESTS ---
-
-            // Custom data source
-            'samples/highcharts/blog/annotations-aapl-iphone/demo.{js,mjs,ts}',
-            'samples/highcharts/blog/gdp-growth-annual/demo.{js,mjs,ts}',
-            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.{js,mjs,ts}',
-            'samples/highcharts/blog/gdp-growth-multiple-request/demo.{js,mjs,ts}',
-            'samples/highcharts/website/xmas-2021/demo.{js,mjs,ts}',
-
-            // Error #13, renders to other divs than #container. Sets global
-            // options.
-            'samples/highcharts/demo/bullet-graph/demo.{js,mjs,ts}',
-            // Network loading?
-            'samples/highcharts/demo/combo-meteogram/demo.{js,mjs,ts}',
-
-            // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-csv/demo.{js,mjs,ts}',
-
-            // Clock
-            'samples/highcharts/demo/dynamic-update/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/gauge-vu-meter/demo.{js,mjs,ts}',
-
-            // Too heavy
-            'samples/highcharts/demo/parallel-coordinates/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/sparkline/demo.{js,mjs,ts}',
-
-            // Maps
-            'samples/maps/demo/map-pies/demo.{js,mjs,ts}', // advanced data
-            'samples/maps/demo/us-counties/demo.{js,mjs,ts}', // advanced data
-            'samples/maps/plotoptions/series-animation-true/demo.{js,mjs,ts}', // animation
-            'samples/highcharts/blog/map-europe-electricity-price/demo.{js,mjs,ts}', // strange fails, remove this later
-
-            // Unknown error
-            'samples/highcharts/boost/arearange/demo.{js,mjs,ts}',
-            'samples/highcharts/boost/scatter-smaller/demo.{js,mjs,ts}',
-            'samples/highcharts/data/google-spreadsheet/demo.{js,mjs,ts}',
-
-            // Various
-            'samples/highcharts/data/delimiters/demo.{js,mjs,ts}', // data island
-            'samples/highcharts/css/exporting/demo.{js,mjs,ts}', // advanced demo
-            'samples/highcharts/css/pattern/demo.{js,mjs,ts}', // styled mode, setOptions
-            'samples/highcharts/studies/logistics/demo.{js,mjs,ts}', // overriding
-
-            // Failing on Edge only
-            'samples/unit-tests/pointer/members/demo.{js,mjs,ts}',
-
-            // visual tests excluded for now due to failure
-            'samples/highcharts/demo/funnel3d/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/live-data/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/organization-chart/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/pareto/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/pyramid3d/demo.{js,mjs,ts}',
-            'samples/highcharts/demo/synchronized-charts/demo.{js,mjs,ts}',
-
-            // Visual test fails due to external library used
-            'samples/highcharts/demo/combo-regression/demo.{js,mjs,ts}',
-
-            'samples/grid-pro/**/demo.{js,mjs,ts}', // TODO: Fails as Grid is not defined
-            'samples/grid-lite/**/demo.{js,mjs,ts}', // TODO: Fails as Grid is not defined
-            'samples/dashboards/**/demo.{js,mjs,ts}' // TODO: Fails as Grid is not defined
-        ],
-        absolute: true,
-        posix: true,
-        nodir: true,
-        follow: false,
-        windowsPathsNoEscape: true
+    const samples = selectVisualSamples(root, {
+        manifest: process.env.VISUAL_TEST_MANIFEST,
+        filter: process.env.VISUAL_TEST_PATH
     });
 
-    const filteredSamples = pathFilters.length ?
-        samples.filter((samplePath) => {
-            const relativePath = relative(process.cwd(), samplePath).replace(/\\/g, '/');
-            return pathFilters.some(
-                (pathFilter) =>
-                    relativePath.includes(pathFilter) ||
-                    samplePath.includes(pathFilter)
-            );
-        }) :
-        samples;
-
-    for (const samplePath of filteredSamples){
-        test(samplePath + '', async () =>{
-            const visualSamplePath = relative(
-                join(root, 'samples'),
-                dirname(samplePath)
-            ).replace(/\\/g, '/');
+    for (const { id: visualSamplePath, path: samplePath } of samples) {
+        // The visual reporter validates outcomes across all samples.
+        // eslint-disable-next-line playwright/expect-expect
+        test(`${visualSamplePath}`, async () => {
             if (context) {
                 await context.clock.setFixedTime(FIXED_CLOCK_TIME);
             }
 
-            const sample = getSample(dirname(samplePath), true);
+            const sample = getSample(
+                dirname(samplePath), true, basename(samplePath)
+            );
             if (sample.script && samplePath.endsWith('.ts')) {
                 sample.script = transpileTS(sample.script);
-            }
-
-            if (
-                sample.details?.requiresManualTesting ||
-                sample.details?.skipTest
-            ) {
-                // eslint-disable-next-line playwright/no-skipped-test
-                test.skip();
             }
 
             let scriptHandle: Awaited<ReturnType<Page['addScriptTag']>> | undefined;

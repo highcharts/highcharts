@@ -2,8 +2,10 @@ import {
     appendError,
     readReference,
     recordCandidateResult,
+    resetVisualRun,
     writeCandidateCompletion,
-    writeReference
+    writeReference,
+    validateVisualRun
 } from './visual-results.ts';
 import { test, expect } from '@playwright/test';
 import {
@@ -18,6 +20,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 const samplePath = 'highcharts/demo/area-missing';
+const secondSamplePath = 'highcharts/demo/line-basic';
 const referenceSVG = '<svg>reference</svg>';
 const candidateSVG = '<svg>candidate</svg>';
 const diffGif = Buffer.from([0x47, 0x49, 0x46, 0x38, 0x39, 0x61]);
@@ -32,16 +35,24 @@ function withTemporaryRoot(run: (root: string) => void): void {
     }
 }
 
-function referencePath(root: string): string {
-    return join(root, 'samples', samplePath, 'reference.svg');
+function artifactPath(
+    root: string,
+    sample: string,
+    filename: string
+): string {
+    return join(root, 'samples', sample, filename);
 }
 
-function candidatePath(root: string): string {
-    return join(root, 'samples', samplePath, 'candidate.svg');
+function referencePath(root: string, sample = samplePath): string {
+    return artifactPath(root, sample, 'reference.svg');
 }
 
-function diffPath(root: string): string {
-    return join(root, 'samples', samplePath, 'diff.gif');
+function candidatePath(root: string, sample = samplePath): string {
+    return artifactPath(root, sample, 'candidate.svg');
+}
+
+function diffPath(root: string, sample = samplePath): string {
+    return artifactPath(root, sample, 'diff.gif');
 }
 
 function resultsPath(root: string): string {
@@ -135,5 +146,144 @@ test('missing reference rejects candidate recording as terminal', () => {
             `Missing visual reference for ${samplePath}`
         );
         expect(existsSync(resultsPath(root))).toBe(false);
+    });
+});
+
+test('validates complete multi-sample candidate results', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        writeReference(root, secondSamplePath, referenceSVG);
+
+        recordCandidateResult(root, samplePath, 0);
+        recordCandidateResult(root, secondSamplePath, 7, candidateSVG, diffGif);
+
+        expect(() => validateVisualRun(root, [samplePath, secondSamplePath]))
+            .not.toThrow();
+    });
+});
+
+test('resets shared outputs and selected stale candidate artifacts', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        mkdirSync(join(root, 'test'), { recursive: true });
+        mkdirSync(join(root, 'samples', samplePath), { recursive: true });
+        writeFileSync(resultsPath(root), `{ "${samplePath}": 0 }`);
+        writeFileSync(errorsPath(root), 'stale error\n');
+        writeFileSync(completionPath(root), '');
+        writeFileSync(candidatePath(root), 'stale candidate');
+        writeFileSync(diffPath(root), Buffer.from('stale diff'));
+
+        resetVisualRun(root, [samplePath]);
+
+        expect(existsSync(resultsPath(root))).toBe(false);
+        expect(existsSync(errorsPath(root))).toBe(false);
+        expect(existsSync(completionPath(root))).toBe(false);
+        expect(existsSync(candidatePath(root))).toBe(false);
+        expect(existsSync(diffPath(root))).toBe(false);
+        expect(existsSync(referencePath(root))).toBe(true);
+    });
+});
+
+test('reference reset removes selected references as well as candidate artifacts', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        writeReference(root, secondSamplePath, referenceSVG);
+        writeFileSync(candidatePath(root), 'stale candidate');
+        writeFileSync(diffPath(root), Buffer.from('stale diff'));
+
+        resetVisualRun(root, [samplePath], true);
+
+        expect(existsSync(referencePath(root))).toBe(false);
+        expect(existsSync(referencePath(root, secondSamplePath))).toBe(true);
+        expect(existsSync(candidatePath(root))).toBe(false);
+        expect(existsSync(diffPath(root))).toBe(false);
+    });
+});
+
+test('candidate validation rejects missing or unexpected results', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+
+        expect(() => validateVisualRun(root, [samplePath])).toThrow(
+            'exactly one result for each expected sample'
+        );
+
+        mkdirSync(join(root, 'test'), { recursive: true });
+        writeFileSync(
+            resultsPath(root),
+            JSON.stringify({ [samplePath]: 0, [secondSamplePath]: 0 })
+        );
+        expect(() => validateVisualRun(root, [samplePath])).toThrow(
+            'exactly one result for each expected sample'
+        );
+    });
+});
+
+test('validation rejects empty or duplicate expected sample IDs', () => {
+    withTemporaryRoot(root => {
+        expect(() => validateVisualRun(root, [])).toThrow('non-empty IDs');
+        expect(() => validateVisualRun(root, [''])).toThrow('non-empty IDs');
+        expect(() => validateVisualRun(root, [samplePath, samplePath]))
+            .toThrow('unique');
+    });
+});
+
+test('validation rejects malformed result JSON and numeric values', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        mkdirSync(join(root, 'test'), { recursive: true });
+
+        writeFileSync(resultsPath(root), '{');
+        expect(() => validateVisualRun(root, [samplePath])).toThrow();
+
+        writeFileSync(resultsPath(root), '[]');
+        expect(() => validateVisualRun(root, [samplePath])).toThrow(
+            'must be a JSON object'
+        );
+
+        for (const value of ['"7"', '-1', '1.5']) {
+            writeFileSync(resultsPath(root), `{ "${samplePath}": ${value} }`);
+            expect(() => validateVisualRun(root, [samplePath])).toThrow(
+                'non-negative integer'
+            );
+        }
+    });
+});
+
+test('reference validation rejects omissions', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+
+        expect(() =>
+            validateVisualRun(root, [samplePath, secondSamplePath], true)
+        ).toThrow(`Missing visual reference for ${secondSamplePath}`);
+    });
+});
+
+test('positive candidate results require both visual artifacts', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        mkdirSync(join(root, 'test'), { recursive: true });
+        writeFileSync(resultsPath(root), `{ "${samplePath}": 1 }`);
+        writeFileSync(candidatePath(root), candidateSVG);
+
+        expect(() => validateVisualRun(root, [samplePath])).toThrow(
+            'requires candidate SVG and GIF artifacts'
+        );
+
+        writeFileSync(diffPath(root), diffGif);
+        expect(() => validateVisualRun(root, [samplePath])).not.toThrow();
+    });
+});
+
+test('validation rejects a non-empty error log', () => {
+    withTemporaryRoot(root => {
+        writeReference(root, samplePath, referenceSVG);
+        recordCandidateResult(root, samplePath, 0);
+        appendError(root, 'Visual test failed');
+
+        expect(() => validateVisualRun(root, [samplePath])).toThrow(
+            'errors log is non-empty'
+        );
     });
 });
