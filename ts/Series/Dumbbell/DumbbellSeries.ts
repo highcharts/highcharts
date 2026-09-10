@@ -19,7 +19,6 @@
  * */
 
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
-import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type LollipopPoint from '../Lollipop/LollipopPoint';
@@ -36,7 +35,7 @@ const {
     columnrange: ColumnRangeSeries
 } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import { extend, merge, pick } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -115,36 +114,27 @@ class DumbbellSeries extends AreaRangeSeries {
             seriesOptions = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            connectorWidthPlus = pick(
+            connectorWidthPlus = (
                 seriesOptions.states &&
                 seriesOptions.states.hover &&
-                seriesOptions.states.hover.connectorWidthPlus,
-                1
-            ),
-            dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle),
+                seriesOptions.states.hover.connectorWidthPlus
+            ) ?? 1,
+            dashStyle = (pointOptions.dashStyle ?? seriesOptions.dashStyle),
             pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true),
             pointHeight = chart.inverted ?
                 yAxis.len - pxThreshold : pxThreshold;
 
-        let connectorWidth = pick<number|undefined, number>(
-                pointOptions.connectorWidth,
-                seriesOptions.connectorWidth as any
-            ),
-            connectorColor = pick<
-            ColorType|undefined,
-            ColorString|undefined,
-            ColorType|undefined,
-            ColorType|undefined,
-            ColorType
-            >(
-                pointOptions.connectorColor,
-                seriesOptions.connectorColor,
-                pointOptions.color,
-                point.zone ? point.zone.color : void 0,
-                point.color as any
-            ),
-            pointTop = pick(point.plotLow, point.plotY),
-            pointBottom = pick(point.plotHigh, pointHeight),
+        let connectorWidth =
+                pointOptions.connectorWidth ??
+                seriesOptions.connectorWidth as any,
+            connectorColor =
+                pointOptions.connectorColor ??
+                seriesOptions.connectorColor ??
+                pointOptions.color ??
+                (point.zone ? point.zone.color : void 0) ??
+                point.color as any,
+            pointTop = (point.plotLow ?? point.plotY),
+            pointBottom = (point.plotHigh ?? pointHeight),
             origProps;
 
         if (typeof pointTop !== 'number') {
@@ -179,19 +169,12 @@ class DumbbellSeries extends AreaRangeSeries {
             };
             point.y = (point as DumbbellPoint).high;
             point.zone = point.zone ? point.getZone() : void 0;
-            connectorColor = pick<
-            ColorType|undefined,
-            ColorString|undefined,
-            ColorType|undefined,
-            ColorType|undefined,
-            ColorType
-            >(
-                pointOptions.connectorColor,
-                seriesOptions.connectorColor,
-                pointOptions.color,
-                point.zone ? point.zone.color : void 0,
-                point.color as any
-            );
+            connectorColor =
+                pointOptions.connectorColor ??
+                seriesOptions.connectorColor ??
+                pointOptions.color ??
+                (point.zone ? point.zone.color : void 0) ??
+                point.color as any;
             extend(point, origProps);
         }
 
@@ -226,7 +209,7 @@ class DumbbellSeries extends AreaRangeSeries {
      */
     public drawConnector(point: (DumbbellPoint|LollipopPoint)): void {
         const series = this,
-            animationLimit = pick(series.options.animationLimit, 250),
+            animationLimit = (series.options.animationLimit ?? 250),
             verb = point.connector && series.chart.pointCount < animationLimit ?
                 'animate' : 'attr';
 
@@ -326,15 +309,14 @@ class DumbbellSeries extends AreaRangeSeries {
 
             if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
-                lowerGraphicColor = pick(
-                    point.options.lowColor,
-                    seriesLowMarker?.fillColor,
-                    seriesLowColor,
-                    point.options.color,
-                    zoneColor,
-                    point.color,
-                    series.color
-                );
+                lowerGraphicColor =
+                    point.options.lowColor ??
+                    seriesLowMarker?.fillColor ??
+                    seriesLowColor ??
+                    point.options.color ??
+                    zoneColor ??
+                    point.color ??
+                    series.color;
                 if (!chart.styledMode) {
                     lowerGraphic.attr({
                         fill: lowerGraphicColor

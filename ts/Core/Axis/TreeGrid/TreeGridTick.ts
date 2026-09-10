@@ -37,7 +37,6 @@ import {
     correctFloat,
     isNumber,
     isObject,
-    pick,
     removeEvent,
     wrap
 } from '../../../Shared/Utilities.js';
@@ -193,10 +192,7 @@ function wrapGetLabelPosition(
     step: number
 ): PositionObject {
     const tick = this,
-        lbOptions = pick(
-            tick.options?.labels,
-            labelOptions
-        ),
+        lbOptions = (tick.options?.labels ?? labelOptions),
         pos = tick.pos,
         axis = tick.axis,
         isTreeGrid = axis.type === 'treegrid',
@@ -259,7 +255,7 @@ function wrapRenderLabel(
             tickPositions
         } = axis,
         mapOfPosToGridNode = axisGrid.mapOfPosToGridNode,
-        labelOptions = pick(tickOptions?.labels, axisOptions?.labels),
+        labelOptions = (tickOptions?.labels ?? axisOptions?.labels),
         symbolOptions = (
             labelOptions && isObject(labelOptions.symbol, true) ?
                 labelOptions.symbol :

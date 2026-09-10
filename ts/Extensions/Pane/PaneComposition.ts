@@ -12,8 +12,7 @@ import type Series from '../../Core/Series/Series';
 import {
     addEvent,
     correctFloat,
-    defined,
-    pick
+    defined
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -235,7 +234,7 @@ function onPointerBeforeGetHoverData(
             return (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
-                pick(s.options.enableMouseTracking, true) &&
+                (s.options.enableMouseTracking ?? true) &&
                 (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };

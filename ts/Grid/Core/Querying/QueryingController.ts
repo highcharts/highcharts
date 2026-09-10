@@ -29,6 +29,7 @@ import type Grid from '../Grid.js';
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';
 import PaginationController from './PaginationController.js';
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -119,20 +120,24 @@ class QueryingController {
     }
 
     /**
-     * Creates a list of modifiers that should be applied to the data table.
+     * Whether the query leaves the data table untouched, so that a cell edit
+     * does not need a requery.
      */
     public willNotModify(): boolean {
-        return (
-            !this.sorting.modifier &&
-            !this.filtering.modifier
-        );
+        return this.getGroupedModifiers().length === 0;
     }
 
     /**
      * Returns a list of modifiers that should be applied to the data table.
+     *
+     * Features can contribute their own modifiers through the
+     * `getGroupedModifiers` event. Those run first, so that sorting and
+     * filtering see the columns they produce.
      */
     public getGroupedModifiers(): DataModifier[] {
         const modifiers: DataModifier[] = [];
+
+        fireEvent(this.grid, 'getGroupedModifiers', { modifiers });
 
         if (this.sorting.modifier) {
             modifiers.push(this.sorting.modifier);

@@ -28,8 +28,7 @@ import {
     fireEvent,
     isNumber,
     isString,
-    objectEach,
-    pick
+    objectEach
 } from '../Shared/Utilities.js';
 import H from './Globals.js';
 const {
@@ -164,8 +163,8 @@ export function insertItem(
             // Handle index option, the element to insert has lower index
             (
                 isNumber(indexOption) &&
-                indexOption < pick(
-                    (collection[i] as Series).options.index,
+                indexOption < (
+                    (collection[i] as Series).options.index ??
                     (collection[i] as Series)._i
                 )
             ) ||
@@ -264,7 +263,7 @@ export const uniqueKey = (function (): () => string {
  * State of the serial mode.
  */
 export function useSerialIds(mode?: boolean): (boolean|undefined) {
-    return (serialMode = pick(mode, serialMode));
+    return (serialMode = (mode ?? serialMode));
 }
 
 /* *

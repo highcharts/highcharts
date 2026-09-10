@@ -48,6 +48,7 @@ const {
 } = H;
 import {
     addEvent,
+    clamp,
     correctFloat,
     defined,
     extend,
@@ -55,7 +56,6 @@ import {
     isNumber,
     isObject,
     merge,
-    pick,
     pushUnique,
     relativeLength,
     splat,
@@ -436,7 +436,7 @@ namespace RadialAxis {
         // point from overlapping the first.
         this.autoConnect = (
             this.isCircular &&
-            typeof pick(this.userMax, this.options.max) === 'undefined' &&
+            typeof (this.userMax ?? this.options.max) === 'undefined' &&
             correctFloat(this.endAngleRad - this.startAngleRad) ===
             correctFloat(2 * Math.PI)
         );
@@ -657,7 +657,7 @@ namespace RadialAxis {
 
         let end,
             path: SVGPath,
-            r = pick(radius, center[2] / 2 - this.offset);
+            r = (radius ?? center[2] / 2 - this.offset);
 
         innerRadius ??= this.horiz ? 0 : this.center && -this.center[3] / 2;
 
@@ -773,10 +773,7 @@ namespace RadialAxis {
             xOnPerimeter,
             open,
             path: SVGPath,
-            outerRadius = pick(
-                radiusToPixels(options.outerRadius),
-                fullRadius
-            ),
+            outerRadius = (radiusToPixels(options.outerRadius) ?? fullRadius),
             innerRadius = radiusToPixels(options.innerRadius),
             thickness = radiusToPixels(options.thickness),
             brStart = true,
@@ -858,10 +855,10 @@ namespace RadialAxis {
                     // Math is for reversed yAxis (#3606)
                     start: Math.min(start, end),
                     end: Math.max(start, end),
-                    innerR: pick(
-                        innerRadius,
-                        isNumber(thickness) ? outerRadius - thickness : void 0,
-                        this.center[3] / 2
+                    innerR: innerRadius ?? (
+                        isNumber(thickness) ?
+                            outerRadius - thickness :
+                            this.center[3] / 2
                     ),
                     open,
                     borderRadius: borderRadius.radius,
@@ -983,18 +980,12 @@ namespace RadialAxis {
 
         // Concentric circles
         } else {
-            // Pick the right values depending if it is grid line or crosshair
-            let transValue = this.translate(value);
-
-            // This is required in case when xAxis is non-circular to
-            // prevent grid lines (or crosshairs, if enabled) from
-            // rendering above the center after they supposed to be
-            // displayed below the center point
-            if (transValue) {
-                if (transValue < 0 || transValue > height) {
-                    transValue = 0;
-                }
-            }
+            // Pick the right values depending if it is grid line or crosshair.
+            // Clamp is required in case when xAxis is non-circular to prevent
+            // grid lines (or crosshairs, if enabled) from rendering above the
+            // center after they supposed to be displayed below the center
+            // point.
+            let transValue = clamp(this.translate(value), 0, height);
 
             if (this.options.gridLineInterpolation === 'circle') {
                 // A value of 0 is in the center, so it won't be
@@ -1062,16 +1053,22 @@ namespace RadialAxis {
         length?: number
     ): PositionObject {
         const translatedVal = this.translate(value);
+        const centerRadius = (
+            (this.center && this.center[2]) || 0
+        ) / 2;
 
         return this.postTranslate(
             this.isCircular ? translatedVal : this.angleRad, // #2848
             // In case when translatedVal is negative, the 0 value must be
             // used instead, in order to deal with lines and labels that
             // fall out of the visible range near the center of a pane
-            pick(
-                this.isCircular ?
-                    length :
-                    (translatedVal < 0 ? 0 : translatedVal), this.center[2] / 2
+            (this.isCircular ?
+                (length ?? centerRadius) :
+                (
+                    typeof translatedVal === 'number' && translatedVal < 0 ?
+                        0 :
+                        translatedVal ?? centerRadius
+                )
             ) - this.offset
         );
     }
@@ -1165,10 +1162,12 @@ namespace RadialAxis {
                 // top, while internal computations are in radians relative to
                 // right (like SVG).
                 start = (startAngle - 90) * Math.PI / 180,
-                end = (pick(
-                    paneOptions.endAngle,
-                    startAngle + (chart.angular ? 270 : 360)
-                ) - 90) * Math.PI / 180;
+                end = (
+                    (
+                        paneOptions.endAngle ??
+                        startAngle + (chart.angular ? 270 : 360)
+                    ) - 90
+                ) * Math.PI / 180;
 
             // Y axis in polar charts
             this.angleRad = (options.angle || 0) * Math.PI / 180;
