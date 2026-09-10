@@ -248,10 +248,11 @@ QUnit.test('Dynamic markers on update', function (assert) {
     });
 
     assert.strictEqual(
-        pointA.graphics[0].opacity !== 0,
+        hasVisibleMarker(pointA),
         true,
         'Explicitly enabled lowMarker should be visible (#25279).'
     );
+
 });
 
 // #16624, temporarily skipped due to #23783
