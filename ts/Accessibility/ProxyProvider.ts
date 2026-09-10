@@ -49,6 +49,7 @@ import { attr, css } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 interface ProxyGroup {
     proxyContainerElement: HTMLDOMElement;
     groupElement: HTMLDOMElement;
@@ -66,8 +67,9 @@ interface ProxyGroup {
 /**
  * Keeps track of all proxy elements and proxy groups.
  *
- * @private
  * @class
+ *
+ * @internal
  */
 class ProxyProvider {
 
@@ -446,4 +448,5 @@ class ProxyProvider {
  *
  * */
 
+/** @internal */
 export default ProxyProvider;

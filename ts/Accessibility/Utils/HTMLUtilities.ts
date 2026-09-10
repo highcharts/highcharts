@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 const simulatedEventTarget = win.EventTarget && new win.EventTarget() || 'none';
 
 
@@ -48,12 +49,7 @@ const simulatedEventTarget = win.EventTarget && new win.EventTarget() || 'none';
  *
  * */
 
-/**
- * @private
- * @param {Highcharts.HTMLDOMElement} el
- * @param {string} className
- * @return {void}
- */
+/** @internal */
 function addClass(el: HTMLDOMElement, className: string): void {
     if (el.classList) {
         el.classList.add(className);
@@ -66,12 +62,7 @@ function addClass(el: HTMLDOMElement, className: string): void {
 }
 
 
-/**
- * @private
- * @param {Highcharts.HTMLDOMElement} el
- * @param {string} className
- * @return {void}
- */
+/** @internal */
 function removeClass(el: HTMLDOMElement, className: string): void {
     if (el.classList) {
         el.classList.remove(className);
@@ -85,7 +76,8 @@ function removeClass(el: HTMLDOMElement, className: string): void {
 
 /**
  * Utility function to clone a mouse event for re-dispatching.
- * @private
+ *
+ * @internal
  */
 function cloneMouseEvent(e: MouseEvent): MouseEvent {
     if (typeof win.MouseEvent === 'function') {
@@ -123,7 +115,8 @@ function cloneMouseEvent(e: MouseEvent): MouseEvent {
 
 /**
  * Utility function to clone a touch event for re-dispatching.
- * @private
+ *
+ * @internal
  */
 function cloneTouchEvent(e: TouchEvent): TouchEvent {
     const touchListToTouchArray = (l: TouchList): Touch[] => {
@@ -168,9 +161,7 @@ function cloneTouchEvent(e: TouchEvent): TouchEvent {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function escapeStringForHTML(str: string): string {
     return str
         .replace(/&/g, '&amp;')
@@ -184,7 +175,8 @@ function escapeStringForHTML(str: string): string {
 
 /**
  * Get an element by ID
- * @private
+ *
+ * @internal
  */
 function getElement(
     id: string
@@ -197,7 +189,8 @@ function getElement(
  * Get a fake mouse event of a given type. If relatedTarget is not given,
  * it will point to simulatedEventTarget, as an indicator that the event
  * is fake.
- * @private
+ *
+ * @internal
  */
 function getFakeMouseEvent(
     type: string,
@@ -267,10 +260,11 @@ function getFakeMouseEvent(
  * is ambiguous whether or not the nesting is for layout purposes or indicates a
  * separate section.
  *
- * @private
- * @param {Highcharts.HTMLDOMElement} [element]
- * @return {string} The heading tag name (h1, h2 etc).
+ * @return {string}
+ * The heading tag name (h1, h2 etc).
  * If no nearest heading is found, "p" is returned.
+ *
+ * @internal
  */
 function getHeadingTagNameForElement(element: HTMLDOMElement): string {
     const getIncreasedHeadingLevel = (tagName: string): string => {
@@ -315,9 +309,8 @@ function getHeadingTagNameForElement(element: HTMLDOMElement): string {
 
 /**
  * Remove an element from the DOM.
- * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
- * @return {void}
+ *
+ * @internal
  */
 function removeElement(element?: DOMElementType): void {
     if (element && element.parentNode) {
@@ -328,9 +321,8 @@ function removeElement(element?: DOMElementType): void {
 
 /**
  * Remove all child nodes from an element.
- * @private
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
- * @return {void}
+ *
+ * @internal
  */
 function removeChildNodes(element: DOMElementType): void {
     while (element.lastChild) {
@@ -341,7 +333,8 @@ function removeChildNodes(element: DOMElementType): void {
 
 /**
  * Utility function. Reverses child nodes of a DOM element.
- * @private
+ *
+ * @internal
  */
 function reverseChildNodes(node: DOMElementType): void {
     let i = node.childNodes.length;
@@ -354,7 +347,8 @@ function reverseChildNodes(node: DOMElementType): void {
 /**
  * Used for aria-label attributes, painting on a canvas will fail if the
  * text contains tags.
- * @private
+ *
+ * @internal
  */
 function stripHTMLTagsFromString(
     str: string,
@@ -370,7 +364,8 @@ function stripHTMLTagsFromString(
 /**
  * Utility function for hiding an element visually, but still keeping it
  * available to screen reader users.
- * @private
+ *
+ * @internal
  */
 function visuallyHideElement(element: HTMLDOMElement): void {
     css(element, {
@@ -394,6 +389,7 @@ function visuallyHideElement(element: HTMLDOMElement): void {
  *
  * */
 
+/** @internal */
 const HTMLUtilities = {
     addClass,
     cloneMouseEvent,
@@ -411,4 +407,5 @@ const HTMLUtilities = {
     visuallyHideElement
 };
 
+/** @internal */
 export default HTMLUtilities;

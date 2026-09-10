@@ -142,10 +142,33 @@ namespace KeyboardNavigationHandler {
      *
      * */
 
+    /**
+     * Options for the keyboard navigation handler.
+     */
     export interface Options {
+
+        /**
+         * An array containing pairs of an array of keycodes, mapped to a
+         * handler function. When the keycode is received, the handler is called
+         * with the keycode as parameter.
+         */
         keyCodeMap: Array<[Array<number>, Function]>;
+
+        /**
+         * Function to run on initialization of module.
+         */
         init: Function;
+
+        /**
+         * Function to run before moving to next/prev module. Receives moving
+         * direction as parameter: +1 for next, -1 for previous.
+         */
         terminate?: Function;
+
+        /**
+         * Function to run to validate module. Should return false if module
+         * should not run, true otherwise. Receives chart as parameter.
+         */
         validate?: Function;
     }
 
