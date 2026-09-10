@@ -1318,8 +1318,6 @@ class Point {
                 point.graphic = graphic.destroy();
             }
 
-            const index = point.index;
-
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
                 if (graphic?.element) {
@@ -1336,7 +1334,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)
