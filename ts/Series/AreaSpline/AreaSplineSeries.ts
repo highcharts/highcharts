@@ -63,9 +63,7 @@ class AreaSplineSeries extends SplineSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<AreaSplinePoint>;
-    /** @internal */
     public points!: Array<AreaSplinePoint>;
     public options!: AreaSplineSeriesOptions;
 }

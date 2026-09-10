@@ -81,9 +81,7 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<NATRPoint>;
-    /** @internal */
     public points!: Array<NATRPoint>;
     public options!: NATROptions;
 

@@ -121,9 +121,7 @@ class DPOIndicator extends SMAIndicator {
      * */
 
     public options!: DPOOptions;
-    /** @internal */
     public data!: Array<DPOPoint>;
-    /** @internal */
     public points!: Array<DPOPoint>;
 
     /* *

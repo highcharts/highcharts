@@ -188,13 +188,11 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<SMAPoint>;
 
     /** @internal */
     public dataEventsToUnbind!: Array<Function>;
 
-    /** @internal */
     public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
     /** @internal */
@@ -202,7 +200,6 @@ class SMAIndicator extends LineSeries {
 
     public options!: SMAOptions;
 
-    /** @internal */
     public points!: Array<SMAPoint>;
 
     /* *

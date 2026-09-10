@@ -89,10 +89,8 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<TrendLinePoint>;
     public options!: TrendLineOptions;
-    /** @internal */
     public points!: Array<TrendLinePoint>;
     /** @internal */
     public updateAllPoints?: boolean = true;

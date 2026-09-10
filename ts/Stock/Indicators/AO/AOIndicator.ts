@@ -125,10 +125,8 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<AOPoint>;
     public options!: AOOptions;
-    /** @internal */
     public points!: Array<AOPoint>;
 
     /* *

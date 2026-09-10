@@ -89,12 +89,10 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<EMAPoint>;
 
     public options!: EMAOptions;
 
-    /** @internal */
     public points!: Array<EMAPoint>;
 
     /* *

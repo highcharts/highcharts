@@ -82,10 +82,8 @@ class DEMAIndicator extends EMAIndicator {
 
     /** @internal */
     public EMApercent!: number;
-    /** @internal */
     public data!: Array<DEMAPoint>;
     public options!: DEMAOptions;
-    /** @internal */
     public points!: Array<DEMAPoint>;
 
     /* *

@@ -151,10 +151,8 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<KeltnerChannelsPoint>;
     public options!: KeltnerChannelsOptions;
-    /** @internal */
     public points!: Array<KeltnerChannelsPoint>;
 
     /* *

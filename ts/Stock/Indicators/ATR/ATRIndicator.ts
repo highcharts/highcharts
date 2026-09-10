@@ -134,9 +134,7 @@ class ATRIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<ATRPoint>;
-    /** @internal */
     public points!: Array<ATRPoint>;
     public options!: ATROptions;
 

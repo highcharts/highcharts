@@ -75,12 +75,10 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<BoxPlotPoint>;
 
     public options!: BoxPlotSeriesOptions;
 
-    /** @internal */
     public points!: Array<BoxPlotPoint>;
 
     /* *
@@ -145,7 +143,6 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     // Translate data points from raw values x and y to plotX and plotY
-    /** @internal */
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,

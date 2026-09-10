@@ -112,7 +112,6 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<BellcurvePoint>;
 
     /** @internal */
@@ -120,7 +119,6 @@ class BellcurveSeries extends AreaSplineSeries {
 
     public options!: BellcurveSeriesOptions;
 
-    /** @internal */
     public points!: Array<BellcurvePoint>;
 
     /** @internal */
@@ -132,7 +130,6 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    /** @internal */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,

@@ -78,7 +78,6 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<ArcDiagramPoint>;
 
     public options!: ArcDiagramSeriesOptions;
@@ -89,7 +88,6 @@ class ArcDiagramSeries extends SankeySeries {
     /** @internal */
     public nodes!: Array<ArcDiagramPoint>;
 
-    /** @internal */
     public points!: Array<ArcDiagramPoint>;
 
     /* *
@@ -520,7 +518,6 @@ class ArcDiagramSeries extends SankeySeries {
         return super.pointAttribs.apply(this, arguments);
     }
 
-    /** @internal */
     public markerAttribs(
         point: ArcDiagramPoint
     ): SVGAttributes {

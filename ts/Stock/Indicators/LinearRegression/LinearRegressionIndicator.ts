@@ -136,10 +136,8 @@ class LinearRegressionIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<LinearRegressionPoint>;
     public options!: LinearRegressionOptions;
-    /** @internal */
     public points!: Array<LinearRegressionPoint>;
 
     /* *

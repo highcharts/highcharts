@@ -148,12 +148,10 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<AroonPoint>;
 
     public options!: AroonOptions;
 
-    /** @internal */
     public points!: Array<AroonPoint>;
 
     /* *

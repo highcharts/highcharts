@@ -125,10 +125,8 @@ class StochasticIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<StochasticPoint>;
     public options!: StochasticOptions;
-    /** @internal */
     public points!: Array<StochasticPoint>;
 
     /* *

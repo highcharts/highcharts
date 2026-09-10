@@ -545,7 +545,6 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<BubblePoint>;
 
     /** @internal */
@@ -559,7 +558,6 @@ class BubbleSeries extends ScatterSeries {
 
     public options!: BubbleSeriesOptions;
 
-    /** @internal */
     public points!: Array<BubblePoint>;
 
     /** @internal */

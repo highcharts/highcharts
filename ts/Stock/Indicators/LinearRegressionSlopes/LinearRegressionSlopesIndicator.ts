@@ -77,10 +77,8 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<LinearRegressionSlopesPoint>;
     public options!: LinearRegressionOptions;
-    /** @internal */
     public points!: Array<LinearRegressionSlopesPoint>;
 
     /* *

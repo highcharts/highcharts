@@ -315,16 +315,13 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<AreaRangePoint>;
     public options!: AreaRangeSeriesOptions;
-    /** @internal */
     public points!: Array<AreaRangePoint>;
     /** @internal */
     public lowerStateMarkerGraphic?: SVGElement;
     /** @internal */
     public upperStateMarkerGraphic?: SVGElement;
-    /** @internal */
     public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
@@ -552,7 +549,6 @@ class AreaRangeSeries extends AreaSeries {
         series.symbol = originalSettings.symbol;
     }
 
-    /** @internal */
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;

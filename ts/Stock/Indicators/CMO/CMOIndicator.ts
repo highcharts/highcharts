@@ -80,10 +80,8 @@ class CMOIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<CMOPoint>;
     public options!: CMOOptions;
-    /** @internal */
     public points!: Array<CMOPoint>;
 
     /* *

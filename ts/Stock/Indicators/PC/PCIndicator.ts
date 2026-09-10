@@ -130,10 +130,8 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<PCPoint>;
     public options!: PCOptions;
-    /** @internal */
     public points!: Array<PCPoint>;
 
     /* *

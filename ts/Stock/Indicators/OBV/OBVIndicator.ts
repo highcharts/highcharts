@@ -102,9 +102,7 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<OBVPoint>;
-    /** @internal */
     public points!: Array<OBVPoint>;
     public options!: OBVOptions;
 

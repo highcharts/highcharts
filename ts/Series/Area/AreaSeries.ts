@@ -99,12 +99,10 @@ class AreaSeries extends LineSeries {
     /** @internal */
     public areaPath?: SVGPath;
 
-    /** @internal */
     public data!: Array<AreaPoint>;
 
     public options!: AreaSeriesOptions;
 
-    /** @internal */
     public points!: Array<AreaPoint>;
 
     /* *

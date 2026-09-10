@@ -89,10 +89,8 @@ class WilliamsRIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<WilliamsRPoint>;
     public options!: WilliamsROptions;
-    /** @internal */
     public points!: Array<WilliamsRPoint>;
 
     /* *

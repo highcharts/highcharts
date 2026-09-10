@@ -129,10 +129,8 @@ class MFIIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<MFIPoint>;
     public options!: MFIOptions;
-    /** @internal */
     public points!: Array<MFIPoint>;
 
     /* *

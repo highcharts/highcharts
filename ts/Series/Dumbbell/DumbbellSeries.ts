@@ -83,10 +83,8 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<DumbbellPoint>;
     public options!: DumbbellSeriesOptions;
-    /** @internal */
     public points!: Array<DumbbellPoint>;
     /** @internal */
     public columnMetrics!: ColumnMetricsObject;

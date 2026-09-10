@@ -66,12 +66,10 @@ class BulletSeries extends ColumnSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<BulletPoint>;
 
     public options!: BulletSeriesOptions;
 
-    /** @internal */
     public points!: Array<BulletPoint>;
 
     /** @internal */
@@ -90,7 +88,6 @@ class BulletSeries extends ColumnSeries {
      *
      * @ignore
      * @function Highcharts.Series#drawPoints
-     * @internal
      */
     public drawPoints(): void {
         const series = this,

@@ -73,10 +73,8 @@ class TRIXIndicator extends TEMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<TRIXPoint>;
     public options!: TRIXOptions;
-    /** @internal */
     public points!: Array<TRIXPoint>;
 
     /* *

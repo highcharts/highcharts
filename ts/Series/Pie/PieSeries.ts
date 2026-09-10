@@ -111,7 +111,6 @@ class PieSeries extends Series {
     /** @internal */
     public center!: Array<number>;
 
-    /** @internal */
     public data!: Array<PiePoint>;
 
     /** @internal */
@@ -119,7 +118,6 @@ class PieSeries extends Series {
 
     public options!: PieSeriesOptions;
 
-    /** @internal */
     public points!: Array<PiePoint>;
 
     /** @internal */

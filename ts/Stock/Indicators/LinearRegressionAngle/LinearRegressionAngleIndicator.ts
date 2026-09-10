@@ -83,10 +83,8 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<LinearRegressionAnglePoint>;
     public options!: LinearRegressionOptions;
-    /** @internal */
     public points!: Array<LinearRegressionAnglePoint>;
 
     /* *

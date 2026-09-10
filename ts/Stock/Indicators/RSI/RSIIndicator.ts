@@ -93,9 +93,7 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<RSIPoint>;
-    /** @internal */
     public points!: Array<RSIPoint>;
     public options!: RSIOptions;
 

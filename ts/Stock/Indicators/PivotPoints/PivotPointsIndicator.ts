@@ -103,10 +103,8 @@ class PivotPointsIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<PivotPointsPoint>;
     public options!: PivotPointsOptions;
-    /** @internal */
     public points!: Array<PivotPointsPoint>;
     /** @internal */
     public endPoint!: number;
@@ -126,7 +124,6 @@ class PivotPointsIndicator extends SMAIndicator {
         return [point.P]; // The rest should not affect extremes
     }
 
-    /** @internal */
     public translate(this: PivotPointsIndicator): void {
         const indicator = this;
 

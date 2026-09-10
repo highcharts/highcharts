@@ -78,10 +78,8 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<LinearRegressionInterceptPoint>;
     public options!: LinearRegressionOptions;
-    /** @internal */
     public points!: Array<LinearRegressionInterceptPoint>;
 
     /* *

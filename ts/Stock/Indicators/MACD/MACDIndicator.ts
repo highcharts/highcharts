@@ -187,7 +187,6 @@ class MACDIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<MACDPoint>;
     /** @internal */
     public graphmacd?: SVGElement;
@@ -196,7 +195,6 @@ class MACDIndicator extends SMAIndicator {
     /** @internal */
     public macdZones!: MACDZonesObject;
     public options!: MACDOptions;
-    /** @internal */
     public points!: Array<MACDPoint>;
     /** @internal */
     public signalZones!: MACDZonesObject;
@@ -276,7 +274,6 @@ class MACDIndicator extends SMAIndicator {
         return [point.y, point.signal, point.MACD];
     }
 
-    /** @internal */
     public translate(): void {
         const indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];

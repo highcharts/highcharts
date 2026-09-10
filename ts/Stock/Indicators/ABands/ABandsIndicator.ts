@@ -148,12 +148,10 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<ABandsPoint>;
 
     public options!: ABandsOptions;
 
-    /** @internal */
     public points!: Array<ABandsPoint>;
 
     /* *

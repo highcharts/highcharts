@@ -108,10 +108,8 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<ChaikinPoint>;
     public options!: ChaikinOptions;
-    /** @internal */
     public points!: Array<ChaikinPoint>;
 
     /* *

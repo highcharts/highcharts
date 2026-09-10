@@ -69,10 +69,8 @@ class BarSeries extends ColumnSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<BarPoint>;
     public options!: BarSeriesOptions;
-    /** @internal */
     public points!: Array<BarPoint>;
 
 }

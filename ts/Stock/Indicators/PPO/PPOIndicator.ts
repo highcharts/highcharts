@@ -96,10 +96,8 @@ class PPOIndicator extends EMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<PPOPoint>;
     public options!: PPOOptions;
-    /** @internal */
     public points!: Array<PPOPoint>;
 
     /* *

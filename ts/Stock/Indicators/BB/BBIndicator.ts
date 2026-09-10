@@ -184,12 +184,10 @@ class BBIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<BBPoint>;
 
     public options!: BBOptions;
 
-    /** @internal */
     public points!: Array<BBPoint>;
 
     /* *

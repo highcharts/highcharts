@@ -239,12 +239,10 @@ class VBPIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<VBPPoint>;
     /** @internal */
     public negWidths!: Array<number>;
     public options!: VBPOptions;
-    /** @internal */
     public points!: Array<VBPPoint>;
     /** @internal */
     public posWidths!: Array<number>;
@@ -347,7 +345,6 @@ class VBPIndicator extends SMAIndicator {
     }
 
     // Initial animation
-    /** @internal */
     public animate(
         init: boolean
     ): void {
@@ -380,7 +377,6 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 
-    /** @internal */
     public drawPoints(): void {
         const indicator = this;
 
@@ -459,7 +455,6 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 
-    /** @internal */
     public translate(): void {
         const indicator = this,
             options: VBPOptions = indicator.options,

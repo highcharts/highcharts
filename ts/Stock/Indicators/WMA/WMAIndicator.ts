@@ -139,10 +139,8 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<WMAPoint>;
     public options!: WMAOptions;
-    /** @internal */
     public points!: Array<WMAPoint>;
 
     /* *

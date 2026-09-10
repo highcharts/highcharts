@@ -80,10 +80,8 @@ class TEMAIndicator extends EMAIndicator {
 
     /** @internal */
     public EMApercent!: number;
-    /** @internal */
     public data!: Array<TEMAPoint>;
     public options!: TEMAOptions;
-    /** @internal */
     public points!: Array<TEMAPoint>;
 
     /* *

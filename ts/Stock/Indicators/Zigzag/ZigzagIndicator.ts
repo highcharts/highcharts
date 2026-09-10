@@ -111,9 +111,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<ZigzagPoint>;
-    /** @internal */
     public points!: Array<ZigzagPoint>;
     public options!: ZigzagOptions;
 

@@ -96,10 +96,8 @@ class APOIndicator extends EMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<APOPoint>;
     public options!: APOOptions;
-    /** @internal */
     public points!: Array<APOPoint>;
 
     /* *

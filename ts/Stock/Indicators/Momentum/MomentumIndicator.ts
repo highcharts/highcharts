@@ -93,10 +93,8 @@ class MomentumIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<MomentumPoint>;
     public options!: MomentumOptions;
-    /** @internal */
     public points!: Array<MomentumPoint>;
 
     /* *

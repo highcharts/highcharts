@@ -140,9 +140,7 @@ class KlingerIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<KlingerPoint>;
-    /** @internal */
     public points!: Array<KlingerPoint>;
     public options!: KlingerOptions;
     /** @internal */

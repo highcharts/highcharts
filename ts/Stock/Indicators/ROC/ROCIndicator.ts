@@ -132,12 +132,10 @@ class ROCIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<ROCPoint>;
 
     public options!: ROCOptions;
 
-    /** @internal */
     public points!: Array<ROCPoint>;
 
     /* *

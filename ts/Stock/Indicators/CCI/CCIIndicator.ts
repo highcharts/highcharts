@@ -108,9 +108,7 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<CCIPoint>;
-    /** @internal */
     public points!: Array<CCIPoint>;
     public options!: CCIOptions;
 

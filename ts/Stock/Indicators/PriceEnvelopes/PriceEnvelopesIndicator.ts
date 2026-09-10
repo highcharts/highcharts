@@ -140,10 +140,8 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<PriceEnvelopesPoint>;
     public options!: PriceEnvelopesOptions;
-    /** @internal */
     public points!: Array<PriceEnvelopesPoint>;
 
     /* *

@@ -375,10 +375,8 @@ class IKHIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data: Array<IKHPoint> = [];
     public options: IKHOptions = {};
-    /** @internal */
     public points: Array<IKHPoint> = [];
     /** @internal */
     public graphCollection: Array<string> = [];
@@ -450,7 +448,6 @@ class IKHIndicator extends SMAIndicator {
         ];
     }
 
-    /** @internal */
     public translate(): void {
         const indicator = this;
 

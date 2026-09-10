@@ -95,9 +95,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<VWAPPoint>;
-    /** @internal */
     public points!: Array<VWAPPoint>;
     public options!: VWAPOptions;
 

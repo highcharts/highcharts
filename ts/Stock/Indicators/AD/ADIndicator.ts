@@ -116,10 +116,8 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<ADPoint>;
     public options!: ADOptions;
-    /** @internal */
     public points!: Array<ADPoint>;
 
     /* *

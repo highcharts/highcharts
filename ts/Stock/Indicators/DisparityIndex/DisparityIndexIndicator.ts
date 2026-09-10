@@ -111,10 +111,8 @@ class DisparityIndexIndicator extends SMAIndicator {
 
     /** @internal */
     public averageIndicator!: typeof SMAIndicator;
-    /** @internal */
     public data!: Array<DisparityIndexPoint>;
     public options!: DisparityIndexOptions;
-    /** @internal */
     public points!: Array<DisparityIndexPoint>;
 
     /* *

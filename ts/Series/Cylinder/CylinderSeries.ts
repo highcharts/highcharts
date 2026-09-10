@@ -72,12 +72,10 @@ class CylinderSeries extends ColumnSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<CylinderPoint>;
 
     public options!: CylinderSeriesOptions;
 
-    /** @internal */
     public points!: Array<CylinderPoint>;
 
 }

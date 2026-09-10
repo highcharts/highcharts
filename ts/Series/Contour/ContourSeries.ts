@@ -81,10 +81,8 @@ export default class ContourSeries extends ScatterSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<ContourPoint>;
 
-    /** @internal */
     public points!: Array<ContourPoint>;
 
     public options!: ContourSeriesOptions;
@@ -194,7 +192,6 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
-    /** @internal */
     public override drawPoints(): void {
         const { group } = this;
         if (!group) {

@@ -87,10 +87,8 @@ class SlowStochasticIndicator extends StochasticIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<SlowStochasticPoint>;
     public options!: SlowStochasticOptions;
-    /** @internal */
     public points!: Array<SlowStochasticPoint>;
 
     /* *

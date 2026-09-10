@@ -93,14 +93,11 @@ class CMFIndicator extends SMAIndicator {
      *
      * */
 
-    /** @internal */
     public data!: Array<CMFPoint>;
     public options!: CMFOptions;
-    /** @internal */
     public points!: Array<CMFPoint>;
     /** @internal */
     public volumeSeries!: LineSeries;
-    /** @internal */
     public linkedParent!: LineSeries;
     /** @internal */
     public yData!: Array<Array<number>>;

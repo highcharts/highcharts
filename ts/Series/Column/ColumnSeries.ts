@@ -116,18 +116,15 @@ class ColumnSeries extends Series {
     /** @internal */
     public dashStyle?: DashStyleValue;
 
-    /** @internal */
     public data!: Array<ColumnPoint>;
 
     /** @internal */
     public dense?: boolean;
 
-    /** @internal */
     public group!: SVGElement;
 
     public options!: ColumnSeriesOptions;
 
-    /** @internal */
     public points!: Array<ColumnPoint>;
 
     /** @internal */

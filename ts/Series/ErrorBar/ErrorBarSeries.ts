@@ -68,10 +68,8 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
-    /** @internal */
     public data!: Array<ErrorBarPoint>;
     public options!: ErrorBarSeriesOptions;
-    /** @internal */
     public points!: Array<ErrorBarPoint>;
 
     /* *
