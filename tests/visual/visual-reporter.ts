@@ -1,5 +1,5 @@
 import type {
-    FullConfig, FullResult, Reporter, Suite, TestCase
+    FullConfig, FullResult, Reporter, Suite, TestCase, TestError, WorkerInfo
 } from '@playwright/test/reporter';
 import { appendFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -14,6 +14,7 @@ export default class VisualReporter implements Reporter {
     private tests: TestCase[] = [];
     private started = false;
     private setupError?: unknown;
+    private runError?: TestError;
     private root: string;
     private referenceMode: boolean;
 
@@ -45,6 +46,12 @@ export default class VisualReporter implements Reporter {
         }
     }
 
+    onError(error: TestError, workerInfo?: WorkerInfo): void {
+        if (!workerInfo || workerInfo.project.name === 'visual') {
+            this.runError = error;
+        }
+    }
+
     onEnd(result: FullResult): { status: 'failed' } | undefined {
         // Listing tests and running unrelated projects must not change output.
         if (!this.started) {
@@ -56,12 +63,31 @@ export default class VisualReporter implements Reporter {
             if (this.setupError) {
                 throw this.setupError;
             }
+            if (this.runError) {
+                throw new Error(this.runError.message || 'Visual run failed.');
+            }
+            const failedSamples = this.tests.filter(test =>
+                test.results.at(-1)?.status !== 'passed'
+            );
             if (
-                result.status !== 'passed' || this.tests.some(test =>
-                    test.results.at(-1)?.status !== 'passed'
+                !['passed', 'failed'].includes(result.status) ||
+                failedSamples.some(test =>
+                    !['failed', 'timedOut'].includes(
+                        test.results.at(-1)?.status || ''
+                    ) || !test.annotations.some(annotation =>
+                        annotation.type === 'visual-sample-error'
+                    )
                 )
             ) {
                 throw new Error('Visual run did not finish every sample.');
+            }
+            if (failedSamples.length) {
+                // Sample errors are already logged by the spec. The run
+                // completed, but still fails and must not be published.
+                if (!this.referenceMode) {
+                    writeCandidateCompletion(this.root);
+                }
+                return { status: 'failed' };
             }
             validateVisualRun(this.root, ids, this.referenceMode);
 

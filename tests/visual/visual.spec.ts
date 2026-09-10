@@ -228,6 +228,7 @@ test.describe('Visual tests', () => {
 
             let scriptHandle: Awaited<ReturnType<Page['addScriptTag']>> | undefined;
             let pageError: BrowserRuntimeError | undefined;
+            let sampleFailed = false;
             const pageErrorListener = (error: Error): void => {
                 if (!pageError) {
                     pageError = {
@@ -376,7 +377,9 @@ test.describe('Visual tests', () => {
                                         c.container &&
                                         !c.renderer?.forExport
                                 ) || [];
-                                const svg = comparator.getSVG(validCharts[0]);
+                                const svg = comparator.getSVG(
+                                    validCharts.at(-1)
+                                );
 
                                 if (!svg) {
                                     throw new Error('No candidate SVG found.');
@@ -488,6 +491,7 @@ test.describe('Visual tests', () => {
                         error instanceof Error ? error.message : String(error)
                     }`
                 );
+                sampleFailed = true;
                 throw error;
             } finally {
                 if (page) {
@@ -513,6 +517,13 @@ test.describe('Visual tests', () => {
                             element.id = 'visual-test-script';
                         }
                     );
+                }
+                if (sampleFailed && page) {
+                    // Successful cleanup distinguishes a sample error from
+                    // a browser or environment failure that prevents cleanup.
+                    test.info().annotations.push({
+                        type: 'visual-sample-error'
+                    });
                 }
             }
         });

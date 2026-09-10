@@ -811,7 +811,7 @@ as a substring, while manifest entries are exact sample IDs.
 | `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
 | `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
 | `test/visual-test-errors.log` | Any sample or terminal error during the run |
-| `test/visual-test-complete` | Candidate mode, only after every selected sample completes and the full run passes |
+| `test/visual-test-complete` | Candidate mode, after every selected sample finishes, including completed sample errors |
 
 ### Failure semantics
 
@@ -826,7 +826,13 @@ are failures:
 - expected results are missing, the selected sample set is invalid, or an
   explicitly requested manifest ID is excluded by Karma
 - `test/visual-test-complete` is absent after the run (indicates the full
-  candidate run did not pass and finalize)
+  candidate run did not finish normally)
+
+A completed sample execution error fails CI and remains in the error log, but
+does not prevent the completion signal when all selected samples finish.
+Interrupted runs, unexecuted samples, and fixture or browser failures omit the
+signal. Completion alone is not permission to publish: the workflow also
+requires successful reference and candidate outcomes and an empty error log.
 
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.

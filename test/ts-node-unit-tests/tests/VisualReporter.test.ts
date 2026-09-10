@@ -6,11 +6,11 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type {
-    FullConfig, FullResult, Suite, TestCase
+    FullConfig, FullResult, Suite, TestCase, WorkerInfo
 } from '@playwright/test/reporter';
 import VisualReporter from '../../../tests/visual/visual-reporter.ts';
 import {
-    recordCandidateResult, writeReference
+    appendError, recordCandidateResult, writeReference
 } from '../../../tests/visual/visual-results.ts';
 
 const ids = ['highcharts/demo/area-missing', 'highcharts/demo/line-labels'];
@@ -24,6 +24,7 @@ function withReporter(
     try {
         const cases = ids.map(title => ({
             title,
+            annotations: [],
             location: { file: join(root, 'tests/visual/visual.spec.ts') },
             results: [{ status: 'passed' }]
         } as TestCase));
@@ -116,3 +117,89 @@ test('successful reference run requires fresh files and omits candidate completi
         strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
     }, true);
 });
+
+for (const status of ['failed', 'timedOut'] as const) {
+    test(`completed run with a ${status} sample retains its error classification`, () => {
+        withReporter((root, reporter, cases) => {
+            reporter.onTestBegin(cases[0]);
+            recordCandidateResult(root, ids[0], 0);
+            reporter.onTestBegin(cases[1]);
+            cases[1].results[0].status = status;
+            cases[1].annotations.push({ type: 'visual-sample-error' });
+            appendError(root, 'Sample script failed.');
+
+            deepStrictEqual(reporter.onEnd({ status: 'failed' } as FullResult), {
+                status: 'failed'
+            });
+            strictEqual(existsSync(join(root, 'test/visual-test-complete')), true);
+            strictEqual(readFileSync(join(root, 'test/visual-test-errors.log'), 'utf8'),
+                'Sample script failed.\n');
+        });
+    });
+}
+
+test('a run where every sample fails still completes without numeric results', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        for (const entry of cases) {
+            entry.results[0].status = 'failed';
+            entry.annotations.push({ type: 'visual-sample-error' });
+            appendError(root, `Sample ${entry.title} failed.`);
+        }
+        deepStrictEqual(reporter.onEnd({ status: 'failed' } as FullResult), {
+            status: 'failed'
+        });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), true);
+        strictEqual(existsSync(join(root, 'test/visual-test-results.json')), false);
+    });
+});
+
+test('fixture or browser failure cannot be treated as a completed sample error', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        cases[1].results[0].status = 'failed';
+        deepStrictEqual(reporter.onEnd({ status: 'failed' } as FullResult), {
+            status: 'failed'
+        });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
+    });
+});
+
+test('a global runner error prevents completion after all samples finish', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        for (const id of ids) {
+            recordCandidateResult(root, id, 0);
+        }
+        reporter.onError({ message: 'Worker crashed.' });
+        deepStrictEqual(reporter.onEnd({ status: 'failed' } as FullResult), {
+            status: 'failed'
+        });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
+        match(readFileSync(join(root, 'test/visual-test-errors.log'), 'utf8'),
+            /Worker crashed/);
+    });
+});
+
+for (const project of ['visual', 'qunit']) {
+    test(`worker errors from ${project} only affect completion for visual`, () => {
+        withReporter((root, reporter, cases) => {
+            reporter.onTestBegin(cases[0]);
+            for (const id of ids) {
+                recordCandidateResult(root, id, 0);
+            }
+            reporter.onError({ message: 'Worker crashed.' }, {
+                project: { name: project }
+            } as WorkerInfo);
+            deepStrictEqual(
+                reporter.onEnd({ status: 'failed' } as FullResult),
+                project === 'visual' ? { status: 'failed' } : undefined
+            );
+            strictEqual(
+                existsSync(join(root, 'test/visual-test-complete')),
+                project !== 'visual'
+            );
+        });
+    });
+}
