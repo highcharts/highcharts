@@ -1797,3 +1797,26 @@ QUnit.test('Lang thousandsSep and decimalPoint in table', function (assert) {
         'lang.decimalPoint should be applied in the data table (#24845).'
     );
 });
+
+QUnit.test('Export after addPoint into cropped series', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        navigator: { enabled: false },
+        scrollbar: { enabled: false },
+        rangeSelector: { enabled: false },
+        xAxis: { min: 500, max: 600 },
+        series: [{
+            data: Array.from({ length: 1000 }, (_, i) => [i, i])
+        }]
+    });
+
+    // Inserting a point in the middle of a cropped series leaves a null
+    // slot in series.data until that point is generated
+    chart.series[0].addPoint([10.5, 1]);
+
+    const rows = chart.exporting.getDataRows();
+    assert.strictEqual(
+        rows.length,
+        1002,
+        'Data export should include the added point and not throw'
+    );
+});
