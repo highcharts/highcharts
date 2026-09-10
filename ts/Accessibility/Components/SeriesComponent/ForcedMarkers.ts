@@ -118,6 +118,30 @@ namespace ForcedMarkersComposition {
 
 
     /**
+     * The normal state opacity of lowMarker on Arearange-like series is
+     * handled if zero opacity was forced on the main marker(#25279).
+     * @private
+     */
+    function restoreLowMarkerOpacity(series: SeriesComposition): void {
+        const lowMarker = (series.options as any).lowMarker;
+
+        if (
+            lowMarker && lowMarker?.enabled !== false &&
+            typeof lowMarker.states?.normal?.opacity !== 'number'
+        ) {
+            merge(true, lowMarker, {
+                states: {
+                    normal: {
+                        opacity: series.resetA11yMarkerOptions?.states
+                            ?.normal?.opacity
+                    }
+                }
+            });
+        }
+    }
+
+
+    /**
      * @private
      */
     function getPointMarkerOpacity(
@@ -202,6 +226,23 @@ namespace ForcedMarkersComposition {
                 ]('highcharts-a11y-markers-hidden');
             }
 
+            // Unforce lowMarker zero opacity if enabled
+            // in styled mode (#25279).
+            const lowMarker = (series.options as any).lowMarker;
+            if (lowMarker) {
+                const lowMarkerVisible = !!series.a11yMarkersForced &&
+                    lowMarker.enabled === true;
+
+                series.points.forEach((point): void => {
+                    const lowGraphic = point.graphics?.[0];
+                    if (lowGraphic) {
+                        lowGraphic[
+                            lowMarkerVisible ? 'addClass' : 'removeClass'
+                        ]('highcharts-a11y-marker-visible');
+                    }
+                });
+            }
+
             // Do we need to handle individual points?
             if (hasIndividualPointMarkerOptions(series)) {
                 series.points.forEach((point): void => {
@@ -250,6 +291,7 @@ namespace ForcedMarkersComposition {
             if (options.marker?.enabled === false) {
                 series.a11yMarkersForced = true;
                 forceZeroOpacityMarkerOptions(series.options);
+                restoreLowMarkerOpacity(series);
             }
 
             if (hasIndividualPointMarkerOptions(series)) {
