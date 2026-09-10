@@ -309,7 +309,7 @@ const SankeySeriesDefaults: SankeySeriesOptions = {
      *
      * @since 11.4.0
      * @sample highcharts/series-sankey/node-distance
-     *         Sankey with dnode distance of 100% means equal to node width
+     *         Sankey with node distance of 100% means equal to node width
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
      * @type   {number|string}

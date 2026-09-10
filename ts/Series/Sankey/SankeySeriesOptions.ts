@@ -291,7 +291,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
-     * wheelrender more curved. A `curveFactor` of 0 makes the lines
+     * wheel render more curved. A `curveFactor` of 0 makes the lines
      * straight.
      */
     curveFactor?: number;
@@ -340,7 +340,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      *
      * @product highcharts
      */
-    data?: Array<(SankeyPointOptions|PointShortOptions)>
+    data?: Array<(SankeyPointOptions|PointShortOptions)>;
 
     /**
      * Options for the data labels appearing on top of the nodes and links.
@@ -434,7 +434,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * @since 11.4.0
      *
      * @sample highcharts/series-sankey/node-distance
-     *         Sankey with dnode distance of 100% means equal to node width
+     *         Sankey with node distance of 100% means equal to node width
      *
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
