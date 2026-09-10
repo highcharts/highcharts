@@ -774,10 +774,11 @@ rejected; it cannot be used to run an ignored sample. `VISUAL_TEST_PATH` remains
 a substring filter for focused local runs and cannot be combined with a
 manifest.
 
-The manifest currently covers 40 samples across Highcharts, Stock, Maps, and
-Gantt. It includes multi-chart rendering, polar and range series, network
-diagrams, stock navigation and flags, map projections and color axes, and Gantt
-progress, hierarchy, and grid columns. New entries must pass reference
+The manifest currently covers 100 samples across Highcharts, Stock, Maps, and
+Gantt, including both demos and focused API-option samples. It includes
+multi-chart rendering, polar and range series, network diagrams, stock
+navigation and indicators, map projections and color axes, and Gantt progress,
+hierarchy, and grid columns. New entries must pass reference
 generation and comparison with the existing offline routes and Karma exclusions.
 
 ### Workflow

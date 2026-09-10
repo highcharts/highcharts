@@ -28,14 +28,18 @@ function withSamples(run: (root: string) => void): void {
     }
 }
 
-test('CI manifest contains eligible samples from all four chart products', () => {
+test('CI manifest covers demos and API samples from all four products', () => {
     const root = join(__dirname, '../../..');
     const samples = selectVisualSamples(root, {
         manifest: 'tests/visual/samples.json'
     });
-    deepStrictEqual([...new Set(samples.map(sample =>
-        sample.id.split('/')[0]
-    ))].sort(), ['gantt', 'highcharts', 'maps', 'stock']);
+    for (const demos of [true, false]) {
+        const products = samples.filter(sample =>
+            (sample.id.split('/')[1] === 'demo') === demos
+        ).map(sample => sample.id.split('/')[0]);
+        deepStrictEqual([...new Set(products)].sort(),
+            ['gantt', 'highcharts', 'maps', 'stock']);
+    }
 });
 
 test('discovery excludes Karma ignores and manual/skip metadata', () => {
