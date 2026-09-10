@@ -28,6 +28,16 @@ function withSamples(run: (root: string) => void): void {
     }
 }
 
+test('CI manifest contains eligible samples from all four chart products', () => {
+    const root = join(__dirname, '../../..');
+    const samples = selectVisualSamples(root, {
+        manifest: 'tests/visual/samples.json'
+    });
+    deepStrictEqual([...new Set(samples.map(sample =>
+        sample.id.split('/')[0]
+    ))].sort(), ['gantt', 'highcharts', 'maps', 'stock']);
+});
+
 test('discovery excludes Karma ignores and manual/skip metadata', () => {
     withSamples(root => {
         deepStrictEqual(selectVisualSamples(root).map(sample => sample.id), [
