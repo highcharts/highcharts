@@ -50,7 +50,6 @@ import {
 /**
  * The boxplot series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes#boxplot
  *
@@ -64,6 +63,7 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BoxPlotSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         BoxPlotSeriesDefaults
@@ -88,6 +88,7 @@ class BoxPlotSeries extends ColumnSeries {
      * */
 
     // Get presentational attributes
+    /** @internal */
     public pointAttribs(): SVGAttributes {
         // No attributes should be set on point.graphic which is the group. The
         // returned fill is for legend symbols.
@@ -96,6 +97,7 @@ class BoxPlotSeries extends ColumnSeries {
 
 
     // Get an SVGPath object for both whiskers
+    /** @internal */
     public getWhiskerPair(
         halfWidth: number,
         stemX: number,
@@ -398,6 +400,7 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     // Return a plain array for speedy calculation
+    /** @internal */
     public toYData(point: BoxPlotPoint): Array<number> {
         return [point.low, point.q1, point.median, point.q3, point.high];
     }
@@ -410,7 +413,6 @@ class BoxPlotSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<BoxPlotPointValKey>;
@@ -434,7 +436,6 @@ RangeDataLabel.compose(BoxPlotSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof BoxPlotSeries;

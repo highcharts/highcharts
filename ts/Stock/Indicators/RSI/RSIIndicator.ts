@@ -51,7 +51,6 @@ function toFixed(a: number, n: number): number {
 /**
  * The RSI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.rsi
  *
@@ -79,6 +78,7 @@ class RSIIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/rsi
      * @optionparent plotOptions.rsi
+     * @internal
      */
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -103,6 +103,7 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: RSIParamsOptions
@@ -217,7 +218,6 @@ class RSIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface RSIIndicator {
     pointClass: typeof RSIPoint;
 }
@@ -228,7 +228,6 @@ interface RSIIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -243,7 +242,6 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  *
  * */
 
-/** @internal */
 export default RSIIndicator;
 
 /* *

@@ -45,7 +45,6 @@ import {
 /**
  * The AO series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -75,6 +74,7 @@ class AOIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
+     * @internal
      */
     public static defaultOptions: AOOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -135,6 +135,7 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public drawGraph(this: AOIndicator): void {
         const indicator = this,
             options = indicator.options,
@@ -162,6 +163,7 @@ class AOIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -251,7 +253,6 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -280,7 +281,6 @@ extend(AOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
@@ -295,7 +295,6 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
-/** @internal */
 export default AOIndicator;
 
 /* *

@@ -42,7 +42,6 @@ import { defined, extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Pivot Points series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pivotpoints
  *
@@ -69,6 +68,7 @@ class PivotPointsIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/pivot-points
      * @optionparent plotOptions.pivotpoints
+     * @internal
      */
     public static defaultOptions: PivotPointsOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -106,7 +106,9 @@ class PivotPointsIndicator extends SMAIndicator {
     public data!: Array<PivotPointsPoint>;
     public options!: PivotPointsOptions;
     public points!: Array<PivotPointsPoint>;
+    /** @internal */
     public endPoint!: number;
+    /** @internal */
     public plotEndPoint!: number;
 
     /* *
@@ -115,6 +117,7 @@ class PivotPointsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public toYData(
         point: PivotPointsPoint
     ): Array<number> {
@@ -154,6 +157,7 @@ class PivotPointsIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getGraphPath(this: PivotPointsIndicator, points: Array<LinePoint>): SVGPath {
         const indicator = this,
             allPivotPoints: Array<Array<LinePoint>> = (
@@ -206,6 +210,7 @@ class PivotPointsIndicator extends SMAIndicator {
     }
 
     // TODO: Rewrite this logic to use multiple dataLabels
+    /** @internal */
     public drawDataLabels(this: PivotPointsIndicator): void {
         const indicator = this,
             pointMapping: Array<(string|boolean)> = indicator.pointArrayMap;
@@ -266,6 +271,7 @@ class PivotPointsIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         this: PivotPointsIndicator,
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
@@ -336,6 +342,7 @@ class PivotPointsIndicator extends SMAIndicator {
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
+    /** @internal */
     public getPivotAndHLC(
         values: Array<Array<number>>
     ): [number, number, number, number] {
@@ -352,6 +359,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return [pivot, high, low, close];
     }
 
+    /** @internal */
     public standardPlacement(
         values: Array<number>
     ): Array<(number|null)> {
@@ -371,6 +379,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return avg;
     }
 
+    /** @internal */
     public camarillaPlacement(
         values: Array<number>
     ): Array<number> {
@@ -390,6 +399,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return avg;
     }
 
+    /** @internal */
     public fibonacciPlacement(
         values: Array<number>
     ): Array<(number|null)> {
@@ -416,7 +426,6 @@ class PivotPointsIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface PivotPointsIndicator{
     nameBase: string;
     pointArrayMap: Array<string>;
@@ -444,7 +453,6 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  *
  * */
 
-/** @internal */
 export default PivotPointsIndicator;
 
 /* *

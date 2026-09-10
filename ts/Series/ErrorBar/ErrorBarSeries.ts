@@ -42,7 +42,6 @@ import RangeDataLabel from '../RangeDataLabel.js';
 /**
  * Errorbar series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.errorbar
  *
@@ -56,6 +55,7 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ErrorBarSeriesOptions = merge(
         BoxPlotSeries.defaultOptions,
         ErrorBarSeriesDefaults,
@@ -78,6 +78,7 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
+    /** @internal */
     public getColumnMetrics(): ColumnMetricsObject {
         const series = this;
 
@@ -89,6 +90,7 @@ class ErrorBarSeries extends BoxPlotSeries {
         );
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         // Error bars draw upper/lower labels via the area range option adapter.
         if (AreaRangeSeries) {
@@ -96,6 +98,7 @@ class ErrorBarSeries extends BoxPlotSeries {
         }
     }
 
+    /** @internal */
     public toYData(point: ErrorBarPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.low, point.high];
@@ -115,7 +118,6 @@ addEvent(ErrorBarSeries, 'afterTranslate', function (): void {
  *
  * */
 
-/** @internal */
 interface ErrorBarSeries extends BoxPlotSeries {
     pointClass: typeof ErrorBarPoint;
     doQuartiles: boolean;
@@ -136,7 +138,6 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
@@ -151,5 +152,4 @@ SeriesRegistry.registerSeriesType('errorbar', ErrorBarSeries);
  *
  * */
 
-/** @internal */
 export default ErrorBarSeries;

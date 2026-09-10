@@ -42,7 +42,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * Linear regression series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearregression
  *
@@ -69,6 +68,7 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregression
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         SMAIndicator.defaultOptions,
@@ -288,6 +288,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     }
 
     // Required to be implemented - starting point for indicator's logic
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         this: LinearRegressionIndicator,
         baseSeries: TLinkedSeries&IndicatorLinkedSeriesBase,
@@ -365,7 +366,6 @@ class LinearRegressionIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
     nameBase: string;
@@ -382,7 +382,6 @@ extend(LinearRegressionIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregression: typeof LinearRegressionIndicator;
@@ -407,7 +406,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionIndicator;
 
 /* *

@@ -47,7 +47,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Klinger oscillator series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.klinger
  *
@@ -74,6 +73,7 @@ class KlingerIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/klinger
      * @optionparent plotOptions.klinger
+     * @internal
      */
     public static defaultOptions: KlingerOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -143,6 +143,7 @@ class KlingerIndicator extends SMAIndicator {
     public data!: Array<KlingerPoint>;
     public points!: Array<KlingerPoint>;
     public options!: KlingerOptions;
+    /** @internal */
     public volumeSeries!: LineSeries;
 
     /* *
@@ -151,6 +152,7 @@ class KlingerIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public calculateTrend(
         this: KlingerIndicator,
         yVal: (Array<Array<number>>),
@@ -164,6 +166,7 @@ class KlingerIndicator extends SMAIndicator {
 
     // Checks if the series and volumeSeries are accessible, number of
     // points.x is longer than period, is series has OHLC data
+    /** @internal */
     public isValidData(
         this: KlingerIndicator,
         firstYVal: Array<number>
@@ -199,6 +202,7 @@ class KlingerIndicator extends SMAIndicator {
         return !!(isLengthValid && isSeriesOHLC);
     }
 
+    /** @internal */
     public getCM(
         previousCM: number,
         DM: number,
@@ -211,6 +215,7 @@ class KlingerIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getDM(
         high: number,
         low: number
@@ -218,6 +223,7 @@ class KlingerIndicator extends SMAIndicator {
         return correctFloat(high - low);
     }
 
+    /** @internal */
     public getVolumeForce(yVal: Array<Array<number>>): Array<Array<number>> {
         const volumeForce: Array<Array<number>> = [];
 
@@ -251,6 +257,7 @@ class KlingerIndicator extends SMAIndicator {
         return volumeForce;
     }
 
+    /** @internal */
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -272,6 +279,7 @@ class KlingerIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getSMA(
         period: number,
         index: number,
@@ -282,6 +290,7 @@ class KlingerIndicator extends SMAIndicator {
             .accumulatePeriodPoints(period, index, values) / period;
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KlingerParamsOptions
@@ -377,7 +386,6 @@ class KlingerIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -404,7 +412,6 @@ MultipleLinesComposition.compose(KlingerIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;
@@ -418,7 +425,6 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  *
  * */
 
-/** @internal */
 export default KlingerIndicator;
 
 /* *

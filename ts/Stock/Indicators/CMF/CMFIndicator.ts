@@ -45,7 +45,6 @@ const {
 /**
  * The CMF series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cmf
  *
@@ -72,6 +71,7 @@ class CMFIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/cmf
      * @optionparent plotOptions.cmf
+     * @internal
      */
     public static defaultOptions: CMFOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -96,9 +96,12 @@ class CMFIndicator extends SMAIndicator {
     public data!: Array<CMFPoint>;
     public options!: CMFOptions;
     public points!: Array<CMFPoint>;
+    /** @internal */
     public volumeSeries!: LineSeries;
     public linkedParent!: LineSeries;
+    /** @internal */
     public yData!: Array<Array<number>>;
+    /** @internal */
     public nameBase: string = 'Chaikin Money Flow';
 
     /* *
@@ -324,7 +327,6 @@ class CMFIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CMFIndicator {
     pointClass: typeof CMFPoint;
 }
@@ -335,7 +337,6 @@ interface CMFIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmf: typeof CMFIndicator;
@@ -350,7 +351,6 @@ SeriesRegistry.registerSeriesType('cmf', CMFIndicator);
  *
  * */
 
-/** @internal */
 export default CMFIndicator;
 
 /* *

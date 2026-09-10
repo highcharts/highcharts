@@ -223,7 +223,6 @@ function onAxisAfterRender(this: Axis): void {
  * */
 
 /**
- * @internal
  */
 class BubbleSeries extends ScatterSeries {
 
@@ -247,6 +246,7 @@ class BubbleSeries extends ScatterSeries {
      * @product      highcharts highstock
      * @requires     highcharts-more
      * @optionparent plotOptions.bubble
+     * @internal
      */
     public static defaultOptions: BubbleSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
@@ -520,6 +520,7 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -546,24 +547,32 @@ class BubbleSeries extends ScatterSeries {
 
     public data!: Array<BubblePoint>;
 
+    /** @internal */
     public displayNegative: BubbleSeriesOptions['displayNegative'];
 
+    /** @internal */
     public maxPxSize!: number;
 
+    /** @internal */
     public minPxSize!: number;
 
     public options!: BubbleSeriesOptions;
 
     public points!: Array<BubblePoint>;
 
+    /** @internal */
     public radii!: Array<(number|null)>;
 
+    /** @internal */
     public yData!: Array<(number|null)>;
 
+    /** @internal */
     public zData!: Array<(number|null)>;
 
+    /** @internal */
     public zMax: BubbleSeriesOptions['zMax'];
 
+    /** @internal */
     public zMin: BubbleSeriesOptions['zMin'];
 
     /* *
@@ -788,6 +797,7 @@ class BubbleSeries extends ScatterSeries {
         this.translateBubble();
     }
 
+    /** @internal */
     public translateBubble(): void {
         const { options, radii } = this,
             { minPxSize } = this.getPxExtremes();
@@ -831,6 +841,7 @@ class BubbleSeries extends ScatterSeries {
         });
     }
 
+    /** @internal */
     public getPxExtremes(): BubblePxExtremes {
         const smallestSize = Math.min(
             this.chart.plotWidth,
@@ -858,6 +869,7 @@ class BubbleSeries extends ScatterSeries {
         return { minPxSize, maxPxSize };
     }
 
+    /** @internal */
     public getZExtremes(): BubbleZExtremes|undefined {
 
         const options = this.options,
@@ -940,7 +952,6 @@ class BubbleSeries extends ScatterSeries {
  *
  * */
 
-/** @internal */
 interface BubbleSeries {
     alignDataLabel: typeof columnProto.alignDataLabel;
     bubblePadding: boolean;
@@ -989,7 +1000,6 @@ addEvent(BubbleSeries, 'update', (e): void => {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bubble: typeof BubbleSeries;
@@ -1003,7 +1013,6 @@ SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
  *
  * */
 
-/** @internal */
 export default BubbleSeries;
 
 /* *

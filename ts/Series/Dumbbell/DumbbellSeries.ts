@@ -58,7 +58,6 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * The dumbbell series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dumbbell
  *
@@ -72,6 +71,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DumbbellSeriesOptions = merge(
         AreaRangeSeries.defaultOptions,
         DumbbellSeriesDefaults
@@ -86,7 +86,9 @@ class DumbbellSeries extends AreaRangeSeries {
     public data!: Array<DumbbellPoint>;
     public options!: DumbbellSeriesOptions;
     public points!: Array<DumbbellPoint>;
+    /** @internal */
     public columnMetrics!: ColumnMetricsObject;
+    /** @internal */
     public lowColor?: ColorType;
 
 
@@ -373,7 +375,6 @@ class DumbbellSeries extends AreaRangeSeries {
  *
  * */
 
-/** @internal */
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
     crispCol: typeof ColumnSeries.prototype.crispCol;
@@ -398,7 +399,6 @@ extend(DumbbellSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dumbbell: typeof DumbbellSeries;
@@ -413,5 +413,4 @@ SeriesRegistry.registerSeriesType('dumbbell', DumbbellSeries);
  *
  * */
 
-/** @internal */
 export default DumbbellSeries;

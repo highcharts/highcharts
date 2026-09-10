@@ -55,7 +55,6 @@ const {
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.arcdiagram
  *
@@ -69,6 +68,7 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions =
         merge(SankeySeries.defaultOptions, ArcDiagramSeriesDefaults);
 
@@ -82,8 +82,10 @@ class ArcDiagramSeries extends SankeySeries {
 
     public options!: ArcDiagramSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
+    /** @internal */
     public nodes!: Array<ArcDiagramPoint>;
 
     public points!: Array<ArcDiagramPoint>;
@@ -482,6 +484,7 @@ class ArcDiagramSeries extends SankeySeries {
     }
     // Networkgraph has two separate collections of nodes and lines, render
     // dataLabels for both sets:
+    /** @internal */
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
             const textPath = this.options.dataLabels.textPath;
@@ -501,6 +504,7 @@ class ArcDiagramSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public pointAttribs(
         point?: ArcDiagramPoint,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -530,7 +534,6 @@ class ArcDiagramSeries extends SankeySeries {
  *
  * */
 
-/** @internal */
 interface ArcDiagramSeries {
     orderNodes: false;
     pointClass: typeof ArcDiagramPoint;
@@ -545,7 +548,6 @@ extend(ArcDiagramSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arcdiagram: typeof ArcDiagramSeries;
@@ -560,5 +562,4 @@ SeriesRegistry.registerSeriesType('arcdiagram', ArcDiagramSeries);
  *
  * */
 
-/** @internal */
 export default ArcDiagramSeries;

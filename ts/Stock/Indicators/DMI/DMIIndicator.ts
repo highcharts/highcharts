@@ -49,7 +49,6 @@ import {
 /**
  * The Directional Movement Index (DMI) series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dmi
  *
@@ -80,6 +79,7 @@ class DMIIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/dmi
      * @optionparent plotOptions.dmi
+     * @internal
      */
     public static defaultOptions: DMIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -161,6 +161,7 @@ class DMIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public calculateDM(
         yVal: Array<Array<number>>,
         i: number,
@@ -184,6 +185,7 @@ class DMIIndicator extends SMAIndicator {
         return correctFloat(DM);
     }
 
+    /** @internal */
     public calculateDI(
         smoothedDM: number,
         tr: number
@@ -191,6 +193,7 @@ class DMIIndicator extends SMAIndicator {
         return smoothedDM / tr * 100;
     }
 
+    /** @internal */
     public calculateDX(
         plusDI: number,
         minusDI: number
@@ -200,6 +203,7 @@ class DMIIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public smoothValues(
         accumulatedValues: number,
         currentValue: number,
@@ -210,6 +214,7 @@ class DMIIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getTR(
         currentPoint: Array<number>,
         prevPoint?: Array<number>
@@ -226,6 +231,7 @@ class DMIIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DMIParamsOptions
@@ -353,7 +359,6 @@ class DMIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DMIIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     pointArrayMap: Array<keyof DMIPoint>;
@@ -378,7 +383,6 @@ MultipleLinesComposition.compose(DMIIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dmi: typeof DMIIndicator;
@@ -392,7 +396,6 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
  *
  * */
 
-/** @internal */
 export default DMIIndicator;
 
 /* *

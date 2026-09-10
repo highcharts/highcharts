@@ -75,7 +75,6 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
 /**
  * The MFI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.mfi
  *
@@ -102,6 +101,7 @@ class MFIIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/mfi
      * @optionparent plotOptions.mfi
+     * @internal
      */
     public static defaultOptions: MFIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -139,6 +139,7 @@ class MFIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MFIParamsOptions
@@ -257,7 +258,6 @@ class MFIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface MFIIndicator {
     nameBase: string;
     pointClass: typeof MFIPoint;
@@ -273,7 +273,6 @@ extend(MFIIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mfi: typeof MFIIndicator;
@@ -288,7 +287,6 @@ SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
  *
  * */
 
-/** @internal */
 export default MFIIndicator;
 
 /* *

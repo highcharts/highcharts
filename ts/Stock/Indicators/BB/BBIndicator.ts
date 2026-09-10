@@ -71,7 +71,6 @@ function getStandardDeviation(
 /**
  * Bollinger Bands series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bb
  *
@@ -98,6 +97,7 @@ class BBIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
+     * @internal
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
 
@@ -196,6 +196,7 @@ class BBIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(this: BBIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
@@ -214,6 +215,7 @@ class BBIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: BBParamsOptions
@@ -290,7 +292,6 @@ class BBIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameComponents: Array<string>;
@@ -313,7 +314,6 @@ MultipleLinesComposition.compose(BBIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bb: typeof BBIndicator;
@@ -327,7 +327,6 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  *
  * */
 
-/** @internal */
 export default BBIndicator;
 
 /* *
