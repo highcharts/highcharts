@@ -25,6 +25,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type { NumberFormatterCallbackFunction } from '../Options';
+import type { PointerEvent } from '../PointerEvent';
 import type Series from '../Series/Series';
 import type { SeriesTypeOptions } from '../Series/SeriesType';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
@@ -164,6 +165,27 @@ export interface ChartEventsOptions {
      *         Add series on chart load
      */
     load?: ChartLoadCallbackFunction;
+    /**
+     * Fires while the chart is panned by mouse drag. Panning must be
+     * enabled through [chart.panning](#chart.panning). One parameter,
+     * `event`, is passed to the function, containing common event
+     * information as well as `event.originalEvent`, the underlying pointer
+     * event. Note that the event fires for every mouse move during the
+     * drag, not once per gesture.
+     *
+     * Calling `event.preventDefault()` or returning false prevents the
+     * default panning of the axes. In Highcharts Maps, and on ordinal axes
+     * in Highcharts Stock, the panning is applied outside the default
+     * action and is not prevented.
+     *
+     * Panning by touch does not fire this event, unless
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch) is enabled and
+     * no zoom type is set. Single-finger drags are then handled as mouse
+     * drags and fire this event.
+     *
+     * @since     7.0.2
+     */
+    pan?: ChartPanCallbackFunction;
     /**
      * Fires when the chart is redrawn, either after a call to
      * `chart.redraw()` or after an axis, series or point is modified with
@@ -1168,6 +1190,17 @@ export interface ChartOptions {
      * @deprecated 10.2.1
      */
     zoomType?: ('x'|'xy'|'y');
+}
+
+export interface ChartPanCallbackFunction {
+    (this: Chart, event: ChartPanEventObject): void;
+}
+
+export interface ChartPanEventObject {
+    originalEvent: PointerEvent;
+    preventDefault: Function;
+    target: Chart;
+    type: 'pan';
 }
 
 export interface ChartPanningOptions {

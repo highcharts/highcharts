@@ -41,7 +41,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -331,15 +330,12 @@ class Breadcrumbs {
             chart = breadcrumbs.chart,
             breadcrumbsOptions = breadcrumbs.options,
             lang = chart.options.lang,
-            textFormat = pick(
-                breadcrumbsOptions.format,
+            textFormat = breadcrumbsOptions.format ?? (
                 breadcrumbsOptions.showFullPath ?
-                    '{level.name}' : '← {level.name}'
+                    '{level.name}' :
+                    '← {level.name}'
             ),
-            defaultText = lang && pick(
-                lang.drillUpText,
-                lang.mainBreadcrumb
-            );
+            defaultText = lang && (lang.drillUpText ?? lang.mainBreadcrumb);
         let returnText = breadcrumbsOptions.formatter &&
             breadcrumbsOptions.formatter(breadcrumb) ||
                 format(
@@ -509,7 +505,7 @@ class Breadcrumbs {
                 newPositions.x += positionOptions.width;
             }
 
-            newPositions.y = pick(newPositions.y, this.yOffset, 0);
+            newPositions.y = (newPositions.y ?? this.yOffset ?? 0);
 
             breadcrumbs.group.align(
                 newPositions,

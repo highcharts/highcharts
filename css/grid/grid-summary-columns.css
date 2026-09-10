@@ -1,0 +1,22 @@
+/* Grid Pro aggregating (summary) columns */
+
+.hcg-themed {
+    .hcg-table {
+        --ig-summary-column-border-width: var(--hcg-summary-column-border-width, var(--ig-column-border-width));
+        --ig-summary-column-border-style: var(--hcg-summary-column-border-style, var(--ig-column-border-style));
+        --ig-summary-column-border-color: var(--hcg-summary-column-border-color, var(--ig-column-border-color));
+        --ig-summary-column-border: var(--ig-summary-column-border-width) var(--ig-summary-column-border-style) var(--ig-summary-column-border-color);
+        --ig-summary-column-font-weight: var(--hcg-summary-column-font-weight, var(--hcg-column-font-weight));
+    }
+
+    .hcg-table thead th:not(.hcg-summary-column):has(+ th.hcg-summary-column),
+    .hcg-table thead th.hcg-summary-column:has(+ th:not(.hcg-summary-column)),
+    .hcg-table tbody tr > :where(.hcg-cell):not(.hcg-summary-column):has(+ .hcg-summary-column),
+    .hcg-table tbody tr > .hcg-summary-column:has(+ :where(.hcg-cell):not(.hcg-summary-column)) {
+        border-right: var(--ig-summary-column-border);
+    }
+
+    .hcg-table tbody tr > .hcg-summary-column {
+        --ig-cell-column-font-weight: var(--ig-summary-column-font-weight);
+    }
+}

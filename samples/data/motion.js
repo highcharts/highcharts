@@ -57,7 +57,7 @@
         }, null, this.playControls, null);
         // Important: max must be set before value in order to allow for
         // higher numbers than 100.
-        this.playRange.value = H.pick(this.options.startIndex, this.dataLength - 1);
+        this.playRange.value = this.options.startIndex ?? (this.dataLength - 1);
 
         // Play-range HTML-output
         this.playOutput = H.createElement('label', {

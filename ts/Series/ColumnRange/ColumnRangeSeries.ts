@@ -41,8 +41,7 @@ import {
     clamp,
     extend,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -164,10 +163,9 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
                 // Adjust shape
                 y = point.plotHigh;
-                height = pick(
-                    (point as any).rectPlotY,
-                    point.plotY
-                ) - point.plotHigh;
+                height =
+                    ((point as any).rectPlotY ?? point.plotY) -
+                    point.plotHigh;
 
                 // Adjust for minPointLength
                 if (Math.abs(height) < (minPointLength as any)) {

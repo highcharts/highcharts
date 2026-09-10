@@ -26,7 +26,6 @@ import Series from '../Core/Series/Series.js';
 import {
     fireEvent,
     isNumber,
-    pick,
     relativeLength
 } from '../Shared/Utilities.js';
 
@@ -98,13 +97,16 @@ namespace CenteredUtilities {
         }
 
         const positions: Array<number> = [
-            pick(centerOption?.[0], '50%' as any),
-            pick(centerOption?.[1], '50%' as any),
+            (centerOption?.[0] ?? '50%' as any),
+            (centerOption?.[1] ?? '50%' as any),
             // Prevent from negative values
-            pick(size && size < 0 ? void 0 : options.size, '100%'),
-            pick(
-                innerSize && innerSize < 0 ? void 0 : options.innerSize || 0,
-                '0%'
+            ((size && size < 0 ? void 0 : options.size) ?? '100%'),
+            (
+                (
+                    innerSize && innerSize < 0 ?
+                        void 0 :
+                        options.innerSize || 0
+                ) ?? '0%'
             )
         ];
 
