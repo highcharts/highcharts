@@ -207,17 +207,28 @@ function onAxisAfterSetTickPositions(
             tickPositions.length > 0 &&
             !this.tickAmount &&
             !this.categories &&
-            !this.dateTime
+            !this.dateTime &&
+            // Custom positions are not laid out on the tick interval, and
+            // ticks inside a break are filtered out by the broken axis
+            !options.tickPositions &&
+            !options.tickPositioner &&
+            !this.brokenAxis?.hasBreaks
         ),
         snapStart = canSnap && options.startOnTick,
         snapEnd = canSnap && options.endOnTick,
         tickSteps = (value: number, atEnd: boolean): number => Math.max(
             Math.ceil(
-                (atEnd ? value - lastTick : firstTick - value) / tickInterval
+                correctFloat(
+                    (atEnd ? value - lastTick : firstTick - value) /
+                    tickInterval
+                )
             ),
             0
         );
 
+    // The overflow halves with each pass rather than clearing at once, so
+    // bubbles a third of the axis wide settle a couple of pixels out. Beyond
+    // five the axis has widened past the give-up threshold below anyway
     let passes = 5;
 
     while (passes--) {
