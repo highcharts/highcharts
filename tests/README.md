@@ -760,9 +760,10 @@ NO_REWRITES=1 npx playwright test
 
 ## Playwright Visual Diagnostic
 
-> **Note:** This is a bounded diagnostic during the Playwright rollout. Karma
-> remains the authoritative visual test runner and results do not replace Karma
-> visual testing.
+> **Note:** This is a bounded run during the Playwright rollout. Karma still
+> provides full visual coverage. Successful Playwright runs for same-repository
+> PRs publish to production Visual Review and can replace the current Karma
+> review for that PR with results for the selected manifest only.
 
 The `visual` Playwright project (`tests/visual/visual.spec.ts`) renders samples to
 SVG, compares them against references, and records a pixel-difference count. It
@@ -830,6 +831,21 @@ are failures:
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.
 Locally these markers are informational.
+
+### Production publishing
+
+After validation, same-repository PR runs use `gulp update-pr-testresults` to
+publish the complete result JSON and SVG/GIF artifacts for differing samples to
+`https://vrevs.highsoft.com`. Both runners use the existing PR review identity;
+the latest published run is current, and reviews are not combined. The Playwright
+PR comment identifies the number of selected samples. Manual workflow runs and
+fork PRs only upload GitHub Actions diagnostics.
+
+Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with
+`GITHUB_RUN_ID` supplying both the submission ID and its globally unique run
+number. Upload failures fail CI, and GitHub artifacts remain available even if
+publishing fails. A numeric visual difference is still a valid completed run and
+is published for review.
 
 ## FAQ
 

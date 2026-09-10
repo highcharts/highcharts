@@ -24,6 +24,11 @@ on:
       - 'tests/package.json'
       - 'tests/package-lock.json'
       - 'tools/docs-preview/package.json'
+      - 'tools/gulptasks/update-pr-testresults.js'
+      - 'tools/gulptasks/lib/visualReviewApi.js'
+      - 'tools/gulptasks-tests/update-pr-testresults.test.mjs'
+      - 'tools/gulptasks-tests/visualReviewApi.test.mjs'
+      - '.github/scripts/commentOnPR.js'
       - 'playwright.config.ts'
       - '.github/workflows/visual-compare-playwright.yml'
 
@@ -171,23 +176,6 @@ jobs:
           VISUAL_TEST_MANIFEST: tests/visual/samples.json
         run: npx playwright test tests/visual/visual.spec.ts --project=visual
 
-      - name: Upload Playwright visual evidence
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: playwright-visual-${{ github.run_id }}
-          if-no-files-found: ignore
-          path: |
-            ${{ runner.temp }}/visual-reference
-            samples/**/reference.svg
-            samples/**/candidate.svg
-            samples/**/diff.gif
-            test/visual-test-results.json
-            test/visual-test-errors.log
-            test/visual-test-complete
-            playwright-report
-            test-results
-
       - name: Verify visual run outcomes
         if: always()
         env:
@@ -208,5 +196,58 @@ jobs:
             echo "::error::Candidate visual test completion marker is missing."
             failures=1
           fi
+          if [ -s test/visual-test-errors.log ]; then
+            echo "::error::Visual test execution errors were recorded."
+            failures=1
+          fi
 
           exit "$failures"
+
+      - name: Publish Playwright visual results
+        id: publish
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          VISUAL_REVIEW_API_KEY: ${{ secrets.VISUAL_REVIEW_INGESTION_API_KEY }}
+          VISUAL_REVIEW_PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: npx gulp update-pr-testresults --pr "$PR_NUMBER"
+
+      - name: Comment on PR
+        if: ${{ success() && steps.publish.outcome == 'success' }}
+        uses: actions/github-script@v8
+        with:
+          github-token: ${{ secrets.PR_COMMENT_TOKEN }}
+          script: |
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { readFileSync } = require('node:fs');
+            const { title, body } = JSON.parse(readFileSync(
+              'tmp/pr-visual-test-comment.json', 'utf8'
+            ));
+            const results = JSON.parse(readFileSync('test/visual-test-results.json', 'utf8'));
+            await createOrUpdateComment(
+              github,
+              context,
+              title.replace('Visual test results', 'Playwright visual test results'),
+              `\nCovers **${Object.keys(results).length} samples** from the Playwright manifest. ` +
+                `The production review shows the latest published run, which may be Karma or Playwright.\n\n${body}`
+            );
+
+      - name: Upload Playwright visual evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: playwright-visual-${{ github.run_id }}
+          if-no-files-found: ignore
+          path: |
+            ${{ runner.temp }}/visual-reference
+            samples/**/reference.svg
+            samples/**/candidate.svg
+            samples/**/diff.gif
+            test/visual-test-results.json
+            test/visual-test-errors.log
+            test/visual-test-complete
+            tmp/pr-visual-test-comment.json
+            playwright-report
+            test-results

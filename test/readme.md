@@ -46,7 +46,10 @@ npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
 
 During the Playwright visual diagnostic rollout, the bounded manifest in
 `tests/visual/samples.json` is run with the same shared Karma exclusions. Karma
-remains authoritative. Generate references and compare candidates with:
+still provides full visual coverage. Same-repository PR runs also publish the
+bounded Playwright results to production Visual Review; the latest published
+run replaces the current review for that PR. Generate references and compare
+candidates with:
 
 ```bash
 VISUAL_TEST_MANIFEST=tests/visual/samples.json \
@@ -59,9 +62,9 @@ npx playwright test tests/visual/visual.spec.ts --project=visual
 
 `VISUAL_TEST_MANIFEST` selects exact sample IDs. Explicit IDs excluded by Karma
 are rejected, and a manifest cannot be combined with `VISUAL_TEST_PATH`.
-Without a manifest, discovery applies the shared Karma exclusions. The accepted
-ADR documents a future runner boundary; it does not make Playwright the current
-visual-test authority.
+Without a manifest, discovery applies the shared Karma exclusions. See
+[Playwright production publishing](../tests/README.md#production-publishing)
+for upload and completion requirements.
 
 ## Writing Tests
 

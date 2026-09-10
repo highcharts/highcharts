@@ -165,7 +165,6 @@ function getPullRequestSha() {
 
 function getSubmissionOptions(testResults, prNumber) {
     const runId = process.env.GITHUB_RUN_ID || String(Date.now());
-    const runNumber = process.env.GITHUB_RUN_NUMBER || runId;
     return {
         apiKey: argv.visualReviewApiKey || process.env.VISUAL_REVIEW_API_KEY,
         apiUrl: getVisualReviewApiUrl(),
@@ -174,7 +173,7 @@ function getSubmissionOptions(testResults, prNumber) {
         productVersion: highchartsVersion,
         runAttempt: process.env.GITHUB_RUN_ATTEMPT || '1',
         runId,
-        runNumber,
+        runNumber: runId,
         samples: createSubmissionSamples(testResults),
         testReport: testResults
     };
