@@ -30,8 +30,8 @@ const ARTIFACTS = {
 };
 
 class VisualReviewApiError extends Error {
-    constructor(message, status) {
-        super(message);
+    constructor(message, status, cause) {
+        super(message, { cause });
         this.name = 'VisualReviewApiError';
         this.status = status;
     }
@@ -241,7 +241,7 @@ async function responseMessage(response) {
 
 async function request(url, options, dependencies = {}, requestState = {
     lastRequestAt: 0
-}) {
+}, readResponse = null) {
     const fetchImpl = dependencies.fetchImpl || fetch;
     const sleep = dependencies.sleep || defaultSleep;
 
@@ -250,18 +250,21 @@ async function request(url, options, dependencies = {}, requestState = {
         try {
             await waitForRequestSlot(dependencies, requestState);
             response = await fetchImpl(url, options);
+            if (response.ok) {
+                // Read archive bodies within the same retry budget as headers.
+                return readResponse ? await readResponse(response) : response;
+            }
         } catch (error) {
             if (attempt === MAX_ATTEMPTS - 1) {
                 throw new VisualReviewApiError(
-                    `Visual review request failed: ${error.message}`
+                    `Visual review request failed: ${error.message}` +
+                    (error.cause ? ` (${error.cause.code || 'cause'}: ${error.cause.message})` : ''),
+                    error.status,
+                    error
                 );
             }
             await sleep(2 ** attempt * 1000);
             continue;
-        }
-
-        if (response.ok) {
-            return response;
         }
 
         if (RETRYABLE_STATUS_CODES.has(response.status) && attempt < MAX_ATTEMPTS - 1) {
@@ -321,7 +324,7 @@ async function downloadLatestNightlyArchive(options = {}) {
         submission?.runAttempt,
         'nightly runAttempt'
     );
-    const archiveResponse = await request(
+    const archiveBytes = await request(
         `${baseUrl}/api/ingestion/nightly/submissions/${runId}/` +
         `attempts/${runAttempt}/artifacts.zip`,
         {
@@ -331,10 +334,11 @@ async function downloadLatestNightlyArchive(options = {}) {
             }
         },
         dependencies,
-        requestState
+        requestState,
+        archiveResponse => archiveResponse.arrayBuffer()
     );
 
-    return Buffer.from(await archiveResponse.arrayBuffer());
+    return Buffer.from(archiveBytes);
 }
 
 /**

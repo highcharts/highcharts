@@ -6,6 +6,7 @@ import test from 'node:test';
 
 import {
     buildSubmissionManifest,
+    downloadLatestNightlyArchive,
     submitNightlyVisualReview,
     submitPullRequestVisualReview
 } from '../gulptasks/lib/visualReviewApi.js';
@@ -24,6 +25,24 @@ function response(status = 200, body = '', ...retryAfterValues) {
         },
         async text() {
             return body;
+        }
+    };
+}
+
+function nightlyResponse(submissions) {
+    return {
+        ...response(),
+        async json() {
+            return submissions;
+        }
+    };
+}
+
+function archiveResponse(readBody) {
+    return {
+        ...response(),
+        async arrayBuffer() {
+            return typeof readBody === 'function' ? readBody() : readBody;
         }
     };
 }
@@ -496,6 +515,151 @@ test('retries transient responses and does not retry client errors', async () =>
         }),
         error => error.status === 400 && /invalid manifest/u.test(error.message)
     );
+});
+
+test('retries an archive body failure on the same URL after one discovery request', async () => {
+    const requests = [];
+    let archiveAttempts = 0;
+    const archive = Buffer.from('archive-bytes');
+    const result = await downloadLatestNightlyArchive({
+        apiKey: 'test-api-key',
+        apiUrl: 'https://vrevs.test',
+        dependencies: {
+            fetchImpl: async url => {
+                requests.push(url);
+                if (url.endsWith('/latest')) {
+                    return nightlyResponse([{
+                        runId: '9007199254740994',
+                        runAttempt: '2'
+                    }]);
+                }
+                archiveAttempts++;
+                return archiveAttempts === 1 ?
+                    archiveResponse(() => {
+                        throw new Error('stream closed prematurely');
+                    }) :
+                    archiveResponse(archive);
+            },
+            sleep: async () => {}
+        }
+    });
+
+    assert.deepEqual(result, archive);
+    assert.equal(requests.filter(url => url.endsWith('/latest')).length, 1);
+    assert.equal(archiveAttempts, 2);
+    assert.equal(requests[1], requests[2]);
+});
+
+test('preserves the final archive body failure and its cause after three attempts', async () => {
+    const cause = Object.assign(new Error('socket closed'), {
+        code: 'UND_ERR_SOCKET'
+    });
+    let archiveAttempts = 0;
+    let lastBodyError;
+
+    await assert.rejects(
+        downloadLatestNightlyArchive({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                fetchImpl: async url => {
+                    if (url.endsWith('/latest')) {
+                        return nightlyResponse([{
+                            runId: '9007199254740994',
+                            runAttempt: '2'
+                        }]);
+                    }
+                    archiveAttempts++;
+                    const bodyError = new Error('terminated', { cause });
+                    if (archiveAttempts === 3) {
+                        lastBodyError = bodyError;
+                    }
+                    return archiveResponse(() => {
+                        throw bodyError;
+                    });
+                },
+                sleep: async () => {}
+            }
+        }),
+        error => {
+            assert.equal(error.cause, lastBodyError);
+            assert.match(error.message, /terminated/u);
+            assert.match(error.message, /UND_ERR_SOCKET/u);
+            assert.match(error.message, /socket closed/u);
+            return true;
+        }
+    );
+    assert.equal(archiveAttempts, 3);
+});
+
+test('shares three attempts between transient archive responses and body failures', async () => {
+    const requests = [];
+    let archiveAttempts = 0;
+    let lastBodyError;
+    await assert.rejects(
+        downloadLatestNightlyArchive({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                fetchImpl: async url => {
+                    requests.push(url);
+                    if (url.endsWith('/latest')) {
+                        return nightlyResponse([{
+                            runId: '9007199254740994',
+                            runAttempt: '2'
+                        }]);
+                    }
+                    archiveAttempts++;
+                    if (archiveAttempts === 1) {
+                        return response(503, 'temporarily unavailable');
+                    }
+                    const bodyError = new Error('stream closed prematurely');
+                    lastBodyError = bodyError;
+                    return archiveResponse(() => {
+                        throw bodyError;
+                    });
+                },
+                sleep: async () => {}
+            }
+        }),
+        error => {
+            assert.equal(error.cause, lastBodyError);
+            return true;
+        }
+    );
+
+    assert.equal(requests.filter(url => url.endsWith('/latest')).length, 1);
+    assert.equal(archiveAttempts, 3);
+});
+
+test('does not retry non-transient archive response statuses', async () => {
+    for (const status of [401, 403, 404, 413]) {
+        let discoveryRequests = 0;
+        let archiveRequests = 0;
+        await assert.rejects(
+            downloadLatestNightlyArchive({
+                apiKey: 'test-api-key',
+                apiUrl: 'https://vrevs.test',
+                dependencies: {
+                    fetchImpl: async url => {
+                        if (url.endsWith('/latest')) {
+                            discoveryRequests++;
+                            return nightlyResponse([{
+                                runId: '9007199254740994',
+                                runAttempt: '2'
+                            }]);
+                        }
+                        archiveRequests++;
+                        return response(status, `archive failed with ${status}`);
+                    },
+                    sleep: async () => {}
+                }
+            }),
+            error => error.status === status
+        );
+        assert.equal(discoveryRequests, 1);
+        assert.equal(archiveRequests, 1);
+    }
 });
 
 test('honors numeric Retry-After seconds', async () => {
