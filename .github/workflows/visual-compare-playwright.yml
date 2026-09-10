@@ -26,6 +26,8 @@ on:
       - 'tools/docs-preview/package.json'
       - 'tools/gulptasks/update-pr-testresults.js'
       - 'tools/gulptasks/lib/visualReviewApi.js'
+      - 'tools/libs/git.js'
+      - 'tools/gulptasks-tests/git.test.mjs'
       - 'tools/gulptasks-tests/update-pr-testresults.test.mjs'
       - 'tools/gulptasks-tests/visualReviewApi.test.mjs'
       - '.github/scripts/commentOnPR.js'
