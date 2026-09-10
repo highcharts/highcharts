@@ -98,6 +98,7 @@ class DPOIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
+     * @internal
      */
     public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -120,7 +121,9 @@ class DPOIndicator extends SMAIndicator {
      * */
 
     public options!: DPOOptions;
+    /** @internal */
     public data!: Array<DPOPoint>;
+    /** @internal */
     public points!: Array<DPOPoint>;
 
     /* *
@@ -129,6 +132,7 @@ class DPOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DPOParamsOptions

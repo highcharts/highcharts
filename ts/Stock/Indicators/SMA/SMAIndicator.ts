@@ -119,6 +119,7 @@ class SMAIndicator extends LineSeries {
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
+     * @internal
      */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
 
@@ -187,16 +188,21 @@ class SMAIndicator extends LineSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<SMAPoint>;
 
+    /** @internal */
     public dataEventsToUnbind!: Array<Function>;
 
+    /** @internal */
     public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
+    /** @internal */
     public nameBase?: string;
 
     public options!: SMAOptions;
 
+    /** @internal */
     public points!: Array<SMAPoint>;
 
     /* *

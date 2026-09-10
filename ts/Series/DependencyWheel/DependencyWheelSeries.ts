@@ -59,6 +59,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DependencyWheelSeriesOptions = merge(
         SankeySeries.defaultOptions,
         DependencyWheelSeriesDefaults
@@ -70,14 +71,18 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<DependencyWheelPoint>;
 
     public options!: DependencyWheelSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
+    /** @internal */
     public nodes!: Array<DependencyWheelPoint>;
 
+    /** @internal */
     public points!: Array<DependencyWheelPoint>;
 
     /* *
@@ -86,6 +91,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public animate(init?: boolean): void {
         const series = this;
 
@@ -123,6 +129,7 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public createNode(id: string): DependencyWheelPoint {
         const node = super.createNode(id) as DependencyWheelPoint;
 
@@ -225,6 +232,7 @@ class DependencyWheelSeries extends SankeySeries {
      * @ignore
      * @todo Override the refactored sankey translateLink and translateNode
      * functions instead of the whole translate function.
+     * @internal
      */
     public translate(): void {
         const series = this,

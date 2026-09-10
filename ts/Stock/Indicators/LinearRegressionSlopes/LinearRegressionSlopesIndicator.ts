@@ -65,6 +65,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionslope
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
@@ -76,8 +77,10 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<LinearRegressionSlopesPoint>;
     public options!: LinearRegressionOptions;
+    /** @internal */
     public points!: Array<LinearRegressionSlopesPoint>;
 
     /* *
@@ -86,6 +89,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public getEndPointY(
         lineParameters: RegressionLineParametersObject
     ): number {

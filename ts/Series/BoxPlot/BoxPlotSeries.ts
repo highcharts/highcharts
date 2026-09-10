@@ -63,6 +63,7 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BoxPlotSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         BoxPlotSeriesDefaults
@@ -74,10 +75,12 @@ class BoxPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<BoxPlotPoint>;
 
     public options!: BoxPlotSeriesOptions;
 
+    /** @internal */
     public points!: Array<BoxPlotPoint>;
 
     /* *
@@ -87,6 +90,7 @@ class BoxPlotSeries extends ColumnSeries {
      * */
 
     // Get presentational attributes
+    /** @internal */
     public pointAttribs(): SVGAttributes {
         // No attributes should be set on point.graphic which is the group. The
         // returned fill is for legend symbols.
@@ -95,6 +99,7 @@ class BoxPlotSeries extends ColumnSeries {
 
 
     // Get an SVGPath object for both whiskers
+    /** @internal */
     public getWhiskerPair(
         halfWidth: number,
         stemX: number,
@@ -140,6 +145,7 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     // Translate data points from raw values x and y to plotX and plotY
+    /** @internal */
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
@@ -397,6 +403,7 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     // Return a plain array for speedy calculation
+    /** @internal */
     public toYData(point: BoxPlotPoint): Array<number> {
         return [point.low, point.q1, point.median, point.q3, point.high];
     }

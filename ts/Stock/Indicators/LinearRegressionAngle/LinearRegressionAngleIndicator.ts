@@ -65,6 +65,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions,
@@ -82,8 +83,10 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<LinearRegressionAnglePoint>;
     public options!: LinearRegressionOptions;
+    /** @internal */
     public points!: Array<LinearRegressionAnglePoint>;
 
     /* *
@@ -105,6 +108,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
         return Math.atan(slope) * (180 / Math.PI); // Rad to deg
     }
 
+    /** @internal */
     public getEndPointY(
         this: LinearRegressionAngleIndicator,
         lineParameters: RegressionLineParametersObject

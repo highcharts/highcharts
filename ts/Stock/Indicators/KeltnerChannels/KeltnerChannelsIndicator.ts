@@ -70,6 +70,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
+     * @internal
      */
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -150,8 +151,10 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<KeltnerChannelsPoint>;
     public options!: KeltnerChannelsOptions;
+    /** @internal */
     public points!: Array<KeltnerChannelsPoint>;
 
     /* *
@@ -160,6 +163,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(this: KeltnerChannelsIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -177,6 +181,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KeltnerChannelsParamsOptions

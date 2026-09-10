@@ -69,6 +69,7 @@ class ChaikinIndicator extends EMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/chaikin
      * @optionparent plotOptions.chaikin
+     * @internal
      */
     public static defaultOptions: ChaikinOptions = merge(EMAIndicator.defaultOptions, {
         /**
@@ -107,8 +108,10 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<ChaikinPoint>;
     public options!: ChaikinOptions;
+    /** @internal */
     public points!: Array<ChaikinPoint>;
 
     /* *
@@ -117,6 +120,7 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions

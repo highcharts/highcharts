@@ -97,6 +97,7 @@ class BBIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/bollinger-bands
      * @optionparent plotOptions.bb
+     * @internal
      */
     public static defaultOptions: BBOptions = merge(SMAIndicator.defaultOptions, {
 
@@ -183,10 +184,12 @@ class BBIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<BBPoint>;
 
     public options!: BBOptions;
 
+    /** @internal */
     public points!: Array<BBPoint>;
 
     /* *
@@ -195,6 +198,7 @@ class BBIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(this: BBIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
@@ -213,6 +217,7 @@ class BBIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: BBParamsOptions

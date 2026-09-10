@@ -69,6 +69,7 @@ class ZigzagIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
+     * @internal
      */
     public static defaultOptions: ZigzagOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -110,7 +111,9 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<ZigzagPoint>;
+    /** @internal */
     public points!: Array<ZigzagPoint>;
     public options!: ZigzagOptions;
 
@@ -120,6 +123,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ZigzagParamsOptions

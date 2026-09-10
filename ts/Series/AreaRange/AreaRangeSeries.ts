@@ -301,6 +301,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      *  Static Properties
      *
+     * @internal
      */
 
     public static defaultOptions: AreaRangeSeriesOptions = merge(
@@ -314,11 +315,16 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<AreaRangePoint>;
     public options!: AreaRangeSeriesOptions;
+    /** @internal */
     public points!: Array<AreaRangePoint>;
+    /** @internal */
     public lowerStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public upperStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
@@ -327,6 +333,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
+    /** @internal */
     public toYData(point: AreaRangePoint): Array<number> {
         return [point.low, point.high];
     }
@@ -469,6 +476,7 @@ class AreaRangeSeries extends AreaSeries {
         return linePath;
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         const series = this,
             dataLabelOptions = series.options.dataLabels;
@@ -507,6 +515,7 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    /** @internal */
     public modifyMarkerSettings(): {
         marker?: PointMarkerOptions;
         symbol?: SymbolKey;
@@ -532,6 +541,7 @@ class AreaRangeSeries extends AreaSeries {
         return originalMarkerSettings;
     }
 
+    /** @internal */
     public restoreMarkerSettings(originalSettings: {
         marker?: PointMarkerOptions;
         symbol?: SymbolKey;
@@ -542,6 +552,7 @@ class AreaRangeSeries extends AreaSeries {
         series.symbol = originalSettings.symbol;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;
@@ -622,6 +633,7 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    /** @internal */
     public hasMarkerChanged(
         options: DeepPartial<AreaRangeSeriesOptions>,
         oldOptions: DeepPartial<AreaRangeSeriesOptions>

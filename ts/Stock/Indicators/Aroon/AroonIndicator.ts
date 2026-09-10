@@ -98,6 +98,7 @@ class AroonIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/aroon
      * @optionparent plotOptions.aroon
+     * @internal
      */
     public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -147,10 +148,12 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<AroonPoint>;
 
     public options!: AroonOptions;
 
+    /** @internal */
     public points!: Array<AroonPoint>;
 
     /* *
@@ -159,6 +162,7 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: AroonParamsOptions

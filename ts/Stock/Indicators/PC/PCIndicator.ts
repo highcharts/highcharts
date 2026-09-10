@@ -69,6 +69,7 @@ class PCIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/price-channel
      * @optionparent plotOptions.pc
+     * @internal
      */
     public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -129,8 +130,10 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<PCPoint>;
     public options!: PCOptions;
+    /** @internal */
     public points!: Array<PCPoint>;
 
     /* *
@@ -139,6 +142,7 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PCParamsOptions

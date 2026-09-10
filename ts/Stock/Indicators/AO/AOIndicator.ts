@@ -74,6 +74,7 @@ class AOIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/ao
      * @optionparent plotOptions.ao
+     * @internal
      */
     public static defaultOptions: AOOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -124,8 +125,10 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<AOPoint>;
     public options!: AOOptions;
+    /** @internal */
     public points!: Array<AOPoint>;
 
     /* *
@@ -134,6 +137,7 @@ class AOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public drawGraph(this: AOIndicator): void {
         const indicator = this,
             options = indicator.options,
@@ -161,6 +165,7 @@ class AOIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

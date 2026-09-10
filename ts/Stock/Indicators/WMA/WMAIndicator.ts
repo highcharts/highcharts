@@ -124,6 +124,7 @@ class WMAIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/wma
      * @optionparent plotOptions.wma
+     * @internal
      */
     public static defaultOptions: WMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -138,8 +139,10 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<WMAPoint>;
     public options!: WMAOptions;
+    /** @internal */
     public points!: Array<WMAPoint>;
 
     /* *
@@ -148,6 +151,7 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: WMAParamsOptions

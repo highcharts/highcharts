@@ -67,6 +67,7 @@ class WilliamsRIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/williams-r
      * @optionparent plotOptions.williamsr
+     * @internal
      */
     public static defaultOptions: WilliamsROptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -88,8 +89,10 @@ class WilliamsRIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<WilliamsRPoint>;
     public options!: WilliamsROptions;
+    /** @internal */
     public points!: Array<WilliamsRPoint>;
 
     /* *
@@ -98,6 +101,7 @@ class WilliamsRIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         this: WilliamsRIndicator,
         series: TLinkedSeries&IndicatorLinkedSeriesBase,

@@ -54,6 +54,7 @@ class BulletSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BulletSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         BulletSeriesDefaults
@@ -65,12 +66,15 @@ class BulletSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<BulletPoint>;
 
     public options!: BulletSeriesOptions;
 
+    /** @internal */
     public points!: Array<BulletPoint>;
 
+    /** @internal */
     public targetData!: Array<number>;
 
     /* *
@@ -86,6 +90,7 @@ class BulletSeries extends ColumnSeries {
      *
      * @ignore
      * @function Highcharts.Series#drawPoints
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -224,6 +229,7 @@ class BulletSeries extends ColumnSeries {
      *
      * @ignore
      * @function Highcharts.Series#getExtremes
+     * @internal
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
         const dataExtremes = super.getExtremes.call(this, yData),

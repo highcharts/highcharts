@@ -79,6 +79,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/disparity-index
      * @optionparent plotOptions.disparityindex
+     * @internal
      */
     public static defaultOptions: DisparityIndexOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -108,9 +109,12 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public averageIndicator!: typeof SMAIndicator;
+    /** @internal */
     public data!: Array<DisparityIndexPoint>;
     public options!: DisparityIndexOptions;
+    /** @internal */
     public points!: Array<DisparityIndexPoint>;
 
     /* *
@@ -119,6 +123,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         const args = arguments,
             ctx = this, // Disparity Index indicator
@@ -130,6 +135,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         ctx.averageIndicator.prototype.init.apply(ctx, args);
     }
 
+    /** @internal */
     public calculateDisparityIndex(
         curPrice: number,
         periodAverage: number
@@ -137,6 +143,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         return correctFloat(curPrice - periodAverage) / periodAverage * 100;
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DisparityIndexParamsOptions

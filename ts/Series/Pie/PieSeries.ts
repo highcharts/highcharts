@@ -96,6 +96,7 @@ class PieSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         Series.defaultOptions,
         PieSeriesDefaults
@@ -107,18 +108,24 @@ class PieSeries extends Series {
      *
      * */
 
+    /** @internal */
     public center!: Array<number>;
 
+    /** @internal */
     public data!: Array<PiePoint>;
 
+    /** @internal */
     public endAngleRad?: number;
 
     public options!: PieSeriesOptions;
 
+    /** @internal */
     public points!: Array<PiePoint>;
 
+    /** @internal */
     public startAngleRad?: number;
 
+    /** @internal */
     public total?: number;
 
     /* *

@@ -193,6 +193,7 @@ class PSARIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/psar
      * @optionparent plotOptions.psar
+     * @internal
      */
     public static defaultOptions: PSAROptions = merge(SMAIndicator.defaultOptions, {
         lineWidth: 0,
@@ -252,8 +253,11 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<PSARPoint>;
+    /** @internal */
     public nameComponents: Array<string>|undefined = void 0;
+    /** @internal */
     public points!: Array<PSARPoint>;
     public options!: PSAROptions;
 
@@ -263,6 +267,7 @@ class PSARIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PSARParamsOptions

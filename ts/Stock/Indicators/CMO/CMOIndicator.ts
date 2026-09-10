@@ -62,6 +62,7 @@ class CMOIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/cmo
      * @optionparent plotOptions.cmo
+     * @internal
      */
     public static defaultOptions: CMOOptions = merge(
         SMAIndicator.defaultOptions,
@@ -79,8 +80,10 @@ class CMOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<CMOPoint>;
     public options!: CMOOptions;
+    /** @internal */
     public points!: Array<CMOPoint>;
 
     /* *
@@ -89,6 +92,7 @@ class CMOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CMOParamsOptions

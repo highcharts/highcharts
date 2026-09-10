@@ -67,6 +67,7 @@ class NATRIndicator extends ATRIndicator {
      * @requires     stock/indicators/atr
      * @requires     stock/indicators/natr
      * @optionparent plotOptions.natr
+     * @internal
      */
     public static defaultOptions: NATROptions = merge(ATRIndicator.defaultOptions, {
         tooltip: {
@@ -80,7 +81,9 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<NATRPoint>;
+    /** @internal */
     public points!: Array<NATRPoint>;
     public options!: NATROptions;
 
@@ -90,6 +93,7 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: NATRParamsOptions

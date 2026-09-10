@@ -64,6 +64,7 @@ class EMAIndicator extends SMAIndicator {
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.ema
+     * @internal
      */
     public static defaultOptions: EMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -88,10 +89,12 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<EMAPoint>;
 
     public options!: EMAOptions;
 
+    /** @internal */
     public points!: Array<EMAPoint>;
 
     /* *
@@ -100,6 +103,7 @@ class EMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public accumulatePeriodPoints(
         period: number,
         index: number,
@@ -118,6 +122,7 @@ class EMAIndicator extends SMAIndicator {
         return sum;
     }
 
+    /** @internal */
     public calculateEma(
         xVal: Array<number>,
         yVal: (Array<number>|Array<Array<number>>),
@@ -139,6 +144,7 @@ class EMAIndicator extends SMAIndicator {
         return [x, y];
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: EMAParamsOptions

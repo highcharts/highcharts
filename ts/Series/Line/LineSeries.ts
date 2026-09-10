@@ -48,6 +48,7 @@ class LineSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: LineSeriesOptions = merge(
         Series.defaultOptions,
         {
@@ -73,10 +74,12 @@ class LineSeries extends Series {
      *
      * */
 
+    /** @internal */
     public data!: Array<LinePoint>;
 
     public options!: LineSeriesOptions;
 
+    /** @internal */
     public points!: Array<LinePoint>;
 
     /* *

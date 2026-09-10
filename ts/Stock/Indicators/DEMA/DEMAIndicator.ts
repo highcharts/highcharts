@@ -70,6 +70,7 @@ class DEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
+     * @internal
      */
     public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
 
@@ -79,9 +80,12 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public EMApercent!: number;
+    /** @internal */
     public data!: Array<DEMAPoint>;
     public options!: DEMAOptions;
+    /** @internal */
     public points!: Array<DEMAPoint>;
 
     /* *
@@ -90,6 +94,7 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -110,6 +115,7 @@ class DEMAIndicator extends EMAIndicator {
         );
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DEMAParamsOptions

@@ -69,6 +69,7 @@ class PPOIndicator extends EMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/ppo
      * @optionparent plotOptions.ppo
+     * @internal
      */
     public static defaultOptions: PPOOptions = merge(EMAIndicator.defaultOptions, {
         /**
@@ -95,8 +96,10 @@ class PPOIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<PPOPoint>;
     public options!: PPOOptions;
+    /** @internal */
     public points!: Array<PPOPoint>;
 
     /* *
@@ -105,6 +108,7 @@ class PPOIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PPOParamsOptions

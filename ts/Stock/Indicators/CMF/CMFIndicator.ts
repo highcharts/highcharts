@@ -71,6 +71,7 @@ class CMFIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/cmf
      * @optionparent plotOptions.cmf
+     * @internal
      */
     public static defaultOptions: CMFOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -92,12 +93,18 @@ class CMFIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<CMFPoint>;
     public options!: CMFOptions;
+    /** @internal */
     public points!: Array<CMFPoint>;
+    /** @internal */
     public volumeSeries!: LineSeries;
+    /** @internal */
     public linkedParent!: LineSeries;
+    /** @internal */
     public yData!: Array<Array<number>>;
+    /** @internal */
     public nameBase: string = 'Chaikin Money Flow';
 
     /* *

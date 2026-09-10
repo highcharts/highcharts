@@ -79,6 +79,7 @@ class MomentumIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
+     * @internal
      */
     public static defaultOptions: MomentumOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -92,8 +93,10 @@ class MomentumIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<MomentumPoint>;
     public options!: MomentumOptions;
+    /** @internal */
     public points!: Array<MomentumPoint>;
 
     /* *
@@ -102,6 +105,7 @@ class MomentumIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MomentumOptions

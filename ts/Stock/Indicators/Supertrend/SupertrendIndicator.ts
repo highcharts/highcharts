@@ -105,6 +105,7 @@ class SupertrendIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/supertrend
      * @optionparent plotOptions.supertrend
+     * @internal
      */
     public static defaultOptions: SupertrendOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -187,12 +188,15 @@ class SupertrendIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<SupertrendPoint>;
 
+    /** @internal */
     public linkedParent!: SupertrendLinkedParentObject;
 
     public options!: SupertrendOptions;
 
+    /** @internal */
     public points!: Array<SupertrendPoint>;
 
     /* *
@@ -201,6 +205,7 @@ class SupertrendIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         const indicator = this;
 
@@ -231,6 +236,7 @@ class SupertrendIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public drawGraph(): void {
         const indicator = this,
             indicOptions: SupertrendOptions = indicator.options,
@@ -548,6 +554,7 @@ class SupertrendIndicator extends SMAIndicator {
     //      Current Close > Current FINAL LOWERBAND
     //     ) THAN Current FINAL LOWERBAND
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: SupertrendParamsOptions

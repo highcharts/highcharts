@@ -86,6 +86,7 @@ class AreaSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: AreaSeriesOptions =
         merge(LineSeries.defaultOptions, AreaSeriesDefaults);
 
@@ -95,12 +96,15 @@ class AreaSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public areaPath?: SVGPath;
 
+    /** @internal */
     public data!: Array<AreaPoint>;
 
     public options!: AreaSeriesOptions;
 
+    /** @internal */
     public points!: Array<AreaPoint>;
 
     /* *

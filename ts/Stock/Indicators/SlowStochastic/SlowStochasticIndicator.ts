@@ -67,6 +67,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @requires     stock/indicators/stochastic
      * @requires     stock/indicators/slow-stochastic
      * @optionparent plotOptions.slowstochastic
+     * @internal
      */
     public static defaultOptions: SlowStochasticOptions = merge(StochasticIndicator.defaultOptions, {
         params: {
@@ -86,8 +87,10 @@ class SlowStochasticIndicator extends StochasticIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<SlowStochasticPoint>;
     public options!: SlowStochasticOptions;
+    /** @internal */
     public points!: Array<SlowStochasticPoint>;
 
     /* *
@@ -96,6 +99,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      *
      * */
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: SlowStochasticParamsOptions

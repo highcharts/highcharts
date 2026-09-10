@@ -68,6 +68,7 @@ class TEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
+     * @internal
      */
     public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions);
 
@@ -77,9 +78,12 @@ class TEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public EMApercent!: number;
+    /** @internal */
     public data!: Array<TEMAPoint>;
     public options!: TEMAOptions;
+    /** @internal */
     public points!: Array<TEMAPoint>;
 
     /* *
@@ -88,6 +92,7 @@ class TEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -107,6 +112,7 @@ class TEMAIndicator extends EMAIndicator {
         );
     }
 
+    /** @internal */
     public getTemaPoint(
         xVal: Array<number>,
         tripledPeriod: number,
@@ -124,6 +130,7 @@ class TEMAIndicator extends EMAIndicator {
         return TEMAPoint;
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: TEMAParamsOptions

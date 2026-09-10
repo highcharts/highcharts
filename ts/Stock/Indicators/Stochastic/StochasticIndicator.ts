@@ -68,6 +68,7 @@ class StochasticIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/stochastic
      * @optionparent plotOptions.stochastic
+     * @internal
      */
     public static defaultOptions: StochasticOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -124,8 +125,10 @@ class StochasticIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<StochasticPoint>;
     public options!: StochasticOptions;
+    /** @internal */
     public points!: Array<StochasticPoint>;
 
     /* *
@@ -134,6 +137,7 @@ class StochasticIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -147,6 +151,7 @@ class StochasticIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: StochasticParamsOptions

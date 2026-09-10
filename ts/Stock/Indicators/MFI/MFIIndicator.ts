@@ -101,6 +101,7 @@ class MFIIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/mfi
      * @optionparent plotOptions.mfi
+     * @internal
      */
     public static defaultOptions: MFIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -128,8 +129,10 @@ class MFIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<MFIPoint>;
     public options!: MFIOptions;
+    /** @internal */
     public points!: Array<MFIPoint>;
 
     /* *
@@ -138,6 +141,7 @@ class MFIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MFIParamsOptions

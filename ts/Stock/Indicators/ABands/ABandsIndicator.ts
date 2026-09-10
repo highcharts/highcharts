@@ -96,6 +96,7 @@ class ABandsIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/acceleration-bands
      * @optionparent plotOptions.abands
+     * @internal
      */
     public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -147,10 +148,12 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<ABandsPoint>;
 
     public options!: ABandsOptions;
 
+    /** @internal */
     public points!: Array<ABandsPoint>;
 
     /* *
@@ -159,6 +162,7 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         this: ABandsIndicator,
         series: TLinkedSeries&IndicatorLinkedSeriesBase,

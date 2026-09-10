@@ -78,6 +78,7 @@ class RSIIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/rsi
      * @optionparent plotOptions.rsi
+     * @internal
      */
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -92,7 +93,9 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<RSIPoint>;
+    /** @internal */
     public points!: Array<RSIPoint>;
     public options!: RSIOptions;
 
@@ -102,6 +105,7 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: RSIParamsOptions

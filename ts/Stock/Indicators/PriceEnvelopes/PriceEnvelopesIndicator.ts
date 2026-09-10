@@ -65,6 +65,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
+     * @internal
      */
     public static defaultOptions: PriceEnvelopesOptions = merge(SMAIndicator.defaultOptions, {
         marker: {
@@ -139,8 +140,10 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<PriceEnvelopesPoint>;
     public options!: PriceEnvelopesOptions;
+    /** @internal */
     public points!: Array<PriceEnvelopesPoint>;
 
     /* *
@@ -149,6 +152,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -167,6 +171,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PriceEnvelopesParamsOptions

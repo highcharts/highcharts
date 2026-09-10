@@ -64,6 +64,7 @@ class TrendLineIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/trendline
      * @optionparent plotOptions.trendline
+     * @internal
      */
     public static defaultOptions: TrendLineOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -88,9 +89,12 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<TrendLinePoint>;
     public options!: TrendLineOptions;
+    /** @internal */
     public points!: Array<TrendLinePoint>;
+    /** @internal */
     public updateAllPoints?: boolean = true;
 
     /* *
@@ -99,6 +103,7 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: TrendLineParamsOptions

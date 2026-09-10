@@ -117,6 +117,7 @@ class ATRIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/atr
      * @optionparent plotOptions.atr
+     * @internal
      */
     public static defaultOptions: ATROptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -133,7 +134,9 @@ class ATRIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<ATRPoint>;
+    /** @internal */
     public points!: Array<ATRPoint>;
     public options!: ATROptions;
 
@@ -143,6 +146,7 @@ class ATRIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ATRParamsOptions

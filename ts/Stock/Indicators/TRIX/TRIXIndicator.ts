@@ -63,6 +63,7 @@ class TRIXIndicator extends TEMAIndicator {
      * @requires     stock/indicators/tema
      * @requires     stock/indicators/trix
      * @optionparent plotOptions.trix
+     * @internal
      */
     public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions);
 
@@ -72,8 +73,10 @@ class TRIXIndicator extends TEMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<TRIXPoint>;
     public options!: TRIXOptions;
+    /** @internal */
     public points!: Array<TRIXPoint>;
 
     /* *
@@ -83,6 +86,7 @@ class TRIXIndicator extends TEMAIndicator {
      * */
 
     // TRIX is calculated using TEMA so we just extend getTemaPoint method.
+    /** @internal */
     public getTemaPoint(
         xVal: Array<number>,
         tripledPeriod: number,

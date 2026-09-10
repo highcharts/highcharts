@@ -57,6 +57,7 @@ class BarSeries extends ColumnSeries {
      * @extends      plotOptions.column
      * @product      highcharts
      * @optionparent plotOptions.bar
+     * @internal
      */
     public static defaultOptions: BarSeriesOptions = merge(ColumnSeries.defaultOptions, {
         // Nothing here yet
@@ -68,8 +69,10 @@ class BarSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<BarPoint>;
     public options!: BarSeriesOptions;
+    /** @internal */
     public points!: Array<BarPoint>;
 
 }

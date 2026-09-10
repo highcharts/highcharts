@@ -71,6 +71,7 @@ class VWAPIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/vwap
      * @optionparent plotOptions.vwap
+     * @internal
      */
     public static defaultOptions: VWAPOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -94,7 +95,9 @@ class VWAPIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<VWAPPoint>;
+    /** @internal */
     public points!: Array<VWAPPoint>;
     public options!: VWAPOptions;
 
@@ -104,6 +107,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: VWAPParamsOptions

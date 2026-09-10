@@ -91,6 +91,7 @@ class CCIIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/cci
      * @optionparent plotOptions.cci
+     * @internal
      */
     public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -107,7 +108,9 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<CCIPoint>;
+    /** @internal */
     public points!: Array<CCIPoint>;
     public options!: CCIOptions;
 
@@ -117,6 +120,7 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CCIParamsOptions

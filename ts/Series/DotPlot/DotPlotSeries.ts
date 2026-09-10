@@ -60,6 +60,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DotPlotSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         DotPlotSeriesDefaults
@@ -71,10 +72,12 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<DotPlotPoint>;
 
     public options!: DotPlotSeriesOptions;
 
+    /** @internal */
     public points!: Array<DotPlotPoint>;
 
     /* *
@@ -83,6 +86,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             options = series.options,

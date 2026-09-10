@@ -72,6 +72,7 @@ class OBVIndicator extends SMAIndicator {
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.obv
+     * @internal
      */
     public static defaultOptions: OBVOptions = merge(SMAIndicator.defaultOptions, {
         marker: {
@@ -101,7 +102,9 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<OBVPoint>;
+    /** @internal */
     public points!: Array<OBVPoint>;
     public options!: OBVOptions;
 
@@ -111,6 +114,7 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: OBVParamsOptions

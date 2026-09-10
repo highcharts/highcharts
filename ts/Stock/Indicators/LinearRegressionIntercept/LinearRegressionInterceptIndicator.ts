@@ -66,6 +66,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
@@ -77,8 +78,10 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<LinearRegressionInterceptPoint>;
     public options!: LinearRegressionOptions;
+    /** @internal */
     public points!: Array<LinearRegressionInterceptPoint>;
 
     /* *
@@ -87,6 +90,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public getEndPointY(
         lineParameters: RegressionLineParametersObject
     ): number {

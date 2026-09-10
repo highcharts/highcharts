@@ -51,6 +51,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BellcurveSeriesOptions = merge(
         AreaSplineSeries.defaultOptions,
         BellcurveSeriesDefaults
@@ -111,14 +112,18 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<BellcurvePoint>;
 
+    /** @internal */
     public mean?: number;
 
     public options!: BellcurveSeriesOptions;
 
+    /** @internal */
     public points!: Array<BellcurvePoint>;
 
+    /** @internal */
     public standardDeviation?: number;
 
     /* *
@@ -127,6 +132,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,
@@ -166,6 +172,7 @@ class BellcurveSeries extends AreaSplineSeries {
         );
     }
 
+    /** @internal */
     public derivedData(
         mean: number,
         standardDeviation: number
@@ -189,6 +196,7 @@ class BellcurveSeries extends AreaSplineSeries {
         return data;
     }
 
+    /** @internal */
     public setDerivedData(): void {
         const series = this;
 
@@ -202,12 +210,14 @@ class BellcurveSeries extends AreaSplineSeries {
         }
     }
 
+    /** @internal */
     public setMean(data: number[]): void {
         const mean = BellcurveSeries.mean(data || []);
 
         this.mean = isNumber(mean) ? correctFloat(mean) : void 0;
     }
 
+    /** @internal */
     public setStandardDeviation(data: number[]): void {
         const sd = BellcurveSeries.standardDeviation(
             data || [],

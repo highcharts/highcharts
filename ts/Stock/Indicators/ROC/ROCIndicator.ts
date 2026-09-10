@@ -117,6 +117,7 @@ class ROCIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/roc
      * @optionparent plotOptions.roc
+     * @internal
      */
     public static defaultOptions: ROCOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -131,10 +132,12 @@ class ROCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<ROCPoint>;
 
     public options!: ROCOptions;
 
+    /** @internal */
     public points!: Array<ROCPoint>;
 
     /* *
@@ -143,6 +146,7 @@ class ROCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ROCParamsOptions

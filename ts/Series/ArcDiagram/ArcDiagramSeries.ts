@@ -68,6 +68,7 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions =
         merge(SankeySeries.defaultOptions, ArcDiagramSeriesDefaults);
 
@@ -77,14 +78,18 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<ArcDiagramPoint>;
 
     public options!: ArcDiagramSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<ArcDiagramPoint>>;
 
+    /** @internal */
     public nodes!: Array<ArcDiagramPoint>;
 
+    /** @internal */
     public points!: Array<ArcDiagramPoint>;
 
     /* *
@@ -481,6 +486,7 @@ class ArcDiagramSeries extends SankeySeries {
     }
     // Networkgraph has two separate collections of nodes and lines, render
     // dataLabels for both sets:
+    /** @internal */
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
             const textPath = this.options.dataLabels.textPath;
@@ -500,6 +506,7 @@ class ArcDiagramSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public pointAttribs(
         point?: ArcDiagramPoint,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -513,6 +520,7 @@ class ArcDiagramSeries extends SankeySeries {
         return super.pointAttribs.apply(this, arguments);
     }
 
+    /** @internal */
     public markerAttribs(
         point: ArcDiagramPoint
     ): SVGAttributes {

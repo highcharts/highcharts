@@ -71,6 +71,7 @@ class AroonOscillatorIndicator extends AroonIndicator {
      * @requires     stock/indicators/aroon
      * @requires     stock/indicators/aroon-oscillator
      * @optionparent plotOptions.aroonoscillator
+     * @internal
      */
     public static defaultOptions: AroonOscillatorOptions = merge(AroonIndicator.defaultOptions, {
         tooltip: {
@@ -84,8 +85,10 @@ class AroonOscillatorIndicator extends AroonIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<AroonOscillatorPoint>;
     public options!: AroonOscillatorOptions;
+    /** @internal */
     public points!: Array<AroonOscillatorPoint>;
 
     /* *
@@ -94,6 +97,7 @@ class AroonOscillatorIndicator extends AroonIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonOscillatorParamsOptions

@@ -50,6 +50,7 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: AreaSplineRangeSeriesOptions = merge(
         AreaRangeSeries.defaultOptions
     );
@@ -61,7 +62,9 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      * */
 
     public options!: AreaSplineRangeSeriesOptions;
+    /** @internal */
     public data!: Array<AreaSplineRangePoint>;
+    /** @internal */
     public points!: Array<AreaSplineRangePoint>;
 
 }

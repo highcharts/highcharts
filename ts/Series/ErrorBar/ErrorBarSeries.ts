@@ -55,6 +55,7 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ErrorBarSeriesOptions = merge(
         BoxPlotSeries.defaultOptions,
         ErrorBarSeriesDefaults,
@@ -67,8 +68,10 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<ErrorBarPoint>;
     public options!: ErrorBarSeriesOptions;
+    /** @internal */
     public points!: Array<ErrorBarPoint>;
 
     /* *
@@ -77,6 +80,7 @@ class ErrorBarSeries extends BoxPlotSeries {
      *
      * */
 
+    /** @internal */
     public getColumnMetrics(): ColumnMetricsObject {
         const series = this;
 
@@ -88,6 +92,7 @@ class ErrorBarSeries extends BoxPlotSeries {
         );
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         // Error bars draw upper/lower labels via the area range option adapter.
         if (AreaRangeSeries) {
@@ -95,6 +100,7 @@ class ErrorBarSeries extends BoxPlotSeries {
         }
     }
 
+    /** @internal */
     public toYData(point: ErrorBarPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.low, point.high];

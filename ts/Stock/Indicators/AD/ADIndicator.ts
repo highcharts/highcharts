@@ -65,6 +65,7 @@ class ADIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/accumulation-distribution
      * @optionparent plotOptions.ad
+     * @internal
      */
     public static defaultOptions: ADOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -115,8 +116,10 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public data!: Array<ADPoint>;
     public options!: ADOptions;
+    /** @internal */
     public points!: Array<ADPoint>;
 
     /* *
@@ -125,6 +128,7 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ADParamsOptions

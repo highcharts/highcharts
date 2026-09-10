@@ -50,6 +50,7 @@ class ColumnPyramidSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ColumnPyramidSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         ColumnPyramidSeriesDefaults
@@ -61,10 +62,12 @@ class ColumnPyramidSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<ColumnPyramidPoint>;
 
     public options!: ColumnPyramidSeriesOptions;
 
+    /** @internal */
     public points!: Array<ColumnPyramidPoint>;
 
     /* *

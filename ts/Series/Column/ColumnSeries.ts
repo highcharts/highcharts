@@ -89,6 +89,7 @@ class ColumnSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         Series.defaultOptions,
         ColumnSeriesDefaults
@@ -100,28 +101,39 @@ class ColumnSeries extends Series {
      *
      * */
 
+    /** @internal */
     public borderWidth!: number;
 
+    /** @internal */
     public columnIndex?: number;
 
+    /** @internal */
     public columnMetrics?: ColumnMetricsObject;
 
+    /** @internal */
     public cropShould?: number;
 
+    /** @internal */
     public dashStyle?: DashStyleValue;
 
+    /** @internal */
     public data!: Array<ColumnPoint>;
 
+    /** @internal */
     public dense?: boolean;
 
+    /** @internal */
     public group!: SVGElement;
 
     public options!: ColumnSeriesOptions;
 
+    /** @internal */
     public points!: Array<ColumnPoint>;
 
+    /** @internal */
     public pointXOffset?: number;
 
+    /** @internal */
     public translatedThreshold?: number;
 
     /* *

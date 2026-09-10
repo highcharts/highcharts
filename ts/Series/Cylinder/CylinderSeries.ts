@@ -57,8 +57,10 @@ class CylinderSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = CylinderComposition.compose;
 
+    /** @internal */
     public static defaultOptions: CylinderSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         CylinderSeriesDefaults
@@ -70,10 +72,12 @@ class CylinderSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public data!: Array<CylinderPoint>;
 
     public options!: CylinderSeriesOptions;
 
+    /** @internal */
     public points!: Array<CylinderPoint>;
 
 }
