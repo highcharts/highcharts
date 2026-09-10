@@ -229,6 +229,22 @@ namespace ColorAxisBase {
                     if (point) {
                         point.dataClass = i;
                         point.colorIndex = dataClass.colorIndex;
+
+                        // Apply the data class state to points created
+                        // after it was toggled off in the legend (#25083)
+                        const hidden = (
+                                axis.legendItem?.labels?.[i] as
+                                    { visible?: boolean }|undefined
+                            )?.visible === false,
+                            // Only take back points this axis hid itself
+                            visible = !hidden && (
+                                point.visible || point.hiddenInDataClass
+                            );
+
+                        point.hiddenInDataClass = hidden;
+                        if (point.visible !== visible) {
+                            point.setVisible(visible);
+                        }
                     }
                     break;
                 }
