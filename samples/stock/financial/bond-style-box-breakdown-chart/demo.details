@@ -1,0 +1,7 @@
+---
+name: Bond Style Box Breakdown Chart
+description: Visualizes a fund’s Morningstar™ Style Box as a bond heatmap by credit quality and term.
+tags:
+  - Morningstar
+js_wrap: b
+...

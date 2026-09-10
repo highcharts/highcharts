@@ -1,0 +1,7 @@
+---
+name: Returns Chart
+description: Shows yearly NAV returns for a fund and benchmark as a column chart.
+tags:
+  - Morningstar
+js_wrap: b
+...

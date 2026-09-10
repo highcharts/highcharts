@@ -1,0 +1,7 @@
+---
+name: DWS Sector Breakdown Spider
+description: Displays equity sector breakdown for a DWS fund as a polar spider chart.
+tags:
+  - Morningstar
+js_wrap: b
+...
