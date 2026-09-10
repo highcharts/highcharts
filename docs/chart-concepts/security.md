@@ -11,6 +11,8 @@ Highcharts.AST.allowedTags.push('blink');
 Highcharts.AST.allowedAttributes.push('data-value');
 // Allow links to the `tel` protocol
 Highcharts.AST.allowedReferences.push('tel:');
+// Allow CSS to load images from a trusted host
+Highcharts.AST.allowedCSSReferences.push('https://cdn.example.com/');
 ```
 
 You may also opt to bypass the filtering completely through the
@@ -66,6 +68,20 @@ chart.setTitle({
     text: "<a href='javascript:console.log(document.domain)'>Click me</a>"
 });
 ```
+
+### Network requests from CSS
+Styles are filtered as well, since CSS can load resources over the network. A `url()` or `image-set()` reference in a style that comes from the chart configuration is only applied if it starts with one of the [allowedCSSReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedCSSReferences). By default these are `#` for same-document references, which gradients, pattern fills and filters rely on, and `data:` for inline data. An `@import` is dropped whatever its reference, as we never see the content of the imported style sheet.
+
+Without this filtering, a chart that renders untrusted text would let an attacker pick an address that the viewer's browser calls, revealing the viewer's IP address and the moment the chart was opened. Only CSS from the chart configuration is filtered - the style sheets of your own page, including the CSS of [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css), are untouched.
+
+If your config comes from a trusted source, you may allow the references you rely on. References are matched by their start, so mind the trailing slash:
+```js
+Highcharts.AST.allowedCSSReferences.push('https://cdn.example.com/');
+// Allow imported style sheets, whose content we cannot filter
+Highcharts.AST.allowedCSSReferences.push('@import');
+```
+
+Loading images from external hosts is still supported. An `<img src="https://...">` in a label passes the [allowedReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedReferences) list, as do options like `chart.plotBackgroundImage` and image markers. The filtering above applies to CSS.
 
 ### Backwards compatibility
 In Highcharts prior to version 9, inputs were not filtered for XSS vectors. Some sporadic issues were handled, but all in all it should be considered giving direct access to the DOM. For example, when `useHTML` was true, any text strings or formats were passed directly to the DOM using `innerHTML`. Highcharts prior to version 9 assumed that the chart configuration was already checked for malicious code, as should any scripting content with user-defined input.

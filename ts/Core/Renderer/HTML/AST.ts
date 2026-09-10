@@ -62,6 +62,104 @@ const emptyHTML = trustedTypesPolicy ?
     trustedTypesPolicy.createHTML('') as unknown as string :
     '';
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Decode the CSS escape sequences of a value, as `u\72 l(` and `url(` are
+ * equivalent to the browser.
+ *
+ * @internal
+ * @param {string} cssText
+ * The CSS value or CSS text to decode.
+ * @return {string}
+ * The decoded CSS.
+ */
+function decodeCSS(cssText: string): string {
+    return cssText.replace(
+        /\\([\da-f]{1,6})[\t\n\f\r ]?|\\(.)/gi,
+        (match, hex: string, char: string): string => {
+            if (hex) {
+                return String.fromCharCode(parseInt(hex, 16));
+            }
+            return char;
+        }
+    );
+}
+
+/**
+ * Check the references of a CSS value or CSS text against
+ * [allowedCSSReferences](Highcharts.AST#.allowedCSSReferences). Only `url()`,
+ * `image-set()` and `@import` can make the browser load an external resource,
+ * of which `@import` requires an opt-in.
+ *
+ * @internal
+ * @param {string} cssText
+ * The CSS value or CSS text to check.
+ * @return {boolean}
+ * Whether all references in the CSS are allowed.
+ */
+function isAllowedCSS(cssText: string): boolean {
+    // Decoding is only needed when the CSS holds an escape sequence
+    const css = cssText.indexOf('\\') === -1 ?
+        cssText :
+        decodeCSS(cssText);
+
+    // The common case, a style with no references at all
+    if (!/url\(|image-set\(|@import/i.test(css)) {
+        return true;
+    }
+
+    // An `@import` loads a full style sheet, whose content is out of reach of
+    // this filtering, so it is filtered out unless explicitly allowed
+    if (
+        /@import/i.test(css) &&
+        AST.allowedCSSReferences.indexOf('@import') === -1
+    ) {
+        return false;
+    }
+
+    // Flagged from the replace callbacks below, as they cannot break early
+    let allowed = true;
+
+    const check = (reference: string): string => {
+        const ref = reference
+            .trim()
+            .replace(/^["']|["']$/g, '')
+            .trim()
+            .toLowerCase();
+
+        if (!AST.allowedCSSReferences.some((allowedRef): boolean =>
+            ref.indexOf(allowedRef.toLowerCase()) === 0
+        )) {
+            allowed = false;
+        }
+        return '';
+    };
+
+    // The `url()` function, with or without quotes. Applied to the full text,
+    // so that nested references like `image-set(url(...) 1x)` are included.
+    css.replace(/url\(([^)]*)/gi, (match, ref: string): string => check(ref));
+
+    // The string form of an allowed `@import`. The `url()` form is covered
+    // above.
+    css.replace(
+        /@import\s*(["'][^"']*["'])/gi,
+        (match, ref: string): string => check(ref)
+    );
+
+    // Inside `image-set()`, bare strings are references too
+    css.replace(
+        /image-set\(([^)]*)/gi,
+        (match, content: string): string =>
+            content.replace(/["'][^"']*["']/g, check)
+    );
+
+    return allowed;
+}
 
 /* *
  *
@@ -185,6 +283,34 @@ class AST {
         'y1',
         'y2',
         'zIndex'
+    ];
+
+    /**
+     * The list of allowed references for CSS values that load external
+     * resources, like `url()` and `image-set()`. Style declarations will only
+     * be applied if their references start with one of these strings, which
+     * by default are the ones that load nothing over the network.
+     *
+     * An `@import` is removed regardless of its reference, as the content of
+     * the imported style sheet cannot be checked. Adding `'@import'` to the
+     * list allows it.
+     *
+     * @see [Source code with default values](
+     * https://github.com/highcharts/highcharts/blob/master/ts/Core/Renderer/HTML/AST.ts#:~:text=public%20static%20allowedCSSReferences)
+     *
+     * @see [Security](https://www.highcharts.com/docs/chart-concepts/security)
+     *
+     * @example
+     * // Allow background images from a trusted host
+     * Highcharts.AST.allowedCSSReferences.push('https://cdn.example.com/');
+     *
+     * @name    Highcharts.AST.allowedCSSReferences
+     * @type    {Array<string>}
+     * @since   next
+     */
+    public static allowedCSSReferences = [
+        '#',
+        'data:'
     ];
 
     /**
@@ -379,6 +505,28 @@ class AST {
     }
 
     /**
+     * Filter an object of CSS declarations against the allow list, so that
+     * styles from the chart configuration load no external resources.
+     *
+     * @internal
+     * @param {Highcharts.CSSObject} styles
+     * The styles to filter.
+     * @return {Highcharts.CSSObject}
+     * The filtered styles.
+     */
+    public static filterUserStyles(styles: CSSObject): CSSObject {
+        objectEach(styles, (val, key): void => {
+            if (isString(val) && !isAllowedCSS(val)) {
+                error(33, false, void 0, {
+                    'Invalid style in config': `${key}`
+                });
+                delete (styles as any)[key];
+            }
+        });
+        return styles;
+    }
+
+    /**
      * Utility function to parse a style string to a CSSObject.
      *
      * @internal
@@ -534,16 +682,45 @@ class AST {
                         );
 
                         if (item.style) {
-                            css(element as any, item.style);
+                            css(
+                                element as any,
+                                bypassHTMLFiltering ?
+                                    item.style :
+                                    AST.filterUserStyles(item.style)
+                            );
                         }
 
-                        // Add text content
-                        if (textNode) {
-                            element.appendChild(textNode);
+                        // A style element may load external resources
+                        // through its CSS text, so it is filtered like style
+                        // declarations. The text is its own when the node
+                        // comes from the options, and that of child text
+                        // nodes when it comes from markup.
+                        const cssText = tagName === 'style' ?
+                            (item.textContent || '') +
+                                (item.children || []).map(
+                                    (child): string => child.textContent || ''
+                                ).join('') :
+                            '';
+
+                        if (
+                            cssText &&
+                            !bypassHTMLFiltering &&
+                            !isAllowedCSS(cssText)
+                        ) {
+                            error(33, false, void 0, {
+                                'Invalid CSS in config': `${tagName}`
+                            });
+
+                        } else {
+                            // Add text content
+                            if (textNode) {
+                                element.appendChild(textNode);
+                            }
+
+                            // Recurse
+                            recurse(item.children || [], element);
                         }
 
-                        // Recurse
-                        recurse(item.children || [], element);
                         node = element;
 
                     } else {

@@ -20,7 +20,7 @@ Highcharts.chart('container', {
             headerFormat: '',
             pointFormat:
                 '{point.y} <a href="{point.custom.url}" ' +
-                'target="_blank" rel="noopener">Link</a>'
+                'target="_blank">Link</a>'
         },
         data: [{
             y: 1,

@@ -182,7 +182,8 @@ Highcharts.chart('container', {
     },
     subtitle: {
         text:
-      'Source <href="https://blog.calm.com/blog/the-feelings-wheel">Calm</a>'
+      'Source: <a href="https://blog.calm.com/blog/the-feelings-wheel">' +
+      'Calm</a>'
     },
     accessibility: {
         typeDescription:
