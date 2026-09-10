@@ -202,14 +202,16 @@ namespace Globals {
             // Checks whether the browser supports passive events, (#11353).
             let supportsPassive = false;
 
-            // Object.defineProperty doesn't work on IE as well as passive
-            // events - instead of using polyfill, we can exclude IE totally.
+            // Accessors don't work on IE as well as passive events - instead
+            // of using polyfill, we can exclude IE totally. The getter has to
+            // be enumerable, or wrappers that shallow-copy the options never
+            // read it (#25092).
             if (!isMS) {
-                const opts = Object.defineProperty({}, 'passive', {
-                    get: function (): void {
-                        supportsPassive = true;
+                const opts: AddEventListenerOptions = {
+                    get passive(): boolean {
+                        return (supportsPassive = true);
                     }
-                });
+                };
 
                 if (win.addEventListener && win.removeEventListener) {
                     win.addEventListener('testPassive', noop, opts);
