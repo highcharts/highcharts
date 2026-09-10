@@ -36,8 +36,6 @@ import type {
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * scatter3d](#plotOptions.scatter3d).
- *
  * @sample {highcharts} highcharts/3d/scatter/
  *         Simple 3D scatter
  *
@@ -48,7 +46,8 @@ import type {
  *
  * @extends series,plotOptions.scatter3d
  *
- * @excluding dragDrop, cluster, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending, cluster, dragDrop,
+ *            legendSymbolColor
  *
  * @excluding boostThreshold, boostBlending
  *
@@ -57,7 +56,6 @@ import type {
  * @requires highcharts-3d
  */
 export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
-    // Nothing here yet
 
     /**
      * An array of data points for the series. For the `scatter3d` series
@@ -114,8 +112,6 @@ export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<Array<number>|*>}
-     *
      * @extends series.scatter.data
      *
      * @product highcharts
@@ -123,6 +119,18 @@ export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
     data?: Array<Array<number>|Scatter3DPointOptions>;
 
     tooltip?: Scatter3DSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    cluster?: undefined;
+    dragDrop?: undefined;
+    legendSymbolColor?: undefined;
 }
 
 export interface Scatter3DSeriesTooltipOptions

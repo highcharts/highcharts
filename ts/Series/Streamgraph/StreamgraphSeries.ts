@@ -33,7 +33,7 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 /**
  * Streamgraph series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.streamgraph
  *
@@ -101,6 +101,7 @@ addEvent(StreamgraphSeries, 'afterGetExtremes', (e): void => {
  *
  * */
 
+/** @internal */
 interface StreamgraphSeries {
     negStacks: boolean;
     pointClass: typeof StreamgraphPoint;
@@ -116,6 +117,7 @@ extend(StreamgraphSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         streamgraph: typeof StreamgraphSeries;
@@ -130,4 +132,5 @@ SeriesRegistry.registerSeriesType('streamgraph', StreamgraphSeries);
  *
  * */
 
+/** @internal */
 export default StreamgraphSeries;

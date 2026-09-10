@@ -32,6 +32,7 @@ import TreemapNode from '../Treemap/TreemapNode.js';
  *
  * */
 
+/** @internal */
 class SunburstNode extends TreemapNode {
 
     /* *
@@ -54,6 +55,7 @@ class SunburstNode extends TreemapNode {
  *
  * */
 
+/** @internal */
 interface SunburstNode {
     series: SunburstSeries;
     children: Array<SunburstNode>;
@@ -65,6 +67,7 @@ interface SunburstNode {
  *
  * */
 
+/** @internal */
 namespace SunburstNode {
 
     /* *
@@ -95,4 +98,5 @@ namespace SunburstNode {
  *
  * */
 
+/** @internal */
 export default SunburstNode;
