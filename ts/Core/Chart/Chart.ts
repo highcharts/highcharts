@@ -1661,7 +1661,10 @@ class Chart {
             )
                 .attr({
                     align: options.align,
-                    'class': 'highcharts-' + key,
+                    'class': [
+                        options.className,
+                        'highcharts-' + key
+                    ].filter(isString).join(' '),
                     zIndex: options.zIndex || 4
                 })
                 .css({
@@ -4737,7 +4740,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
     /** @internal */
@@ -5071,7 +5074,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
     /**
@@ -5250,7 +5253,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
 }
