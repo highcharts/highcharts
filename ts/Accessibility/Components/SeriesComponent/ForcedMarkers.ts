@@ -126,14 +126,14 @@ namespace ForcedMarkersComposition {
         const lowMarker = (series.options as any).lowMarker;
 
         if (
-            lowMarker?.enabled === true &&
+            lowMarker && lowMarker?.enabled !== false &&
             typeof lowMarker.states?.normal?.opacity !== 'number'
         ) {
             merge(true, lowMarker, {
                 states: {
                     normal: {
                         opacity: series.resetA11yMarkerOptions?.states
-                            ?.normal?.opacity ?? 1
+                            ?.normal?.opacity
                     }
                 }
             });
