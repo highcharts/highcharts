@@ -419,3 +419,36 @@ QUnit.test('Axis title offset (#3027)', function (assert) {
         }
     );
 });
+
+QUnit.test(
+    'Y-axis labels not truncated with title.offset 0 on stacked axis (#6967)',
+    function (assert) {
+        // Outer axis reserves label space even when title.offset is 0.
+        const chart = Highcharts.chart('container', {
+            yAxis: [
+                {},
+                {
+                    title: {
+                        offset: 0
+                    }
+                }
+            ],
+            series: [
+                {
+                    data: [0.0001, 0.0002, 0.0003],
+                    yAxis: 0
+                },
+                {
+                    data: [0.0001, 0.0002, 0.0003],
+                    yAxis: 1
+                }
+            ]
+        });
+
+        assert.ok(
+            chart.yAxis[1].labelGroup.getBBox().x >= 0,
+            'Outer y-axis labels should stay inside the container when the ' +
+            'title offset is set to 0 (#6967).'
+        );
+    }
+);
