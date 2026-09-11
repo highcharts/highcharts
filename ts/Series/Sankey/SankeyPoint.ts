@@ -85,16 +85,12 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public weight?: number;
 
     /**
-     * Depth of this link's wrap lane, measured from the plot edge the lane
-     * runs along. Assigned to backward links only.
+     * Depth of a backward link's lane from the plot edge it runs along.
      * @internal
      */
     public wrapLane?: number;
 
-    /**
-     * Whether this link's wrap lane runs along the top of the plot area.
-     * @internal
-     */
+    /** @internal */
     public wrapUp?: boolean;
 
     /* *

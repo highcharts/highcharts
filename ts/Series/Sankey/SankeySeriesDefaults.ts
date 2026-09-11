@@ -69,8 +69,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
      * wheel render more curved. A `curveFactor` of 0 makes the lines
-     * straight. In circular layouts it also scales the bend radius of the
-     * back-edge and self-link loops.
+     * straight. In circular layouts it also scales the turn radius of the
+     * back-edge loops. A self-link turns on the node width instead, so its
+     * loop keeps a hole to place the label in.
      *
      * @private
      */

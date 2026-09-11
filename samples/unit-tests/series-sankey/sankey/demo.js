@@ -704,13 +704,20 @@ QUnit.test('Sankey and circular data', function (assert) {
     );
 
     series.setData([['a', 'a', 5], ['a', 'b', 5], ['b', 'a', 5]]);
-    const aLinks = series.nodes
-        .find(node => node.id === 'a').linksFrom
-        .map(link => link.toNode.id + (link.isCircular ? '*' : ''));
+    const aNode = series.nodes.find(node => node.id === 'a'),
+        linkIds = links => links.map(
+            link => link.toNode.id + (link.isCircular ? '*' : '')
+        );
+
     assert.deepEqual(
-        aLinks,
-        ['b', 'a*'],
-        'Regular links should sort above circular ones in a node band (#8218)'
+        linkIds(aNode.linksFrom),
+        ['a*', 'b'],
+        'A self-link should sort first in a node band (#8218)'
+    );
+    assert.strictEqual(
+        aNode.linksTo[0].fromNode.id,
+        'a',
+        'A self-link should sort first on both sides of its node (#8218)'
     );
 
     series.update({
