@@ -4,7 +4,9 @@ sidebar_label: "Next.js"
 
 # Highcharts Grid with Next.js
 The official React packages work with Next.js but require client-side rendering
-since Grid uses browser APIs. This guide shows how to set it up.
+since Grid uses browser APIs. This guide covers that setup. Configure the grid
+with `options` or with components, the same as in
+[Getting started](https://www.highcharts.com/docs/grid/frameworks/react/getting-started).
 
 ## 1. Install the Grid React package
 ```bash
@@ -25,7 +27,8 @@ automatically.
 
 ## 2. Use dynamic import with SSR disabled
 The Grid component must be loaded dynamically with `ssr: false` to avoid
-"window is not defined" errors during server-side rendering.
+"window is not defined" errors during server-side rendering. A type-only
+`GridOptions` import is safe in this file; `Grid` is loaded on the client:
 
 ```tsx
 'use client';
@@ -51,6 +54,21 @@ export default function Page() {
     });
 
     return <Grid options={options} />;
+}
+```
+
+`Data`, `Column`, and the other components are value imports, so they cannot
+sit in a Server Component. Put that grid in a client module and load the
+module with `ssr: false`. The markup inside the client file is the same as in
+[Getting started](https://www.highcharts.com/docs/grid/frameworks/react/getting-started).
+
+```tsx
+import dynamic from 'next/dynamic';
+
+const TeamGrid = dynamic(() => import('./team-grid'), { ssr: false });
+
+export default function Page() {
+    return <TeamGrid />;
 }
 ```
 
@@ -108,9 +126,13 @@ export default function Page() {
 }
 ```
 
+The same `gridRef` and `callback` props work when the grid is configured with
+components. See
+[Grid](https://www.highcharts.com/docs/grid/frameworks/react/grid#grid-instance).
+
 ## 4. Updating the Grid
-When the options object changes, the Grid component automatically updates. Use
-state to manage your options:
+When `options` change, the Grid component updates. Store that object in
+`useState` so the grid updates only when you change the state:
 
 ```tsx
 'use client';
@@ -154,6 +176,9 @@ export default function Page() {
 }
 ```
 
+With components, keep the row data in state and pass it to `Data`. See
+[Data](https://www.highcharts.com/docs/grid/frameworks/react/data).
+
 See the [live Grid Lite example](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo-nextjs).
 See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo-nextjs).
 
@@ -162,4 +187,7 @@ See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-
 - **`'use client'` directive** - Required on any component that uses Grid
 - **Dynamic import** - Always use `next/dynamic` with `{ ssr: false }`
 - **CSS auto-loaded** - The React package imports the Grid CSS automatically
-- **State for options** - Always store options in `useState` to ensure the Grid only updates when you explicitly change the state
+- **State** - Store `options` in `useState`. For components, keep changing
+  data in state too. See
+  [Grid](https://www.highcharts.com/docs/grid/frameworks/react/grid) and
+  [Data](https://www.highcharts.com/docs/grid/frameworks/react/data).
