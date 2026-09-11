@@ -567,7 +567,8 @@ class Tooltip {
                 // tooltip disappears, #19035.
                 css(container, {
                     position: 'absolute',
-                    top: '1px',
+                    top: 0,
+                    left: 0,
                     pointerEvents: 'none',
                     zIndex: Math.max(
                         options.style.zIndex || 0,
@@ -671,9 +672,9 @@ class Tooltip {
      *
      * @internal
      */
-    public getPlayingField(): SizeObject {
+    public getPlayingField(distance = this.distance): SizeObject {
         const { body, documentElement } = doc,
-            { chart, distance, outside } = this;
+            { chart, outside } = this;
         return {
             width: outside ?
                 // Subtract distance to prevent scrollbars
@@ -1318,13 +1319,9 @@ class Tooltip {
         const {
             chart,
             chart: {
-                chartWidth,
-                chartHeight,
                 plotHeight,
                 plotLeft,
                 plotTop,
-                scrollablePixelsY = 0,
-                scrollablePixelsX,
                 styledMode
             },
             distance,
@@ -1334,37 +1331,46 @@ class Tooltip {
                 position,
                 positioner
             },
+            outside,
             pointer
         } = tooltip;
-        const {
-            scrollLeft = 0,
-            scrollTop = 0
-        } = chart.scrollablePlotArea?.scrollingContainer || {};
 
+        // The area which the tooltip should be limited to. Limit to the chart
+        // container or the document, depending on the `outside` option.
+        const field = this.getPlayingField(0),
+            bounds = {
+                right: field.width,
+                top: 0,
+                bottom: field.height
+            },
+            tooltipLabel = tooltip.getLabel(),
+            ren = this.renderer || chart.renderer,
+            headerTop = chart.xAxis[0]?.opposite,
+            chartPosition = pointer.getChartPosition(),
+            chartTop = outside ? chartPosition.top : 0,
+            chartLeft = outside ? chartPosition.left : 0,
+            hasFixedPosition = positioner || fixed;
 
-        // The area which the tooltip should be limited to. Limit to scrollable
-        // plot area if enabled, otherwise limit to the chart container. If
-        // outside is true it should be the whole viewport
-        const bounds = (
-            tooltip.outside &&
-            typeof scrollablePixelsX !== 'number'
-        ) ?
-            doc.documentElement.getBoundingClientRect() : {
-                left: scrollLeft,
-                right: scrollLeft + chartWidth,
-                top: scrollTop,
-                bottom: scrollTop + chartHeight
-            };
+        if (headerTop) {
+            bounds.top = chartTop + plotTop;
+        } else {
+            bounds.bottom = chartTop + plotTop + plotHeight;
+        }
 
-        const tooltipLabel = tooltip.getLabel();
-        const ren = this.renderer || chart.renderer;
-        const headerTop = Boolean(chart.xAxis[0]?.opposite);
-        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
-        const hasFixedPosition = positioner || fixed;
-
-        let distributionBoxTop = plotTop + scrollTop;
-        let headerHeight = 0;
-        let adjustedPlotHeight = plotHeight - scrollablePixelsY;
+        // Visualize field for debugging
+        // if (!window.field) {
+        //     window.field = document.createElement('div');
+        //     window.field.style.position = 'absolute';
+        //     window.field.style.backgroundColor = 'rgba(0, 0, 255, 0.2)';
+        //     window.field.style.pointerEvents = 'none';
+        //     document.body.appendChild(window.field);
+        // }
+        // window.field.style.left = (outside ? 0 : chartPosition.left) + 'px';
+        // window.field.style.top = (
+        //  bounds.top + (outside ? 0 : chartPosition.top)
+        // ) + 'px';
+        // window.field.style.width = bounds.right + 'px';
+        // window.field.style.height = (bounds.bottom - bounds.top) + 'px';
 
         /**
          * Calculates the anchor position for the partial tooltip
@@ -1378,17 +1384,18 @@ class Tooltip {
         ): ({ anchorX: number; anchorY: (number|undefined) }) {
             const { isHeader, plotX = 0, plotY = 0, series } = point;
 
-            let anchorX;
-            let anchorY;
+            let anchorX,
+                anchorY;
             if (isHeader) {
                 // Set anchorX to plotX
-                anchorX = Math.max(plotLeft + plotX, plotLeft);
-                // Set anchorY to center of visible plot area.
-                anchorY = plotTop + plotHeight / 2;
+                anchorX = chartLeft + Math.max(plotLeft + plotX, plotLeft);
+                // Set anchorY to center of visible plot area so that chevron
+                // points inward
+                anchorY = chartTop + plotTop + plotHeight / 2;
             } else {
                 const { xAxis, yAxis } = series;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos + clamp(
+                anchorX = chartLeft + xAxis.pos + clamp(
                     plotX,
                     -distance,
                     xAxis.len + distance
@@ -1398,14 +1405,14 @@ class Tooltip {
                 if (series.shouldShowTooltip(0, yAxis.pos - plotTop + plotY, {
                     ignoreX: true
                 })) {
-                    anchorY = yAxis.pos + plotY;
+                    anchorY = chartTop + yAxis.pos + plotY;
                 }
             }
 
             // Limit values to plot area
             anchorX = clamp(
                 anchorX,
-                bounds.left - distance,
+                -distance,
                 bounds.right + distance
             );
 
@@ -1428,11 +1435,11 @@ class Tooltip {
                 y;
 
             if (point.isHeader) {
-                y = headerTop ? 0 : adjustedPlotHeight;
+                y = headerTop ? -boxHeight : bounds.bottom;
                 x = clamp(
                     anchor[0] - (boxWidth / 2),
-                    bounds.left,
-                    bounds.right - boxWidth - (tooltip.outside ? chartLeft : 0)
+                    0,
+                    bounds.right - boxWidth
                 );
             } else if (fixed && point) {
                 const pos = tooltip.getFixedPosition(
@@ -1441,15 +1448,15 @@ class Tooltip {
                     point
                 );
                 x = pos.x;
-                y = pos.y - distributionBoxTop;
+                y = pos.y - bounds.top;
 
             } else {
-                y = anchor[1] - distributionBoxTop;
+                y = anchor[1] - bounds.top;
                 x = alignedLeft ?
                     anchor[0] - boxWidth - distance :
                     anchor[0] + distance;
                 x = clamp(
-                    x, alignedLeft ? x : bounds.left, bounds.right
+                    x, alignedLeft ? x : 0, bounds.right
                 );
             }
 
@@ -1546,37 +1553,30 @@ class Tooltip {
         ): Array<BoxObject> {
             if (str !== false && str !== '') {
                 const point: (Point|Tooltip.PositionerPointObject) = (
-                    points[i - 1] ||
-                    {
-                        // Item 0 is the header. Instead of this, we could also
-                        // use the crosshair label
-                        isHeader: true,
-                        plotX: points[0].plotX,
-                        plotY: plotHeight,
-                        series: {}
-                    }
-                );
-                const isHeader: boolean = (point as any).isHeader;
+                        points[i - 1] ||
+                        {
+                            // Item 0 is the header. Instead of this, we could
+                            // also use the crosshair label
+                            isHeader: true,
+                            plotX: points[0].plotX,
+                            plotY: plotHeight,
+                            series: {}
+                        }
+                    ),
+                    isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip label reference on the series
-                const owner = isHeader ? tooltip : point.series;
-                const tt = owner.tt = updatePartialTooltip(
-                    owner.tt, point, str.toString()
-                );
+                const owner = isHeader ? tooltip : point.series,
+                    tt = owner.tt = updatePartialTooltip(
+                        owner.tt, point, str.toString()
+                    );
 
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
-                const bBox = tt.getBBox();
-                const boxWidth = bBox.width + tt.strokeWidth();
-                if (isHeader) {
-                    headerHeight = bBox.height + options.header.distance;
-                    adjustedPlotHeight += headerHeight;
-                    if (headerTop) {
-                        distributionBoxTop -= headerHeight;
-                    }
-                }
+                const bBox = tt.getBBox(),
+                    boxWidth = bBox.width + tt.strokeWidth(),
+                    { anchorX, anchorY } = getAnchor(point);
 
-                const { anchorX, anchorY } = getAnchor(point);
                 if (typeof anchorY === 'number') {
                     const size = bBox.height + 1,
                         boxPosition = (positioner || defaultPositioner).call(
@@ -1610,24 +1610,11 @@ class Tooltip {
             return boxes;
         }, []);
 
-        // Realign the tooltips towards the right if there is not enough space
-        // to the left and there is space to the right
-        if (!hasFixedPosition && boxes.some((box): boolean => {
-            // Always realign if the beginning of a label is outside bounds
-            const { outside } = tooltip;
-            const boxStart = (outside ? chartLeft : 0) + box.anchorX;
-
-            if (
-                boxStart < bounds.left &&
-                boxStart + box.boxWidth < bounds.right
-            ) {
-                return true;
-            }
-
-            // Otherwise, check if there is more space available to the right
-            return boxStart < (chartLeft - bounds.left) + box.boxWidth &&
-                bounds.right - boxStart > boxStart;
-        })) {
+        // If overflow left then align all labels to the right
+        if (
+            !hasFixedPosition &&
+            boxes.some((box): boolean => box.x < 0)
+        ) {
             boxes = boxes.map((box): BoxObject => {
                 const { x, y } = defaultPositioner.call(
                     this,
@@ -1648,63 +1635,27 @@ class Tooltip {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
 
+        // Exempt the header from the distribution algorithm
+        const headerBox = boxes.shift() as BoxObject;
+        headerBox.pos = headerBox.target;
+
         // Distribute and put in place
-        distribute(boxes, adjustedPlotHeight);
-        const boxExtremes = {
-            left: chartLeft,
-            right: chartLeft
-        };
+        distribute(boxes, bounds.bottom - bounds.top);
 
-        // Get the extremes from series tooltips
-        boxes.forEach(function (box: BoxObject): void {
-            const { x, boxWidth, isHeader } = box;
-            if (!isHeader) {
-                if (tooltip.outside && chartLeft + x < boxExtremes.left) {
-                    boxExtremes.left = chartLeft + x;
-                }
-                if (
-                    tooltip.outside &&
-                    boxExtremes.left + boxWidth > boxExtremes.right
-                ) {
-                    boxExtremes.right = chartLeft + x;
-                }
-            }
-        });
-
-        boxes.forEach(function (box: BoxObject): void {
+        [headerBox, ...boxes].forEach(function (box: BoxObject): void {
             const {
                 x,
                 anchorX,
                 anchorY,
-                pos,
-                point: {
-                    isHeader
-                }
+                pos
             } = box;
             const attributes: SVGAttributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
-                /* NOTE: y should equal pos to be consistent with !split
-                 * tooltip, but is currently relative to plotTop. Is left as is
-                 * to avoid breaking change. Remove distributionBoxTop to make
-                 * it consistent.
-                 */
-                y: (pos || 0) + distributionBoxTop + (fixed && position.y || 0),
+                y: (pos || 0) + bounds.top + (fixed && position.y || 0),
                 anchorX,
                 anchorY
             };
-
-            // Handle left-aligned tooltips overflowing the chart area
-            if (tooltip.outside && x < anchorX) {
-                const offset = chartLeft - boxExtremes.left;
-                // Skip this if there is no overflow
-                if (offset > 0) {
-                    attributes.x = isHeader ?
-                        (boxExtremes.right - boxExtremes.left) / 2 :
-                        x + offset;
-                    attributes.anchorX = anchorX + offset;
-                }
-            }
 
             // Put the label in place
             box.tt.attr(attributes);
@@ -1718,7 +1669,6 @@ class Tooltip {
          */
         const {
             container,
-            outside,
             renderer
         } = tooltip;
         if (outside && container && renderer) {
@@ -1729,10 +1679,6 @@ class Tooltip {
                 height + y,
                 false
             );
-
-            // Position the tooltip container to the chart container
-            container.style.left = boxExtremes.left + 'px';
-            container.style.top = chartTop + 'px';
         }
 
         // Workaround for #18927, artefacts left by the shadows of split
