@@ -1588,7 +1588,7 @@ class Series {
 
                 // Matching point already used by an earlier row, look
                 // for the next occurrence instead of using it twice
-                // (#25083)
+                // (#25312)
                 while (!matchedById && oldData[pointIndex]?.touched) {
                     pointIndex = haystack.indexOf(
                         needle as any,

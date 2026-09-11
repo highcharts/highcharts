@@ -296,7 +296,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         [true, true, true, true],
         'Array with X, duplicated X, requireSorting is false - all points ' +
         'should be updated from existing, matching subsequent occurrences ' +
-        '(#8995, #25083)'
+        '(#8995, #25312)'
     );
 
     // A point already claimed by an earlier row must not be matched again,
@@ -327,7 +327,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             .sort(),
         ['0:10', '0:20', '1:30', '1:40'],
         'Array with duplicated X - every row should keep its own point, ' +
-        'none dropped or duplicated (#25083)'
+        'none dropped or duplicated (#25312)'
     );
 
     // A point already claimed by an earlier row, unsorted x-values pattern
@@ -357,7 +357,7 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
             .sort(),
         ['0:2', '0:8', '1:4', '1:6'],
         'Unsorted duplicate X pattern - all rows should keep their own ' +
-        'point, matching next occurrence (#25083)'
+        'point, matching next occurrence (#25312)'
     );
 
     // Identify by id
