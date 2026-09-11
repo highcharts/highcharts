@@ -641,10 +641,66 @@ QUnit.test('Sankey and circular data', function (assert) {
         'A back edge should trigger the circular layout'
     );
 
+    // A back edge wraps past its own band instead of running between the
+    // columns, so its label anchor has to sit on the wrap channel. Probing
+    // the fill keeps this independent of the actual coordinates.
+    const backEdge = series.points[1];
+    assert.ok(
+        backEdge.graphic.element.isPointInFill(new DOMPoint(
+            backEdge.dlBox.x,
+            backEdge.dlBox.y + backEdge.dlBox.height / 2
+        )),
+        'A back edge should anchor its label on the band it draws (#8218)'
+    );
+
     series.update({ name: 'updated' });
     assert.ok(
         series.isDataCircular,
         'Circular layout should persist after a series update (#8218)'
+    );
+
+    // Each back edge gets its own wrap lane. Without one, a thin back edge
+    // was drawn inside a thicker one, and their labels landed on top of each
+    // other. Probing the fill keeps this free of coordinates.
+    series.setData([
+        ['a', 'b', 20], ['b', 'c', 15], ['b', 'a', 5],
+        ['c', 'd', 5], ['c', 'b', 5], ['d', 'a', 1], ['d', 'b', 1]
+    ]);
+    const backEdges = series.points.filter(
+        point => point.isCircular && point.fromNode !== point.toNode
+    );
+    assert.strictEqual(
+        backEdges.length, 4, 'This topology should need four back edges'
+    );
+    // dlBox spans the lane the band runs along, so overlapping boxes mean
+    // overlapping lanes.
+    const lanes = backEdges.map(point => [
+            Math.min(point.dlBox.y, point.dlBox.y + point.dlBox.height),
+            Math.max(point.dlBox.y, point.dlBox.y + point.dlBox.height)
+        ].map(value => Math.round(value))),
+        sharedLanes = [];
+
+    lanes.forEach((lane, i) => {
+        lanes.slice(i + 1).forEach(other => {
+            if (Math.min(lane[1], other[1]) - Math.max(lane[0], other[0]) > 0) {
+                sharedLanes.push([lane, other]);
+            }
+        });
+    });
+    assert.deepEqual(
+        sharedLanes,
+        [],
+        'Back edges should not share a wrap lane (#8218)'
+    );
+
+    // b -> a routes along the top lane, so it has to leave node b above the
+    // forward link, or its band would cross the one it sits on.
+    assert.deepEqual(
+        series.nodes
+            .find(node => node.id === 'b').linksFrom
+            .map(link => link.toNode.id),
+        ['a', 'c'],
+        'A link bound for the top lane should attach above the flow (#8218)'
     );
 
     series.setData([['a', 'a', 5], ['a', 'b', 5], ['b', 'a', 5]]);
