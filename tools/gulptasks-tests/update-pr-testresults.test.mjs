@@ -328,8 +328,14 @@ test('reports Karma artifacts without credentials or API requests', async () => 
         const payload = JSON.parse(comment);
         assert.equal(requests.length, 0);
         assert.match(payload.body, /Production Visual Review contains Playwright results/u);
-        assert.ok(payload.body.includes(artifactsUrl));
-        assert.ok(!payload.body.includes('https://vrevs.test/pr/'));
+        const linkDestinations = Array.from(
+            payload.body.matchAll(/\[[^\]]*\]\(([^)]+)\)/gu),
+            match => match[1]
+        );
+        assert.deepEqual(
+            linkDestinations,
+            pixels ? [artifactsUrl, artifactsUrl] : [artifactsUrl]
+        );
         assert.match(payload.title, pixels ? /Differences found/u : /No difference found/u);
         if (pixels) {
             assert.match(payload.body, /Found \*\*1\*\* diffing sample/u);
