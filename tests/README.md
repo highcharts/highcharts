@@ -790,6 +790,12 @@ API-backed samples use recorded responses in `tests/visual/data`; these routes
 are limited to the visual project and retain offline execution. See the
 [fixture provenance](visual/data/README.md) before refreshing those responses.
 
+SVG capture waits for the sample's initial XHR data requests to finish. Charts
+can emit their load event before CSV data arrives, so chart existence or
+`hasLoaded` alone is insufficient. Pending requests share the chart's 10-second
+readiness timeout and are aborted during sample cleanup. No fixed settling delay
+is added to samples without requests, and empty datasets remain valid.
+
 ### Workflow
 
 Run the two commands in order for the same manifest or sample:

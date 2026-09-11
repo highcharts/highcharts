@@ -17,6 +17,7 @@ import {
     writeReference
 } from './visual-results.ts';
 import { selectVisualSamples } from './visual-samples.ts';
+import { captureVisualSVG } from './visual-capture.ts';
 
 type VisualComparator = {
     CANVAS_WIDTH: number;
@@ -81,10 +82,6 @@ function throwRuntimeError(
 }
 
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
-const MAX_CHART_LOAD_ATTEMPTS = 100;
-const CHART_LOAD_RETRY_DELAY_MS = 100;
-const CHART_LOAD_TIMEOUT_MS =
-    MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
 const root = process.cwd();
 const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
 const runtimeErrorMode = process.env.VISUAL_TEST_RUNTIME_ERROR;
@@ -358,54 +355,7 @@ test.describe('Visual tests', () => {
                     );
                 }
 
-                const candidateSVG = await page.evaluate(
-                    async ({ maxAttempts, retryDelay, timeoutMs }) => {
-                        const Highcharts = (window as any).Highcharts;
-                        const comparator =
-                            (window as VisualWindow).VisualComparator;
-
-                        if (!comparator) {
-                            throw new Error('Visual comparator is not loaded.');
-                        }
-
-                        let attempts = 0;
-                        while (attempts < maxAttempts) {
-                            const chart = Highcharts?.charts?.at(-1);
-
-                            if (chart || document.getElementsByTagName('svg').length) {
-                                const validCharts = Highcharts?.charts?.filter(
-                                    (c: any) => c &&
-                                        c.container &&
-                                        !c.renderer?.forExport
-                                ) || [];
-                                const svg = comparator.getSVG(
-                                    validCharts.at(-1)
-                                );
-
-                                if (!svg) {
-                                    throw new Error('No candidate SVG found.');
-                                }
-
-                                return svg;
-                            }
-
-                            attempts++;
-                            await new Promise(
-                                resolve => setTimeout(resolve, retryDelay)
-                            );
-                        }
-
-                        throw new Error(
-                            `Chart test failed to load within ${timeoutMs}ms ` +
-                            `(${maxAttempts} attempts at ${retryDelay}ms intervals).`
-                        );
-                    },
-                    {
-                        maxAttempts: MAX_CHART_LOAD_ATTEMPTS,
-                        retryDelay: CHART_LOAD_RETRY_DELAY_MS,
-                        timeoutMs: CHART_LOAD_TIMEOUT_MS
-                    }
-                );
+                const candidateSVG = await captureVisualSVG(page);
 
                 if (referenceMode) {
                     const runtimeError = pageError ?? await page.evaluate(() =>
