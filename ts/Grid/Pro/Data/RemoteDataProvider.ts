@@ -142,7 +142,7 @@ export class RemoteDataProvider extends DataProvider {
     /**
      * Whether the positional row id warning was already emitted.
      */
-    private warnedAboutPositionalRowIds = false;
+    private warnedPositionalIds = false;
 
     /**
      * Returns the configured chunk size for the current query.
@@ -198,12 +198,12 @@ export class RemoteDataProvider extends DataProvider {
      * @param idColumn
      * The configured `idColumn`, when the response did not contain it.
      */
-    private warnAboutPositionalRowIds(idColumn?: string): void {
-        if (this.warnedAboutPositionalRowIds) {
+    private warnPositionalIds(idColumn?: string): void {
+        if (this.warnedPositionalIds) {
             return;
         }
 
-        this.warnedAboutPositionalRowIds = true;
+        this.warnedPositionalIds = true;
 
         // eslint-disable-next-line no-console
         console.warn(
@@ -496,7 +496,7 @@ export class RemoteDataProvider extends DataProvider {
                     idColumn = result.rowIds;
                 }
                 if (!idColumn) {
-                    this.warnAboutPositionalRowIds(idColId);
+                    this.warnPositionalIds(idColId);
                     idColumn = Array.from(
                         { length: chunkRowCount },
                         (_, i): number => i + requestOffset

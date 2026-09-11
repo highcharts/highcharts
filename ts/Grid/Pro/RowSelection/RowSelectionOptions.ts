@@ -44,9 +44,9 @@ export type RowSelectionMode = 'single'|'multiple';
 export type RowSelectionTrigger = 'row'|'checkbox'|'both';
 
 /**
- * What a click without a modifier key does in the `multiple` mode.
+ * What a click on a row, without a modifier key, does in the `multiple` mode.
  */
-export type RowSelectionClickBehavior = 'toggle'|'replace';
+export type RowSelectionClickAction = 'toggle'|'replace';
 
 /**
  * The modifier key that adds a row to, or removes it from, the selection.
@@ -117,7 +117,8 @@ export interface RowSelectionOptions {
     trigger?: RowSelectionTrigger;
 
     /**
-     * What a click without a modifier key does in the `multiple` mode.
+     * What a click on a row, without a modifier key, does in the `multiple`
+     * mode.
      *
      * - `toggle`: the clicked row is added to, or removed from, the selection.
      * - `replace`: the selection is replaced by the clicked row, and rows are
@@ -128,12 +129,12 @@ export interface RowSelectionOptions {
      *
      * @default 'toggle'
      */
-    clickBehavior?: RowSelectionClickBehavior;
+    clickAction?: RowSelectionClickAction;
 
     /**
      * The modifier key that adds a row to, or removes it from, the selection.
      *
-     * `ctrlOrMeta` matches the Command key on macOS and the Control key
+     * `ctrlOrMeta` follows the platform: Command on macOS, Control
      * elsewhere. `Shift` is not available, as it selects a range.
      *
      * @default 'ctrlOrMeta'

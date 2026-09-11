@@ -87,6 +87,25 @@ function productCell(page: any, rowIndex: number) {
     );
 }
 
+/**
+ * The key `ctrlOrMeta` resolves to, and the one it ignores.
+ *
+ * Read from the page, not from `process.platform`: Playwright device
+ * descriptors override the user agent, so Desktop Chrome reports Windows
+ * even on a Mac host, while Desktop Safari reports macOS.
+ */
+async function modifierKeys(
+    page: any
+): Promise<{ accepted: 'Meta'|'Control'; ignored: 'Meta'|'Control' }> {
+    const isMac = await page.evaluate(
+        () => navigator.userAgent.indexOf('Mac') !== -1
+    );
+
+    return isMac ?
+        { accepted: 'Meta', ignored: 'Control' } :
+        { accepted: 'Control', ignored: 'Meta' };
+}
+
 test.describe('Grid Pro row selection', () => {
     test('Single mode selects one row and deselects it on a second click',
         async ({ page }) => {
@@ -125,19 +144,42 @@ test.describe('Grid Pro row selection', () => {
         ]);
     });
 
-    test('With clickBehavior replace, a plain click replaces and the ' +
+    test('With clickAction replace, a plain click replaces and the ' +
         'modifier adds', async ({ page }) => {
-        await setupGrid(page, { clickBehavior: 'replace' });
+        await setupGrid(page, { clickAction: 'replace' });
 
         await productCell(page, 0).click();
         await productCell(page, 2).click();
         expect(await selectedIds(page)).toEqual(['ROW-003']);
 
-        await productCell(page, 4).click({
-            modifiers: [process.platform === 'darwin' ? 'Meta' : 'Control']
-        });
+        const { accepted } = await modifierKeys(page);
+
+        // A Mac host turns Ctrl-click into the context-menu gesture and
+        // swallows the click, so projects with a non-Mac user agent cannot
+        // exercise their modifier there. CI runs on Linux and does.
+        test.skip(
+            accepted === 'Control' && process.platform === 'darwin',
+            'Ctrl-click is not deliverable on a Mac host'
+        );
+
+        await productCell(page, 4).click({ modifiers: [accepted] });
         expect(await selectedIds(page)).toEqual(['ROW-003', 'ROW-005']);
     });
+
+    test('The other platform\'s modifier does not add to the selection',
+        async ({ page }) => {
+            await setupGrid(page, { clickAction: 'replace' });
+            const { ignored } = await modifierKeys(page);
+
+            await productCell(page, 0).click();
+
+            // `ctrlOrMeta` resolves to one key per platform, not both, so
+            // this click carries no modifier the grid reacts to and simply
+            // replaces the selection.
+            await productCell(page, 2).click({ modifiers: [ignored] });
+
+            expect(await selectedIds(page)).toEqual(['ROW-003']);
+        });
 
     test('Hovering a selected row does not wipe the selection highlight',
         async ({ page }) => {
@@ -240,7 +282,7 @@ test.describe('Grid Pro row selection', () => {
             // it hit-tests through to the row, exactly like a click anywhere
             // else on that row. Clicking by coordinate rather than through
             // the locator, so the browser does the hit-testing.
-            const box = (await checkbox.boundingBox())!;
+            const box = await checkbox.boundingBox();
             const clickCheckbox = async (): Promise<void> => {
                 await page.mouse.click(
                     box.x + box.width / 2,
@@ -307,9 +349,9 @@ test.describe('Grid Pro row selection', () => {
             ));
 
             // Nothing rendered in the far window may claim to be selected.
-            expect(await page.locator(
+            await expect(page.locator(
                 'tbody:not(.hcg-tbody-pinned) tr.hcg-row-selected'
-            ).count()).toBe(0);
+            )).toHaveCount(0);
 
             await page.evaluate(() => {
                 (window as any).grid.viewport.tbodyElement.scrollTop = 0;
@@ -355,9 +397,9 @@ test.describe('Grid Pro row selection', () => {
                         const cls = tr.classList.contains('hcg-row-selected');
                         const aria =
                             tr.getAttribute('aria-selected') === 'true';
-                        const cb = tr.querySelector(
+                        const cb = tr.querySelector<HTMLInputElement>(
                             '.hcg-selection-checkbox'
-                        ) as HTMLInputElement | null;
+                        );
 
                         if (
                             cls !== want ||

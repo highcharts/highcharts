@@ -27,13 +27,14 @@ import type TableRow from '../../Core/Table/Body/TableRow';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type {
     RowSelectionChangeEvent,
-    RowSelectionClickBehavior,
+    RowSelectionClickAction,
     RowSelectionMode,
     RowSelectionOptions,
     RowSelectionTrigger
 } from './RowSelectionOptions';
 
 import { classNames } from './RowSelectionGlobals.js';
+import { isMac } from '../../Core/Globals.js';
 import { fireEvent, splat } from '../../../Shared/Utilities.js';
 
 
@@ -131,8 +132,8 @@ class RowSelectionController {
     /**
      * Returns what an unmodified click does in the `multiple` mode.
      */
-    public get clickBehavior(): RowSelectionClickBehavior {
-        return this.options.clickBehavior || 'toggle';
+    public get clickAction(): RowSelectionClickAction {
+        return this.options.clickAction || 'toggle';
     }
 
     /**
@@ -217,9 +218,10 @@ class RowSelectionController {
     public toggle(rowId: RowId): void {
         if (this.selected.has(rowId)) {
             this.apply([], [rowId]);
-        } else {
-            this.select(rowId);
+            return;
         }
+
+        this.select(rowId);
     }
 
     /**
@@ -281,7 +283,7 @@ class RowSelectionController {
             return;
         } else if (
             fromCheckbox ||
-            this.clickBehavior === 'toggle' ||
+            this.clickAction === 'toggle' ||
             this.isModifierPressed(originalEvent)
         ) {
             if (this.selected.has(rowId)) {
@@ -309,9 +311,13 @@ class RowSelectionController {
             return false;
         }
 
-        return this.options.modifierKey === 'alt' ?
-            e.altKey :
-            e.ctrlKey || e.metaKey;
+        if (this.options.modifierKey === 'alt') {
+            return e.altKey;
+        }
+
+        // On macOS Ctrl-click is the system context-menu gesture, so only
+        // Command may extend the selection there.
+        return isMac ? e.metaKey : e.ctrlKey;
     }
 
     /**

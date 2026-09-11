@@ -39,7 +39,7 @@ Grid.grid('container', {
         enabled: true,
         mode: 'multiple',
         trigger: 'both',
-        clickBehavior: 'toggle',
+        clickAction: 'toggle',
         checkbox: {
             enabled: true
         }
@@ -55,7 +55,7 @@ Grid.grid('container', {
     const controls = {
         mode: 'mode',
         trigger: 'trigger',
-        clickBehavior: 'click-behavior'
+        clickAction: 'click-action'
     };
 
     Object.entries(controls).forEach(([option, id]) => {

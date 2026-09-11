@@ -56,7 +56,7 @@ export const defaultOptions: DeepPartial<Options> = {
         enabled: false,
         mode: 'single',
         trigger: 'both',
-        clickBehavior: 'toggle',
+        clickAction: 'toggle',
         modifierKey: 'ctrlOrMeta',
         checkbox: {
             enabled: false,

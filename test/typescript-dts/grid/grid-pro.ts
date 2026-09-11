@@ -191,7 +191,7 @@ function test_grid() {
             enabled: true,
             mode: 'multiple',
             trigger: 'both',
-            clickBehavior: 'toggle',
+            clickAction: 'toggle',
             modifierKey: 'ctrlOrMeta',
             checkbox: {
                 enabled: true

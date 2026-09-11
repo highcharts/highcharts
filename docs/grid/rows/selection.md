@@ -48,30 +48,28 @@ rowSelection: {
 }
 ```
 
-### Click behavior in the multiple mode
+### Click action in the multiple mode
 
-In the `multiple` mode, `clickBehavior` decides what a click without a modifier
-key does:
+In the `multiple` mode, `clickAction` decides what a plain click on the row —
+not on the checkbox, which always toggles — does:
 
 | Value | Behavior |
 |---|---|
 | `toggle` (default) | The clicked row is added to, or removed from, the selection. Every row can be picked with a plain click. |
 | `replace` | The clicked row replaces the selection. Rows are added or removed with the modifier key instead, the way file managers behave. |
 
-`modifierKey` chooses that modifier. The default, `ctrlOrMeta`, matches the
-Command key on macOS and the Control key elsewhere; `alt` is the alternative.
+`modifierKey` chooses that modifier. The default, `ctrlOrMeta`, follows the
+platform: Command on macOS, Control everywhere else. The alternative is `alt`.
 `Shift` is not available, because it selects a range.
 
 ```js
 rowSelection: {
     enabled: true,
     mode: 'multiple',
-    clickBehavior: 'replace',
+    clickAction: 'replace',
     modifierKey: 'ctrlOrMeta'
 }
 ```
-
-Whatever `clickBehavior` is set to, clicking a checkbox always toggles the row.
 
 ## What selects a row
 
@@ -143,8 +141,7 @@ grid.rowSelection.toggle('row-003');
 grid.rowSelection.clear();
 ```
 
-Row ids come from the data provider, so a selection survives sorting,
-filtering, and page changes. See [Row ids](#row-ids) below.
+Row ids come from the data provider — see [Row ids](#row-ids) below.
 
 ## Events
 
@@ -229,17 +226,13 @@ Selected rows get the `hcg-row-selected` class. The highlight itself is part of
 the theme, so it only applies to a themed grid — with `rendering.theme: ''` the
 class is still set but nothing is painted, leaving the styling to you.
 
-The same goes for the checkbox: it carries the shared `hcg-input` class, whose
-`appearance: none` reset is unconditional while its border and background come
-from the theme. On an unthemed grid it is therefore present and clickable, but
-invisible until you style it — the built-in [checkbox
-renderer](https://www.highcharts.com/docs/grid/editing/renderers) behaves the
-same way. Target it with `.hcg-selection-checkbox`:
+The checkbox is different: on an unthemed grid it falls back to the native
+browser checkbox, so it stays visible without any styling. Target it with
+`.hcg-selection-checkbox`:
 
 ```css
 .hcg-selection-checkbox {
-    border: 1px solid currentcolor;
-    border-radius: 2px;
+    accent-color: #7cb5ec;
 }
 ```
 
@@ -258,8 +251,7 @@ Three CSS variables control the highlight:
 }
 ```
 
-The checkbox carries the `hcg-selection-checkbox` class, and the cells of the
-dedicated selection column carry `hcg-selection-cell`.
+Cells of the dedicated selection column carry `hcg-selection-cell`.
 
 ## Accessibility
 
