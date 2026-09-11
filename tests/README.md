@@ -864,10 +864,11 @@ Locally these markers are informational.
 
 After validation, same-repository PR runs use `gulp update-pr-testresults` to
 publish the complete result JSON and SVG/GIF artifacts for differing samples to
-`https://vrevs.highsoft.com`. Both runners use the existing PR review identity;
-the latest published run is current, and reviews are not combined. The Playwright
-PR comment identifies the number of selected samples. Manual workflow runs and
-fork PRs only upload GitHub Actions diagnostics.
+`https://vrevs.highsoft.com`. Playwright is the sole production publisher. Karma
+continues comparing samples and links to its GitHub Actions artifacts using
+`gulp update-pr-testresults --artifacts-url URL`, which skips API submission.
+The Playwright PR comment identifies the number of selected samples. Manual
+workflow runs and fork PRs only upload GitHub Actions diagnostics.
 
 Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with
 `GITHUB_RUN_ID` supplying both the submission ID and its globally unique run

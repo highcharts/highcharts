@@ -47,7 +47,9 @@ npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
 The Playwright manifest in `tests/visual/samples.json` covers the same eligible
 sample set as Karma, using shared exclusions. Same-repository PR runs publish
 the Playwright results to production Visual Review; the latest published
-run replaces the current review for that PR. Generate references and compare
+run replaces the current review for that PR. Karma only uploads GitHub Actions
+artifacts and posts an artifact-linked comment; it does not publish to production
+Visual Review. Generate references and compare
 candidates with:
 
 ```bash

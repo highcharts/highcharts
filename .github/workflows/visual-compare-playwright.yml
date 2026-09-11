@@ -249,7 +249,7 @@ jobs:
               context,
               title.replace('Visual test results', 'Playwright visual test results'),
               `\nCovers **${Object.keys(results).length} samples** from the Playwright manifest. ` +
-                `The production review shows the latest published run, which may be Karma or Playwright.\n\n${body}`
+                `Playwright publishes the production visual review.\n\n${body}`
             );
 
       - name: Upload Playwright visual evidence

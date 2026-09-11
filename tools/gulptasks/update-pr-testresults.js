@@ -130,9 +130,16 @@ function createPRCommentBody(
     if (diffingSamples.length > 0) {
         commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
             `Found **${diffingSamples.length}** diffing sample(s). ${createMarkdownLink(
-                reviewUrl,
-                'Please review the differences.'
+                argv.artifactsUrl || reviewUrl,
+                argv.artifactsUrl ?
+                    'Download the visual-test-results artifact.' :
+                    'Please review the differences.'
             )}\n`;
+    }
+    if (argv.artifactsUrl) {
+        commentTemplate += '\n\nKarma results are available in ' +
+            createMarkdownLink(argv.artifactsUrl, 'GitHub Actions artifacts') +
+            '. Production Visual Review contains Playwright results.';
     }
     const changedSamplesTemplate = createTemplateForChangedSamples(changedFilesProvider);
     commentTemplate += `\n\n${changedSamplesTemplate}`;
@@ -187,6 +194,10 @@ async function submitReview(testResults, prNumber) {
     if (hasVisualTestErrors()) {
         logLib.warn('Visual test errors found; skipping visual review API finalization.');
         return false;
+    }
+    if (argv.artifactsUrl) {
+        logLib.message('Skipping visual review API submission.');
+        return true;
     }
 
     const progressBar = createUploadProgressBar();
@@ -265,6 +276,7 @@ commentOnPR.flags = {
     '--pr': 'Pull request number',
     '--fail-silently': 'Will always return exitCode 0 (success)',
     '--dryrun': 'Skips the Visual Review API submission.',
+    '--artifacts-url': 'Writes an artifact-linked PR comment without publishing to Visual Review.',
     '--results-path': 'Path to the visual test results JSON file.',
     '--visual-review-api-url': 'Use VISUAL_REVIEW_API_URL to select the service origin. Defaults to https://vrevs.highsoft.com.',
     '--visual-review-api-key': 'Use VISUAL_REVIEW_API_KEY to authenticate with the ingestion API.'
