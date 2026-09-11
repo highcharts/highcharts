@@ -43,7 +43,7 @@ Highcharts React provides dedicated React components for chart elements and modu
 
 ### Chart elements
 
-You can use element components to shape your chart structure:
+You can use element components to shape your chart structure. Element components and series are direct children of `<Chart>`, mirroring the Highcharts options structure:
 
 ```tsx
 import { Chart, Title, Legend } from "@highcharts/react";

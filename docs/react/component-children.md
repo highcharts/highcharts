@@ -12,6 +12,15 @@ component will be bound to.
 | [XAxis](https://www.highcharts.com/docs/react/components/chart-elements/xaxis)       | [xAxis.title.text](https://api.highcharts.com/highcharts/xAxis.title.text)     |
 | [YAxis](https://www.highcharts.com/docs/react/components/chart-elements/yaxis)       | [yAxis.title.text](https://api.highcharts.com/highcharts/yAxis.title.text)     |
 | [Legend](https://www.highcharts.com/docs/react/components/chart-elements/legend)     | [legend.labelFormat](https://api.highcharts.com/highcharts/legend.labelFormat) |
+| [Drilldown](https://www.highcharts.com/docs/react/components/modules/drilldown)      | [drilldown.series](https://api.highcharts.com/highcharts/drilldown.series)     |
+
+## Child order
+
+Option components can appear in any order among `<Chart>`'s children, because each one is routed to its own Highcharts option independently. Order matters only between components of the same array-type kind.
+
+`XAxis`, `YAxis`, and `DataTable` are array-type, as are series components. Several of each are allowed, and they form their option array in the order they are written, so the first is index `0`, the second index `1`, and so on. A series that selects an axis by index depends on that order.
+
+Every other option component is single: `Title`, `Subtitle`, `Credits`, `Legend`, `Tooltip`, `PlotOptions`, `Palette`, `Accessibility`, `Data`, `Drilldown`, and `Exporting`. Rendering two of the same kind does not produce two options. Their props merge into one, and the later component wins wherever both set the same option.
 
 ## Advanced configuration
 

@@ -28,3 +28,13 @@ option and specific series keys like
 [`plotOptions.line`](https://api.highcharts.com/highcharts/plotOptions.line)
 and
 [`plotOptions.column`](https://api.highcharts.com/highcharts/plotOptions.column).
+
+## Scope and precedence
+
+Series options resolve in three levels, each overriding the one before it:
+
+1. `series`, which applies to every series in the chart.
+2. A series-type key such as `line` or `column`, which applies only to series of that type and overrides `series` for them.
+3. Options set on an individual series component, which override both.
+
+The key an option sits under therefore decides which series it reaches, not just where it is written. In the example above `dataLabels` is set on `series`, so both the line and the column series show them. Moving it to `column` would leave the line series without labels.
