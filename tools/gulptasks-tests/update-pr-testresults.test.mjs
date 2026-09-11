@@ -44,6 +44,7 @@ const environmentKeys = [
 ];
 
 async function runComment({
+    artifactsUrl,
     environment = {},
     existingComment,
     failSilently = false,
@@ -114,6 +115,7 @@ async function runComment({
         }
         Object.assign(commandArgv, {
             _: [],
+            artifactsUrl,
             failSilently,
             pr: '25068',
             resultsPath
@@ -250,7 +252,7 @@ test('writes the PR comment payload', async () => {
     }
 });
 
-test('submits results and writes a PR comment with the CI run metadata', async () => {
+test('uses the globally unique CI run ID for submission metadata', async () => {
     const { comment, requests } = await runComment({
         environment: {
             GITHUB_RUN_ID: '9876',
@@ -272,7 +274,7 @@ test('submits results and writes a PR comment with the CI run metadata', async (
         testReport: manifest.testReport,
         submissionUrl: manifestRequest[0]
     }, {
-        runNumber: '1234',
+        runNumber: '9876',
         prNumber: 25068,
         prSha: 'b'.repeat(40),
         testReport: {
@@ -285,10 +287,11 @@ test('submits results and writes a PR comment with the CI run metadata', async (
     assert.equal(commentPayload.title, 'Visual test results - No difference found');
 });
 
-test('uses GITHUB_RUN_ID as the runNumber fallback when GITHUB_RUN_NUMBER is unset', async () => {
+test('uses GITHUB_RUN_ID as the runNumber when GITHUB_RUN_NUMBER is set', async () => {
     const { requests } = await runComment({
         environment: {
-            GITHUB_RUN_ID: '5678'
+            GITHUB_RUN_ID: '5678',
+            GITHUB_RUN_NUMBER: '1234'
         },
         testResults: {}
     });
@@ -312,6 +315,43 @@ test('skips the existing PR comment when visual execution errors occur', async (
         assert.equal(comment, existingComment);
         assert.equal(requests.length, 0);
     }
+});
+
+test('reports Karma artifacts without credentials or API requests', async () => {
+    const artifactsUrl = 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts';
+    for (const pixels of [0, 526]) {
+        const { comment, requests } = await runComment({
+            artifactsUrl,
+            environment: { VISUAL_REVIEW_API_KEY: undefined },
+            testResults: { 'highcharts/series-networkgraph/textpath-datalabels': pixels }
+        });
+        const payload = JSON.parse(comment);
+        assert.equal(requests.length, 0);
+        assert.match(payload.body, /Production Visual Review contains Playwright results/u);
+        const linkDestinations = Array.from(
+            payload.body.matchAll(/\[[^\]]*\]\(([^)]+)\)/gu),
+            match => match[1]
+        );
+        assert.deepEqual(
+            linkDestinations,
+            pixels ? [artifactsUrl, artifactsUrl] : [artifactsUrl]
+        );
+        assert.match(payload.title, pixels ? /Differences found/u : /No difference found/u);
+        if (pixels) {
+            assert.match(payload.body, /Found \*\*1\*\* diffing sample/u);
+        }
+    }
+});
+
+test('does not report successful artifact comparisons after execution errors', async () => {
+    const { comment, requests, result } = await runComment({
+        artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts',
+        testResults: {},
+        visualTestErrors: true
+    });
+    assert.equal(result, false);
+    assert.equal(comment, undefined);
+    assert.equal(requests.length, 0);
 });
 
 const submissionFailures = [

@@ -14,6 +14,7 @@ import type Highcharts from '~code/esm/highcharts.src';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path/posix';
+import { isDeepStrictEqual } from 'node:util';
 
 import { test as base } from '@playwright/test';
 import { getKarmaScripts, setTestingOptions } from './utils';
@@ -219,13 +220,37 @@ async function getJSONSources(): Promise<RouteType[]> {
         { with: { type: 'json' } }
     );
 
-    for (const source of sources as {url: string, filename: string}[]) {
+    const visualSources = test.info().project.name === 'visual' ?
+        (await import('./visual/data/index.json', {
+            with: { type: 'json' }
+        })).default.map(source => ({
+            ...source,
+            directory: 'tests/visual/data'
+        })) : [];
+
+    for (const source of [...sources, ...visualSources] as {
+        url: string;
+        filename: string;
+        directory?: string;
+        method?: string;
+        postData?: unknown;
+    }[]) {
         routes.push({
             pattern: source.url,
             handler: async route => {
                 try {
+                    if (
+                        (source.method &&
+                            route.request().method() !== source.method) ||
+                        (source.postData && !isDeepStrictEqual(
+                            route.request().postDataJSON(), source.postData
+                        ))
+                    ) {
+                        await route.abort();
+                        return;
+                    }
                     const localPath = join(
-                        'samples/data/json-sources',
+                        source.directory || 'samples/data/json-sources',
                         source.filename
                     );
 
