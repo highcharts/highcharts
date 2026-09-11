@@ -256,6 +256,9 @@ jobs:
         with:
           name: visual-test-results
           path: |
+            samples/**/reference.svg
+            samples/**/candidate.svg
+            samples/**/diff.gif
             test/visual-test-results.json
             test/visual-test-errors.log
             tmp/pr-visual-test-comment.json
