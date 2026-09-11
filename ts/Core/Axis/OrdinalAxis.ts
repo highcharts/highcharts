@@ -35,7 +35,6 @@ import {
     defined,
     isString,
     isNumber,
-    pick,
     css,
     addEvent
 } from '../../Shared/Utilities.js';
@@ -665,12 +664,18 @@ namespace OrdinalAxis {
                 (min <= dataMin && movedUnits <= 0) ||
                 (max >= dataMax + overscroll && movedUnits >= 0)
             ) {
-                e.preventDefault();
-                return;
-            }
+                // At the x-axis data edge, with vertical panning enabled, fall
+                // back to the base pan so the y-axis can still be panned,
+                // otherwise block panning past the edge, #24716
+                if (panning && /y/.test(panning.type)) {
+                    runBase = true;
+                } else {
+                    e.preventDefault();
+                    return;
+                }
 
             // We have an ordinal axis, but the data is equally spaced
-            if (!extendedAxis.ordinal.positions) {
+            } else if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
             } else if (Math.abs(movedUnits) > 1) {
@@ -1009,10 +1014,7 @@ namespace OrdinalAxis {
 
                         overscrollPointsRange = Math.min(
                             overscrollPointsRange,
-                            pick(
-                                // Check for a single-point series:
-                                series.closestPointRange,
-                                overscrollPointsRange
+                            (series.closestPointRange ?? overscrollPointsRange
                             )
                         );
 
@@ -1155,10 +1157,9 @@ namespace OrdinalAxis {
                     ordinal.offset = min - (minIndex * slope);
 
                 } else {
-                    ordinal.overscrollPointsRange = pick(
-                        axis.closestPointRange,
-                        ordinal.overscrollPointsRange
-                    );
+                    ordinal.overscrollPointsRange =
+                        axis.closestPointRange ??
+                        ordinal.overscrollPointsRange;
                     ordinal.positions = axis.ordinal.slope = ordinal.offset =
                         void 0;
                 }
@@ -1554,10 +1555,13 @@ namespace OrdinalAxis {
                     overscrollPercentage : number
                 ): number {
 
-                    return pick(
-                        ordinal.originalOrdinalRange,
-                        defined(axis.dataMax) && defined(axis.dataMin) ?
-                            axis.dataMax - axis.dataMin : 0
+                    return (
+                        ordinal.originalOrdinalRange ??
+                        (
+                            defined(axis.dataMax) && defined(axis.dataMin) ?
+                                axis.dataMax - axis.dataMin :
+                                0
+                        )
                     ) * overscrollPercentage;
 
                 };

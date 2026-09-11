@@ -36,7 +36,7 @@ const {
     heatmap: HeatmapSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import { clamp, pick } from '../../Shared/Utilities.js';
+import { clamp } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -400,7 +400,7 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
                             )
                         ), -xAxis.len, 2 * xAxis.len
                     ),
-                    pointPadding = pick(point.pointPadding, seriesPointPadding),
+                    pointPadding = (point.pointPadding ?? seriesPointPadding),
                     // We calculate the point padding of the midpoints to
                     // preserve the angles of the shape.
                     midPointPadding = pointPadding *

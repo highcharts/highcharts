@@ -146,7 +146,7 @@ function getNode(
 
     // Call getNode recursively on the children. Calculate the height of the
     // node, and the number of descendants.
-    const children = ((mapOfIdToChildren[id] || [])).map((child): TreeNode => {
+    const children = (mapOfIdToChildren[id] || []).map((child): TreeNode => {
         const node = getNode(
                 child.id as any,
                 id,

@@ -55,7 +55,6 @@ import {
     isNumber,
     isObject,
     merge,
-    pick,
     relativeLength,
     stableSort
 } from '../../Shared/Utilities.js';
@@ -339,19 +338,16 @@ class SankeySeries extends ColumnSeries {
                 obj: AnyRecord,
                 key: string
             ): AnyRecord => {
-                obj[key] = pick(
-                    stateOptions[key],
-                    (options as any)[key],
-                    levelOptions[key],
-                    (series.options as any)[key]
-                );
+                obj[key] =
+                    stateOptions[key] ??
+                    (options as any)[key] ??
+                    levelOptions[key] ??
+                    (series.options as any)[key];
                 return obj;
             }, {}),
-            color = pick(
-                stateOptions.color,
-                options.color,
-                values.colorByPoint ? point.color : levelOptions.color
-            );
+            color = stateOptions.color ??
+                options.color ??
+                (values.colorByPoint ? point.color : levelOptions.color);
 
         // Node attributes
         if (point.isNode) {
@@ -869,7 +865,7 @@ class SankeySeries extends ColumnSeries {
             { inverted } = chart,
             translationFactor = this.translationFactor,
             options = this.options,
-            linkColorMode = pick(point.linkColorMode, options.linkColorMode),
+            linkColorMode = (point.linkColorMode ?? options.linkColorMode),
             curvy = (
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor ?? 0.33)
@@ -1015,16 +1011,13 @@ class SankeySeries extends ColumnSeries {
             ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            // Crisp the final top (ring offset included) so the shift can't
+            // Crisp the final top (lane offset included) so the shift can't
             // reintroduce a subpixel node edge.
             fromNodeTop = crisp(
-                pick(
-                    nodeOffset?.absoluteTop,
-                    (
-                        column.sankeyColumn.top(translationFactor) +
-                        (nodeOffset?.relativeTop || 0)
-                    )
-                ) + (this.colCircOffsets[node.column || 0] || 0),
+                (nodeOffset?.absoluteTop ?? (
+                    column.sankeyColumn.top(translationFactor) +
+                    (nodeOffset?.relativeTop || 0)
+                )) + (this.colCircOffsets[node.column || 0] || 0),
                 borderWidth
             ),
             left = crisp(

@@ -1774,17 +1774,26 @@ QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
     );
 });
 
-QUnit.test('Thousand separator from lang options', function (assert) {
+QUnit.test('Lang thousandsSep and decimalPoint in table', function (assert) {
     const chart = Highcharts.chart('container', {
-        lang: {
-            thousandsSep: '_THOUSAND_SEPARATOR_'
-        },
-        series: [{
-            data: [
-                [10000]
-            ]
-        }]
-    });
+            lang: {
+                thousandsSep: '_THOUSAND_SEPARATOR_',
+                decimalPoint: '_DECIMAL_POINT_'
+            },
+            series: [{
+                data: [
+                    [10000.5]
+                ]
+            }]
+        }),
+        table = chart.getTable();
 
-    assert.ok(chart.getTable().includes('_THOUSAND_SEPARATOR_'));
+    assert.ok(
+        table.includes('_THOUSAND_SEPARATOR_'),
+        'lang.thousandsSep should be applied in the data table.'
+    );
+    assert.ok(
+        table.includes('_DECIMAL_POINT_'),
+        'lang.decimalPoint should be applied in the data table (#24845).'
+    );
 });

@@ -61,6 +61,7 @@ function onSeriesAfterSetOptions(
 
     if (
         dataGrouping &&
+        !dataGrouping.approximation &&
         options.useOhlcData &&
         options.id !== 'highcharts-navigator-series'
     ) {

@@ -26,13 +26,50 @@ import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
 import Axis from '../../Core/Axis/Axis.js';
 import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
-import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /** @internal */
 declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }
+}
+
+/** @internal */
+interface BoundAxis {
+    axis: Axis;
+    callbacks: Array<Function>;
+    oldMin?: (null|number|string);
+    oldMax?: (null|number|string);
+}
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Support for the deprecated `chart` option, renamed to `chartOptions`.
+ * The new option takes precedence. #24715
+ *
+ * @internal
+ */
+function compatChartOptions(
+    options: StandaloneNavigatorOptions,
+    chart?: Chart
+): StandaloneNavigatorOptions {
+    if (options.chart) {
+        error(32, false, chart, {
+            'standaloneNavigator.chart':
+                'use standaloneNavigator.chartOptions'
+        });
+
+        return merge({ chartOptions: options.chart }, options);
+    }
+
+    return options;
 }
 
 /* *
@@ -59,7 +96,7 @@ declare module '../../Core/GlobalsBase' {
 class StandaloneNavigator {
 
     public navigator: Navigator;
-    public boundAxes: Array<{ axis: Axis, callbacks: Array<Function> }> = [];
+    public boundAxes: Array<BoundAxis> = [];
     public chartOptions: Partial<Options>;
     public userOptions: StandaloneNavigatorOptions;
 
@@ -108,15 +145,23 @@ class StandaloneNavigator {
         element: (string | globalThis.HTMLElement),
         userOptions: StandaloneNavigatorOptions
     ) {
-        this.userOptions = userOptions;
+        this.userOptions = userOptions = compatChartOptions(userOptions);
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
-            userOptions.chart,
+            userOptions.chartOptions,
             { navigator: userOptions }
         );
 
-        if (this.chartOptions.chart && userOptions.height) {
+        // For a non-inverted navigator, the height option sets the chart
+        // height unless it is set explicitly in chart options (#21268,
+        // #24715).
+        if (
+            this.chartOptions.chart &&
+            !this.chartOptions.chart.inverted &&
+            !userOptions.chartOptions?.chart?.height &&
+            userOptions.height
+        ) {
             this.chartOptions.chart.height = userOptions.height;
         }
 
@@ -167,7 +212,8 @@ class StandaloneNavigator {
             return;
         }
 
-        const { min, max } = this.navigator.xAxis,
+        const navigator = this.navigator,
+            { min, max } = navigator.xAxis,
             removeEventCallbacks = [];
 
         if (twoWay) {
@@ -196,7 +242,7 @@ class StandaloneNavigator {
         }
 
         const removeSetRangeEvent = addEvent(
-            this.navigator,
+            navigator,
             'setRange',
             (e: SetRangeEvent): void => {
                 axis.setExtremes(e.min, e.max, e.redraw, e.animation);
@@ -210,6 +256,15 @@ class StandaloneNavigator {
 
         if (!boundAxis) {
             boundAxis = { axis, callbacks: [] };
+
+            // A navigator bound to a yAxis defines the full range the axis
+            // should cover. Stash the axis' own bounds before overriding them,
+            // so `unbind` can restore them, #24716
+            if (axis.coll === 'yAxis') {
+                boundAxis.oldMin = axis.options.min ?? axis.min;
+                boundAxis.oldMax = axis.options.max ?? axis.max;
+            }
+
             this.boundAxes.push(boundAxis);
         }
         boundAxis.callbacks = removeEventCallbacks;
@@ -220,6 +275,13 @@ class StandaloneNavigator {
                 nav.addSeries(series.options);
             }
         });
+
+        // Bind a yAxis to the navigator's full range so vertical panning isn't
+        // capped at the series' data extremes, #24716
+        if (axis.coll === 'yAxis') {
+            const { dataMin, dataMax } = navigator.xAxis.getExtremes();
+            axis.update({ min: dataMin, max: dataMax }, false);
+        }
 
         // Set extremes to match the navigator's extremes
         axis.setExtremes(min, max);
@@ -244,14 +306,18 @@ class StandaloneNavigator {
      *        Passing a Chart object unbinds the first X axis of the chart,
      *        an Axis object unbinds that specific axis,
      *        and undefined unbinds all axes bound to the navigator.
+     * @param {boolean} restoreExtremes
+     *        Whether to restore the axis' original min/max that were
+     *        overridden when binding a yAxis.
      */
-    public unbind(axisOrChart?: Chart | Axis): void {
+    public unbind(
+        axisOrChart?: Chart | Axis,
+        restoreExtremes?: boolean
+    ): void {
         // If no axis or chart is provided, unbind all bound axes
         if (!axisOrChart) {
-            this.boundAxes.forEach(({ callbacks }): void => {
-                callbacks.forEach(
-                    (removeCallback): void => removeCallback()
-                );
+            this.boundAxes.forEach((boundAxis): void => {
+                this.releaseAxis(boundAxis, restoreExtremes);
             });
 
             this.boundAxes.length = 0;
@@ -265,11 +331,40 @@ class StandaloneNavigator {
 
         for (let i = this.boundAxes.length - 1; i >= 0; i--) {
             if (this.boundAxes[i].axis === axis) {
-                this.boundAxes[i].callbacks.forEach(
-                    (callback): void => callback()
-                );
+                this.releaseAxis(this.boundAxes[i], restoreExtremes);
                 this.boundAxes.splice(i, 1);
             }
+        }
+    }
+
+    /**
+     * Disconnect a bound axis' events and restore the axis' own bounds that
+     * were overridden when binding a yAxis.
+     *
+     * @internal
+     *
+     * @param {BoundAxis} boundAxis
+     *        The bound axis entry to release.
+     * @param {boolean} [restoreExtremes=false]
+     *        Whether to restore the axis' original min/max that were
+     *        overridden when binding a yAxis.
+     */
+    private releaseAxis(
+        boundAxis: BoundAxis,
+        restoreExtremes = false
+    ): void {
+        // Disconnect events
+        boundAxis.callbacks.forEach(
+            (removeCallback): void => removeCallback()
+        );
+
+        // Restore the axis' original min/max that were overridden in `bind`
+        if (boundAxis.axis.coll === 'yAxis' && restoreExtremes) {
+            const min = boundAxis.oldMin ?? void 0,
+                max = boundAxis.oldMax ?? void 0;
+
+            boundAxis.axis.update({ min, max }, false);
+            boundAxis.axis.setExtremes(min, max);
         }
     }
 
@@ -277,13 +372,14 @@ class StandaloneNavigator {
      * Destroys allocated standalone navigator elements.
      *
      * @function Highcharts.StandaloneNavigator#destroy
+     *
+     * @param {boolean} restoreExtremes
+     *        Whether to restore the axis' original min/max that were
+     *        overridden when binding a yAxis.
      */
-    public destroy(): void {
-        // Disconnect events
-        this.boundAxes.forEach(({ callbacks }): void => {
-            callbacks.forEach(
-                (removeCallback): void => removeCallback()
-            );
+    public destroy(restoreExtremes?: boolean): void {
+        this.boundAxes.forEach((boundAxis): void => {
+            this.releaseAxis(boundAxis, restoreExtremes);
         });
         this.boundAxes.length = 0;
         this.navigator.destroy();
@@ -310,10 +406,19 @@ class StandaloneNavigator {
         newOptions: StandaloneNavigatorOptions,
         redraw?: boolean
     ): void {
+        newOptions = compatChartOptions(newOptions, this.navigator.chart);
+        this.userOptions = merge(this.userOptions, newOptions);
+
+        const chartUserOptions = this.userOptions.chartOptions?.chart;
+
         this.chartOptions = merge(
             this.chartOptions,
-            newOptions.height && { chart: { height: newOptions.height } },
-            newOptions.chart,
+            (
+                newOptions.height &&
+                !chartUserOptions?.inverted &&
+                !chartUserOptions?.height
+            ) ? { chart: { height: newOptions.height } } : void 0,
+            newOptions.chartOptions,
             { navigator: newOptions }
         );
 
@@ -340,7 +445,7 @@ class StandaloneNavigator {
     public addSeries(seriesOptions: SeriesOptions): void {
         this.navigator.chart.addSeries(merge(
             seriesOptions,
-            { showInNavigator: pick(seriesOptions.showInNavigator, true) }
+            { showInNavigator: (seriesOptions.showInNavigator ?? true) }
         ));
 
         this.navigator.setBaseSeries();
@@ -389,8 +494,8 @@ class StandaloneNavigator {
                 this.navigator.xAxis.getExtremes();
 
         return {
-            min: pick(min, dataMin),
-            max: pick(max, dataMax),
+            min: (min ?? dataMin),
+            max: (max ?? dataMax),
             dataMin,
             dataMax,
             userMin,

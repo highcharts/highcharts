@@ -107,7 +107,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     pInt,
     relativeLength,
     removeEvent,
@@ -348,7 +347,7 @@ class Chart {
         c?: Chart.CallbackFunction|true
     ): Chart|Promise<Chart> {
         const chart = new Chart(a as any, b as any, c);
-        return chart.promise || chart;
+        return chart.promise ?? chart;
     }
     /* eslint-enable jsdoc/check-param-names */
 
@@ -802,14 +801,11 @@ class Chart {
 
         chart.zooming = {
             ...zooming,
-            type: pick(options.zoomType, zooming.type),
-            key: pick(options.zoomKey, zooming.key),
-            pinchType: pick(options.pinchType, zooming.pinchType),
-            singleTouch: pick(
-                options.zoomBySingleTouch,
-                zooming.singleTouch,
-                false
-            ),
+            type: (options.zoomType ?? zooming.type),
+            key: (options.zoomKey ?? zooming.key),
+            pinchType: (options.pinchType ?? zooming.pinchType),
+            singleTouch:
+                options.zoomBySingleTouch ?? zooming.singleTouch ?? false,
             resetButton: merge(
                 zooming.resetButton,
                 options.resetZoomButton
@@ -1301,7 +1297,6 @@ class Chart {
         let hasDirtyStacks: (boolean|undefined),
             hasStackedSeries: (boolean|undefined),
             i: number,
-            isDirtyBox = chart.isDirtyBox,
             redrawLegend = chart.isDirtyLegend,
             serie: Series;
 
@@ -1394,6 +1389,7 @@ class Chart {
         chart.getMargins(); // #3098
 
         // If one axis is dirty, all axes must be redrawn (#792, #2169)
+        let isDirtyBox = chart.isDirtyBox;
         axes.forEach(function (axis): void {
             if (axis.isDirty) {
                 isDirtyBox = true;
@@ -1562,7 +1558,7 @@ class Chart {
             // inspect the generated series.points.
             series.getPointsCollection()
                 .forEach((point): void => {
-                    if (pick(point.selectedStaging, point.selected)) {
+                    if (point.selectedStaging ?? point.selected) {
                         acc.push(point);
                     }
                 });
@@ -2151,7 +2147,7 @@ class Chart {
             chartWidth = chart.chartWidth;
             if (!chart.styledMode) {
                 css(container, {
-                    width: pick(optionsChart.style?.width, chartWidth + 'px')
+                    width: (optionsChart.style?.width ?? chartWidth + 'px')
                 });
             }
         }
@@ -3034,10 +3030,7 @@ class Chart {
                 mockTick.destroy();
                 if (
                     label &&
-                    pick(
-                        labels.reserveSpace,
-                        !isNumber(options.crossing)
-                    )
+                    (labels.reserveSpace ?? !isNumber(options.crossing))
                 ) {
                     expectedSpace = label.getBBox().height +
                         labels.distance +
@@ -3475,7 +3468,7 @@ class Chart {
         let series: (Series|undefined);
 
         if (options) { // <- not necessary
-            redraw = pick(redraw, true); // Defaults to true
+            redraw = (redraw ?? true); // Defaults to true
 
             fireEvent(
                 chart,
@@ -3598,7 +3591,7 @@ class Chart {
     ): Axis {
         const axis = new Axis(this, options.axis, coll);
 
-        if (pick(options.redraw, true)) {
+        if (options.redraw ?? true) {
             this.redraw(options.animation);
         }
 
@@ -3665,7 +3658,8 @@ class Chart {
         // Update text
         AST.setElementHTML(
             loadingSpan,
-            pick(str, options.lang.loading, '')
+            (str ?? options.lang.loading ?? ''
+            )
         );
 
         if (!chart.styledMode) {
@@ -3746,6 +3740,9 @@ class Chart {
      * Note that when changing series data, `chart.update` may mutate the passed
      * data options.
      *
+     * If the given options don't differ from the current chart options, the
+     * update is skipped and the `afterUpdate` event is not emitted.
+     *
      * See also the
      * [responsive option set](https://api.highcharts.com/highcharts/responsive).
      * Switching between `responsive.rules` basically runs `chart.update` under
@@ -3802,7 +3799,20 @@ class Chart {
             updateAllSeries,
             runSetSize;
 
-        fireEvent(chart, 'update', { options: options });
+        options = diffObjects(options, chart.options);
+
+        const e: AnyRecord = {
+            options,
+            // Event handlers can turn this on or off to control further
+            // processing
+            hasChanged: !!Object.keys(options).length
+        };
+        fireEvent(chart, 'update', e);
+
+        // If no changes are detected, stop further processing (#24805).
+        if (!e.hasChanged) {
+            return;
+        }
 
         // If there are responsive rules in action, undo the responsive rules
         // before we apply the updated options and replay the responsive rules
@@ -3810,8 +3820,6 @@ class Chart {
         if (!isResponsiveOptions) {
             chart.setResponsive(false, true);
         }
-
-        options = diffObjects(options, chart.options);
 
         chart.userOptions = merge(chart.userOptions, options);
 
@@ -3947,7 +3955,7 @@ class Chart {
 
                     // No match by id found, match by index instead
                     if (!item && (chart as any)[coll]) {
-                        item = (chart as any)[coll][pick(newOptions.index, i)];
+                        item = (chart as any)[coll][(newOptions.index ?? i)];
 
                         // Check if we grabbed an item with an existing but
                         // different id (#13541). Check that the item in this
@@ -4048,7 +4056,7 @@ class Chart {
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
             chart.setSize(newWidth as number, newHeight as number, animation);
-        } else if (pick(redraw, true)) {
+        } else if (redraw ?? true) {
             chart.redraw(animation);
         }
 
@@ -4113,22 +4121,17 @@ class Chart {
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
-                    null :
+                    void 0 :
                     'plotBox'
             );
 
-        /** @internal */
-        function zoomOut(): void {
-            chart.zoomOut();
-        }
-
-        fireEvent(this, 'beforeShowResetZoom', null as any, function (): void {
+        fireEvent(this, 'beforeShowResetZoom', void 0, (): void => {
             chart.resetZoomButton = chart.renderer
                 .button(
                     lang.resetZoom,
-                    null as any,
-                    null as any,
-                    zoomOut,
+                    0,
+                    0,
+                    (): void => chart.zoomOut(),
                     theme
                 )
                 .attr({
@@ -4137,7 +4140,7 @@ class Chart {
                 })
                 .addClass('highcharts-reset-zoom')
                 .add()
-                .align(btnOptions.position, false, alignTo as any);
+                .align(btnOptions.position, false, alignTo);
         });
 
         fireEvent(this, 'afterShowResetZoom');
@@ -4261,8 +4264,8 @@ class Chart {
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
-                toLength = pick(to[wh], axis.len),
-                fromLength = pick(from[wh], axis.len),
+                toLength = (to[wh] ?? axis.len),
+                fromLength = (from[wh] ?? axis.len),
                 // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :
@@ -4289,7 +4292,8 @@ class Chart {
             // (#22945)
             // Set offset to 0 for ordinal axis only when zooming out, (#24545).
             const offset = (
-                    axis.chart.polar || (axis.isOrdinal && scale <= 1)
+                    selection || axis.chart.polar ||
+                    (axis.isOrdinal && scale <= 1)
                 ) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
@@ -4299,14 +4303,6 @@ class Chart {
             let newMin = eventMin + offset,
                 newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
-
-            if (selection) {
-                selection[axis.coll as 'xAxis' | 'yAxis']!.push({
-                    axis,
-                    min: Math.min(eventMin, eventMax),
-                    max: Math.max(eventMin, eventMax)
-                });
-            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -4419,16 +4415,21 @@ class Chart {
                 if (
                     reset || (
                         axis.series.length &&
-                        (newMin !== min || newMax !== max) &&
-                        newMin >= floor &&
-                        newMax <= ceiling
+                        (
+                            selection ||
+                            (
+                                (newMin !== min || newMax !== max) &&
+                                newMin >= floor &&
+                                newMax <= ceiling
+                            )
+                        )
                     )
                 ) {
                     if (selection) {
                         selection[axis.coll as 'xAxis'|'yAxis']!.push({
                             axis,
-                            min: newMin,
-                            max: newMax
+                            min: Math.min(eventMin, eventMax),
+                            max: Math.max(eventMin, eventMax)
                         });
                     } else {
 
@@ -4436,19 +4437,22 @@ class Chart {
                         // disallow certain axis padding options that would make
                         // panning/zooming hard. Reset and redraw after the
                         // operation has finished.
-                        axis.isPanning = trigger !== 'zoom';
+                        axis.isPanning = trigger !== 'zoom' &&
+                            trigger !== 'drop';
 
                         if (axis.isPanning && trigger !== 'mousewheel') {
                             isAnyAxisPanning = true; // #21319
                         }
 
-                        axis.setExtremes(
-                            reset ? void 0 : newMin,
-                            reset ? void 0 : newMax,
-                            false,
-                            false,
-                            { move, trigger, scale }
-                        );
+                        if (trigger !== 'drop') {
+                            axis.setExtremes(
+                                reset ? void 0 : newMin,
+                                reset ? void 0 : newMax,
+                                false,
+                                false,
+                                { move, trigger, scale }
+                            );
+                        }
 
                         if (
                             !reset &&
@@ -4492,7 +4496,8 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button, but not while panning
+                // Show or hide the Reset zoom button, but not while
+                // panning.
                 if (
                     displayButton &&
                     !isAnyAxisPanning &&

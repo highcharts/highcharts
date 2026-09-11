@@ -7,6 +7,16 @@
     margin: 0 auto;
 }
 
+.highcharts-tooltip h3 {
+    margin: 0;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid var(--highcharts-neutral-color-20);
+}
+
+.highcharts-tooltip table {
+    font-size: 0.8rem;
+}
+
 .highcharts-plot-border {
     stroke-width: 1px;
     stroke: silver;

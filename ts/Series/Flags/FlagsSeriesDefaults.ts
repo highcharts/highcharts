@@ -67,9 +67,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
 
     /**
-   * What type of legend symbol to render for this series. For flags
-   * series, the default is `flag-icon`, a pole with a pennant.
-   *
+     * What type of legend symbol to render for this series. For flags
+     * series, the default is `flag-icon`, a pole with a pennant.
+     *
      * @default   flag-icon
      * @product   highstock
      * @apioption plotOptions.flags.legendSymbol
@@ -110,8 +110,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * @sample {highstock} stock/plotoptions/flags/
      *         Different shapes
      *
-     * @type    {Highcharts.FlagsShapeValue}
+     * @declare Highcharts.FlagsShapeValue
      * @product highstock
+     * @type    {"circlepin"|"flag"|"squarepin"}
      */
     shape: 'flag',
 
@@ -267,7 +268,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * `.highcharts-flag-series .highcharts-point` rule.
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"fontSize": "11px", "fontWeight": "bold"}
+     * @default { "color": "var(--highcharts-neutral-color-100)", "fontSize": "0.7em", "fontWeight": "bold" }
      * @product highstock
      */
     style: {

@@ -339,6 +339,7 @@
                         point.shapeArgs.d &&
                         point.shapeArgs.d.length === 0
                     ) &&
+                    point.series.options.enableMouseTracking !== false &&
                     typeof point.onMouseOver === 'function'
                 ) {
                     point.onMouseOver();

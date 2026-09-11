@@ -285,6 +285,7 @@ class ProxyElement {
             margin: 0,
             display: 'block',
             position: 'absolute',
+            'pointer-events': 'none',
             '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)'
         });
     }

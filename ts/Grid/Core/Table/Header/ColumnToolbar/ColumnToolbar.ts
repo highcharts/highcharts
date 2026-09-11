@@ -277,9 +277,12 @@ class HeaderCellToolbar implements Toolbar {
 
     /**
      * Focuses the first button of the toolbar.
+     *
+     * @param options
+     * Native focus options.
      */
-    public focus(): void {
-        this.buttons[0]?.focus();
+    public focus(options?: FocusOptions): void {
+        this.buttons[0]?.focus(options);
     }
 
     /**
@@ -291,20 +294,31 @@ class HeaderCellToolbar implements Toolbar {
     private keyDownHandler(e: KeyboardEvent): void {
         const len = this.buttons.length;
         const cursor = this.focusCursor;
+        let elementToFocus: ToolbarButton | HTMLElement | undefined;
 
         switch (e.key) {
             case 'ArrowUp':
             case 'ArrowLeft':
-                this.buttons[Math.abs((cursor - 1 + len) % len)].focus();
+                elementToFocus = this.buttons[
+                    Math.abs((cursor - 1 + len) % len)
+                ];
                 break;
             case 'ArrowDown':
             case 'ArrowRight':
-                this.buttons[(cursor + 1) % len].focus();
+                elementToFocus = this.buttons[(cursor + 1) % len];
                 break;
             case 'Escape':
-                this.column.header?.htmlElement.focus();
+                elementToFocus = this.column.header?.htmlElement;
                 break;
+            default:
+                return;
         }
+
+        e.preventDefault();
+        e.stopPropagation();
+        elementToFocus?.focus({
+            preventScroll: true
+        });
     }
 }
 

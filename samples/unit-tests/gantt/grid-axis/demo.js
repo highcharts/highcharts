@@ -2196,6 +2196,17 @@ QUnit.test(
             chart.xAxis[0].options.labels.align,
             'Label align options should still not be defined.'
         );
+
+        assert.ok(
+            chart.xAxis[0].clippable,
+            'Axes without grid.enabled should remain clippable when Gantt ' +
+            'module is loaded. #24795'
+        );
+        assert.ok(
+            chart.yAxis[0].clippable,
+            'Axes without grid.enabled should remain clippable when Gantt ' +
+            'module is loaded. #24795'
+        );
     }
 );
 

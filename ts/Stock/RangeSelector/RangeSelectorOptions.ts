@@ -376,7 +376,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @default none
+     * @default 'none'
      * @since     1.3.7
      */
     inputBoxBorderColor: ColorString;
@@ -522,7 +522,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/vertical-align-bottom/
      *         Bottom
      *
-     * @default top
+     * @default 'top'
      * @since 6.0.0
      */
     verticalAlign: VerticalAlignValue;

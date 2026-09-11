@@ -81,6 +81,76 @@ QUnit.test(
     });
 
 QUnit.test(
+    'Exported SVG should embed accessibility description as ' +
+    'Dublin Core RDF metadata',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [{
+                data: [1, 2, 3, 4, 5, 6]
+            }]
+        });
+
+        const svgWithTypeDesc = await chart.exporting.getSVGForExport();
+        assert.ok(
+            /<metadata>[\s\S]*<dc:description>[^<]+<\/dc:description>/
+                .test(svgWithTypeDesc),
+            'Exported SVG should contain generated chart-type description ' +
+            'as RDF metadata fallback.'
+        );
+
+        chart.update({
+            accessibility: {
+                description: 'Bar chart showing sales by quarter & region.'
+            }
+        });
+        const svgWithDesc = await chart.exporting.getSVGForExport();
+        assert.ok(
+            svgWithDesc.includes(
+                '<dc:description>Bar chart showing sales by quarter ' +
+                '&amp; region.</dc:description>'
+            ),
+            'Exported SVG should contain dc:description from ' +
+            'accessibility.description'
+        );
+
+        chart.update({
+            accessibility: { description: undefined },
+            caption: { text: 'Caption fallback text' }
+        });
+        const svgWithCaption = await chart.exporting.getSVGForExport();
+        assert.ok(
+            svgWithCaption.includes(
+                '<dc:description>Caption fallback text</dc:description>'
+            ),
+            'Exported SVG should contain dc:description from caption.text'
+        );
+
+        // Create a linked description element
+        chart.update({ caption: { text: undefined } });
+        const linkedEl = document.createElement('p');
+        linkedEl.className = 'highcharts-description';
+        linkedEl.textContent = 'Linked description text';
+        chart.renderTo.parentNode.insertBefore(
+            linkedEl, chart.renderTo.nextSibling
+        );
+        // Rebind linkedDescription element to the chart
+        chart.redraw();
+        try {
+            const svgWithLinked = await chart.exporting.getSVGForExport();
+            assert.ok(
+                svgWithLinked.includes(
+                    '<dc:description>Linked description text' +
+                    '</dc:description>'
+                ),
+                'Exported SVG should contain dc:description from ' +
+                'linkedDescription'
+            );
+        } finally {
+            linkedEl.remove();
+        }
+    });
+
+QUnit.test(
     'Printing should preserve position of screen-reader divs (#21554)',
     function (assert) {
         const chart = Highcharts.chart('container', {

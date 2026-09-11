@@ -1187,7 +1187,7 @@ QUnit.test('Ordinal axis + Scatter series #19243', function (assert) {
             series: [{
                 type: 'line',
                 data: linePoints,
-                pointInverval: 10
+                pointInterval: 10
             }, {
                 type: 'scatter',
                 data: scatterPoints,

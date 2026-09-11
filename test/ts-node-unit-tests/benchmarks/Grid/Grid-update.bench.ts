@@ -33,6 +33,8 @@ export default async function benchmarkTest(
     
     // Load Grid module
     let Grid = await import(join(CODE_PATH, '/grid/grid-lite.src.js'));
+    Grid = Grid.default ?? Grid; // grid factory lives on the default export
+
     if (typeof Grid === 'function') {
         Grid = Grid(win); // old UMD pattern
     } else if (!Grid.win) {

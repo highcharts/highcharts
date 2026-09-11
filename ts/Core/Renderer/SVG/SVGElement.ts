@@ -73,7 +73,6 @@ import {
     merge,
     objectEach,
     pInt,
-    pick,
     pushUnique,
     replaceNested,
     syncTimeout
@@ -322,10 +321,10 @@ class SVGElement implements SVGElementBase {
      * Property value.
      */
     private _defaultGetter(key: string): (number|string) {
-        let ret = pick(
-            (this as AnyRecord)[key + 'Value'], // Align getter
-            (this as AnyRecord)[key],
-            this.element ? this.element.getAttribute(key) : null,
+        let ret = (
+            (this as AnyRecord)[key + 'Value'] ??
+            (this as AnyRecord)[key] ??
+            (this.element ? this.element.getAttribute(key) : null) ??
             0
         );
 
@@ -532,11 +531,8 @@ class SVGElement implements SVGElementBase {
             alignTo = void 0; // Do not use the box
         }
 
-        const alignToBox: BBoxObject = pick(
-                alignTo,
-                (renderer as any)[alignToKey as any],
-                renderer
-            ),
+        const alignToBox: BBoxObject =
+                alignTo ?? (renderer as any)[alignToKey as any] ?? renderer,
             // Default: left align
             x = (alignToBox.x || 0) + (alignOptions.x || 0) +
                 ((alignToBox.width || 0) - (alignOptions.width || 0)) *
@@ -607,7 +603,7 @@ class SVGElement implements SVGElementBase {
         complete?: Function
     ): this {
         const animOptions = animObject(
-                pick(options, this.renderer.globalAnimation, true)
+                (options ?? this.renderer.globalAnimation ?? true)
             ),
             deferTime = animOptions.defer;
 
@@ -1341,7 +1337,7 @@ class SVGElement implements SVGElementBase {
 
             i = v.length;
             while (i--) {
-                v[i] = '' + (pInt(v[i]) * pick(strokeWidth, NaN));
+                v[i] = '' + (pInt(v[i]) * (strokeWidth ?? NaN));
             }
             value = v.join(',').replace(/NaN/g, 'none'); // #3226
             this.element.setAttribute('stroke-dasharray', value);
@@ -1531,7 +1527,7 @@ class SVGElement implements SVGElementBase {
                 cacheKeys
             } = renderer,
             isSVG = element.namespaceURI === wrapper.SVG_NS,
-            rotation = pick(rot, wrapper.rotation, 0),
+            rotation = (rot ?? wrapper.rotation ?? 0),
             fontSize = renderer.styledMode ? (
                 element &&
                 SVGElement.prototype.getStyle.call(element, 'font-size')
@@ -2214,7 +2210,7 @@ class SVGElement implements SVGElementBase {
         const wrapper = this as AnyRecord;
 
         SVGElement.symbolCustomAttribs.forEach(function (key: string): void {
-            wrapper[key] = pick((hash as any)[key], wrapper[key]);
+            wrapper[key] = ((hash as any)[key] ?? wrapper[key]);
         });
 
         wrapper.attr({
@@ -2266,7 +2262,8 @@ class SVGElement implements SVGElementBase {
 
         // Replace text content and escape markup
         titleNode.textContent = replaceNested( // Scan #[73]
-            pick(value, ''), // #3276, #3895
+            (
+                value ?? ''), // #3276, #3895
             [/<[^>]*>/g, '']
         ).replace(/&lt;/g, '<').replace(/&gt;/g, '>');
     }

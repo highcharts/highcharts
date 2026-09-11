@@ -131,6 +131,10 @@ const isDateTimeFormatOptions = (
  *
  * @param {Highcharts.TimeOptions} [options] Time options as defined in
  * [chart.options.time](/highcharts/time).
+ *
+ * @param {Highcharts.LangOptions} [lang]
+ * Language options. When `options.locale` is not set, `lang.locale` is used as
+ * the locale fallback for locale-aware date formatting.
  */
 class TimeBase {
 
@@ -146,8 +150,8 @@ class TimeBase {
         options?: TimeBase.TimeOptions,
         lang?: LangOptionsCore
     ) {
-        this.update(options);
         this.lang = lang;
+        this.update(options);
     }
 
     /* *
@@ -331,7 +335,11 @@ class TimeBase {
     public dateTimeFormat(
         options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale: string|Array<string>|undefined = this.options.locale || pageLang
+        locale: string|Array<string>|undefined = (
+            this.options.locale ||
+            this.lang?.locale ||
+            pageLang
+        )
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
         if (isString(options)) {
