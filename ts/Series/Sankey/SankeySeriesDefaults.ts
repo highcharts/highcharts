@@ -41,6 +41,8 @@ import type SankeySeries from './SankeySeries';
  *         Inverted sankey diagram
  * @sample highcharts/plotoptions/sankey-outgoing
  *         Sankey diagram with outgoing links
+ * @sample highcharts/series-sankey/circular-dependencies/
+ *         Sankey diagram with circular and self-referencing links
  *
  * @extends      plotOptions.column
  * @since        6.0.0
@@ -67,7 +69,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
      * wheel render more curved. A `curveFactor` of 0 makes the lines
-     * straight.
+     * straight. In circular layouts it also scales the turn radius of the
+     * back-edge loops. A self-link turns on the node width instead, so its
+     * loop keeps a hole to place the label in.
      *
      * @private
      */

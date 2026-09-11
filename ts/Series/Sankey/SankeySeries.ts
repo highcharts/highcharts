@@ -29,6 +29,7 @@ import type {
 } from './SankeySeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
@@ -50,6 +51,8 @@ import {
     clamp,
     crisp,
     extend,
+    getAlignFactor,
+    isNumber,
     isObject,
     merge,
     relativeLength,
@@ -82,6 +85,13 @@ class SankeySeries extends ColumnSeries {
         ColumnSeries.defaultOptions,
         SankeySeriesDefaults
     );
+
+    /**
+     * Largest fraction of the column axis circular geometry may reserve
+     * outside the edge columns.
+     * @internal
+     */
+    private static readonly CIRCULAR_SHIFT_MAX_FACTOR = 0.6;
 
     /* *
      *
@@ -123,11 +133,30 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    /**
+     * Flow-axis offset per column, centering the ones with a self-link.
+     * @internal
+     */
+    public colCircOffsets: Array<number> = [];
+
     public colDistance!: number;
 
     public data!: Array<SankeyPoint>;
 
+    /**
+     * Column-axis space reserved for circular geometry past the first
+     * column.
+     * @internal
+     */
+    public firstColCircShift = 0;
+
     public group!: SVGElement;
+
+    /**
+     * Whether the data has circular dependencies.
+     * @internal
+     */
+    public isDataCircular!: boolean;
 
     public mapOptionsToLevel?: (Record<string, SankeySeriesLevelOptions>|null);
 
@@ -207,7 +236,11 @@ class SankeySeries extends ColumnSeries {
             node.level = level;
             visited.add(node);
             for (const link of node.linksFrom) {
-                if (link.toNode && !visited.has(link.toNode)) {
+                if (
+                    !link.isCircular &&
+                    link.toNode &&
+                    !visited.has(link.toNode)
+                ) {
                     series.order(link.toNode, level + 1, visited);
                 }
             }
@@ -222,10 +255,16 @@ class SankeySeries extends ColumnSeries {
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
 
+        if (this.useCircularLayout) {
+            // Runs on every Sankey translate
+            this.isDataCircular = this.markCircularLinks(this.points);
+        }
+
         if (this.orderNodes) {
             for (const node of this.nodes) {
-                // Identify the root node(s)
-                if (node.linksTo.length === 0) {
+                // Identify the root node(s). Circular links, including
+                // self-links, do not anchor a node.
+                if (!node.linksTo.some((link): boolean => !link.isCircular)) {
                     // Start by the root node(s) and recursively set the level
                     // on all following nodes.
                     this.order(node, 0);
@@ -252,8 +291,8 @@ class SankeySeries extends ColumnSeries {
                 (acc, col): number => Math.max(acc, col.length),
                 0
             );
-            if (maxLength * nodePadding > (this.chart.plotSizeY as any)) {
-                nodePadding = (this.chart.plotSizeY as any) / maxLength;
+            if (maxLength * nodePadding > (this.chart.plotSizeY || 0)) {
+                nodePadding = (this.chart.plotSizeY || 0) / maxLength;
             }
         }
 
@@ -343,11 +382,65 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
+     * Mark links that would close a directed cycle, which are then left out
+     * of the column assignment. Self-links are marked too, but need no
+     * inter-column room, so they do not count towards the return value.
+     *
+     * @param {Array<SankeyPoint>} points The points to check.
+     * @return {boolean} Whether any circular layout is required.
+     *
+     * @internal
+     */
+    public markCircularLinks(points: Array<SankeyPoint>): boolean {
+        const nodes = this.nodes;
+
+        for (const point of points) {
+            point.isCircular = false;
+        }
+
+        let hasCircularLink = false;
+
+        // DFS marking links that point back into the path currently walked.
+        // The back edge selected as circular follows the input data order.
+        const visited = new Set<SankeyPoint>(),
+            inStack = new Set<SankeyPoint>(),
+            visit = (node: SankeyPoint): void => {
+                visited.add(node);
+                inStack.add(node);
+                for (const link of node.linksFrom) {
+                    const nextNode = link.toNode;
+
+                    if (!nextNode) {
+                        continue;
+                    }
+                    if (nextNode === node) {
+                        link.isCircular = true;
+                    } else if (!visited.has(nextNode)) {
+                        visit(nextNode);
+                    } else if (inStack.has(nextNode)) {
+                        link.isCircular = true;
+                        hasCircularLink = true;
+                    }
+                }
+                inStack.delete(node);
+            };
+
+        for (const node of nodes) {
+            if (!visited.has(node)) {
+                visit(node);
+            }
+        }
+
+        return hasCircularLink;
+    }
+
+    /**
      * Run pre-translation by generating the nodeColumns.
      * @private
      */
     public translate(): void {
 
+        this.isDataCircular = false;
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
@@ -361,25 +454,116 @@ class SankeySeries extends ColumnSeries {
         this.nodeWidth = getNodeWidth(this, columnCount);
         this.nodePadding = this.getNodePadding();
 
-        // Find out how much space is needed. Base it on the translation
-        // factor of the most spacious column.
+        // Find out how much space is needed. Remember which column sets the
+        // factor, so the lanes below can rescale it exactly. #8218
+        let flowColumnIndex = 0,
+            minFactor = Infinity;
 
-        this.translationFactor = nodeColumns.reduce(
-            (
-                translationFactor: number,
-                column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
-            ): number => Math.min(
-                translationFactor,
-                column.sankeyColumn.getTranslationFactor(series)
-            ),
-            Infinity
-        );
+        nodeColumns.forEach((column, index): void => {
+            const factor = column.sankeyColumn.getTranslationFactor(series);
 
+            if (factor < minFactor) {
+                minFactor = factor;
+                flowColumnIndex = index;
+            }
+        });
+        this.translationFactor = minFactor;
+
+        this.firstColCircShift = 0;
+        this.colCircOffsets = [];
+
+        let lastColCircShift = 0;
+
+        if (this.useCircularLayout) {
+            // Lanes route outside the central flow, so the columns give up
+            // what those claim, plus a padding at either end. #8218
+            const reserve = this.assignWrapSides(),
+                flowColumn = reserve ? nodeColumns[flowColumnIndex] : void 0;
+
+            if (flowColumn) {
+                const flowSum = flowColumn.sankeyColumn.sum(),
+                    free = this.translationFactor * flowSum -
+                        4 * this.nodePadding;
+
+                if (flowSum && free > 0) {
+                    this.translationFactor = free / (flowSum + reserve);
+                }
+            }
+
+            this.stackWrapLanes();
+
+            const { nodePadding, nodeWidth, translationFactor } = this,
+                minLinkWidth = options.minLinkWidth || 0,
+                bend = nodeWidth * (options.curveFactor ?? 0.33),
+                lastCol = nodeColumns.length - 1,
+                align = getAlignFactor(options.nodeAlignment || 'center'),
+                width = (weight: number): number =>
+                    Math.max(weight * translationFactor, minLinkWidth);
+
+            // Columns align on their bands alone, so shift one holding a
+            // self-link down by the lane lapping above it. #8218
+            this.colCircOffsets = nodeColumns.map((column): number => {
+                let selfWeight = 0;
+
+                for (const node of column) {
+                    let weight = 0;
+
+                    for (const link of node.linksFrom) {
+                        if (link.toNode === node) {
+                            weight += link.weight || 0;
+                        }
+                    }
+                    selfWeight = Math.max(selfWeight, weight);
+                }
+
+                return selfWeight ?
+                    align * (2 * nodeWidth + width(selfWeight)) :
+                    0;
+            });
+
+            // A turn reaches `bend + linkHeight` past the face it leaves.
+            // Edges without circular links reserve nothing. #8218
+            let firstWeight = 0,
+                lastWeight = 0;
+
+            for (const point of this.points) {
+                if (point.isCircular) {
+                    const weight = point.weight || 0;
+
+                    if (point.toNode.column === 0) {
+                        firstWeight = Math.max(firstWeight, weight);
+                    }
+                    if (point.fromNode.column === lastCol) {
+                        lastWeight = Math.max(lastWeight, weight);
+                    }
+                }
+            }
+
+            this.firstColCircShift = firstWeight ?
+                nodePadding + bend + width(firstWeight) : 0;
+            lastColCircShift = lastWeight ?
+                nodePadding + bend + width(lastWeight) : 0;
+
+            // Cap the reservation rather than the scale, or a short column
+            // axis turns `colDistance` negative and inverts the order. #8218
+            const reserved = this.firstColCircShift + lastColCircShift,
+                allowed = SankeySeries.CIRCULAR_SHIFT_MAX_FACTOR * Math.max(
+                    0,
+                    (chart.plotSizeX || 0) - nodeWidth -
+                    (options.borderWidth || 0)
+                );
+
+            if (reserved > allowed) {
+                this.firstColCircShift *= allowed / reserved;
+                lastColCircShift *= allowed / reserved;
+            }
+        }
 
         this.colDistance =
             (
-                (chart.plotSizeX as any) - this.nodeWidth -
-                (options.borderWidth as any)
+                (chart.plotSizeX || 0) - this.nodeWidth -
+                (options.borderWidth || 0) -
+                this.firstColCircShift - lastColCircShift
             ) / Math.max(1, nodeColumns.length - 1);
 
         // Calculate level options used in sankey and organization
@@ -450,6 +634,224 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
+     * Send every backward link to the top or the bottom lane stack, the
+     * shallower one winning, and order each node's band to match. #8218
+     *
+     * @return {number} Flow to reserve off the columns, in weight: the scale
+     * is not settled until the stacks are known.
+     *
+     * @internal
+     */
+    public assignWrapSides(): number {
+        const depth = [0, 0],
+            // A self-link's two ends must land on the same offset, and a
+            // band packs from the top either side, so it goes first. #8218
+            laneSide = (point: SankeyPoint): number => {
+                if (!point.isCircular) {
+                    return 0;
+                }
+                if (point.fromNode === point.toNode) {
+                    return -2;
+                }
+                return point.wrapUp ? -1 : 1;
+            };
+
+        let circular = false,
+            selfWeight = 0;
+
+        for (const point of this.points) {
+            point.wrapLane = void 0;
+
+            if (!point.isCircular) {
+                continue;
+            }
+            circular = true;
+
+            // A self-link laps its own node, so it claims room without
+            // taking a place in either stack.
+            if (point.fromNode === point.toNode) {
+                selfWeight = Math.max(selfWeight, point.weight || 0);
+                continue;
+            }
+            const side = depth[0] <= depth[1] ? 0 : 1;
+
+            point.wrapUp = side === 0;
+            point.wrapLane = 0;
+            depth[side] += point.weight || 0;
+        }
+
+        // Order each band by where its links are bound, so none has to cross
+        // the band it sits on to reach its lane. #8218
+        if (circular) {
+            const bySide = (a: SankeyPoint, b: SankeyPoint): number =>
+                laneSide(a) - laneSide(b);
+
+            for (const node of this.nodes) {
+                stableSort(node.linksFrom, bySide);
+                stableSort(node.linksTo, bySide);
+            }
+        }
+
+        // Twice the deepest claim, as the columns are centred.
+        return 2 * Math.max(depth[0], depth[1], selfWeight);
+    }
+
+    /**
+     * Stack each lane inwards from its plot edge at the settled scale. Two
+     * lanes never share flow-axis space, so no band is drawn inside another.
+     * #8218
+     * @internal
+     */
+    public stackWrapLanes(): void {
+        const { nodePadding, points, translationFactor } = this,
+            minLinkWidth = this.options.minLinkWidth || 0,
+            plotSizeY = this.chart.plotSizeY || 0,
+            // Clear of the plot border, matching the reserve.
+            depth = [nodePadding, nodePadding];
+
+        for (const point of points) {
+            if (isNumber(point.wrapLane)) {
+                const side = point.wrapUp ? 0 : 1;
+
+                point.wrapLane = depth[side];
+                depth[side] += Math.max(
+                    (point.weight || 0) * translationFactor, minLinkWidth
+                );
+            }
+        }
+
+        // `minLinkWidth` can inflate the stacks past the reserve. #8218
+        const stacked = depth[0] + depth[1];
+
+        if (stacked > plotSizeY) {
+            for (const point of points) {
+                if (isNumber(point.wrapLane)) {
+                    point.wrapLane *= plotSizeY / stacked;
+                }
+            }
+        }
+    }
+
+    /**
+     * Resolve a backward link's lane as its centre line and the direction it
+     * lies in, so the path and the label anchor read the same one. #8218
+     * @internal
+     */
+    public wrapChannel(
+        point: SankeyPoint,
+        linkHeight: number
+    ): { centerY: number, sign: number } {
+        const half = Math.abs(linkHeight) / 2,
+            plotSizeY = this.chart.plotSizeY || 0;
+
+        // A self-link laps its own node, so its lane sits beside that band,
+        // a full turn away. That closes the loop as a circle whose hole
+        // tracks the node width, and the hole is what gives way when the
+        // plot is too tight for it. #8218
+        if (point.fromNode === point.toNode) {
+            const { shapeArgs } = point.fromNode,
+                top = (shapeArgs && isNumber(shapeArgs.y)) ? shapeArgs.y : 0,
+                bottom = top + (
+                    (shapeArgs && isNumber(shapeArgs.height)) ?
+                        shapeArgs.height :
+                        0
+                ),
+                want = half + 2 * this.nodeWidth,
+                above = Math.min(want, top - half),
+                below = Math.min(want, plotSizeY - bottom - half);
+
+            return above >= below ?
+                { centerY: top - above, sign: -1 } :
+                { centerY: bottom + below, sign: 1 };
+        }
+
+        const lane = point.wrapLane || 0;
+
+        return point.wrapUp ?
+            { centerY: lane + half, sign: -1 } :
+            { centerY: plotSizeY - lane - half, sign: 1 };
+    }
+
+    /**
+     * Build the path for a link that points backwards: a circular back-edge,
+     * or a link whose explicit `column` places the target left of the source.
+     * The band leaves both node faces, turns into its wrap lane, and runs
+     * back along it. #8218
+     * @internal
+     */
+    public backwardLinkPath(
+        point: SankeyPoint,
+        fromY: number,
+        toY: number,
+        linkHeight: number,
+        nodeLeft: number,
+        right: number,
+        nodeW: number
+    ): SVGPath {
+        const { centerY, sign } = this.wrapChannel(point, linkHeight),
+            { nodeWidth } = this,
+            colSign = this.chart.inverted ? -1 : 1,
+            half = Math.abs(linkHeight) / 2,
+            // A self-link has no span to cross, so both its faces sit on
+            // the node's centre line, or the loop comes out an oval a node
+            // wide. It turns on the node width, which gives it its hole.
+            loops = point.fromNode === point.toNode,
+            bend = loops ?
+                nodeWidth :
+                nodeWidth * (this.options.curveFactor ?? 0.33),
+            fromX = loops ? nodeLeft + nodeW / 2 : nodeLeft + nodeW,
+            toX = loops ? nodeLeft + nodeW / 2 : right,
+            fromC = fromY + linkHeight / 2,
+            toC = toY + linkHeight / 2,
+            // The centre line leaves one face, turns into the lane, runs
+            // along it and turns back to the other face. A turn needs twice
+            // its radius of travel, so each side keeps what it can afford.
+            radius = half + bend,
+            rFrom = Math.min(radius, Math.abs(centerY - fromC) / 2),
+            rTo = Math.min(radius, Math.abs(centerY - toC) / 2),
+            // Both edges are that centre line offset by half the thickness,
+            // so each corner is two arcs about one centre - an even width
+            // the whole way round. #8218
+            outerFrom = rFrom + half,
+            innerFrom = Math.max(0, rFrom - half),
+            outerTo = rTo + half,
+            innerTo = Math.max(0, rTo - half),
+            fromTurn = fromC + sign * rFrom,
+            toTurn = toC + sign * rTo,
+            laneFrom = centerY - sign * rFrom,
+            laneTo = centerY - sign * rTo,
+            laneLead = centerY + sign * half,
+            laneTail = centerY - sign * half,
+            xFromOuter = fromX + colSign * outerFrom,
+            xFromInner = fromX + colSign * innerFrom,
+            xToOuter = toX - colSign * outerTo,
+            xToInner = toX - colSign * innerTo,
+            // Every corner turns one way going out, the other coming back.
+            out = sign * colSign > 0 ? 1 : 0,
+            back = 1 - out;
+
+        return [
+            ['M', fromX, fromC - sign * half],
+            ['A', outerFrom, outerFrom, 0, 0, out, xFromOuter, fromTurn],
+            ['L', xFromOuter, laneFrom],
+            ['A', outerFrom, outerFrom, 0, 0, out, fromX, laneLead],
+            ['L', toX, laneLead],
+            ['A', outerTo, outerTo, 0, 0, out, xToOuter, laneTo],
+            ['L', xToOuter, toTurn],
+            ['A', outerTo, outerTo, 0, 0, out, toX, toC - sign * half],
+            ['L', toX, toC + sign * half],
+            ['A', innerTo, innerTo, 0, 0, back, xToInner, toTurn],
+            ['L', xToInner, laneTo],
+            ['A', innerTo, innerTo, 0, 0, back, toX, laneTail],
+            ['L', fromX, laneTail],
+            ['A', innerFrom, innerFrom, 0, 0, back, xFromInner, laneFrom],
+            ['L', xFromInner, fromTurn],
+            ['A', innerFrom, innerFrom, 0, 0, back, fromX, fromC + sign * half],
+            ['Z']
+        ];
+    }
+
+    /**
      * Run translation operations for one link.
      * @internal
      */
@@ -466,7 +868,7 @@ class SankeySeries extends ColumnSeries {
             linkColorMode = (point.linkColorMode ?? options.linkColorMode),
             curvy = (
                 (chart.inverted ? -this.colDistance : this.colDistance) *
-                (options.curveFactor as any)
+                (options.curveFactor ?? 0.33)
             ),
             nodeLeft = fromNode.nodeX,
             right = toNode.nodeX,
@@ -482,7 +884,7 @@ class SankeySeries extends ColumnSeries {
             straight = right > nodeLeft + nodeW;
 
         if (chart.inverted) {
-            fromY = (chart.plotSizeY as any) - fromY;
+            fromY = (chart.plotSizeY || 0) - fromY;
             toY = (chart.plotSizeY || 0) - toY;
             nodeW = -nodeW;
             linkHeight = -linkHeight;
@@ -496,6 +898,9 @@ class SankeySeries extends ColumnSeries {
             toY,
             toY + linkHeight
         ];
+
+        // Label anchor for a wrapping link, set to its lane below.
+        let wrapTop: (number|undefined);
 
         // Links going from left to right
         if (straight && typeof toY === 'number') {
@@ -525,73 +930,34 @@ class SankeySeries extends ColumnSeries {
                 ]
             };
 
-        // Experimental: Circular links pointing backwards. In
-        // v6.1.0 this breaks the rendering completely, so even
-        // this experimental rendering is an improvement. #8218.
-        // @todo
-        // - Make room for the link in the layout
-        // - Automatically determine if the link should go up or
-        //   down.
+        // Handle links that point backwards: circular back-edges, and links
+        // whose explicit `column` places the target left of the source. #8218.
         } else if (typeof toY === 'number') {
-            const bend = 20,
-                vDist = chart.plotHeight - fromY - linkHeight,
-                x1 = right - bend - linkHeight,
-                x2 = right - bend,
-                x3 = right,
-                x4 = nodeLeft + nodeW,
-                x5 = x4 + bend,
-                x6 = x5 + linkHeight,
-                fy1 = fromY,
-                fy2 = fromY + linkHeight,
-                fy3 = fy2 + bend,
-                y4 = fy3 + vDist,
-                y5 = y4 + bend,
-                y6 = y5 + linkHeight,
-                ty1 = toY,
-                ty2 = ty1 + linkHeight,
-                ty3 = ty2 + bend,
-                cfy1 = fy2 - linkHeight * 0.7,
-                cy2 = y5 + linkHeight * 0.7,
-                cty1 = ty2 - linkHeight * 0.7,
-                cx1 = x3 - linkHeight * 0.7,
-                cx2 = x4 + linkHeight * 0.7;
-
             point.shapeArgs = {
-                d: [
-                    ['M', x4, fy1],
-                    ['C', cx2, fy1, x6, cfy1, x6, fy3],
-                    ['L', x6, y4],
-                    ['C', x6, cy2, cx2, y6, x4, y6],
-                    ['L', x3, y6],
-                    ['C', cx1, y6, x1, cy2, x1, y4],
-                    ['L', x1, ty3],
-                    ['C', x1, cty1, cx1, ty1, x3, ty1],
-                    ['L', x3, ty2],
-                    ['C', x2, ty2, x2, ty2, x2, ty3],
-                    ['L', x2, y4],
-                    ['C', x2, y5, x2, y5, x3, y5],
-                    ['L', x4, y5],
-                    ['C', x5, y5, x5, y5, x5, y4],
-                    ['L', x5, fy3],
-                    ['C', x5, fy2, x5, fy2, x4, fy2],
-                    ['Z']
-                ]
+                d: this.backwardLinkPath(
+                    point, fromY, toY, linkHeight, nodeLeft, right, nodeW
+                )
             };
 
+            // The band runs along its lane, not between the columns. Half a
+            // `linkHeight` back lands on the edge it is measured from. #8218
+            wrapTop = this.wrapChannel(point, linkHeight).centerY -
+                linkHeight / 2;
         }
 
-        // Place data labels in the middle
+        // Place data labels in the middle - on the lane for a wrapping link,
+        // otherwise mid-way along the link band.
         point.dlBox = {
             x: nodeLeft + (right - nodeLeft + nodeW) / 2,
-            y: fromY + (toY - fromY) / 2,
+            y: isNumber(wrapTop) ? wrapTop : fromY + (toY - fromY) / 2,
             height: linkHeight,
             width: 0
         };
 
         // And set the tooltip anchor in the middle
         point.tooltipPos = chart.inverted ? [
-            (chart.plotSizeY as any) - point.dlBox.y - linkHeight / 2,
-            (chart.plotSizeX as any) - point.dlBox.x
+            (chart.plotSizeY || 0) - point.dlBox.y - linkHeight / 2,
+            (chart.plotSizeX || 0) - point.dlBox.x
         ] : [
             point.dlBox.x,
             point.dlBox.y + linkHeight / 2
@@ -641,16 +1007,22 @@ class SankeySeries extends ColumnSeries {
             sum = node.getSum(),
             nodeHeight = Math.max(
                 Math.round(sum * translationFactor),
-                this.options.minLinkWidth as any
+                this.options.minLinkWidth || 0
             ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeTop = crisp(((nodeOffset as any).absoluteTop ?? (
-                column.sankeyColumn.top(translationFactor) +
-                    (nodeOffset as any).relativeTop
-            )), borderWidth),
+            // Crisp the final top (lane offset included) so the shift can't
+            // reintroduce a subpixel node edge.
+            fromNodeTop = crisp(
+                (nodeOffset?.absoluteTop ?? (
+                    column.sankeyColumn.top(translationFactor) +
+                    (nodeOffset?.relativeTop || 0)
+                )) + (this.colCircOffsets[node.column || 0] || 0),
+                borderWidth
+            ),
             left = crisp(
-                this.colDistance * (node.column as any) +
+                this.firstColCircShift +
+                    this.colDistance * (node.column || 0) +
                     borderWidth / 2,
                 borderWidth
             ) + relativeLength(node.options[
@@ -659,7 +1031,7 @@ class SankeySeries extends ColumnSeries {
                     'offsetHorizontal'
             ] || 0, nodeWidth),
             nodeLeft = chart.inverted ?
-                (chart.plotSizeX as any) - left :
+                (chart.plotSizeX || 0) - left :
                 left;
         node.sum = sum;
         // If node sum is 0, don't render the rect #12453
@@ -692,7 +1064,7 @@ class SankeySeries extends ColumnSeries {
 
             if (chart.inverted) {
                 x = nodeLeft - nodeWidth;
-                y = (chart.plotSizeY as any) - fromNodeTop - nodeHeight;
+                y = (chart.plotSizeY || 0) - fromNodeTop - nodeHeight;
                 width = node.options.height || options.height || nodeWidth;
                 height = node.options.width || options.width || nodeHeight;
             }
@@ -714,8 +1086,8 @@ class SankeySeries extends ColumnSeries {
 
             // Set the anchor position for tooltips
             node.tooltipPos = chart.inverted ? [
-                (chart.plotSizeY as any) - y - height / 2,
-                (chart.plotSizeX as any) - x - width / 2
+                (chart.plotSizeY || 0) - y - height / 2,
+                (chart.plotSizeX || 0) - x - width / 2
             ] : [
                 x + width / 2,
                 y + height / 2
@@ -758,6 +1130,12 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
     pointClass: typeof SankeyPoint;
     remove: typeof ColumnSeries.prototype.remove;
     setData: NodesComposition.SeriesComposition['setData'];
+    /**
+     * Whether to lay out and render circular links. Disabled in series that
+     * inherit sankey but have no circular layout (organization, arc diagram,
+     * dependency wheel). #8218
+     */
+    useCircularLayout: boolean;
 }
 
 NodesComposition.compose(SankeyPoint, SankeySeries);
@@ -774,7 +1152,8 @@ extend(SankeySeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to', 'weight'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop as any
+    searchPoint: H.noop,
+    useCircularLayout: true
 });
 
 /* *
