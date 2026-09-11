@@ -44,6 +44,7 @@ const environmentKeys = [
 ];
 
 async function runComment({
+    artifactsUrl,
     environment = {},
     existingComment,
     failSilently = false,
@@ -114,6 +115,7 @@ async function runComment({
         }
         Object.assign(commandArgv, {
             _: [],
+            artifactsUrl,
             failSilently,
             pr: '25068',
             resultsPath
@@ -313,6 +315,37 @@ test('skips the existing PR comment when visual execution errors occur', async (
         assert.equal(comment, existingComment);
         assert.equal(requests.length, 0);
     }
+});
+
+test('reports Karma artifacts without credentials or API requests', async () => {
+    const artifactsUrl = 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts';
+    for (const pixels of [0, 526]) {
+        const { comment, requests } = await runComment({
+            artifactsUrl,
+            environment: { VISUAL_REVIEW_API_KEY: undefined },
+            testResults: { 'highcharts/series-networkgraph/textpath-datalabels': pixels }
+        });
+        const payload = JSON.parse(comment);
+        assert.equal(requests.length, 0);
+        assert.match(payload.body, /Production Visual Review contains Playwright results/u);
+        assert.ok(payload.body.includes(artifactsUrl));
+        assert.ok(!payload.body.includes('https://vrevs.test/pr/'));
+        assert.match(payload.title, pixels ? /Differences found/u : /No difference found/u);
+        if (pixels) {
+            assert.match(payload.body, /Found \*\*1\*\* diffing sample/u);
+        }
+    }
+});
+
+test('does not report successful artifact comparisons after execution errors', async () => {
+    const { comment, requests, result } = await runComment({
+        artifactsUrl: 'https://github.com/highcharts/highcharts/actions/runs/123#artifacts',
+        testResults: {},
+        visualTestErrors: true
+    });
+    assert.equal(result, false);
+    assert.equal(comment, undefined);
+    assert.equal(requests.length, 0);
 });
 
 const submissionFailures = [

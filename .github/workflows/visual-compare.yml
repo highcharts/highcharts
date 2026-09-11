@@ -208,11 +208,11 @@ jobs:
         run: |
           npx gulp update-pr-testresults \
           --pr ${{github.event.pull_request.number}} \
+          --artifacts-url "$ARTIFACTS_URL" \
           --fail-silently
         if: ${{ always() }}
         env:
-          VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
-          VISUAL_REVIEW_PR_SHA: ${{github.event.pull_request.head.sha}}
+          ARTIFACTS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts
 
       - name: Comment on PR
         uses: actions/github-script@v8
