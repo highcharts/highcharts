@@ -241,12 +241,13 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
     stickyTracking?: boolean;
 
     /**
-     * A configuration object for the tooltip rendering of each single
-     * series. Properties are inherited from [tooltip](#tooltip).
-     * Overridable properties are `headerFormat`, `pointFormat`,
-     * `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`. Unlike other
-     * series, in a scatter plot the series.name by default shows in the
-     * headerFormat and point.x and point.y in the pointFormat.
+     * The tooltip options for each individual series. Properties are inherited
+     * from [tooltip](#tooltip). Overridable properties are `headerFormat`,
+     * `pointFormat`, `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`.
+     *
+     * By default, the header displays the point name, category or datetime
+     * value. A lone value on a linear x-axis is omitted. The body displays the
+     * series name and both the x and y values.
      *
      * @product highcharts highstock highmaps
      */
@@ -260,7 +261,7 @@ export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {
     headerFormat?: SeriesTooltipOptions['headerFormat'];
 
     /**
-     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/><span style="color:transparent">\u25CF</span> x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
+     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>\u00A0\u00A0x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
      */
     pointFormat?: SeriesTooltipOptions['pointFormat'];
 }

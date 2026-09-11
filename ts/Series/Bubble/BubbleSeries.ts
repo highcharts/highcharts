@@ -458,7 +458,7 @@ class BubbleSeries extends ScatterSeries {
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
                 '{series.name}:<br/>' +
-                '<span style="color:transparent">\u25CF</span> ' +
+                '\u00A0\u00A0' +
                 'x = <b>{point.x}</b>, y = <b>{point.y}</b>, ' +
                 'Size: <b>{point.z}</b><br/>'
         },

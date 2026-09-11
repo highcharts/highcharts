@@ -387,10 +387,10 @@ QUnit.test(
                 data: [[[1, 12]], [[1, 33]]],
                 expected: [
                     'Temperature:<br/>' +
-                        '<span style="color:transparent">\u25CF</span> ' +
+                        '\u00A0\u00A0' +
                         'x = <b>1</b>, y = <b>12</b><br/>',
                     'Humidity:<br/>' +
-                        '<span style="color:transparent">\u25CF</span> ' +
+                        '\u00A0\u00A0' +
                         'x = <b>1</b>, y = <b>33</b><br/>'
                 ]
             },
@@ -399,11 +399,11 @@ QUnit.test(
                 data: [[[1, 12, 2]], [[1, 33, 2]]],
                 expected: [
                     'Temperature:<br/>' +
-                        '<span style="color:transparent">\u25CF</span> ' +
+                        '\u00A0\u00A0' +
                         'x = <b>1</b>, y = <b>12</b>, ' +
                         'Size: <b>2</b><br/>',
                     'Humidity:<br/>' +
-                        '<span style="color:transparent">\u25CF</span> ' +
+                        '\u00A0\u00A0' +
                         'x = <b>1</b>, y = <b>33</b>, ' +
                         'Size: <b>2</b><br/>'
                 ]
