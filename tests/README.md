@@ -23,6 +23,7 @@ This directory contains the Playwright test suite for Highcharts products.
 - [Debugging](#debugging)
   - [QUnit browser logs](#qunit-browser-logs)
 - [Environment Variables](#environment-variables)
+- [Playwright Visual Comparisons](#playwright-visual-comparisons)
 - [FAQ](#faq)
 - [Common Issues](#common-issues)
 - [Resources](#resources)
@@ -695,6 +696,10 @@ Add `--reporter=list` for detailed console output:
 npx playwright test --reporter=list
 ```
 
+For visual runs, keep the configured reporter list. A command-line
+`--reporter` value replaces that list and can remove the visual reporter that
+validates complete results and writes `test/visual-test-complete`.
+
 ### QUnit browser logs
 
 When QUnit tests fail, browser logs are written to per-worker files:
@@ -733,7 +738,9 @@ npx playwright show-trace test-results/<test-folder>/trace.zip
 | `NO_REWRITES` | Skip route rewrites, test against live CDN |
 | `QUNIT_TEST_PATH` | Glob-enabled QUnit test path (e.g., `unit-tests/rangeselector/*`) |
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
-| `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
+| `VISUAL_TEST_PATH` | Filter visual tests by one or more path substrings |
+| `VISUAL_TEST_MANIFEST` | Select the exact visual sample IDs listed in a JSON manifest; mutually exclusive with `VISUAL_TEST_PATH` |
+| `VISUAL_TEST_REFERENCE` | Set to `1` to write reference SVGs instead of comparing |
 
 Examples:
 
@@ -744,9 +751,130 @@ QUNIT_TEST_PATH=unit-tests/rangeselector/update npx playwright test --project=qu
 # Run single visual test
 VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
 
+# Run the full visual manifest
+VISUAL_TEST_MANIFEST=tests/visual/samples.json npx playwright test --project=visual
+
 # Test against live CDN
 NO_REWRITES=1 npx playwright test
 ```
+
+## Playwright Visual Comparisons
+
+> **Note:** Playwright and Karma run the same eligible sample set in different
+> browsers. Successful Playwright runs for same-repository
+> PRs publish to production Visual Review and can replace the current Karma
+> review for that PR with results for the selected manifest only.
+
+The `visual` Playwright project (`tests/visual/visual.spec.ts`) renders samples to
+SVG, compares them against references, and records a pixel-difference count. It
+runs on Chromium only. Sample discovery uses the shared Karma visual exclusions.
+The CI workflow starts with the IDs in `tests/visual/samples.json`. A selection
+test checks that this manifest contains every eligible candidate sample. CI
+compares the subset present and eligible on both revisions, matching Karma's
+handling of samples without master references. The selected IDs are saved in
+the workflow artifacts as `visual-samples.json`. An entry excluded
+by Karma is rejected; it cannot be used to run an ignored sample. `VISUAL_TEST_PATH` remains
+a substring filter for focused local runs and cannot be combined with a
+manifest.
+
+The manifest currently covers 2,034 samples across Highcharts, Stock, Maps, and
+Gantt, including both demos and focused API-option samples. It includes
+multi-chart rendering, polar and range series, network diagrams, stock
+navigation and indicators, map projections and color axes, and Gantt progress,
+hierarchy, and grid columns. New entries must pass reference
+generation and comparison with the existing offline routes and Karma exclusions.
+Discovery includes `demo.js` and TypeScript sources compiled by Karma's `--ts`
+mode. Module-only `demo.mjs` samples are not loaded by Karma and are excluded.
+The visual runner preloads the Morningstar connector, as Karma does. Its five
+API-backed samples use recorded responses in `tests/visual/data`; these routes
+are limited to the visual project and retain offline execution. See the
+[fixture provenance](visual/data/README.md) before refreshing those responses.
+
+SVG capture waits for the sample's initial XHR data requests to finish. Charts
+can emit their load event before CSV data arrives, so chart existence or
+`hasLoaded` alone is insufficient. Pending requests share the chart's 10-second
+readiness timeout and are aborted during sample cleanup. No fixed settling delay
+is added to samples without requests, and empty datasets remain valid.
+
+### Workflow
+
+Run the two commands in order for the same manifest or sample:
+
+**1. Generate the references** (write once, or to refresh):
+
+```sh
+VISUAL_TEST_MANIFEST=tests/visual/samples.json \
+VISUAL_TEST_REFERENCE=1 \
+npx playwright test tests/visual/visual.spec.ts --project=visual
+```
+
+This writes `samples/<path>/reference.svg` files and exits. References are
+generated locally and are ignored by Git. Reference mode does not produce
+candidate output, results JSON, or a completion marker. Re-running it overwrites
+the existing files, so only run this intentionally.
+
+**2. Run the candidate comparison**:
+
+```sh
+VISUAL_TEST_MANIFEST=tests/visual/samples.json \
+npx playwright test tests/visual/visual.spec.ts --project=visual
+```
+
+For a focused local run, generate and compare one sample with
+`VISUAL_TEST_PATH=samples/highcharts/demo/area-missing`. The path value is matched
+as a substring, while manifest entries are exact sample IDs.
+
+### Outputs
+
+| File | Written when |
+|------|-------------|
+| `samples/<path>/reference.svg` | Reference mode only |
+| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 |
+| `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
+| `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
+| `test/visual-test-errors.log` | Any sample or terminal error during the run |
+| `test/visual-test-complete` | Candidate mode, after every selected sample finishes, including completed sample errors |
+
+### Failure semantics
+
+A **numeric pixel difference** recorded in `test/visual-test-results.json` is
+diagnostic and does not itself fail the Playwright run. The following conditions
+are failures:
+
+- The sample script throws or the chart does not load within the timeout
+- The browser context or Playwright process terminates unexpectedly
+- `reference.svg` is absent when candidate mode is run
+- `test/visual-test-errors.log` is non-empty after the run
+- expected results are missing, the selected sample set is invalid, or an
+  explicitly requested manifest ID is excluded by Karma
+- `test/visual-test-complete` is absent after the run (indicates the full
+  candidate run did not finish normally)
+
+A completed sample execution error fails CI and remains in the error log, but
+does not prevent the completion signal when all selected samples finish.
+Interrupted runs, unexecuted samples, and fixture or browser failures omit the
+signal. Completion alone is not permission to publish: the workflow also
+requires successful reference and candidate outcomes and an empty error log.
+
+The CI workflow uploads diagnostics from both revisions and gates the result on
+the reference and candidate outcomes plus the candidate completion marker.
+Locally these markers are informational.
+
+### Production publishing
+
+After validation, same-repository PR runs use `gulp update-pr-testresults` to
+publish the complete result JSON and SVG/GIF artifacts for differing samples to
+`https://vrevs.highsoft.com`. Playwright is the sole production publisher. Karma
+continues comparing samples and links to its GitHub Actions artifacts using
+`gulp update-pr-testresults --artifacts-url URL`, which skips API submission.
+The Playwright PR comment identifies the number of selected samples. Manual
+workflow runs and fork PRs only upload GitHub Actions diagnostics.
+
+Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with
+`GITHUB_RUN_ID` supplying both the submission ID and its globally unique run
+number. Upload failures fail CI, and GitHub artifacts remain available even if
+publishing fails. A numeric visual difference is still a valid completed run and
+is published for review.
 
 ## FAQ
 
@@ -801,6 +929,11 @@ The default configuration uses multiple reporters:
 - Line reporter locally (`line`) or dot reporter in CI (`dot`)
 - HTML reporter (`playwright-report/`)
 - Custom QUnit browser-log note reporter
+- Custom visual completion reporter (`tests/visual/visual-reporter.ts`)
+
+For visual runs, retain all configured reporters. Passing `--reporter` replaces
+the configuration, so omitting the visual reporter prevents completion
+validation.
 
 View the HTML report with:
 

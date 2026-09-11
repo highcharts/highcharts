@@ -44,6 +44,29 @@ npx karma start test/karma-conf.js --tests highcharts/*/* --reference
 npx karma start test/karma-conf.js --tests highcharts/*/* --visualcompare
 ```
 
+The Playwright manifest in `tests/visual/samples.json` covers the same eligible
+sample set as Karma, using shared exclusions. Same-repository PR runs publish
+the Playwright results to production Visual Review; the latest published
+run replaces the current review for that PR. Karma only uploads GitHub Actions
+artifacts and posts an artifact-linked comment; it does not publish to production
+Visual Review. Generate references and compare
+candidates with:
+
+```bash
+VISUAL_TEST_MANIFEST=tests/visual/samples.json \
+VISUAL_TEST_REFERENCE=1 \
+npx playwright test tests/visual/visual.spec.ts --project=visual
+
+VISUAL_TEST_MANIFEST=tests/visual/samples.json \
+npx playwright test tests/visual/visual.spec.ts --project=visual
+```
+
+`VISUAL_TEST_MANIFEST` selects exact sample IDs. Explicit IDs excluded by Karma
+are rejected, and a manifest cannot be combined with `VISUAL_TEST_PATH`.
+Without a manifest, discovery applies the shared Karma exclusions. See
+[Playwright production publishing](../tests/README.md#production-publishing)
+for upload and completion requirements.
+
 ## Writing Tests
 
 For debugging, it may be convenient to use the visual [Highcharts Utils].
