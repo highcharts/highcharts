@@ -7,6 +7,37 @@
         }
 
         var Highcharts = window.Highcharts;
+        var originalSend = window.XMLHttpRequest.prototype.send;
+        var pendingRequests = new Set();
+
+        function trackDataRequests() {
+            const requests = pendingRequests = new Set();
+            window.XMLHttpRequest.prototype.send = function (...args) {
+                const xhr = this;
+                requests.add(xhr);
+                function finish() {
+                    requests.delete(xhr);
+                }
+                // Data's readystatechange callback updates the chart before
+                // loadend. A chart can be loaded while its CSV is still pending.
+                xhr.addEventListener('loadend', finish, { once: true });
+                try {
+                    return originalSend.apply(xhr, args);
+                } catch (error) {
+                    xhr.removeEventListener('loadend', finish);
+                    finish();
+                    throw error;
+                }
+            };
+        }
+
+        function cleanupDataRequests() {
+            window.XMLHttpRequest.prototype.send = originalSend;
+            const requests = pendingRequests;
+            pendingRequests = new Set();
+            requests.forEach(xhr => xhr.abort());
+            requests.clear();
+        }
 
         function deepClone(obj, seen) {
             if (obj === null || typeof obj !== 'object') {
@@ -391,6 +422,7 @@
 
         window.HCVisualSetup = {
             beforeSample() {
+                trackDataRequests();
                 Math.randomCursor = 0;
                 ignoreNextSetOptions++;
                 if (cleanupMode === 'strict') {
@@ -398,6 +430,7 @@
                 }
             },
             afterSample() {
+                cleanupDataRequests();
                 restoreWrappedFunctions();
                 restoreAddedEvents();
                 if (cleanupMode === 'strict') {
@@ -408,6 +441,9 @@
                 markOptionsClean();
             },
             markOptionsClean,
+            hasPendingRequests() {
+                return pendingRequests.size > 0;
+            },
             configure,
             deepClone,
             mode: cleanupMode,
