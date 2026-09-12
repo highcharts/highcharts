@@ -20,6 +20,8 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type { DeepPartial } from '../../Shared/Types';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -27,7 +29,65 @@ const {
     column: ColumnSeries,
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
+import Tooltip from '../../Core/Tooltip.js';
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const seriesHeaderFormat =
+    '<span style="color:{point.color}">\u25CF</span> ' +
+    '<span style="font-size: 0.8em"> {series.name}</span><br/>';
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Whether the series type supports explicitly enabled shared tooltips.
+ * @private
+ */
+function supportsSharedTooltip(series: ScatterSeries): boolean {
+    return !!(
+        series.isCartesian &&
+        series.type === series.sharedTooltipType
+    );
+}
+
+/**
+ * @private
+ */
+function onTooltipHeaderFormatter(
+    this: Tooltip,
+    e: Event&Tooltip.HeaderFormatterEventObject
+): void {
+    const point = e.point,
+        series = point.series;
+
+    if (
+        !e.isFooter &&
+        series instanceof ScatterSeries &&
+        series.tooltipOptions.headerFormat ===
+            ScatterSeriesDefaults.tooltip?.headerFormat
+    ) {
+        if (!supportsSharedTooltip(series)) {
+            e.text = point.tooltipFormatter(seriesHeaderFormat);
+            e.preventDefault();
+        } else if (
+            !point.name &&
+            !series.xAxis.categories &&
+            series.xAxis.type === 'linear'
+        ) {
+            e.text = '';
+            e.preventDefault();
+        }
+    }
+}
 
 /* *
  *
@@ -90,6 +150,28 @@ class ScatterSeries extends LineSeries {
 
     /* eslint-disable valid-jsdoc */
     /**
+     * Honor explicit shared-tooltip opt-in for cartesian scatter-like
+     * series while keeping the default behavior unchanged.
+     * @private
+     */
+    public setOptions(
+        itemOptions: DeepPartial<SeriesTypeOptions>
+    ): this['options'] {
+        // Set before calling super, so that the shared-tooltip default for
+        // `stickyTracking` is resolved with the right value
+        this.noSharedTooltip = !supportsSharedTooltip(this);
+
+        const options = super.setOptions(itemOptions);
+
+        this.noSharedTooltip = !(
+            supportsSharedTooltip(this) &&
+            this.tooltipOptions.shared
+        );
+
+        return options;
+    }
+
+    /**
      * Optionally add the jitter effect.
      * @private
      */
@@ -150,8 +232,6 @@ class ScatterSeries extends LineSeries {
             this.graph = this.graph.destroy();
         }
     }
-
-
 }
 
 /* *
@@ -162,6 +242,7 @@ class ScatterSeries extends LineSeries {
 
 interface ScatterSeries {
     pointClass: typeof ScatterPoint;
+    sharedTooltipType: string;
 }
 extend(ScatterSeries.prototype, {
     allowOutsidePlotInteraction: true,
@@ -169,6 +250,7 @@ extend(ScatterSeries.prototype, {
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,
+    sharedTooltipType: 'scatter',
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup']
 });
 
@@ -183,6 +265,8 @@ extend(ScatterSeries.prototype, {
 addEvent(ScatterSeries, 'afterTranslate', function (): void {
     this.applyJitter();
 });
+
+addEvent(Tooltip, 'headerFormatter', onTooltipHeaderFormatter);
 
 /* eslint-enable no-invalid-this */
 
