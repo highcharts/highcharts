@@ -1648,8 +1648,29 @@ class Tooltip {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
 
-        // Distribute and put in place
-        distribute(boxes, adjustedPlotHeight);
+        // When `tooltip.outside: true` labels may be placed outside the plot
+        // area, in the chart or in the whole viewport, so tall labels have room
+        // instead of being hidden (#24860).
+        const spaceAbove = distributionBoxTop +
+                (tooltip.outside ? chartTop : 0),
+            // The height that is missing for all labels to fit
+            deficit = boxes.reduce((sum, box): number => sum + box.size, 0) -
+                adjustedPlotHeight,
+            spaceBelow = deficit > 0 ?
+                tooltip.getPlayingField().height - spaceAbove -
+                    adjustedPlotHeight : 0,
+            below = headerHeight && !headerTop ?
+                0 : clamp(deficit, 0, spaceBelow),
+            above = headerTop ? 0 : clamp(deficit - below, 0, spaceAbove);
+
+        // Distribute and put in place. Shift the targets to keep the header
+        // anchored to the axis (#24860).
+        boxes.forEach((box): void => {
+            box.target += above;
+        });
+        distribute(boxes, adjustedPlotHeight + above + below);
+        distributionBoxTop -= above;
+
         const boxExtremes = {
             left: chartLeft,
             right: chartLeft
@@ -1671,6 +1692,8 @@ class Tooltip {
             }
         });
 
+        const containerOffset = Math.max(-distributionBoxTop, 0);
+
         boxes.forEach(function (box: BoxObject): void {
             const {
                 x,
@@ -1689,9 +1712,10 @@ class Tooltip {
                  * to avoid breaking change. Remove distributionBoxTop to make
                  * it consistent.
                  */
-                y: (pos || 0) + distributionBoxTop + (fixed && position.y || 0),
+                y: (pos || 0) + distributionBoxTop + containerOffset +
+                    (fixed && position.y || 0),
                 anchorX,
-                anchorY
+                anchorY: anchorY + containerOffset
             };
 
             // Handle left-aligned tooltips overflowing the chart area
@@ -1732,7 +1756,7 @@ class Tooltip {
 
             // Position the tooltip container to the chart container
             container.style.left = boxExtremes.left + 'px';
-            container.style.top = chartTop + 'px';
+            container.style.top = chartTop - containerOffset + 'px';
         }
 
         // Workaround for #18927, artefacts left by the shadows of split
