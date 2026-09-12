@@ -1346,15 +1346,16 @@ class Tooltip {
             tooltipLabel = tooltip.getLabel(),
             ren = this.renderer || chart.renderer,
             headerTop = chart.xAxis[0]?.opposite,
+            headerDistance = options.header.distance || 0,
             chartPosition = pointer.getChartPosition(),
             chartTop = outside ? chartPosition.top : 0,
             chartLeft = outside ? chartPosition.left : 0,
             hasFixedPosition = positioner || fixed;
 
         if (headerTop) {
-            bounds.top = chartTop + plotTop;
+            bounds.top = chartTop + plotTop - headerDistance;
         } else {
-            bounds.bottom = chartTop + plotTop + plotHeight;
+            bounds.bottom = chartTop + plotTop + plotHeight + headerDistance;
         }
 
         // Visualize field for debugging
