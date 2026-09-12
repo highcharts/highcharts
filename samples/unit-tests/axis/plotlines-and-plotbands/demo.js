@@ -949,7 +949,14 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
         ],
         yAxis: [
             {
-                height: '50%'
+                height: '50%',
+                // Reaches below the pane (#6257)
+                plotBands: [
+                    {
+                        from: -100,
+                        to: 1
+                    }
+                ]
             },
             {
                 height: '50%',
@@ -987,6 +994,14 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
     assert.ok(
         bands[1].height > bands[0].height,
         'plotBand with acrossPanes = true has greater height'
+    );
+
+    assert.close(
+        Number(chart.yAxis[0].plotBandClip.attr('height')),
+        chart.yAxis[0].len,
+        1,
+        '#6257: a band should be clipped to its own pane, not to the whole ' +
+            'plot area'
     );
 });
 
@@ -1064,5 +1079,109 @@ QUnit.test(
         });
 
         opacityTester([1, 1, 1]);
+    }
+);
+
+QUnit.test(
+    '#6257: Plot band reaching outside the axis is clipped, not fitted',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                xAxis: {
+                    max: 8,
+                    min: 0,
+                    plotBands: [{
+                        from: 7,
+                        label: {
+                            text: 'Cut'
+                        },
+                        to: 12
+                    }]
+                },
+                yAxis: {
+                    max: 8,
+                    min: 0,
+                    plotBands: [{
+                        from: -5,
+                        to: 3
+                    }]
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            xAxis = chart.xAxis[0],
+            yAxis = chart.yAxis[0],
+            bands = xAxis.plotLinesAndBands,
+            // Rendered band corners, index 1 for x and 2 for y
+            corners = (band, index) => band.svgElem.pathArray
+                .filter(segment => segment.length === 3)
+                .map(segment => segment[index]);
+
+        assert.close(
+            Math.max(...corners(bands[0], 1)),
+            xAxis.toPixels(12),
+            1,
+            'A band reaching past the max should keep its real coordinates, ' +
+                'so that a gradient fill spans the full band'
+        );
+
+        assert.ok(
+            bands[0].svgElem.element.getAttribute('clip-path'),
+            'The band should be clipped to the axis instead of being fitted'
+        );
+
+        const labelBox = bands[0].label.getBBox();
+
+        assert.ok(
+            labelBox.x + labelBox.width / 2 < xAxis.pos + xAxis.len,
+            'The label of a cut band should stay within the visible part'
+        );
+
+        assert.close(
+            Math.max(...corners(yAxis.plotLinesAndBands[0], 2)),
+            yAxis.toPixels(-5),
+            1,
+            'A band on a vertical axis should keep its real coordinates too'
+        );
+
+        chart.setSize(400, 300, false);
+
+        assert.close(
+            Number(xAxis.plotBandClip.attr('width')),
+            xAxis.len,
+            1,
+            'The clip should follow the axis when the chart is resized'
+        );
+    }
+);
+
+QUnit.test(
+    '#6257: Plot band clip across a scrollable plot area',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    height: 300,
+                    scrollablePlotArea: {
+                        minHeight: 500
+                    }
+                },
+                xAxis: {
+                    plotBands: [{
+                        from: 1,
+                        to: 2
+                    }]
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            axis = chart.xAxis[0];
+
+        assert.ok(
+            Number(axis.plotBandClip.attr('height')) >=
+                chart.plotTop + chart.plotHeight,
+            'The clip should not cut the band where the plot area reaches ' +
+                'below the chart height'
+        );
     }
 );
