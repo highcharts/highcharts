@@ -275,6 +275,8 @@ The label next to the crosshair in Highcharts Stock. 
 
 The data label. Use _.highcharts-data-label-box_ to style the border or background, and _.highcharts-data-label text_ for text styling. Use the _dataLabels.className_ option to set specific class names for individual items. Replaces background, border, color and style options for [series.dataLabels](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels).
 
+For SVG text, set `fill` on `.highcharts-data-label text`. With `dataLabels.useHTML`, set `color` on `.highcharts-data-label foreignObject > div`. This selects the root HTML text element, where the default `0.7em` font size is applied once. Nested content inherits its color and font size unless overridden.
+
 [Demo of styling data labels](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels/).
 
 ```
@@ -480,6 +482,8 @@ The box and border for the legend. Replaces [legend.backgroundColor](https://ap
 
 Styles for each individual legend item. Replaces [legend.itemStyle](https://api.highcharts.com/highcharts/legend.itemStyle), and [legend.itemHoverStyle](https://api.highcharts.com/highcharts/legend.itemHoverStyle) when the _:hover_ pseudo-class is added.
 
+For SVG text, set `fill` on `.highcharts-legend-item > text`. With `legend.useHTML`, set `color` on `.highcharts-legend-item foreignObject > div`. The root HTML text element uses `0.8em`, and nested content inherits this size. HTML text also follows the legend's hover and hidden colors; hidden items retain their hidden color and line-through decoration while hovered.
+
 [Demo of legend styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/legend/).
 
 ```
@@ -638,10 +642,11 @@ Styles for the Highcharts Stock scrollbar. The thumb is the actual bar. The butt
 .highcharts-tooltip
 .highcharts-tooltip-box
 .highcharts-tooltip text
+.highcharts-tooltip foreignObject > div
 .highcharts-tooltip-header
 ```
 
-Styles for the tooltip. The tooltip box is the shape or path where the background and border can be set. Text styles should be applied to the text element.
+Styles for the tooltip. The tooltip box is the shape or path where the background and border can be set. For SVG text, apply text styles to `.highcharts-tooltip text` and use `fill` for its color. With `tooltip.useHTML`, use `.highcharts-tooltip foreignObject > div` and set `color` instead. This selects the root HTML text element and applies the default `0.8em` font size once, allowing nested content to inherit without repeated scaling. The `.highcharts-header` class applies a further `0.8em` reduction to header text.
 
 [Demo of tooltip styling](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/tooltip-border-background/).
 
