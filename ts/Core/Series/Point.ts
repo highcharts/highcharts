@@ -1312,16 +1312,10 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1340,7 +1334,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)

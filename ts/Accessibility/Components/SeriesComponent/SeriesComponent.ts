@@ -34,7 +34,10 @@ import ForcedMarkers from './ForcedMarkers.js';
 import NewDataAnnouncer from './NewDataAnnouncer.js';
 import Series from '../../../Core/Series/Series.js';
 import SeriesDescriber from './SeriesDescriber.js';
-const { describeSeries } = SeriesDescriber;
+const {
+    compose: composeSeriesDescriber,
+    describeSeries
+} = SeriesDescriber;
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 
 
@@ -71,6 +74,7 @@ class SeriesComponent extends AccessibilityComponent {
     ): void {
         NewDataAnnouncer.compose(SeriesClass);
         ForcedMarkers.compose(SeriesClass);
+        composeSeriesDescriber(PointClass);
         SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }
 
