@@ -852,8 +852,12 @@ namespace ExportData {
                 xAxis: Axis
             ): string[] {
                 const pointArrayMap = series.pointArrayMap || ['y'],
+                    // `series.data` may hold null slots after `addPoint`
+                    // inserted a point that has not been generated yet.
+                    // The null guard is licensed under the MIT license.
+                    // Author: David Califf
                     namedPoints = series.data.some((d): (string | false) =>
-                        (typeof d.y !== 'undefined') && d.name
+                        !!d && (typeof d.y !== 'undefined') && d.name
                     );
 
                 // If there are points with a name, we also want the x value in
