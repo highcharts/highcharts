@@ -106,6 +106,7 @@
 .hcg-theme-default {
     --hcg-border-color: var(--highcharts-neutral-color-20, color-mix(in srgb, var(--hcg-color, #000000) 10%, var(--hcg-background, #ffffff)));
     --hcg-row-hover-background: var(--ig-highlight-color-5, color-mix(in srgb, var(--hcg-color, #000000) 3%, var(--hcg-background, #ffffff)));
+    --hcg-row-selected-background: var(--highcharts-highlight-color-10, color-mix(in srgb, var(--hcg-color, #000000) 8%, var(--hcg-background, #ffffff)));
     --hcg-row-even-background: var(--highcharts-neutral-color-3, color-mix(in srgb, var(--hcg-color, #000000) 2%, var(--hcg-background, #ffffff)));
     --hcg-summary-row-border-color: var(--highcharts-neutral-color-40, color-mix(in srgb, var(--hcg-color, #000000) 40%, var(--hcg-background, #ffffff)));
     --hcg-summary-column-border-color: var(--hcg-summary-row-border-color);

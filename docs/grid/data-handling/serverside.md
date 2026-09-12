@@ -170,6 +170,16 @@ Use `idColumn` when one of the returned columns contains stable row IDs. If it
 is not set, the remote provider falls back to `rowIds` from the response or to
 generated row indices.
 
+Those generated indices are positions **within the current query result**, so
+they stop pointing at the same record as soon as the data is sorted or
+filtered. Any feature keyed by row ID — [row
+selection](https://www.highcharts.com/docs/grid/rows/selection), [row
+pinning](https://www.highcharts.com/docs/grid/rows/pinning), [tree
+view](https://www.highcharts.com/docs/grid/rows/tree-view) expansion state —
+then silently follows a different row. Grid logs a console warning when it has
+to fall back to positions, so either set `idColumn` or return `rowIds` from the
+server.
+
 Use `setValueCallback` when edited cell values should be saved on the server.
 Without it, remote editing cannot be persisted.
 

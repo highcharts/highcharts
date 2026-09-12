@@ -1,0 +1,54 @@
+/* Grid Pro row selection */
+.hcg-container .hcg-table {
+    &.hcg-rows-selectable tbody tr {
+        user-select: none;
+    }
+
+    .hcg-selection-cell {
+        text-align: center;
+        text-overflow: clip;
+    }
+
+    .hcg-selection-checkbox {
+        cursor: pointer;
+        margin: 0;
+        vertical-align: middle;
+    }
+
+    .hcg-selection-checkbox-readonly {
+        cursor: inherit;
+        pointer-events: none;
+    }
+
+    .hcg-cell:not(.hcg-selection-cell) > .hcg-selection-checkbox {
+        margin-right: 0.5em;
+    }
+}
+
+.hcg-themed {
+    .hcg-table tbody tr.hcg-row-selected > :where(.hcg-cell) {
+        --ig-row-selected-background:
+            color-mix(
+                in srgb,
+                var(--hcg-row-selected-background, var(--ig-column-layer)) var(--hcg-row-selected-opacity, var(--ig-hover-opacity)),
+                var(--ig-column-layer) calc(100% - var(--hcg-row-selected-opacity, var(--ig-hover-opacity)))
+            );
+        --ig-row-selected-color: var(--hcg-row-selected-color, var(--ig-column-text-layer));
+
+        /* The row layer the hover and sync states composite over. Setting it
+           makes a cell hover blend on top of the selection instead of
+           replacing it - its selector is one pseudo-class more specific, so it
+           cannot be outranked here. */
+        --ig-row-hover-color: var(--ig-row-selected-background);
+        --ig-row-hover-text-color: var(--ig-row-selected-color);
+        --ig-cell-hover-text-color: var(--ig-row-selected-color);
+
+        background: var(--ig-row-selected-background);
+        color: var(--ig-row-selected-color);
+    }
+
+    /* Drops the themed horizontal padding, which would clip the checkbox. */
+    .hcg-table .hcg-selection-cell {
+        --hcg-horizontal-padding: 0;
+    }
+}
