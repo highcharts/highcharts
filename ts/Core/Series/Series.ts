@@ -3139,7 +3139,9 @@ class Series {
      */
     public drawPoints(points?: Array<Point>): void {
 
-        points ||= this.points.concat(this.condemnedPoints);
+        points ||= this.points.concat(
+            this.condemnedPoints.filter((p): boolean => !p.destroyed)
+        );
 
         const series = this,
             chart = series.chart,
