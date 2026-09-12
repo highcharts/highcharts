@@ -419,3 +419,51 @@ QUnit.test('Axis title offset (#3027)', function (assert) {
         }
     );
 });
+
+QUnit.test('yAxis label space with small title.offset (#6967)', function (
+    assert
+) {
+    // Stacked left axes: a small title.offset on the outer axis must still
+    // reserve room for its labels.
+    const stacked = Highcharts.chart('container', {
+        yAxis: [
+            {},
+            {
+                title: {
+                    offset: 0
+                }
+            }
+        ],
+        series: [
+            { data: [0.0001, 0.0002, 0.0003], yAxis: 0 },
+            { data: [0.0001, 0.0002, 0.0003], yAxis: 1 }
+        ]
+    });
+
+    assert.ok(
+        stacked.yAxis[1].labelGroup.getBBox().x >= 0,
+        'Outer yAxis labels should stay inside the container.'
+    );
+
+    // At offset 0 the title overlaps the labels and reserves no space, so
+    // removing the title entirely must not change plotLeft.
+    const single = Highcharts.chart('container', {
+        yAxis: {
+            title: {
+                offset: 0
+            }
+        },
+        series: [
+            { data: [0.0001, 0.0002, 0.0003] }
+        ]
+    });
+    const offsetPlotLeft = single.plotLeft;
+
+    single.update({ yAxis: { title: { text: null } } });
+
+    assert.strictEqual(
+        offsetPlotLeft,
+        single.plotLeft,
+        'title.offset: 0 reserves label width only, not label + title.'
+    );
+});
