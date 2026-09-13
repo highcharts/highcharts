@@ -1,14 +1,5 @@
 (async () => {
 
-    // Custom template helpers
-    Highcharts.Templating.helpers.floor = (
-        value: number
-    ): number => Math.floor(value);
-    Highcharts.Templating.helpers.rest = (
-        value: number,
-        divisor: number
-    ): number => value % divisor;
-
     const csv = await fetch(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@180fb2be6b/samples/data/who-height-for-age.csv'
     ).then(response => response.text());
@@ -40,9 +31,11 @@
 
         xAxis: {
             labels: {
-                format: '{value} years'
+                // Subtract 0 to turn '01' into 1
+                format: '{subtract (value:%y) 0} years'
             },
-            minPadding: 0
+            minPadding: 0,
+            type: 'datetime'
         },
 
         yAxis: {
@@ -58,8 +51,9 @@
         tooltip: {
             crosshairs: true,
             headerFormat: `<table>
-                <caption>Age {floor point.key} years{#if (lt point.key 6)},
-                    {floor (rest (multiply point.key 12) 12)} months
+                <caption>Age {subtract (point.x:%y) 0}
+                    years{#if (lt (point.x:%y) 6)},
+                    {subtract (point.x:%m) 1} months
                 {/if}</caption>`,
             footerFormat: '</table>',
             shared: true,
@@ -72,7 +66,8 @@
                 dataMapping: {
                     x: 'ageMonths'
                 },
-                pointInterval: 1 / 12,
+                pointIntervalUnit: 'month',
+                pointStart: '2000-01-01',
                 relativeXValue: true
             },
             line: {
