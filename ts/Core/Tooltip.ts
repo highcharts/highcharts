@@ -36,8 +36,7 @@ import H from './Globals.js';
 const {
     composed,
     dateFormats,
-    doc,
-    isSafari
+    doc
 } = H;
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
@@ -1691,18 +1690,6 @@ class Tooltip {
                 false
             );
         }
-
-        // Workaround for #18927, artefacts left by the shadows of split
-        // tooltips in Safari v16 (2023). Check again with later versions if we
-        // can remove this.
-        if (isSafari) {
-            tooltipLabel.attr({
-                // Force a redraw of the whole group by chaining the opacity
-                // slightly
-                opacity: tooltipLabel.opacity === 1 ? 0.999 : 1
-            });
-        }
-
     }
 
     /**
