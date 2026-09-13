@@ -142,6 +142,12 @@
             type: 'arearange',
             color: '#fa4b42',
             zIndex: 0
-        }]
+        }],
+
+        exporting: {
+            csv: {
+                dateFormat: '%y-%m'
+            }
+        }
     });
 })();

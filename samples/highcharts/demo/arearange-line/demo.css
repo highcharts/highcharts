@@ -90,6 +90,8 @@ body {
 .highcharts-data-table td,
 .highcharts-data-table th,
 .highcharts-data-table caption {
+    border: 1px solid var(--highcharts-neutral-color-20, #ccc);
+    font-size: 0.9em;
     padding: 0.5em;
 }
 
