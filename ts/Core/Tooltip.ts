@@ -47,7 +47,6 @@ import {
     clamp,
     css,
     discardElement,
-    extend,
     fireEvent,
     getAlignFactor,
     internalClearTimeout,
@@ -1358,20 +1357,24 @@ class Tooltip {
             bounds.bottom = chartTop + plotTop + plotHeight + headerDistance;
         }
 
-        // Visualize field for debugging
-        // if (!window.field) {
-        //     window.field = document.createElement('div');
-        //     window.field.style.position = 'absolute';
-        //     window.field.style.backgroundColor = 'rgba(0, 0, 255, 0.2)';
-        //     window.field.style.pointerEvents = 'none';
-        //     document.body.appendChild(window.field);
+        // Uncomment this to visualize field for debugging
+        // let debugBox = H.tooltipFieldDebugBox;
+        // if (!debugBox) {
+        //     debugBox = H.tooltipFieldDebugBox = document
+        //         .createElement('div');
+        //     css(debugBox, {
+        //         position: 'absolute',
+        //         backgroundColor: 'rgba(0, 0, 255, 0.2)',
+        //         pointerEvents: 'none'
+        //     });
+        //     document.body.appendChild(debugBox);
         // }
-        // window.field.style.left = (outside ? 0 : chartPosition.left) + 'px';
-        // window.field.style.top = (
-        //  bounds.top + (outside ? 0 : chartPosition.top)
-        // ) + 'px';
-        // window.field.style.width = bounds.right + 'px';
-        // window.field.style.height = (bounds.bottom - bounds.top) + 'px';
+        // css(debugBox, {
+        //     left: (outside ? 0 : chartPosition.left) + 'px',
+        //     top: (bounds.top + (outside ? 0 : chartPosition.top)) + 'px',
+        //     width: bounds.right + 'px',
+        //     height: (bounds.bottom - bounds.top) + 'px'
+        // });
 
         /**
          * Calculates the anchor position for the partial tooltip
@@ -1410,7 +1413,7 @@ class Tooltip {
                 }
             }
 
-            // Limit values to plot area
+            // Limit values to bounds
             anchorX = clamp(
                 anchorX,
                 -distance,
@@ -1544,14 +1547,16 @@ class Tooltip {
 
         // Graceful degradation for legacy formatters
         if (isString(labels)) {
-            labels = [false, labels];
+            labels = ['', labels];
         }
+        let emptyHeader: true|undefined;
+
         // Create the individual labels for header and points, ignore footer
-        let boxes = labels.slice(0, points.length + 1).reduce(function (
+        const boxes = labels.slice(0, points.length + 1).reduce((
             boxes: Array<BoxObject>,
             str: (boolean|string),
             i: number
-        ): Array<BoxObject> {
+        ): Array<BoxObject> => {
             if (str !== false && str !== '') {
                 const point: (Point|Tooltip.PositionerPointObject) = (
                         points[i - 1] ||
@@ -1564,7 +1569,7 @@ class Tooltip {
                             series: {}
                         }
                     ),
-                    isHeader: boolean = (point as any).isHeader;
+                    isHeader = point.isHeader;
 
                 // Store the tooltip label reference on the series
                 const owner = isHeader ? tooltip : point.series,
@@ -1587,26 +1592,34 @@ class Tooltip {
                             point,
                             tooltip,
                             [anchorX, anchorY]
-                        );
+                        ),
+                        boxObject: BoxObject = {
+                            // 0-align to the top, 1-align to the bottom
+                            align: hasFixedPosition ? 0 : void 0,
+                            anchorX,
+                            anchorY,
+                            boxWidth,
+                            point,
+                            rank: (boxPosition as any).rank ??
+                                (isHeader ? 1 : 0),
+                            size,
+                            target: boxPosition.y,
+                            tt,
+                            x: boxPosition.x
+                        };
 
-                    boxes.push({
-                        // 0-align to the top, 1-align to the bottom
-                        align: hasFixedPosition ? 0 : void 0,
-                        anchorX,
-                        anchorY,
-                        boxWidth,
-                        point,
-                        rank: (boxPosition as any).rank ?? (isHeader ? 1 : 0),
-                        size,
-                        target: boxPosition.y,
-                        tt,
-                        x: boxPosition.x
-                    });
+                    if (isHeader) {
+                        boxObject.pos = boxPosition.y;
+                    }
+
+                    boxes.push(boxObject);
                 } else {
                     // Hide tooltips which anchorY is outside the visible plot
                     // area
                     tt.isActive = false;
                 }
+            } else if (i === 0) {
+                emptyHeader = true;
             }
             return boxes;
         }, []);
@@ -1616,7 +1629,7 @@ class Tooltip {
             !hasFixedPosition &&
             boxes.some((box): boolean => box.x < 0)
         ) {
-            boxes = boxes.map((box): BoxObject => {
+            for (const box of boxes) {
                 const { x, y } = defaultPositioner.call(
                     this,
                     box.boxWidth,
@@ -1626,24 +1639,22 @@ class Tooltip {
                     [box.anchorX, box.anchorY],
                     false
                 );
-                return extend(box, {
-                    target: y,
-                    x
-                });
-            });
+                box.target = y;
+                box.x = x;
+            }
         }
 
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
 
-        // Exempt the header from the distribution algorithm
-        const headerBox = boxes.shift() as BoxObject;
-        headerBox.pos = headerBox.target;
-
         // Distribute and put in place
-        distribute(boxes, bounds.bottom - bounds.top);
+        distribute(
+            // Headers not included in the algorithm
+            boxes.slice(emptyHeader ? 0 : 1),
+            bounds.bottom - bounds.top
+        );
 
-        [headerBox, ...boxes].forEach(function (box: BoxObject): void {
+        for (const box of boxes) {
             const {
                 x,
                 anchorX,
@@ -1660,8 +1671,7 @@ class Tooltip {
 
             // Put the label in place
             box.tt.attr(attributes);
-
-        });
+        }
 
         /* If we have a separate tooltip container, then update the necessary
          * container properties.
@@ -1677,7 +1687,7 @@ class Tooltip {
             const { width, height, x, y } = tooltipLabel.getBBox();
             renderer.setSize(
                 width + x,
-                height + y,
+                height + y + 5, // +5 to avoid cutting off the shadow
                 false
             );
         }
