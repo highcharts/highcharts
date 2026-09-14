@@ -366,6 +366,17 @@ namespace PlotLineOrBandAxis {
 
         if (path && toPath) {
 
+            // The band isn't fitted to the axis, so flag the ones that extend
+            // outside it for clipping (#6257)
+            if (isNumber(this.min) && isNumber(this.max)) {
+                result.isOverflowing = Math.min(from, to) < this.min ||
+                    Math.max(from, to) > this.max;
+            }
+
+            // Flat paths don't need labels (#3836), neither do bands clipped
+            // away entirely (#6257)
+            result.isFlat = outside;
+
             // Go over each subpath - for panes in Highcharts Stock
             for (let i = 0; i < path.length; i += 2) {
                 const pathStart = path[i],
@@ -399,10 +410,6 @@ namespace PlotLineOrBandAxis {
                         ['Z']
                     );
                 }
-
-                // Flat paths don't need labels (#3836), neither do bands
-                // clipped away entirely (#6257)
-                result.isFlat = outside;
             }
 
         }

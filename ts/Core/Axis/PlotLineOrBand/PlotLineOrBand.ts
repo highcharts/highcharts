@@ -279,23 +279,6 @@ class PlotLineOrBand {
                 .add(group);
         }
 
-        // Clip the band to the axis, as it isn't fitted to it. Only along the
-        // axis, to leave `acrossPanes` bands and the navigator alone (#6257).
-        if (isBand) {
-            const { len, pos } = axis,
-                // Left wide open across the axis, so that a scrollable plot
-                // area isn't cut off
-                clipBox = horiz ?
-                    { height: 1e5, width: len, x: pos, y: 0 } :
-                    { height: len, width: 1e5, x: 0, y: pos },
-                clip = axis.plotBandClip ||= renderer.clipRect(clipBox);
-
-            clip.attr(clipBox);
-            if (isNew) {
-                svgElem.clip(clip);
-            }
-        }
-
         // Set the path or return
         if (defined(value)) { // Plot line
             path = axis.getPlotLinePath({
@@ -309,6 +292,23 @@ class PlotLineOrBand {
                 logarithmic?.log2lin(to) ?? to,
                 options
             );
+
+            // The band isn't fitted to the axis, so clip the ones that extend
+            // outside it. Only along the axis, to leave `acrossPanes` bands and
+            // the navigator alone (#6257).
+            let clip: SVGElement|undefined;
+            if (path.isOverflowing) {
+                const { len, pos } = axis,
+                    // Left wide open across the axis, so that a scrollable plot
+                    // area isn't cut off
+                    clipBox = horiz ?
+                        { height: 1e5, width: len, x: pos, y: 0 } :
+                        { height: len, width: 1e5, x: 0, y: pos };
+
+                clip = axis.plotBandClip ||= renderer.clipRect(clipBox);
+                clip.attr(clipBox);
+            }
+            svgElem.clip(clip);
         } else {
             return;
         }
@@ -434,11 +434,19 @@ class PlotLineOrBand {
                 [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])],
             yBounds = path.yBounds ||
                 [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])],
-            // Align within the visible part of a clipped band (#6257)
-            bounds = horiz ? xBounds : yBounds,
-            low = clamp(arrayMin(bounds), pos, pos + len),
-            high = clamp(arrayMax(bounds), pos, pos + len),
-            x = horiz ? low : arrayMin(xBounds),
+            bounds = horiz ? xBounds : yBounds;
+
+        let low = arrayMin(bounds),
+            high = arrayMax(bounds);
+
+        // A clipped band is only partly visible, so align the label within the
+        // visible part (#6257)
+        if (path.isOverflowing) {
+            low = clamp(low, pos, pos + len);
+            high = clamp(high, pos, pos + len);
+        }
+
+        const x = horiz ? low : arrayMin(xBounds),
             y = horiz ? arrayMin(yBounds) : low,
             bBoxWidth = horiz ? high - low : arrayMax(xBounds) - x;
 

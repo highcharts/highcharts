@@ -1167,7 +1167,7 @@ QUnit.test(
                 },
                 xAxis: {
                     plotBands: [{
-                        from: 1,
+                        from: -1,
                         to: 2
                     }]
                 },
