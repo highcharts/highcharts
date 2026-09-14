@@ -9,9 +9,6 @@
 
 var VERBOSE = false;
 
-var CANVAS_WIDTH = 600;
-var CANVAS_HEIGHT = 400;
-
 var div;
 if (!document.getElementById('container')) {
     div = document.createElement('div');
@@ -595,159 +592,6 @@ if (window.QUnit) {
     });
 }
 
-/*
- * Display the tooltip so it gets part of the comparison
- */
-Highcharts.prepareShot = function (chart) {
-    if (
-        chart &&
-        chart.series &&
-        chart.series[0]
-    ) {
-        var points = chart.series[0].nodes || // Network graphs, sankey etc
-                chart.series[0].points || [],
-            i = points.length;
-
-        while (i--) {
-            if (
-                points[i]?.visible &&
-                !points[i].isNull &&
-                !( // Map point with no extent, like Aruba
-                    points[i].shapeArgs &&
-                    points[i].shapeArgs.d &&
-                    points[i].shapeArgs.d.length === 0
-                ) &&
-                points[i].series.options.enableMouseTracking !== false &&
-                typeof points[i].onMouseOver === 'function'
-            ) {
-                points[i].onMouseOver();
-                break;
-            }
-        }
-
-        // Breaks inside foreign objects are considered tainted canvas
-		// ¯\_(ツ)_/¯
-        [].forEach.call(
-			chart.container.querySelectorAll('foreignObject br'),
-			function (br) {
-				br.parentNode.replaceChild(document.createElement('div'), br);
-			}
-		);
-
-        // Replace images in foreign objects
-        [].forEach.call(
-			chart.container.querySelectorAll('foreignObject img'),
-			function (img) {
-				const div = document.createElement('div');
-                div.style.width = '16px';
-                div.style.height = '16px';
-                div.style.position = 'inline-block';
-                div.style.backgroundColor = '#ddd';
-                img.parentNode.replaceChild(div, img);
-			}
-		);
-    }
-};
-
-/**
-* Basic pretty-print SVG, each tag on a new line.
-* @param  {String} svg The SVG
-* @return {String}     Pretty SVG
-*/
-function prettyXML(svg) {
-    svg = svg
-        .replace(/>/g, '>\n')
-
-        // Don't introduce newlines inside tspans or links, it will make the text
-        // render differently
-        .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
-        .replace(/<\/tspan>\n/g, '</tspan>')
-        .replace(/<a([^>]*)>\n/g, '<a$1>')
-        .replace(/<\/a>\n/g, '</a>');
-
-    return svg;
-}
-
-/**
- * Get the SVG of a chart, or the first SVG in the page
- * @param  {Object} chart The chart
- * @return {String}       The SVG
- */
-function getSVG(chart) {
-    var svg;
-    if (chart) {
-        var container = chart.container;
-        Highcharts.prepareShot(chart);
-        svg = container.querySelector('svg')
-            .outerHTML
-            .replace(
-                /<svg /,
-                '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
-            );
-
-        if (chart.styledMode) {
-            var highchartsCSS = document.getElementById('highcharts.css');
-            if (highchartsCSS) {
-                svg = svg
-                    // Get the typography styling right
-                    .replace(
-                        ' class="highcharts-root" ',
-                        ' class="highcharts-root highcharts-container" ' +
-                            'style="width:auto; height:auto" '
-                    )
-
-                    // Insert highcharts.css
-                    .replace(
-                        '</defs>',
-                        '<style>' + highchartsCSS.innerText + '</style></defs>'
-                );
-            }
-
-            var demoCSS = document.getElementById('demo.css');
-            if (demoCSS) {
-                svg = svg
-                    // Insert demo.css
-                    .replace(
-                        '</defs>',
-                        '<style>' + demoCSS.innerText + '</style></defs>'
-                );
-            }
-        }
-
-        // Renderer samples
-    } else {
-        if (document.getElementsByTagName('svg').length) {
-            svg = document.getElementsByTagName('svg')[0].outerHTML;
-        }
-    }
-
-    return prettyXML(svg);
-}
-
-/**
- * Compares the image data of two canvases
- * @param  {Array} data1 Pixel data for image1.
- * @param  {Array} data2 Pixel data for image2.
- * @return {Number}      The amount of different pixels, where 0 is identical
- */
-function compare(data1, data2) { // eslint-disable-line no-unused-vars
-    var i = data1.length,
-        diff = 0,
-        pixels = [],
-        pixel;
-
-    // loops over all reds, greens, blues and alphas
-    while (i--) {
-        pixel = Math.floor(i / 4);
-        if (Math.abs(data1[i] - data2[i]) !== 0 && !pixels[pixel]) {
-            pixels[pixel] = true;
-            diff++;
-        }
-    }
-
-    return diff;
-}
-
 /**
  * Vanilla request for fetching an url using GET.
  * @param {String} url to fetch
@@ -801,62 +645,6 @@ function saveSVGSnapshot(svg, path) {
     }
 }
 
-// Ported from the offline-exporting module
-function svgToDataUrl(svg) {
-    var DOMURL = (window.URL || window.webkitURL || window);
-
-    // Webkit and not chrome
-    var userAgent = window.navigator.userAgent;
-    var webKit = (
-        userAgent.indexOf('WebKit') > -1 &&
-        userAgent.indexOf('Chrome') < 0
-    );
-
-    try {
-        // Safari requires data URI since it doesn't allow navigation to
-        // blob URLs. ForeignObjects also don't work well in Blobs in Chrome
-        // (#14780).
-        if (!webKit && svg.indexOf('<foreignObject') === -1) {
-            return DOMURL.createObjectURL(new window.Blob([svg], {
-                type: 'image/svg+xml;charset-utf-16'
-            }));
-        }
-    } catch (e) {
-        // Ignore
-    }
-    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-}
-
-
-function svgToPixels(svg, canvas) {
-    var DOMURL = (window.URL || window.webkitURL || window);
-    var ctx = canvas.getContext && canvas.getContext('2d');
-
-    var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
-    img.src = svgToDataUrl(svg);
-
-    return new Promise(function (resolve, reject) {
-        img.onload = function () {
-            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-            resolve(ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT).data);
-            DOMURL.revokeObjectURL(img.src);
-        };
-        img.onerror = function () {
-            DOMURL.revokeObjectURL(img.src);
-            reject(new Error('Error loading SVG on canvas.'));
-        };
-    });
-}
-
-function createCanvas(id) {
-    var canvas = document.createElement('canvas');
-    canvas.setAttribute('id', id);
-    canvas.setAttribute('width', CANVAS_WIDTH);
-    canvas.setAttribute('height', CANVAS_HEIGHT);
-    return canvas;
-}
-
 /**
  * Get a PNG image or image data from the chart SVG
  * and compares it with a reference svg already stored on the system.
@@ -868,20 +656,23 @@ function createCanvas(id) {
 function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
     return new Promise(function (resolve, reject) {
 
-        var candidateSVG = getSVG(chart);
+        var candidateSVG = VisualComparator.getSVG(chart);
         if (!candidateSVG || !path) {
             reject(new Error('No candidate SVG found for path: ' + path));
         }
 
-        var referenceCanvas = createCanvas('reference');
-        var candidateCanvas = createCanvas('candidate');
-        var candidatePixels = svgToPixels(candidateSVG, candidateCanvas);
+        var referenceCanvas = VisualComparator.createCanvas('reference');
+        var candidateCanvas = VisualComparator.createCanvas('candidate');
+        var candidatePixels = VisualComparator.svgToPixels(
+            candidateSVG,
+            candidateCanvas
+        );
 
         loadReferenceSVG(path)
             .then(function (referenceSVG) {
                 return Promise
                     .all([
-                        svgToPixels(referenceSVG, referenceCanvas),
+                        VisualComparator.svgToPixels(referenceSVG, referenceCanvas),
                         candidatePixels
                     ])
                     .catch(function (err) {
@@ -891,15 +682,18 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             .then(function (pixelsInFile) {
                 var referencePixels = pixelsInFile[0];
                 var candidatePixels = pixelsInFile[1];
-                var diff = compare(referencePixels, candidatePixels);
+                var diff = VisualComparator.compare(
+                    referencePixels,
+                    candidatePixels
+                );
 
                 if (diff !== 0) {
                     saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
 
                     __karma__.info({
                         filename: './samples/' + path + '/diff.gif',
-                        canvasWidth: CANVAS_WIDTH,
-                        canvasHeight: CANVAS_HEIGHT,
+                        canvasWidth: VisualComparator.CANVAS_WIDTH,
+                        canvasHeight: VisualComparator.CANVAS_HEIGHT,
                         frames: [
                             referencePixels,
                             candidatePixels
