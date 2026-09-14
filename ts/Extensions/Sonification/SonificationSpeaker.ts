@@ -58,6 +58,38 @@ namespace SonificationSpeaker {
     }
 }
 
+/**
+ * Excluded voices from the speech synthesis.
+ * @internal
+ */
+const excludedVoices: string[] = [
+    'Albert',
+    'Bad News',
+    'Bahh',
+    'Bells',
+    'Boing',
+    'Bubbles',
+    'Cellos',
+    'Deranged',
+    'Fred',
+    'Good News',
+    'Hysterical',
+    'Junior',
+    'Kathy',
+    'Organ',
+    'Princess',
+    'Ralph',
+    'Trinoids',
+    'Whisper',
+    'Zarvox',
+    'Wobble',
+    'Superstar',
+    'Eddy',
+    'Flo',
+    'Grandma',
+    'Grandpa'
+];
+
 
 /**
  * The SonificationSpeaker class. This class represents an announcer using
@@ -197,7 +229,11 @@ class SonificationSpeaker {
                     this.voice = voices[i];
                     return;
                 }
-                if (!langFallback && voices[i].lang === lang) {
+                if (
+                    !langFallback &&
+                    voices[i].lang === lang &&
+                    !excludedVoices.includes(voices[i].name)
+                ) {
                     langFallback = voices[i];
                     if (!name) {
                         break;
