@@ -73,7 +73,7 @@ declare module '../../Core/Series/SeriesOptions' {
  * Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
  * series and adds the largest padding required. If no series has this function
  * defined, we add nothing.
- * @private
+ * @internal
  */
 function onAxisAfterSetAxisTranslation(
     this: Axis
@@ -122,7 +122,7 @@ function onAxisAfterSetAxisTranslation(
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.tilemap
  *
@@ -183,7 +183,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Use the shape's defined data label alignment function.
-     * @private
+     * @internal
      */
     public alignDataLabel(): void {
         return this.tileShape.alignDataLabel.apply(this, arguments);
@@ -204,7 +204,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Get metrics for padding of axis for this series.
-     * @private
+     * @internal
      */
     public getSeriesPixelPadding(
         axis: Axis
@@ -262,7 +262,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Set tile shape object on series.
-     * @private
+     * @internal
      */
     public setOptions(): TilemapSeriesOptions {
         // Call original function
@@ -276,7 +276,7 @@ class TilemapSeries extends HeatmapSeries {
 
     /**
      * Use translate from tileShape.
-     * @private
+     * @internal
      */
     public translate(): void {
         return this.tileShape.translate.apply(this, arguments);
@@ -290,6 +290,7 @@ class TilemapSeries extends HeatmapSeries {
  *
  * */
 
+/** @internal */
 interface TilemapSeries {
     pointClass: typeof TilemapPoint;
 }
@@ -312,6 +313,7 @@ extend(TilemapSeries.prototype, { // Prototype functions
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tilemap: typeof TilemapSeries;
@@ -326,6 +328,7 @@ SeriesRegistry.registerSeriesType('tilemap', TilemapSeries);
  *
  * */
 
+/** @internal */
 export default TilemapSeries;
 
 /* *

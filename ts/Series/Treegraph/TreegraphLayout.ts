@@ -29,7 +29,7 @@ import TreegraphNode from './TreegraphNode.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  */
 class TreegraphLayout {
@@ -415,4 +415,5 @@ class TreegraphLayout {
  *
  * */
 
+/** @internal */
 export default TreegraphLayout;
