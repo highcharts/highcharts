@@ -44,6 +44,8 @@ const {
     format,
     numberFormat
 } = F;
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
     reverseChildNodes,
@@ -53,7 +55,9 @@ import {
     defined,
     find,
     isString,
-    isNumber
+    isNumber,
+    pushUnique,
+    wrap
 } from '../../../Shared/Utilities.js';
 
 
@@ -76,6 +80,41 @@ declare module '../../../Core/Series/PointBase' {
  *  Functions
  *
  * */
+
+/**
+ * @private
+ */
+function compose(
+    PointClass: typeof Point
+): void {
+
+    if (pushUnique(composed, 'A11y.SD')) {
+        wrap(PointClass.prototype, 'applyOptions', pointApplyOptions);
+    }
+
+}
+
+
+/**
+ * Discard the mock graphic once the point is no longer null, so that the
+ * series can draw a real marker for it, #25299.
+ * @private
+ */
+function pointApplyOptions(
+    this: Point,
+    proceed: Point['applyOptions'],
+    ...args: Parameters<Point['applyOptions']>
+): Point {
+    const point = proceed.apply(this, args);
+
+    if (point.hasMockGraphic && !point.isNull) {
+        point.graphic = point.graphic?.destroy();
+        delete point.hasMockGraphic;
+    }
+
+    return point;
+}
+
 
 /**
  * @private
@@ -754,6 +793,7 @@ function describeSeries(
  * */
 
 const SeriesDescriber = {
+    compose,
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter,
     describeSeries
