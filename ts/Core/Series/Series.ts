@@ -2994,7 +2994,7 @@ class Series {
         // Apply plotBorderRadius clipping
         plotClipGroup?.clip(
             // Navigator y-axis is not clippable
-            clip && this.yAxis.clippable ?
+            clip && this.yAxis?.clippable ?
                 chart.plotClipInner :
                 void 0
         );

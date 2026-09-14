@@ -1,6 +1,7 @@
 Highcharts.mapChart('container', {
     chart: {
-        margin: 0
+        margin: 0,
+        plotBorderRadius: 4
     },
 
     title: {

@@ -4,7 +4,7 @@
 
     max-width: 800px;
     min-width: 310px;
-    margin: 0 auto;
+    margin: 1em auto;
     font-family: system-ui, sans-serif;
     color: var(--highcharts-neutral-color-100, #000);
 }
