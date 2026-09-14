@@ -26,9 +26,9 @@ import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint';
  *
  * */
 
-/** @internal */
 declare class ErrorBarPoint extends BoxPlotPoint {
     public options: ErrorBarPointOptions;
+    /** @internal */
     public series: ErrorBarSeries;
 }
 
@@ -39,5 +39,4 @@ declare class ErrorBarPoint extends BoxPlotPoint {
  *
  * */
 
-/** @internal */
 export default ErrorBarPoint;

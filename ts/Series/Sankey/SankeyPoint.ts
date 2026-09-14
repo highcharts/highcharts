@@ -45,40 +45,57 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public className!: string;
 
+    /** @internal */
     public column?: number;
 
+    /** @internal */
     public fromNode!: SankeyPoint;
 
+    /** @internal */
     public hangsFrom?: SankeyPoint;
 
+    /** @internal */
     public level!: number;
 
+    /** @internal */
     public linkBase!: Array<number>;
 
+    /** @internal */
     public linkColorMode!: ('from'|'gradient'|'to');
 
+    /** @internal */
     public linksFrom!: Array<SankeyPoint>;
 
+    /** @internal */
     public linksTo!: Array<SankeyPoint>;
 
+    /** @internal */
     public mass!: number;
 
+    /** @internal */
     public nodeX!: number;
 
+    /** @internal */
     public nodeY!: number;
 
     public options!: SankeyPointOptions;
 
+    /** @internal */
     public outgoing?: boolean;
 
+    /** @internal */
     public series!: SankeySeries;
 
+    /** @internal */
     public sum?: number;
 
+    /** @internal */
     public toNode!: SankeyPoint;
 
+    /** @internal */
     public weight?: number;
 
     /* *

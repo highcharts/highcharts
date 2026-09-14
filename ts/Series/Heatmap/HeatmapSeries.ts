@@ -81,7 +81,6 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.heatmap
  *
@@ -95,6 +94,7 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HeatmapSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         HeatmapSeriesDefaults
@@ -106,10 +106,13 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public canvas?: HTMLCanvasElement;
 
+    /** @internal */
     public colorAxis!: ColorAxis;
 
+    /** @internal */
     public context?: CanvasRenderingContext2D;
 
     public data!: Array<HeatmapPoint>;
@@ -118,12 +121,16 @@ class HeatmapSeries extends ScatterSeries {
 
     public points!: Array<HeatmapPoint>;
 
+    /** @internal */
     public valueData?: Array<number>;
 
+    /** @internal */
     public valueMax: number = NaN;
 
+    /** @internal */
     public valueMin: number = NaN;
 
+    /** @internal */
     public isDirtyCanvas: boolean = true;
 
     /* *

@@ -124,6 +124,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return [point.P]; // The rest should not affect extremes
     }
 
+    /** @internal */
     public translate(this: PivotPointsIndicator): void {
         const indicator = this;
 
@@ -427,15 +428,23 @@ class PivotPointsIndicator extends SMAIndicator {
  * */
 
 interface PivotPointsIndicator{
+    /** @internal */
     nameBase: string;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof PivotPointsPoint;
+    /** @internal */
     pointValKey: string;
 }
 extend(PivotPointsIndicator.prototype, {
+    /** @internal */
     nameBase: 'Pivot Points',
+    /** @internal */
     pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
+    /** @internal */
     pointValKey: 'P',
+    /** @internal */
     pointClass: PivotPointsPoint
 });
 

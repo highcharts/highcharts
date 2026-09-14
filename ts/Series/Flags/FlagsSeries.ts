@@ -83,7 +83,6 @@ interface DistributedBoxObject extends R.BoxObject {
 /**
  * The Flags series.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.flags
  *
@@ -99,6 +98,7 @@ class FlagsSeries extends ColumnSeries {
 
     public static compose = FlagsSymbols.compose;
 
+    /** @internal */
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         FlagsSeriesDefaults
@@ -112,6 +112,7 @@ class FlagsSeries extends ColumnSeries {
 
     public data!: Array<FlagsPoint>;
 
+    /** @internal */
     public onSeries?: typeof Series.prototype;
 
     public options!: FlagsSeriesOptions;
@@ -500,5 +501,4 @@ SeriesRegistry.registerSeriesType('flags', FlagsSeries);
  *
  * */
 
-/** @internal */
 export default FlagsSeries;

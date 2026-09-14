@@ -345,6 +345,7 @@ class VBPIndicator extends SMAIndicator {
     }
 
     // Initial animation
+    /** @internal */
     public animate(
         init: boolean
     ): void {
@@ -377,6 +378,7 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public drawPoints(): void {
         const indicator = this;
 
@@ -455,6 +457,7 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 
+    /** @internal */
     public translate(): void {
         const indicator = this,
             options: VBPOptions = indicator.options,
@@ -912,25 +915,38 @@ class VBPIndicator extends SMAIndicator {
  * */
 
 interface VBPIndicator {
+    /** @internal */
     nameBase: string;
+    /** @internal */
     nameComponents: Array<string>;
+    /** @internal */
     pointClass: typeof VBPPoint;
 
+    /** @internal */
     crispCol: ColumnSeries['crispCol'];
+    /** @internal */
     getColumnMetrics: ColumnSeries['getColumnMetrics'];
 }
 
 extend(VBPIndicator.prototype, {
+    /** @internal */
     nameBase: 'Volume by Price',
+    /** @internal */
     nameComponents: ['ranges'],
+    /** @internal */
     calculateOn: {
         chart: 'render',
         xAxis: 'afterSetExtremes'
     },
+    /** @internal */
     pointClass: VBPPoint,
+    /** @internal */
     markerAttribs: noop as any,
+    /** @internal */
     drawGraph: noop,
+    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics,
+    /** @internal */
     crispCol: columnProto.crispCol
 });
 

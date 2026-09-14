@@ -953,6 +953,7 @@ class BubbleSeries extends ScatterSeries {
  * */
 
 interface BubbleSeries {
+    /** @internal */
     alignDataLabel: typeof columnProto.alignDataLabel;
     bubblePadding: boolean;
     isBubble: true;
@@ -961,6 +962,7 @@ interface BubbleSeries {
 }
 
 extend(BubbleSeries.prototype, {
+    /** @internal */
     alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,

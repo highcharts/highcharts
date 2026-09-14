@@ -190,6 +190,7 @@ class SupertrendIndicator extends SMAIndicator {
 
     public data!: Array<SupertrendPoint>;
 
+    /** @internal */
     public linkedParent!: SupertrendLinkedParentObject;
 
     public options!: SupertrendOptions;

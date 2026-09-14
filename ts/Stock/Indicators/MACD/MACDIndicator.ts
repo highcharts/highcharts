@@ -274,6 +274,7 @@ class MACDIndicator extends SMAIndicator {
         return [point.y, point.signal, point.MACD];
     }
 
+    /** @internal */
     public translate(): void {
         const indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
@@ -521,25 +522,40 @@ class MACDIndicator extends SMAIndicator {
  * */
 
 interface MACDIndicator {
+    /** @internal */
     crispCol: typeof ColumnSeries.prototype.crispCol;
+    /** @internal */
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
+    /** @internal */
     nameComponents: Array<string>;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof MACDPoint;
+    /** @internal */
     pointValKey: string;
 }
 
 extend(MACDIndicator.prototype, {
+    /** @internal */
     nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
     // "y" value is treated as Histogram data
+    /** @internal */
     pointArrayMap: ['y', 'signal', 'MACD'],
+    /** @internal */
     parallelArrays: ['x', 'y', 'signal', 'MACD'],
+    /** @internal */
     pointValKey: 'y',
     // Columns support:
+    /** @internal */
     markerAttribs: noop as any,
+    /** @internal */
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
+    /** @internal */
     crispCol: H.seriesTypes.column.prototype.crispCol,
+    /** @internal */
     drawPoints: H.seriesTypes.column.prototype.drawPoints
 });
 

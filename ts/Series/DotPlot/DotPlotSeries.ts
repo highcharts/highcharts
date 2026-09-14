@@ -84,6 +84,7 @@ class DotPlotSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             options = series.options,
@@ -223,11 +224,14 @@ class DotPlotSeries extends ColumnSeries {
  * */
 
 interface DotPlotSeries {
+    /** @internal */
     pointAttr?: SVGAttributes;
+    /** @internal */
     pointClass: typeof DotPlotPoint;
 }
 
 extend(DotPlotSeries.prototype, {
+    /** @internal */
     markerAttribs: void 0
 });
 

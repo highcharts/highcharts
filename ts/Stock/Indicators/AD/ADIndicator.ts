@@ -90,6 +90,7 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     protected static populateAverage(
         xVal: Array<number>,
         yVal: Array<Array<number>>,

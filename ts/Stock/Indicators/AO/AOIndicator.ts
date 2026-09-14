@@ -257,8 +257,10 @@ interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
     pointClass: typeof AOPoint;
+    /** @internal */
     crispCol: typeof columnProto.crispCol;
     drawPoints: typeof columnProto.drawPoints;
+    /** @internal */
     getColumnMetrics: typeof columnProto.getColumnMetrics;
     translate: typeof columnProto.translate;
 }
@@ -269,7 +271,9 @@ extend(AOIndicator.prototype, {
 
     // Columns support:
     markerAttribs: noop as any,
+    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics,
+    /** @internal */
     crispCol: columnProto.crispCol,
     translate: columnProto.translate,
     drawPoints: columnProto.drawPoints

@@ -193,6 +193,7 @@ class SMAIndicator extends LineSeries {
     /** @internal */
     public dataEventsToUnbind!: Array<Function>;
 
+    /** @internal */
     public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
     /** @internal */

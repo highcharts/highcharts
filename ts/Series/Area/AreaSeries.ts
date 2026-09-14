@@ -190,9 +190,7 @@ class AreaSeries extends LineSeries {
         });
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
         const getGraphPath = LineSeries.prototype.getGraphPath,
             options = this.options,
@@ -511,9 +509,11 @@ class AreaSeries extends LineSeries {
  * */
 
 interface AreaSeries {
+    /** @internal */
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
+    /** @internal */
     singleStacks: false
 });
 

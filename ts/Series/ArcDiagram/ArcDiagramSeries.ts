@@ -518,6 +518,7 @@ class ArcDiagramSeries extends SankeySeries {
         return super.pointAttribs.apply(this, arguments);
     }
 
+    /** @internal */
     public markerAttribs(
         point: ArcDiagramPoint
     ): SVGAttributes {

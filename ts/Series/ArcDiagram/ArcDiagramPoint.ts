@@ -42,7 +42,6 @@ const {
  *
  * */
 
-/** @internal */
 class ArcDiagramPoint extends SankeyPoint {
 
     /* *
@@ -51,22 +50,30 @@ class ArcDiagramPoint extends SankeyPoint {
      *
      * */
 
+    /** @internal */
     public fromNode!: ArcDiagramPoint;
 
+    /** @internal */
     public index!: number;
 
+    /** @internal */
     public linksFrom!: Array<ArcDiagramPoint>;
 
+    /** @internal */
     public linksTo!: Array<ArcDiagramPoint>;
 
     public options!: ArcDiagramPointOptions;
 
+    /** @internal */
     public series!: ArcDiagramSeries;
 
+    /** @internal */
     public scale!: number;
 
+    /** @internal */
     public shapeArgs!: SVGAttributes;
 
+    /** @internal */
     public toNode!: ArcDiagramPoint;
 
 
@@ -77,6 +84,7 @@ class ArcDiagramPoint extends SankeyPoint {
      * */
 
 
+    /** @internal */
     public isValid(): boolean {
         // No null points here
         return true;
@@ -93,9 +101,11 @@ class ArcDiagramPoint extends SankeyPoint {
 
 /** @internal */
 interface ArcDiagramPoint {
+    /** @internal */
     setState: typeof NodesComposition['setNodeState'];
 }
 extend(ArcDiagramPoint.prototype, {
+    /** @internal */
     setState: NodesComposition.setNodeState
 });
 
@@ -105,5 +115,4 @@ extend(ArcDiagramPoint.prototype, {
  *
  * */
 
-/** @internal */
 export default ArcDiagramPoint;

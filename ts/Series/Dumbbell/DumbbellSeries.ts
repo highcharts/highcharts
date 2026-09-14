@@ -377,6 +377,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
+    /** @internal */
     crispCol: typeof ColumnSeries.prototype.crispCol;
     trackerGroups: Array<string>;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];
@@ -384,6 +385,7 @@ interface DumbbellSeries {
 }
 
 extend(DumbbellSeries.prototype, {
+    /** @internal */
     crispCol: ColumnSeries.prototype.crispCol,
     drawGraph: noop,
     drawTracker: ColumnSeries.prototype.drawTracker,

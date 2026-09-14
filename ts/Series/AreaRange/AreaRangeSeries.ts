@@ -322,6 +322,7 @@ class AreaRangeSeries extends AreaSeries {
     public lowerStateMarkerGraphic?: SVGElement;
     /** @internal */
     public upperStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
@@ -549,6 +550,7 @@ class AreaRangeSeries extends AreaSeries {
         series.symbol = originalSettings.symbol;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;
@@ -714,17 +716,26 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
  * */
 
 interface AreaRangeSeries {
+    /** @internal */
     deferTranslatePolar: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof AreaRangePoint;
+    /** @internal */
     pointValKey: string;
 }
 
 extend(AreaRangeSeries.prototype, {
+    /** @internal */
     deferTranslatePolar: true,
+    /** @internal */
     pointArrayMap: ['low', 'high'],
+    /** @internal */
     pointClass: AreaRangePoint,
+    /** @internal */
     pointValKey: 'low',
+    /** @internal */
     setStackedPoints: noop
 });
 

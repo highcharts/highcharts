@@ -448,6 +448,7 @@ class IKHIndicator extends SMAIndicator {
         ];
     }
 
+    /** @internal */
     public translate(): void {
         const indicator = this;
 
@@ -936,13 +937,18 @@ class IKHIndicator extends SMAIndicator {
  * */
 
 interface IKHIndicator {
+    /** @internal */
     pointClass: typeof IKHPoint;
+    /** @internal */
     nameComponents: Array<string>;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     pointArrayMap: Array<keyof IKHPoint>;
 }
 
 extend(IKHIndicator.prototype, {
+    /** @internal */
     pointArrayMap: [
         'tenkanSen',
         'kijunSen',
@@ -950,7 +956,9 @@ extend(IKHIndicator.prototype, {
         'senkouSpanA',
         'senkouSpanB'
     ],
+    /** @internal */
     pointValKey: 'tenkanSen',
+    /** @internal */
     nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
 

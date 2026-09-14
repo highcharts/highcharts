@@ -89,6 +89,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public animate(init?: boolean): void {
         const series = this;
 
@@ -394,13 +395,19 @@ class DependencyWheelSeries extends SankeySeries {
  * */
 
 interface DependencyWheelSeries {
+    /** @internal */
     getCenter: typeof PieSeries.prototype.getCenter;
+    /** @internal */
     orderNodes: boolean;
+    /** @internal */
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
+    /** @internal */
     orderNodes: false,
+    /** @internal */
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
+    /** @internal */
     getCenter: PieSeries.prototype.getCenter
 });
 

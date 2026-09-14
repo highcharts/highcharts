@@ -205,21 +205,33 @@ class LollipopSeries extends Series {
  * */
 
 interface LollipopSeries {
+    /** @internal */
     alignDataLabel: typeof colProto['alignDataLabel'];
+    /** @internal */
     crispCol: typeof colProto['crispCol'];
+    /** @internal */
     drawConnector: typeof dumbbellProto['drawConnector'];
+    /** @internal */
     drawDataLabels: typeof colProto['drawDataLabels'];
+    /** @internal */
     getColumnMetrics: typeof colProto['getColumnMetrics'];
+    /** @internal */
     getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
 }
 
 extend(LollipopSeries.prototype, {
+    /** @internal */
     alignDataLabel: colProto.alignDataLabel,
+    /** @internal */
     crispCol: colProto.crispCol,
+    /** @internal */
     drawConnector: dumbbellProto.drawConnector,
+    /** @internal */
     drawDataLabels: colProto.drawDataLabels,
+    /** @internal */
     getColumnMetrics: colProto.getColumnMetrics,
+    /** @internal */
     getConnectorAttribs: dumbbellProto.getConnectorAttribs,
     pointClass: LollipopPoint
 });

@@ -174,6 +174,7 @@ class VWAPIndicator extends SMAIndicator {
      * @return {Object}
      * Object contains computed VWAP
      **/
+    /** @internal */
     public calculateVWAPValues<TLinkedSeries extends LineSeries>(
         isOHLC: boolean,
         xValues: Array<number>,

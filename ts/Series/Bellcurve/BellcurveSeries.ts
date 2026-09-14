@@ -130,6 +130,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,

@@ -87,7 +87,6 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
 
 /**
  * Histogram class
- * @internal
  * @class
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
@@ -100,6 +99,7 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HistogramSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         HistogramSeriesDefaults
@@ -111,6 +111,7 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public binWidth?: number;
 
     public data!: Array<HistogramPoint>;
@@ -119,6 +120,7 @@ class HistogramSeries extends ColumnSeries {
 
     public points!: Array<HistogramPoint>;
 
+    /** @internal */
     public userOptions!: HistogramSeriesOptions;
 
     /* *
@@ -289,11 +291,15 @@ class HistogramSeries extends ColumnSeries {
 
 interface HistogramSeries extends DerivedComposition.SeriesComposition {
     animate: typeof ColumnSeries.prototype.animate;
+    /** @internal */
     destroy: typeof ColumnSeries.prototype.destroy;
     drawPoints: typeof ColumnSeries.prototype.drawPoints;
+    /** @internal */
     drawTracker: typeof ColumnSeries.prototype.drawTracker;
     group: typeof ColumnSeries.prototype.group;
+    /** @internal */
     init: typeof ColumnSeries.prototype.init;
+    /** @internal */
     pointAttribs: typeof ColumnSeries.prototype.pointAttribs;
     pointClass: typeof HistogramPoint;
     remove: typeof ColumnSeries.prototype.remove;

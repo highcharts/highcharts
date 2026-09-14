@@ -113,6 +113,7 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PictorialSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         /**
@@ -144,6 +145,7 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public paths!: Array<PictorialPathOptions>;
 
     public data!: Array<PictorialPoint>;
@@ -211,9 +213,12 @@ class PictorialSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public animateDrilldown(): void {}
+    /** @internal */
     public animateDrillupFrom(): void {}
 
+    /** @internal */
     public pointAttribs(
         point?: PictorialPoint
     ): SVGAttributes {

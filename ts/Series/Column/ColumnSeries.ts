@@ -121,6 +121,7 @@ class ColumnSeries extends Series {
     /** @internal */
     public dense?: boolean;
 
+    /** @internal */
     public group!: SVGElement;
 
     public options!: ColumnSeriesOptions;

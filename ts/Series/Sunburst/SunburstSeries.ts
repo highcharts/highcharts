@@ -465,6 +465,7 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: SunburstSeriesOptions = merge(
         TreemapSeries.defaultOptions,
         SunburstSeriesDefaults
@@ -476,22 +477,27 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public center!: Array<number>;
 
     public data!: Array<SunburstPoint>;
 
+    /** @internal */
     public mapOptionsToLevel!: Record<string, SunburstSeriesLevelOptions>;
 
+    /** @internal */
     public nodeMap!: Record<string, SunburstNode>;
 
     public options!: SunburstSeriesOptions;
 
     public points!: Array<SunburstPoint>;
 
+    /** @internal */
     public shapeRoot?: SunburstNode.NodeValuesObject;
 
     public startAndEndRadians!: CU.RadianAngles;
 
+    /** @internal */
     public tree!: SunburstNode;
 
     /* *
@@ -500,6 +506,7 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public alignDataLabel(
         point: SunburstPoint,
         dataLabel: SVGLabel,
@@ -562,6 +569,7 @@ class SunburstSeries extends TreemapSeries {
         }
     }
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
@@ -772,6 +780,7 @@ class SunburstSeries extends TreemapSeries {
         }, [] as Array<SunburstNode.NodeValuesObject>);
     }
 
+    /** @internal */
     public setRootNode(
         id: string,
         redraw?: boolean,
@@ -863,6 +872,7 @@ class SunburstSeries extends TreemapSeries {
         }
     }
 
+    /** @internal */
     public translate(this: SunburstSeries): void {
         const series = this,
             options = series.options,
@@ -965,21 +975,33 @@ class SunburstSeries extends TreemapSeries {
 
 interface SunburstSeries {
     getCenter: typeof CU['getCenter'];
+    /** @internal */
     pointClass: typeof SunburstPoint;
+    /** @internal */
     utils: typeof SunburstUtilities;
+    /** @internal */
     NodeClass: typeof SunburstNode;
 }
 
 extend(SunburstSeries.prototype, {
+    /** @internal */
     axisTypes: [],
+    /** @internal */
     drawDataLabels: noop, // `drawDataLabels` is called in `drawPoints`
+    /** @internal */
     getCenter: getCenter,
+    /** @internal */
     isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.
+    /** @internal */
     onPointSupported: true,
+    /** @internal */
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
+    /** @internal */
     pointClass: SunburstPoint,
+    /** @internal */
     NodeClass: SunburstNode,
+    /** @internal */
     utils: SunburstUtilities
 });
 

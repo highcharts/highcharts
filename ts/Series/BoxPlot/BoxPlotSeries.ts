@@ -143,6 +143,7 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     // Translate data points from raw values x and y to plotX and plotY
+    /** @internal */
     public translate(): void {
         const series = this,
             yAxis = series.yAxis,
@@ -414,17 +415,24 @@ class BoxPlotSeries extends ColumnSeries {
  * */
 
 interface BoxPlotSeries extends ColumnSeries {
+    /** @internal */
     doQuartiles?: boolean;
+    /** @internal */
     pointArrayMap: Array<BoxPlotPointValKey>;
+    /** @internal */
     pointClass: typeof BoxPlotPoint;
+    /** @internal */
     pointValKey: BoxPlotPointValKey;
 }
 
 extend(BoxPlotSeries.prototype, {
     // Array point configs are mapped to this
+    /** @internal */
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
     // Defines the top of the tracker
+    /** @internal */
     pointValKey: 'high',
+    /** @internal */
     setStackedPoints: noop // #3890
 });
 
@@ -450,7 +458,4 @@ SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
  *
  * */
 
-/**
- * @internal
- */
 export default BoxPlotSeries;
