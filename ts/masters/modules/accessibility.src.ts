@@ -32,11 +32,13 @@ G.KeyboardNavigationHandler = KeyboardNavigationHandler;
 G.SeriesAccessibilityDescriber = SeriesDescriber;
 // Compositions
 Accessibility.compose(
+    G.Axis,
     G.Chart,
     G.Legend,
     G.Point,
     G.Series,
     G.SVGElement,
+    G.Tooltip,
     G.RangeSelector
 );
 export default Highcharts;
