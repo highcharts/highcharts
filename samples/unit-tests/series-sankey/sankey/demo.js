@@ -591,6 +591,14 @@ QUnit.test('Sankey and circular data', function (assert) {
         chart.series[0].points[3].isCircular,
         'Forward links should not be marked circular (#24079)'
     );
+    assert.strictEqual(
+        chart.series[0].points[3].graphic
+            .attr('d')
+            .split(' ')
+            .filter(item => item === 'C').length,
+        2,
+        'The link should be a straight forward link (#24079)'
+    );
 
     const series = chart.series[0];
     series.setData([['a', 'a', 1], ['a', 'b', 2]]);
@@ -735,6 +743,12 @@ QUnit.test('Sankey and circular data', function (assert) {
         ],
         [false, false],
         'Explicit-column backward data should not be marked circular (#8218)'
+    );
+
+    assert.strictEqual(
+        typeof series.points[0].wrapLane,
+        'number',
+        'A backward link outside a cycle should get a wrap lane (#8218)'
     );
 });
 

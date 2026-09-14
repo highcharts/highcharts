@@ -391,7 +391,7 @@ class SankeySeries extends ColumnSeries {
      *
      * @internal
      */
-    public markCircularLinks(points: Array<SankeyPoint>): boolean {
+    private markCircularLinks(points: Array<SankeyPoint>): boolean {
         const nodes = this.nodes;
 
         for (const point of points) {
@@ -527,7 +527,10 @@ class SankeySeries extends ColumnSeries {
                 lastWeight = 0;
 
             for (const point of this.points) {
-                if (point.isCircular) {
+                if (
+                    isNumber(point.wrapLane) ||
+                    point.fromNode === point.toNode
+                ) {
                     const weight = point.weight || 0;
 
                     if (point.toNode.column === 0) {
@@ -642,34 +645,38 @@ class SankeySeries extends ColumnSeries {
      *
      * @internal
      */
-    public assignWrapSides(): number {
+    private assignWrapSides(): number {
         const depth = [0, 0],
             // A self-link's two ends must land on the same offset, and a
             // band packs from the top either side, so it goes first. #8218
             laneSide = (point: SankeyPoint): number => {
-                if (!point.isCircular) {
-                    return 0;
-                }
                 if (point.fromNode === point.toNode) {
                     return -2;
+                }
+                if (!isNumber(point.wrapLane)) {
+                    return 0;
                 }
                 return point.wrapUp ? -1 : 1;
             };
 
-        let circular = false,
+        let wraps = false,
             selfWeight = 0;
 
         for (const point of this.points) {
+            const { fromNode, toNode } = point;
+
             point.wrapLane = void 0;
 
-            if (!point.isCircular) {
+            // Every link drawn backwards needs a lane, whether a cycle put
+            // it there or an explicit `column` did. #8218
+            if (!toNode || (toNode.column || 0) > (fromNode.column || 0)) {
                 continue;
             }
-            circular = true;
+            wraps = true;
 
             // A self-link laps its own node, so it claims room without
             // taking a place in either stack.
-            if (point.fromNode === point.toNode) {
+            if (fromNode === toNode) {
                 selfWeight = Math.max(selfWeight, point.weight || 0);
                 continue;
             }
@@ -682,7 +689,7 @@ class SankeySeries extends ColumnSeries {
 
         // Order each band by where its links are bound, so none has to cross
         // the band it sits on to reach its lane. #8218
-        if (circular) {
+        if (wraps) {
             const bySide = (a: SankeyPoint, b: SankeyPoint): number =>
                 laneSide(a) - laneSide(b);
 
@@ -702,7 +709,7 @@ class SankeySeries extends ColumnSeries {
      * #8218
      * @internal
      */
-    public stackWrapLanes(): void {
+    private stackWrapLanes(): void {
         const { nodePadding, points, translationFactor } = this,
             minLinkWidth = this.options.minLinkWidth || 0,
             plotSizeY = this.chart.plotSizeY || 0,
@@ -737,7 +744,7 @@ class SankeySeries extends ColumnSeries {
      * lies in, so the path and the label anchor read the same one. #8218
      * @internal
      */
-    public wrapChannel(
+    private wrapChannel(
         point: SankeyPoint,
         linkHeight: number
     ): { centerY: number, sign: number } {
@@ -779,7 +786,7 @@ class SankeySeries extends ColumnSeries {
      * back along it. #8218
      * @internal
      */
-    public backwardLinkPath(
+    private backwardLinkPath(
         point: SankeyPoint,
         fromY: number,
         toY: number,
