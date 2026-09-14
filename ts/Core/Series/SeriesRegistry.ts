@@ -18,13 +18,13 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
 import type Series from './Series.js';
 
 import H from '../Globals.js';
 import D from '../Defaults.js';
-const { defaultOptions } = D;
+const { builtinPlotOptions, defaultOptions } = D;
 import Point from './Point.js';
 import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 
@@ -90,6 +90,13 @@ namespace SeriesRegistry {
 
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
+        }
+
+        // Save the built in type defaults before `setOptions` can change them,
+        // so user options set globally can be told apart later (#20716)
+        if (defaultPlotOptions[seriesType]) {
+            (builtinPlotOptions as AnyRecord)[seriesType] =
+                merge(true, {}, defaultPlotOptions[seriesType]);
         }
 
         seriesTypes[seriesType] = SeriesClass;
