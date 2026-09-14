@@ -495,6 +495,7 @@ class SunburstSeries extends TreemapSeries {
     /** @internal */
     public shapeRoot?: SunburstNode.NodeValuesObject;
 
+    /** @internal */
     public startAndEndRadians!: CU.RadianAngles;
 
     /** @internal */
@@ -974,6 +975,7 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
+    /** @internal */
     getCenter: typeof CU['getCenter'];
     /** @internal */
     pointClass: typeof SunburstPoint;
@@ -1025,6 +1027,7 @@ namespace SunburstSeries {
         idRoot: string;
         innerR: number;
         point: SunburstPoint;
+        /** @internal */
         radians: CU.RadianAngles;
         shapeExisting: SunburstNode.NodeValuesObject;
         shapePreviousRoot?: SunburstNode.NodeValuesObject;

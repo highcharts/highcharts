@@ -550,6 +550,7 @@ class PieSeries extends Series {
 
 interface PieSeries {
     drawGraph: undefined;
+    /** @internal */
     getCenter: typeof CU['getCenter'];
     pointClass: typeof PiePoint;
 }
@@ -558,6 +559,7 @@ extend(PieSeries.prototype, {
     directTouch: true,
     drawGraph: void 0,
     drawTracker: ColumnSeries.prototype.drawTracker,
+    /** @internal */
     getCenter: CU.getCenter,
     getSymbol: noop,
     invertible: false,

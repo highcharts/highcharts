@@ -99,6 +99,7 @@ class FlowMapPoint extends MapLinePoint {
  * */
 
 interface FlowMapPoint {
+    /** @internal */
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
 

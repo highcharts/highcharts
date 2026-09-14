@@ -96,6 +96,7 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = FlagsSymbols.compose;
 
     /** @internal */

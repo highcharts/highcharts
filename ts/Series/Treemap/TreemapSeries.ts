@@ -1937,6 +1937,7 @@ class TreemapSeries extends ScatterSeries {
 
 /** @internal */
 interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
+    /** @internal */
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     /** @internal */
     colorKey: string;
@@ -1964,6 +1965,7 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
 extend(TreemapSeries.prototype, {
     /** @internal */
     buildKDTree: noop,
+    /** @internal */
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
     /** @internal */
     colorKey: 'colorValue', // Point color option key

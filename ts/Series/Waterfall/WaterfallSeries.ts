@@ -106,6 +106,7 @@ class WaterfallSeries extends ColumnSeries {
         WaterfallSeriesDefaults
     );
 
+    /** @internal */
     public static compose = WaterfallAxis.compose;
 
     /* *
@@ -135,6 +136,7 @@ class WaterfallSeries extends ColumnSeries {
     /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public yAxis!: WaterfallAxis;
 
     /** @internal */
@@ -921,6 +923,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
 namespace WaterfallSeries {
     export interface WaterfallChart extends Chart {
+        /** @internal */
         axes: Array<WaterfallAxis>;
     }
 }

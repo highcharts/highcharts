@@ -1003,12 +1003,15 @@ class MapSeries extends ScatterSeries {
 
 /** @internal */
 interface MapSeries extends ColorMapComposition.SeriesComposition {
+    /** @internal */
     getCenter: typeof CU['getCenter'];
+    /** @internal */
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
     /** @internal */
     pointClass: typeof MapPoint;
     /** @internal */
     preserveAspectRatio: boolean;
+    /** @internal */
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     /** @internal */
     animate(init?: boolean): void;
@@ -1032,10 +1035,13 @@ extend(MapSeries.prototype, {
     /** @internal */
     type: 'map',
 
+    /** @internal */
     axisTypes: ColorMapComposition.seriesMembers.axisTypes,
 
+    /** @internal */
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
+    /** @internal */
     colorKey: ColorMapComposition.seriesMembers.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
@@ -1055,6 +1061,7 @@ extend(MapSeries.prototype, {
     /** @internal */
     forceDL: true,
 
+    /** @internal */
     getCenter: CU.getCenter,
 
     /** @internal */
@@ -1066,6 +1073,7 @@ extend(MapSeries.prototype, {
     /** @internal */
     isCartesian: false,
 
+    /** @internal */
     parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
 
     pointArrayMap: ColorMapComposition.seriesMembers.pointArrayMap,

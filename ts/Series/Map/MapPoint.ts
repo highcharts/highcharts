@@ -58,6 +58,7 @@ class MapPoint extends ScatterPoint {
      * Get the projected path based on the geometry. May also be called on
      * mapData options (not point instances), hence static.
      * @private
+     * @internal
      */
     public static getProjectedPath(
         point: MapPoint,
@@ -166,6 +167,7 @@ class MapPoint extends ScatterPoint {
     /**
      * Get the bounds in terms of projected units
      * @private
+     * @internal
      */
     public getProjectedBounds(
         projection: Projection
@@ -325,12 +327,15 @@ class MapPoint extends ScatterPoint {
 
 /** @internal */
 interface MapPoint extends ColorMapComposition.PointComposition {
+    /** @internal */
     value: ColorMapComposition.PointComposition['value'];
+    /** @internal */
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
 extend(MapPoint.prototype, {
     dataLabelOnNull: ColorMapComposition.pointMembers.dataLabelOnNull,
     moveToTopOnHover: ColorMapComposition.pointMembers.moveToTopOnHover,
+    /** @internal */
     isValid: ColorMapComposition.pointMembers.isValid
 });
 

@@ -179,6 +179,7 @@ class XRangeSeries extends ColumnSeries {
      * Borrow the column series metrics, but with swapped axes. This gives
      * free access to features like groupPadding, grouping, pointWidth etc.
      * @private
+     * @internal
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const swapAxes = (): void => {
@@ -701,6 +702,7 @@ class XRangeSeries extends ColumnSeries {
 interface XRangeSeries {
     /** @internal */
     pointClass: typeof XRangePoint;
+    /** @internal */
     columnMetrics: ColumnMetricsObject;
     /** @internal */
     getExtremesFromAll: boolean;

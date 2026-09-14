@@ -565,6 +565,7 @@ addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
 interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
+    /** @internal */
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     getSymbol: typeof Series.prototype.getSymbol;
     image?: SVGElement;
@@ -590,6 +591,7 @@ extend(HeatmapSeries.prototype, {
 
     specialGroup: 'group',
 
+    /** @internal */
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
