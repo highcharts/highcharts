@@ -2614,7 +2614,7 @@ const defaultOptions: DefaultOptions = {
              * @sample {highstock} stock/tooltip/header
              *         Header options for split tooltip
              */
-            distance: 5,
+            distance: 4,
             /**
              * The name of a symbol to use for the border around the tooltip
              * header. Applies only when [tooltip.split](#tooltip.split) is
