@@ -18,21 +18,8 @@ permissions:
 jobs:
   generate_release_reference_images:
     runs-on: ubuntu-latest
-    env:
-      BROWSER_COUNT: 2
     steps:
       - uses: actions/checkout@v6
-
-      - name: Use Firefox 153.0.4
-        id: release-firefox
-        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
-        with:
-          firefox-version: '153.0.4'
-
-      - name: Disable Firefox updates
-        env:
-          FIREFOX_PATH: ${{ steps.release-firefox.outputs.firefox-path }}
-        run: node .github/scripts/disableFirefoxUpdates.js
 
       - uses: actions/setup-node@v6
         with:
@@ -43,24 +30,13 @@ jobs:
 
       - run: npm ci
       - run: npx gulp scripts
+      - run: npx playwright install --with-deps chromium
 
-      - run: |
-          npx karma start test/karma-conf.js \
-            --tests highcharts/*/* \
-            --reference --browsercount "${BROWSER_COUNT}" \
-            --no-fail-on-empty-test-suite
-          npx karma start test/karma-conf.js \
-            --tests stock/*/* \
-            --reference --browsercount "${BROWSER_COUNT}" \
-            --no-fail-on-empty-test-suite
-          npx karma start test/karma-conf.js \
-            --tests maps/*/* \
-            --reference --browsercount "${BROWSER_COUNT}" \
-            --no-fail-on-empty-test-suite
-          npx karma start test/karma-conf.js \
-            --tests gantt/*/* \
-            --reference --browsercount "${BROWSER_COUNT}" \
-            --no-fail-on-empty-test-suite
+      - name: Generate release reference images
+        env:
+          VISUAL_TEST_MANIFEST: tests/visual/samples.json
+          VISUAL_TEST_REFERENCE: '1'
+        run: npm run test:pw:visual
 
 
       - name: Publish release reference images
@@ -68,6 +44,5 @@ jobs:
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
         run: npx gulp update-nightly-testresults --tag "${{github.ref_name}}"
-
 
 

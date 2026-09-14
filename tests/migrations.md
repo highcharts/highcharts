@@ -326,17 +326,19 @@ npx playwright test --project=setup-dashboards --project=dashboards
 npm test
 ```
 
-## Karma to Playwright Migration (Partial)
+## Karma to Playwright Migration
 
-As of this migration, unit tests (`samples/unit-tests/`) now run through
-Playwright's QUnit bridge instead of Karma directly. Visual comparison tests
-still use Karma.
+Unit tests (`samples/unit-tests/`) and visual comparison tests now run through
+Playwright. The visual project uses Chromium and the manifest in
+`tests/visual/samples.json`; use `VISUAL_TEST_REFERENCE=1` when generating
+references and leave it unset when comparing candidates. `VISUAL_TEST_PATH`
+filters focused local runs by path substring.
 
 ### What Changed
 
-1. **`gulp test` command** - Now routes unit tests to Playwright (via QUnit
-   runner) instead of Karma. Visual tests (`--visualcompare`, `--reference`)
-   still use Karma.
+1. **`gulp test` command** - Routes unit tests to Playwright via the QUnit
+   runner. The retired `--visualcompare` and `--reference` flags are rejected;
+   use `npm run test:pw:visual` for visual tests.
 
 2. **npm scripts** - Updated to use Playwright:
    - `npm test` - Runs all Playwright tests
@@ -347,10 +349,12 @@ still use Karma.
 4. **BrowserStack** - Removed. Playwright's built-in Chromium, Firefox, and
    WebKit browsers provide cross-browser coverage.
 
-### What Still Uses Karma
+### Shared Karma Compatibility Files
 
-- Visual comparison tests (SVG reference/candidate generation)
-- The visual comparison CI workflows (`visual-compare.yml`, `nightly.yml`)
+The visual runner still uses the shared exclusions and compatibility helpers in
+`test/karma-files.json`, `test/karma-setup.js`, and
+`test/karma-product-tests.js`. These files remain part of the test harness; this
+does not mean that visual tests use the Karma runner.
 
 ### Removed Karma Features
 
