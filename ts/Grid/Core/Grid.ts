@@ -525,11 +525,18 @@ export class Grid {
 
     /**
      * Refreshes the cached source column ids available in the data provider.
+     *
+     * A feature that materializes its own column into the queried table can add
+     * its id to the event payload, so that the column counts as bound (and is
+     * therefore sortable, filterable and exportable).
      */
     private async refreshAvailableSourceColumnIds(): Promise<void> {
-        this.columnPolicy.setAvailableSourceColumnIds(
-            (await this.dataProvider?.getColumnIds()) || []
-        );
+        const event: GridRefreshSourceColumnIdsEvent = {
+            columnIds: (await this.dataProvider?.getColumnIds()) || []
+        };
+        fireEvent(this, 'refreshSourceColumnIds', event);
+
+        this.columnPolicy.setAvailableSourceColumnIds(event.columnIds);
     }
 
     /**
@@ -1851,6 +1858,14 @@ export type GridDirtyFlags = (
 export interface ProcessUpdateDiffEvent {
     diff: DeepPartial<NonArrayOptions>;
     flags: Set<GridDirtyFlags>;
+}
+
+/**
+ * Payload of the `refreshSourceColumnIds` event, letting a feature declare the
+ * columns it materializes into the queried table.
+ */
+export interface GridRefreshSourceColumnIdsEvent {
+    columnIds: string[];
 }
 
 /**

@@ -82,8 +82,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     /**
      * The fill color for the flags.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @product highstock
      */
     fillColor?: ColorType;
@@ -91,8 +89,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     /**
      * Fixed height of the flag's shape. By default, height is
      * autocalculated according to the flag's title.
-     *
-     * @type {number}
      *
      * @product highstock
      */
@@ -102,8 +98,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * What type of legend symbol to render for this series. For flags
      * series, the default is `flag-icon`, a pole with a pennant.
      *
-     * @default flag-icon
-     * @apioption plotOptions.flags.legendSymbol
+     * @default 'flag-icon'
      */
     legendSymbol?: string;
 
@@ -112,8 +107,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
-     *
-     * @type {Highcharts.ColorType}
      *
      * @default #000000
      *
@@ -137,8 +130,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags-onkey/
      *         Range series, flag on high
      *
-     * @type {string}
-     *
      * @default y
      *
      * @since 4.2.2
@@ -147,7 +138,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @validvalue ["y", "open", "high", "low", "close"]
      */
-    onKey?: string;
+    onKey?: 'close'|'high'|'low'|'open'|'y';
 
     /**
      * The id of the series that the flags should be drawn on. If no id
@@ -155,8 +146,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/plotoptions/flags/
      *         Flags on series and on x axis
-     *
-     * @type {string}
      *
      * @product highstock
      */
@@ -169,8 +158,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/plotoptions/flags/
      *         Different shapes
-     *
-     * @type {Highcharts.FlagsShapeValue}
      *
      * @product highstock
      */
@@ -195,9 +182,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the styles are set in the
      * `.highcharts-flag-series .highcharts-point` rule.
      *
-     * @type {Highcharts.CSSObject}
-     *
-     * @default {"fontSize": "11px", "fontWeight": "bold"}
+     * @default { "color": "var(--highcharts-neutral-color-100)", "fontSize": "0.7em", "fontWeight": "bold" }
      *
      * @product highstock
      */
@@ -218,8 +203,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * The text to display on each flag. This can be defined on series
      * level, or individually for each point. Defaults to `"A"`.
      *
-     * @type {string}
-     *
      * @default A
      *
      * @product highstock
@@ -231,8 +214,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * advanced formatting, images and reliable bi-directional text
      * rendering. Note that exported images won't respect the HTML, and that
      * HTML won't respect Z-index settings.
-     *
-     * @type {boolean}
      *
      * @default false
      *
@@ -248,8 +229,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/demo/flags-shapes/
      *         Flags with fixed width
-     *
-     * @type {number}
      *
      * @product highstock
      */
@@ -287,23 +266,24 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *    }]
      *    ```
      *
-     * @type {Array<*>}
-     *
      * @extends series.line.data
      *
      * @excluding dataLabels, marker, name, y
      *
      * @product highstock
-     *
-     * @apioption series.flags.data
      */
     data?: Array<FlagsPointOptions>;
 
     /**
+     * The Y axis value to serve as the base for the columns, for
+     * distinguishing between values above and below a threshold. If `null`,
+     * the columns extend from the padding Y axis minimum.
      *
-     * @type {number|null}
+     * @default null
+     *
+     * @product highstock
      */
-    threshold?: number|null;
+    threshold?: ColumnSeriesOptions['threshold'];
 
     /**
      * Specific tooltip options for flag series. Flag series tooltips are
