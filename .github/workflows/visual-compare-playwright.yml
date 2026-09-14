@@ -248,8 +248,7 @@ jobs:
               github,
               context,
               title.replace('Visual test results', 'Playwright visual test results'),
-              `\nCovers **${Object.keys(results).length} samples** from the Playwright manifest. ` +
-                `Playwright publishes the production visual review.\n\n${body}`
+              `\nCovers **${Object.keys(results).length} samples**.\n\n${body}`
             );
 
       - name: Upload Playwright visual evidence
