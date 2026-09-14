@@ -70,9 +70,12 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
      */
 
     /**
-     * What type of legend symbol to render for this series. For HLC series,
-     * the default is `hlc`, a vertical stem with a tick on the right
-     * representing the closing value.
+     * What type of legend symbol to render for this series. The default
+     * `hlc` shows two stems, each with a tick on the right representing the
+     * closing value.
+     *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
      *
      * @default   hlc
      * @product   highstock
