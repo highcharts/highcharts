@@ -72,7 +72,23 @@ chart.setTitle({
 ### Network requests from CSS
 Styles are filtered as well, since CSS can load resources over the network. A `url()` or `image-set()` reference in a style that comes from the chart configuration is only applied if it starts with one of the [allowedCSSReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedCSSReferences). By default these are `#` for same-document references, which gradients, pattern fills and filters rely on, and `data:` for inline data. An `@import` is dropped whatever its reference, as we never see the content of the imported style sheet.
 
-Without this filtering, a chart that renders untrusted text would let an attacker pick an address that the viewer's browser calls, revealing the viewer's IP address and the moment the chart was opened. Only CSS from the chart configuration is filtered - the style sheets of your own page, including the CSS of [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css), are untouched.
+Without this filtering, a chart that renders untrusted text would let an attacker pick an address that the viewer's browser calls. That tells the attacker the viewer's IP address and the moment the chart was opened.
+
+The risk comes from the text, so the text is what we filter: `style` attributes and `<style>` elements inside the HTML strings of the configuration. Styling options that take a CSS object, like `title.style`, are applied as they are given. So are the style sheets of your own page, including the CSS of [styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css). These describe the design of your chart, so make sure untrusted input never reaches them.
+
+```js
+Highcharts.chart('container', {
+    title: {
+        // Filtered, as the style comes in as markup
+        text: '<span style="background: url(https://example.com/x.png)">' +
+            'Sales</span>',
+        // Not filtered, as this is a styling option
+        style: {
+            background: 'url(https://example.com/x.png)'
+        }
+    }
+});
+```
 
 If your config comes from a trusted source, you may allow the references you rely on. References are matched by their start, so mind the trailing slash:
 ```js
