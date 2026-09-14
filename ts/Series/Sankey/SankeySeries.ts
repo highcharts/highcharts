@@ -475,22 +475,7 @@ class SankeySeries extends ColumnSeries {
         let lastColCircShift = 0;
 
         if (this.useCircularLayout) {
-            // Lanes route outside the central flow, so the columns give up
-            // what those claim, plus a padding at either end. #8218
-            const reserve = this.assignWrapSides(),
-                flowColumn = reserve ? nodeColumns[flowColumnIndex] : void 0;
-
-            if (flowColumn) {
-                const flowSum = flowColumn.sankeyColumn.sum(),
-                    free = this.translationFactor * flowSum -
-                        4 * this.nodePadding;
-
-                if (flowSum && free > 0) {
-                    this.translationFactor = free / (flowSum + reserve);
-                }
-            }
-
-            this.stackWrapLanes();
+            this.wrapLanes(nodeColumns[flowColumnIndex]);
 
             const { nodePadding, nodeWidth, translationFactor } = this,
                 minLinkWidth = options.minLinkWidth || 0,
@@ -502,24 +487,13 @@ class SankeySeries extends ColumnSeries {
 
             // Columns align on their bands alone, so shift one holding a
             // self-link down by the lane lapping above it. #8218
-            this.colCircOffsets = nodeColumns.map((column): number => {
-                let selfWeight = 0;
+            for (let i = 0; i < nodeColumns.length; i++) {
+                const weight = this.colCircOffsets[i] || 0;
 
-                for (const node of column) {
-                    let weight = 0;
-
-                    for (const link of node.linksFrom) {
-                        if (link.toNode === node) {
-                            weight += link.weight || 0;
-                        }
-                    }
-                    selfWeight = Math.max(selfWeight, weight);
-                }
-
-                return selfWeight ?
-                    align * (2 * nodeWidth + width(selfWeight)) :
+                this.colCircOffsets[i] = weight ?
+                    align * (2 * nodeWidth + width(weight)) :
                     0;
-            });
+            }
 
             // A turn reaches `bend + linkHeight` past the face it leaves.
             // Edges without circular links reserve nothing. #8218
@@ -638,15 +612,20 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Send every backward link to the top or the bottom lane stack, the
-     * shallower one winning, and order each node's band to match. #8218
-     *
-     * @return {number} Flow to reserve off the columns, in weight: the scale
-     * is not settled until the stacks are known.
-     *
+     * shallower one winning, and order each node's band to match. The
+     * columns then give up what the lanes claim, and the lanes stack
+     * inwards from their plot edge at the settled scale, so no two share
+     * flow-axis space. The rescale sits between the two passes: the claim
+     * is known in weight, the lanes only settle in pixels. Self-link weight
+     * is left per column in `colCircOffsets`. #8218
      * @internal
      */
-    private assignWrapSides(): number {
-        const depth = [0, 0],
+    private wrapLanes(
+        flowColumn?: SankeyColumnComposition.ArrayComposition<SankeyPoint>
+    ): void {
+        const { nodePadding, points } = this,
+            depth = [0, 0],
+            nodeSelf = new Map<SankeyPoint, number>(),
             // A self-link's two ends must land on the same offset, and a
             // band packs from the top either side, so it goes first. #8218
             laneSide = (point: SankeyPoint): number => {
@@ -662,7 +641,7 @@ class SankeySeries extends ColumnSeries {
         let wraps = false,
             selfWeight = 0;
 
-        for (const point of this.points) {
+        for (const point of points) {
             const { fromNode, toNode } = point;
 
             point.wrapLane = void 0;
@@ -675,9 +654,18 @@ class SankeySeries extends ColumnSeries {
             wraps = true;
 
             // A self-link laps its own node, so it claims room without
-            // taking a place in either stack.
+            // taking a place in either stack. Its column is shifted by the
+            // deepest lap any one node there holds.
             if (fromNode === toNode) {
-                selfWeight = Math.max(selfWeight, point.weight || 0);
+                const column = fromNode.column || 0,
+                    weight =
+                        (nodeSelf.get(fromNode) || 0) + (point.weight || 0);
+
+                nodeSelf.set(fromNode, weight);
+                this.colCircOffsets[column] = Math.max(
+                    this.colCircOffsets[column] || 0, weight
+                );
+                selfWeight = Math.max(selfWeight, weight);
                 continue;
             }
             const side = depth[0] <= depth[1] ? 0 : 1;
@@ -687,48 +675,50 @@ class SankeySeries extends ColumnSeries {
             depth[side] += point.weight || 0;
         }
 
-        // Order each band by where its links are bound, so none has to cross
-        // the band it sits on to reach its lane. #8218
-        if (wraps) {
-            const bySide = (a: SankeyPoint, b: SankeyPoint): number =>
-                laneSide(a) - laneSide(b);
-
-            for (const node of this.nodes) {
-                stableSort(node.linksFrom, bySide);
-                stableSort(node.linksTo, bySide);
-            }
+        if (!wraps) {
+            return;
         }
 
-        // Twice the deepest claim, as the columns are centred.
-        return 2 * Math.max(depth[0], depth[1], selfWeight);
-    }
+        // Order each band by where its links are bound, so none has to cross
+        // the band it sits on to reach its lane. #8218
+        const bySide = (a: SankeyPoint, b: SankeyPoint): number =>
+            laneSide(a) - laneSide(b);
 
-    /**
-     * Stack each lane inwards from its plot edge at the settled scale. Two
-     * lanes never share flow-axis space, so no band is drawn inside another.
-     * #8218
-     * @internal
-     */
-    private stackWrapLanes(): void {
-        const { nodePadding, points, translationFactor } = this,
+        for (const node of this.nodes) {
+            stableSort(node.linksFrom, bySide);
+            stableSort(node.linksTo, bySide);
+        }
+
+        // Lanes route outside the central flow, so the columns give up what
+        // those claim, plus a padding at either end. Twice the deepest, as
+        // the columns are centred. #8218
+        const reserve = 2 * Math.max(depth[0], depth[1], selfWeight),
+            flowSum = flowColumn?.sankeyColumn.sum() || 0,
+            free = this.translationFactor * flowSum - 4 * nodePadding;
+
+        if (reserve && flowSum && free > 0) {
+            this.translationFactor = free / (flowSum + reserve);
+        }
+
+        const { translationFactor } = this,
             minLinkWidth = this.options.minLinkWidth || 0,
             plotSizeY = this.chart.plotSizeY || 0,
             // Clear of the plot border, matching the reserve.
-            depth = [nodePadding, nodePadding];
+            stack = [nodePadding, nodePadding];
 
         for (const point of points) {
             if (isNumber(point.wrapLane)) {
                 const side = point.wrapUp ? 0 : 1;
 
-                point.wrapLane = depth[side];
-                depth[side] += Math.max(
+                point.wrapLane = stack[side];
+                stack[side] += Math.max(
                     (point.weight || 0) * translationFactor, minLinkWidth
                 );
             }
         }
 
         // `minLinkWidth` can inflate the stacks past the reserve. #8218
-        const stacked = depth[0] + depth[1];
+        const stacked = stack[0] + stack[1];
 
         if (stacked > plotSizeY) {
             for (const point of points) {
