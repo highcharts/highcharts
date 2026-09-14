@@ -1182,6 +1182,13 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
+        // Reject nested keys that would allow prototype pollution
+        if (nestedKeys.some((nestedKey): boolean => (
+            nestedKey === '__proto__' || nestedKey === 'constructor'
+        ))) {
+            return object;
+        }
+
         nestedKeys.reduce(function (
             result: any,
             key: string,
