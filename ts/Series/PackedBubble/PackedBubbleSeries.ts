@@ -1239,6 +1239,7 @@ class PackedBubbleSeries extends BubbleSeries {
  *
  * */
 
+/** @internal */
 interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     /** @internal */
     pointClass: typeof PackedBubblePoint;

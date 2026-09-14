@@ -186,6 +186,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
  *
  * */
 
+/** @internal */
 interface PackedBubblePoint extends NetworkgraphPoint {
     /** @internal */
     className: BubblePointType['className'];

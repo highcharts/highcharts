@@ -1935,6 +1935,7 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     /** @internal */

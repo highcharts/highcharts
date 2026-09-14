@@ -323,6 +323,7 @@ class MapPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface MapPoint extends ColorMapComposition.PointComposition {
     value: ColorMapComposition.PointComposition['value'];
     isValid: ColorMapComposition.PointComposition['isValid'];

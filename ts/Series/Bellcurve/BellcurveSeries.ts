@@ -233,6 +233,7 @@ class BellcurveSeries extends AreaSplineSeries {
  *
  * */
 
+/** @internal */
 interface BellcurveSeries extends DerivedComposition.SeriesComposition {
     pointClass: typeof BellcurvePoint;
 }

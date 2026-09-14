@@ -410,6 +410,7 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
  *
  * */
 
+/** @internal */
 interface NetworkgraphPoint extends NodesComposition.PointComposition {
     /** @internal */
     className: NodesComposition.PointComposition['className'];

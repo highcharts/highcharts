@@ -289,6 +289,7 @@ class HistogramSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface HistogramSeries extends DerivedComposition.SeriesComposition {
     animate: typeof ColumnSeries.prototype.animate;
     /** @internal */

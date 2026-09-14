@@ -1001,6 +1001,7 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface MapSeries extends ColorMapComposition.SeriesComposition {
     getCenter: typeof CU['getCenter'];
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];

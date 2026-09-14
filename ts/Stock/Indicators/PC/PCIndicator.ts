@@ -195,6 +195,7 @@ class PCIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;

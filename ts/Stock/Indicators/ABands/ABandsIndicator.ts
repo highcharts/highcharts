@@ -261,6 +261,7 @@ class ABandsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ABandsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;

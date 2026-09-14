@@ -260,6 +260,7 @@ class StochasticIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;

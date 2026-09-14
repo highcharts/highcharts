@@ -756,6 +756,7 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface SankeySeries extends NodesComposition.SeriesComposition {
     /** @internal */
     animate(init?: boolean): void;

@@ -240,6 +240,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PriceEnvelopesIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameComponents: Array<string>;

@@ -345,6 +345,7 @@ class WindbarbSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
     /** @internal */
     beaufortFloor: Array<number>;

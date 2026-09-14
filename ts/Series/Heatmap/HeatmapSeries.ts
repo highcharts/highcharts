@@ -561,6 +561,7 @@ addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
  *
  * */
 
+/** @internal */
 interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
