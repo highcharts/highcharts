@@ -149,7 +149,7 @@ class DataCursor {
     private buildEmittingTag(
         e: Event
     ): string {
-        return (
+        return JSON.stringify(
             e.cursor.type === 'position' ?
                 [
                     e.table.id,
@@ -166,7 +166,7 @@ class DataCursor {
                     e.cursor.state,
                     e.cursor.type
                 ]
-        ).join('\0');
+        );
     }
 
 
