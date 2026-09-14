@@ -263,6 +263,39 @@ export interface ScrollbarOptions {
     zIndex?: number;
 }
 
+/**
+ * Options for a scrollbar applied directly to an axis. Shared between the
+ * X and Y axis variants, it only differs from the base
+ * [scrollbar](#scrollbar) options in the default of `enabled`.
+ */
+export interface AxisScrollbarOptions extends ScrollbarOptions {
+
+    /**
+     * Enable or disable the scrollbar.
+     *
+     * @sample stock/scrollbar/enabled/
+     *         Disable the scrollbar, only use navigator
+     *
+     * @default false
+     */
+    enabled?: boolean;
+
+}
+
+/**
+ * Options for a scrollbar applied to an X axis.
+ */
+export interface XAxisScrollbarOptions extends AxisScrollbarOptions {
+    // Nothing here yet
+}
+
+/**
+ * Options for a scrollbar applied to a Y axis.
+ */
+export interface YAxisScrollbarOptions extends AxisScrollbarOptions {
+    // Nothing here yet
+}
+
 /* *
  *
  *  Default Export

@@ -1787,6 +1787,16 @@ namespace AxisDefaults {
          */
 
         /**
+         * Enable or disable the scrollbar on the X axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
+         *
+         * @default   false
+         * @product   highstock
+         * @apioption xAxis.scrollbar.enabled
+         */
+
+        /**
          * Whether to show the axis line and title when the axis has no data.
          *
          * @sample {highcharts} highcharts/yaxis/showempty/
@@ -2924,14 +2934,14 @@ namespace AxisDefaults {
          */
 
         /**
-         * Enable the scrollbar on the Y axis.
+         * Enable or disable the scrollbar on the Y axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
          *
          * @sample {highstock} stock/yaxis/scrollbar/
          *         Enabled on Y axis
          *
-         * @type      {boolean}
          * @default   false
-         * @since     4.2.6
          * @product   highstock
          * @apioption yAxis.scrollbar.enabled
          */
