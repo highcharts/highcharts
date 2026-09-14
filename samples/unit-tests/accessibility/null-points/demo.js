@@ -44,7 +44,11 @@ QUnit.test('Dynamic null points', function (assert) {
     const chart = Highcharts.chart('container', {
             series: [
                 {
-                    data: [1, null, null, 2, 3, 4, 5, 6]
+                    // Explicit x, so that setData below can match the points
+                    data: [
+                        [0, 1], [1, null], [2, null], [3, 2],
+                        [4, 3], [5, 4], [6, 5], [7, 6]
+                    ]
                 }
             ]
         }),
@@ -81,11 +85,34 @@ QUnit.test('Dynamic null points', function (assert) {
         'point.'
     );
 
+    // Without a redraw in between, so that the marker is not re-created
+    nullPoint.update({
+        y: null
+    }, false);
+
+    assert.ok(
+        nullPoint.graphic,
+        'Updating a null point to null should keep the dummy marker, #12718.'
+    );
+
     nullPoint.select(true, true);
 
     assert.notStrictEqual(
         nullPoint.graphic.attr('y'),
         'NaN',
         'Point graphic y shouldn\'t be NaN.'
+    );
+
+    series.setData([[0, 1], [1, 3], [2, 4]]);
+
+    assert.notOk(
+        nullPoint.hasMockGraphic,
+        'Point restored through setData should not keep the dummy marker, ' +
+        '#25299.'
+    );
+    assert.strictEqual(
+        nullPoint.graphic.element.tagName,
+        'path',
+        'Point restored through setData should have a marker element, #25299.'
     );
 });
