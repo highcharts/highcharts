@@ -83,6 +83,13 @@ function isGeneratedSampleArtifact(filePath) {
         return false;
     }
 
+    const sampleDir = path.dirname(normalizedPath);
+    const configPath = path.join(process.cwd(), sampleDir, 'config.ts');
+
+    if (!fs.existsSync(configPath)) {
+        return false;
+    }
+
     return /\/(demo\.(ts|html|css|details)|\.gitignore|demo\.js)$/u
         .test(normalizedPath);
 }
