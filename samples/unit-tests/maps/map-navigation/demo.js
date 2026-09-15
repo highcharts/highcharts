@@ -217,6 +217,55 @@ QUnit.test('Map navigation button alignment', assert => {
     );
 });
 
+QUnit.test('Mouse wheel deltas are isolated per map', assert => {
+    const clock = TestUtilities.lolexInstall(),
+        firstContainer = document.createElement('div'),
+        secondContainer = document.createElement('div'),
+        getOptions = () => ({
+            chart: {
+                height: 300,
+                width: 400
+            },
+            mapNavigation: {
+                enabled: true
+            },
+            series: []
+        });
+
+    document.body.append(firstContainer, secondContainer);
+
+    const firstChart = Highcharts.mapChart(firstContainer, getOptions()),
+        secondChart = Highcharts.mapChart(secondContainer, getOptions()),
+        firstController = new TestController(firstChart),
+        secondController = new TestController(secondChart);
+
+    let firstZooms = 0,
+        secondZooms = 0;
+
+    firstChart.mapView.zoomBy = () => ++firstZooms;
+    secondChart.mapView.zoomBy = () => ++secondZooms;
+
+    for (let i = 0; i < 9; ++i) {
+        firstController.mouseWheel(200, 150, {
+            deltaY: 1,
+            target: firstChart.container
+        });
+    }
+    secondController.mouseWheel(200, 150, {
+        deltaY: 1,
+        target: secondChart.container
+    });
+
+    assert.strictEqual(firstZooms, 9, 'The first map should zoom nine times');
+    assert.strictEqual(secondZooms, 1, 'The second map should zoom once');
+
+    firstChart.destroy();
+    secondChart.destroy();
+    firstContainer.remove();
+    secondContainer.remove();
+    TestUtilities.lolexRunAndUninstall(clock);
+});
+
 QUnit.test('Orthographic map rotation and panning.', assert => {
 
     const getGraticule = partial => {
