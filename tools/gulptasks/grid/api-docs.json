@@ -43,6 +43,9 @@
         "../../../ts/Grid/Pro/Credits/CreditsPro.ts",
         "../../../ts/Grid/Pro/GridEvents.ts",
 
+        "../../../ts/Grid/Pro/RowSelection/RowSelectionOptions.ts",
+        "../../../ts/Grid/Pro/RowSelection/RowSelectionController.ts",
+
         "../../../ts/Grid/Pro/ColumnTypes/Validator.ts",
         "../../../ts/Grid/Pro/ColumnTypes/ColumnDataType.d.ts",
 
