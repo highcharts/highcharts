@@ -42,12 +42,14 @@ import { extend } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         tooltipDateKeys?: Array<string>;
     }
 }
 
+/** @internal */
 interface BBoxObjectWithCenter extends BBoxObject {
     centerX?: number;
 }
@@ -58,6 +60,7 @@ interface BBoxObjectWithCenter extends BBoxObject {
  *
  * */
 
+/** @internal */
 class XRangePoint extends ColumnPoint {
 
     /* *
@@ -69,7 +72,7 @@ class XRangePoint extends ColumnPoint {
     /**
      * Return color of a point based on its category.
      *
-     * @private
+     * @internal
      * @function getColorByCategory
      *
      * @param {object} series
@@ -117,7 +120,7 @@ class XRangePoint extends ColumnPoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public resolveColor(): void {
         const series = this.series;
@@ -143,7 +146,7 @@ class XRangePoint extends ColumnPoint {
     /**
      * Extend init to have y default to 0.
      *
-     * @private
+     * @internal
      */
     public constructor(
         series: XRangeSeries,
@@ -158,7 +161,7 @@ class XRangePoint extends ColumnPoint {
     /**
      * Extend applyOptions to handle time strings for x2
      *
-     * @private
+     * @internal
      */
     public applyOptions(
         options: XRangePointOptions,
@@ -172,7 +175,7 @@ class XRangePoint extends ColumnPoint {
     }
 
     /**
-     * @private
+     * @internal
      */
     public setState(): void {
         super.setState.apply(this, arguments as any);
@@ -181,7 +184,7 @@ class XRangePoint extends ColumnPoint {
     }
 
     /**
-     * @private
+     * @internal
      */
     public isValid(): boolean {
         return typeof this.x === 'number' &&
@@ -196,6 +199,7 @@ class XRangePoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 interface XRangePoint {
     clipRectArgs?: RectangleObject;
     len?: number;
@@ -225,6 +229,7 @@ extend(XRangePoint.prototype, {
  *
  * */
 
+/** @internal */
 export default XRangePoint;
 
 /* *

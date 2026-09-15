@@ -35,6 +35,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         crosshairWidth?: VariwidePoint['crosshairWidth'];
@@ -46,6 +47,7 @@ declare module '../../Core/Series/PointBase' {
  *  Class
  *
  * */
+/** @internal */
 class VariwidePoint extends ColumnPoint {
 
     /* *
@@ -76,4 +78,5 @@ class VariwidePoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default VariwidePoint;

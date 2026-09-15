@@ -93,7 +93,6 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
     /**
      * @ignore-option
-     * @private
      */
     marker: false as any,
 
@@ -103,8 +102,6 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
     /**
      * @ignore-option
-     *
-     * @private
      */
     legendType: 'point',
 
