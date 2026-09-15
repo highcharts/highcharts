@@ -293,9 +293,46 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         scatterS.points.map(function (p) {
             return p.wasThere;
         }),
-        [true, true, undefined, undefined],
-        'Array with X, duplicated X, requireSorting is false - some points ' +
-        'should be updated from existing (#8995)'
+        [true, true, true, true],
+        'Array with X, duplicated X, requireSorting is false - all points ' +
+        'should be updated from existing, matching subsequent occurrences ' +
+        '(#8995, #25312)'
+    );
+
+    // Rows in an order that differs from the existing points
+    const reorderS = chart.addSeries({
+        type: 'scatter',
+        data: [[0, 10], [1, 30], [0, 20], [1, 40]]
+    });
+    reorderS.setData([
+        [1, 4],
+        [0, 2],
+        [1, 6],
+        [0, 8]
+    ]);
+    assert.deepEqual(
+        reorderS.points.map(function (p) {
+            return [p.x, p.y].join(':');
+        }),
+        ['1:4', '0:2', '1:6', '0:8'],
+        'Reordered rows with duplicated X - points should follow the order ' +
+        'of the new data (#25312)'
+    );
+
+    // A new row combined with a reordering, so that the hole left for the
+    // new point falls where a matched point's options are
+    const addS = chart.addSeries({
+        type: 'scatter',
+        data: [[0, 1], [1, 2]]
+    });
+    addS.setData([[2, 30], [1, 20]]);
+    assert.deepEqual(
+        addS.points.map(function (p) {
+            return [p.x, p.y].join(':');
+        }),
+        ['2:30', '1:20'],
+        'A new point should take its own options, not those of a matched ' +
+        'point (#25312)'
     );
 
     // Identify by id

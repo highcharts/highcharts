@@ -1541,8 +1541,11 @@ class Series {
         const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
             oldData = this.data,
-            rowsToAdd: Array<{ newIndex: number, oldIndex: number }> = [],
-            rowsToUpdate: Array<{ newIndex: number, oldIndex: number }> = [],
+            // Keeps `data[i]` paired with `options.data[i]` (#25312)
+            newData: Array<Point> = [],
+            // Where to resume the search per needle, so that repeated
+            // values match distinct points (#25083)
+            searchFrom = new Map<unknown, number>(),
             equalLength = dataTable.rowCount === oldData.length;
         let hasUpdatedByKey,
             i,
@@ -1583,46 +1586,28 @@ class Series {
             // We have a needle and a haystack to search for matching points
             if (haystack) {
 
-                pointIndex = haystack.indexOf(needle as any, lastIndex);
-
-                // Matching X not found or used already due to non-unique x
-                // values (#8995), add point (but later)
-                if (pointIndex === -1) {
-                    const optionsX = newXColumn?.[i];
-                    let newIndex = oldXColumn?.length ?? dataTable.rowCount;
-                    while (
-                        newIndex &&
-                        oldXColumn &&
-                        typeof optionsX === 'number' &&
-                        oldXColumn[newIndex - 1] as number > optionsX
-                    ) {
-                        newIndex--;
-                    }
-                    rowsToAdd.push({ newIndex, oldIndex: i });
+                // Speed optimize by only searching after the last known index.
+                // Performs ~20% better on large data sets.
+                pointIndex = haystack.indexOf(
+                    needle as any,
+                    requireSorting ? lastIndex : searchFrom.get(needle) ?? 0
+                );
+                if (pointIndex !== -1) {
+                    searchFrom.set(needle, pointIndex + 1);
+                }
 
                 // Matching X found, update
-                } else if (
-                    oldData[pointIndex] /* &&
-                    pOptions === oldData[pointIndex]?.options*/
-                ) {
-                    rowsToUpdate.push({
-                        newIndex: pointIndex,
-                        oldIndex: i
-                    });
+                if (oldData[pointIndex]) {
+                    newData[i] = oldData[pointIndex];
 
                     // Mark it touched, below we will remove all points that
                     // are not touched.
                     oldData[pointIndex].touched = true;
 
-                    // Speed optimize by only searching after last known
-                    // index. Performs ~20% better on large data sets.
                     if (requireSorting) {
                         lastIndex = pointIndex + 1;
                     }
-                // Point exists, no changes, don't remove it
-                } /*/ else if (oldData[pointIndex]) {
-                    oldData[pointIndex].touched = true;
-                }*/
+                }
 
                 // If the length is equal and some of the nodes had a
                 // match in the same position, we don't want to remove
@@ -1635,37 +1620,35 @@ class Series {
                 ) {
                     hasUpdatedByKey = true;
                 }
-            } else {
-                // Gather all points that are not matched
-                rowsToAdd.push({ newIndex: i, oldIndex: i });
             }
         }
 
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
-            // Update matching points
-            rowsToUpdate.forEach((row): void => {
-                oldData[row.newIndex].applyOptions(
-                    dataTable.getRowObject(row.oldIndex) as PointOptions
-                );
-            });
 
-            // Add new points
-            rowsToAdd.sort((a, b): number => b.newIndex - a.newIndex);
-            rowsToAdd.forEach((data): void => {
-                // Splice in an undefined item, `generatePoints` will pick it
-                // up and create the point
-                oldData.splice(data.newIndex, 0, void 0 as any);
-            });
+            newData.length = dataTable.rowCount;
+
+            // Update matching points
+            for (i = 0; i < newData.length; i++) {
+                point = newData[i];
+                if (point) {
+                    point.applyOptions(
+                        dataTable.getRowObject(i) as PointOptions
+                    );
+                    point.index = i;
+                }
+            }
+
             // Remove points not touched
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
                 if (point && !point.touched) {
                     point.destroy();
-                    oldData.splice(i, 1);
                 }
             }
+
+            this.data = newData;
 
             this.isDirtyData = this.isDirty = true;
 
@@ -1701,7 +1684,7 @@ class Series {
         }
 
         oldData.forEach((point): void => {
-            if (point) {
+            if (point && !point.condemned) {
                 point.touched = false;
             }
         });
