@@ -158,7 +158,7 @@ export const defaultOptions: DeepPartial<Options> = {
             strictWidths: false,
             virtualizationThreshold: 20
         },
-        theme: 'hcg-theme-default'
+        theme: 'hcg-theme-default hc-test'
     },
     columnDefaults: {
         sorting: {

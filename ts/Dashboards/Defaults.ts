@@ -32,7 +32,7 @@ export const defaultOptions: BoardOptions = {
         enabled: true,
         layoutOptions: {
             rowClassName: void 0,
-            cellClassName: void 0
+            cellClassName: void 0 // test
         },
         layouts: []
     },
