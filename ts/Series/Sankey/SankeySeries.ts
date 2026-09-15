@@ -123,28 +123,37 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public colDistance!: number;
 
     public data!: Array<SankeyPoint>;
 
+    /** @internal */
     public group!: SVGElement;
 
+    /** @internal */
     public mapOptionsToLevel?: (Record<string, SankeySeriesLevelOptions>|null);
 
+    /** @internal */
     public nodeColumns?: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>>;
 
+    /** @internal */
     public nodeLookup!: Record<string, SankeyPoint>;
 
+    /** @internal */
     public nodePadding!: number;
 
+    /** @internal */
     public nodes!: Array<SankeyPoint>;
 
+    /** @internal */
     public nodeWidth!: number;
 
     public options!: SankeySeriesOptions;
 
     public points!: Array<SankeyPoint>;
 
+    /** @internal */
     public translationFactor!: number;
 
     /* *
@@ -327,16 +336,19 @@ class SankeySeries extends ColumnSeries {
         };
 
     }
+    /** @internal */
     public drawTracker(): void {
         ColumnSeries.prototype.drawTracker.call(this, this.points);
         ColumnSeries.prototype.drawTracker.call(this, this.nodes);
     }
 
+    /** @internal */
     public drawPoints(): void {
         ColumnSeries.prototype.drawPoints.call(this, this.points);
         ColumnSeries.prototype.drawPoints.call(this, this.nodes);
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         ColumnSeries.prototype.drawDataLabels.call(this, this.points);
         ColumnSeries.prototype.drawDataLabels.call(this, this.nodes);
@@ -744,36 +756,60 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface SankeySeries extends NodesComposition.SeriesComposition {
+    /** @internal */
     animate(init?: boolean): void;
+    /** @internal */
     createNode(id: string): SankeyPoint;
+    /** @internal */
     destroy: NodesComposition.SeriesComposition['destroy'];
+    /** @internal */
     forceDL: boolean;
+    /** @internal */
     init(chart: Chart, options: SankeySeriesOptions): void;
+    /** @internal */
     invertible: boolean;
+    /** @internal */
     isCartesian: boolean;
+    /** @internal */
     noSharedTooltip: boolean;
+    /** @internal */
     orderNodes: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof SankeyPoint;
+    /** @internal */
     remove: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     setData: NodesComposition.SeriesComposition['setData'];
 }
 
 NodesComposition.compose(SankeyPoint, SankeySeries);
 
 extend(SankeySeries.prototype, {
+    /** @internal */
     animate: LineSeries.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
+    /** @internal */
     createNode: NodesComposition.createNode as any,
+    /** @internal */
     forceDL: true,
+    /** @internal */
     invertible: true,
+    /** @internal */
     isCartesian: false,
+    /** @internal */
     orderNodes: true,
+    /** @internal */
     noSharedTooltip: true,
+    /** @internal */
     pointArrayMap: ['from', 'to', 'weight'],
+    /** @internal */
     pointClass: SankeyPoint,
+    /** @internal */
     searchPoint: H.noop as any
 });
 

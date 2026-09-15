@@ -88,6 +88,7 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WordcloudSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WordcloudSeriesDefaults
@@ -99,7 +100,9 @@ class WordcloudSeries extends ColumnSeries {
      *
      * */
     public data!: Array<WordcloudPoint>;
+    /** @internal */
     public defaultScale?: number;
+    /** @internal */
     public field?: WordcloudSeries.WordcloudFieldObject;
     public options!: WordcloudSeriesOptions;
     public points!: Array<WordcloudPoint>;
@@ -154,6 +157,7 @@ class WordcloudSeries extends ColumnSeries {
         return Math.floor(Math.max(min, weight * max));
     }
 
+    /** @internal */
     public drawPoints(): void {
         if (
             this.zooming ||
@@ -365,6 +369,7 @@ class WordcloudSeries extends ColumnSeries {
         });
     }
 
+    /** @internal */
     public hasData(): boolean {
         const series = this;
 
@@ -376,6 +381,7 @@ class WordcloudSeries extends ColumnSeries {
         );
     }
 
+    /** @internal */
     public getPlotBox(name?: string): Series.PlotBoxTransform {
         const series = this,
             { chart, group, zooming } = this,
@@ -517,24 +523,36 @@ class WordcloudSeries extends ColumnSeries {
  *
  * */
 interface WordcloudSeries {
+    /** @internal */
     placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof WordcloudPoint;
+    /** @internal */
     spirals: Record<string, WordcloudSeries.WordcloudSpiralFunction>;
+    /** @internal */
     utils: typeof WU;
 }
 
 extend(WordcloudSeries.prototype, {
+    /** @internal */
     animate: noop,
+    /** @internal */
     animateDrilldown: noop,
+    /** @internal */
     animateDrillupFrom: noop,
+    /** @internal */
     isCartesian: false,
+    /** @internal */
     pointClass: WordcloudPoint,
+    /** @internal */
     setClip: noop,
 
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for
     // example.
+    /** @internal */
     placementStrategy: {
         random: function (
             point: WordcloudPoint,
@@ -562,15 +580,18 @@ extend(WordcloudSeries.prototype, {
             };
         }
     },
+    /** @internal */
     pointArrayMap: ['weight'],
     // Spirals used for placing a word after the initial position experienced a
     // collision with either another word or the borders. To implement a custom
     // spiral, look at the function archimedeanSpiral for example.
+    /** @internal */
     spirals: {
         'archimedean': archimedeanSpiral,
         'rectangular': rectangularSpiral,
         'square': squareSpiral
     },
+    /** @internal */
     utils: {
         extendPlayingField: extendPlayingField,
         getRotation: getRotation,

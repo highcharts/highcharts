@@ -65,6 +65,7 @@ class VariwideSeries extends ColumnSeries {
 
     public static compose = VariwideComposition.compose;
 
+    /** @internal */
     public static defaultOptions: VariwideSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         VariwideSeriesDefaults
@@ -76,12 +77,16 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public crispOption?: boolean;
     public data!: Array<VariwidePoint>;
     public options!: VariwideSeriesOptions;
     public points!: Array<VariwidePoint>;
+    /** @internal */
     public relZ!: Array<number>;
+    /** @internal */
     public totalZ!: number;
+    /** @internal */
     public zData?: Array<number>;
 
     /* *
@@ -90,6 +95,7 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
@@ -183,6 +189,7 @@ class VariwideSeries extends ColumnSeries {
     }
 
 
+    /** @internal */
     public translate(): void {
         // Temporarily disable crisping when computing original shapeArgs
         this.crispOption = this.options.crisp;
@@ -238,6 +245,7 @@ class VariwideSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public getXExtremes(
         xData: Array<number>|TypedArray
     ): RangeSelector.RangeObject {
@@ -315,17 +323,26 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
  * */
 
 interface VariwideSeries {
+    /** @internal */
     irregularWidths: boolean;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof VariwidePoint;
 }
 
 extend(VariwideSeries.prototype, {
+    /** @internal */
     irregularWidths: true,
+    /** @internal */
     keysAffectYAxis: ['y'],
+    /** @internal */
     pointArrayMap: ['y', 'z'],
+    /** @internal */
     parallelArrays: ['x', 'y', 'z'],
+    /** @internal */
     pointClass: VariwidePoint
 });
 

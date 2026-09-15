@@ -39,7 +39,6 @@ const {
 /**
  * The NATR series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.natr
  *
@@ -68,6 +67,7 @@ class NATRIndicator extends ATRIndicator {
      * @requires     stock/indicators/atr
      * @requires     stock/indicators/natr
      * @optionparent plotOptions.natr
+     * @internal
      */
     public static defaultOptions: NATROptions = merge(ATRIndicator.defaultOptions, {
         tooltip: {
@@ -91,6 +91,7 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: NATRParamsOptions
@@ -128,7 +129,6 @@ class NATRIndicator extends ATRIndicator {
  *
  * */
 
-/** @internal */
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
 }
@@ -139,7 +139,6 @@ interface NATRIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         natr: typeof NATRIndicator;
@@ -154,7 +153,6 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
  *
  * */
 
-/** @internal */
 export default NATRIndicator;
 
 /* *

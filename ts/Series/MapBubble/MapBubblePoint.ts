@@ -60,6 +60,7 @@ class MapBubblePoint extends BubblePoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return typeof this.z === 'number';
     }
@@ -73,11 +74,14 @@ class MapBubblePoint extends BubblePoint {
  * */
 
 interface MapBubblePoint {
+    /** @internal */
     getProjectedBounds: typeof mapPointProto.getProjectedBounds;
 }
 
 extend(MapBubblePoint.prototype, {
+    /** @internal */
     applyOptions: mapPointProto.applyOptions,
+    /** @internal */
     getProjectedBounds: mapPointProto.getProjectedBounds
 });
 

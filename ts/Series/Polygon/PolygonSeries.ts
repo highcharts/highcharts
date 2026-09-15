@@ -47,6 +47,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PolygonSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         PolygonSeriesDefaults
@@ -58,6 +59,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public areaPath?: SVGPath;
     public data!: Array<PolygonPoint>;
     public options!: PolygonSeriesOptions;
@@ -69,6 +71,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public getGraphPath(): SVGPath {
         const graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this);
 
@@ -84,6 +87,7 @@ class PolygonSeries extends ScatterSeries {
         return graphPath;
     }
 
+    /** @internal */
     public drawGraph(): void {
         // Borrow the fill logic from area.drawGraph, honoring `fillOpacity`
         // and an optional `fillColor`
@@ -99,13 +103,18 @@ class PolygonSeries extends ScatterSeries {
  * */
 
 interface PolygonSeries {
+    /** @internal */
     pointClass: typeof PolygonPoint;
+    /** @internal */
     type: string;
 }
 
 extend(PolygonSeries.prototype, {
+    /** @internal */
     type: 'polygon',
+    /** @internal */
     drawTracker: LineSeries.prototype.drawTracker,
+    /** @internal */
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 

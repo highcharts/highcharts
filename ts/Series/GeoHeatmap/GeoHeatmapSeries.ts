@@ -240,10 +240,13 @@ class GeoHeatmapSeries extends MapSeries {
 
     public points!: Array<GeoHeatmapPoint>;
 
+    /** @internal */
     public canvas?: HTMLCanvasElement;
 
+    /** @internal */
     public context?: CanvasRenderingContext2D;
 
+    /** @internal */
     public isDirtyCanvas: boolean = true;
 
     /* *
@@ -649,6 +652,7 @@ class GeoHeatmapSeries extends MapSeries {
         return projectedPixelData;
     }
 
+    /** @internal */
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean

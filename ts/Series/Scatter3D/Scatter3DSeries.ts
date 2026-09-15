@@ -52,6 +52,7 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: Scatter3DSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         Scatter3DSeriesDefaults
@@ -75,6 +76,7 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public pointAttribs(point: Scatter3DPoint): SVGAttributes {
         const attribs = super.pointAttribs.apply(this, arguments);
 
@@ -95,22 +97,28 @@ class Scatter3DSeries extends ScatterSeries {
  * */
 
 interface Scatter3DSeries {
+    /** @internal */
     pointClass: typeof Scatter3DPoint;
 }
 
 extend(Scatter3DSeries.prototype, {
 
+    /** @internal */
     axisTypes: ['xAxis', 'yAxis', 'zAxis'],
 
     // Require direct touch rather than using the k-d-tree, because the
     // k-d-tree currently doesn't take the xyz coordinate system into
     // account (#4552)
+    /** @internal */
     directTouch: true,
 
+    /** @internal */
     parallelArrays: ['x', 'y', 'z'],
 
+    /** @internal */
     pointArrayMap: ['x', 'y', 'z'],
 
+    /** @internal */
     pointClass: Scatter3DPoint
 
 });

@@ -68,7 +68,6 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -99,6 +98,7 @@ class DPOIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
+     * @internal
      */
     public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -130,6 +130,7 @@ class DPOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DPOParamsOptions
@@ -199,7 +200,6 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -214,7 +214,6 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -229,7 +228,6 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
-/** @internal */
 export default DPOIndicator;
 
 /* *
