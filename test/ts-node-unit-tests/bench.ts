@@ -76,10 +76,14 @@ async function runTestInWorker(testFile: string, size: number): Promise<Benchmar
     let timeout: ReturnType<typeof setTimeout>;
     const promise = new Promise<BenchmarkResult>((resolve, reject) =>{
         worker.on('message', value =>{
-            if (value.error){
+            if (Object.prototype.hasOwnProperty.call(value, 'error')) {
                 reject(value.error);
-            } else if (typeof value.result === 'number') {
+            } else if (Number.isFinite(value.result)) {
                 resolve(value.result);
+            } else {
+                reject(new Error(
+                    `Benchmark ${testFile} must return a finite number`
+                ));
             }
         });
         worker.on('error', reject);

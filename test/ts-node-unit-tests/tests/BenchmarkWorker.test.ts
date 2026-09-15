@@ -162,4 +162,31 @@ describe('benchmark CLI', () => {
             strictEqual(existsSync(report), false);
         });
     }
+
+    for (const [index, [value, message]] of [
+        ['0', '0'], ['null', 'null'], ['undefined', 'undefined'],
+        ['false', 'false'], ['""', '']
+    ].entries()) {
+        it(`rejects a falsy thrown value: ${value}`, async () => {
+            const { result, report } = await runCLI(`throw-falsy-${index}`,
+                `export default () => { throw ${value}; };`);
+
+            strictEqual(result.status, 1, result.stderr);
+            strictEqual(result.stderr.trim(), message);
+            strictEqual(existsSync(report), false);
+        });
+    }
+
+    for (const [index, value] of [
+        'undefined', 'null', '"1"', 'NaN', 'Infinity', '-Infinity'
+    ].entries()) {
+        it(`rejects an invalid result: ${value}`, async () => {
+            const { result, report } = await runCLI(`invalid-result-${index}`,
+                `export default () => { return ${value}; };`);
+
+            strictEqual(result.status, 1, result.stderr);
+            match(result.stderr, /must return a finite number/);
+            strictEqual(existsSync(report), false);
+        });
+    }
 });
