@@ -46,7 +46,7 @@ const { defaultOptions } = D;
 /**
  * The hlc series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.hlc
  *
@@ -127,7 +127,7 @@ class HLCSeries extends ColumnSeries {
     /**
      * Function to create SVGPath of the point based on the plot positions of
      * this point.
-     * @private
+     * @internal
      */
     protected getPointPath(point: HLCPoint): SVGPath {
         // Crisp vector coordinates
@@ -157,7 +157,7 @@ class HLCSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.hlc#init
      */
     public init(): void {
@@ -168,7 +168,7 @@ class HLCSeries extends ColumnSeries {
 
     /**
      * Postprocess mapping between options and SVG attributes
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: HLCPoint,
@@ -195,7 +195,7 @@ class HLCSeries extends ColumnSeries {
     /**
      * Translate data points from raw values x and y to plotX and plotY
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.hlc#translate
      */
     public translate(): void {
@@ -256,6 +256,7 @@ class HLCSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface HLCSeries {
     pointClass: typeof HLCPoint;
 }
@@ -295,13 +296,42 @@ extend(
 
 declare module '../../Core/Options'{
     interface LangOptions {
+        /**
+         * The tooltip label for a point's opening value, used in the
+         * default `pointFormat` of the `ohlc` series.
+         *
+         * @default Open
+         * @product highstock
+         */
         stockOpen?: string;
+        /**
+         * The tooltip label for a point's highest value, used in the
+         * default `pointFormat` of the `hlc` and `ohlc` series.
+         *
+         * @default High
+         * @product highstock
+         */
         stockHigh?: string;
+        /**
+         * The tooltip label for a point's lowest value, used in the
+         * default `pointFormat` of the `hlc` and `ohlc` series.
+         *
+         * @default Low
+         * @product highstock
+         */
         stockLow?: string;
+        /**
+         * The tooltip label for a point's closing value, used in the
+         * default `pointFormat` of the `hlc` and `ohlc` series.
+         *
+         * @default Close
+         * @product highstock
+         */
         stockClose?: string;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         hlc: typeof HLCSeries;
@@ -316,4 +346,5 @@ SeriesRegistry.registerSeriesType('hlc', HLCSeries);
  *
  * */
 
+/** @internal */
 export default HLCSeries;

@@ -38,6 +38,7 @@ const {
  *
  * */
 
+/** @internal */
 class HLCPoint extends ColumnPoint {
 
     /* *
@@ -104,4 +105,5 @@ namespace HLCPoint {
  *
  * */
 
+/** @internal */
 export default HLCPoint;

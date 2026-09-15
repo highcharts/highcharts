@@ -46,8 +46,6 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  * @product highstock
  *
  * @requires modules/heikinashi
- *
- * @excluding dataParser, dataURL, marker
  */
 export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
@@ -103,11 +101,7 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
      *    }]
      *    ```
      *
-     * @type {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
-     *
      * @extends series.candlestick.data
-     *
-     * @excluding y
      *
      * @product highstock
      */
@@ -115,14 +109,20 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
     dataGrouping?: HeikinAshiSeriesDataGroupingOptions;
 
+
 }
 
-/**
- * @optionparent series.heikinashi.dataGrouping
- */
 interface HeikinAshiSeriesDataGroupingOptions extends DataGroupingOptions {
 
-    groupAll?: boolean;
+    /**
+     * Whether to force data grouping to calculate all grouped points for
+     * a given dataset, rather than only the ones within the visible
+     * range. Enabled by default for Heikin Ashi, as each point depends
+     * on the values of the previous one.
+     *
+     * @default true
+     */
+    groupAll?: DataGroupingOptions['groupAll'];
 
 }
 
