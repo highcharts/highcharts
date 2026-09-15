@@ -18,18 +18,10 @@ import {
 } from './visual-results.ts';
 import { selectVisualSamples } from './visual-samples.ts';
 import { captureVisualSVG } from './visual-capture.ts';
-
-type VisualComparator = {
-    CANVAS_WIDTH: number;
-    CANVAS_HEIGHT: number;
-    compare: (data1: Uint8ClampedArray, data2: Uint8ClampedArray) => number;
-    createCanvas: (id: string) => HTMLCanvasElement;
-    getSVG: (chart: unknown) => string | undefined;
-    svgToPixels: (
-        svg: string,
-        canvas: HTMLCanvasElement
-    ) => Promise<Uint8ClampedArray>;
-};
+import {
+    compareVisualSVGs,
+    type VisualComparator
+} from './visual-comparison.ts';
 
 type BrowserRuntimeError = {
     message: string;
@@ -42,14 +34,6 @@ type VisualWindow = Window & {
     visualTestUnhandledRejectionListener?: (
         event: PromiseRejectionEvent
     ) => void;
-};
-
-type ComparisonResult = {
-    candidatePixels?: number[];
-    difference: number;
-    height: number;
-    referencePixels?: number[];
-    width: number;
 };
 
 function transformVisualSampleScript(script: string | undefined): string {
@@ -366,43 +350,10 @@ test.describe('Visual tests', () => {
                     writeReference(root, visualSamplePath, candidateSVG);
                 } else {
                     const referenceSVG = readReference(root, visualSamplePath);
-                    const comparison = await page.evaluate(
-                        async (
-                            { candidateSVG, referenceSVG }
-                        ): Promise<ComparisonResult> => {
-                            const comparator =
-                                (window as VisualWindow).VisualComparator;
-
-                            if (!comparator) {
-                                throw new Error('Visual comparator is not loaded.');
-                            }
-
-                            const pixels = await Promise.all([
-                                comparator.svgToPixels(
-                                    referenceSVG,
-                                    comparator.createCanvas('reference')
-                                ),
-                                comparator.svgToPixels(
-                                    candidateSVG,
-                                    comparator.createCanvas('candidate')
-                                )
-                            ]);
-                            const difference = comparator.compare(
-                                pixels[0],
-                                pixels[1]
-                            );
-
-                            return {
-                                difference,
-                                width: comparator.CANVAS_WIDTH,
-                                height: comparator.CANVAS_HEIGHT,
-                                ...(difference ? {
-                                    referencePixels: Array.from(pixels[0]),
-                                    candidatePixels: Array.from(pixels[1])
-                                } : {})
-                            };
-                        },
-                        { candidateSVG, referenceSVG }
+                    const comparison = await compareVisualSVGs(
+                        page,
+                        referenceSVG,
+                        candidateSVG
                     );
 
                     const runtimeError = pageError ?? await page.evaluate(() =>
@@ -425,8 +376,12 @@ test.describe('Visual tests', () => {
                             comparison.difference,
                             candidateSVG,
                             createAnimatedGif(
-                                Uint8Array.from(comparison.referencePixels),
-                                Uint8Array.from(comparison.candidatePixels),
+                                Buffer.from(
+                                    comparison.referencePixels, 'base64'
+                                ),
+                                Buffer.from(
+                                    comparison.candidatePixels, 'base64'
+                                ),
                                 comparison.width,
                                 comparison.height
                             )
