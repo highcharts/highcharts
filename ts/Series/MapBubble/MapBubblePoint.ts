@@ -72,6 +72,7 @@ class MapBubblePoint extends BubblePoint {
  *
  * */
 
+/** @internal */
 interface MapBubblePoint {
     getProjectedBounds: typeof mapPointProto.getProjectedBounds;
 }
