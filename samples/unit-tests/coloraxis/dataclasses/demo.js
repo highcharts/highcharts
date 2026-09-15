@@ -140,3 +140,62 @@ QUnit.test('Data classes - interactions', function (assert) {
         'The shown point should be hovered.'
     );
 });
+
+QUnit.test('Data classes - visibility after setData (#25083)', function (
+    assert
+) {
+    const chart = Highcharts.chart('container', {
+        colorAxis: {
+            dataClasses: [
+                { from: 0, to: 5, name: 'low' },
+                { from: 5, to: 10, name: 'high' }
+            ]
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        series: [
+            {
+                type: 'scatter',
+                data: [
+                    { x: 0, y: 1 },
+                    { x: 0, y: 7 },
+                    { x: 1, y: 3 },
+                    { x: 1, y: 9 }
+                ]
+            }
+        ]
+    });
+
+    const high = chart.legend.allItems.find(item => item.name === 'high'),
+        highPoints = () => chart.series[0].points.filter(point => point.y >= 5);
+
+    high.setVisible(); // Hide
+
+    chart.series[0].setData([
+        { x: 0, y: 2 },
+        { x: 0, y: 8 },
+        { x: 1, y: 4 },
+        { x: 1, y: 6 }
+    ]);
+
+    assert.ok(
+        highPoints().every(point => !point.visible),
+        'Points created by setData should be hidden while their data class ' +
+        'is toggled off'
+    );
+
+    high.setVisible(); // Show again
+
+    assert.ok(
+        highPoints().every(
+            point => point.visible && point.graphic && point.dataLabel
+        ),
+        'They should come back with a graphic and a data label when the ' +
+        'data class is toggled on again'
+    );
+});
