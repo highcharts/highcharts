@@ -836,7 +836,8 @@ namespace AxisDefaults {
 
         /**
          * As opposed to the `setExtremes` event, this event fires after the
-         * final min and max values are computed and corrected for `minRange`.
+         * final min and max values are computed and corrected for `minRange`,
+         * and only when the extremes have changed since the previous redraw.
          *
          * Fires when the minimum and maximum is set for the axis, either by
          * calling the `.setExtremes()` method or by selecting an area in the
