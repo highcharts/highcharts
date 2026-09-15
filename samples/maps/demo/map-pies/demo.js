@@ -139,6 +139,11 @@
             align: 'left'
         },
 
+        tooltip: {
+            headerFormat: '',
+            useHTML: true
+        },
+
         // Default options for the pies
         plotOptions: {
             pie: {
@@ -185,10 +190,11 @@
                 'sumVotes', 'value', 'pieOffset'
             ],
             tooltip: {
-                headerFormat: '',
                 pointFormatter() {
                     const hoverVotes = this.hoverVotes; // Used by pie only
-                    return '<b>' + this.id + ' votes</b><br/>' +
+                    return `
+                        <h4>${this.id} votes</h4>
+                        <table>` +
                         [
                             ['Democrats', this.demVotes, demColor],
                             ['Republicans', this.repVotes, repColor],
@@ -197,20 +203,35 @@
                         ]
                             .sort((a, b) => b[1] - a[1]) // Sort tooltip by
                             // most votes
-                            .map(
-                                line => '<span style="color:' + line[2] +
-                                // Colorized bullet
-                                '">\u25CF</span> ' +
-                                // Party and votes
-                                (line[0] === hoverVotes ? '<b>' : '') +
-                                line[0] + ': ' +
-                                Highcharts.numberFormat(line[1], 0) +
-                                (line[0] === hoverVotes ? '</b>' : '') +
-                                '<br/>'
+                            .map(line =>
+                                `<tr style="${
+                                    line[0] === hoverVotes ?
+                                        'font-weight: bold;' :
+                                        ''
+                                }">
+                                    <td>
+                                        <span style="color: ${line[2]}">
+                                            \u25CF
+                                        </span>
+                                        <span style="color:
+                                            var(--highcharts-neutral-color-60);
+                                        ">
+                                            ${line[0]}
+                                        </span>
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${Highcharts.numberFormat(line[1], 0)}
+                                    </td>
+                                </tr>`
                             )
                             .join('') +
-                        '<hr/>Total: ' +
-                        Highcharts.numberFormat(this.sumVotes, 0);
+                        `<tr>
+                            <td colspan="2" style="text-align: right">
+                            <hr/>
+                            Total: ${Highcharts.numberFormat(this.sumVotes, 0)}
+                            </td>
+                        </tr>
+                        </table>`;
                 }
             }
         }, {

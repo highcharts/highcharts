@@ -38,8 +38,7 @@ import {
     defined,
     isNumber,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -233,7 +232,7 @@ class TimelinePoint extends LinePoint {
         const point = this,
             series = point.series;
 
-        redraw = pick(redraw, series.options.ignoreHiddenPoint);
+        redraw = (redraw ?? series.options.ignoreHiddenPoint);
 
         PiePoint.prototype.setVisible.call(point, visible, false);
         // Process new data

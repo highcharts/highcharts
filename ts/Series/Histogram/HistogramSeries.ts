@@ -64,7 +64,7 @@ const binsNumberFormulas: Record<string, Function> = {
 
 /**
  * Returns a function for mapping number to the closed (right opened) bins
- * @private
+ * @internal
  * @param {Array<number>} bins
  * Width of the bins
  */
@@ -87,7 +87,7 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
 
 /**
  * Histogram class
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
@@ -127,6 +127,9 @@ class HistogramSeries extends ColumnSeries {
      *
      * */
 
+    /**
+     * @internal
+     */
     public binsNumber(data?: number[]): number {
         const binsNumberOption = this.options.binsNumber;
         const binsNumber = binsNumberFormulas[binsNumberOption as any] ||
@@ -143,6 +146,9 @@ class HistogramSeries extends ColumnSeries {
         );
     }
 
+    /**
+     * @internal
+     */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,
@@ -174,6 +180,9 @@ class HistogramSeries extends ColumnSeries {
         );
     }
 
+    /**
+     * @internal
+     */
     public derivedData(
         baseData: Array<number>,
         binsNumber: number,
@@ -256,6 +265,9 @@ class HistogramSeries extends ColumnSeries {
         return data;
     }
 
+    /**
+     * @internal
+     */
     public setDerivedData(): void {
         const yData = this.baseSeries?.getColumn('y');
 

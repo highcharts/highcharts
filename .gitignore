@@ -92,3 +92,9 @@ node_modules/
 .agents/skills/*/references/
 .claude/skills/*/references/
 .claude/*.local.json
+
+# Old changelog artefact
+changelog/changelog.html
+
+# Playwright visual run signal
+/test/visual-test-complete

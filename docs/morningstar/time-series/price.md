@@ -5,13 +5,13 @@ Get price time series data for single or multiple securities.
 Returns price series data for securities specified, based on Market data
 entitlement.
 
-When multiple securities are sent, the start date of the first security
-in the list is used as the start date for the series.
+When multiple securities are sent, the start date of the first security in the
+list is used as the start date for the series.
 
 ## How to use Price
 
-In order to fetch price time series, specify series type `Price` in
-the Time Series Connector options.
+In order to fetch price time series, specify series type `Price` in the Time
+Series Connector options.
 
 ```js
 const priceConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
@@ -30,11 +30,17 @@ const priceConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector(
 });
 ```
 
-For more details, see [Morningstar’s Time Series API].
+For more details, see [Morningstar’s Time Series API - Price].
 
 ## Relevant demos
 
 - **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-TimeSeriesConnector to retrieve Price time series.
+`TimeSeriesConnector` to retrieve `Price` time series.
 
-[Morningstar’s Time Series API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/time-series/price
+## Morningstar API Reference
+
+For more details, see [Morningstar’s Time Series API].
+
+<!-- Links -->
+[Morningstar’s Time Series API]: https://developer.morningstar.com/direct-web-services/documentation/enterprise-component-apis/time-series/about
+[Morningstar’s Time Series API - Price]: https://developer.morningstar.com/direct-web-services/documentation/enterprise-component-apis/time-series/price

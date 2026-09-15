@@ -6,6 +6,7 @@ module.exports = {
      * Refer to doc by relative path without extension, i.e.: 'maps/drilldown'
      */
     unlisted: [
+        'adr/0001-separate-visual-runner-from-comparison',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon'
@@ -76,6 +77,14 @@ module.exports = {
         { from: 'react/components/modules/broken-axis', to: 'react/components/modules/brokenaxis' },
         { from: 'react/components/modules/draggable-points', to: 'react/components/modules/draggablepoints' },
         { from: 'react/components/modules/stock-tools', to: 'react/components/modules/stocktools' },
+        // More focus on new Global API, higher level:
+        { from: 'morningstar/dws-connector', to: 'morningstar/dws/investments-details-connector' },
+        // Endpoint no longer supported, use generic Morningstar page instead:
+        { from: 'morningstar/regulatory-news-announcements', to: 'morningstar/morningstar' },
+        // Endpoint no longer supported, use generic Screener page instead:
+        { from: 'morningstar/screeners/esg-screener', to: 'morningstar/screeners/screener' },
+        { from: 'morningstar/screeners/investor-preferences', to: 'morningstar/screeners/screener' },
+        { from: 'morningstar/screeners/regulatory-screener', to: 'morningstar/screeners/screener' },
         // Special case for xmlns schema in Map Collection
         // # --> https://github.com/highcharts/doc-builder/issues/58
         { from: 'mc', to: 'maps/map-collection#map-properties' }

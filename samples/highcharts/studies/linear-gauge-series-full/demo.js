@@ -8,8 +8,7 @@
 /* eslint-disable jsdoc/check-tag-names */
 const H = Highcharts;
 
-const pick = H.pick,
-    isNumber = H.isNumber,
+const isNumber = H.isNumber,
     addEvent = H.addEvent,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -264,7 +263,7 @@ seriesType(
 
                 graphic[updateGraphic](
                     endAttr,
-                    pick(seriesOptions.animation, { duration: 1000 })
+                    seriesOptions.animation ?? { duration: 1000 }
                 );
             }
 
@@ -389,63 +388,56 @@ seriesType(
 
                     // The option which controls whether target should
                     // display on series or on axis
-                    onPoint = pick(pointOptions.onPoint, seriesOptions.onPoint);
+                    onPoint = pointOptions.onPoint ?? seriesOptions.onPoint;
 
                     // Show/hide additional column
-                    showColumn = pick(
-                        pointOptions.showColumn,
-                        seriesOptions.showColumn
+                    showColumn = (
+                        pointOptions.showColumn ?? seriesOptions.showColumn
                     );
 
                     // The option which controls whether target should have
                     // an additional line
-                    showLine = pick(
-                        pointOptions.showLine,
-                        seriesOptions.showLine
+                    showLine = (
+                        pointOptions.showLine ?? seriesOptions.showLine
                     );
 
                     // Total length of a target
                     length = relativeLength(
-                        pick(
-                            pointTargetOptions.length,
-                            seriesTargetOptions.length
-                        ),
+                        pointTargetOptions.length ??
+                            seriesTargetOptions.length,
                         shapeArgsWidth
                     );
 
                     // Total width of a target
                     width = relativeLength(
-                        pick(
-                            pointTargetOptions.width,
-                            seriesTargetOptions.width
-                        ),
+                        pointTargetOptions.width ??
+                            seriesTargetOptions.width,
                         shapeArgsWidth
                     );
 
                     // Border width of a target
-                    borderWidth = pick(
-                        pointTargetOptions.borderWidth,
+                    borderWidth = (
+                        pointTargetOptions.borderWidth ??
                         seriesTargetOptions.borderWidth
                     );
 
                     // The zIndex of a target symbol
-                    zIndex = pick(
-                        pointTargetOptions.zIndex,
+                    zIndex = (
+                        pointTargetOptions.zIndex ??
                         seriesTargetOptions.zIndex
                     );
 
                     // Width of a target line
-                    lineWidth = pick(
-                        pointTargetOptions.lineWidth,
-                        seriesTargetOptions.lineWidth,
-                        seriesOptions.borderWidth,
-                        point.borderWidth,
-                        1
-                    );
+                    lineWidth =
+                        pointTargetOptions.lineWidth ??
+                        seriesTargetOptions.lineWidth ??
+                        seriesOptions.borderWidth ??
+                        point.borderWidth ??
+                        1;
 
                     // The zIndex of a target line
-                    lineZIndex = pick(
-                        pointTargetOptions.lineZIndex,
+                    lineZIndex = (
+                        pointTargetOptions.lineZIndex ??
                         seriesTargetOptions.lineZIndex
                     );
 
@@ -453,19 +445,15 @@ seriesType(
                     if (shape === 'target') {
                         // Base length of a target
                         baseLength = relativeLength(
-                            pick(
-                                pointTargetOptions.baseLength,
-                                seriesTargetOptions.baseLength
-                            ),
+                            pointTargetOptions.baseLength ??
+                                seriesTargetOptions.baseLength,
                             length
                         );
 
                         // Vertical indent of a target
                         indent = relativeLength(
-                            pick(
-                                pointTargetOptions.indent,
-                                seriesTargetOptions.indent
-                            ),
+                            pointTargetOptions.indent ??
+                                seriesTargetOptions.indent,
                             length
                         );
 
@@ -629,42 +617,45 @@ seriesType(
                     /* = if (build.classic) { =*/
                     // Setting style to target symbol
                     targetSymGraphic.attr({
-                        fill: pick(
-                            pointTargetOptions.color,
-                            seriesTargetOptions.color,
-                            pointOptions.color,
-                            (series.zones.length && (point.getZone.call({
-                                series: series,
-                                x: valueX,
-                                y: valueY,
-                                options: {}
-                            }).color || series.color)) || undefined,
-                            point.color,
-                            series.color
-                        ),
-                        stroke: pick(
-                            pointTargetOptions.borderColor,
-                            seriesTargetOptions.borderColor,
-                            point.borderColor,
-                            seriesOptions.borderColor
-                        ),
-                        'stroke-width': pick(
-                            pointTargetOptions.borderWidth,
-                            seriesTargetOptions.borderWidth,
-                            point.borderWidth,
+                        fill:
+                            pointTargetOptions.color ??
+                            seriesTargetOptions.color ??
+                            pointOptions.color ??
+                            (
+                                (
+                                    series.zones.length &&
+                                    (
+                                        point.getZone.call({
+                                            series: series,
+                                            x: valueX,
+                                            y: valueY,
+                                            options: {}
+                                        }).color || series.color
+                                    )
+                                ) || void 0
+                            ) ??
+                            point.color ??
+                            series.color,
+                        stroke:
+                            pointTargetOptions.borderColor ??
+                            seriesTargetOptions.borderColor ??
+                            point.borderColor ??
+                            seriesOptions.borderColor,
+                        'stroke-width':
+                            pointTargetOptions.borderWidth ??
+                            seriesTargetOptions.borderWidth ??
+                            point.borderWidth ??
                             seriesOptions.borderWidth
-                        )
                     });
 
                     // Setting style to target line, if exists
                     if (showLine) {
                         targetLinGraphic.attr({
-                            stroke: pick(
-                                pointTargetOptions.lineColor,
-                                seriesTargetOptions.lineColor,
-                                point.borderColor,
-                                seriesOptions.borderColor
-                            ),
+                            stroke:
+                                pointTargetOptions.lineColor ??
+                                seriesTargetOptions.lineColor ??
+                                point.borderColor ??
+                                seriesOptions.borderColor,
                             'stroke-width': lineWidth
                         });
                     }

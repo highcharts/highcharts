@@ -57,7 +57,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     removeEvent
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../Utilities.js';
@@ -1183,6 +1182,13 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
+        // Reject nested keys that would allow prototype pollution
+        if (nestedKeys.some((nestedKey): boolean => (
+            nestedKey === '__proto__' || nestedKey === 'constructor'
+        ))) {
+            return object;
+        }
+
         nestedKeys.reduce(function (
             result: any,
             key: string,
@@ -1313,16 +1319,10 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1341,7 +1341,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)
@@ -1467,7 +1468,7 @@ class Point {
             series = point.series,
             chart = series.chart;
 
-        selected = pick(selected, !point.selected);
+        selected = (selected ?? !point.selected);
 
         this.selectedStaging = selected;
 
@@ -1845,7 +1846,7 @@ class Point {
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
-                    pick(point.colorIndex, series.colorIndex) +
+                    (point.colorIndex ?? series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
                 'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276

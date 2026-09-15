@@ -65,7 +65,7 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
      *         Data labels on range series
      *
      * @default 0
-     * @deprecated next
+     * @deprecated 13.0.1
      */
     xHigh?: number;
 
@@ -79,7 +79,7 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
      *         Data labels on range series
      *
      * @default 0
-     * @deprecated next
+     * @deprecated 13.0.1
      */
     xLow?: number;
 
@@ -93,7 +93,7 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
      *         Data labels on range series
      *
      * @default 0
-     * @deprecated next
+     * @deprecated 13.0.1
      */
     yHigh?: number;
 
@@ -107,7 +107,7 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
      *         Data labels on range series
      *
      * @default 0
-     * @deprecated next
+     * @deprecated 13.0.1
      */
     yLow?: number;
 }

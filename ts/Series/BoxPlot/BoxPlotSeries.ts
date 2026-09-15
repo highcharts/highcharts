@@ -38,7 +38,6 @@ import {
     crisp,
     extend,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -247,11 +246,10 @@ class BoxPlotSeries extends ColumnSeries {
                     // Stem attributes
                     stemAttr.stroke =
                         point.stemColor || options.stemColor || color;
-                    stemAttr['stroke-width'] = pick(
-                        point.stemWidth,
-                        options.stemWidth,
-                        options.lineWidth
-                    );
+                    stemAttr['stroke-width'] =
+                        point.stemWidth ??
+                        options.stemWidth ??
+                        options.lineWidth;
                     stemAttr.dashstyle = (
                         point.stemDashStyle ||
                         options.stemDashStyle ||
@@ -266,11 +264,10 @@ class BoxPlotSeries extends ColumnSeries {
                             options.whiskerColor ||
                             color
                         );
-                        whiskersAttr['stroke-width'] = pick(
-                            point.whiskerWidth,
-                            options.whiskerWidth,
-                            options.lineWidth
-                        );
+                        whiskersAttr['stroke-width'] =
+                            point.whiskerWidth ??
+                            options.whiskerWidth ??
+                            options.lineWidth;
                         whiskersAttr.dashstyle = (
                             point.whiskerDashStyle ||
                             options.whiskerDashStyle ||
@@ -301,11 +298,10 @@ class BoxPlotSeries extends ColumnSeries {
                         options.medianColor ||
                         color
                     );
-                    medianAttr['stroke-width'] = pick(
-                        point.medianWidth,
-                        options.medianWidth,
-                        options.lineWidth
-                    );
+                    medianAttr['stroke-width'] =
+                        point.medianWidth ??
+                        options.medianWidth ??
+                        options.lineWidth;
                     medianAttr.dashstyle = (
                         point.medianDashStyle ||
                         options.medianDashStyle ||

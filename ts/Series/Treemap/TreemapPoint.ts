@@ -32,7 +32,7 @@ const {
     pie: { prototype: { pointClass: PiePoint } },
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
-import { extend, isNumber, pick } from '../../Shared/Utilities.js';
+import { extend, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -103,7 +103,7 @@ class TreemapPoint extends ScatterPoint {
             !this.node.isGroup &&
             !this.node.isLeaf &&
             !series.nodeMap[series.rootNode].isGroup &&
-            !pick(options.interactByLeaf, !options.allowTraversingTree)
+            !(options.interactByLeaf ?? !options.allowTraversingTree)
         ) {
             className += ' highcharts-internal-node-interactive';
 

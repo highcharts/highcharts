@@ -37,8 +37,7 @@ import {
     extend,
     fireEvent,
     isArray,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -232,7 +231,7 @@ class SMAIndicator extends LineSeries {
                 ): void {
                     params.push(
                         (this.options.params as any)[component] +
-                        pick(this.nameSuffixes[index], '')
+                        (this.nameSuffixes[index] ?? '')
                     );
                 },
                 this
