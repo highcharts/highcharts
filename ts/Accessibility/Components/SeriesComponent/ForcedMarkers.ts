@@ -27,6 +27,8 @@ import type {
 } from '../../../Core/Series/PointOptions';
 import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
+import type DumbbellSeriesOptions from '../../../Series/Dumbbell/DumbbellSeriesOptions';
+import type AreaRangeSeriesOptions from '../../../Series/AreaRange/AreaRangeSeriesOptions';
 
 import H from '../../../Core/Globals.js';
 const { composed } = H;
@@ -123,10 +125,12 @@ namespace ForcedMarkersComposition {
      * @private
      */
     function restoreLowMarkerOpacity(series: SeriesComposition): void {
-        const lowMarker = (series.options as any).lowMarker;
+        const lowMarker = (
+            series.options as AreaRangeSeriesOptions | DumbbellSeriesOptions
+        ).lowMarker;
 
         if (
-            lowMarker && lowMarker?.enabled !== false &&
+            lowMarker && lowMarker?.enabled === true &&
             typeof lowMarker.states?.normal?.opacity !== 'number'
         ) {
             merge(true, lowMarker, {
@@ -228,7 +232,9 @@ namespace ForcedMarkersComposition {
 
             // Unforce lowMarker zero opacity if enabled
             // in styled mode (#25279).
-            const lowMarker = (series.options as any).lowMarker;
+            const lowMarker = (
+                series.options as AreaRangeSeriesOptions | DumbbellSeriesOptions
+            ).lowMarker;
             if (lowMarker) {
                 const lowMarkerVisible = !!series.a11yMarkersForced &&
                     lowMarker.enabled === true;
