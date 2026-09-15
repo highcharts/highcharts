@@ -38,6 +38,9 @@ The config for now only contains the sample sizes the test is run with.
 
 The test can return any number, but generally it is assumed to be a duration.
 
+Import errors, missing default functions and failed benchmark iterations stop the
+runner with a nonzero exit code. Failed iterations are not recorded as timings.
+
 The `before` function is optional, but if defined it should return an object that contains a fileName and a function used to generate a dataset. The dataset is cached locally to speed up the total testing time.
 
 ```ts
