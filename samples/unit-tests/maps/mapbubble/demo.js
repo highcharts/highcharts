@@ -18,6 +18,7 @@ QUnit.test('MapBubble', function (assert) {
             colorKey: 'colorValue',
             data: [
                 {
+                    name: 'Green',
                     lat: 51.507222,
                     lon: -0.1275,
                     z: 3,
@@ -68,7 +69,7 @@ QUnit.test('MapBubble', function (assert) {
         assert.strictEqual(
             chart.tooltip.label.text.element.textContent
                 .replace(/[\s\u200B]/g, ''),
-            '0:3',
+            'GreenGreen:3',
             'The tooltip should contain the correct capital information ' +
             '(#20086).'
         );
