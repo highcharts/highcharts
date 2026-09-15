@@ -59,7 +59,8 @@ namespace SonificationSpeaker {
 }
 
 /**
- * Excluded voices from the speech synthesis.
+ * Novelty voice names on macOS to skip. Unintelligible at sonification
+ * rates. Matched on the name before the first parenthesis.
  * @internal
  */
 const excludedVoices: string[] = [
@@ -70,24 +71,26 @@ const excludedVoices: string[] = [
     'Boing',
     'Bubbles',
     'Cellos',
-    'Deranged',
+    'Eddy',
+    'Flo',
     'Fred',
     'Good News',
-    'Hysterical',
+    'Grandma',
+    'Grandpa',
+    'Jester',
     'Junior',
     'Kathy',
     'Organ',
-    'Princess',
     'Ralph',
+    'Reed',
+    'Rocko',
+    'Sandy',
+    'Shelley',
+    'Superstar',
     'Trinoids',
     'Whisper',
-    'Zarvox',
     'Wobble',
-    'Superstar',
-    'Eddy',
-    'Flo',
-    'Grandma',
-    'Grandpa'
+    'Zarvox'
 ];
 
 
@@ -223,16 +226,26 @@ class SonificationSpeaker {
                 lang = this.options.language || 'en-US',
                 voices = this.synthesis.getVoices(),
                 len = voices.length;
-            let langFallback;
+            let defaultForLang,
+                langFallback,
+                anyForLang,
+                voiceName;
             for (let i = 0; i < len; ++i) {
                 if (name && voices[i].name === name) {
                     this.voice = voices[i];
                     return;
                 }
+                if (voices[i].lang !== lang) {
+                    continue;
+                }
+                voiceName = voices[i].name.split('(')[0].trim();
+                anyForLang ||= voices[i];
+                if (voices[i].default) {
+                    defaultForLang ||= voices[i];
+                }
                 if (
                     !langFallback &&
-                    voices[i].lang === lang &&
-                    !excludedVoices.includes(voices[i].name)
+                    !excludedVoices.includes(voiceName)
                 ) {
                     langFallback = voices[i];
                     if (!name) {
@@ -240,7 +253,7 @@ class SonificationSpeaker {
                     }
                 }
             }
-            this.voice = langFallback;
+            this.voice = defaultForLang || langFallback || anyForLang;
         }
     }
 }
