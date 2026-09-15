@@ -1707,7 +1707,9 @@ export class Grid {
             delete this[key as keyof this];
         });
 
-        Grid.grids.splice(dgIndex, 1);
+        if (dgIndex !== -1) {
+            Grid.grids.splice(dgIndex, 1);
+        }
     }
 
     /**
