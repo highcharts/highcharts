@@ -2016,6 +2016,13 @@ class Series {
                     .call({ series: this }, data[i]);
 
                 for (const key of Object.keys(ptOptions)) {
+                    // Assigning these would write through to
+                    // `Object.prototype` or the `Object` constructor instead
+                    // of creating a column, and thereby affect unrelated
+                    // objects on the page
+                    if (key === '__proto__' || key === 'constructor') {
+                        continue;
+                    }
                     columns[key] ||= new Array(dataLength);
                     columns[key][i] = (ptOptions as any)[key];
                 }
