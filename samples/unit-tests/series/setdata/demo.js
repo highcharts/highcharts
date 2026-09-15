@@ -299,65 +299,40 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         '(#8995, #25312)'
     );
 
-    // A point already claimed by an earlier row must not be matched again,
-    // or the rows collapse onto it and the data of all but the last is lost
-    scatterS.setData(
-        [
-            // reset
-            [0, 1],
-            [0, 2],
-            [1, 3],
-            [1, 4]
-        ],
-        true,
-        false,
-        false
-    );
-    scatterS.setData([
-        [0, 10],
-        [0, 20],
-        [1, 30],
-        [1, 40]
+    // Rows in an order that differs from the existing points
+    const reorderS = chart.addSeries({
+        type: 'scatter',
+        data: [[0, 10], [1, 30], [0, 20], [1, 40]]
+    });
+    reorderS.setData([
+        [1, 4],
+        [0, 2],
+        [1, 6],
+        [0, 8]
     ]);
     assert.deepEqual(
-        scatterS.points
-            .map(function (p) {
-                return [p.x, p.y].join(':');
-            })
-            .sort(),
-        ['0:10', '0:20', '1:30', '1:40'],
-        'Array with duplicated X - every row should keep its own point, ' +
-        'none dropped or duplicated (#25312)'
+        reorderS.points.map(function (p) {
+            return [p.x, p.y].join(':');
+        }),
+        ['1:4', '0:2', '1:6', '0:8'],
+        'Reordered rows with duplicated X - points should follow the order ' +
+        'of the new data (#25312)'
     );
 
-    // A point already claimed by an earlier row, unsorted x-values pattern
-    scatterS.setData(
-        [
-            // reset with unsorted pattern [0, 1, 0, 1]
-            [0, 10],
-            [1, 30],
-            [0, 20],
-            [1, 40]
-        ],
-        true,
-        false,
-        false
-    );
-    scatterS.setData([
-        [0, 2],
-        [0, 8],
-        [1, 4],
-        [1, 6]
-    ]);
+    // A new row combined with a reordering, so that the hole left for the
+    // new point falls where a matched point's options are
+    const addS = chart.addSeries({
+        type: 'scatter',
+        data: [[0, 1], [1, 2]]
+    });
+    addS.setData([[2, 30], [1, 20]]);
     assert.deepEqual(
-        scatterS.points
-            .map(function (p) {
-                return [p.x, p.y].join(':');
-            })
-            .sort(),
-        ['0:2', '0:8', '1:4', '1:6'],
-        'Unsorted duplicate X pattern - all rows should keep their own ' +
-        'point, matching next occurrence (#25312)'
+        addS.points.map(function (p) {
+            return [p.x, p.y].join(':');
+        }),
+        ['2:30', '1:20'],
+        'A new point should take its own options, not those of a matched ' +
+        'point (#25312)'
     );
 
     // Identify by id
