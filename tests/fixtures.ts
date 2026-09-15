@@ -1330,17 +1330,8 @@ export async function createChart(
 
     const handle = await page.evaluateHandle(
         ([{ chartConstructor, container, HC }, cc, serializedCallback]) => {
-            type ChartFactories = Record<
-                CreateChartConfig['chartConstructor'],
-                (
-                    container: CreateChartConfig['container'],
-                    options: Partial<Highcharts.Options>,
-                    callback?: (chart: Highcharts.Chart) => void
-                ) => ReturnType<typeof Highcharts.chart>
-            >;
-
             const HCInstance =
-                (HC ?? window.Highcharts) as unknown as ChartFactories;
+                HC ?? window.Highcharts;
 
             const callback = serializedCallback ?
                 (chart: Highcharts.Chart) => {

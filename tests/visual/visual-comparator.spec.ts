@@ -92,7 +92,7 @@ test('Visual comparator: missing SVG rejects', async ({ page }) => {
         }
 
         return comparator.svgToPixels(
-            undefined as unknown as string,
+            undefined,
             comparator.createCanvas('missing')
         );
     })).rejects.toThrow();
