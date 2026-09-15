@@ -257,6 +257,8 @@ jobs:
 
 
       - name: Sync references from Visual Review API
+        env:
+          VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
         run: npx gulp sync-nightly-references
 
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
