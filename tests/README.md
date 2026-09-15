@@ -796,6 +796,11 @@ can emit their load event before CSV data arrives, so chart existence or
 readiness timeout and are aborted during sample cleanup. No fixed settling delay
 is added to samples without requests, and empty datasets remain valid.
 
+Capture prefers the chart rendered into `#container`, so asynchronously created
+inset charts do not change which SVG is compared. Samples using other container
+IDs retain the last non-export chart fallback; renderer-only samples use their
+first SVG.
+
 ### Workflow
 
 Run the two commands in order for the same manifest or sample:
