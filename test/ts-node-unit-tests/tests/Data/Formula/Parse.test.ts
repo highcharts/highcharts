@@ -39,4 +39,34 @@ describe('Formula.parseFormula', () => {
             'Processing should result in a value of -10.'
         );
     });
+
+    it('should parse and process >=', () => {
+        const formula = Formula.parseFormula('2 >= 1', false);
+
+        deepStrictEqual(
+            formula,
+            [2, '>=', 1],
+            'Parsing `2 >= 1` should keep >= as one operator.'
+        );
+        strictEqual(
+            Formula.processFormula(formula),
+            true,
+            'Formula `2 >= 1` should return TRUE.'
+        );
+    });
+
+    it('should parse and process <=', () => {
+        const formula = Formula.parseFormula('1 <= 1', false);
+
+        deepStrictEqual(
+            formula,
+            [1, '<=', 1],
+            'Parsing `1 <= 1` should keep <= as one operator.'
+        );
+        strictEqual(
+            Formula.processFormula(formula),
+            true,
+            'Formula `1 <= 1` should return TRUE.'
+        );
+    });
 });
