@@ -26,6 +26,7 @@ import type GaugePoint from '../Gauge/GaugePoint';
  *
  * */
 
+/** @internal */
 declare class SolidGaugePoint extends GaugePoint {
     options: SolidGaugePointOptions;
     series: SolidGaugeSeries;
@@ -38,4 +39,5 @@ declare class SolidGaugePoint extends GaugePoint {
  *
  * */
 
+/** @internal */
 export default SolidGaugePoint;

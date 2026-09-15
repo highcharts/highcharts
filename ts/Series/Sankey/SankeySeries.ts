@@ -64,7 +64,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.sankey
  *
@@ -90,7 +90,7 @@ class SankeySeries extends ColumnSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     protected static getDLOptions(
         params: {
@@ -156,7 +156,7 @@ class SankeySeries extends ColumnSeries {
     /**
      * Create node columns by analyzing the nodes and the relations between
      * incoming and outgoing links.
-     * @private
+     * @internal
      */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> {
         const columns: Array<SankeyColumnComposition.ArrayComposition<SankeyPoint>> = [];
@@ -187,7 +187,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Order the nodes, starting with the root node(s). (#9818)
-     * @private
+     * @internal
      */
     public order(
         node: SankeyPoint,
@@ -217,7 +217,7 @@ class SankeySeries extends ColumnSeries {
     /**
      * Extend generatePoints by adding the nodes, which are Point objects
      * but pushed to the this.nodes array.
-     * @private
+     * @internal
      */
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
@@ -238,7 +238,7 @@ class SankeySeries extends ColumnSeries {
     /**
      * Overridable function to get node padding, overridden in dependency
      * wheel series type.
-     * @private
+     * @internal
      */
     public getNodePadding(): number {
 
@@ -262,7 +262,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Define hasData function for non-cartesian series.
-     * @private
+     * @internal
      * @return {boolean}
      *         Returns true if the series has points at all.
      */
@@ -272,7 +272,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Return the presentational attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: SankeyPoint,
@@ -344,7 +344,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Run pre-translation by generating the nodeColumns.
-     * @private
+     * @internal
      */
     public translate(): void {
 
@@ -744,6 +744,7 @@ class SankeySeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface SankeySeries extends NodesComposition.SeriesComposition {
     animate(init?: boolean): void;
     createNode(id: string): SankeyPoint;
@@ -783,6 +784,7 @@ extend(SankeySeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sankey: typeof SankeySeries;
@@ -797,6 +799,7 @@ SeriesRegistry.registerSeriesType('sankey', SankeySeries);
  *
  * */
 
+/** @internal */
 export default SankeySeries;
 
 /* *

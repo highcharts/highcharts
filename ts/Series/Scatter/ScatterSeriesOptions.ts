@@ -25,7 +25,7 @@ import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import { SeriesTooltipOptions } from '../../Core/TooltipOptions';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -93,7 +93,8 @@ export interface ScatterSeriesJitterOptions {
  *
  * @extends series,plotOptions.scatter
  *
- * @excluding cropThreshold, pointPlacement, shadow, useOhlcData
+ * @excluding cropThreshold, legendSymbolColor, pointPlacement, shadow,
+ *            useOhlcData
  *
  * @excluding cropThreshold, dataParser, dataURL, useOhlcData
  *
@@ -251,6 +252,15 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      * @product highcharts highstock highmaps
      */
     tooltip?: ScatterSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    dataParser?: undefined;
+    dataURL?: undefined;
 }
 
 export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {

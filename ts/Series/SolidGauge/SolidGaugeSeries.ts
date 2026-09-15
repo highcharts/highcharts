@@ -50,7 +50,7 @@ import {
 /**
  * SolidGauge series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.solidgauge
  *
@@ -294,6 +294,7 @@ class SolidGaugeSeries extends GaugeSeries {
  *
  * */
 
+/** @internal */
 interface SolidGaugeSeries {
     pointClass: typeof SolidGaugePoint;
 }
@@ -304,6 +305,7 @@ interface SolidGaugeSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         solidgauge: typeof SolidGaugeSeries;
@@ -318,4 +320,5 @@ SeriesRegistry.registerSeriesType('solidgauge', SolidGaugeSeries);
  *
  * */
 
+/** @internal */
 export default SolidGaugeSeries;

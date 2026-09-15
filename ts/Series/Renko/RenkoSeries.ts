@@ -19,6 +19,7 @@
  * */
 
 import type RenkoSeriesOptions from './RenkoSeriesOptions';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type Series from '../../Core/Series/Series';
 import type PointOptions from '../../Core/Series/PointOptions';
@@ -28,7 +29,6 @@ import RenkoPoint from './RenkoPoint.js';
 import RenkoSeriesDefaults from './RenkoSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import {
     extend,
     isNumber,
@@ -36,6 +36,7 @@ import {
     relativeLength
 } from '../../Shared/Utilities.js';
 
+/** @internal */
 interface RenkoData {
     x: number;
     low: number;
@@ -52,7 +53,7 @@ interface RenkoData {
 /**
  * The renko series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.renko
  *
@@ -61,9 +62,15 @@ interface RenkoData {
 class RenkoSeries extends ColumnSeries {
     /**
      * Renko data created from linear data
+     *
+     * @internal
      */
     public renkoData?: RenkoData[];
+
+    /** @internal */
     public hasDerivedData = true;
+
+    /** @internal */
     public allowDG = false;
 
     public init(): void {
@@ -210,6 +217,7 @@ class RenkoSeries extends ColumnSeries {
      * */
 }
 
+/** @internal */
 interface RenkoSeries {
     pointClass: typeof RenkoPoint;
 }
@@ -223,6 +231,7 @@ extend(RenkoSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         renko: typeof RenkoSeries;
@@ -237,4 +246,5 @@ SeriesRegistry.registerSeriesType('renko', RenkoSeries);
  *
  * */
 
+/** @internal */
 export default RenkoSeries;

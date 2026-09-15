@@ -42,6 +42,7 @@ import { correctFloat, extend, pInt } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class SunburstPoint extends TreemapPoint {
 
     /* *
@@ -149,6 +150,7 @@ class SunburstPoint extends TreemapPoint {
  *
  * */
 
+/** @internal */
 interface SunburstPoint {
     setState: typeof Point.prototype.setState;
     setVisible: typeof TreemapPoint.prototype.setVisible;
@@ -166,4 +168,5 @@ extend(SunburstPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default SunburstPoint;
