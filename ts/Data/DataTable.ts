@@ -771,18 +771,6 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
     }
 
     /**
-     * Returns the unique version tag of the current state of the table.
-     *
-     * @function Highcharts.DataTable#getVersionTag
-     *
-     * @return {string}
-     * Unique version tag.
-     */
-    public getVersionTag(): string {
-        return this.versionTag;
-    }
-
-    /**
      * Determines whether all specified column names exist in the table.
      *
      * @function Highcharts.DataTable#hasColumns
