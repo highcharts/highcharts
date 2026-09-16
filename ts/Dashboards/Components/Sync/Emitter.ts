@@ -28,7 +28,7 @@ class SyncEmitter {
      * Registry for reusable emitter.
      * The emitter is stored by ID.
      */
-    public static registry: Record<string, SyncEmitter> = {};
+    public static registry: Record<string, SyncEmitter> = Object.create(null);
 
     /**
      * Adds an emitter to the emitter registry.
