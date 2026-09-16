@@ -2016,7 +2016,20 @@ class Series {
                     .call({ series: this }, data[i]);
 
                 for (const key of Object.keys(ptOptions)) {
-                    columns[key] ||= new Array(dataLength);
+                    // Assigning these would write through to
+                    // `Object.prototype` or the `Object` constructor instead
+                    // of creating a column, and thereby affect unrelated
+                    // objects on the page
+                    if (key === '__proto__' || key === 'constructor') {
+                        continue;
+                    }
+
+                    // Inherited keys like `toString` are truthy without being
+                    // columns of ours, so test for an own property rather
+                    // than for a value (#25321)
+                    if (!Object.hasOwnProperty.call(columns, key)) {
+                        columns[key] = new Array(dataLength);
+                    }
                     columns[key][i] = (ptOptions as any)[key];
                 }
             }
