@@ -1184,3 +1184,21 @@ QUnit.test('textPath', assert => {
 
     ren.destroy();
 });
+
+QUnit.test(
+    'Rotated useHTML text without initial position (#25277)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {}),
+            text = chart.renderer
+                .text('Rotated', undefined, undefined, true)
+                .attr({ rotation: -45 })
+                .add();
+
+        assert.notOk(
+            /NaN/.test(text.foreignObject.element.getAttribute('transform')),
+            'The foreign object should not be rotated around a NaN origin'
+        );
+
+        text.destroy();
+    }
+);
