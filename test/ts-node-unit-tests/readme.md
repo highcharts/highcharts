@@ -11,7 +11,10 @@ From the root folder run `node --import tsx --test test/ts-node-unit-tests/tests
 
 Optionally the `--watch` flag can be used to automatically rerun on changes.
 
-The tests will also run as part of the pre-commit script.
+The tests also run as part of the pre-commit script and the Highcharts CI
+workflow's Node unit tests job using `npm run test-node`. This includes the
+benchmark worker and CLI regression tests. Dependency changes in `package.json`
+or `package-lock.json` trigger the workflow as well.
 
 ## Caveats
 * `ts-node` doesn't support all the settings in `.tsconfig.json`, such as path rewriting. As a result, imports will have to be relative from the test folder.

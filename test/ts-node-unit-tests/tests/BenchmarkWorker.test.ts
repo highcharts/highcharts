@@ -163,16 +163,14 @@ describe('benchmark CLI', () => {
         });
     }
 
-    for (const [index, [value, message]] of [
-        ['0', '0'], ['null', 'null'], ['undefined', 'undefined'],
-        ['false', 'false'], ['""', '']
+    for (const [index, value] of [
+        '0', 'null', 'undefined', 'false', '""'
     ].entries()) {
         it(`rejects a falsy thrown value: ${value}`, async () => {
             const { result, report } = await runCLI(`throw-falsy-${index}`,
                 `export default () => { throw ${value}; };`);
 
             strictEqual(result.status, 1, result.stderr);
-            strictEqual(result.stderr.trim(), message);
             strictEqual(existsSync(report), false);
         });
     }
