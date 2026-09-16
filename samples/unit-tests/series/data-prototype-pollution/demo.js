@@ -126,3 +126,41 @@ QUnit.test('Inherited data keys must not mutate built-ins', function (assert) {
         'The valid part of the data should still be applied'
     );
 });
+
+QUnit.test('Nested keys must not mutate inherited objects', function (assert) {
+    // Objects reached through the prototype chain are shared with every
+    // other point built on it, so a nested key must not use one as the
+    // target of its write. Unsafe segments are rejected before this, so an
+    // ordinary name is needed to get past them
+    const shared = { radius: 5 },
+        point = Object.create({ marker: shared });
+
+    point.y = 1;
+    point['marker.fillColor'] = 'red';
+
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column'
+        }]
+    });
+
+    chart.series[0].setData([point], false);
+
+    assert.deepEqual(
+        shared,
+        { radius: 5 },
+        'The inherited object should not have been written to'
+    );
+
+    assert.deepEqual(
+        Array.from(chart.series[0].getColumn('marker')),
+        [{ fillColor: 'red' }],
+        'The nested key should land on an object of the point\'s own'
+    );
+
+    assert.deepEqual(
+        Array.from(chart.series[0].getColumn('y')),
+        [1],
+        'The valid part of the data should still be applied'
+    );
+});
