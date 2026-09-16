@@ -1181,9 +1181,11 @@ class Axis {
         pointPlacement?: number
     ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = (old && axis.old ? axis.old.min : axis.min),
+            axisOld = axis.old,
+            axisLen = axis.len,
+            localMin = (old && axisOld ? axisOld.min : axis.min),
             // Scale for a linked axis with its own pixel length
-            lenRatio = (this.len && axis.len) ? this.len / axis.len : 1;
+            lenRatio = (this.len && axisLen) ? this.len / axisLen : 1;
 
         if (!isNumber(localMin)) {
             return NaN;
@@ -1198,7 +1200,7 @@ class Axis {
 
         let sign = 1,
             cvsOffset = 0,
-            localA = old && axis.old ? axis.old.transA : axis.transA,
+            localA = old && axisOld ? axisOld.transA : axis.transA,
             returnValue = 0;
 
         if (!localA) {
@@ -1209,13 +1211,13 @@ class Axis {
         // in SVG.
         if (cvsCoord) {
             sign *= -1; // Canvas coordinates inverts the value
-            cvsOffset = axis.len;
+            cvsOffset = axisLen;
         }
 
         // Handle reversed axis
         if (axis.reversed) {
             sign *= -1;
-            cvsOffset -= sign * (axis.sector || axis.len);
+            cvsOffset -= sign * (axis.sector || axisLen);
         }
 
         // From pixels to value
