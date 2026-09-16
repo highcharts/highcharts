@@ -36,8 +36,7 @@ import type HLCSeriesOptions from './HLCSeriesOptions';
  *         HLC chart
  *
  * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
- *               stack
+ * @excluding    borderColor, borderRadius, borderWidth, crisp, stack, stacking
  * @product      highstock
  * @optionparent plotOptions.hlc
  */
@@ -62,11 +61,6 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
      * @default   hlc
      * @product   highstock
      * @apioption plotOptions.hlc.dataGrouping.approximation
-     */
-
-    /**
-     * @default   close
-     * @apioption plotOptions.hlc.colorKey
      */
 
     /**

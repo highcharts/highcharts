@@ -65,13 +65,11 @@ declare module '../../Core/Series/StatesOptions' {
  *
  * @extends series,plotOptions.heatmap
  *
- * @excluding animationLimit, connectEnds, connectNulls, cropThreshold,
- *            dashStyle, findNearestPointBy, getExtremesFromAll, jitter,
- *            linecap, lineWidth, pointInterval, pointIntervalUnit,
- *            pointRange, pointStart, shadow, softThreshold, stacking,
- *            step, threshold, cluster, dragDrop
- *
- * @excluding cropThreshold, dragDrop ,pointRange, stack,
+ * @excluding animationLimit, cluster, connectEnds, connectNulls, cropThreshold,
+ *            dashStyle, dragDrop, findNearestPointBy, getExtremesFromAll,
+ *            jitter, linecap, lineWidth, pointInterval, pointIntervalUnit,
+ *            pointRange, pointStart, shadow, softThreshold, stack, stacking,
+ *            step, threshold
  *
  * @product highcharts highmaps
  */
