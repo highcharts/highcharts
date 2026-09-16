@@ -1,6 +1,6 @@
 QUnit.test('Data options must not pollute shared objects', function (assert) {
-    // JSON.parse keeps `__proto__` and `constructor` as own keys, unlike
-    // object literals where they are intercepted by the parser
+    // JSON.parse keeps `__proto__` as an own key. In an object literal it
+    // changes the prototype instead. `constructor` is an ordinary own key
     const data = JSON.parse(
         '[{"y":1,"__proto__":{"polluted":"yes"}},' +
         '{"y":2,"constructor":{"polluted":"yes"}}]'
@@ -28,7 +28,7 @@ QUnit.test('Data options must not pollute shared objects', function (assert) {
     );
 
     assert.strictEqual(
-        Object[0],
+        Object[1],
         undefined,
         'The Object constructor should not be written to'
     );
@@ -44,6 +44,10 @@ QUnit.test('Data options must not pollute shared objects', function (assert) {
         [1, 2],
         'The valid part of the data should still be applied'
     );
+
+    // Keep later tests isolated if the regression reappears
+    delete Object.prototype[0];
+    delete Object[1];
 });
 
 QUnit.test('Nested data keys must not pollute Object.prototype', function (
@@ -84,6 +88,9 @@ QUnit.test('Nested data keys must not pollute Object.prototype', function (
         [1, 2],
         'The valid part of the data should still be applied'
     );
+
+    // Keep later tests isolated if the regression reappears
+    delete Object.prototype.polluted;
 });
 
 QUnit.test('Inherited data keys must not mutate built-ins', function (assert) {
@@ -124,6 +131,37 @@ QUnit.test('Inherited data keys must not mutate built-ins', function (assert) {
         Array.from(chart.series[0].getColumn('y')),
         [1, 2],
         'The valid part of the data should still be applied'
+    );
+
+    // Keep later tests isolated if the regression reappears
+    delete Object.prototype.toString[0];
+});
+
+QUnit.test('Incremental data preserves inherited key names', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            data: [{ y: 1 }]
+        }]
+    });
+
+    chart.series[0].points[0].update(JSON.parse(
+        '{"y":2,"toString":"updated","constructor":{"polluted":"yes"}}'
+    ), false);
+    chart.series[0].addPoint(JSON.parse(
+        '{"y":3,"toString":"added","__proto__":{"polluted":"yes"}}'
+    ), false);
+
+    assert.deepEqual(
+        Array.from(chart.series[0].getColumn('toString')),
+        ['updated', 'added'],
+        'Inherited key names should be preserved by update and addPoint'
+    );
+
+    assert.deepEqual(
+        Object.keys(chart.series[0].dataTable.columns),
+        ['y', 'toString'],
+        'Unsafe keys should not create columns'
     );
 });
 
