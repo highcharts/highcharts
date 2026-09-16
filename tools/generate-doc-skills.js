@@ -472,6 +472,101 @@ function selfTest() {
         assert.equal(indexContent.includes('[no-heading](getting-started/no-heading.md)'), true, 'index should fall back to filename when no H1');
         assert.equal(indexContent.includes('[Setext Title](getting-started/setext-heading.md)'), true, 'index should detect Setext H1 headings');
 
+        const sourceDocs = path.join(repoRoot, 'docs');
+        for (const [topic, directories] of [
+            ['accessibility', ['accessibility', 'sonification']],
+            ['data', ['working-with-data']],
+            ['exporting', ['export-module']],
+            ['js', ['getting-started', 'chart-concepts', 'chart-and-series-types', 'chart-design-and-style']],
+            ['react', ['react']]
+        ]) {
+            const skill = SKILLS.find(item => item.name === `highcharts-${topic}`);
+            assert.ok(skill, `${topic} config should be loaded`);
+            assert.deepEqual(skill.destinations, [
+                { path: path.join(repoRoot, '.agents', 'skills', skill.name) },
+                { path: path.join(repoRoot, '.claude', 'skills', skill.name) },
+                ...(['js', 'react'].includes(topic) ? [{
+                    path: path.resolve(repoRoot, '..', 'highcharts-dist', '.claude', 'skills', skill.name),
+                    requireParent: path.resolve(repoRoot, '..', 'highcharts-dist', 'package.json')
+                }] : [])
+            ]);
+            const expectedDocs = [
+                ...directories.flatMap(directory => (
+                    listMarkdownFiles(path.join(sourceDocs, directory))
+                        .map(file => `${directory}/${file}`)
+                )),
+                ...(topic === 'js' ? [
+                    'accessibility/accessibility-module-feature-overview.md',
+                    'advanced-chart-features/boost-module.md',
+                    'advanced-chart-features/data-sorting.md',
+                    'advanced-chart-features/highcharts-typescript-declarations.md',
+                    'advanced-chart-features/internationalization.md',
+                    'advanced-chart-features/stacking-charts.md'
+                ] : topic === 'react' ? [] : [
+                    `react/components/modules/${topic}.md`,
+                    'react/getting-started.md',
+                    'react/bundling-and-tree-shaking.md'
+                ])
+            ].sort();
+            const built = buildSkill(skill, sourceDocs, path.join(tempRoot, 'build-real'));
+            assert.deepEqual(built.files, expectedDocs);
+            assert.equal(built.files.some(file => /^(grid|dashboards|morningstar)\//u.test(file)), false);
+            const markdown = fs.readFileSync(path.join(built.root, 'SKILL.md'), 'utf8');
+            assert.ok(markdown.includes('`references/docs/index.md`'));
+            assert.ok(markdown.includes(`name: highcharts-${topic}\n`));
+            assert.ok(markdown.includes(`description: ${skill.skillMd.description}\n`));
+            if (topic === 'react') {
+                assert.deepEqual(skill.docs, { include: ['react/'], exclude: [] });
+                for (const rule of [
+                    'use the relevant child component first, including JSX children where supported; use chart-level props or the `options` prop only when no child component expresses the behavior',
+                    'Drive dynamic values through React state and props',
+                    'Use chart instance APIs only when neither declarative route works',
+                    'Render series as direct children of `Chart`',
+                    'Prefer dedicated series components; use the generic `Series` component when series are dynamic or a dedicated component is impractical',
+                    'keep hooks and state in the parent and pass values through props',
+                    'verify child support and static parsing behavior before preferring children over chart-level options',
+                    'Use dedicated series and module components and import only what the chart renders',
+                    'Import a module from `highcharts/es-modules/masters/...` only when no React component exists',
+                    'load a complete product bundle only when its feature set is required',
+                    'use a `Chart` ref only when the behavior cannot be expressed through child components or chart props/options',
+                    'Add \'use client\' to files containing Highcharts components or modules',
+                    'keep Highcharts imports and rendering in the client component',
+                    'Server code may fetch or stream data into that component but must not instantiate Highcharts'
+                ]) {
+                    assert.ok(markdown.includes(rule), rule);
+                }
+            }
+            if (topic === 'js') {
+                for (const file of [
+                    'getting-started/your-first-chart.md',
+                    'chart-concepts/series.md',
+                    'accessibility/accessibility-module-feature-overview.md'
+                ]) {
+                    assert.ok(built.files.includes(file), file);
+                }
+                assert.equal(built.files.some(file => /^(working-with-data|export-module)\//u.test(file)), false);
+                for (const route of ['data', 'accessibility', 'exporting']) {
+                    assert.ok(markdown.includes(`\`highcharts-${route}\``));
+                }
+                assert.ok(markdown.includes('Basic `series.data` setup remains in this skill'));
+            }
+            const index = fs.readFileSync(
+                path.join(built.root, 'references', 'docs', 'index.md'), 'utf8'
+            );
+            assert.equal(
+                index.split('\n').filter(line => line.startsWith('- [')).length,
+                expectedDocs.length
+            );
+            for (const file of expectedDocs) {
+                assert.ok(index.includes(`](${file})`), file);
+                assert.equal(
+                    fs.readFileSync(path.join(built.root, 'references', 'docs', file), 'utf8'),
+                    stripContent(fs.readFileSync(path.join(sourceDocs, file), 'utf8')),
+                    file
+                );
+            }
+        }
+
         for (const skill of SKILLS) {
             assert.match(
                 renderSkillMd(skill.name, skill.skillMd),
