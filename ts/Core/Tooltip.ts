@@ -1336,8 +1336,11 @@ class Tooltip {
         // The area which the tooltip should be limited to. Limit to the chart
         // container or the document, depending on the `outside` option.
         const field = this.getPlayingField(0),
+            scrollLeft = chart.scrollablePlotArea?.scrollingContainer
+                .scrollLeft || 0,
             bounds = {
-                right: field.width,
+                left: scrollLeft,
+                right: field.width + scrollLeft,
                 top: 0,
                 bottom: field.height
             },
@@ -1415,7 +1418,7 @@ class Tooltip {
             // Limit values to bounds
             anchorX = clamp(
                 anchorX,
-                -distance,
+                bounds.left - distance,
                 bounds.right + distance
             );
 
@@ -1441,7 +1444,7 @@ class Tooltip {
                 y = headerTop ? -boxHeight : bounds.bottom;
                 x = clamp(
                     anchor[0] - (boxWidth / 2),
-                    0,
+                    bounds.left,
                     bounds.right - boxWidth
                 );
             } else if (fixed && point) {
@@ -1459,7 +1462,7 @@ class Tooltip {
                     anchor[0] - boxWidth - distance :
                     anchor[0] + distance;
                 x = clamp(
-                    x, alignedLeft ? x : 0, bounds.right
+                    x, alignedLeft ? x : bounds.left, bounds.right
                 );
             }
 
@@ -1612,8 +1615,9 @@ class Tooltip {
                         boxObject.pos = boxPosition.y;
                     }
 
-                    hasLeftOverflow ||= boxObject.x < 0;
-                    tooWide ||= boxWidth + distance > bounds.right;
+                    hasLeftOverflow ||= boxObject.x < bounds.left;
+                    tooWide ||= boxWidth + distance >
+                        bounds.right - bounds.left;
 
                     boxes.push(boxObject);
                 } else {
@@ -1644,7 +1648,7 @@ class Tooltip {
                     false
                 );
                 box.target = y;
-                box.x = tooWide ? 0 : x;
+                box.x = tooWide ? bounds.left : x;
             }
         }
 
@@ -1688,8 +1692,9 @@ class Tooltip {
             // Set container size to fit the bounds
             const { width, height, x, y } = tooltipLabel.getBBox();
             renderer.setSize(
-                width + x + 3, // +3 to avoid cutting off the shadow
-                height + y + 7, // +7 to avoid cutting off the shadow
+                // Plus some pixels to avoid cutting off the shadow
+                width + x + 3,
+                height + y + 7,
                 false
             );
         }
