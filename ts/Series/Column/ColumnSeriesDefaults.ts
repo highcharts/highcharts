@@ -413,7 +413,7 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.column
- * @excluding connectNulls, dataParser, dataURL, gapSize, gapUnit, linecap,
+ * @excluding connectNulls, gapSize, gapUnit, linecap,
  *            lineWidth, marker, connectEnds, step
  * @product   highcharts highstock
  * @apioption series.column
