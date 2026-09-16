@@ -888,6 +888,35 @@ describe('DataTable', () => {
                 'If no value is provided, the new row is filled with `undefined`.'
             );
         });
+
+        it('should preserve existing rows when inserting array rows', () => {
+            const table = new DataTable({
+                columns: {
+                    ID: [1, 2, 3],
+                    Name: ['John', 'Jane', 'Alice']
+                }
+            });
+
+            table.setRows([
+                [98, 'Ana'],
+                [99, 'Bob']
+            ], 1, true);
+
+            strictEqual(
+                table.getRowCount(),
+                5,
+                'The table should include both inserted rows.'
+            );
+
+            deepStrictEqual(
+                table.getColumns(),
+                {
+                    ID: [1, 98, 99, 2, 3],
+                    Name: ['John', 'Ana', 'Bob', 'Jane', 'Alice']
+                },
+                'Inserted rows should not truncate existing rows.'
+            );
+        });
     });
 
     describe('Metadata in a cloned table', () => {
