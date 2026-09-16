@@ -34,7 +34,7 @@ import type { DataProviderTypeRegistry } from './DataProviderType';
 /**
  * Record of data provider classes
  */
-export const types = {} as DataProviderTypeRegistry;
+export const types = Object.create(null) as DataProviderTypeRegistry;
 
 
 /* *
