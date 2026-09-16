@@ -45,3 +45,43 @@ QUnit.test('Data options must not pollute shared objects', function (assert) {
         'The valid part of the data should still be applied'
     );
 });
+
+QUnit.test('Nested data keys must not pollute Object.prototype', function (
+    assert
+) {
+    // Dotted keys are expanded by `setNestedProperty`, which walked into
+    // whatever the segment resolved to. For `__proto__` that is the shared
+    // `Object.prototype`, so the last segment landed on every object
+    const data = JSON.parse(
+        '[{"y":1,"__proto__.polluted":"yes"},' +
+        '{"y":2,"constructor.prototype.polluted":"yes"}]'
+    );
+
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column'
+        }]
+    });
+
+    // The nested key handling only runs when the series has no `data` option
+    // of its own, which is the case until `setData` has returned
+    chart.series[0].setData(data, false);
+
+    assert.strictEqual(
+        {}.polluted,
+        undefined,
+        'Object.prototype should not have picked up the nested payload'
+    );
+
+    assert.deepEqual(
+        Object.keys(chart.series[0].dataTable.columns),
+        ['y'],
+        'No columns should be created for the unsafe nested keys'
+    );
+
+    assert.deepEqual(
+        Array.from(chart.series[0].getColumn('y')),
+        [1, 2],
+        'The valid part of the data should still be applied'
+    );
+});

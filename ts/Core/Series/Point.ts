@@ -1182,6 +1182,20 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
+        // Prototype pollution (#14883). Keys like `__proto__` arrive as own,
+        // enumerable properties through `JSON.parse`, and walking into one
+        // would hand us `Object.prototype` as the target of the assignment
+        // below. `getNestedProperty` filters the same way when reading.
+        for (const nestedKey of nestedKeys) {
+            if (
+                nestedKey === '__proto__' ||
+                nestedKey === 'constructor' ||
+                nestedKey === 'prototype'
+            ) {
+                return object;
+            }
+        }
+
         nestedKeys.reduce(function (
             result: any,
             key: string,
@@ -1193,7 +1207,10 @@ class Point {
             result[key] = (
                 isLastKey ?
                     value :
-                    isObject(result[key], true) ?
+                    // Inherited objects are shared with everything else on
+                    // that prototype, so start a fresh one instead
+                    isObject(result[key], true) &&
+                    Object.hasOwnProperty.call(result, key) ?
                         result[key] :
                         {}
             );
