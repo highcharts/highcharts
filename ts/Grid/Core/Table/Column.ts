@@ -23,7 +23,10 @@
  *
  * */
 
-import type { IndividualColumnOptions } from '../Options';
+import type {
+    CellValueGetterCallback,
+    IndividualColumnOptions
+} from '../Options';
 import type Cell from './Cell';
 import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
@@ -45,7 +48,7 @@ import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 import GridUtils from '../GridUtils.js';
-import { fireEvent } from '../../../Shared/Utilities.js';
+import { defined, fireEvent } from '../../../Shared/Utilities.js';
 
 const {
     createOptionsProxy
@@ -118,6 +121,21 @@ export class Column {
     public sorting?: ColumnSorting;
 
     /**
+     * Class names applied to every element of the column (header, body and
+     * filter cells): the ones from the `className` option, plus the ones
+     * features contribute.
+     */
+    public readonly classNames: string[] = [];
+
+    /**
+     * Cell value resolver installed by a feature that derives the column values
+     * from the rest of the row (the Grid Pro `columnAggregator` option). A user
+     * `cells.valueGetter` takes precedence over it, and returning nothing falls
+     * back to the column's own data.
+     */
+    public valueResolver?: CellValueGetterCallback;
+
+    /**
      * Filtering column module.
      */
     public filtering?: ColumnFiltering;
@@ -168,6 +186,9 @@ export class Column {
             grid.options?.columnDefaults
         );
 
+        if (this.options.className) {
+            this.classNames.push(...this.options.className.split(/\s+/g));
+        }
     }
 
     /* *
@@ -227,7 +248,14 @@ export class Column {
     public async getCellValue(cell: TableCell): Promise<DataTableCellType> {
         const valueGetter = this.options.cells?.valueGetter;
         if (valueGetter) {
-            return await valueGetter.call(cell, cell);
+            return this.conformValue(await valueGetter.call(cell, cell));
+        }
+
+        if (this.valueResolver) {
+            const resolved = await this.valueResolver.call(cell, cell);
+            if (defined(resolved)) {
+                return this.conformValue(resolved);
+            }
         }
 
         const sourceColumnId = this.viewport.grid.columnPolicy
@@ -236,10 +264,42 @@ export class Column {
             return void 0;
         }
 
-        return this.viewport.grid.dataProvider?.getValue(
-            sourceColumnId,
-            cell.row.index
+        return this.conformValue(
+            await this.viewport.grid.dataProvider?.getValue(
+                sourceColumnId,
+                cell.row.index
+            )
         );
+    }
+
+    /**
+     * Whether the column derives its cell values from the row instead of
+     * reading them from the data, so editing a cell of the row must re-resolve
+     * them.
+     */
+    public isDerived(): boolean {
+        return !!(this.options.cells?.valueGetter || this.valueResolver);
+    }
+
+    /**
+     * Keeps a value the grid resolves for a cell within the column's declared
+     * `dataType`, so cell formatters and renderers written for the column never
+     * receive a foreign type. Values derived by the grid are the usual source:
+     * a numeric aggregator over a text column resolves to `0`.
+     *
+     * @param value
+     * Resolved cell value.
+     */
+    public conformValue(value: DataTableCellType): DataTableCellType {
+        if (
+            this.dataType === 'string' &&
+            defined(value) &&
+            typeof value !== 'string'
+        ) {
+            return String(value);
+        }
+
+        return value;
     }
 
     /**
@@ -277,6 +337,20 @@ export class Column {
     }
 
     /**
+     * Adds the column class names to one of its elements.
+     *
+     * @param element
+     * Element of the column (a header, body or filter cell).
+     */
+    public applyClassNames(element: HTMLElement): void {
+        if (!this.classNames.length) {
+            return;
+        }
+
+        element.classList.add(...this.classNames);
+    }
+
+    /**
      * Registers a cell in the column.
      *
      * @param cell
@@ -284,11 +358,7 @@ export class Column {
      */
     public registerCell(cell: Cell): void {
         cell.htmlElement.setAttribute('data-column-id', this.id);
-        if (this.options.className) {
-            cell.htmlElement.classList.add(
-                ...this.options.className.split(/\s+/g)
-            );
-        }
+        this.applyClassNames(cell.htmlElement);
         if (this.viewport.grid.hoveredColumnId === this.id) {
             cell.htmlElement.classList.add(
                 Globals.getClassName('hoveredColumn')
@@ -314,7 +384,7 @@ export class Column {
      * Returns the width of the column in pixels.
      */
     public getWidth(): number {
-        return this.viewport.columnResizing.getColumnWidth(this);
+        return this.viewport.columnLayout.getColumnWidth(this);
     }
 
     /**

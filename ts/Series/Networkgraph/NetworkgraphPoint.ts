@@ -41,8 +41,7 @@ import {
     addEvent,
     css,
     defined,
-    extend,
-    pick
+    extend
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -123,21 +122,14 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
             pointOptions = this.options;
 
         return {
-            'stroke-width': pick(
-                pointOptions.width,
-                (linkOptions as any).width
-            ),
+            'stroke-width': (pointOptions.width ?? (linkOptions as any).width),
             stroke: (
                 pointOptions.color || (linkOptions as any).color
             ),
             dashstyle: (
                 pointOptions.dashStyle || (linkOptions as any).dashStyle
             ),
-            opacity: pick(
-                pointOptions.opacity,
-                (linkOptions as any).opacity,
-                1
-            )
+            opacity: (pointOptions.opacity ?? (linkOptions as any).opacity ?? 1)
         };
     }
 

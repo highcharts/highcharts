@@ -109,8 +109,9 @@ const VariablePieSeriesDefaults: VariablePieSeriesOptions = {
      * @sample {highcharts} highcharts/variable-radius-pie/sizeby/
      *         Difference between area and radius sizeBy
      *
-     * @type  {Highcharts.VariablePieSizeByValue}
-     * @since 6.0.0
+     * @declare Highcharts.VariablePieSizeByValue
+     * @since   6.0.0
+     * @type    {"area"|"radius"}
      */
     sizeBy: 'area',
 

@@ -31,8 +31,7 @@ const {
 import {
     correctFloat,
     extend,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -51,10 +50,8 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any
-    )
-    );
+    const price = ((yVal[i] as any)[index] ?? (yVal[i] as any
+    ));
 
     if (subtract) {
         return correctFloat(sum - price);
@@ -175,10 +172,8 @@ class DPOIndicator extends SMAIndicator {
 
             // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
-            price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
-            )
-            );
+            price = (yVal[rangeIndex] as any)[index] ??
+                (yVal[rangeIndex] as any);
 
             oscillator = price - sum / period;
 

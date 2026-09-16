@@ -2,7 +2,6 @@ declare namespace Highcharts {
     interface ExtendedSeries {
         keepProps: string[];
     }
-
     interface Series {
         tr?: HTMLElement;
         trRefresh?: boolean;

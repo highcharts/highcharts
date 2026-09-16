@@ -34,7 +34,7 @@ import Globals from '../../Core/Globals.js';
 import { getGridRowPinningOptions } from './RowPinningController.js';
 import PinnedTableRow from './PinnedTableRow.js';
 
-const { makeHTMLElement } = GridUtils;
+const { makeHTMLElement, joinClassNames } = GridUtils;
 
 /**
  * The class names used by the row pinning functionality.
@@ -87,10 +87,10 @@ class RowPinningView {
         this.pinnedTopTbodyElement = makeHTMLElement(
             'tbody',
             {
-                className: [
+                className: joinClassNames(
                     classNames.pinnedTbodyElement,
                     classNames.pinnedTopTbodyElement
-                ].join(' ')
+                )
             }
         );
         this.pinnedTopTbodyElement.setAttribute(
@@ -101,10 +101,10 @@ class RowPinningView {
         this.pinnedBottomTbodyElement = makeHTMLElement(
             'tbody',
             {
-                className: [
+                className: joinClassNames(
                     classNames.pinnedTbodyElement,
                     classNames.pinnedBottomTbodyElement
-                ].join(' ')
+                )
             }
         );
         this.pinnedBottomTbodyElement.setAttribute(

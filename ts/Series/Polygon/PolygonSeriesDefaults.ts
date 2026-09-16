@@ -62,7 +62,7 @@ const PolygonSeriesDefaults: PolygonSeriesOptions = {
      *
      * @type    {number}
      * @default 1
-     * @since   next
+     * @since   13.0.1
      * @product highcharts highstock
      */
     fillOpacity: 1,

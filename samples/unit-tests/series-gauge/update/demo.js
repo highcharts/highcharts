@@ -19,7 +19,7 @@ QUnit.test('Updating gauge series', assert => {
             tickPixelInterval: 30,
             labels: {
                 allowOverlap: false,
-                format: 'Really long tick label'
+                format: 'Really long tick label {value}'
             }
         },
         series: [

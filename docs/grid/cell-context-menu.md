@@ -3,6 +3,10 @@
 Highcharts Grid supports context menus for table body cells. When enabled, Grid
 shows a context menu on right-click for table body cells.
 
+On touch devices, you can open the context menu using a long-press on a cell.
+This is particularly important on iOS, where browsers do not fire the
+`contextmenu` event on long-press.
+
 ## Configure a cell context menu
 
 The context menu is configured at the cell level:
@@ -31,16 +35,12 @@ Grid.grid('container', {
 
 ### Enabling behavior
 
-The context menu is enabled/disabled per column using `contextMenu.enabled`.
+The context menu is controlled per column using `contextMenu.enabled`.
 
-When `enabled` is omitted, Grid enables the context menu when:
-
-- `contextMenu.items` is provided (explicit opt-in), or
-- built-in actions are registered by a composed feature and at least one of
-  those actions is enabled for the clicked cell.
-
-In Grid Pro, row pinning registers built-in actions by default:
-`pinRowTop`, `pinRowBottom`, `unpinRow`.
+If `enabled` is omitted, Grid opens the menu when you provide
+`contextMenu.items`, or when a Grid Pro feature adds an active built-in item.
+For example, row pinning adds its menu items when
+`rendering.rows.pinning.enabled` is `true`.
 
 If `items` is empty, the browser's native context menu is kept.
 
@@ -57,30 +57,29 @@ When a cell is focused, open the context menu using the `ContextMenu` key or
 Each item supports:
 
 - `label`: Text shown in the menu
-- `icon`: Optional built-in Grid icon name (see [Custom icons](https://www.highcharts.com/docs/grid/theming/custom-icons))
+- `icon`: Optional built-in or custom Grid icon name (see [Custom icons](https://www.highcharts.com/docs/grid/theming/custom-icons))
 - `separator: true`: Renders a divider instead of a clickable item
 - `disabled: true`: Disables the item
 - `onClick(cell)`: Callback invoked when the item is clicked
 
-Grid Pro exposes these built-in row pinning action IDs:
+Grid Pro exposes the built-in row pinning group ID `'pinning'`. Use it to add
+the full row pinning action group inline.
+
+The individual row pinning action IDs are:
 
 - `'pinRowTop'`
 - `'pinRowBottom'`
 - `'unpinRow'`
 
-These built-in actions are not available in Grid Lite.
+These built-ins are not available in Grid Lite.
 
-Built-ins and custom items can be mixed in one list in Grid Pro:
+With row pinning enabled, the built-in group can be mixed with custom items in
+Grid Pro:
 
 ```js
 contextMenu: {
     items: [
-        'pinRowTop',
-        {
-            actionId: 'unpinRow',
-            label: 'Unpin now',
-            icon: 'unpin'
-        },
+        'pinning',
         { separator: true },
         {
             label: 'Show context',
@@ -97,33 +96,44 @@ the native browser context menu.
 
 ## Localize built-in labels
 
-Built-in row pinning actions use these root language keys in Grid Pro:
+Built-in feature actions use feature-specific language options in Grid Pro.
+For row pinning:
 
-- `lang.pinRowTop`
-- `lang.pinRowBottom`
-- `lang.unpinRow`
+- `lang.rowPinning.label`
+- `lang.rowPinning.pinRowTop`
+- `lang.rowPinning.pinRowBottom`
+- `lang.rowPinning.unpinRow`
 
 ```js
 Grid.grid('container', {
     lang: {
-        pinRowTop: 'Pin to top',
-        pinRowBottom: 'Pin to bottom',
-        unpinRow: 'Remove pin'
+        rowPinning: {
+            label: 'Pinning',
+            pinRowTop: 'Pin to top',
+            pinRowBottom: 'Pin to bottom',
+            unpinRow: 'Remove pin'
+        }
     }
 });
 ```
 
+Table editing labels are configured under `lang.tableEditing`, for example
+`lang.tableEditing.rows`, `lang.tableEditing.addRowAbove` and
+`lang.tableEditing.deleteColumn`.
+
 ## Nested submenus
 
-Any action item can define `items` to become a branch item with a submenu.
+Use `type: 'submenu'` and `items` to define a branch item with a submenu.
 Branch items open submenus on click and do not execute leaf callbacks.
 
-The built-in row pinning submenu example below applies to Grid Pro only.
+To place row pinning actions in a submenu, define a custom submenu and include
+the individual built-in action IDs. This example applies to Grid Pro only.
 
 ```js
 contextMenu: {
     enabled: true,
     items: [{
+        type: 'submenu',
         label: 'Pinning',
         items: [
             'pinRowTop',
@@ -132,6 +142,7 @@ contextMenu: {
                 label: 'Unpin now'
             },
             {
+                type: 'submenu',
                 label: 'Advanced',
                 items: [{
                     label: 'Custom leaf',
@@ -145,12 +156,8 @@ contextMenu: {
 }
 ```
 
-For built-in branch items (`{ actionId, items }`), `actionId` is used for
-default label/icon only. Built-in row-state disabling is applied only to
-built-in leaf actions.
-
-Nested levels do not use implicit defaults. You must provide submenu `items`
-explicitly.
+Nested levels do not use implicit defaults. Define each submenu with
+`type: 'submenu'` and provide its `items` explicitly.
 
 ## Callback context
 

@@ -13,7 +13,7 @@
  * */
 
 /**
- * @private
+ * @internal
  * @todo
  * - Check update, remove etc.
  * - Custom icons like persons, carts etc. Either as images, font icons or
@@ -38,7 +38,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import { extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,7 +47,7 @@ import { extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dotplot
  *
@@ -126,10 +126,9 @@ class DotPlotSeries extends ColumnSeries {
                     pointMarkerOptions.symbol ||
                     (seriesMarkerOptions as any).symbol
                 ),
-                radius = pick(
-                    pointMarkerOptions.radius,
-                    (seriesMarkerOptions as any).radius
-                ),
+                radius =
+                    pointMarkerOptions.radius ??
+                    (seriesMarkerOptions as any).radius,
                 isSquare = symbol !== 'rect',
                 width = isSquare ? height : slotWidth,
                 shapeArgs = point.shapeArgs || {},
@@ -223,6 +222,7 @@ class DotPlotSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface DotPlotSeries {
     pointAttr?: SVGAttributes;
     pointClass: typeof DotPlotPoint;
@@ -238,6 +238,7 @@ extend(DotPlotSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dotplot: typeof DotPlotSeries;
@@ -252,4 +253,5 @@ SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
  *
  * */
 
+/** @internal */
 export default DotPlotSeries;

@@ -589,7 +589,7 @@ class TreegraphSeries extends TreemapSeries {
         // Links must also be destroyed.
         if (this.links) {
             for (const link of this.links) {
-                link.destroy();
+                link.destroy(true);
             }
             this.links.length = 0;
         }

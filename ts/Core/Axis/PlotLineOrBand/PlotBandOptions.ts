@@ -237,7 +237,7 @@ export interface PlotBandOptions {
      *
      * @since 11.4.2
      */
-    borderRadius?: number|string|BorderRadiusOptionsObject;
+    borderRadius?: number|string|Partial<BorderRadiusOptionsObject>;
 
     /**
      * Border width for the plot band. Also requires `borderColor` to be set.

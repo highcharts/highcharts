@@ -465,6 +465,16 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
 
     /**
+     * Can set the group padding on a specific level. Overrides the series
+     * option of the same name.
+     *
+     * @type      {number}
+     * @since     12.2.0
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.groupPadding
+     */
+
+    /**
      * Can set the layoutAlgorithm option on a specific level.
      *
      * @type       {string}
@@ -497,18 +507,31 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @apioption plotOptions.treemap.levels.level
      */
 
+    /**
+     * Whether the `level` number is absolute, or relative to the currently
+     * visible root. Overrides the series option of the same name for this
+     * level.
+     *
+     * @type      {boolean}
+     * @product   highcharts
+     * @apioption plotOptions.treemap.levels.levelIsConstant
+     */
+
 
     // Presentational options
 
     /**
      * The color of the border surrounding each tree map item.
      *
-     * @type {Highcharts.ColorString}
+     * @type    {Highcharts.ColorString}
+     * @product highcharts
      */
     borderColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The width of the border surrounding each tree map item.
+     *
+     * @product highcharts
      */
     borderWidth: 1,
 

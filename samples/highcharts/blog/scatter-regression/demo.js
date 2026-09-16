@@ -44,11 +44,6 @@ Highcharts.chart('container', {
         marker: {
             enabled: false
         },
-        states: {
-            hover: {
-                lineWidth: 0
-            }
-        },
         enableMouseTracking: false
     }, {
         keys: ['x', 'y', 'name'],

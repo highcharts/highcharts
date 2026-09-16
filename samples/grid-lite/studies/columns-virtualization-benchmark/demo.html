@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="/code/grid/css/grid-lite.css">
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
+
+<div class="benchmark">
+    <div class="benchmark-toolbar">
+        <button id="run-benchmark" type="button">Run benchmark</button>
+        <span id="benchmark-status">Idle</span>
+    </div>
+
+    <div class="benchmark-summary">
+        <span><strong>Rows:</strong> 300</span>
+        <span><strong>Columns:</strong> 500</span>
+        <span><strong>Row virtualization:</strong> on</span>
+    </div>
+
+    <table class="benchmark-results">
+        <caption>Column virtualization benchmark results</caption>
+        <thead>
+            <tr>
+                <th scope="col">Case</th>
+                <th scope="col">Column virtualization</th>
+                <th scope="col">Strict widths</th>
+                <th scope="col">Grid init</th>
+                <th scope="col">Next frame</th>
+                <th scope="col">Second frame</th>
+                <th scope="col">Rendered rows</th>
+                <th scope="col">Rendered columns</th>
+                <th scope="col">Body cells</th>
+            </tr>
+        </thead>
+        <tbody id="benchmark-results"></tbody>
+    </table>
+
+    <div class="benchmark-preview-header">
+        Preview shows the currently measured case.
+    </div>
+    <div id="container"></div>
+
+    <p class="highcharts-description">
+        This benchmark compares a 300 row, 500 column Grid without column
+        virtualization, with column virtualization, and with column
+        virtualization plus strict column widths. Row virtualization is enabled
+        in all cases.
+    </p>
+</div>

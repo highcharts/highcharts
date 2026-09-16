@@ -46,7 +46,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dependencywheel
  *
@@ -146,7 +146,7 @@ class DependencyWheelSeries extends SankeySeries {
 
         /**
          * Get the offset in weight values of a point/link.
-         * @private
+         * @internal
          */
         node.offset = (
             point: DependencyWheelPoint
@@ -200,7 +200,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Dependency wheel has only one column, it runs along the perimeter.
-     * @private
+     * @internal
      */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition> {
         const series = this,
@@ -216,7 +216,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Translate from vertical pixels to perimeter.
-     * @private
+     * @internal
      */
     public getNodePadding(): number {
         return (this.options.nodePadding as any) / Math.PI;
@@ -390,6 +390,7 @@ class DependencyWheelSeries extends SankeySeries {
  *
  * */
 
+/** @internal */
 interface DependencyWheelSeries {
     getCenter: typeof PieSeries.prototype.getCenter;
     orderNodes: boolean;
@@ -407,6 +408,7 @@ extend(DependencyWheelSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof DependencyWheelSeries;
@@ -421,4 +423,5 @@ SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
  *
  * */
 
+/** @internal */
 export default DependencyWheelSeries;

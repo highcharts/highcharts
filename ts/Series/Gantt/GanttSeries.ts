@@ -125,7 +125,7 @@ class GanttSeries extends XRangeSeries {
             const startColumn = super.getColumn('start');
             if (startColumn.length) {
                 return startColumn.map((val: number|string): number =>
-                    time.parse(val) || 0
+                    time.parse(val) ?? NaN // #24849
                 );
             }
         }

@@ -280,6 +280,191 @@ test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
         .toBe(true);
 });
 
+test('Grid partial update: events should only swap callbacks, not re-render', async ({ page }) => {
+    await page.setContent(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-pro.css"></link>
+            </head>
+            <body>
+                <div id="container"></div>
+            </body>
+        </html>
+    `, { waitUntil: 'networkidle' });
+
+    const result = await page.evaluate(async () => {
+        const parentElement = document.getElementById('container');
+        if (!parentElement) {
+            return null;
+        }
+
+        const grid = await (window as any).Grid.grid(parentElement, {
+            data: {
+                columns: {
+                    product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
+                    weight: [100, 40, 0.5, 200, 10, 20],
+                    price: [1.5, 2.53, 5, 4.5, 3.7, 2.1]
+                }
+            }
+        }, true);
+
+        const viewport = grid.viewport;
+        const tableElementBefore = viewport.tableElement;
+
+        let firstCallbackCalls = 0;
+        let secondCallbackCalls = 0;
+
+        // Register the first callback.
+        await grid.update({
+            events: {
+                afterUpdate: () => {
+                    firstCallbackCalls++;
+                }
+            }
+        });
+
+        // Replace it with a second callback. The first one must not fire again.
+        await grid.update({
+            events: {
+                afterUpdate: () => {
+                    secondCallbackCalls++;
+                }
+            }
+        });
+
+        viewport.resizeObserver?.disconnect();
+
+        return {
+            firstCallbackCalls,
+            secondCallbackCalls,
+            tableElementUnchanged: grid.tableElement === tableElementBefore
+        };
+    });
+
+    // The first callback fired once (for its own update) and the second
+    // callback replaced it and fired for the second update.
+    expect(result?.firstCallbackCalls, 'The first callback should fire once, then be replaced.')
+        .toBe(1);
+
+    expect(result?.secondCallbackCalls, 'The new callback should be live.')
+        .toBe(1);
+
+    expect(result?.tableElementUnchanged, 'Updating events shouldn\'t re-render the entire grid.')
+        .toBe(true);
+});
+
+test('Grid partial update: nested events should not re-render the grid', async ({ page }) => {
+    await page.setContent(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+                <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-pro.css"></link>
+            </head>
+            <body>
+                <div id="container"></div>
+            </body>
+        </html>
+    `, { waitUntil: 'networkidle' });
+
+    const result = await page.evaluate(async () => {
+        const parentElement = document.getElementById('container');
+        if (!parentElement) {
+            return null;
+        }
+
+        const grid = await (window as any).Grid.grid(parentElement, {
+            data: {
+                columns: {
+                    product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
+                    weight: [100, 40, 0.5, 200, 10, 20],
+                    price: [1.5, 2.53, 5, 4.5, 3.7, 2.1]
+                }
+            },
+            pagination: {
+                enabled: true,
+                pageSize: 2,
+                page: 1
+            },
+            columns: [{
+                id: 'product',
+                width: 200
+            }]
+        }, true);
+
+        const viewport = grid.viewport;
+        const tableElementBefore = viewport.tableElement;
+
+        // Update only nested event groups at every level.
+        await grid.update({
+            columnDefaults: {
+                events: {
+                    afterResize: () => {}
+                }
+            },
+            columns: [{
+                id: 'product',
+                events: {
+                    afterSort: () => {}
+                },
+                cells: {
+                    events: {
+                        click: () => {}
+                    }
+                },
+                header: {
+                    events: {
+                        click: () => {}
+                    }
+                }
+            }],
+            pagination: {
+                events: {
+                    afterPageChange: () => {}
+                }
+            }
+        });
+
+        const productColumn = viewport.getColumn('product');
+
+        viewport.resizeObserver?.disconnect();
+
+        return {
+            tableElementUnchanged: grid.tableElement === tableElementBefore,
+            columnEventStored:
+                typeof productColumn.options?.events?.afterSort === 'function',
+            cellsEventStored:
+                typeof productColumn.options?.cells?.events?.click === 'function',
+            headerEventStored:
+                typeof productColumn.options?.header?.events?.click === 'function',
+            columnDefaultsEventStored:
+                typeof grid.options?.columnDefaults?.events?.afterResize === 'function',
+            paginationEventStored:
+                typeof grid.options?.pagination?.events?.afterPageChange === 'function'
+        };
+    });
+
+    expect(result?.tableElementUnchanged, 'Updating nested events shouldn\'t re-render the grid.')
+        .toBe(true);
+
+    expect(result?.columnEventStored, 'The column event callback should be stored live.')
+        .toBe(true);
+
+    expect(result?.cellsEventStored, 'The cells event callback should be stored live.')
+        .toBe(true);
+
+    expect(result?.headerEventStored, 'The header event callback should be stored live.')
+        .toBe(true);
+
+    expect(result?.columnDefaultsEventStored, 'The columnDefaults event callback should be stored live.')
+        .toBe(true);
+
+    expect(result?.paginationEventStored, 'The pagination event callback should be stored live.')
+        .toBe(true);
+});
+
 // Equivalent of test/typescript-karma/Grid/update.test.js - full update: pagination.enabled
 test('Grid full update: pagination.enabled', async ({ page }) => {
     await page.setContent(`

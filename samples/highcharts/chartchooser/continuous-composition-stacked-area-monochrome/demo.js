@@ -56,7 +56,7 @@ Highcharts.chart('container', {
         },
         {
             name: 'O2',
-            clor: '#c4fdff',
+            color: '#c4fdff',
             data: [21, 20, 2, 0.5, 0, 0, 0, 0, 0, 0, 0]
         },
         {
