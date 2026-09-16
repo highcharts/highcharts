@@ -90,3 +90,6 @@ node_modules/
 
 # Old changelog artefact
 changelog/changelog.html
+
+# Playwright visual run signal
+/test/visual-test-complete

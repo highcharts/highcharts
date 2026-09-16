@@ -12,5 +12,5 @@ export default {
         min: 4,
         max: 30
     }],
-    modules: ['highcharts-more', 'modules/coloraxis']
+    modules: ['modules/coloraxis']
 } satisfies SampleGeneratorConfig;

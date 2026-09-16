@@ -1182,21 +1182,11 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
-        // Prototype pollution (#14883). Keys like `__proto__` arrive as own,
-        // enumerable properties through `JSON.parse`, and walking into one
-        // would hand us `Object.prototype` as the target of the assignment
-        // below. Reading is already covered by `getNestedProperty`, which
-        // rejects `__proto__` by name and drops `constructor` and
-        // `prototype` on its child filter instead. Writing has to reject all
-        // three by name, as there is no resulting value to filter on.
-        for (const nestedKey of nestedKeys) {
-            if (
-                nestedKey === '__proto__' ||
-                nestedKey === 'constructor' ||
-                nestedKey === 'prototype'
-            ) {
-                return object;
-            }
+        // Reject nested keys that would allow prototype pollution
+        if (nestedKeys.some((nestedKey): boolean => (
+            nestedKey === '__proto__' || nestedKey === 'constructor'
+        ))) {
+            return object;
         }
 
         nestedKeys.reduce(function (
@@ -1332,16 +1322,10 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1360,7 +1344,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)

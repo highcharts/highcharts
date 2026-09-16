@@ -3007,7 +3007,7 @@ class Series {
         // Apply plotBorderRadius clipping
         plotClipGroup?.clip(
             // Navigator y-axis is not clippable
-            clip && this.yAxis.clippable ?
+            clip && this.yAxis?.clippable ?
                 chart.plotClipInner :
                 void 0
         );
@@ -3459,10 +3459,8 @@ class Series {
 
         const series = this,
             chart = series.chart,
-            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-            data = series.data || [];
+            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent);
         let destroy: ('hide'|'destroy'),
-            i,
             axis;
 
         // Add event hook
@@ -3472,13 +3470,13 @@ class Series {
         this.removeEvents(keepEventsForUpdate);
 
         // Erase from axes
-        (series.axisTypes || []).forEach(function (AXIS: string): void {
-            axis = (series as any)[AXIS];
+        for (const coll of (series.axisTypes || [])) {
+            axis = series[coll];
             if (axis?.series) {
                 erase(axis.series, series);
                 axis.isDirty = axis.forceRedraw = true;
             }
-        });
+        }
 
         // Remove legend items
         if (series.legendItem) {
@@ -3486,9 +3484,8 @@ class Series {
         }
 
         // Destroy all points with their elements
-        i = data.length;
-        while (i--) {
-            data[i]?.destroy?.(true);
+        for (const point of series.points || []) {
+            point?.destroy?.(true);
         }
 
         for (const zone of series.zones || []) {
