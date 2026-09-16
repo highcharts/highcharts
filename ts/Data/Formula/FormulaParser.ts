@@ -91,7 +91,7 @@ const functionRegExp = /^([A-Z][A-Z\d\.]*)\(/;
  * formulas would exceed the call stack of the recursive parser.
  * @private
  */
-const maxNestingLevel = 256;
+const MAX_NESTING_LEVEL = 256;
 
 
 /**
@@ -506,9 +506,9 @@ function parseFormula(
     alternativeSeparators: boolean,
     nestingLevel: number = 0
 ): Formula {
-    if (nestingLevel > maxNestingLevel) {
+    if (nestingLevel > MAX_NESTING_LEVEL) {
         const error = new Error(
-            'Formula nested deeper than ' + maxNestingLevel + ' levels.'
+            'Formula nested deeper than ' + MAX_NESTING_LEVEL + ' levels.'
         ) as FormulaParserError;
 
         error.name = 'FormulaParseError';
