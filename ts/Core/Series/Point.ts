@@ -1185,7 +1185,10 @@ class Point {
         // Prototype pollution (#14883). Keys like `__proto__` arrive as own,
         // enumerable properties through `JSON.parse`, and walking into one
         // would hand us `Object.prototype` as the target of the assignment
-        // below. `getNestedProperty` filters the same way when reading.
+        // below. Reading is already covered by `getNestedProperty`, which
+        // rejects `__proto__` by name and drops `constructor` and
+        // `prototype` on its child filter instead. Writing has to reject all
+        // three by name, as there is no resulting value to filter on.
         for (const nestedKey of nestedKeys) {
             if (
                 nestedKey === '__proto__' ||
