@@ -184,8 +184,6 @@ export interface ErrorBarSeriesOptions extends BoxPlotSeriesOptions {
     boostBlending?: undefined;
     boostThreshold?: undefined;
     borderRadius?: undefined;
-    dataParser?: undefined;
-    dataURL?: undefined;
     stack?: undefined;
     stacking?: undefined;
 

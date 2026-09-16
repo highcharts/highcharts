@@ -218,9 +218,7 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
     boostBlending?: undefined;
     boostThreshold?: undefined;
     borderWidth?: undefined;
-    dataParser?: undefined;
     dataSorting?: undefined;
-    dataURL?: undefined;
     depth?: undefined;
     linecap?: undefined;
     shadow?: undefined;
