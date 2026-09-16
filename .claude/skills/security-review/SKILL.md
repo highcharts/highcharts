@@ -35,6 +35,8 @@ Useful existing coverage includes `samples/unit-tests/svgrenderer/xss`, `samples
 
 ## Reproduce and compare
 
+Before installing dependencies or running repository tooling, inspect the relevant diff, including dependency and lockfile changes, install hooks, and invoked build or test scripts. If you find suspicious changes, pause execution and report the concern rather than proceeding.
+
 Keep the user's checkout intact: use isolated snapshots or worktrees for other revisions, and keep review artifacts under `tmp/`. Do not fix product code or add permanent regression tests during a review.
 
 For each plausible candidate:
