@@ -44,7 +44,7 @@ import {
     merge
 } from '../../../Shared/Utilities.js';
 
-const { makeHTMLElement, formatText, joinClassNames } =
+const { makeHTMLElement, formatText, joinClassNames, setHTMLContent } =
     GridUtils;
 
 const paginationAlignments = [
@@ -490,7 +490,7 @@ class Pagination {
             totalPages: totalPages
         });
 
-        this.pageInfoElement.innerHTML = pageInfoText;
+        setHTMLContent(this.pageInfoElement, pageInfoText);
     }
 
     /**
@@ -989,9 +989,10 @@ class Pagination {
             )
         }, this.contentWrapper);
 
-        makeHTMLElement('span', {
-            innerHTML: this.lang?.pageSizeLabel ?? ''
-        }, container);
+        setHTMLContent(
+            makeHTMLElement('span', {}, container),
+            this.lang?.pageSizeLabel ?? ''
+        );
 
         this.pageSizeSelect = makeHTMLElement('select', {
             className: Globals.getClassName('input'),
