@@ -1450,8 +1450,8 @@ class Tooltip {
                     boxHeight,
                     point
                 );
-                x = pos.x;
-                y = pos.y - bounds.top;
+                x = pos.x + chartLeft;
+                y = pos.y - bounds.top + chartTop;
 
             } else {
                 y = anchor[1] - bounds.top;
@@ -1463,7 +1463,6 @@ class Tooltip {
                 );
             }
 
-            // NOTE: y is relative to distributionBoxTop
             return { x, y };
         };
 
