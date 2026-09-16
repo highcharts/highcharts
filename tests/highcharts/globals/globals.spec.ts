@@ -31,4 +31,78 @@ test.describe('Globals', () => {
         expect(result.hasChartMethod, 'Highcharts should have chart method').toBe(true);
         expect(result.hasProduct, 'Highcharts should have product property').toBe(true);
     });
+
+    test('Passive events are detected through copied options', async ({
+        page
+    }) => {
+        await page.setContent(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <script>
+                        const nativeAddEventListener =
+                            EventTarget.prototype.addEventListener;
+
+                        EventTarget.prototype.addEventListener = function (
+                            type,
+                            listener,
+                            options
+                        ) {
+                            const copiedOptions =
+                                typeof options === 'object' && options !== null ?
+                                    { ...options } : options;
+
+                            if (type === 'touchstart') {
+                                window.touchstartOptions = copiedOptions;
+                            }
+
+                            return nativeAddEventListener.call(
+                                this,
+                                type,
+                                listener,
+                                copiedOptions
+                            );
+                        };
+
+                        window.restoreAddEventListener = function () {
+                            EventTarget.prototype.addEventListener =
+                                nativeAddEventListener;
+                        };
+                    </script>
+                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
+                </head>
+                <body></body>
+            </html>
+        `, { waitUntil: 'networkidle' });
+
+        try {
+            const result = await page.evaluate(() => {
+                const testWindow = window as any,
+                    Highcharts = testWindow.Highcharts,
+                    element = document.createElement('div'),
+                    removeEvent = Highcharts.addEvent(
+                        element,
+                        'touchstart',
+                        (): void => {}
+                    );
+
+                try {
+                    return {
+                        supportsPassiveEvents:
+                            Highcharts.supportsPassiveEvents,
+                        passive: testWindow.touchstartOptions?.passive
+                    };
+                } finally {
+                    removeEvent();
+                }
+            });
+
+            expect(result.supportsPassiveEvents).toBe(true);
+            expect(result.passive).toBe(true);
+        } finally {
+            await page.evaluate(() => {
+                (window as any).restoreAddEventListener();
+            });
+        }
+    });
 });
