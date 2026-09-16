@@ -1548,7 +1548,9 @@ class Tooltip {
         if (isString(labels)) {
             labels = ['', labels];
         }
-        let emptyHeader: true|undefined;
+        let emptyHeader: true|undefined,
+            hasLeftOverflow: boolean|undefined,
+            tooWide: boolean|undefined;
 
         // Create the individual labels for header and points, ignore footer
         const boxes = labels.slice(0, points.length + 1).reduce((
@@ -1611,6 +1613,9 @@ class Tooltip {
                         boxObject.pos = boxPosition.y;
                     }
 
+                    hasLeftOverflow ||= boxObject.x < 0;
+                    tooWide ||= boxWidth + distance > bounds.right;
+
                     boxes.push(boxObject);
                 } else {
                     // Hide tooltips which anchorY is outside the visible plot
@@ -1623,10 +1628,11 @@ class Tooltip {
             return boxes;
         }, []);
 
-        // If overflow left then align all labels to the right
+        // If overflow left then align all labels to the right. Unless if the
+        // label is too wide to fit in the bounds, then place it at 0.
         if (
             !hasFixedPosition &&
-            boxes.some((box): boolean => box.x < 0)
+            hasLeftOverflow
         ) {
             for (const box of boxes) {
                 const { x, y } = defaultPositioner.call(
@@ -1639,7 +1645,7 @@ class Tooltip {
                     false
                 );
                 box.target = y;
-                box.x = x;
+                box.x = tooWide ? 0 : x;
             }
         }
 
@@ -1672,11 +1678,9 @@ class Tooltip {
             box.tt.attr(attributes);
         }
 
-        /* If we have a separate tooltip container, then update the necessary
-         * container properties.
-         * Test that tooltip has its own container and renderer before executing
-         * the operation.
-         */
+        // If we have a separate tooltip container, then update the necessary
+        // container properties. Check that tooltip has its own container and
+        // renderer before executing the operation.
         const {
             container,
             renderer
@@ -1685,8 +1689,8 @@ class Tooltip {
             // Set container size to fit the bounds
             const { width, height, x, y } = tooltipLabel.getBBox();
             renderer.setSize(
-                width + x,
-                height + y + 5, // +5 to avoid cutting off the shadow
+                width + x + 3, // +3 to avoid cutting off the shadow
+                height + y + 7, // +7 to avoid cutting off the shadow
                 false
             );
         }
