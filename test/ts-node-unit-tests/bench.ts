@@ -3,6 +3,7 @@ import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmar
 import { readdirSync, existsSync } from 'node:fs';
 import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { argv, exit } from 'node:process';
 
@@ -127,7 +128,7 @@ function quartile (arr: number[], q:number) {
 };
 
 async function runRest(testFile: string) : Promise<BenchResults>{
-    const { config } = await import(testFile);
+    const { config } = await import(pathToFileURL(testFile).href);
 
     const results = [];
     await mkdir(join(__dirname, 'test-data'), { recursive: true });
