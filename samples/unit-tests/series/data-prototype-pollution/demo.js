@@ -85,3 +85,44 @@ QUnit.test('Nested data keys must not pollute Object.prototype', function (
         'The valid part of the data should still be applied'
     );
 });
+
+QUnit.test('Inherited data keys must not mutate built-ins', function (assert) {
+    // `columns.toString` is truthy through the prototype chain without being
+    // a column, so a truthiness test let the write land on the shared
+    // `Object.prototype.toString`
+    const data = JSON.parse(
+        '[{"y":1,"toString":"a"},{"y":2,"toString":"b"}]'
+    );
+
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'column'
+        }]
+    });
+
+    chart.series[0].setData(data, false);
+
+    assert.strictEqual(
+        Object.prototype.toString[0],
+        undefined,
+        'Object.prototype.toString should not be written to'
+    );
+
+    assert.strictEqual(
+        typeof {}.toString,
+        'function',
+        'Object.prototype.toString should still be a function'
+    );
+
+    assert.deepEqual(
+        Array.from(chart.series[0].getColumn('toString')),
+        ['a', 'b'],
+        'The inherited key should become a column of its own'
+    );
+
+    assert.deepEqual(
+        Array.from(chart.series[0].getColumn('y')),
+        [1, 2],
+        'The valid part of the data should still be applied'
+    );
+});
