@@ -834,6 +834,10 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         const table = this;
         const column = table.columns[columnId];
 
+        if (!column) {
+            return false;
+        }
+
         // Normal array
         if (Array.isArray(column)) {
             return (column.indexOf(cellValue) !== -1);
