@@ -601,18 +601,13 @@ class AST {
                 'text/html'
             );
         } catch {
-            // There are two cases where this fails:
-            // 1. IE9 and PhantomJS, where the DOMParser only supports parsing
-            //    XML
-            // 2. Due to a Chromium issue where chart redraws are triggered by
-            //    a `beforeprint` event (#16931),
-            //    https://issues.chromium.org/issues/40222135. In this case
-            //    the Trusted Types `createHTML` callback throws because it is
-            //    no longer runnable, even though `DOMParser` itself is not a
-            //    Trusted Types sink. Retry with the raw string below.
-        }
-
-        if (!doc) {
+            // Due to a Chromium issue where chart redraws are triggered by a
+            // `beforeprint` event (#16931),
+            // https://issues.chromium.org/issues/40222135, the Trusted
+            // Types `createHTML` callback can throw "The provided callback
+            // is no longer runnable" while the browser is mid-print. Retry
+            // with the raw string - `DOMParser` itself is not a Trusted
+            // Types sink, so parsing it directly is safe.
             try {
                 doc = new DOMParser().parseFromString(markup, 'text/html');
             } catch {
