@@ -28,6 +28,7 @@ import type Options from '../../Core/Options';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import AST from '../../Core/Renderer/HTML/AST.js';
 import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
@@ -579,7 +580,13 @@ class Breadcrumbs {
             .add(breadcrumbs.group);
 
         if (!chart.styledMode) {
-            button.attr(breadcrumbsOptions.style as SVGAttributes);
+            // The option is applied as attributes, so it must pass the same
+            // filtering as `buttonTheme` does in `SVGRenderer.button`.
+            // Otherwise keys like `onmouseover` would end up as live event
+            // handlers on the breadcrumbs group.
+            button.attr(AST.filterUserAttributes(
+                merge(breadcrumbsOptions.style) as SVGAttributes
+            ));
         }
         return button;
     }

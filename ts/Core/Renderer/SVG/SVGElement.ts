@@ -77,7 +77,7 @@ import {
     replaceNested,
     syncTimeout
 } from '../../../Shared/Utilities.js';
-import { uniqueKey } from '../../Utilities.js';
+import { error, uniqueKey } from '../../Utilities.js';
 
 /* *
  *
@@ -90,6 +90,18 @@ declare module '../CSSObject' {
         strokeWidth?: (number|string);
     }
 }
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Attribute names that the browser turns into event handlers.
+ * @private
+ */
+const eventAttribute = /^on/i;
 
 /* *
  *
@@ -354,6 +366,16 @@ class SVGElement implements SVGElementBase {
         key: string,
         element: SVGDOMElement
     ): void {
+        // Event handler attributes like `onmouseover` would become live
+        // script in the host origin. They can reach this bare setter from
+        // option structures that are passed on to `attr`, for example gradient
+        // definitions, so refuse them here rather than in each caller.
+        if (eventAttribute.test(key)) {
+            error(33, false, void 0, {
+                'Invalid attribute in config': `${key}`
+            });
+            return;
+        }
         element.setAttribute(key, value);
     }
 
