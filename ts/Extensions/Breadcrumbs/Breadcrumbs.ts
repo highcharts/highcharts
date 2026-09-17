@@ -541,7 +541,7 @@ class Breadcrumbs {
             // otherwise wipe it (#25357).
             buttonTheme = merge(
                 breadcrumbsOptions.buttonTheme,
-                { style: breadcrumbsOptions.style }
+                chart.styledMode ? void 0 : { style: breadcrumbsOptions.style }
             );
 
         const button: SVGElement = chart.renderer
