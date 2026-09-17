@@ -67,7 +67,7 @@ function errorMessage(reply: Reply): string {
 describe('benchmark worker', () => {
     for (const extension of ['ts', 'mts']) {
         it(`runs an ESM .${extension} benchmark with a before hook`, async () => {
-            const file = await fixture(`esm.${extension}`, `
+            const file = await fixture(`esm #%.${extension}`, `
             export function before(size) {
                 return { fileName: 'esm.json', func: () => ({ size }) };
             }
@@ -121,7 +121,7 @@ async function runCLI(name: string, source: string) {
         await copyFile(join(repositoryRoot, 'tools/libs', file),
             join(root, 'tools/libs', file));
     }
-    await writeFile(join(runner, 'benchmarks/fixture.bench.ts'),
+    await writeFile(join(runner, 'benchmarks/fixture #%.bench.ts'),
         'export const config = { sizes: [1] };\n' + source);
 
     const result = spawnSync(process.execPath,
@@ -133,7 +133,7 @@ async function runCLI(name: string, source: string) {
     strictEqual(result.error, undefined, result.error?.message);
     return {
         result,
-        report: join(root, 'tmp/benchmarks/actual/fixture.json')
+        report: join(root, 'tmp/benchmarks/actual/fixture #%.json')
     };
 }
 

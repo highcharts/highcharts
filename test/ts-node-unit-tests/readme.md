@@ -16,6 +16,9 @@ workflow's Node unit tests job using `npm run test-node`. This includes the
 benchmark worker and CLI regression tests. Dependency changes in `package.json`
 or `package-lock.json` trigger the workflow as well.
 
+The Test tooling workflow also runs the benchmark worker and CLI regression
+tests on Linux and Windows with both LTS and latest Node.js.
+
 ## Caveats
 * `ts-node` doesn't support all the settings in `.tsconfig.json`, such as path rewriting. As a result, imports will have to be relative from the test folder.
 
