@@ -54,9 +54,6 @@ function deepClone(value: any, excludedKeys?: string[]): any {
         const keys = Object.keys(value);
 
         for (const key of keys) {
-            // Prototype pollution (#14883). JSON.parse keeps `__proto__` and
-            // `constructor` as own keys; assigning them onto the clone would
-            // mutate Object.prototype or replace the constructor.
             if (key === '__proto__' || key === 'constructor') {
                 continue;
             }
