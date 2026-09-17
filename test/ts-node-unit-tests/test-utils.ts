@@ -9,6 +9,9 @@ const defaultHTML = (
     '<body><div id="container"></div></body></html>'
 );
 
+
+console.log('test')
+
 /**
  * Handles logging a failed test to the console.
  * @param error
