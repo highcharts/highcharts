@@ -1,0 +1,8 @@
+---
+name: Asset Allocations Bar
+description: Shows fund asset allocation as a bar chart alongside a synchronized data grid.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+...

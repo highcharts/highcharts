@@ -1,0 +1,7 @@
+---
+name: DWS Sector Breakdown Bar Chart
+description: Renders equity sector breakdown as a column chart for a DWS fund by sector.
+tags:
+  - Morningstar
+js_wrap: b
+...

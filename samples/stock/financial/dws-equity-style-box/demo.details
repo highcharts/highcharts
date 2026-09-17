@@ -1,0 +1,7 @@
+---
+name: DWS Equity Style Box
+description: Renders the Morningstar™ Style Box for a DWS fund as a heatmap using the InvestmentsConnector.
+tags:
+  - Morningstar
+js_wrap: b
+...
