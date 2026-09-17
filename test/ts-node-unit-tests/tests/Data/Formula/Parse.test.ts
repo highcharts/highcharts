@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual, strictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual, throws } from 'node:assert';
 
 import Formula from '../../../../../ts/Data/Formula/Formula';
 
@@ -21,6 +21,26 @@ describe('Formula.parseFormula', () => {
                 10
             ],
             'Parsing should result in the expected structure.'
+        );
+    });
+
+    it('should reject too deeply nested formulas', () => {
+        throws(
+            () => Formula.parseFormula(
+                '('.repeat(10000) + '1' + ')'.repeat(10000),
+                false
+            ),
+            { name: 'FormulaParseError' },
+            'Deep nesting should throw a parse error, not a RangeError.'
+        );
+
+        strictEqual(
+            Formula.processFormula(Formula.parseFormula(
+                '('.repeat(100) + '1' + ')'.repeat(100),
+                false
+            )),
+            1,
+            'Nesting within the limit should still parse and process.'
         );
     });
 
