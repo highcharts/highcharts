@@ -1,6 +1,4 @@
 ---
- name: Styled scrollbar
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of scrollbar options
+js_wrap: b
 ...

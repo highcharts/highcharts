@@ -1,4 +1,38 @@
-<div id="container"></div>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/stock.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="number" path="scrollbar.height" value="10" min="6" max="30"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.margin" value="0" min="0" max="30"></highcharts-control>
+      <highcharts-separator></highcharts-separator>
+      <highcharts-control type="color" path="scrollbar.trackBackgroundColor" value="rgba(255, 255, 255, 0.001)"></highcharts-control>
+      <highcharts-control type="color" path="scrollbar.trackBorderColor" value="#cccccc"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.trackBorderRadius" value="5" min="0" max="10"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.trackBorderWidth" value="1" min="0" max="5"></highcharts-control>
+      <highcharts-separator></highcharts-separator>
+      <highcharts-control type="color" path="scrollbar.barBackgroundColor" value="#cccccc"></highcharts-control>
+      <highcharts-control type="color" path="scrollbar.barBorderColor" value="#cccccc"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.barBorderRadius" value="5" min="0" max="10"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.barBorderWidth" value="0" min="0" max="5"></highcharts-control>
+      <highcharts-separator></highcharts-separator>
+      <highcharts-control type="boolean" path="scrollbar.buttonsEnabled" value="false"></highcharts-control>
+      <highcharts-control type="color" path="scrollbar.buttonArrowColor" value="#333333"></highcharts-control>
+      <highcharts-control type="color" path="scrollbar.buttonBackgroundColor" value="#e6e6e6"></highcharts-control>
+      <highcharts-control type="color" path="scrollbar.buttonBorderColor" value="#cccccc"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.buttonBorderRadius" value="0" min="0" max="10"></highcharts-control>
+      <highcharts-control type="number" path="scrollbar.buttonBorderWidth" value="1" min="0" max="5"></highcharts-control>
+      <highcharts-separator></highcharts-separator>
+      <highcharts-control type="color" path="scrollbar.rifleColor" value="none"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>
