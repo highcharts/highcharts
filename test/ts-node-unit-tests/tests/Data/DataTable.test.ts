@@ -906,6 +906,127 @@ describe('DataTable', () => {
         });
     });
 
+    describe('Prototype pollution protection', () => {
+        const notSafeKeys = ['__proto__', 'constructor'],
+            createTable = () => new DataTable({
+                columns: { safe: [1, 2, 3] }
+            }),
+
+            isOwnColumn = (table: DataTable, columnId: string): boolean =>
+                Object.prototype.hasOwnProperty.call(
+                    (table as any).columns,
+                    columnId
+                ),
+
+            assertNoPollution = (table: DataTable) => {
+                notSafeKeys.forEach(key => {
+                    strictEqual(
+                        isOwnColumn(table, key),
+                        false,
+                        `No own ${key} column should be created.`
+                    );
+                });
+
+                strictEqual(
+                    (Object.prototype as any)[0],
+                    undefined,
+                    'Object.prototype must not be polluted.'
+                );
+
+                strictEqual(
+                    (Object as any)[0],
+                    undefined,
+                    'Object constructor must not be polluted.'
+                );
+            };
+
+        it('should ignore __proto__/constructor columns passed to the constructor', () => {
+            const table = new DataTable({
+                columns: {
+                    '__proto__': [1, 2, 3],
+                    'constructor': [4, 5, 6],
+                    safe: ['a', 'b', 'c']
+                } as any
+            });
+
+            assertNoPollution(table);
+
+            deepStrictEqual(
+                table.getColumn('safe'),
+                ['a', 'b', 'c'],
+                'Safe columns should still be created normally.'
+            );
+        });
+
+        it('should ignore __proto__/constructor keys in setCell', () => {
+            const table = createTable();
+
+            notSafeKeys.forEach(key => {
+                table.setCell(key, 0, 'bad');
+            });
+
+            assertNoPollution(table);
+        });
+
+        it('should reject __proto__/constructor as source or target in changeColumnId', () => {
+            const table = createTable();
+
+            notSafeKeys.forEach(key => {
+                strictEqual(
+                    table.changeColumnId(key, 'safe'),
+                    false,
+                    `Rename from ${key} should fail.`
+                );
+
+                strictEqual(
+                    table.changeColumnId('safe', key),
+                    false,
+                    `Rename to ${key} should fail.`
+                );
+            });
+
+            deepStrictEqual(
+                table.getColumn('safe'),
+                [1, 2, 3],
+                'Untouched \'safe\' column should be unaffected.'
+            );
+
+            assertNoPollution(table);
+        });
+
+        it('should ignore __proto__/constructor keys in DataTableCore#setColumns', () => {
+            const table = createTable();
+
+            table.setColumns({
+                '__proto__': [9, 9, 9],
+                'constructor': [9, 9, 9]
+            } as any);
+
+            assertNoPollution(table);
+        });
+
+        it('should ignore __proto__/constructor keys in DataTable#setColumns', () => {
+            const table = createTable();
+
+            table.setColumns({
+                '__proto__': [9, 9, 9],
+                'constructor': [9, 9, 9]
+            } as any, 0);
+
+            assertNoPollution(table);
+        });
+
+        it('should ignore __proto__/constructor columnId in setColumn', () => {
+            const table = createTable();
+
+            notSafeKeys.forEach(key => {
+                table.setColumn(key, [9, 9, 9]);
+            });
+
+            assertNoPollution(table);
+        });
+    });
+
     describe('Metadata in a cloned table', () => {
         it('should be a shallow copy', () => {
             // Note: We use an object value in metadata to properly test shallow copy behavior
