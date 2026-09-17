@@ -28,8 +28,9 @@ Run using `npm run benchmark`.
 
 Optional arguments:
 * `--context [base|actual]`, sets the context for comparisions
-* `--pattern [regex]`, match benchmark files by the given pattern.
-I.e. `*.bench.local.ts`.
+* `--pattern [substring]`, match file paths containing the literal text, e.g.
+  `Stock/` or `.bench.local.ts`. Regular expressions and wildcards are not
+  interpreted.
 
 Reports for each test will be output to `tmp/benchmarks/actual/` (or `tmp/benchmarks/base/` depending on the context).
 

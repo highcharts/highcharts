@@ -198,7 +198,7 @@ async function benchmark(){
 
         const testFiles = result.filter(file => {
             if (pattern && typeof pattern === 'string') {
-                return new RegExp(pattern).test(file);
+                return file.includes(pattern);
             }
 
             return file.includes('.bench.ts');
