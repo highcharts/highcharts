@@ -621,8 +621,8 @@ class AST {
         }
 
         if (!doc) {
-            // Never assign untrusted markup to a live document's innerHTML
-            // (#22354). Parse into a detached, inert document instead.
+            // Never assign untrusted markup to a live document's innerHTML.
+            // Parse into a detached, inert document instead.
             doc = H.doc.implementation.createHTMLDocument('');
             doc.body.innerHTML = markup;
         }

@@ -90,7 +90,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'AST DOMParser fallback never executes unsanitized markup (#22354)',
+    'AST DOMParser fallback never executes unsanitized markup',
     assert => {
         const originalParseFromString = window.DOMParser.prototype
             .parseFromString;
