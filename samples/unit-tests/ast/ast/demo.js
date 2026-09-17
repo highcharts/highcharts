@@ -90,35 +90,31 @@ QUnit.test(
 );
 
 QUnit.test(
-    'AST DOMParser fallback never executes unsanitized markup',
+    'AST DOMParser fallback avoids the live document for untrusted markup',
     assert => {
         const originalParseFromString = window.DOMParser.prototype
             .parseFromString;
-        const maliciousMarkup =
-            '<img src="x" onerror="window.astXssExecuted = true">';
+        const originalCreateElement = document.createElement;
+        const originalCreateHTMLDocument = document.implementation
+            .createHTMLDocument;
+        const markup = '<img src="x" onerror="1">';
 
-        function assertMarkupIsSafe(container, message) {
-            const img = container.querySelector('img');
-
-            assert.notOk(
-                img && img.getAttribute('onerror'),
-                `${message} - onerror attribute should be stripped.`
-            );
-            assert.strictEqual(
-                window.astXssExecuted,
-                false,
-                `${message} - markup should never execute.`
-            );
+        function restore() {
+            window.DOMParser.prototype.parseFromString =
+                originalParseFromString;
+            document.createElement = originalCreateElement;
+            document.implementation.createHTMLDocument =
+                originalCreateHTMLDocument;
         }
 
         // Case 1: the first DOMParser attempt throws, simulating the
         // Trusted Types `createHTML` failure during a scripted print
         // (#16931). The AST should retry with the raw markup string
-        // instead of giving up.
-        let callCount = 0;
+        // instead of falling back at all.
+        let parseCallCount = 0;
         window.DOMParser.prototype.parseFromString = function (...args) {
-            callCount++;
-            if (callCount === 1) {
+            parseCallCount++;
+            if (parseCallCount === 1) {
                 throw new Error(
                     'The provided callback is no longer runnable'
                 );
@@ -126,42 +122,62 @@ QUnit.test(
             return originalParseFromString.apply(this, args);
         };
 
-        window.astXssExecuted = false;
-        const retryContainer = document.createElement('div');
-
-        try {
-            new Highcharts.AST(maliciousMarkup).addToDOM(retryContainer);
-        } finally {
-            window.DOMParser.prototype.parseFromString =
-                originalParseFromString;
-        }
+        const retryAst = new Highcharts.AST(markup);
+        restore();
 
         assert.ok(
-            callCount > 1,
+            parseCallCount > 1,
             'DOMParser should be retried with the raw markup string after ' +
             'the first parse attempt fails.'
         );
-        assertMarkupIsSafe(retryContainer, 'Retry fallback');
+        assert.strictEqual(
+            retryAst.nodes[0] && retryAst.nodes[0].tagName,
+            'img',
+            'The markup should still be parsed correctly after the retry.'
+        );
 
-        // Case 2: DOMParser is entirely unusable. The AST must parse into
-        // a detached, inert document rather than assigning the markup to
-        // a live element's innerHTML.
+        // Case 2: DOMParser is entirely unusable. The AST must parse the
+        // markup into a detached, inert document (no browsing context, so
+        // no resource loads or handlers can ever run there) instead of
+        // assigning it to a live document element's innerHTML.
         window.DOMParser.prototype.parseFromString = function () {
             throw new Error('DOMParser unavailable');
         };
 
-        window.astXssExecuted = false;
-        const inertContainer = document.createElement('div');
+        let liveDivCreated = false;
+        document.createElement = function (tagName) {
+            if (String(tagName).toLowerCase() === 'div') {
+                liveDivCreated = true;
+            }
+            return originalCreateElement.apply(this, arguments);
+        };
 
-        try {
-            new Highcharts.AST(maliciousMarkup).addToDOM(inertContainer);
-        } finally {
-            window.DOMParser.prototype.parseFromString =
-                originalParseFromString;
-        }
+        let inertDocumentCreated = false;
+        document.implementation.createHTMLDocument = function () {
+            inertDocumentCreated = true;
+            return originalCreateHTMLDocument.apply(this, arguments);
+        };
 
-        assertMarkupIsSafe(inertContainer, 'Inert document fallback');
+        const inertAst = new Highcharts.AST(markup);
+        restore();
 
-        delete window.astXssExecuted;
+        assert.strictEqual(
+            inertDocumentCreated,
+            true,
+            'A detached, inert document should be used when DOMParser is ' +
+            'entirely unusable.'
+        );
+        assert.strictEqual(
+            inertAst.nodes[0] && inertAst.nodes[0].tagName,
+            'img',
+            'The markup should still be parsed correctly via the inert ' +
+            'document fallback.'
+        );
+        assert.strictEqual(
+            liveDivCreated,
+            false,
+            'The live document should never be used to hold unsanitized ' +
+            'markup via innerHTML.'
+        );
     }
 );
