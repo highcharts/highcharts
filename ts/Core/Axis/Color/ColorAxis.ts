@@ -939,7 +939,12 @@ class ColorAxis extends Axis implements ColorAxisBase {
                             chart.legend.colorizeItem(this as any, vis);
                             affectedSeries.forEach((series): void => {
                                 fireEvent(series, 'afterDataClassLegendClick');
+
+                                // Points hidden in a data class have no
+                                // graphic or data label yet (#25083)
+                                series.isDirty = true;
                             });
+                            chart.redraw(false);
                         }
                     },
                     dataClass
