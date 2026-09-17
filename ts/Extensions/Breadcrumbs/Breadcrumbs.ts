@@ -25,10 +25,8 @@ import type {
 } from './BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart.js';
 import type Options from '../../Core/Options';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import AST from '../../Core/Renderer/HTML/AST.js';
 import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
 import F from '../../Core/Templating.js';
 const { format } = F;
@@ -537,7 +535,14 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            buttonTheme = merge(breadcrumbsOptions.buttonTheme);
+            // The `style` option is CSS for the button text, so it belongs in
+            // the theme's `style` rather than being applied afterwards. A
+            // later `setState` re-applies the normal state style, which would
+            // otherwise wipe it (#25357).
+            buttonTheme = merge(
+                breadcrumbsOptions.buttonTheme,
+                { style: breadcrumbsOptions.style }
+            );
 
         const button: SVGElement = chart.renderer
             .button(
@@ -579,15 +584,6 @@ class Breadcrumbs {
             .addClass('highcharts-breadcrumbs-button')
             .add(breadcrumbs.group);
 
-        if (!chart.styledMode) {
-            // The option is applied as attributes, so it must pass the same
-            // filtering as `buttonTheme` does in `SVGRenderer.button`.
-            // Otherwise keys like `onmouseover` would end up as live event
-            // handlers on the breadcrumbs group.
-            button.attr(AST.filterUserAttributes(
-                merge(breadcrumbsOptions.style) as SVGAttributes
-            ));
-        }
         return button;
     }
 
