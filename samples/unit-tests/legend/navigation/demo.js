@@ -137,4 +137,68 @@ QUnit.test('Horizontal legend paging (#7513)', function (assert) {
         chart.legend.horizontalNav,
         'Right-to-left legends should keep the default layout'
     );
+
+    chart.update({
+        legend: {
+            rtl: false
+        },
+        plotOptions: {
+            series: {
+                showCheckbox: true
+            }
+        }
+    });
+
+    const hiddenBoxes = chart.legend.allItems.map(
+        item => item.checkbox.style.display === 'none'
+    );
+
+    assert.ok(
+        hiddenBoxes.includes(true) && hiddenBoxes.includes(false),
+        'Some checkboxes should be hidden and some shown'
+    );
+
+    assert.deepEqual(
+        hiddenBoxes,
+        chart.legend.allItems.map(
+            item => item.legendItem.pageIx !== chart.legend.currentPage - 1
+        ),
+        'Checkboxes should be shown for the current page only'
+    );
+
+    // `legend.width` beats the chart width, the same as it does when the
+    // items wrap
+    chart.update({
+        legend: {
+            width: 500
+        }
+    });
+
+    assert.ok(
+        chart.legend.legendWidth > 500,
+        'An explicit legend width should not be capped to the chart width'
+    );
+
+    // The pager widens as the page number grows, so the space reserved for
+    // the navigation has to account for the widest it can get (#7513)
+    // `oneToOne` so that the added series actually reach the legend
+    chart.update({
+        series: Array.from({ length: 40 }, (_, i) => ({
+            name: 'Series number ' + (i + 1)
+        }))
+    }, true, true);
+
+    const paged = chart.legend,
+        lastPage = paged.pages.length;
+
+    assert.ok(lastPage > 9, 'The pager should reach a two-digit page number');
+
+    paged.scroll(lastPage - paged.currentPage, false);
+
+    const navBox = paged.nav.getBBox();
+
+    assert.ok(
+        paged.nav.translateX + navBox.x + navBox.width <= paged.legendWidth,
+        'The navigation should stay inside the legend box on the last page'
+    );
 });
