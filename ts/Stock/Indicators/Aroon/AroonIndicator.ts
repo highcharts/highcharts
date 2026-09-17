@@ -29,7 +29,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import { extend, merge, pick } from '../../../Shared/Utilities.js';
+import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -189,12 +189,12 @@ class AroonIndicator extends SMAIndicator {
 
             xLow = getExtremeIndexInArray(slicedY.map(
                 function (elem): number {
-                    return pick(elem[low], (elem as any));
+                    return (elem[low] ?? (elem as any));
                 }), 'min');
 
             xHigh = getExtremeIndexInArray(slicedY.map(
                 function (elem): number {
-                    return pick(elem[high], (elem as any));
+                    return (elem[high] ?? (elem as any));
                 }), 'max');
 
             aroonUp = (xHigh / period) * 100;
@@ -275,7 +275,7 @@ export default AroonIndicator;
  * @extends   series,plotOptions.aroon
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators

@@ -22,8 +22,8 @@ QUnit.test('Missing plotband when range is small (#4964)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[1] !==
-            chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ')[6],
+        chart.xAxis[0].plotBands[1].svgElem.d.split(' ')[1] !==
+            chart.xAxis[0].plotBands[1].svgElem.d.split(' ')[6],
         true,
         'Second plotband is visible'
     );
@@ -202,28 +202,29 @@ QUnit.test('Defaults', assert => {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
+        chart.xAxis[0].plotLines[0].svgElem.element.getAttribute(
             'stroke-width'
         ),
         '1',
         'A default stroke width should be applied to the plot line'
     );
 
-    const stroke = chart.xAxis[0].plotLinesAndBands[0].svgElem.element
-        .getAttribute('stroke');
     const colorRegex = /^(#[0-9a-f]{6}|var\(--highcharts-[a-z0-9\-]+\))$/;
     assert.ok(
-        colorRegex.test(stroke),
-        'A default stroke color should be applied to the plot line. ' +
-        `Actual: ${stroke}`
+        colorRegex.test(
+            chart.xAxis[0].plotLines[0].svgElem.element.getAttribute(
+                'stroke'
+            )
+        ),
+        'A default stroke color should be applied to the plot line'
     );
 
-    const fill = chart.yAxis[0].plotLinesAndBands[0].svgElem.element
-        .getAttribute('fill');
     assert.ok(
-        colorRegex.test(fill),
-        'A default fill color should be applied to the plot band. ' +
-        `Actual: ${fill}`,
+        colorRegex.test(
+            chart.yAxis[0].plotBands[0].svgElem.element.getAttribute(
+                'fill'
+            )
+        ),
         'A default fill color should be applied to the plot band'
     );
 });
@@ -307,14 +308,14 @@ QUnit.test('General tests', function (assert) {
     });
 
     assert.ok(
-        chart.yAxis[0].plotLinesAndBands[0].svgElem.element
+        chart.yAxis[0].plotLines[0].svgElem.element
             .classList
             .contains('my-custom-class'),
         'Class name should be applied to plot lines (#8415, #20586)'
     );
 
-    var plPath = chart.xAxis[0].plotLinesAndBands[0].svgElem.d.split(' '),
-        pbPath = chart.xAxis[0].plotLinesAndBands[1].svgElem.d.split(' ');
+    var plPath = chart.xAxis[0].plotLines[0].svgElem.d.split(' '),
+        pbPath = chart.xAxis[0].plotBands[0].svgElem.d.split(' ');
 
     assert.strictEqual(
         pbPath[pbPath.length - 1],
@@ -337,18 +338,18 @@ QUnit.test('General tests', function (assert) {
     );
 
     assert.ok(
-        chart.yAxis[0].plotLinesAndBands[0].label.actualWidth > 0,
+        chart.yAxis[0].plotLines[0].label.actualWidth > 0,
         'Plot line label should be able to render outside plot area #17888.'
     );
 
     assert.strictEqual(
-        chart.yAxis[0].plotLinesAndBands[1].label.actualWidth,
+        chart.yAxis[0].plotLines[1].label.actualWidth,
         0,
         `Plot label with clip: true should not be able to render outside plot
         area #15777.`
     );
 
-    var longLabelPlotLine = chart.yAxis[0].plotLinesAndBands[2],
+    var longLabelPlotLine = chart.yAxis[0].plotLines[2],
         longLabel = longLabelPlotLine.label,
         labelRight = longLabel.alignAttr.x + longLabel.getBBox().width,
         plotRight = chart.plotLeft + chart.plotWidth;
@@ -409,7 +410,7 @@ QUnit.test('General tests', function (assert) {
     });
 
     axis = chart.yAxis[0];
-    plotLine = axis.plotLinesAndBands[0];
+    plotLine = axis.plotLines[0];
     bBox = plotLine.svgElem.getBBox();
     center = chart.pane[0].center;
     end = axis.getPosition(plotLineValue);
@@ -445,7 +446,7 @@ QUnit.test('General tests', function (assert) {
         }
     });
 
-    plotLine = chart.yAxis[0].plotLinesAndBands[0];
+    plotLine = chart.yAxis[0].plotLines[0];
     bBox = plotLine.svgElem.getBBox();
     plotLineLength = Math.sqrt(
         Math.pow(bBox.width, 2) + Math.pow(bBox.height, 2)
@@ -582,26 +583,26 @@ QUnit.test('#6521 - missing labels for narrow bands', function (assert) {
     });
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[0].label.element.textContent,
+        chart.xAxis[0].plotBands[0].label.element.textContent,
         'Wide Enough',
         'First label set'
     );
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[1].label.element.textContent,
+        chart.xAxis[0].plotBands[1].label.element.textContent,
         'Too Narrow',
         'Second label set'
     );
 
     chart.xAxis[0].setExtremes(null, Date.UTC(2016, 0, 20));
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands[1].label.attr('visibility'),
+        chart.xAxis[0].plotBands[1].label.attr('visibility'),
         'hidden',
         'Outside range, label hidden'
     );
 
     chart.xAxis[0].setExtremes(null, Date.UTC(2016, 0, 30));
     assert.notEqual(
-        chart.xAxis[0].plotLinesAndBands[1].label.attr('visibility'),
+        chart.xAxis[0].plotBands[1].label.attr('visibility'),
         'hidden',
         'Inside range, label shown'
     );
@@ -639,20 +640,20 @@ QUnit.test('Plotbands clip (#2361)', function (assert) {
         ]
     });
     assert.notEqual(
-        chart.xAxis[0].plotLinesAndBands[0].label,
+        chart.xAxis[0].plotBands[0].label,
         null,
         'Plotbands should be visible after zooming '
     );
     $('#container').highcharts().xAxis[0].setExtremes(2, 5);
 
     assert.notEqual(
-        chart.xAxis[0].plotLinesAndBands[0].label,
+        chart.xAxis[0].plotBands[0].label,
         null,
         'Plotbands should be visible after zooming'
     );
     $('#container').highcharts().xAxis[0].setExtremes(4, 5);
     assert.equal(
-        chart.xAxis[0].plotLinesAndBands[0].label.visibility,
+        chart.xAxis[0].plotBands[0].label.visibility,
         'hidden',
         'Plotbands should be hidden after zooming'
     );
@@ -697,8 +698,8 @@ QUnit.test(
                 ]
             });
 
-        plotLine = chart.xAxis[0].plotLinesAndBands[0];
-        plotBand = chart.xAxis[0].plotLinesAndBands[1];
+        plotLine = chart.xAxis[0].plotLines[0];
+        plotBand = chart.xAxis[0].plotBands[0];
 
         assert.ok(
             plotLine.label &&
@@ -746,8 +747,8 @@ QUnit.test(
             }
         });
 
-        plotLine = chart.xAxis[0].plotLinesAndBands[0];
-        plotBand = chart.xAxis[0].plotLinesAndBands[1];
+        plotLine = chart.xAxis[0].plotLines[0];
+        plotBand = chart.xAxis[0].plotBands[0];
 
         assert.strictEqual(
             '###',
@@ -896,7 +897,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     });
 
     assert.ok(
-        !chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        !chart.xAxis[0].plotBands[0].svgElem,
         '#14310: plotBand should not render when axis is not visible'
     );
 
@@ -907,7 +908,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     });
 
     assert.ok(
-        !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        !!chart.xAxis[0].plotBands[0].svgElem,
         '#14310: plotBand should render when axis visibility gets ' +
         'dynamically updated'
     );
@@ -921,7 +922,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     chart.redraw();
 
     assert.strictEqual(
-        chart.xAxis[0].plotLinesAndBands.length,
+        chart.xAxis[0].plotBands.length,
         2,
         '#14053: plotBands from before update with redraw=false should also ' +
         'be added'
@@ -930,7 +931,7 @@ QUnit.test('Dynamically added plotbands', function (assert) {
     chart.series[0].hide();
 
     assert.ok(
-        chart.xAxis[0].plotLinesAndBands[0].svgElem.pathArray.isFlat,
+        chart.xAxis[0].plotBands[0].svgElem.pathArray.isFlat,
         '#15434: plotBand should be hidden series is hidden'
     );
 });
@@ -980,8 +981,8 @@ QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
     });
 
     var bands = [
-        chart.xAxis[0].plotLinesAndBands[0].svgElem.getBBox(),
-        chart.xAxis[0].plotLinesAndBands[1].svgElem.getBBox()
+        chart.xAxis[0].plotBands[0].svgElem.getBBox(),
+        chart.xAxis[0].plotBands[1].svgElem.getBBox()
     ];
 
     assert.ok(
@@ -1024,11 +1025,11 @@ QUnit.test(
             }),
             xAxis = chart.series[0].xAxis,
             opacityTester = vals => {
-                const plotLinesAndBands = xAxis.plotLinesAndBands;
+                const plotBands = xAxis.plotBands;
 
                 for (let i = 0; i < 3; i++) {
                     assert.strictEqual(
-                        plotLinesAndBands[i].label.opacity,
+                        plotBands[i].label.opacity,
                         vals[i],
                         `Opacity of label number ${i} should be ${vals[i]}`
                     );
@@ -1042,7 +1043,7 @@ QUnit.test(
                 from: 0,
                 to: 1,
                 label: {
-                    text: '0000000000000000',
+                    text: 'UpdatedLabelText',
                     allowOverlap: true
                 }
             },
@@ -1064,5 +1065,554 @@ QUnit.test(
         });
 
         opacityTester([1, 1, 1]);
+
+        assert.strictEqual(
+            chart.series[0].xAxis.plotBands[0].label.element.textContent,
+            'UpdatedLabelText',
+            'First label text should be correct after update'
+        );
     }
 );
+
+QUnit.test(
+    'Soft update',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            xAxis: {
+                plotBands: [
+                    {
+                        from: 2,
+                        to: 3,
+                        color: 'green'
+
+                    },
+                    {
+                        from: 4,
+                        to: 5,
+                        color: 'blue'
+                    }
+                ]
+            },
+            series: [{
+                data: [1, 3, 2, 4, 3, 5, 4]
+            }]
+        });
+
+        const [greenBand, blueBand] = chart.xAxis[0].plotBands;
+
+        // Update one to one without id
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        from: 1
+                    },
+                    {
+                        from: 3
+                    }
+                ]
+            }
+        });
+
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            2,
+            'There should be two plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.ok(
+            chart.xAxis[0].plotBands[0].options ===
+            chart.xAxis[0].options.plotBands[0],
+            'The axis options should be kept in sync with the plot band options'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+        assert.strictEqual(
+            greenBand.options.from,
+            1,
+            'The "from" option of the first plot band should be updated'
+        );
+        assert.strictEqual(
+            blueBand.options.from,
+            3,
+            'The "from" option of the second plot band should be updated'
+        );
+
+        // Chart/Axis update with no relevant changes
+        chart.update({
+            xAxis: {
+                title: {
+                    text: 'New title'
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            2,
+            'There should be two plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+
+        // Update without id, add plot band
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        to: 2
+                    },
+                    {
+                        from: 4
+                    },
+                    {
+                        from: 2.5,
+                        to: 3.5,
+                        color: 'red'
+                    }
+                ]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            3,
+            'There should be three plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+
+        // Update without id, remove plot band
+        chart.update({
+            xAxis: {
+                plotBands: [{}, {}]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            2,
+            'There should be two plot bands after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            greenBand,
+            'The first plot band should be the same instance'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[1],
+            blueBand,
+            'The second plot band should be the same instance'
+        );
+
+        chart.xAxis[0].plotBands[1].id = 'blue-band';
+
+        // Update with id, remove unidentified plot band
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        id: 'blue-band',
+                        color: 'lightblue'
+                    }
+                ]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            1,
+            'There should be one plot band after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            blueBand,
+            'The plot band should be the same instance'
+        );
+        assert.strictEqual(
+            blueBand.svgElem.element.getAttribute('fill'),
+            'lightblue',
+            'The "color" option of the plot band should be updated'
+        );
+
+        // Update without id should match id'ed band
+        chart.update({
+            xAxis: {
+                plotBands: [
+                    {
+                        from: 3
+                    }
+                ]
+            }
+        });
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            1,
+            'There should be one plot band after update'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].plotBands[0],
+            blueBand,
+            'The plot band should be the same instance'
+        );
+        assert.strictEqual(
+            blueBand.options.from,
+            3,
+            'The "from" option of the plot band should be updated'
+        );
+
+        // Remove all plot bands
+        chart.xAxis[0].removePlotBand('blue-band');
+        assert.strictEqual(
+            chart.xAxis[0].plotBands.length,
+            0,
+            'There should be no plot bands after removePlotBand'
+        );
+        assert.strictEqual(
+            chart.xAxis[0].options.plotBands.length,
+            0,
+            'The axis options should be kept in sync with the plot band options'
+        );
+    }
+);
+
+QUnit.test('Plot band labels', function (assert) {
+    let chart;
+    const options = {
+        chart: {
+            width: 600
+        },
+        xAxis: {
+            plotBands: [
+                {
+                    from: 5,
+                    to: 6,
+                    color: Highcharts.getOptions().colors[0],
+                    label: {
+                        text: 'Before'
+                    }
+                },
+                {
+                    from: 12,
+                    to: 13,
+                    color: Highcharts.getOptions().colors[2],
+                    label: {
+                        text: 'Within'
+                    }
+                },
+                {
+                    from: 25,
+                    to: 26,
+                    color: Highcharts.getOptions().colors[3],
+                    label: {
+                        text: 'After'
+                    }
+                }
+            ],
+            plotLines: [
+                {
+                    value: 11,
+                    label: {
+                        text: 'Abcdef',
+                        x: 0,
+                        useHTML: true
+                    }
+                }
+            ]
+        },
+
+        yAxis: {
+            plotLines: [{
+                value: 4,
+                label: {
+                    text: 'Big text',
+                    useHTML: true,
+                    style: {
+                        fontSize: '2em'
+                    },
+                    align: 'right'
+                }
+            }, {
+                value: 5,
+                label: {
+                    text: 'Small text',
+                    useHTML: true,
+                    align: 'right'
+                }
+            }]
+        },
+
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6, 7],
+                pointStart: 10
+            }
+        ]
+    };
+
+    // Create the Highcharts chart
+    chart = Highcharts.chart('container', options);
+
+    assert.equal(
+        typeof chart.xAxis[0].plotBands[0].label,
+        'undefined',
+        'Highcharts - before'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotBands[1].label,
+        'object',
+        'Highcharts - within'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotBands[2].label,
+        'undefined',
+        'Highcharts - after'
+    );
+
+    const line = chart.xAxis[0].plotLines[0].svgElem.getBBox(),
+        label = chart.xAxis[0].plotLines[0].label;
+
+    assert.close(
+        line.x,
+        label.x,
+        1,
+        'HTML label should be placed (x-pos) near the plot line (#20792).'
+    );
+
+    // Create the Highcharts Stock chart
+    chart = Highcharts.stockChart('container', options);
+
+    assert.equal(
+        typeof chart.xAxis[0].plotBands[0].label,
+        'undefined',
+        'Label less than x axis should not be rendered'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotBands[1].label,
+        'object',
+        'Label within x axis should be rendered'
+    );
+    assert.equal(
+        typeof chart.xAxis[0].plotBands[2].label,
+        'undefined',
+        'Label greater than x axis should not be rendered'
+    );
+
+    assert.close(
+        chart.yAxis[0].plotLines[0].label.element
+            .getBoundingClientRect()
+            .right,
+        chart.yAxis[0].plotLines[1].label.element
+            .getBoundingClientRect()
+            .right,
+        1,
+        'Font size should be considered when laying out label (#19488)'
+    );
+});
+
+QUnit.test('NaN in label position (#7175)', function (assert) {
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container'
+        },
+        xAxis: {
+            plotBands: [
+                {
+                    // mark the weekend
+                    color: '#FCFFC5',
+                    from: Date.UTC(2010, 0, 2),
+                    to: Date.UTC(2010, 0, 4),
+                    label: {
+                        text: 'Plot band'
+                    }
+                }
+            ],
+            tickInterval: 24 * 3600 * 1000, // one day
+            type: 'datetime'
+        },
+
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    56.4,
+                    69.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4
+                ],
+                pointStart: Date.UTC(2010, 0, 1),
+                pointInterval: 24 * 3600 * 1000
+            }
+        ]
+    });
+
+    assert.notEqual(
+        chart.container.innerHTML.indexOf('Plot band'),
+        -1,
+        'Label added successfully'
+    );
+    assert.strictEqual(chart.container.innerHTML.indexOf('NaN'), -1, 'No NaN');
+
+    chart.series[0].hide();
+
+    assert.strictEqual(chart.container.innerHTML.indexOf('NaN'), -1, 'No NaN');
+});
+
+QUnit.test(
+    'Events should be bound to all plotBands (#6166) and plotLines (#10302).',
+    function (assert) {
+        var clicked,
+            plotLineReference,
+            cfg = {
+                xAxis: {
+                    min: 20,
+                    max: 50,
+                    plotBands: [
+                        {
+                            color: '#FCFFC5',
+                            from: 0,
+                            to: 11,
+                            id: 'plotband-1',
+                            events: {
+                                click: function () {
+                                    clicked = 'plotBand';
+                                }
+                            }
+                        }
+                    ]
+                },
+                series: [
+                    {
+                        data: [
+                            [1, 20],
+                            [11, 20],
+                            [21, 25],
+                            [41, 28]
+                        ]
+                    }
+                ]
+            },
+            chart = Highcharts.stockChart('container', cfg);
+
+        chart.xAxis[0].setExtremes(0, 10);
+
+        var controller = new TestController(chart);
+        controller.click(100, 100);
+
+        assert.deepEqual(clicked, 'plotBand', 'Click event fired on plot band');
+
+        // #10302
+        chart.xAxis[0].setExtremes(20, 50);
+        chart.update({
+            xAxis: {
+                plotLines: [
+                    {
+                        value: 5,
+                        width: 20,
+                        color: 'black',
+                        zIndex: 1,
+                        events: {
+                            click: function () {
+                                plotLineReference = this;
+                                clicked = 'plotLine';
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        chart.xAxis[0].setExtremes(0, 40);
+        controller.click(85, 100);
+
+        assert.deepEqual(clicked, 'plotLine', 'Click event fired on plot line');
+
+        assert.ok(
+            plotLineReference === chart.xAxis[0].plotLines[0],
+            'Plot line event context should be corresponding plot line object.'
+        );
+    }
+);
+
+QUnit.test('Plotbands in stock', assert => {
+
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: Array.from({ length: 50 }, () => 1),
+            showInNavigator: false
+        }],
+        xAxis: {
+            min: 10,
+            max: 30
+        },
+        navigator: {
+            xAxis: {
+                min: 0,
+                max: 50,
+                plotBands: [{
+                    from: 10,
+                    to: 14,
+                    color: 'red'
+                }]
+            }
+        }
+    });
+    const xAxis = chart.xAxis[1];
+    assert.strictEqual(
+        xAxis.plotBands[0].svgElem.pathArray[0][2],
+        xAxis.top,
+        'The plotBand on navigator should be positioned on corresponding yAxis'
+    );
+});
+
+QUnit.test('PlotBand on main axis when navigator yAxis has id', assert => {
+
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            plotBands: [{
+                from: 5,
+                to: 10,
+                color: 'yellow'
+            }]
+        },
+        navigator: {
+            yAxis: {
+                id: 'nav-ABC'
+            }
+        },
+
+        series: [{
+            data: Array.from({ length: 15 }, () => 1)
+        }]
+    });
+    const xAxis = chart.xAxis[0];
+
+    assert.strictEqual(
+        xAxis.plotBands[0].svgElem.pathArray.length,
+        5,
+        'The plotband should only have 1 box'
+    );
+});

@@ -37,7 +37,6 @@ import {
     addEvent,
     defined,
     merge,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
@@ -249,12 +248,10 @@ class TiledWebMapSeries extends MapSeries {
             options = this.options,
             provider = options.provider,
             { zoom } = mapView,
-            lambda = pick(
-                (
-                    mapView.projection.options.rotation &&
+            lambda = ((
+                mapView.projection.options.rotation &&
                     mapView.projection.options.rotation[0]
-                ), 0
-            ),
+            ) ?? 0),
             worldSize = 400.979322,
             tileSize = 256,
             duration = chart.renderer.forExport ? 0 : 200,
@@ -370,7 +367,7 @@ class TiledWebMapSeries extends MapSeries {
                     // Do not show warning if no subdomain in URL
                     theme.url.indexOf('{s}') !== -1
                 ) {
-                    subdomain = pick(def.subdomains && def.subdomains[0], '');
+                    subdomain = ((def.subdomains && def.subdomains[0]) ?? '');
                     error(
                         'Highcharts warning: The Tiles Provider\'s Subdomain ' +
                         '\'' + provider.subdomain + '\' is not defined in ' +
@@ -402,11 +399,11 @@ class TiledWebMapSeries extends MapSeries {
                 this.maxZoom = theme.maxZoom;
 
                 // Add as credits.text, to prevent changing the default mapText
-                const creditsText = pick(
-                    chart.userOptions.credits && chart.userOptions.credits.text,
-                    'Highcharts.com ' + pick(theme.credits, def.defaultCredits)
+                const creditsText = (
+                    (chart.userOptions.credits &&
+                    chart.userOptions.credits.text) ??
+                    ('Highcharts.com ' + (theme.credits ?? def.defaultCredits))
                 );
-
                 if (chart.credits) {
                     chart.credits.update({
                         text: creditsText
@@ -414,7 +411,7 @@ class TiledWebMapSeries extends MapSeries {
                 } else {
                     chart.addCredits({
                         text: creditsText,
-                        style: pick(chart.options.credits?.style, {})
+                        style: (chart.options.credits?.style ?? {})
                     });
                 }
 

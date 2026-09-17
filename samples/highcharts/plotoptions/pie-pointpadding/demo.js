@@ -8,7 +8,6 @@
 // copy will need to be re-synced if those core modules change.
 (function ({
     defined,
-    pick,
     Series,
     SVGElement,
     relativeLength,
@@ -54,8 +53,8 @@
                 end = middleAngle + minArcRange / 2;
             }
 
-            const rx = pick(options.r, w),
-                ry = pick(options.r, h || w),
+            const rx = options.r ?? w,
+                ry = options.r ?? (h || w),
                 fullCircle = (
                     Math.abs(end - start - 2 * Math.PI) <
                     proximity
@@ -72,9 +71,9 @@
                 cosEnd = fullCircle ? 0 : Math.cos(end),
                 sinEnd = fullCircle ? 1 : Math.sin(end),
                 // Proximity takes care of rounding errors around PI (#6971)
-                longArc = pick(
-                    options.longArc,
-                    end - start - Math.PI < proximity ? 0 : 1
+                longArc = (
+                    options.longArc ??
+                    (end - start - Math.PI < proximity ? 0 : 1)
                 );
 
             let arcSegment = [
@@ -83,7 +82,7 @@
                 ry, // Y radius
                 0, // Slanting
                 longArc, // Long or short arc
-                pick(options.clockwise, 1), // Clockwise
+                options.clockwise ?? 1, // Clockwise
                 // Use a static pixel offset for full circle (#21701)
                 cx + (fullCircle ? 0.001 : rx * cosEnd),
                 cy + ry * sinEnd
@@ -134,9 +133,9 @@
                     innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
                     innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd),
                     // Proximity takes care of rounding errors around PI (#6971)
-                    innerlongArc = pick(
-                        options.longArc,
-                        innerEnd - innerStart - Math.PI < proximity ? 0 : 1
+                    innerlongArc = (
+                        options.longArc ??
+                        (innerEnd - innerStart - Math.PI < proximity ? 0 : 1)
                     );
 
                 arcSegment = [

@@ -54,7 +54,7 @@ class CreditsPro extends Credits {
         const { text, href } = this.options;
 
         setHTMLContent(this.textElement, text || '');
-        this.textElement.setAttribute('href', href || '');
+        this.setHref(href);
     }
 
     /**

@@ -834,6 +834,10 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         const table = this;
         const column = table.columns[columnId];
 
+        if (!column) {
+            return false;
+        }
+
         // Normal array
         if (Array.isArray(column)) {
             return (column.indexOf(cellValue) !== -1);
@@ -1335,6 +1339,26 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
  * Possible value types for a table cell.
  */
 export type CellType = (boolean|number|null|string|undefined);
+
+/**
+ * Type guard narrowing an arbitrary value to a valid table cell value.
+ *
+ * @param {*} value
+ * Candidate value.
+ *
+ * @return {boolean}
+ * `true` when the value is a valid `CellType`.
+ */
+export function isCellValue(value: unknown): value is CellType {
+    const valueType = typeof value;
+    return (
+        value === null ||
+        valueType === 'undefined' ||
+        valueType === 'boolean' ||
+        valueType === 'number' ||
+        valueType === 'string'
+    );
+}
 
 /**
  * Conventional array of table cells typed as `CellType`.

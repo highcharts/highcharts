@@ -23,7 +23,6 @@ import type Position3DObject from './Renderer/Position3DObject';
 import type PositionObject from './Renderer/PositionObject';
 
 import H from './Globals.js';
-import { pick } from '../Shared/Utilities.js';
 const { deg2rad } = H;
 
 /* *
@@ -157,15 +156,14 @@ function perspective(
         /* The useInvertedPersp argument is used for inverted charts with
          * already inverted elements, such as dataLabels or tooltip positions.
          */
-        inverted = pick(
-            useInvertedPersp,
+        inverted = useInvertedPersp ?? (
             insidePlotArea ? chart.inverted : false
         ),
         origin = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
             z: options3d.depth / 2,
-            vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+            vd: (options3d.depth ?? 1) * (options3d.viewDistance ?? 0)
         },
         scale = chart.scale3d || 1,
         beta = deg2rad * options3d.beta * (inverted ? -1 : 1),
@@ -271,21 +269,21 @@ function pointCameraDistance(
         cameraPosition = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
-            z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
+            z: (options3d.depth ?? 1) * (options3d.viewDistance ?? 0) +
                 options3d.depth
         },
         // Added support for objects with plotX or x coordinates.
         distance = Math.sqrt(
             Math.pow(
-                cameraPosition.x - pick(coordinates.plotX, coordinates.x),
+                cameraPosition.x - (coordinates.plotX ?? coordinates.x),
                 2
             ) +
             Math.pow(
-                cameraPosition.y - pick(coordinates.plotY, coordinates.y),
+                cameraPosition.y - (coordinates.plotY ?? coordinates.y),
                 2
             ) +
             Math.pow(
-                cameraPosition.z - pick(coordinates.plotZ, coordinates.z),
+                cameraPosition.z - (coordinates.plotZ ?? coordinates.z),
                 2
             )
         );

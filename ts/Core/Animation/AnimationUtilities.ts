@@ -35,8 +35,7 @@ import {
     isNumber,
     isObject,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -65,11 +64,8 @@ export function setAnimation(
     animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
-    chart.renderer.globalAnimation = pick(
-        animation,
-        chart.options.chart.animation,
-        true
-    );
+    chart.renderer.globalAnimation =
+        animation ?? chart.options.chart.animation ?? true;
 }
 
 /**
@@ -198,7 +194,9 @@ export function animate(
         }
 
         const fx = new Fx(el, opt, prop),
-            d = (params as SVGAttributes).d;
+            d = (params as SVGAttributes).d,
+            // Discrete value that doesn't animate, apply at once
+            applyImmediately = prop === 'dashstyle';
 
         let start: number|string = 0,
             end: number|string|undefined = void 0,
@@ -212,8 +210,13 @@ export function animate(
             );
             fx.toD = d;
             end = 1;
+
         } else if ((el as SVGElement)?.attr) {
             start = (el as SVGElement).attr(prop);
+            if (applyImmediately) {
+                (el as SVGElement).attr(prop, val);
+            }
+
         } else if (el) {
             start = +(getStyle(el as HTMLElement, prop) || 0);
             if (prop !== 'opacity') {
@@ -229,7 +232,7 @@ export function animate(
         }
 
         // Empty dashstyle animation crashes treemap on hover
-        if (defined(end)) {
+        if (defined(end) && !applyImmediately) {
             fx.run(start as any, end as any, unit);
         }
     });

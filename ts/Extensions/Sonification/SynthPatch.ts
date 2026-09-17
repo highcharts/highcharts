@@ -15,7 +15,7 @@
 
 'use strict';
 
-import { clamp, defined, pick } from '../../Shared/Utilities.js';
+import { clamp, defined } from '../../Shared/Utilities.js';
 
 /** @internal */
 type EnvelopePoint = Record<'t'|'vol', number>;
@@ -548,7 +548,7 @@ class Oscillator {
     ): void {
         const opts = this.options,
             f = clamp(
-                pick(opts.fixedFrequency, frequency) *
+                (opts.fixedFrequency ?? frequency) *
                 (opts.freqMultiplier || 1), 0, 21000
             ),
             oscTarget = this.getOscTarget(),
@@ -683,7 +683,7 @@ class Oscillator {
                 opts.releaseEnvelope && opts.releaseEnvelope.length;
         if (needsGainNode) {
             this.gainNode = new GainNode(this.audioContext, {
-                gain: pick(opts.volume, 1)
+                gain: (opts.volume ?? 1)
             });
         }
         // We always need VM gain, so make that
