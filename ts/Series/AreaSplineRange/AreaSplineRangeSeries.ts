@@ -158,7 +158,7 @@ export default AreaSplineRangeSeries;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.areasplinerange
- * @excluding dataParser, dataURL, stack, step, boostThreshold, boostBlending
+ * @excluding stack, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange

@@ -218,7 +218,6 @@ export default TrendLineIndicator;
  * @extends   series,plotOptions.trendline
  * @since     7.1.3
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/trendline
  * @apioption series.trendline

@@ -253,7 +253,6 @@ export default EMAIndicator;
  * @extends   series,plotOptions.ema
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @apioption series.ema
  */
