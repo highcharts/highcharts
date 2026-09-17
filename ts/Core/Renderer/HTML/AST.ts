@@ -606,13 +606,25 @@ class AST {
             //    XML
             // 2. Due to a Chromium issue where chart redraws are triggered by
             //    a `beforeprint` event (#16931),
-            //    https://issues.chromium.org/issues/40222135
+            //    https://issues.chromium.org/issues/40222135. In this case
+            //    the Trusted Types `createHTML` callback throws because it is
+            //    no longer runnable, even though `DOMParser` itself is not a
+            //    Trusted Types sink. Retry with the raw string below.
         }
 
         if (!doc) {
-            const body = createElement('div');
-            body.innerHTML = markup;
-            doc = { body };
+            try {
+                doc = new DOMParser().parseFromString(markup, 'text/html');
+            } catch {
+                // Ignore, fall through to the inert-document fallback below.
+            }
+        }
+
+        if (!doc) {
+            // Never assign untrusted markup to a live document's innerHTML
+            // (#22354). Parse into a detached, inert document instead.
+            doc = H.doc.implementation.createHTMLDocument('');
+            doc.body.innerHTML = markup;
         }
 
         const appendChildNodes = (
