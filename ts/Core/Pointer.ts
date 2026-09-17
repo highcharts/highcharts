@@ -345,7 +345,14 @@ class Pointer {
      * @function Highcharts.Pointer#destroy
      */
     public destroy(): void {
-        const pointer = this;
+        const pointer = this,
+            container = pointer.chart.container;
+
+        if (container) {
+            container.onclick =
+            container.onmousedown =
+            container.onmousemove = null; // #25305
+        }
 
         this.eventsToUnbind.forEach((unbind): void => unbind());
         this.eventsToUnbind = [];
