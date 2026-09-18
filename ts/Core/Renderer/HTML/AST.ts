@@ -29,7 +29,6 @@ const {
 } = H;
 import {
     attr,
-    createElement,
     css,
     isFunction,
     isString,
