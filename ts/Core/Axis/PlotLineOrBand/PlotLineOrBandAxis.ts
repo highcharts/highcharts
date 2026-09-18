@@ -39,6 +39,16 @@ import {
  *
  * */
 
+declare module '../AxisComposition' {
+    interface AxisComposition {
+        /**
+         * Clip rectangle keeping plot bands within the axis (#6257).
+         * @internal
+         */
+        plotBandClip?: SVGElement;
+    }
+}
+
 declare module '../AxisOptions' {
     interface AxisOptions {
         plotBands?: Array<PlotBandOptions>;
@@ -122,12 +132,6 @@ namespace PlotLineOrBandAxis {
             to: number,
             options?: (PlotBandOptions|PlotLineOptions)
         ): SVGPath;
-
-        /**
-         * Clip rectangle keeping plot bands within the axis (#6257).
-         * @internal
-         */
-        plotBandClip?: SVGElement;
 
         /**
          * Remove a plot band by its id.

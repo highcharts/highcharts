@@ -1339,7 +1339,7 @@ QUnit.test(
             }),
             xAxis = chart.xAxis[0],
             yAxis = chart.yAxis[0],
-            bands = xAxis.plotLinesAndBands,
+            bands = xAxis.plotBands,
             // Rendered band corners, index 1 for x and 2 for y
             corners = (band, index) => band.svgElem.pathArray
                 .filter(segment => segment.length === 3)
@@ -1366,7 +1366,7 @@ QUnit.test(
         );
 
         assert.close(
-            Math.max(...corners(yAxis.plotLinesAndBands[0], 2)),
+            Math.max(...corners(yAxis.plotBands[0], 2)),
             yAxis.toPixels(-5),
             1,
             'A band on a vertical axis should keep its real coordinates too'
