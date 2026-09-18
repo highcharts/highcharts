@@ -108,7 +108,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
     /**
      * Destroy point.
      * Then remove point from the layout.
-     * @private
+     * @internal
      */
     public destroy(): void {
         if (this.series?.layout) {

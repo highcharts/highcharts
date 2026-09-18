@@ -22,6 +22,18 @@ jobs:
       BROWSER_COUNT: 2
     steps:
       - uses: actions/checkout@v6
+
+      - name: Use Firefox 153.0.4
+        id: release-firefox
+        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.release-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
+
       - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'

@@ -223,7 +223,7 @@ export default APOIndicator;
  * @extends   series,plotOptions.apo
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
+ * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators

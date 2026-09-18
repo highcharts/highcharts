@@ -89,7 +89,10 @@ function getLatestCommitShaSync(useShortVersion = false) {
  */
 function getFilesChanged() {
     const ChildProcess = require('child_process');
-    return ChildProcess.execSync('git log --name-status --pretty="" origin/master..HEAD').toString() || '';
+    return ChildProcess.execFileSync(
+        'git',
+        ['diff', '--name-status', 'origin/master', 'HEAD']
+    ).toString() || '';
 }
 
 /* *
