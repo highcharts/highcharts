@@ -1060,4 +1060,26 @@ describe('DataTable', () => {
         });
     });
 
+    describe('Prototype pollution', () => {
+        it('should reject IDs that would pollute ID-keyed maps', () => {
+            const protoTable = new DataTable({ id: '__proto__' });
+            const constructorTable = new DataTable({ id: 'constructor' });
+
+            notStrictEqual(
+                protoTable.id,
+                '__proto__',
+                'The `__proto__` ID should be replaced by a unique key.'
+            );
+            ok(
+                protoTable.autoId,
+                'A table with a rejected ID should be flagged as auto-generated.'
+            );
+            notStrictEqual(
+                constructorTable.id,
+                'constructor',
+                'The `constructor` ID should be replaced by a unique key.'
+            );
+        });
+    });
+
 });
