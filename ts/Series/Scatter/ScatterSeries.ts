@@ -20,8 +20,6 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type { DeepPartial } from '../../Shared/Types';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -91,19 +89,6 @@ class ScatterSeries extends LineSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
-    /**
-     * @private
-     */
-    public setOptions(
-        itemOptions: DeepPartial<SeriesTypeOptions>
-    ): this['options'] {
-        const options = super.setOptions(itemOptions);
-
-        this.noSharedTooltip = !this.tooltipOptions.shared;
-
-        return options;
-    }
-
     /**
      * Optionally add the jitter effect.
      * @private
