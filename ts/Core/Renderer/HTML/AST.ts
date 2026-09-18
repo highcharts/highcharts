@@ -176,6 +176,7 @@ class AST {
         'title',
         'type',
         'valign',
+        'viewBox',
         'width',
         'x',
         'x1',
