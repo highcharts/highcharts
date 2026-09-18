@@ -1096,7 +1096,7 @@
     "highcharts/series-networkgraph/cloth",
     "highcharts/series-networkgraph/cuboids",
     "highcharts/series-networkgraph/data-options",
-    "highcharts/series-networkgraph/dicsonnected-graphs",
+    "highcharts/series-networkgraph/disconnected-graphs",
     "highcharts/series-networkgraph/forces",
     "highcharts/series-networkgraph/initial-positions",
     "highcharts/series-networkgraph/integration-comparison",
