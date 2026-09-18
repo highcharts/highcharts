@@ -424,7 +424,6 @@ export default LinearRegressionIndicator;
  * @extends   series,plotOptions.linearregression
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/regressions
  * @apioption series.linearregression

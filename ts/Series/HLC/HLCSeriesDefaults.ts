@@ -36,8 +36,7 @@ import type HLCSeriesOptions from './HLCSeriesOptions';
  *         HLC chart
  *
  * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
- *               stack
+ * @excluding    borderColor, borderRadius, borderWidth, crisp, stack, stacking
  * @product      highstock
  * @optionparent plotOptions.hlc
  */
@@ -159,7 +158,6 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.hlc
- * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.hlc
  */

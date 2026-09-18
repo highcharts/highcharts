@@ -2109,20 +2109,19 @@ class Pointer {
                     this.pinch(e);
                 }
 
+                // If inside, capture touch-drag and display tooltip. If not
+                // inside, allow dragging the finger to scroll the page
+                if (
+                    this.hasPointerCapture && // #25095
+                    e.type === 'touchmove' &&
+                    !(chart.scrollablePixelsX || chart.scrollablePixelsY)
+                ) {
+                    e.preventDefault();
+                }
+
             } else if (start) {
                 // Hide the tooltip on touching outside the plot area (#1203)
                 this.reset();
-            }
-
-            // If inside, capture touch-drag and display tooltip. If not inside,
-            // allow dragging the finger to scroll the page
-            if (
-                (chart.tooltip?.options.followTouchMove ?? true) &&
-                isInside &&
-                e.type === 'touchmove' &&
-                !(chart.scrollablePixelsX || chart.scrollablePixelsY)
-            ) {
-                e.preventDefault();
             }
 
         } else if ((e as any).touches.length === 2) {

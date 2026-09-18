@@ -6,6 +6,7 @@ import test from 'node:test';
 
 import {
     buildSubmissionManifest,
+    downloadLatestNightlyArchive,
     submitNightlyVisualReview,
     submitPullRequestVisualReview
 } from '../gulptasks/lib/visualReviewApi.js';
@@ -24,6 +25,24 @@ function response(status = 200, body = '', ...retryAfterValues) {
         },
         async text() {
             return body;
+        }
+    };
+}
+
+function nightlyResponse(submissions) {
+    return {
+        ...response(),
+        async json() {
+            return submissions;
+        }
+    };
+}
+
+function archiveResponse(readBody) {
+    return {
+        ...response(),
+        async arrayBuffer() {
+            return typeof readBody === 'function' ? readBody() : readBody;
         }
     };
 }
@@ -368,6 +387,63 @@ test('splits artifact uploads into endpoint-sized batches', async () => {
     }
 });
 
+test('uploads artifacts larger than a batch through the binary endpoint', async () => {
+    const largeReference = Buffer.alloc(7 * 1024 * 1024 + 1);
+    largeReference.write('<svg>');
+    const calls = [];
+    const progress = [];
+
+    await submitPullRequestVisualReview({
+        apiKey: 'test-api-key',
+        dependencies: {
+            fetchImpl: async (url, options) => {
+                calls.push({ url, options });
+                return response();
+            },
+            sleep: async () => {}
+        },
+        prNumber: 123,
+        prSha: sha,
+        productVersion: '13.0.1',
+        runAttempt: '1',
+        runId: '456',
+        runNumber: '789',
+        samples: [{
+            name: 'maps/series-geoheatmap/geoheatmap-equalearth',
+            comparisonValue: 42,
+            artifacts: {
+                reference: largeReference,
+                candidate: Buffer.from('<svg/>'),
+                difference: Buffer.from('GIF89a')
+            }
+        }],
+        onProgress: event => progress.push(event),
+        testReport: {}
+    });
+
+    assert.equal(calls.length, 4);
+    assert.equal(
+        calls[1].url,
+        'https://vrevs.highsoft.com/api/ingestion/submissions/456/attempts/1/' +
+        'artifacts/reference?sampleName=maps%2Fseries-geoheatmap%2F' +
+        'geoheatmap-equalearth'
+    );
+    assert.equal(calls[1].options.headers['content-type'], 'image/svg+xml');
+    assert.strictEqual(calls[1].options.body, largeReference);
+    assert.deepEqual(
+        JSON.parse(calls[2].options.body).artifacts.map(artifact => artifact.role),
+        ['candidate', 'difference']
+    );
+    assert.deepEqual(
+        progress.map(({ completed, role }) => [completed, role]),
+        [
+            [1, 'reference'],
+            [2, 'candidate'],
+            [3, 'difference']
+        ]
+    );
+});
+
 test('finalizes empty submissions', async () => {
     const calls = [];
     await submitPullRequestVisualReview({
@@ -439,6 +515,151 @@ test('retries transient responses and does not retry client errors', async () =>
         }),
         error => error.status === 400 && /invalid manifest/u.test(error.message)
     );
+});
+
+test('retries an archive body failure on the same URL after one discovery request', async () => {
+    const requests = [];
+    let archiveAttempts = 0;
+    const archive = Buffer.from('archive-bytes');
+    const result = await downloadLatestNightlyArchive({
+        apiKey: 'test-api-key',
+        apiUrl: 'https://vrevs.test',
+        dependencies: {
+            fetchImpl: async url => {
+                requests.push(url);
+                if (url.endsWith('/latest')) {
+                    return nightlyResponse([{
+                        runId: '9007199254740994',
+                        runAttempt: '2'
+                    }]);
+                }
+                archiveAttempts++;
+                return archiveAttempts === 1 ?
+                    archiveResponse(() => {
+                        throw new Error('stream closed prematurely');
+                    }) :
+                    archiveResponse(archive);
+            },
+            sleep: async () => {}
+        }
+    });
+
+    assert.deepEqual(result, archive);
+    assert.equal(requests.filter(url => url.endsWith('/latest')).length, 1);
+    assert.equal(archiveAttempts, 2);
+    assert.equal(requests[1], requests[2]);
+});
+
+test('preserves the final archive body failure and its cause after three attempts', async () => {
+    const cause = Object.assign(new Error('socket closed'), {
+        code: 'UND_ERR_SOCKET'
+    });
+    let archiveAttempts = 0;
+    let lastBodyError;
+
+    await assert.rejects(
+        downloadLatestNightlyArchive({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                fetchImpl: async url => {
+                    if (url.endsWith('/latest')) {
+                        return nightlyResponse([{
+                            runId: '9007199254740994',
+                            runAttempt: '2'
+                        }]);
+                    }
+                    archiveAttempts++;
+                    const bodyError = new Error('terminated', { cause });
+                    if (archiveAttempts === 3) {
+                        lastBodyError = bodyError;
+                    }
+                    return archiveResponse(() => {
+                        throw bodyError;
+                    });
+                },
+                sleep: async () => {}
+            }
+        }),
+        error => {
+            assert.equal(error.cause, lastBodyError);
+            assert.match(error.message, /terminated/u);
+            assert.match(error.message, /UND_ERR_SOCKET/u);
+            assert.match(error.message, /socket closed/u);
+            return true;
+        }
+    );
+    assert.equal(archiveAttempts, 3);
+});
+
+test('shares three attempts between transient archive responses and body failures', async () => {
+    const requests = [];
+    let archiveAttempts = 0;
+    let lastBodyError;
+    await assert.rejects(
+        downloadLatestNightlyArchive({
+            apiKey: 'test-api-key',
+            apiUrl: 'https://vrevs.test',
+            dependencies: {
+                fetchImpl: async url => {
+                    requests.push(url);
+                    if (url.endsWith('/latest')) {
+                        return nightlyResponse([{
+                            runId: '9007199254740994',
+                            runAttempt: '2'
+                        }]);
+                    }
+                    archiveAttempts++;
+                    if (archiveAttempts === 1) {
+                        return response(503, 'temporarily unavailable');
+                    }
+                    const bodyError = new Error('stream closed prematurely');
+                    lastBodyError = bodyError;
+                    return archiveResponse(() => {
+                        throw bodyError;
+                    });
+                },
+                sleep: async () => {}
+            }
+        }),
+        error => {
+            assert.equal(error.cause, lastBodyError);
+            return true;
+        }
+    );
+
+    assert.equal(requests.filter(url => url.endsWith('/latest')).length, 1);
+    assert.equal(archiveAttempts, 3);
+});
+
+test('does not retry non-transient archive response statuses', async () => {
+    for (const status of [401, 403, 404, 413]) {
+        let discoveryRequests = 0;
+        let archiveRequests = 0;
+        await assert.rejects(
+            downloadLatestNightlyArchive({
+                apiKey: 'test-api-key',
+                apiUrl: 'https://vrevs.test',
+                dependencies: {
+                    fetchImpl: async url => {
+                        if (url.endsWith('/latest')) {
+                            discoveryRequests++;
+                            return nightlyResponse([{
+                                runId: '9007199254740994',
+                                runAttempt: '2'
+                            }]);
+                        }
+                        archiveRequests++;
+                        return response(status, `archive failed with ${status}`);
+                    },
+                    sleep: async () => {}
+                }
+            }),
+            error => error.status === status
+        );
+        assert.equal(discoveryRequests, 1);
+        assert.equal(archiveRequests, 1);
+    }
 });
 
 test('honors numeric Retry-After seconds', async () => {

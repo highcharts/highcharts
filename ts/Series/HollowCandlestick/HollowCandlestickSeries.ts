@@ -403,7 +403,7 @@ export default HollowCandlestickSeries;
  *
  * @type      {*}
  * @extends   series,plotOptions.hollowcandlestick
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  * @product   highstock
  * @requires  modules/hollowcandlestick
  * @apioption series.hollowcandlestick
