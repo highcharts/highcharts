@@ -4286,10 +4286,13 @@ class Axis {
                     ) { // #2248, #4660
                         if (!alternateBands[pos]) {
                             // Should be imported from PlotLineOrBand.js, but
-                            // the dependency cycle with axis is a problem
+                            // the dependency cycle with axis is a problem. Try
+                            // moving it to the PlotLineOrBand axis composition
+                            // later.
                             alternateBands[pos] = new (H as any).PlotLineOrBand(
                                 axis,
-                                {}
+                                {},
+                                'plotBands'
                             );
                         }
                         from = pos + tickmarkOffset; // #949
