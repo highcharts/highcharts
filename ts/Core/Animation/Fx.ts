@@ -523,7 +523,9 @@ class Fx {
                 // Fixed from the right side, "scaling" left
                 } else if (
                     startX[startX.length - 1] ===
-                        endX[endX.length - startX.length + i]
+                    endX[endX.length - startX.length + i] &&
+                    // Ensure right side is not moving (#25280)
+                    startX[startX.length - 1] === endX[endX.length - 1]
                 ) {
                     shift = startX.length - i;
                     break;

@@ -236,6 +236,74 @@ QUnit.test('Path animation', function (assert) {
     }
 });
 
+QUnit.test(
+    'initPath fixed vs moving right edge (#10696, #25280)',
+    function (assert) {
+        const fromD = [
+            ['M', 400, 120],
+            ['L', 700, 120]
+        ];
+        const toD = [
+            ['M', 200, 120],
+            ['L', 700, 120]
+        ];
+
+        // Right edge fixed: last x in startX matches last x in endX (#10696).
+        const fixedRight = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [1800, 3600],
+                endX: [2349, 3600],
+                isArea: false
+            },
+            fromD,
+            toD
+        );
+
+        assert.strictEqual(
+            fixedRight[0].length,
+            fixedRight[1].length,
+            'Fixed right edge should pad paths to equal length (#10696).'
+        );
+        assert.ok(
+            fixedRight[0].length > 0,
+            'Start path should not be empty when right edge is fixed.'
+        );
+
+        // Right edge moving: x values align in the middle,
+        // but last x differs (#25280).
+        const movingRight = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [100, 200, 3600],
+                endX: [2349, 3600, 4000],
+                isArea: false
+            },
+            [
+                ['M', 100, 120],
+                ['L', 400, 120],
+                ['L', 700, 120]
+            ],
+            [
+                ['M', 200, 120],
+                ['L', 500, 120],
+                ['L', 800, 120]
+            ]
+        );
+
+        assert.strictEqual(
+            movingRight[0].length,
+            0,
+            'Moving right edge should not use fixed-right alignment (#25280).'
+        );
+        assert.notStrictEqual(
+            movingRight[0].length,
+            movingRight[1].length,
+            'Paths should not be padded when the right edge is moving.'
+        );
+    }
+);
+
 QUnit.test('Symbol animation', function (assert) {
     // Hijack animation
     var clock = TestUtilities.lolexInstall();

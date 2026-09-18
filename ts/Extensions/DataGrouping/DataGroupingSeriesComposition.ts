@@ -316,7 +316,9 @@ function anchorPoints(
     const groupedDataLastIndex = groupedXData.length - 1,
         anchor = dataGroupingOptions.anchor,
         firstAnchor = dataGroupingOptions.firstAnchor,
-        lastAnchor = dataGroupingOptions.lastAnchor;
+        lastAnchor = dataGroupingOptions.lastAnchor,
+        dataMax = series.xAxis?.dataMax,
+        anchorMax = isNumber(dataMax) ? Math.min(xMax, dataMax) : xMax;
     let anchorIndexIterator = groupedXData.length - 1,
         anchorFirstIndex = 0;
 
@@ -348,7 +350,9 @@ function anchorPoints(
         groupedDataLastIndex > 0 &&
             lastAnchor &&
             totalRange &&
-            groupedXData[groupedDataLastIndex] >= xMax - totalRange
+            // Use dataMax, not axis.max: overscroll padding must not disable
+            // lastAnchor when the last group is at the data edge (#25280).
+            groupedXData[groupedDataLastIndex] >= anchorMax - totalRange
     ) {
         anchorIndexIterator--;
         const lastGroupStart = series.groupMap[
