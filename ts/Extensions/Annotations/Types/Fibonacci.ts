@@ -11,13 +11,13 @@
  *
  * */
 
+import type { AnnotationOptions } from '../AnnotationOptions';
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
-import CrookedLine from './CrookedLine';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
@@ -394,7 +394,7 @@ namespace Fibonacci {
          * @extends   annotations.types.crookedLine.labelOptions
          * @apioption annotations.types.fibonacci.typeOptions.labels
          */
-        labels: Array<CrookedLine.Options['labelOptions']>;
+        labels: Array<AnnotationOptions['labelOptions']>;
 
         /**
          * The color of line.

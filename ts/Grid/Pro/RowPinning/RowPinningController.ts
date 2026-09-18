@@ -54,6 +54,39 @@ export type RowPinningPosition = 'top'|'bottom';
 export type RowPinningChangeAction = 'pin'|'unpin'|'toggle';
 
 /**
+ * Language options for the row pinning feature.
+ */
+export interface RowPinningLangOptions {
+    /**
+     * Label used for the built-in row pinning context menu group.
+     *
+     * @default 'Row pinning'
+     */
+    label?: string;
+
+    /**
+     * Label used for the built-in "pin row to top" action.
+     *
+     * @default 'Pin row to top'
+     */
+    pinRowTop?: string;
+
+    /**
+     * Label used for the built-in "pin row to bottom" action.
+     *
+     * @default 'Pin row to bottom'
+     */
+    pinRowBottom?: string;
+
+    /**
+     * Label used for the built-in "unpin row" action.
+     *
+     * @default 'Unpin row'
+     */
+    unpinRow?: string;
+}
+
+/**
  * Snapshot of pinned row IDs by section.
  */
 export interface RowPinningState {
@@ -113,19 +146,15 @@ export interface RowPinningSectionOptions {
  */
 export interface RowPinningOptions {
     /**
-     * Whether row pinning is enabled.
+     * Whether built-in row pinning UI is enabled.
      *
-     * @default true
+     * This controls UI affordances such as context menu actions. Configured
+     * pinned rows and the runtime row pinning API continue to work when it is
+     * disabled.
+     *
+     * @default false
      */
     enabled?: boolean;
-
-    /**
-     * Column ID containing stable unique row IDs used by pinning.
-     *
-     * When omitted, row pinning uses the provider row IDs resolved by the
-     * Grid.
-     */
-    idColumn?: string;
 
     /**
      * Row IDs pinned to the top section on initial render.
@@ -223,18 +252,32 @@ export interface RowPinningLangA11yOptions {
     };
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
     interface CellContextMenuBuiltInActionIdRegistry {
         pinRowTop: never;
         pinRowBottom: never;
         unpinRow: never;
     }
 
+    interface CellContextMenuBuiltInGroupIdRegistry {
+        pinning: never;
+    }
+}
+
+declare module '../../Core/Options' {
     interface LangOptions {
+        /**
+         * Language options for the row pinning feature.
+         */
+        rowPinning?: RowPinningLangOptions;
+
         /**
          * Label used for the built-in "pin row to top" action.
          *
          * @default 'Pin row to top'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowTop` instead.
          */
         pinRowTop?: string;
 
@@ -242,6 +285,9 @@ declare module '../../Core/Options' {
          * Label used for the built-in "pin row to bottom" action.
          *
          * @default 'Pin row to bottom'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowBottom` instead.
          */
         pinRowBottom?: string;
 
@@ -249,6 +295,9 @@ declare module '../../Core/Options' {
          * Label used for the built-in "unpin row" action.
          *
          * @default 'Unpin row'
+         *
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.unpinRow` instead.
          */
         unpinRow?: string;
     }
@@ -477,10 +526,10 @@ class RowPinningController {
     }
 
     /**
-     * Returns whether the `enabled` pinning option is not explicitly `false`.
+     * Returns whether the `enabled` pinning option is explicitly `true`.
      */
     public isOptionEnabled(): boolean {
-        return this.getPinningOptions()?.enabled !== false;
+        return this.getPinningOptions()?.enabled === true;
     }
 
     /**

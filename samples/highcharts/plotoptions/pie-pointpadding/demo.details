@@ -1,0 +1,6 @@
+---
+ name: Pie point padding plugin
+ authors:
+   - Wojciech Chmiel
+ js_wrap: b
+...

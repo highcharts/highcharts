@@ -1,0 +1,6 @@
+---
+name: Column virtualization benchmark
+authors:
+  - Dawid Dragula
+js_wrap: b
+...

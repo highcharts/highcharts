@@ -242,8 +242,12 @@ class Accessibility {
         let msg: string | undefined;
 
         if (filteringApplied && condition) {
-            const parsedCondition =
-                ColumnFiltering.parseCamelCaseToReadable(condition);
+            const column = this.grid.viewport?.getColumn(columnId);
+            const parsedCondition = ColumnFiltering.getOperatorLabel(
+                condition,
+                column?.dataType ?? 'string',
+                lang
+            );
 
             if (
                 condition === 'empty' ||

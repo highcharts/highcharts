@@ -18,10 +18,10 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
@@ -55,20 +55,20 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         allowDG?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        fillColor?: ColorType;
-        lineColor?: ColorType;
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
         shape?: FlagsShapeValue;
     }
 }
 
+/** @internal */
 interface DistributedBoxObject extends R.BoxObject {
     anchorX?: number;
     plotX?: number;
@@ -83,7 +83,7 @@ interface DistributedBoxObject extends R.BoxObject {
 /**
  * The Flags series.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.flags
  *
@@ -126,7 +126,7 @@ class FlagsSeries extends ColumnSeries {
 
     /**
      * Disable animation, but keep clipping (#8546).
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (init) {
@@ -136,7 +136,7 @@ class FlagsSeries extends ColumnSeries {
 
     /**
      * Draw the markers.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -346,7 +346,7 @@ class FlagsSeries extends ColumnSeries {
     /**
      * Extend the column trackers with listeners to expand and contract
      * stacks.
-     * @private
+     * @internal
      */
     public drawTracker(): void {
         const series = this,
@@ -404,23 +404,23 @@ class FlagsSeries extends ColumnSeries {
 
     /**
      * Get presentational attributes
-     * @private
+     * @internal
      */
     public pointAttribs(
         point: FlagsPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            color = (point && point.color) || this.color;
+            color = point?.color || this.color;
 
         let lineColor = options.lineColor,
-            lineWidth = (point && point.lineWidth),
-            fill = (point && point.fillColor) || options.fillColor;
+            lineWidth = point?.lineWidth,
+            fill = point?.fillColor || options.fillColor;
 
         if (state) {
-            fill = (options.states as any)[state].fillColor;
-            lineColor = (options.states as any)[state].lineColor;
-            lineWidth = (options.states as any)[state].lineWidth;
+            fill = options.states?.[state]?.fillColor;
+            lineColor = options.states?.[state]?.lineColor;
+            lineWidth = options.states?.[state]?.lineWidth;
         }
 
         return {
@@ -431,7 +431,7 @@ class FlagsSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public setClip(): void {
         Series.prototype.setClip.apply(this, arguments as any);
@@ -452,6 +452,7 @@ class FlagsSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     allowDG: boolean;
     group: typeof ColumnSeries.prototype.group;
@@ -474,7 +475,7 @@ extend(FlagsSeries.prototype, {
     buildKDTree: noop,
     /**
      * Inherit the initialization from base Series.
-     * @private
+     * @internal
      */
     init: Series.prototype.init
 });
@@ -485,6 +486,7 @@ extend(FlagsSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         flags: typeof FlagsSeries;
@@ -498,16 +500,5 @@ SeriesRegistry.registerSeriesType('flags', FlagsSeries);
  *
  * */
 
+/** @internal */
 export default FlagsSeries;
-
-/* *
- *
- *  API Declarations
- *
- * */
-
-/**
- * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
- */
-
-''; // Detach doclets above

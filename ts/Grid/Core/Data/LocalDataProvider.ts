@@ -34,7 +34,7 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional, TypedArray, AnyRecord } from '../../../Shared/Types';
+import type { MakeOptional, TypedArray } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -44,6 +44,7 @@ import DataProviderRegistry from './DataProviderRegistry.js';
 import { uniqueKey } from '../../../Core/Utilities.js';
 import {
     defined,
+    fireEvent,
     isNumber,
     isString
 } from '../../../Shared/Utilities.js';
@@ -171,12 +172,19 @@ export class LocalDataProvider extends DataProvider {
     private async handleTableChange(e: DataEvent): Promise<void> {
         this.querying.shouldBeUpdated = true;
 
+        if (
+            e.type === 'afterDeleteRows' ||
+            e.type === 'afterSetRows'
+        ) {
+            this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
+        }
+
         const grid = this.querying.grid;
         if (!grid?.viewport) {
             return;
         }
 
-        if (e.type === 'afterSetCell' && e.detail?.fromGrid) {
+        if (e.detail?.fromGrid) {
             return;
         }
 
@@ -238,7 +246,17 @@ export class LocalDataProvider extends DataProvider {
             })
         );
 
-        this.setDataTable(connector.getTable());
+        if (!connector.loaded) {
+            try {
+                const loadedConnector = await connector.load();
+                connector.converter = loadedConnector.converter;
+                connector.loaded = true;
+            } catch {
+                return;
+            }
+        }
+
+        this.setDataTable(connector.getTable(this.options.dataTableKey));
 
         if (
             'enablePolling' in connector.options &&
@@ -249,14 +267,6 @@ export class LocalDataProvider extends DataProvider {
             connector.startPolling(
                 Math.max(connector.options.dataRefreshRate || 0, 1) * 1000
             );
-        }
-
-        if (!connector.loaded) {
-            try {
-                await connector.load();
-            } catch {
-                return;
-            }
         }
     }
 
@@ -419,16 +429,17 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
-        const grid = this.querying.grid;
-        if ('treeView' in grid && grid.treeView) {
-            try {
-                grid.treeView.sync();
-                interTable = grid.treeView.projectTable(interTable);
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error((error as AnyRecord).message);
-            }
-        }
+        const projectPresentationTableEvent = {
+            table: interTable
+        } as {
+            table: DataTable;
+        };
+        fireEvent(
+            this.querying.grid,
+            'projectPresentationTable',
+            projectPresentationTableEvent
+        );
+        interTable = projectPresentationTableEvent.table;
 
         this.prePaginationRowCount = interTable.rowCount;
 
@@ -577,6 +588,12 @@ export interface LocalDataProviderOptions extends DataProviderOptions {
      *         Grid with HTML table connector
      */
     connector?: GridDataConnectorTypeOptions | DataConnectorType;
+
+    /**
+     * The connector data table key used as the grid data source. If omitted,
+     * the first connector table is used.
+     */
+    dataTableKey?: string;
 
     /**
      * Columns data to initialize the Grid with.

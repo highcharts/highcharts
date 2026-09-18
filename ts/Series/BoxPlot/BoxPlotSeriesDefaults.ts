@@ -40,13 +40,28 @@ import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
  *         Jittered scatter plot on top of a box plot
  *
  * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
+ * @excluding    borderColor, borderWidth, groupZPadding,
  *               states, boostThreshold, boostBlending
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
 const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
+
+    /**
+     * The corner radius of the border surrounding the box. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a size relative to the box width.
+     *
+     * @sample {highcharts} highcharts/demo/violin-plot/
+     *         Box plot with rounded corners
+     *
+     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
+     * @default 0
+     * @since   13.0.1
+     * @product highcharts
+     */
+    borderRadius: 0,
 
     /**
      * The Y axis value to serve as the base for the columns, for
@@ -276,6 +291,26 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      */
 
     /**
+     * The point key used to position a box plot data label.
+     *
+     * @typedef {"low"|"q1"|"median"|"q3"|"high"} Highcharts.BoxPlotPointValKey
+     */
+
+    /**
+     * The point key to use for positioning this data label.
+     * Possible values are `low`, `q1`, `median`, `q3` and `high`.
+     *
+     * @sample {highcharts} highcharts/series-boxplot/data-labels/
+     *         Multiple data labels
+     *
+     * @type      {Highcharts.BoxPlotPointValKey}
+     * @default   high
+     * @validvalue ["low", "q1", "median", "q3", "high"]
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.dataLabels.alignToKey
+     */
+
+    /**
      * The color of the whiskers, the horizontal lines marking low and high
      * values. When `undefined`, the general series color is used.
      *
@@ -318,7 +353,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.boxplot
- * @excluding dataParser, dataURL, marker, stack, stacking, states,
+ * @excluding marker, stack, stacking, states,
  *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  highcharts-more

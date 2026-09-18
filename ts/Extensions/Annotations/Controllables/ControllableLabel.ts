@@ -32,8 +32,7 @@ import MockPoint from '../MockPoint.js';
 import {
     extend,
     getAlignFactor,
-    isNumber,
-    pick
+    isNumber
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -503,7 +502,7 @@ class ControllableLabel extends Controllable {
                 itemPosition = tooltip.getPosition.call(
                     {
                         chart,
-                        distance: pick(itemOptions.distance, 16),
+                        distance: (itemOptions.distance ?? 16),
                         getPlayingField: tooltip.getPlayingField,
                         pointer: tooltip.pointer
                     },

@@ -170,7 +170,6 @@ export default NATRIndicator;
  * @extends   series,plotOptions.natr
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/atr
  * @requires  stock/indicators/natr

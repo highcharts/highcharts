@@ -1838,14 +1838,14 @@ const productInfo = {
         name: 'Morningstar',
         icon: `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1483_3937)">
-                <path d="M13.7999 13.6C14.6799 12.4333 15.1998 10.9926 15.1998 
-                9.43158C15.1998 5.54856 11.9762 2.40002 8.0003 2.40002C4.02442 
-                2.40002 0.799805 5.54856 0.799805 9.43158C0.799805 
-                10.9915 1.31932 
-                12.4341 2.19844 13.6H3.696C2.6088 12.5293 1.9372 11.0588 1.9372 
-                9.43158C1.9372 6.16186 4.65152 3.5106 8.0003 
-                3.5106C11.3491 3.5106 
-                14.063 6.16186 14.063 9.43158C14.063 11.0566 13.3925 12.5293 
+                <path d="M13.7999 13.6C14.6799 12.4333 15.1998 10.9926 15.1998
+                9.43158C15.1998 5.54856 11.9762 2.40002 8.0003 2.40002C4.02442
+                2.40002 0.799805 5.54856 0.799805 9.43158C0.799805
+                10.9915 1.31932
+                12.4341 2.19844 13.6H3.696C2.6088 12.5293 1.9372 11.0588 1.9372
+                9.43158C1.9372 6.16186 4.65152 3.5106 8.0003
+                3.5106C11.3491 3.5106
+                14.063 6.16186 14.063 9.43158C14.063 11.0566 13.3925 12.5293
                 12.3076 13.6H13.7999Z" fill="#E93D42"/>
                 </g>
                 <defs>
@@ -1875,8 +1875,8 @@ const charts = {
         demoName: 'Advanced accessible chart',
         // eslint-disable-next-line max-len
         demoDescription: 'Chart demonstrating more advanced accessibility configuration.',
-        chartDescription: `A purely decorative chart demonstrating 
-       more advanced accessibility configuration, using 
+        chartDescription: `A purely decorative chart demonstrating
+       more advanced accessibility configuration, using
        a custom series type based on the boxplot series.`,
         madeWith: ['core']
     },
@@ -1886,8 +1886,8 @@ const charts = {
         demoName: 'Live data (CSV) ',
         // eslint-disable-next-line max-len
         demoDescription: 'Data input from a remote, changing, CSV file.',
-        chartDescription: `A purely decorative chart demonstrating 
-       the use of the data module to load data from 
+        chartDescription: `A purely decorative chart demonstrating
+       the use of the data module to load data from
        a remote CSV file, with polling enabled.`,
         madeWith: ['core']
     },
@@ -1897,7 +1897,7 @@ const charts = {
         demoName: 'Polygon Series',
         // eslint-disable-next-line max-len
         demoDescription: 'Height and weight data plotted using a set of coordinates.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the polygon series type.`,
         madeWith: ['core']
     },
@@ -1907,7 +1907,7 @@ const charts = {
         demoName: 'Scatter plot with linear regression',
         // eslint-disable-next-line max-len
         demoDescription: 'Scatter charts are often used to visualize the relationships between data in two dimensions.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the scatter series type with linear regression.`,
         madeWith: ['core']
     },
@@ -1917,7 +1917,7 @@ const charts = {
         demoName: 'Heatmap',
         // eslint-disable-next-line max-len
         demoDescription: 'Heatmaps visualize hot spots within data sets, and to show patterns or correlations.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the heatmap series type.`,
         madeWith: ['core']
     },
@@ -1927,7 +1927,7 @@ const charts = {
         demoName: 'Pictorial Series',
         // eslint-disable-next-line max-len
         demoDescription: 'Chart showing the composition of the human body.',
-        chartDescription: `A purely decorative chart demonstrating 
+        chartDescription: `A purely decorative chart demonstrating
        the use of the pictorial series type.`,
         madeWith: ['core']
     }
@@ -1963,7 +1963,7 @@ function buildDemo() {
     let buttonString = '';
     for (let ii = 0; ii < chart.madeWith.length; ++ii) {
         const product = productInfo[chart.madeWith[ii]];
-        buttonString +=  `<a href="${product.url}" 
+        buttonString +=  `<a href="${product.url}"
         target="_blank" class="hc-button hc-button--white hc-button--size-100">
         ${product.name}`;
         let isHighchartsIcon = false;

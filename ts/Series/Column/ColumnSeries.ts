@@ -25,14 +25,13 @@ import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColumnSeriesDefaults from './ColumnSeriesDefaults.js';
@@ -49,8 +48,7 @@ import {
     isArray,
     isNumber,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -59,9 +57,12 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         barW?: number;
+        /** @internal */
         pointXOffset?: number;
     }
 }
@@ -217,7 +218,7 @@ class ColumnSeries extends Series {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         options: ColumnSeriesOptions
     ): void {
-        super.init.apply(this, arguments as any);
+        super.init.apply(this, arguments);
 
         const series = this;
 
@@ -307,12 +308,9 @@ class ColumnSeries extends Series {
             pointOffsetWidth = groupWidth / (columnCount || 1),
             pointWidth = Math.min(
                 options.maxPointWidth || xAxis.len,
-                pick(
-                    options.pointWidth,
-                    pointOffsetWidth * (
-                        1 - 2 * (options.pointPadding as any)
-                    )
-                )
+                (options.pointWidth ?? pointOffsetWidth * (
+                    1 - 2 * (options.pointPadding as any)
+                ))
             ),
             pointPadding = (pointOffsetWidth - pointWidth) / 2,
             // #1251, #3737
@@ -677,25 +675,24 @@ class ColumnSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            p2o = (this as any).pointAttrToOptions || {},
+            p2o = this.pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
 
-        let stateOptions: SeriesStateHoverOptions,
+        let stateOptions: SeriesStatesOptions<ColumnSeriesOptions>[keyof SeriesStatesOptions<ColumnSeriesOptions>],
             zone,
             brightness,
-            fill = (point && point.color) || this.color,
+            fill = point?.color || this.color,
             // Set to fill when borderColor null:
             stroke = (
-                (point && (point as any)[strokeOption]) ||
-                (options as any)[strokeOption] ||
+                point?.[strokeOption] ||
+                options[strokeOption] ||
                 fill
             ),
-            dashstyle =
-                (point && point.options.dashStyle) || options.dashStyle,
-            strokeWidth = ((point as any)?.[strokeWidthOption]) ??
-                (options as any)[strokeWidthOption] ??
-                (this as any)[strokeWidthOption] ?? 1,
+            dashstyle = point?.options.dashStyle || options.dashStyle,
+            strokeWidth = point?.[strokeWidthOption] ??
+                options[strokeWidthOption] ??
+                this[strokeWidthOption] ?? 1,
             opacity = (point?.isNull && options.nullInteraction) ?
                 0 :
                 (point?.opacity ?? options.opacity ?? 1);
@@ -721,7 +718,7 @@ class ColumnSeries extends Series {
         // Select or hover states
         if (state && point) {
             stateOptions = merge(
-                (options.states as any)[state],
+                options.states?.[state],
                 // #6401
                 point.options.states?.[state] || {}
             );
@@ -729,20 +726,19 @@ class ColumnSeries extends Series {
             fill =
                 stateOptions.color || (
                     typeof brightness !== 'undefined' &&
-                    color(fill as any)
+                    color(fill)
                         .brighten(stateOptions.brightness as any)
                         .get()
                 ) || fill;
-            stroke = (stateOptions as any)[strokeOption] || stroke;
-            strokeWidth =
-                (stateOptions as any)[strokeWidthOption] || strokeWidth;
+            stroke = stateOptions[strokeOption] || stroke;
+            strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
             dashstyle = stateOptions.dashStyle || dashstyle;
-            opacity = pick(stateOptions.opacity, opacity);
+            opacity = stateOptions.opacity ?? opacity;
         }
 
         const ret: SVGAttributes = {
-            fill: fill as any,
-            stroke: stroke,
+            fill,
+            stroke,
             'stroke-width': strokeWidth,
             opacity: point?.condemned ? 0 : opacity
         };
@@ -805,6 +801,7 @@ class ColumnSeries extends Series {
                         );
                         if (!styledMode) {
                             initialAttr.opacity = 0;
+                            initialAttr['stroke-width'] = 0;
                         }
                         shouldUpdate = true;
                         verb = 'animate';
@@ -829,7 +826,7 @@ class ColumnSeries extends Series {
                 if (!styledMode) {
                     graphic[verb](series.pointAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : ''
                     ))
                         .shadow(
                             point.allowShadow !== false && options.shadow
@@ -970,7 +967,7 @@ class ColumnSeries extends Series {
             });
         }
 
-        Series.prototype.remove.apply(series, arguments as any);
+        Series.prototype.remove.apply(series, arguments);
     }
 
 
@@ -982,6 +979,7 @@ class ColumnSeries extends Series {
  *
  * */
 
+/** @internal */
 interface ColumnSeries {
     pointClass: typeof ColumnPoint;
 }
@@ -1004,6 +1002,7 @@ extend(ColumnSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         column: typeof ColumnSeries;
@@ -1017,6 +1016,7 @@ SeriesRegistry.registerSeriesType('column', ColumnSeries);
  *
  * */
 
+/** @internal */
 export default ColumnSeries;
 
 /* *

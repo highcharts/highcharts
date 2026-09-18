@@ -127,7 +127,21 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
      */
     size: true as any,
 
+    /**
+     * @declare Highcharts.SeriesFunnelDataLabelsOptionsObject
+     * @extends plotOptions.pie.dataLabels
+     */
     dataLabels: {
+
+        /**
+         * Whether to render the data label inside the funnel item instead of
+         * outside, connected by a connector line.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption plotOptions.funnel.dataLabels.inside
+         */
+
         connectorWidth: 1,
         verticalAlign: 'middle'
     },
@@ -174,7 +188,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.funnel
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostBlending, boostThreshold
  * @product   highcharts
  * @requires  modules/funnel

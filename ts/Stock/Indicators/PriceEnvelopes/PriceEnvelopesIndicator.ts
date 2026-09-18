@@ -313,7 +313,6 @@ export default PriceEnvelopesIndicator;
  *
  * @extends   series,plotOptions.priceenvelopes
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/price-envelopes

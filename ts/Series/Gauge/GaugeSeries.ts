@@ -46,7 +46,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -684,7 +683,7 @@ class GaugeSeries extends Series {
         Series.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
-        if (pick(redraw, true)) {
+        if (redraw ?? true) {
             this.chart.redraw();
         }
     }
@@ -766,7 +765,7 @@ export default GaugeSeries;
  *
  * @extends   series,plotOptions.gauge
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            cropThreshold, dashStyle, findNearestPointBy,
  *            getExtremesFromAll, marker, negativeColor, pointPlacement, shadow,
  *            softThreshold, stack, stacking, states, step, threshold,
  *            turboThreshold, zoneAxis, zones, dataSorting, boostBlending

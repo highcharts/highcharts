@@ -68,6 +68,7 @@ class PinnedTableRow extends TableRow {
             for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
                 await (this.cells[i] as PinnedTableCell).setValue();
             }
+            await this.syncRenderedCells();
         }
 
         if (doReflow) {

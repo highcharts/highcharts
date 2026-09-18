@@ -13,7 +13,7 @@
  *
  * */
 
-import PCIndicator from './PCIndicator';
+import type PCIndicator from './PCIndicator';
 import type SMAPoint from '../SMA/SMAPoint';
 
 /* *

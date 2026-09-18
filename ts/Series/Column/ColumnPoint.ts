@@ -28,12 +28,15 @@ import Point from '../../Core/Series/Point.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /** @internal */
         allowShadow?: boolean;
     }
 }
 
+/** @internal */
 export class ColumnPoint extends Point {
     allowShadow?: boolean;
     barX!: number;
@@ -50,4 +53,5 @@ export class ColumnPoint extends Point {
  *
  * */
 
+/** @internal */
 export default ColumnPoint;

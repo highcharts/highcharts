@@ -25,7 +25,7 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import Series from '../../../Core/Series/Series';
+import type Series from '../../../Core/Series/Series';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
@@ -240,7 +240,6 @@ export default OBVIndicator;
  * @extends   series,plotOptions.obv
  * @since     9.1.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/obv
  * @apioption series.obv

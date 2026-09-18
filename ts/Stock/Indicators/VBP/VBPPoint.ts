@@ -23,7 +23,7 @@ const {
         }
     }
 } = SeriesRegistry.seriesTypes;
-import VBPIndicator from './VBPIndicator';
+import type VBPIndicator from './VBPIndicator';
 
 /* *
  *

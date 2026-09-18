@@ -24,10 +24,7 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../Utils/Announcer.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import T from '../../Core/Templating.js';
 const {
     format
@@ -46,7 +43,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import {
     clamp,
     internalClearTimeout,
-    pick,
     syncTimeout
 } from '../../Shared/Utilities.js';
 
@@ -85,7 +81,7 @@ class NavigatorComponent extends AccessibilityComponent {
                         .updateGroupProxyElementPositions('navigator');
                     component.updateHandleValues();
                 }, animObject(
-                    pick(this.chart.renderer.globalAnimation, true)
+                    (this.chart.renderer.globalAnimation ?? true)
                 ).duration);
             }
         });

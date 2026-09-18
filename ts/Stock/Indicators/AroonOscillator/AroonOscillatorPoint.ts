@@ -12,7 +12,7 @@
  *
  * */
 
-import AroonOscillatorIndicator from './AroonOscillatorIndicator';
+import type AroonOscillatorIndicator from './AroonOscillatorIndicator';
 import type AroonPoint from '../Aroon/AroonPoint';
 
 /* *

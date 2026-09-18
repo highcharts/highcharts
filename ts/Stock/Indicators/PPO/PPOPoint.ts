@@ -12,7 +12,7 @@
  *  Imports
  *
  * */
-import PPOIndicator from './PPOIndicator';
+import type PPOIndicator from './PPOIndicator';
 import type EMAPoint from '../EMA/EMAPoint';
 
 /* *

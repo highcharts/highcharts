@@ -1,6 +1,7 @@
 ---
- name: Multiple data tables
+ name: Get data table from Data module
  authors:
    - Torstein Hønsi
+ requiresManualTesting: true
  js_wrap: b
 ...

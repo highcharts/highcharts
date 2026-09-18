@@ -59,7 +59,6 @@ import {
     fireEvent,
     isArray,
     isNumber,
-    pick,
     pushUnique,
     wrap
 } from '../../Shared/Utilities.js';
@@ -204,15 +203,12 @@ function allocateIfNotSeriesBoosting(
  * True, if boost is enabled.
  */
 function boostEnabled(chart: Chart): boolean {
-    return pick(
-        (
-            chart &&
+    return ((
+        chart &&
             chart.options &&
             chart.options.boost &&
             chart.options.boost.enabled
-        ),
-        true
-    );
+    ) ?? true);
 }
 
 /** @internal */
@@ -591,26 +587,15 @@ function destroyGraphics(
 ): void {
     const points = series.points;
 
-    if (points) {
-        let point: Point,
-            i: number;
-
-        for (i = 0; i < points.length; i = i + 1) {
-            point = points[i];
-            if (point && point.destroyElements) {
-                point.destroyElements(); // #7557
-            }
-        }
-    }
+    points?.forEach((point): void => {
+        point?.destroyElements?.(); // #7557
+    });
 
     (
         ['graph', 'area', 'tracker'] as
         Array<('graph'|'area'|'tracker')>
     ).forEach((prop): void => {
-        const seriesProp = series[prop];
-        if (seriesProp) {
-            series[prop] = seriesProp.destroy();
-        }
+        series[prop] = series[prop]?.destroy();
     });
 
     for (const zone of series.zones) {
@@ -794,7 +779,7 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+        threshold = (options.boostThreshold ?? Number.MAX_VALUE);
 
     if (threshold === 0) {
         return false;
@@ -826,7 +811,7 @@ const getSeriesBoosting = (
     data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
     const { options, forceCrop, chart } = series,
-        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+        threshold = (options.boostThreshold ?? Number.MAX_VALUE);
 
     // Return early if either will be grouped or boost is disabled.
     if (forceCrop || threshold === 0) {
@@ -990,12 +975,9 @@ function getPoint(
         }
     }
 
-    point.category = pick(
-        xAxis.categories ?
-            xAxis.categories[point.x] :
-            point.x, // @todo simplify
-        point.x
-    );
+    point.category = (xAxis.categories ?
+        xAxis.categories[point.x] :
+        point.x ?? point.x);
     point.key = point.name ?? point.category;
 
     point.dist = boostPoint.dist;
@@ -1046,7 +1028,15 @@ function scatterProcessData(
         yData = series.getColumn('y'),
         yExtremes = yAxis.getExtremes(),
         yMax = yExtremes.max ?? Number.MAX_VALUE,
-        yMin = yExtremes.min ?? -Number.MAX_VALUE;
+        yMin = yExtremes.min ?? -Number.MAX_VALUE,
+        // Crop on the Y axis only against the hard options bounds, not the
+        // auto-scaled `yAxis.min` and `yAxis.max`. Cropping against them would
+        // lock reset zoom to the old window and stop the data extremes from
+        // being restored (#24386).
+        yCropMin = yAxis.userMin ?? (isNumber(yAxis.options.min) ?
+            yAxis.options.min : -Number.MAX_VALUE),
+        yCropMax = yAxis.userMax ?? (isNumber(yAxis.options.max) ?
+            yAxis.options.max : Number.MAX_VALUE);
 
     /// if (series.boost) {
     //     delete series.boost.pointDataIndices;
@@ -1110,7 +1100,7 @@ function scatterProcessData(
 
         if (
             x >= xMin && x <= xMax &&
-            y >= yMin && y <= yMax
+            y >= yCropMin && y <= yCropMax
         ) {
             processedXData.push(x);
             processedYData.push(y);
@@ -1204,7 +1194,7 @@ function seriesRenderCanvas(this: Series): void {
             this.options.xData ||
             this.getColumn('x', true)
         ),
-        lineWidth = pick(options.lineWidth, 1),
+        lineWidth = (options.lineWidth ?? 1),
         nullYSubstitute = options.nullInteraction && yMin,
         tooltip = chart.tooltip;
 

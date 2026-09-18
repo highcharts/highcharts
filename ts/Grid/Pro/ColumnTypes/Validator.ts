@@ -281,7 +281,7 @@ class Validator {
         }
 
         for (const rule of rules) {
-            let ruleDef: RuleDefinition;
+            let ruleDef: RuleDefinition|undefined;
             let err: ValidationNotification|undefined;
 
             if (typeof rule === 'string') {
@@ -289,6 +289,10 @@ class Validator {
                 err = validationNotifications?.[rule];
             } else {
                 ruleDef = rule;
+            }
+
+            if (!ruleDef) {
+                continue;
             }
 
             let validateFn: ValidateFunction;

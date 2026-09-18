@@ -85,14 +85,12 @@ const dataset = [
 ];
 
 const columns = {
-    id: [],
     path: [],
     name: [],
     budget: []
 };
 
-for (const [index, [path, budget]] of dataset.entries()) {
-    columns.id.push(index + 1);
+for (const [path, budget] of dataset) {
     columns.path.push(path);
     columns.name.push(path.split('/').pop());
     columns.budget.push(budget);
@@ -100,20 +98,20 @@ for (const [index, [path, budget]] of dataset.entries()) {
 
 window.grid = Grid.grid('container', {
     data: {
-        columns,
-        idColumn: 'id',
-        treeView: {
-            input: {
-                type: 'path'
-            },
-            expandedRowIds: 'all',
-            stickyParents: true,
-            treeColumn: 'name'
-        }
+        columns
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path'
+        },
+        treeColumn: 'name'
     },
     header: ['name', 'budget'],
     rendering: {
         rows: {
+            expandedLevels: 'all',
+            stickyParents: true,
             virtualization: true
         }
     }

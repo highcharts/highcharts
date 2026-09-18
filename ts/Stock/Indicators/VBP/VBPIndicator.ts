@@ -38,8 +38,7 @@ import type {
 import type { TypedArray } from '../../../Shared/Types';
 import VBPPoint from './VBPPoint.js';
 
-import A from '../../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../../Core/Animation/AnimationUtilities.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -983,7 +982,7 @@ export default VBPIndicator;
  * @extends   series,plotOptions.vbp
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL, compare, compareBase, compareStart
+ * @excluding compare, compareBase, compareStart
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/volume-by-price
  * @apioption series.vbp

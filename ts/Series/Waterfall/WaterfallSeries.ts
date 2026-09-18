@@ -45,8 +45,7 @@ import {
     isNumber,
     isObject,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -226,14 +225,14 @@ class WaterfallSeries extends ColumnSeries {
 
     // Postprocess mapping between options and SVG attributes
     public pointAttribs(
-        point: WaterfallPoint,
-        state: StatesOptionsKey
+        point?: WaterfallPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
 
         const upColor = this.options.upColor;
 
         // Set or reset up color (#3710, update to negative)
-        if (upColor && !point.options.color && isNumber(point.y)) {
+        if (upColor && point && !point.options.color && isNumber(point.y)) {
             point.color = point.y > 0 ? upColor : void 0;
         }
 
@@ -611,7 +610,7 @@ extend(WaterfallSeries.prototype, {
 addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
     const series = this,
         { options, points, yAxis } = series,
-        minPointLength = pick(options.minPointLength, 5),
+        minPointLength = (options.minPointLength ?? 5),
         halfMinPointLength = minPointLength / 2,
         threshold = options.threshold || 0,
         stacking = options.stacking,

@@ -110,9 +110,15 @@ QUnit.test(
             chart.xAxis[0].ticks[2].label.getBBox().height,
             'Third label is same as second'
         );
+    }
+);
+
+QUnit.test(
+    '#22961: Dynamic line clamp',
+    function (assert) {
 
         // #22961
-        chart.update({
+        const chart = Highcharts.chart('container', {
             chart: {
                 type: 'column'
             },

@@ -161,6 +161,7 @@ function uploadProductPackage(productProps, options = {}) {
 
     promises.push(uploadFiles({
         bucket: options.bucket,
+        dryrun: options.dryrun,
         files: [
             zipFile,
             zipWithoutVersion
@@ -175,6 +176,7 @@ function uploadProductPackage(productProps, options = {}) {
         cdnFiles.push.apply(cdnFiles, rootJSFiles);
         promises.push(uploadFiles({
             bucket: options.bucket,
+            dryrun: options.dryrun,
             files: rootJSFiles,
             name: prettyName,
             s3Params: {
@@ -191,6 +193,7 @@ function uploadProductPackage(productProps, options = {}) {
         cdnFiles.push.apply(cdnFiles, rootGfxFiles);
         promises.push(uploadFiles({
             bucket: options.bucket,
+            dryrun: options.dryrun,
             files: rootGfxFiles,
             name: prettyName,
             s3Params: {
@@ -206,6 +209,7 @@ function uploadProductPackage(productProps, options = {}) {
         cdnFiles.push.apply(cdnFiles, versionJSFiles);
         promises.push(uploadFiles({
             bucket: options.bucket,
+            dryrun: options.dryrun,
             files: versionJSFiles,
             name: prettyName,
             s3Params: {
@@ -222,6 +226,7 @@ function uploadProductPackage(productProps, options = {}) {
         cdnFiles.push.apply(cdnFiles, versionGfxFiles);
         promises.push(uploadFiles({
             bucket: options.bucket,
+            dryrun: options.dryrun,
             files: versionGfxFiles,
             name: prettyName,
             s3Params: {
@@ -282,7 +287,7 @@ function distUploadCode() {
         log.message(`Using bucket ${bucket} as defined in git-ignore-me.properties.`);
     }
 
-    if (!bucket) {
+    if (!bucket && !argv.dryrun) {
         throw new Error('No --bucket or --use-git-ignore-me argument specified.');
     }
 
@@ -291,7 +296,7 @@ function distUploadCode() {
             return Promise.reject(new Error(`Could not find entry in build-properties.json for: ${productName}`));
         }
         const productProps = { name: productName, ...products[productName], version: properties.version };
-        return uploadProductPackage(productProps, { bucket });
+        return uploadProductPackage(productProps, { bucket, dryrun: argv.dryrun });
     });
 
     for (const file of ['products.js', 'products.json']) {
@@ -302,6 +307,7 @@ function distUploadCode() {
             }],
             name: file,
             bucket,
+            dryrun: argv.dryrun,
             profile: argv.profile
         }));
     }
@@ -312,6 +318,7 @@ function distUploadCode() {
 distUploadCode.description = 'Uploads distribution files (zipped/binary) to code bucket.';
 distUploadCode.flags = {
     '--bucket': 'S3 bucket to upload to. Is overridden if --use-git-ignore-me is defined.',
+    '--dryrun': 'Writes the resulting file tree to ./tmp/s3/ instead of uploading. (optional)',
     '--product': 'Product to upload. E.g. Highcharts, Grid. (optional - default is Highcharts)',
     '--products': 'Comma-separated list of products to upload, according to the selected product. For ' +
         'product=Highcharts, e.g highcharts,highmaps (optional - default is all products defined in proper build-properties.json).',

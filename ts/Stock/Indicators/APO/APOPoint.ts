@@ -13,7 +13,7 @@
  *
  * */
 
-import APOIndicator from './APOIndicator';
+import type APOIndicator from './APOIndicator';
 import type EMAPoint from '../EMA/EMAPoint';
 
 

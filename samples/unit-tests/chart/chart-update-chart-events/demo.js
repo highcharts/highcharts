@@ -3,7 +3,9 @@ QUnit.test('Chart events', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
             events: {
-                redraw: () => stack.push('Redraw.1')
+                redraw: () => stack.push('Redraw.1'),
+                update: e => stack.push(`Update.${!!e.hasChanged}`),
+                afterUpdate: () => stack.push('AfterUpdate')
             },
             width: 200
         }
@@ -35,9 +37,11 @@ QUnit.test('Chart events', assert => {
     assert.deepEqual(
         stack,
         [
-            'Redraw.1'
+            'Redraw.1',
+            'Update.true',
+            'AfterUpdate'
         ],
-        'Updated without redraw, no event should fire'
+        'Updated without redraw, the update events should fire but no redraw'
     );
 
     chart.redraw();
@@ -45,8 +49,39 @@ QUnit.test('Chart events', assert => {
         stack,
         [
             'Redraw.1',
+            'Update.true',
+            'AfterUpdate',
             'Redraw.2'
         ],
         'Redrew, only the replaced event should fire (#6538)'
+    );
+
+    chart.update({});
+    assert.deepEqual(
+        stack,
+        [
+            'Redraw.1',
+            'Update.true',
+            'AfterUpdate',
+            'Redraw.2',
+            'Update.false'
+        ],
+        'Empty chart.update({}) should be a no-op, neither ' +
+        'afterUpdate nor redraw should fire (#24805)'
+    );
+
+    chart.update({ chart: { width: 300 } });
+    assert.deepEqual(
+        stack,
+        [
+            'Redraw.1',
+            'Update.true',
+            'AfterUpdate',
+            'Redraw.2',
+            'Update.false',
+            'Update.false'
+        ],
+        'chart.update() with options matching current state should be a ' +
+        'no-op, neither afterUpdate nor redraw should fire (#24805)'
     );
 });

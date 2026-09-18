@@ -11,7 +11,13 @@ From the root folder run `node --import tsx --test test/ts-node-unit-tests/tests
 
 Optionally the `--watch` flag can be used to automatically rerun on changes.
 
-The tests will also run as part of the pre-commit script.
+The tests also run as part of the pre-commit script and the Highcharts CI
+workflow's Node unit tests job using `npm run test-node`. This includes the
+benchmark worker and CLI regression tests. Dependency changes in `package.json`
+or `package-lock.json` trigger the workflow as well.
+
+The Test tooling workflow also runs the benchmark worker and CLI regression
+tests on Linux and Windows with both LTS and latest Node.js.
 
 ## Caveats
 * `ts-node` doesn't support all the settings in `.tsconfig.json`, such as path rewriting. As a result, imports will have to be relative from the test folder.
@@ -22,8 +28,9 @@ Run using `npm run benchmark`.
 
 Optional arguments:
 * `--context [base|actual]`, sets the context for comparisions
-* `--pattern [regex]`, match benchmark files by the given pattern.
-I.e. `*.bench.local.ts`.
+* `--pattern [substring]`, match file paths containing the literal text, e.g.
+  `Stock/` or `.bench.local.ts`. Regular expressions and wildcards are not
+  interpreted.
 
 Reports for each test will be output to `tmp/benchmarks/actual/` (or `tmp/benchmarks/base/` depending on the context).
 
@@ -36,7 +43,11 @@ and a default export, which is the main test.
 
 The config for now only contains the sample sizes the test is run with.
 
-The test can return any number, but generally it is assumed to be a duration.
+The test must return a finite number (including zero), usually a duration.
+
+Import errors, missing default functions, invalid results and failed benchmark
+iterations stop the runner with a nonzero exit code. Failed iterations are not
+recorded as timings.
 
 The `before` function is optional, but if defined it should return an object that contains a fileName and a function used to generate a dataset. The dataset is cached locally to speed up the total testing time.
 

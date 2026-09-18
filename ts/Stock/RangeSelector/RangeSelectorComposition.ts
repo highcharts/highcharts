@@ -32,7 +32,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -128,7 +127,7 @@ function axisMinFromRange(
         }
     }
 
-    const dataMin = pick(this.dataMin, Number.MIN_VALUE);
+    const dataMin = (this.dataMin ?? Number.MIN_VALUE);
 
     if (!isNumber(min)) {
         min = dataMin;
@@ -141,7 +140,8 @@ function axisMinFromRange(
         }
         this.newMax = Math.min(
             min + range,
-            pick(this.dataMax, Number.MAX_VALUE)
+            (this.dataMax ?? Number.MAX_VALUE
+            )
         );
     }
 
@@ -355,8 +355,8 @@ function onChartUpdate(
         this.rangeSelector = rangeSelector = new RangeSelectorConstructor(this);
     }
 
-    this.extraBottomMargin = false;
-    this.extraTopMargin = false;
+    this.extraBottomMargin = void 0;
+    this.extraTopMargin = void 0;
 
     if (rangeSelector) {
 
