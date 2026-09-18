@@ -1133,6 +1133,7 @@
     "highcharts/series-polar/column-inverted-threshold",
     "highcharts/series-polar/column-inverted-update",
     "highcharts/series-polar/tooltip-shared",
+    "highcharts/series-sankey/circular-dependencies",
     "highcharts/series-sankey/dense",
     "highcharts/series-sankey/height",
     "highcharts/series-sankey/link-color-mode",
