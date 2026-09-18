@@ -38,6 +38,7 @@ import {
     addEvent,
     arrayMax,
     arrayMin,
+    clamp,
     defined,
     destroyObjectProperties,
     erase,
@@ -276,6 +277,23 @@ class PlotLineOrBand {
                 logarithmic?.log2lin(to) ?? to,
                 options
             );
+
+            // The band isn't fitted to the axis, so clip the ones that extend
+            // outside it. Only along the axis, to leave `acrossPanes` bands and
+            // the navigator alone (#6257).
+            let clip: SVGElement|undefined;
+            if (path.isOverflowing) {
+                const { len, pos } = axis,
+                    // Left wide open across the axis, so that a scrollable plot
+                    // area isn't cut off
+                    clipBox = horiz ?
+                        { height: 1e5, width: len, x: pos, y: 0 } :
+                        { height: len, width: 1e5, x: 0, y: pos };
+
+                clip = axis.plotBandClip ||= renderer.clipRect(clipBox);
+                clip.attr(clipBox);
+            }
+            svgElem.clip(clip);
         }
 
         if (path) {
@@ -415,19 +433,32 @@ class PlotLineOrBand {
 
         // Get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
-        const xBounds = path.xBounds ||
+        const { horiz, len, pos } = axis,
+            xBounds = path.xBounds ||
                 [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])],
             yBounds = path.yBounds ||
                 [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])],
-            x = arrayMin(xBounds),
-            y = arrayMin(yBounds),
-            bBoxWidth = arrayMax(xBounds) - x;
+            bounds = horiz ? xBounds : yBounds;
+
+        let low = arrayMin(bounds),
+            high = arrayMax(bounds);
+
+        // A clipped band is only partly visible, so align the label within the
+        // visible part (#6257)
+        if (path.isOverflowing) {
+            low = clamp(low, pos, pos + len);
+            high = clamp(high, pos, pos + len);
+        }
+
+        const x = horiz ? low : arrayMin(xBounds),
+            y = horiz ? arrayMin(yBounds) : low,
+            bBoxWidth = horiz ? high - low : arrayMax(xBounds) - x;
 
         label.align(optionsLabel, false, {
             x,
             y,
             width: bBoxWidth,
-            height: arrayMax(yBounds) - y
+            height: horiz ? arrayMax(yBounds) - y : high - low
         });
 
         label.alignAttr.y -= renderer.fontMetrics(label).b;
