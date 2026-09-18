@@ -449,6 +449,18 @@ class WGLRenderer {
             yData = (
                 series.getColumn('y').length ? series.getColumn('y') : void 0
             ) || (options as any).yData || series.getColumn('y', true),
+            lowData = isRange ? (
+                (
+                    series.getColumn('low').length ?
+                        series.getColumn('low') : void 0
+                ) || series.getColumn('low', true)
+            ) : void 0,
+            highData = isRange ? (
+                (
+                    series.getColumn('high').length ?
+                        series.getColumn('high') : void 0
+                ) || series.getColumn('high', true)
+            ) : void 0,
             zData = (
                 series.getColumn('z').length ? series.getColumn('z') : void 0
             ) || (options as any).zData || series.getColumn('z', true),
@@ -934,8 +946,8 @@ class WGLRenderer {
                     y = (d as any).slice(1, 3);
                 }
 
-                low = series.getColumn('low', true)?.[i];
-                y = series.getColumn('high', true)?.[i] || 0;
+                low = lowData?.[i];
+                y = highData?.[i] || 0;
 
             } else if (isStacked) {
                 x = (d as any).x;
