@@ -4600,7 +4600,6 @@ class Axis {
                 if (!chart.styledMode) {
                     cross
                         .attr({
-                            dashstyle: options.dashStyle || 'Solid',
                             stroke: options.color || (
                                 categorized ?
                                     color(
@@ -4608,7 +4607,9 @@ class Axis {
                                     ).setOpacity(0.25).get() :
                                     'var(--highcharts-neutral-color-20)'
                             ),
-                            'stroke-width': options.width ?? 1
+                            'stroke-width': options.width ?? 1,
+                            // Dash style must be after stroke-width
+                            dashstyle: options.dashStyle || 'Solid'
                         })
                         .css({
                             'pointer-events': 'none'
