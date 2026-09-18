@@ -18,13 +18,13 @@
  *
  * */
 
+import type Legend from '../Core/Legend/Legend';
 import type OHLCSeries from './OHLC/OHLCSeries';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type { SymbolFunction } from '../Core/Renderer/SVG/SymbolType';
 
 import H from '../Core/Globals.js';
-import Legend from '../Core/Legend/Legend.js';
 import { addEvent, crisp, pushUnique } from '../Shared/Utilities.js';
 
 const { composed } = H;
@@ -82,6 +82,7 @@ namespace FinancialSymbols {
 
     /** @internal */
     export function compose(
+        LegendClass: typeof Legend,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'Series.FinancialSymbols')) {
@@ -98,7 +99,7 @@ namespace FinancialSymbols {
             ];
 
             // The legend itself colors the down glyph
-            addEvent(Legend, 'afterColorizeItem', function (e): void {
+            addEvent(LegendClass, 'afterColorizeItem', function (e): void {
                 const { item, visible } = e as {
                         item: OHLCSeries;
                         visible: boolean;
