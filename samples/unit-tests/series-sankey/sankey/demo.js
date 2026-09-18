@@ -608,8 +608,9 @@ QUnit.test('Sankey and circular data', function (assert) {
         selfLink.isCircular, true, 'Self link should be marked circular (#8218)'
     );
     assert.strictEqual(
-        series.isDataCircular, false,
-        'Self links alone should not trigger the circular layout (#8218)'
+        selfLink.wrapLane, undefined,
+        'A self link should lap its own node instead of taking a wrap lane ' +
+        '(#8218)'
     );
     assert.deepEqual(
         [series.nodes[0].level, series.nodes[1].level], [0, 1],
@@ -628,10 +629,9 @@ QUnit.test('Sankey and circular data', function (assert) {
     );
 
     series.setData([['a', 'b', 1], ['b', 'c', 1]]);
-    assert.deepEqual(
-        [series.isDataCircular, series.firstColCircShift],
-        [false, 0],
-        'Circular state and spacing should reset for acyclic data (#8218)'
+    assert.strictEqual(
+        series.firstColCircShift, 0,
+        'Circular spacing should reset for acyclic data (#8218)'
     );
     assert.notOk(
         series.points.some(point => point.isCircular),
@@ -644,14 +644,11 @@ QUnit.test('Sankey and circular data', function (assert) {
         [false, true],
         'Only the return (back) edge should be marked circular'
     );
-    assert.ok(
-        series.isDataCircular,
+    assert.strictEqual(
+        typeof series.points[1].wrapLane, 'number',
         'A back edge should trigger the circular layout'
     );
 
-    // A back edge wraps past its own band instead of running between the
-    // columns, so its label anchor has to sit on the wrap channel. Probing
-    // the fill keeps this independent of the actual coordinates.
     const backEdge = series.points[1];
     assert.ok(
         backEdge.graphic.element.isPointInFill(new DOMPoint(
@@ -662,14 +659,11 @@ QUnit.test('Sankey and circular data', function (assert) {
     );
 
     series.update({ name: 'updated' });
-    assert.ok(
-        series.isDataCircular,
+    assert.strictEqual(
+        typeof series.points[1].wrapLane, 'number',
         'Circular layout should persist after a series update (#8218)'
     );
 
-    // Each back edge gets its own wrap lane. Without one, a thin back edge
-    // was drawn inside a thicker one, and their labels landed on top of each
-    // other. Probing the fill keeps this free of coordinates.
     series.setData([
         ['a', 'b', 20], ['b', 'c', 15], ['b', 'a', 5],
         ['c', 'd', 5], ['c', 'b', 5], ['d', 'a', 1], ['d', 'b', 1]
@@ -680,8 +674,7 @@ QUnit.test('Sankey and circular data', function (assert) {
     assert.strictEqual(
         backEdges.length, 4, 'This topology should need four back edges'
     );
-    // dlBox spans the lane the band runs along, so overlapping boxes mean
-    // overlapping lanes.
+    // dlBox spans the lane the band runs along
     const lanes = backEdges.map(point => [
             Math.min(point.dlBox.y, point.dlBox.y + point.dlBox.height),
             Math.max(point.dlBox.y, point.dlBox.y + point.dlBox.height)
@@ -701,14 +694,13 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Back edges should not share a wrap lane (#8218)'
     );
 
-    // b -> a routes along the top lane, so it has to leave node b above the
-    // forward link, or its band would cross the one it sits on.
     assert.deepEqual(
         series.nodes
             .find(node => node.id === 'b').linksFrom
             .map(link => link.toNode.id),
         ['a', 'c'],
-        'A link bound for the top lane should attach above the flow (#8218)'
+        'A link bound for a lane should attach on the lane side of the node, ' +
+        'so its band does not cross the one it sits on (#8218)'
     );
 
     series.setData([['a', 'a', 5], ['a', 'b', 5], ['b', 'a', 5]]);
@@ -736,12 +728,8 @@ QUnit.test('Sankey and circular data', function (assert) {
             { id: 'E', column: 0 }, { id: 'F', column: 2 }
         ]
     });
-    assert.deepEqual(
-        [
-            chart.series[0].isDataCircular,
-            chart.series[0].points[0].isCircular
-        ],
-        [false, false],
+    assert.notOk(
+        chart.series[0].points[0].isCircular,
         'Explicit-column backward data should not be marked circular (#8218)'
     );
 
@@ -749,6 +737,60 @@ QUnit.test('Sankey and circular data', function (assert) {
         typeof series.points[0].wrapLane,
         'number',
         'A backward link outside a cycle should get a wrap lane (#8218)'
+    );
+
+    // The flow axis is the path's y, the column axis its x, either way round
+    const bandExtent = point => {
+        const flow = [],
+            column = [];
+
+        for (const segment of point.shapeArgs.d) {
+            if (segment[0] === 'A') {
+                column.push(segment[6]);
+                flow.push(segment[7]);
+            } else if (segment[0] !== 'Z') {
+                column.push(segment[1]);
+                flow.push(segment[2]);
+            }
+        }
+
+        return {
+            flow: Math.max(...flow) - Math.min(...flow),
+            min: Math.min(...column),
+            max: Math.max(...column)
+        };
+    };
+
+    chart.update({ chart: { inverted: true } });
+    series.update({
+        data: [['a', 'b', 20], ['b', 'c', 15], ['b', 'a', 5]],
+        nodes: []
+    });
+
+    assert.ok(
+        bandExtent(series.points.find(point => point.isCircular)).flow <
+            chart.plotSizeY / 2,
+        'An inverted back edge should reach its lane without crossing the ' +
+        'flow axis (#8218)'
+    );
+
+    // Narrow enough for the reservation past the edge columns to be capped
+    chart.update({ chart: { inverted: false, width: 400 } });
+    series.update({
+        curveFactor: 1.6,
+        nodeWidth: 60,
+        data: [['a', 'b', 5], ['b', 'a', 5]]
+    });
+
+    const capped = bandExtent(series.points.find(point => point.isCircular));
+
+    assert.deepEqual(
+        [
+            Math.round(Math.min(0, capped.min)),
+            Math.round(Math.max(0, capped.max - chart.plotSizeX))
+        ],
+        [0, 0],
+        'A capped turn should keep the band inside the plot (#8218)'
     );
 });
 

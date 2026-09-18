@@ -51,7 +51,7 @@ In addition to auto-generated properties, custom properties such as `color` or `
 Circular dependencies
 ---------------------
 
-Links may flow back to an earlier node, forming a cycle. A link that closes a cycle is drawn as a band wrapping around the diagram, running in a lane along the top or the bottom of the plot area. Each such link gets a lane of its own, so two of them never overlap, and they are shared out between the two sides to keep the diagram balanced. A link where `from` and `to` refer to the same node is drawn as a loop around that node instead.
+Links may flow back to an earlier node, forming a cycle. A link that closes a cycle is drawn as a band wrapping around the diagram, running in a lane along one of the two plot area edges the flow runs between. Each such link gets a lane of its own, so two of them never overlap, and they are shared out between the two sides to keep the diagram balanced. A link where `from` and `to` refer to the same node is drawn as a loop around that node instead.
 
 When a cycle contains more than one link, the link that closes it during traversal is the one drawn as the wrapping band, which for a simple cycle is the one appearing last in the data. The order of the data therefore decides which flow reads as the "return" flow. The turn radius of the wrapping bands follows the [curveFactor](https://api.highcharts.com/highcharts/series.sankey.curveFactor) option; a self-link turns on the node width instead, so its loop keeps a hole to place the label in.
 
