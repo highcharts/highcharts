@@ -45,7 +45,6 @@ const { splice, setLength } = ColumnUtils;
 import {
     addEvent,
     defined,
-    extend,
     fireEvent,
     isNumber
 } from '../Shared/Utilities.js';
@@ -902,6 +901,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             if (columnId !== newColumnId) {
                 columns[newColumnId] = columns[columnId];
                 delete columns[columnId];
+                table.versionTag = uniqueKey();
             }
 
             return true;
@@ -1029,7 +1029,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             super.setColumns(
                 columns,
                 rowIndex,
-                extend(eventDetail, { silent: true })
+                { ...eventDetail, silent: true }
             );
         } else {
             for (

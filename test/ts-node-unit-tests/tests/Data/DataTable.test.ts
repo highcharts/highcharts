@@ -110,6 +110,33 @@ describe('DataTable', () => {
                 'Table should retrieve only existing column.'
             );
         });
+
+        it('should update the version tag', () => {
+            const table = new DataTable({ columns: { column1: [true] } });
+            const versionTag = table.getVersionTag();
+
+            table.changeColumnId('column1', 'newColumn');
+
+            notStrictEqual(
+                table.getVersionTag(),
+                versionTag,
+                'Renaming a column should update the version tag.'
+            );
+        });
+
+        it('should keep the version tag when nothing changes', () => {
+            const table = new DataTable({ columns: { column1: [true] } });
+            const versionTag = table.getVersionTag();
+
+            table.changeColumnId('column1', 'column1');
+            table.changeColumnId('nonexistant', 'newColumn');
+
+            strictEqual(
+                table.getVersionTag(),
+                versionTag,
+                'Renames without effect should keep the version tag.'
+            );
+        });
     });
 
     describe('Column Retrieve', () => {
@@ -749,6 +776,20 @@ describe('DataTable', () => {
             strictEqual(columns.y[3], undefined, 'y[3] should be undefined');
             strictEqual(columns.y[4], undefined, 'y[4] should be undefined');
             strictEqual(columns.y[5], undefined, 'y[5] should be undefined');
+        });
+
+        it('should not mutate the passed event detail', () => {
+            // A leaked `silent` flag would mute a later call reusing it.
+            const eventDetail = {};
+            const table = new DataTable({ columns: { column1: [1] } });
+
+            table.setColumns({ column1: [2] }, void 0, eventDetail);
+
+            deepStrictEqual(
+                eventDetail,
+                {},
+                'Passed event detail should not be mutated.'
+            );
         });
     });
 
