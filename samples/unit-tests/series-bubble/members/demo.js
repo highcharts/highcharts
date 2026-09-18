@@ -1,8 +1,7 @@
-QUnit.test('directTouch', function (assert) {
+QUnit.test('Shared tooltip', function (assert) {
     var bubbleSeries = Highcharts.Series.types.bubble;
-    assert.strictEqual(
+    assert.notOk(
         bubbleSeries.prototype.noSharedTooltip,
-        true,
-        'noSharedTooltip should default to true.'
+        'Bubble series should support shared tooltips.'
     );
 });
