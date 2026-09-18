@@ -26,6 +26,13 @@ Use row pinning to keep selected rows visible at the top or bottom while the
 main row set scrolls normally. See
 [Row pinning](https://www.highcharts.com/docs/grid/rows/pinning).
 
+## Selection
+
+Use row selection to let end users pick one or more rows, then read the
+selection through the API and events to drive editing, exporting, or a
+connected chart. See
+[Row selection](https://www.highcharts.com/docs/grid/rows/selection).
+
 ## Tree view
 
 Use TreeView to present hierarchical source rows as an expandable hierarchy with
