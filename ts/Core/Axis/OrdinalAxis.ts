@@ -673,7 +673,14 @@ namespace OrdinalAxis {
             if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
-            } else if (Math.abs(movedUnits) > 1) {
+            // Drag panning ignores movements of a single point to avoid
+            // jitter, but mouse wheel panning accumulates a constant pixel
+            // step per notch (see MouseWheelZoom) and needs single-point
+            // granularity to keep a constant on-screen speed across zoom
+            // levels.
+            } else if (
+                Math.abs(movedUnits) > ((e as AnyRecord).mouseWheel ? 0 : 1)
+            ) {
 
                 // Remove active points for shared tooltip
                 if (hoverPoints) {
