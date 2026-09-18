@@ -19,6 +19,7 @@
  * */
 
 import type HLCSeriesOptions from './HLCSeriesOptions';
+import type Legend from '../../Core/Legend/Legend';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -62,9 +63,10 @@ class HLCSeries extends ColumnSeries {
 
     public static compose(
         _SeriesClass: typeof Series,
+        LegendClass: typeof Legend,
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        FinancialSymbols.compose(SVGRendererClass);
+        FinancialSymbols.compose(LegendClass, SVGRendererClass);
     }
 
     public static defaultOptions: HLCSeriesOptions = merge(

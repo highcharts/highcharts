@@ -1901,6 +1901,7 @@
     "stock/navigator/styling-interactive",
     "stock/plotoptions/candlestick-color",
     "stock/plotoptions/candlestick-linecolor",
+    "stock/plotoptions/financial-legend-symbols",
     "stock/plotoptions/flags-allowoverlapx",
     "stock/plotoptions/flags-onkey",
     "stock/plotoptions/flags-stackdistance",
