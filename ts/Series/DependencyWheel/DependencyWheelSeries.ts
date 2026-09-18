@@ -46,7 +46,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dependencywheel
  *
@@ -60,6 +59,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DependencyWheelSeriesOptions = merge(
         SankeySeries.defaultOptions,
         DependencyWheelSeriesDefaults
@@ -75,8 +75,10 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options!: DependencyWheelSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
+    /** @internal */
     public nodes!: Array<DependencyWheelPoint>;
 
     public points!: Array<DependencyWheelPoint>;
@@ -87,6 +89,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public animate(init?: boolean): void {
         const series = this;
 
@@ -124,6 +127,7 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public createNode(id: string): DependencyWheelPoint {
         const node = super.createNode(id) as DependencyWheelPoint;
 
@@ -390,15 +394,20 @@ class DependencyWheelSeries extends SankeySeries {
  *
  * */
 
-/** @internal */
 interface DependencyWheelSeries {
+    /** @internal */
     getCenter: typeof PieSeries.prototype.getCenter;
+    /** @internal */
     orderNodes: boolean;
+    /** @internal */
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
+    /** @internal */
     orderNodes: false,
+    /** @internal */
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
+    /** @internal */
     getCenter: PieSeries.prototype.getCenter
 });
 
@@ -408,7 +417,6 @@ extend(DependencyWheelSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof DependencyWheelSeries;
@@ -423,5 +431,4 @@ SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
  *
  * */
 
-/** @internal */
 export default DependencyWheelSeries;

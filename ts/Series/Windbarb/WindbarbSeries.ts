@@ -106,6 +106,7 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WindbarbSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WindbarbSeriesDefaults
@@ -127,6 +128,7 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public init(
         chart: Chart,
         options: WindbarbSeriesOptions
@@ -135,6 +137,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     // Get presentational attributes.
+    /** @internal */
     public pointAttribs(
         point?: WindbarbPoint,
         state?: StatesOptionsKey
@@ -158,6 +161,7 @@ class WindbarbSeries extends ColumnSeries {
 
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
+    /** @internal */
     public windArrow(
         point: WindbarbPoint
     ): (SVGElement|SVGPath) {
@@ -236,6 +240,7 @@ class WindbarbSeries extends ColumnSeries {
         return path;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const chart = this.chart,
             yAxis = this.yAxis,
@@ -296,6 +301,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     // Fade in the arrows on initializing series.
+    /** @internal */
     public animate(
         init?: boolean
     ): void {
@@ -310,14 +316,17 @@ class WindbarbSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public markerAttribs(): SVGAttributes {
         return {};
     }
 
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         return {};
     }
 
+    /** @internal */
     public shouldShowTooltip(
         plotX: number,
         plotY: number,
@@ -336,15 +345,25 @@ class WindbarbSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
+    /** @internal */
     beaufortFloor: Array<number>;
+    /** @internal */
     beaufortName: Array<string>;
+    /** @internal */
     group: typeof ColumnSeries.prototype.group;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof WindbarbPoint;
+    /** @internal */
     remove: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     drawTracker: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }
@@ -352,21 +371,29 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
 OnSeriesComposition.compose(WindbarbSeries);
 
 extend(WindbarbSeries.prototype, {
+    /** @internal */
     beaufortFloor: [
         0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7
     ], // @todo dictionary with names?
+    /** @internal */
     beaufortName: [
         'Calm', 'Light air', 'Light breeze',
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
         'Violent storm', 'Hurricane'
     ],
+    /** @internal */
     invertible: false,
+    /** @internal */
     parallelArrays: ['x', 'value', 'direction'],
+    /** @internal */
     pointArrayMap: ['value', 'direction'],
+    /** @internal */
     pointClass: WindbarbPoint,
+    /** @internal */
     trackerGroups: ['markerGroup'],
+    /** @internal */
     translate: function (this: WindbarbSeries): void {
         const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;

@@ -56,6 +56,7 @@ import {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         showLine?: WaterfallSeries['showLine'];
     }
 }
@@ -99,11 +100,13 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WaterfallSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WaterfallSeriesDefaults
     );
 
+    /** @internal */
     public static compose = WaterfallAxis.compose;
 
     /* *
@@ -112,6 +115,7 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public chart!: WaterfallSeries.WaterfallChart;
 
     public data!: Array<WaterfallPoint>;
@@ -120,16 +124,22 @@ class WaterfallSeries extends ColumnSeries {
 
     public points!: Array<WaterfallPoint>;
 
+    /** @internal */
     public stackedYNeg!: Array<number>;
 
+    /** @internal */
     public stackedYPos!: Array<number>;
 
+    /** @internal */
     public stackKey!: 'waterfall';
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public yAxis!: WaterfallAxis;
 
+    /** @internal */
     public yData!: Array<any>;
 
     /* *
@@ -139,6 +149,7 @@ class WaterfallSeries extends ColumnSeries {
      * */
 
     // After generating points, set y-values for all sums.
+    /** @internal */
     public generatePoints(): void {
 
         // Parent call:
@@ -160,6 +171,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Call default processData then override yData to reflect waterfall's
     // extremes on yAxis
+    /** @internal */
     public processData(
         force?: boolean
     ): undefined {
@@ -213,6 +225,7 @@ class WaterfallSeries extends ColumnSeries {
 
 
     // Return y value or string if point is sum
+    /** @internal */
     public toYData(pt: WaterfallPoint): any {
         if (pt.isSum) {
             return 'sum';
@@ -224,6 +237,7 @@ class WaterfallSeries extends ColumnSeries {
     }
 
     // Postprocess mapping between options and SVG attributes
+    /** @internal */
     public pointAttribs(
         point?: WaterfallPoint,
         state?: StatesOptionsKey
@@ -251,6 +265,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Return an empty path initially, because we need to know the stroke-width
     // in order to set the final path.
+    /** @internal */
     public getGraphPath(
         this: WaterfallSeries
     ): SVGPath {
@@ -258,6 +273,7 @@ class WaterfallSeries extends ColumnSeries {
     }
 
     // Draw columns' connector lines
+    /** @internal */
     public getCrispPath(
         this: WaterfallSeries
     ): SVGPath {
@@ -358,6 +374,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
+    /** @internal */
     public drawGraph(): void {
         LineSeries.prototype.drawGraph.call(this);
         this.graph?.animate({
@@ -366,6 +383,7 @@ class WaterfallSeries extends ColumnSeries {
     }
 
     // Waterfall has stacking along the x-values too.
+    /** @internal */
     public setStackedPoints(axis: Axis): void {
         const series = this,
             options = series.options,
@@ -539,6 +557,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         const stacking = this.options.stacking,
             yAxis = this.yAxis,
@@ -593,16 +612,22 @@ class WaterfallSeries extends ColumnSeries {
  * */
 
 interface WaterfallSeries {
+    /** @internal */
     pointClass: typeof WaterfallPoint;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     showLine: boolean;
 }
 
 extend(WaterfallSeries.prototype, {
+    /** @internal */
     pointValKey: 'y',
     // Property needed to prevent lines between the columns from disappearing
     // when negativeColor is used.
+    /** @internal */
     showLine: true,
+    /** @internal */
     pointClass: WaterfallPoint
 });
 
@@ -898,6 +923,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
 
 namespace WaterfallSeries {
     export interface WaterfallChart extends Chart {
+        /** @internal */
         axes: Array<WaterfallAxis>;
     }
 }

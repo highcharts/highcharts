@@ -53,7 +53,6 @@ import {
 /**
  * The ColumnRangeSeries class
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.columnrange
  *
@@ -68,6 +67,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ColumnRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         AreaRangeSeries.defaultOptions,
@@ -80,6 +80,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public setOptions(): ColumnRangeSeriesOptions {
         // #14359 Prevent side-effect from stacking.
         merge(true, arguments[0], { stacking: void 0 });
@@ -90,6 +91,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     // Overrides from modules that may be loaded after this module
     // @todo move to compositions
 
+    /** @internal */
     public translate(): void {
         return columnProto.translate.apply(this);
     }
@@ -106,6 +108,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
     // public getColumnMetrics(): ColumnMetricsObject {
     //     return columnProto.getColumnMetrics.apply(this, arguments as any);
     // }
+    /** @internal */
     public pointAttribs(): SVGAttributes {
         return columnProto.pointAttribs.apply(this, arguments as any);
     }
@@ -115,9 +118,11 @@ class ColumnRangeSeries extends AreaRangeSeries {
     // public animate(): void {
     //     return columnProto.animate.apply(this, arguments as any);
     // }
+    /** @internal */
     public translate3dPoints(): void {
         return columnProto.translate3dPoints.apply(this, arguments as any);
     }
+    /** @internal */
     public translate3dShapes(): void {
         return columnProto.translate3dShapes.apply(this, arguments as any);
     }
@@ -232,25 +237,42 @@ addEvent(ColumnRangeSeries, 'afterColumnTranslate', function (): void {
 /** @internal */
 interface ColumnRangeSeries {
     options: ColumnRangeSeriesOptions;
+    /** @internal */
     pointClass: typeof ColumnRangePoint;
     points: Array<ColumnRangePoint>;
+    /** @internal */
     adjustForMissingColumns: typeof columnProto.adjustForMissingColumns;
+    /** @internal */
     animate: typeof columnProto.animate,
+    /** @internal */
     crispCol: typeof columnProto.crispCol;
+    /** @internal */
     drawPoints: typeof columnProto.drawPoints,
+    /** @internal */
     getColumnMetrics: typeof columnProto.getColumnMetrics;
 }
 extend(ColumnRangeSeries.prototype, {
+    /** @internal */
     directTouch: true,
+    /** @internal */
     pointClass: ColumnRangePoint,
+    /** @internal */
     trackerGroups: ['group', 'dataLabelsGroup'],
+    /** @internal */
     adjustForMissingColumns: columnProto.adjustForMissingColumns,
+    /** @internal */
     animate: columnProto.animate,
+    /** @internal */
     crispCol: columnProto.crispCol,
+    /** @internal */
     drawGraph: noop,
+    /** @internal */
     drawPoints: columnProto.drawPoints,
+    /** @internal */
     getSymbol: noop,
+    /** @internal */
     drawTracker: columnProto.drawTracker,
+    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics
 });
 
@@ -277,5 +299,4 @@ SeriesRegistry.registerSeriesType('columnrange', ColumnRangeSeries);
  *
  * */
 
-/** @internal */
 export default ColumnRangeSeries;

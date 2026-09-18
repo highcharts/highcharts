@@ -89,6 +89,7 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PackedBubbleSeriesOptions = merge(
         BubbleSeries.defaultOptions,
         PackedBubbleSeriesDefaults
@@ -100,6 +101,7 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -116,30 +118,40 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public chart!: PackedBubbleChart;
 
     public data!: Array<PackedBubblePoint>;
 
+    /** @internal */
     public hoverPoint?: PackedBubblePoint;
 
+    /** @internal */
     public layout!: PackedBubbleLayout;
 
     public options!: PackedBubbleSeriesOptions;
 
+    /** @internal */
     public parentNode?: PackedBubblePoint;
 
+    /** @internal */
     public parentNodeLayout?: PackedBubbleLayout;
 
+    /** @internal */
     public parentNodesGroup?: SVGElement;
 
+    /** @internal */
     public parentNodeMass: number = 0;
 
+    /** @internal */
     public parentNodeRadius?: number;
 
     public points!: Array<PackedBubblePoint>;
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -459,6 +471,7 @@ class PackedBubbleSeries extends BubbleSeries {
         }
     }
 
+    /** @internal */
     public destroy(): void {
         // Remove the series from all layouts series collections #11469
         if (this.chart.graphLayoutsLookup) {
@@ -566,6 +579,7 @@ class PackedBubbleSeries extends BubbleSeries {
         }
     }
 
+    /** @internal */
     public drawTracker(): void {
         const parentNode = this.parentNode;
         // Chart = series.chart,
@@ -666,6 +680,7 @@ class PackedBubbleSeries extends BubbleSeries {
         this.radii = radii;
     }
 
+    /** @internal */
     public init(): PackedBubbleSeries {
         seriesProto.init.apply(this, arguments);
         initDataLabelsDefer.call(this);
@@ -979,6 +994,7 @@ class PackedBubbleSeries extends BubbleSeries {
         ]; // The same as described before
     }
 
+    /** @internal */
     public render(): void {
         const dataLabels = [] as Array<SVGElement>;
         seriesProto.render.apply(this, arguments);
@@ -1223,8 +1239,11 @@ class PackedBubbleSeries extends BubbleSeries {
  *
  * */
 
+/** @internal */
 interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
+    /** @internal */
     pointClass: typeof PackedBubblePoint;
+    /** @internal */
     bubblePadding: BubbleSeriesType['bubblePadding'];
     /**
      * Array of internal forces. Each force should be later defined in
@@ -1237,41 +1256,75 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
      * @internal
      */
     hasDraggableNodes: boolean;
+    /** @internal */
     isBubble: BubbleSeriesType['isBubble'];
+    /** @internal */
     isCartesian: boolean;
+    /** @internal */
     maxPxSize: BubbleSeriesType['maxPxSize'];
+    /** @internal */
     minPxSize: BubbleSeriesType['minPxSize'];
+    /** @internal */
     nodes: NetworkgraphSeries['nodes'];
+    /** @internal */
     noSharedTooltip: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     radii: BubbleSeriesType['radii'];
+    /** @internal */
     specialGroup: BubbleSeriesType['specialGroup'];
+    /** @internal */
     trackerGroups: Array<string>;
+    /** @internal */
     yData: BubbleSeriesType['yData'];
+    /** @internal */
     zData: BubbleSeriesType['zData'];
+    /** @internal */
     zoneAxis: BubbleSeriesType['zoneAxis'];
+    /** @internal */
     getPointsCollection(): Array<PackedBubblePoint>;
+    /** @internal */
     indexateNodes: NetworkgraphSeries['indexateNodes'];
+    /** @internal */
     markerAttribs: BubbleSeriesType['markerAttribs'];
+    /** @internal */
     onMouseDown: typeof DragNodesComposition.onMouseDown;
+    /** @internal */
     onMouseMove: typeof DragNodesComposition.onMouseMove;
+    /** @internal */
     redrawHalo: typeof DragNodesComposition.redrawHalo;
+    /** @internal */
     setState: BubbleSeriesType['setState'];
 }
 extend(PackedBubbleSeries.prototype, {
+    /** @internal */
     pointClass: PackedBubblePoint,
+    /** @internal */
     axisTypes: [],
+    /** @internal */
     directTouch: true,
+    /** @internal */
     forces: ['barycenter', 'repulsive'],
+    /** @internal */
     hasDraggableNodes: true,
+    /** @internal */
     invertible: false,
+    /** @internal */
     isCartesian: false,
+    /** @internal */
     noSharedTooltip: true,
+    /** @internal */
     pointArrayMap: ['value'],
+    /** @internal */
     pointValKey: 'value',
+    /** @internal */
     requireSorting: false,
+    /** @internal */
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
+    /** @internal */
     initDataLabels: initDataLabels,
     alignDataLabel: seriesProto.alignDataLabel,
     indexateNodes: noop as NetworkgraphSeries['indexateNodes'],

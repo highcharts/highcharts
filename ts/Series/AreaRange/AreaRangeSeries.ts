@@ -290,7 +290,6 @@ function getRangeDataLabelOptions(
 /**
  * The AreaRange series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.arearange
  *
@@ -302,6 +301,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      *  Static Properties
      *
+     * @internal
      */
 
     public static defaultOptions: AreaRangeSeriesOptions = merge(
@@ -318,8 +318,11 @@ class AreaRangeSeries extends AreaSeries {
     public data!: Array<AreaRangePoint>;
     public options!: AreaRangeSeriesOptions;
     public points!: Array<AreaRangePoint>;
+    /** @internal */
     public lowerStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public upperStateMarkerGraphic?: SVGElement;
+    /** @internal */
     public xAxis!: Axis|RadialAxis.AxisComposition;
 
     /* *
@@ -328,6 +331,7 @@ class AreaRangeSeries extends AreaSeries {
      *
      * */
 
+    /** @internal */
     public toYData(point: AreaRangePoint): Array<number> {
         return [point.low, point.high];
     }
@@ -470,6 +474,7 @@ class AreaRangeSeries extends AreaSeries {
         return linePath;
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         const series = this,
             dataLabelOptions = series.options.dataLabels;
@@ -508,6 +513,7 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    /** @internal */
     public modifyMarkerSettings(): {
         marker?: PointMarkerOptions;
         symbol?: SymbolKey;
@@ -533,6 +539,7 @@ class AreaRangeSeries extends AreaSeries {
         return originalMarkerSettings;
     }
 
+    /** @internal */
     public restoreMarkerSettings(originalSettings: {
         marker?: PointMarkerOptions;
         symbol?: SymbolKey;
@@ -543,6 +550,7 @@ class AreaRangeSeries extends AreaSeries {
         series.symbol = originalSettings.symbol;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             pointLength = series.points.length;
@@ -623,6 +631,7 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
+    /** @internal */
     public hasMarkerChanged(
         options: DeepPartial<AreaRangeSeriesOptions>,
         oldOptions: DeepPartial<AreaRangeSeriesOptions>
@@ -706,19 +715,27 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
  *
  * */
 
-/** @internal */
 interface AreaRangeSeries {
+    /** @internal */
     deferTranslatePolar: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof AreaRangePoint;
+    /** @internal */
     pointValKey: string;
 }
 
 extend(AreaRangeSeries.prototype, {
+    /** @internal */
     deferTranslatePolar: true,
+    /** @internal */
     pointArrayMap: ['low', 'high'],
+    /** @internal */
     pointClass: AreaRangePoint,
+    /** @internal */
     pointValKey: 'low',
+    /** @internal */
     setStackedPoints: noop
 });
 
@@ -730,7 +747,6 @@ RangeDataLabel.compose(AreaRangeSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;
@@ -746,5 +762,4 @@ SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
  *
  * */
 
-/** @internal */
 export default AreaRangeSeries;
