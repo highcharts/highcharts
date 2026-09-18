@@ -91,6 +91,13 @@ class DataTableCore {
         let rowCount = 0;
 
         objectEach(options.columns || {}, (column, columnId): void => {
+            if (
+                columnId === '__proto__' ||
+                columnId === 'constructor'
+            ) {
+                return;
+            }
+
             this.columns[columnId] = column.slice();
             rowCount = Math.max(rowCount, column.length);
         });
@@ -342,6 +349,13 @@ class DataTableCore {
     ): void {
         let rowCount = this.rowCount;
         objectEach(columns, (column, columnId): void => {
+            if (
+                columnId === '__proto__' ||
+                columnId === 'constructor'
+            ) {
+                return;
+            }
+
             this.columns[columnId] = column.slice();
             rowCount = column.length;
         });
