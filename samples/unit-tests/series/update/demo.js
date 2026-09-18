@@ -1292,5 +1292,9 @@ QUnit.test(
             'from-defaults',
             'Should use default plotOptions for the new type'
         );
+
+        // Don't leak the type into the rest of the suite
+        delete Highcharts.seriesTypes[type];
+        delete Highcharts.getOptions().plotOptions[type];
     }
 );
