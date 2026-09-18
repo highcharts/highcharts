@@ -131,8 +131,9 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
-        headerFormat: '<span style="font-size: 0.8em">' +
-            '{ucfirst point.key}</span><br/>',
+        headerFormat: '{#ne point.key point.x}' +
+            '<span style="font-size: 0.8em">' +
+            '{ucfirst point.key}</span><br/>{/ne}',
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
             '{series.name}:<br/>' +
             '\u00A0\u00A0' +

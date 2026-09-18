@@ -256,7 +256,7 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
 
 export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {
     /**
-     * @default {highcharts|highstock} '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>'
+     * @default {highcharts|highstock} '{#ne point.key point.x}<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>{/ne}'
      */
     headerFormat?: SeriesTooltipOptions['headerFormat'];
 

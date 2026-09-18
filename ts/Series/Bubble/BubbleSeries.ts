@@ -962,7 +962,6 @@ extend(BubbleSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],
-    sharedTooltipType: 'bubble',
     trackerGroups: ['group', 'dataLabelsGroup'],
     specialGroup: 'group', // To allow clipping (#6296)
     zoneAxis: 'z'
