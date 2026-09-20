@@ -354,7 +354,7 @@ class AST {
                 valid = false;
             }
             if (
-                ['background', 'dynsrc', 'href', 'lowsrc', 'src']
+                ['background', 'dynsrc', 'href', 'lowsrc', 'src', 'xlink:href']
                     .indexOf(key) !== -1
             ) {
                 valid = isString(val) && AST.allowedReferences.some(
