@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
+import { join } from 'node:path';
 import { runRelease } from '../grid-release.js';
 
 function fixture(overrides = {}) {
@@ -42,7 +43,7 @@ test('Dashboards workflow builds dependencies and prepares a local candidate', a
         'npx gulp dist-release --product Dashboards'
     ]);
     assert.ok(events.some(e => typeof e === 'string' &&
-        e.includes('gulptasks/dashboards/build-properties.json')));
+        e.includes(join('gulptasks', 'dashboards', 'build-properties.json'))));
     assert.ok(events.some(e => typeof e === 'string' &&
         e.includes('dashboards-dist') && e.includes('manually reset')));
     assert.ok(!events.some(e => typeof e === 'string' &&

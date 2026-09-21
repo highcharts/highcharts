@@ -269,13 +269,12 @@ async function runRelease({
     await gate(
         `Run npx gulp dist-release --product ${product}. This pulls/rebases ` +
         `and deletes/replaces files in sibling ${repos.join(', ')}.\n` +
-        'It runs npm publish --dry-run, without committing, tagging or pushing.',
+        'Changes remain local, without committing, tagging or pushing.',
         'approve'
     );
     execute(['npx', 'gulp', 'dist-release', '--product', product]);
     console.log(plan ? '\nPlan only; no changes made.' :
-        '\nCandidate prepared locally. Review the dist repositories. ' +
-        'Do not run the suggested publish commands.');
+        '\nCandidate prepared locally. Review the dist repositories.');
 }
 
 async function main(args, product = 'Grid') {
