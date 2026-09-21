@@ -79,9 +79,7 @@ interface MapBubblePoint {
 }
 
 extend(MapBubblePoint.prototype, {
-    /** @internal */
     applyOptions: mapPointProto.applyOptions,
-    /** @internal */
     getProjectedBounds: mapPointProto.getProjectedBounds
 });
 

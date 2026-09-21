@@ -221,7 +221,6 @@ interface RenkoSeries {
 }
 
 extend(RenkoSeries.prototype, {
-    /** @internal */
     pointClass: RenkoPoint
 });
 /* *

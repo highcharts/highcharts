@@ -591,7 +591,6 @@ extend(HeatmapSeries.prototype, {
 
     specialGroup: 'group',
 
-    /** @internal */
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**

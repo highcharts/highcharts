@@ -962,7 +962,6 @@ interface BubbleSeries {
 }
 
 extend(BubbleSeries.prototype, {
-    /** @internal */
     alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,

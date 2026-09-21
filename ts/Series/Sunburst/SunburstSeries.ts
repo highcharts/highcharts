@@ -986,24 +986,15 @@ interface SunburstSeries {
 }
 
 extend(SunburstSeries.prototype, {
-    /** @internal */
     axisTypes: [],
-    /** @internal */
     drawDataLabels: noop, // `drawDataLabels` is called in `drawPoints`
-    /** @internal */
     getCenter: getCenter,
-    /** @internal */
     isCartesian: false,
     // Mark that the sunburst is supported by the series on point feature.
-    /** @internal */
     onPointSupported: true,
-    /** @internal */
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
-    /** @internal */
     pointClass: SunburstPoint,
-    /** @internal */
     NodeClass: SunburstNode,
-    /** @internal */
     utils: SunburstUtilities
 });
 

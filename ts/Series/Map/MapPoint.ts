@@ -335,7 +335,6 @@ interface MapPoint extends ColorMapComposition.PointComposition {
 extend(MapPoint.prototype, {
     dataLabelOnNull: ColorMapComposition.pointMembers.dataLabelOnNull,
     moveToTopOnHover: ColorMapComposition.pointMembers.moveToTopOnHover,
-    /** @internal */
     isValid: ColorMapComposition.pointMembers.isValid
 });
 

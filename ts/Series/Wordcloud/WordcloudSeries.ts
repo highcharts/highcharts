@@ -536,23 +536,16 @@ interface WordcloudSeries {
 }
 
 extend(WordcloudSeries.prototype, {
-    /** @internal */
     animate: noop,
-    /** @internal */
     animateDrilldown: noop,
-    /** @internal */
     animateDrillupFrom: noop,
-    /** @internal */
     isCartesian: false,
-    /** @internal */
     pointClass: WordcloudPoint,
-    /** @internal */
     setClip: noop,
 
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for
     // example.
-    /** @internal */
     placementStrategy: {
         random: function (
             point: WordcloudPoint,
@@ -580,18 +573,15 @@ extend(WordcloudSeries.prototype, {
             };
         }
     },
-    /** @internal */
     pointArrayMap: ['weight'],
     // Spirals used for placing a word after the initial position experienced a
     // collision with either another word or the borders. To implement a custom
     // spiral, look at the function archimedeanSpiral for example.
-    /** @internal */
     spirals: {
         'archimedean': archimedeanSpiral,
         'rectangular': rectangularSpiral,
         'square': squareSpiral
     },
-    /** @internal */
     utils: {
         extendPlayingField: extendPlayingField,
         getRotation: getRotation,

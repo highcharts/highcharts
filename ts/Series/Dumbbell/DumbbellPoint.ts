@@ -140,7 +140,6 @@ interface DumbbellPoint {
 }
 
 extend(DumbbellPoint.prototype, {
-    /** @internal */
     pointSetState: AreaRangePoint.prototype.setState
 });
 

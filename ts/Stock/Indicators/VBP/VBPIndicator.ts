@@ -929,24 +929,16 @@ interface VBPIndicator {
 }
 
 extend(VBPIndicator.prototype, {
-    /** @internal */
     nameBase: 'Volume by Price',
-    /** @internal */
     nameComponents: ['ranges'],
-    /** @internal */
     calculateOn: {
         chart: 'render',
         xAxis: 'afterSetExtremes'
     },
-    /** @internal */
     pointClass: VBPPoint,
-    /** @internal */
     markerAttribs: noop as any,
-    /** @internal */
     drawGraph: noop,
-    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics,
-    /** @internal */
     crispCol: columnProto.crispCol
 });
 

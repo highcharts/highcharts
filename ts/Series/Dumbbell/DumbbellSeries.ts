@@ -385,7 +385,6 @@ interface DumbbellSeries {
 }
 
 extend(DumbbellSeries.prototype, {
-    /** @internal */
     crispCol: ColumnSeries.prototype.crispCol,
     drawGraph: noop,
     drawTracker: ColumnSeries.prototype.drawTracker,

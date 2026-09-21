@@ -265,22 +265,15 @@ interface HLCSeries {
     pointClass: typeof HLCPoint;
 }
 extend(HLCSeries.prototype, {
-    /** @internal */
     pointClass: HLCPoint,
-    /** @internal */
     animate: null as any, // Disable animation
-    /** @internal */
     directTouch: false,
-    /** @internal */
     keysAffectYAxis: ['low', 'high'],
-    /** @internal */
     pointArrayMap: ['high', 'low', 'close'],
-    /** @internal */
     pointAttrToOptions: {
         stroke: 'color',
         'stroke-width': 'lineWidth'
     },
-    /** @internal */
     pointValKey: 'close'
 });
 

@@ -252,27 +252,16 @@ interface ColumnRangeSeries {
     getColumnMetrics: typeof columnProto.getColumnMetrics;
 }
 extend(ColumnRangeSeries.prototype, {
-    /** @internal */
     directTouch: true,
-    /** @internal */
     pointClass: ColumnRangePoint,
-    /** @internal */
     trackerGroups: ['group', 'dataLabelsGroup'],
-    /** @internal */
     adjustForMissingColumns: columnProto.adjustForMissingColumns,
-    /** @internal */
     animate: columnProto.animate,
-    /** @internal */
     crispCol: columnProto.crispCol,
-    /** @internal */
     drawGraph: noop,
-    /** @internal */
     drawPoints: columnProto.drawPoints,
-    /** @internal */
     getSymbol: noop,
-    /** @internal */
     drawTracker: columnProto.drawTracker,
-    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics
 });
 

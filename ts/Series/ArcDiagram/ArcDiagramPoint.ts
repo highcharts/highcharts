@@ -105,7 +105,6 @@ interface ArcDiagramPoint {
     setState: typeof NodesComposition['setNodeState'];
 }
 extend(ArcDiagramPoint.prototype, {
-    /** @internal */
     setState: NodesComposition.setNodeState
 });
 

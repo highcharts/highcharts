@@ -75,6 +75,7 @@ class AreaSplineSeries extends SplineSeries {
  * */
 interface AreaSplineSeries extends SplineSeries {
     pointClass: typeof AreaSplinePoint;
+    /** @internal */
     getGraphPath: typeof areaProto.getGraphPath,
     /** @internal */
     getStackPoints: typeof areaProto.getStackPoints;
@@ -84,9 +85,7 @@ interface AreaSplineSeries extends SplineSeries {
 
 extend(AreaSplineSeries.prototype, {
     getGraphPath: areaProto.getGraphPath,
-    /** @internal */
     getStackPoints: areaProto.getStackPoints,
-    /** @internal */
     drawGraph: areaProto.drawGraph
 });
 

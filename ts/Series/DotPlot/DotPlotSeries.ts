@@ -231,7 +231,6 @@ interface DotPlotSeries {
 }
 
 extend(DotPlotSeries.prototype, {
-    /** @internal */
     markerAttribs: void 0
 });
 

@@ -1300,31 +1300,18 @@ interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
     setState: BubbleSeriesType['setState'];
 }
 extend(PackedBubbleSeries.prototype, {
-    /** @internal */
     pointClass: PackedBubblePoint,
-    /** @internal */
     axisTypes: [],
-    /** @internal */
     directTouch: true,
-    /** @internal */
     forces: ['barycenter', 'repulsive'],
-    /** @internal */
     hasDraggableNodes: true,
-    /** @internal */
     invertible: false,
-    /** @internal */
     isCartesian: false,
-    /** @internal */
     noSharedTooltip: true,
-    /** @internal */
     pointArrayMap: ['value'],
-    /** @internal */
     pointValKey: 'value',
-    /** @internal */
     requireSorting: false,
-    /** @internal */
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
-    /** @internal */
     initDataLabels: initDataLabels,
     alignDataLabel: seriesProto.alignDataLabel,
     indexateNodes: noop as NetworkgraphSeries['indexateNodes'],

@@ -334,15 +334,10 @@ interface VariwideSeries {
 }
 
 extend(VariwideSeries.prototype, {
-    /** @internal */
     irregularWidths: true,
-    /** @internal */
     keysAffectYAxis: ['y'],
-    /** @internal */
     pointArrayMap: ['y', 'z'],
-    /** @internal */
     parallelArrays: ['x', 'y', 'z'],
-    /** @internal */
     pointClass: VariwidePoint
 });
 

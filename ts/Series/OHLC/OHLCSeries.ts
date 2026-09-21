@@ -224,9 +224,7 @@ interface OHLCSeries {
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
-    /** @internal */
     pointClass: OHLCPoint,
-    /** @internal */
     pointArrayMap: ['open', 'high', 'low', 'close']
 });
 

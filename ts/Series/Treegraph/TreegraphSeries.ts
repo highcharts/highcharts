@@ -787,15 +787,10 @@ interface TreegraphSeries {
 }
 
 extend(TreegraphSeries.prototype, {
-    /** @internal */
     forceDL: true,
-    /** @internal */
     pointClass: TreegraphPoint,
-    /** @internal */
     NodeClass: TreegraphNode,
-    /** @internal */
     LinkClass: TreegraphLink,
-    /** @internal */
     isCartesian: false
 });
 

@@ -678,17 +678,11 @@ interface VennSeries {
 }
 
 extend(VennSeries.prototype, {
-    /** @internal */
     axisTypes: [],
-    /** @internal */
     directTouch: true,
-    /** @internal */
     isCartesian: false,
-    /** @internal */
     pointArrayMap: ['value'],
-    /** @internal */
     pointClass: VennPoint,
-    /** @internal */
     utils: VennUtils
 });
 

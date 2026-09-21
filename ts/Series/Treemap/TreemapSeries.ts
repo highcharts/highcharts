@@ -1963,25 +1963,15 @@ interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series
     };
 }
 extend(TreemapSeries.prototype, {
-    /** @internal */
     buildKDTree: noop,
-    /** @internal */
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-    /** @internal */
     colorKey: 'colorValue', // Point color option key
-    /** @internal */
     directTouch: true,
-    /** @internal */
     getExtremesFromAll: true,
-    /** @internal */
     getSymbol: noop,
-    /** @internal */
     optionalAxis: 'colorAxis',
-    /** @internal */
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
-    /** @internal */
     pointArrayMap: ['value', 'colorValue'],
-    /** @internal */
     pointClass: TreemapPoint,
     NodeClass: TreemapNode,
     trackerGroups: ['group', 'dataLabelsGroup'],

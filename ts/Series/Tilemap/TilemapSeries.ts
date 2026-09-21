@@ -301,17 +301,13 @@ interface TilemapSeries {
 
 extend(TilemapSeries.prototype, { // Prototype functions
     // Revert the noop on getSymbol.
-    /** @internal */
     getSymbol: noop,
     // Use drawPoints, markerAttribs, pointAttribs methods from the old
     // heatmap implementation.
     // TODO: Consider standardizing heatmap and tilemap into more
     // consistent form.
-    /** @internal */
     markerAttribs: ScatterSeries.prototype.markerAttribs,
-    /** @internal */
     pointAttribs: ColumnSeries.prototype.pointAttribs as any,
-    /** @internal */
     pointClass: TilemapPoint
 });
 

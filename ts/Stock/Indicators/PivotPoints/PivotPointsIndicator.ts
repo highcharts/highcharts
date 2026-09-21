@@ -438,13 +438,9 @@ interface PivotPointsIndicator{
     pointValKey: string;
 }
 extend(PivotPointsIndicator.prototype, {
-    /** @internal */
     nameBase: 'Pivot Points',
-    /** @internal */
     pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
-    /** @internal */
     pointValKey: 'P',
-    /** @internal */
     pointClass: PivotPointsPoint
 });
 

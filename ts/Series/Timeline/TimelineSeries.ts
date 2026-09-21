@@ -488,11 +488,8 @@ interface TimelineSeries {
 }
 extend(TimelineSeries.prototype, {
     // Use a group of trackers from TrackerMixin
-    /** @internal */
     drawTracker: ColumnSeries.prototype.drawTracker,
-    /** @internal */
     pointClass: TimelinePoint,
-    /** @internal */
     trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });
 

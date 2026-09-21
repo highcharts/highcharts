@@ -167,9 +167,7 @@ interface SunburstPoint {
 }
 
 extend(SunburstPoint.prototype, {
-    /** @internal */
     getClassName: Point.prototype.getClassName,
-    /** @internal */
     haloPath: Point.prototype.haloPath,
     setState: Point.prototype.setState
 });

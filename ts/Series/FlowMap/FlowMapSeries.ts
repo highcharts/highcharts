@@ -848,16 +848,11 @@ interface FlowMapSeries {
 }
 
 extend(FlowMapSeries.prototype, {
-    /** @internal */
     pointClass: FlowMapPoint,
-    /** @internal */
     pointArrayMap: ['from', 'to', 'weight'],
-    /** @internal */
     drawPoints: ColumnSeries.prototype.drawPoints,
-    /** @internal */
     getDataColumnKeys: ColumnSeries.prototype.getDataColumnKeys,
     // Make it work on zoom or pan.
-    /** @internal */
     useMapGeometry: true
 });
 

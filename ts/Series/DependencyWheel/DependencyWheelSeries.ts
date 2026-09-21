@@ -403,11 +403,8 @@ interface DependencyWheelSeries {
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
-    /** @internal */
     orderNodes: false,
-    /** @internal */
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
-    /** @internal */
     getCenter: PieSeries.prototype.getCenter
 });
 

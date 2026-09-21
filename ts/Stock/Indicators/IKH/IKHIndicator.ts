@@ -948,7 +948,6 @@ interface IKHIndicator {
 }
 
 extend(IKHIndicator.prototype, {
-    /** @internal */
     pointArrayMap: [
         'tenkanSen',
         'kijunSen',
@@ -956,9 +955,7 @@ extend(IKHIndicator.prototype, {
         'senkouSpanA',
         'senkouSpanB'
     ],
-    /** @internal */
     pointValKey: 'tenkanSen',
-    /** @internal */
     nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
 

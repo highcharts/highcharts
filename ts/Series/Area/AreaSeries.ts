@@ -513,7 +513,6 @@ interface AreaSeries {
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
-    /** @internal */
     singleStacks: false
 });
 

@@ -559,7 +559,6 @@ extend(PieSeries.prototype, {
     directTouch: true,
     drawGraph: void 0,
     drawTracker: ColumnSeries.prototype.drawTracker,
-    /** @internal */
     getCenter: CU.getCenter,
     getSymbol: noop,
     invertible: false,

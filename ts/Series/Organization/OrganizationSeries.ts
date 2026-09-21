@@ -485,7 +485,6 @@ interface OrganizationSeries {
     pointClass: typeof OrganizationPoint;
 }
 extend(OrganizationSeries.prototype, {
-    /** @internal */
     pointClass: OrganizationPoint
 });
 

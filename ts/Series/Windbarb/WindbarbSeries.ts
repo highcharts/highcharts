@@ -371,29 +371,21 @@ interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
 OnSeriesComposition.compose(WindbarbSeries);
 
 extend(WindbarbSeries.prototype, {
-    /** @internal */
     beaufortFloor: [
         0, 0.3, 1.6, 3.4, 5.5, 8.0, 10.8, 13.9, 17.2, 20.8,
         24.5, 28.5, 32.7
     ], // @todo dictionary with names?
-    /** @internal */
     beaufortName: [
         'Calm', 'Light air', 'Light breeze',
         'Gentle breeze', 'Moderate breeze', 'Fresh breeze',
         'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
         'Violent storm', 'Hurricane'
     ],
-    /** @internal */
     invertible: false,
-    /** @internal */
     parallelArrays: ['x', 'value', 'direction'],
-    /** @internal */
     pointArrayMap: ['value', 'direction'],
-    /** @internal */
     pointClass: WindbarbPoint,
-    /** @internal */
     trackerGroups: ['markerGroup'],
-    /** @internal */
     translate: function (this: WindbarbSeries): void {
         const beaufortFloor = this.beaufortFloor,
             beaufortName = this.beaufortName;

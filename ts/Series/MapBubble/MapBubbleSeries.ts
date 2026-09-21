@@ -316,44 +316,31 @@ interface MapBubbleSeries {
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
-    /** @internal */
     type: 'mapbubble',
 
-    /** @internal */
     axisTypes: ['colorAxis'],
 
-    /** @internal */
     getProjectedBounds: mapProto.getProjectedBounds,
 
-    /** @internal */
     isCartesian: false,
 
     // If one single value is passed, it is interpreted as z
-    /** @internal */
     pointArrayMap: ['z'],
 
-    /** @internal */
     pointClass: MapBubblePoint,
 
-    /** @internal */
     processData: mapProto.processData,
 
-    /** @internal */
     projectPoint: mapPointProto.projectPoint,
 
-    /** @internal */
     kdAxisArray: ['plotX', 'plotY'],
 
-    /** @internal */
     setData: mapProto.setData,
 
-    /** @internal */
     setOptions: mapProto.setOptions,
 
-    /** @internal */
     useMapGeometry: true,
 
-    /** @internal */
     xyFromShape: true
 });
 

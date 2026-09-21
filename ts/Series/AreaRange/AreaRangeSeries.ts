@@ -727,15 +727,10 @@ interface AreaRangeSeries {
 }
 
 extend(AreaRangeSeries.prototype, {
-    /** @internal */
     deferTranslatePolar: true,
-    /** @internal */
     pointArrayMap: ['low', 'high'],
-    /** @internal */
     pointClass: AreaRangePoint,
-    /** @internal */
     pointValKey: 'low',
-    /** @internal */
     setStackedPoints: noop
 });
 

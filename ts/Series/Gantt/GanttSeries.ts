@@ -242,11 +242,8 @@ interface GanttSeries{
 }
 
 extend(GanttSeries.prototype, { // Props - series member overrides
-    /** @internal */
     pointArrayMap: ['start', 'end', 'y'],
-    /** @internal */
     pointClass: GanttPoint,
-    /** @internal */
     setData: Series.prototype.setData
 });
 

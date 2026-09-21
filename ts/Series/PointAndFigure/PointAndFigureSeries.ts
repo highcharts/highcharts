@@ -356,15 +356,10 @@ interface PointAndFigureSeries {
 }
 
 extend(PointAndFigureSeries.prototype, {
-    /** @internal */
     takeOrdinalPosition: true,
-    /** @internal */
     pnfDataGroups: [],
-    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics,
-    /** @internal */
     pointClass: PointAndFigurePoint,
-    /** @internal */
     sorted: true
 });
 

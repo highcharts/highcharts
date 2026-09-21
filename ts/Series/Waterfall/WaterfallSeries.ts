@@ -621,13 +621,10 @@ interface WaterfallSeries {
 }
 
 extend(WaterfallSeries.prototype, {
-    /** @internal */
     pointValKey: 'y',
     // Property needed to prevent lines between the columns from disappearing
     // when negativeColor is used.
-    /** @internal */
     showLine: true,
-    /** @internal */
     pointClass: WaterfallPoint
 });
 

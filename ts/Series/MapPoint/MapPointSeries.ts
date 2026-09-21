@@ -285,19 +285,12 @@ interface MapPointSeries {
     pointClass: typeof MapPointPoint;
 }
 extend(MapPointSeries.prototype, {
-    /** @internal */
     type: 'mappoint',
-    /** @internal */
     axisTypes: ['colorAxis'],
-    /** @internal */
     forceDL: true,
-    /** @internal */
     isCartesian: false,
-    /** @internal */
     pointClass: MapPointPoint,
-    /** @internal */
     searchPoint: noop as any,
-    /** @internal */
     useMapGeometry: true // #16534
 });
 

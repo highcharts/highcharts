@@ -110,11 +110,8 @@ interface PolygonSeries {
 }
 
 extend(PolygonSeries.prototype, {
-    /** @internal */
     type: 'polygon',
-    /** @internal */
     drawTracker: LineSeries.prototype.drawTracker,
-    /** @internal */
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 

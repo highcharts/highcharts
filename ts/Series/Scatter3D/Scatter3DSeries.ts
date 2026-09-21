@@ -103,22 +103,17 @@ interface Scatter3DSeries {
 
 extend(Scatter3DSeries.prototype, {
 
-    /** @internal */
     axisTypes: ['xAxis', 'yAxis', 'zAxis'],
 
     // Require direct touch rather than using the k-d-tree, because the
     // k-d-tree currently doesn't take the xyz coordinate system into
     // account (#4552)
-    /** @internal */
     directTouch: true,
 
-    /** @internal */
     parallelArrays: ['x', 'y', 'z'],
 
-    /** @internal */
     pointArrayMap: ['x', 'y', 'z'],
 
-    /** @internal */
     pointClass: Scatter3DPoint
 
 });

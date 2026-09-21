@@ -717,25 +717,15 @@ interface XRangeSeries {
 }
 
 extend(XRangeSeries.prototype, {
-    /** @internal */
     pointClass: XRangePoint,
-    /** @internal */
     pointArrayMap: ['x2', 'y'],
-    /** @internal */
     getExtremesFromAll: true,
-    /** @internal */
     keysAffectYAxis: ['y'],
-    /** @internal */
     parallelArrays: ['x', 'x2', 'y'],
-    /** @internal */
     requireSorting: false,
-    /** @internal */
     type: 'xrange',
-    /** @internal */
     animate: SeriesRegistry.series.prototype.animate,
-    /** @internal */
     autoIncrement: noop,
-    /** @internal */
     buildKDTree: noop
 });
 

@@ -1032,48 +1032,35 @@ interface MapSeries extends ColorMapComposition.SeriesComposition {
     render(): void;
 }
 extend(MapSeries.prototype, {
-    /** @internal */
     type: 'map',
 
-    /** @internal */
     axisTypes: ColorMapComposition.seriesMembers.axisTypes,
 
-    /** @internal */
     colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
 
-    /** @internal */
     colorKey: ColorMapComposition.seriesMembers.colorKey,
 
     // When tooltip is not shared, this series (and derivatives) requires
     // direct touch/hover. KD-tree does not apply.
-    /** @internal */
     directTouch: true,
 
     // We need the points' bounding boxes in order to draw the data labels,
     // so we skip it now and call it from drawPoints instead.
-    /** @internal */
     drawDataLabels: noop,
 
     // No graph for the map series
-    /** @internal */
     drawGraph: noop,
 
-    /** @internal */
     forceDL: true,
 
-    /** @internal */
     getCenter: CU.getCenter,
 
-    /** @internal */
     getExtremesFromAll: true,
 
-    /** @internal */
     getSymbol: noop,
 
-    /** @internal */
     isCartesian: false,
 
-    /** @internal */
     parallelArrays: ColorMapComposition.seriesMembers.parallelArrays,
 
     pointArrayMap: ColorMapComposition.seriesMembers.pointArrayMap,

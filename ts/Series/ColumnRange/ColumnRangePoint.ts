@@ -88,7 +88,6 @@ interface ColumnRangePoint {
 
 }
 extend(ColumnRangePoint.prototype, {
-    /** @internal */
     setState: columnProto.setState
 });
 

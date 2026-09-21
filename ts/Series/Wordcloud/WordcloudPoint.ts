@@ -84,7 +84,6 @@ interface WordcloudPoint {
 }
 
 extend(WordcloudPoint.prototype, {
-    /** @internal */
     weight: 1
 });
 

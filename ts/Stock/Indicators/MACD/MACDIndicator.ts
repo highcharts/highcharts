@@ -539,23 +539,15 @@ interface MACDIndicator {
 }
 
 extend(MACDIndicator.prototype, {
-    /** @internal */
     nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
     // "y" value is treated as Histogram data
-    /** @internal */
     pointArrayMap: ['y', 'signal', 'MACD'],
-    /** @internal */
     parallelArrays: ['x', 'y', 'signal', 'MACD'],
-    /** @internal */
     pointValKey: 'y',
     // Columns support:
-    /** @internal */
     markerAttribs: noop as any,
-    /** @internal */
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    /** @internal */
     crispCol: H.seriesTypes.column.prototype.crispCol,
-    /** @internal */
     drawPoints: H.seriesTypes.column.prototype.drawPoints
 });
 

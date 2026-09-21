@@ -221,17 +221,11 @@ interface LollipopSeries {
 }
 
 extend(LollipopSeries.prototype, {
-    /** @internal */
     alignDataLabel: colProto.alignDataLabel,
-    /** @internal */
     crispCol: colProto.crispCol,
-    /** @internal */
     drawConnector: dumbbellProto.drawConnector,
-    /** @internal */
     drawDataLabels: colProto.drawDataLabels,
-    /** @internal */
     getColumnMetrics: colProto.getColumnMetrics,
-    /** @internal */
     getConnectorAttribs: dumbbellProto.getConnectorAttribs,
     pointClass: LollipopPoint
 });

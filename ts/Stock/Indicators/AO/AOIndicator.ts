@@ -271,9 +271,7 @@ extend(AOIndicator.prototype, {
 
     // Columns support:
     markerAttribs: noop as any,
-    /** @internal */
     getColumnMetrics: columnProto.getColumnMetrics,
-    /** @internal */
     crispCol: columnProto.crispCol,
     translate: columnProto.translate,
     drawPoints: columnProto.drawPoints

@@ -789,27 +789,17 @@ interface SankeySeries extends NodesComposition.SeriesComposition {
 NodesComposition.compose(SankeyPoint, SankeySeries);
 
 extend(SankeySeries.prototype, {
-    /** @internal */
     animate: LineSeries.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    /** @internal */
     createNode: NodesComposition.createNode as any,
-    /** @internal */
     forceDL: true,
-    /** @internal */
     invertible: true,
-    /** @internal */
     isCartesian: false,
-    /** @internal */
     orderNodes: true,
-    /** @internal */
     noSharedTooltip: true,
-    /** @internal */
     pointArrayMap: ['from', 'to', 'weight'],
-    /** @internal */
     pointClass: SankeyPoint,
-    /** @internal */
     searchPoint: H.noop as any
 });
 
