@@ -88,6 +88,11 @@ node_modules/
 /playwright/.cache/
 **/*.spec.*-snapshots/
 
+# Generated skill reference docs
+.agents/skills/*/references/
+.claude/skills/*/references/
+.claude/*.local.json
+
 # Old changelog artefact
 changelog/changelog.html
 
