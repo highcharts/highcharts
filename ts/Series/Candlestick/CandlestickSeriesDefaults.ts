@@ -140,8 +140,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding borderColor, borderRadius, borderWidth, dataParser, dataURL,
- *            marker
+ * @excluding borderColor, borderRadius, borderWidth, marker
  * @product   highstock
  * @apioption series.candlestick
  */

@@ -56,9 +56,8 @@ const ColumnPyramidSeriesDefaults: ColumnPyramidSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.columnpyramid
- * @excluding connectEnds, connectNulls, dashStyle, dataParser, dataURL,
- *            gapSize, gapUnit, linecap, lineWidth, marker, step,
- *            boostThreshold, boostBlending
+ * @excluding connectEnds, connectNulls, dashStyle, gapSize, gapUnit, linecap,
+ *            lineWidth, marker, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.columnpyramid

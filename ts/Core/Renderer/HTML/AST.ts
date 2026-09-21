@@ -279,7 +279,6 @@ class AST {
         'span',
         'stop',
         'strong',
-        'style',
         'sub',
         'sup',
         'svg',

@@ -365,7 +365,6 @@ export default MapBubbleSeries;
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.mapbubble
- * @excluding dataParser, dataURL
  * @product   highmaps
  * @apioption series.mapbubble
  */

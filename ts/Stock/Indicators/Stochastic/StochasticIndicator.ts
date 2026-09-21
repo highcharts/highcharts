@@ -317,9 +317,9 @@ export default StochasticIndicator;
  * @extends   series,plotOptions.stochastic
  * @since     6.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
- *            navigatorOptions, pointInterval, pointIntervalUnit,
- *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
+ *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
+ *            pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/stochastic
  * @apioption series.stochastic
