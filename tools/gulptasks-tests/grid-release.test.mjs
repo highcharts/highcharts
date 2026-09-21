@@ -93,6 +93,7 @@ test('approved workflow builds before tests and prepares without push', async ()
         'git pull --ff-only',
         'npm i',
         'npm i',
+        'npx gulp dist',
         'npx gulp scripts --product Grid',
         'npx gulp scripts --force',
         'npm run gtest',

@@ -125,9 +125,10 @@ async function runRelease({
     }
     if (from !== 'candidate') {
         await gate(
-            'DRY RUN: If declaration errors require it, run npx gulp dist ' +
-            'manually now (it deletes build/ and code/). Otherwise continue.'
+            'DRY RUN: Run npx gulp dist to build Highcharts and its ' +
+            'declarations. This deletes build/ and code/.', 'approve'
         );
+        execute(['npx', 'gulp', 'dist']);
         const properties = path.join(
             root, 'tools/gulptasks/grid/build-properties.json'
         );
