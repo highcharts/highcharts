@@ -21,10 +21,124 @@ function fixture(overrides = {}) {
     };
 }
 
+test('Dashboards workflow builds dependencies and prepares a local candidate', async () => {
+    let configReads = 0;
+    const { events, options } = fixture({
+        product: 'Dashboards',
+        readJSON: file => file.endsWith('config.json') ? {
+            compileOnDemand: false,
+            useMinifiedCode: configReads++ > 0
+        } : { version: '4.2.1' }
+    });
+    await runRelease(options);
+    assert.deepEqual(events.filter(e => e.args).map(e => e.args.join(' ')), [
+        'git pull --ff-only',
+        'npm i',
+        'npm i',
+        'npx gulp scripts',
+        'npm run gcode',
+        'npm run dtest',
+        'npx gulp test-cypress --product Dashboards',
+        'npm test',
+        'npx gulp dist --with-deps',
+        'npx gulp dist-release --product Dashboards'
+    ]);
+    assert.ok(events.some(e => typeof e === 'string' &&
+        e.includes('gulptasks/dashboards/build-properties.json')));
+    assert.ok(events.some(e => typeof e === 'string' &&
+        e.includes('dashboards-dist') && e.includes('manually reset')));
+    assert.ok(!events.some(e => typeof e === 'string' &&
+        e.includes('grid-lite-dist')));
+});
+
+test('Dashboards requires source mode and disabled compile on demand', async () => {
+    for (const settings of [
+        { compileOnDemand: true, useMinifiedCode: false },
+        { compileOnDemand: false, useMinifiedCode: true }
+    ]) {
+        const { events, options } = fixture({
+            product: 'Dashboards', from: 'dry-run', readJSON: () => settings
+        });
+        await assert.rejects(runRelease(options), /Disable compileOnDemand/u);
+        assert.ok(!events.some(e => e.args));
+    }
+});
+
+test('Dashboards candidate can be skipped for a bugfix', async () => {
+    const { events, options } = fixture({
+        product: 'Dashboards', from: 'candidate', prompt: async () => 'skip'
+    });
+    await runRelease(options);
+    assert.deepEqual(events, []);
+});
+
+test('Dashboards plan has no side effects and CLI help names the product', async () => {
+    const unexpected = () => { throw new Error('Unexpected side effect'); };
+    await runRelease({
+        product: 'Dashboards', plan: true,
+        readJSON: unexpected, prompt: unexpected, remove: unexpected,
+        run: unexpected
+    });
+    const result = spawnSync(process.execPath, [
+        'tools/dashboards-release.js', '--help'
+    ], { encoding: 'utf8' });
+    assert.equal(result.status, 0);
+    assert.match(result.stdout, /Interactive Dashboards release/u);
+    assert.match(result.stdout, /dashboards-dist/u);
+});
+
 test('denied reset does not delete files or run commands', async () => {
     const { events, options } = fixture({ prompt: async () => '' });
     await assert.rejects(runRelease(options), /without confirmation/u);
     assert.deepEqual(events, []);
+});
+
+test('approval and confirmation prompts have distinct colored labels', async () => {
+    const originalTTY = process.stdout.isTTY;
+    const originalNoColor = process.env.NO_COLOR;
+    try {
+        process.stdout.isTTY = true;
+        delete process.env.NO_COLOR;
+        const { events, options } = fixture();
+        await runRelease(options);
+        for (const message of events.filter(e => typeof e === 'string')) {
+            if (message.endsWith('[type approve]')) {
+                assert.ok(message.startsWith(
+                    '\u001b[1;33mApproval required:\u001b[0m\n'
+                ));
+            } else {
+                assert.ok(message.startsWith(
+                    '\u001b[1;36mConfirmation required:\u001b[0m\n'
+                ));
+            }
+        }
+        for (const tty of [false, true]) {
+            process.stdout.isTTY = tty;
+            process.env.NO_COLOR = '1';
+            await assert.rejects(runRelease({
+                prompt: async message => {
+                    assert.ok(message.startsWith('Approval required:\n'));
+                    assert.ok(!message.includes('\u001b'));
+                    return 'no';
+                }
+            }), /without confirmation/u);
+            await assert.rejects(runRelease({
+                from: 'candidate',
+                prompt: async message => {
+                    assert.ok(message.startsWith('Confirmation required:\n'));
+                    assert.ok(!message.includes('\u001b'));
+                    return 'no';
+                }
+            }), /without confirmation/u);
+        }
+    } finally {
+        process.stdout.isTTY = originalTTY;
+        if (typeof originalNoColor === 'undefined') {
+            delete process.env.NO_COLOR;
+        } else {
+            process.env.NO_COLOR = originalNoColor;
+        }
+    }
 });
 
 test('cleanup waits for each removal before proceeding', async () => {
