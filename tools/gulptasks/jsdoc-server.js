@@ -108,6 +108,7 @@ function jsDocServer() {
     const fs = require('fs');
     const http = require('http');
     const log = require('../libs/log');
+    const { sanitizePath } = require('../libs/fs');
 
     return new Promise(resolve => {
 
@@ -116,7 +117,7 @@ function jsDocServer() {
         http
             .createServer((request, response) => {
 
-                let p = request.url;
+                let p = sanitizePath(request.url);
 
                 if (p === '/highcharts' || p === '/' || p === '') {
                     response302(response, '/highcharts/');
@@ -173,7 +174,7 @@ function jsDocServer() {
                         }
                     );
             })
-            .listen(port);
+            .listen(port, '127.0.0.1');
 
         log.warn(
             'API documentation server running on http://localhost:' + port

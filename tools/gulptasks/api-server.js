@@ -32,8 +32,6 @@ const MIMES = {
     xml: 'application/xml'
 };
 
-const PATH_ESCAPE = /\.\.?\/|\/\.|\/\//u;
-
 const PORT = 9005;
 
 const SOURCE_PATH = Path.join(__dirname, '..', '..', 'build', 'api');
@@ -100,25 +98,6 @@ function response404(response, p) {
     response.end('Ooops, the requested file is 404', 'utf-8');
 }
 
-/**
- * Removes path elements that could result in a folder escape.
- *
- * @param {string} path
- * Path to sanitize.
- *
- * @returns {string}
- * Sanitized path.
- */
-function sanitizePath(path) {
-    path = (new URL(path, 'http://localhost')).pathname;
-
-    while (PATH_ESCAPE.test(path)) {
-        path = path.replace(PATH_ESCAPE, '');
-    }
-
-    return path;
-}
-
 /* *
  *
  *  Tasks
@@ -134,6 +113,7 @@ function sanitizePath(path) {
 async function apiServer() {
 
     const log = require('../libs/log');
+    const { sanitizePath } = require('../libs/fs');
     const argv = require('yargs').argv;
 
     let mainRoute;
@@ -214,7 +194,7 @@ async function apiServer() {
                     }
                 );
         })
-        .listen(PORT);
+        .listen(PORT, '127.0.0.1');
 
     log.warn(
         'API documentation server running on http://localhost:' + PORT

@@ -108,6 +108,7 @@ function apiServer() {
     const fs = require('fs');
     const http = require('http');
     const logLib = require('../../libs/log');
+    const { sanitizePath } = require('../../libs/fs');
 
     return new Promise(resolve => {
 
@@ -116,7 +117,7 @@ function apiServer() {
         http
             .createServer((request, response) => {
 
-                let uri = request.url;
+                let uri = sanitizePath(request.url);
 
                 switch (uri) {
                     case '':
@@ -177,7 +178,7 @@ function apiServer() {
                     }
                 );
             })
-            .listen(port);
+            .listen(port, '127.0.0.1');
 
         logLib.warn(
             'API documentation server running on http://localhost:' + port
