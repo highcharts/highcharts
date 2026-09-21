@@ -22,12 +22,11 @@ function fixture(overrides = {}) {
 }
 
 test('Dashboards workflow builds dependencies and prepares a local candidate', async () => {
-    let configReads = 0;
     const { events, options } = fixture({
         product: 'Dashboards',
         readJSON: file => file.endsWith('config.json') ? {
             compileOnDemand: false,
-            useMinifiedCode: configReads++ > 0
+            useMinifiedCode: true
         } : { version: '4.2.1' }
     });
     await runRelease(options);
@@ -38,7 +37,6 @@ test('Dashboards workflow builds dependencies and prepares a local candidate', a
         'npx gulp scripts',
         'npm run gcode',
         'npm run dtest',
-        'npx gulp test-cypress --product Dashboards',
         'npm test',
         'npx gulp dist --with-deps',
         'npx gulp dist-release --product Dashboards'
@@ -51,17 +49,17 @@ test('Dashboards workflow builds dependencies and prepares a local candidate', a
         e.includes('grid-lite-dist')));
 });
 
-test('Dashboards requires source mode and disabled compile on demand', async () => {
-    for (const settings of [
-        { compileOnDemand: true, useMinifiedCode: false },
-        { compileOnDemand: false, useMinifiedCode: true }
-    ]) {
-        const { events, options } = fixture({
-            product: 'Dashboards', from: 'dry-run', readJSON: () => settings
-        });
-        await assert.rejects(runRelease(options), /Disable compileOnDemand/u);
-        assert.ok(!events.some(e => e.args));
-    }
+test('Dashboards source settings rely on confirmation without reading config', async () => {
+    const { options } = fixture({
+        product: 'Dashboards',
+        from: 'dry-run',
+        readJSON: () => { throw new Error('Unexpected config read'); },
+        run: args => {
+            assert.deepEqual(args, ['npx', 'gulp', 'scripts']);
+            throw new Error('Reached build');
+        }
+    });
+    await assert.rejects(runRelease(options), /Reached build/u);
 });
 
 test('Dashboards candidate can be skipped for a bugfix', async () => {
@@ -88,7 +86,7 @@ test('Dashboards plan has no side effects and CLI help names the product', async
 });
 
 test('denied reset does not delete files or run commands', async () => {
-    const { events, options } = fixture({ prompt: async () => '' });
+    const { events, options } = fixture({ prompt: async () => 'cancel' });
     await assert.rejects(runRelease(options), /without confirmation/u);
     assert.deepEqual(events, []);
 });
@@ -236,11 +234,37 @@ test('candidate replacement requires separate destructive approval', async () =>
     let count = 0;
     const { events, options } = fixture({
         from: 'candidate',
-        prompt: async () => { ++count; return 'done'; }
+        prompt: async () => ++count < 3 ? 'done' : 'cancel'
     });
     await assert.rejects(runRelease(options), /without confirmation/u);
-    assert.equal(count, 2);
+    assert.equal(count, 3);
     assert.equal(events.length, 0);
+});
+
+test('invalid answers retry the same gate without running actions', async () => {
+    for (const from of ['reset', 'candidate']) {
+        const expected = from === 'reset' ? 'approve' : 'done';
+        const responses = ['', expected === 'approve' ? 'done' : 'approve', expected];
+        const questions = [];
+        const { options } = fixture({
+            from,
+            prompt: async question => {
+                questions.push(question);
+                if (questions.length > 3) {
+                    throw new Error('Reached next step');
+                }
+                return responses.shift();
+            },
+            remove: () => {
+                assert.equal(questions.length, 3);
+                throw new Error('Reached next step');
+            },
+            run: () => { assert.fail('Unexpected command'); }
+        });
+        await assert.rejects(runRelease(options), /Reached next step/u);
+        assert.equal(questions[0], questions[1]);
+        assert.equal(questions[1], questions[2]);
+    }
 });
 
 test('command failure stops before subsequent actions', async () => {

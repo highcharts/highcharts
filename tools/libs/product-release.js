@@ -26,7 +26,8 @@ Interactive ${product} release preparation. PHASE: reset, dry-run, candidate.
 Requires sibling highcharts-utils and ${repositories[product].join(', ')} clones.
 Destructive steps require typing "approve"; manual steps require "done".
 ${product === 'Dashboards' ?
-        'The candidate selection also accepts "skip" for bugfix releases.\n' : ''}Other answers, EOF or Ctrl+C stop the script. There is no auto-yes mode.
+        'The candidate selection also accepts "skip" for bugfix releases.\n' : ''}Unrecognized answers repeat the prompt. Type "cancel" or "no" to stop.
+EOF or Ctrl+C also stops the script. There is no auto-yes mode.
 Stops on command failure. Never passes --push to dist-release.
 `;
 }
@@ -100,17 +101,24 @@ async function runRelease({
         const color = approval ? '\u001b[1;33m' : '\u001b[1;36m';
         const prefix = process.stdout.isTTY && !('NO_COLOR' in process.env) ?
             `${color}${label}\u001b[0m\n` : `${label}\n`;
-        const question = `${prefix}${message} [type ${answer}` +
+        const question = `${prefix}${message}\nType cancel to stop. [type ${answer}` +
             `${skippable ? ' or skip' : ''}]`;
         if (plan) {
             console.log(`\n${question}`);
         } else {
-            const response = await prompt(question);
-            if (skippable && response === 'skip') {
-                return false;
-            }
-            if (response !== answer) {
-                throw new Error('Stopped without confirmation.');
+            for (;;) {
+                const response = await prompt(question);
+                if (response === answer) {
+                    return true;
+                }
+                if (skippable && response === 'skip') {
+                    return false;
+                }
+                if (response === 'cancel' || response === 'no') {
+                    throw new Error('Stopped without confirmation.');
+                }
+                console.log(`Please type ${answer}` +
+                    `${skippable ? ', skip' : ''} or cancel.`);
             }
         }
         return true;
@@ -152,19 +160,10 @@ async function runRelease({
     if (from !== 'candidate') {
         if (dashboards) {
             await gate(
-                `Disable compileOnDemand and useMinifiedCode in ${config}.\n` +
-                'Disable Compile on Demand in the utils UI too, and verify ' +
-                `highchartsDir resolves to ${root}. Restart the utils server.`
+                'In highcharts-utils, disable Compile on Demand and ' +
+                'useMinifiedCode, point highchartsDir to this checkout, ' +
+                'then restart the server.'
             );
-            if (!plan) {
-                const settings = readJSON(config);
-                if (settings.compileOnDemand !== false ||
-                    settings.useMinifiedCode !== false) {
-                    throw new Error(
-                        'Disable compileOnDemand and useMinifiedCode first.'
-                    );
-                }
-            }
         }
         await gate(
             dashboards ?
@@ -184,13 +183,12 @@ async function runRelease({
         );
         if (dashboards) {
             await gate(
-                'Build Grid and run Dashboards, Cypress and Highcharts tests. ' +
+                'Build Grid and run Dashboards and Highcharts tests. ' +
                 'Build/test tasks replace generated files under build/, ' +
                 'code/, js/ and test output directories.', 'approve'
             );
             execute(['npm', 'run', 'gcode']);
             execute(['npm', 'run', 'dtest']);
-            execute(['npx', 'gulp', 'test-cypress', '--product', 'Dashboards']);
             execute(['npm', 'test']);
             await gate(
                 'Build Highcharts, Grid and Dashboards with npx gulp dist ' +

@@ -11,7 +11,7 @@ The script uses Node built-ins so it can start without `node_modules` and contin
 
 For debugging on another Highcharts branch, use `node tools/grid-release.js --allow-non-master`. This bypasses only the Highcharts branch check. Approval prompts and manual checkpoints remain active, and commands (including `git pull --ff-only`) operate on your current checkout. You can combine it with `--from dry-run` or `--from candidate`.
 
-Type `approve` before deletion or replacement of generated files and distribution repository contents. These prompts start with a bold yellow `Approval required:` label in terminals (set `NO_COLOR` to disable color). Type `done` after each manual task, marked with a bold cyan `Confirmation required:` label. Other answers, EOF and Ctrl+C stop the script; failed commands also stop it. There is no automatic approval option. Non-interactive runs can use `--plan`, which only prints the checklist.
+Type `approve` before deletion or replacement of generated files and distribution repository contents. These prompts start with a bold yellow `Approval required:` label in terminals (set `NO_COLOR` to disable color). Type `done` after each manual task, marked with a bold cyan `Confirmation required:` label. Unrecognized answers repeat the prompt. Type `cancel` or `no` to stop; EOF, Ctrl+C and failed commands also stop the script. There is no automatic approval option. Non-interactive runs can use `--plan`, which only prints the checklist.
 
 After reset approval, cleanup reports each directory before and after removal, with a progress message every five seconds for slow removals. Large directories such as `node_modules` can take time. The next confirmation appears once cleanup finishes.
 
