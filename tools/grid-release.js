@@ -11,11 +11,12 @@ const readline = require('node:readline/promises');
 const root = path.resolve(__dirname, '..');
 const cleanup = ['build', 'code', 'cypress', 'js', 'node_modules', 'out', 'tmp'];
 const phases = ['reset', 'dry-run', 'candidate'];
-const help = `Usage: node tools/grid-release.js [--plan] [--from PHASE]
+const help = `Usage: node tools/grid-release.js [--plan] [--from PHASE] [--allow-non-master]
 
 Interactive Grid release preparation. PHASE: reset, dry-run, candidate.
 --plan prints the checklist without running commands (also works in CI).
 --from resumes at a phase; you must have completed earlier phases yourself.
+--allow-non-master bypasses the Highcharts branch check for debugging.
 Requires sibling highcharts-utils, grid-lite-dist and grid-pro-dist clones.
 Destructive steps require typing "approve"; manual steps require "done".
 Any other answer, EOF or Ctrl+C stops the script. There is no auto-yes mode.
@@ -190,6 +191,7 @@ async function runRelease({
 async function main(args) {
     let from = 'reset';
     let plan = false;
+    let allowNonMaster = false;
     for (let i = 0; i < args.length; ++i) {
         if (args[i] === '--help') {
             console.log(help);
@@ -197,6 +199,8 @@ async function main(args) {
         }
         if (args[i] === '--plan') {
             plan = true;
+        } else if (args[i] === '--allow-non-master') {
+            allowNonMaster = true;
         } else if (args[i] === '--from' && phases.includes(args[i + 1])) {
             from = args[++i];
         } else {
@@ -207,10 +211,13 @@ async function main(args) {
         if (!process.stdin.isTTY || !process.stdout.isTTY) {
             throw new Error('An interactive terminal is required. Use --plan in CI.');
         }
-        if (execFileSync('git', ['branch', '--show-current'], {
+        if (!allowNonMaster && execFileSync('git', ['branch', '--show-current'], {
             cwd: root, encoding: 'utf8'
         }).trim() !== 'master') {
-            throw new Error('Run from master. No branch is switched automatically.');
+            throw new Error(
+                'Run from master, or use --allow-non-master for debugging. ' +
+                'No branch is switched automatically.'
+            );
         }
         for (const repo of ['highcharts-utils', 'grid-lite-dist', 'grid-pro-dist']) {
             if (!fs.existsSync(path.resolve(root, '..', repo, 'package.json'))) {
@@ -228,4 +235,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { runRelease };
+module.exports = { main, runRelease };

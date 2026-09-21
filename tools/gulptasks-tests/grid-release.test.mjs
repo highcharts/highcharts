@@ -159,11 +159,36 @@ test('plan does not read, prompt, delete or execute', async () => {
 });
 
 test('CLI rejects noninteractive execution and push flags', () => {
-    for (const args of [[], ['--push'], ['--from', 'invalid']]) {
+    for (const args of [
+        [], ['--allow-non-master'], ['--push'], ['--from', 'invalid']
+    ]) {
         const result = spawnSync(process.execPath, [
             'tools/grid-release.js', ...args
         ], { encoding: 'utf8' });
         assert.equal(result.status, 1);
         assert.match(result.stderr, /interactive terminal|Unknown argument/u);
+    }
+});
+
+test('non-master override bypasses branch check but still requires approval', () => {
+    for (const override of [false, true]) {
+        const result = spawnSync(process.execPath, ['-e', `
+            process.stdin.isTTY = true;
+            process.stdout.isTTY = true;
+            const cp = require('node:child_process');
+            cp.execFileSync = () => 'debug-branch';
+            cp.spawnSync = () => { throw new Error('Unexpected command'); };
+            require('node:fs').existsSync = () => true;
+            require('./tools/grid-release').main(
+                ${JSON.stringify(override ? ['--allow-non-master'] : [])}
+            ).catch(error => {
+                console.error(error.message);
+                process.exitCode = 1;
+            });
+        `], { input: 'no\n', encoding: 'utf8', timeout: 5000 });
+        assert.equal(result.status, 1);
+        assert.match(result.stderr, override ?
+            /Stopped without confirmation/u : /Run from master/u);
+        assert.equal(result.stdout.includes('[type approve]'), override);
     }
 });
