@@ -317,7 +317,6 @@ export default ZigzagIndicator;
  * @extends   series,plotOptions.zigzag
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/zigzag
  * @apioption series.zigzag

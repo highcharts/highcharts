@@ -45,17 +45,14 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.hlc
  *
- * @excluding borderColor, borderRadius, borderWidth, crisp, stacking,
- *            stack
- *
- * @excluding dataParser, dataURL
+ * @excluding borderColor, borderRadius, borderWidth, crisp, stacking, stack
  *
  * @product highstock
  */
 export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     /**
-     * @default close
+     * @default 'close'
      */
     colorKey?: string;
 

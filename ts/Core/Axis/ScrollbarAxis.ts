@@ -253,6 +253,9 @@ namespace ScrollbarAxis {
                     this.setRange(this.from, this.to);
                 }
             });
+
+        } else if (axis.scrollbar) {
+            axis.scrollbar = axis.scrollbar.destroy();
         }
     }
 

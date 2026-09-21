@@ -120,6 +120,7 @@ class PinnedTableCell extends TableCell {
                 this.row,
                 sourceColumnId
             );
+            await this.updateDerivedCells();
             return false;
         }
 

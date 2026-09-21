@@ -490,6 +490,22 @@ describe('DataTable', () => {
         });
     });
 
+    describe('hasRowWith', () => {
+        it('should return false when the column does not exist', () => {
+            const table = new DataTable({
+                columns: {
+                    x: [1]
+                }
+            });
+
+            strictEqual(
+                table.hasRowWith('missing', 1),
+                false,
+                'Missing column should return false for a numeric value.'
+            );
+        });
+    });
+
     describe('getRows', () => {
         it('should return row with non-existing column', () => {
             const table = new DataTable({ columns: { 'a': [0] } });

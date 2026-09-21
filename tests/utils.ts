@@ -276,12 +276,16 @@ if (!highchartsCssPath) {
 // Prefer the built CSS but fall back to the source file when dist assets are absent.
 export const highchartsCSS = readFileSync(highchartsCssPath, 'utf8');
 
-export function getSample(path: string, injectCSS: boolean = false) {
+export function getSample(
+    path: string,
+    injectCSS: boolean = false,
+    scriptFile = 'demo.{js,mjs,ts}'
+) {
     path = normalize(path.replace(/\\/g, '/')).replace(/\\/g, '/');
     const files = {
         html: 'demo.html',
         css: 'demo.css',
-        script: 'demo.{js,mjs,ts}',
+        script: scriptFile,
         details: 'demo.details'
     };
 
