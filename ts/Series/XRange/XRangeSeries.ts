@@ -383,6 +383,11 @@ class XRangeSeries extends ColumnSeries {
 
         point.shapeArgs = shapeArgs;
 
+        // Rank data labels by the length of the bar. The point's `y` is a
+        // category index here, so the generic value based rank would order
+        // the labels by their row rather than by size (#23585).
+        point.labelrank = point.labelrank ?? width;
+
         // Move tooltip to default position
         if (!inverted) {
             (point.tooltipPos as any)[0] -= oldColWidth +

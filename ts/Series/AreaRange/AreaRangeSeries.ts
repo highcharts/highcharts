@@ -490,6 +490,14 @@ class AreaRangeSeries extends AreaSeries {
             for (const point of series.points) {
                 const labels = point.dataLabels ?? [];
 
+                // Rank both labels of the point by how tall the range is.
+                // `pointValKey` is `low` for this series, so the generic
+                // value based rank would order the labels by their lower
+                // bound rather than by size (#23585).
+                point.labelrank = point.labelrank ?? Math.abs(
+                    (point.high || 0) - (point.low || 0)
+                );
+
                 point.dataLabelUpper = labels.find((label): boolean => (
                     RangeDataLabel.resolveAlignToKey(
                         series,
