@@ -9,7 +9,7 @@ node tools/grid-release.js
 
 The script uses Node built-ins so it can start without `node_modules` and continue after deleting it. It calls the existing npm and Gulp tasks. It requires the Highcharts checkout on `master` and sibling `highcharts-utils`, `grid-lite-dist` and `grid-pro-dist` repositories. The Grid distribution repositories must be on `main`, with no untracked or uncommitted files.
 
-For debugging on another Highcharts branch, use `node tools/grid-release.js --allow-non-master`. This bypasses only the Highcharts branch check. Approval prompts and manual checkpoints remain active, and commands (including `git pull --ff-only`) operate on your current checkout. You can combine it with `--from dry-run` or `--from candidate`.
+For debugging on another Highcharts branch, use `node tools/grid-release.js --allow-non-master`. This bypasses the Highcharts branch, clean-worktree and remote-commit checks. Approval prompts and manual checkpoints remain active, and commands (including `git pull --ff-only`) operate on your current checkout. You can combine it with `--from dry-run` or `--from candidate`.
 
 Type `approve` before deletion or replacement of generated files and distribution repository contents. These prompts start with a bold yellow `Approval required:` label in terminals (set `NO_COLOR` to disable color). Type `done` after each manual task, marked with a bold cyan `Confirmation required:` label. Unrecognized answers repeat the prompt. Type `cancel` or `no` to stop; EOF, Ctrl+C and failed commands also stop the script. There is no automatic approval option. Non-interactive runs can use `--plan`, which only prints the checklist.
 
@@ -29,3 +29,5 @@ node tools/grid-release.js --help
 node tools/grid-release.js --plan
 node tools/grid-release.js < /dev/null # Expected failure
 ```
+
+Normal runs require a clean Highcharts checkout, including untracked files. Before builds or candidate preparation, the script fetches `origin/master` and requires `HEAD` to match it. It checks again after version confirmation and before copying the candidate. Commit and push version changes before continuing. The debugging override permits local changes and unpushed commits; use it only for local testing.

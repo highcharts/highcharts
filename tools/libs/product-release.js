@@ -9,7 +9,9 @@ const path = require('node:path');
 const readline = require('node:readline/promises');
 
 const root = path.resolve(__dirname, '../..');
-const cleanup = ['build', 'code', 'cypress', 'js', 'node_modules', 'out', 'tmp'];
+const cleanup = [
+    'build', 'code', 'cypress', 'js', 'node_modules', 'out', 'tmp'
+];
 const phases = ['reset', 'dry-run', 'candidate'];
 const repositories = {
     Grid: ['grid-lite-dist', 'grid-pro-dist'],
@@ -17,19 +19,40 @@ const repositories = {
 };
 
 function getHelp(product) {
-    return `Usage: node tools/${product.toLowerCase()}-release.js [--plan] [--from PHASE] [--allow-non-master]
+    const candidateHelp = product === 'Dashboards' ?
+        'The candidate selection accepts "skip" for bugfix releases.\n' : '';
+    return `Usage: node tools/${product.toLowerCase()}-release.js
+    [--plan] [--from PHASE] [--allow-non-master]
 
 Interactive ${product} release preparation. PHASE: reset, dry-run, candidate.
 --plan prints the checklist without running commands (also works in CI).
 --from resumes at a phase; you must have completed earlier phases yourself.
---allow-non-master bypasses the Highcharts branch check for debugging.
-Requires sibling highcharts-utils and ${repositories[product].join(', ')} clones.
+--allow-non-master bypasses checkout integrity checks for debugging.
+Requires sibling highcharts-utils and these distribution clones:
+${repositories[product].join(', ')}.
 Destructive steps require typing "approve"; manual steps require "done".
-${product === 'Dashboards' ?
-        'The candidate selection also accepts "skip" for bugfix releases.\n' : ''}Unrecognized answers repeat the prompt. Type "cancel" or "no" to stop.
+${candidateHelp}Unrecognized answers repeat the prompt.
+Type "cancel" or "no" to stop.
 EOF or Ctrl+C also stops the script. There is no auto-yes mode.
 Stops on command failure. Never passes --push to dist-release.
 `;
+}
+
+function verifyCheckout(requireRemote = true, git = args => execFileSync(
+    'git', args, { cwd: root, encoding: 'utf8' }
+).trim()) {
+    if (git(['branch', '--show-current']) !== 'master') {
+        throw new Error(
+            'Run from master, or use --allow-non-master for debugging.'
+        );
+    }
+    if (git(['status', '--porcelain', '--untracked-files=all'])) {
+        throw new Error('Commit or remove local changes before releasing.');
+    }
+    if (requireRemote && git(['rev-parse', 'HEAD']) !==
+        git(['rev-parse', 'origin/master'])) {
+        throw new Error('Release HEAD must match origin/master.');
+    }
 }
 
 function command(args, cwd = root) {
@@ -66,8 +89,9 @@ async function removeDirectory(file) {
     const start = Date.now();
     console.log(`Removing ${file}...`);
     const progress = setInterval(() => {
+        const seconds = Math.round((Date.now() - start) / 1000);
         console.log(
-            `Still removing ${file} (${Math.round((Date.now() - start) / 1000)}s)...`
+            `Still removing ${file} (${seconds}s)...`
         );
     }, 5000);
     try {
@@ -82,6 +106,8 @@ async function runRelease({
     product = 'Grid',
     from = 'reset',
     plan = false,
+    allowNonMaster = false,
+    verify = verifyCheckout,
     prompt = ask,
     run = command,
     remove = removeDirectory,
@@ -97,11 +123,13 @@ async function runRelease({
     const config = path.join(utils, 'config.json');
     async function gate(message, answer = 'done', skippable = false) {
         const approval = answer === 'approve';
-        const label = approval ? 'Approval required:' : 'Confirmation required:';
+        const label = approval ?
+            'Approval required:' : 'Confirmation required:';
         const color = approval ? '\u001b[1;33m' : '\u001b[1;36m';
         const prefix = process.stdout.isTTY && !('NO_COLOR' in process.env) ?
             `${color}${label}\u001b[0m\n` : `${label}\n`;
-        const question = `${prefix}${message}\nType cancel to stop. [type ${answer}` +
+        const question = `${prefix}${message}\n` +
+            `Type cancel to stop. [type ${answer}` +
             `${skippable ? ' or skip' : ''}]`;
         if (plan) {
             console.log(`\n${question}`);
@@ -130,6 +158,11 @@ async function runRelease({
             run(args);
         }
     }
+    function checkSource() {
+        if (!plan && !allowNonMaster) {
+            verify();
+        }
+    }
     if (from === 'reset') {
         await gate(
             `RESET: Delete these paths under ${root}:\n` +
@@ -143,8 +176,8 @@ async function runRelease({
         }
         for (const repo of repos) {
             await gate(
-                `In ${path.resolve(root, '..', repo)}, manually reset unwanted ` +
-                'changes or commit and push work you want to keep.\n' +
+                `In ${path.resolve(root, '..', repo)}, manually reset ` +
+                'unwanted changes or commit and push work you want to keep.\n' +
                 'Confirm there are no untracked or uncommitted files and ' +
                 `the branch is ${branch}.`
             );
@@ -156,6 +189,10 @@ async function runRelease({
         } else {
             run(['npm', 'i'], utils);
         }
+    }
+    if (!allowNonMaster) {
+        execute(['git', 'fetch', 'origin', 'master']);
+        checkSource();
     }
     if (from !== 'candidate') {
         if (dashboards) {
@@ -174,13 +211,16 @@ async function runRelease({
         );
         execute(['npx', 'gulp', dashboards ? 'scripts' : 'dist']);
         const properties = path.join(
-            root, `tools/gulptasks/${product.toLowerCase()}/build-properties.json`
+            root, 'tools/gulptasks', product.toLowerCase(),
+            'build-properties.json'
         );
         await gate(
             `Check the version in ${properties}` +
             (plan ? '.' : ` (currently ${readJSON(properties).version}).`) +
-            '\nUpdate it manually if needed, then confirm it is correct.'
+            '\nUpdate it manually if needed, then confirm it is correct. ' +
+            'For normal releases, commit and push changes before continuing.'
         );
+        checkSource();
         if (dashboards) {
             await gate(
                 'Build Grid and run Dashboards and Highcharts tests. ' +
@@ -198,8 +238,8 @@ async function runRelease({
             execute(['npx', 'gulp', 'dist', '--with-deps']);
         } else {
             await gate(
-                'Build Grid and Highcharts for the Pro tests. Generated files ' +
-            'under build/, code/ and js/ will be replaced.', 'approve'
+                'Build Grid and Highcharts for the Pro tests. Generated ' +
+                'files under build/, code/ and js/ will be replaced.', 'approve'
             );
             execute(['npx', 'gulp', 'scripts', '--product', 'Grid']);
             execute(['npx', 'gulp', 'scripts', '--force']);
@@ -220,7 +260,9 @@ async function runRelease({
                 throw new Error('highcharts-utils must use minified code.');
             }
             if (dashboards && settings.compileOnDemand !== false) {
-                throw new Error('Keep compileOnDemand disabled for demo checks.');
+                throw new Error(
+                    'Keep compileOnDemand disabled for demo checks.'
+                );
             }
         }
         if (dashboards) {
@@ -243,8 +285,8 @@ async function runRelease({
             execute(['npx', 'gulp', 'scripts', '--force']);
             execute(['npx', 'gulp', 'compile']);
             await gate(
-                'Start/restart highcharts-utils and check every Grid Lite and ' +
-            'Grid Pro demo. Confirm all demos pass.'
+                'Start/restart highcharts-utils and check every Grid Lite ' +
+                'and Grid Pro demo. Confirm all demos pass.'
             );
             await gate(
                 'Inspect both Highcharts-Grid-Lite-x.x.x.zip and ' +
@@ -254,8 +296,8 @@ async function runRelease({
         }
     }
     if (dashboards && !await gate(
-        'RELEASE CANDIDATE: Prepare for a non-bugfix release or major changes. ' +
-        'Type skip for a bugfix release that does not need a candidate.',
+        'RELEASE CANDIDATE: Prepare for a non-bugfix release or major ' +
+        'changes. Type skip for a bugfix that does not need a candidate.',
         'done', true
     )) {
         console.log('Dry run complete. Candidate preparation skipped.');
@@ -272,6 +314,7 @@ async function runRelease({
         'Changes remain local, without committing, tagging or pushing.',
         'approve'
     );
+    checkSource();
     execute(['npx', 'gulp', 'dist-release', '--product', product]);
     console.log(plan ? '\nPlan only; no changes made.' :
         '\nCandidate prepared locally. Review the dist repositories.');
@@ -299,23 +342,21 @@ async function main(args, product = 'Grid') {
     }
     if (!plan) {
         if (!process.stdin.isTTY || !process.stdout.isTTY) {
-            throw new Error('An interactive terminal is required. Use --plan in CI.');
-        }
-        if (!allowNonMaster && execFileSync('git', ['branch', '--show-current'], {
-            cwd: root, encoding: 'utf8'
-        }).trim() !== 'master') {
             throw new Error(
-                'Run from master, or use --allow-non-master for debugging. ' +
-                'No branch is switched automatically.'
+                'An interactive terminal is required. Use --plan in CI.'
             );
         }
+        if (!allowNonMaster) {
+            verifyCheckout(false);
+        }
         for (const repo of ['highcharts-utils', ...repositories[product]]) {
-            if (!fs.existsSync(path.resolve(root, '..', repo, 'package.json'))) {
+            const manifest = path.resolve(root, '..', repo, 'package.json');
+            if (!fs.existsSync(manifest)) {
                 throw new Error(`Missing sibling repository: ${repo}`);
             }
         }
     }
-    await runRelease({ from, plan, product });
+    await runRelease({ from, plan, product, allowNonMaster });
 }
 
-module.exports = { main, runRelease };
+module.exports = { main, runRelease, verifyCheckout };

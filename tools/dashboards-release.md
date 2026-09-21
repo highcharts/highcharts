@@ -14,7 +14,7 @@ Destructive steps show a bold yellow **Approval required:** label and wait for `
 3. **Distribution checks:** Approve `npx gulp dist --with-deps`. This is the current task for building minified Highcharts, Grid and Dashboards together, preserving dependency code between builds; `--dashboards-all` is not a supported flag. Set `useMinifiedCode` to `true`, keep Compile on Demand disabled, restart utils, and confirm all Dashboards and Grid demos pass. Inspect the versioned Dashboards ZIP under `build/dist/` (unpacked contents are in `build/dist/dashboards`), including its code, declarations and examples, and compare packaged code with `dashboards-dist`.
 4. **Release candidate:** For non-bugfix releases or major changes, confirm with `done`; for a bugfix that does not need a candidate, enter `skip`. After approval, the script runs `npx gulp dist-release --product Dashboards`. This pulls/rebases and replaces distribution repository files. Changes remain local, without committing, tagging or pushing. Review the resulting `dashboards-dist` contents against the ZIP.
 
-Use `--from dry-run` or `--from candidate` to restart after resolving a failure. Earlier prerequisites are your responsibility when resuming. Use `--allow-non-master` to debug on another Highcharts branch; commands operate on the current checkout and approval prompts remain active. Completed steps are not rolled back, and the utils config remains in minified mode.
+Use `--from dry-run` or `--from candidate` to restart after resolving a failure. Earlier prerequisites are your responsibility when resuming. Use `--allow-non-master` to debug on another Highcharts branch, bypassing the clean-worktree and remote-commit checks too; commands operate on the current checkout and approval prompts remain active. Completed steps are not rolled back, and the utils config remains in minified mode.
 
 Validation without running a release:
 
@@ -24,3 +24,5 @@ node tools/dashboards-release.js --help
 node tools/dashboards-release.js --plan
 node tools/dashboards-release.js < /dev/null # Expected failure
 ```
+
+Normal runs require a clean Highcharts checkout, including untracked files. Before builds or candidate preparation, the script fetches `origin/master` and requires `HEAD` to match it. It checks again after version confirmation and before copying the candidate. Commit and push version changes before continuing. The debugging override permits local changes and unpushed commits; use it only for local testing.

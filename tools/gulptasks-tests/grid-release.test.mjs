@@ -3,12 +3,14 @@ import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { runRelease } from '../grid-release.js';
+import { verifyCheckout } from '../libs/product-release.js';
 
 function fixture(overrides = {}) {
     const events = [];
     return {
         events,
         options: {
+            allowNonMaster: true,
             prompt: async message => {
                 events.push(message);
                 return message.endsWith('[type approve]') ?
@@ -22,46 +24,51 @@ function fixture(overrides = {}) {
     };
 }
 
-test('Dashboards workflow builds dependencies and prepares a local candidate', async () => {
-    const { events, options } = fixture({
-        product: 'Dashboards',
-        readJSON: file => file.endsWith('config.json') ? {
-            compileOnDemand: false,
-            useMinifiedCode: true
-        } : { version: '4.2.1' }
-    });
-    await runRelease(options);
-    assert.deepEqual(events.filter(e => e.args).map(e => e.args.join(' ')), [
-        'git pull --ff-only',
-        'npm i',
-        'npm i',
-        'npx gulp scripts',
-        'npm run gcode',
-        'npm run dtest',
-        'npm test',
-        'npx gulp dist --with-deps',
-        'npx gulp dist-release --product Dashboards'
-    ]);
-    assert.ok(events.some(e => typeof e === 'string' &&
+test('Dashboards workflow builds dependencies and prepares a local candidate',
+    async () => {
+        const { events, options } = fixture({
+            product: 'Dashboards',
+            readJSON: file => (file.endsWith('config.json') ? {
+                compileOnDemand: false,
+                useMinifiedCode: true
+            } : { version: '4.2.1' })
+        });
+        await runRelease(options);
+        const commands = events.filter(e => e.args).map(e => e.args.join(' '));
+        assert.deepEqual(commands, [
+            'git pull --ff-only',
+            'npm i',
+            'npm i',
+            'npx gulp scripts',
+            'npm run gcode',
+            'npm run dtest',
+            'npm test',
+            'npx gulp dist --with-deps',
+            'npx gulp dist-release --product Dashboards'
+        ]);
+        assert.ok(events.some(e => typeof e === 'string' &&
         e.includes(join('gulptasks', 'dashboards', 'build-properties.json'))));
-    assert.ok(events.some(e => typeof e === 'string' &&
+        assert.ok(events.some(e => typeof e === 'string' &&
         e.includes('dashboards-dist') && e.includes('manually reset')));
-    assert.ok(!events.some(e => typeof e === 'string' &&
+        assert.ok(!events.some(e => typeof e === 'string' &&
         e.includes('grid-lite-dist')));
-});
-
-test('Dashboards source settings rely on confirmation without reading config', async () => {
-    const { options } = fixture({
-        product: 'Dashboards',
-        from: 'dry-run',
-        readJSON: () => { throw new Error('Unexpected config read'); },
-        run: args => {
-            assert.deepEqual(args, ['npx', 'gulp', 'scripts']);
-            throw new Error('Reached build');
-        }
     });
-    await assert.rejects(runRelease(options), /Reached build/u);
-});
+
+test('Dashboards source settings rely on confirmation without reading config',
+    async () => {
+        const { options } = fixture({
+            product: 'Dashboards',
+            from: 'dry-run',
+            readJSON: () => {
+                throw new Error('Unexpected config read');
+            },
+            run: args => {
+                assert.deepEqual(args, ['npx', 'gulp', 'scripts']);
+                throw new Error('Reached build');
+            }
+        });
+        await assert.rejects(runRelease(options), /Reached build/u);
+    });
 
 test('Dashboards candidate can be skipped for a bugfix', async () => {
     const { events, options } = fixture({
@@ -71,20 +78,26 @@ test('Dashboards candidate can be skipped for a bugfix', async () => {
     assert.deepEqual(events, []);
 });
 
-test('Dashboards plan has no side effects and CLI help names the product', async () => {
-    const unexpected = () => { throw new Error('Unexpected side effect'); };
-    await runRelease({
-        product: 'Dashboards', plan: true,
-        readJSON: unexpected, prompt: unexpected, remove: unexpected,
-        run: unexpected
+test('Dashboards plan has no side effects and CLI help names the product',
+    async () => {
+        function unexpected() {
+            throw new Error('Unexpected side effect');
+        }
+        await runRelease({
+            product: 'Dashboards',
+            plan: true,
+            readJSON: unexpected,
+            prompt: unexpected,
+            remove: unexpected,
+            run: unexpected
+        });
+        const result = spawnSync(process.execPath, [
+            'tools/dashboards-release.js', '--help'
+        ], { encoding: 'utf8' });
+        assert.equal(result.status, 0);
+        assert.match(result.stdout, /Interactive Dashboards release/u);
+        assert.match(result.stdout, /dashboards-dist/u);
     });
-    const result = spawnSync(process.execPath, [
-        'tools/dashboards-release.js', '--help'
-    ], { encoding: 'utf8' });
-    assert.equal(result.status, 0);
-    assert.match(result.stdout, /Interactive Dashboards release/u);
-    assert.match(result.stdout, /dashboards-dist/u);
-});
 
 test('denied reset does not delete files or run commands', async () => {
     const { events, options } = fixture({ prompt: async () => 'cancel' });
@@ -92,52 +105,123 @@ test('denied reset does not delete files or run commands', async () => {
     assert.deepEqual(events, []);
 });
 
-test('approval and confirmation prompts have distinct colored labels', async () => {
-    const originalTTY = process.stdout.isTTY;
-    const originalNoColor = process.env.NO_COLOR;
-    try {
-        process.stdout.isTTY = true;
-        delete process.env.NO_COLOR;
-        const { events, options } = fixture();
-        await runRelease(options);
-        for (const message of events.filter(e => typeof e === 'string')) {
-            if (message.endsWith('[type approve]')) {
-                assert.ok(message.startsWith(
-                    '\u001b[1;33mApproval required:\u001b[0m\n'
-                ));
+test('approval and confirmation prompts have distinct colored labels',
+    async () => {
+        const originalTTY = process.stdout.isTTY;
+        const originalNoColor = process.env.NO_COLOR;
+        try {
+            process.stdout.isTTY = true;
+            delete process.env.NO_COLOR;
+            const { events, options } = fixture();
+            await runRelease(options);
+            for (const message of events.filter(e => typeof e === 'string')) {
+                if (message.endsWith('[type approve]')) {
+                    assert.ok(message.startsWith(
+                        '\u001b[1;33mApproval required:\u001b[0m\n'
+                    ));
+                } else {
+                    assert.ok(message.startsWith(
+                        '\u001b[1;36mConfirmation required:\u001b[0m\n'
+                    ));
+                }
+            }
+            for (const tty of [false, true]) {
+                process.stdout.isTTY = tty;
+                process.env.NO_COLOR = '1';
+                await assert.rejects(runRelease({
+                    prompt: async message => {
+                        assert.ok(message.startsWith('Approval required:\n'));
+                        assert.ok(!message.includes('\u001b'));
+                        return 'no';
+                    }
+                }), /without confirmation/u);
+                await assert.rejects(runRelease({
+                    from: 'candidate',
+                    allowNonMaster: true,
+                    prompt: async message => {
+                        assert.ok(message.startsWith(
+                            'Confirmation required:\n'
+                        ));
+                        assert.ok(!message.includes('\u001b'));
+                        return 'no';
+                    }
+                }), /without confirmation/u);
+            }
+        } finally {
+            process.stdout.isTTY = originalTTY;
+            if (typeof originalNoColor === 'undefined') {
+                delete process.env.NO_COLOR;
             } else {
-                assert.ok(message.startsWith(
-                    '\u001b[1;36mConfirmation required:\u001b[0m\n'
-                ));
+                process.env.NO_COLOR = originalNoColor;
             }
         }
-        for (const tty of [false, true]) {
-            process.stdout.isTTY = tty;
-            process.env.NO_COLOR = '1';
-            await assert.rejects(runRelease({
-                prompt: async message => {
-                    assert.ok(message.startsWith('Approval required:\n'));
-                    assert.ok(!message.includes('\u001b'));
-                    return 'no';
-                }
-            }), /without confirmation/u);
-            await assert.rejects(runRelease({
-                from: 'candidate',
-                prompt: async message => {
-                    assert.ok(message.startsWith('Confirmation required:\n'));
-                    assert.ok(!message.includes('\u001b'));
-                    return 'no';
-                }
-            }), /without confirmation/u);
-        }
-    } finally {
-        process.stdout.isTTY = originalTTY;
-        if (typeof originalNoColor === 'undefined') {
-            delete process.env.NO_COLOR;
-        } else {
-            process.env.NO_COLOR = originalNoColor;
-        }
+    });
+
+test('checkout verification rejects dirty and unpushed release sources', () => {
+    function gitWith({ branch = 'master', status = '', head = 'abc' } = {}) {
+        return args => {
+            if (args[0] === 'branch') {
+                return branch;
+            }
+            if (args[0] === 'status') {
+                return status;
+            }
+            return args[1] === 'HEAD' ? head : 'abc';
+        };
     }
+    assert.doesNotThrow(() => verifyCheckout(true, gitWith()));
+    for (const status of [' M source.ts', 'M  source.ts', '?? extra.ts']) {
+        assert.throws(() => verifyCheckout(true, gitWith({ status })),
+            /local changes/u);
+    }
+    assert.throws(() => verifyCheckout(true, gitWith({ branch: 'debug' })),
+        /Run from master/u);
+    assert.throws(() => verifyCheckout(true, gitWith({ head: 'local' })),
+        /must match origin\/master/u);
+    assert.doesNotThrow(() =>
+        verifyCheckout(false, gitWith({ head: 'before-pull' })));
+});
+
+test('normal runs verify source before builds and copying', async () => {
+    for (const from of ['dry-run', 'candidate']) {
+        const { events, options } = fixture({
+            from,
+            allowNonMaster: false,
+            verify: () => {
+                throw new Error('Dirty checkout');
+            }
+        });
+        await assert.rejects(runRelease(options), /Dirty checkout/u);
+        assert.deepEqual(events.map(e => e.args), [
+            ['git', 'fetch', 'origin', 'master']
+        ]);
+    }
+    let checks = 0;
+    const { events, options } = fixture({
+        from: 'candidate',
+        allowNonMaster: false,
+        verify: () => {
+            if (++checks === 2) {
+                throw new Error('Checkout changed while confirming');
+            }
+        }
+    });
+    await assert.rejects(runRelease(options), /Checkout changed/u);
+    assert.ok(!events.some(e => e.args?.includes('dist-release')));
+});
+
+test('debug override skips verification and remote fetch', async () => {
+    const { events, options } = fixture({
+        from: 'candidate',
+        allowNonMaster: true,
+        verify: () => {
+            throw new Error('Unexpected verification');
+        }
+    });
+    await runRelease(options);
+    assert.deepEqual(events.filter(e => e.args).map(e => e.args), [
+        ['npx', 'gulp', 'dist-release', '--product', 'Grid']
+    ]);
 });
 
 test('cleanup waits for each removal before proceeding', async () => {
@@ -147,7 +231,9 @@ test('cleanup waits for each removal before proceeding', async () => {
         remove: file => {
             removed.push(file);
             if (removed.length === 1) {
-                return new Promise(resolve => { finish = resolve; });
+                return new Promise(resolve => {
+                    finish = resolve;
+                });
             }
             throw new Error('Stop simulation');
         }
@@ -160,8 +246,9 @@ test('cleanup waits for each removal before proceeding', async () => {
     await assert.rejects(pending, /Stop simulation/u);
 });
 
-test('real readline advances after approve and Enter', { timeout: 5000 }, async () => {
-    const child = spawn(process.execPath, ['-e', `
+test('real readline advances after approve and Enter', { timeout: 5000 },
+    async () => {
+        const child = spawn(process.execPath, ['-e', `
         require('./tools/grid-release').runRelease({
             remove: () => {},
             run: () => { throw new Error('Unexpected command'); }
@@ -170,59 +257,64 @@ test('real readline advances after approve and Enter', { timeout: 5000 }, async 
             process.exitCode = 1;
         });
     `], { stdio: ['pipe', 'pipe', 'pipe'] });
-    try {
-        let output = '';
-        let approved = false;
-        let proceeded = false;
-        child.stdout.on('data', chunk => {
-            output += chunk;
-            if (!approved && output.includes('[type approve]')) {
-                approved = true;
-                child.stdin.write('approve\n');
-            }
-            if (!proceeded && output.includes('[type done]')) {
-                proceeded = true;
-                child.stdin.write('no\n');
-            }
-        });
-        const code = await new Promise((resolve, reject) => {
-            child.on('error', reject);
-            child.on('close', resolve);
-        });
-        assert.equal(code, 1);
-        assert.ok(proceeded, 'Reached the next manual checkpoint');
-    } finally {
-        child.kill();
-    }
-});
+        try {
+            let output = '';
+            let approved = false;
+            let proceeded = false;
+            child.stdout.on('data', chunk => {
+                output += chunk;
+                if (!approved && output.includes('[type approve]')) {
+                    approved = true;
+                    child.stdin.write('approve\n');
+                }
+                if (!proceeded && output.includes('[type done]')) {
+                    proceeded = true;
+                    child.stdin.write('no\n');
+                }
+            });
+            const code = await new Promise((resolve, reject) => {
+                child.on('error', reject);
+                child.on('close', resolve);
+            });
+            assert.equal(code, 1);
+            assert.ok(proceeded, 'Reached the next manual checkpoint');
+        } finally {
+            child.kill();
+        }
+    });
 
-test('approved workflow builds before tests and prepares without push', async () => {
-    const { events, options } = fixture();
-    await runRelease(options);
-    assert.deepEqual(events.filter(e => e.remove).map(e =>
-        e.remove.split(/[\\/]/u).pop()
-    ), ['build', 'code', 'cypress', 'js', 'node_modules', 'out', 'tmp']);
-    assert.deepEqual(events.filter(e => e.args).map(e => e.args.join(' ')), [
-        'git pull --ff-only',
-        'npm i',
-        'npm i',
-        'npx gulp dist',
-        'npx gulp scripts --product Grid',
-        'npx gulp scripts --force',
-        'npm run gtest',
-        'npx gulp dist --product Grid',
-        'npx gulp scripts --force',
-        'npx gulp compile',
-        'npx gulp dist-release --product Grid'
-    ]);
-    assert.match(events.filter(e => e.args)[2].cwd, /highcharts-utils$/u);
-});
+test('approved workflow builds before tests and prepares without push',
+    async () => {
+        const { events, options } = fixture();
+        await runRelease(options);
+        assert.deepEqual(events.filter(e => e.remove).map(e =>
+            e.remove.split(/[\\/]/u).pop()), [
+            'build', 'code', 'cypress', 'js', 'node_modules', 'out', 'tmp'
+        ]);
+        const commands = events.filter(e => e.args).map(e => e.args.join(' '));
+        assert.deepEqual(commands, [
+            'git pull --ff-only',
+            'npm i',
+            'npm i',
+            'npx gulp dist',
+            'npx gulp scripts --product Grid',
+            'npx gulp scripts --force',
+            'npm run gtest',
+            'npx gulp dist --product Grid',
+            'npx gulp scripts --force',
+            'npx gulp compile',
+            'npx gulp dist-release --product Grid'
+        ]);
+        assert.match(events.filter(e => e.args)[2].cwd, /highcharts-utils$/u);
+    });
 
 test('manual confirmation blocks candidate until answered', async () => {
     let confirm;
     const { events, options } = fixture({
         from: 'candidate',
-        prompt: () => new Promise(resolve => { confirm = resolve; })
+        prompt: () => new Promise(resolve => {
+            confirm = resolve;
+        })
     });
     const pending = runRelease(options);
     assert.equal(events.length, 0);
@@ -231,46 +323,56 @@ test('manual confirmation blocks candidate until answered', async () => {
     assert.equal(events.length, 0);
 });
 
-test('candidate replacement requires separate destructive approval', async () => {
-    let count = 0;
-    const { events, options } = fixture({
-        from: 'candidate',
-        prompt: async () => ++count < 3 ? 'done' : 'cancel'
-    });
-    await assert.rejects(runRelease(options), /without confirmation/u);
-    assert.equal(count, 3);
-    assert.equal(events.length, 0);
-});
-
-test('invalid answers retry the same gate without running actions', async () => {
-    for (const from of ['reset', 'candidate']) {
-        const expected = from === 'reset' ? 'approve' : 'done';
-        const responses = ['', expected === 'approve' ? 'done' : 'approve', expected];
-        const questions = [];
-        const { options } = fixture({
-            from,
-            prompt: async question => {
-                questions.push(question);
-                if (questions.length > 3) {
-                    throw new Error('Reached next step');
-                }
-                return responses.shift();
-            },
-            remove: () => {
-                assert.equal(questions.length, 3);
-                throw new Error('Reached next step');
-            },
-            run: () => { assert.fail('Unexpected command'); }
+test('candidate replacement requires separate destructive approval',
+    async () => {
+        let count = 0;
+        const { events, options } = fixture({
+            from: 'candidate',
+            prompt: async () => (++count < 3 ? 'done' : 'cancel')
         });
-        await assert.rejects(runRelease(options), /Reached next step/u);
-        assert.equal(questions[0], questions[1]);
-        assert.equal(questions[1], questions[2]);
-    }
-});
+        await assert.rejects(runRelease(options), /without confirmation/u);
+        assert.equal(count, 3);
+        assert.equal(events.length, 0);
+    });
+
+test('invalid answers retry the same gate without running actions',
+    async () => {
+        for (const from of ['reset', 'candidate']) {
+            const expected = from === 'reset' ? 'approve' : 'done';
+            const responses = [
+                '',
+                expected === 'approve' ? 'done' : 'approve',
+                expected
+            ];
+            const questions = [];
+            const { options } = fixture({
+                from,
+                prompt: async question => {
+                    questions.push(question);
+                    if (questions.length > 3) {
+                        throw new Error('Reached next step');
+                    }
+                    return responses.shift();
+                },
+                remove: () => {
+                    assert.equal(questions.length, 3);
+                    throw new Error('Reached next step');
+                },
+                run: () => {
+                    assert.fail('Unexpected command');
+                }
+            });
+            await assert.rejects(runRelease(options), /Reached next step/u);
+            assert.equal(questions[0], questions[1]);
+            assert.equal(questions[1], questions[2]);
+        }
+    });
 
 test('command failure stops before subsequent actions', async () => {
     const { events, options } = fixture({
-        run: () => { throw new Error('build failed'); },
+        run: () => {
+            throw new Error('build failed');
+        },
         from: 'dry-run'
     });
     await assert.rejects(runRelease(options), /build failed/u);
@@ -288,7 +390,9 @@ test('source mode prevents demo checks and candidate preparation', async () => {
 });
 
 test('plan does not read, prompt, delete or execute', async () => {
-    const unexpected = () => { throw new Error('Unexpected side effect'); };
+    function unexpected() {
+        throw new Error('Unexpected side effect');
+    }
     await runRelease({
         plan: true,
         prompt: unexpected,
@@ -310,9 +414,10 @@ test('CLI rejects noninteractive execution and push flags', () => {
     }
 });
 
-test('non-master override bypasses branch check but still requires approval', () => {
-    for (const override of [false, true]) {
-        const result = spawnSync(process.execPath, ['-e', `
+test('non-master override bypasses branch check but still requires approval',
+    () => {
+        for (const override of [false, true]) {
+            const result = spawnSync(process.execPath, ['-e', `
             process.stdin.isTTY = true;
             process.stdout.isTTY = true;
             const cp = require('node:child_process');
@@ -326,9 +431,9 @@ test('non-master override bypasses branch check but still requires approval', ()
                 process.exitCode = 1;
             });
         `], { input: 'no\n', encoding: 'utf8', timeout: 5000 });
-        assert.equal(result.status, 1);
-        assert.match(result.stderr, override ?
-            /Stopped without confirmation/u : /Run from master/u);
-        assert.equal(result.stdout.includes('[type approve]'), override);
-    }
-});
+            assert.equal(result.status, 1);
+            assert.match(result.stderr, override ?
+                /Stopped without confirmation/u : /Run from master/u);
+            assert.equal(result.stdout.includes('[type approve]'), override);
+        }
+    });
