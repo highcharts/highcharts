@@ -8,6 +8,9 @@ on:
     ]
     paths:
       - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'test/ts-node-unit-tests/**'
       - 'tools/**/*'
       - '.github/workflows/test-tooling.yml'
       - 'tests/internal/*'
@@ -40,3 +43,7 @@ jobs:
       - name: Run test
         run: node --test "./tools/gulptasks-tests/*.mjs"
 
+      - name: Run benchmark regression tests
+        run: >-
+          node --import tsx --test
+          test/ts-node-unit-tests/tests/BenchmarkWorker.test.ts

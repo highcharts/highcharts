@@ -1661,7 +1661,10 @@ class Chart {
             )
                 .attr({
                     align: options.align,
-                    'class': 'highcharts-' + key,
+                    'class': [
+                        options.className,
+                        'highcharts-' + key
+                    ].filter(isString).join(' '),
                     zIndex: options.zIndex || 4
                 })
                 .css({
@@ -3033,7 +3036,7 @@ class Chart {
                     (labels.reserveSpace ?? !isNumber(options.crossing))
                 ) {
                     expectedSpace = label.getBBox().height +
-                        labels.distance +
+                        (labels.distance ?? 15) +
                         Math.max(isNumber(offset) ? offset : 0, 0);
                 }
 
@@ -3149,6 +3152,13 @@ class Chart {
 
         if (creds.enabled && !this.credits) {
 
+            // Run the user-supplied URL through the allow list, so that
+            // references like `javascript:` can't be executed from the
+            // credits label
+            const href = creds.href ?
+                AST.filterUserAttributes({ href: creds.href }).href :
+                void 0;
+
             /**
              * The chart's credits label. The label has an `update` method that
              * allows setting new options as per the
@@ -3171,8 +3181,8 @@ class Chart {
                         'creditsClick',
                         e as Event,
                         (): void => {
-                            if (creds.href) {
-                                win.location.href = creds.href;
+                            if (href) {
+                                win.location.href = href;
                             }
                         }
                     );
@@ -4737,7 +4747,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
     /** @internal */
@@ -4780,6 +4790,10 @@ namespace Chart {
 
         /**
          * The URL for the credits label.
+         *
+         * URLs that do not start with one of the
+         * [AST.allowedReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedReferences),
+         * for example `javascript:` URLs, are ignored.
          *
          * @sample {highcharts} highcharts/credits/href/
          *         Custom URL and text
@@ -5071,7 +5085,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
     /**
@@ -5250,7 +5264,7 @@ namespace Chart {
 
         /** @internal */
         zIndex?: number;
-
+        className?: string;
     }
 
 }

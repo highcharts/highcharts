@@ -156,6 +156,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * */
     public data!: Array<HollowCandlestickPoint>;
 
+    /** @internal */
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
     public options!: HollowCandlestickSeriesOptions;
@@ -384,7 +385,7 @@ export default HollowCandlestickSeries;
  *
  * @type      {*}
  * @extends   series,plotOptions.hollowcandlestick
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  * @product   highstock
  * @requires  modules/hollowcandlestick
  * @apioption series.hollowcandlestick

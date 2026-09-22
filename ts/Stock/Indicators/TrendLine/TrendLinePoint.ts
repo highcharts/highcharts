@@ -21,8 +21,8 @@ import type TrendLineIndicator from './TrendLineIndicator';
  *
  * */
 
-/** @internal */
 declare class TrendLinePoint extends SMAPoint {
+    /** @internal */
     public series: TrendLineIndicator;
 }
 
@@ -32,5 +32,4 @@ declare class TrendLinePoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default TrendLinePoint;

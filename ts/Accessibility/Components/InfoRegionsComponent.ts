@@ -56,6 +56,7 @@ const {
     addClass,
     getElement,
     getHeadingTagNameForElement,
+    getShadowRoot,
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HU;
@@ -390,7 +391,12 @@ class InfoRegionsComponent extends AccessibilityComponent {
         }
 
         const query = format(linkedDescOption, this.chart),
-            queryMatch = doc.querySelectorAll(query);
+            shadowRoot = getShadowRoot(this.chart.renderTo),
+            shadowMatch = shadowRoot?.querySelectorAll(query),
+            // The description may also live outside the shadow root (#22682)
+            queryMatch = shadowMatch?.length ?
+                shadowMatch :
+                doc.querySelectorAll(query);
 
         if (queryMatch.length === 1) {
             return queryMatch[0] as any;
@@ -644,7 +650,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
     /** @internal */
     public getEndOfChartMarkerText(): string {
         const endMarkerId = `highcharts-end-of-chart-marker-${this.chart.index}`,
-            endMarker = getElement(endMarkerId);
+            endMarker = getElement(endMarkerId, this.chart.renderTo);
 
         if (endMarker) {
             return endMarker.outerHTML;
@@ -695,8 +701,10 @@ class InfoRegionsComponent extends AccessibilityComponent {
     public initSonifyButton(
         sonifyButtonId: string
     ): void {
-        const el = this.sonifyButton = getElement(sonifyButtonId);
         const chart = this.chart;
+        const el = this.sonifyButton = getElement(
+            sonifyButtonId, chart.renderTo
+        );
         const defaultHandler = (e: Event): void => {
             if (el) {
                 el.setAttribute('aria-hidden', 'true');
@@ -749,14 +757,16 @@ class InfoRegionsComponent extends AccessibilityComponent {
     public initDataTableButton(
         tableButtonId: string
     ): void {
-        const el = this.viewDataTableButton = getElement(tableButtonId),
-            chart = this.chart,
+        const chart = this.chart,
+            el = this.viewDataTableButton = getElement(
+                tableButtonId, chart.renderTo
+            ),
             tableId = tableButtonId.replace('hc-linkto-', '');
 
         if (el) {
             attr(el, {
                 tabindex: -1,
-                'aria-expanded': !!getElement(tableId)
+                'aria-expanded': !!getElement(tableId, chart.renderTo)
             });
 
             el.onclick = chart.options.accessibility

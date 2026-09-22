@@ -75,12 +75,14 @@ import { uniqueKey } from '../Core/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../Core/Axis/AxisBase' {
     interface AxisBase {
         center?: Array<number>;
     }
 }
 
+/** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase {
         polar: ChartOptions['polar'];
@@ -93,6 +95,7 @@ declare module '../Core/Chart/ChartOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         rectPlotX?: PolarPoint['rectPlotX'];
@@ -101,6 +104,7 @@ declare module '../Core/Series/PointBase' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         hasClipCircleSetter?: boolean;
@@ -181,7 +185,7 @@ export declare class PolarSeriesComposition extends Series {
  * */
 
 /**
- * @private
+ * @internal
  */
 function clipCircle(
     renderer: SVGRenderer,
@@ -206,7 +210,7 @@ function clipCircle(
 
 /**
  * Find correct align and vertical align based on an angle in polar chart
- * @private
+ * @internal
  */
 function findAlignments(
     angle: number,
@@ -242,7 +246,7 @@ function findAlignments(
 
 /**
  * #6212 Calculate connectors for spline series in polar chart.
- * @private
+ * @internal
  */
 function getConnectors(
     segment: Array<PolarPoint>,
@@ -354,7 +358,7 @@ function onChartAfterDrawChartBox(
 
 /**
  * If polar has polygonal grid lines, force start and endOnTick on radial axis
- * @private
+ * @internal
  */
 function onChartAfterInit(event: any): void {
     const xAxis = event.args[0].xAxis,
@@ -398,7 +402,7 @@ function onChartCreateAxes(
 
 /**
  * Get selection dimensions
- * @private
+ * @internal
  */
 function onPointerGetSelectionBox(this: Pointer, event: any): void {
     const marker = event.args.marker,
@@ -432,7 +436,7 @@ function onPointerGetSelectionBox(this: Pointer, event: any): void {
 
 /**
  * Get attrs for Polar selection marker
- * @private
+ * @internal
  */
 function onPointerGetSelectionMarkerAttrs(
     this: Pointer,
@@ -644,7 +648,7 @@ function onPointerGetSelectionMarkerAttrs(
 }
 
 /**
- * @private
+ * @internal
  */
 function onSeriesAfterInit(
     this: Series
@@ -710,7 +714,7 @@ function onSeriesAfterColumnTranslate(
  * Extend translate. The plotX and plotY values are computed as if the polar
  * chart were a cartesian plane, where plotX denotes the angle in radians
  * and (yAxis.len - plotY) is the pixel distance from center.
- * @private
+ * @internal
  */
 function onSeriesAfterTranslate(
     this: Series
@@ -807,7 +811,7 @@ function onSeriesAfterTranslate(
  * Search a k-d tree by the point angle (used for shared tooltips in polar) or
  * the inverted point.
  * charts
- * @private
+ * @internal
  */
 function searchPointByAngleOrInverted(
     this: Series,
@@ -833,7 +837,7 @@ function searchPointByAngleOrInverted(
 
 /**
  * Trim polygonal path
- * @private
+ * @internal
  */
 function trimPath(
     path: SVGPath,
@@ -875,7 +879,7 @@ function trimPath(
 /**
  * Extend chart.get to also search in panes. Used internally in
  * responsiveness and chart.update.
- * @private
+ * @internal
  */
 function wrapChartGet(
     this: Chart,
@@ -890,7 +894,7 @@ function wrapChartGet(
 
 /**
  * Align column data labels outside the columns. #1199.
- * @private
+ * @internal
  */
 function wrapColumnSeriesAlignDataLabel(
     this: (ColumnSeries|PolarSeriesComposition),
@@ -977,7 +981,7 @@ function wrapColumnSeriesAlignDataLabel(
 
 /**
  * Extend the column prototype's translate method
- * @private
+ * @internal
  */
 function onAfterColumnTranslate(
     this: (ColumnSeries&PolarSeriesComposition)
@@ -1190,7 +1194,7 @@ function onAfterColumnTranslate(
 /**
  * Extend getSegmentPath to allow connecting ends across 0 to provide a
  * closed circle in line-like series.
- * @private
+ * @internal
  */
 function wrapLineSeriesGetGraphPath(
     this: PolarSeriesComposition,
@@ -1261,7 +1265,7 @@ function wrapLineSeriesGetGraphPath(
 
 /**
  * Extend getCoordinates to prepare for polar axis values
- * @private
+ * @internal
  */
 function wrapPointerGetCoordinates(
     this: PolarSeriesComposition,
@@ -1309,7 +1313,7 @@ function wrapPointerGetCoordinates(
 
 /**
  * Prevent zooming on mobile devices
- * @private
+ * @internal
  */
 function wrapPointerPinch(
     this: Pointer,
@@ -1325,7 +1329,7 @@ function wrapPointerPinch(
 
 /**
  * Define the animate method for regular series
- * @private
+ * @internal
  */
 function wrapSeriesAnimate(
     this: PolarSeriesComposition,
@@ -1424,7 +1428,7 @@ function wrapSeriesAnimate(
 
 /**
  * Overridden method for calculating a spline from one point to the next
- * @private
+ * @internal
  */
 function wrapSplineSeriesGetPointSpline(
     this: PolarSeriesComposition,
@@ -1475,7 +1479,7 @@ function wrapSplineSeriesGetPointSpline(
 
 /**
  * Extend the point pos method to calculate point positions for the polar chart.
- * @private
+ * @internal
  */
 function wrapPointPos(
     this: PolarPoint,
@@ -1510,7 +1514,7 @@ function wrapPointPos(
 /**
  * Extensions for polar charts. Additionally, much of the geometry required
  * for polar charts is gathered in RadialAxes.js.
- * @private
+ * @internal
  */
 class PolarAdditions {
 
@@ -1696,7 +1700,7 @@ class PolarAdditions {
     /**
      * Translate a point's plotX and plotY from the internal angle and radius
      * measures to true plotX, plotY coordinates
-     * @private
+     * @internal
      */
     public toXY(
         point: PolarPoint
@@ -1761,4 +1765,5 @@ class PolarAdditions {
  *
  * */
 
+/** @internal */
 export default PolarAdditions;
