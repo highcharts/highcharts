@@ -389,6 +389,11 @@ export interface LangAccessibilityOptions {
     rangeSelector: LangAccessibilityRangeSelectorOptions;
 
     /**
+     * @deprecated 10.2.1
+     */
+    resetZoomButton?: string;
+
+    /**
      * Language options for the screen reader information sections added
      * before and after the charts.
      *
