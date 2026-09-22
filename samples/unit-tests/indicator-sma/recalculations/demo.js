@@ -412,3 +412,161 @@ QUnit.test('Order of series and indicators, #15892.', function (assert) {
         indicator should also update its data #18689.`
     );
 });
+
+QUnit.test(
+    'addPoint/removePoint vs setData on linked SMA (#22081)',
+    function (assert) {
+        const pointStart = 1000,
+            pointInterval = 1,
+            period = 5;
+
+        function createChart(data) {
+            return Highcharts.stockChart('container', {
+                chart: {
+                    animation: false
+                },
+                xAxis: {
+                    minRange: 1
+                },
+                series: [{
+                    id: 'main',
+                    pointStart: pointStart,
+                    pointInterval: pointInterval,
+                    data: data,
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }, {
+                    type: 'sma',
+                    id: 'sma',
+                    linkedTo: 'main',
+                    params: {
+                        period: period
+                    },
+                    dataGrouping: {
+                        enabled: false
+                    }
+                }]
+            });
+        }
+
+        function expectedIndicatorLength(parentRowCount, indicatorPeriod) {
+            return parentRowCount - indicatorPeriod + 1;
+        }
+
+        function expectedSmaLength(mainRowCount) {
+            return expectedIndicatorLength(mainRowCount, period);
+        }
+
+        function assertSmaSynced(assert, chart, label) {
+            const main = chart.get('main'),
+                sma = chart.get('sma'),
+                modifiedRows = sma.dataTable.getModified().rowCount,
+                expectedLength = expectedSmaLength(main.dataTable.rowCount);
+
+            assert.strictEqual(
+                sma.points.length,
+                expectedLength,
+                label + ': SMA point count matches main series'
+            );
+            assert.ok(
+                sma.points.length > 0,
+                label + ': SMA points are not empty'
+            );
+            assert.strictEqual(
+                sma.points.length,
+                modifiedRows,
+                label + ': points length matches getModified() row count'
+            );
+            assert.deepEqual(
+                sma.points.map(function (point) {
+                    return point.y;
+                }),
+                sma.getColumn('y', true),
+                label + ': rendered points match y column data'
+            );
+            assert.ok(
+                sma.graphPath &&
+                sma.graphPath.xMap &&
+                sma.graphPath.xMap.length > 0,
+                label + ': graphPath has a non-empty xMap'
+            );
+        }
+
+        let chart = createChart([
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+        ]);
+
+        assertSmaSynced(assert, chart, 'initial');
+
+        chart.get('main').addPoint(31);
+        assertSmaSynced(assert, chart, 'after addPoint(end)');
+
+        chart.get('main').removePoint(
+            chart.get('main').data.length - 1
+        );
+        assertSmaSynced(assert, chart, 'after removePoint(last)');
+
+        chart.get('main').removePoint(0);
+        assertSmaSynced(assert, chart, 'after removePoint(first)');
+
+        chart.get('main').addPoint(50, true, true);
+        assertSmaSynced(assert, chart, 'after addPoint(shift)');
+
+        chart.get('main').setData([
+            100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
+            110, 111, 112, 113, 114, 115, 116, 117, 118, 119
+        ]);
+        assertSmaSynced(assert, chart, 'after full setData replace');
+
+        chart = createChart([
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+        ]);
+
+        chart.get('main').setData([
+            [5000, 10], [5001, 11], [5002, 12], [5003, 13], [5004, 14],
+            [5005, 15], [5006, 16], [5007, 17], [5008, 18], [5009, 19],
+            [5010, 20], [5011, 21]
+        ]);
+        assertSmaSynced(
+            assert,
+            chart,
+            'after setData with unrelated x values (+1 length, not append)'
+        );
+
+        chart = createChart([
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
+        ]);
+
+        chart.addSeries({
+            type: 'sma',
+            id: 'sma2',
+            linkedTo: 'sma',
+            params: {
+                period: 3
+            },
+            dataGrouping: {
+                enabled: false
+            }
+        });
+
+        chart.get('main').addPoint(26);
+        assertSmaSynced(assert, chart, 'after addPoint(end) with chained SMA');
+
+        const sma2 = chart.get('sma2'),
+            sma = chart.get('sma'),
+            sma2Period = sma2.options.params.period;
+
+        assert.strictEqual(
+            sma2.points.length,
+            expectedIndicatorLength(sma.points.length, sma2Period),
+            'chained SMA point count after addPoint(end)'
+        );
+        assert.ok(
+            sma2.points.length > 0 &&
+            sma2.points.length === sma2.dataTable.getModified().rowCount,
+            'chained SMA points synced with processed data after addPoint(end)'
+        );
+    }
+);
