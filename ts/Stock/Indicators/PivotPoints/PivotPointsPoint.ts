@@ -57,7 +57,6 @@ function destroyExtraLabels(
  *
  * */
 
-/** @internal */
 class PivotPointsPoint extends SMAPoint {
 
     /* *
@@ -66,8 +65,11 @@ class PivotPointsPoint extends SMAPoint {
      *
      * */
 
+    /** @internal */
     public P!: number;
+    /** @internal */
     public pivotLine!: string;
+    /** @internal */
     public series!: PivotPointsIndicator;
 
     /* *
@@ -76,6 +78,7 @@ class PivotPointsPoint extends SMAPoint {
      *
      * */
 
+    /** @internal */
     public destroyElements(
         this: PivotPointsPoint
     ): void {
@@ -83,6 +86,7 @@ class PivotPointsPoint extends SMAPoint {
     }
 
     // This method is called when removing points, e.g. series.update()
+    /** @internal */
     public destroy(
         this: PivotPointsPoint
     ): void {
@@ -97,5 +101,4 @@ class PivotPointsPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default PivotPointsPoint;

@@ -123,10 +123,13 @@ class GeoHeatmapSeries extends MapSeries {
 
     public points!: Array<GeoHeatmapPoint>;
 
+    /** @internal */
     public canvas?: HTMLCanvasElement;
 
+    /** @internal */
     public context?: CanvasRenderingContext2D;
 
+    /** @internal */
     public isDirtyCanvas: boolean = true;
 
     /* *
@@ -532,6 +535,7 @@ class GeoHeatmapSeries extends MapSeries {
         return projectedPixelData;
     }
 
+    /** @internal */
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
@@ -634,3 +638,107 @@ SeriesRegistry.registerSeriesType('geoheatmap', GeoHeatmapSeries);
 
 /** @internal */
 export default GeoHeatmapSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * A `geoheatmap` series. If the [type](#series.map.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.geoheatmap
+ * @excluding allAreas, dragDrop, findNearestPointBy,
+ *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
+ *            stickyTracking
+ * @product   highmaps
+ * @requires  modules/geoheatmap
+ * @apioption series.geoheatmap
+ */
+
+/**
+ * An array of data points for the series. For the `geoheatmap` series
+ * type, points can be given in the following ways:
+ *
+ * 1.  An array of arrays with 3 or 2 values. In this case, the values
+ * correspond to `lon,lat,value`. The `value` refers to the color on the `colorAxis`.
+ *
+ *  ```js
+ *     data: [
+ *         [51.50, -0.12, 7],
+ *         [54.59, -5.93, 4],
+ *         [55.8, -4.25, 3]
+ *     ]
+ *  ```
+ *
+ * 2.  An array of objects with named values. The following snippet shows only a
+ * few settings, see the complete options set below. If the total number of data
+ * points exceeds the series' [turboThreshold](#series.heatmap.turboThreshold),
+ * this option is not available.
+ *
+ *  ```js
+ *     data: [{
+ *         lat: 51.50,
+ *         lon: -0.12,
+ *         value: 7,
+ *         name: "London"
+ *     }, {
+ *         lat: 54.59,
+ *         lon: -5.93,
+ *         value: 4,
+ *         name: "Belfast"
+ *     }]
+ *  ```
+ *
+ * @sample maps/demo/geoheatmap-europe/
+ *         GeoHeatmap Chart with interpolation on Europe map
+ * @sample maps/series-geoheatmap/geoheatmap-equalearth/
+ *         GeoHeatmap Chart on the Equal Earth Projection
+ *
+ * @basic
+ * @type      {Array<Array<number>|*>}
+ * @extends   series.map.data
+ * @product   highmaps
+ * @apioption series.geoheatmap.data
+ */
+
+/**
+ * Individual color for the point. By default the color is either used
+ * to denote the value, or pulled from the global `colors` array.
+ *
+ * @type      {Highcharts.ColorType}
+ * @product   highmaps
+ * @apioption series.geoheatmap.data.color
+ */
+
+/**
+ * The value of the point, resulting in a color controlled by options
+ * as set in the [colorAxis](#colorAxis) configuration.
+ *
+ * @type      {number|null}
+ * @product   highmaps
+ * @apioption series.geoheatmap.data.value
+ */
+
+/**
+ * Detailed options for interpolation object.
+ *
+ * @interface Highcharts.InterpolationOptionsObject
+ *//**
+ *  Enable or disable the interpolation.
+ *
+ * @name Highcharts.InterpolationOptionsObject#enabled
+ * @type {boolean}
+ *//**
+ * Represents how much blur should be added to the interpolated
+ * image. Works best in the range of 0-1, all higher values
+ * would need a lot more performance of the machine to calculate
+ * more detailed interpolation.
+ *
+ * @name Highcharts.InterpolationOptionsObject#blur
+ * @type {number}
+ */
+
+''; // Adds doclets above to the transpiled file

@@ -142,6 +142,7 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: TiledWebMapSeriesOptions = merge(
         MapSeries.defaultOptions,
         TiledWebMapSeriesDefaults
@@ -153,6 +154,7 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         MapViewClass: typeof MapView
     ): void {
@@ -169,14 +171,19 @@ class TiledWebMapSeries extends MapSeries {
 
     public options!: TiledWebMapSeriesOptions;
 
+    /** @internal */
     public tiles: Record<string, TilesItem> | undefined;
 
+    /** @internal */
     public minZoom: number | undefined;
 
+    /** @internal */
     public maxZoom: number | undefined;
 
+    /** @internal */
     public redrawTiles: boolean = false;
 
+    /** @internal */
     public isAnimating: boolean = false;
 
     /* *
@@ -233,6 +240,7 @@ class TiledWebMapSeries extends MapSeries {
         return { lon, lat };
     }
 
+    /** @internal */
     public drawPoints(): void {
         const chart = this.chart,
             mapView = chart.mapView;
@@ -775,6 +783,7 @@ class TiledWebMapSeries extends MapSeries {
         }
     }
 
+    /** @internal */
     public update(options: TiledWebMapSeriesOptions): void {
         const { transformGroups } = this,
             chart = this.chart,

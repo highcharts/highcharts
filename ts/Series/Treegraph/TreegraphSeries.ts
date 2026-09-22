@@ -97,6 +97,7 @@ class TreegraphSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: TreegraphSeriesOptions = merge(
         TreemapSeries.defaultOptions,
         TreegraphSeriesDefaults
@@ -114,18 +115,25 @@ class TreegraphSeries extends TreemapSeries {
 
     public points!: Array<TreegraphPoint>;
 
+    /** @internal */
     public layoutModifier!: LayoutModifiers;
 
+    /** @internal */
     public nodeMap!: Record<string, TreegraphNode>;
 
+    /** @internal */
     public tree!: TreegraphNode;
 
+    /** @internal */
     public nodeList: Array<TreegraphNode> = [];
 
+    /** @internal */
     public layoutAlgorithm!: TreegraphLayout;
 
+    /** @internal */
     public links: Array<TreegraphLink> = [];
 
+    /** @internal */
     public mapOptionsToLevel!: Record<string, TreegraphSeriesLevelOptions>;
 
     /* *
@@ -134,6 +142,7 @@ class TreegraphSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
         this.layoutAlgorithm = new TreegraphLayout();
@@ -259,6 +268,7 @@ class TreegraphSeries extends TreemapSeries {
         return { ax, bx, ay, by };
     }
 
+    /** @internal */
     private getLinks(): TreegraphLink[] {
         const series = this;
         const links = [] as TreegraphLink[];
@@ -298,6 +308,7 @@ class TreegraphSeries extends TreemapSeries {
         return links;
     }
 
+    /** @internal */
     public buildTree(
         id: string,
         index: number,
@@ -310,12 +321,14 @@ class TreegraphSeries extends TreemapSeries {
         return super.buildTree.call(this, id, index, level, list, parent);
     }
 
+    /** @internal */
     public markerAttribs(): SVGAttributes {
         // The super Series.markerAttribs returns { width: NaN, height: NaN },
         // so just disable this for now.
         return {};
     }
 
+    /** @internal */
     public setCollapsedStatus(
         node: TreegraphNode,
         visibility: boolean
@@ -335,6 +348,7 @@ class TreegraphSeries extends TreemapSeries {
         });
     }
 
+    /** @internal */
     public drawTracker(): void {
         ColumnSeries.prototype.drawTracker.apply(this, arguments);
         ColumnSeries.prototype.drawTracker.call(this, this.links);
@@ -397,6 +411,7 @@ class TreegraphSeries extends TreemapSeries {
         }
     }
 
+    /** @internal */
     public translateLink(link: TreegraphLink): void {
         const fromNode = link.fromNode,
             toNode = link.toNode,
@@ -585,6 +600,7 @@ class TreegraphSeries extends TreemapSeries {
         }
     }
 
+    /** @internal */
     public destroy(): void {
         // Links must also be destroyed.
         if (this.links) {
@@ -648,6 +664,7 @@ class TreegraphSeries extends TreemapSeries {
         return attribs;
     }
 
+    /** @internal */
     public drawPoints(): void {
         TreemapSeries.prototype.drawPoints.apply(this, arguments);
         ColumnSeries.prototype.drawPoints.call(this, this.links);
@@ -759,9 +776,13 @@ class TreegraphSeries extends TreemapSeries {
  * */
 
 interface TreegraphSeries {
+    /** @internal */
     inverted?: boolean;
+    /** @internal */
     pointClass: typeof TreegraphPoint;
+    /** @internal */
     NodeClass: typeof TreegraphNode;
+    /** @internal */
     LinkClass: typeof TreegraphLink;
 }
 

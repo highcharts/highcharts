@@ -61,6 +61,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: GanttSeriesOptions = merge(
         XRangeSeries.defaultOptions,
         GanttSeriesDefaults
@@ -72,6 +73,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass?: typeof Chart,
@@ -119,6 +121,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public getColumn(columnName: string): Array<number> {
         const time = this.chart.time;
         if (columnName === 'x') {
@@ -231,9 +234,10 @@ class GanttSeries extends XRangeSeries {
  *
  * */
 
-/** @internal */
-interface GanttSeries {
+interface GanttSeries{
+    /** @internal */
     keyboardMoveVertical: boolean;
+    /** @internal */
     pointClass: typeof GanttPoint;
 }
 

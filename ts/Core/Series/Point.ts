@@ -1159,7 +1159,8 @@ class Point {
     /**
      * Set a value in an object, on the property defined by key. The key
      * supports nested properties using dot notation. The function modifies the
-     * input object and does not make a copy.
+     * input object and does not make a copy. Paths containing `__proto__` or
+     * `constructor` are ignored.
      *
      * @function Highcharts.Point#setNestedProperty<T>
      *
@@ -1182,6 +1183,13 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
+        // Reject nested keys that would allow prototype pollution
+        if (nestedKeys.some((nestedKey): boolean => (
+            nestedKey === '__proto__' || nestedKey === 'constructor'
+        ))) {
+            return object;
+        }
+
         nestedKeys.reduce(function (
             result: any,
             key: string,
@@ -1193,7 +1201,10 @@ class Point {
             result[key] = (
                 isLastKey ?
                     value :
-                    isObject(result[key], true) ?
+                    // Inherited objects are shared with everything else on
+                    // that prototype, so start a fresh one instead
+                    isObject(result[key], true) &&
+                    Object.hasOwnProperty.call(result, key) ?
                         result[key] :
                         {}
             );
@@ -1312,16 +1323,10 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1340,7 +1345,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)

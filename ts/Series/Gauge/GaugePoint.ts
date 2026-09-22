@@ -48,9 +48,12 @@ class GaugePoint extends Point {
      *
      * */
 
+    /** @internal */
     public dial?: SVGElement;
     public options!: GaugePointOptions;
+    /** @internal */
     public series!: GaugeSeries;
+    /** @internal */
     public shapeArgs!: SVGAttributes;
 
 
