@@ -793,8 +793,9 @@ are limited to the visual project and retain offline execution. See the
 SVG capture waits for the sample's initial XHR data requests to finish. Charts
 can emit their load event before CSV data arrives, so chart existence or
 `hasLoaded` alone is insufficient. Pending requests share the chart's 10-second
-readiness timeout and are aborted during sample cleanup. No fixed settling delay
-is added to samples without requests, and empty datasets remain valid.
+readiness timeout and are aborted during sample cleanup. Once ready, capture
+yields to queued zero-delay sample updates and checks readiness again. Empty
+datasets remain valid.
 
 Capture prefers the chart rendered into `#container`, so asynchronously created
 inset charts do not change which SVG is compared. Samples using other container

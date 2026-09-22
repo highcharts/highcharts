@@ -119,6 +119,39 @@ test('capture keeps the main map when its locator loads later', async ({ page })
     }
 });
 
+test('capture waits for the deferred earth statistics dataset', async ({ page }) => {
+    await prepareDataSample(page);
+    for (const script of [
+        'code/modules/map.src.js',
+        'code/modules/geoheatmap.src.js'
+    ]) {
+        await page.addScriptTag({ path: script });
+    }
+    await page.locator('[data-test-container]').evaluate(element => {
+        element.innerHTML = '<div id="container"></div>' +
+            '<select id="dataset"></select>';
+    });
+
+    // Start capture before the initial zero-delay timer populates the chart.
+    await page.clock.install({ time: new Date('2024-01-01T00:00:00Z') });
+    await page.clock.pauseAt(new Date('2024-01-01T00:00:01Z'));
+    await page.addScriptTag({ path:
+        'samples/maps/demo/geoheatmap-earth-statistics/demo.js'
+    });
+    await expect(page.locator('.highcharts-container')).toHaveCount(1);
+
+    const capturing = captureVisualSVG(page);
+    // Let capture enter the browser before advancing its paused timers.
+    await page.evaluate(() => undefined);
+    await page.clock.runFor(1);
+    const svg = await capturing;
+    expect(svg.includes(
+        'Land Surface (day) and Sea Temperature in August 2022'
+    )).toBe(true);
+    expect(svg.includes('data:image/png;base64,')).toBe(true);
+    expect(svg.includes('-40°C')).toBe(true);
+});
+
 test('visual portfolio fixture requires the recorded method and body', async ({ page }) => {
     await page.context().setOffline(true);
     await setupRoutes(page);

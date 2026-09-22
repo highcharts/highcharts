@@ -20,12 +20,18 @@ export async function captureVisualSVG(
         if (!comparator) {
             throw new Error('Visual comparator is not loaded.');
         }
+        const isReady = () =>
+            !window.HCVisualSetup?.hasPendingRequests?.() &&
+            (visualWindow.Highcharts?.charts?.at(-1) ||
+                document.getElementsByTagName('svg').length);
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
-            const charts = visualWindow.Highcharts?.charts || [];
-            if (
-                !window.HCVisualSetup?.hasPendingRequests?.() &&
-                (charts.at(-1) || document.getElementsByTagName('svg').length)
-            ) {
+            if (isReady()) {
+                // Let queued zero-delay sample updates run before capture.
+                await new Promise(resolve => setTimeout(resolve, 0));
+                if (!isReady()) {
+                    continue;
+                }
+                const charts = visualWindow.Highcharts?.charts || [];
                 const validCharts = charts.filter(chart =>
                     chart && chart.container && !chart.renderer?.forExport
                 );
