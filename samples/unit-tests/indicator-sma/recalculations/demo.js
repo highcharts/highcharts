@@ -418,10 +418,8 @@ QUnit.test(
     function (assert) {
         const pointStart = 1000,
             pointInterval = 1,
-            period = 5;
-
-        function createChart(data) {
-            return Highcharts.stockChart('container', {
+            period = 5,
+            chart = Highcharts.stockChart('container', {
                 chart: {
                     animation: false
                 },
@@ -432,7 +430,10 @@ QUnit.test(
                     id: 'main',
                     pointStart: pointStart,
                     pointInterval: pointInterval,
-                    data: data,
+                    data: [
+                        10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                        20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+                    ],
                     dataGrouping: {
                         enabled: false
                     }
@@ -447,8 +448,8 @@ QUnit.test(
                         enabled: false
                     }
                 }]
-            });
-        }
+            }),
+            main = chart.get('main');
 
         function expectedIndicatorLength(parentRowCount, indicatorPeriod) {
             return parentRowCount - indicatorPeriod + 1;
@@ -458,9 +459,8 @@ QUnit.test(
             return expectedIndicatorLength(mainRowCount, period);
         }
 
-        function assertSmaSynced(assert, chart, label) {
-            const main = chart.get('main'),
-                sma = chart.get('sma'),
+        function assertSmaSynced(label) {
+            const sma = chart.get('sma'),
                 modifiedRows = sma.dataTable.getModified().rowCount,
                 expectedLength = expectedSmaLength(main.dataTable.rowCount);
 
@@ -493,49 +493,37 @@ QUnit.test(
             );
         }
 
-        let chart = createChart([
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-        ]);
+        assertSmaSynced('initial');
 
-        assertSmaSynced(assert, chart, 'initial');
+        main.addPoint(31);
+        assertSmaSynced('after addPoint(end)');
 
-        chart.get('main').addPoint(31);
-        assertSmaSynced(assert, chart, 'after addPoint(end)');
+        main.removePoint(main.data.length - 1);
+        assertSmaSynced('after removePoint(last)');
 
-        chart.get('main').removePoint(
-            chart.get('main').data.length - 1
-        );
-        assertSmaSynced(assert, chart, 'after removePoint(last)');
+        main.removePoint(0);
+        assertSmaSynced('after removePoint(first)');
 
-        chart.get('main').removePoint(0);
-        assertSmaSynced(assert, chart, 'after removePoint(first)');
+        main.addPoint(50, true, true);
+        assertSmaSynced('after addPoint(shift)');
 
-        chart.get('main').addPoint(50, true, true);
-        assertSmaSynced(assert, chart, 'after addPoint(shift)');
-
-        chart.get('main').setData([
+        main.setData([
             100, 101, 102, 103, 104, 105, 106, 107, 108, 109,
             110, 111, 112, 113, 114, 115, 116, 117, 118, 119
         ]);
-        assertSmaSynced(assert, chart, 'after full setData replace');
+        assertSmaSynced('after full setData replace');
 
-        chart = createChart([
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-        ]);
-
-        chart.get('main').setData([
+        main.setData([10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
+        main.setData([
             [5000, 10], [5001, 11], [5002, 12], [5003, 13], [5004, 14],
             [5005, 15], [5006, 16], [5007, 17], [5008, 18], [5009, 19],
             [5010, 20], [5011, 21]
         ]);
         assertSmaSynced(
-            assert,
-            chart,
             'after setData with unrelated x values (+1 length, not append)'
         );
 
-        chart = createChart([
+        main.setData([
             10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
         ]);
 
@@ -551,8 +539,8 @@ QUnit.test(
             }
         });
 
-        chart.get('main').addPoint(26);
-        assertSmaSynced(assert, chart, 'after addPoint(end) with chained SMA');
+        main.addPoint(26);
+        assertSmaSynced('after addPoint(end) with chained SMA');
 
         const sma2 = chart.get('sma2'),
             sma = chart.get('sma'),
