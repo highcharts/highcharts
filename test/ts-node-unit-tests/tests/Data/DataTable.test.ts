@@ -560,6 +560,29 @@ describe('DataTable', () => {
                 'Row values are the same after clone.'
             );
         });
+
+        it('should splice array rows in when inserting', () => {
+            const table = new DataTable({
+                columns: { a: [1, 2, 3], b: [4, 5, 6] }
+            });
+
+            table.setRows([[9, 8], [7, 6]], 1, true);
+
+            strictEqual(
+                table.getRowCount(),
+                5,
+                'Inserting two rows should grow the table by two.'
+            );
+
+            deepStrictEqual(
+                table.getColumns(),
+                {
+                    a: [1, 9, 7, 2, 3],
+                    b: [4, 8, 6, 5, 6]
+                },
+                'Existing rows should be shifted, not overwritten.'
+            );
+        });
     });
 
     describe('setColumns', () => {
