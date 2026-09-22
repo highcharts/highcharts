@@ -39,7 +39,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Stochastic series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.stochastic
  *
@@ -69,6 +68,7 @@ class StochasticIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/stochastic
      * @optionparent plotOptions.stochastic
+     * @internal
      */
     public static defaultOptions: StochasticOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -135,6 +135,7 @@ class StochasticIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -148,6 +149,7 @@ class StochasticIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: StochasticParamsOptions
@@ -287,7 +289,6 @@ MultipleLinesComposition.compose(StochasticIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
@@ -301,7 +302,6 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  *
  * */
 
-/** @internal */
 export default StochasticIndicator;
 
 /* *
@@ -317,9 +317,9 @@ export default StochasticIndicator;
  * @extends   series,plotOptions.stochastic
  * @since     6.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
- *            navigatorOptions, pointInterval, pointIntervalUnit,
- *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
+ *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
+ *            pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/stochastic
  * @apioption series.stochastic

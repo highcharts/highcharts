@@ -113,6 +113,34 @@ Available providers
     ```js
     theme: ‘Standard’
     ```
+Styling tiles with CSS filters
+------------
+The tiles are rendered as SVG `image` elements inside the series group. The whole base map can therefore be restyled with the CSS [filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) property, without any changes to the tile provider or the chart configuration.
+
+```css
+.highcharts-tiledwebmap-series {
+    filter: grayscale(1);
+}
+
+```
+The rule matches the series group, so tiles that are loaded later, while zooming or panning, are styled as well. Other series are drawn in their own groups and keep their colors.
+
+Filter functions can be combined, for example to turn a light base map into a dark one:
+
+```css
+.highcharts-tiledwebmap-series {
+    filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85);
+}
+
+```
+Scoping the rule to the `highcharts-dark` class makes the base map follow the chart's dark mode.
+
+The filter should be set on the series group and not on the single `image` elements. Filters such as `blur` sample nearby pixels. Applied per tile, they leave visible seams along the tile edges.
+
+Please note that CSS filters are applied by the browser and are not a part of the chart's SVG. They are therefore not included in exported images.
+
+<iframe style="width: 100%; height: 620px; border: none;" src="https://highcharts.com/samples/embed/maps/series-tiledwebmap/css-filters" allow="fullscreen"></iframe>
+
 API Reference
 -------------
 For an overview of the `tiledwebmap` series options see the [API reference](https://api.highcharts.com/highmaps/series.tiledwebmap).

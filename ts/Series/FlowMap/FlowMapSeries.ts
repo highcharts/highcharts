@@ -177,8 +177,11 @@ export class FlowMapSeries extends MapLineSeries {
     public data!: Array<FlowMapPoint>;
     public options!: FlowMapSeriesOptions;
     public points!: Array<FlowMapPoint>;
+    /** @internal */
     public smallestWeight?: number;
+    /** @internal */
     public greatestWeight?: number;
+    /** @internal */
     public centerOfPoints!: PositionObject;
 
     /**
@@ -463,6 +466,7 @@ export class FlowMapSeries extends MapLineSeries {
         });
     }
 
+    /** @internal */
     public getPointShapeArgs(point: FlowMapPoint): SVGAttributes {
         const { fromPos, toPos } = point;
 
@@ -668,10 +672,12 @@ export class FlowMapSeries extends MapLineSeries {
  *
  * */
 
-/** @internal */
 export interface FlowMapSeries {
+    /** @internal */
     pointClass: typeof FlowMapPoint;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     drawPoints: typeof ColumnSeries.prototype['drawPoints'];
 }
 

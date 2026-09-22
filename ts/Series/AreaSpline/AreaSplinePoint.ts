@@ -27,10 +27,11 @@ import SplinePoint from '../Spline/SplinePoint.js';
  *
  * */
 
-/** @internal */
 declare class AreaSplinePoint extends SplinePoint {
+    /** @internal */
     public isCliff?: AreaPoint['isCliff'];
     public options: AreaSplinePointOptions;
+    /** @internal */
     public series: AreaSplineSeries;
 }
 
@@ -40,5 +41,4 @@ declare class AreaSplinePoint extends SplinePoint {
  *
  * */
 
-/** @internal */
 export default AreaSplinePoint;

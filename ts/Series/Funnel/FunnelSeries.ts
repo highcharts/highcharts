@@ -108,6 +108,7 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: FunnelSeriesOptions = merge(
         PieSeries.defaultOptions,
         FunnelSeriesDefaults
@@ -119,6 +120,7 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public centerX?: number;
 
     public data!: Array<FunnelPoint>;

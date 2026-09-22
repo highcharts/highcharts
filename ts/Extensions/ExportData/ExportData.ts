@@ -63,6 +63,7 @@ import {
     isNumber,
     pushUnique
 } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -597,6 +598,11 @@ namespace ExportData {
     function downloadCSV(
         this: Exporting
     ): void {
+        if (!this.chart.series.some(isExportableSeries)) {
+            error('Warning: No data to export', false, this.chart);
+            return;
+        }
+
         this.wrapLoading((): void => {
             const csv = this.getCSV(true);
 
@@ -623,6 +629,11 @@ namespace ExportData {
     function downloadXLS(
         this: Exporting
     ): void {
+        if (!this.chart.series.some(isExportableSeries)) {
+            error('Warning: No data to export', false, this.chart);
+            return;
+        }
+
         this.wrapLoading((): void => {
             const uri = 'data:application/vnd.ms-excel;base64,',
                 template =
@@ -893,11 +904,7 @@ namespace ExportData {
                 mockSeries: ExportDataSeries,
                 j: number;
 
-            if (
-                series.options.includeInDataExport !== false &&
-                !series.options.isInternal &&
-                series.visible !== false // #55
-            ) {
+            if (isExportableSeries(series)) {
 
                 // Build a lookup for X axis index and the position of the first
                 // series that belongs to that X axis. Includes -1 for non-axis
@@ -1500,6 +1507,24 @@ namespace ExportData {
         this: Exporting
     ): void {
         this.toggleDataTable(false);
+    }
+
+    /**
+     * Whether the series contributes columns to the exported data.
+     *
+     * @internal
+     *
+     * @requires modules/exporting
+     * @requires modules/export-data
+     */
+    function isExportableSeries(
+        series: Series
+    ): boolean {
+        return (
+            series.options.includeInDataExport !== false &&
+            !series.options.isInternal &&
+            series.visible !== false // #55
+        );
     }
 
     /**
