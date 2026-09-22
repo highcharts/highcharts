@@ -72,6 +72,7 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: TimelineSeriesOptions = merge(
         LineSeries.defaultOptions,
         TimelineSeriesDefaults
@@ -89,10 +90,13 @@ class TimelineSeries extends LineSeries {
 
     public points!: Array<TimelinePoint>;
 
+    /** @internal */
     public userOptions!: TimelineSeriesOptions;
 
+    /** @internal */
     public visibilityMap!: Array<(boolean|TimelinePoint|TimelinePointOptions)>;
 
+    /** @internal */
     public visiblePointsCount?: number;
 
     /* *
@@ -101,6 +105,7 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public alignDataLabel(
         point: TimelinePoint,
         dataLabel: SVGLabel,
@@ -174,6 +179,7 @@ class TimelineSeries extends LineSeries {
         super.alignDataLabel.apply(series, arguments);
     }
 
+    /** @internal */
     public bindAxes(): void {
         const series = this;
 
@@ -185,6 +191,7 @@ class TimelineSeries extends LineSeries {
         }
     }
 
+    /** @internal */
     public distributeDL(): void {
         const series = this,
             dataLabelsOptions = series.options.dataLabels,
@@ -220,6 +227,7 @@ class TimelineSeries extends LineSeries {
         }
     }
 
+    /** @internal */
     public generatePoints(): void {
         super.generatePoints();
 
@@ -233,6 +241,7 @@ class TimelineSeries extends LineSeries {
         }
     }
 
+    /** @internal */
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
             nullInteraction = series.options.nullInteraction,
@@ -251,6 +260,7 @@ class TimelineSeries extends LineSeries {
         return map;
     }
 
+    /** @internal */
     public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         const series = this,
             filteredData = xData.filter((_x, i): boolean => (
@@ -264,6 +274,7 @@ class TimelineSeries extends LineSeries {
         };
     }
 
+    /** @internal */
     public init(): void {
         const series = this;
 
@@ -373,6 +384,7 @@ class TimelineSeries extends LineSeries {
         ));
     }
 
+    /** @internal */
     public markerAttribs(
         point: TimelinePoint,
         state?: StatesOptionsKey
@@ -470,7 +482,9 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
 
 /** @internal */
 interface TimelineSeries {
+    /** @internal */
     pointClass: typeof TimelinePoint;
+    /** @internal */
     trackerGroups: Array<string>;
 }
 extend(TimelineSeries.prototype, {

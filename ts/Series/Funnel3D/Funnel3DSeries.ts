@@ -68,6 +68,7 @@ class Funnel3DSeries extends ColumnSeries {
      * */
 
     public static compose = Funnel3DComposition.compose;
+    /** @internal */
     public static defaultOptions: Funnel3DSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         Funnel3DSeriesDefaults
@@ -79,8 +80,10 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public center!: Array<number>;
 
+    /** @internal */
     public centerX?: number;
 
     public data!: Array<Funnel3DPoint>;

@@ -74,7 +74,6 @@ function createPointObj(
 /**
  * The Supertrend series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.supertrend
  *
@@ -106,6 +105,7 @@ class SupertrendIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/supertrend
      * @optionparent plotOptions.supertrend
+     * @internal
      */
     public static defaultOptions: SupertrendOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -190,6 +190,7 @@ class SupertrendIndicator extends SMAIndicator {
 
     public data!: Array<SupertrendPoint>;
 
+    /** @internal */
     public linkedParent!: SupertrendLinkedParentObject;
 
     public options!: SupertrendOptions;
@@ -202,6 +203,7 @@ class SupertrendIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         const indicator = this;
 
@@ -232,6 +234,7 @@ class SupertrendIndicator extends SMAIndicator {
         );
     }
 
+    /** @internal */
     public drawGraph(): void {
         const indicator = this,
             indicOptions: SupertrendOptions = indicator.options,
@@ -549,6 +552,7 @@ class SupertrendIndicator extends SMAIndicator {
     //      Current Close > Current FINAL LOWERBAND
     //     ) THAN Current FINAL LOWERBAND
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: SupertrendParamsOptions
@@ -658,7 +662,6 @@ class SupertrendIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface SupertrendIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -676,7 +679,6 @@ extend(SupertrendIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
@@ -691,7 +693,6 @@ SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
  *
  * */
 
-/** @internal */
 export default SupertrendIndicator;
 
 /* *
@@ -707,7 +708,7 @@ export default SupertrendIndicator;
  * @extends   series,plotOptions.supertrend
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, cropThreshold, data, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, cropThreshold, data,
  *            joinBy, keys, navigatorOptions, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *            showInNavigator, stacking, threshold

@@ -44,7 +44,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * @requires highcharts-3d
  * @requires modules/cylinder
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cylinder
  *
@@ -58,8 +57,10 @@ class CylinderSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = CylinderComposition.compose;
 
+    /** @internal */
     public static defaultOptions: CylinderSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         CylinderSeriesDefaults
@@ -85,7 +86,6 @@ class CylinderSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface CylinderSeries {
     pointClass: typeof CylinderPoint;
 }
@@ -100,7 +100,6 @@ extend(CylinderSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cylinder: typeof CylinderSeries;
@@ -115,5 +114,4 @@ SeriesRegistry.registerSeriesType('cylinder', CylinderSeries);
  *
  * */
 
-/** @internal */
 export default CylinderSeries;

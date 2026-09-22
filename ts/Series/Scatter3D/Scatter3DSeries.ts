@@ -52,6 +52,7 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: Scatter3DSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         Scatter3DSeriesDefaults
@@ -75,6 +76,7 @@ class Scatter3DSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public pointAttribs(point: Scatter3DPoint): SVGAttributes {
         const attribs = super.pointAttribs.apply(this, arguments);
 
@@ -95,6 +97,7 @@ class Scatter3DSeries extends ScatterSeries {
  * */
 
 interface Scatter3DSeries {
+    /** @internal */
     pointClass: typeof Scatter3DPoint;
 }
 

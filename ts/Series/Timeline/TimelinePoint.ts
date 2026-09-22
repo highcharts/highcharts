@@ -56,12 +56,15 @@ class TimelinePoint extends LinePoint {
      *
      * */
 
+    /** @internal */
     public label?: string;
 
     public options!: TimelinePointOptions;
 
+    /** @internal */
     public series!: TimelineSeries;
 
+    /** @internal */
     public userDLOptions?: TimelineDataLabelOptions;
 
     /* *
@@ -70,6 +73,7 @@ class TimelinePoint extends LinePoint {
      *
      * */
 
+    /** @internal */
     public alignConnector(): void {
         const point = this,
             series = point.series,
@@ -113,6 +117,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public drawConnector(): void {
         const point = this,
             { dataLabel, series } = point;
@@ -135,6 +140,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public getConnectorPath(): SVGPath {
         const {
                 plotX = 0,
@@ -213,10 +219,12 @@ class TimelinePoint extends LinePoint {
         this.y = 1;
     }
 
+    /** @internal */
     public isValid(): boolean {
         return this.options.y !== null;
     }
 
+    /** @internal */
     public setState(): void {
         const proceed = super.setState;
 
@@ -226,6 +234,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public setVisible(
         visible: boolean,
         redraw?: boolean
@@ -244,6 +253,7 @@ class TimelinePoint extends LinePoint {
         }
     }
 
+    /** @internal */
     public applyOptions(
         options: (PointOptions|PointShortOptions),
         x?: number,

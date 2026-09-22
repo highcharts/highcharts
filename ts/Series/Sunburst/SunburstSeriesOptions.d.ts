@@ -197,7 +197,7 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
  *
- * @excluding dataParser, dataURL, stack, dataSorting, boostThreshold,
+ * @excluding stack, dataSorting, boostThreshold,
  *            boostBlending
  *
  * @product highcharts

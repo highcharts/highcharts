@@ -136,6 +136,7 @@ class TilemapSeries extends HeatmapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: TilemapSeriesOptions = merge(
         HeatmapSeries.defaultOptions,
         TilemapSeriesDefaults
@@ -147,6 +148,7 @@ class TilemapSeries extends HeatmapSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis
     ): void {
@@ -173,6 +175,7 @@ class TilemapSeries extends HeatmapSeries {
 
     public points!: Array<TilemapPoint>;
 
+    /** @internal */
     public tileShape!: TilemapShapes.DefinitionObject;
 
     /* *
@@ -189,6 +192,7 @@ class TilemapSeries extends HeatmapSeries {
         return this.tileShape.alignDataLabel.apply(this, arguments);
     }
 
+    /** @internal */
     public drawPoints(): void {
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
@@ -292,6 +296,7 @@ class TilemapSeries extends HeatmapSeries {
 
 /** @internal */
 interface TilemapSeries {
+    /** @internal */
     pointClass: typeof TilemapPoint;
 }
 

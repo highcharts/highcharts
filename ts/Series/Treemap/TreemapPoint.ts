@@ -49,30 +49,42 @@ class TreemapPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public drillId?: (boolean|string);
 
+    /** @internal */
     public isGroup?: boolean;
 
+    /** @internal */
     public imageUrl?: string;
 
+    /** @internal */
     public groupedPointsAmount: number = 0;
 
+    /** @internal */
     public name!: string;
 
+    /** @internal */
     public node!: TreemapNode;
 
     public options!: TreemapPointOptions;
 
+    /** @internal */
     public parent?: string;
 
+    /** @internal */
     public simulatedValue?: number;
 
+    /** @internal */
     public series!: TreemapSeries;
 
+    /** @internal */
     public shapeType: 'arc'|'circle'|'image'|'path'|'rect'|'text' = 'rect';
 
+    /** @internal */
     public sortIndex?: number;
 
+    /** @internal */
     public value!: (number|null);
 
     /* *
@@ -81,12 +93,14 @@ class TreemapPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public draw(
         params: DrawPointParams
     ): void {
         DPU.draw(this, params);
     }
 
+    /** @internal */
     public getClassName(): string {
         const series = this.series,
             options = series.options;
@@ -130,6 +144,7 @@ class TreemapPoint extends ScatterPoint {
         return Boolean(this.id || isNumber(this.value));
     }
 
+    /** @internal */
     public setState(state: StatesOptionsKey): void {
         super.setState.apply(this, arguments);
 
@@ -141,6 +156,7 @@ class TreemapPoint extends ScatterPoint {
         }
     }
 
+    /** @internal */
     public shouldDraw(): boolean {
         return isNumber(this.plotY) && this.y !== null;
     }
@@ -155,6 +171,7 @@ class TreemapPoint extends ScatterPoint {
 
 /** @internal */
 interface TreemapPoint extends ColorMapComposition.PointComposition {
+    /** @internal */
     setVisible: typeof PiePoint.prototype.setVisible;
 }
 
