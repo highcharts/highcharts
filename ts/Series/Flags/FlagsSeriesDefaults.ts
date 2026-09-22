@@ -34,9 +34,10 @@ import type FlagsSeriesOptions from './FlagsSeriesOptions';
  *         Flags on a line series
  *
  * @extends      plotOptions.column
- * @excluding    animation, borderColor, borderWidth,
- *               colorByPoint, cropThreshold, dataGrouping, pointPadding,
- *               pointWidth, turboThreshold
+ * @excluding    animation, boostBlending, boostThreshold, borderColor,
+ *               borderWidth, colorByPoint, cropThreshold, dataGrouping,
+ *               edgeColor, edgeWidth, nullInteraction, onPoint, pointPadding,
+ *               pointWidth, turboThreshold, zoomEnabled
  * @product      highstock
  * @optionparent plotOptions.flags
  */
@@ -288,10 +289,11 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flags
- * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, cropThreshold, dashStyle, dataGrouping, gapSize,
- *            gapUnit, linecap, lineWidth, marker, pointPadding, pointWidth,
- *            step, turboThreshold, useOhlcData
+ * @excluding animation, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, colorByPoint, connectNulls, cropThreshold,
+ *            dashStyle, dataGrouping, edgeColor, edgeWidth, gapSize, gapUnit,
+ *            linecap, marker, nullInteraction, onPoint, pointPadding,
+ *            pointWidth, step, turboThreshold, useOhlcData, zoomEnabled
  * @product   highstock
  * @apioption series.flags
  */

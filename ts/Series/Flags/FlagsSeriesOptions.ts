@@ -47,14 +47,16 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.flags
  *
- * @excluding animation, borderColor, borderWidth,
- *            colorByPoint, cropThreshold, dataGrouping, pointPadding,
- *            pointWidth, turboThreshold
+ * @excluding animation, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, colorByPoint, cropThreshold, dataGrouping,
+ *            edgeColor, edgeWidth, nullInteraction, onPoint, pointPadding,
+ *            pointWidth, turboThreshold, zoomEnabled
  *
- * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, cropThreshold, dashStyle, dataGrouping, gapSize,
- *            gapUnit, linecap, lineWidth, marker, pointPadding, pointWidth,
- *            step, turboThreshold, useOhlcData
+ * @excluding animation, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, colorByPoint, connectNulls, cropThreshold,
+ *            dashStyle, dataGrouping, edgeColor, edgeWidth, gapSize, gapUnit,
+ *            linecap, marker, nullInteraction, onPoint, pointPadding,
+ *            pointWidth, step, turboThreshold, useOhlcData, zoomEnabled
  *
  * @product highstock
  */
@@ -68,6 +70,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags-allowoverlapx
      *         Allow sideways overlap
      *
+     * @default false
+     *
      * @since 6.0.4
      */
     allowOverlapX?: boolean;
@@ -76,11 +80,15 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * The corner radius of the border surrounding each flag. For `squarepin`
      * shaped flags only. A number signifies pixels. A percentage string, like
      * for example 50%, signifies a relative size.
+     *
+     * @default 0
      */
     borderRadius?: number;
 
     /**
      * The fill color for the flags.
+     *
+     * @default var(--highcharts-background-color)
      *
      * @product highstock
      */
@@ -116,6 +124,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The pixel width of the flag's line/border.
+     *
+     * @default 1
      *
      * @product highstock
      */
@@ -159,6 +169,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags/
      *         Different shapes
      *
+     * @default 'flag'
+     *
      * @product highstock
      */
     shape?: FlagsShapeValue;
@@ -169,6 +181,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/plotoptions/flags-stackdistance/
      *         A greater stack distance
+     *
+     * @default 12
      *
      * @product highstock
      */
@@ -190,6 +204,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * Text alignment for the text inside the flag.
+     *
+     * @default 'center'
      *
      * @since 5.0.0
      *
@@ -236,8 +252,9 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The y position of the top left corner of the flag relative to either
-     * the series (if onSeries is defined), or the x axis. Defaults to
-     * `-30`.
+     * the series (if onSeries is defined), or the x axis.
+     *
+     * @default -30
      *
      * @product highstock
      */
@@ -294,6 +311,20 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @product highstock
      */
     tooltip?: FlagsSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    edgeColor?: undefined;
+    edgeWidth?: undefined;
+    nullInteraction?: undefined;
+    onPoint?: undefined;
+    zoomEnabled?: undefined;
 }
 
 export interface FlagsSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
