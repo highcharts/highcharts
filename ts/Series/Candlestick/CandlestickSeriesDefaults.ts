@@ -96,10 +96,10 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      *         Candlestick line colors
      *
      * @type    {Highcharts.ColorType}
-     * @default #000000
      * @product highstock
      */
     lineColor: 'var(--highcharts-neutral-color-100)',
+
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -110,6 +110,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @product highstock
      */
     lineWidth: 1,
+
     /**
      * The fill color of the candlestick when values are rising.
      *
@@ -122,11 +123,10 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      *         Colors in styled mode
      *
      * @type    {Highcharts.ColorType}
-     * @default #ffffff
      * @product highstock
     */
-
     upColor: 'var(--highcharts-background-color)',
+
     /**
      * @product highstock
      */

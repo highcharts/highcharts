@@ -54,7 +54,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @default #000000
+     * @default 'var(--highcharts-neutral-color-100)'
      *
      * @product highstock
      */
@@ -65,7 +65,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * series, the default is `candlestick`, a vertical line (wick) with a
      * rectangular body.
      *
-     * @default candlestick
+     * @default 'candlestick'
      */
     legendSymbol?: string;
 
@@ -160,7 +160,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @sample {highstock} highcharts/css/candlestick/
      *         Colors in styled mode
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highstock
      */
