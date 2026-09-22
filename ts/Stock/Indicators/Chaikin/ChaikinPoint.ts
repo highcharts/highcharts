@@ -22,8 +22,8 @@ import type EMAPoint from '../EMA/EMAPoint';
  *
  * */
 
-/** @internal */
 declare class ChaikinPoint extends EMAPoint {
+    /** @internal */
     public series: ChaikinIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class ChaikinPoint extends EMAPoint {
  *
  * */
 
-/** @internal */
 export default ChaikinPoint;

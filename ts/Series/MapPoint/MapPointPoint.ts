@@ -41,12 +41,15 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public insetIndex?: number;
 
     public options!: MapPointPointOptions;
 
+    /** @internal */
     public properties?: AnyRecord;
 
+    /** @internal */
     public series!: MapPointSeries;
 
     /* *
@@ -55,6 +58,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return Boolean(
             this.options.geometry ||
@@ -73,6 +77,7 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
 /** @internal */
 interface MapPointPoint extends ScatterPoint {
+    /** @internal */
     bounds?: MapBounds;
 }
 

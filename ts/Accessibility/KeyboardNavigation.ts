@@ -195,7 +195,7 @@ class KeyboardNavigation {
      */
     public updateExitAnchor(): void {
         const endMarkerId = `highcharts-end-of-chart-marker-${this.chart.index}`,
-            endMarker = getElement(endMarkerId);
+            endMarker = getElement(endMarkerId, this.chart.renderTo);
 
         this.removeExitAnchor();
 

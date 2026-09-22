@@ -212,11 +212,7 @@ class HeaderCell extends Cell {
             this.htmlElement.setAttribute('aria-label', column.id);
 
             // Add user column classname
-            if (column.options.className) {
-                this.htmlElement.classList.add(
-                    ...column.options.className.split(/\s+/g)
-                );
-            }
+            column.applyClassNames(this.htmlElement);
 
             // Add resizing
             this.resizeHandle = column.viewport.columnsResizer

@@ -135,6 +135,14 @@ function getBoostClipRect(
         const verticalAxes =
             chart.inverted ? chart.xAxis : chart.yAxis; // #14444
 
+        // Use chart.clipBox dimensions to match what createAndAttachRenderer
+        // compares against. Fractional clipOffset shrinks chart.clipBox below
+        // plotWidth/Height, breaking that check. #22949
+        if (!chart.inverted && !navigator && chart.clipBox) {
+            clipBox.width = chart.clipBox.width;
+            clipBox.height = chart.clipBox.height;
+        }
+
         if (verticalAxes.length <= 1) {
             clipBox.y = Math.min(verticalAxes[0].pos, clipBox.y);
             clipBox.height = (

@@ -108,6 +108,7 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -123,12 +124,14 @@ class NetworkgraphSeries extends Series {
 
     public data!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public nodes!: Array<NetworkgraphPoint>;
 
     public options!: NetworkgraphSeriesOptions;
 
     public points!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *

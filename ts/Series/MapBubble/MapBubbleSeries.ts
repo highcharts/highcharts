@@ -81,6 +81,7 @@ class MapBubbleSeries extends BubbleSeries {
 
     public clearBounds = mapProto.clearBounds;
 
+    /** @internal */
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
@@ -91,6 +92,7 @@ class MapBubbleSeries extends BubbleSeries {
         }, compareX, e);
     }
 
+    /** @internal */
     translate(): void {
         mapPointProto.translate.call(this);
         this.getRadii();
@@ -107,14 +109,23 @@ class MapBubbleSeries extends BubbleSeries {
 
 /** @internal */
 interface MapBubbleSeries {
+    /** @internal */
     type: string;
+    /** @internal */
     getProjectedBounds: typeof mapProto.getProjectedBounds;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof MapBubblePoint;
+    /** @internal */
     setData: typeof mapProto.setData;
+    /** @internal */
     processData: typeof mapProto.processData;
+    /** @internal */
     projectPoint: typeof mapPointProto.projectPoint;
+    /** @internal */
     setOptions: typeof mapProto.setOptions;
+    /** @internal */
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -178,7 +189,6 @@ export default MapBubbleSeries;
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.mapbubble
- * @excluding dataParser, dataURL
  * @product   highmaps
  * @apioption series.mapbubble
  */

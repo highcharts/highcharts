@@ -58,14 +58,19 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
      *
      * */
 
+    /** @internal */
     public dispX?: number;
 
+    /** @internal */
     public dispY?: number;
 
+    /** @internal */
     public fixedPosition: DragNodesPoint['fixedPosition'];
 
+    /** @internal */
     public prevX?: number;
 
+    /** @internal */
     public prevY?: number;
 
     /* *
@@ -407,8 +412,10 @@ class NetworkgraphPoint extends Point implements DragNodesPoint {
 
 /** @internal */
 interface NetworkgraphPoint extends NodesComposition.PointComposition {
+    /** @internal */
     className: NodesComposition.PointComposition['className'];
     degree: number;
+    /** @internal */
     formatPrefix: NodesComposition.PointComposition['formatPrefix'];
     from: NodesComposition.PointComposition['from'];
     fromNode: NetworkgraphPoint;
