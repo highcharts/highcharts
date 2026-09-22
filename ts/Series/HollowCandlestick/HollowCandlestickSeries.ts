@@ -156,6 +156,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * */
     public data!: Array<HollowCandlestickPoint>;
 
+    /** @internal */
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
     public options!: HollowCandlestickSeriesOptions;

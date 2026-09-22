@@ -68,12 +68,15 @@ class GeoHeatmapPoint extends MapPoint {
      *
      * */
 
+    /** @internal */
     public lat!: number;
 
+    /** @internal */
     public lon!: number;
 
     public options!: GeoHeatmapPointOptions;
 
+    /** @internal */
     public series!: GeoHeatmapSeries;
 
     /* *

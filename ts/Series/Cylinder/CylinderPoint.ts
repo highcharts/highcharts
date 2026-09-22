@@ -36,7 +36,6 @@ const {
  *
  * */
 
-/** @internal */
 class CylinderPoint extends ColumnPoint {
 
     /* *
@@ -47,6 +46,7 @@ class CylinderPoint extends ColumnPoint {
 
     public options!: CylinderPointOptions;
 
+    /** @internal */
     public series!: CylinderSeries;
 
 }
@@ -72,5 +72,4 @@ extend(CylinderPoint.prototype, {
  *
  * */
 
-/** @internal */
 export default CylinderPoint;
