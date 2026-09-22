@@ -65,18 +65,24 @@ class GanttPoint extends XRangePoint {
      *
      * */
 
+    /** @internal */
     public collapsed?: boolean;
 
+    /** @internal */
     public completed?: boolean;
 
+    /** @internal */
     public end?: number;
 
+    /** @internal */
     public milestone?: boolean;
 
     public options!: GanttPointOptions;
 
+    /** @internal */
     public series!: GanttSeries;
 
+    /** @internal */
     public start?: number;
 
     /* *
@@ -115,6 +121,7 @@ class GanttPoint extends XRangePoint {
         return ganttPoint;
     }
 
+    /** @internal */
     public isValid(): boolean {
         return (
             (

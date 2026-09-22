@@ -188,3 +188,36 @@ QUnit.test('Nested properties in maps', function (assert) {
         'Point 2 test property should be Test string'
     );
 });
+
+QUnit.test(
+    'Nested keys should not allow prototype pollution',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                series: [
+                    {
+                        keys: [
+                            '__proto__.polluted',
+                            'constructor.prototype.alsoPolluted',
+                            'y'
+                        ],
+                        data: [['yes', 'yes', 1]]
+                    }
+                ]
+            }),
+            point = chart.series[0].points[0];
+
+        assert.strictEqual(
+            {}.polluted,
+            undefined,
+            'Object.prototype should not be polluted through __proto__'
+        );
+
+        assert.strictEqual(
+            {}.alsoPolluted,
+            undefined,
+            'Object.prototype should not be polluted through constructor'
+        );
+
+        assert.strictEqual(point.y, 1, 'Remaining keys should still apply');
+    }
+);

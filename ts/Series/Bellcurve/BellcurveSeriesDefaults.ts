@@ -105,7 +105,7 @@ const BellcurveSeriesDefaults: BellcurveSeriesOptions = {
  * @extends   series,plotOptions.bellcurve
  * @since     6.0.0
  * @product   highcharts
- * @excluding dataParser, dataURL, data, boostThreshold, boostBlending
+ * @excluding data, boostThreshold, boostBlending
  * @requires  modules/histogram-bellcurve
  * @apioption series.bellcurve
  */

@@ -81,7 +81,6 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.heatmap
  *
@@ -95,6 +94,7 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HeatmapSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         HeatmapSeriesDefaults
@@ -106,10 +106,13 @@ class HeatmapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public canvas?: HTMLCanvasElement;
 
+    /** @internal */
     public colorAxis!: ColorAxis;
 
+    /** @internal */
     public context?: CanvasRenderingContext2D;
 
     public data!: Array<HeatmapPoint>;
@@ -118,12 +121,16 @@ class HeatmapSeries extends ScatterSeries {
 
     public points!: Array<HeatmapPoint>;
 
+    /** @internal */
     public valueData?: Array<number>;
 
+    /** @internal */
     public valueMax: number = NaN;
 
+    /** @internal */
     public valueMin: number = NaN;
 
+    /** @internal */
     public isDirtyCanvas: boolean = true;
 
     /* *
@@ -133,7 +140,7 @@ class HeatmapSeries extends ScatterSeries {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const
@@ -269,14 +276,14 @@ class HeatmapSeries extends ScatterSeries {
 
     /**
      * Override to use rectangle by default
-     * @private
+     * @internal
      */
     getSymbol(): void {
         this.symbol = this.options.marker?.symbol || 'rect';
     }
 
     /**
-     * @private
+     * @internal
      */
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
@@ -297,7 +304,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * Override to also allow null points, used when building the k-d-tree for
      * tooltips in boost mode.
-     * @private
+     * @internal
      */
     getValidPoints(
         points?: Array<HeatmapPoint>,
@@ -314,7 +321,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.dataTable.rowCount;
@@ -322,7 +329,7 @@ class HeatmapSeries extends ScatterSeries {
 
     /**
      * Override the init method to add point ranges on both axes.
-     * @private
+     * @internal
      */
     public init(): void {
         super.init.apply(this, arguments);
@@ -357,7 +364,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public markerAttribs(
         point: HeatmapPoint,
@@ -418,7 +425,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: HeatmapPoint,
@@ -475,7 +482,7 @@ class HeatmapSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -554,9 +561,11 @@ addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
  *
  * */
 
+/** @internal */
 interface HeatmapSeries extends ColorMapComposition.SeriesComposition {
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
+    /** @internal */
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
     getSymbol: typeof Series.prototype.getSymbol;
     image?: SVGElement;
@@ -585,7 +594,7 @@ extend(HeatmapSeries.prototype, {
     trackerGroups: ColorMapComposition.seriesMembers.trackerGroups,
 
     /**
-     * @private
+     * @internal
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 

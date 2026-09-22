@@ -15,3 +15,8 @@ body {
 #container {
     height: 300px;
 }
+
+#report {
+    font-family: monospace;
+    margin: 10px;
+}

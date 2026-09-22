@@ -45,6 +45,8 @@ import type {
 
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
+import H from '../../Globals.js';
+const { composed } = H;
 import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
@@ -56,6 +58,7 @@ import {
     isObject,
     isString,
     merge,
+    pushUnique,
     removeEvent,
     wrap
 } from '../../../Shared/Utilities.js';
@@ -566,17 +569,13 @@ function wrapGenerateTick(
     const axis = this,
         mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {},
         isTreeGrid = axis.type === 'treegrid',
-        ticks = axis.ticks;
+        ticks = axis.ticks,
+        gridNode = axis.treeGrid.mapOfPosToGridNode?.[pos];
     let tick = ticks[pos],
         levelOptions,
-        options: (DeepPartial<AxisOptions> | undefined),
-        gridNode;
+        options: (DeepPartial<AxisOptions> | undefined);
 
-    if (
-        isTreeGrid &&
-        axis.treeGrid.mapOfPosToGridNode
-    ) {
-        gridNode = axis.treeGrid.mapOfPosToGridNode[pos];
+    if (isTreeGrid && gridNode) {
         levelOptions = mapOptionsToLevel[gridNode.depth];
 
         if (levelOptions) {
@@ -585,10 +584,7 @@ function wrapGenerateTick(
             };
         }
 
-        if (
-            !tick &&
-            TickConstructor
-        ) {
+        if (!tick && TickConstructor) {
             ticks[pos] = tick =
                 new TickConstructor(axis, pos, void 0, void 0, {
                     category: gridNode.name,
@@ -789,9 +785,7 @@ function wrapSetTickInterval(
     const axis = this,
         options = axis.options,
         time = axis.chart.time,
-        linkedParent = typeof options.linkedTo === 'number' ?
-            this.chart[axis.coll]?.[options.linkedTo] :
-            void 0,
+        linkedParent = axis.linkedParent,
         isTreeGrid = axis.type === 'treegrid';
 
     if (isTreeGrid) {
@@ -877,10 +871,8 @@ class TreeGridAxisAdditions {
         TickClass: typeof Tick
     ): (T&typeof TreeGridAxisComposition) {
 
-        if (!AxisClass.keepProps.includes('treeGrid')) {
+        if (pushUnique(composed, 'Axis.TreeGrid')) {
             const axisProps = AxisClass.prototype;
-
-            AxisClass.keepProps.push('treeGrid');
 
             wrap(axisProps, 'generateTick', wrapGenerateTick);
             wrap(axisProps, 'init', wrapInit);

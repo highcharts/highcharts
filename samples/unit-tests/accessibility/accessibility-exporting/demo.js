@@ -207,3 +207,57 @@ QUnit.test(
         }
     }
 );
+
+QUnit.test(
+    'Screen reader section inside a shadow root (#22682)',
+    function (assert) {
+        // The a11y module looks its elements up in the document, which does not
+        // cross a shadow boundary unless scoped to the chart's root node
+        const host = document.createElement('div');
+
+        document.body.appendChild(host);
+
+        const shadowRoot = host.attachShadow({ mode: 'open' }),
+            renderTo = document.createElement('div'),
+            description = document.createElement('div');
+
+        // The default linkedDescription selector expects the description to be
+        // the chart container's next sibling
+        description.className = 'highcharts-description';
+        description.textContent = 'Description of the chart.';
+        shadowRoot.appendChild(renderTo);
+        shadowRoot.appendChild(description);
+
+        const chart = Highcharts.chart(renderTo, {
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            tabindexOf = selector => {
+                const el = shadowRoot.querySelector(selector);
+                return el && el.getAttribute('tabindex');
+            };
+
+        assert.strictEqual(
+            tabindexOf('[id^="hc-linkto-highcharts-data-table-"]'),
+            '-1',
+            'The data table button should be removed from the tab sequence'
+        );
+
+        assert.strictEqual(
+            tabindexOf('[id^="highcharts-a11y-sonify-data-btn-"]'),
+            '-1',
+            'The play as sound button should be removed from the tab sequence'
+        );
+
+        assert.strictEqual(
+            chart.accessibility.components.infoRegions
+                .linkedDescriptionElement,
+            description,
+            'The linked description should resolve inside the shadow root'
+        );
+
+        chart.destroy();
+        host.remove();
+    }
+);

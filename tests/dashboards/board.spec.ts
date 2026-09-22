@@ -74,4 +74,56 @@ test.describe('Board Tests', () => {
             'Board fully destroyed, all layouts removed'
         ).toBeUndefined();
     });
+
+    // Regression test for #25039
+    test('Board.update() resolves when components are mounted', async ({
+        page
+    }) => {
+        await page.setContent(
+            dashboardsWithLayoutHTML,
+            { waitUntil: 'networkidle' }
+        );
+
+        const result = await page.evaluate(async () => {
+            const Dashboards = (window as any).Dashboards;
+
+            const board = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{ cells: [{ id: 'dashboard-cell-1' }] }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'dashboard-cell-1',
+                    type: 'HTML',
+                    elements: [{ tagName: 'h1', textContent: 'Initial' }]
+                }]
+            }, true);
+
+            const updated = await board.update({
+                components: [{
+                    renderTo: 'dashboard-cell-1',
+                    type: 'HTML',
+                    elements: [{ tagName: 'h1', textContent: 'Updated' }]
+                }]
+            });
+
+            return {
+                isSameBoard: updated === board,
+                mounted: updated.mountedComponents.length,
+                text: updated.mountedComponents[0]
+                    ?.component.contentElement.textContent
+            };
+        });
+
+        expect(
+            result.isSameBoard,
+            'update() resolves with the board instance'
+        ).toBe(true);
+        expect(result.mounted, 'One component mounted').toBe(1);
+        expect(
+            result.text,
+            'Component is mounted once the promise resolves'
+        ).toBe('Updated');
+    });
 });
