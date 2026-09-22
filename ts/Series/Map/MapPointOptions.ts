@@ -166,7 +166,6 @@ export interface MapPointOptions extends ScatterPointOptions {
 
     /**
      *
-     * @extends   plotOptions.map.states
      *
      * @product   highmaps
      */
