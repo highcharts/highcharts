@@ -120,6 +120,7 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: OHLCSeriesOptions = merge(
         HLCSeries.defaultOptions,
         OHLCSeriesDefaults
@@ -131,6 +132,7 @@ class OHLCSeries extends HLCSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series,
         ..._args: Array<never>
@@ -189,6 +191,7 @@ class OHLCSeries extends HLCSeries {
         }
     }
 
+    /** @internal */
     protected getPointPath(point: OHLCPoint): SVGPath {
         const path = super.getPointPath(point),
             strokeWidth = this.borderWidth,
@@ -247,6 +250,7 @@ class OHLCSeries extends HLCSeries {
         return attribs;
     }
 
+    /** @internal */
     public toYData(point: OHLCPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];
@@ -261,7 +265,9 @@ class OHLCSeries extends HLCSeries {
  * */
 
 interface OHLCSeries {
+    /** @internal */
     pointClass: typeof OHLCPoint;
+    /** @internal */
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {

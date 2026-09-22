@@ -39,7 +39,6 @@ import { defined, isObject, merge } from '../../Shared/Utilities.js';
 /**
  * The line series is the base type and is therefor the series base prototype.
  *
- * @internal
  */
 class LineSeries extends Series {
 
@@ -49,6 +48,7 @@ class LineSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: LineSeriesOptions = merge(
         Series.defaultOptions,
         {
@@ -357,7 +357,6 @@ class LineSeries extends Series {
  *
  * */
 
-/** @internal */
 interface LineSeries {
     pointClass: typeof LinePoint;
 }
@@ -368,7 +367,6 @@ interface LineSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         line: typeof LineSeries;
@@ -382,7 +380,6 @@ SeriesRegistry.registerSeriesType('line', LineSeries);
  *
  * */
 
-/** @internal */
 export default LineSeries;
 
 /* *

@@ -55,6 +55,7 @@ class CandlestickSeries extends OHLCSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: CandlestickSeriesOptions = merge(
         OHLCSeries.defaultOptions,
         { tooltip: OHLCSeries.defaultOptions.tooltip },
