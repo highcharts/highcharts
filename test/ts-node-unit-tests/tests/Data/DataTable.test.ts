@@ -791,6 +791,103 @@ describe('DataTable', () => {
         });
     });
 
+    describe('growing typed array columns', () => {
+        it('should grow when a sibling column grows', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2]),
+                    y: [1, 2]
+                }
+            });
+
+            table.setColumn('y', [1, 2, 3, 4]);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 0, 0]),
+                'The typed column should follow the new row count.'
+            );
+        });
+
+        it('should grow when a longer column is added', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setColumns({ y: [1, 2, 3] });
+
+            strictEqual(
+                table.getColumn('x')!.length,
+                3,
+                'The typed column should follow the new row count.'
+            );
+        });
+
+        it('should keep values appended with setRow', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setRow({ x: 3 });
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 3]),
+                'The appended value should be kept.'
+            );
+        });
+
+        it('should keep values appended with setRows', () => {
+            const objectRows = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            objectRows.setRows([{ x: 3 }, { x: 4 }]);
+
+            deepStrictEqual(
+                objectRows.getColumn('x'),
+                new Float32Array([1, 2, 3, 4]),
+                'Appended object rows should be kept.'
+            );
+
+            const arrayRows = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            arrayRows.setRows([[3], [4]]);
+
+            deepStrictEqual(
+                arrayRows.getColumn('x'),
+                new Float32Array([1, 2, 3, 4]),
+                'Appended array rows should be kept.'
+            );
+        });
+
+        it('should keep a value set beyond the last row', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setCell('x', 3, 7);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 0, 7]),
+                'The cell beyond the last row should be kept.'
+            );
+        });
+    });
+
     describe('setModifier', () => {
         it('should return unsorted columns before modifier is applied', () => {
             const table = new DataTable({

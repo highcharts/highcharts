@@ -965,6 +965,11 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             table.rowCount = (rowIndex + 1);
         }
 
+        // Make room before writing, typed arrays cannot grow in place
+        if (rowIndex >= column.length) {
+            column = columns[columnId] = setLength(column, rowIndex + 1);
+        }
+
         column[rowIndex] = cellValue;
 
         if (modifier) {
@@ -1060,18 +1065,22 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                     tableColumn = new ArrayConstructor(
                         Math.max(rowCount, columnEnd)
                     );
-                } else if (ArrayConstructor === Array) {
-                    if (!Array.isArray(tableColumn)) {
+                } else {
+                    if (
+                        ArrayConstructor === Array &&
+                        !Array.isArray(tableColumn)
+                    ) {
                         tableColumn = Array.from(tableColumn);
                     }
-                } else if (tableColumn.length < columnEnd) {
-                    tableColumn =
-                        new ArrayConstructor(
+
+                    // Make room before writing, typed arrays cannot grow in
+                    // place
+                    if (tableColumn.length < columnEnd) {
+                        tableColumn = setLength(
+                            tableColumn,
                             Math.max(rowCount, columnEnd)
-                        ) as TypedArray;
-                    tableColumn.set(
-                        tableColumns[columnId] as ArrayLike<number>
-                    );
+                        );
+                    }
                 }
                 tableColumns[columnId] = tableColumn;
 
@@ -1273,6 +1282,12 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             rowIndex,
             rows
         });
+
+        // Make room before writing, typed arrays cannot grow in place. When
+        // inserting, `splice` grows the columns instead.
+        if (!insert && rowIndex + rowCount > table.rowCount) {
+            table.applyRowCount(rowIndex + rowCount);
+        }
 
         for (
             let i = 0,

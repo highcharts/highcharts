@@ -72,7 +72,8 @@ export interface SpliceResult<T extends DataTableColumn> {
  * @param {boolean} asSubarray
  * If column is a typed array, return a subarray instead of a new array. It
  * is faster `O(1)`, but the entire buffer will be kept in memory until all
- * views of it are destroyed. Default is `false`.
+ * views of it are destroyed. Default is `false`. Ignored when the column
+ * grows, as a longer typed array always needs a new buffer.
  *
  * @return {DataTableColumn}
  * Modified column.
@@ -87,6 +88,17 @@ export function setLength(
     if (Array.isArray(column)) {
         column.length = length;
         return column;
+    }
+
+    // Typed arrays cannot grow in place, so copy into a longer one
+    if (length > column.length) {
+        const Constructor = Object.getPrototypeOf(column)
+                .constructor as TypedArrayConstructor,
+            grown = new Constructor(length);
+
+        grown.set(column);
+
+        return grown;
     }
 
     return column[asSubarray ? 'subarray' : 'slice'](0, length);
