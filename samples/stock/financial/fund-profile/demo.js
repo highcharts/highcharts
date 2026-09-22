@@ -99,6 +99,13 @@ Highcharts.setOptions({
     }
 });
 
+// Apply global options to grids
+Grid.setOptions({
+    credits: {
+        enabled: false
+    }
+});
+
 async function renderDashboard() {
     const api = {
         url: 'https://demo-live-data.highcharts.com',
@@ -456,9 +463,6 @@ async function renderDashboard() {
                     },
                     theme: 'theme-piechart'
                 },
-                credits: {
-                    enabled: false
-                },
                 editable: false,
                 // Display only the columns in the header array.
                 header: [{
@@ -739,9 +743,6 @@ async function renderDashboard() {
                 text: 'Underlying Holdings'
             },
             gridOptions: {
-                credits: {
-                    enabled: false
-                },
                 rendering: {
                     theme: 'theme-holdings'
                 },
