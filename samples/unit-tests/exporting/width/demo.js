@@ -31,9 +31,18 @@ QUnit.test('Deprecated exporting.width is not posted', async function (assert) {
             'The deprecated exporting.width should not be posted (#24101)'
         );
 
+        // Reset, so that the assertions below can not pass on the body of the
+        // first export
+        postData = undefined;
+
         await chart.exporting.exportChart({
             width: 300
         });
+
+        assert.ok(
+            postData,
+            'The second export should have posted'
+        );
 
         assert.notOk(
             'width' in postData,
