@@ -78,7 +78,7 @@ import {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.venn
  *
@@ -110,7 +110,7 @@ class VennSeries extends ScatterSeries {
      * Finds the optimal label position by looking for a position that has a low
      * distance from the internal circles, and as large possible distance to the
      * external circles.
-     * @private
+     * @internal
      * @todo Optimize the initial position.
      * @todo Add unit tests.
      * @param {Array<Highcharts.CircleObject>} internal
@@ -207,7 +207,7 @@ class VennSeries extends ScatterSeries {
     /**
      * Calculates data label values for a given relations object.
      *
-     * @private
+     * @internal
      * @todo add unit tests
      * @param {Highcharts.VennRelationObject} relation A relations object.
      * @param {Array<Highcharts.VennRelationObject>} setRelations The list of
@@ -272,7 +272,7 @@ class VennSeries extends ScatterSeries {
      * Calculates the positions, and the label values of all the sets in the
      * venn diagram.
      *
-     * @private
+     * @internal
      * @todo Add support for constrained MDS.
      * @param {Array<Highcharts.VennRelationObject>} relations
      * List of the overlap between two or more sets, or the size of a single
@@ -320,7 +320,7 @@ class VennSeries extends ScatterSeries {
 
     /**
      * Calculates the proper scale to fit the cloud inside the plotting area.
-     * @private
+     * @internal
      * @todo add unit test
      * @param {number} targetWidth
      * Width of target area.
@@ -356,7 +356,7 @@ class VennSeries extends ScatterSeries {
      * If a circle is outside a give field, then the boundaries of the field is
      * adjusted accordingly. Modifies the field object which is passed as the
      * first parameter.
-     * @private
+     * @internal
      * @todo NOTE: Copied from wordcloud, can probably be unified.
      * @param {Highcharts.PolygonBoxObject} field
      * The bounding box of a playing field.
@@ -454,7 +454,7 @@ class VennSeries extends ScatterSeries {
 
     /**
      * Draw the graphics for each point.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -500,7 +500,7 @@ class VennSeries extends ScatterSeries {
     /**
      * Calculates the style attributes for a point. The attributes can vary
      * depending on the state of the point.
-     * @private
+     * @internal
      * @param {Highcharts.Point} point
      * The point which will get the resulting attributes.
      * @param {string} [state]
@@ -664,6 +664,7 @@ class VennSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface VennSeries {
     /** @internal */
     directTouch: boolean;
@@ -711,6 +712,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         venn: typeof VennSeries;
@@ -725,4 +727,5 @@ SeriesRegistry.registerSeriesType('venn', VennSeries);
  *
  * */
 
+/** @internal */
 export default VennSeries;

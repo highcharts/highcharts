@@ -48,7 +48,7 @@ import {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.variwide
  *
@@ -132,7 +132,7 @@ class VariwideSeries extends ColumnSeries {
      * Translate an x value inside a given category index into the distorted
      * axis translation.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#postTranslate
      *
      * @param {number} index
@@ -203,7 +203,7 @@ class VariwideSeries extends ColumnSeries {
 
     /**
      * Function that corrects stack labels positions
-     * @private
+     * @internal
      */
     public correctStackLabels(): void {
         const series = this,
@@ -322,6 +322,7 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface VariwideSeries {
     /** @internal */
     irregularWidths: boolean;
@@ -347,6 +348,7 @@ extend(VariwideSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variwide: typeof VariwideSeries;
@@ -361,4 +363,5 @@ SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
  *
  * */
 
+/** @internal */
 export default VariwideSeries;

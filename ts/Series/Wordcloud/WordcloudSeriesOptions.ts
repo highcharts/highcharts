@@ -74,8 +74,9 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      * option will allow the playing field to be extended to fit the word.
      * If false then the word will be dropped from the visualization.
      *
-     * NB! This option is currently not decided to be published in the API,
-     * and is therefore marked as private.
+     * NB! This option is currently not decided to be published in the API.
+     *
+     * @internal
      */
     allowExtendPlayingField?: boolean;
 
@@ -180,9 +181,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
     /**
      * CSS styles for the words.
      *
-     * @type {Highcharts.CSSObject}
-     *
-     * @default {"fontFamily":"sans-serif", "fontWeight": "900"}
+     * @default { fontFamily: 'sans-serif', fontWeight: '900', whiteSpace: 'nowrap' }
      */
     style?: CSSObject;
 

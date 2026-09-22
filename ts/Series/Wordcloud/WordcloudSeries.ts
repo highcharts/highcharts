@@ -74,7 +74,7 @@ const {
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.wordcloud
  *
@@ -129,7 +129,7 @@ class WordcloudSeries extends ColumnSeries {
     /**
      * Calculates the fontSize of a word based on its weight.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#deriveFontSize
      *
      * @param {number} [relativeWeight=0]
@@ -522,6 +522,7 @@ class WordcloudSeries extends ColumnSeries {
  * Prototype properties
  *
  * */
+/** @internal */
 interface WordcloudSeries {
     /** @internal */
     placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
@@ -596,6 +597,7 @@ extend(WordcloudSeries.prototype, {
  * Registry
  *
  * */
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof WordcloudSeries;
@@ -610,6 +612,7 @@ SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
  *
  * */
 
+/** @internal */
 namespace WordcloudSeries {
     export interface WordcloudFieldObject extends PolygonBoxObject, SizeObject {
         ratioX: number;
@@ -655,4 +658,5 @@ namespace WordcloudSeries {
  *
  * */
 
+/** @internal */
 export default WordcloudSeries;

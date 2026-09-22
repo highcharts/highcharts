@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 class VennPoint extends ScatterPoint {
 
     /* *
@@ -83,6 +84,7 @@ class VennPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface VennPoint {
     // Nothing to add
 }
@@ -93,4 +95,5 @@ interface VennPoint {
  *
  * */
 
+/** @internal */
 export default VennPoint;

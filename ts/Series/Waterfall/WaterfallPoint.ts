@@ -30,6 +30,7 @@ import { isNumber } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -95,4 +96,5 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
+/** @internal */
 export default WaterfallPoint;

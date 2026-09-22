@@ -30,6 +30,7 @@ import { isNumber } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class WindbarbPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -69,4 +70,5 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
+/** @internal */
 export default WindbarbPoint;
