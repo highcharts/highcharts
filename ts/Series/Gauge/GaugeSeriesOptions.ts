@@ -259,13 +259,6 @@ export interface GaugeSeriesPivotOptions {
  *
  * @extends series,plotOptions.gauge
  *
- * @excluding animationLimit, boostBlending, boostThreshold, colorAxis,
- *            colorKey, connectEnds, connectNulls, cropThreshold, dashStyle,
- *            dataParser, dataSorting, dataURL, dragDrop, findNearestPointBy,
- *            getExtremesFromAll, negativeColor, pointPlacement,
- *            shadow, softThreshold, stack, stacking, step,
- *            turboThreshold, xAxis, zoneAxis, zones
- *
  * @product highcharts
  *
  * @requires highcharts-more
@@ -310,8 +303,6 @@ export interface GaugeSeriesOptions extends LineSeriesOptions {
      * @basic
      *
      * @extends series.line.data
-     *
-     * @excluding drilldown, marker, x
      *
      * @product highcharts
      */

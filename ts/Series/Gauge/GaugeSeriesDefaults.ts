@@ -34,6 +34,12 @@ import type GaugeSeriesOptions from './GaugeSeriesOptions';
  *         Gauge chart
  *
  * @extends      plotOptions.line
+ * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+ *               connectEnds, connectNulls, cropThreshold, dashStyle,
+ *               dragDrop, findNearestPointBy, getExtremesFromAll, marker,
+ *               negativeColor, pointPlacement, shadow, softThreshold,
+ *               stacking, states, step, threshold, turboThreshold, xAxis,
+ *               zoneAxis, zones, dataSorting, boostBlending
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.gauge
@@ -363,6 +369,11 @@ const GaugeSeriesDefaults: GaugeSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.gauge
+ * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
+ *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            getExtremesFromAll, marker, negativeColor, pointPlacement, shadow,
+ *            softThreshold, stack, stacking, states, step, threshold,
+ *            turboThreshold, zoneAxis, zones, dataSorting, boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.gauge

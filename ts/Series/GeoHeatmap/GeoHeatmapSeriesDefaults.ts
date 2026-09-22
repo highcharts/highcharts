@@ -41,6 +41,8 @@ import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
  * @extends      plotOptions.map
  * @since        11.0.0
  * @product      highmaps
+ * @excluding    allAreas, dragDrop, findNearestPointBy, geometry, joinBy,
+ * negativeColor, onPoint, stickyTracking
  * @requires     modules/geoheatmap
  * @optionparent plotOptions.geoheatmap
  */
@@ -148,6 +150,9 @@ const GeoHeatmapSeriesDefaults: GeoHeatmapSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.geoheatmap
+ * @excluding allAreas, dataParser, dataURL, dragDrop, findNearestPointBy,
+ *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
+ *            stickyTracking
  * @product   highmaps
  * @requires  modules/geoheatmap
  * @apioption series.geoheatmap

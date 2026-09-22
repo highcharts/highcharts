@@ -77,8 +77,6 @@ export interface InterpolationObject {
  *
  * @since 11.0.0
  *
- * @excluding geometry
- *
  * @product highmaps
  *
  * @requires modules/geoheatmap
