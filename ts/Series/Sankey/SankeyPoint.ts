@@ -90,6 +90,12 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      */
     public wrapLane?: number;
 
+    /**
+     * Flow-axis room a node reserves in its column for its self-link laps.
+     * @internal
+     */
+    public wrapLap?: number;
+
     /** @internal */
     public wrapUp?: boolean;
 
@@ -139,7 +145,8 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
         for (let i = 0; i < node.linksTo.length; i++) {
             const point = node.linksTo[i],
-                column = point.fromNode.column;
+                // A link may be missing its `from` end
+                column = point.fromNode?.column;
 
             if (
                 defined(column) &&

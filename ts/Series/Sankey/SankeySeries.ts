@@ -87,11 +87,10 @@ class SankeySeries extends ColumnSeries {
     );
 
     /**
-     * Largest fraction of the column axis circular geometry may reserve
-     * outside the edge columns.
+     * Largest fraction of either plot axis circular geometry may claim.
      * @internal
      */
-    private static readonly CIRCULAR_SHIFT_MAX_FACTOR = 0.6;
+    private static readonly CIRCULAR_MAX_FACTOR = 0.6;
 
     /* *
      *
@@ -133,12 +132,6 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * Flow-axis offset per column, centering the ones with a self-link.
-     * @internal
-     */
-    public colCircOffsets: Array<number> = [];
-
     public colDistance!: number;
 
     public data!: Array<SankeyPoint>;
@@ -149,6 +142,19 @@ class SankeySeries extends ColumnSeries {
      * @internal
      */
     public firstColCircShift = 0;
+
+    /**
+     * Flow-axis extent the columns lay out within, shrunk by what the
+     * circular geometry claims. #8218
+     * @internal
+     */
+    public flowHeight = 0;
+
+    /**
+     * Flow-axis start of that extent.
+     * @internal
+     */
+    public flowTop = 0;
 
     public group!: SVGElement;
 
@@ -442,30 +448,34 @@ class SankeySeries extends ColumnSeries {
         this.nodeWidth = getNodeWidth(this, columnCount);
         this.nodePadding = this.getNodePadding();
 
-        // Find out how much space is needed. Remember which column sets the
-        // factor, so the lanes below can rescale it exactly. #8218
-        let flowColumnIndex = 0,
-            minFactor = Infinity;
-
-        nodeColumns.forEach((column, index): void => {
-            const factor = column.sankeyColumn.getTranslationFactor(series);
-
-            if (factor < minFactor) {
-                minFactor = factor;
-                flowColumnIndex = index;
-            }
-        });
-        this.translationFactor = minFactor;
-
+        // The whole plot, until the circular geometry below claims its
+        // share. #8218
         this.firstColCircShift = 0;
-        this.colCircOffsets = [];
+        this.flowTop = 0;
+        this.flowHeight = chart.plotSizeY || 0;
+
+        if (this.useCircularLayout) {
+            for (const node of this.nodes) {
+                node.wrapLap = 0;
+            }
+        }
+
+        // Find out how much space is needed. Base it on the translation
+        // factor of the most spacious column.
+        this.translationFactor = nodeColumns.reduce(
+            (
+                translationFactor: number,
+                column: SankeyColumnComposition.ArrayComposition<SankeyPoint>
+            ): number => Math.min(
+                translationFactor,
+                column.sankeyColumn.getTranslationFactor(series)
+            ),
+            Infinity
+        );
 
         let lastColCircShift = 0;
 
-        if (
-            this.useCircularLayout &&
-            this.wrapLanes(nodeColumns[flowColumnIndex])
-        ) {
+        if (this.useCircularLayout && this.wrapLanes(nodeColumns)) {
             lastColCircShift = this.circularShifts(nodeColumns);
         }
 
@@ -544,11 +554,8 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
-     * Reserve the column-axis room the wrapping bands turn in, once the
-     * lanes are settled, and return what the last column gives up. The
-     * per-column self-link offsets are scaled in place, and the first
-     * column's reservation is left on the series, as the nodes read both.
-     * #8218
+     * Reserve the column-axis room the wrapping bands turn in. Returns the
+     * last column's share; the first column's is left on the series. #8218
      * @internal
      */
     private circularShifts(
@@ -556,97 +563,132 @@ class SankeySeries extends ColumnSeries {
             SankeyColumnComposition.ArrayComposition<SankeyPoint>
         >
     ): number {
-        const { chart, nodePadding, nodeWidth, options, translationFactor } =
-                this,
-            minLinkWidth = options.minLinkWidth || 0,
-            bend = nodeWidth * (options.curveFactor || 0),
-            lastCol = nodeColumns.length - 1,
-            align = getAlignFactor(options.nodeAlignment || 'center'),
-            width = (weight: number): number =>
-                Math.max(weight * translationFactor, minLinkWidth);
+        const { chart, nodePadding, nodeWidth, options } = this,
+            lastCol = nodeColumns.length - 1;
 
-        // Columns align on their bands alone, so shift one holding a
-        // self-link down by the lane lapping above it. #8218
-        for (let i = 0; i < nodeColumns.length; i++) {
-            const weight = this.colCircOffsets[i] || 0;
-
-            this.colCircOffsets[i] = weight ?
-                align * (2 * nodeWidth + width(weight)) :
-                0;
-        }
-
-        // A turn reaches `bend + linkHeight` past the face it leaves.
-        // Edges without circular links reserve nothing. #8218
-        let firstWeight = 0,
-            lastWeight = 0;
+        // A turn reaches `bend + linkHeight` past the face it leaves. A
+        // self-link turns from the centre line, so half a node width less.
+        // #8218
+        let firstShift = 0,
+            lastShift = 0;
 
         for (const point of this.points) {
-            if (isNumber(point.wrapLane) || point.fromNode === point.toNode) {
-                const weight = point.weight || 0;
+            const { fromNode, toNode } = point;
 
-                if (point.toNode.column === 0) {
-                    firstWeight = Math.max(firstWeight, weight);
-                }
-                if (point.fromNode.column === lastCol) {
-                    lastWeight = Math.max(lastWeight, weight);
-                }
+            // A link missing either end is no link at all, and `fromNode ===
+            // toNode` would read two of those as a self-link. #8218
+            if (!fromNode || !toNode) {
+                continue;
+            }
+            const loops = fromNode === toNode;
+
+            if (!isNumber(point.wrapLane) && !loops) {
+                continue;
+            }
+
+            // The `wrapLanes` cap on the scale mirrors this reach. #8218
+            const reach = nodePadding + this.wrapBend(point) +
+                this.linkHeight(point) - (loops ? nodeWidth / 2 : 0);
+
+            if (toNode.column === 0) {
+                firstShift = Math.max(firstShift, reach);
+            }
+            if (fromNode.column === lastCol) {
+                lastShift = Math.max(lastShift, reach);
             }
         }
 
-        this.firstColCircShift = firstWeight ?
-            nodePadding + bend + width(firstWeight) : 0;
-
-        let lastColCircShift = lastWeight ?
-            nodePadding + bend + width(lastWeight) : 0;
-
         // Cap the reservation rather than the scale, or a short column
         // axis turns `colDistance` negative and inverts the order. #8218
-        const reserved = this.firstColCircShift + lastColCircShift,
-            allowed = SankeySeries.CIRCULAR_SHIFT_MAX_FACTOR * Math.max(
+        const reserved = firstShift + lastShift,
+            allowed = SankeySeries.CIRCULAR_MAX_FACTOR * Math.max(
                 0,
                 (chart.plotSizeX || 0) - nodeWidth -
                 (options.borderWidth || 0)
             );
 
         if (reserved > allowed) {
-            this.firstColCircShift *= allowed / reserved;
-            lastColCircShift *= allowed / reserved;
+            firstShift *= allowed / reserved;
+            lastShift *= allowed / reserved;
         }
+        this.firstColCircShift = firstShift;
 
-        return lastColCircShift;
+        return lastShift;
+    }
+
+    /**
+     * Thickness of a link's band.
+     * @internal
+     */
+    private linkHeight(point: SankeyPoint): number {
+        return Math.max(
+            (point.weight || 0) * this.translationFactor,
+            this.options.minLinkWidth || 0
+        );
+    }
+
+    /**
+     * Radius a backward link turns on, before the band thickness. A
+     * self-link turns on the node width, which leaves its loop a hole. #8218
+     * @internal
+     */
+    private wrapBend(point: SankeyPoint): number {
+        return this.nodeWidth * (
+            point.fromNode === point.toNode ?
+                1 :
+                (this.options.curveFactor || 0)
+        );
+    }
+
+    /**
+     * How far a self-link's loop may reach either side of its node's centre
+     * line. It bounds the loop both ways round, so a narrow axis shrinks it
+     * instead of flattening it. #8218
+     * @internal
+     */
+    private selfReach(node: SankeyPoint): number {
+        const { chart, nodePadding, nodeWidth } = this,
+            centre = node.nodeX +
+                (chart.inverted ? -nodeWidth : nodeWidth) / 2;
+
+        return Math.min(
+            centre,
+            (chart.plotSizeX || 0) - centre,
+            this.colDistance - nodeWidth / 2 - nodePadding
+        );
     }
 
     /**
      * Send every backward link to the top or the bottom lane stack, the
-     * shallower one winning, and order each node's band to match. The
-     * columns then give up what the lanes claim, and the lanes stack
-     * inwards from their plot edge at the settled scale, so no two share
-     * flow-axis space. The rescale sits between the two passes: the claim
-     * is known in weight, the lanes only settle in pixels. Self-link weight
-     * is left per column in `colCircOffsets`. Returns whether any link
-     * needed a lane at all. #8218
+     * shallower one winning, and order each node's band to match. A
+     * self-link laps its own node instead, claiming room inside its column.
+     * The columns then lay out within what is left of the flow axis, so no
+     * lane or lap shares space with a band. Returns whether any link needed
+     * a lane. #8218
      * @internal
      */
     private wrapLanes(
-        flowColumn?: SankeyColumnComposition.ArrayComposition<SankeyPoint>
+        nodeColumns: Array<
+            SankeyColumnComposition.ArrayComposition<SankeyPoint>
+        >
     ): boolean {
-        const { nodePadding, points } = this,
+        const { chart, nodePadding, nodeWidth, options, points } = this,
             depth = [0, 0],
-            nodeSelf = new Map<SankeyPoint, number>(),
+            selfWeight = new Map<SankeyPoint, number>(),
+            // Columns hug the edge their alignment names, so offer the
+            // bands the other one first. #8218
+            near = getAlignFactor(options.nodeAlignment || 'center') < 0.5 ?
+                1 :
+                0,
             // A self-link's two ends must land on the same offset, and a
             // band packs from the top either side, so it goes first. #8218
-            laneSide = (point: SankeyPoint): number => {
-                if (point.fromNode === point.toNode) {
-                    return -2;
-                }
-                if (!isNumber(point.wrapLane)) {
-                    return 0;
-                }
-                return point.wrapUp ? -1 : 1;
-            };
+            laneSide = (point: SankeyPoint): number => (
+                point.fromNode === point.toNode ? -2 :
+                    isNumber(point.wrapLane) ? (point.wrapUp ? -1 : 1) : 0
+            );
 
         let wraps = false,
-            selfWeight = 0;
+            thickest: (SankeyPoint|undefined);
 
         for (const point of points) {
             const { fromNode, toNode } = point;
@@ -654,32 +696,37 @@ class SankeySeries extends ColumnSeries {
             point.wrapLane = void 0;
 
             // Every link drawn backwards needs a lane, whether a cycle put
-            // it there or an explicit `column` did. #8218
-            if (!toNode || (toNode.column || 0) > (fromNode.column || 0)) {
+            // it there or an explicit `column` did. A link missing either
+            // end gets none. #8218
+            if (
+                !fromNode || !toNode ||
+                (toNode.column || 0) > (fromNode.column || 0)
+            ) {
                 continue;
             }
             wraps = true;
 
-            // A self-link laps its own node, so it claims room without
-            // taking a place in either stack. Its column is shifted by the
-            // deepest lap any one node there holds.
+            // A self-link claims room beside its own band, not a lane. Two
+            // of them on one node share that room and so draw on top of
+            // each other, which is expected. #8218
             if (fromNode === toNode) {
-                const column = fromNode.column || 0,
-                    weight =
-                        (nodeSelf.get(fromNode) || 0) + (point.weight || 0);
-
-                nodeSelf.set(fromNode, weight);
-                this.colCircOffsets[column] = Math.max(
-                    this.colCircOffsets[column] || 0, weight
+                selfWeight.set(
+                    fromNode,
+                    (selfWeight.get(fromNode) || 0) + (point.weight || 0)
                 );
-                selfWeight = Math.max(selfWeight, weight);
+                // The lap's fixed part, which the solve below reads off the
+                // column before it knows the scale.
+                fromNode.wrapLap = 2 * nodeWidth;
                 continue;
             }
-            const side = depth[0] <= depth[1] ? 0 : 1;
+            const side = depth[near] <= depth[1 - near] ? near : 1 - near;
 
             point.wrapUp = side === 0;
             point.wrapLane = 0;
             depth[side] += point.weight || 0;
+            if ((point.weight || 0) > (thickest?.weight || 0)) {
+                thickest = point;
+            }
         }
 
         if (!wraps) {
@@ -697,44 +744,134 @@ class SankeySeries extends ColumnSeries {
             stableSort(node.linksTo, bySide);
         }
 
-        // Lanes route outside the central flow, so the columns give up what
-        // those claim, plus a padding at either end. Twice the deepest, as
-        // the columns are centred. #8218
-        const reserve = 2 * Math.max(depth[0], depth[1], selfWeight),
-            flowSum = flowColumn?.sankeyColumn.sum() || 0,
-            free = this.translationFactor * flowSum - 4 * nodePadding;
+        // Lanes and laps claim flow-axis space on the same scale as the node
+        // bands, so solve for the scale where all three fit: fixed parts off
+        // the extent, weighted parts off the divisor. #8218
+        const plotSizeY = chart.plotSizeY || 0,
+            gaps = Math.max(1, nodeColumns.length - 1),
+            span = (chart.plotSizeX || 0) - nodeWidth -
+                (options.borderWidth || 0),
+            // Breathing room either side of a lane stack, capped so a short
+            // flow axis is not reserved away entirely. Self-links lap inside
+            // their column and need none. #8218
+            pad = (depth[0] || depth[1]) ?
+                Math.min(
+                    2 * nodePadding,
+                    SankeySeries.CIRCULAR_MAX_FACTOR * plotSizeY / 2
+                ) :
+                0,
+            // What the heaviest turn at a plot edge reserves on the column
+            // axis, split into its fixed and its weighted part.
+            edgeFixed = thickest ? nodePadding + this.wrapBend(thickest) : 0,
+            edgeWeight = thickest?.weight || 0;
 
-        if (reserve && flowSum && free > 0) {
-            this.translationFactor = free / (flowSum + reserve);
+        this.flowTop = pad;
+        this.flowHeight = plotSizeY - 2 * pad;
+
+        let factor = this.translationFactor;
+
+        for (let i = 0; i < nodeColumns.length; i++) {
+            const column = nodeColumns[i],
+                sum = column.sankeyColumn.sum();
+
+            if (!sum) {
+                continue;
+            }
+
+            let weight = depth[0] + depth[1];
+
+            if (selfWeight.size) {
+                // A node width cannot give way, so cap what the laps claim,
+                // or a wide node leaves its column no room for its own
+                // bands. The loops then give way in their holes. #8218
+                const lap = column.sankeyColumn.lapSum(),
+                    allowed = SankeySeries.CIRCULAR_MAX_FACTOR * Math.max(
+                        0,
+                        this.flowHeight - (options.borderWidth || 0) -
+                        (column.length - 1) * nodePadding
+                    ),
+                    // A self-loop turns both sides of its own node, so the
+                    // gap to the next column has to hold its band plus a
+                    // node width, or the loop closes over its own hole and
+                    // comes out a blob. The turns at the plot edges come off
+                    // the same span, and an edge column pays for its own
+                    // outward turn as well. #8218
+                    edge = i === 0 || i === nodeColumns.length - 1,
+                    sides = edge ? 1 : 2,
+                    lanes = edge ? gaps + 1 : gaps,
+                    selfRoom = span - gaps * (nodeWidth + nodePadding) -
+                        sides * edgeFixed -
+                        (edge ? nodePadding + nodeWidth / 2 : 0);
+
+                if (lap > allowed) {
+                    for (const node of column) {
+                        node.wrapLap = (node.wrapLap || 0) * allowed / lap;
+                    }
+                }
+
+                for (const node of column) {
+                    const self = selfWeight.get(node) || 0;
+
+                    weight += self;
+                    if (self && selfRoom > 0) {
+                        factor = Math.min(
+                            factor,
+                            selfRoom / (self * lanes + sides * edgeWeight)
+                        );
+                    }
+                }
+            }
+
+            factor = Math.min(
+                factor,
+                column.sankeyColumn.getTranslationFactor(this) * sum /
+                    (sum + weight)
+            );
         }
 
-        const { translationFactor } = this,
-            minLinkWidth = this.options.minLinkWidth || 0,
-            plotSizeY = this.chart.plotSizeY || 0,
-            // Clear of the plot border, matching the reserve.
-            stack = [nodePadding, nodePadding];
+        // A turn needs the band's own thickness past each face, and what it
+        // may reserve there is capped. Let the flow axis give way rather
+        // than fill up, or a band too thick to turn in turns outside. #8218
+        if (thickest) {
+            const wrapRoom = SankeySeries.CIRCULAR_MAX_FACTOR *
+                    (chart.plotSizeX || 0) -
+                2 * (this.wrapBend(thickest) + nodePadding);
+
+            if (wrapRoom > 0) {
+                factor = Math.min(factor, wrapRoom / (thickest.weight || 1));
+            }
+        }
+
+        // No column carries any weight, so there is nothing to lay out and
+        // no scale to lay it out at. Leaving the extent alone keeps the
+        // reserve out of `0 * Infinity`. #8218
+        if (!isFinite(factor)) {
+            return false;
+        }
+        this.translationFactor = factor;
+
+        // Stack the lanes inwards from their plot edge, then hand the flow
+        // axis whatever they left. Measuring the stacks in pixels rather
+        // than in weight is what keeps `minLinkWidth` from inflating one
+        // past its share. #8218
+        const stack = [pad / 2, pad / 2];
 
         for (const point of points) {
             if (isNumber(point.wrapLane)) {
                 const side = point.wrapUp ? 0 : 1;
 
                 point.wrapLane = stack[side];
-                stack[side] += Math.max(
-                    (point.weight || 0) * translationFactor, minLinkWidth
-                );
+                stack[side] += this.linkHeight(point);
             }
         }
 
-        // `minLinkWidth` can inflate the stacks past the reserve. #8218
-        const stacked = stack[0] + stack[1];
+        this.flowTop = stack[0] + pad / 2;
+        this.flowHeight = plotSizeY - this.flowTop - stack[1] - pad / 2;
 
-        if (stacked > plotSizeY) {
-            for (const point of points) {
-                if (isNumber(point.wrapLane)) {
-                    point.wrapLane *= plotSizeY / stacked;
-                }
-            }
-        }
+        // Additive, so a lap the cap above shrank keeps what it was left.
+        selfWeight.forEach((weight, node): void => {
+            node.wrapLap = (node.wrapLap || 0) + weight * factor;
+        });
 
         return true;
     }
@@ -752,24 +889,31 @@ class SankeySeries extends ColumnSeries {
             plotSizeY = this.chart.plotSizeY || 0;
 
         // A self-link laps its own node, so its lane sits beside that band,
-        // a full turn away. That closes the loop as a circle whose hole
-        // tracks the node width, and the hole is what gives way when the
-        // plot is too tight for it. #8218
+        // a full turn away, closing the loop as a circle whose hole tracks
+        // the node width. The lap is reserved at the flow-axis start of the
+        // column, which an inverted chart mirrors to the far side. #8218
         if (point.fromNode === point.toNode) {
             const { shapeArgs } = point.fromNode,
-                top = (shapeArgs && isNumber(shapeArgs.y)) ? shapeArgs.y : 0,
-                bottom = top + (
-                    (shapeArgs && isNumber(shapeArgs.height)) ?
-                        shapeArgs.height :
-                        0
-                ),
-                want = half + 2 * this.nodeWidth,
-                above = Math.min(want, top - half),
-                below = Math.min(want, plotSizeY - bottom - half);
+                top = shapeArgs?.y ?? 0,
+                bottom = top + (shapeArgs?.height ?? 0),
+                up = !this.chart.inverted,
+                // The lap, or the room to the plot edge in a series that
+                // lays out no lap.
+                room = this.useCircularLayout ?
+                    (point.fromNode.wrapLap || 0) :
+                    (up ? top : plotSizeY - bottom),
+                // The turn is half the travel either way round, so the
+                // column axis bounds it as much as the lap does, or the loop
+                // keeps its height as it loses its width. #8218
+                turn = Math.max(0, Math.min(
+                    half + 2 * this.nodeWidth,
+                    room - half,
+                    2 * (this.selfReach(point.fromNode) - half)
+                ));
 
-            return above >= below ?
-                { centerY: top - above, sign: -1 } :
-                { centerY: bottom + below, sign: 1 };
+            return up ?
+                { centerY: top - turn, sign: -1 } :
+                { centerY: bottom + turn, sign: 1 };
         }
 
         // An inverted chart mirrors the node faces, so the lane mirrors
@@ -801,16 +945,13 @@ class SankeySeries extends ColumnSeries {
         nodeW: number
     ): SVGPath {
         const { centerY, sign } = this.wrapChannel(point, linkHeight),
-            { nodeWidth } = this,
             colSign = this.chart.inverted ? -1 : 1,
             half = Math.abs(linkHeight) / 2,
             // A self-link has no span to cross, so both its faces sit on
             // the node's centre line, or the loop comes out an oval a node
             // wide. It turns on the node width, which gives it its hole.
             loops = point.fromNode === point.toNode,
-            bend = loops ?
-                nodeWidth :
-                nodeWidth * (this.options.curveFactor || 0),
+            bend = this.wrapBend(point),
             fromX = loops ? nodeLeft + nodeW / 2 : nodeLeft + nodeW,
             toX = loops ? nodeLeft + nodeW / 2 : right,
             fromC = fromY + linkHeight / 2,
@@ -818,12 +959,13 @@ class SankeySeries extends ColumnSeries {
             // A turn also reaches sideways, past the face it leaves, and
             // the columns only gave up what the shifts reserved - which a
             // short column axis caps. Keep the reach inside the plot, or a
-            // thick band turns outside it. A self-link gives way in its
-            // hole instead, so it keeps the whole axis. #8218
+            // thick band turns outside it. A self-link turns both sides of
+            // its own node, so `selfReach` bounds it. #8218
             plotSizeX = this.chart.plotSizeX || 0,
-            reachFrom = loops ? plotSizeX :
+            selfReach = loops ? this.selfReach(point.fromNode) : 0,
+            reachFrom = loops ? selfReach :
                 (colSign > 0 ? plotSizeX - fromX : fromX),
-            reachTo = loops ? plotSizeX :
+            reachTo = loops ? selfReach :
                 (colSign > 0 ? toX : plotSizeX - toX),
             // The centre line leaves one face, turns into the lane, runs
             // along it and turns back to the other face. A turn needs twice
@@ -1043,13 +1185,11 @@ class SankeySeries extends ColumnSeries {
             ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            // Crisp the final top (lane offset included) so the shift can't
-            // reintroduce a subpixel node edge.
             fromNodeTop = crisp(
-                (nodeOffset?.absoluteTop ?? (
+                nodeOffset?.absoluteTop ?? (
                     column.sankeyColumn.top(translationFactor) +
                     (nodeOffset?.relativeTop || 0)
-                )) + (this.colCircOffsets[node.column || 0] || 0),
+                ),
                 borderWidth
             ),
             left = crisp(
