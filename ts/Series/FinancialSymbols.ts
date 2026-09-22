@@ -20,8 +20,10 @@ declare module '../Core/Renderer/SVG/SymbolType' {
 /* *
  * Composition
  * */
+/** @internal */
 namespace FinancialSymbols {
 
+    /** @internal */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -74,4 +76,5 @@ namespace FinancialSymbols {
     }
 }
 
+/** @internal */
 export default FinancialSymbols;
