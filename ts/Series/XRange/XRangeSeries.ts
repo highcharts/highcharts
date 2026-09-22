@@ -124,6 +124,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: XRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         XRangeSeriesDefaults
@@ -135,6 +136,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis
     ): void {
@@ -270,6 +272,7 @@ class XRangeSeries extends ColumnSeries {
         return pointIndex;
     }
 
+    /** @internal */
     public alignDataLabel(point: XRangePoint): void {
         const oldPlotX = point.plotX;
         point.plotX = point.dlBox?.centerX ?? point.plotX;
@@ -697,12 +700,19 @@ class XRangeSeries extends ColumnSeries {
 
 /** @internal */
 interface XRangeSeries {
+    /** @internal */
     pointClass: typeof XRangePoint;
+    /** @internal */
     columnMetrics: ColumnMetricsObject;
+    /** @internal */
     getExtremesFromAll: boolean;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     requireSorting: boolean;
+    /** @internal */
     type: string;
+    /** @internal */
     x2Data: Array<(number|undefined)>;
 }
 

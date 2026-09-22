@@ -52,7 +52,7 @@ import type WindbarbPointOptions from './WindbarbPointOptions';
  *            cropThreshold, dashStyle, dragDrop, gapSize, gapUnit,
  *            linecap, shadow, stacking, step, boostBlending
  *
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  *
  * @since 6.0.0
  *

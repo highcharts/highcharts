@@ -67,9 +67,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
 
     /**
-   * What type of legend symbol to render for this series. For flags
-   * series, the default is `flag-icon`, a pole with a pennant.
-   *
+     * What type of legend symbol to render for this series. For flags
+     * series, the default is `flag-icon`, a pole with a pennant.
+     *
      * @default   flag-icon
      * @product   highstock
      * @apioption plotOptions.flags.legendSymbol
@@ -268,7 +268,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * `.highcharts-flag-series .highcharts-point` rule.
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"fontSize": "11px", "fontWeight": "bold"}
+     * @default { "color": "var(--highcharts-neutral-color-100)", "fontSize": "0.7em", "fontWeight": "bold" }
      * @product highstock
      */
     style: {
@@ -289,9 +289,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  *
  * @extends   series,plotOptions.flags
  * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, cropThreshold, dashStyle, dataGrouping, dataParser,
- *            dataURL, gapSize, gapUnit, linecap, lineWidth, marker,
- *            pointPadding, pointWidth, step, turboThreshold, useOhlcData
+ *            connectNulls, cropThreshold, dashStyle, dataGrouping, gapSize,
+ *            gapUnit, linecap, lineWidth, marker, pointPadding, pointWidth,
+ *            step, turboThreshold, useOhlcData
  * @product   highstock
  * @apioption series.flags
  */

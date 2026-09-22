@@ -40,9 +40,6 @@ const {
  *
  * */
 
-/**
- * @internal
- */
 class BubblePoint extends ScatterPoint {
 
     /* *
@@ -53,6 +50,7 @@ class BubblePoint extends ScatterPoint {
 
     public options!: BubblePointOptions;
 
+    /** @internal */
     public series!: BubbleSeries;
 
     /* *
@@ -112,7 +110,4 @@ extend(BubblePoint.prototype, {
  *
  * */
 
-/**
- * @internal
- */
 export default BubblePoint;

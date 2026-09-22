@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class ATRPoint extends SMAPoint {
+    /** @internal */
     public series: ATRIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class ATRPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default ATRPoint;

@@ -50,10 +50,13 @@ class VennPoint extends ScatterPoint {
 
     public options!: VennPointOptions;
 
+    /** @internal */
     public series!: VennSeries;
 
+    /** @internal */
     public sets?: Array<string>;
 
+    /** @internal */
     public value?: number;
 
     /* *
@@ -62,10 +65,12 @@ class VennPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.value);
     }
 
+    /** @internal */
     public shouldDraw(): boolean {
         // Only draw points with single sets.
         return !!this.shapeArgs;
