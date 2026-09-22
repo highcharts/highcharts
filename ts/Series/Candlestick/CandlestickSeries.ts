@@ -41,7 +41,6 @@ import { crisp, merge } from '../../Shared/Utilities.js';
 /**
  * The candlestick series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.candlestick
  *
@@ -188,7 +187,6 @@ class CandlestickSeries extends OHLCSeries {
 
 }
 
-/** @internal */
 interface CandlestickSeries {
     pointClass: typeof CandlestickPoint;
 }
@@ -199,7 +197,6 @@ interface CandlestickSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         candlestick: typeof CandlestickSeries;
@@ -214,5 +211,4 @@ SeriesRegistry.registerSeriesType('candlestick', CandlestickSeries);
  *
  * */
 
-/** @internal */
 export default CandlestickSeries;

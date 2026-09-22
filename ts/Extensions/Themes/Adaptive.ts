@@ -352,7 +352,6 @@ namespace DynamicDefaultTheme {
                         borderColor: 'var(--highcharts-neutral-color-100)'
                     }
                 },
-                borderColor: 'var(--highcharts-background-color)',
                 lineColor: 'var(--highcharts-neutral-color-100)',
                 upColor: 'var(--highcharts-background-color)'
             },
