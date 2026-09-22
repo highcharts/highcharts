@@ -40,6 +40,7 @@ const {
  *
  * */
 
+/** @internal */
 class TilemapPoint extends HeatmapPoint {
 
     /* *
@@ -69,7 +70,7 @@ class TilemapPoint extends HeatmapPoint {
      * */
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Point#haloPath
      */
     public haloPath(): SVGPath {
@@ -84,6 +85,7 @@ class TilemapPoint extends HeatmapPoint {
  *
  * */
 
+/** @internal */
 interface TilemapPoint {
     setVisible: ColorAxisComposition.PointComposition['setVisible'];
 }
@@ -99,4 +101,5 @@ extend(TilemapPoint.prototype, {
  *
  * */
 
+/** @internal */
 export default TilemapPoint;
