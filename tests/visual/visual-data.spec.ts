@@ -66,6 +66,51 @@ test('capture waits for delayed CSV data after the empty chart loads', async ({ 
     )).toBe(596);
 });
 
+test('capture waits for image markers and the chart load handler', async ({ page }) => {
+    await prepareDataSample(page);
+    let release: () => void;
+    const responseGate = new Promise<void>(resolve => { release = resolve; });
+    await page.route('**/delayed-marker.svg', async route => {
+        await responseGate;
+        await route.fulfill({
+            contentType: 'image/svg+xml',
+            body: '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"/>'
+        });
+    });
+    await page.evaluate(() => {
+        window.Highcharts.chart('container', {
+            chart: {
+                events: {
+                    load() {
+                        this.setTitle({ text: 'Images loaded' });
+                    }
+                }
+            },
+            title: { text: 'Images pending' },
+            series: [{
+                data: [1],
+                marker: { symbol: 'url(http://localhost/delayed-marker.svg)' }
+            }]
+        });
+    });
+    expect(await page.evaluate(() =>
+        !!window.Highcharts.charts[0].hasLoaded
+    )).toBe(false);
+
+    let captured = false;
+    const capturing = captureVisualSVG(page, 100, 10).then(svg => {
+        captured = true;
+        return svg;
+    });
+    // Keep the image pending while capture reaches its readiness check.
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const capturedBeforeLoad = captured;
+    release();
+    const svg = await capturing;
+    expect(capturedBeforeLoad).toBe(false);
+    expect(svg.includes('Images loaded')).toBe(true);
+});
+
 test('stalled data times out and cleanup permits a valid empty chart', async ({ page }) => {
     await prepareDataSample(page);
     await page.route('**/pending.csv', () => {});
