@@ -965,7 +965,6 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             table.rowCount = (rowIndex + 1);
         }
 
-        // Make room before writing, typed arrays cannot grow in place
         if (rowIndex >= column.length) {
             column = columns[columnId] = setLength(column, rowIndex + 1);
         }
@@ -1073,8 +1072,6 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                         tableColumn = Array.from(tableColumn);
                     }
 
-                    // Make room before writing, typed arrays cannot grow in
-                    // place
                     if (tableColumn.length < columnEnd) {
                         tableColumn = setLength(
                             tableColumn,
@@ -1283,8 +1280,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             rows
         });
 
-        // Make room before writing, typed arrays cannot grow in place. When
-        // inserting, `splice` grows the columns instead.
+        // Make room before writing, `insert` grows via `splice` instead
         if (!insert && rowIndex + rowCount > table.rowCount) {
             table.applyRowCount(rowIndex + rowCount);
         }

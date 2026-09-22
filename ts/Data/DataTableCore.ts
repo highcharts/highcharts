@@ -405,8 +405,7 @@ class DataTableCore {
             }
         }
 
-        // Make room before writing, typed arrays cannot grow in place. When
-        // inserting, `splice` grows the columns instead.
+        // Make room before writing, `insert` grows via `splice` instead
         if (!insert && indexRowCount > this.rowCount) {
             this.applyRowCount(indexRowCount);
         }

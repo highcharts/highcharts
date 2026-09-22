@@ -90,7 +90,6 @@ export function setLength(
         return column;
     }
 
-    // Typed arrays cannot grow in place, so copy into a longer one
     if (length > column.length) {
         const Constructor = Object.getPrototypeOf(column)
                 .constructor as TypedArrayConstructor,
