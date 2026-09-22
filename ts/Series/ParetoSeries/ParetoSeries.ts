@@ -53,6 +53,7 @@ class ParetoSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ParetoSeriesOptions = merge(
         LineSeries.defaultOptions,
         ParetoSeriesDefaults

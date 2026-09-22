@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 type VisualChart = {
     container?: HTMLElement;
+    renderTo?: HTMLElement;
     renderer?: { forExport?: boolean };
 };
 
@@ -28,7 +29,11 @@ export async function captureVisualSVG(
                 const validCharts = charts.filter(chart =>
                     chart && chart.container && !chart.renderer?.forExport
                 );
-                const svg = comparator.getSVG(validCharts.at(-1));
+                // Async inset charts must not replace the primary sample chart.
+                const chart = validCharts.find(chart =>
+                    chart.renderTo?.id === 'container'
+                ) || validCharts.at(-1);
+                const svg = comparator.getSVG(chart);
                 if (!svg) {
                     throw new Error('No candidate SVG found.');
                 }

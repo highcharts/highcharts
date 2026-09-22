@@ -413,13 +413,12 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  *
  * @extends   series,plotOptions.sankey
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
- *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones, dataSorting
+ *            borderWidth, crisp, cropThreshold, depth, dragDrop, edgeColor,
+ *            edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
+ *            groupPadding, groupZPadding, label, maxPointWidth, negativeColor,
+ *            pointInterval, pointIntervalUnit, pointPadding, pointPlacement,
+ *            pointRange, pointStart, pointWidth, shadow, softThreshold,
+ *            stacking, threshold, zoneAxis, zones, dataSorting
  * @product   highcharts
  * @requires  modules/sankey
  * @apioption series.sankey

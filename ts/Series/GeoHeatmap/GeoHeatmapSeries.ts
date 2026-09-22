@@ -240,10 +240,13 @@ class GeoHeatmapSeries extends MapSeries {
 
     public points!: Array<GeoHeatmapPoint>;
 
+    /** @internal */
     public canvas?: HTMLCanvasElement;
 
+    /** @internal */
     public context?: CanvasRenderingContext2D;
 
+    /** @internal */
     public isDirtyCanvas: boolean = true;
 
     /* *
@@ -649,6 +652,7 @@ class GeoHeatmapSeries extends MapSeries {
         return projectedPixelData;
     }
 
+    /** @internal */
     public searchPoint(
         e: PointerEvent,
         compareX?: boolean
@@ -760,7 +764,7 @@ export default GeoHeatmapSeries;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.geoheatmap
- * @excluding allAreas, dataParser, dataURL, dragDrop, findNearestPointBy,
+ * @excluding allAreas, dragDrop, findNearestPointBy,
  *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
  *            stickyTracking
  * @product   highmaps

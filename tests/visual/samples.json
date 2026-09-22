@@ -1642,6 +1642,7 @@
     "maps/series-geoheatmap/geoheatmap-equalearth",
     "maps/series-geoheatmap/turkey-fire-areas",
     "maps/series-tiledwebmap/basic-configuration",
+    "maps/series-tiledwebmap/css-filters",
     "maps/series-tiledwebmap/custom-url",
     "maps/series-tiledwebmap/europe-timezones",
     "maps/series-tiledwebmap/hiking-trail",

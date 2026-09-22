@@ -91,6 +91,34 @@ test('stalled data times out and cleanup permits a valid empty chart', async ({ 
     expect(await captureVisualSVG(page)).toContain('No data to display');
 });
 
+test('capture keeps the main map when its locator loads later', async ({ page }) => {
+    await prepareDataSample(page);
+    await page.addScriptTag({ path: 'code/modules/map.src.js' });
+    await page.addStyleTag({ path: 'samples/maps/demo/locator-map/demo.css' });
+    let release: () => void;
+    const responseGate = new Promise<void>(resolve => { release = resolve; });
+    let requests = 0;
+    await page.route('**/custom/world.topo.json', async route => {
+        if (++requests === 2) {
+            await responseGate;
+        }
+        await route.fallback();
+    });
+
+    try {
+        await page.addScriptTag({ path: 'samples/maps/demo/locator-map/demo.js' });
+        await expect(page.locator('#container .highcharts-container')).toHaveCount(1);
+        const mainSVG = await captureVisualSVG(page);
+        expect(mainSVG).toContain('Highcharts Map with Locator');
+
+        release();
+        await expect(page.locator('#container .highcharts-container')).toHaveCount(2);
+        expect(await captureVisualSVG(page)).toBe(mainSVG);
+    } finally {
+        release();
+    }
+});
+
 test('visual portfolio fixture requires the recorded method and body', async ({ page }) => {
     await page.context().setOffline(true);
     await setupRoutes(page);

@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class PSARPoint extends SMAPoint {
+    /** @internal */
     public series: PSARIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class PSARPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default PSARPoint;

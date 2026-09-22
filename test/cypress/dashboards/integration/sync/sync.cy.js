@@ -39,3 +39,37 @@ describe('Sync groups for the same connectors.', () => {
         cy.get('.highcharts-legend-item').eq(3).should('have.class', 'highcharts-legend-item-hidden');
     });
 });
+
+describe('Highlight sync after destroying a component.', () => {
+    before(() => {
+        cy.visit('/dashboards/sync/highlight-after-destroy');
+    });
+
+    it('#25082, should unregister highlight on the component table.', () => {
+        cy.boardRendered();
+
+        cy.board().then(board => {
+            const table = board.mountedComponents[0].component.getDataTable();
+            const getCount = () =>
+                (board.dataCursor.listenerMap[table.id]?.['point.mouseOver'] || [])
+                    .length;
+
+            const before = getCount();
+            board.mountedComponents[1].cell.destroy();
+
+            assert.strictEqual(
+                getCount(),
+                before - 1,
+                'Highlight listener should be removed from the component table.'
+            );
+
+            board.dataCursor.emitCursor(table, {
+                type: 'position',
+                row: 0,
+                column: 'Vitamin A',
+                state: 'point.mouseOver',
+                sourceId: 'cypress'
+            });
+        });
+    });
+});

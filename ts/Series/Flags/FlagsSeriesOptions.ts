@@ -52,9 +52,9 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *            pointWidth, turboThreshold
  *
  * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, cropThreshold, dashStyle, dataGrouping, dataParser,
- *            dataURL, gapSize, gapUnit, linecap, lineWidth, marker,
- *            pointPadding, pointWidth, step, turboThreshold, useOhlcData
+ *            connectNulls, cropThreshold, dashStyle, dataGrouping, gapSize,
+ *            gapUnit, linecap, lineWidth, marker, pointPadding, pointWidth,
+ *            step, turboThreshold, useOhlcData
  *
  * @product highstock
  */
