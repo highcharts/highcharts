@@ -107,7 +107,6 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.ohlc
- * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.ohlc
  */

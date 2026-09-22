@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class MomentumPoint extends SMAPoint {
+    /** @internal */
     public series: MomentumIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class MomentumPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default MomentumPoint;

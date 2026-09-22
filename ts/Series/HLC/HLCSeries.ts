@@ -60,6 +60,7 @@ class HLCSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         _SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
@@ -67,6 +68,7 @@ class HLCSeries extends ColumnSeries {
         FinancialSymbols.compose(SVGRendererClass);
     }
 
+    /** @internal */
     public static defaultOptions: HLCSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         HLCSeriesDefaults
@@ -84,6 +86,7 @@ class HLCSeries extends ColumnSeries {
 
     public points!: Array<HLCPoint>;
 
+    /** @internal */
     public yData!: Array<Array<number>>;
 
     /* *
@@ -187,6 +190,7 @@ class HLCSeries extends ColumnSeries {
         return attribs;
     }
 
+    /** @internal */
     public toYData(point: HLCPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.high, point.low, point.close];
@@ -257,6 +261,7 @@ class HLCSeries extends ColumnSeries {
  * */
 
 interface HLCSeries {
+    /** @internal */
     pointClass: typeof HLCPoint;
 }
 extend(HLCSeries.prototype, {
@@ -275,9 +280,13 @@ extend(HLCSeries.prototype, {
 
 // Extend default lang options with OHLC terms
 const HLCDefaultLangOptions = {
+    /** @internal */
     stockOpen: 'Open',
+    /** @internal */
     stockHigh: 'High',
+    /** @internal */
     stockLow: 'Low',
+    /** @internal */
     stockClose: 'Close'
 };
 
