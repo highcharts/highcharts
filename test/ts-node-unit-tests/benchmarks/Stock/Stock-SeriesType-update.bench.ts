@@ -44,9 +44,11 @@ export default function benchmarkTest({
 
     for (let i = 0; i < 250; i++) {
         chart.update({
-            navigator: {
-                maskInside: i % 2 !== 0
-            }
+            series: [
+                {
+                    type: i % 2 === 0 ? 'candlestick' : 'line'
+                }
+            ]
         });
     }
 
