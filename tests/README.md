@@ -751,8 +751,8 @@ QUNIT_TEST_PATH=unit-tests/rangeselector/update npx playwright test --project=qu
 # Run single visual test
 VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
 
-# Run the full visual manifest
-VISUAL_TEST_MANIFEST=tests/visual/samples.json npx playwright test --project=visual
+# Run all eligible visual samples
+npx playwright test --project=visual
 
 # Test against live CDN
 NO_REWRITES=1 npx playwright test
@@ -767,22 +767,22 @@ NO_REWRITES=1 npx playwright test
 
 The `visual` Playwright project (`tests/visual/visual.spec.ts`) renders samples to
 SVG, compares them against references, and records a pixel-difference count. It
-runs on Chromium only. Sample discovery uses the shared Karma visual exclusions.
-The CI workflow starts with the IDs in `tests/visual/samples.json`. A selection
-test checks that this manifest contains every eligible candidate sample. CI
-compares the subset present and eligible on both revisions, matching Karma's
-handling of samples without master references. The selected IDs are saved in
-the workflow artifacts as `visual-samples.json`. An entry excluded
-by Karma is rejected; it cannot be used to run an ignored sample. `VISUAL_TEST_PATH` remains
-a substring filter for focused local runs and cannot be combined with a
-manifest.
+runs on Chromium only. Discovery includes eligible Highcharts, Stock, Maps, and
+Gantt samples by default. It uses Karma's exclusion list in
+`test/visual-test-samples.js` and the `skipTest` and `requiresManualTesting`
+sample metadata. Add exceptions to that shared exclusion list. CI compares
+the samples present and eligible on both the candidate and pinned master
+revisions, matching Karma's handling of samples without master references.
+The selected IDs are saved in the workflow artifacts as `visual-samples.json`.
+A sample introduced in a PR has no master reference and joins comparisons once
+it is present on master. `VISUAL_TEST_PATH` remains a substring filter for
+focused local runs. `VISUAL_TEST_MANIFEST` selects exact IDs when a fixed set is
+needed and cannot be combined with a path filter.
 
-The manifest currently covers 2,034 samples across Highcharts, Stock, Maps, and
-Gantt, including both demos and focused API-option samples. It includes
-multi-chart rendering, polar and range series, network diagrams, stock
-navigation and indicators, map projections and color axes, and Gantt progress,
-hierarchy, and grid columns. New entries must pass reference
-generation and comparison with the existing offline routes and Karma exclusions.
+Discovery covers demos and focused API-option samples, including multi-chart
+rendering, polar and range series, network diagrams, stock navigation and
+indicators, map projections and color axes, and Gantt progress, hierarchy, and
+grid columns.
 Discovery includes `demo.js` and TypeScript sources compiled by Karma's `--ts`
 mode. Module-only `demo.mjs` samples are not loaded by Karma and are excluded.
 The visual runner preloads the Morningstar connector, as Karma does. Its five
@@ -803,12 +803,11 @@ first SVG.
 
 ### Workflow
 
-Run the two commands in order for the same manifest or sample:
+Run the two commands in order for the same checkout or selected sample:
 
 **1. Generate the references** (write once, or to refresh):
 
 ```sh
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 VISUAL_TEST_REFERENCE=1 \
 npx playwright test tests/visual/visual.spec.ts --project=visual
 ```
@@ -821,13 +820,12 @@ the existing files, so only run this intentionally.
 **2. Run the candidate comparison**:
 
 ```sh
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 npx playwright test tests/visual/visual.spec.ts --project=visual
 ```
 
 For a focused local run, generate and compare one sample with
 `VISUAL_TEST_PATH=samples/highcharts/demo/area-missing`. The path value is matched
-as a substring, while manifest entries are exact sample IDs.
+as a substring, while optional manifest entries are exact sample IDs.
 
 ### Outputs
 
