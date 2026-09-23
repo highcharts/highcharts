@@ -291,6 +291,29 @@ async function renderDashboard() {
                 '</span><br/>',
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
                 '{point.name}<b> {point.y:.2f}%</b><br/>'
+        },
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    xAxis: [{
+                        grid: {
+                            enabled: false
+                        }
+                    }]
+                }
+            }, {
+                condition: {
+                    maxWidth: 550
+                },
+                chartOptions: {
+                    chart: {
+                        inverted: true
+                    }
+                }
+            }]
         }
     });
 
