@@ -39,7 +39,7 @@ import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
  * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} link
  *        Link that connects two nodes
  * @param {number} force
@@ -77,7 +77,7 @@ function attractive(
  * Attractive force function. Can be replaced by API's
  * `layoutAlgorithm.attractiveForce`
  *
- * @private
+ * @internal
  * @param {number} d current distance between two nodes
  * @param {number} k expected distance between two nodes
  * @return {number} force
@@ -97,7 +97,7 @@ function attractiveForceFunction(
  * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
- * @private
+ * @internal
  */
 function barycenter(
     this: ReingoldFruchtermanLayout
@@ -122,7 +122,7 @@ function barycenter(
 /**
  * Estimate the best possible distance between two nodes, making graph
  * readable.
- * @private
+ * @internal
  */
 function getK(
     layout: ReingoldFruchtermanLayout
@@ -160,7 +160,7 @@ function getK(
  * forces. Or even Time-Corrected Verlet by Jonathan
  * "lonesock" Dummer
  *
- * @private
+ * @internal
  * @param {Highcharts.NetworkgraphLayout} layout layout object
  * @param {Highcharts.Point} node node that should be translated
  */
@@ -209,7 +209,7 @@ function integrate(
  * In Verlet integration, force is applied on a node immediately to it's
  * `plotX` and `plotY` position.
  *
- * @private
+ * @internal
  * @param {Highcharts.Point} node
  *        Node that should be translated by force.
  * @param {number} force
@@ -236,7 +236,7 @@ function repulsive(
  * Repulsive force function. Can be replaced by API's
  * `layoutAlgorithm.repulsiveForce`
  *
- * @private
+ * @internal
  * @param {number} d current distance between two nodes
  * @param {number} k expected distance between two nodes
  * @return {number} force
@@ -265,4 +265,5 @@ const VerletIntegration: GraphIntegrationObject = {
     repulsiveForceFunction
 };
 
+/** @internal */
 export default VerletIntegration;

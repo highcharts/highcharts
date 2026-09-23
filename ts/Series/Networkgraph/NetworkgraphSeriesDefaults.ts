@@ -51,7 +51,7 @@ import type Point from '../../Core/Series/Point';
  * @requires     modules/networkgraph
  * @optionparent plotOptions.networkgraph
  *
- * @private
+ * @internal
  */
 const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     stickyTracking: false,
@@ -59,7 +59,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     /**
      * @default   true
      * @extends   plotOptions.series.inactiveOtherPoints
-     * @private
+     * @internal
      */
     inactiveOtherPoints: true,
 
@@ -142,7 +142,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
      *
      * @declare Highcharts.SeriesNetworkgraphDataLabelsOptionsObject
      *
-     * @private
+     * @internal
      */
     dataLabels: {
 
@@ -231,7 +231,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     },
     /**
      * Link style options
-     * @private
+     * @internal
      */
     link: {
         /**
@@ -261,7 +261,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
     },
     /**
      * Flag to determine if nodes are draggable or not.
-     * @private
+     * @internal
      */
     draggable: true,
     layoutAlgorithm: {

@@ -35,7 +35,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.mapline
  *
@@ -75,7 +75,7 @@ class MapLineSeries extends MapSeries {
 
     /**
      * Get presentational attributes
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.mapline#pointAttribs
      */
     public pointAttribs(
@@ -99,6 +99,7 @@ class MapLineSeries extends MapSeries {
  *
  * */
 
+/** @internal */
 interface MapLineSeries {
     colorProp: 'stroke';
     pointClass: typeof MapLinePoint;

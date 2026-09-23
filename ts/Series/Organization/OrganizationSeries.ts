@@ -57,7 +57,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.organization
  *
@@ -480,6 +480,7 @@ class OrganizationSeries extends SankeySeries {
  *
  * */
 
+/** @internal */
 interface OrganizationSeries {
     /** @internal */
     pointClass: typeof OrganizationPoint;
