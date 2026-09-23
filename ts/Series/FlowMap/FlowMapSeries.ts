@@ -13,6 +13,7 @@
 'use strict';
 
 /* *
+ *
  *  Imports
  *
  * */
@@ -55,7 +56,6 @@ import FlowMapSeriesDefaults from './FlowMapSeriesDefaults.js';
 /**
  * The flowmap series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.flowmap
  *
@@ -69,6 +69,7 @@ export class FlowMapSeries extends MapLineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: FlowMapSeriesOptions = merge(
         MapLineSeries.defaultOptions,
         FlowMapSeriesDefaults
@@ -696,7 +697,6 @@ extend(FlowMapSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         flowmap: typeof FlowMapSeries;
@@ -711,7 +711,6 @@ SeriesRegistry.registerSeriesType('flowmap', FlowMapSeries);
  *
  * */
 
-/** @internal */
 export default FlowMapSeries;
 
 /* *

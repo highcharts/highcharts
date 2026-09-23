@@ -42,7 +42,7 @@ import type { FlowMapPointOptions, MarkerEndOptions } from './FlowMapPointOption
  */
 export interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     /** @default true */
-    animation?: boolean;
+    animation?: MapLineSeriesOptions['animation'];
 
     /**
      * The `curveFactor` option for all links. Value higher than 0 will
@@ -116,6 +116,10 @@ export interface FlowMapSeriesOptions extends MapLineSeriesOptions {
      */
     fillOpacity?: number;
 
+    /**
+     * Whether the series' lines grow towards their end, unless overridden in
+     * each point.
+     */
     growTowards?: boolean;
 
     /**

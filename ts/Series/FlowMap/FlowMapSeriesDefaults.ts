@@ -74,6 +74,14 @@ const FlowMapSeriesDefaults: FlowMapSeriesOptions = {
     fillOpacity: 0.5,
 
     /**
+     * Whether the series' lines grow towards their end, unless overridden in
+     * each point.
+     *
+     * @type      {boolean}
+     * @apioption plotOptions.flowmap.growTowards
+     */
+
+    /**
      * The [id](#series.id) of another series to link to. Additionally, the
      * value can be ":previous" to link to the previous series. When two
      * series are linked, only the first one appears in the legend. Toggling
