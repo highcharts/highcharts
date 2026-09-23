@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 type VisualChart = {
     container?: HTMLElement;
+    hasLoaded?: boolean;
     renderTo?: HTMLElement;
     renderer?: { forExport?: boolean };
 };
@@ -20,20 +21,30 @@ export async function captureVisualSVG(
         if (!comparator) {
             throw new Error('Visual comparator is not loaded.');
         }
-        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const getChart = () => {
             const charts = visualWindow.Highcharts?.charts || [];
-            if (
-                !window.HCVisualSetup?.hasPendingRequests?.() &&
-                (charts.at(-1) || document.getElementsByTagName('svg').length)
-            ) {
-                const validCharts = charts.filter(chart =>
-                    chart && chart.container && !chart.renderer?.forExport
-                );
-                // Async inset charts must not replace the primary sample chart.
-                const chart = validCharts.find(chart =>
-                    chart.renderTo?.id === 'container'
-                ) || validCharts.at(-1);
-                const svg = comparator.getSVG(chart);
+            const validCharts = charts.filter(chart =>
+                chart && chart.container && !chart.renderer?.forExport
+            );
+            // Async inset charts must not replace the primary sample chart.
+            return validCharts.find(chart =>
+                chart.renderTo?.id === 'container'
+            ) || validCharts.at(-1);
+        };
+        const isReady = () => {
+            const chart = getChart();
+            return !window.HCVisualSetup?.hasPendingRequests?.() &&
+                (chart ? chart.hasLoaded :
+                    document.getElementsByTagName('svg').length);
+        };
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            if (isReady()) {
+                // Let queued zero-delay sample updates run before capture.
+                await new Promise(resolve => setTimeout(resolve, 0));
+                if (!isReady()) {
+                    continue;
+                }
+                const svg = comparator.getSVG(getChart());
                 if (!svg) {
                     throw new Error('No candidate SVG found.');
                 }
