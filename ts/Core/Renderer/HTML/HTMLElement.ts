@@ -77,15 +77,18 @@ class HTMLElement extends SVGElement {
              */
             SVGRendererClass.prototype.html = function (
                 str: string,
-                x: number,
-                y: number
+                x?: number,
+                y?: number
             ): HTMLElement {
                 return new HTMLElement(this, 'div')
                     // Set the default attributes
                     .attr({
                         text: str,
-                        x: Math.round(x),
-                        y: Math.round(y),
+                        // Default the position like the SVG text does, so that
+                        // a rotation applied before the element is positioned
+                        // doesn't read NaN as its origin (#25277)
+                        x: Math.round(x || 0),
+                        y: Math.round(y || 0),
                         // The namespace attribute is required for serialization
                         // (export and side-by-side comparison), otherwise it
                         // inherits the SVG namespace from foreignObject.
