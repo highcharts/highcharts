@@ -281,8 +281,8 @@ class PlotLineOrBand {
             // The band isn't fitted to the axis, so clip the ones that extend
             // outside it. Only along the axis, to leave `acrossPanes` bands and
             // the navigator alone (#6257).
-            let clip: SVGElement|undefined;
-            if (path.isOverflowing) {
+            let clip = axis.plotBandClip;
+            if (path.isOverflowing || clip) {
                 const { len, pos } = axis,
                     // Left wide open across the axis, so that a scrollable plot
                     // area isn't cut off
@@ -290,10 +290,10 @@ class PlotLineOrBand {
                         { height: 1e5, width: len, x: pos, y: 0 } :
                         { height: len, width: 1e5, x: 0, y: pos };
 
-                clip = axis.plotBandClip ||= renderer.clipRect(clipBox);
+                clip ||= axis.plotBandClip = renderer.clipRect(clipBox);
                 clip.attr(clipBox);
+                svgElem.clip(clip);
             }
-            svgElem.clip(clip);
         }
 
         if (path) {
