@@ -47,7 +47,7 @@ const SplineSeriesDefaults: SplineSeriesOptions = {};
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.spline
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
+ * @excluding step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @apioption series.spline
  */

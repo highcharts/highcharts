@@ -31,7 +31,6 @@ import { extend } from '../../Shared/Utilities.js';
  *
  * */
 
-/** @internal */
 class DumbbellPoint extends AreaRangePoint {
 
     /* *
@@ -40,9 +39,12 @@ class DumbbellPoint extends AreaRangePoint {
      *
      * */
 
+    /** @internal */
     public series!: DumbbellSeries;
     public options!: DumbbellPointOptions;
+    /** @internal */
     public connector?: SVGElement;
+    /** @internal */
     public pointWidth!: number;
 
     /* *
@@ -112,6 +114,7 @@ class DumbbellPoint extends AreaRangePoint {
         point.connector?.[verb](series.getConnectorAttribs(point));
     }
 
+    /** @internal */
     public destroy(sync?: boolean): void {
         const point = this;
 
@@ -132,6 +135,7 @@ class DumbbellPoint extends AreaRangePoint {
 
 /** @internal */
 interface DumbbellPoint {
+    /** @internal */
     pointSetState: typeof AreaRangePoint.prototype.setState;
 }
 
@@ -145,5 +149,4 @@ extend(DumbbellPoint.prototype, {
  *
  * */
 
-/** @internal */
 export default DumbbellPoint;

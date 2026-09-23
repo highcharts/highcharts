@@ -44,6 +44,7 @@ class Scatter3DPoint extends ScatterPoint {
 
     public options!: Scatter3DPointOptions;
 
+    /** @internal */
     public series!: Scatter3DSeries;
 
     /* *
@@ -52,6 +53,7 @@ class Scatter3DPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public applyOptions(): Scatter3DPoint {
         super.applyOptions.apply(this, arguments);
 

@@ -143,9 +143,12 @@ namespace SankeyColumnComposition {
                 factor = 0,
                 i: number,
                 remainingHeight = (
-                    (chart.plotSizeY || 0) -
+                    (series.flowHeight || chart.plotSizeY || 0) -
                     (series.options.borderWidth || 0) -
-                    (column.length - 1) * series.nodePadding
+                    (column.length - 1) * series.nodePadding -
+                    (series.useCircularLayout ?
+                        column.sankeyColumn.lapSum() :
+                        0)
                 );
 
             // Because the minLinkWidth option doesn't obey the direct
@@ -205,16 +208,33 @@ namespace SankeyColumnComposition {
                         node.getSum() * factor,
                         series.options.minLinkWidth || 0
                     );
-                    height += nodeHeight;
+                    height += nodeHeight + (node.wrapLap || 0);
                     return height;
                 }, 0);
 
-            // Node alignment option handling #19096
-            return getAlignFactor(series.options.nodeAlignment || 'center') * (
-                (series.chart.plotSizeY || 0) - height
-            );
+            // Node alignment option handling #19096. Circular geometry
+            // shrinks the extent aligned within. #8218
+            return (series.flowTop || 0) +
+                getAlignFactor(series.options.nodeAlignment || 'center') * (
+                    (series.flowHeight || (series.chart.plotSizeY || 0)) -
+                    height
+                );
         }
 
+
+        /**
+         * Flow-axis room this column's nodes reserve for self-link laps.
+         * #8218
+         * @private
+         */
+        public lapSum(): number {
+            return this.points.reduce((
+                sum: number,
+                node: SankeyPoint
+            ): number => (
+                sum + (node.wrapLap || 0)
+            ), 0);
+        }
 
         /**
          * Get the left position of the column in pixels
@@ -310,7 +330,9 @@ namespace SankeyColumnComposition {
                             'offsetHorizontal' :
                             'offsetVertical'
                     ],
-                    optionOffset = node.options.offset || 0;
+                    optionOffset = node.options.offset || 0,
+                    // A self-link laps the flow-axis start of its node. #8218
+                    lap = column[i].wrapLap || 0;
 
                 if (sum) {
                     totalNodeOffset = height + nodePadding;
@@ -320,7 +342,7 @@ namespace SankeyColumnComposition {
                 }
                 if (column[i] === node) {
                     return {
-                        relativeTop: offset + (
+                        relativeTop: offset + lap + (
                             defined(directionOffset) ?
                                 // `directionOffset` is a percent of the node
                                 // height
@@ -332,7 +354,7 @@ namespace SankeyColumnComposition {
                         )
                     };
                 }
-                offset += totalNodeOffset;
+                offset += totalNodeOffset + lap;
             }
         }
 

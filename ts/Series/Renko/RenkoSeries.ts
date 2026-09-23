@@ -73,11 +73,13 @@ class RenkoSeries extends ColumnSeries {
     /** @internal */
     public allowDG = false;
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
         this.renkoData = [];
     }
 
+    /** @internal */
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
@@ -87,6 +89,7 @@ class RenkoSeries extends ColumnSeries {
         super.setData(data, redraw, animation, false);
     }
 
+    /** @internal */
     public getXExtremes(xData: number[]): { min: number; max: number } {
         this.processData();
 
@@ -97,6 +100,7 @@ class RenkoSeries extends ColumnSeries {
         };
     }
 
+    /** @internal */
     public getProcessedData(): Series.ProcessedDataObject {
         const modified = this.dataTable.getModified();
         const processedXData: number[] = [];
@@ -193,6 +197,7 @@ class RenkoSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: RenkoSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         RenkoSeriesDefaults
@@ -219,6 +224,7 @@ class RenkoSeries extends ColumnSeries {
 
 /** @internal */
 interface RenkoSeries {
+    /** @internal */
     pointClass: typeof RenkoPoint;
 }
 

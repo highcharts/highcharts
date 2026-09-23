@@ -96,7 +96,7 @@ export interface ScatterSeriesJitterOptions {
  * @excluding cropThreshold, legendSymbolColor, pointPlacement, shadow,
  *            useOhlcData
  *
- * @excluding cropThreshold, dataParser, dataURL, useOhlcData
+ * @excluding cropThreshold, useOhlcData
  *
  * @product highcharts highstock
  */
@@ -252,15 +252,6 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      * @product highcharts highstock highmaps
      */
     tooltip?: ScatterSeriesTooltipOptions;
-
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
 }
 
 export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {

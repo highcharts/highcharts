@@ -51,22 +51,30 @@ class SunburstPoint extends TreemapPoint {
      *
      * */
 
+    /** @internal */
     public dataLabelPath?: SVGElement;
 
+    /** @internal */
     public innerArcLength?: number;
 
+    /** @internal */
     public outerArcLength?: number;
 
+    /** @internal */
     public node!: SunburstNode;
 
     public options!: SunburstPointOptions;
 
+    /** @internal */
     public series!: SunburstSeries;
 
+    /** @internal */
     public shapeExisting!: SunburstNode.NodeValuesObject;
 
+    /** @internal */
     public sliced?: boolean;
 
+    /** @internal */
     public shapeType!: ('arc'|'circle'|'path'|'rect'|'text');
 
     /* *
@@ -75,6 +83,7 @@ class SunburstPoint extends TreemapPoint {
      *
      * */
 
+    /** @internal */
     public getDataLabelPath(
         label: SVGElement
     ): SVGElement {
@@ -138,6 +147,7 @@ class SunburstPoint extends TreemapPoint {
         return this.dataLabelPath;
     }
 
+    /** @internal */
     public isValid(): boolean {
         return true;
     }
@@ -152,7 +162,9 @@ class SunburstPoint extends TreemapPoint {
 
 /** @internal */
 interface SunburstPoint {
+    /** @internal */
     setState: typeof Point.prototype.setState;
+    /** @internal */
     setVisible: typeof TreemapPoint.prototype.setVisible;
 }
 

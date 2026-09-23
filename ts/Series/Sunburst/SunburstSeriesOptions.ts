@@ -215,7 +215,7 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
  *
- * @excluding dataParser, dataURL, stack, dataSorting, boostThreshold,
+ * @excluding stack, dataSorting, boostThreshold,
  *            boostBlending
  *
  * @product highcharts
@@ -362,9 +362,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
     compare?: undefined;
     compareBase?: undefined;
     dataGrouping?: undefined;
-    dataParser?: undefined;
     dataSorting?: undefined;
-    dataURL?: undefined;
     depth?: undefined;
     dragDrop?: undefined;
     gapSize?: undefined;

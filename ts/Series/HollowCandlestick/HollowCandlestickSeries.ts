@@ -156,6 +156,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * */
     public data!: Array<HollowCandlestickPoint>;
 
+    /** @internal */
     public hollowCandlestickData: Array<HollowcandleInfo> = [];
 
     public options!: HollowCandlestickSeriesOptions;
@@ -283,6 +284,23 @@ class HollowCandlestickSeries extends CandlestickSeries {
     }
 
     /**
+     * The legend's bullish candle is hollow, and colored by trend (#24567).
+     *
+     * @internal
+     * @function Highcharts.seriesTypes.hollowcandlestick#legendSymbolAttribs
+     */
+    public legendSymbolAttribs(): SVGAttributes {
+        return {
+            fill: this.getPointFill({
+                isBullish: true,
+                trendDirection: 'up'
+            }),
+            stroke: this.getLineColor('up'),
+            'stroke-width': this.options.lineWidth
+        };
+    }
+
+    /**
      * Add color and fill attribute for each point.
      *
      * @private
@@ -302,8 +320,10 @@ class HollowCandlestickSeries extends CandlestickSeries {
         const attribs = super.pointAttribs.call(this, point, state);
         let stateOptions;
 
-        const index = point?.index,
-            hollowcandleInfo = this.hollowCandlestickData[index || 0] || {};
+        // Without a point, as for the legend, fall back to a falling candle
+        // rather than to the first point (#24567)
+        const hollowcandleInfo =
+            this.hollowCandlestickData[point?.index ?? -1] || {};
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
         attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) ||
@@ -384,7 +404,7 @@ export default HollowCandlestickSeries;
  *
  * @type      {*}
  * @extends   series,plotOptions.hollowcandlestick
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  * @product   highstock
  * @requires  modules/hollowcandlestick
  * @apioption series.hollowcandlestick

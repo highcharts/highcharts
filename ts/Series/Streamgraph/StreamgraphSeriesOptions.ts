@@ -53,7 +53,7 @@ import type StreamgraphPointOptions from './StreamgraphPointOptions';
  *
  * @requires modules/streamgraph
  *
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
+ * @excluding step, boostThreshold, boostBlending
  */
 export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
 
@@ -170,16 +170,6 @@ export interface StreamgraphSeriesOptions extends AreaSplineSeriesOptions {
     marker?: PointMarkerOptions;
 
     lineWidth?: number;
-
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
-
 }
 
 /* *

@@ -53,8 +53,7 @@ import type ColorType from '../../Core/Color/ColorType';
  * pointPadding, pointPlacement, pointRange, pointStart, pointWidth
  *
  * @excluding boost, compare, compareStart, connectNulls, cumulative,
- * cumulativeStart, dataGrouping, dataParser, dataSorting, dataURL,
- * dragDrop, marker, step
+ * cumulativeStart, dataGrouping, dataSorting, dragDrop, marker, step
  *
  * @product highstock
  *
@@ -189,9 +188,7 @@ export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
     cumulativeStart?: undefined;
     dashStyle?: undefined;
     dataGrouping?: undefined;
-    dataParser?: undefined;
     dataSorting?: undefined;
-    dataURL?: undefined;
     dragDrop?: undefined;
     edgeColor?: undefined;
     edgeWidth?: undefined;

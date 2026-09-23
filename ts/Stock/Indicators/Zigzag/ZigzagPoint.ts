@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class ZigzagPoint extends SMAPoint {
+    /** @internal */
     public series: ZigzagIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class ZigzagPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default ZigzagPoint;

@@ -44,7 +44,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding step, boostThreshold, boostBlending
  *
- * @excluding dataParser, dataURL, step, boostThreshold, boostBlending
+ * @excluding step, boostThreshold, boostBlending
  *
  * @product highcharts highstock
  *
@@ -54,15 +54,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  */
 export interface SplineSeriesOptions extends LineSeriesOptions {
     states?: SeriesStatesOptions<SplineSeriesOptions>;
-
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
 }
 
 /* *

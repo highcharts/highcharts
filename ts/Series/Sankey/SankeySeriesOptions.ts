@@ -273,13 +273,12 @@ export interface SankeySeriesNodeOptions {
  *            zones, minPointLength, dataSorting, boostBlending
  *
  * @excluding animationLimit, boostBlending, boostThreshold, borderColor,
- *            borderWidth, crisp, cropThreshold, dataParser,
- *            dataURL, depth, dragDrop, edgeColor, edgeWidth,
- *            findNearestPointBy, getExtremesFromAll, grouping, groupPadding,
- *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
- *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones, dataSorting
+ *            borderWidth, crisp, cropThreshold, depth, dragDrop, edgeColor,
+ *            edgeWidth, findNearestPointBy, getExtremesFromAll, grouping,
+ *            groupPadding, groupZPadding, label, maxPointWidth, negativeColor,
+ *            pointInterval, pointIntervalUnit, pointPadding, pointPlacement,
+ *            pointRange, pointStart, pointWidth, shadow, softThreshold,
+ *            stacking, threshold, zoneAxis, zones, dataSorting
  *
  * @requires modules/sankey
  */
@@ -513,9 +512,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     colorKey?: undefined;
     crisp?: undefined;
     cropThreshold?: undefined;
-    dataParser?: undefined;
     dataSorting?: undefined;
-    dataURL?: undefined;
     depth?: undefined;
     dragDrop?: undefined;
     edgeColor?: undefined;

@@ -54,8 +54,10 @@ class VariwidePoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public crosshairWidth!: number;
     public options!: VariwidePointOptions;
+    /** @internal */
     public series!: VariwideSeries;
 
     /* *
@@ -64,6 +66,7 @@ class VariwidePoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.y) && isNumber(this.z);
     }
