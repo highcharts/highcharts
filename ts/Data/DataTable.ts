@@ -1081,13 +1081,20 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                 }
                 tableColumns[columnId] = tableColumn;
 
-                for (
-                    let i = 0,
-                        iEnd = column.length;
-                    i < iEnd;
-                    ++i
-                ) {
-                    tableColumn[columnStart + i] = column[i];
+                if (Array.isArray(tableColumn)) {
+                    for (
+                        let i = 0,
+                            iEnd = column.length;
+                        i < iEnd;
+                        ++i
+                    ) {
+                        tableColumn[columnStart + i] = column[i];
+                    }
+                } else {
+                    tableColumn.set(
+                        column as ArrayLike<number>,
+                        columnStart
+                    );
                 }
 
                 rowCount = Math.max(rowCount, columnEnd);
