@@ -490,6 +490,22 @@ describe('DataTable', () => {
         });
     });
 
+    describe('hasRowWith', () => {
+        it('should return false when the column does not exist', () => {
+            const table = new DataTable({
+                columns: {
+                    x: [1]
+                }
+            });
+
+            strictEqual(
+                table.hasRowWith('missing', 1),
+                false,
+                'Missing column should return false for a numeric value.'
+            );
+        });
+    });
+
     describe('getRows', () => {
         it('should return row with non-existing column', () => {
             const table = new DataTable({ columns: { 'a': [0] } });
@@ -542,6 +558,29 @@ describe('DataTable', () => {
                 tableClone.getRow(0),
                 table.getRow(0),
                 'Row values are the same after clone.'
+            );
+        });
+
+        it('should splice array rows in when inserting', () => {
+            const table = new DataTable({
+                columns: { a: [1, 2, 3], b: [4, 5, 6] }
+            });
+
+            table.setRows([[9, 8], [7, 6]], 1, true);
+
+            strictEqual(
+                table.getRowCount(),
+                5,
+                'Inserting two rows should grow the table by two.'
+            );
+
+            deepStrictEqual(
+                table.getColumns(),
+                {
+                    a: [1, 9, 7, 2, 3],
+                    b: [4, 8, 6, 5, 6]
+                },
+                'Existing rows should be shifted, not overwritten.'
             );
         });
     });
