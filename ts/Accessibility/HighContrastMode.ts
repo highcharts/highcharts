@@ -728,6 +728,29 @@ function onChartUpdate(
 }
 
 /**
+ * Apply the high contrast theme again after a direct chart method has rolled
+ * it back. Methods like `Tooltip#update` and `setTitle` don't redraw, so the
+ * accessibility update that follows a redraw would not get to it (#15567).
+ *
+ * @private
+ * @param {Highcharts.AccessibilityChart} chart The chart that was updated.
+ * @return {void}
+ */
+function afterChartUpdate(
+    chart: Accessibility.ChartComposition
+): void {
+    const highContrastState = chart.highContrastState;
+
+    if (
+        highContrastState?.active &&
+        !highContrastState.applied &&
+        !highContrastState.applying
+    ) {
+        setHighContrastTheme(chart);
+    }
+}
+
+/**
  * Keep the remembered point colors in sync with user updates.
  *
  * @private
@@ -764,6 +787,7 @@ function onPointUpdate(
  * */
 
 const whcm = {
+    afterChartUpdate,
     isHighContrastModeActive,
     onChartUpdate,
     onPointUpdate,

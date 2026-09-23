@@ -867,6 +867,12 @@ QUnit.test('High contrast theme should not swallow direct updates', function (
                     color: '#0000ff'
                 }
             },
+            title: {
+                style: {
+                    color: '#0000ff'
+                },
+                text: 'Chart title'
+            },
             tooltip: {
                 backgroundColor: '#0000ff'
             },
@@ -877,8 +883,8 @@ QUnit.test('High contrast theme should not swallow direct updates', function (
 
         forcedColors.set(true);
 
-        // `Legend#update` and `Tooltip#update` write into `chart.options`
-        // without going through `chart.update`
+        // `Legend#update`, `Tooltip#update` and `setTitle` write into
+        // `chart.options` without going through `chart.update`
         chart.legend.update({
             itemStyle: {
                 color: '#ff0000'
@@ -887,6 +893,29 @@ QUnit.test('High contrast theme should not swallow direct updates', function (
         chart.tooltip.update({
             backgroundColor: '#ff0000'
         });
+        chart.setTitle({
+            style: {
+                color: '#ff0000'
+            }
+        });
+
+        assert.strictEqual(
+            chart.options.legend.itemStyle.color,
+            'windowText',
+            'Theme should be re-applied after a legend update'
+        );
+
+        assert.strictEqual(
+            chart.options.tooltip.backgroundColor,
+            'window',
+            'Theme should be re-applied after a tooltip update'
+        );
+
+        assert.strictEqual(
+            chart.options.title.style.color,
+            'windowText',
+            'Theme should be re-applied after a title update'
+        );
 
         forcedColors.set(false);
 
@@ -900,6 +929,12 @@ QUnit.test('High contrast theme should not swallow direct updates', function (
             chart.options.tooltip.backgroundColor,
             '#ff0000',
             'Tooltip update should survive the theme being removed'
+        );
+
+        assert.strictEqual(
+            chart.options.title.style.color,
+            '#ff0000',
+            'Title update should survive the theme being removed'
         );
     });
 });

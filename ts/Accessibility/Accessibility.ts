@@ -527,8 +527,8 @@ namespace Accessibility {
 
     /**
      * Roll back the high contrast theme before a direct chart method updates
-     * options. The theme is applied again from the accessibility update that
-     * follows the redraw.
+     * options. The theme is applied again right after, since
+     * these methods don't all redraw (#15567).
      * @private
      */
     function chartMethodWrap(
@@ -538,12 +538,13 @@ namespace Accessibility {
     ): void {
         whcm.onChartUpdate(this);
         proceed.apply(this, args);
+        whcm.afterChartUpdate(this);
     }
 
     /**
      * Roll back the high contrast theme before a chart component updates or is
-     * removed. The theme is applied again from the accessibility update that
-     * follows the redraw.
+     * removed. The theme is applied again right after, since
+     * these methods don't all redraw (#15567).
      * @private
      */
     function chartComponentMethodWrap(
@@ -551,8 +552,11 @@ namespace Accessibility {
         proceed: Function,
         ...args: Array<unknown>
     ): void {
-        whcm.onChartUpdate(this.chart as Accessibility.ChartComposition);
+        const chart = this.chart as Accessibility.ChartComposition;
+
+        whcm.onChartUpdate(chart);
         proceed.apply(this, args);
+        whcm.afterChartUpdate(chart);
     }
 
     /**
@@ -696,7 +700,7 @@ namespace Accessibility {
             );
 
             // Mark dirty for update
-            ['updatedData', 'remove'].forEach((event): void => {
+            ['update', 'updatedData', 'remove'].forEach((event): void => {
                 addEvent(
                     SeriesClass as typeof SeriesComposition,
                     event,
@@ -707,12 +711,6 @@ namespace Accessibility {
                     }
                 );
             });
-
-            addEvent(
-                SeriesClass as typeof SeriesComposition,
-                'update',
-                seriesOnUpdate
-            );
         }
 
     }
@@ -729,18 +727,6 @@ namespace Accessibility {
 
         if (this.series.chart.accessibility) {
             this.series.chart.a11yDirty = true;
-        }
-    }
-
-    /**
-     * Keep high contrast mode in sync, and mark dirty for update.
-     * @private
-     */
-    function seriesOnUpdate(
-        this: SeriesComposition
-    ): void {
-        if (this.chart.accessibility) {
-            this.chart.a11yDirty = true;
         }
     }
 
