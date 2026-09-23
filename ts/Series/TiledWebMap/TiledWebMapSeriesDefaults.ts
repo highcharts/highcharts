@@ -39,7 +39,7 @@ import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
  * @excluding    affectsMapView, allAreas, allowPointSelect, animation,
  * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
  * clip, color, colorAxis, colorByPoint, colorIndex, colorKey, colors,
- * cursor, dashStyle, dataLabels, dataParser, dataURL, dragDrop,
+ * cursor, dashStyle, dataLabels, dragDrop,
  * enableMouseTracking, findNearestPointBy, joinBy, keys, marker,
  * negativeColor, nullColor, nullInteraction, onPoint, point,
  * pointDescriptionFormatter, selected, shadow, showCheckbox,
@@ -75,7 +75,7 @@ const TiledWebMapSeriesDefaults: TiledWebMapSeriesOptions = {
  * @excluding affectsMapView, allAreas, allowPointSelect, animation,
  * animationLimit, boostBlending, boostThreshold, borderColor, borderWidth,
  * clip, color, colorAxis, colorByPoint, colorIndex, colorKey, colors, cursor,
- * dashStyle, dataLabels, dataParser, dataURL, dragDrop, enableMouseTracking,
+ * dashStyle, dataLabels, dragDrop, enableMouseTracking,
  * findNearestPointBy, joinBy, keys, marker, negativeColor, nullColor,
  * nullInteraction, onPoint, point, pointDescriptionFormatter, selected, shadow,
  * showCheckbox, stickyTracking, tooltip, type

@@ -60,7 +60,6 @@ import {
     isNumber,
     isString,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -80,7 +79,6 @@ declare module '../Axis/AxisBase' {
 /** @internal */
 declare module './ChartBase' {
     interface ChartBase {
-        _labelPanes?: Record<string, Axis>;
         fixedRange?: number;
         setFixedRange(range: number|undefined): void;
     }
@@ -166,11 +164,10 @@ function getForcedAxisOptions(
     if (type === 'xAxis') {
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
-        const navigatorEnabled = pick(
-            chartOptions.navigator?.enabled,
-            NavigatorDefaults.enabled,
-            true
-        );
+        const navigatorEnabled =
+            chartOptions.navigator?.enabled ??
+            NavigatorDefaults.enabled ??
+            true;
 
         const axisOptions: DeepPartial<AxisOptions> = {
             type: 'datetime',
@@ -235,11 +232,10 @@ class StockChart extends Chart {
             yAxisOptions = userOptions.yAxis,
             // Always disable startOnTick:true on the main axis when the
             // navigator is enabled (#1090)
-            navigatorEnabled = pick(
-                userOptions.navigator?.enabled,
-                NavigatorDefaults.enabled,
-                true
-            );
+            navigatorEnabled =
+                userOptions.navigator?.enabled ??
+                NavigatorDefaults.enabled ??
+                true;
 
         // Avoid doing these twice
         userOptions.xAxis = userOptions.yAxis = void 0;
@@ -263,26 +259,18 @@ class StockChart extends Chart {
                 },
                 scrollbar: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(
-                        ScrollbarDefaults.enabled,
-                        true
-                    )
+                    enabled: (ScrollbarDefaults.enabled ?? true)
                 },
                 rangeSelector: {
                     // #4988 - check if setOptions was called
-                    enabled: pick(
-                        RangeSelectorDefaults.rangeSelector.enabled,
-                        true
-                    )
+                    enabled:
+                        RangeSelectorDefaults.rangeSelector.enabled ?? true
                 },
                 title: {
                     text: null
                 },
                 tooltip: {
-                    split: pick(
-                        defaultOptions.tooltip?.split,
-                        true
-                    ),
+                    split: (defaultOptions.tooltip?.split ?? true),
                     crosshairs: true
                 },
                 legend: {
@@ -421,7 +409,6 @@ namespace StockChart {
             addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
             addEvent(AxisClass, 'afterHideCrosshair', onAxisAfterHideCrosshair);
             addEvent(AxisClass, 'autoLabelAlign', onAxisAutoLabelAlign);
-            addEvent(AxisClass, 'destroy', onAxisDestroy);
             addEvent(AxisClass, 'getPlotLinePath', onAxisGetPlotLinePath);
 
             ChartClass.prototype.setFixedRange = setFixedRange;
@@ -508,8 +495,8 @@ namespace StockChart {
                 )
                 .attr({
                     align: options.align || align,
-                    padding: pick(options.padding, 8),
-                    r: pick(options.borderRadius, 3),
+                    padding: (options.padding ?? 8),
+                    r: (options.borderRadius ?? 3),
                     zIndex: 2
                 })
                 .add(axis.labelGroup);
@@ -658,46 +645,34 @@ namespace StockChart {
         const axis = this,
             chart = axis.chart,
             options = axis.options,
-            panes = chart._labelPanes = chart._labelPanes || {},
             labelOptions = options.labels;
 
-        if (chart.options.isStock && axis.coll === 'yAxis') {
-            const key = options.top + ',' + options.height;
-            // Do it only for the first Y axis of each pane
-            if (!panes[key] && labelOptions.enabled) {
+        // Returns true if this is the first yAxis in the pane
+        const isFirstYAxisInPane = () : boolean => {
+            let foundOther = false;
+            for (const otherAxis of chart.yAxis) {
+                if (otherAxis === axis && !foundOther) {
+                    return true;
+                }
                 if (
-                    labelOptions.distance === 15 && // Default
-                    axis.side === 1
+                    otherAxis !== axis &&
+                    otherAxis.options.top === options.top &&
+                    otherAxis.options.height === options.height
                 ) {
-                    labelOptions.distance = 0;
+                    foundOther = true;
                 }
-                if (typeof labelOptions.align === 'undefined') {
-                    labelOptions.align = 'right';
-                }
-                panes[key] = axis;
-                e.align = 'right';
-
-                e.preventDefault();
             }
-        }
-    }
+            return false;
+        };
 
-    /**
-     * Clear axis from label panes. (#6071)
-     * @internal
-     */
-    function onAxisDestroy(
-        this: Axis
-    ): void {
-        const axis = this,
-            chart = axis.chart,
-            key = (
-                axis.options &&
-                (axis.options.top + ',' + axis.options.height)
-            );
-
-        if (key && chart._labelPanes && chart._labelPanes[key] === axis) {
-            delete chart._labelPanes[key];
+        if (
+            chart.options.isStock &&
+            axis.coll === 'yAxis' &&
+            isFirstYAxisInPane() &&
+            labelOptions.enabled
+        ) {
+            e.align = 'right';
+            e.preventDefault();
         }
     }
 
@@ -712,7 +687,7 @@ namespace StockChart {
         const axis = this,
             axisOptions = axis.options,
             series = (
-                axis.isLinked && !axis.series && axis.linkedParent ?
+                !axis.series && axis.linkedParent ?
                     axis.linkedParent.series :
                     axis.series
             ),
@@ -820,9 +795,11 @@ namespace StockChart {
                 }
             }
 
-            transVal = pick(
-                translatedValue,
-                axis.translate(value || 0, void 0, void 0, e.old)
+            transVal = translatedValue ?? axis.translate(
+                value || 0,
+                void 0,
+                void 0,
+                e.old
             );
 
             if (isNumber(transVal)) {
@@ -937,7 +914,7 @@ namespace StockChart {
             groupingEnabled = (
                 series.allowDG !== false &&
                 dataGroupingOptions &&
-                pick(dataGroupingOptions.enabled, chart.options.isStock)
+                (dataGroupingOptions.enabled ?? chart.options.isStock)
             );
 
         return groupingEnabled;
@@ -983,7 +960,7 @@ namespace StockChart {
         c?: Chart.CallbackFunction|true
     ): StockChart|Promise<StockChart> {
         const chart = new StockChart(a as any, b as any, c);
-        return chart.promise || chart;
+        return chart.promise ?? chart;
     }
 
     /* eslint-enable jsdoc/check-param-names */

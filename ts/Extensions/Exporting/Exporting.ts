@@ -86,7 +86,6 @@ import {
     isObject,
     merge,
     objectEach,
-    pick,
     pushUnique,
     removeEvent,
     splat,
@@ -1032,7 +1031,7 @@ export class Exporting {
         }
 
         if (btnOptions.text && btnOptions.symbol) {
-            theme.paddingLeft = pick(theme.paddingLeft, 30);
+            theme.paddingLeft = (theme.paddingLeft ?? 30);
         } else if (!btnOptions.text) {
             extend(theme, {
                 width: btnOptions.width,
@@ -1056,10 +1055,10 @@ export class Exporting {
             )
             .addClass(options.className || '')
             .attr({
-                title: pick(chart.options.lang[
+                title: (chart.options.lang[
                     (btnOptions._titleKey ||
                     btnOptions.titleKey) as keyof LangOptions
-                ] as string, '')
+                ] as string ?? '')
             });
 
         button.menuClassName = (
@@ -1104,7 +1103,7 @@ export class Exporting {
             .add(exporting.group)
             .align(extend(btnOptions, {
                 width: button.width,
-                x: pick(btnOptions.x, exporting.buttonOffset) // #1654
+                x: (btnOptions.x ?? exporting.buttonOffset) // #1654
             }), true, 'spacingBox');
 
         exporting.buttonOffset += (
@@ -1778,7 +1777,6 @@ export class Exporting {
                         exportingOptions.filename.replace(/\//g, '-') :
                         this.getFilename(),
                     type: exportingOptions.type,
-                    width: exportingOptions.width,
                     scale: exportingOptions.scale,
                     svg
                 }, exportingOptions.fetchOptions);
@@ -2889,7 +2887,7 @@ export class Exporting {
     ): void {
         this.isDirty = true;
         merge(true, this.options, exportingOptions);
-        if (pick(redraw, true)) {
+        if (redraw ?? true) {
             this.chart.redraw();
         }
     }
@@ -3263,7 +3261,7 @@ export namespace Exporting {
                     if (chart.exporting) {
                         chart.exporting.isDirty = true;
                         merge(true, chart.options.navigation, options);
-                        if (pick(redraw, true)) {
+                        if (redraw ?? true) {
                             chart.redraw();
                         }
                     }

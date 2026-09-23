@@ -28,8 +28,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import {
     extend,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -41,7 +40,6 @@ import {
 /**
  * The bullet series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bullet
  *
@@ -55,6 +53,7 @@ class BulletSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BulletSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         BulletSeriesDefaults
@@ -72,6 +71,7 @@ class BulletSeries extends ColumnSeries {
 
     public points!: Array<BulletPoint>;
 
+    /** @internal */
     public targetData!: Array<number>;
 
     /* *
@@ -175,23 +175,29 @@ class BulletSeries extends ColumnSeries {
                 // Presentational
                 if (!chart.styledMode) {
                     targetGraphic.attr({
-                        fill: pick(
-                            targetOptions.color,
-                            pointOptions.color,
-                            (series.zones.length && (point.getZone.call({
-                                series: series,
-                                x: point.x,
-                                y: targetVal,
-                                options: {}
-                            })?.color || series.color)) || void 0,
-                            point.color,
+                        fill: (
+                            targetOptions.color ??
+                            pointOptions.color ??
+                            (
+                                (
+                                    series.zones.length &&
+                                    (
+                                        point.getZone?.call({
+                                            series: series,
+                                            x: point.x,
+                                            y: targetVal,
+                                            options: {}
+                                        })?.color || series.color
+                                    )
+                                ) || void 0
+                            ) ??
+                            point.color ??
                             series.color
                         ),
-                        stroke: pick(
-                            targetOptions.borderColor,
-                            point.borderColor,
-                            series.options.borderColor
-                        ),
+                        stroke:
+                            targetOptions.borderColor ??
+                            point.borderColor ??
+                            series.options.borderColor,
                         'stroke-width': targetOptions.borderWidth,
                         r: targetOptions.borderRadius
                     });
@@ -219,6 +225,7 @@ class BulletSeries extends ColumnSeries {
      *
      * @ignore
      * @function Highcharts.Series#getExtremes
+     * @internal
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
         const dataExtremes = super.getExtremes.call(this, yData),
@@ -231,13 +238,15 @@ class BulletSeries extends ColumnSeries {
             );
             if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(
-                    pick(dataExtremes.dataMin, Infinity),
+                    (
+                        dataExtremes.dataMin ?? Infinity),
                     targetExtremes.dataMin
                 );
             }
             if (isNumber(targetExtremes.dataMax)) {
                 dataExtremes.dataMax = Math.max(
-                    pick(dataExtremes.dataMax, -Infinity),
+                    (
+                        dataExtremes.dataMax ?? -Infinity),
                     targetExtremes.dataMax
                 );
             }
@@ -254,7 +263,6 @@ class BulletSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface BulletSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -273,7 +281,6 @@ BulletSeries.prototype.pointClass = BulletPoint;
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof BulletSeries;
@@ -288,5 +295,4 @@ SeriesRegistry.registerSeriesType('bullet', BulletSeries);
  *
  * */
 
-/** @internal */
 export default BulletSeries;

@@ -36,7 +36,7 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const { dateFormats } = H;
+const { composed, dateFormats } = H;
 import Tick from './Tick.js';
 import {
     defined,
@@ -46,9 +46,9 @@ import {
     isNumber,
     isObject as isObjectUtils,
     merge,
-    pick,
     wrap,
-    addEvent
+    addEvent,
+    pushUnique
 } from '../../Shared/Utilities.js';
 import { timeUnits } from '../Utilities.js';
 
@@ -210,7 +210,7 @@ function applyGridOptions(axis: Axis): void {
         options.labels = {};
     }
     */
-    options.labels.align = pick(options.labels.align, 'center');
+    options.labels.align = (options.labels.align ?? 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc
 
@@ -242,9 +242,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (!AxisClass.keepProps.includes('grid')) {
-        AxisClass.keepProps.push('grid');
-
+    if (pushUnique(composed, 'Axis.Grid')) {
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
@@ -473,7 +471,14 @@ function onAfterInit(this: Axis): void {
     }
 
     if (gridOptions.columns) {
-        const columns = axis.grid.columns = [] as Array<GridAxisComposition>;
+        axis.grid.columns ||= [];
+
+        const columns = axis.grid.columns;
+
+        // Destroy existing columns. In a future update we could consider
+        // matching and updating existing columns instead of recreating all.
+        columns.forEach((column): void => column.destroy());
+        columns.length = 0;
 
         let columnIndex = axis.grid.columnIndex = 0;
 
@@ -972,8 +977,8 @@ function onAfterSetOptions(
                             _________________________
             Into this:    |_____|_____|_____|_____|
                                 ^                 ^    */
-            options.minPadding = pick(userOptions.minPadding, 0);
-            options.maxPadding = pick(userOptions.maxPadding, 0);
+            options.minPadding = (userOptions.minPadding ?? 0);
+            options.maxPadding = (userOptions.maxPadding ?? 0);
         }
 
         // If borderWidth is set, then use its value for tick and
@@ -1023,20 +1028,19 @@ function onAfterTickSize(
     e: { tickSize?: [number, number] }
 ): void {
     const {
-        horiz,
-        maxLabelDimensions,
-        options: {
-            grid: gridOptions = {}
-        }
-    } = this;
-    if (gridOptions.enabled && maxLabelDimensions) {
-        const labelPadding = this.options.labels.distance * 2;
-        const distance = horiz ?
-            (
-                gridOptions.cellHeight ||
-                labelPadding + maxLabelDimensions.height
-            ) :
-            labelPadding + maxLabelDimensions.width;
+            horiz,
+            maxLabelDimensions,
+            options
+        } = this,
+        { labels, grid = {} } = options;
+    if (grid.enabled && maxLabelDimensions) {
+        const labelPadding = (labels.distance ?? 15) * 2,
+            distance = horiz ?
+                (
+                    grid.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
+                labelPadding + maxLabelDimensions.width;
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         } else {
@@ -1057,8 +1061,7 @@ function onChartAfterSetChartSize(this: Chart): void {
 
 /** @internal */
 function onDestroy(
-    this: Axis,
-    e: { keepEvents: boolean }
+    this: Axis
 ): void {
     const {
         grid
@@ -1071,7 +1074,7 @@ function onDestroy(
     }
 
     (grid.columns || []).forEach(
-        (column): void => column.destroy(e.keepEvents)
+        (column): void => column.destroy()
     );
     grid.columns = void 0;
 }
@@ -1336,7 +1339,7 @@ function onTrimTicks(this: Axis): void {
     if (
         gridOptions.enabled === true &&
         !categoryAxis &&
-        (axis.isXAxis || axis.isLinked)
+        (axis.isXAxis || axis.linkedParent)
     ) {
         if (
             (endMoreThanMin || startLessThanMin) && !options.startOnTick

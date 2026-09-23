@@ -48,8 +48,7 @@ import {
     isArray,
     isNumber,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -77,7 +76,6 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * The column series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.column
  *
@@ -91,6 +89,7 @@ class ColumnSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         Series.defaultOptions,
         ColumnSeriesDefaults
@@ -102,28 +101,37 @@ class ColumnSeries extends Series {
      *
      * */
 
+    /** @internal */
     public borderWidth!: number;
 
+    /** @internal */
     public columnIndex?: number;
 
+    /** @internal */
     public columnMetrics?: ColumnMetricsObject;
 
+    /** @internal */
     public cropShould?: number;
 
+    /** @internal */
     public dashStyle?: DashStyleValue;
 
     public data!: Array<ColumnPoint>;
 
+    /** @internal */
     public dense?: boolean;
 
+    /** @internal */
     public group!: SVGElement;
 
     public options!: ColumnSeriesOptions;
 
     public points!: Array<ColumnPoint>;
 
+    /** @internal */
     public pointXOffset?: number;
 
+    /** @internal */
     public translatedThreshold?: number;
 
     /* *
@@ -313,11 +321,8 @@ class ColumnSeries extends Series {
                     pointOffsetWidth
                 ) || xAxis.len,
                 series.chart.relativeLength(
-                    pick(
-                        options.pointWidth,
-                        pointOffsetWidth * (
-                            1 - 2 * (options.pointPadding as any)
-                        )
+                    options.pointWidth ?? pointOffsetWidth * (
+                        1 - 2 * (options.pointPadding as any)
                     ),
                     pointOffsetWidth
                 )
@@ -993,7 +998,6 @@ class ColumnSeries extends Series {
  *
  * */
 
-/** @internal */
 interface ColumnSeries {
     pointClass: typeof ColumnPoint;
 }
@@ -1016,7 +1020,6 @@ extend(ColumnSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         column: typeof ColumnSeries;
@@ -1030,7 +1033,6 @@ SeriesRegistry.registerSeriesType('column', ColumnSeries);
  *
  * */
 
-/** @internal */
 export default ColumnSeries;
 
 /* *

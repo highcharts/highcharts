@@ -294,7 +294,7 @@ export function getSample(path: string, injectCSS: boolean = false) {
             const content = readFileSync(globPath, { encoding: 'utf8'});
 
             if (type === 'details') {
-                obj[type] = yamlLoad(content) as object;
+                obj[type] = yamlLoad(content);
             } else {
                 obj[type] = content;
             }

@@ -346,7 +346,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.map
- * @excluding dataParser, dataURL, dragDrop, marker
+ * @excluding dragDrop, marker
  * @product   highmaps
  * @apioption series.map
  */
@@ -429,6 +429,17 @@ const MapSeriesDefaults: MapSeriesOptions = {
  * @since     3.0
  * @product   highmaps
  * @apioption plotOptions.map.colors
+ */
+
+/**
+ * Whether to apply a drop shadow to the map shapes. The shadow can be an
+ * object configuration containing `color`, `offsetX`, `offsetY`, `opacity`
+ * and `width`.
+ *
+ * @type      {boolean|Highcharts.ShadowOptionsObject}
+ * @default   false
+ * @product   highmaps
+ * @apioption plotOptions.map.shadow
  */
 
 /**

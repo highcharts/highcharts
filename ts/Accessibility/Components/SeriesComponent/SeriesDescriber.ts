@@ -44,6 +44,8 @@ const {
     format,
     numberFormat
 } = F;
+import H from '../../../Core/Globals.js';
+const { composed } = H;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
     reverseChildNodes,
@@ -54,7 +56,8 @@ import {
     find,
     isString,
     isNumber,
-    pick
+    pushUnique,
+    wrap
 } from '../../../Shared/Utilities.js';
 
 
@@ -77,6 +80,41 @@ declare module '../../../Core/Series/PointBase' {
  *  Functions
  *
  * */
+
+/**
+ * @private
+ */
+function compose(
+    PointClass: typeof Point
+): void {
+
+    if (pushUnique(composed, 'A11y.SD')) {
+        wrap(PointClass.prototype, 'applyOptions', pointApplyOptions);
+    }
+
+}
+
+
+/**
+ * Discard the mock graphic once the point is no longer null, so that the
+ * series can draw a real marker for it, #25299.
+ * @private
+ */
+function pointApplyOptions(
+    this: Point,
+    proceed: Point['applyOptions'],
+    ...args: Parameters<Point['applyOptions']>
+): Point {
+    const point = proceed.apply(this, args);
+
+    if (point.hasMockGraphic && !point.isNull) {
+        point.graphic = point.graphic?.destroy();
+        delete point.hasMockGraphic;
+    }
+
+    return point;
+}
+
 
 /**
  * @private
@@ -159,11 +197,11 @@ function addMockPointElement(
             firstGraphic.parentGroup :
             series.graph || series.group,
         mockPos = firstPointWithGraphic ? {
-            x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
-            y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
+            x: (point.plotX ?? firstPointWithGraphic.plotX ?? 0),
+            y: (point.plotY ?? firstPointWithGraphic.plotY ?? 0)
         } : {
-            x: pick(point.plotX, 0),
-            y: pick(point.plotY, 0)
+            x: (point.plotX ?? 0),
+            y: (point.plotY ?? 0)
         },
         mockElement = makeMockElement(point, mockPos);
 
@@ -390,7 +428,8 @@ function getPointArrayMapValueDescription(
         keyToValStr = function (key: string): string|undefined {
             const num = pointNumberToString(
                 point,
-                pick((point as any)[key], (point.options as any)[key])
+                ((point as any)[key] ?? (point.options as any)[key]
+                )
             );
             return num !== void 0 ?
                 key + ': ' + pre + num + suf :
@@ -485,11 +524,13 @@ function getPointValueDescription(
             seriesA11yOptions.point.valueDescriptionFormat,
         pointValueDescriptionFormat = seriesValueDescFormat ||
             chart.options.accessibility.point.valueDescriptionFormat,
-        showXDescription = pick(
-            series.xAxis &&
-            series.xAxis.options.accessibility &&
-            series.xAxis.options.accessibility.enabled,
-            !chart.angular && series.type !== 'flowmap'
+        showXDescription = (
+            (
+                series.xAxis &&
+                series.xAxis.options.accessibility &&
+                series.xAxis.options.accessibility.enabled
+            ) ??
+            (!chart.angular && series.type !== 'flowmap')
         ),
         xDesc = showXDescription ? getPointXDescription(point) : '',
         context = {
@@ -654,10 +695,10 @@ function defaultSeriesDescriptionFormatter(
         ) + (
             shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
         ),
-        formatStr = pick(
-            series.options.accessibility &&
-                series.options.accessibility.descriptionFormat,
-            chart.options.accessibility.series.descriptionFormat,
+        formatStr = (
+            (series.options.accessibility &&
+                series.options.accessibility.descriptionFormat) ??
+            chart.options.accessibility.series.descriptionFormat ??
             ''
         );
 
@@ -752,6 +793,7 @@ function describeSeries(
  * */
 
 const SeriesDescriber = {
+    compose,
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter,
     describeSeries

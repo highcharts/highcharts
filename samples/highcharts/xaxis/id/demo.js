@@ -4,7 +4,7 @@ const chart = Highcharts.chart('container', {
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
             'Oct', 'Nov', 'Dec'
         ],
-        id: 'x-axis'
+        id: 'x-axis-1'
     },
     subtitle: {
         floating: true,
@@ -22,6 +22,6 @@ const chart = Highcharts.chart('container', {
 
 document.getElementById('button').addEventListener('click', () => {
     chart.setTitle(null, {
-        text: 'The axis object: ' + chart.get('x-axis')
+        text: `The axis object id: <b>${chart.get('x-axis-1').options.id}</b>`
     });
 });

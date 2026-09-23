@@ -35,7 +35,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import { isNumber, isString, pick } from '../../Shared/Utilities.js';
+import { isNumber, isString } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -51,12 +51,15 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
+    /** @internal */
     public fromPos?: PositionObject;
 
+    /** @internal */
     public toPos?: PositionObject;
 
     public options!: FlowMapPointOptions;
 
+    /** @internal */
     public series!: FlowMapSeries;
 
     /* *
@@ -74,15 +77,13 @@ class FlowMapPoint extends MapLinePoint {
             .forEach(function (toOrFrom): void {
                 valid = !!(valid && (toOrFrom && (
                     isString(toOrFrom) || ( // Point id or has lat/lon coords
-                        isNumber(pick(
-                            (toOrFrom as LonLatArray)[0],
+                        isNumber(
+                            (toOrFrom as LonLatArray)[0] ??
                             (toOrFrom as MapLonLatObject).lat
-                        )
                         ) &&
-                        isNumber(pick(
-                            (toOrFrom as LonLatArray)[1],
+                        isNumber(
+                            (toOrFrom as LonLatArray)[1] ??
                             (toOrFrom as MapLonLatObject).lon
-                        )
                         )
                     )
                 )));
@@ -98,6 +99,7 @@ class FlowMapPoint extends MapLinePoint {
  * */
 
 interface FlowMapPoint {
+    /** @internal */
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
 

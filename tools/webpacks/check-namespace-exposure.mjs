@@ -43,8 +43,7 @@ const ALLOWLIST = new Set([
     'boards',
     'doc',
     'noop',
-    'isMS',
-    'supportsPassiveEvents'
+    'isMS'
 ]);
 
 const exportPatterns = [

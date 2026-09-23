@@ -79,7 +79,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     pushUnique,
     splat,
     stableSort
@@ -189,6 +188,7 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     static defaultOptions: TreemapSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         TreemapSeriesDefaults
@@ -200,6 +200,7 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series
     ): void {
@@ -216,40 +217,54 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public axisRatio!: number;
 
+    /** @internal */
     public colorValueData?: Array<number>;
 
+    /** @internal */
     public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
     public data!: Array<TreemapPoint>;
 
+    /** @internal */
     public drillUpButton?: SVGElement;
 
+    /** @internal */
     public idPreviousRoot?: string;
 
+    /** @internal */
     public mapOptionsToLevel!: Record<string, TreemapSeriesLevelOptions>;
 
+    /** @internal */
     public nodeMap!: Record<string, TreemapNode>;
 
+    /** @internal */
     public nodeList!: TreemapNode[];
 
     public options!: TreemapSeriesOptions;
 
+    /** @internal */
     public parentList?: TreemapSeries.ListOfParentsObject;
 
     public points!: Array<TreemapPoint>;
 
+    /** @internal */
     private hadOutsideDataLabels?: boolean;
 
+    /** @internal */
     private hasOutsideDataLabels?: boolean;
 
+    /** @internal */
     public rootNode!: string;
 
     private simulation = 0;
 
+    /** @internal */
     public tree!: TreemapNode;
 
+    /** @internal */
     public level?: number;
 
     /* *
@@ -259,6 +274,7 @@ class TreemapSeries extends ScatterSeries {
      * */
 
 
+    /** @internal */
     public algorithmCalcPoints(
         directionChange: boolean,
         last: boolean,
@@ -328,6 +344,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public algorithmFill(
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
@@ -378,6 +395,7 @@ class TreemapSeries extends ScatterSeries {
         return childrenArea;
     }
 
+    /** @internal */
     public algorithmLowAspectRatio(
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
@@ -450,6 +468,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public applyTreeGrouping(): void {
         const series = this,
             parentList = series.parentList || {},
@@ -580,14 +599,11 @@ class TreemapSeries extends ScatterSeries {
             options = series.options,
             mapOptionsToLevel = series.mapOptionsToLevel,
             level = mapOptionsToLevel[parent.level + 1],
-            algorithm = pick(
-                (
-                    level?.layoutAlgorithm &&
+            algorithm = ((
+                level?.layoutAlgorithm &&
                     series[level?.layoutAlgorithm] &&
                     level.layoutAlgorithm
-                ),
-                options.layoutAlgorithm
-            ),
+            ) ?? options.layoutAlgorithm),
             alternate = options.alternateStartingDirection,
             // Collect all children which should be included
             children = parent.children.filter((n): boolean =>
@@ -1085,6 +1101,7 @@ class TreemapSeries extends ScatterSeries {
         this.setRootNode(id, redraw);
     }
 
+    /** @internal */
     public drillUp(): void {
         const series = this,
             node = series.nodeMap[series.rootNode];
@@ -1098,6 +1115,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
         const { dataMin, dataMax } = super.getExtremes(this.colorValueData);
@@ -1135,7 +1153,7 @@ class TreemapSeries extends ScatterSeries {
                 curr: TreemapPoint,
                 i: number
             ): TreemapSeries.ListOfParentsObject {
-                const parent = pick(curr.parent, '');
+                const parent = (curr.parent ?? '');
 
                 if (typeof prev[parent] === 'undefined') {
                     prev[parent] = [];
@@ -1179,6 +1197,7 @@ class TreemapSeries extends ScatterSeries {
         return series.buildTree('', -1, 0, series.parentList || {});
     }
 
+    /** @internal */
     public buildTree(
         id: string,
         index: number,
@@ -1248,6 +1267,7 @@ class TreemapSeries extends ScatterSeries {
         return !!this.dataTable.rowCount;
     }
 
+    /** @internal */
     public init(
         chart: Chart,
         options: DeepPartial<TreemapSeriesOptions>
@@ -1410,17 +1430,17 @@ class TreemapSeries extends ScatterSeries {
                 state && options.states && options.states[state] || {},
             className = point?.node && point.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
-            // Stroke width uses pick because it can be 0.
+            // Stroke width uses nullish coalescing because it can be 0.
             attr: SVGAttributes = {
                 'stroke':
                     (point && (point as any).borderColor) ||
                     level.borderColor ||
                     stateOptions.borderColor ||
                     options.borderColor,
-                'stroke-width': pick(
-                    point && (point as any).borderWidth,
-                    level.borderWidth,
-                    stateOptions.borderWidth,
+                'stroke-width': (
+                    (point && (point as any).borderWidth) ??
+                    level.borderWidth ??
+                    stateOptions.borderWidth ??
                     options.borderWidth
                 ),
                 'dashstyle':
@@ -1503,6 +1523,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public setPointValues(): void {
         const series = this;
         const { points, xAxis, yAxis } = series;
@@ -1618,7 +1639,7 @@ class TreemapSeries extends ScatterSeries {
                 extend<TreemapSeries.SetRootNodeObject>({
                     newRootId: id,
                     previousRootId: series.rootNode,
-                    redraw: pick(redraw, true),
+                    redraw: (redraw ?? true),
                     series: series
                 }, eventArguments as any);
 
@@ -1673,6 +1694,7 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
+    /** @internal */
     public setTreeValues(tree: TreemapNode): TreemapNode {
         const series = this,
             options = series.options,
@@ -1703,11 +1725,8 @@ class TreemapSeries extends ScatterSeries {
         ));
 
         // Set the values
-        let val = pick(
-            point?.simulatedValue,
-            point?.options.value,
-            childrenTotal
-        );
+        let val =
+            point?.simulatedValue ?? point?.options.value ?? childrenTotal;
 
         if (point) {
             point.value = val;
@@ -1727,7 +1746,7 @@ class TreemapSeries extends ScatterSeries {
             children: children,
             childrenTotal: childrenTotal,
             // Ignore this node if point is not visible
-            ignore: !(pick(point?.visible, true) && (val > 0)),
+            ignore: !((point?.visible ?? true) && (val > 0)),
             isLeaf: tree.visible && !(
                 series.type === 'treegraph' ?
                     children.length > 0 :
@@ -1737,13 +1756,14 @@ class TreemapSeries extends ScatterSeries {
             levelDynamic: (
                 tree.level - (levelIsConstant ? 0 : nodeRoot.level)
             ),
-            name: pick(point?.name, ''),
-            sortIndex: pick(point?.sortIndex, -val),
+            name: (point?.name ?? ''),
+            sortIndex: (point?.sortIndex ?? -val),
             val: val
         });
         return tree;
     }
 
+    /** @internal */
     public sliceAndDice(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1751,6 +1771,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmFill(true, parent, children);
     }
 
+    /** @internal */
     public squarified(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1758,6 +1779,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmLowAspectRatio(true, parent, children);
     }
 
+    /** @internal */
     public strip(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1765,6 +1787,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmLowAspectRatio(false, parent, children);
     }
 
+    /** @internal */
     public stripes(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1772,6 +1795,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmFill(false, parent, children);
     }
 
+    /** @internal */
     public translate(tree?: this['tree']): void {
         const series = this,
             options = series.options,
@@ -1911,17 +1935,29 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
+    /** @internal */
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
+    /** @internal */
     colorKey: string;
+    /** @internal */
     directTouch: boolean;
+    /** @internal */
     getExtremesFromAll: boolean;
+    /** @internal */
     optionalAxis: string;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof TreemapPoint;
+    /** @internal */
     NodeClass: typeof TreemapNode;
+    /** @internal */
     trackerGroups: Array<string>;
+    /** @internal */
     utils: {
         recursive: typeof TreemapUtilities.recursive;
     };

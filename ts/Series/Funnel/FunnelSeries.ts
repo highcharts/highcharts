@@ -48,7 +48,6 @@ import {
     fireEvent,
     isArray,
     merge,
-    pick,
     pushUnique,
     splat
 } from '../../Shared/Utilities.js';
@@ -108,6 +107,7 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: FunnelSeriesOptions = merge(
         PieSeries.defaultOptions,
         FunnelSeriesDefaults
@@ -119,6 +119,7 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public centerX?: number;
 
     public data!: Array<FunnelPoint>;
@@ -635,7 +636,7 @@ class FunnelSeries extends PieSeries {
                 y: y1,
                 topWidth: x2 - x1,
                 bottomWidth: x4 - x3,
-                height: Math.abs(pick(y5, y3) - y1),
+                height: Math.abs((y5 ?? y3) - y1),
                 width: NaN
             };
 

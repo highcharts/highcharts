@@ -39,7 +39,6 @@ import {
     clamp,
     defined,
     isNumber,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -549,7 +548,7 @@ namespace ColumnDataLabel {
                         labelPosition.computed.y = y - topOffset;
 
                         // Detect overflowing data labels
-                        if (pick(dataLabelOptions.crop, true)) {
+                        if (dataLabelOptions.crop ?? true) {
                             dataLabelWidth = dataLabel.getBBox().width;
 
                             let sideOverflow: number|undefined;

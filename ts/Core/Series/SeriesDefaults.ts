@@ -2001,6 +2001,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
+         * @type  {number|Array<number>}
          * @since 2.2.1
          */
         padding: [1, 3],
@@ -2630,9 +2631,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * What type of legend symbol to render for this series. Can be one of
-     * `areaMarker`, `lineMarker` or `rectangle`.
+     * `areaMarker`, `lineMarker` or `rectangle`. The financial series of
+     * Highcharts Stock add `candlestick`, `hlc` and `ohlc`.
      *
-     * @validvalue ["areaMarker", "lineMarker", "rectangle"]
+     * @validvalue ["areaMarker", "candlestick", "hlc", "lineMarker", "ohlc", "rectangle"]
      *
      * @sample {highcharts} highcharts/series/legend-symbol/
      *         Change the legend symbol

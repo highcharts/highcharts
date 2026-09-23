@@ -62,7 +62,7 @@ const PolygonSeriesDefaults: PolygonSeriesOptions = {
      *
      * @type    {number}
      * @default 1
-     * @since   next
+     * @since   13.0.1
      * @product highcharts highstock
      */
     fillOpacity: 1,
@@ -89,7 +89,7 @@ const PolygonSeriesDefaults: PolygonSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.polygon
- * @excluding dataParser, dataURL, stack, boostThreshold, boostBlending
+ * @excluding stack, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.polygon

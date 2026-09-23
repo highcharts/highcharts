@@ -1,4 +1,3 @@
-
 import type { BenchmarkContext, BenchmarkResult } from '../../benchmark';
 import { performance } from 'node:perf_hooks';
 import { generateOHLC } from '../../data-generators';
@@ -14,12 +13,10 @@ export function before(size: number) {
     return {
         fileName: `${size}-ohlc.json`,
         func: generateOHLC.bind(undefined, size)
-  };
+    };
 }
 
 export default function benchmarkTest({
-    size,
-    CODE_PATH,
     data
 }: BenchmarkContext): BenchmarkResult {
     const { Highcharts: hc, el } = getHighchartsJSDOM('highstock');

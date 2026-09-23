@@ -20,16 +20,15 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type Axis from './Axis';
-import type {
-    AxisBreakOptions,
-    YAxisOptions
-} from './AxisOptions';
+import type { AxisBreakOptions } from './AxisOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
+import H from '../Globals.js';
+const { composed } = H;
 import StackItem from './Stacking/StackItem.js';
 import {
     addEvent,
@@ -37,7 +36,7 @@ import {
     fireEvent,
     isArray,
     isNumber,
-    pick
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -252,8 +251,7 @@ namespace BrokenAxis {
         SeriesClass: typeof Series
     ): (T&typeof BrokenAxis) {
 
-        if (!AxisClass.keepProps.includes('brokenAxis')) {
-            AxisClass.keepProps.push('brokenAxis');
+        if (pushUnique(composed, 'Axis.Broken')) {
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterInit', onAxisAfterInit);
@@ -366,7 +364,7 @@ namespace BrokenAxis {
     /** @internal */
     function onSeriesAfterRender(this: Series): void {
         this.drawBreaks(this.xAxis, ['x']);
-        this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
+        this.drawBreaks(this.yAxis, (this.pointArrayMap ?? ['y']));
     }
 
     /** @internal */
@@ -389,7 +387,7 @@ namespace BrokenAxis {
                 breaks = brokenAxis?.breakArray || [];
                 threshold = axis.isXAxis ?
                     axis.min :
-                    pick(series.options.threshold, axis.min);
+                    (series.options.threshold ?? axis.min);
 
                 points.forEach(function (point: Point): void {
                     y = (point as any)['stack' + key.toUpperCase()] ??
@@ -554,7 +552,6 @@ namespace BrokenAxis {
                             xRange
                         ] = new StackItem(
                             yAxis as any,
-                            (yAxis.options as YAxisOptions).stackLabels as any,
                             false,
                             xRange,
                             this.stack ?? ''
@@ -784,10 +781,8 @@ namespace BrokenAxis {
                     if (Additions.isInBreak(breaks[i], val)) {
                         inbrk = true;
                         if (!keep) {
-                            keep = pick(
-                                (breaks as any)[i].showPoints,
-                                !axis.isXAxis
-                            );
+                            keep =
+                                (breaks as any)[i].showPoints ?? !axis.isXAxis;
                         }
                     }
                 }
@@ -1055,7 +1050,7 @@ namespace BrokenAxis {
                 };
             }
 
-            if (pick(redraw, true)) {
+            if (redraw ?? true) {
                 axis.chart.redraw();
             }
         }
