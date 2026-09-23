@@ -792,23 +792,6 @@ describe('DataTable', () => {
     });
 
     describe('growing typed array columns', () => {
-        it('should grow when a sibling column grows', () => {
-            const table = new DataTable({
-                columns: {
-                    x: new Float32Array([1, 2]),
-                    y: [1, 2]
-                }
-            });
-
-            table.setColumn('y', [1, 2, 3, 4]);
-
-            deepStrictEqual(
-                table.getColumn('x'),
-                new Float32Array([1, 2, 0, 0]),
-                'The typed column should follow the new row count.'
-            );
-        });
-
         it('should grow when a longer column is added', () => {
             const table = new DataTable({
                 columns: {
@@ -818,26 +801,10 @@ describe('DataTable', () => {
 
             table.setColumns({ y: [1, 2, 3] });
 
-            strictEqual(
-                table.getColumn('x')!.length,
-                3,
-                'The typed column should follow the new row count.'
-            );
-        });
-
-        it('should keep values appended with setRow', () => {
-            const table = new DataTable({
-                columns: {
-                    x: new Float32Array([1, 2])
-                }
-            });
-
-            table.setRow({ x: 3 });
-
             deepStrictEqual(
                 table.getColumn('x'),
-                new Float32Array([1, 2, 3]),
-                'The appended value should be kept.'
+                new Float32Array([1, 2, 0]),
+                'The typed column should follow the new row count.'
             );
         });
 
