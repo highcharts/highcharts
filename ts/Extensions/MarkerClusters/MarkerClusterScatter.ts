@@ -59,7 +59,6 @@ import {
     isObject,
     merge,
     syncTimeout,
-    relativeLength,
     isFunction,
     addEvent
 } from '../../Shared/Utilities.js';
@@ -118,12 +117,10 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
             group: Record<string, MarkerClusterSplitDataArray> = {},
             pointMaxDistance = Number(
                 options.processedDistance ??
-                relativeLength(
+                series.chart.relativeLength(
                     options.distance ||
                     clusterDefaults.layoutAlgorithm.distance,
-                    series.chart.plotWidth,
-                    void 0,
-                    series.chart.renderTo
+                    series.chart.plotWidth
                 )
             ),
             iterations = options.iterations,
@@ -274,12 +271,10 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
         const series = this,
             pointMaxDistance = Number(
                 options.processedDistance ??
-                relativeLength(
+                series.chart.relativeLength(
                     options.distance ||
                     clusterDefaults.layoutAlgorithm.gridSize,
-                    series.chart.plotWidth,
-                    void 0,
-                    series.chart.renderTo
+                    series.chart.plotWidth
                 )
             ),
 
@@ -866,7 +861,7 @@ function seriesGeneratePoints(
     const series = this,
         { chart } = series,
         mapView = chart.mapView,
-        { plotWidth, renderTo } = chart,
+        { plotWidth } = chart,
         xData = series.getColumn('x'),
         yData = series.getColumn('y'),
         clusterOptions = series.options.cluster,
@@ -916,20 +911,16 @@ function seriesGeneratePoints(
         layoutAlgOptions = clusterOptions.layoutAlgorithm;
 
         // Get processed algorithm properties.
-        layoutAlgOptions.processedGridSize = relativeLength(
+        layoutAlgOptions.processedGridSize = chart.relativeLength(
             layoutAlgOptions.gridSize ||
                 clusterDefaults.layoutAlgorithm.gridSize,
-            plotWidth,
-            void 0,
-            renderTo
+            plotWidth
         );
 
-        layoutAlgOptions.processedDistance = relativeLength(
+        layoutAlgOptions.processedDistance = chart.relativeLength(
             layoutAlgOptions.distance ||
                 clusterDefaults.layoutAlgorithm.distance,
-            plotWidth,
-            void 0,
-            renderTo
+            plotWidth
         );
 
         kmeansThreshold = layoutAlgOptions.kmeansThreshold ||
@@ -1467,11 +1458,9 @@ function seriesGetScaledGridSize(
         mapView = series.chart.mapView,
         processedGridSize = Number(
             options.processedGridSize ??
-            relativeLength(
+            series.chart.relativeLength(
                 options.gridSize || clusterDefaults.layoutAlgorithm.gridSize,
-                series.chart.plotWidth,
-                void 0,
-                series.chart.renderTo
+                series.chart.plotWidth
             )
         );
 

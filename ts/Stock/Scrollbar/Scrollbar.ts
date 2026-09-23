@@ -46,7 +46,6 @@ import {
     merge,
     pick,
     pushUnique,
-    relativeLength,
     removeEvent
 } from '../../Shared/Utilities.js';
 
@@ -487,14 +486,12 @@ class Scrollbar {
         scroller.chart = chart;
 
         // Backward compatibility
-        scroller.size = relativeLength(
+        scroller.size = chart.relativeLength(
             pick(
                 scroller.options.size,
                 scroller.options.height
             ) || 0,
-            chart.plotHeight,
-            void 0,
-            chart.renderTo
+            chart.plotHeight
         );
 
         // Init

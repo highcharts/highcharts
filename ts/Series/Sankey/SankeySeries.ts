@@ -685,15 +685,13 @@ class SankeySeries extends ColumnSeries {
             // Border radius should not greater than half the height of the node
             // #18956
             const r = clamp(
-                relativeLength(
+                chart.relativeLength(
                     (
                         isObject(borderRadius) ?
                             borderRadius.radius :
                             borderRadius
                     ) || 0,
-                    width,
-                    void 0,
-                    chart.renderTo
+                    width
                 ),
                 0,
                 nodeHeight / 2

@@ -51,8 +51,7 @@ import {
     isArray,
     isNumber,
     merge,
-    pick,
-    relativeLength
+    pick
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -953,25 +952,20 @@ class ColorAxis extends Axis implements ColorAxisBase {
             {
                 legend: legendOptions
             } = chart.options,
-            renderTo = chart.renderTo,
             width = pick(
                 defined(colorAxisWidth) ?
-                    relativeLength(
+                    chart.relativeLength(
                         colorAxisWidth,
-                        chart.chartWidth,
-                        void 0,
-                        renderTo
+                        chart.chartWidth
                     ) : void 0,
                 legendOptions?.symbolWidth,
                 horiz ? ColorAxis.defaultLegendLength : 12
             ),
             height = pick(
                 defined(colorAxisHeight) ?
-                    relativeLength(
+                    chart.relativeLength(
                         colorAxisHeight,
-                        chart.chartHeight,
-                        void 0,
-                        renderTo
+                        chart.chartHeight
                     ) : void 0,
                 legendOptions?.symbolHeight,
                 horiz ? 12 : ColorAxis.defaultLegendLength

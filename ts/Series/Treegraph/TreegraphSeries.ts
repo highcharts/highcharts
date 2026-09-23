@@ -208,11 +208,9 @@ class TreegraphSeries extends TreemapSeries {
                     this,
                     columnCount
                 ),
-                radius = relativeLength(
+                radius = chart.relativeLength(
                     markerOptions.radius || 0,
-                    Math.min(plotSizeX, plotSizeY),
-                    void 0,
-                    chart.renderTo
+                    Math.min(plotSizeX, plotSizeY)
                 ),
                 lineWidth = Math.max(
                     markerOptions.lineWidth || 0,

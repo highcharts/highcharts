@@ -32,8 +32,7 @@ import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 import {
     addEvent,
     clamp,
-    isNumber,
-    relativeLength
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -295,7 +294,6 @@ class AxisResizer {
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
             plotBottom = plotTop + plotHeight,
-            renderTo = chart.renderTo,
             calculatePercent = (value: number): string => (
                 value * 100 / plotHeight + '%'
             ),
@@ -351,17 +349,13 @@ class AxisResizer {
 
                 top = axis.top;
 
-                const minLength = Math.round(relativeLength(
+                const minLength = Math.round(chart.relativeLength(
                         axisOptions.minLength || NaN,
-                        plotHeight,
-                        void 0,
-                        renderTo
+                        plotHeight
                     )),
-                    maxLength = Math.round(relativeLength(
+                    maxLength = Math.round(chart.relativeLength(
                         axisOptions.maxLength || NaN,
-                        plotHeight,
-                        void 0,
-                        renderTo
+                        plotHeight
                     ));
 
                 if (!isFirst && axesGroup === nextAxes) {

@@ -1890,6 +1890,19 @@ class Chart {
     }
 
     /**
+     * Resolves a CSS length expression to pixels, relative to this chart's
+     * container.
+     *
+     * @internal
+     * @function Highcharts.Chart#relativeLength
+     */
+    public relativeLength = (
+        value: (number|CSSLength|null|undefined),
+        base: number,
+        offset?: number
+    ): number => relativeLength(value, base, offset, this.renderTo);
+
+    /**
      * Internal function to get the available size of the container element
      *
      * @internal
@@ -1949,12 +1962,7 @@ class Chart {
          */
         chart.chartWidth = Math.max( // #1393
             0,
-            relativeLength(
-                widthOption,
-                containerBox.width,
-                void 0,
-                chart.renderTo
-            ) ||
+            chart.relativeLength(widthOption, containerBox.width) ||
             containerBox.width ||
             600 // #1460
         );
@@ -1966,12 +1974,7 @@ class Chart {
          */
         chart.chartHeight = Math.max(
             0,
-            relativeLength(
-                heightOption,
-                chart.chartWidth,
-                void 0,
-                chart.renderTo
-            ) ||
+            chart.relativeLength(heightOption, chart.chartWidth) ||
             (enableDefaultHeight ? 400 : containerBox.height)
         );
 
@@ -2655,11 +2658,9 @@ class Chart {
                     const base = side % 2 ? // Right or Left
                         chart.chartWidth :
                         chart.chartHeight;
-                    chart[target][side] = relativeLength(
+                    chart[target][side] = chart.relativeLength(
                         optionValue,
-                        base || 0,
-                        void 0,
-                        chart.renderTo
+                        base || 0
                     );
                 }
             });
@@ -2760,12 +2761,7 @@ class Chart {
             width: chartWidth - mgn - chartBorderWidth % 2,
             height: chartHeight - mgn - chartBorderWidth % 2,
             r: defined(borderRadius) ?
-                relativeLength(
-                    borderRadius,
-                    0,
-                    void 0,
-                    chart.renderTo
-                ) :
+                chart.relativeLength(borderRadius, 0) :
                 void 0
         });
 
@@ -4068,21 +4064,17 @@ class Chart {
         // Update size. Redraw is forced.
         const newWidth = optionsChart && (
             isString(optionsChart.width) ?
-                relativeLength(
+                chart.relativeLength(
                     optionsChart.width,
-                    chart.getContainerBox().width,
-                    void 0,
-                    chart.renderTo
+                    chart.getContainerBox().width
                 ) :
                 optionsChart.width
         );
         const newHeight = optionsChart && (
             isString(optionsChart.height) ?
-                relativeLength(
+                chart.relativeLength(
                     optionsChart.height,
-                    isNumber(newWidth) ? newWidth : chart.chartWidth,
-                    void 0,
-                    chart.renderTo
+                    isNumber(newWidth) ? newWidth : chart.chartWidth
                 ) :
                 optionsChart.height
         );

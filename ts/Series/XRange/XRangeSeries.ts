@@ -338,11 +338,9 @@ class XRangeSeries extends ColumnSeries {
         // Handle individual pointWidth
         if (defined(point.options.pointWidth)) {
             const resolvedPointWidth = Math.ceil(
-                relativeLength(
+                this.chart.relativeLength(
                     point.options.pointWidth,
-                    pointHeight,
-                    void 0,
-                    this.chart.renderTo
+                    pointHeight
                 )
             );
             yOffset -= (resolvedPointWidth - pointHeight) / 2;

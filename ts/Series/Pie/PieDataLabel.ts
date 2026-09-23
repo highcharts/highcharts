@@ -40,8 +40,7 @@ import {
     defined,
     isNumber,
     pick,
-    pushUnique,
-    relativeLength
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -311,11 +310,9 @@ namespace ColumnDataLabel {
 
                 const r = seriesCenter[2] / 2,
                     dataLabelOptions = dataLabel.options,
-                    distance = relativeLength(
+                    distance = chart.relativeLength(
                         dataLabelOptions?.distance || 0,
-                        r,
-                        void 0,
-                        chart.renderTo
+                        r
                     );
 
                 // Arrange points for collision detection
@@ -795,11 +792,9 @@ namespace ColumnDataLabel {
                         Math.max(0, newSize - options.thickness * 2) :
                         Math.max(
                             0,
-                            relativeLength(
+                            this.chart.relativeLength(
                                 options.innerSize || 0,
-                                newSize,
-                                void 0,
-                                this.chart.renderTo
+                                newSize
                             )
                         ), newSize
                 ); // #6647

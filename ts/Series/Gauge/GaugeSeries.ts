@@ -46,8 +46,7 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
-    relativeLength
+    pick
 } from '../../Shared/Utilities.js';
 
 
@@ -461,10 +460,10 @@ class GaugeSeries extends Series {
     public translate(): void {
 
         const series = this,
+            { relativeLength } = series.chart,
             yAxis = series.yAxis,
             options = series.options,
-            center = yAxis.center,
-            renderTo = series.chart.renderTo;
+            center = yAxis.center;
 
         series.generatePoints();
 
@@ -477,29 +476,19 @@ class GaugeSeries extends Series {
                     options.dial,
                     point.dial
                 ),
-                radius = relativeLength(
-                    dialOptions.radius, center[2] / 2, void 0, renderTo
-                ),
-                baseLength = relativeLength(
-                    dialOptions.baseLength, radius, void 0, renderTo
-                ),
+                radius = relativeLength(dialOptions.radius, center[2] / 2),
+                baseLength = relativeLength(dialOptions.baseLength, radius),
                 rearLength = Math.min(
-                    relativeLength(
-                        dialOptions.rearLength, radius, void 0, renderTo
-                    ),
+                    relativeLength(dialOptions.rearLength, radius),
                     radius
                 ),
                 baseWidth = Math.min(
-                    relativeLength(
-                        dialOptions.baseWidth, radius, void 0, renderTo
-                    ),
+                    relativeLength(dialOptions.baseWidth, radius),
                     radius
                 ),
-                topWidth = relativeLength(
-                    dialOptions.topWidth, radius, void 0, renderTo
-                ),
+                topWidth = relativeLength(dialOptions.topWidth, radius),
                 borderRadius = relativeLength(
-                    dialOptions.borderRadius, radius, void 0, renderTo
+                    dialOptions.borderRadius, radius
                 ),
                 // Border radius at the base
                 bRBase = Math.min(borderRadius, baseWidth / 2),
@@ -590,11 +579,9 @@ class GaugeSeries extends Series {
             options = series.options,
             pivotOptions = options.pivot,
             renderer = chart.renderer,
-            pivotRadius = relativeLength(
+            pivotRadius = chart.relativeLength(
                 pivotOptions?.radius || 0,
-                center[2] / 2,
-                void 0,
-                chart.renderTo
+                center[2] / 2
             );
 
         series.points.forEach((point): void => {

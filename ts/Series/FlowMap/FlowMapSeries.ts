@@ -675,12 +675,7 @@ class FlowMapSeries extends MapLineSeries {
         // An offset makes room for arrows if they are specified.
         if (offset) {
             // Prepare offset if it's a percentage by converting to number.
-            offset = relativeLength(
-                offset,
-                finalWidth * 4,
-                void 0,
-                this.chart.renderTo
-            );
+            offset = this.chart.relativeLength(offset, finalWidth * 4);
 
             // Vector between the points.
             let dX = toX - fromX,

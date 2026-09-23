@@ -29,8 +29,7 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
-    relativeLength
+    pick
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -123,11 +122,9 @@ class BulletSeries extends ColumnSeries {
                     shapeArgs = point.dlBox;
                 }
 
-                width = relativeLength(
+                width = chart.relativeLength(
                     targetOptions.width,
-                    (shapeArgs as any).width,
-                    void 0,
-                    chart.renderTo
+                    (shapeArgs as any).width
                 );
                 y = series.yAxis.translate(
                     targetVal,

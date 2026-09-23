@@ -36,7 +36,6 @@ import {
     getAlignFactor,
     isNumber,
     merge,
-    relativeLength,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -395,12 +394,7 @@ class Pane {
             } else {
                 this.center[3] = Math.min(
                     size,
-                    relativeLength(
-                        options.innerSize || 0,
-                        size,
-                        void 0,
-                        this.chart.renderTo
-                    )
+                    this.chart.relativeLength(options.innerSize || 0, size)
                 );
             }
         }

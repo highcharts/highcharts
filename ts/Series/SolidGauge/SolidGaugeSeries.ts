@@ -38,8 +38,7 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
-    relativeLength
+    pick
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -148,19 +147,14 @@ class SolidGaugeSeries extends GaugeSeries {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
                 const paneInnerSize = yAxis.pane.options.innerSize,
-                    renderTo = series.chart.renderTo,
-                    radius = ((
-                        relativeLength(
-                            point.options.radius ??
-                                options.radius ??
-                                '100%',
-                            outerRadius,
-                            void 0,
-                            renderTo
-                        )
-                    )),
-                    innerRadius = Math.min((
-                        relativeLength(
+                    radius = series.chart.relativeLength(
+                        point.options.radius ??
+                            options.radius ??
+                            '100%',
+                        outerRadius
+                    ),
+                    innerRadius = Math.min(
+                        series.chart.relativeLength(
                             point.options.innerRadius ??
                                 options.innerRadius ??
                                 (
@@ -169,11 +163,8 @@ class SolidGaugeSeries extends GaugeSeries {
                                         paneInnerSize
                                 ) ??
                                 0,
-                            outerRadius,
-                            void 0,
-                            renderTo
-                        )
-                    ), radius),
+                            outerRadius
+                        ), radius),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad

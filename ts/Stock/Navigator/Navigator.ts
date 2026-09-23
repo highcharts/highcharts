@@ -56,7 +56,6 @@ import {
     isNumber,
     merge,
     pick,
-    relativeLength,
     removeEvent,
     splat
 } from '../../Shared/Utilities.js';
@@ -616,12 +615,7 @@ class Navigator {
             // Update navigator axis
             if (options.height || options.xAxis || options.yAxis) {
                 this.height = defined(options.height) ?
-                    relativeLength(
-                        options.height,
-                        chart.plotHeight,
-                        void 0,
-                        chart.renderTo
-                    ) :
+                    chart.relativeLength(options.height, chart.plotHeight) :
                     this.height;
                 const offsets = this.getXAxisOffsets();
 
@@ -1333,18 +1327,16 @@ class Navigator {
             navigatorEnabled = navigatorOptions.enabled,
             scrollbarOptions = chartOptions.scrollbar || {},
             scrollbarEnabled = scrollbarOptions.enabled,
-            height = navigatorEnabled ? relativeLength(
-                navigatorOptions.height || 0,
-                chart.plotHeight,
-                void 0,
-                chart.renderTo
-            ) : 0,
-            scrollbarHeight = scrollbarEnabled ? relativeLength(
-                scrollbarOptions.height || 0,
-                chart.plotHeight,
-                void 0,
-                chart.renderTo
-            ) : 0,
+            height = navigatorEnabled ?
+                chart.relativeLength(
+                    navigatorOptions.height || 0,
+                    chart.plotHeight
+                ) : 0,
+            scrollbarHeight = scrollbarEnabled ?
+                chart.relativeLength(
+                    scrollbarOptions.height || 0,
+                    chart.plotHeight
+                ) : 0,
             scrollButtonSize =
                 scrollbarOptions.buttonsEnabled && scrollbarHeight || 0;
 

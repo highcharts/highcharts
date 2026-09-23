@@ -66,7 +66,6 @@ import {
     merge,
     pick,
     pushUnique,
-    relativeLength,
     stableSort,
     syncTimeout
 } from '../../Shared/Utilities.js';
@@ -917,11 +916,9 @@ class Legend {
                         options.itemWidth ||
                         legend.widthOption ||
                         chart.spacingBox.width,
-                        options.maxWidth ? relativeLength(
+                        options.maxWidth ? chart.relativeLength(
                             options.maxWidth,
-                            chart.chartWidth,
-                            void 0,
-                            chart.renderTo
+                            chart.chartWidth
                         ) : Infinity
                     ) - itemExtraWidth
                 ) + 'px'
@@ -1235,11 +1232,9 @@ class Legend {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = relativeLength(
+        legend.widthOption = chart.relativeLength(
             options.width,
-            chartSpacingBoxWidth - padding,
-            void 0,
-            chart.renderTo
+            chartSpacingBoxWidth - padding
         );
 
         // Compute how wide the legend is allowed to be
@@ -1314,11 +1309,9 @@ class Legend {
                         legend.widthOption || legend.offsetWidth
                     ),
                     allowedWidth,
-                    relativeLength(
+                    chart.relativeLength(
                         options.maxWidth,
-                        chart.chartWidth,
-                        void 0,
-                        chart.renderTo
+                        chart.chartWidth
                     ) || Infinity
                 ) :
                 (legend.widthOption || legend.offsetWidth)
