@@ -111,20 +111,7 @@ describe('DataTable', () => {
             );
         });
 
-        it('should update the version tag', () => {
-            const table = new DataTable({ columns: { column1: [true] } });
-            const versionTag = table.getVersionTag();
-
-            table.changeColumnId('column1', 'newColumn');
-
-            notStrictEqual(
-                table.getVersionTag(),
-                versionTag,
-                'Renaming a column should update the version tag.'
-            );
-        });
-
-        it('should keep the version tag when nothing changes', () => {
+        it('should update the version tag only on an effective rename', () => {
             const table = new DataTable({ columns: { column1: [true] } });
             const versionTag = table.getVersionTag();
 
@@ -135,6 +122,14 @@ describe('DataTable', () => {
                 table.getVersionTag(),
                 versionTag,
                 'Renames without effect should keep the version tag.'
+            );
+
+            table.changeColumnId('column1', 'newColumn');
+
+            notStrictEqual(
+                table.getVersionTag(),
+                versionTag,
+                'Renaming a column should update the version tag.'
             );
         });
     });
