@@ -540,7 +540,8 @@ interface ArcDiagramSeries {
     pointClass: typeof ArcDiagramPoint;
 }
 extend(ArcDiagramSeries.prototype, {
-    orderNodes: false
+    orderNodes: false,
+    useCircularLayout: false
 });
 
 /* *
