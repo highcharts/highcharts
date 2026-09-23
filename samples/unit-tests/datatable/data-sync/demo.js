@@ -132,6 +132,6 @@ QUnit.test('Sync between data table and series', async assert => {
     assert.strictEqual(
         redrawCount,
         1,
-        'After adding a row to the DataTable, the chart should be exactly once'
+        'After setting multiple columns, the chart should redraw exactly once'
     );
 });
