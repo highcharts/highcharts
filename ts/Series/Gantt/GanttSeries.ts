@@ -47,7 +47,7 @@ import { extend, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.gantt
  *
@@ -143,7 +143,7 @@ class GanttSeries extends XRangeSeries {
      *
      * @requires highcharts-gantt
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.gantt#drawPoint
      *
      * @param {Highcharts.Point} point
@@ -206,7 +206,7 @@ class GanttSeries extends XRangeSeries {
 
     /**
      * Handle milestones, as they have no x2.
-     * @private
+     * @internal
      */
     public translatePoint(point: GanttPoint): void {
         let shapeArgs: SVGAttributes,
@@ -253,6 +253,7 @@ extend(GanttSeries.prototype, { // Props - series member overrides
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         gantt: typeof GanttSeries;
@@ -267,4 +268,5 @@ SeriesRegistry.registerSeriesType('gantt', GanttSeries);
  *
  * */
 
+/** @internal */
 export default GanttSeries;

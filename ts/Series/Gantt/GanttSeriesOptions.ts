@@ -41,6 +41,12 @@ import type {
  * @optionparent series.gantt.connectors.animation
  */
 export interface GanttAnimationOptions extends Partial<AnimationOptions> {
+    /**
+     * Whether the connector animation is reversed, drawing from the
+     * dependent point to the point it depends on.
+     *
+     * @default true
+     */
     reversed?: boolean;
 }
 
@@ -68,10 +74,6 @@ export type GanttDependencyOptions = (
  * @product gantt
  *
  * @requires highcharts-gantt
- *
- * @excluding boostThreshold, dashStyle, findNearestPointBy,
- *            getExtremesFromAll, marker, negativeColor, pointInterval,
- *            pointIntervalUnit, pointPlacement, pointStart
  */
 export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
@@ -81,8 +83,6 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
      * Data for a Gantt series.
      *
      * @declare Highcharts.GanttPointOptionsObject
-     *
-     * @type {Array<*>}
      *
      * @extends series.xrange.data
      *
@@ -110,6 +110,23 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
     states?: SeriesStatesOptions<GanttSeriesOptions>;
 
     tooltip?: GanttSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostThreshold?: undefined;
+    dashStyle?: undefined;
+    findNearestPointBy?: undefined;
+    getExtremesFromAll?: undefined;
+    marker?: undefined;
+    negativeColor?: undefined;
+    pointInterval?: undefined;
+    pointIntervalUnit?: undefined;
+    pointPlacement?: undefined;
+    pointStart?: undefined;
 }
 
 export interface GanttSeriesTooltipOptions extends XRangeSeriesTooltipOptions {
