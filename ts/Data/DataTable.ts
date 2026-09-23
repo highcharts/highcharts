@@ -1075,7 +1075,14 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
                     }
 
                     if (tableColumn.length < rowCount) {
-                        tableColumn = setLength(tableColumn, rowCount);
+                        if (ArrayConstructor === Array) {
+                            tableColumn = setLength(tableColumn, rowCount);
+                        } else {
+                            const grown =
+                                new ArrayConstructor(rowCount) as TypedArray;
+                            grown.set(tableColumn as ArrayLike<number>);
+                            tableColumn = grown;
+                        }
                     }
                 }
                 tableColumns[columnId] = tableColumn;
