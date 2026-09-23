@@ -27,7 +27,6 @@ import type {
 } from '../../../Core/Series/PointOptions';
 import type Series from '../../../Core/Series/Series.js';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
-
 import H from '../../../Core/Globals.js';
 const { composed } = H;
 import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
@@ -45,6 +44,13 @@ namespace ForcedMarkersComposition {
      *  Declarations
      *
      * */
+
+    /**
+     * @private
+     */
+    type SeriesWithLowMarker = SeriesOptions & {
+        lowMarker?: PointMarkerOptions;
+    };
 
     export declare class PointComposition extends Accessibility.PointComposition {
         hasForcedA11yMarker?: boolean;
@@ -123,9 +129,9 @@ namespace ForcedMarkersComposition {
      * @private
      */
     function restoreLowMarkerOpacity(series: SeriesComposition): void {
-        const { lowMarker } = series.options as {
-            lowMarker?: PointMarkerOptions
-        };
+        const lowMarker = (
+            series.options as SeriesWithLowMarker
+        ).lowMarker;
 
         if (
             lowMarker && lowMarker?.enabled === true &&
@@ -230,9 +236,9 @@ namespace ForcedMarkersComposition {
 
             // Unforce lowMarker zero opacity if enabled
             // in styled mode (#25279).
-            const { lowMarker } = series.options as {
-                lowMarker?: PointMarkerOptions
-            };
+            const lowMarker = (
+                series.options as SeriesWithLowMarker
+            ).lowMarker;
             if (lowMarker) {
                 const lowMarkerVisible = !!series.a11yMarkersForced &&
                     lowMarker.enabled === true;
