@@ -3,7 +3,7 @@
  *  Generating API documentation for the @highcharts/react package.
  *
  *  Reads the integration's `.d.ts` files and writes a `tree-react.json`. The
- *  integration is generated from the Highcharts source by the 
+ *  integration is generated from the Highcharts source by the
  *  hc-integration-gen repo, and the tree is consumed by the API docs backend
  *  (hc-apidoc-backend), whose React sync task runs this tool with its own
  *  `--source` and `--out` paths.
@@ -51,41 +51,36 @@ const md = markdownit();
  * */
 
 
-interface PassThrough {
-    // The options path this prop points to ('' = the whole options root).
-    // Becomes the prop's `doclet.crossref`, which the backend reads.
-    hrefPath: string;
-}
-
-
 interface PropEntry {
     name: string;
     type: string;
     description: string;
-    optional: boolean;
-    // Set when the prop points to an options subtree; becomes its crossref.
-    passThrough?: PassThrough;
+    // Options path the prop points to (`options/legend`); the backend reads
+    // the prop's content from there.
+    crossref?: string;
 }
 
 
 interface ComponentDoc {
     name: string;
     category: string;
-    importPath: string;
+    // JSDoc of the component, tags included.
     description: string;
     props: PropEntry[];
     // Source `.d.ts` path emitted as the node's `meta.file`.
     sourceFile: string;
-    // The options subtree this whole component points to (its `doclet.crossref`).
-    // Only chart elements, modules, and PlotOptions use this.
+    // Options path the whole component points to. Only chart elements,
+    // modules, and PlotOptions use this.
     crossref?: string;
+    // Highcharts modules the component loads, e.g. `modules/exporting`.
+    modules?: string[];
 }
 
 
-interface ProductConfig {
-    id: 'highcharts' | 'stock' | 'maps' | 'gantt';
-    entryFile: string;
-    includeSharedLibrary: boolean;
+interface CategoryDef {
+    name: string;
+    // HTML, rendered as is by the API docs.
+    description: string;
 }
 
 
@@ -96,28 +91,12 @@ interface ProductConfig {
  * */
 
 
-const PRODUCTS: ProductConfig[] = [
-    {
-        id: 'highcharts',
-        entryFile: 'Highcharts.d.ts',
-        includeSharedLibrary: true
-    },
-    {
-        id: 'stock',
-        entryFile: 'Stock.d.ts',
-        includeSharedLibrary: false
-    },
-    {
-        id: 'maps',
-        entryFile: 'Maps.d.ts',
-        includeSharedLibrary: false
-    },
-    {
-        id: 'gantt',
-        entryFile: 'Gantt.d.ts',
-        includeSharedLibrary: false
-    }
-];
+// One entry file per product. Highcharts' is read in full; the others only add
+// their chart and generic series components.
+const ENTRY_FILES = ['Highcharts.d.ts', 'Stock.d.ts', 'Maps.d.ts', 'Gantt.d.ts'];
+
+// Charts are ordered by product, the order users expect.
+const CHART_ORDER = ['Chart', 'StockChart', 'MapsChart', 'GanttChart'];
 
 const SHARED_DIRS: Array<{ dir: string; category: string }> = [
     { dir: 'series',     category: 'Series types'         },
@@ -125,13 +104,6 @@ const SHARED_DIRS: Array<{ dir: string; category: string }> = [
     { dir: 'modules',    category: 'Modules'              },
     { dir: 'options',    category: 'Chart elements'       }
 ];
-
-
-interface CategoryDef {
-    name: string;
-    description: string;
-}
-
 
 // The five top-level sidebar categories, in order. `name` must match the
 // category names used during extraction.
@@ -167,6 +139,56 @@ const CATEGORIES: CategoryDef[] = [
     }
 ];
 
+// Chart elements and modules whose option isn't named after them.
+const CROSSREF_OVERRIDES: Record<string, string> = {
+    BrokenAxis: 'options/xAxis/breaks',
+    DraggablePoints: 'options/plotOptions/series/dragDrop',
+    SeriesLabel: 'options/plotOptions/series/label'
+};
+
+// Which product the generated pointers aim at. The backend fills any missing
+// descriptions from the other products (see `Nav.ts`).
+const CROSSREF_PRODUCT = 'highcharts';
+
+// Type names that look like Highcharts types but must NOT get the
+// `Highcharts.` prefix: the namespace itself, TS/stdlib, React, and DOM types.
+const TS_BUILTINS = new Set([
+    // Highcharts namespace name (alias for the namespace, not a type)
+    'Highcharts',
+    // TypeScript / standard library
+    'Array', 'Record', 'Partial', 'Required', 'Readonly', 'Pick', 'Omit',
+    'Extract', 'Exclude', 'NonNullable', 'ReturnType', 'Parameters',
+    'Date', 'Promise', 'Map', 'Set', 'Object', 'Function', 'RegExp', 'JSON',
+    'Iterable', 'Iterator', 'ReadonlyArray',
+    // React (bare forms produced by cleanType)
+    'Ref', 'HTMLAttributes', 'ReactNode', 'ReactElement', 'JSX', 'Element',
+    // DOM
+    'HTMLDivElement', 'HTMLElement', 'HTMLInputElement', 'Document', 'Window',
+    'Event', 'MouseEvent', 'KeyboardEvent', 'TouchEvent', 'PointerEvent',
+    'WheelEvent', 'DragEvent', 'FocusEvent', 'UIEvent', 'Node'
+]);
+
+// Matches `Highcharts.Foo` and bare `Foo` type names, skipping other
+// namespaces' members (`React.X`) and single-letter generics.
+const TYPE_RE = /(?<!\.)\b(Highcharts\.)?([A-Z]\w+)\b(?!\.)/g;
+
+// A `Links to Highcharts.Options.<path>` hint in a prop's JSDoc. The captured
+// path becomes that prop's pointer target.
+const LINKS_HINT_RE = /^Links to Highcharts\.Options\.(.+?)\s*$/;
+
+// Where the Highcharts module files live, relative to the `highcharts` package.
+const MASTERS_PATH = 'highcharts/es-modules/masters/';
+
+// Static imports of a module file (`import 'x.src.js'`, `import X from ...`).
+// Dynamic `import()` calls only load on demand, so they don't count.
+const STATIC_IMPORT_RE = /^import\s(?:[^'"]*\sfrom\s)?['"]([^'"]+)\.src\.js['"]/gm;
+
+// Description for the `options` prop that every series/indicator has; its
+// pointer opens the full series config.
+const SERIES_OPTIONS_PROP_DESCRIPTION =
+    'Full series configuration object, equivalent to one entry of the ' +
+    'Highcharts <code>series</code> array.';
+
 
 /* *
  *
@@ -198,12 +220,25 @@ function getJSDoc(
 }
 
 
-function toHTML(text: string): string {
-    if (!text) {
-        return '';
+// Render a JSDoc comment as HTML. Its tags are Markdown too: an `@example`
+// becomes a code block and a `@see` a link, the only tags the package uses.
+function toHTML(jsdoc: string): string {
+    const [text, ...tags] = jsdoc.split(/^(?=@(?:example|see)\b)/m);
+    const parts = [text];
+
+    for (const tag of tags) {
+        const content = tag.replace(/^@\w+/, '').trim();
+
+        if (!content) {
+            continue;
+        }
+        parts.push(tag.startsWith('@example') ?
+            '```jsx\n' + content + '\n```' :
+            `See also: <${content}>`);
     }
+
     return md.render(
-        text.replace(
+        parts.join('\n\n').replace(
             /\{@link ([^|}]+)(?:\|([^}]+))?\}/gm,
             (_, link, name) => `[${name || link}](${link})`
         )
@@ -223,38 +258,31 @@ function cleanType(typeText: string): string {
 }
 
 
-// Which product the generated pointers aim at. The backend fills any missing
-// descriptions from the other products (see `Nav.ts`).
-const CROSSREF_PRODUCT = 'highcharts';
+// Add the `Highcharts.` prefix to recognised Highcharts types in a type label.
+function prefixHighchartsTypeText(typeText: string): string {
+    return typeText.replace(TYPE_RE, (match, _prefix, name) => (
+        TS_BUILTINS.has(name) ? match : `Highcharts.${name}`
+    ));
+}
 
 
-// Type names that look like Highcharts types but must NOT get the
-// `Highcharts.` prefix: the namespace itself, TS/stdlib, React, and DOM types.
-const TS_BUILTINS = new Set([
-    // Highcharts namespace name (alias for the namespace, not a type)
-    'Highcharts',
-    // TypeScript / standard library
-    'Array', 'Record', 'Partial', 'Required', 'Readonly', 'Pick', 'Omit',
-    'Extract', 'Exclude', 'NonNullable', 'ReturnType', 'Parameters',
-    'Date', 'Promise', 'Map', 'Set', 'Object', 'Function', 'RegExp', 'JSON',
-    'Iterable', 'Iterator', 'ReadonlyArray',
-    // React (bare forms produced by cleanType)
-    'Ref', 'HTMLAttributes', 'ReactNode', 'ReactElement', 'JSX', 'Element',
-    // DOM
-    'HTMLDivElement', 'HTMLElement', 'HTMLInputElement', 'Document', 'Window',
-    'Event', 'MouseEvent', 'KeyboardEvent', 'TouchEvent', 'PointerEvent',
-    'WheelEvent', 'DragEvent', 'FocusEvent', 'UIEvent', 'Node'
-]);
+// The options path a `Highcharts.<X>Options` type documents: `Options` is the
+// root, `PlotOptions` is `options/plotOptions`, and `LegendOptions` is
+// `options/legend`.
+function toOptionsPath(typeText: string): string | undefined {
+    const name = typeText.match(/^(?:Highcharts|HC)\.([A-Z]\w+)$/)?.[1];
 
+    if (name === 'Options') {
+        return 'options';
+    }
+    if (name === 'PlotOptions') {
+        return 'options/plotOptions';
+    }
 
-// Matches `Highcharts.Foo` and bare `Foo` type names, skipping other
-// namespaces' members (`React.X`) and single-letter generics.
-const TYPE_RE = /(?<!\.)\b(Highcharts\.)?([A-Z]\w+)\b(?!\.)/g;
+    const m = name?.match(/^([A-Z]\w*?)Options$/);
 
-
-// A `Links to Highcharts.Options.<path>` hint in a prop's JSDoc. The captured
-// path becomes that prop's pointer target.
-const LINKS_HINT_RE = /^Links to Highcharts\.Options\.(.+?)\s*$/;
+    return m ? `options/${m[1][0].toLowerCase()}${m[1].slice(1)}` : undefined;
+}
 
 
 // The basic prop names for the generic series components, read from the
@@ -280,38 +308,63 @@ function genericSeriesPropNames(
 }
 
 
-// Description for the `options` prop that every series/indicator has; its
-// pointer opens the full series config.
-const SERIES_OPTIONS_PROP_DESCRIPTION =
-    'Full series configuration object, equivalent to one entry of the ' +
-    'Highcharts <code>series</code> array.';
-
-
-// Build the `options` prop: a leaf whose pointer (`hrefPath`) opens the full
-// series config.
+// The `options` prop of a series: its pointer opens the full series config.
 function seriesOptionsProp(
-    hrefPath: string,
-    type: string,
-    optional: boolean
+    crossref: string | undefined,
+    type: string
 ): PropEntry {
     return {
         name: 'options',
         type,
         description: SERIES_OPTIONS_PROP_DESCRIPTION,
-        optional,
-        passThrough: hrefPath ? { hrefPath } : undefined
+        crossref
     };
 }
 
 
-// Add the `Highcharts.` prefix to recognised Highcharts types in a type label.
-function prefixHighchartsTypeText(typeText: string): string {
-    return typeText.replace(TYPE_RE, (match, _prefix, name) => {
-        if (TS_BUILTINS.has(name)) {
-            return match;
+// The `highcharts` package's module files, found the way Node resolves it:
+// in the nearest `node_modules` of the package or of any folder above it.
+function findMastersDir(packageRoot: string): string {
+    let dir = Path.resolve(packageRoot);
+    for (;;) {
+        const mastersDir = Path.join(dir, 'node_modules', MASTERS_PATH);
+        if (FSSync.existsSync(mastersDir) || dir === Path.dirname(dir)) {
+            return mastersDir;
         }
-        return `Highcharts.${name}`;
-    });
+        dir = Path.dirname(dir);
+    }
+}
+
+
+// The Highcharts modules a component file loads, e.g. `modules/stock`: its own
+// module imports, followed through the modules those import in turn.
+function getLoadedModules(jsPath: string, packageRoot: string): string[] {
+    const mastersDir = findMastersDir(packageRoot);
+    const modules = new Set<string>();
+    const visit = (filePath: string, toModule: (spec: string) => string): void => {
+        if (!FSSync.existsSync(filePath)) {
+            return;
+        }
+        const text = FSSync.readFileSync(filePath, 'utf8');
+        for (const [, spec] of text.matchAll(STATIC_IMPORT_RE)) {
+            const module = toModule(spec);
+            if (!module || modules.has(module)) {
+                continue;
+            }
+            modules.add(module);
+            visit(
+                Path.join(mastersDir, `${module}.src.js`),
+                // Modules import each other relatively.
+                relative => Path.posix.join(Path.posix.dirname(module), relative)
+            );
+        }
+    };
+
+    visit(jsPath, spec => (
+        spec.startsWith(MASTERS_PATH) ? spec.slice(MASTERS_PATH.length) : ''
+    ));
+
+    return [...modules];
 }
 
 
@@ -322,65 +375,13 @@ function prefixHighchartsTypeText(typeText: string): string {
  * */
 
 
-// Turn a Highcharts options-type name into its path: `Options`→'',
-// `PlotOptions`→'plotOptions', `<X>Options`→lowercase first letter of X.
-function namespaceMemberToOptionsHrefPath(
-    name: string
-): string | undefined {
-    if (name === 'Options') {
-        return '';
-    }
-    if (name === 'PlotOptions') {
-        return 'plotOptions';
-    }
-    const m = name.match(/^([A-Z]\w*?)Options$/);
-    if (!m) {
-        return undefined;
-    }
-    return m[1][0].toLowerCase() + m[1].slice(1);
-}
-
-
-// Turn a `Highcharts.<X>Options` type into its options path
-// (e.g. `Highcharts.PlotOptions` → `options/plotOptions`).
-function deriveCrossrefFromExternalAlias(
-    aliasRhs: string
-): string | undefined {
-    const m = aliasRhs.match(/^(?:Highcharts|HC)\.([A-Z]\w+)$/);
-    if (!m) {
-        return undefined;
-    }
-    const hrefPath = namespaceMemberToOptionsHrefPath(m[1]);
-    if (hrefPath === undefined) {
-        return undefined;
-    }
-    return hrefPath ? `options/${hrefPath}` : 'options';
-}
-
-
-// If a prop is typed as a Highcharts options object (`Highcharts.<X>Options`),
-// return the options subtree it points to (e.g. the chart `options` prop).
-function detectPassThrough(
-    sourceTypeText: string
-): PassThrough | undefined {
-    const ns = sourceTypeText.match(/^(?:Highcharts|HC)\.([A-Z]\w+)$/);
-    if (ns) {
-        const path = namespaceMemberToOptionsHrefPath(ns[1]);
-        if (path !== undefined) {
-            return { hrefPath: path };
-        }
-    }
-    return undefined;
-}
-
-
 function resolveTypeText(
     member: TSCompiler.PropertySignature,
     src: TSCompiler.SourceFile,
-    checker: TSCompiler.TypeChecker | undefined
+    checker: TSCompiler.TypeChecker
 ): string {
     const sourceText = member.type ? member.type.getText(src) : 'any';
-    if (!checker || !member.type) {
+    if (!member.type) {
         return sourceText;
     }
     const resolved = checker.typeToString(
@@ -405,8 +406,8 @@ type PropContainer =
 function extractPropsFromInterface(
     iface: PropContainer,
     src: TSCompiler.SourceFile,
-    checker?: TSCompiler.TypeChecker,
-    externalTypeAliases?: Map<string, TSCompiler.TypeAliasDeclaration>
+    checker: TSCompiler.TypeChecker,
+    externalTypeAliases: Map<string, TSCompiler.TypeAliasDeclaration>
 ): PropEntry[] {
     const props: PropEntry[] = [];
 
@@ -421,25 +422,23 @@ function extractPropsFromInterface(
         const sourceTypeText = member.type ?
             member.type.getText(src) :
             'any';
-        // A `Links to …` hint points the prop at that option; otherwise detect
-        // a pass-through (either directly or one type-alias deep).
+        // A `Links to …` hint points the prop at that option; otherwise the
+        // prop's type decides, directly or one type alias deep.
         const linkHint = doc.match(LINKS_HINT_RE);
-        const aliasNode = externalTypeAliases?.get(sourceTypeText);
-        const passThrough = linkHint ?
-            { hrefPath: linkHint[1].trim() } :
-            (detectPassThrough(sourceTypeText) ??
+        const aliasNode = externalTypeAliases.get(sourceTypeText);
+        const crossref = linkHint ?
+            `options/${linkHint[1].trim().replaceAll('.', '/')}` :
+            (toOptionsPath(sourceTypeText) ??
                 (aliasNode ?
-                    detectPassThrough(aliasNode.type.getText(src)) :
+                    toOptionsPath(aliasNode.type.getText(src)) :
                     undefined));
-        // The resolved type when `highcharts` is installed; the source text
-        // otherwise.
-        const displayType = resolveTypeText(member, src, checker);
         props.push({
             name: member.name.getText(src),
-            type: cleanType(displayType),
+            // The resolved type when `highcharts` is installed; the source
+            // text otherwise.
+            type: cleanType(resolveTypeText(member, src, checker)),
             description: linkHint ? '' : doc,
-            optional: !!member.questionToken,
-            passThrough
+            crossref
         });
     }
 
@@ -485,12 +484,20 @@ function isComponentishParamType(typeText: string): boolean {
 }
 
 
+// The Highcharts series type from the `import type { SeriesXxxOptions }` line
+// (e.g. `arearange`); used for the basic props and the `options` pointer.
+function detectSeriesType(src: TSCompiler.SourceFile): string | undefined {
+    const text = src.getFullText();
+    const m = text.match(/import type \{ Series(\w+)Options \}/);
+    return m ? m[1].toLowerCase() : undefined;
+}
+
+
 function extractComponentsFromFile(
     src: TSCompiler.SourceFile,
     category: string,
-    importPath: string,
     sourceFile: string,
-    checker?: TSCompiler.TypeChecker
+    checker: TSCompiler.TypeChecker
 ): ComponentDoc[] {
     // Prop containers: interfaces and object-literal type aliases.
     const interfaces = new Map<string, PropContainer>();
@@ -595,9 +602,9 @@ function extractComponentsFromFile(
         }
     });
 
-    // Chart elements and modules drop their props (the whole component points
-    // to one subtree); series and indicators keep theirs as basic options.
-    const dropsProps = (
+    // Chart elements and modules point at one options subtree as a whole, so
+    // they list no props; series and indicators keep theirs as basic options.
+    const pointsAtSubtree = (
         category === 'Chart elements' ||
         category === 'Modules'
     );
@@ -614,11 +621,10 @@ function extractComponentsFromFile(
         if (propsIfaceName && externalTypeAliases.has(propsIfaceName)) {
             // The component is just an alias to a Highcharts options object (e.g.
             // PlotOptions): point at that subtree instead of listing members.
-            const aliasRhs = externalTypeAliases
-                .get(propsIfaceName)!
-                .type.getText(src);
-            crossref = deriveCrossrefFromExternalAlias(aliasRhs);
-        } else if (!dropsProps) {
+            crossref = toOptionsPath(
+                externalTypeAliases.get(propsIfaceName)!.type.getText(src)
+            );
+        } else if (!pointsAtSubtree) {
             const commonIface = interfaces.get('ICommonAttributes');
             if (commonIface) {
                 props = extractPropsFromInterface(
@@ -646,39 +652,27 @@ function extractComponentsFromFile(
             }
         }
 
+        if (pointsAtSubtree && !crossref) {
+            // Named after its option (Legend → options/legend).
+            crossref = CROSSREF_OVERRIDES[c.name] ||
+                `options/${c.name[0].toLowerCase()}${c.name.slice(1)}`;
+        }
+
         components.push({
             name: c.name,
             category,
-            importPath,
             description: c.description,
             props,
             sourceFile,
-            ...(crossref !== undefined ? { crossref } : {})
+            crossref
         });
-    }
-
-    // Chart elements and modules point at their whole subtree, derived from the
-    // name (Legend → options/legend).
-    if (category === 'Chart elements' || category === 'Modules') {
-        const crossrefOverrides: Record<string, string> = {
-            BrokenAxis: 'options/xAxis/breaks',
-            DraggablePoints: 'options/plotOptions/series/dragDrop'
-        };
-        for (const comp of components) {
-            if (!comp.crossref) {
-                const optionPath =
-                    comp.name.charAt(0).toLowerCase() + comp.name.slice(1);
-                comp.crossref =
-                    crossrefOverrides[comp.name] || `options/${optionPath}`;
-                comp.props = [];
-            }
-        }
     }
 
     // Series & indicators: merge the wrapper and its `<Name>Series` into one;
     // the basic props become leaves, and `options` points to the full config.
     if (category === 'Series types' || category === 'Technical indicators') {
         const seriesType = detectSeriesType(src);
+        const seriesPath = seriesType && `options/series/${seriesType}`;
         const byName = new Map(components.map(c => [c.name, c]));
         const out: ComponentDoc[] = [];
         for (const c of components) {
@@ -693,13 +687,9 @@ function extractComponentsFromFile(
 
             const basicProps = (seriesEntity?.props ?? c.props).map(p => {
                 if (p.name === 'options') {
-                    return seriesOptionsProp(
-                        seriesType ? `series.${seriesType}` : '',
-                        p.type,
-                        p.optional
-                    );
+                    return seriesOptionsProp(seriesPath || undefined, p.type);
                 }
-                if (!seriesType) {
+                if (!seriesPath) {
                     return p;
                 }
                 // Point at the matching series option; the backend fills in the
@@ -707,14 +697,13 @@ function extractComponentsFromFile(
                 return {
                     ...p,
                     description: '',
-                    passThrough: { hrefPath: `series.${seriesType}.${p.name}` }
+                    crossref: `${seriesPath}/${p.name}`
                 };
             });
 
             out.push({
                 name: c.name,
                 category,
-                importPath,
                 description: seriesEntity ?
                     (c.description || seriesEntity.description) :
                     c.description,
@@ -733,24 +722,21 @@ function extractComponentsFromFile(
             if (!comp.name.endsWith('Series') || !genericNames.length) {
                 continue;
             }
-            comp.props = genericNames.map(name => {
-                if (name === 'options') {
-                    return seriesOptionsProp(
-                        'plotOptions.series',
-                        'Highcharts.SeriesOptionsType',
-                        true
-                    );
-                }
-                // Point at the shared series option (via the `line` default);
-                // the backend fills in the description and type.
-                return {
-                    name,
-                    type: '',
-                    description: '',
-                    optional: true,
-                    passThrough: { hrefPath: `series.line.${name}` }
-                };
-            });
+            comp.props = genericNames.map(name => (
+                name === 'options' ?
+                    seriesOptionsProp(
+                        'options/plotOptions/series',
+                        'Highcharts.SeriesOptionsType'
+                    ) :
+                    // Point at the shared series option (via the `line`
+                    // default); the backend fills in the description and type.
+                    {
+                        name,
+                        type: '',
+                        description: '',
+                        crossref: `options/series/line/${name}`
+                    }
+            ));
         }
     }
 
@@ -758,176 +744,92 @@ function extractComponentsFromFile(
 }
 
 
-// The Highcharts series type from the `import type { SeriesXxxOptions }` line
-// (e.g. `arearange`); used for the basic props and the `options` pointer.
-function detectSeriesType(src: TSCompiler.SourceFile): string | undefined {
-    const text = src.getFullText();
-    const m = text.match(/import type \{ Series(\w+)Options \}/);
-    return m ? m[1].toLowerCase() : undefined;
-}
-
-
-// Source `.d.ts` path relative to the package root, with forward slashes.
-function sourceFileFor(
-    filePath: string,
-    packageRoot: string
-): string {
+// Source `.d.ts` path relative to the package root, e.g. `series/Line.d.ts`.
+function toSourceFile(filePath: string, packageRoot: string): string {
     return Path.relative(packageRoot, filePath).replace(/\\/g, '/');
 }
 
 
-function importPathFor(
-    filePath: string,
-    packageRoot: string,
-    overrideForEntry?: string
-): string {
-    if (overrideForEntry) {
-        return overrideForEntry;
-    }
-    const rel = Path
-        .relative(packageRoot, filePath)
-        .replace(/\\/g, '/')
-        .replace(/\.d\.ts$/, '');
-    return rel === 'index' ?
-        '@highcharts/react' :
-        `@highcharts/react/${rel}`;
-}
-
-
 function getDtsFiles(dir: string): string[] {
-    const out: string[] = [];
     if (!FSSync.existsSync(dir)) {
-        return out;
+        return [];
     }
-    for (const entry of FSSync.readdirSync(dir, { withFileTypes: true })) {
-        const full = Path.join(dir, entry.name);
-        if (entry.isFile() && entry.name.endsWith('.d.ts')) {
-            out.push(full);
-        }
-    }
-    return out;
+    return FSSync.readdirSync(dir, { withFileTypes: true })
+        .filter(entry => entry.isFile() && entry.name.endsWith('.d.ts'))
+        .map(entry => Path.join(dir, entry.name));
 }
 
 
-// Build the full set of components. Only the `highcharts` product is built —
-// with `includeSharedLibrary` it covers every chart type plus the shared library.
+// Build the full set of components: the chart and generic series of every
+// product, plus the shared library of series, indicators, modules, and chart
+// elements.
 function extractComponents(
-    product: ProductConfig,
     packageRoot: string,
     program: TSCompiler.Program
 ): ComponentDoc[] {
-    const entryPath = Path.join(packageRoot, product.entryFile);
-    const entrySrc = program.getSourceFile(entryPath);
-    if (!entrySrc) {
-        throw new Error(`Cannot find entry file: ${entryPath}`);
-    }
-
     const checker = program.getTypeChecker();
-
-    const entryImportPath = `@highcharts/react${
-        product.id === 'highcharts' ?
-            '' :
-            '/' + product.entryFile.replace(/\.d\.ts$/, '')
-    }`;
-
-    const components: ComponentDoc[] = extractComponentsFromFile(
-        entrySrc,
-        'Core',
-        entryImportPath,
-        product.entryFile,
-        checker
-    );
-
-    // Sort the entry file's components: chart constructors → Charts, the
-    // generic <Series> base → Series types.
-    const assignCoreCategory = (c: ComponentDoc): void => {
-        if (c.name.endsWith('Chart')) {
-            c.category = 'Charts';
-        } else if (c.name.endsWith('Series')) {
-            // Generic <Series> base; props were built in the Core branch above.
-            c.category = 'Series types';
+    const components: ComponentDoc[] = [];
+    const add = (
+        filePath: string,
+        category: string,
+        filter?: (c: ComponentDoc) => boolean
+    ): void => {
+        const src = program.getSourceFile(filePath);
+        if (!src) {
+            return;
+        }
+        const extracted = extractComponentsFromFile(
+            src,
+            category,
+            toSourceFile(filePath, packageRoot),
+            checker
+        );
+        const modules = getLoadedModules(
+            filePath.replace(/\.d\.ts$/, '.js'),
+            packageRoot
+        );
+        for (const c of extracted) {
+            c.modules = modules;
+            // The entry files hold charts (→ Charts) and generic series
+            // bases (→ Series types).
+            if (c.category === 'Core') {
+                if (c.name.endsWith('Chart')) {
+                    c.category = 'Charts';
+                } else if (c.name.endsWith('Series')) {
+                    c.category = 'Series types';
+                }
+            }
+            if (
+                (!filter || filter(c)) &&
+                !components.some(x => x.name === c.name)
+            ) {
+                components.push(c);
+            }
         }
     };
-    for (const c of components) {
-        if (c.category === 'Core') {
-            assignCoreCategory(c);
+
+    for (const [index, entryFile] of ENTRY_FILES.entries()) {
+        // Other products only contribute their chart and series base.
+        add(
+            Path.join(packageRoot, entryFile),
+            'Core',
+            index ? c => c.category !== 'Core' : void 0
+        );
+    }
+
+    for (const { dir, category } of SHARED_DIRS) {
+        for (const filePath of getDtsFiles(Path.join(packageRoot, dir))) {
+            add(filePath, category);
         }
     }
 
-    if (product.includeSharedLibrary) {
-        // Pull chart constructors and series bases from the other entry files so
-        // all four Chart/Series variants appear together.
-        for (const variant of PRODUCTS) {
-            if (variant.id === product.id) {
-                continue;
-            }
-            const variantPath = Path.join(packageRoot, variant.entryFile);
-            const variantSrc = program.getSourceFile(variantPath);
-            if (!variantSrc) {
-                continue;
-            }
-            const variantImportPath = `@highcharts/react/` +
-                variant.entryFile.replace(/\.d\.ts$/, '');
-            const variantExtracted = extractComponentsFromFile(
-                variantSrc,
-                'Core',
-                variantImportPath,
-                variant.entryFile,
-                checker
-            );
-            for (const c of variantExtracted) {
-                assignCoreCategory(c);
-                if (
-                    (c.category === 'Charts' ||
-                        c.category === 'Series types') &&
-                    !components.find(x => x.name === c.name)
-                ) {
-                    components.push(c);
-                }
-            }
-        }
-
-        // Shared library: series, indicators, modules, chart elements.
-        for (const { dir, category } of SHARED_DIRS) {
-            const fullDir = Path.join(packageRoot, dir);
-            for (const f of getDtsFiles(fullDir)) {
-                const src = program.getSourceFile(f);
-                if (!src) {
-                    continue;
-                }
-                const importPath = importPathFor(f, packageRoot);
-                const extracted = extractComponentsFromFile(
-                    src,
-                    category,
-                    importPath,
-                    sourceFileFor(f, packageRoot),
-                    checker
-                );
-                for (const c of extracted) {
-                    if (!components.find(x => x.name === c.name)) {
-                        components.push(c);
-                    }
-                }
-            }
-        }
-    }
-
-    // Charts are ordered by product (Highcharts → Stock → Maps → Gantt), not
-    // alphabetically — the order users expect.
-    const chartOrder = PRODUCTS.map(p => `${
-        p.entryFile.replace(/\.d\.ts$/, '').replace(/^Highcharts$/, '')
-    }Chart`);
-    components.sort((a, b) => {
-        if (a.category !== b.category) {
-            return a.category.localeCompare(b.category);
-        }
-        if (a.category === 'Charts') {
-            return chartOrder.indexOf(a.name) - chartOrder.indexOf(b.name);
-        }
-        return a.name.localeCompare(b.name, undefined, {
-            sensitivity: 'base'
-        });
-    });
+    components.sort((a, b) => (
+        a.category.localeCompare(b.category) || (
+            a.category === 'Charts' ?
+                CHART_ORDER.indexOf(a.name) - CHART_ORDER.indexOf(b.name) :
+                a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+        )
+    ));
 
     console.log(
         `[react] ${components.length} components ` +
@@ -945,11 +847,6 @@ function extractComponents(
  * */
 
 
-function stripHtmlTags(text: string): string {
-    return text.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-}
-
-
 // Make a URL-safe key from a category name ("Series types" → "SeriesTypes"),
 // since path segments can't have spaces. The frontend shows the human label.
 function categoryKey(name: string): string {
@@ -958,16 +855,6 @@ function categoryKey(name: string): string {
         .filter(Boolean)
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join('');
-}
-
-
-// Component body: an import snippet followed by the JSDoc (as HTML).
-function buildComponentDescription(c: ComponentDoc): string {
-    const importSnippet =
-        `<pre><code>import { ${c.name} } from '${c.importPath}';</code></pre>`;
-    return c.description ?
-        `${importSnippet}${toHTML(c.description)}` :
-        importSnippet;
 }
 
 
@@ -992,26 +879,18 @@ function buildTreeReact(
             const propChildren: Record<string, unknown> = {};
 
             for (const p of c.props) {
-                const propDoclet: Record<string, unknown> = {
-                    description: p.description,
-                    type: {
-                        names: [prefixHighchartsTypeText(p.type)]
-                    }
-                };
-
-                if (p.passThrough) {
-                    // `[product, path]`; the backend reads the content from there.
-                    // Slash-separated to match what the resolver expects.
-                    propDoclet.crossref = [
-                        CROSSREF_PRODUCT,
-                        p.passThrough.hrefPath ?
-                            `options/${p.passThrough.hrefPath.replaceAll('.', '/')}` :
-                            'options'
-                    ];
-                }
-
                 propChildren[p.name] = {
-                    doclet: propDoclet,
+                    doclet: {
+                        description: p.description,
+                        type: {
+                            names: [prefixHighchartsTypeText(p.type)]
+                        },
+                        // `[product, path]`; the backend reads the content
+                        // from there.
+                        ...(p.crossref ?
+                            { crossref: [CROSSREF_PRODUCT, p.crossref] } :
+                            {})
+                    },
                     meta: {
                         fullname: `${catKey}.${c.name}.${p.name}`,
                         name: p.name,
@@ -1021,16 +900,15 @@ function buildTreeReact(
                 };
             }
 
-            const componentDoclet: Record<string, unknown> = {
-                description: buildComponentDescription(c)
-            };
-
-            if (c.crossref) {
-                componentDoclet.crossref = [CROSSREF_PRODUCT, c.crossref];
-            }
-
             componentChildren[c.name] = {
-                doclet: componentDoclet,
+                doclet: {
+                    // Its examples show how to import it.
+                    description: toHTML(c.description),
+                    ...(c.crossref ?
+                        { crossref: [CROSSREF_PRODUCT, c.crossref] } :
+                        {}),
+                    ...(c.modules?.length ? { modules: c.modules } : {})
+                },
                 meta: {
                     fullname: `${catKey}.${c.name}`,
                     name: c.name,
@@ -1041,7 +919,7 @@ function buildTreeReact(
         }
 
         tree[catKey] = {
-            doclet: { description: stripHtmlTags(cat.description) },
+            doclet: { description: cat.description },
             meta: { fullname: catKey, name: catKey },
             children: componentChildren
         };
@@ -1071,15 +949,10 @@ async function main(): Promise<void> {
         Process.exit(1);
     }
 
-    const allDts: string[] = [];
-    for (const f of getDtsFiles(packageRoot)) {
-        allDts.push(f);
-    }
-    for (const { dir } of SHARED_DIRS) {
-        for (const f of getDtsFiles(Path.join(packageRoot, dir))) {
-            allDts.push(f);
-        }
-    }
+    const allDts = [
+        packageRoot,
+        ...SHARED_DIRS.map(({ dir }) => Path.join(packageRoot, dir))
+    ].flatMap(getDtsFiles);
 
     if (allDts.length === 0) {
         console.error(`No .d.ts files found under "${packageRoot}".`);
@@ -1098,9 +971,7 @@ async function main(): Promise<void> {
         lib: ['lib.es2020.d.ts', 'lib.dom.d.ts']
     });
 
-    // Only the `highcharts` product is needed — with `includeSharedLibrary`
-    // it already covers the shared library and every chart type.
-    const components = extractComponents(PRODUCTS[0], packageRoot, program);
+    const components = extractComponents(packageRoot, program);
 
     if (!components.length) {
         console.error('No components extracted; not writing tree-react.json.');
