@@ -281,7 +281,7 @@ async function renderDashboard() {
             series: {
                 minPointLength: 3,
                 borderWidth: 1,
-                color: '#274FE0',
+                color: 'light-dark(#014ce5, #4d7cff)',
                 borderColor: 'var(--highcharts-neutral-color-20)'
             }
         },
@@ -431,8 +431,8 @@ async function renderDashboard() {
                         ],
                         states: {
                             hover: {
-                                color: '#014CE5',
-                                borderColor: '#014CE5'
+                                color: 'light-dark(#014ce5, #4d7cff)',
+                                borderColor: 'light-dark(#014ce5, #4d7cff)'
                             }
                         },
                         dataLabels: {
@@ -518,7 +518,7 @@ async function renderDashboard() {
                 plotOptions: {
                     column: {
                         pointWidth: 20,
-                        color: '#014CE5'
+                        color: 'light-dark(#014ce5, #4d7cff)'
                     }
                 },
                 legend: {
@@ -578,12 +578,12 @@ async function renderDashboard() {
                 colorAxis: {
                     dataClasses: [{
                         from: 49,
-                        color: '#014ce5',
+                        color: 'light-dark(#014ce5, #4d7cff)',
                         name: '50+'
                     }, {
                         from: 24,
                         to: 49,
-                        color: '#487cea',
+                        color: 'light-dark(#487cea, #3560c4)',
                         name: '25-49'
                     }, {
                         from: 9,
@@ -663,7 +663,7 @@ async function renderDashboard() {
                 },
                 plotOptions: {
                     series: {
-                        color: '#014CE5'
+                        color: 'light-dark(#014ce5, #4d7cff)'
                     }
                 },
                 series: [{
@@ -725,7 +725,7 @@ async function renderDashboard() {
                             '#5A6B7D',
                             '#10B981',
                             '#EA293C',
-                            '#014CE5'
+                            'light-dark(#014ce5, #4d7cff)'
                         ],
                         minPointLength: 2,
                         colorByPoint: true,
@@ -990,7 +990,7 @@ async function renderDashboard() {
                     }]
                 },
                 navigator: {
-                    maskFill: '#274FE026',
+                    maskFill: 'light-dark(#274fe026, #4d7cff26)',
                     outlineColor: 'var(--highcharts-neutral-color-20)',
                     height: 73,
                     xAxis: {
@@ -1038,7 +1038,7 @@ async function renderDashboard() {
                 },
                 plotOptions: {
                     series: {
-                        color: '#014CE5',
+                        color: 'light-dark(#014ce5, #4d7cff)',
                         states: {
                             hover: {
                                 enabled: false
