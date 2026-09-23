@@ -22,15 +22,23 @@
 
 import type Accessibility from './Accessibility';
 import type ColorType from '../Core/Color/ColorType';
+import type GradientColor from '../Core/Color/GradientColor';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
+import Color from '../Core/Color/Color.js';
 import H from '../Core/Globals.js';
 const {
     doc,
     isMS,
     win
 } = H;
-import { merge, pick } from '../Shared/Utilities.js';
+import {
+    isArray,
+    isObject,
+    isString,
+    merge,
+    pick
+} from '../Shared/Utilities.js';
 
 const systemColorKeywords = new Set([
     'accentcolor',
@@ -62,9 +70,33 @@ const systemColorKeywords = new Set([
     'windowtext'
 ]);
 
+/**
+ * Detect whether a color was picked by the chart author, as opposed to one of
+ * the CSS system color keywords that forced colors mode supplies. Gradients
+ * are judged by their stops, and `Highcharts.color` instances by the input
+ * they hold.
+ *
+ * @private
+ * @param {*} [color] The color option to check.
+ * @return {boolean} True if the author picked the color.
+ */
 function isAuthorColor(color?: unknown): boolean {
+    // Unwrap `Highcharts.color()` instances to the input they were made from
+    if (color instanceof Color) {
+        return isAuthorColor(color.input);
+    }
+
+    // A gradient is author defined when any of its stops is
+    if (isObject(color, true)) {
+        const stops = (color as GradientColor).stops;
+
+        return isArray(stops) && stops.some(
+            (stop): boolean => isAuthorColor(stop?.[1])
+        );
+    }
+
     return (
-        typeof color === 'string' &&
+        isString(color) &&
         !systemColorKeywords.has(color.toLowerCase())
     );
 }
@@ -180,13 +212,6 @@ function setHighContrastTheme(
             preserveAuthorColors = hasAuthorDefinedSeriesColors(userTheme);
 
         chart.update(theme, false);
-
-        if (preserveAuthorColors) {
-            chart.renderer.box.style.setProperty(
-                'forced-color-adjust',
-                'none'
-            );
-        }
 
         const customColors = userTheme.colors,
             hasCustomColors = !!customColors?.length,
@@ -323,6 +348,16 @@ function setHighContrastTheme(
         // The redraw for each series and after is required for 3D pie
         // (workaround)
         chart.redraw();
+
+        // Opt the plotted series out of forced colors, so that the author's
+        // own colors survive. Scoped to the series group, leaving axes,
+        // legend and tooltip to follow the user's system setting (#15921).
+        if (preserveAuthorColors) {
+            chart.seriesGroup?.element.style.setProperty(
+                'forced-color-adjust',
+                'none'
+            );
+        }
     } finally {
         delete highContrastState.applying;
     }

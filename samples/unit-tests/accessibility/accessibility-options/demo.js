@@ -21,6 +21,13 @@ function isPointAriaHidden(point) {
     return point.graphic.element.getAttribute('aria-hidden') === 'true';
 }
 
+// The forced colors opt-out is scoped to the series group, so that axes,
+// legend and tooltip still follow the user's system setting.
+function getForcedColorAdjust(chart) {
+    return chart.seriesGroup &&
+        chart.seriesGroup.element.style.forcedColorAdjust;
+}
+
 QUnit.test('Accessibility disabled', function (assert) {
     var chart = Highcharts.chart('container', {
             accessibility: {
@@ -314,7 +321,7 @@ QUnit.test('HCM colors override series colors', function (assert) {
     );
 
     assert.strictEqual(
-        chart.renderer.box.style.forcedColorAdjust,
+        getForcedColorAdjust(chart),
         'none',
         'Custom high contrast colors should be preserved in forced colors mode.'
     );
@@ -367,7 +374,7 @@ QUnit.test('HCM colors override series colors', function (assert) {
     const series = chart.series[0];
 
     assert.strictEqual(
-        chart.renderer.box.style.forcedColorAdjust,
+        getForcedColorAdjust(chart),
         'none',
         'Single custom high contrast series colors should also be preserved.'
     );
@@ -398,7 +405,7 @@ QUnit.test('HCM colors override series colors', function (assert) {
     });
 
     assert.notOk(
-        chart.renderer.box.style.forcedColorAdjust,
+        getForcedColorAdjust(chart),
         'System color high contrast themes should keep browser adjustments.'
     );
 
@@ -417,6 +424,81 @@ QUnit.test('HCM colors override series colors', function (assert) {
         'Reapplying the theme should preserve its marker line width.'
     );
 });
+
+QUnit.test(
+    'HCM recognizes gradient and Color instance theme colors',
+    function (assert) {
+        const linearGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
+
+        let chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: [{
+                        linearGradient: linearGradient,
+                        stops: [[0, '#f00'], [1, '#00f']]
+                    }]
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            getForcedColorAdjust(chart),
+            'none',
+            'Gradient high contrast colors should be preserved in forced ' +
+            'colors mode.'
+        );
+
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    plotOptions: {
+                        series: {
+                            color: Highcharts.color('#0f0')
+                        }
+                    }
+                }
+            },
+            series: [{
+                type: 'line',
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            getForcedColorAdjust(chart),
+            'none',
+            'Color instances should be recognized as author colors.'
+        );
+
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: [{
+                        linearGradient: linearGradient,
+                        stops: [[0, 'window'], [1, 'windowText']]
+                    }]
+                }
+            },
+            series: [{
+                type: 'column',
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.notOk(
+            getForcedColorAdjust(chart),
+            'Gradients built from system colors should keep browser ' +
+            'adjustments.'
+        );
+    }
+);
 
 QUnit.test(
     'skipNullPoints only skips null points, not valid ones (#24650)',
