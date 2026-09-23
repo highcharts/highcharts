@@ -496,64 +496,6 @@ function triangleDown(
     ];
 }
 
-
-/**
- * Left-oriented triangle symbol path.
- *
- * @param {number} x
- * X coordinate
- * @param {number} y
- * Y coordinate
- * @param {number} w
- * Width
- * @param {number} h
- * Height
- * @return {Highcharts.SVGPathArray}
- * Path
- */
-function triangleLeft(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x + w, y],
-        ['L', x, y + h / 2],
-        ['L', x + w, y + h],
-        ['Z']
-    ];
-}
-
-
-/**
- * Right-oriented triangle symbol path.
- *
- * @param {number} x
- * X coordinate
- * @param {number} y
- * Y coordinate
- * @param {number} w
- * Width
- * @param {number} h
- * Height
- * @return {Highcharts.SVGPathArray}
- * Path
- */
-function triangleRight(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h / 2],
-        ['L', x, y + h],
-        ['Z']
-    ];
-}
-
 /* *
  *
  *  Registry
@@ -571,8 +513,6 @@ declare module './SymbolType' {
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
-        'triangle-left': typeof triangleLeft;
-        'triangle-right': typeof triangleRight;
     }
 }
 
@@ -730,39 +670,7 @@ const Symbols: SymbolTypeRegistry = {
      * @return {Highcharts.SVGPathArray}
      * Path
      */
-    'triangle-down': triangleDown,
-
-    /**
-     * Left-oriented triangle symbol path.
-     *
-     * @param {number} x
-     * X coordinate
-     * @param {number} y
-     * Y coordinate
-     * @param {number} w
-     * Width
-     * @param {number} h
-     * Height
-     * @return {Highcharts.SVGPathArray}
-     * Path
-     */
-    'triangle-left': triangleLeft,
-
-    /**
-     * Right-oriented triangle symbol path.
-     *
-     * @param {number} x
-     * X coordinate
-     * @param {number} y
-     * Y coordinate
-     * @param {number} w
-     * Width
-     * @param {number} h
-     * Height
-     * @return {Highcharts.SVGPathArray}
-     * Path
-     */
-    'triangle-right': triangleRight
+    'triangle-down': triangleDown
 } as SymbolTypeRegistry;
 
 /* *

@@ -252,16 +252,12 @@ class LegendComponent extends AccessibilityComponent {
 
                 if (hasPages) {
                     const itemPage = legendItem.pageIx || 0;
-                    const label = legendItem.label;
-
-                    // Horizontal pages are clipped at item boundaries, so
-                    // there the page index is enough
-                    hide = itemPage !== curPage - 1 || (
-                        !legend.horizontalNav &&
-                        (legendItem.y || 0) + (
-                            label ? Math.round(label.getBBox().height) : 0
-                        ) - legend.pages[itemPage] > clipHeight
-                    );
+                    const y = legendItem.y || 0;
+                    const h = legendItem.label ?
+                        Math.round(legendItem.label.getBBox().height) :
+                        0;
+                    hide = y + h - legend.pages[itemPage] > clipHeight ||
+                        itemPage !== curPage - 1;
                 }
 
                 if (hide) {

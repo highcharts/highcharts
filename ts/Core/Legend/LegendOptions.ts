@@ -117,7 +117,6 @@ export interface LegendNavigationOptions {
     activeColor: ColorType;
     animation?: (boolean|Partial<AnimationOptions>);
     arrowSize?: number;
-    direction?: ('horizontal'|'vertical');
     enabled?: boolean;
     inactiveColor: ColorType;
     style?: CSSObject;

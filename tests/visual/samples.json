@@ -736,7 +736,7 @@
     "highcharts/legend/margin-30",
     "highcharts/legend/margin-default",
     "highcharts/legend/maxwidth",
-    "highcharts/legend/navigation-horizontal",
+    "highcharts/legend/navigation-horizontal-plugin",
     "highcharts/legend/padding-itemmargin",
     "highcharts/legend/pie-legend-itemclick",
     "highcharts/legend/reversed",
