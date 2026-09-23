@@ -337,10 +337,16 @@ class XRangeSeries extends ColumnSeries {
 
         // Handle individual pointWidth
         if (defined(point.options.pointWidth)) {
-            yOffset -= (
-                (Math.ceil(point.options.pointWidth) - pointHeight) / 2
+            const resolvedPointWidth = Math.ceil(
+                relativeLength(
+                    point.options.pointWidth,
+                    pointHeight,
+                    void 0,
+                    this.chart.renderTo
+                )
             );
-            pointHeight = Math.ceil(point.options.pointWidth);
+            yOffset -= (resolvedPointWidth - pointHeight) / 2;
+            pointHeight = resolvedPointWidth;
         }
 
         // Apply pointPlacement to the Y axis

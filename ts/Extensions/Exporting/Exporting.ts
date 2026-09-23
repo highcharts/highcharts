@@ -1987,7 +1987,7 @@ export class Exporting {
             top: '-9999em',
             width: chart.chartWidth + 'px',
             height: chart.chartHeight + 'px'
-        }, doc.body);
+        }, chart.renderTo); // Inherit container-scoped CSS variables (#23989)
 
         // Get the source size
         const cssWidth: string = chart.renderTo.style.width,

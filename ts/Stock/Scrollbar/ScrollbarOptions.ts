@@ -16,6 +16,7 @@
  * */
 
 import type ColorType from '../../Core/Color/ColorType';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 
 /* *
  *
@@ -138,14 +139,17 @@ export interface ScrollbarOptions {
     enabled?: boolean;
 
     /**
-     * The height of the scrollbar. If `buttonsEnabled` is true , the height
-     * also applies to the width of the scroll arrows so that they are always
-     * squares.
+     * The height of the scrollbar, either in pixels or as a CSS length
+     * expression, e.g. a percentage of the chart's plot area height like
+     * `'5%'`. If `buttonsEnabled` is true , the height also applies to the
+     * width of the scroll arrows so that they are always squares.
      *
      * @sample stock/scrollbar/style/
      *         Non-default height
+     *
+     * @type {number|Highcharts.CSSLength}
      */
-    height?: number;
+    height?: (number|CSSLength);
 
     /** @internal */
     inverted?: boolean;
@@ -209,13 +213,17 @@ export interface ScrollbarOptions {
 
     /**
      * The width of a vertical scrollbar or height of a horizontal
-     * scrollbar. Defaults to 20 on touch devices.
+     * scrollbar, either in pixels or as a CSS length expression, e.g. a
+     * percentage of the chart's plot area height like `'5%'`. Defaults to
+     * 20 on touch devices.
      *
      * @default   14
      * @since     4.2.6
      * @product   highstock
+     *
+     * @type {number|Highcharts.CSSLength}
      */
-    size?: number;
+    size?: (number|CSSLength);
 
     /** @internal */
     step?: number;

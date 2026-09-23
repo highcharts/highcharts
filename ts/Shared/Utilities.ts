@@ -1597,10 +1597,12 @@ function measureCSSLength(
     if (!probe.isConnected) {
         parent.appendChild(probe);
     }
+    // Workaround for supporting negative values (#23989)
+    const prop = isSVG ? 'width' : 'marginLeft';
     // Reset first, so invalid values yield 0 instead of the last measure
-    probe.style.width = '';
-    probe.style.width = value;
-    return parseFloat(win.getComputedStyle(probe).width) || 0;
+    probe.style[prop] = '';
+    probe.style[prop] = value;
+    return parseFloat(win.getComputedStyle(probe)[prop]) || 0;
 }
 
 

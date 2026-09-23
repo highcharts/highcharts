@@ -49,7 +49,8 @@ import {
     isNumber,
     merge,
     objectEach,
-    pick
+    pick,
+    relativeLength
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -308,12 +309,22 @@ class ColumnSeries extends Series {
             groupWidth = categoryWidth - 2 * groupPadding,
             pointOffsetWidth = groupWidth / (columnCount || 1),
             pointWidth = Math.min(
-                options.maxPointWidth || xAxis.len,
-                pick(
-                    options.pointWidth,
-                    pointOffsetWidth * (
-                        1 - 2 * (options.pointPadding as any)
-                    )
+                relativeLength(
+                    options.maxPointWidth,
+                    pointOffsetWidth,
+                    void 0,
+                    series.chart.renderTo
+                ) || xAxis.len,
+                relativeLength(
+                    pick(
+                        options.pointWidth,
+                        pointOffsetWidth * (
+                            1 - 2 * (options.pointPadding as any)
+                        )
+                    ),
+                    pointOffsetWidth,
+                    void 0,
+                    series.chart.renderTo
                 )
             ),
             pointPadding = (pointOffsetWidth - pointWidth) / 2,
@@ -591,8 +602,14 @@ class ColumnSeries extends Series {
             // Handle point.options.pointWidth
             // @todo Handle grouping/stacking too. Calculate offset properly
             if (defined(point.options.pointWidth)) {
-                pointWidth = barW =
-                    Math.ceil(point.options.pointWidth as any);
+                pointWidth = barW = Math.ceil(
+                    relativeLength(
+                        point.options.pointWidth,
+                        seriesPointWidth,
+                        void 0,
+                        chart.renderTo
+                    )
+                );
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 

@@ -830,6 +830,19 @@
             36,
             'calc() with a CSS variable resolves correctly'
         );
+        style.setProperty('--hc-test-negative-gap', '-12px');
+        assert.strictEqual(
+            relativeLength('var(--hc-test-negative-gap)', 0),
+            -12,
+            'A negative CSS variable should not be clamped to 0'
+        );
+        assert.strictEqual(
+            relativeLength('calc(var(--hc-test-gap) * -3)', 0),
+            -36,
+            'calc() resolving to a negative value should not be ' +
+            'clamped to 0'
+        );
+        style.removeProperty('--hc-test-negative-gap');
         assert.strictEqual(
             relativeLength('calc(', 0),
             0,
