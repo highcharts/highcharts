@@ -504,9 +504,6 @@ QUnit.test(
         }
 
         const chart = Highcharts.stockChart('container', {
-            chart: {
-                animation: false
-            },
             rangeSelector: {
                 buttons: [{
                     count: 1,
