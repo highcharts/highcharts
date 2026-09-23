@@ -8,6 +8,11 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+.demo-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
 /* Themes */
 .theme-custom {
     --hcg-border-radius: 5px;
@@ -40,8 +45,7 @@ body {
     border-radius: 6px;
     background-color: var(--highcharts-background-color);
     padding: 10px 15px 0;
-    max-width: 1000px;
-    margin: 0 auto 30px;
+    margin: 0 0 30px;
 }
 
 #container .highcharts-dashboards-cell > .highcharts-dashboards-component {

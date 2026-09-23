@@ -6,9 +6,12 @@ body {
     padding: 10px;
 }
 
-#container {
+.demo-wrapper {
     max-width: 1000px;
     margin: 0 auto;
+}
+
+#container {
     container: style-box-grid / inline-size;
 }
 
