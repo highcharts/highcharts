@@ -122,12 +122,6 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
     reversed: false,
 
     /**
-     * To avoid adapting the data label size in Pie.drawDataLabels.
-     * @ignore-option
-     */
-    size: true as any,
-
-    /**
      * @declare Highcharts.SeriesFunnelDataLabelsOptionsObject
      * @extends plotOptions.pie.dataLabels
      */
@@ -146,9 +140,6 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
         verticalAlign: 'middle'
     },
 
-    /**
-     * Options for the series states.
-     */
     states: {
 
         /**

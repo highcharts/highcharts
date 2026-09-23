@@ -27,6 +27,9 @@ import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
  * */
 
 export interface FunnelDataLabelOptions extends PieDataLabelOptions {
+    /** @default 1 */
+    connectorWidth?: PieDataLabelOptions['connectorWidth'];
+
     /**
      * Whether to render the data labels inside the funnel or pyramid shape.
      * By default, the labels are rendered outside the shape.
@@ -35,13 +38,8 @@ export interface FunnelDataLabelOptions extends PieDataLabelOptions {
      *
      * @product highcharts
      */
-    inside?: boolean;
+    inside?: PieDataLabelOptions['inside'];
+
+    /** @default 'middle' */
+    verticalAlign?: PieDataLabelOptions['verticalAlign'];
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default FunnelDataLabelOptions;
