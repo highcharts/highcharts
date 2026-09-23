@@ -13,10 +13,10 @@ Paths relative to `ts/Grid/Pro/`.
 
 | Feature | Files | Attaches to |
 |---|---|---|
-| Events: `events`, and `events`, `cells.events`, `header.events` in column options | `GridEvents.ts` | Grid load, update and redraw events; cell, column and header events. Removes `events` from update diffs |
+| Events | `GridEvents.ts` | Grid `beforeLoad`, `afterLoad`, `beforeUpdate`, `afterUpdate`, `beforeRedraw`, `afterRedraw` to root `events`; Column `afterResize`, `beforeSort`, `afterSort`, `beforeFilter`, `afterFilter` to column `events`; TableCell `click`, `dblClick`, `mouseOver`, `mouseOut`, `afterRender` to column `cells.events`; HeaderCell `click`, `afterRender` to column `header.events`. Grid `processUpdateDiff` removes every `events` group from update diffs |
 | Cell editing | `CellEditing/` | Table `beforeInit` (`viewport.cellEditing`), Column `afterInit` (edit-mode renderer), TableCell `dblClick`, `keyDown`, `afterRender`. Option `cells.editMode` |
 | Validation | `ColumnTypes/Validator*.ts` | Table `beforeInit` (`viewport.validator`), `afterDestroy`. Rules in `Validator.rulesRegistry`; defaults per data type and renderer in `predefinedRules` |
-| Cell renderers | `CellRendering/` | Column `afterInit` (`column.cellRenderer`). Each renderer registers with `registerRenderer`: text, checkbox, select, text, number, date, time and date-time inputs, sparkline. Content classes in `ContentTypes/` |
+| Cell renderers | `CellRendering/` | Column `afterInit` (`column.cellRenderer`). Each renderer registers with `registerRenderer`: `text`, `checkbox`, `select`, `textInput`, `numberInput`, `dateInput`, `timeInput`, `dateTimeInput`, `sparkline`. Content classes in `ContentTypes/` |
 | Row pinning | `RowPinning/` | Grid `beforeLoad`, `beforeUpdate`; Table `beforeInit`, `afterReflow`, `bodyScroll`; virtualizer hooks; context-menu actions |
 | Table editing | `TableEditing/` | Grid `beforeLoad`; context-menu actions for adding and deleting rows and columns |
 | Tree view and row grouping | `TreeView/` | Grid `projectPresentationTable`, `resolveFilterCondition`, row toggle events; Table focus and inset events; cell `getEditability`; sticky group rows |
