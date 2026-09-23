@@ -4286,10 +4286,13 @@ class Axis {
                     ) { // #2248, #4660
                         if (!alternateBands[pos]) {
                             // Should be imported from PlotLineOrBand.js, but
-                            // the dependency cycle with axis is a problem
+                            // the dependency cycle with axis is a problem. Try
+                            // moving it to the PlotLineOrBand axis composition
+                            // later.
                             alternateBands[pos] = new (H as any).PlotLineOrBand(
                                 axis,
-                                {}
+                                {},
+                                'plotBands'
                             );
                         }
                         from = pos + tickmarkOffset; // #949
@@ -4597,7 +4600,6 @@ class Axis {
                 if (!chart.styledMode) {
                     cross
                         .attr({
-                            dashstyle: options.dashStyle || 'Solid',
                             stroke: options.color || (
                                 categorized ?
                                     color(
@@ -4605,7 +4607,9 @@ class Axis {
                                     ).setOpacity(0.25).get() :
                                     'var(--highcharts-neutral-color-20)'
                             ),
-                            'stroke-width': options.width ?? 1
+                            'stroke-width': options.width ?? 1,
+                            // Dash style must be after stroke-width
+                            dashstyle: options.dashStyle || 'Solid'
                         })
                         .css({
                             'pointer-events': 'none'

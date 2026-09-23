@@ -1124,6 +1124,15 @@ export async function setupRoutes(page: Page){
         for (const route of routes) {
             await page.route(route.pattern, route.handler);
         }
+        if (test.info().project.name === 'visual') {
+            await page.route(
+                'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico',
+                route => route.fulfill({
+                    path: 'tests/visual/data/highcharts-favicon.ico',
+                    contentType: 'image/x-icon'
+                })
+            );
+        }
     }
 }
 
@@ -1340,7 +1349,7 @@ export async function createChart(
             >;
 
             const HCInstance =
-                (HC ?? window.Highcharts) as unknown as ChartFactories;
+                (HC ?? window.Highcharts) as ChartFactories;
 
             const callback = serializedCallback ?
                 (chart: Highcharts.Chart) => {

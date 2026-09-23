@@ -6,6 +6,7 @@ import { join, relative, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { argv, exit } from 'node:process';
+import { pathToFileURL } from 'node:url';
 
 import yargs from 'yargs';
 import * as swc from '@swc/core';
@@ -198,7 +199,7 @@ async function benchmark(){
 
         const testFiles = result.filter(file => {
             if (pattern && typeof pattern === 'string') {
-                return new RegExp(pattern).test(file);
+                return file.includes(pattern);
             }
 
             return file.includes('.bench.ts');

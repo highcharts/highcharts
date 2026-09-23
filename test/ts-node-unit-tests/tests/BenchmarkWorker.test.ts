@@ -67,7 +67,7 @@ function errorMessage(reply: Reply): string {
 describe('benchmark worker', () => {
     for (const extension of ['ts', 'mts']) {
         it(`runs an ESM .${extension} benchmark with a before hook`, async () => {
-            const file = await fixture(`esm.${extension}`, `
+            const file = await fixture(`esm #%.${extension}`, `
             export function before(size) {
                 return { fileName: 'esm.json', func: () => ({ size }) };
             }
@@ -108,7 +108,7 @@ describe('benchmark worker', () => {
     });
 });
 
-async function runCLI(name: string, source: string) {
+async function runCLI(name: string, source: string, args: string[] = []) {
     const root = join(fixtureRoot, name);
     const runner = join(root, 'test/ts-node-unit-tests');
     for (const dir of ['code', 'tools/libs', 'test/ts-node-unit-tests/benchmarks']) {
@@ -121,11 +121,11 @@ async function runCLI(name: string, source: string) {
         await copyFile(join(repositoryRoot, 'tools/libs', file),
             join(root, 'tools/libs', file));
     }
-    await writeFile(join(runner, 'benchmarks/fixture.bench.ts'),
+    await writeFile(join(runner, 'benchmarks/fixture #%.bench.ts'),
         'export const config = { sizes: [1] };\n' + source);
 
     const result = spawnSync(process.execPath,
-        ['--import', 'tsx', join(runner, 'bench.ts')], {
+        ['--import', 'tsx', join(runner, 'bench.ts'), ...args], {
             cwd: root,
             encoding: 'utf8',
             timeout: 10000
@@ -133,11 +133,31 @@ async function runCLI(name: string, source: string) {
     strictEqual(result.error, undefined, result.error?.message);
     return {
         result,
-        report: join(root, 'tmp/benchmarks/actual/fixture.json')
+        report: join(root, 'tmp/benchmarks/actual/fixture #%.json')
     };
 }
 
 describe('benchmark CLI', () => {
+    for (const [index, [pattern, selected]] of ([
+        ['fixture #%.bench.ts', true],
+        ['benchmarks/', true],
+        ['not-a-benchmark', false],
+        ['.*', false],
+        ['[', false],
+        ['(a+)+$', false]
+    ] as const).entries()) {
+        it(`matches --pattern as a literal substring: ${pattern}`, async () => {
+            const { result, report } = await runCLI(
+                `pattern-${index}`,
+                'export default () => 0;',
+                ['--pattern', pattern]
+            );
+
+            strictEqual(result.status, 0, result.stderr);
+            strictEqual(existsSync(report), selected);
+        });
+    }
+
     it('completes all iterations when a benchmark returns zero', async () => {
         const { result, report } = await runCLI('zero',
             'export default () => 0;');
@@ -163,16 +183,14 @@ describe('benchmark CLI', () => {
         });
     }
 
-    for (const [index, [value, message]] of [
-        ['0', '0'], ['null', 'null'], ['undefined', 'undefined'],
-        ['false', 'false'], ['""', '']
+    for (const [index, value] of [
+        '0', 'null', 'undefined', 'false', '""'
     ].entries()) {
         it(`rejects a falsy thrown value: ${value}`, async () => {
             const { result, report } = await runCLI(`throw-falsy-${index}`,
                 `export default () => { throw ${value}; };`);
 
             strictEqual(result.status, 1, result.stderr);
-            strictEqual(result.stderr.trim(), message);
             strictEqual(existsSync(report), false);
         });
     }

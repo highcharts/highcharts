@@ -1,4 +1,15 @@
-# Visual connector responses
+# Visual fixtures
+
+`highcharts-favicon.ico` was retrieved on 2026-09-22 from
+`https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico`
+(SHA-256: `a65f1c0882344f4c2c88bd0ae795bab5e8e30fd5ca2cef69627057ec1651f8cc`).
+The visual project serves it for that URL. The runner rewrites the retired
+`https://www.highcharts.com/favicon.ico` URL to it because Playwright aborts
+`/favicon.ico` requests before route handlers run. Both timeline samples use
+the recorded asset.
+This lets image markers finish loading and the chart load handlers run offline.
+
+## Connector responses
 
 These responses are snapshots from `highcharts/live-data-generator` commit
 `10a296cdf02abfad7258104ef49557d4c1349f95`, used by the five eligible visual samples
