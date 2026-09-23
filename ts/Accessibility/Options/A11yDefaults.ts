@@ -551,12 +551,17 @@ const Options: DeepPartial<A11yOptions> = {
          * Controls how [highContrastTheme](#accessibility.highContrastTheme)
          * is applied.
          *
-         * The default option is `auto`, which applies the high contrast theme
-         * the user's system has a high contrast theme active.
+         * With the default `auto`, the theme is applied while the browser
+         * reports forced colors as being active, and removed again when they
+         * are turned off. The chart follows the system setting without
+         * requiring a page reload.
+         *
+         * `true` always applies the theme, while `false` never applies it.
          *
          * @sample highcharts/accessibility/high-contrast-mode
          *         High contrast mode enabled
          *
+         * @type  {boolean|"auto"}
          * @since 11.4.0
          */
         highContrastMode: 'auto',
