@@ -60,8 +60,7 @@ import {
     addEvent,
     defined,
     extend,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
 
@@ -109,6 +108,7 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -124,12 +124,14 @@ class NetworkgraphSeries extends Series {
 
     public data!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public nodes!: Array<NetworkgraphPoint>;
 
     public options!: NetworkgraphSeriesOptions;
 
     public points!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -274,9 +276,9 @@ class NetworkgraphSeries extends Series {
             node = this.nodes[i];
 
             node.degree = node.getDegree();
-            node.radius = pick(
-                node.marker && node.marker.radius,
-                this.options.marker && this.options.marker.radius,
+            node.radius = (
+                (node.marker && node.marker.radius) ??
+                (this.options.marker && this.options.marker.radius) ??
                 0
             );
             node.key = node.name;

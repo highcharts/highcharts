@@ -1,5 +1,7 @@
 # Getting started
 
+> **Tip:** Want to see what's new? Check the [Highcharts React changelog](https://github.com/highcharts/highcharts-react/blob/master/CHANGELOG.md) for the latest features, improvements, and fixes.
+
 ## Requirements
 
 The release has been tested with:

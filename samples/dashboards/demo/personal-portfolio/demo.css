@@ -52,7 +52,7 @@ body {
     flex: 0 1 37.5%;
 }
 
-.highcharts-yaxis .highcharts-tick {
+.highcharts-radial-axis-grid .highcharts-grid-line {
     stroke-width: 4px;
     stroke: var(--highcharts-background-color);
 }

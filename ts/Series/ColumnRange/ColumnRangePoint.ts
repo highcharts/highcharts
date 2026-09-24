@@ -56,6 +56,7 @@ class ColumnRangePoint extends AreaRangePoint {
 
     public options!: ColumnRangePointOptions;
 
+    /** @internal */
     public series!: ColumnRangeSeries;
 
     /* *
@@ -64,6 +65,7 @@ class ColumnRangePoint extends AreaRangePoint {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.low);
     }
@@ -75,9 +77,13 @@ class ColumnRangePoint extends AreaRangePoint {
  *
  * */
 
+/** @internal */
 interface ColumnRangePoint {
+    /** @internal */
     barX: typeof columnProto.barX;
+    /** @internal */
     pointWidth: typeof columnProto.pointWidth;
+    /** @internal */
     shapeType: typeof columnProto.shapeType;
 
 }

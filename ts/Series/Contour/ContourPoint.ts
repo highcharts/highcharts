@@ -34,10 +34,13 @@ const {
 
 class ContourPoint extends ScatterPoint {
 
+    /** @internal */
     public value!: (number|null);
 
+    /** @internal */
     public x!: number;
 
+    /** @internal */
     public y!: number;
 
 

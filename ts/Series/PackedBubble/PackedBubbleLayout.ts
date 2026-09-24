@@ -28,7 +28,7 @@ import type Series from '../../Core/Series/Series';
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
-import { addEvent, defined, pick } from '../../Shared/Utilities.js';
+import { addEvent, defined } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -36,6 +36,7 @@ import { addEvent, defined, pick } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
@@ -51,7 +52,7 @@ declare module '../../Core/Chart/ChartBase' {
  * */
 
 /**
- * @private
+ * @internal
  */
 function chartGetSelectedParentNodes(
     this: Chart
@@ -71,7 +72,7 @@ function chartGetSelectedParentNodes(
 /**
  * Remove accumulated data points to redistribute all of them again
  * (i.e after hiding series by legend)
- * @private
+ * @internal
  */
 function onChartBeforeRedraw(
     this: Chart
@@ -185,17 +186,11 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                 centerY = box.height / 2;
             }
 
-            node.plotX = node.prevX = pick(
-                node.plotX,
-                (centerX as any) +
-                (radius as any) * Math.cos(node.index || index * angle)
-            );
+            node.plotX = node.prevX = (node.plotX ?? (centerX as any) +
+                (radius as any) * Math.cos(node.index || index * angle));
 
-            node.plotY = node.prevY = pick(
-                node.plotY,
-                (centerY as any) +
-                (radius as any) * Math.sin(node.index || index * angle)
-            );
+            node.plotY = node.prevY = (node.plotY ?? (centerY as any) +
+                (radius as any) * Math.sin(node.index || index * angle));
 
             node.dispX = 0;
             node.dispY = 0;

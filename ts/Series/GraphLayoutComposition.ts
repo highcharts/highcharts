@@ -27,7 +27,7 @@ import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
 import { setAnimation } from '../Core/Animation/AnimationUtilities.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { addEvent, pushUnique } from '../Shared/Utilities.js';
+import { addEvent, fireEvent, pushUnique } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -197,6 +197,7 @@ function onChartRender(
             this.series.forEach((series): void => {
                 if (series && series.layout) {
                     series.render();
+                    fireEvent(series, 'afterSimulation');
                 }
             });
         }

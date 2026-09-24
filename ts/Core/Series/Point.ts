@@ -57,7 +57,6 @@ import {
     isObject,
     isString,
     merge,
-    pick,
     removeEvent
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../Utilities.js';
@@ -711,9 +710,14 @@ class Point {
      *
      * @internal
      * @function Highcharts.Point#destroy
+     *
+     * @param {boolean} [sync]
+     *        Whether to destroy the point synchronously. Used internally from
+     *        series.destroy, where condemned points may cause animation errors
+     *        (#24976).
      */
-    public destroy(): void {
-        if (!this.condemned) {
+    public destroy(sync?: boolean): void {
+        if (!this.destroyed && !this.condemned) {
             const point = this,
                 series = point.series,
                 chart = series.chart,
@@ -740,6 +744,8 @@ class Point {
                 for (const prop in point) { // eslint-disable-line guard-for-in
                     delete point[prop];
                 }
+
+                this.destroyed = true;
             };
 
             if (point.legendItem) {
@@ -760,7 +766,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (duration && series.condemnedPoints) {
+            if (duration && !sync && series.condemnedPoints) {
                 series.condemnedPoints.push(this);
                 this.graphic?.addClass('highcharts-point-condemned');
                 setTimeout(destroyPoint, duration);
@@ -913,10 +919,10 @@ class Point {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
+     * @return {Highcharts.SeriesZonesOptionsObject|undefined}
+     *         The zone item, or `undefined` if the series has no zones.
      */
-    public getZone(): Series.ZoneObject {
+    public getZone(): Series.ZoneObject|undefined {
         const series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y';
@@ -924,7 +930,10 @@ class Point {
             i = 0;
 
         zone = zones[i];
-        while ((this as any)[zoneAxis] >= (zone.value as any)) {
+        while (
+            i < zones.length &&
+            (this as any)[zoneAxis] >= (zone.value as any)
+        ) {
             zone = zones[++i];
         }
 
@@ -1150,7 +1159,8 @@ class Point {
     /**
      * Set a value in an object, on the property defined by key. The key
      * supports nested properties using dot notation. The function modifies the
-     * input object and does not make a copy.
+     * input object and does not make a copy. Paths containing `__proto__` or
+     * `constructor` are ignored.
      *
      * @function Highcharts.Point#setNestedProperty<T>
      *
@@ -1173,6 +1183,13 @@ class Point {
     ): T {
         const nestedKeys = key.split('.');
 
+        // Reject nested keys that would allow prototype pollution
+        if (nestedKeys.some((nestedKey): boolean => (
+            nestedKey === '__proto__' || nestedKey === 'constructor'
+        ))) {
+            return object;
+        }
+
         nestedKeys.reduce(function (
             result: any,
             key: string,
@@ -1184,7 +1201,10 @@ class Point {
             result[key] = (
                 isLastKey ?
                     value :
-                    isObject(result[key], true) ?
+                    // Inherited objects are shared with everything else on
+                    // that prototype, so start a fresh one instead
+                    isObject(result[key], true) &&
+                    Object.hasOwnProperty.call(result, key) ?
                         result[key] :
                         {}
             );
@@ -1303,16 +1323,10 @@ class Point {
 
             point.applyOptions(options);
 
-            // Update visuals, #4146
-            // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic,
-                index = point.index;
-            const shouldDestroyGraphic = point.y === null ?
-                !hasMockGraphic :
-                hasMockGraphic;
-            if (graphic && shouldDestroyGraphic) {
+            // Update visuals, #4146. The a11y mock graphic is exempt, it is
+            // maintained by the accessibility module, #12718.
+            if (graphic && point.y === null && !point.hasMockGraphic) {
                 point.graphic = graphic.destroy();
-                delete point.hasMockGraphic;
             }
 
             if (isObject(options, true)) {
@@ -1331,7 +1345,8 @@ class Point {
                 }
             }
 
-            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            const index = point.index,
+                pointOptions = point.optionsToObject(options) as AnyRecord;
 
             if (!series.hasProcessedDataTable) {
                 // Record changes in the data table (#24451)
@@ -1457,7 +1472,7 @@ class Point {
             series = point.series,
             chart = series.chart;
 
-        selected = pick(selected, !point.selected);
+        selected = (selected ?? !point.selected);
 
         this.selectedStaging = selected;
 
@@ -1835,7 +1850,7 @@ class Point {
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +
-                    pick(point.colorIndex, series.colorIndex) +
+                    (point.colorIndex ?? series.colorIndex) +
                     (point.className ? ' ' + point.className : ''),
                 'visibility': markerVisibility,
                 'zIndex': -1 // #4929, #8276

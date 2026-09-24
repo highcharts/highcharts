@@ -26,10 +26,15 @@ const grid = Grid.grid('container', {
                 'Active',
                 'Archived'
             ]
-        },
-        treeView: {
-            treeColumn: 'name',
-            expandedRowIds: 'all'
+        }
+    },
+    treeView: {
+        enabled: true,
+        treeColumn: 'name'
+    },
+    rendering: {
+        rows: {
+            expandedLevels: 'all'
         }
     },
     columns: [{

@@ -9,18 +9,23 @@ expandable hierarchy inside the grid. Use it when your data represents
 parent-child relationships such as organization structures, folders, product
 categories, account trees, or multi-level budgets.
 
-Tree view is configured using `data.treeView` and works with the local
-data provider. Grid builds a tree index from the source table, then projects
-the queried row set into visible parent and child rows before pagination is
-applied.
+Tree view is enabled by setting `treeView.enabled` to `true`. It works with the
+local data provider. Grid builds a tree index from the source table, then
+projects the queried row set into visible parent and child rows before
+pagination is applied.
+
+To build a hierarchy from repeated values of flat data instead, use
+[row grouping](https://www.highcharts.com/docs/grid/rows/grouping).
 
 ## Minimum requirements
 
 - Tree view is available in Highcharts Grid Pro.
+- Set `treeView.enabled: true`. Declaring the remaining tree view options alone
+  does not enable the feature.
 - Tree view works with local data (`data.columns`,
   `data.dataTable`, or connector-backed data).
 - Provide either `parentId` or `path` hierarchy data, or configure
-  `data.treeView.input` to point to custom hierarchy columns.
+  `treeView.input` to point to custom hierarchy columns.
 
 ```js
 Grid.grid('container', {
@@ -30,10 +35,10 @@ Grid.grid('container', {
                 'Root/Sales',
                 'Root/Marketing'
             ]
-        },
-        treeView: {
-            enabled: true
         }
+    },
+    treeView: {
+        enabled: true
     }
 });
 ```
@@ -49,7 +54,7 @@ Tree view supports two input models:
 - `parentId`: explicit parent references in a dedicated column
 - `path`: hierarchical paths such as `Root/Sales/EMEA`
 
-If `data.treeView.input` is omitted, TreeView auto-detects standard columns and
+If `treeView.input` is omitted, TreeView auto-detects standard columns and
 prefers `path` when both `path` and `parentId` exist.
 
 ### `parentId` input
@@ -68,14 +73,19 @@ Grid.grid('container', {
             name: ['Root', 'Sales', 'Marketing', 'EMEA', 'APAC'],
             budget: [1000, 600, 400, 350, 250]
         },
-        idColumn: 'id',
-        treeView: {
-            input: {
-                type: 'parentId',
-                parentIdColumn: 'parentId'
-            },
-            treeColumn: 'name',
-            expandedRowIds: 'all'
+        idColumn: 'id'
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'parentId',
+            parentIdColumn: 'parentId'
+        },
+        treeColumn: 'name'
+    },
+    rendering: {
+        rows: {
+            expandedLevels: 'all'
         }
     },
     header: ['name', 'budget']
@@ -104,14 +114,15 @@ Grid.grid('container', {
             ],
             budget: [1000, 600, 400, 350, 250]
         },
-        idColumn: 'id',
-        treeView: {
-            input: {
-                type: 'path',
-                pathColumn: 'path',
-                separator: '/',
-                showFullPath: true
-            }
+        idColumn: 'id'
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path',
+            pathColumn: 'path',
+            separator: '/',
+            showFullPath: true
         }
     }
 });
@@ -140,7 +151,7 @@ those ancestors.
 
 The expand/collapse UI is rendered in the tree column.
 
-- Use `data.treeView.treeColumn` to choose which column receives indentation
+- Use `treeView.treeColumn` to choose which column receives indentation
   and toggle buttons.
 - If `treeColumn` is omitted, Grid uses the first rendered column.
 - Tree rows expose their depth on the `tr` element as `data-tree-depth`.
@@ -150,6 +161,7 @@ The expand/collapse UI is rendered in the tree column.
 
 ```js
 treeView: {
+    enabled: true,
     treeColumn: 'name',
     input: {
         type: 'path',
@@ -160,17 +172,30 @@ treeView: {
 
 ## Initial expansion state
 
-Use `expandedRowIds` to seed which branches are expanded when Tree view is
-initialized or when Tree view configuration changes.
+Two options in `rendering.rows` seed which branches are expanded when Tree view
+is initialized or when Tree view configuration changes:
+
+- `expandedLevels` expands whole levels, counted from the top
+- `expandedRowIds` expands individual rows
 
 ```js
-treeView: {
-    expandedRowIds: [1, 2, 7] // or: 'all'
+rendering: {
+    rows: {
+        expandedLevels: 2,       // or: 'all'
+        expandedRowIds: [1, 2, 7]
+    }
 }
 ```
 
-`expandedRowIds: 'all'` expands every row that currently has children. Leaf
-rows are ignored automatically. It does not require `data.idColumn`.
+A row is initially expanded when its depth is lower than `expandedLevels`, or
+when its ID is listed in `expandedRowIds` - the two options add up and neither
+of them collapses rows. `expandedLevels` defaults to `0`, which leaves every
+branch collapsed.
+
+`expandedLevels: 2` expands the root rows and their children, so three levels
+are visible. `expandedLevels: 'all'` expands every row that currently has
+children. Leaf rows are ignored automatically, and neither option requires
+`data.idColumn`.
 
 For an explicit `expandedRowIds` array, each value is matched against the
 current Tree view row IDs. `data.idColumn` is required when those values come
@@ -179,12 +204,14 @@ instead.
 
 ## Sticky parents
 
-Set `stickyParents: true` to keep the current ancestor context visible while
-scrolling long trees.
+Set `rendering.rows.stickyParents: true` to keep the current ancestor context
+visible while scrolling long trees.
 
 ```js
-treeView: {
-    stickyParents: true
+rendering: {
+    rows: {
+        stickyParents: true
+    }
 }
 ```
 
@@ -193,26 +220,20 @@ hierarchies and [row virtualization](https://www.highcharts.com/docs/grid/rows/v
 
 ## Aggregation
 
-Use `columns[].treeView.aggregator` to derive parent values from their direct
-children during TreeView projection.
+Use `columns[].rowAggregator` to derive parent values from their direct children
+during TreeView projection.
 
 ```js
 columns: [{
     id: 'budget',
-    treeView: {
-        aggregator: 'SUM'
-    }
+    rowAggregator: 'SUM'
 }, {
     id: 'utilization',
-    treeView: {
-        aggregator: 'AVERAGE'
-    }
+    rowAggregator: 'AVERAGE'
 }, {
     id: 'risk',
-    treeView: {
-        aggregator: function (context) {
-            return context.depth === 0 ? false : 'MAX';
-        }
+    rowAggregator: function (context) {
+        return context.depth === 0 ? false : 'MAX';
     }
 }]
 ```
@@ -229,10 +250,8 @@ Aggregation rules:
   ```js
   columns: [{
       id: 'budget',
-      treeView: {
-          aggregator: function (context) {
-              return context.rowId === 'europe' ? false : 'SUM';
-          }
+      rowAggregator: function (context) {
+          return context.rowId === 'europe' ? false : 'SUM';
       }
   }]
   ```
@@ -303,10 +322,11 @@ parent-child context.
 ## Custom separators
 
 For path data that is not slash-separated, pass a string, `RegExp`, or callback
-in `data.treeView.input.separator`.
+in `treeView.input.separator`.
 
 ```js
 treeView: {
+    enabled: true,
     input: {
         type: 'path',
         separator: /[A-Z]+(?![a-z])|[A-Z][a-z]*/
@@ -323,6 +343,7 @@ should return an ordered array of path segments.
 
 ```js
 treeView: {
+    enabled: true,
     input: {
         type: 'path',
         separator: path => path.split(' > ')
@@ -332,7 +353,25 @@ treeView: {
 
 This works well for custom domain-specific path formats.
 
+## Migrating from `data.treeView`
+
+The `data.treeView` option is deprecated since v3.1.0 and now supports the
+`parentId` and `path` input models only. Move the configuration to the root
+level:
+
+| Deprecated | Replacement |
+| ---------- | ----------- |
+| `data.treeView.enabled` | `treeView.enabled` |
+| `data.treeView.input` | `treeView.input` |
+| `data.treeView.treeColumn` | `treeView.treeColumn` |
+| `data.treeView.expandedRowIds` | `rendering.rows.expandedRowIds`, or `rendering.rows.expandedLevels: 'all'` |
+| `data.treeView.stickyParents` | `rendering.rows.stickyParents` |
+| `columns[].treeView.aggregator` | `columns[].rowAggregator` |
+
+When both `treeView` and `data.treeView` are set, the root level `treeView`
+takes precedence and `data.treeView` is ignored entirely.
+
 ## API reference
 
 See more in the
-[API reference for `data.treeView`](https://api.highcharts.com/grid/data.treeView).
+[API reference for `treeView`](https://api.highcharts.com/grid/treeView).

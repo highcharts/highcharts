@@ -40,7 +40,7 @@ G.StockChart = G.StockChart || G.stockChart;
 extend(G.StockChart, StockChart);
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
-HLCSeries.compose(G.Series, G.SVGRenderer);
+HLCSeries.compose(G.Series, G.Legend, G.SVGRenderer);
 FlagsSeries.compose(G.Renderer);
 OHLCSeries.compose(G.Series);
 G.Navigator.compose(G.Chart, G.Axis, G.Series);

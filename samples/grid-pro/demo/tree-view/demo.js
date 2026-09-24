@@ -66,13 +66,18 @@ Grid.grid('container', {
     gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns,
-        idColumn: 'recordId',
-        treeView: {
-            input: {
-                type: 'path',
-                pathColumn: 'Regions' // Column that contains the path
-            },
-            expandedRowIds: [1, 2, 3, 13] // Values from defined idColum above
+        idColumn: 'recordId'
+    },
+    treeView: {
+        enabled: true,
+        input: {
+            type: 'path',
+            pathColumn: 'Regions' // Column that contains the path
+        }
+    },
+    rendering: {
+        rows: {
+            expandedRowIds: [1, 2, 3, 13] // Values from defined idColumn above
         }
     },
     columnDefaults: {

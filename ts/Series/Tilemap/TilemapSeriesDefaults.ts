@@ -126,7 +126,8 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
      * @sample maps/demo/diamondmap
      *         Diamond tile shapes
      *
-     * @type {Highcharts.TilemapShapeValue}
+     * @declare Highcharts.TilemapShapeValue
+     * @type    {"circle"|"diamond"|"hexagon"|"square"}
      */
     tileShape: 'hexagon'
 
@@ -137,7 +138,7 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.tilemap
- * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
+ * @excluding allAreas, joinBy, mapData, marker,
  *            pointRange, shadow, stack, dataSorting, boostThreshold,
  *            boostBlending
  * @product   highcharts highmaps

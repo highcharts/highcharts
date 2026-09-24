@@ -23,7 +23,7 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import { addEvent, extend, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -146,8 +146,8 @@ function getGroupPixelWidth(
             groupPixelWidth = Math.max(
                 groupPixelWidth,
                 // Fallback to commonOptions (#9693)
-                pick(
-                    dgOptions.groupPixelWidth,
+                (
+                    dgOptions.groupPixelWidth ??
                     DataGroupingDefaults.common.groupPixelWidth
                 )
             );
@@ -214,7 +214,7 @@ function setDataGrouping(
 
     let i;
 
-    redraw = pick(redraw, true);
+    redraw = (redraw ?? true);
 
     if (!dataGrouping) {
         dataGrouping = {

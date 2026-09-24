@@ -1789,7 +1789,11 @@ QUnit.test('Chart.update', assert => {
     );
 
     assert.deepEqual(
-        getYAxisLabels(),
+        [
+            axis.ticks[0].label.textStr,
+            axis.grid.columns[0].ticks[0].label.textStr,
+            axis.grid.columns[1].ticks[0].label.textStr
+        ],
         ['Updated 1', 'Updated 2', 'New 3'],
         'should still have two updated labels and a new one after update.'
     );
@@ -1893,7 +1897,7 @@ QUnit.test(
             chart.xAxis[1].tickPositions.map(tickPosition =>
                 chart.xAxis[1].ticks[tickPosition].label.textStr
             ).join(', '),
-            'July, January, July',
+            'July, January, ',
             'Secondary axis should show months when xAxis.units set (#16626)'
         );
     }
@@ -2196,6 +2200,17 @@ QUnit.test(
             chart.xAxis[0].options.labels.align,
             'Label align options should still not be defined.'
         );
+
+        assert.ok(
+            chart.xAxis[0].clippable,
+            'Axes without grid.enabled should remain clippable when Gantt ' +
+            'module is loaded. #24795'
+        );
+        assert.ok(
+            chart.yAxis[0].clippable,
+            'Axes without grid.enabled should remain clippable when Gantt ' +
+            'module is loaded. #24795'
+        );
     }
 );
 
@@ -2351,3 +2366,27 @@ QUnit.test('slotWidth', assert => {
         'Non-styled and styled mode labels width should be the similar, #22943'
     );
 });
+
+QUnit.test(
+    'Destroying a chart should not throw a TypeError for axes without grid ' +
+    'additions, #24644',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [{ data: [1, 2, 3] }]
+        });
+
+        chart.axes.forEach(axis => {
+            delete axis.grid;
+        });
+
+        // Failure would be a TypeError thrown by onDestroy, which QUnit
+        // catches by itself.
+        chart.destroy();
+
+        assert.ok(
+            true,
+            'Destroying a chart with axes without grid additions should ' +
+            'not throw TypeError.'
+        );
+    }
+);

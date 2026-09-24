@@ -69,7 +69,6 @@ declare module '../../Core/Series/PointBase' {
  *
  * */
 
-/** @internal */
 class AreaRangePoint extends AreaPoint {
 
     /* *
@@ -78,34 +77,48 @@ class AreaRangePoint extends AreaPoint {
      *
      * */
 
+    /** @internal */
     public _plotY?: number;
 
+    /** @internal */
     public below?: boolean;
 
+    /** @internal */
     public dataLabelUpper?: SVGElement|SVGLabel;
 
+    /** @internal */
     public isInside?: boolean;
 
+    /** @internal */
     public isTopInside?: boolean;
 
+    /** @internal */
     public high!: number;
 
+    /** @internal */
     public low!: number;
 
     public options!: AreaRangePointOptions;
 
+    /** @internal */
     public origProps?: Partial<AreaRangePoint>;
 
+    /** @internal */
     public plotHigh?: number;
 
+    /** @internal */
     public plotLow?: number;
 
+    /** @internal */
     public plotHighX?: number;
 
+    /** @internal */
     public plotLowX?: number;
 
+    /** @internal */
     public plotX!: number;
 
+    /** @internal */
     public series!: AreaRangeSeries;
 
     /* *
@@ -172,6 +185,7 @@ class AreaRangePoint extends AreaPoint {
         series.restoreMarkerSettings(originalSettings);
     }
 
+    /** @internal */
     public haloPath(): SVGPath {
         const isPolar = this.series.chart.polar;
 
@@ -201,6 +215,7 @@ class AreaRangePoint extends AreaPoint {
         return path;
     }
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.low) && isNumber(this.high);
     }
@@ -213,7 +228,6 @@ class AreaRangePoint extends AreaPoint {
  *
  * */
 
-/** @internal */
 export default AreaRangePoint;
 
 /* *

@@ -38,8 +38,7 @@ import {
     arrayMin,
     crisp,
     extend,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -66,6 +65,7 @@ class VariwideSeries extends ColumnSeries {
 
     public static compose = VariwideComposition.compose;
 
+    /** @internal */
     public static defaultOptions: VariwideSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         VariwideSeriesDefaults
@@ -77,12 +77,16 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public crispOption?: boolean;
     public data!: Array<VariwidePoint>;
     public options!: VariwideSeriesOptions;
     public points!: Array<VariwidePoint>;
+    /** @internal */
     public relZ!: Array<number>;
+    /** @internal */
     public totalZ!: number;
+    /** @internal */
     public zData?: Array<number>;
 
     /* *
@@ -91,6 +95,7 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
@@ -169,8 +174,8 @@ class VariwideSeries extends ColumnSeries {
                 minPx - this.chart.plotLeft - goRight * axis.minPixelPadding,
             linearSlotLeft = i / relZ.length * len,
             linearSlotRight = (i + goRight) / relZ.length * len,
-            slotLeft = (pick(relZ[i], totalZ) / totalZ) * len,
-            slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len,
+            slotLeft = ((relZ[i] ?? totalZ) / totalZ) * len,
+            slotRight = ((relZ[i + goRight] ?? totalZ) / totalZ) * len,
             xInsideLinearSlot = (x - (left + linearSlotLeft));
 
         // Set crosshairWidth for every point (#8173)
@@ -184,6 +189,7 @@ class VariwideSeries extends ColumnSeries {
     }
 
 
+    /** @internal */
     public translate(): void {
         // Temporarily disable crisping when computing original shapeArgs
         this.crispOption = this.options.crisp;
@@ -239,6 +245,7 @@ class VariwideSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public getXExtremes(
         xData: Array<number>|TypedArray
     ): RangeSelector.RangeObject {
@@ -316,9 +323,13 @@ addEvent(VariwideSeries, 'afterColumnTranslate', function (): void {
  * */
 
 interface VariwideSeries {
+    /** @internal */
     irregularWidths: boolean;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof VariwidePoint;
 }
 

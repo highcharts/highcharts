@@ -44,7 +44,7 @@ Highcharts.chart('container', {
         }],
         labels: {
             // Move them inside to avoid collision with plot band labels
-            distance: '-30%'
+            distance: '-40%'
         }
     },
 

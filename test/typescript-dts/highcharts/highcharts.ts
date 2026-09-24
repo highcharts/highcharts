@@ -9,6 +9,7 @@
 import * as Highcharts from "highcharts";
 import "highcharts/modules/series-label";
 
+test_borderRadius();
 test_legend();
 test_selectEvent();
 test_seriesArea();
@@ -17,8 +18,33 @@ test_seriesColumn();
 test_seriesDependencyWheel();
 test_seriesLine();
 test_seriesPie();
+test_templating();
 test_tooltip();
 test_yAxis();
+
+/**
+ * Tests Highcharts.BorderRadiusOptionsObject, whose members are all optional
+ * because they fall back to documented defaults. #24856
+ */
+function test_borderRadius() {
+    Highcharts.chart('container', {
+        plotOptions: {
+            column: {
+                borderRadius: {
+                    radius: '50%'
+                }
+            }
+        },
+        series: [{
+            type: 'column',
+            borderRadius: {
+                radius: 3,
+                scope: 'stack'
+            },
+            data: [1, 2, 3]
+        }]
+    });
+}
 
 /**
  * Tests legend options.
@@ -503,6 +529,23 @@ function test_seriesPie() {
                 name: 'Other',
                 y: 2.61
             }]
+        }]
+    });
+}
+
+/**
+ * Tests Highcharts.Templating and its documented `helpers` member. #24856
+ */
+function test_templating() {
+    const templating: Highcharts.TemplatingObject = Highcharts.Templating;
+    templating.helpers.abs = (value: number): number => Math.abs(value);
+    Highcharts.chart('container', {
+        series: [{
+            type: 'line',
+            data: [1, -2, 3],
+            dataLabels: {
+                format: 'Absolute value: {abs point.y}'
+            }
         }]
     });
 }

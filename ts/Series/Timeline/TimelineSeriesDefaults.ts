@@ -221,7 +221,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
  *
  * @extends   series,plotOptions.timeline
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            cropThreshold, dashStyle, findNearestPointBy,
  *            getExtremesFromAll, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *            stacking, stack, step, threshold, turboThreshold, zoneAxis, zones,

@@ -30,15 +30,14 @@ const {
     doc,
     isFirefox
 } = H;
-import BaseFormIcons from '../../../Shared/BaseFormIcons';
-import getIcon from '../../../Shared/BaseFormUtils';
+import BaseFormIcons from '../../../Shared/BaseFormIcons.js';
+import getIcon from '../../../Shared/BaseFormUtils.js';
 
 import {
     createElement,
     isArray,
     isObject,
     objectEach,
-    pick,
     stableSort
 } from '../../../Shared/Utilities.js';
 
@@ -174,11 +173,9 @@ function addToolbar(
     label.setAttribute('aria-label', 'Annotation type');
     label.appendChild(
         doc.createTextNode(
-            pick(
-                // Advanced annotations:
-                lang[options.langKey as any] || options.langKey,
-                // Basic shapes:
-                options.shapes && options.shapes[0].type,
+            (
+                (lang[options.langKey as any] || options.langKey) ??
+                (options.shapes && options.shapes[0].type) ??
                 ''
             )
         )

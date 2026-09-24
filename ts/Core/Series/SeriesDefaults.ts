@@ -421,13 +421,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
-     * Options for a specific series-level data table. The `dataTable` option
-     * can be either a configuration object or an instance of the `DataTable`
-     * class. If a `DataTable` instance is passed, it will be used directly. If
-     * a configuration object is passed, a new `DataTable` instance will be
-     * created based on the provided configuration.
+     * Options for a specific series-level data table or an array of data
+     * tables. The `dataTable` option can be either a configuration object or an
+     * instance of the `DataTable` class. If a `DataTable` instance is passed,
+     * it will be used directly. If a configuration object or an array is
+     * passed, a new `DataTable` instance will be created based on the provided
+     * configuration.
      *
-     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
+     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
      * @sample {highcharts} highcharts/datatable/series-datatable/
      *         Series with one data table each
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
@@ -2000,6 +2001,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highmaps} maps/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
+         * @type  {number|Array<number>}
          * @since 2.2.1
          */
         padding: [1, 3],
@@ -2629,9 +2631,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * What type of legend symbol to render for this series. Can be one of
-     * `areaMarker`, `lineMarker` or `rectangle`.
+     * `areaMarker`, `lineMarker` or `rectangle`. The financial series of
+     * Highcharts Stock add `candlestick`, `hlc` and `ohlc`.
      *
-     * @validvalue ["areaMarker", "lineMarker", "rectangle"]
+     * @validvalue ["areaMarker", "candlestick", "hlc", "lineMarker", "ohlc", "rectangle"]
      *
      * @sample {highcharts} highcharts/series/legend-symbol/
      *         Change the legend symbol

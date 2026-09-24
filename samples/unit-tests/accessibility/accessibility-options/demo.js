@@ -253,6 +253,42 @@ QUnit.test('Keyboard navigation', function (assert) {
     );
 });
 
+QUnit.test(
+    'skipNullPoints only skips null points, not valid ones (#24650)',
+    function (assert) {
+        const homeKey = 36;
+        const chart = Highcharts.chart('container', {
+            accessibility: {
+                keyboardNavigation: {
+                    seriesNavigation: {
+                        skipNullPoints: true
+                    }
+                }
+            },
+            series: [{
+                // The first null must be skipped, but the valid points
+                // after it should still be reachable.
+                data: [null, 2, 3]
+            }]
+        });
+
+        chart.accessibility.keyboardNavigation.onKeydown(
+            new KeyboardEvent('keydown', { keyCode: homeKey })
+        );
+        const point = chart.highlightedPoint;
+
+        assert.ok(
+            point,
+            'Keyboard navigation should reach a point when skipNullPoints ' +
+            'is true.'
+        );
+        assert.notOk(
+            point && point.isNull,
+            'Navigation should skip the null point and land on a valid point.'
+        );
+    }
+);
+
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{}]
@@ -310,6 +346,9 @@ QUnit.test('High contrast theme should persist on chart update', function (
     assert
 ) {
     const options = {
+        chart: {
+            animation: false
+        },
         accessibility: {
             highContrastMode: true,
             highContrastTheme: {
@@ -317,7 +356,7 @@ QUnit.test('High contrast theme should persist on chart update', function (
                     plotLines: [{
                         color: '#ff0000',
                         value: 2,
-                        width: 2
+                        width: 5
                     }]
                 }
             }
@@ -334,7 +373,7 @@ QUnit.test('High contrast theme should persist on chart update', function (
         }]
     };
     const chart = Highcharts.chart('container', options);
-    let plotLine = chart.yAxis[0].plotLinesAndBands[0];
+    const plotLine = chart.yAxis[0].plotLines[0];
 
     assert.strictEqual(
         plotLine.svgElem.element.getAttribute('stroke'),
@@ -343,10 +382,15 @@ QUnit.test('High contrast theme should persist on chart update', function (
     );
 
     chart.update(options);
-    plotLine = chart.yAxis[0].plotLinesAndBands[0];
+    const plotLineAfterUpdate = chart.yAxis[0].plotLines[0];
+
+    assert.ok(
+        plotLine === plotLineAfterUpdate,
+        'Plot line should be the same instance after update'
+    );
 
     assert.strictEqual(
-        plotLine.svgElem.element.getAttribute('stroke'),
+        plotLineAfterUpdate.svgElem.element.getAttribute('stroke'),
         '#ff0000',
         'Plot line should keep the high contrast color after chart.update'
     );

@@ -47,8 +47,8 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            chart.yAxis[0].plotLinesAndBands[0].svgElem.d ===
-                chart.yAxis[1].plotLinesAndBands[0].svgElem.d,
+            chart.yAxis[0].plotBands[0].svgElem.d ===
+                chart.yAxis[1].plotBands[0].svgElem.d,
             false,
             'Proper position plotBands'
         );
