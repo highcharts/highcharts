@@ -271,11 +271,6 @@ export interface ScrollbarOptions {
 export interface AxisScrollbarOptions extends ScrollbarOptions {
 
     /**
-     * Enable or disable the scrollbar.
-     *
-     * @sample stock/scrollbar/enabled/
-     *         Disable the scrollbar, only use navigator
-     *
      * @default false
      */
     enabled?: boolean;
