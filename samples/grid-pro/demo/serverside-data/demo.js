@@ -81,13 +81,33 @@ Grid.grid('container', {
         width: 80
     }],
     pagination: {
-        enabled: true,
-        pageSize: 10,
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [5, 10, 20, 50]
+        enabled: true
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 800
+            },
+            gridOptions: {
+                header: ['employeeId', 'firstName', 'hireDate', 'city'],
+                columns: [{
+                    id: 'firstName',
+                    header: {
+                        format: 'Employee'
+                    },
+                    cells: {
+                        format: `
+                            {value} {row.data.lastName}<br/>
+                            {row.data.role} ({row.data.department})
+                        `
+                    }
+                }, {
+                    id: 'city',
+                    cells: {
+                        format: '{value}, {row.data.state}'
+                    }
+                }]
             }
-        }
+        }]
     }
 });
