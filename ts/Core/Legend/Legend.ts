@@ -65,7 +65,6 @@ import {
     isNumber,
     merge,
     pushUnique,
-    relativeLength,
     stableSort,
     syncTimeout
 } from '../../Shared/Utilities.js';
@@ -915,7 +914,7 @@ class Legend {
                         options.itemWidth ||
                         legend.widthOption ||
                         chart.spacingBox.width,
-                        options.maxWidth ? relativeLength(
+                        options.maxWidth ? chart.relativeLength(
                             options.maxWidth,
                             chart.chartWidth
                         ) : Infinity
@@ -1234,8 +1233,8 @@ class Legend {
         legend.itemY = legend.initialItemY;
         legend.offsetWidth = 0;
         legend.lastItemY = 0;
-        legend.widthOption = relativeLength(
-            options.width as any,
+        legend.widthOption = chart.relativeLength(
+            options.width,
             chartSpacingBoxWidth - padding
         );
 
@@ -1311,7 +1310,7 @@ class Legend {
                         legend.widthOption || legend.offsetWidth
                     ),
                     allowedWidth,
-                    relativeLength(
+                    chart.relativeLength(
                         options.maxWidth,
                         chart.chartWidth
                     ) || Infinity

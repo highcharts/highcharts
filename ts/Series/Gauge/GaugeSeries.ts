@@ -45,8 +45,7 @@ import {
     defined,
     extend,
     isNumber,
-    merge,
-    relativeLength
+    merge
 } from '../../Shared/Utilities.js';
 
 
@@ -462,6 +461,7 @@ class GaugeSeries extends Series {
     public translate(): void {
 
         const series = this,
+            { relativeLength } = series.chart,
             yAxis = series.yAxis,
             options = series.options,
             center = yAxis.center;
@@ -488,7 +488,9 @@ class GaugeSeries extends Series {
                     radius
                 ),
                 topWidth = relativeLength(dialOptions.topWidth, radius),
-                borderRadius = relativeLength(dialOptions.borderRadius, radius),
+                borderRadius = relativeLength(
+                    dialOptions.borderRadius, radius
+                ),
                 // Border radius at the base
                 bRBase = Math.min(borderRadius, baseWidth / 2),
                 // Border radius at the top
@@ -578,7 +580,7 @@ class GaugeSeries extends Series {
             options = series.options,
             pivotOptions = options.pivot,
             renderer = chart.renderer,
-            pivotRadius = relativeLength(
+            pivotRadius = chart.relativeLength(
                 pivotOptions?.radius || 0,
                 center[2] / 2
             );

@@ -74,6 +74,7 @@ import {
     objectEach,
     pInt,
     pushUnique,
+    relativeLength,
     replaceNested,
     syncTimeout
 } from '../../../Shared/Utilities.js';
@@ -2179,8 +2180,7 @@ class SVGElement implements SVGElementBase {
         // In styled mode, read computed stroke width
         const val = this.getStyle('stroke-width');
 
-        let ret = 0,
-            tempElement: SVGDOMElement;
+        let ret = 0;
 
         // Read pixel values directly
         if (/px$/.test(val)) {
@@ -2188,14 +2188,12 @@ class SVGElement implements SVGElementBase {
 
         // Other values like em, pt etc need to be measured
         } else if (val !== '') {
-            tempElement = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
-            attr(tempElement, {
-                width: val as any,
-                'stroke-width': 0
-            });
-            this.element.parentNode.appendChild(tempElement);
-            ret = (tempElement as any).getBBox().width;
-            tempElement.parentNode.removeChild(tempElement);
+            ret = relativeLength(
+                val,
+                0,
+                void 0,
+                this.element.parentNode as SVGDOMElement
+            );
         }
         return ret;
     }

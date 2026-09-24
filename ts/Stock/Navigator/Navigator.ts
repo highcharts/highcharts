@@ -613,7 +613,9 @@ class Navigator {
 
             // Update navigator axis
             if (options.height || options.xAxis || options.yAxis) {
-                this.height = options.height ?? this.height;
+                this.height = defined(options.height) ?
+                    chart.relativeLength(options.height, chart.plotHeight) :
+                    this.height;
                 const offsets = this.getXAxisOffsets();
 
                 this.xAxis.update({
@@ -1316,8 +1318,16 @@ class Navigator {
             navigatorEnabled = navigatorOptions.enabled,
             scrollbarOptions = chartOptions.scrollbar || {},
             scrollbarEnabled = scrollbarOptions.enabled,
-            height = navigatorEnabled && navigatorOptions.height || 0,
-            scrollbarHeight = scrollbarEnabled && scrollbarOptions.height || 0,
+            height = navigatorEnabled ?
+                chart.relativeLength(
+                    navigatorOptions.height || 0,
+                    chart.plotHeight
+                ) : 0,
+            scrollbarHeight = scrollbarEnabled ?
+                chart.relativeLength(
+                    scrollbarOptions.height || 0,
+                    chart.plotHeight
+                ) : 0,
             scrollButtonSize =
                 scrollbarOptions.buttonsEnabled && scrollbarHeight || 0;
 

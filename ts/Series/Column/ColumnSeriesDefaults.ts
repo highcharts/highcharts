@@ -142,10 +142,11 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
     marker: null as any, // Point options are specified in the base options
 
     /**
-     * The maximum allowed pixel width for a column, translated to the
-     * height of a bar in a bar chart. This prevents the columns from
-     * becoming too wide when there is a small number of points in the
-     * chart.
+     * The maximum allowed width for a column, translated to the height of
+     * a bar in a bar chart, either in pixels or as a CSS length
+     * expression, e.g. a percentage of the point's own slot width like
+     * `'50%'`. This prevents the columns from becoming too wide when
+     * there is a small number of points in the chart.
      *
      * @see [pointWidth](#plotOptions.column.pointWidth)
      *
@@ -154,7 +155,7 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
      * @sample {highstock} highcharts/plotoptions/column-maxpointwidth-20/
      *         Limited to 50
      *
-     * @type      {number}
+     * @type      {number|Highcharts.CSSLength}
      * @since     4.1.8
      * @product   highcharts highstock gantt
      * @apioption plotOptions.column.maxPointWidth
@@ -177,11 +178,13 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
     pointPadding: 0.1,
 
     /**
-     * A pixel value specifying a fixed width for each column or bar point.
-     * When set to `undefined`, the width is calculated from the
-     * `pointPadding` and `groupPadding`. The width effects the dimension
-     * that is not based on the point value. For column series it is the
-     * horizontal length and for bar series it is the vertical length.
+     * A fixed width for each column or bar point, either in pixels or as
+     * a CSS length expression, e.g. `20`, `'2em'`, or a percentage of the
+     * point's own slot width, like `'50%'`. When set to `undefined`, the
+     * width is calculated from the `pointPadding` and `groupPadding`. The
+     * width effects the dimension that is not based on the point value.
+     * For column series it is the horizontal length and for bar series it
+     * is the vertical length.
      *
      * @see [maxPointWidth](#plotOptions.column.maxPointWidth)
      *
@@ -189,19 +192,21 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
      *         20px wide columns regardless of chart width or the amount of
      *         data points
      *
-     * @type      {number}
+     * @type      {number|Highcharts.CSSLength}
      * @since     1.2.5
      * @product   highcharts highstock gantt
      * @apioption plotOptions.column.pointWidth
      */
 
     /**
-     * A pixel value specifying a fixed width for the column or bar.
-     * Overrides pointWidth on the series.
+     * A fixed width for the column or bar, either in pixels or as a CSS
+     * length expression, e.g. `20`, `'2em'`, or a percentage of the
+     * series' own point width, like `'50%'`. Overrides pointWidth on the
+     * series.
      *
      * @see [series.pointWidth](#plotOptions.column.pointWidth)
      *
-     * @type      {number}
+     * @type      {number|Highcharts.CSSLength}
      * @default   undefined
      * @since     7.0.0
      * @product   highcharts highstock gantt
@@ -523,13 +528,14 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
  */
 
 /**
- * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series. The width effects the dimension that is not based
- * on the point value.
+ * A fixed width for the column or bar, either in pixels or as a CSS
+ * length expression, e.g. `20`, `'2em'`, or a percentage of the series'
+ * own point width, like `'50%'`. Overrides pointWidth on the series. The
+ * width effects the dimension that is not based on the point value.
  *
  * @see [series.pointWidth](#plotOptions.column.pointWidth)
  *
- * @type      {number}
+ * @type      {number|Highcharts.CSSLength}
  * @apioption series.column.data.pointWidth
  */
 

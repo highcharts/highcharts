@@ -200,10 +200,11 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
 
     /**
-     * Fixed height of the flag's shape. By default, height is
-     * autocalculated according to the flag's title.
+     * A fixed height for the flag's shape, either in pixels or as a CSS
+     * length expression, e.g. `20`, `'2em'`, or `'calc(var(--gap) * 2)'`.
+     * By default, height is autocalculated according to the flag's title.
      *
-     * @type      {number}
+     * @type      {number|Highcharts.CSSLength}
      * @product   highstock
      * @apioption plotOptions.flags.height
      */

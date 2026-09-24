@@ -40,7 +40,7 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -189,6 +189,7 @@ class Funnel3DSeries extends ColumnSeries {
 
         const series = this,
             chart = series.chart,
+            { relativeLength } = chart,
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
@@ -197,13 +198,10 @@ class Funnel3DSeries extends ColumnSeries {
             center: Array<(number|string)> = options.center as any,
             centerX = relativeLength(center[0], plotWidth),
             centerY = relativeLength(center[1], plotHeight),
-            width = relativeLength(options.width as any, plotWidth),
-            height = relativeLength(options.height as any, plotHeight),
-            neckWidth = relativeLength(options.neckWidth as any, plotWidth),
-            neckHeight = relativeLength(
-                options.neckHeight as any,
-                plotHeight
-            ),
+            width = relativeLength(options.width, plotWidth),
+            height = relativeLength(options.height, plotHeight),
+            neckWidth = relativeLength(options.neckWidth, plotWidth),
+            neckHeight = relativeLength(options.neckHeight, plotHeight),
             neckY = (centerY - height / 2) + height - neckHeight,
             points = series.points;
 

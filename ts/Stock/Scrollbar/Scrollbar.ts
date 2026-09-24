@@ -485,8 +485,10 @@ class Scrollbar {
         scroller.chart = chart;
 
         // Backward compatibility
-        scroller.size = scroller.options.size ??
-            scroller.options.height as any;
+        scroller.size = chart.relativeLength(
+            (scroller.options.size ?? scroller.options.height) || 0,
+            chart.plotHeight
+        );
 
         // Init
         if (options.enabled) {
