@@ -85,6 +85,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      *         Flags on series and on x axis
      *
      * @type      {string}
+     * @default   undefined
      * @product   highstock
      * @apioption plotOptions.flags.onSeries
      */
@@ -152,7 +153,11 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
     },
 
     /**
-     * @type {number|null}
+     * The Y axis value to serve as the base for the flags. If `null`, the
+     * flags are placed relative to the padding Y axis minimum.
+     *
+     * @type    {number|null}
+     * @product highstock
      */
     threshold: null,
 
@@ -296,6 +301,12 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  *            pointWidth, step, turboThreshold, useOhlcData, zoomEnabled
  * @product   highstock
  * @apioption series.flags
+ */
+
+/**
+ * @excluding changeDecimals, valueDecimals, valuePrefix, valueSuffix
+ * @product   highstock
+ * @apioption series.flags.tooltip
  */
 
 /**

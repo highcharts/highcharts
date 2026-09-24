@@ -157,6 +157,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags/
      *         Flags on series and on x axis
      *
+     * @default undefined
+     *
      * @product highstock
      */
     onSeries?: string;
@@ -292,9 +294,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     data?: Array<FlagsPointOptions>;
 
     /**
-     * The Y axis value to serve as the base for the columns, for
-     * distinguishing between values above and below a threshold. If `null`,
-     * the columns extend from the padding Y axis minimum.
+     * The Y axis value to serve as the base for the flags. If `null`, the
+     * flags are placed relative to the padding Y axis minimum.
      *
      * @default null
      *
