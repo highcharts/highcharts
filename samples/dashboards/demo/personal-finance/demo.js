@@ -56,6 +56,7 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
+                height: 48,
                 styledMode: true
             },
             series: [{
@@ -79,6 +80,7 @@ Dashboards.board('container', {
         },
         chartOptions: {
             chart: {
+                height: 48,
                 styledMode: true
             },
             series: [{
@@ -95,6 +97,9 @@ Dashboards.board('container', {
         renderTo: 'dashboard-row-1-cell-3',
         elements: [{
             tagName: 'div',
+            style: {
+                textAlign: 'center'
+            },
             children: [{
                 tagName: 'h4',
                 textContent: 'Check how you can save more!',

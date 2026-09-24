@@ -64,8 +64,7 @@ import {
     fireEvent,
     isArray,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
 
@@ -76,7 +75,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.packedbubble
  *
@@ -90,6 +89,7 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PackedBubbleSeriesOptions = merge(
         BubbleSeries.defaultOptions,
         PackedBubbleSeriesDefaults
@@ -101,6 +101,7 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -117,30 +118,40 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public chart!: PackedBubbleChart;
 
     public data!: Array<PackedBubblePoint>;
 
+    /** @internal */
     public hoverPoint?: PackedBubblePoint;
 
+    /** @internal */
     public layout!: PackedBubbleLayout;
 
     public options!: PackedBubbleSeriesOptions;
 
+    /** @internal */
     public parentNode?: PackedBubblePoint;
 
+    /** @internal */
     public parentNodeLayout?: PackedBubbleLayout;
 
+    /** @internal */
     public parentNodesGroup?: SVGElement;
 
+    /** @internal */
     public parentNodeMass: number = 0;
 
+    /** @internal */
     public parentNodeRadius?: number;
 
     public points!: Array<PackedBubblePoint>;
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -152,7 +163,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Create a single array of all points from all series
-     * @private
+     * @internal
      */
     public accumulateAllPoints(): Array<PackedBubbleSeries.Data> {
         const chart = this.chart,
@@ -188,7 +199,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Adding the basic layout to series points.
-     * @private
+     * @internal
      */
     public addLayout(): void {
         const layoutOptions = this.options.layoutAlgorithm =
@@ -236,7 +247,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Function responsible for adding series layout, used for parent nodes.
-     * @private
+     * @internal
      */
     public addSeriesLayout(): void {
         const layoutOptions = this.options.layoutAlgorithm =
@@ -273,7 +284,7 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * The function responsible for calculating the parent node radius
      * based on the total surface of inside-bubbles and the group BBox
-     * @private
+     * @internal
      */
     public calculateParentRadius(): void {
         const bBox = this.seriesBox(),
@@ -306,7 +317,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Calculate min and max bubble value for radius calculation.
-     * @private
+     * @internal
      */
     public calculateZExtremes(): Array<number> {
         const chart = this.chart,
@@ -335,15 +346,15 @@ class PackedBubbleSeries extends BubbleSeries {
             });
         });
 
-        zMin = pick(zMin, valMin);
-        zMax = pick(zMax, valMax);
+        zMin = (zMin ?? valMin);
+        zMax = (zMax ?? valMax);
 
         return [zMin, zMax];
     }
 
     /**
      * Check if two bubbles overlaps.
-     * @private
+     * @internal
      */
     public checkOverlap(
         bubble1: Array<number>,
@@ -362,7 +373,7 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Creating parent nodes for split series, in which all the bubbles
      * are rendered.
-     * @private
+     * @internal
      */
     public createParentNodes(): void {
         const PackedBubblePoint = this.pointClass,
@@ -443,7 +454,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Function responsible for adding all the layouts to the chart.
-     * @private
+     * @internal
      */
     public deferLayout(): void {
         // TODO split layouts to independent methods
@@ -460,6 +471,7 @@ class PackedBubbleSeries extends BubbleSeries {
         }
     }
 
+    /** @internal */
     public destroy(): void {
         // Remove the series from all layouts series collections #11469
         if (this.chart.graphLayoutsLookup) {
@@ -487,7 +499,7 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Packedbubble has two separate collections of nodes if split, render
      * dataLabels for both sets:
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
         // We defer drawing the dataLabels
@@ -507,7 +519,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Create Background/Parent Nodes for split series.
-     * @private
+     * @internal
      */
     public drawGraph(): void {
 
@@ -526,10 +538,7 @@ class PackedBubbleSeries extends BubbleSeries {
                 ),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || this.color,
-                'stroke-width': pick(
-                    nodeMarker.lineWidth,
-                    this.options.lineWidth
-                )
+                'stroke-width': (nodeMarker.lineWidth ?? this.options.lineWidth)
             };
 
         let parentAttribs: SVGAttributes = {};
@@ -570,6 +579,7 @@ class PackedBubbleSeries extends BubbleSeries {
         }
     }
 
+    /** @internal */
     public drawTracker(): void {
         const parentNode = this.parentNode;
         // Chart = series.chart,
@@ -606,7 +616,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Calculate radius of bubbles in series.
-     * @private
+     * @internal
      */
     public getPointRadius(): void {
         const chart = this.chart,
@@ -670,6 +680,7 @@ class PackedBubbleSeries extends BubbleSeries {
         this.radii = radii;
     }
 
+    /** @internal */
     public init(): PackedBubbleSeries {
         seriesProto.init.apply(this, arguments);
         initDataLabelsDefer.call(this);
@@ -694,7 +705,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Mouse up action, finalizing drag&drop.
-     * @private
+     * @internal
      */
     public onMouseUp(
         dnPoint: DragNodesPoint
@@ -748,7 +759,7 @@ class PackedBubbleSeries extends BubbleSeries {
      * allDataPoints - bubble array, in format [pixel x value,
      * pixel y value, radius,
      * related series index, related point index]
-     * @private
+     * @internal
      * @param {Array<Highcharts.PackedBubbleData>} allDataPoints All points from all series
      * @return {Array<Highcharts.PackedBubbleData>} Positions of all bubbles
      */
@@ -881,7 +892,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Function that checks for a parentMarker and sets the correct opacity.
-     * @private
+     * @internal
      * @param {Highcharts.Pack} point
      * Candidate point for opacity correction.
      * @param {string} [state]
@@ -924,7 +935,7 @@ class PackedBubbleSeries extends BubbleSeries {
      * two other bubbles, lastBubble is the last added bubble, newOrigin is
      * the bubble for positioning new bubbles. nextBubble is the currently
      * added bubble for which we are calculating positions
-     * @private
+     * @internal
      * @param {Array<number>} lastBubble The closest last bubble
      * @param {Array<number>} newOrigin New bubble
      * @param {Array<number>} nextBubble The closest next bubble
@@ -983,6 +994,7 @@ class PackedBubbleSeries extends BubbleSeries {
         ]; // The same as described before
     }
 
+    /** @internal */
     public render(): void {
         const dataLabels = [] as Array<SVGElement>;
         seriesProto.render.apply(this, arguments);
@@ -1014,7 +1026,7 @@ class PackedBubbleSeries extends BubbleSeries {
      * The comparison of bBox and the size of plotArea
      * (later it may be also the size set by customer) is giving the
      * value how to recalculate the radius so it will match the size
-     * @private
+     * @internal
      */
     public resizeRadius(): void {
         const chart = this.chart,
@@ -1072,7 +1084,7 @@ class PackedBubbleSeries extends BubbleSeries {
      * The function responsible for calculating series bubble' s bBox.
      * Needed because of exporting failure when useSimulation
      * is set to false
-     * @private
+     * @internal
      */
     public seriesBox(): (Array<number>|null) {
         const chart = this.chart,
@@ -1108,7 +1120,7 @@ class PackedBubbleSeries extends BubbleSeries {
 
     /**
      * Needed because of z-indexing issue if point is added in series.group
-     * @private
+     * @internal
      */
     public setVisible(): void {
         const series = this;
@@ -1150,7 +1162,7 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Extend the base translate method to handle bubble size,
      * and correct positioning them.
-     * @private
+     * @internal
      */
     public translate(): void {
         const chart = this.chart,
@@ -1188,7 +1200,7 @@ class PackedBubbleSeries extends BubbleSeries {
                 // Update the series points with the val from positions
                 // array
                 point = data[position[4] as any];
-                radius = pick(position[2], void 0);
+                radius = (position[2] ?? void 0);
 
                 if (!useSimulation) {
                     point.plotX = (
@@ -1227,40 +1239,64 @@ class PackedBubbleSeries extends BubbleSeries {
  *
  * */
 
+/** @internal */
 interface PackedBubbleSeries extends DragNodesSeries, NetworkgraphSeries {
+    /** @internal */
     pointClass: typeof PackedBubblePoint;
+    /** @internal */
     bubblePadding: BubbleSeriesType['bubblePadding'];
     /**
      * Array of internal forces. Each force should be later defined in
      * integrations.js.
-     * @private
+     * @internal
      */
     forces: Array<string>;
     /**
      * An internal option used for allowing nodes dragging.
-     * @private
+     * @internal
      */
     hasDraggableNodes: boolean;
+    /** @internal */
     isBubble: BubbleSeriesType['isBubble'];
+    /** @internal */
     isCartesian: boolean;
+    /** @internal */
     maxPxSize: BubbleSeriesType['maxPxSize'];
+    /** @internal */
     minPxSize: BubbleSeriesType['minPxSize'];
+    /** @internal */
     nodes: NetworkgraphSeries['nodes'];
+    /** @internal */
     noSharedTooltip: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointValKey: string;
+    /** @internal */
     radii: BubbleSeriesType['radii'];
+    /** @internal */
     specialGroup: BubbleSeriesType['specialGroup'];
+    /** @internal */
     trackerGroups: Array<string>;
+    /** @internal */
     yData: BubbleSeriesType['yData'];
+    /** @internal */
     zData: BubbleSeriesType['zData'];
+    /** @internal */
     zoneAxis: BubbleSeriesType['zoneAxis'];
+    /** @internal */
     getPointsCollection(): Array<PackedBubblePoint>;
+    /** @internal */
     indexateNodes: NetworkgraphSeries['indexateNodes'];
+    /** @internal */
     markerAttribs: BubbleSeriesType['markerAttribs'];
+    /** @internal */
     onMouseDown: typeof DragNodesComposition.onMouseDown;
+    /** @internal */
     onMouseMove: typeof DragNodesComposition.onMouseMove;
+    /** @internal */
     redrawHalo: typeof DragNodesComposition.redrawHalo;
+    /** @internal */
     setState: BubbleSeriesType['setState'];
 }
 extend(PackedBubbleSeries.prototype, {
@@ -1291,6 +1327,7 @@ extend(PackedBubbleSeries.prototype, {
  *
  * */
 
+/** @internal */
 namespace PackedBubbleSeries {
 
     export type Data = [

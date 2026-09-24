@@ -24,6 +24,8 @@ import type Axis from '../../Core/Axis/Axis';
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type ParallelCoordinates from './ParallelCoordinates';
 
+import H from '../../Core/Globals.js';
+const { composed } = H;
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import {
     addEvent,
@@ -31,7 +33,7 @@ import {
     arrayMin,
     isNumber,
     merge,
-    pick
+    pushUnique
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -195,11 +197,8 @@ namespace ParallelAxis {
         AxisClass: typeof Axis
     ): void {
 
-        if (!AxisClass.keepProps.includes('parallel')) {
+        if (pushUnique(composed, 'Axis.ParallelCoordinates')) {
             const axisCompo = AxisClass as typeof Composition;
-
-            // On update, keep parallel additions.
-            AxisClass.keepProps.push('parallel');
 
             addEvent(axisCompo, 'init', onInit);
             addEvent(axisCompo, 'afterSetOptions', onAfterSetOptions);
@@ -242,8 +241,7 @@ namespace ParallelAxis {
                     axis.chart.options.chart.parallelAxes,
                     e.userOptions
                 );
-                parallelCoordinates.position = pick(
-                    parallelCoordinates.position,
+                parallelCoordinates.position = parallelCoordinates.position ?? (
                     axisIndex >= 0 ? axisIndex : chart.yAxis.length
                 );
                 parallelCoordinates.setPosition(axisPosition, axis.options);
@@ -302,6 +300,8 @@ namespace ParallelAxis {
         this: Composition
     ): void {
         const axis = this;
+
+        delete this.type; // After Axis.update
         if (!axis.parallelCoordinates) {
             axis.parallelCoordinates = new ParallelAxisAdditions(axis);
         }

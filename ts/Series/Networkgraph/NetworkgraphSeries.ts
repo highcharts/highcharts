@@ -60,8 +60,7 @@ import {
     addEvent,
     defined,
     extend,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
 
@@ -109,6 +108,7 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -124,12 +124,14 @@ class NetworkgraphSeries extends Series {
 
     public data!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public nodes!: Array<NetworkgraphPoint>;
 
     public options!: NetworkgraphSeriesOptions;
 
     public points!: Array<NetworkgraphPoint>;
 
+    /** @internal */
     public deferDataLabels: boolean = true;
 
     /* *
@@ -274,9 +276,9 @@ class NetworkgraphSeries extends Series {
             node = this.nodes[i];
 
             node.degree = node.getDegree();
-            node.radius = pick(
-                node.marker && node.marker.radius,
-                this.options.marker && this.options.marker.radius,
+            node.radius = (
+                (node.marker && node.marker.radius) ??
+                (this.options.marker && this.options.marker.radius) ??
                 0
             );
             node.key = node.name;
@@ -390,7 +392,7 @@ class NetworkgraphSeries extends Series {
     ): SVGAttributes {
         // By default, only `selected` state is passed on
         const pointState = state || point && point.state || 'normal',
-            stateOptions = (this.options.states as any)[pointState];
+            stateOptions = this.options.states?.[pointState];
 
         let attribs = Series.prototype.pointAttribs.call(
             this,
@@ -400,18 +402,17 @@ class NetworkgraphSeries extends Series {
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
-            // For link, get prefixed names:
+            // For link, get nested names:
             if (stateOptions) {
                 attribs = {
-                    // TO DO: API?
-                    stroke: stateOptions.linkColor || attribs.stroke,
-                    dashstyle: (
-                        stateOptions.linkDashStyle || attribs.dashstyle
-                    ),
-                    opacity: pick(
-                        stateOptions.linkOpacity, attribs.opacity
-                    ),
-                    'stroke-width': stateOptions.linkColor ||
+                    stroke: stateOptions.link?.color || attribs.stroke,
+                    dashstyle: stateOptions.link?.dashStyle ||
+                        attribs.dashstyle,
+                    // Deprecated linkOpacity, but keep for backwards compat.
+                    opacity: (stateOptions as any).linkOpacity ??
+                        stateOptions.link?.opacity ??
+                        attribs.opacity,
+                    'stroke-width': stateOptions.link?.width ||
                         attribs['stroke-width']
                 };
             }

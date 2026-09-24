@@ -24,7 +24,6 @@ import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type DataTableCore from '../../Data/DataTableCore';
 import type SeriesClass from '../../Core/Series/Series';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
@@ -55,7 +54,6 @@ import {
     isNumber,
     isObject,
     merge,
-    pick,
     pushUnique,
     relativeLength
 } from '../../Shared/Utilities.js';
@@ -80,7 +78,7 @@ function onAxisAfterGetSeriesExtremes(
         modMax: (boolean|undefined);
 
     if (this.isXAxis) {
-        dataMax = pick(this.dataMax, -Number.MAX_VALUE);
+        dataMax = this.dataMax ?? -Number.MAX_VALUE;
         for (const series of this.series as Array<XRangeSeries>) {
             const column = (
                 series.dataTable.getColumn('x2', true) ||
@@ -126,6 +124,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: XRangeSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         XRangeSeriesDefaults
@@ -137,6 +136,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis
     ): void {
@@ -179,6 +179,7 @@ class XRangeSeries extends ColumnSeries {
      * Borrow the column series metrics, but with swapped axes. This gives
      * free access to features like groupPadding, grouping, pointWidth etc.
      * @private
+     * @internal
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const swapAxes = (): void => {
@@ -272,9 +273,10 @@ class XRangeSeries extends ColumnSeries {
         return pointIndex;
     }
 
+    /** @internal */
     public alignDataLabel(point: XRangePoint): void {
         const oldPlotX = point.plotX;
-        point.plotX = pick(point.dlBox?.centerX, point.plotX);
+        point.plotX = point.dlBox?.centerX ?? point.plotX;
 
         if (point.dataLabel && point.shapeArgs?.width) {
             point.dataLabel.css({
@@ -297,7 +299,7 @@ class XRangeSeries extends ColumnSeries {
             minPointLength = options.minPointLength || 0,
             oldColWidth = (point.shapeArgs?.width || 0) / 2,
             seriesXOffset = this.pointXOffset = metrics.offset,
-            posX = pick(point.x2, (point.x as any) + (point.len || 0)),
+            posX = point.x2 ?? ((point.x as any) + (point.len || 0)),
             borderRadius = options.borderRadius,
             plotTop = this.chart.plotTop,
             plotLeft = this.chart.plotLeft;
@@ -314,7 +316,7 @@ class XRangeSeries extends ColumnSeries {
 
         const length = Math.abs((plotX2 as any) - (plotX as any)),
             inverted = this.chart.inverted,
-            borderWidth = pick(options.borderWidth, 1);
+            borderWidth = options.borderWidth ?? 1;
 
         let widthDifference,
             partialFill: number | XRangePointPartialFillOptions,
@@ -508,7 +510,7 @@ class XRangeSeries extends ColumnSeries {
      */
     public drawPoint(
         point: XRangePoint,
-        verb: string
+        verb: ('animate'|'attr')
     ): void {
         const seriesOpts = this.options,
             renderer = this.chart.renderer,
@@ -517,15 +519,12 @@ class XRangeSeries extends ColumnSeries {
             partShapeArgs = point.partShapeArgs,
             clipRectArgs = point.clipRectArgs,
             pointState = point.state,
-            stateOpts: SeriesStateHoverOptions = (
-                (seriesOpts.states as any)[pointState || 'normal'] ||
-                {}
-            ),
+            stateOpts = seriesOpts.states?.[pointState || 'normal'] || {},
             pointStateVerb = typeof pointState === 'undefined' ?
                 'attr' : verb,
             pointAttr = this.pointAttribs(point, pointState),
-            animation = pick(
-                this.chart.options.chart.animation,
+            animation = (
+                this.chart.options.chart.animation ??
                 stateOpts.animation
             );
 
@@ -647,7 +646,7 @@ class XRangeSeries extends ColumnSeries {
      *
      * @private
      */
-    public getAnimationVerb(): string {
+    public getAnimationVerb(): ('animate'|'attr') {
         return (
             this.chart.pointCount < (this.options.animationLimit || 250) ?
                 'animate' :
@@ -701,12 +700,19 @@ class XRangeSeries extends ColumnSeries {
  * */
 
 interface XRangeSeries {
+    /** @internal */
     pointClass: typeof XRangePoint;
+    /** @internal */
     columnMetrics: ColumnMetricsObject;
+    /** @internal */
     getExtremesFromAll: boolean;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     requireSorting: boolean;
+    /** @internal */
     type: string;
+    /** @internal */
     x2Data: Array<(number|undefined)>;
 }
 

@@ -45,8 +45,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type Tick from '../../Core/Axis/Tick';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject, stop } = A;
+import { animObject, stop } from '../../Core/Animation/AnimationUtilities.js';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -813,8 +812,8 @@ class ChartAdditions {
             // (#19725)
             if (!chart.hasCartesianSeries) {
                 chart.axes.forEach((axis): void => {
-                    axis.destroy(true);
-                    axis.init(chart, merge(axis.userOptions, axis.options));
+                    axis.visible = false;
+                    axis.redraw();
                 });
             }
 
@@ -984,16 +983,22 @@ class ChartAdditions {
                 // Reset the zoom level of the upper series
                 if (newSeries?.xAxis) {
                     oldExtremes = level.oldExtremes;
-                    newSeries.xAxis.setExtremes(
+                    const { xAxis, yAxis } = newSeries;
+                    xAxis.setExtremes(
                         oldExtremes.xMin,
                         oldExtremes.xMax,
                         false
                     );
-                    newSeries.yAxis.setExtremes(
+                    yAxis.setExtremes(
                         oldExtremes.yMin,
                         oldExtremes.yMax,
                         false
                     );
+
+                    // Reset visibility after `applyDrilldown` may have set it
+                    // to false
+                    xAxis.visible = xAxis.options.visible;
+                    yAxis.visible = yAxis.options.visible;
                 }
 
                 // We have a resetZoomButton tucked away for this level. Attach

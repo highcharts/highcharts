@@ -508,3 +508,18 @@ QUnit.test('#24710, series.update and zones', function (assert) {
         'Graph should be the same after update (#24710).'
     );
 });
+
+QUnit.test('#24633, getZone on a series with no zones', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+    const point = chart.series[0].points[0];
+
+    assert.strictEqual(
+        point.getZone(),
+        undefined,
+        'getZone should return undefined when the series has no zones (#24633).'
+    );
+});

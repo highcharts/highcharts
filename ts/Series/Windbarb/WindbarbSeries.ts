@@ -27,8 +27,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -38,7 +37,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import WindbarbPoint from './WindbarbPoint.js';
 import WindbarbSeriesDefaults from './WindbarbSeriesDefaults.js';
-import { extend, merge, pick } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -107,6 +106,7 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: WindbarbSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         WindbarbSeriesDefaults
@@ -128,6 +128,7 @@ class WindbarbSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public init(
         chart: Chart,
         options: WindbarbSeriesOptions
@@ -136,6 +137,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     // Get presentational attributes.
+    /** @internal */
     public pointAttribs(
         point?: WindbarbPoint,
         state?: StatesOptionsKey
@@ -143,23 +145,23 @@ class WindbarbSeries extends ColumnSeries {
         const options = this.options;
 
         let stroke = point?.color || this.color,
-            strokeWidth = this.options.lineWidth;
+            strokeWidth = options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            stroke = options.states?.[state]?.color || stroke;
+            strokeWidth = (options.states?.[state]?.lineWidthPlus || 0) +
+                (options.states?.[state]?.lineWidth || strokeWidth || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke,
             'stroke-width': strokeWidth
         };
     }
 
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
+    /** @internal */
     public windArrow(
         point: WindbarbPoint
     ): (SVGElement|SVGPath) {
@@ -238,6 +240,7 @@ class WindbarbSeries extends ColumnSeries {
         return path;
     }
 
+    /** @internal */
     public drawPoints(): void {
         const chart = this.chart,
             yAxis = this.yAxis,
@@ -262,7 +265,7 @@ class WindbarbSeries extends ColumnSeries {
                         .addClass(
                             'highcharts-point ' +
                             'highcharts-color-' +
-                            pick(point.colorIndex, point.series.colorIndex)
+                            (point.colorIndex ?? point.series.colorIndex)
                         );
                 }
 
@@ -298,6 +301,7 @@ class WindbarbSeries extends ColumnSeries {
     }
 
     // Fade in the arrows on initializing series.
+    /** @internal */
     public animate(
         init?: boolean
     ): void {
@@ -312,14 +316,17 @@ class WindbarbSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public markerAttribs(): SVGAttributes {
         return {};
     }
 
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         return {};
     }
 
+    /** @internal */
     public shouldShowTooltip(
         plotX: number,
         plotY: number,
@@ -338,15 +345,25 @@ class WindbarbSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface WindbarbSeries extends OnSeriesComposition.SeriesComposition {
+    /** @internal */
     beaufortFloor: Array<number>;
+    /** @internal */
     beaufortName: Array<string>;
+    /** @internal */
     group: typeof ColumnSeries.prototype.group;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof WindbarbPoint;
+    /** @internal */
     remove: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     drawTracker: typeof ColumnSeries.prototype.remove;
+    /** @internal */
     windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
 
 }

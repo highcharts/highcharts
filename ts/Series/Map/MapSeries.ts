@@ -22,7 +22,6 @@ import type {
     AnimationOptions,
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
-import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { RowObject } from '../../Data/DataTable';
@@ -42,8 +41,7 @@ import type {
     SeriesTypeOptions
 } from '../../Core/Series/SeriesType';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject, stop } = A;
+import { animObject, stop } from '../../Core/Animation/AnimationUtilities.js';
 import ColorMapComposition from '../ColorMapComposition.js';
 import CU from '../CenteredUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
@@ -71,7 +69,6 @@ import {
     isObject,
     merge,
     objectEach,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -89,6 +86,19 @@ declare module '../../Core/Series/SeriesBase' {
         transformGroups?: Array<SVGElement>|undefined;
         tupleKey?: string;
         useMapGeometry?: boolean;
+
+        /**
+         * Mapping point specific attributes to options. Implemented in map and
+         * hlc series, and by extension all series derived from them.
+         * The concept seems flexible but is used as strictly as the type
+         * indicates, so extend the type if needed.
+         *
+         * @internal
+         */
+        pointAttrToOptions?: {
+            stroke?: 'color';
+            'stroke-width'?: 'lineWidth';
+        };
     }
 }
 
@@ -96,11 +106,6 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
         mapData?: MapDataType;
-    }
-    interface SeriesStateHoverOptions
-    {
-        brightness?: number;
-        color?: ColorType;
     }
 }
 
@@ -138,34 +143,43 @@ class MapSeries extends ScatterSeries {
 
     // public baseView?: { center: Highcharts.LonLatArray; zoom: number };
 
+    /** @internal */
     public bounds?: MapBounds;
 
+    /** @internal */
     public chart!: MapChart;
 
     public data!: Array<MapPoint>;
 
+    /** @internal */
     public group!: SVGElement;
 
+    /** @internal */
     public joinBy!: Array<string>;
 
+    /** @internal */
     public mapData?: unknown;
 
+    /** @internal */
     public mapMap?: AnyRecord;
 
+    /** @internal */
     public mapTitle?: string;
 
     public options!: MapSeriesOptions;
 
-    public pointAttrToOptions?: Record<string, string>;
-
     public points!: Array<MapPoint>;
 
+    /** @internal */
     public transformGroups: Array<SVGElement>|undefined;
 
+    /** @internal */
     public valueData?: Array<number>;
 
+    /** @internal */
     public valueMax?: number;
 
+    /** @internal */
     public valueMin?: number;
 
     public tupleKey = 'hc-key';
@@ -207,6 +221,7 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public clearBounds(): void {
         this.points.forEach((point): void => {
             delete point.bounds;
@@ -350,10 +365,9 @@ class MapSeries extends ScatterSeries {
                         // When strokeWidth is animating
                         if (animateIn || animateOut) {
 
-                            const strokeWidth = pick(
-                                    series.getStrokeWidth(series.options),
-                                    1 // Styled mode
-                                ),
+                            const strokeWidth =
+                                    series.getStrokeWidth(series.options) ??
+                                    1,
                                 inheritedStrokeWidth = (
                                     strokeWidth /
                                     (
@@ -393,10 +407,7 @@ class MapSeries extends ScatterSeries {
         transformGroups.forEach((transformGroup, i): void => {
             const view = i === 0 ? mapView : mapView.insets[i - 1],
                 svgTransform = view.getSVGTransform(),
-                strokeWidth = pick(
-                    this.getStrokeWidth(this.options),
-                    1 // Styled mode
-                );
+                strokeWidth = (this.getStrokeWidth(this.options) ?? 1);
 
             /*
             Animate or move to the new zoom level. In order to prevent
@@ -544,14 +555,10 @@ class MapSeries extends ScatterSeries {
                     if (!point.bounds) {
                         let bounds = point.getProjectedBounds(projection);
                         if (bounds) {
-                            point.labelrank = pick(
-                                point.labelrank,
-                                // Bigger shape, higher rank
-                                (
-                                    (bounds.x2 - bounds.x1) *
+                            point.labelrank = (point.labelrank ?? (
+                                (bounds.x2 - bounds.x1) *
                                     (bounds.y2 - bounds.y1)
-                                )
-                            );
+                            ));
 
                             const { midX, midY } = bounds;
                             if (insets && isNumber(midX) && isNumber(midY)) {
@@ -691,6 +698,7 @@ class MapSeries extends ScatterSeries {
         return attr;
     }
 
+    /** @internal */
     public matchPoints(): boolean {
         // #16782
         return !this.hasProcessedDataTable &&
@@ -719,6 +727,7 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public getDataColumnKeys(): Array<string> {
         // No x data for maps
         return this.pointArrayMap;
@@ -957,6 +966,7 @@ class MapSeries extends ScatterSeries {
         fireEvent(series, 'afterTranslate');
     }
 
+    /** @internal */
     public update(
         options: SeriesTypeOptions
     ): void {
@@ -991,21 +1001,34 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface MapSeries extends ColorMapComposition.SeriesComposition {
+    /** @internal */
     getCenter: typeof CU['getCenter'];
+    /** @internal */
     pointArrayMap: ColorMapComposition.SeriesComposition['pointArrayMap'];
+    /** @internal */
     pointClass: typeof MapPoint;
+    /** @internal */
     preserveAspectRatio: boolean;
+    /** @internal */
     trackerGroups: ColorMapComposition.SeriesComposition['trackerGroups'];
+    /** @internal */
     animate(init?: boolean): void;
+    /** @internal */
     doFullTranslate(): boolean;
+    /** @internal */
     drawMapDataLabels(): void;
+    /** @internal */
     drawPoints(): void;
+    /** @internal */
     hasData(): boolean;
+    /** @internal */
     pointAttribs(
         point?: MapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes;
+    /** @internal */
     render(): void;
 }
 extend(MapSeries.prototype, {

@@ -22,8 +22,8 @@
 
 import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
@@ -46,7 +46,6 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.dependencywheel
  *
@@ -60,6 +59,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DependencyWheelSeriesOptions = merge(
         SankeySeries.defaultOptions,
         DependencyWheelSeriesDefaults
@@ -75,8 +75,10 @@ class DependencyWheelSeries extends SankeySeries {
 
     public options!: DependencyWheelSeriesOptions;
 
+    /** @internal */
     public nodeColumns!: Array<SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>>;
 
+    /** @internal */
     public nodes!: Array<DependencyWheelPoint>;
 
     public points!: Array<DependencyWheelPoint>;
@@ -87,6 +89,7 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public animate(init?: boolean): void {
         const series = this;
 
@@ -124,6 +127,7 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public createNode(id: string): DependencyWheelPoint {
         const node = super.createNode(id) as DependencyWheelPoint;
 
@@ -146,7 +150,7 @@ class DependencyWheelSeries extends SankeySeries {
 
         /**
          * Get the offset in weight values of a point/link.
-         * @private
+         * @internal
          */
         node.offset = (
             point: DependencyWheelPoint
@@ -200,7 +204,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Dependency wheel has only one column, it runs along the perimeter.
-     * @private
+     * @internal
      */
     public createNodeColumns(): Array<SankeyColumnComposition.ArrayComposition> {
         const series = this,
@@ -216,7 +220,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Translate from vertical pixels to perimeter.
-     * @private
+     * @internal
      */
     public getNodePadding(): number {
         return (this.options.nodePadding as any) / Math.PI;
@@ -234,9 +238,9 @@ class DependencyWheelSeries extends SankeySeries {
                 (series.chart.plotHeight + series.getNodePadding()),
             center = series.getCenter(),
             startAngle = ((options.startAngle || 0) - 90) * deg2rad,
-            brOption = options.borderRadius,
-            borderRadius = typeof brOption === 'object' ?
-                brOption.radius : brOption;
+            borderRadius = borderRadiusObject(
+                options.borderRadius
+            ).radius;
 
         super.translate();
 
@@ -391,14 +395,18 @@ class DependencyWheelSeries extends SankeySeries {
  * */
 
 interface DependencyWheelSeries {
+    /** @internal */
     getCenter: typeof PieSeries.prototype.getCenter;
+    /** @internal */
     orderNodes: boolean;
+    /** @internal */
     pointClass: typeof DependencyWheelPoint;
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
-    getCenter: PieSeries.prototype.getCenter
+    getCenter: PieSeries.prototype.getCenter,
+    useCircularLayout: false
 });
 
 /* *

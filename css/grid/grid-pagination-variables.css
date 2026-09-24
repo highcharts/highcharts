@@ -1,4 +1,4 @@
-.hcg-container .hcg-pagination {
+.hcg-themed .hcg-pagination {
     background: var(--hcg-pagination-background, transparent);
     color: var(--hcg-pagination-color, var(--ig-color));
     font-weight: var(--hcg-pagination-font-weight, var(--ig-font-weight));
@@ -9,4 +9,27 @@
     padding-right: var(--hcg-pagination-horizontal-padding, var(--hcg-pagination-padding, var(--ig-horizontal-padding)));
     padding-bottom: var(--hcg-pagination-vertical-padding, var(--hcg-pagination-padding, var(--ig-vertical-padding)));
     padding-left: var(--hcg-pagination-horizontal-padding, var(--hcg-pagination-padding, var(--ig-horizontal-padding)));
+    gap: var(--hcg-pagination-gap, 0.75rem);
+
+    .hcg-pagination-controls,
+    .hcg-pagination-pages {
+        gap: 2px;
+    }
+
+    .hcg-pagination-pages .hcg-button {
+        min-width: 30px;
+    }
+
+    .hcg-pagination-pages span {
+        min-width: 20px;
+    }
+
+    .hcg-pagination-page-size {
+        text-align: right;
+
+        select.hcg-input {
+            width: 60px;
+            margin-left: 8px;
+        }
+    }
 }

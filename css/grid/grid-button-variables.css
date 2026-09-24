@@ -9,11 +9,11 @@
     --ig-button-background-base: var(--hcg-button-background, transparent);
     --ig-button-padding-base: var(--hcg-button-padding, 6px);
     --ig-button-color-base: var(--hcg-button-color, inherit);
-    --ig-button-hover-color-base: var(--hcg-button-hover-color, var(--ig-default-background));
-    --ig-button-hover-background-base: var(--hcg-button-hover-background, var(--ig-default-color));
+    --ig-button-hover-color-base: var(--hcg-button-hover-color, inherit);
+    --ig-button-hover-background-base: var(--hcg-button-hover-background, transparent);
     --ig-button-hover-border-color-base: var(--hcg-button-hover-border-color, var(--ig-button-border-color-base));
-    --ig-button-selected-color-base: var(--hcg-button-selected-color, var(--ig-default-background));
-    --ig-button-selected-background-base: var(--hcg-button-selected-background, var(--ig-default-color));
+    --ig-button-selected-color-base: var(--hcg-button-selected-color, inherit);
+    --ig-button-selected-background-base: var(--hcg-button-selected-background, transparent);
     --ig-button-selected-border-color-base: var(--hcg-button-selected-border-color, var(--ig-button-border-color));
 
     /* ─────────────────────────────────────────────────────────────
@@ -74,7 +74,10 @@
         --ig-button-selected-background: var(--hcg-pagination-button-selected-background, var(--ig-button-selected-background-base));
         --ig-button-selected-border-color: var(--hcg-pagination-button-selected-border-color, var(--ig-button-selected-border-color-base));
     }
+}
 
+/* Surface application only when themed — utilities win with theme: ''. */
+.hcg-themed {
     :where(.hcg-button) {
         font-weight: var(--ig-button-font-weight);
         font-size: var(--ig-button-font-size);
@@ -112,6 +115,7 @@
 
         &:focus-visible {
             box-shadow: var(--ig-button-focus-ring);
+            border-color: transparent;
         }
     }
 }

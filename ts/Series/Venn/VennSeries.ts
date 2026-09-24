@@ -41,8 +41,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type VennSeriesOptions from './VennSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import CU from '../../Core/Geometry/CircleUtilities.js';
@@ -95,6 +94,7 @@ class VennSeries extends ScatterSeries {
 
     public static splitter = 'highcharts-split';
 
+    /** @internal */
     public static defaultOptions: VennSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         VennSeriesDefaults
@@ -398,6 +398,7 @@ class VennSeries extends ScatterSeries {
 
     public data!: Array<VennPoint>;
 
+    /** @internal */
     public mapOfIdToRelation!: Record<string, VennRelationObject>;
 
     public options!: VennSeriesOptions;
@@ -411,6 +412,7 @@ class VennSeries extends ScatterSeries {
      * */
 
 
+    /** @internal */
     public animate(init?: boolean): void {
         if (!init) {
             const series = this,
@@ -487,6 +489,7 @@ class VennSeries extends ScatterSeries {
 
     }
 
+    /** @internal */
     public init(): void {
         ScatterSeries.prototype.init.apply(this, arguments);
 
@@ -512,8 +515,7 @@ class VennSeries extends ScatterSeries {
         const series = this,
             seriesOptions = series.options || {},
             pointOptions = point?.options || {},
-            stateOptions =
-                (state && (seriesOptions.states as any)[state as any]) || {},
+            stateOptions = (state && seriesOptions.states?.[state]) || {},
             options = merge(
                 seriesOptions,
                 pointOptions,
@@ -523,7 +525,7 @@ class VennSeries extends ScatterSeries {
         // Return resulting values for the attributes.
         return {
             'fill': color(options.color || point.color)
-                .brighten(options.brightness as any)
+                .brighten(options.brightness || 0)
                 .get(),
             // Set opacity directly to the SVG element, not to pattern #14372.
             opacity: options.opacity,
@@ -533,6 +535,7 @@ class VennSeries extends ScatterSeries {
         };
     }
 
+    /** @internal */
     public translate(): void {
 
         const chart = this.chart;
@@ -662,10 +665,15 @@ class VennSeries extends ScatterSeries {
  * */
 
 interface VennSeries {
+    /** @internal */
     directTouch: boolean;
+    /** @internal */
     isCartesian: boolean;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof VennPoint;
+    /** @internal */
     utils: typeof VennUtils;
 }
 
@@ -680,6 +688,7 @@ extend(VennSeries.prototype, {
 
 // Modify final series options.
 addEvent(VennSeries, 'afterSetOptions', function (
+    /** @internal */
     e: { options: VennSeriesOptions }
 ): void {
     const options = e.options,

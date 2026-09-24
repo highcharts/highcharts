@@ -490,7 +490,7 @@ QUnit.test(
                             type: 'column',
                             data: [1, 2],
                             pointPadding: 0,
-                            groupPAdding: 0,
+                            groupPadding: 0,
 
                             borderColor: 'rgb(255,0,0)',
                             color: 'rgb(255,255,255)',
@@ -589,7 +589,7 @@ QUnit.test(
                             type: 'column',
                             data: [1, 2],
                             pointPadding: 0,
-                            groupPAdding: 0,
+                            groupPadding: 0,
 
                             borderColor: 'rgb(255,0,0)',
                             color: 'rgb(255,255,255)',
@@ -970,4 +970,35 @@ QUnit.test('#14351: Tweening NaN path', assert => {
         'M 10 10',
         'It should not attempt to tween NaN values'
     );
+});
+
+QUnit.test('Animation without an owner element', function (assert) {
+    const clock = TestUtilities.lolexInstall();
+
+    let currentNow = 0;
+
+    try {
+        Highcharts.animate(
+            undefined,
+            undefined,
+            {
+                duration: 100,
+                step: now => {
+                    currentNow = now;
+                }
+            }
+        );
+
+        setTimeout(() => {
+            assert.ok(
+                currentNow > 0.4 && currentNow < 0.6,
+                'Animation should run without an owner element'
+            );
+        }, 50);
+
+        // Reset animation
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
 });

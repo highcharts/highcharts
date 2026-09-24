@@ -40,6 +40,7 @@ export const version = '@product.version@';
 export const buildDate = '@product.date@';
 export const rawClassNames = {
     container: 'container',
+    themed: 'themed',
     tableElement: 'table',
     captionElement: 'caption',
     descriptionElement: 'description',
@@ -56,9 +57,11 @@ export const rawClassNames = {
     syncedCell: 'synced-cell',
     syncedColumn: 'synced-column',
     editedCell: 'edited-cell',
+    cellEditingContainer: 'cell-editing-container',
     mockedRow: 'mocked-row',
     rowsContentNowrap: 'rows-content-nowrap',
     virtualization: 'virtualization',
+    columnVirtualization: 'column-virtualization',
     scrollableContent: 'scrollable-content',
     headerCell: 'header-cell',
     headerCellContainer: 'header-cell-container',
@@ -130,6 +133,17 @@ export const composed: Array<string> = [];
 export const userAgent = (win.navigator && win.navigator.userAgent) || '';
 export const isChrome = userAgent.indexOf('Chrome') !== -1;
 export const isSafari = !isChrome && userAgent.indexOf('Safari') !== -1;
+export const isIos = !!win.navigator && (
+    /iPhone|iPod|iPad/i.test(userAgent) ||
+    (
+        win.navigator.platform === 'MacIntel' &&
+        win.navigator.maxTouchPoints > 1
+    )
+);
+export const isTouchDevice = !!(
+    'ontouchstart' in win ||
+    (win.navigator && win.navigator.maxTouchPoints > 0)
+);
 export const getClassName = (classNameKey: ClassNameKey): string =>
     classNamePrefix + rawClassNames[classNameKey];
 
@@ -150,5 +164,7 @@ export default {
     userAgent,
     isChrome,
     isSafari,
+    isIos,
+    isTouchDevice,
     getClassName
 } as const;

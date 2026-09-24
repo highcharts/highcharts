@@ -44,12 +44,15 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public open!: number;
 
     public options!: OHLCPointOptions;
 
+    /** @internal */
     public plotOpen!: number;
 
+    /** @internal */
     public series!: OHLCSeries;
 
     /* *
@@ -104,10 +107,10 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * @private
      * @function Highcharts.seriesTypes.ohlc#getZone
      *
-     * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
+     * @return {Highcharts.SeriesZonesOptionsObject|undefined}
+     *         The zone item, or `undefined` if the series has no zones.
      */
-    public getZone(): Series.ZoneObject {
+    public getZone(): Series.ZoneObject|undefined {
         const zone = super.getZone();
         this.resolveUpColor();
 
@@ -118,6 +121,7 @@ class OHLCPoint extends HLCSeries.prototype.pointClass {
      * Extend the parent method by resolving up/down colors (#15849)
      * @private
      **/
+    /** @internal */
     public applyOptions(): Point {
         super.applyOptions.apply(this, arguments);
         if (this.resolveColor) {

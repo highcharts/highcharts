@@ -27,20 +27,23 @@ function renderEvent(target, event) {
 }
 
 const columns = {
-    id: ids,
-    product: ids.map((_, i) => 'Product ' + (i + 1)),
-    category: ids.map((_, i) => categories[i % categories.length]),
-    stock: ids.map((_, i) => 15 + ((i * 7) % 90)),
-    price: ids.map((_, i) => Number((1 + (i % 12) * 0.35).toFixed(2)))
+    ID: ids,
+    Product: ids.map((_, i) => 'Product ' + (i + 1)),
+    Category: ids.map((_, i) => categories[i % categories.length]),
+    Stock: ids.map((_, i) => 15 + ((i * 7) % 90)),
+    Price: ids.map((_, i) => Number((1 + (i % 12) * 0.35).toFixed(2)))
 };
 
 const grid = Grid.grid('container', {
     gridKey: 'YOUR-GRID-KEY-HERE',
-    data: { columns },
+    data: {
+        columns,
+        idColumn: 'ID'
+    },
     rendering: {
         rows: {
             pinning: {
-                idColumn: 'id',
+                enabled: true,
                 topIds: [ids[0]],
                 bottomIds: [ids[ids.length - 1]],
                 events: {

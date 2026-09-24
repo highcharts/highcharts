@@ -10,10 +10,11 @@ const grid = Grid.grid('container', {
             name: ['Root', 'Sales', 'Marketing', 'EMEA', 'APAC'],
             budget: [1000, 600, 400, 350, 250]
         },
-        idColumn: 'id',
-        treeView: {
-            treeColumn: 'name'
-        }
+        idColumn: 'id'
+    },
+    treeView: {
+        enabled: true,
+        treeColumn: 'name'
     },
     header: ['name', 'budget'],
     events: {

@@ -211,7 +211,7 @@ class DataTableCore {
      * Fetches the given column by the canonical column ID. Simplified version
      * of the full `DataTable.getRow` method, always returning by reference.
      *
-     * @function Highcharts.DataTable#setColumn
+     * @function Highcharts.DataTable#getColumn
      *
      * @param {string} columnId
      * ID of the column to get.
@@ -393,7 +393,15 @@ class DataTableCore {
 
         if (eventDetail?.addColumns !== false) {
             for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
-                columns[rowKeys[i]] ||= new Array(this.rowCount);
+                const rowKey = rowKeys[i];
+
+                if (
+                    rowKey !== '__proto__' &&
+                    rowKey !== 'constructor' &&
+                    !Object.hasOwnProperty.call(columns, rowKey)
+                ) {
+                    columns[rowKey] = new Array(this.rowCount);
+                }
             }
         }
 

@@ -38,7 +38,6 @@ import {
     css,
     defined,
     objectEach,
-    pick,
     pushUnique,
     removeEvent
 } from '../Shared/Utilities.js';
@@ -319,7 +318,7 @@ class MSPointer extends Pointer {
 
         if (
             this.hasZoom ||
-            pick((tooltip?.options.followTouchMove), true)
+            ((tooltip?.options.followTouchMove) ?? true)
         ) {
             this.batchMSEvents(addEvent);
         }

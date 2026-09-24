@@ -24,10 +24,7 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../Utils/Announcer.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
-import A from '../../Core/Animation/AnimationUtilities.js';
-const {
-    animObject
-} = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import T from '../../Core/Templating.js';
 const {
     format
@@ -46,7 +43,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import {
     clamp,
     internalClearTimeout,
-    pick,
     syncTimeout
 } from '../../Shared/Utilities.js';
 
@@ -54,9 +50,10 @@ import {
 /**
  * The NavigatorComponent class
  *
- * @private
  * @class
  * @name Highcharts.NavigatorComponent
+ *
+ * @internal
  */
 class NavigatorComponent extends AccessibilityComponent {
     private announcer!: Announcer;
@@ -67,7 +64,8 @@ class NavigatorComponent extends AccessibilityComponent {
 
     /**
      * Init the component
-     * @private
+     *
+     * @internal
      */
     public init(): void {
         const chart = this.chart,
@@ -85,7 +83,7 @@ class NavigatorComponent extends AccessibilityComponent {
                         .updateGroupProxyElementPositions('navigator');
                     component.updateHandleValues();
                 }, animObject(
-                    pick(this.chart.renderer.globalAnimation, true)
+                    (this.chart.renderer.globalAnimation ?? true)
                 ).duration);
             }
         });
@@ -94,7 +92,8 @@ class NavigatorComponent extends AccessibilityComponent {
 
     /**
      * Called on updates
-     * @private
+     *
+     * @internal
      */
     public onChartUpdate(): void {
         const chart = this.chart,
@@ -147,8 +146,9 @@ class NavigatorComponent extends AccessibilityComponent {
 
     /**
      * Get navigation for a navigator handle.
-     * @private
      * @return {Highcharts.KeyboardNavigationHandler} The module object.
+     *
+     * @internal
      */
     public getNavigatorHandleNavigation(
         handleIx: number
@@ -224,7 +224,8 @@ class NavigatorComponent extends AccessibilityComponent {
 
     /**
      * Update the value of the handles to match current navigator pos.
-     * @private
+     *
+     * @internal
      */
     private updateHandleValues(): void {
         const navigator = this.chart.navigator;
@@ -240,7 +241,8 @@ class NavigatorComponent extends AccessibilityComponent {
 
     /**
      * Get a navigator handle by its index
-     * @private
+     *
+     * @internal
      */
     private getHandleByIx(ix: number): SVGElement|undefined {
         const navigator = this.chart.navigator;
@@ -251,7 +253,8 @@ class NavigatorComponent extends AccessibilityComponent {
 
     /**
      * Update navigator to match changed proxy values.
-     * @private
+     *
+     * @internal
      */
     private updateNavigator(beforeAnnounce?: () => void): void {
         const performUpdate = (beforeAnnounce?: () => void): void => {
@@ -334,4 +337,5 @@ class NavigatorComponent extends AccessibilityComponent {
  *
  * */
 
+/** @internal */
 export default NavigatorComponent;

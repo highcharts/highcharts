@@ -13,12 +13,10 @@ export function before(size: number) {
     return {
         fileName: `${size}-ohlc.json`,
         func: generateOHLC.bind(undefined, size)
-  };
+    };
 }
 
 export default function benchmarkTest({
-    size,
-    CODE_PATH,
     data
 }: BenchmarkContext): BenchmarkResult {
     const { Highcharts: hc, el } = getHighchartsJSDOM('highstock');
@@ -35,7 +33,10 @@ export default function benchmarkTest({
         series: [
             {
                 data: data,
-                type: 'candlestick'
+                type: 'candlestick',
+                dataGrouping: {
+                    enabled: true
+                }
             }
         ]
     });

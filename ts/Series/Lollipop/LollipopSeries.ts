@@ -43,8 +43,8 @@ import { extend, merge } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
         connectorWidthPlus?: number;
     }
 }
@@ -205,11 +205,17 @@ class LollipopSeries extends Series {
  * */
 
 interface LollipopSeries {
+    /** @internal */
     alignDataLabel: typeof colProto['alignDataLabel'];
+    /** @internal */
     crispCol: typeof colProto['crispCol'];
+    /** @internal */
     drawConnector: typeof dumbbellProto['drawConnector'];
+    /** @internal */
     drawDataLabels: typeof colProto['drawDataLabels'];
+    /** @internal */
     getColumnMetrics: typeof colProto['getColumnMetrics'];
+    /** @internal */
     getConnectorAttribs: typeof dumbbellProto['getConnectorAttribs'];
     pointClass: typeof LollipopPoint;
 }

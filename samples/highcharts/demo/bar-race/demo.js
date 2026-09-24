@@ -115,6 +115,10 @@ function getSubtitle() {
         </span>`;
 }
 
+const linearEasing = function (pos) {
+    return pos;
+};
+
 (async () => {
 
     dataset = await fetch(
@@ -125,7 +129,8 @@ function getSubtitle() {
     chart = Highcharts.chart('container', {
         chart: {
             animation: {
-                duration: 500
+                duration: 500,
+                easing: linearEasing
             },
             marginRight: 50
         },

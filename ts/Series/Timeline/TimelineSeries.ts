@@ -46,8 +46,7 @@ import {
     arrayMin,
     defined,
     extend,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -73,6 +72,7 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: TimelineSeriesOptions = merge(
         LineSeries.defaultOptions,
         TimelineSeriesDefaults
@@ -90,10 +90,13 @@ class TimelineSeries extends LineSeries {
 
     public points!: Array<TimelinePoint>;
 
+    /** @internal */
     public userOptions!: TimelineSeriesOptions;
 
+    /** @internal */
     public visibilityMap!: Array<(boolean|TimelinePoint|TimelinePointOptions)>;
 
+    /** @internal */
     public visiblePointsCount?: number;
 
     /* *
@@ -102,6 +105,7 @@ class TimelineSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public alignDataLabel(
         point: TimelinePoint,
         dataLabel: SVGLabel,
@@ -150,10 +154,7 @@ class TimelineSeries extends LineSeries {
                     (distance - pad) * 2 - ((point.itemHeight || 0) / 2)
                 );
                 styles = {
-                    width: pick(
-                        dataLabelsOptions.style?.width,
-                        `${series.yAxis.len * 0.4}px`
-                    ),
+                    width: (dataLabelsOptions.style?.width ?? `${series.yAxis.len * 0.4}px`),
                     // Apply ellipsis when data label height is exceeded.
                     textOverflow: (dataLabel.width || 0) / targetDLWidth *
                         (dataLabel.height || 0) / 2 > availableSpace *
@@ -178,6 +179,7 @@ class TimelineSeries extends LineSeries {
         super.alignDataLabel.apply(series, arguments);
     }
 
+    /** @internal */
     public bindAxes(): void {
         const series = this;
 
@@ -189,6 +191,7 @@ class TimelineSeries extends LineSeries {
         }
     }
 
+    /** @internal */
     public distributeDL(): void {
         const series = this,
             dataLabelsOptions = series.options.dataLabels,
@@ -196,10 +199,8 @@ class TimelineSeries extends LineSeries {
         let visibilityIndex = 1;
 
         if (dataLabelsOptions) {
-            const distance = pick(
-                dataLabelsOptions.distance,
-                inverted ? 20 : 100
-            );
+            const distance = dataLabelsOptions.distance ??
+                (inverted ? 20 : 100);
 
             for (const point of series.points) {
                 const defaults: TimelineDataLabelOptions = {
@@ -226,6 +227,7 @@ class TimelineSeries extends LineSeries {
         }
     }
 
+    /** @internal */
     public generatePoints(): void {
         super.generatePoints();
 
@@ -239,6 +241,7 @@ class TimelineSeries extends LineSeries {
         }
     }
 
+    /** @internal */
     public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         const series = this,
             nullInteraction = series.options.nullInteraction,
@@ -257,6 +260,7 @@ class TimelineSeries extends LineSeries {
         return map;
     }
 
+    /** @internal */
     public getXExtremes(xData: Array<number>): RangeSelector.RangeObject {
         const series = this,
             filteredData = xData.filter((_x, i): boolean => (
@@ -270,6 +274,7 @@ class TimelineSeries extends LineSeries {
         };
     }
 
+    /** @internal */
     public init(): void {
         const series = this;
 
@@ -379,6 +384,7 @@ class TimelineSeries extends LineSeries {
         ));
     }
 
+    /** @internal */
     public markerAttribs(
         point: TimelinePoint,
         state?: StatesOptionsKey
@@ -387,16 +393,17 @@ class TimelineSeries extends LineSeries {
             seriesMarkerOptions = series.options.marker,
             pointMarkerOptions = point.marker || {},
             symbol = (
-                pointMarkerOptions.symbol || seriesMarkerOptions?.symbol
+                pointMarkerOptions.symbol ||
+                seriesMarkerOptions?.symbol
             ),
-            width = pick<number|undefined, number|undefined, number>(
-                pointMarkerOptions.width,
-                seriesMarkerOptions?.width,
-                series.closestPointRangePx as any
+            width = (
+                pointMarkerOptions.width ??
+                seriesMarkerOptions?.width ??
+                (series.closestPointRangePx || 0)
             ),
-            height = pick<number|undefined, number>(
-                pointMarkerOptions.height,
-                seriesMarkerOptions?.height as any
+            height = (
+                pointMarkerOptions.height ??
+                (seriesMarkerOptions?.height || 0)
             );
 
         let seriesStateOptions,
@@ -414,9 +421,9 @@ class TimelineSeries extends LineSeries {
             seriesStateOptions = seriesMarkerOptions?.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
-            radius = pick(
-                pointStateOptions?.radius,
-                seriesStateOptions?.radius,
+            radius = (
+                pointStateOptions?.radius ??
+                seriesStateOptions?.radius ??
                 radius + (seriesStateOptions?.radiusPlus || 0)
             );
         }
@@ -433,7 +440,7 @@ class TimelineSeries extends LineSeries {
         return (series.chart.inverted) ? {
             y: (attribs.x && attribs.width) &&
                 series.xAxis.len - attribs.x - attribs.width,
-            x: attribs.y && attribs.y,
+            x: attribs.y,
             width: attribs.height,
             height: attribs.width
         } : attribs;
@@ -474,7 +481,9 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
  * */
 
 interface TimelineSeries {
+    /** @internal */
     pointClass: typeof TimelinePoint;
+    /** @internal */
     trackerGroups: Array<string>;
 }
 extend(TimelineSeries.prototype, {

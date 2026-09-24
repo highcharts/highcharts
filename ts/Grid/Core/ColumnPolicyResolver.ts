@@ -81,6 +81,11 @@ class ColumnPolicyResolver {
      */
     private availableSourceColumnIds?: Set<string>;
 
+    /**
+     * Source column ids hidden by data projection features.
+     */
+    private hiddenSourceColumnIds?: Set<string>;
+
     /* *
     *
     *  Methods
@@ -193,6 +198,19 @@ class ColumnPolicyResolver {
      */
     public setAvailableSourceColumnIds(columnIds?: string[]): void {
         this.availableSourceColumnIds = columnIds ?
+            new Set(columnIds) :
+            void 0;
+    }
+
+    /**
+     * Sets source column ids that should not be rendered.
+     *
+     * @param columnIds
+     * Source column ids hidden from the rendered column set. If omitted, the
+     * cache is cleared.
+     */
+    public setHiddenSourceColumnIds(columnIds?: string[]): void {
+        this.hiddenSourceColumnIds = columnIds?.length ?
             new Set(columnIds) :
             void 0;
     }
@@ -404,7 +422,9 @@ class ColumnPolicyResolver {
             return [];
         }
 
-        return this.filterEnabledColumns(columnsIncluded);
+        return this.filterEnabledColumns(
+            this.filterHiddenSourceColumns(columnsIncluded)
+        );
     }
 
     /**
@@ -429,6 +449,37 @@ class ColumnPolicyResolver {
         );
 
         return autoColumns.concat(customConfiguredColumns);
+    }
+
+    /**
+     * Filters out columns backed by hidden source columns.
+     *
+     * @param columnIds
+     * Candidate column ids.
+     */
+    private filterHiddenSourceColumns(columnIds: string[]): string[] {
+        const hiddenSourceColumnIds = this.hiddenSourceColumnIds;
+        if (!hiddenSourceColumnIds) {
+            return columnIds;
+        }
+
+        const result: string[] = [];
+
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            const columnId = columnIds[i];
+            const sourceColumnId = this.getColumnSourceId(columnId);
+
+            if (
+                sourceColumnId &&
+                hiddenSourceColumnIds.has(sourceColumnId)
+            ) {
+                continue;
+            }
+
+            result.push(columnId);
+        }
+
+        return result;
     }
 
     /**

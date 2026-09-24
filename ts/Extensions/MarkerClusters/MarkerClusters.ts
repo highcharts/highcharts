@@ -41,8 +41,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
