@@ -25,8 +25,10 @@ import type {
     CellContextMenuContext
 } from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
 
+import { createGridIcon } from '../../Core/UI/SvgIcons.js';
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
+import GridUtils from '../../Core/GridUtils.js';
 import {
     registerBuiltInAction,
     registerBuiltInGroup
@@ -39,6 +41,11 @@ import {
     merge,
     pushUnique
 } from '../../../Shared/Utilities.js';
+
+const { makeHTMLElement, joinClassNames } = GridUtils;
+
+const emptyStateClassName = Globals.classNamePrefix + 'empty-state-button';
+const emptyStateRowClassName = Globals.classNamePrefix + 'empty-state-row';
 
 /* *
  *
@@ -59,7 +66,9 @@ export const defaultOptions: DeepPartial<Options> = {
             deleteRow: 'Delete row',
             addColumnBefore: 'Add column before',
             addColumnAfter: 'Add column after',
-            deleteColumn: 'Delete column'
+            deleteColumn: 'Delete column',
+            addFirstRow: 'Add row',
+            addFirstColumn: 'Add column'
         }
     },
     tableEditing: {
@@ -126,6 +135,20 @@ export interface TableEditingLangOptions {
      * @default 'Delete column'
      */
     deleteColumn?: string;
+
+    /**
+     * Label used for the empty state button that adds the first row.
+     *
+     * @default 'Add row'
+     */
+    addFirstRow?: string;
+
+    /**
+     * Label used for the empty state button that adds the first column.
+     *
+     * @default 'Add column'
+     */
+    addFirstColumn?: string;
 }
 
 /**
@@ -145,6 +168,7 @@ export function compose(
     registerBuiltInActions();
 
     addEvent(GridClass, 'beforeLoad', initTableEditing);
+    addEvent(GridClass, 'afterRenderViewport', renderEmptyStateButton);
 }
 
 /**
@@ -235,6 +259,69 @@ function registerBuiltInActions(): void {
  */
 function initTableEditing(this: Grid): void {
     this.tableEditing = new TableEditingController(this);
+}
+
+/**
+ * Renders a button that seeds an empty table with its first column or row,
+ * which cannot be done through the cell context menu.
+ */
+function renderEmptyStateButton(this: Grid): void {
+    const grid = this;
+    const controller = grid.tableEditing;
+    const state = controller?.getEmptyState();
+    const contentWrapper = grid.contentWrapper;
+
+    if (!controller || !state || !contentWrapper) {
+        return;
+    }
+
+    const isRow = state === 'rows';
+    const lang = grid.options?.lang?.tableEditing;
+    const button = makeHTMLElement('button', {
+        className: joinClassNames(
+            Globals.getClassName('button'),
+            emptyStateClassName
+        )
+    });
+
+    button.appendChild(createGridIcon(
+        'plus',
+        grid.options?.rendering?.icons
+    ));
+    makeHTMLElement('span', {
+        innerText: (isRow ? lang?.addFirstRow : lang?.addFirstColumn) || ''
+    }, button);
+
+    button.addEventListener('click', (): void => {
+        void (async (): Promise<void> => {
+            await (
+                isRow ? controller.addFirstRow() : controller.addFirstColumn()
+            );
+
+            // The button is gone after the redraw, so move the focus to where
+            // the work continues: the new cell, or the next empty state step.
+            (
+                grid.viewport?.getRenderedRows()[0]?.cells[0]?.htmlElement ||
+                grid.contentWrapper?.querySelector<HTMLElement>(
+                    '.' + emptyStateClassName
+                )
+            )?.focus();
+        })();
+    });
+
+    const tbody = grid.viewport?.tbodyElement;
+
+    if (isRow && tbody) {
+        makeHTMLElement('td', {}, makeHTMLElement('tr', {
+            className: emptyStateRowClassName
+        }, tbody)).appendChild(button);
+        return;
+    }
+
+    const noData = contentWrapper.querySelector(
+        '.' + Globals.getClassName('noData')
+    );
+    contentWrapper.insertBefore(button, noData?.nextSibling || null);
 }
 
 /**
