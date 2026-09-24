@@ -51,7 +51,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
     /**
      * The height of the scrollbar, either in pixels or as a CSS length
      * expression, e.g. a percentage of the chart's plot area height like
-     * `'5%'`. If `buttonsEnabled` is true , the height also applies to
+     * `'5%'`. If `buttonsEnabled` is true, the height also applies to
      * the width of the scroll arrows so that they are always squares.
      *
      * @sample stock/scrollbar/style/

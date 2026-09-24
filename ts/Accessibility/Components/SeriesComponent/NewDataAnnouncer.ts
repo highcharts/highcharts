@@ -53,17 +53,13 @@ const {
  * */
 
 
-/**
- * @private
- */
+/** @internal */
 function chartHasAnnounceEnabled(chart: Chart): boolean {
     return !!(chart.options.accessibility as any).announceNewData.enabled;
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function findPointInDataArray<T extends Accessibility.PointComposition>(
     point: T
 ): T {
@@ -79,7 +75,8 @@ function findPointInDataArray<T extends Accessibility.PointComposition>(
 
 /**
  * Get array of unique series from two arrays
- * @private
+ *
+ * @internal
  */
 function getUniqueSeries(
     arrayA?: Array<Accessibility.SeriesComposition>,
@@ -106,8 +103,9 @@ function getUniqueSeries(
  * */
 
 /**
- * @private
  * @class
+ *
+ * @internal
  */
 class NewDataAnnouncer {
 
@@ -150,7 +148,8 @@ class NewDataAnnouncer {
 
     /**
      * Initialize the new data announcer.
-     * @private
+     *
+     * @internal
      */
     public init(): void {
         const chart = this.chart;
@@ -173,7 +172,8 @@ class NewDataAnnouncer {
 
     /**
      * Remove traces of announcer.
-     * @private
+     *
+     * @internal
      */
     public destroy(): void {
         this.eventProvider.removeAddedEvents();
@@ -183,7 +183,8 @@ class NewDataAnnouncer {
 
     /**
      * Add event listeners for the announcer
-     * @private
+     *
+     * @internal
      */
     public addEventListeners(): void {
         const announcer = this,
@@ -208,8 +209,8 @@ class NewDataAnnouncer {
 
     /**
      * On new data series added, update dirty list.
-     * @private
-     * @param {Highcharts.Series} series
+     *
+     * @internal
      */
     public onSeriesAdded(
         series: Accessibility.SeriesComposition
@@ -226,7 +227,8 @@ class NewDataAnnouncer {
 
     /**
      * Gather what we know and announce the data to user.
-     * @private
+     *
+     * @internal
      */
     public announceDirtyData(): void {
         const chart = this.chart,
@@ -265,13 +267,14 @@ class NewDataAnnouncer {
 
     /**
      * Announce to user that there is new data.
-     * @private
      * @param {Array<Highcharts.Series>} dirtySeries
      *          Array of series with new data.
      * @param {Highcharts.Series} [newSeries]
      *          If a single new series was added, a reference to this series.
      * @param {Highcharts.Point} [newPoint]
      *          If a single point was added, a reference to this point.
+     *
+     * @internal
      */
     public queueAnnouncement(
         dirtySeries: Array<Accessibility.SeriesComposition>,
@@ -331,7 +334,6 @@ class NewDataAnnouncer {
 
     /**
      * Get announcement message for new data.
-     * @private
      * @param {Array<Highcharts.Series>} dirtySeries
      *          Array of series with new data.
      * @param {Highcharts.Series} [newSeries]
@@ -341,6 +343,8 @@ class NewDataAnnouncer {
      *
      * @return {string|null}
      * The announcement message to give to user.
+     *
+     * @internal
      */
     public buildAnnouncementMessage(
         dirtySeries: Array<Accessibility.SeriesComposition>,
@@ -391,6 +395,7 @@ class NewDataAnnouncer {
  *
  * */
 
+/** @internal */
 namespace NewDataAnnouncer {
 
     /* *
@@ -399,6 +404,7 @@ namespace NewDataAnnouncer {
      *
      * */
 
+    /** @internal */
     export interface DirtyObject {
         allSeries: Record<string, Accessibility.SeriesComposition>;
         hasDirty?: boolean;
@@ -406,6 +412,7 @@ namespace NewDataAnnouncer {
         newSeries?: Accessibility.SeriesComposition;
     }
 
+    /** @internal */
     export interface QueuedAnnouncementObject {
         message: string;
         series: Array<Accessibility.SeriesComposition>;
@@ -419,9 +426,7 @@ namespace NewDataAnnouncer {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         SeriesClass: typeof Series
     ): void {
@@ -444,8 +449,8 @@ namespace NewDataAnnouncer {
 
     /**
      * On new point added, update dirty list.
-     * @private
-     * @param {Highcharts.Point} point
+     *
+     * @internal
      */
     function seriesOnAddPoint(
         this: Accessibility.SeriesComposition,
@@ -472,7 +477,8 @@ namespace NewDataAnnouncer {
 
     /**
      * On new data in the series, make sure we add it to the dirty list.
-     * @private
+     *
+     * @internal
      */
     function seriesOnUpdatedData(
         this: Accessibility.SeriesComposition
@@ -501,4 +507,5 @@ namespace NewDataAnnouncer {
  *
  * */
 
+/** @internal */
 export default NewDataAnnouncer;
