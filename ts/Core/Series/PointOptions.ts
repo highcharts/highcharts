@@ -385,7 +385,7 @@ export interface PointMarkerOptions {
      * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
      * Inherit from series color (undefined)
      *
-     * @default ${palette.backgroundColor}
+     * @default 'var(--highcharts-background-color)'
      */
     lineColor?: ColorType;
 
@@ -762,7 +762,7 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
      * Solid red discs for selected points
      *
-     * @default ${palette.neutralColor20}
+     * @default 'var(--highcharts-neutral-color-20)'
      */
     fillColor?: ColorType;
 
@@ -773,7 +773,7 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
      * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
      * Red line color for selected points
      *
-     * @default ${palette.neutralColor100}
+     * @default 'var(--highcharts-neutral-color-100)'
      */
     lineColor?: ColorType;
 

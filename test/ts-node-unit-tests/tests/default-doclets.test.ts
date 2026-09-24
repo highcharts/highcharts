@@ -9,13 +9,16 @@
  * - For each such typed const, looks up the interface with the same name in the
  *   Options file and collects @default doclets from its properties
  * - Reports mismatches between documented and actual defaults
+ * - Separately, scans all Options files for @default doclets with template
+ *   expressions (e.g. ${palette.*}), which are never valid default values
  *
  * Limitations:
  * - Only checks properties that are explicitly set in the Defaults const; properties
  *   whose defaults come from parent merges or inheritance are not verified here
  * - Recurses only into inline type literals — does not follow named type references
  *   (e.g. a property typed as `SomeOtherOptions` won't have its members checked)
- * - Skips @default doclets that contain template expressions (e.g. ${palette.*})
+ * - @default doclets that are not valid TS literals are compared as raw text, so
+ *   they only fail where the property is also set in the Defaults const
  */
 
 import { describe, it } from 'node:test';
@@ -188,13 +191,35 @@ function getDocletDefault(node: TS.Node): (string|undefined) {
 
     if (
         !comment ||
-        /^\{[a-z|]+\}\s/u.test(comment) ||
-        comment.includes('${')
+        /^\{[a-z|]+\}\s/u.test(comment)
     ) {
         return;
     }
 
-    return normalizeTextValue(comment);
+    return normalizeTextValue(comment) ?? comment;
+}
+
+function collectTemplateDefaults(sourceFile: TS.SourceFile): Array<string> {
+    const found: Array<string> = [];
+    const visit = (node: TS.Node): void => {
+        for (const tag of TS.getJSDocTags(node)) {
+            const comment = stringifyComment(tag.comment);
+
+            if (tag.tagName.text === 'default' && comment.includes('${')) {
+                const { line } = sourceFile
+                    .getLineAndCharacterOfPosition(tag.getStart());
+
+                found.push(
+                    `${sourceFile.fileName}:${line + 1}: @default ${comment}`
+                );
+            }
+        }
+        TS.forEachChild(node, visit);
+    };
+
+    visit(sourceFile);
+
+    return found;
 }
 
 function getPath(prefix: string, name: string): string {
@@ -365,14 +390,7 @@ function normalizeObjectPropertyName(
 }
 
 function normalizeTextValue(text: string): (string|undefined) {
-    const sourceFile = TS.createSourceFile(
-        'default-doclet.ts',
-        `const value = (${text});`,
-        TS.ScriptTarget.Latest,
-        true,
-        TS.ScriptKind.TS
-    );
-    const statement = sourceFile.statements[0];
+    const statement = parseSource(`const value = (${text});`).statements[0];
 
     if (
         !statement ||
@@ -382,13 +400,18 @@ function normalizeTextValue(text: string): (string|undefined) {
         return;
     }
 
-    const declaration = statement.declarationList.declarations[0];
+    const initializer = statement.declarationList.declarations[0].initializer;
 
-    if (!declaration.initializer) {
+    // Reject text the parser could not consume fully, e.g. `${palette.x}`
+    if (
+        !initializer ||
+        !TS.isParenthesizedExpression(initializer) ||
+        initializer.expression.getText() !== text
+    ) {
         return;
     }
 
-    return normalizeExpression(declaration.initializer);
+    return normalizeExpression(initializer);
 }
 
 function normalizeWhitespace(text: string): string {
@@ -418,14 +441,18 @@ function stringifyComment(
         .trim();
 }
 
-function parseSource(code: string): TS.SourceFile {
+function parseSource(code: string, fileName = 'test.ts'): TS.SourceFile {
     return TS.createSourceFile(
-        'test.ts',
+        fileName,
         code,
         TS.ScriptTarget.Latest,
         true,
         TS.ScriptKind.TS
     );
+}
+
+function readSource(path: string): TS.SourceFile {
+    return parseSource(TS.sys.readFile(join(REPO_ROOT, path)) || '', path);
 }
 
 describe('Helper: normalizeTextValue', () => {
@@ -456,6 +483,12 @@ describe('Helper: normalizeTextValue', () => {
             normalizeTextValue("['a', 'b']"),
             "['a', 'b']"
         );
+    });
+
+    it('returns undefined for text that is not a valid literal', () => {
+        strictEqual(normalizeTextValue('${palette.backgroundColor}'), void 0);
+        strictEqual(normalizeTextValue('10\nDesktop'), void 0);
+        strictEqual(normalizeTextValue('%e %b %Y'), void 0);
     });
 });
 
@@ -506,7 +539,7 @@ describe('Helper: collectDefaultTags', () => {
         strictEqual(defaults.size, 0);
     });
 
-    it('skips @default containing template expressions', () => {
+    it('keeps @default that is not a valid literal as raw text', () => {
         const src = parseSource(
             'interface FooOptions {\n' +
             '    /** @default ${palette.backgroundColor} */\n' +
@@ -515,7 +548,27 @@ describe('Helper: collectDefaultTags', () => {
         );
 
         const defaults = collectDefaultTags(src, 'FooOptions');
-        strictEqual(defaults.size, 0);
+        strictEqual(defaults.get('color'), '${palette.backgroundColor}');
+    });
+});
+
+describe('Helper: collectTemplateDefaults', () => {
+    it('finds @default with template expressions at any depth', () => {
+        const src = parseSource(
+            'interface FooOptions {\n' +
+            '    style: CSSObject & {\n' +
+            '        /** @default ${palette.neutralColor80} */\n' +
+            '        color?: string;\n' +
+            '    };\n' +
+            "    /** @default 'var(--highcharts-background-color)' */\n" +
+            '    backgroundColor?: string;\n' +
+            '}'
+        );
+
+        strictEqual(
+            collectTemplateDefaults(src).join(),
+            'test.ts:3: @default ${palette.neutralColor80}'
+        );
     });
 });
 
@@ -563,15 +616,15 @@ describe('Helper: collectDefaultsFromObject', () => {
 });
 
 describe('Options @default doclets', () => {
+    const optionsFiles = glob.sync(OPTIONS_GLOB, {
+        cwd: REPO_ROOT,
+        ignore: IGNORE_GLOBS
+    });
+
     it('should match paired defaults files', (t) => {
         const failures: Array<string> = [];
         let checksPerformed = 0;
         let pairedCount = 0;
-
-        const optionsFiles = glob.sync(OPTIONS_GLOB, {
-            cwd: REPO_ROOT,
-            ignore: IGNORE_GLOBS
-        });
 
         for (const optionsPath of optionsFiles) {
             const defaultsPath = optionsPath.replace(
@@ -585,21 +638,10 @@ describe('Options @default doclets', () => {
 
             pairedCount++;
 
-            const optionsSource = TS.createSourceFile(
-                optionsPath,
-                TS.sys.readFile(join(REPO_ROOT, optionsPath)) || '',
-                TS.ScriptTarget.Latest,
-                true,
-                TS.ScriptKind.TS
+            const optionsSource = readSource(optionsPath);
+            const defaultsObjects = getDefaultsObjects(
+                readSource(defaultsPath)
             );
-            const defaultsSource = TS.createSourceFile(
-                defaultsPath,
-                TS.sys.readFile(join(REPO_ROOT, defaultsPath)) || '',
-                TS.ScriptTarget.Latest,
-                true,
-                TS.ScriptKind.TS
-            );
-            const defaultsObjects = getDefaultsObjects(defaultsSource);
 
             for (const [interfaceName, actualDefaults] of defaultsObjects) {
                 const docletDefaults = collectDefaultTags(
@@ -636,6 +678,14 @@ describe('Options @default doclets', () => {
             `Checked ${checksPerformed} @default doclet(s) across ` +
             `${optionsFiles.length} Options files ` +
             `(${pairedCount} paired with Defaults).`
+        );
+
+        strictEqual(failures.length, 0, failures.join('\n'));
+    });
+
+    it('should not use template expressions', () => {
+        const failures = optionsFiles.flatMap(
+            optionsPath => collectTemplateDefaults(readSource(optionsPath))
         );
 
         strictEqual(failures.length, 0, failures.join('\n'));
