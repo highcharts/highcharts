@@ -45,7 +45,7 @@ jobs:
   visual_playwright_compare:
     name: Playwright visual comparison
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Checkout candidate
         uses: actions/checkout@v6

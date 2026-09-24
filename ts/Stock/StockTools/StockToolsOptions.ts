@@ -56,14 +56,16 @@ export interface LangStockToolsOptions {
     /**
      * Aria label for the stock tools toolbar arrow toggle button.
      *
-     * @since 12.2.0
+     * @default 'Toggle submenu'
+     * @since   12.2.0
      */
     arrowLabel?: string;
 
     /**
      * Aria label for the stock tools toolbar group element.
      *
-     * @since 12.2.0
+     * @default 'Stock chart tools'
+     * @since   12.2.0
      */
     groupLabel?: string;
 }

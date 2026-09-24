@@ -1,15 +1,8 @@
 import { test, expect } from '@playwright/test';
-
-type VisualComparator = {
-    CANVAS_WIDTH: number;
-    CANVAS_HEIGHT: number;
-    compare: (data1: Uint8ClampedArray, data2: Uint8ClampedArray) => number;
-    createCanvas: (id: string) => HTMLCanvasElement;
-    svgToPixels: (
-        svg: string,
-        canvas: HTMLCanvasElement
-    ) => Promise<Uint8ClampedArray>;
-};
+import {
+    compareVisualSVGs,
+    type VisualComparator
+} from './visual-comparison.ts';
 
 type VisualWindow = Window & {
     VisualComparator?: VisualComparator;
@@ -19,31 +12,6 @@ const svg = (fill: string) => (
     '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400">' +
         `<rect width="600" height="400" fill="${fill}"/></svg>`
 );
-
-async function compareSVGs(
-    page: import('@playwright/test').Page,
-    referenceSVG: string,
-    candidateSVG: string
-): Promise<number> {
-    return page.evaluate(async ({ referenceSVG, candidateSVG }) => {
-        const comparator = (window as VisualWindow).VisualComparator;
-        if (!comparator) {
-            throw new Error('Visual comparator is not loaded.');
-        }
-
-        const referencePixels = comparator.svgToPixels(
-            referenceSVG,
-            comparator.createCanvas('reference')
-        );
-        const candidatePixels = comparator.svgToPixels(
-            candidateSVG,
-            comparator.createCanvas('candidate')
-        );
-        const pixels = await Promise.all([referencePixels, candidatePixels]);
-
-        return comparator.compare(pixels[0], pixels[1]);
-    }, { referenceSVG, candidateSVG });
-}
 
 test.beforeEach(async ({ page }) => {
     await page.setContent('');
@@ -71,17 +39,55 @@ test('visual cleanup restores direct prototype mutations between samples', async
 test('Visual comparator: identical SVGs have no numeric difference', async ({
     page
 }) => {
-    const difference = await compareSVGs(page, svg('#ffffff'), svg('#ffffff'));
+    const comparison = await compareVisualSVGs(
+        page, svg('#ffffff'), svg('#ffffff')
+    );
 
-    expect(difference).toBe(0);
+    expect(comparison).toEqual({ difference: 0, width: 600, height: 400 });
 });
 
-test('Visual comparator: changed SVGs have a numeric difference', async ({
+test('Visual comparator: changed SVGs preserve pixels in base64', async ({
     page
 }) => {
-    const difference = await compareSVGs(page, svg('#ffffff'), svg('#000000'));
+    const comparison = await compareVisualSVGs(
+        page, svg('#ffffff'), svg('#0080ff')
+    );
 
-    expect(difference).toBeGreaterThan(0);
+    expect(comparison.difference).toBe(600 * 400);
+    expect(typeof comparison.referencePixels).toBe('string');
+    expect(typeof comparison.candidatePixels).toBe('string');
+    expect(Buffer.from(comparison.referencePixels, 'base64')).toEqual(
+        Buffer.alloc(600 * 400 * 4, 255)
+    );
+    expect(Buffer.from(comparison.candidatePixels, 'base64')).toEqual(
+        Buffer.alloc(600 * 400 * 4, Buffer.from([0, 128, 255, 255]))
+    );
+});
+
+test('Visual comparator: captures non-breaking spaces as valid SVG', async ({
+    page
+}) => {
+    const source = '<svg xmlns="http://www.w3.org/2000/svg" ' +
+        'width="600" height="400">' +
+        '<text x="10" y="20">Series 1:\u00A0\u00A0x = 1, y = 2</text></svg>';
+    await page.setContent(source);
+
+    const captures = await page.evaluate(() => {
+        const comparator = (window as VisualWindow).VisualComparator;
+        if (!comparator) {
+            throw new Error('Visual comparator is not loaded.');
+        }
+
+        return [
+            comparator.getSVG({ container: document.body }),
+            comparator.getSVG()
+        ];
+    });
+
+    for (const captured of captures) {
+        const comparison = await compareVisualSVGs(page, source, captured);
+        expect(comparison.difference).toBe(0);
+    }
 });
 
 test('Visual comparator: missing SVG rejects', async ({ page }) => {
@@ -92,7 +98,7 @@ test('Visual comparator: missing SVG rejects', async ({ page }) => {
         }
 
         return comparator.svgToPixels(
-            undefined as unknown as string,
+            undefined,
             comparator.createCanvas('missing')
         );
     })).rejects.toThrow();
