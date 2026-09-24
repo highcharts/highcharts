@@ -18,3 +18,5 @@ export default function ExportingChart() {
 ```
 
 The `Exporting` component accepts all [exporting API options](https://api.highcharts.com/highcharts/exporting) as props.
+
+`<Exporting />` bundles `exporting.src.js`, `offline-exporting.src.js`, and `export-data.src.js`. Adding it alone enables CSV and XLS export; there is no separate ExportData component.
