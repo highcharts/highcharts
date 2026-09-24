@@ -43,29 +43,25 @@ declare module './ControllableBase' {
     }
 }
 
-/**
- * A collection of SVG definitions for reusable elements such as markers,
- * gradients, filters and patterns. Used mostly in styled mode - see
- * [gradients, shadows and
- * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
- *
- * Each key is an id that can be referenced from other options. Annotations
- * use it to define arrow markers, referenced from a shape's
- * [markerEnd](#annotations.shapes.markerEnd) or
- * [markerStart](#annotations.shapes.markerStart) option. Two markers are
- * available by default: `arrow` and `reverse-arrow`.
- */
 export interface DefsOptions {
 
     /**
-     * The default `arrow` marker definition, a filled triangle pointing
-     * towards the end of the path.
+     * The default `arrow` marker, rendered as a filled triangle pointing
+     * towards the end of the path. Reference it by id in
+     * [markerEnd](#annotations.shapes.markerEnd) or
+     * [markerStart](#annotations.shapes.markerStart).
+     *
+     * @default {"tagName": "marker", "attributes": {"id": "arrow", "refY": 5, "refX": 9, "markerWidth": 10, "markerHeight": 10}, "children": [{"tagName": "path", "attributes": {"d": "M 0 0 L 10 5 L 0 10 Z", "stroke-width": 0}}]}
      */
     arrow?: AST.Node;
 
     /**
-     * The default `reverse-arrow` marker definition, a filled triangle
-     * pointing towards the start of the path.
+     * The default `reverse-arrow` marker, rendered as a filled triangle
+     * pointing towards the start of the path. Reference it by id in
+     * [markerEnd](#annotations.shapes.markerEnd) or
+     * [markerStart](#annotations.shapes.markerStart).
+     *
+     * @default {"tagName": "marker", "attributes": {"id": "reverse-arrow", "refY": 5, "refX": 1, "markerWidth": 10, "markerHeight": 10}, "children": [{"tagName": "path", "attributes": {"d": "M 0 5 L 10 0 L 10 10 Z", "stroke-width": 0}}]}
      */
     'reverse-arrow'?: AST.Node;
 
