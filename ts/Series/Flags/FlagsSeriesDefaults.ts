@@ -37,7 +37,7 @@ import type FlagsSeriesOptions from './FlagsSeriesOptions';
  * @excluding    animation, boostBlending, boostThreshold, borderColor,
  *               borderWidth, colorByPoint, cropThreshold, dataGrouping,
  *               edgeColor, edgeWidth, nullInteraction, onPoint, pointPadding,
- *               pointWidth, turboThreshold, zoomEnabled
+ *               pointWidth, threshold, turboThreshold, zoomEnabled
  * @product      highstock
  * @optionparent plotOptions.flags
  */
@@ -152,14 +152,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
         pointFormat: '{point.text}'
     },
 
-    /**
-     * The Y axis value to serve as the base for the flags. If `null`, the
-     * flags are placed relative to the padding Y axis minimum.
-     *
-     * @type    {number|null}
-     * @product highstock
-     */
-    threshold: null,
+    /** @ignore-option */
+    threshold: null, // Don't stretch the Y axis like column does
+
 
     /**
      * The text to display on each flag. This can be defined on series
@@ -298,7 +293,8 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  *            borderWidth, colorByPoint, connectNulls, cropThreshold,
  *            dashStyle, dataGrouping, edgeColor, edgeWidth, gapSize, gapUnit,
  *            linecap, marker, nullInteraction, onPoint, pointPadding,
- *            pointWidth, step, turboThreshold, useOhlcData, zoomEnabled
+ *            pointWidth, step, threshold, turboThreshold, useOhlcData,
+ *            zoomEnabled
  * @product   highstock
  * @apioption series.flags
  */

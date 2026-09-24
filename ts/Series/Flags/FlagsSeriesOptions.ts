@@ -50,13 +50,14 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @excluding animation, boostBlending, boostThreshold, borderColor,
  *            borderWidth, colorByPoint, cropThreshold, dataGrouping,
  *            edgeColor, edgeWidth, nullInteraction, onPoint, pointPadding,
- *            pointWidth, turboThreshold, zoomEnabled
+ *            pointWidth, threshold, turboThreshold, zoomEnabled
  *
  * @excluding animation, boostBlending, boostThreshold, borderColor,
  *            borderWidth, colorByPoint, connectNulls, cropThreshold,
  *            dashStyle, dataGrouping, edgeColor, edgeWidth, gapSize, gapUnit,
  *            linecap, marker, nullInteraction, onPoint, pointPadding,
- *            pointWidth, step, turboThreshold, useOhlcData, zoomEnabled
+ *            pointWidth, step, threshold, turboThreshold, useOhlcData,
+ *            zoomEnabled
  *
  * @product highstock
  */
@@ -292,16 +293,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @product highstock
      */
     data?: Array<FlagsPointOptions>;
-
-    /**
-     * The Y axis value to serve as the base for the flags. If `null`, the
-     * flags are placed relative to the padding Y axis minimum.
-     *
-     * @default null
-     *
-     * @product highstock
-     */
-    threshold?: ColumnSeriesOptions['threshold'];
 
     /**
      * Specific tooltip options for flag series. Flag series tooltips are
