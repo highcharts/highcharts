@@ -18,10 +18,11 @@
  *
  * */
 
-import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
-import type FunnelPointOptions from './FunnelPointOptions';
+import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions';
+import type { FunnelPointOptions } from './FunnelPointOptions';
 import type PieSeriesOptions from '../Pie/PieSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { ColorType } from '../../Core/Color/ColorType';
 
 /* *
  *
@@ -44,10 +45,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.funnel
  *
- * @excluding innerSize,size,dataSorting
- *
- * @excluding stack, xAxis, yAxis, dataSorting,
- *            boostBlending, boostThreshold
+ * @excluding boostBlending, boostThreshold, dataSorting, innerSize, size,
+ *            stack, xAxis, yAxis
  *
  * @product highcharts
  *
@@ -57,6 +56,8 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
 
     /**
      * Initial animation is by default disabled for the funnel chart.
+     *
+     * @default false
      */
     animation?: boolean;
 
@@ -67,6 +68,8 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      *
      * @sample highcharts/plotoptions/funnel-border-radius
      *         Funnel and pyramid with rounded border
+     *
+     * @default 0
      */
     borderRadius?: number;
 
@@ -75,7 +78,6 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      * of the plot area, so it fills the plot area height.
      *
      * @default ["50%", "50%"]
-     *
      * @since 3.0
      */
     center?: [(number|string|null), (number|string|null)];
@@ -125,12 +127,7 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<number|null|*>}
-     *
-     * @extends series.pie.data
-     *
-     * @excluding sliced
-     *
+     * @basic
      * @product highcharts
      */
     data?: Array<(number|null|FunnelPointOptions)>;
@@ -146,6 +143,7 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      *         Funnel demo
      *
      * @since 3.0
+     * @default '100%'
      */
     height?: (number|string);
 
@@ -153,6 +151,8 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      * The height of the neck, the lower part of the funnel. A number
      * defines pixel width, a percentage string defines a percentage of the
      * plot area height.
+     *
+     * @default '25%'
      */
     neckHeight?: (number|string);
 
@@ -165,6 +165,7 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      *         Funnel demo
      *
      * @since 3.0
+     * @default '30%'
      */
     neckWidth?: (number|string);
 
@@ -173,43 +174,73 @@ export interface FunnelSeriesOptions extends PieSeriesOptions {
      * no neck width and neck height is a pyramid.
      *
      * @since 3.0.10
+     * @default false
      */
     reversed?: boolean;
 
-    /**
-     * To avoid adapting the data label size in Pie.drawDataLabels.
-     *
-     * @ignore-option
-     */
-    size?: undefined;
-
-    /**
-     * Options for the series states.
-     */
-    states?: SeriesStatesOptions<FunnelSeriesOptions>;
-
-    /**
-     * @excluding halo, marker, lineWidth, lineWidthPlus
-     *
-     * @apioption plotOptions.funnel.states.hover
-     */
-
-    /**
-     * Options for a selected funnel item.
-     *
-     * @excluding halo, marker, lineWidth, lineWidthPlus
-     *
-     * @apioption series.funnel.states.select
-     */
+    states?: FunnelSeriesStatesOptions;
 
     /**
      * The width of the funnel compared to the width of the plot area,
      * or the pixel width if it is a number.
      *
      * @since 3.0
+     * @default '90%'
      */
     width?: (number|string);
 
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    size?: undefined;
+
+}
+
+type SeriesStatesOptionsAlias = SeriesStatesOptions<FunnelSeriesOptions>;
+interface FunnelSeriesStatesOptions extends SeriesStatesOptionsAlias {
+    hover?: SeriesStatesOptionsAlias['hover'] & {
+
+        /* *
+        *
+        *  Excluded
+        *
+        * */
+
+        halo?: undefined;
+        lineWidth?: undefined;
+        lineWidthPlus?: undefined;
+        marker?: undefined;
+    };
+
+    select?: SeriesStatesOptionsAlias['select'] & {
+        /**
+         * A specific border color for the selected point.
+         *
+         * @default 'var(--highcharts-neutral-color-100)'
+         */
+        borderColor: ColorType;
+
+        /**
+         * A specific color for the selected point.
+         *
+         * @default 'var(--highcharts-neutral-color-20)'
+         */
+        color?: ColorType;
+
+        /* *
+        *
+        *  Excluded
+        *
+        * */
+
+        halo?: undefined;
+        lineWidth?: undefined;
+        lineWidthPlus?: undefined;
+        marker?: undefined;
+    };
 }
 
 /* *

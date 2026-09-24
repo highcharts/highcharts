@@ -51,7 +51,6 @@ import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 /**
  * The funnel3d series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
@@ -67,7 +66,9 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = Funnel3DComposition.compose;
+
     /** @internal */
     public static defaultOptions: Funnel3DSeriesOptions = merge(
         ColumnSeries.defaultOptions,
@@ -98,9 +99,7 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public alignDataLabel(
         point: Funnel3DPoint,
         _dataLabel: SVGLabel,
@@ -161,7 +160,7 @@ class Funnel3DSeries extends ColumnSeries {
 
     /**
      * Override default axis options with series required options for axes.
-     * @private
+     * @internal
      */
     public bindAxes(): void {
         Series.prototype.bindAxes.apply(this, arguments);
@@ -181,9 +180,7 @@ class Funnel3DSeries extends ColumnSeries {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public translate(): void {
         Series.prototype.translate.apply(this, arguments);
 
@@ -367,8 +364,13 @@ class Funnel3DSeries extends ColumnSeries {
  * */
 
 interface Funnel3DSeries {
+    /** @internal */
     getWidthAt(y: number): number; // Added during translate
+
+    /** @internal */
     pointClass: typeof Funnel3DPoint;
+
+    /** @internal */
     translate3dShapes(): void;
 }
 extend(Funnel3DSeries.prototype, {

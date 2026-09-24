@@ -114,7 +114,8 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
      */
     reversed?: boolean;
 
-    states?: SeriesStatesOptions<PyramidSeriesOptions>;
+    states?: FunnelSeriesOptions['states'] &
+        SeriesStatesOptions<PyramidSeriesOptions>;
 
 }
 
