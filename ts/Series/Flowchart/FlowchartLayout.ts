@@ -273,16 +273,14 @@ namespace FlowchartLayout {
             let changed = true;
             while (changed) {
                 changed = false;
-                // Peel sinks to the front of `right`.
                 for (const id of present()) {
+                    // Peel sinks to the front of `right`.
                     if (outDeg.get(id) === 0) {
                         remove(id);
                         right.unshift(id);
                         changed = true;
                     }
-                }
-                // Peel sources to the back of `left`.
-                for (const id of present()) {
+                    // Peel sources to the back of `left`.
                     if (inDeg.get(id) === 0) {
                         remove(id);
                         left.push(id);
