@@ -23,6 +23,7 @@ import type {
     ColumnSeriesTooltipOptions
 } from '../Column/ColumnSeriesOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -87,12 +88,15 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     fillColor?: ColorType;
 
     /**
-     * Fixed height of the flag's shape. By default, height is
-     * autocalculated according to the flag's title.
+     * A fixed height for the flag's shape, either in pixels or as a CSS
+     * length expression, e.g. `20`, `'2em'`, or `'calc(var(--gap) * 2)'`.
+     * By default, height is autocalculated according to the flag's title.
+     *
+     * @type {number|Highcharts.CSSLength}
      *
      * @product highstock
      */
-    height?: number;
+    height?: (number|CSSLength);
 
     /**
      * What type of legend symbol to render for this series. For flags
