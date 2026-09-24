@@ -58,6 +58,7 @@ import {
     merge,
     pushUnique,
     splat,
+    stableSort,
     syncTimeout
 } from '../Shared/Utilities.js';
 
@@ -1539,6 +1540,8 @@ class Tooltip {
             labels = [false, labels];
         }
         // Create the individual labels for header and points, ignore footer
+        // Boxes grouped by pane position, for per-pane distribute() below.
+        const paneGroups = new Map<string, Array<BoxObject>>();
         let boxes = labels.slice(0, points.length + 1).reduce(function (
             boxes: Array<BoxObject>,
             str: (boolean|string),
@@ -1586,21 +1589,31 @@ class Tooltip {
                             point,
                             tooltip,
                             [anchorX, anchorY]
-                        );
+                        ),
+                        box: BoxObject = {
+                            // 0-align to the top, 1-align to the bottom
+                            align: hasFixedPosition ? 0 : void 0,
+                            anchorX,
+                            anchorY,
+                            boxWidth,
+                            point,
+                            rank: (boxPosition as any).rank ??
+                                (isHeader ? 1 : 0),
+                            size,
+                            target: boxPosition.y,
+                            tt,
+                            x: boxPosition.x
+                        },
+                        // Bucket by pane (xAxis) as boxes are created, so
+                        // renderSplit doesn't need a second pass over
+                        // `boxes` just to group them before distribute().
+                        xAxis = point.series?.xAxis,
+                        key = xAxis ? `${xAxis.pos}+${xAxis.len}` : '0',
+                        group = paneGroups.get(key) || [];
 
-                    boxes.push({
-                        // 0-align to the top, 1-align to the bottom
-                        align: hasFixedPosition ? 0 : void 0,
-                        anchorX,
-                        anchorY,
-                        boxWidth,
-                        point,
-                        rank: (boxPosition as any).rank ?? (isHeader ? 1 : 0),
-                        size,
-                        target: boxPosition.y,
-                        tt,
-                        x: boxPosition.x
-                    });
+                    boxes.push(box);
+                    group.push(box);
+                    paneGroups.set(key, group);
                 } else {
                     // Hide tooltips which anchorY is outside the visible plot
                     // area
@@ -1649,7 +1662,16 @@ class Tooltip {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        distribute(boxes, adjustedPlotHeight);
+        if (paneGroups.size <= 1) {
+            // Single pane: sorts `boxes` in place, no extra work needed.
+            distribute(boxes, adjustedPlotHeight);
+        } else {
+            paneGroups.forEach((group): void => {
+                distribute(group, adjustedPlotHeight);
+            });
+            // Restore target order on boxes` too, needed by boxExtremes below.
+            stableSort(boxes, (a, b): number => a.target - b.target);
+        }
         const boxExtremes = {
             left: chartLeft,
             right: chartLeft
