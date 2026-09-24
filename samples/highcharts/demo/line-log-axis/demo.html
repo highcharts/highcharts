@@ -3,11 +3,24 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
+
 <figure class="highcharts-figure">
     <div id="container"></div>
+    <div class="highcharts-controls-wrapper">
+        <highcharts-controls>
+            <highcharts-group header="Axis type">
+                <highcharts-control path="xAxis.type" value="logarithmic" options="linear,logarithmic"></highcharts-control>
+                <highcharts-control path="yAxis.type" value="logarithmic" options="linear,logarithmic"></highcharts-control>
+            </highcharts-group>
+        </highcharts-controls>
+    </div>
     <p class="highcharts-description">
-        This chart shows the use of a logarithmic y-axis. Logarithmic axes can
-        be useful when dealing with data with spikes or large value gaps,
-        as they allow variance in the smaller values to remain visible.
+        This chart shows the use of logarithmic x and y axes. The luminosity of
+        main-sequence stars spans more than eight orders of magnitude, from
+        dim red dwarfs like TRAPPIST-1 to massive O-type stars like
+        Theta¹ Orionis C. On logarithmic axes the mass-luminosity relation
+        appears as a nearly straight line. Switch the axes to linear to see
+        how almost all of the stars collapse into the lower left corner.
     </p>
 </figure>

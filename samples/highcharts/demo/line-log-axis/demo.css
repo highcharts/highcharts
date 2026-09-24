@@ -21,6 +21,14 @@ body {
     margin: 1em auto;
 }
 
+.highcharts-controls-wrapper {
+    padding: 0 10px;
+}
+
+highcharts-controls {
+    display: inline-block;
+}
+
 .highcharts-data-table table {
     font-family: Verdana, sans-serif;
     border-collapse: collapse;
