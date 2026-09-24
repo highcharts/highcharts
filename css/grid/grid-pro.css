@@ -104,6 +104,21 @@
     padding: 0 !important;
 }
 
+/* Table editing empty state. The surface comes from the themed
+   `.hcg-button` rules — do not repeat it here. */
+.hcg-container .hcg-empty-state-button {
+    align-self: center;
+    margin: 8px auto;
+    gap: 6px;
+}
+
+/* Plain holder: a button cannot be a direct child of a table body. */
+.hcg-empty-state-row > td {
+    display: block;
+    padding: 0;
+    text-align: center;
+}
+
 .hcg-cell-editing-container {
     position: absolute;
     top: 0;

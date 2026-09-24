@@ -157,6 +157,56 @@ class TableEditingController {
     }
 
     /**
+     * Returns what an empty table is missing. Context menu actions cannot
+     * cover either case, since they need a body cell to open on.
+     */
+    public getEmptyState(): 'columns' | 'rows' | undefined {
+        const table = this.isEnabled() ? this.getDataTable() : void 0;
+
+        if (!table) {
+            return;
+        }
+
+        if (table.getColumnIds().length < 1) {
+            return 'columns';
+        }
+
+        if (table.getRowCount() < 1) {
+            return 'rows';
+        }
+    }
+
+    /**
+     * Adds the first column to an empty table.
+     */
+    public async addFirstColumn(): Promise<void> {
+        const table = this.getDataTable();
+
+        if (!table) {
+            return;
+        }
+
+        table.setColumns({
+            [this.getNewColumnId(table)]: this.getEmptyColumn(table)
+        }, void 0, { fromGrid: true });
+        await this.updateColumnsFromTable(table);
+    }
+
+    /**
+     * Adds the first row to a table that has columns but no rows.
+     */
+    public async addFirstRow(): Promise<void> {
+        const table = this.getDataTable();
+
+        if (!table) {
+            return;
+        }
+
+        table.setRows([this.getEmptyRow(table)], 0, true, { fromGrid: true });
+        await this.updateRowsFromTable(table);
+    }
+
+    /**
      * Adds an empty row above the context row.
      *
      * @param context

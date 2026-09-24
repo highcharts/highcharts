@@ -57,6 +57,7 @@ export const rawClassNames = {
     syncedCell: 'synced-cell',
     syncedColumn: 'synced-column',
     editedCell: 'edited-cell',
+    contextMenuCell: 'context-menu-cell',
     cellEditingContainer: 'cell-editing-container',
     mockedRow: 'mocked-row',
     rowsContentNowrap: 'rows-content-nowrap',

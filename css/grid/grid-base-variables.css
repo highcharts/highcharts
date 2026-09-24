@@ -110,6 +110,16 @@
     --ig-focus-ring-width: var(--hcg-focus-ring-width, 2px);
     --ig-focus-ring: 0 0 0 var(--ig-focus-ring-width) var(--ig-focus-ring-color);
 
+    /* Marks the target of an open menu. Neutral on purpose — the focus sits
+       in the menu, so the focus hue would read as a dimmed focus. */
+    --ig-target-ring-color:
+        color-mix(
+            in srgb,
+            var(--ig-color) var(--hcg-target-ring-opacity, 40%),
+            transparent
+        );
+    --ig-target-ring: 0 0 0 var(--ig-focus-ring-width) var(--ig-target-ring-color);
+
     /* CSS helpers */
     --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
 
