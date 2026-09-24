@@ -405,6 +405,11 @@ class DataTableCore {
             }
         }
 
+        // Typed arrays ignore out-of-range writes, `insert` grows via `splice`
+        if (!insert && indexRowCount > this.rowCount) {
+            this.applyRowCount(indexRowCount);
+        }
+
         objectEach(columns, (column, columnId): void => {
             if (column) {
                 if (insert) {
