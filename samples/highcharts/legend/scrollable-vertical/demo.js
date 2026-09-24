@@ -3,13 +3,12 @@
  * the legend into a separate SVG element inside a scrollable div element.
  */
 
-(function (H) {
-    const { addEvent, createElement, css } = H;
+(({ addEvent, createElement, css, Legend }) => {
 
-    addEvent(H.Legend, 'afterRender', function () {
+    addEvent(Legend, 'afterRender', function () {
         const legend = this,
             { chart, group, options } = legend,
-            area = options.custom && options.custom.scrollableLegendArea;
+            area = options.custom?.scrollableLegendArea;
 
         if (!area || chart.options.chart.forExport) {
             return;
@@ -67,7 +66,7 @@
         });
         group.element.removeAttribute('transform');
     });
-}(Highcharts));
+})(Highcharts);
 
 Highcharts.chart('container', {
 
@@ -77,6 +76,11 @@ Highcharts.chart('container', {
 
     legend: {
         layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        navigation: {
+            enabled: false
+        },
         // Use custom properties to configure scrollable legend
         custom: {
             scrollableLegendArea: {

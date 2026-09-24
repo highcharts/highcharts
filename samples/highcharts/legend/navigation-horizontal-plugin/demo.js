@@ -10,10 +10,9 @@
  *
  * See https://github.com/highcharts/highcharts/issues/7513
  */
-(function (H) {
-    const { css, merge, relativeLength, wrap } = H,
-        legendProto = H.Legend.prototype,
-        symbols = H.SVGRenderer.prototype.symbols;
+(({ css, Legend, merge, relativeLength, SVGRenderer, wrap }) => {
+    const legendProto = Legend.prototype,
+        symbols = SVGRenderer.prototype.symbols;
 
     // `triangle-left` is also defined by the arrow-symbols module, to the same
     // path. `triangle-right` exists nowhere yet
@@ -254,7 +253,7 @@
             }
         });
     });
-}(Highcharts));
+})(Highcharts);
 
 
 Highcharts.chart('container', {
