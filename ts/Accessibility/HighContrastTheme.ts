@@ -30,6 +30,7 @@ import type Options from '../Core/Options';
  *
  * */
 
+/** @internal */
 declare module '../Core/Series/DataLabelOptions' {
     interface DataLabelOptions {
         connectorColor?: ColorType;
@@ -42,8 +43,10 @@ declare module '../Core/Series/DataLabelOptions' {
  *
  * */
 
+/** @internal */
 export type HighContrastThemeOptions = DeepPartial<Options>;
 
+/** @internal */
 const theme: HighContrastThemeOptions = {
     chart: {
         backgroundColor: 'window'
@@ -245,4 +248,5 @@ const theme: HighContrastThemeOptions = {
  *
  * */
 
+/** @internal */
 export default theme;
