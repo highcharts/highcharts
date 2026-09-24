@@ -84,7 +84,7 @@ const rad2deg = 180 / Math.PI;
  *
  * */
 
-/** @private */
+/** @internal */
 function isBoolean(x: unknown): x is boolean {
     return typeof x === 'boolean';
 }
@@ -93,7 +93,7 @@ function isBoolean(x: unknown): x is boolean {
  * Find a set of coordinates given a start coordinates, an angle, and a
  * distance.
  *
- * @private
+ * @internal
  * @function getEndPoint
  *
  * @param {number} x
@@ -123,7 +123,7 @@ const getEndPoint = function getEndPoint(
     };
 };
 
-/** @private */
+/** @internal */
 function getDlOptions(
     params: SunburstSeries.DlOptionsParams
 ): SunburstDataLabelOptions {
@@ -313,7 +313,7 @@ function getDlOptions(
     return options;
 }
 
-/** @private */
+/** @internal */
 function getAnimation(
     shape: SunburstNode.NodeValuesObject,
     params: SunburstSeries.AnimationParams
@@ -389,7 +389,7 @@ function getAnimation(
     };
 }
 
-/** @private */
+/** @internal */
 function getDrillId(
     point: SunburstPoint,
     idRoot: string,
@@ -413,7 +413,7 @@ function getDrillId(
     return drillId;
 }
 
-/** @private */
+/** @internal */
 function cbSetTreeValuesBefore(
     node: SunburstNode,
     options: SunburstNode.NodeValuesObject
@@ -457,6 +457,7 @@ function cbSetTreeValuesBefore(
  *
  * */
 
+/** @internal */
 class SunburstSeries extends TreemapSeries {
 
     /* *
@@ -527,7 +528,7 @@ class SunburstSeries extends TreemapSeries {
 
     /**
      * Animate the slices in. Similar to the animation of polar charts.
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         const chart = this.chart,
@@ -724,7 +725,7 @@ class SunburstSeries extends TreemapSeries {
 
     /**
      * The layout algorithm for the levels.
-     * @private
+     * @internal
      */
     public layoutAlgorithm(
         parent: SunburstNode.NodeValuesObject,
@@ -807,7 +808,7 @@ class SunburstSeries extends TreemapSeries {
 
     /**
      * Set the shape arguments on the nodes. Recursive from root down.
-     * @private
+     * @internal
      */
     public setShapeArgs(
         parent: SunburstNode,
@@ -974,6 +975,7 @@ class SunburstSeries extends TreemapSeries {
  *
  * */
 
+/** @internal */
 interface SunburstSeries {
     /** @internal */
     getCenter: typeof CU['getCenter'];
@@ -1004,6 +1006,7 @@ extend(SunburstSeries.prototype, {
  *
  * */
 
+/** @internal */
 namespace SunburstSeries {
 
     /* *
@@ -1049,6 +1052,7 @@ namespace SunburstSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sunburst: typeof SunburstSeries;
@@ -1062,4 +1066,5 @@ SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
  *
  * */
 
+/** @internal */
 export default SunburstSeries;

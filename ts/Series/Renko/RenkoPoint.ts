@@ -34,6 +34,7 @@ const {
  *
  * */
 
+/** @internal */
 class RenkoPoint extends ColumnPoint {
     public options!: RenkoPointOptions;
     /** @internal */
@@ -55,4 +56,5 @@ class RenkoPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default RenkoPoint;

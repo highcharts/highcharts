@@ -33,6 +33,7 @@ const { pointClass: ScatterPoint } = ScatterSeries.prototype;
  *
  * */
 
+/** @internal */
 class Scatter3DPoint extends ScatterPoint {
 
     /* *
@@ -71,4 +72,5 @@ class Scatter3DPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 export default Scatter3DPoint;

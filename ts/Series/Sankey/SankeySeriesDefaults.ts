@@ -20,10 +20,9 @@
  *
  * */
 
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SankeyPoint from './SankeyPoint';
-import type SankeySeries from './SankeySeries';
+import type SankeySeriesOptions from './SankeySeriesOptions';
 
 /* *
  *
@@ -57,10 +56,8 @@ import type SankeySeries from './SankeySeries';
  *               threshold, zoneAxis, zones
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
- *
- * @private
  */
-const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
+const SankeySeriesDefaults: SankeySeriesOptions = {
 
     borderWidth: 0,
 
@@ -72,8 +69,6 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * straight. It also sets the turn radius of the bands wrapping around
      * a circular layout; a self-link's loop turns on the node width
      * instead.
-     *
-     * @private
      */
     curveFactor: 0.33,
 
@@ -139,7 +134,6 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * @default   true
      * @extends   plotOptions.series.inactiveOtherPoints
-     * @private
      */
     inactiveOtherPoints: true,
 
@@ -236,15 +230,11 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
 
     /**
      * Opacity for the links between nodes in the sankey diagram.
-     *
-     * @private
      */
     linkOpacity: 0.5,
 
     /**
      * Opacity for the nodes in the sankey diagram.
-     *
-     * @private
      */
     opacity: 1,
 
@@ -259,8 +249,6 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      * @since     7.1.3
      * @default   0
      * @apioption plotOptions.sankey.minLinkWidth
-     *
-     * @private
      */
     minLinkWidth: 0,
 
@@ -326,7 +314,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
      *
      * @since 11.4.0
      * @sample highcharts/series-sankey/node-distance
-     *         Sankey with dnode distance of 100% means equal to node width
+     *         Sankey with node distance of 100% means equal to node width
      * @sample highcharts/series-organization/node-distance
      *         Organization chart with node distance of 50%
      * @type   {number|string}

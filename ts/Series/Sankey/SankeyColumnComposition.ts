@@ -35,6 +35,7 @@ import {
  *
  * */
 
+/** @internal */
 namespace SankeyColumnComposition {
 
     /* *
@@ -55,7 +56,7 @@ namespace SankeyColumnComposition {
 
     /**
      * SankeyColumn Composition
-     * @private
+     * @internal
      * @function Highcharts.SankeyColumn#compose
      *
      * @param {Array<SankeyPoint>} points
@@ -122,7 +123,7 @@ namespace SankeyColumnComposition {
 
         /**
          * Calculate translation factor used in column and nodes distribution
-         * @private
+         * @internal
          * @function Highcharts.SankeyColumn#getTranslationFactor
          *
          * @param {SankeySeries} series
@@ -183,7 +184,7 @@ namespace SankeyColumnComposition {
 
         /**
          * Get the top position of the column in pixels
-         * @private
+         * @internal
          * @function Highcharts.SankeyColumn#top
          *
          * @param {number} factor
@@ -237,7 +238,7 @@ namespace SankeyColumnComposition {
 
         /**
          * Get the left position of the column in pixels
-         * @private
+         * @internal
          * @function Highcharts.SankeyColumn#top
          *
          * @param {number} factor
@@ -278,7 +279,7 @@ namespace SankeyColumnComposition {
 
         /**
          * Calculate sum of all nodes inside specific column
-         * @private
+         * @internal
          */
         public sum(): number {
             return this.points.reduce((
@@ -291,7 +292,7 @@ namespace SankeyColumnComposition {
 
         /**
          * Get the offset in pixels of a node inside the column
-         * @private
+         * @internal
          * @function Highcharts.SankeyColumn#offset
          *
          * @param {SankeyPoint} node
@@ -367,4 +368,5 @@ namespace SankeyColumnComposition {
  *
  * */
 
+/** @internal */
 export default SankeyColumnComposition;
