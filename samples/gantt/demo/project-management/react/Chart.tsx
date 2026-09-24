@@ -1,10 +1,10 @@
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
-import { Title, Tooltip, XAxis, YAxis, PlotOptions } from '@highcharts/react';
 import { GanttChart } from '@highcharts/react/Gantt';
+import { PlotOptions, Tooltip, Title, XAxis, YAxis } from '@highcharts/react';
 import { GanttSeries } from '@highcharts/react/series/Gantt';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-import type { GanttTaskPoint, GanttPoint } from './types';
+import type { GanttTaskPoint, GanttPoint, WeekendAxis } from './types';
 
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
 
@@ -16,30 +16,37 @@ Highcharts.addEvent(
     Highcharts.Axis,
     'foundExtremes',
     function (this: Highcharts.Axis) {
-        const axis = this as Highcharts.Axis & {
-            options: Highcharts.XAxisOptions & {
-                custom?: { weekendPlotBands?: { color: string } };
-                plotBands?: Highcharts.XAxisPlotBandsOptions[];
-            };
-        };
-        const weekendColor = axis.options.custom?.weekendPlotBands?.color;
-        if (weekendColor) {
+        const axis = this as WeekendAxis;
+        if (axis.options.custom?.weekendBackground) {
             const chart = axis.chart;
             const isWeekend = (t: number) =>
                 /[06]/.test(chart.time.dateFormat('%w', t));
-            const plotBands: Highcharts.XAxisPlotBandsOptions[] = [];
 
             let inWeekend = false;
+            let last: Highcharts.XAxisPlotBandsOptions | undefined;
 
             for (
                 let x = Math.floor((axis.min ?? 0) / day) * day;
                 x <= Math.ceil((axis.max ?? 0) / day) * day;
                 x += day
             ) {
-                const last = plotBands.at(-1);
                 if (isWeekend(x) && !inWeekend) {
-                    plotBands.push({ from: x, color: weekendColor });
+                    const plotBand: Highcharts.XAxisPlotBandsOptions = {
+                        from: x,
+                        color: axis.options.custom.weekendBackground
+                    };
+
+                    if (
+                        !axis.plotBands.find(
+                            (pb) => pb.options.from === plotBand.from
+                        )
+                    ) {
+                        axis.addPlotBand(plotBand);
+                    }
+
                     inWeekend = true;
+
+                    last = plotBand;
                 }
 
                 if (!isWeekend(x) && inWeekend && last) {
@@ -47,7 +54,6 @@ Highcharts.addEvent(
                     inWeekend = false;
                 }
             }
-            axis.options.plotBands = plotBands;
         }
     }
 );
@@ -106,8 +112,13 @@ export default function ProjectManagementChart() {
                         label: { format: '' }
                     },
                     custom: {
-                        weekendPlotBands: {
-                            color: 'var(--highcharts-neutral-color-5, #f2f2f2)'
+                        weekendBackground: {
+                            pattern: {
+                                path: 'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
+                                width: 10,
+                                height: 10,
+                                color: 'rgba(128,128,128,0.15)'
+                            }
                         }
                     }
                 } as unknown as Partial<Parameters<typeof XAxis>[0]>)}

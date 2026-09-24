@@ -25,3 +25,11 @@ export type GanttPoint = Highcharts.Point & {
     yCategory?: string;
     x2?: number;
 };
+
+export type WeekendAxis = Highcharts.Axis & {
+    options: Highcharts.XAxisOptions & {
+        custom?: { weekendBackground?: Highcharts.PatternObject };
+    };
+    plotBands: Array<{ options: Highcharts.XAxisPlotBandsOptions }>;
+    addPlotBand: (options: Highcharts.XAxisPlotBandsOptions) => void;
+};
