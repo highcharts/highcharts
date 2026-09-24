@@ -790,11 +790,13 @@ API-backed samples use recorded responses in `tests/visual/data`; these routes
 are limited to the visual project and retain offline execution. See the
 [fixture provenance](visual/data/README.md) before refreshing those responses.
 
-SVG capture waits for the sample's initial XHR data requests to finish. Charts
-can emit their load event before CSV data arrives, so chart existence or
-`hasLoaded` alone is insufficient. Pending requests share the chart's 10-second
-readiness timeout and are aborted during sample cleanup. No fixed settling delay
-is added to samples without requests, and empty datasets remain valid.
+SVG capture waits for the selected chart's load handler and the sample's initial
+XHR data requests to finish. Image markers can delay the load handler, and charts
+can emit their load event before CSV data arrives, so both checks are needed.
+Pending requests share the chart's 10-second readiness timeout and are aborted
+during sample cleanup. Once ready, capture
+yields to queued zero-delay sample updates and checks readiness again. Empty
+datasets remain valid.
 
 Capture prefers the chart rendered into `#container`, so asynchronously created
 inset charts do not change which SVG is compared. Samples using other container

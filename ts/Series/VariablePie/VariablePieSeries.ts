@@ -73,6 +73,7 @@ class VariablePieSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: VariablePieSeriesOptions = merge(
         PieSeries.defaultOptions,
         VariablePieSeriesDefaults
@@ -90,6 +91,7 @@ class VariablePieSeries extends PieSeries {
 
     public points!: Array<VariablePiePoint>;
 
+    /** @internal */
     public radii!: Array<number>;
 
     /* *
