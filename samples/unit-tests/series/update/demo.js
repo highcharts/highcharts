@@ -308,6 +308,33 @@ QUnit.test('Series.update', function (assert) {
         chart.series[0].options.animation, false, 'Series ' +
         'animation on update should always be false even if set from options'
     );
+
+    // Type registered after chart creation (#24254)
+    const lateColumnType = 'latecolumn';
+    assert.notOk(
+        chart.options.plotOptions[lateColumnType],
+        'Chart should not have plotOptions for a type registered later (#24254)'
+    );
+
+    Highcharts.seriesType(lateColumnType, 'column', {
+        customProp: 'from-defaults'
+    });
+
+    chart.series[0].update({ type: lateColumnType });
+
+    assert.strictEqual(
+        chart.series[0].type,
+        lateColumnType,
+        'Series should update without throwing (#24254)'
+    );
+    assert.strictEqual(
+        chart.series[0].options.customProp,
+        'from-defaults',
+        'Should use default plotOptions for the new type (#24254)'
+    );
+
+    delete Highcharts.seriesTypes[lateColumnType];
+    delete Highcharts.getOptions().plotOptions[lateColumnType];
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {
@@ -1259,42 +1286,3 @@ QUnit.test('The eventsToUnbind array instance (#12959, #13937)', assert => {
         'Different series are having a separate eventsToUnbind array instance.'
     );
 });
-
-QUnit.test(
-    'Series type change when chart plotOptions[type] is missing (#24254)',
-    function (assert) {
-        const type = 'latecolumn',
-            chart = Highcharts.chart('container', {
-                series: [{
-                    type: 'column',
-                    data: [1, 2, 3]
-                }]
-            });
-
-        assert.notOk(
-            chart.options.plotOptions[type],
-            'Chart should not have plotOptions for a type registered later'
-        );
-
-        Highcharts.seriesType(type, 'column', {
-            customProp: 'from-defaults'
-        });
-
-        chart.series[0].update({ type: type });
-
-        assert.strictEqual(
-            chart.series[0].type,
-            type,
-            'Series should update without throwing'
-        );
-        assert.strictEqual(
-            chart.series[0].options.customProp,
-            'from-defaults',
-            'Should use default plotOptions for the new type'
-        );
-
-        // Don't leak the type into the rest of the suite
-        delete Highcharts.seriesTypes[type];
-        delete Highcharts.getOptions().plotOptions[type];
-    }
-);

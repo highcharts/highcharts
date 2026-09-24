@@ -1160,7 +1160,7 @@ class Series {
         // These may be modified by the event
         const typeOptions: SeriesTypeOptions =
                 e.plotOptions[this.type] ||
-                merge({}, defaultOptions.plotOptions[this.type]), // #24254
+                merge(defaultOptions.plotOptions[this.type]), // #24254
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
             ),
