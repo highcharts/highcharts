@@ -238,7 +238,7 @@ function pause(button) {
 }
 
 function update(sliderClicked) {
-    if (!sliderClicked) { 
+    if (!sliderClicked) {
         input.value = parseInt(input.value, 10) + 1;
     }
 
@@ -277,7 +277,7 @@ function update(sliderClicked) {
     }
 
     // If slider moved
-    if (yearIndex != dataLength - 1) { 
+    if (yearIndex !== dataLength - 1) {
         // Add current year
         for (let i = 0; i < series.length; i++) {
             const newY = formatRevenue[i][input.value];
@@ -299,7 +299,7 @@ function update(sliderClicked) {
         chart.redraw();
     }
 
-    if (input.value == endYear) {
+    if (input.value === endYear) {
         // Auto-pause
         pause(btn);
     }
@@ -307,12 +307,14 @@ function update(sliderClicked) {
 
 function play(button) {
     // Reset slider and series data at the end
-    if (input.value == endYear) {
+    if (input.value === endYear) {
         input.value = startYear;
-        for (i = 0; i < chart.series.length; i++) { 
-            chart.series[i].setData(chart.series[i].options.data.slice(0, 1), false);
+        for (let i = 0; i < chart.series.length; i++) {
+            chart.series[i].setData(
+                chart.series[i].options.data.slice(0, 1), false
+            );
         }
-        chart.redraw()
+        chart.redraw();
     }
     button.title = 'pause';
     button.className = 'fa fa-pause';
