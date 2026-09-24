@@ -1739,6 +1739,13 @@ class Data {
                     success: function (
                         res: (string|JSON.Type)
                     ): void {
+                        if (data.destroyed) {
+                            // The chart was destroyed while the request was
+                            // in flight, so there is nothing left to update
+                            // (#25115)
+                            return;
+                        }
+
                         if (chart?.series) {
                             done(res);
                         }

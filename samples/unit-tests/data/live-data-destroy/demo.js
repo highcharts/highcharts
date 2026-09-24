@@ -17,8 +17,6 @@
             originalXMLHttpRequest = win.XMLHttpRequest,
             log = {
                 count: 0,
-                inFlight: 0,
-                maxInFlight: 0,
                 afterDestroy: 0,
                 errors: [],
                 destroyed: false,
@@ -37,14 +35,11 @@
             const xhr = this;
 
             log.count++;
-            log.inFlight++;
-            log.maxInFlight = Math.max(log.maxInFlight, log.inFlight);
             if (log.destroyed) {
                 log.afterDestroy++;
             }
 
             setTimeout(function () {
-                log.inFlight--;
                 xhr.readyState = 4;
                 xhr.status = 200;
                 xhr.responseText = getBody();
@@ -84,20 +79,16 @@
                 clock.tick(2200);
 
                 assert.strictEqual(
-                    log.maxInFlight,
-                    1,
-                    'Only one polling chain should be running at a time. ' +
-                    'Each successful poll runs chart.update, which re-enters ' +
+                    log.count,
+                    4,
+                    'Only one polling chain should be running. Each ' +
+                    'successful poll runs chart.update, which re-enters ' +
                     'Data#init, and the poller started there must replace ' +
-                    'the current one rather than run alongside it.'
+                    'the current one rather than add requests of its own.'
                 );
 
                 const data = chart.data;
 
-                assert.ok(
-                    log.count > 1,
-                    'The chart should have polled at least once'
-                );
                 assert.strictEqual(
                     typeof data.liveDataTimeout,
                     'number',
