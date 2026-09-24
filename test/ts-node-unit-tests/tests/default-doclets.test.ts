@@ -11,6 +11,9 @@
  * - Reports mismatches between documented and actual defaults
  * - Separately, scans all Options files for @default doclets with template
  *   expressions (e.g. ${palette.*}), which are never valid default values
+ * - Counts @default doclets whose property is not set in the Defaults const, as
+ *   those can't be verified. To list them as failures, run from repo root:
+ *   `DEFAULT_DOCLETS_STRICT=1 npx tsx --test test/ts-node-unit-tests/tests/default-doclets.test.ts`
  *
  * Limitations:
  * - Only checks properties that are explicitly set in the Defaults const; properties
@@ -37,6 +40,7 @@ const IGNORE_GLOBS = [
     'ts/masters*/**',
     '**/*.d.ts'
 ];
+const STRICT = !!process.env.DEFAULT_DOCLETS_STRICT;
 
 type DefaultMap = Map<string, string>;
 
@@ -623,6 +627,7 @@ describe('Options @default doclets', () => {
 
     it('should match paired defaults files', (t) => {
         const failures: Array<string> = [];
+        const unverified: Array<string> = [];
         let checksPerformed = 0;
         let pairedCount = 0;
 
@@ -651,6 +656,11 @@ describe('Options @default doclets', () => {
 
                 for (const [path, expected] of docletDefaults) {
                     if (!actualDefaults.has(path)) {
+                        unverified.push(
+                            `${optionsPath} | ${interfaceName}.${path} | ` +
+                            `@default ${expected} can't be verified: ` +
+                            'property is not set in Defaults'
+                        );
                         continue;
                     }
 
@@ -679,6 +689,16 @@ describe('Options @default doclets', () => {
             `${optionsFiles.length} Options files ` +
             `(${pairedCount} paired with Defaults).`
         );
+
+        if (STRICT) {
+            failures.push(...unverified);
+        } else if (unverified.length) {
+            t.diagnostic(
+                `${unverified.length} @default doclet(s) can't be verified: ` +
+                'property is not set in Defaults. ' +
+                'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
+            );
+        }
 
         strictEqual(failures.length, 0, failures.join('\n'));
     });
