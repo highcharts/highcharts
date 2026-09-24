@@ -28,7 +28,6 @@ export default function BubbleChart() {
             containerProps={{ style: { height: '400px' } }}
         >
             <Title align="left">Sugar and fat intake per country</Title>
-            {/* @ts-expect-error */}
             <Subtitle align="left">
                 Source: <a href="http://www.euromonitor.com/">Euromonitor</a>{' '}
                 and <a href="https://data.oecd.org/">OECD</a>

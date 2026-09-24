@@ -18,7 +18,6 @@ export default function ColumnBasicChart() {
             <Title align="left">
                 Corn vs wheat estimated production for 2023
             </Title>
-            {/* @ts-expect-error */}
             <Subtitle align="left">
                 Source:{' '}
                 <a
