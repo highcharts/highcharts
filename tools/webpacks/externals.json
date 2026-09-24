@@ -157,6 +157,15 @@
     },
     {
         "files": [
+            "Series/AreaRange/AreaRangePoint"
+        ],
+        "included": [
+            "highcharts-more"
+        ],
+        "namespacePath": ".Series.types.arearange.prototype.pointClass"
+    },
+    {
+        "files": [
             "Series/AreaSpline/AreaSplineSeries"
         ],
         "included": [],

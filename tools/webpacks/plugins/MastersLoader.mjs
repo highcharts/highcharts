@@ -121,7 +121,7 @@ function decorateImports(content, masterImports) {
  * Extracted requirements.
  */
 function extractMasterImports(content, contentFolder, requirePrefix='') {
-    const masterDoclet = content.match(/^\/\*(.*?)\*\//su)?.[1] || '';
+    const masterDoclet = content.match(/\/\*(.*?)\*\//su)?.[1] || '';
     const requireMatches =
         masterDoclet.matchAll(/@requires?[ \t]+([\/\w\.-]+)/gsu);
 

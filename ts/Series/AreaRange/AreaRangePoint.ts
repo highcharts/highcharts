@@ -24,17 +24,15 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import AreaSeries from '../Area/AreaSeries.js';
 const {
-    area: {
-        prototype: {
-            pointClass: AreaPoint,
-            pointClass: {
-                prototype: areaProto
-            }
+    prototype: {
+        pointClass: AreaPoint,
+        pointClass: {
+            prototype: areaProto
         }
     }
-} = SeriesRegistry.seriesTypes;
+} = AreaSeries;
 import { defined, isNumber } from '../../Shared/Utilities.js';
 
 /* *

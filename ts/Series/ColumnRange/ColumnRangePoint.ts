@@ -21,23 +21,20 @@
 import type ColumnRangePointOptions from './ColumnRangePointOptions.js';
 import type ColumnRangeSeries from './ColumnRangeSeries.js';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: {
-                    prototype: columnProto
-                }
-            }
-        },
-        arearange: {
-            prototype: {
-                pointClass: AreaRangePoint
-            }
+    prototype: {
+        pointClass: {
+            prototype: columnProto
         }
     }
-} = SeriesRegistry;
+} = ColumnSeries;
+const {
+    prototype: {
+        pointClass: AreaRangePoint
+    }
+} = AreaRangeSeries;
 import { extend, isNumber } from '../../Shared/Utilities.js';
 
 /* *
