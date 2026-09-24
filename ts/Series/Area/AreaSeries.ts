@@ -73,7 +73,6 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Area series type.
  *
- * @internal
  * @class
  * @name AreaSeries
  *
@@ -87,6 +86,7 @@ class AreaSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: AreaSeriesOptions =
         merge(LineSeries.defaultOptions, AreaSeriesDefaults);
 
@@ -96,6 +96,7 @@ class AreaSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public areaPath?: SVGPath;
 
     public data!: Array<AreaPoint>;
@@ -189,9 +190,7 @@ class AreaSeries extends LineSeries {
         });
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
         const getGraphPath = LineSeries.prototype.getGraphPath,
             options = this.options,
@@ -509,8 +508,8 @@ class AreaSeries extends LineSeries {
  *
  * */
 
-/** @internal */
 interface AreaSeries {
+    /** @internal */
     pointClass: typeof AreaPoint;
 }
 extend(AreaSeries.prototype, {
@@ -523,7 +522,6 @@ extend(AreaSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         area: typeof AreaSeries;
@@ -537,5 +535,4 @@ SeriesRegistry.registerSeriesType('area', AreaSeries);
  *
  * */
 
-/** @internal */
 export default AreaSeries;

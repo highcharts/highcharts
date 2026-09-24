@@ -1,0 +1,6 @@
+---
+name: Highcharts Sankey Diagram with circular dependencies
+authors:
+  - Andrzej Bułeczka
+js_wrap: b
+...
