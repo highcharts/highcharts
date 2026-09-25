@@ -83,7 +83,10 @@ QUnit.test('Test updating axis by id', function (assert) {
 
 QUnit.test('Updating a linked axis id (#24658)', function (assert) {
     const options = id => ({
-        xAxis: [{ id, max: 10 }, { id: 'linked', linkedTo: 0 }],
+        xAxis: [
+            { id, max: 10, width: '60%' },
+            { id: 'linked', linkedTo: 0, left: '65%', width: '30%' }
+        ],
         series: [
             { data: [1, 2, 3], xAxis: id },
             { data: [3, 2, 1], xAxis: 'linked' }
@@ -117,6 +120,26 @@ QUnit.test('Updating a linked axis id (#24658)', function (assert) {
         linked.max,
         10,
         'Linked axis inherits the master extremes'
+    );
+
+    const master = chart.get('renamed'),
+        value = (master.min + master.max) / 2;
+
+    assert.notEqual(
+        master.len,
+        linked.len,
+        'The two panes should have different pixel widths.'
+    );
+
+    const lenRatio = linked.len / master.len,
+        masterPixel = master.toPixels(value, true),
+        linkedPixel = linked.toPixels(value, true);
+
+    assert.close(
+        linkedPixel,
+        masterPixel * lenRatio,
+        0.5,
+        'Linked axis pixel position should scale to its own pane width.'
     );
 });
 
