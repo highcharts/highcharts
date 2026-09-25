@@ -229,6 +229,50 @@ QUnit.test(
         the point should be placed where the last point in group is.`
         );
 
+        // lastAnchor with overscroll above group range (#25280)
+        const pointStart = Date.UTC(2017, 0, 1),
+            overscrollData = [];
+
+        for (let i = 0; i <= 1000; i += 1) {
+            overscrollData.push([pointStart + i * 1000, i % 100]);
+        }
+
+        chart.destroy();
+
+        const overscrollChart = Highcharts.stockChart('container', {
+            rangeSelector: {
+                buttons: [{
+                    count: 1,
+                    type: 'minute',
+                    text: '1M'
+                }],
+                inputEnabled: false,
+                selected: 0
+            },
+            xAxis: {
+                overscroll: 2001
+            },
+            series: [{
+                data: overscrollData
+            }]
+        });
+
+        const navSeries = overscrollChart.navigator.series[0],
+            lastXBefore = navSeries.points.at(-1).x,
+            dataMaxBefore = navSeries.xAxis.dataMax;
+
+        navSeries.baseSeries.addPoint([
+            dataMaxBefore + 1000,
+            55
+        ], false, true);
+        overscrollChart.redraw();
+
+        assert.notStrictEqual(
+            navSeries.points.at(-1).x,
+            lastXBefore,
+            'lastAnchor should pin the last grouped x to dataMax with ' +
+            'overscroll above group range (#25280).'
+        );
     });
 
 QUnit.test('Deprecated smoothed option.', function (assert) {
