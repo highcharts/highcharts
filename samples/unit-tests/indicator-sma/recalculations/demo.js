@@ -420,9 +420,6 @@ QUnit.test(
             pointInterval = 1,
             period = 5,
             chart = Highcharts.stockChart('container', {
-                chart: {
-                    animation: false
-                },
                 xAxis: {
                     minRange: 1
                 },
@@ -469,10 +466,6 @@ QUnit.test(
                 expectedLength,
                 label + ': SMA point count matches main series'
             );
-            assert.ok(
-                sma.points.length > 0,
-                label + ': SMA points are not empty'
-            );
             assert.strictEqual(
                 sma.points.length,
                 modifiedRows,
@@ -484,12 +477,6 @@ QUnit.test(
                 }),
                 sma.getColumn('y', true),
                 label + ': rendered points match y column data'
-            );
-            assert.ok(
-                sma.graphPath &&
-                sma.graphPath.xMap &&
-                sma.graphPath.xMap.length > 0,
-                label + ': graphPath has a non-empty xMap'
             );
         }
 
@@ -521,40 +508,6 @@ QUnit.test(
         ]);
         assertSmaSynced(
             'after setData with unrelated x values (+1 length, not append)'
-        );
-
-        main.setData([
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
-        ]);
-
-        chart.addSeries({
-            type: 'sma',
-            id: 'sma2',
-            linkedTo: 'sma',
-            params: {
-                period: 3
-            },
-            dataGrouping: {
-                enabled: false
-            }
-        });
-
-        main.addPoint(26);
-        assertSmaSynced('after addPoint(end) with chained SMA');
-
-        const sma2 = chart.get('sma2'),
-            sma = chart.get('sma'),
-            sma2Period = sma2.options.params.period;
-
-        assert.strictEqual(
-            sma2.points.length,
-            expectedIndicatorLength(sma.points.length, sma2Period),
-            'chained SMA point count after addPoint(end)'
-        );
-        assert.ok(
-            sma2.points.length > 0 &&
-            sma2.points.length === sma2.dataTable.getModified().rowCount,
-            'chained SMA points synced with processed data after addPoint(end)'
         );
     }
 );

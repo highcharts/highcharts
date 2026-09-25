@@ -478,16 +478,12 @@ class SMAIndicator extends LineSeries {
         ) {
             const oldX = indicator.getColumn('x'),
                 newX = processedData.xData,
-                oldLen = oldDataLength,
-                newLen = newX.length;
+                overlapLast = Math.min(oldDataLength, newX.length) - 1;
 
-            const isAddPoint =
-                newLen === oldLen + 1 &&
-                oldX[oldLen - 1] === newX[oldLen - 1];
-            const isRemovePointFromEnd =
-                newLen === oldLen - 1 &&
-                oldLen >= 2 &&
-                oldX[oldLen - 2] === newX[newLen - 1];
+            const isIncrementalUpdate =
+                Math.abs(newX.length - oldDataLength) === 1 &&
+                overlapLast >= 0 &&
+                oldX[overlapLast] === newX[overlapLast];
 
             // When data is cropped update only available points (#9493)
             if (indicator.cropped) {
@@ -507,7 +503,7 @@ class SMAIndicator extends LineSeries {
             } else if (
                 indicator.updateAllPoints || // #18710
                 // Distinguish edge add/remove points from setData (#22081).
-                !(isAddPoint || isRemovePointFromEnd)
+                !isIncrementalUpdate
             ) {
                 overwriteData = false;
 
@@ -539,7 +535,6 @@ class SMAIndicator extends LineSeries {
             table.setColumns(columns);
             delete indicator.xColumn;
             delete indicator.xColumnIsNumbers;
-            indicator.isDirty = true;
         }
 
         if (
