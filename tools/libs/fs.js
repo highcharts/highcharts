@@ -638,6 +638,24 @@ function path(
 }
 
 /**
+ * Removes path elements that could result in a folder escape. Use this on any
+ * path coming from an HTTP request before joining it with a root folder.
+ *
+ * The URL parser resolves all dot segments, including percent-encoded ones,
+ * and clamps at the root, so the result always starts with a separator and
+ * can never escape the folder it gets joined with.
+ *
+ * @param {string} pathToSanitize
+ * Path to sanitize.
+ *
+ * @return {string}
+ * Sanitized path.
+ */
+function sanitizePath(pathToSanitize) {
+    return (new URL(pathToSanitize, 'http://localhost')).pathname;
+}
+
+/**
  * Set file content.
  *
  * @param {string} filePath
@@ -683,5 +701,6 @@ module.exports = {
     normalizePath,
     parentPath,
     path,
+    sanitizePath,
     setFile
 };
