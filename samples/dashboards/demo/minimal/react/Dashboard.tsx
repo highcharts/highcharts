@@ -1,4 +1,22 @@
-const colors = Highcharts.getOptions().colors.map((c, i) =>
+import { useEffect } from 'react';
+
+import Highcharts from 'highcharts';
+import 'highcharts/es-modules/masters/modules/accessibility.src.js';
+import 'highcharts/es-modules/masters/themes/adaptive.src.js';
+
+import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src.js';
+import '@highcharts/dashboards/es-modules/masters/modules/layout.src.js';
+import type { Options as BoardOptions } from '@highcharts/dashboards/es-modules/Dashboards/Board.js';
+
+import Grid from '@highcharts/grid-pro/es-modules/masters/grid-pro.src.js';
+import type { TableCell } from '@highcharts/grid-pro/es-modules/masters/grid-pro.src.js';
+
+Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
+
+const colors = Highcharts.getOptions().colors.map((c: string, i: number) =>
     Highcharts.color('#0443E1')
         .brighten(i / 10)
         .get()
@@ -22,7 +40,7 @@ Highcharts.setOptions({
     }
 });
 
-Dashboards.board('container', {
+const config: BoardOptions = {
     dataPool: {
         connectors: [{
             id: 'support',
@@ -195,7 +213,7 @@ Dashboards.board('container', {
                     {
                         id: 'Department',
                         cells: {
-                            formatter() {
+                            formatter(this: TableCell) {
                                 const dept = this.value;
                                 return `<div
                                     class="department ${dept.toLowerCase()}">
@@ -212,7 +230,7 @@ Dashboards.board('container', {
                     {
                         id: 'Wait time',
                         cells: {
-                            formatter() {
+                            formatter(this: TableCell) {
                                 const minutes = this.value;
                                 if (minutes < 60) {
                                     return `${minutes}
@@ -243,4 +261,12 @@ Dashboards.board('container', {
                 ]
             }
         }]
-}, true);
+};
+
+export default function Dashboard() {
+    useEffect(() => {
+        Dashboards.board('container', config, true);
+    }, [config]);
+
+    return <div id="container" />;
+}
