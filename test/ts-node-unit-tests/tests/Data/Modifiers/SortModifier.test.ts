@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual } from 'node:assert';
 
 import DataTable from '../../../../../ts/Data/DataTable.js';
 import SortModifier from '../../../../../ts/Data/Modifiers/SortModifier.js';
@@ -51,6 +51,51 @@ describe('SortModifier', () => {
                 tableAscX.getModified().getColumns(['x', 'y']),
                 table.getColumns(['x', 'y']),
                 'Resorted table should be ordered the same as original.'
+            );
+        });
+
+        it('should sort by multiple columns in ascending order', async () => {
+            const table = new DataTable({
+                columns: {
+                    x: [1, 2, 1, 2, 1],
+                    y: [5, 4, 3, 2, 1],
+                    id: ['a', 'b', 'c', 'd', 'e']
+                }
+            });
+            const modifier = new SortModifier({
+                columns: [
+                    { column: 'x', direction: 'asc' },
+                    { column: 'y', direction: 'asc' }
+                ]
+            });
+
+            const modifiedTable = await modifier.modify(table.clone());
+            const modified = modifiedTable.getModified();
+
+            deepStrictEqual(
+                modified.getColumn('id'),
+                ['e', 'c', 'a', 'd', 'b'],
+                'Table should be sorted by x ascending, then y ascending.'
+            );
+            strictEqual(
+                modified.getOriginalRowIndex(0),
+                4,
+                'Local row 0 should map to original row 4.'
+            );
+            strictEqual(
+                modified.getOriginalRowIndex(2),
+                0,
+                'Local row 2 should map to original row 0.'
+            );
+            strictEqual(
+                modified.getLocalRowIndex(0),
+                2,
+                'Original row 0 should map to local row 2.'
+            );
+            strictEqual(
+                modified.getLocalRowIndex(4),
+                0,
+                'Original row 4 should map to local row 0.'
             );
         });
     });

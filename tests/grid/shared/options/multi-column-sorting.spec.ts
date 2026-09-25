@@ -27,6 +27,21 @@ test.describe('Grid multi-column sorting', () => {
         }
     };
 
+    const getGridState = (page: any) => page.evaluate(() => {
+        const grid = (window as any).Grid.grids[0];
+        const sorting = grid.querying.sorting;
+        const sortings = sorting.currentSortings || (
+            sorting.currentSorting?.columnId ?
+                [sorting.currentSorting] : []
+        );
+
+        return {
+            columnIds: sortings.map((item: any) => item.columnId),
+            orders: sortings.map((item: any) => item.order),
+            rowOrder: grid.dataProvider.getDataTable(true).columns.id
+        };
+    });
+
     test.beforeEach(async ({ page }) => {
         await page.goto(demoPath, { waitUntil: 'networkidle' });
         await page.waitForFunction(() => {
@@ -42,14 +57,7 @@ test.describe('Grid multi-column sorting', () => {
         await page.locator('th[data-column-id="score"]').click({ modifiers: ['Shift'] });
         await page.locator('th[data-column-id="id"]').click({ modifiers: ['Shift'] });
 
-        const result = await page.evaluate(() => {
-            const grid = (window as any).Grid.grids[0];
-            const sortings = grid.querying.sorting.currentSortings || [];
-            return {
-                columnIds: sortings.map((sorting: any) => sorting.columnId),
-                rowOrder: grid.dataProvider.getDataTable(true).columns.id
-            };
-        });
+        const result = await getGridState(page);
 
         expect(result.columnIds, 'Applied sorting priority').toEqual(['group', 'score', 'id']);
         expect(result.rowOrder, 'Sorted row order').toEqual(expectedOrder);
@@ -105,7 +113,8 @@ test.describe('Grid multi-column sorting', () => {
             }
             return {
                 columnIds: sortings.map((s: any) => s.columnId),
-                orders: sortings.map((s: any) => s.order)
+                orders: sortings.map((s: any) => s.order),
+                rowOrder: grid.dataProvider.getDataTable(true).columns.id
             };
         }, { timeout: 5000 });
 
@@ -123,5 +132,44 @@ test.describe('Grid multi-column sorting', () => {
         }, { timeout: 5000 });
 
         expect(await labelText.jsonValue(), 'Menu item label should contain priority (2)').toContain('(2)');
+
+        expect(resultValue.rowOrder, 'Sorted row order with custom compare').toEqual([
+            'b', 'g', 'a', 'c', 'd', 'f', 'h', 'e'
+        ]);
+    });
+
+    test('Shift-click toggles and removes a secondary sort', async ({ page }) => {
+        await page.setViewportSize({ width: 1200, height: 800 });
+
+        await page.locator('th[data-column-id="group"]').click();
+        await page.locator('th[data-column-id="score"]').click({ modifiers: ['Shift'] });
+
+        let result = await getGridState(page);
+        expect(result.columnIds).toEqual(['group', 'score']);
+        expect(result.orders).toEqual(['asc', 'asc']);
+        expect(result.rowOrder).toEqual([
+            'c', 'a', 'b', 'g', 'e', 'f', 'h', 'd'
+        ]);
+
+        await page.locator('th[data-column-id="score"]').click({ modifiers: ['Shift'] });
+
+        result = await getGridState(page);
+        expect(result.columnIds).toEqual(['group', 'score']);
+        expect(result.orders).toEqual(['asc', 'desc']);
+        expect(result.rowOrder).toEqual([
+            'b', 'g', 'a', 'c', 'd', 'f', 'h', 'e'
+        ]);
+
+        await page.locator('th[data-column-id="score"]').click({ modifiers: ['Shift'] });
+
+        result = await getGridState(page);
+        expect(result.columnIds).toEqual(['group']);
+        expect(result.rowOrder).toEqual([
+            'a', 'b', 'c', 'g', 'd', 'e', 'f', 'h'
+        ]);
+        await expect(page.locator('th[data-column-id="group"] .hcg-header-cell-icons button'))
+            .not.toHaveAttribute('aria-label', /Priority/);
+        await expect(page.locator('th[data-column-id="score"] .hcg-header-cell-icons button'))
+            .not.toHaveAttribute('aria-label', /Priority/);
     });
 });
