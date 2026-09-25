@@ -74,6 +74,8 @@ import type TilemapPointOptions from './TilemapPointOptions';
  * @product highcharts highmaps
  *
  * @requires modules/tilemap
+ * @requires product:highmaps
+ * @requires modules/heatmap
  */
 export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
 
