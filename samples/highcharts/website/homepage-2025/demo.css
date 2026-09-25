@@ -90,6 +90,9 @@
     --highlight-purple: #8791ff;
     --highlight-red: #f87171;
     --text-primary: var(--primitives-neutral-900);
+    --annotation-label-background: #fffc;
+    --product-icon-contrast: #000;
+    --product-icon-surface: #fff;
     --text-secondary: var(--primitives-neutral-700);
     --text-tertiary: var(--primitives-neutral-500);
     --unimportant: #e3e3e8;
@@ -206,6 +209,9 @@
     --button-colors-transparent-stroke-outer-pressed: var(--primitives-neutral-800);
     --background: var(--primitives-neutral-900);
     --text-primary: var(--primitives-neutral-25);
+    --annotation-label-background: transparent;
+    --product-icon-contrast: var(--primitives-neutral-25);
+    --product-icon-surface: var(--primitives-neutral-900);
     --text-secondary: var(--primitives-neutral-200);
     --text-tertiary: var(--primitives-neutral-400);
     --border-100: var(--primitives-neutral-700);
@@ -289,6 +295,9 @@
         --button-colors-transparent-stroke-outer-pressed: var(--primitives-neutral-800);
         --background: var(--primitives-neutral-900);
         --text-primary: var(--primitives-neutral-25);
+        --annotation-label-background: transparent;
+        --product-icon-contrast: var(--primitives-neutral-25);
+        --product-icon-surface: var(--primitives-neutral-900);
         --text-secondary: var(--primitives-neutral-200);
         --text-tertiary: var(--primitives-neutral-400);
         --border-100: var(--primitives-neutral-700);
@@ -379,9 +388,17 @@
     opacity: 0.01;
 }
 
+/* The sample is embedded in an iframe on the homepage, and an opaque body
+   paints over whatever the parent page has behind it -- including the area
+   below the card. color-scheme is declared so that a standalone visit
+   still gets a themed canvas from the UA rather than white. */
+:root {
+    color-scheme: light dark;
+}
+
 body {
     font-family: "IBM Plex Sans", sans-serif;
-    background-color: var(--background);
+    background-color: transparent;
     margin: 0;
 }
 
@@ -440,6 +457,20 @@ body {
     align-items: center;
     gap: 10px;
     height: 40px;
+    flex-shrink: 0;
+}
+
+/* Product icons: an inlined <symbol> sprite, so the markup carries no
+   definitions of its own and nothing is fetched at runtime. The two
+   --product-icon-* tokens invert the marks the Figma export hardcoded to
+   black and white, which would otherwise vanish on a dark card. */
+.product-icon-sprite {
+    display: none;
+}
+
+.product-icon {
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
 }
 
@@ -883,8 +914,16 @@ button.dot {
     stroke: #c00;
 }
 
-.events-annotations .highcharts-annotation-label span {
-    background-color: light-dark(#fffc, transparent);
+/* useHTML renders these labels as foreignObject > body > div, with no
+   span, so the old selector matched nothing and the chip never appeared.
+   Content inside foreignObject also starts from the UA default black
+   rather than inheriting the page colour, which left the text invisible
+   on a dark card, so set both explicitly.
+   light-dark() is avoided here because it needs color-scheme declared,
+   which would change UA form and scrollbar rendering page-wide. */
+.events-annotations .highcharts-annotation-label div {
+    background-color: var(--annotation-label-background);
+    color: var(--text-primary);
     font-size: 0.9em;
 }
 
@@ -1054,6 +1093,20 @@ button.dot {
 .highcharts-dashboards-component-kpi-value {
     padding-left: 20px;
     font-weight: bold;
+}
+
+/* The KPI components pass chartOptions without a chart.height and nothing
+   constrained this container, so every sparkline fell back to Highcharts'
+   400px default inside a ~148px card and painted outside it -- the strip
+   of stray graph visible between the KPI row and the row below.
+   Kept off the shared component rule so tooltips elsewhere in the
+   dashboard are not clipped; the KPI charts disable mouse tracking. */
+.highcharts-dashboards-component-kpi {
+    overflow: hidden;
+}
+
+.highcharts-dashboards-component-kpi-chart-container {
+    height: 64px;
 }
 
 /* Grid theme */
