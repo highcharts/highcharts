@@ -134,7 +134,6 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
                     joinBy: ['hc-key', 'code'],
                     tooltip: { valueSuffix: '%' },
                     borderWidth: 0.5,
-                    shadow: false,
                     accessibility: { enabled: false }
                 }}
             />
@@ -142,7 +141,6 @@ const UsCountiesChart = React.memo(function UsCountiesChart() {
                 name="State borders"
                 color="white"
                 options={{
-                    shadow: false,
                     borderWidth: 2,
                     accessibility: { enabled: false }
                 }}
