@@ -9,10 +9,9 @@ import {
     PlotOptions
 } from '@highcharts/react';
 import { LineSeries } from '@highcharts/react/series/Line';
+import { SeriesLabel } from '@highcharts/react/modules/SeriesLabel';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
-
-import 'highcharts/es-modules/masters/modules/series-label.src.js';
 
 export default function LineChart() {
     return (
@@ -93,6 +92,7 @@ export default function LineChart() {
                     1084, 932, 899
                 ]}
             />
+            <SeriesLabel />
             <Exporting />
             <Accessibility />
         </Chart>
