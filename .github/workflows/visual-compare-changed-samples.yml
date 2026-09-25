@@ -70,21 +70,11 @@ jobs:
           else
             printf '%s\n' 'No supported changed products selected.'
           fi
-          printf 'has_products=%s\n' "$has_products" >> "$GITHUB_OUTPUT"
-          printf 'product_globs=%s\n' "$product_globs" >> "$GITHUB_OUTPUT"
-
-      - name: Use Firefox 153.0.4
-        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
-        id: changed-samples-firefox
-        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
-        with:
-          firefox-version: '153.0.4'
-
-      - name: Disable Firefox updates
-        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
-        env:
-          FIREFOX_PATH: ${{ steps.changed-samples-firefox.outputs.firefox-path }}
-        run: node .github/scripts/disableFirefoxUpdates.js
+          {
+            printf 'has_products=%s\n' "$has_products"
+            printf 'product_globs=%s\n' "$product_globs"
+            printf 'products=%s\n' "$(paste -sd, "$products_file")"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Use Node.js lts/*
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
@@ -97,18 +87,39 @@ jobs:
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
         run: npm ci
 
-      - name: Build Highcharts
+      - name: Select visual samples
+        id: selected_samples
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        env:
+          PRODUCTS: ${{ steps.changed_samples.outputs.products }}
+        run: |
+          set -euo pipefail
+          manifest="$RUNNER_TEMP/visual-samples.json"
+          node .github/scripts/selectVisualSamples.mjs --products "$PRODUCTS" > "$manifest"
+          if [[ "$(cat "$manifest")" == '[]' ]]; then
+            echo 'No visual samples selected.'
+            echo 'has_samples=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'has_samples=true' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build Highcharts
+        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
         run: npx gulp scripts
 
       - name: Generate changed samples
-        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
         env:
           PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
         run: npx gulp generate-samples --samples "$PRODUCT_GLOBS"
 
-      - name: Render changed samples
-        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+      - name: Install Playwright Chromium
+        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate changed sample references
+        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
         env:
-          PRODUCT_GLOBS: ${{ steps.changed_samples.outputs.product_globs }}
-        run: npx karma start test/karma-conf.js --tests "$PRODUCT_GLOBS" --ts --reference --browsercount 2
+          VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
+          VISUAL_TEST_REFERENCE: '1'
+        run: npm run test:pw:visual

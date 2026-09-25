@@ -216,22 +216,9 @@ jobs:
 
   nightly_visual_diff:
     runs-on: ubuntu-latest
-    env:
-      BROWSER_COUNT: 2
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
-      - name: Use Firefox 153.0.4
-        id: nightly-firefox
-        uses: browser-actions/setup-firefox@0bc507ddf224827e3b1af68e014d5e42ab93e795 # v1
-        with:
-          firefox-version: '153.0.4'
-
-      - name: Disable Firefox updates
-        env:
-          FIREFOX_PATH: ${{ steps.nightly-firefox.outputs.firefox-path }}
-        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -242,6 +229,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Set application version env var
         run: |
           HIGHCHARTS_VERSION="$(node -p "require('./package.json').version")"
@@ -251,23 +241,32 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount "${BROWSER_COUNT}" --no-fail-on-empty-test-suite
+      - name: Generate nightly references
+        env:
+          VISUAL_TEST_REFERENCE: '1'
+        run: npx playwright test tests/visual/visual.spec.ts --project=visual
+
       - name: Preserve generated reference images
         run: npx gulp copy-nightly-references
-
 
       - name: Sync references from Visual Review API
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
         run: npx gulp sync-nightly-references
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount "${BROWSER_COUNT}" --visualcompare || true
+      - name: Run nightly visual comparison
+        run: npx playwright test tests/visual/visual.spec.ts --project=visual
+
+      - name: Verify nightly visual completion
+        run: |
+          if [ ! -f test/visual-test-complete ]; then
+            echo "::error::Candidate visual test completion marker is missing."
+            exit 1
+          fi
+          if [ -s test/visual-test-errors.log ]; then
+            echo "::error::Visual test execution errors were recorded."
+            exit 1
+          fi
 
       - name: Publish nightly visual results
         env:
@@ -391,4 +390,3 @@ jobs:
           payload-file-path: "24hoursofhighcharts.json"
           webhook: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
           webhook-type: webhook-trigger
-
