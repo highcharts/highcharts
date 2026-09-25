@@ -111,7 +111,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'scatter',
         marginLeft: 150,
-        marginBottom: 25,
+        spacingBottom: 25,
         events: {
             render: onRender
         },

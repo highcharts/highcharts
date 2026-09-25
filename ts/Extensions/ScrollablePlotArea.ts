@@ -625,9 +625,9 @@ export class ScrollablePlotArea {
  * **Note:** Because native browser scrollbars are used, they may
  * overlap with fixed chart elements such as credits or the chart
  * border. To avoid this collision, it is recommended to manually add
- * extra space to the corresponding side using `chart.spacingBottom`
- * (for horizontal scrollbars) or `chart.spacingRight` (for vertical
- * scrollbars).
+ * extra space to the corresponding side using
+ * [chart.spacingBottom](#chart.spacingBottom) (for horizontal scrollbars) or
+ * [chart.spacingRight](#chart.spacingRight) (for vertical scrollbars).
  *
  * @sample highcharts/chart/scrollable-plotarea
  *         Scrollable plot area
