@@ -255,6 +255,18 @@ class DataTableCore {
     }
 
     /**
+     * Returns the unique version tag of the current state of the table.
+     *
+     * @function Highcharts.DataTableCore#getVersionTag
+     *
+     * @return {string}
+     * Unique version tag.
+     */
+    public getVersionTag(): string {
+        return this.versionTag;
+    }
+
+    /**
      * Retrieves the row at a given index.
      *
      * @function Highcharts.DataTable#getRowObject
