@@ -1,9 +1,8 @@
-import { strictEqual, ok, deepStrictEqual, throws } from 'node:assert';
+import { strictEqual, ok, throws } from 'node:assert';
 import { describe, it } from 'node:test';
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import manifest from '../../../tests/visual/samples.json';
 
 import {
     excludedSamples,
@@ -102,14 +101,5 @@ describe('visual test sample eligibility', () => {
         } finally {
             await rm(root, { recursive: true, force: true });
         }
-    });
-
-    it('keeps the proposed initial samples eligible', () => {
-        deepStrictEqual(
-            manifest.map(sampleId =>
-                getVisualSampleSkipReason(repositoryRoot, sampleId)
-            ),
-            manifest.map(() => undefined)
-        );
     });
 });

@@ -80,6 +80,12 @@ jobs:
             tools/docs-preview/package.json \
             tests/visual
 
+      - name: Preserve candidate visual samples
+        run: |
+          find samples/highcharts samples/stock samples/maps samples/gantt -type f \
+            \( -name demo.js -o -name demo.ts -o -name demo.details \) -print0 |
+            tar --null -czf "$RUNNER_TEMP/visual-candidate-samples.tar.gz" -T -
+
       - name: Checkout pinned master reference
         uses: actions/checkout@v6
         with:
@@ -117,19 +123,24 @@ jobs:
             tools/docs-preview/package.json
 
       - name: Select comparable visual samples
+        env:
+          CANDIDATE_SAMPLES: ${{ runner.temp }}/visual-candidate
         run: |
+          mkdir -p "$CANDIDATE_SAMPLES"
+          tar -xzf "$RUNNER_TEMP/visual-candidate-samples.tar.gz" -C "$CANDIDATE_SAMPLES"
           node --import tsx <<'NODE'
           const fs = require('node:fs');
           const path = require('node:path');
           const { selectVisualSamples } = require('./tests/visual/visual-samples.ts');
-          const requested = new Set(require('./tests/visual/samples.json'));
+          const candidate = new Set(selectVisualSamples(process.env.CANDIDATE_SAMPLES)
+            .map(sample => sample.id));
           const comparable = selectVisualSamples(process.cwd())
             .map(sample => sample.id)
-            .filter(id => requested.has(id));
+            .filter(id => candidate.has(id));
           if (!comparable.length) throw new Error('No comparable visual samples');
           fs.writeFileSync(path.join(process.env.RUNNER_TEMP, 'visual-samples.json'),
             JSON.stringify(comparable));
-          console.log(`Comparing ${comparable.length} of ${requested.size} candidate samples present and eligible in both revisions.`);
+          console.log(`Comparing ${comparable.length} samples present and eligible in both revisions.`);
           NODE
 
       - name: Generate master reference

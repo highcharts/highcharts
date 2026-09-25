@@ -126,4 +126,80 @@ test.describe('Board Tests', () => {
             'Component is mounted once the promise resolves'
         ).toBe('Updated');
     });
+
+    test('renderTo is an element id, not a CSS selector', async ({ page }) => {
+        await page.setContent(
+            dashboardsWithLayoutHTML,
+            { waitUntil: 'networkidle' }
+        );
+
+        const result = await page.evaluate(async () => {
+            const Dashboards = (window as any).Dashboards;
+            const outside = document.createElement('div');
+
+            outside.id = 'admin-panel';
+            outside.textContent = 'untouched';
+            document.body.appendChild(outside);
+
+            let error: string | null = null;
+            let board: any;
+
+            try {
+                board = await Dashboards.board('container', {
+                    gui: {
+                        layouts: [{
+                            rows: [{
+                                cells: [{ id: 'dashboard-cell-1' }]
+                            }]
+                        }]
+                    },
+                    components: [{
+                        renderTo: 'dashboard-cell-1',
+                        type: 'HTML',
+                        elements: [{
+                            tagName: 'p',
+                            textContent: 'Inside'
+                        }]
+                    }, {
+                        renderTo: 'missing,#admin-panel',
+                        type: 'HTML',
+                        elements: [{
+                            tagName: 'p',
+                            textContent: 'Pwned'
+                        }]
+                    }, {
+                        renderTo: 'bad"id)',
+                        type: 'HTML',
+                        elements: [{
+                            tagName: 'p',
+                            textContent: 'Nope'
+                        }]
+                    }]
+                }, true);
+            } catch (e) {
+                error = (e as Error).name + ': ' + (e as Error).message;
+            }
+
+            return {
+                error,
+                outsideText: outside.textContent,
+                outsideChildren: outside.children.length,
+                mounted: board ? board.mountedComponents.length : 0,
+                insideText: document.getElementById('dashboard-cell-1')
+                    ?.textContent
+            };
+        });
+
+        expect(result.error, 'Board.init() should not throw').toBeNull();
+        expect(
+            result.outsideText,
+            'Comma in the id must not match #admin-panel'
+        ).toBe('untouched');
+        expect(
+            result.outsideChildren,
+            'Component must not mount outside the board'
+        ).toBe(0);
+        expect(result.mounted, 'Only the real cell is mounted').toBe(1);
+        expect(result.insideText, 'Normal id still resolves').toContain('Inside');
+    });
 });
