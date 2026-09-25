@@ -1158,7 +1158,9 @@ class Series {
         fireEvent(this, 'setOptions', e);
 
         // These may be modified by the event
-        const typeOptions = (e.plotOptions as any)[this.type],
+        const typeOptions: SeriesTypeOptions =
+                e.plotOptions[this.type] ||
+                merge(defaultOptions.plotOptions[this.type]), // #24254
             userPlotOptions = (
                 userOptions.plotOptions || {} as SeriesTypePlotOptions
             ),
