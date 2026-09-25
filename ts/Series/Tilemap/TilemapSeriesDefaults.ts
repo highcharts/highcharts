@@ -52,6 +52,8 @@ import type TilemapSeriesOptions from './TilemapSeriesOptions';
  *               dataSorting, boostThreshold, boostBlending
  * @product      highcharts highmaps
  * @requires     modules/tilemap
+ * @requires     product:highmaps
+ * @requires     modules/heatmap
  * @optionparent plotOptions.tilemap
  */
 const TilemapSeriesDefaults: TilemapSeriesOptions = {
@@ -143,6 +145,8 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  *            boostBlending
  * @product   highcharts highmaps
  * @requires  modules/tilemap
+ * @requires  product:highmaps
+ * @requires  modules/heatmap
  * @apioption series.tilemap
  */
 
