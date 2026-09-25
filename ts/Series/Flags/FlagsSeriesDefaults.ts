@@ -35,9 +35,11 @@ import type FlagsSeriesOptions from './FlagsSeriesOptions';
  *
  * @extends      plotOptions.column
  * @excluding    animation, boostBlending, boostThreshold, borderColor,
- *               borderWidth, colorByPoint, cropThreshold, dataGrouping,
- *               edgeColor, edgeWidth, nullInteraction, onPoint, pointPadding,
- *               pointWidth, threshold, turboThreshold, zoomEnabled
+ *               borderWidth, colorByPoint, cropThreshold, dataGrouping, depth,
+ *               edgeColor, edgeWidth, groupZPadding, lowMarker,
+ *               nullInteraction, onPoint, pointPadding, pointWidth,
+ *               startFromThreshold, threshold, trackByArea, turboThreshold,
+ *               zoomEnabled
  * @product      highstock
  * @optionparent plotOptions.flags
  */
@@ -85,7 +87,6 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      *         Flags on series and on x axis
      *
      * @type      {string}
-     * @default   undefined
      * @product   highstock
      * @apioption plotOptions.flags.onSeries
      */
@@ -291,10 +292,11 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * @extends   series,plotOptions.flags
  * @excluding animation, boostBlending, boostThreshold, borderColor,
  *            borderWidth, colorByPoint, connectNulls, cropThreshold,
- *            dashStyle, dataGrouping, edgeColor, edgeWidth, gapSize, gapUnit,
- *            linecap, marker, nullInteraction, onPoint, pointPadding,
- *            pointWidth, step, threshold, turboThreshold, useOhlcData,
- *            zoomEnabled
+ *            dashStyle, dataGrouping, depth, edgeColor, edgeWidth, gapSize,
+ *            gapUnit, groupZPadding, linecap, lowMarker, marker,
+ *            nullInteraction, onPoint, pointPadding, pointWidth,
+ *            startFromThreshold, step, threshold, trackByArea,
+ *            turboThreshold, useOhlcData, zoomEnabled
  * @product   highstock
  * @apioption series.flags
  */
