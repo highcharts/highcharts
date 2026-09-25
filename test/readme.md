@@ -40,24 +40,24 @@ Playwright browser before running them:
 npx playwright install chromium
 ```
 
-The canonical manifest is `tests/visual/samples.json`. Generate references and
-compare candidates with:
+Playwright discovers eligible samples using the shared visual exclusions in
+`test/visual-test-samples.js`. Same-repository PR runs publish the Playwright
+results to production Visual Review; the latest published run replaces the
+current review for that PR. Generate references and compare candidates with:
 
 ```bash
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 VISUAL_TEST_REFERENCE=1 \
 npm run test:pw:visual
 
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 npm run test:pw:visual
 ```
 
-`VISUAL_TEST_MANIFEST` selects exact sample IDs. A manifest cannot be combined
-with `VISUAL_TEST_PATH`, which filters sample paths by substring for focused
-local runs. Sample discovery applies the shared visual exclusions. The former
-`gulp test --reference` and `gulp test --visualcompare` entrypoints are retired;
-use the Playwright commands above. Visual comparisons support Chromium only.
-See
+`VISUAL_TEST_MANIFEST` selects exact sample IDs. Explicit IDs excluded by the
+shared visual exclusions are rejected. A manifest cannot be combined with
+`VISUAL_TEST_PATH`, which filters sample paths by substring for focused local
+runs. Without a manifest, new eligible samples are discovered automatically.
+The former `gulp test --reference` and `gulp test --visualcompare` entrypoints
+are retired; use the Playwright commands above. See
 [Playwright production publishing](../tests/README.md#production-publishing)
 for upload and completion requirements.
 

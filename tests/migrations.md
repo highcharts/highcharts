@@ -329,10 +329,10 @@ npm test
 ## Karma to Playwright Migration
 
 Unit tests (`samples/unit-tests/`) and visual comparison tests now run through
-Playwright. The visual project uses Chromium and the manifest in
-`tests/visual/samples.json`; use `VISUAL_TEST_REFERENCE=1` when generating
-references and leave it unset when comparing candidates. `VISUAL_TEST_PATH`
-filters focused local runs by path substring.
+Playwright. The visual project uses Chromium and automatically discovers
+eligible samples using the shared exclusions. Use `VISUAL_TEST_REFERENCE=1`
+when generating references and leave it unset when comparing candidates.
+`VISUAL_TEST_PATH` filters focused local runs by path substring.
 
 ### What Changed
 

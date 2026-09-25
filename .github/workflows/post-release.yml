@@ -34,7 +34,6 @@ jobs:
 
       - name: Generate release reference images
         env:
-          VISUAL_TEST_MANIFEST: tests/visual/samples.json
           VISUAL_TEST_REFERENCE: '1'
         run: npm run test:pw:visual
 
@@ -44,5 +43,4 @@ jobs:
         env:
           VISUAL_REVIEW_API_KEY: ${{secrets.VISUAL_REVIEW_INGESTION_API_KEY}}
         run: npx gulp update-nightly-testresults --tag "${{github.ref_name}}"
-
 

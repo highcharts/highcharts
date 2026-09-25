@@ -34,6 +34,9 @@ jobs:
       - name: Run unit tests
         run: npm run test-node
 
+      - name: Run tooling unit tests
+        run: npm run test-node:tooling
+
   nightly_cypress:
     name: Cypress tests
     runs-on: ubuntu-latest
@@ -213,8 +216,6 @@ jobs:
 
   nightly_visual_diff:
     runs-on: ubuntu-latest
-    env:
-      VISUAL_TEST_MANIFEST: tests/visual/samples.json
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -389,4 +390,3 @@ jobs:
           payload-file-path: "24hoursofhighcharts.json"
           webhook: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
           webhook-type: webhook-trigger
-

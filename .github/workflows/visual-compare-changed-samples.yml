@@ -76,6 +76,17 @@ jobs:
             printf 'products=%s\n' "$(paste -sd, "$products_file")"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Use Node.js lts/*
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
+        run: npm ci
+
       - name: Select visual samples
         id: selected_samples
         if: ${{ steps.changed_samples.outputs.has_products == 'true' }}
@@ -91,17 +102,6 @@ jobs:
           else
             echo 'has_samples=true' >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Use Node.js lts/*
-        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-
-      - name: Install dependencies
-        if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}
-        run: npm ci
 
       - name: Build Highcharts
         if: ${{ steps.selected_samples.outputs.has_samples == 'true' }}

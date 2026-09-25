@@ -37,6 +37,7 @@
     "gtest": "gulp test --product Grid --force",
     "test": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=setup-grid-lite --project=setup-grid-pro --project=highcharts --project=dashboards --project=grid-lite --project=grid-pro --project=grid-shared --project=qunit",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
+    "test-node:tooling": "node --import tsx --test \"test/ts-node-unit-tests/tooling-tests/*.test.ts\"",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
     "test:webpack": "node tools/webpacks/check-duplicates.mjs && node tools/webpacks/check-namespace-exposure.mjs",
     "test:precommit": "npx gulp generate-samples --check && npx gulp test --modified && npm run test-node",
@@ -189,6 +190,9 @@
     ],
     "./tests/**": [
       "npx --workspace tests eslint"
+    ],
+    "{.github/workflows/visual-compare-playwright.yml,package.json,package-lock.json,test/visual-test-samples.js,test/ts-node-unit-tests/bench*.ts,test/ts-node-unit-tests/tooling-tests/**,tests/utils.ts,tests/visual/**}": [
+      "node -e \"require('node:child_process').execSync('npm run test-node:tooling', {stdio: 'inherit'})\""
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

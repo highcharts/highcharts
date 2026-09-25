@@ -1,16 +1,20 @@
-import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
 const products = new Set(['highcharts', 'stock', 'maps', 'gantt']);
-const manifestPath = resolve(
-    dirname(fileURLToPath(import.meta.url)),
-    '../../tests/visual/samples.json'
+const require = createRequire(import.meta.url);
+const { require: requireTS } = require('tsx/cjs/api');
+const { selectVisualSamples: discoverEligibleVisualSamples } = requireTS(
+    '../../tests/visual/visual-samples.ts',
+    import.meta.url
 );
+const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 export function selectVisualSamples(
     requestedProducts,
-    manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+    sampleIds = discoverEligibleVisualSamples(repositoryRoot)
+        .map(sample => sample.id)
 ) {
     const requested = [...new Set(requestedProducts)];
     const unknown = requested.filter(product => !products.has(product));
@@ -18,7 +22,7 @@ export function selectVisualSamples(
         throw new Error(`Unknown visual sample product: ${unknown.join(', ')}`);
     }
 
-    return manifest.filter(id => requested.some(product =>
+    return sampleIds.filter(id => requested.some(product =>
         id.startsWith(`${product}/`)
     ));
 }

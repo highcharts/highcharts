@@ -397,10 +397,8 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
         const id = 'highcharts/demo/basic-line';
         writeReference(root, id, '<svg>new</svg>');
         copyNightlyReferences({ sampleRoot, referenceRoot });
-        await syncNightlyReferences({
-            sampleRoot,
-            referenceRoot,
-            fetchImpl: async () => response(200, '<svg>old</svg>')
+        await writeSample(sampleRoot, id, {
+            'reference.svg': '<svg>old</svg>'
         });
         resetVisualRun(root, [id]);
         recordCandidateResult(root, id, 12, '<svg>new</svg>', Buffer.from('GIF89a'));
@@ -492,7 +490,8 @@ test('nightly selects every eligible product sample and gates publication', () =
     const job = workflow.jobs.nightly_visual_diff;
     assert.deepEqual(
         selectVisualSamples(process.cwd(), {
-            manifest: job.env.VISUAL_TEST_MANIFEST
+            manifest: job.env?.VISUAL_TEST_MANIFEST,
+            filter: job.env?.VISUAL_TEST_PATH
         }).map(sample => sample.id).sort(),
         selectVisualSamples(process.cwd()).map(sample => sample.id).sort()
     );
@@ -511,7 +510,7 @@ test('nightly selects every eligible product sample and gates publication', () =
         assert.equal(step.if, undefined, 'Each step requires prior success');
     }
     assert.equal(steps[0].env.VISUAL_TEST_REFERENCE, '1');
-    assert.equal(job.env.VISUAL_TEST_REFERENCE, undefined);
+    assert.equal(job.env?.VISUAL_TEST_REFERENCE, undefined);
     assert.equal(steps[3].env?.VISUAL_TEST_REFERENCE, undefined);
 });
 
