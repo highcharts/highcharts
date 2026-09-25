@@ -340,4 +340,5 @@ input.addEventListener('click', function () {
 // Stop animation when clicking and dragging range bar
 input.addEventListener('input', function () {
     pause(btn);
+    update(true);
 });
