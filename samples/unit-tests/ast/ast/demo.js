@@ -88,3 +88,114 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('Filtering of CSS references', assert => {
+    const AST = Highcharts.AST,
+        styleOf = markup => {
+            const container = document.createElement('div');
+            new AST(markup).addToDOM(container);
+            return container.querySelector('p').getAttribute('style') || '';
+        },
+        // A style element at the top level of a markup string is moved to the
+        // document head by the HTML parser, so it only reaches the AST when
+        // wrapped in another element
+        cssTextOf = cssText => {
+            const container = document.createElement('div');
+            new AST('<div><style>' + cssText + '</style></div>')
+                .addToDOM(container);
+            const style = container.querySelector('style');
+            return style ? style.textContent : '';
+        };
+
+    const external = styleOf(
+        '<p style="color: red; background: url(https://example.com/x.png)">t' +
+        '</p>'
+    );
+
+    assert.strictEqual(
+        external.indexOf('url(') === -1,
+        true,
+        'An external CSS reference should be filtered out.'
+    );
+
+    assert.strictEqual(
+        /color:\s*red/.test(external),
+        true,
+        'The remaining declarations should survive the filtering.'
+    );
+
+    assert.strictEqual(
+        styleOf(
+            '<p style="background: u\\72 l(https://example.com/x.png)">t</p>'
+        ).indexOf('url(') === -1,
+        true,
+        'An escaped reference should be filtered out, as `u\\72 l(` and ' +
+        '`url(` are equivalent to the browser.'
+    );
+
+    assert.strictEqual(
+        styleOf('<p style="filter: url(#blur)">t</p>').indexOf('#blur') > -1,
+        true,
+        'A same-document reference should be applied, as gradients, ' +
+        'patterns and filters rely on it.'
+    );
+
+    assert.strictEqual(
+        cssTextOf('.a { background: url(https://example.com/b.png) }'),
+        '',
+        'The CSS text of a style element should be filtered out when it ' +
+        'holds an external reference.'
+    );
+
+    assert.strictEqual(
+        cssTextOf('@import "data:text/css;base64,I2Mge30=";'),
+        '',
+        'An @import should be filtered out even for an allowed reference, ' +
+        'as the content of the imported style sheet cannot be checked.'
+    );
+
+    assert.strictEqual(
+        cssTextOf('.a { filter: url(#blur) }'),
+        '.a { filter: url(#blur) }',
+        'A same-document reference should keep the CSS text, as styled mode ' +
+        'definitions rely on it.'
+    );
+});
+
+QUnit.test('Opting in to CSS references', assert => {
+    const AST = Highcharts.AST,
+        references = AST.allowedCSSReferences.slice(),
+        markup = '<p style="background: url(https://cdn.example.com/x.png)">' +
+            't</p>',
+        styleOf = () => {
+            const container = document.createElement('div');
+            new AST(markup).addToDOM(container);
+            return container.querySelector('p').getAttribute('style') || '';
+        };
+
+    try {
+        AST.allowedCSSReferences.push('https://cdn.example.com/');
+
+        assert.strictEqual(
+            styleOf().indexOf('https://cdn.example.com/x.png') > -1,
+            true,
+            'An allowed reference should be applied.'
+        );
+    } finally {
+        AST.allowedCSSReferences.length = 0;
+        references.forEach(reference => {
+            AST.allowedCSSReferences.push(reference);
+        });
+    }
+
+    AST.bypassHTMLFiltering = true;
+    try {
+        assert.strictEqual(
+            styleOf().indexOf('https://cdn.example.com/x.png') > -1,
+            true,
+            'bypassHTMLFiltering should bypass the filtering of styles.'
+        );
+    } finally {
+        AST.bypassHTMLFiltering = false;
+    }
+});
