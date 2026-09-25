@@ -47,14 +47,19 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.flags
  *
- * @excluding animation, borderColor, borderWidth,
- *            colorByPoint, cropThreshold, dataGrouping, pointPadding,
- *            pointWidth, turboThreshold
+ * @excluding animation, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, colorByPoint, cropThreshold, dataGrouping, depth,
+ *            edgeColor, edgeWidth, groupZPadding, lowMarker, nullInteraction,
+ *            onPoint, pointPadding, pointWidth, startFromThreshold,
+ *            threshold, trackByArea, turboThreshold, zoomEnabled
  *
- * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, cropThreshold, dashStyle, dataGrouping, gapSize,
- *            gapUnit, linecap, lineWidth, marker, pointPadding, pointWidth,
- *            step, turboThreshold, useOhlcData
+ * @excluding animation, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, colorByPoint, connectNulls, cropThreshold,
+ *            dashStyle, dataGrouping, depth, edgeColor, edgeWidth, gapSize,
+ *            gapUnit, groupZPadding, linecap, lowMarker, marker,
+ *            nullInteraction, onPoint, pointPadding, pointWidth,
+ *            startFromThreshold, step, threshold, trackByArea,
+ *            turboThreshold, useOhlcData, zoomEnabled
  *
  * @product highstock
  */
@@ -68,6 +73,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags-allowoverlapx
      *         Allow sideways overlap
      *
+     * @default false
+     *
      * @since 6.0.4
      */
     allowOverlapX?: boolean;
@@ -76,11 +83,15 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * The corner radius of the border surrounding each flag. For `squarepin`
      * shaped flags only. A number signifies pixels. A percentage string, like
      * for example 50%, signifies a relative size.
+     *
+     * @default 0
      */
     borderRadius?: number;
 
     /**
      * The fill color for the flags.
+     *
+     * @default var(--highcharts-background-color)
      *
      * @product highstock
      */
@@ -116,6 +127,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The pixel width of the flag's line/border.
+     *
+     * @default 1
      *
      * @product highstock
      */
@@ -159,6 +172,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @sample {highstock} stock/plotoptions/flags/
      *         Different shapes
      *
+     * @default 'flag'
+     *
      * @product highstock
      */
     shape?: FlagsShapeValue;
@@ -169,6 +184,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/plotoptions/flags-stackdistance/
      *         A greater stack distance
+     *
+     * @default 12
      *
      * @product highstock
      */
@@ -190,6 +207,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * Text alignment for the text inside the flag.
+     *
+     * @default 'center'
      *
      * @since 5.0.0
      *
@@ -236,8 +255,9 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The y position of the top left corner of the flag relative to either
-     * the series (if onSeries is defined), or the x axis. Defaults to
-     * `-30`.
+     * the series (if onSeries is defined), or the x axis.
+     *
+     * @default -30
      *
      * @product highstock
      */
@@ -275,17 +295,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     data?: Array<FlagsPointOptions>;
 
     /**
-     * The Y axis value to serve as the base for the columns, for
-     * distinguishing between values above and below a threshold. If `null`,
-     * the columns extend from the padding Y axis minimum.
-     *
-     * @default null
-     *
-     * @product highstock
-     */
-    threshold?: ColumnSeriesOptions['threshold'];
-
-    /**
      * Specific tooltip options for flag series. Flag series tooltips are
      * different from most other types in that a flag doesn't have a data
      * value, so the tooltip rather displays the `text` option for each
@@ -294,6 +303,24 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @product highstock
      */
     tooltip?: FlagsSeriesTooltipOptions;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    boostBlending?: undefined;
+    boostThreshold?: undefined;
+    depth?: undefined;
+    edgeColor?: undefined;
+    edgeWidth?: undefined;
+    groupZPadding?: undefined;
+    nullInteraction?: undefined;
+    onPoint?: undefined;
+    startFromThreshold?: undefined;
+    trackByArea?: undefined;
+    zoomEnabled?: undefined;
 }
 
 export interface FlagsSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
