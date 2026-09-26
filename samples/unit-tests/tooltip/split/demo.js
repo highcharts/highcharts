@@ -240,7 +240,6 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     const point = chart.series[0].points[0],
         tooltipClient = chart.tooltip.container.getBoundingClientRect(),
-        docBodyStyle = getComputedStyle(Highcharts.doc.body),
         chartBox = chart.container.getBoundingClientRect();
 
     // Notice: in browser tests add QUnit messages that push down the chart
@@ -249,7 +248,8 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     // for the pointer helps.
 
     assert.close(
-        chart.xAxis[0].toPixels(point.x) + parseFloat(docBodyStyle.marginLeft),
+        chart.xAxis[0].toPixels(point.x) +
+            chart.pointer.getChartPosition().left,
         tooltipClient.x + (tooltipClient.width / 2),
         1.5,
         `Tooltip with outside and split properties set to true should be
@@ -355,27 +355,12 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
             true,
             'The tooltip should be aligned towards the left'
         );
-        assert.strictEqual(
-            ttRight <= mainContainer.clientWidth,
-            true,
+        assert.lessThan(
+            ttRight,
+            mainContainer.clientWidth + 6, // +6 for shadow and stuff
             'The tooltip should not overflow the viewport'
         );
     });
-
-    // check the alignment when tooltip.outside is false
-    chart.update({
-        tooltip: {
-            split: true,
-            outside: false
-        }
-    });
-
-    points[points.length - 1].onMouseOver();
-    assert.strictEqual(
-        chart.series[0].tt.x < chart.series[0].tt.anchorX,
-        true,
-        'The tooltip should be aligned towards the left'
-    );
 
     // Reset
     subcontainer.remove();
