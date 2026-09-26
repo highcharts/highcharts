@@ -843,7 +843,7 @@ QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
 });
 
 QUnit.test('Label overflow', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             width: 300,
             height: 200
@@ -864,7 +864,7 @@ QUnit.test('Label overflow', function (assert) {
         ]
     });
 
-    var bBox = chart.xAxis[0].ticks[3].label.element.getBBox();
+    const bBox = chart.xAxis[0].ticks[3].label.element.getBBox();
     assert.ok(
         bBox.x + bBox.width > chart.chartWidth,
         'Label should be outside chart area (#7475)'
@@ -880,6 +880,30 @@ QUnit.test('Label overflow', function (assert) {
     assert.ok(
         bBox.x + bBox.width > chart.chartWidth,
         'Label should be inside chart area'
+    );
+
+    // #24123
+    chart.setSize(null, 400);
+
+    chart.yAxis[0].update({
+        tickInterval: 0.5,
+        labels: {
+            style: {
+                fontSize: '80px'
+            }
+        }
+    });
+
+    const axis = chart.yAxis[0],
+        visibleTicks = axis.tickPositions
+            .map(pos => axis.ticks[pos])
+            .filter(tick => tick?.label?.attr('visibility') !== 'hidden'),
+        upperLabelBBox = visibleTicks[1]?.label.element.getBBox(),
+        lowerLabelBBox = visibleTicks[0]?.label.element.getBBox();
+
+    assert.ok(
+        lowerLabelBBox.y >= upperLabelBBox.y + upperLabelBBox.height,
+        'No yAxis label overlap with large font size (#24123)'
     );
 });
 
