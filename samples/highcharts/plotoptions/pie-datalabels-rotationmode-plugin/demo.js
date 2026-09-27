@@ -5,30 +5,15 @@
  * - Vertical writing mode
  * - Optionally rotated on the right half
  */
-(({ merge, wrap }) => {
-
-    wrap(
-        Highcharts.seriesTypes.pie.prototype,
-        'getDataLabelPosition',
-        function (proceed) {
-            const pos = proceed.apply(
-                this,
-                Array.prototype.slice.call(arguments, 1)
-            );
-
-            if (this.options.dataLabels.rotationMode === 'perpendicular') {
-                pos.alignment = 'left';
-            }
-            return pos;
-        }
-    );
+(({ animate, animObject, merge, wrap }) => {
 
     // Wrap the placeDataLabels method to apply the rotation mode
     wrap(
         Highcharts.seriesTypes.pie.prototype,
         'placeDataLabels',
         function (proceed) {
-            const seriesDLOptions = this.options.dataLabels;
+            const seriesDLOptions = this.options.dataLabels,
+                animation = animObject(this.chart.renderer.globalAnimation);
 
             // Call the original placeDataLabels method
             proceed.apply(this);
@@ -40,23 +25,25 @@
                     if (options.rotationMode === 'perpendicular') {
                         const radius = this.center[2] / 2,
                             { distance } = options,
+                            lastAngle = dataLabel.lastPerpendicularAngle,
                             vertical = options.style.writingMode ===
                                 'vertical-rl',
                             halfHeight = vertical ?
                                 0 :
-                                dataLabel.bBox.height / 2,
-                            attr = {
-                                x: this.center[0] - radius - distance,
-                                y: this.center[1] - halfHeight,
-                                rotationOriginX: radius + distance,
-                                rotationOriginY: halfHeight,
-                                rotation: point.angle * (180 / Math.PI) + 180
-                            };
+                                dataLabel.bBox.height / 2;
+
+                        const getAttr = angle => ({
+                            align: 'left',
+                            x: this.center[0] - radius - distance,
+                            y: this.center[1] - halfHeight,
+                            rotationOriginX: radius + distance,
+                            rotationOriginY: halfHeight,
+                            rotation: angle * (180 / Math.PI) + 180
+                        });
 
                         // Right side
                         /*
                         if (!point.half) {
-                            dataLabel.attr({ align: 'right' });
                             attr.x = this.center[0] + radius + distance;
                             attr.rotationOriginX = -radius - 2 * distance +
                                 dataLabel.bBox.width;
@@ -64,17 +51,7 @@
                         }
                         */
 
-                        // Avoid animating from far side of the circle
-                        if (typeof dataLabel.rotation === 'number') {
-                            if (attr.rotation > dataLabel.rotation + 180) {
-                                attr.rotation -= 360;
-                            } else if (
-                                attr.rotation < dataLabel.rotation - 180
-                            ) {
-                                attr.rotation += 360;
-                            }
-                        }
-
+                        /*
                         if (vertical) {
                             attr.x = this.center[0];
                             attr.y = this.center[1] - radius + options.distance;
@@ -82,12 +59,36 @@
                             attr.rotationOriginY = radius - options.distance;
                             attr.rotation -= 90;
                         }
+                        */
 
-                        dataLabel[
-                            dataLabel.placedPerpendicular ? 'animate' : 'attr'
-                        ](attr);
+                        if (typeof lastAngle !== 'number') {
+                            dataLabel.attr(getAttr(point.angle));
+                        } else {
+                            animate(undefined, undefined, {
+                                ...animation,
+                                step: (now, fx) => {
+                                    let fromAngle = lastAngle;
 
-                        dataLabel.placedPerpendicular = true;
+                                    // Avoid animating from far side of circle
+                                    if (point.angle > fromAngle + Math.PI) {
+                                        fromAngle += 2 * Math.PI;
+                                    } else if (
+                                        point.angle < fromAngle - Math.PI
+                                    ) {
+                                        fromAngle -= 2 * Math.PI;
+                                    }
+
+                                    dataLabel.attr(
+                                        getAttr(
+                                            fromAngle +
+                                            (point.angle - fromAngle) * fx.pos
+                                        )
+                                    );
+                                }
+                            });
+                        }
+
+                        dataLabel.lastPerpendicularAngle = point.angle;
 
                     }
                 }
