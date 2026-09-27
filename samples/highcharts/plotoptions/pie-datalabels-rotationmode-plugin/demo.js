@@ -4,6 +4,7 @@
  * @todo
  * - Vertical writing mode
  * - Optionally rotated on the right half
+ * - Link from API
  */
 (({ animate, animObject, merge, wrap }) => {
 
@@ -32,24 +33,26 @@
                                 0 :
                                 dataLabel.bBox.height / 2;
 
-                        const getAttr = angle => ({
-                            align: 'left',
-                            x: this.center[0] - radius - distance,
-                            y: this.center[1] - halfHeight,
-                            rotationOriginX: radius + distance,
-                            rotationOriginY: halfHeight,
-                            rotation: angle * (180 / Math.PI) + 180
-                        });
+                        const getAttr = angle => {
+                            const attr = {
+                                align: 'left',
+                                x: this.center[0] - radius - distance,
+                                y: this.center[1] - halfHeight,
+                                rotationOriginX: radius + distance,
+                                rotationOriginY: halfHeight,
+                                rotation: angle * (180 / Math.PI) + 180
+                            };
 
-                        // Right side
-                        /*
-                        if (!point.half) {
-                            attr.x = this.center[0] + radius + distance;
-                            attr.rotationOriginX = -radius - 2 * distance +
-                                dataLabel.bBox.width;
-                            attr.rotation -= 180;
-                        }
-                        */
+                            // Right side
+                            if (angle > -Math.PI / 2 && angle < Math.PI / 2) {
+                                attr.align = 'right';
+                                attr.x = this.center[0] + radius + distance;
+                                attr.rotationOriginX = -radius - 2 * distance +
+                                    dataLabel.bBox.width;
+                                attr.rotation -= 180;
+                            }
+                            return attr;
+                        };
 
                         /*
                         if (vertical) {
