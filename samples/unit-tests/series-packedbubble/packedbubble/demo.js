@@ -234,4 +234,42 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         true,
         'Series should lack parentNode'
     );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'packedbubble'
+        },
+        plotOptions: {
+            packedbubble: {
+                layoutAlgorithm: {
+                    enableSimulation: true,
+                    splitSeries: true
+                }
+            }
+        },
+        series: [{
+            data: []
+        }, {
+            data: [1, 2, 3]
+        }]
+    });
+
+    const dragController = new TestController(chart),
+        { parentNode, parentNodeRadius } = chart.series[0],
+        x = parentNode.plotX + chart.plotLeft,
+        y = parentNode.plotY + chart.plotTop;
+
+    dragController.triggerEvent('mouseover', x, y);
+    dragController.mouseDown(x, y);
+    dragController.mouseMove(x + 20, y + 20);
+    dragController.mouseMove(x + 40, y + 40);
+
+    assert.close(
+        parentNode.graphic.attr('x') + parentNodeRadius,
+        parentNode.plotX,
+        1,
+        'Dragged parent node graphic should follow its position, #25421.'
+    );
+
+    dragController.mouseUp(x + 40, y + 40);
 });
