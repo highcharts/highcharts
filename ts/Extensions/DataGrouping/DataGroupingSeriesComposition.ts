@@ -317,7 +317,7 @@ function anchorPoints(
         anchor = dataGroupingOptions.anchor,
         firstAnchor = dataGroupingOptions.firstAnchor,
         lastAnchor = dataGroupingOptions.lastAnchor,
-        dataMax = series.xAxis?.dataMax,
+        dataMax = series.xAxis.dataMax,
         anchorMax = isNumber(dataMax) ? Math.min(xMax, dataMax) : xMax;
     let anchorIndexIterator = groupedXData.length - 1,
         anchorFirstIndex = 0;
