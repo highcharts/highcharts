@@ -6,7 +6,8 @@ Highcharts.chart('container', {
         scrollablePlotArea: {
             minWidth: 600,
             scrollPositionX: 1
-        }
+        },
+        spacingBottom: 22
     },
     title: {
         text: 'Wind speed during a day',
