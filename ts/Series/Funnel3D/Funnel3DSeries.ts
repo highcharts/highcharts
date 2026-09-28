@@ -26,19 +26,16 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import Funnel3DComposition from './Funnel3DComposition.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import { composeFunnel3D } from './Funnel3DComposition.js';
 import Funnel3DSeriesDefaults from './Funnel3DSeriesDefaults.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Math3D from '../../Core/Math3D.js';
-const { perspective } = Math3D;
+import { perspective } from '../../Core/Math3D.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
+    series: Series
 } = SeriesRegistry;
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 
@@ -67,7 +64,7 @@ class Funnel3DSeries extends ColumnSeries {
      * */
 
     /** @internal */
-    public static compose = Funnel3DComposition.compose;
+    public static compose = composeFunnel3D;
 
     /** @internal */
     public static defaultOptions: Funnel3DSeriesOptions = merge(
@@ -367,7 +364,6 @@ interface Funnel3DSeries {
     /** @internal */
     getWidthAt(y: number): number; // Added during translate
 
-    /** @internal */
     pointClass: typeof Funnel3DPoint;
 
     /** @internal */

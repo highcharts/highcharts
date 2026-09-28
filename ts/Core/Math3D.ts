@@ -146,7 +146,7 @@ function rotate3D(
  *
  * @requires highcharts-3d
  */
-function perspective(
+export function perspective(
     points: Array<Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean,

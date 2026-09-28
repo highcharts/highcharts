@@ -65,6 +65,7 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 interface Funnel3DPoint {
+    /** @internal */
     shapeType: string;
 }
 extend(Funnel3DPoint.prototype, {
