@@ -2435,7 +2435,10 @@ class Series {
                     0
             ),
             // Create a configuration object out of a data row
-            dataColumnKeys = this.getDataColumnKeys();
+            dataColumnKeys = this.getDataColumnKeys(),
+            globalAnimation = series.chart.renderer.globalAnimation,
+            { duration } = animObject(globalAnimation);
+
         let dataLength,
             cursor,
             point: Point,
@@ -2528,10 +2531,23 @@ class Series {
                 if (i === cropStart && !hasGroupedData) {
                     i += processedDataLength;
                 }
-                if (data[i]) {
-                    data[i].destroyElements();
-                    data[i].plotX = void 0; // #1003
-                }
+                data[i]?.destroy();
+                // eslint-disable-next-line @typescript-eslint/no-array-delete
+                delete data[i];
+
+                // const point = data[i];
+                // if (point) {
+                //     if (duration) {
+                //         series.condemnedPoints.push(point);
+                //     }
+                //     syncTimeout((): void => {
+                //         if (point) {
+                //             point.destroyElements();
+                //             point.plotX = void 0; // #1003
+                //         }
+                //         series.condemnedPoints.length = 0;
+                //     }, duration);
+                // }
             }
         }
 
