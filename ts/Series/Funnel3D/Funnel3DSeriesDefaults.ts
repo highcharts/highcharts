@@ -50,7 +50,9 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
     },
 
     /**
-     * The width of edge circles for each point.
+     * The width of the outline around the top and bottom ellipses of each
+     * funnel segment. Its color is set by `edgeColor` and defaults to the
+     * point color.
      */
     edgeWidth: 0,
 

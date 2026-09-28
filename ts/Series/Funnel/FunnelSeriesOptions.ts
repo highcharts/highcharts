@@ -221,7 +221,7 @@ interface FunnelSeriesStatesOptions extends SeriesStatesOptionsAlias {
          *
          * @default 'var(--highcharts-neutral-color-100)'
          */
-        borderColor: ColorType;
+        borderColor?: ColorType;
 
         /**
          * A specific color for the selected point.
