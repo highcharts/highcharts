@@ -235,6 +235,12 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         'Series should lack parentNode'
     );
 
+    if (!window.requestAnimationFrame) {
+        return;
+    }
+
+    const done = assert.async();
+
     chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble'
@@ -254,22 +260,41 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         }]
     });
 
-    const dragController = new TestController(chart),
-        { parentNode, parentNodeRadius } = chart.series[0],
-        x = parentNode.plotX + chart.plotLeft,
-        y = parentNode.plotY + chart.plotTop;
+    const series = chart.series[0],
+        unbind = Highcharts.addEvent(series, 'afterSimulation', () => {
+            unbind();
+            drag();
+        });
 
-    dragController.triggerEvent('mouseover', x, y);
-    dragController.mouseDown(x, y);
-    dragController.mouseMove(x + 20, y + 20);
-    dragController.mouseMove(x + 40, y + 40);
+    function drag() {
+        const dragController = new TestController(chart),
+            { parentNode, parentNodeRadius } = series,
+            startX = parentNode.plotX,
+            dx = startX < chart.plotWidth / 2 ? 20 : -20,
+            x = startX + chart.plotLeft,
+            y = parentNode.plotY + chart.plotTop;
 
-    assert.close(
-        parentNode.graphic.attr('x') + parentNodeRadius,
-        parentNode.plotX,
-        1,
-        'Dragged parent node graphic should follow its position, #25421.'
-    );
+        dragController.triggerEvent('mouseover', x, y);
+        dragController.mouseDown(x, y);
+        dragController.mouseMove(x + dx, y);
+        dragController.mouseMove(x + 2 * dx, y);
 
-    dragController.mouseUp(x + 40, y + 40);
+        requestAnimationFrame(() => {
+            assert.close(
+                parentNode.plotX,
+                startX + 2 * dx,
+                1,
+                'Parent node should be dragged, #25421.'
+            );
+            assert.close(
+                parentNode.graphic.attr('x') + parentNodeRadius,
+                parentNode.plotX,
+                1,
+                'Dragged parent node graphic should follow its position, ' +
+                '#25421.'
+            );
+            dragController.mouseUp(x + 2 * dx, y);
+            done();
+        });
+    }
 });
