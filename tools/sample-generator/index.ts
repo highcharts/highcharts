@@ -475,13 +475,17 @@ function getPathMeta(config: SampleGeneratorConfig): MetaList {
                 }
             }
 
+            const explicitOptions = typeof controlOptions === 'object' ?
+                controlOptions.options :
+                void 0;
+
             list.push({
                 path,
                 controlOptions: typeof controlOptions === 'object' ?
                     controlOptions : void 0,
                 node,
                 mainType,
-                options,
+                options: explicitOptions ?? options,
                 defaultValue,
                 overrideValue
             });
