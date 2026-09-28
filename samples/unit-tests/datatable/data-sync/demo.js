@@ -87,4 +87,31 @@ QUnit.test('Sync between data table and series', async assert => {
         'After updating a column in the DataTable, the corresponding points ' +
         'should be updated in the series'
     );
+
+    // #25283
+    const seriesTable = new Highcharts.DataTable({
+        columns: {
+            x: [1, 2, 3],
+            y: [5, 6, 7]
+        }
+    });
+    const seriesWithTable = chart.addSeries({
+        dataTable: seriesTable
+    });
+
+    seriesWithTable.points[1].update({ y: 99 });
+    seriesWithTable.addPoint([4, 8]);
+
+    assert.deepEqual(
+        Array.from(seriesWithTable.getColumn('y')),
+        [5, 99, 7, 8],
+        'Updating and adding points should work with a data table instance ' +
+        'on series level.'
+    );
+
+    assert.deepEqual(
+        Array.from(seriesTable.getColumn('y')),
+        [5, 6, 7],
+        'The series should not write back into the given data table.'
+    );
 });

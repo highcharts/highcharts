@@ -423,10 +423,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * Options for a specific series-level data table or an array of data
      * tables. The `dataTable` option can be either a configuration object or an
-     * instance of the `DataTable` class. If a `DataTable` instance is passed,
-     * it will be used directly. If a configuration object or an array is
-     * passed, a new `DataTable` instance will be created based on the provided
-     * configuration.
+     * instance of the `DataTable` class. Even if a `DataTable` instance is
+     * passed, the series creates its own `DataTable` for the resolved data, so
+     * that it never writes back into the provided one. Changes to the provided
+     * table are still reflected in the series.
      *
      * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
      * @sample {highcharts} highcharts/datatable/series-datatable/
