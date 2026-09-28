@@ -1158,7 +1158,11 @@ class Axis {
         pointPlacement?: number
     ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = (old && axis.old ? axis.old.min : axis.min);
+            axisOld = axis.old,
+            axisLen = axis.len,
+            localMin = (old && axisOld ? axisOld.min : axis.min),
+            // Scale for a linked axis with its own pixel length
+            lenRatio = (this.len && axisLen) ? this.len / axisLen : 1;
 
         if (!isNumber(localMin)) {
             return NaN;
@@ -1173,7 +1177,7 @@ class Axis {
 
         let sign = 1,
             cvsOffset = 0,
-            localA = old && axis.old ? axis.old.transA : axis.transA,
+            localA = old && axisOld ? axisOld.transA : axis.transA,
             returnValue = 0;
 
         if (!localA) {
@@ -1184,19 +1188,19 @@ class Axis {
         // in SVG.
         if (cvsCoord) {
             sign *= -1; // Canvas coordinates inverts the value
-            cvsOffset = axis.len;
+            cvsOffset = axisLen;
         }
 
         // Handle reversed axis
         if (axis.reversed) {
             sign *= -1;
-            cvsOffset -= sign * (axis.sector || axis.len);
+            cvsOffset -= sign * (axis.sector || axisLen);
         }
 
         // From pixels to value
         if (backwards) { // Reverse translation
 
-            val = val * sign + cvsOffset;
+            val = val / lenRatio * sign + cvsOffset;
             val -= minPixelPadding;
             // From chart pixel to value:
             returnValue = val / localA + localMin;
@@ -1219,6 +1223,7 @@ class Axis {
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
             }
+            returnValue *= lenRatio;
 
             if (Math.abs(returnValue) < 1e-9) {
                 returnValue = 0;
