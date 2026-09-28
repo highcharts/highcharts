@@ -41,7 +41,7 @@ import { isNumber } from '../../Shared/Utilities.js';
  * @product      highmaps
  * @optionparent plotOptions.map
  *
- * @internal
+ * @private
  */
 const MapSeriesDefaults: MapSeriesOptions = {
 
@@ -54,7 +54,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @since 10.0.0
      *
-     * @internal
+     * @private
      */
     affectsMapView: true,
 
@@ -92,7 +92,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
     /**
      * @ignore-option
      *
-     * @internal
+     * @private
      */
     marker: null as any,
 
@@ -107,7 +107,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @type {Highcharts.ColorType}
      *
-     * @internal
+     * @private
      */
     nullColor: 'var(--highcharts-neutral-color-3)',
 
@@ -119,7 +119,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @since     4.2.7
      * @apioption plotOptions.map.nullInteraction
      *
-     * @internal
+     * @private
      */
 
     stickyTracking: false,
@@ -132,7 +132,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
     /**
      * @ignore-option
      *
-     * @internal
+     * @private
      */
     turboThreshold: 0,
 
@@ -148,7 +148,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @default true
      * @product highmaps
      *
-     * @internal
+     * @private
      */
     allAreas: true,
 
@@ -165,7 +165,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
-     * @internal
+     * @private
      */
     borderColor: 'var(--highcharts-neutral-color-20)',
 
@@ -183,7 +183,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @product   highmaps
      * @apioption plotOptions.series.borderWidth
      *
-     * @internal
+     * @private
      */
     borderWidth: 1,
 
@@ -221,7 +221,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @product   highmaps
      * @apioption plotOptions.series.joinBy
      *
-     * @internal
+     * @private
      */
     joinBy: 'hc-key',
 
@@ -236,7 +236,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
     /**
      * @apioption plotOptions.series.states
      *
-     * @internal
+     * @private
      */
     states: {
 

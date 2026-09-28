@@ -66,7 +66,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     /**
      * The border radius of the node cards.
      *
-     * @internal
+     * @private
      */
     borderRadius: 3,
 
@@ -139,7 +139,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     /**
      * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
      *
-     * @internal
+     * @private
      */
     dataLabels: {
 
@@ -194,7 +194,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
 
             // eslint-disable-next-line valid-jsdoc
             /**
-             * @internal
+             * @private
              */
             function styleAttr(style: CSSObject): string {
                 return Object.keys(style).reduce(function (
@@ -287,7 +287,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * The indentation in pixels of hanging nodes, nodes which parent has
      * [layout](#series.organization.nodes.layout) set to `hanging`.
      *
-     * @internal
+     * @private
      */
     hangingIndent: 20,
     /**
@@ -315,7 +315,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @since   10.0.0
      * @type    {"inherit"|"cumulative"|"shrink"}
      *
-     * @internal
+     * @private
      */
     hangingIndentTranslation: 'inherit',
     /**
@@ -339,7 +339,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @type {Highcharts.ColorString}
      * @deprecated 10.3.0
      * @apioption series.organization.linkColor
-     * @internal
+     * @private
      */
 
     /**
@@ -352,7 +352,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      *
      * @deprecated 10.3.0
      * @apioption series.organization.linkLineWidth
-     * @internal
+     * @private
      */
 
     /**
@@ -366,7 +366,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      *
      * @see [nodeWidth](#plotOptions.organization.nodeWidth)
      *
-     * @internal
+     * @private
      */
     minNodeLength: 10,
     /**
@@ -376,7 +376,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      *
      * @see [minNodeLength](#plotOptions.organization.minNodeLength)
      *
-     * @internal
+     * @private
      */
     nodeWidth: 50,
     tooltip: {
