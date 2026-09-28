@@ -187,7 +187,7 @@ Start with:
 - [Frameworks](https://www.highcharts.com/docs/grid/frameworks/index)
 - [Angular](https://www.highcharts.com/docs/grid/frameworks/angular)
 - [Next.js](https://www.highcharts.com/docs/grid/frameworks/nextjs)
-- [React](https://www.highcharts.com/docs/grid/frameworks/react)
+- [React](https://www.highcharts.com/docs/grid/frameworks/react/getting-started)
 - [Vue](https://www.highcharts.com/docs/grid/frameworks/vue)
 
 ## Additional topics
