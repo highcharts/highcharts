@@ -211,7 +211,7 @@ class DumbbellSeries extends AreaRangeSeries {
      */
     public drawConnector(point: (DumbbellPoint|LollipopPoint)): void {
         const { chart } = this,
-            animationLimit = this.options.animationLimit ?? 250,
+            animationLimit = this.options.animationLimit ?? 1000,
             verb = point.connector && chart.pointCount() < animationLimit ?
                 'animate' : 'attr';
 

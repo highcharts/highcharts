@@ -962,7 +962,7 @@ class TreemapSeries extends ScatterSeries {
             shadow = styledMode ? {} : options.shadow,
             {
                 allowTraversingTree,
-                animationLimit = 250,
+                animationLimit = 1000,
                 borderRadius
             } = options,
             withinAnimationLimit = chart.pointCount() < animationLimit;

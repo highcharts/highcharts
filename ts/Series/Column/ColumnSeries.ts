@@ -777,7 +777,7 @@ class ColumnSeries extends Series {
             nullInteraction = options.nullInteraction,
             { styledMode, renderer } = chart,
             allowAnimation = chart.pointCount() <
-                (options.animationLimit || 250);
+                (options.animationLimit || 1000);
         let shapeArgs;
 
         // Draw the columns
