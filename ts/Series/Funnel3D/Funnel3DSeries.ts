@@ -149,10 +149,7 @@ class Funnel3DSeries extends ColumnSeries {
         }
 
         point.dlBox = dlBox;
-        ColumnSeries.prototype.alignDataLabel.apply(
-            series,
-            arguments
-        );
+        super.alignDataLabel.apply(series, arguments);
     }
 
     /**
@@ -160,7 +157,7 @@ class Funnel3DSeries extends ColumnSeries {
      * @internal
      */
     public bindAxes(): void {
-        Series.prototype.bindAxes.apply(this, arguments);
+        super.bindAxes.apply(this, arguments);
 
         extend(this.xAxis.options, {
             gridLineWidth: 0,
