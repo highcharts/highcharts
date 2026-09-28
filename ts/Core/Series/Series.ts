@@ -2199,7 +2199,8 @@ class Series {
             dataTable,
             'afterSetColumns',
             (e: ColumnEvent): void => {
-                this.setData(e.target);
+                this.setData(e.target, false);
+                queueRedraw();
             }
         ));
 
