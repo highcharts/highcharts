@@ -1443,6 +1443,8 @@ const defaultOptions: DefaultOptions = {
          *         Legend with vertical scrollable extension
          * @sample highcharts/legend/scrollable-horizontal/
          *         Legend with horizontal scrollable extension
+         * @sample highcharts/legend/navigation-horizontal-plugin/
+         *         Legend with horizontal navigation extension
          *
          */
         navigation: {
