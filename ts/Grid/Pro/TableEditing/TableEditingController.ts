@@ -55,6 +55,9 @@ interface DataProviderWithRowIndexMapping extends DataTableProvider {
     getOriginalRowIndexFromLocal(
         localRowIndex: number
     ): Promise<number | undefined>;
+    getLocalRowIndexFromOriginal(
+        originalRowIndex: number
+    ): Promise<number | undefined>;
 }
 
 /**
@@ -325,14 +328,26 @@ class TableEditingController {
             return;
         }
 
+        const insertIndex = rowIndexes.original + offset;
+
         table.setRows(
             [this.getEmptyRow(table)],
-            rowIndexes.original + offset,
+            insertIndex,
             true,
             { fromGrid: true }
         );
         await this.updateRowsFromTable(table);
-        this.focusResult(rowIndexes.local + offset, context.columnId);
+
+        // Sorting and filtering decide where the row ends up, or whether it
+        // shows at all, so ask the provider instead of counting on the offset.
+        const provider = this.grid.dataProvider;
+
+        this.focusResult(
+            hasRowIndexMapping(provider) ?
+                await provider.getLocalRowIndexFromOriginal(insertIndex) :
+                insertIndex,
+            context.columnId
+        );
     }
 
     private async addColumn(
@@ -427,11 +442,12 @@ class TableEditingController {
      *
      * @param rowIndex
      * Presentation index of the row to focus, clamped to the last row.
+     * Undefined when a filter hides the row, and then nothing is focused.
      *
      * @param columnId
      * Column to focus, or the first one when it no longer exists.
      */
-    private focusResult(rowIndex: number, columnId?: string): void {
+    private focusResult(rowIndex: number | undefined, columnId?: string): void {
         const viewport = this.grid.viewport;
 
         if (!viewport) {
@@ -444,6 +460,10 @@ class TableEditingController {
             this.grid.contentWrapper?.querySelector<HTMLElement>(
                 '.' + emptyStateButtonClassName
             )?.focus();
+            return;
+        }
+
+        if (rowIndex === void 0) {
             return;
         }
 
@@ -600,13 +620,15 @@ class TableEditingController {
 function hasRowIndexMapping(
     provider: unknown
 ): provider is DataProviderWithRowIndexMapping {
+    const candidate = provider as {
+        getOriginalRowIndexFromLocal?: unknown;
+        getLocalRowIndexFromOriginal?: unknown;
+    } | undefined;
+
     return !!(
-        provider &&
-        typeof (
-            provider as {
-                getOriginalRowIndexFromLocal?: unknown;
-            }
-        ).getOriginalRowIndexFromLocal === 'function'
+        candidate &&
+        typeof candidate.getOriginalRowIndexFromLocal === 'function' &&
+        typeof candidate.getLocalRowIndexFromOriginal === 'function'
     );
 }
 
