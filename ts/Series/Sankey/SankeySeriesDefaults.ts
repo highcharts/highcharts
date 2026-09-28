@@ -41,6 +41,8 @@ import type SankeySeries from './SankeySeries';
  *         Inverted sankey diagram
  * @sample highcharts/plotoptions/sankey-outgoing
  *         Sankey diagram with outgoing links
+ * @sample highcharts/series-sankey/circular-dependencies/
+ *         Sankey diagram with circular and self-referencing links
  *
  * @extends      plotOptions.column
  * @since        6.0.0
@@ -67,7 +69,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Higher numbers makes the links in a sankey diagram or dependency
      * wheel render more curved. A `curveFactor` of 0 makes the lines
-     * straight.
+     * straight. It also sets the turn radius of the bands wrapping around
+     * a circular layout; a self-link's loop turns on the node width
+     * instead.
      *
      * @private
      */
@@ -263,7 +267,8 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     /**
      * Determines which side of the chart the nodes are to be aligned to. When
      * the chart is inverted, `top` aligns to the left and `bottom` to the
-     * right.
+     * right. With circular links, the nodes align within the space those
+     * links leave.
      *
      * @sample highcharts/plotoptions/sankey-nodealignment
      *         Node alignment demonstrated
