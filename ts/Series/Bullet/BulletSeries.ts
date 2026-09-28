@@ -155,7 +155,7 @@ class BulletSeries extends ColumnSeries {
                 if (targetGraphic) {
                     // Update
                     targetGraphic[
-                        chart.pointCount < animationLimit ?
+                        chart.pointCount() < animationLimit ?
                             'animate' :
                             'attr'
                     ](targetShapeArgs);

@@ -960,10 +960,12 @@ class TreemapSeries extends ScatterSeries {
             styledMode = chart.styledMode,
             options = series.options,
             shadow = styledMode ? {} : options.shadow,
-            borderRadius = options.borderRadius,
-            withinAnimationLimit =
-                chart.pointCount < (options.animationLimit as any),
-            allowTraversingTree = options.allowTraversingTree;
+            {
+                allowTraversingTree,
+                animationLimit = 250,
+                borderRadius
+            } = options,
+            withinAnimationLimit = chart.pointCount() < animationLimit;
 
         for (const point of points) {
             const animatableAttribs: SVGAttributes = {},

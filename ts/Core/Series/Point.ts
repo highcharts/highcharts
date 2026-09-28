@@ -143,8 +143,6 @@ class Point {
 
         this.dataLabelOnNull ??= series.options.nullInteraction;
 
-        series.chart.pointCount++;
-
         // Set point properties for convenient access in tooltip and data labels
         this.category = series.xAxis?.categories?.[this.x] ?? this.x;
         this.key = this.name ?? this.category;
@@ -773,8 +771,6 @@ class Point {
             } else {
                 destroyPoint();
             }
-
-            chart.pointCount--;
         }
 
         this.condemned = true;

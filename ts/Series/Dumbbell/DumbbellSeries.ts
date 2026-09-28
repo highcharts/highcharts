@@ -210,18 +210,18 @@ class DumbbellSeries extends AreaRangeSeries {
      *        The point to inspect.
      */
     public drawConnector(point: (DumbbellPoint|LollipopPoint)): void {
-        const series = this,
-            animationLimit = (series.options.animationLimit ?? 250),
-            verb = point.connector && series.chart.pointCount < animationLimit ?
+        const { chart } = this,
+            animationLimit = this.options.animationLimit ?? 250,
+            verb = point.connector && chart.pointCount() < animationLimit ?
                 'animate' : 'attr';
 
         if (!point.connector) {
-            point.connector = series.chart.renderer.path()
+            point.connector = chart.renderer.path()
                 .addClass('highcharts-lollipop-stem')
                 .attr({
                     zIndex: -1
                 })
-                .add(series.group);
+                .add(this.group);
         }
 
         point.connector[verb](this.getConnectorAttribs(point));
