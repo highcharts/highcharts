@@ -34,9 +34,16 @@ import type {
 import type { DataTableValue } from '../../../Data/DataTableOptions';
 import type { IndividualColumnOptions } from '../../Core/Options';
 
+import Globals from '../../Core/Globals.js';
 import {
     hasDataTableProvider
 } from '../../Core/Data/DataProvider.js';
+
+/**
+ * Class name of the button offered when the table has no columns or no rows.
+ */
+export const emptyStateButtonClassName =
+    Globals.classNamePrefix + 'empty-state-button';
 
 /* *
  *
@@ -240,14 +247,17 @@ class TableEditingController {
         context: CellContextMenuContext
     ): Promise<void> {
         const table = this.getDataTable();
-        const rowIndex = await this.getOriginalRowIndex(context.rowId);
+        const rowIndexes = await this.getRowIndexes(context.rowId);
 
-        if (!table || rowIndex === void 0) {
+        if (!table || !rowIndexes) {
             return;
         }
 
-        table.deleteRows(rowIndex, 1, { fromGrid: true });
+        table.deleteRows(rowIndexes.original, 1, { fromGrid: true });
         await this.updateRowsFromTable(table);
+
+        // The row that moved up into the deleted one's place.
+        this.focusResult(rowIndexes.local, context.columnId);
     }
 
     /**
@@ -290,8 +300,18 @@ class TableEditingController {
             return;
         }
 
+        const columnIds = table.getColumnIds();
+        const deletedIndex = columnIds.indexOf(sourceColumnId);
+        const rowIndexes = await this.getRowIndexes(context.rowId);
+
         table.deleteColumns([sourceColumnId], { fromGrid: true });
         await this.updateColumnsFromTable(table);
+
+        // The column that took the deleted one's place, or its predecessor.
+        this.focusResult(
+            rowIndexes?.local || 0,
+            columnIds[deletedIndex + 1] || columnIds[deletedIndex - 1]
+        );
     }
 
     private async addRow(
@@ -299,19 +319,20 @@ class TableEditingController {
         offset: 0 | 1
     ): Promise<void> {
         const table = this.getDataTable();
-        const rowIndex = await this.getOriginalRowIndex(context.rowId);
+        const rowIndexes = await this.getRowIndexes(context.rowId);
 
-        if (!table || rowIndex === void 0) {
+        if (!table || !rowIndexes) {
             return;
         }
 
         table.setRows(
             [this.getEmptyRow(table)],
-            rowIndex + offset,
+            rowIndexes.original + offset,
             true,
             { fromGrid: true }
         );
         await this.updateRowsFromTable(table);
+        this.focusResult(rowIndexes.local + offset, context.columnId);
     }
 
     private async addColumn(
@@ -348,9 +369,12 @@ class TableEditingController {
             nextColumns[nextColumnId] = this.getEmptyColumn(table);
         }
 
+        const rowIndexes = await this.getRowIndexes(context.rowId);
+
         table.deleteColumns(void 0, { fromGrid: true });
         table.setColumns(nextColumns, void 0, { fromGrid: true });
         await this.updateColumnsFromTable(table);
+        this.focusResult(rowIndexes?.local || 0, nextColumnId);
     }
 
     private getDataTable(): DataTable | undefined {
@@ -368,23 +392,67 @@ class TableEditingController {
             void 0;
     }
 
-    private async getOriginalRowIndex(
+    /**
+     * Resolves a row both as the viewport lists it and as it sits in the
+     * source table. Sorting and filtering make the two differ.
+     *
+     * @param rowId
+     * Id of the row to resolve.
+     */
+    private async getRowIndexes(
         rowId: RowId | undefined
-    ): Promise<number | undefined> {
+    ): Promise<{ local: number, original: number } | undefined> {
         const provider = this.grid.dataProvider;
 
         if (!provider || rowId === void 0) {
             return;
         }
 
-        const rowIndex = await provider.getRowIndex(rowId);
-        if (rowIndex === void 0) {
+        const local = await provider.getRowIndex(rowId);
+
+        if (local === void 0) {
             return;
         }
 
-        return hasRowIndexMapping(provider) ?
-            await provider.getOriginalRowIndexFromLocal(rowIndex) :
-            rowIndex;
+        const original = hasRowIndexMapping(provider) ?
+            await provider.getOriginalRowIndexFromLocal(local) :
+            local;
+
+        return original === void 0 ? void 0 : { local, original };
+    }
+
+    /**
+     * Moves the focus to the cell the edit produced. Without it the redraw
+     * drops the focus to the document and nothing shows what changed.
+     *
+     * @param rowIndex
+     * Presentation index of the row to focus, clamped to the last row.
+     *
+     * @param columnId
+     * Column to focus, or the first one when it no longer exists.
+     */
+    private focusResult(rowIndex: number, columnId?: string): void {
+        const viewport = this.grid.viewport;
+
+        if (!viewport) {
+            return;
+        }
+
+        const lastRowIndex = viewport.rowsVirtualizer.rowCount - 1;
+
+        if (lastRowIndex < 0) {
+            this.grid.contentWrapper?.querySelector<HTMLElement>(
+                '.' + emptyStateButtonClassName
+            )?.focus();
+            return;
+        }
+
+        viewport.focusCellByRowIndex(
+            Math.min(rowIndex, lastRowIndex),
+            Math.max(viewport.columns.findIndex(
+                (column): boolean => column.id === columnId
+            ), 0)
+        );
     }
 
     private getNewColumnId(table: DataTable): string {

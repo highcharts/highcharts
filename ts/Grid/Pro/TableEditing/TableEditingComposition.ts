@@ -34,6 +34,7 @@ import {
     registerBuiltInGroup
 } from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import TableEditingController, {
+    emptyStateButtonClassName,
     type TableEditingOptions
 } from './TableEditingController.js';
 import {
@@ -44,7 +45,6 @@ import {
 
 const { makeHTMLElement, joinClassNames } = GridUtils;
 
-const emptyStateClassName = Globals.classNamePrefix + 'empty-state-button';
 const emptyStateRowClassName = Globals.classNamePrefix + 'empty-state-row';
 
 /* *
@@ -280,7 +280,7 @@ function renderEmptyStateButton(this: Grid): void {
     const button = makeHTMLElement('button', {
         className: joinClassNames(
             Globals.getClassName('button'),
-            emptyStateClassName
+            emptyStateButtonClassName
         )
     });
 
@@ -303,7 +303,7 @@ function renderEmptyStateButton(this: Grid): void {
             (
                 grid.viewport?.getRenderedRows()[0]?.cells[0]?.htmlElement ||
                 grid.contentWrapper?.querySelector<HTMLElement>(
-                    '.' + emptyStateClassName
+                    '.' + emptyStateButtonClassName
                 )
             )?.focus();
         })();
