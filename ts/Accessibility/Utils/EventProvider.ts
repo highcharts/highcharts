@@ -20,11 +20,11 @@
  *
  * */
 
-import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
 import type { EventCallback } from '../../Core/Callback';
+import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
 
+import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
 import H from '../../Core/Globals.js';
-import DOMElementType from '../../Core/Renderer/DOMElementType';
 
 /* *
  *
@@ -32,14 +32,14 @@ import DOMElementType from '../../Core/Renderer/DOMElementType';
  *
  * */
 
+/** @internal */
 interface ElementsFocusEventRemovers {
     element: DOMElementType,
     remover: Function
 }
 
-/**
- * @private
- */
+
+/** @internal */
 class EventProvider {
 
     /* *
@@ -76,7 +76,8 @@ class EventProvider {
     /**
      * Add an event to an element and keep track of it for later removal.
      * Same args as Highcharts.addEvent.
-     * @private
+     *
+     * @internal
      */
     public addEvent(): Function {
         const remover = addEvent.apply(H, arguments);
@@ -89,7 +90,8 @@ class EventProvider {
 
     /**
      * Remove added event.
-     * @private
+     *
+     * @internal
      */
     public removeEvent(event: Function): void {
         const pos =
@@ -100,7 +102,8 @@ class EventProvider {
 
     /**
      * Remove all added events.
-     * @private
+     *
+     * @internal
      */
     public removeAddedEvents(): void {
         this.eventRemovers.map((e): Function => e.remover)
@@ -116,4 +119,5 @@ class EventProvider {
  *
  * */
 
+/** @internal */
 export default EventProvider;
