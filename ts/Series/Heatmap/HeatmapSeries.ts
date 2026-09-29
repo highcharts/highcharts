@@ -549,10 +549,6 @@ class HeatmapSeries extends ScatterSeries {
 
 addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
     this.isDirtyCanvas = true;
-    this.drawPoints();
-    if (this.options.enableMouseTracking) {
-        this.drawTracker(); // #23162, set tracker again after points redraw
-    }
 });
 
 /* *
