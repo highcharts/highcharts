@@ -720,7 +720,7 @@ class Point {
                 series = point.series,
                 chart = series.chart,
                 hoverPoints = chart.hoverPoints,
-                globalAnimation = point.series.chart.renderer.globalAnimation,
+                globalAnimation = chart.renderer.globalAnimation,
                 { duration } = animObject(globalAnimation);
 
             /**
@@ -762,6 +762,9 @@ class Point {
             if (point === chart.hoverPoint) {
                 point.onMouseOut();
             }
+
+            // Avoid points out of range dodging unselect (#6445)
+            delete point.options.selected;
 
             // Remove properties after animation
             if (duration && !sync && series.condemnedPoints) {
