@@ -128,7 +128,6 @@ function onRecommendMapView(
 /**
  * The series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.tiledwebmap
  *

@@ -174,7 +174,6 @@ function onSeriesAfterBindAxes(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.treemap
  *

@@ -83,7 +83,6 @@ interface LayoutModifiers {
 /**
  * The Treegraph series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.treegraph
  *

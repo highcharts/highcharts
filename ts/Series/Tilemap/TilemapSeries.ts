@@ -122,7 +122,6 @@ function onAxisAfterSetAxisTranslation(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.tilemap
  *
