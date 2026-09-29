@@ -287,5 +287,4 @@ const EulerIntegration: GraphIntegrationObject = {
     repulsiveForceFunction
 };
 
-/** @internal */
 export default EulerIntegration;

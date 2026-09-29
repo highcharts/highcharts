@@ -32,7 +32,7 @@ import type Point from '../../Core/Series/Point';
  * The QuadTree node class. Used in Networkgraph chart as a base for Barnes-Hut
  * approximation.
  *
- * @internal
+ * @private
  * @class
  * @name Highcharts.QuadTreeNode
  *

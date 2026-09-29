@@ -116,6 +116,7 @@ declare module '../../Core/Series/SeriesOptions' {
  * */
 
 /**
+ * @private
  * @class
  * @name Highcharts.seriesTypes.map
  *
@@ -1000,6 +1001,7 @@ class MapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface MapSeries extends ColorMapComposition.SeriesComposition {
     /** @internal */
     getCenter: typeof CU['getCenter'];

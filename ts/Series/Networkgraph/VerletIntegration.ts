@@ -265,5 +265,4 @@ const VerletIntegration: GraphIntegrationObject = {
     repulsiveForceFunction
 };
 
-/** @internal */
 export default VerletIntegration;

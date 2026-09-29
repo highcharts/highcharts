@@ -49,7 +49,7 @@ import {
 /**
  * Reingold-Fruchterman algorithm from
  * "Graph Drawing by Force-directed Placement" paper.
- * @internal
+ * @private
  */
 class ReingoldFruchtermanLayout {
 

@@ -57,6 +57,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
+ * @private
  * @class
  * @name Highcharts.seriesTypes.organization
  *

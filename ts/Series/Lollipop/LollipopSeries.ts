@@ -59,6 +59,7 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * Lollipop series type
  *
+ * @private
  * @class
  * @name Highcharts.seriesTypes.lollipop
  *
@@ -174,6 +175,7 @@ extend(LollipopSeries.prototype, {
  *
  * */
 
+/** @private */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         lollipop: typeof LollipopSeries;
