@@ -39,7 +39,6 @@ const {
  *
  * */
 
-/** @internal */
 class GaugePoint extends Point {
 
     /* *
@@ -80,5 +79,4 @@ class GaugePoint extends Point {
  *
  * */
 
-/** @internal */
 export default GaugePoint;

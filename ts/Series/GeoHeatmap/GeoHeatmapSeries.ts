@@ -93,7 +93,6 @@ function scaledPointPos(
 /**
  * The Geo Heatmap series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.geoheatmap
  *
@@ -602,7 +601,6 @@ addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
  *
  * */
 
-/** @internal */
 interface GeoHeatmapSeries {
     pointClass: typeof GeoHeatmapPoint;
     pointArrayMap: Array<string>;
@@ -622,7 +620,6 @@ extend(GeoHeatmapSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         geoheatmap: typeof GeoHeatmapSeries;
@@ -636,7 +633,6 @@ SeriesRegistry.registerSeriesType('geoheatmap', GeoHeatmapSeries);
  *
  * */
 
-/** @internal */
 export default GeoHeatmapSeries;
 
 /* *

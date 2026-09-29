@@ -34,7 +34,6 @@ const {
  *
  * */
 
-/** @internal */
 class GanttPoint extends XRangePoint {
 
     /* *
@@ -145,5 +144,4 @@ class GanttPoint extends XRangePoint {
  *
  * */
 
-/** @internal */
 export default GanttPoint;

@@ -82,9 +82,8 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * The `gauge` series type
  *
- * @internal
  * @class
- * @name Highcharts.seriesTypes.map
+ * @name Highcharts.seriesTypes.gauge
  *
  * @augments Highcharts.Series
  */
@@ -375,7 +374,6 @@ class GaugeSeries extends Series {
  *
  * */
 
-/** @internal */
 interface GaugeSeries {
     angular: boolean;
     directTouch: boolean;
@@ -405,9 +403,6 @@ extend(GaugeSeries.prototype, {
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         gauge: typeof GaugeSeries;
@@ -422,7 +417,6 @@ SeriesRegistry.registerSeriesType('gauge', GaugeSeries);
  *
  * */
 
-/** @internal */
 export default GaugeSeries;
 
 /* *

@@ -62,7 +62,6 @@ declare module '../../Core/Series/PointBase' {
  *
  * */
 
-/** @internal */
 class GeoHeatmapPoint extends MapPoint {
 
     /* *
@@ -134,5 +133,4 @@ class GeoHeatmapPoint extends MapPoint {
  *
  * */
 
-/** @internal */
 export default GeoHeatmapPoint;

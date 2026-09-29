@@ -47,7 +47,6 @@ import { extend, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.gantt
  *
@@ -253,7 +252,6 @@ extend(GanttSeries.prototype, { // Props - series member overrides
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         gantt: typeof GanttSeries;
@@ -268,5 +266,4 @@ SeriesRegistry.registerSeriesType('gantt', GanttSeries);
  *
  * */
 
-/** @internal */
 export default GanttSeries;
