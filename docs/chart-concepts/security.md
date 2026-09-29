@@ -1,3 +1,10 @@
+---
+description: >-
+  Understand how Highcharts filters HTML in chart options, the limits of that
+  protection for callbacks and older versions, and how allow lists and Trusted
+  Types relate to chart security.
+---
+
 Highcharts Security
 ===
 

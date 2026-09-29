@@ -1,3 +1,10 @@
+---
+description: >-
+  Apply a provided Highcharts theme or create a custom options object with
+  Highcharts.setOptions. Follow an example combining light and dark palettes
+  with chart backgrounds, title styles, and axis colors.
+---
+
 Themes
 ======
 

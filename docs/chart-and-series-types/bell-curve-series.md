@@ -1,3 +1,11 @@
+---
+description: >-
+  Create a bell curve from a one-dimensional base series, choose the number
+  and spacing of intervals, and understand when the normal-distribution
+  assumption fits the data. The article includes the required module and
+  series configuration.
+---
+
 Bell curve
 ===
 

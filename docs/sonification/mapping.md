@@ -1,3 +1,10 @@
+---
+description: >-
+  Set fixed sound parameters or map pitch, volume, pan, and duration to data
+  properties, with optional value ranges. The article offers guidance on
+  mapping choices, using multiple parameters, and avoiding overload.
+---
+
 Mapping to Data
 ===
 

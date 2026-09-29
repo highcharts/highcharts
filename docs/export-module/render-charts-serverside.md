@@ -1,3 +1,10 @@
+---
+description: >-
+  Install the Node export server and use its command-line interface to create
+  chart images from configurations or SVGs, with examples of converting one
+  chart and processing several charts in a batch.
+---
+
 Command Line Rendering
 ======================
 
