@@ -47,7 +47,6 @@ import {
  *
  * */
 
-/** @internal */
 class TimelinePoint extends LinePoint {
 
     /* *
@@ -292,5 +291,4 @@ class TimelinePoint extends LinePoint {
  *
  * */
 
-/** @internal */
 export default TimelinePoint;

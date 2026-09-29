@@ -174,7 +174,7 @@ function onSeriesAfterBindAxes(
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.treemap
  *
@@ -2006,7 +2006,6 @@ namespace TreemapSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treemap: typeof TreemapSeries;
@@ -2020,5 +2019,4 @@ SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
  *
  * */
 
-/** @internal */
 export default TreemapSeries;

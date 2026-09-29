@@ -122,7 +122,7 @@ function onAxisAfterSetAxisTranslation(
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.tilemap
  *
@@ -294,7 +294,6 @@ class TilemapSeries extends HeatmapSeries {
  *
  * */
 
-/** @internal */
 interface TilemapSeries {
     /** @internal */
     pointClass: typeof TilemapPoint;
@@ -318,7 +317,6 @@ extend(TilemapSeries.prototype, { // Prototype functions
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tilemap: typeof TilemapSeries;
@@ -333,7 +331,6 @@ SeriesRegistry.registerSeriesType('tilemap', TilemapSeries);
  *
  * */
 
-/** @internal */
 export default TilemapSeries;
 
 /* *

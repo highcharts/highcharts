@@ -28,7 +28,6 @@ import type TreemapNode from './TreemapNode';
  *
  * */
 
-/** @internal */
 class TreemapAlgorithmGroup {
 
     /* *
@@ -177,5 +176,4 @@ namespace TreemapAlgorithmGroup {
  *
  * */
 
-/** @internal */
 export default TreemapAlgorithmGroup;

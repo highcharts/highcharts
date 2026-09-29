@@ -62,5 +62,4 @@ namespace TreemapUtilities {
  *
  * */
 
-/** @internal */
 export default TreemapUtilities;

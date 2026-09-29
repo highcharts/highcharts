@@ -83,7 +83,7 @@ interface LayoutModifiers {
 /**
  * The Treegraph series type.
  *
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.treegraph
  *
@@ -775,7 +775,6 @@ class TreegraphSeries extends TreemapSeries {
  *
  * */
 
-/** @internal */
 interface TreegraphSeries {
     /** @internal */
     inverted?: boolean;
@@ -801,7 +800,6 @@ extend(TreegraphSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treegraph: typeof TreegraphSeries;
@@ -815,7 +813,6 @@ SeriesRegistry.registerSeriesType('treegraph', TreegraphSeries);
  *
  * */
 
-/** @internal */
 export default TreegraphSeries;
 
 /* *

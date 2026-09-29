@@ -629,5 +629,4 @@ const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> =
  *
  * */
 
-/** @internal */
 export default TilemapShapes;

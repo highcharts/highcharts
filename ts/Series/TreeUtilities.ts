@@ -420,5 +420,4 @@ const TreeUtilities = {
     updateRootId
 };
 
-/** @internal */
 export default TreeUtilities;

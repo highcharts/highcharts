@@ -40,7 +40,6 @@ const {
  *
  * */
 
-/** @internal */
 class TilemapPoint extends HeatmapPoint {
 
     /* *
@@ -85,7 +84,6 @@ class TilemapPoint extends HeatmapPoint {
  *
  * */
 
-/** @internal */
 interface TilemapPoint {
     setVisible: ColorAxisComposition.PointComposition['setVisible'];
 }
@@ -101,5 +99,4 @@ extend(TilemapPoint.prototype, {
  *
  * */
 
-/** @internal */
 export default TilemapPoint;

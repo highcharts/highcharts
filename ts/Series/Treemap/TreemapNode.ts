@@ -28,7 +28,6 @@ import type TreemapPoint from './TreemapPoint';
  *
  * */
 
-/** @internal */
 class TreemapNode {
 
     /* *
@@ -85,7 +84,6 @@ class TreemapNode {
  *
  * */
 
-/** @internal */
 interface TreemapNode {
     height: number;
     i: number;
@@ -126,5 +124,4 @@ namespace TreemapNode {
  *
  * */
 
-/** @internal */
 export default TreemapNode;
