@@ -91,7 +91,6 @@ function ownProp(obj: unknown, key: string): boolean {
 /**
  * Waterfall series type.
  *
- * @private
  */
 class WaterfallSeries extends ColumnSeries {
 

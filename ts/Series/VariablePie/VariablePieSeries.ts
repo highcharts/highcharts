@@ -60,7 +60,6 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * The variablepie series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.variablepie
  *

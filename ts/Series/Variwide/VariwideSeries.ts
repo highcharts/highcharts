@@ -48,7 +48,6 @@ import {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.variwide
  *

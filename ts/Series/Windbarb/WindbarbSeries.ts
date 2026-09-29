@@ -92,7 +92,6 @@ function registerApproximation(): void {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.windbarb
  *

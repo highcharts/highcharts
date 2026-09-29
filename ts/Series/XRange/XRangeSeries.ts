@@ -109,7 +109,6 @@ function onAxisAfterGetSeriesExtremes(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.xrange
  *

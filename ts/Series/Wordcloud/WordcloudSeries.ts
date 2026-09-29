@@ -74,7 +74,6 @@ const {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.wordcloud
  *

@@ -78,7 +78,6 @@ import {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.venn
  *

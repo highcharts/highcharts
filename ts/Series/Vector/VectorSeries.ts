@@ -47,7 +47,6 @@ import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The vector series class.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.vector
  *
