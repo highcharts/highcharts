@@ -458,7 +458,8 @@
                 shape: 'mapmarker',
                 borderColor: 'black',
                 borderWidth: 1,
-                backgroundColor: 'auto'
+                backgroundColor: 'auto',
+                padding: 5
             },
             accessibility: {
                 point: {

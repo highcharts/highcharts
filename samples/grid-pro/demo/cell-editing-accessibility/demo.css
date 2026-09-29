@@ -1,0 +1,162 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+    --anchor-color: #007bff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+        --anchor-color: #8ec3fc;
+    }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
+    --anchor-color: #8ec3fc;
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.highcharts-description a {
+    color: var(--anchor-color);
+}
+
+.demo,
+.highcharts-light .demo {
+    padding: 8px 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #121212;
+}
+
+.editor h2 {
+    margin: 0 0 7px;
+}
+
+.editor .instructions {
+    font-size: 0.9em;
+    margin-bottom: 7px;
+}
+
+.editor,
+.highcharts-light .editor {
+    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.editor details,
+.highcharts-light .editor details {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
+    margin-top: 6px;
+}
+
+.editor summary {
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.editor .option-group {
+    margin-left: 20px;
+    margin-top: 6px;
+}
+
+.editor .option {
+    margin-bottom: 6px;
+}
+
+.option label {
+    display: inline-block;
+}
+
+#changelog {
+    max-height: 240px;
+    overflow-y: auto;
+    min-height: 48px;
+}
+
+#changelog:empty::before {
+    content: "Edits will be listed here.";
+    color: #777;
+    font-style: italic;
+}
+
+#changelog div + div {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #e6e6e6;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .demo {
+        color: #fff;
+    }
+
+    .editor,
+    .editor details {
+        border-color: #525252;
+    }
+
+    #changelog:empty::before {
+        color: #aaa;
+    }
+
+    #changelog div + div {
+        border-top-color: #525252;
+    }
+}
+
+.highcharts-dark .demo {
+    color: #fff;
+}
+
+.highcharts-dark .editor,
+.highcharts-dark .editor details {
+    border-color: #525252;
+}
+
+.highcharts-dark #changelog:empty::before {
+    color: #aaa;
+}
+
+.highcharts-dark #changelog div + div {
+    border-top-color: #525252;
+}

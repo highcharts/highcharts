@@ -217,6 +217,7 @@ QUnit.test('Drilldown methods', function (assert) {
         '#15771: Point should be at correct index in ddPoints'
     );
 
+    chart.xAxis[0].update({ min: void 0 });
     chart.series[0].update({
         point: {
             events: {

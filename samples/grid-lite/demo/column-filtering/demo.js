@@ -1,29 +1,29 @@
 const grid = Grid.grid('container', {
     data: {
         columns: {
-            id: [
+            ID: [
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
                 19, 20
             ],
-            active: [
+            Active: [
                 true, null, false, true, true, false, null, true, false, true,
                 null, false, true, true, false, null, true, false, true, false
             ],
-            product: [
+            Product: [
                 'Apples', 'Pears', 'Plums', 'Apricots', 'Bananas', 'Oranges',
                 'Grapes', 'Strawberries', 'Blueberries', 'Mangoes',
                 'Pineapples', 'Kiwis', 'Peaches', 'Cherries', 'Watermelons',
                 'Cantaloupe', 'Raspberries', null, 'Lemons', 'Limes'
             ],
-            weight: [
+            Weight: [
                 100, 40, 5, 200, 120, null, 3, 25, 15, 350, 1200, 8, 150, 20,
                 5000, 2000, 12, 18, 140, 110
             ],
-            price: [
+            Price: [
                 1.5, 2.53, 5, 4.5, 0.89, 3.20, 6.75, 8.99, 12.50, 2.99, 4.25,
                 1.89, 3.75, 7.20, 8.50, null, 9.25, 10.75, 2.15, 1.95
             ],
-            url: [
+            URL: [
                 'http://path1.to', 'http://path2.to', 'http://path2.to',
                 'http://path3.to', 'http://path4.to', 'http://path5.to',
                 null, 'http://path7.to', 'http://path8.to',
@@ -32,7 +32,7 @@ const grid = Grid.grid('container', {
                 'http://path15.to', 'http://path16.to', 'http://path17.to',
                 'http://path18.to', 'http://path19.to'
             ],
-            icon: [
+            Icon: [
                 'Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL',
                 'Bananas URL', 'Oranges URL', 'Grapes URL', 'Strawberries URL',
                 null, 'Mangoes URL', 'Pineapples URL', 'Kiwis URL',
@@ -40,7 +40,7 @@ const grid = Grid.grid('container', {
                 'Cantaloupe URL', 'Raspberries URL', 'Blackberries URL',
                 'Lemons URL', 'Limes URL'
             ],
-            date: [
+            Date: [
                 Date.UTC(2025, 9, 1), Date.UTC(2025, 9, 2),
                 Date.UTC(2025, 9, 3), Date.UTC(2025, 9, 4),
                 Date.UTC(2025, 9, 5), Date.UTC(2025, 9, 6),
@@ -60,19 +60,27 @@ const grid = Grid.grid('container', {
         }
     },
     columns: [{
-        id: 'id',
+        id: 'ID',
         width: 60
     }, {
-        id: 'date',
+        id: 'Date',
         dataType: 'datetime',
         cells: {
             format: '{value:%Y-%m-%d}'
+        },
+        filtering: {
+            rule: {
+                operator: 'greaterThan',
+                value: Date.UTC(2025, 8, 30)
+            }
         }
     }, {
-        id: 'weight',
+        id: 'Weight',
         filtering: {
-            condition: 'greaterThan',
-            value: 100
+            rule: {
+                operator: 'greaterThan',
+                value: 100
+            }
         }
     }]
 });

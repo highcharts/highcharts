@@ -1,0 +1,63 @@
+@import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+:root,
+.highcharts-light {
+    --mstar-text-strong: #1a1918;
+    --mstar-text-muted: #64625f;
+    --mstar-line: #dad9d8;
+    --mstar-surface: #fff;
+    --mstar-accent: #2364b9;
+    --mstar-accent-soft: rgba(35, 100, 185, 0.45);
+    --mstar-accent-select: rgba(35, 100, 185, 0.12);
+    --mstar-band: #a9c0db;
+    --mstar-hover: rgba(100, 98, 95, 0.08);
+    --mstar-mask: rgba(100, 98, 95, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --mstar-text-strong: #f3f2f0;
+        --mstar-text-muted: #a8a6a3;
+        --mstar-line: #3a3938;
+        --mstar-surface: #1f1f1f;
+        --mstar-accent: #5b9bff;
+        --mstar-accent-soft: rgba(91, 155, 255, 0.45);
+        --mstar-accent-select: rgba(91, 155, 255, 0.18);
+        --mstar-band: #3d6ea8;
+        --mstar-hover: rgba(255, 255, 255, 0.08);
+        --mstar-mask: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.highcharts-dark {
+    --mstar-text-strong: #f3f2f0;
+    --mstar-text-muted: #a8a6a3;
+    --mstar-line: #3a3938;
+    --mstar-surface: #1f1f1f;
+    --mstar-accent: #5b9bff;
+    --mstar-accent-soft: rgba(91, 155, 255, 0.45);
+    --mstar-accent-select: rgba(91, 155, 255, 0.18);
+    --mstar-band: #3d6ea8;
+    --mstar-hover: rgba(255, 255, 255, 0.08);
+    --mstar-mask: rgba(255, 255, 255, 0.1);
+}
+
+#dashboard-col-stock,
+#dashboard-col-grid {
+    height: 600px;
+}
+
+.highcharts-dashboards-component-title {
+    padding: 10px;
+    margin: 0;
+    background-color: var(--highcharts-neutral-color-5);
+    color: var(--highcharts-neutral-color-100);
+    border: solid 1px var(--highcharts-neutral-color-20);
+    border-bottom: none;
+}
+
+.highcharts-description {
+    padding: 0 10px;
+}

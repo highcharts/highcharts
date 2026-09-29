@@ -131,6 +131,10 @@ const isDateTimeFormatOptions = (
  *
  * @param {Highcharts.TimeOptions} [options] Time options as defined in
  * [chart.options.time](/highcharts/time).
+ *
+ * @param {Highcharts.LangOptions} [lang]
+ * Language options. When `options.locale` is not set, `lang.locale` is used as
+ * the locale fallback for locale-aware date formatting.
  */
 class TimeBase {
 
@@ -146,8 +150,8 @@ class TimeBase {
         options?: TimeBase.TimeOptions,
         lang?: LangOptionsCore
     ) {
-        this.update(options);
         this.lang = lang;
+        this.update(options);
     }
 
     /* *
@@ -331,7 +335,11 @@ class TimeBase {
     public dateTimeFormat(
         options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale: string|Array<string>|undefined = this.options.locale || pageLang
+        locale: string|Array<string>|undefined = (
+            this.options.locale ||
+            this.lang?.locale ||
+            pageLang
+        )
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
         if (isString(options)) {
@@ -443,19 +451,19 @@ class TimeBase {
         );
 
         if (this.timezone !== 'UTC') {
-            const offset = this.getTimezoneOffset(d);
+            const offset = this.getTimezoneOffset(d),
+                localHours = (hours - offset / timeUnits.hour + 24) % 24;
             d += offset;
 
-            // Adjustments close to DST transitions
             if (
-                // Optimize for speed by limiting the number of calls to
-                // `getTimezoneOffset`. According to
+                // Limit the number of calls to `getTimezoneOffset` to months
+                // where DST changes may occur. According to
                 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
                 // DST change may only occur in these months.
                 [2, 3, 8, 9, 10, 11].indexOf(month) !== -1 &&
 
-                // DST transitions occur only in the night-time
-                (hours < 5 || hours > 20)
+                // DST changes only occur at night (#24420)
+                (localHours < 5 || localHours > 20)
             ) {
                 const newOffset = this.getTimezoneOffset(d);
 

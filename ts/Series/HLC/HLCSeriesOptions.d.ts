@@ -45,17 +45,14 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.hlc
  *
- * @excluding borderColor, borderRadius, borderWidth, crisp, stacking,
- *            stack
- *
- * @excluding dataParser, dataURL
+ * @excluding borderColor, borderRadius, borderWidth, crisp, stacking, stack
  *
  * @product highstock
  */
 export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     /**
-     * @default close
+     * @default 'close'
      */
     colorKey?: string;
 
@@ -134,6 +131,20 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
      *
      * @apioption plotOptions.hlc.dataGrouping.groupPixelWidth
      */
+
+    /**
+     * What type of legend symbol to render for this series. The default
+     * `hlc` shows two stems, each with a tick on the right representing the
+     * closing value.
+     *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
+     *
+     * @default hlc
+     *
+     * @product highstock
+     */
+    legendSymbol?: string;
 
     /**
      * The pixel width of the line/border. Defaults to `1`.

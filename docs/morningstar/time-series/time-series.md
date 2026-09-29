@@ -1,8 +1,8 @@
 # Time Series
 
-Time Series gives data on performance for securities. This data can for instance
-be used for visualization in a chart, or to calculate returns for a given time
-period.
+Time Series gives data on performance for securities. This data can for
+instance be used for visualization in a chart, or to calculate returns for a
+given time period.
 
 ## Capabilities
 
@@ -12,10 +12,8 @@ period.
 - [OHLCV](https://www.highcharts.com/docs/morningstar/time-series/ohlcv)
 - [Price](https://www.highcharts.com/docs/morningstar/time-series/price)
 - [Rating](https://www.highcharts.com/docs/morningstar/time-series/rating)
-- [Regulatory News Announcements](https://www.highcharts.com/docs/morningstar/regulatory-news-announcements)
 - [Return](https://www.highcharts.com/docs/morningstar/time-series/return)
 - [Rolling Return](https://www.highcharts.com/docs/morningstar/time-series/rolling-return)
-
 
 For more details, see [Morningstar’s Time Series API].
 
@@ -25,12 +23,12 @@ Use the `TimeSeriesConnector` to load time series data.
 
 In dashboards, this connector is called `MorningstarTimeSeries`
 
-You can fetch time series data of various kinds. Specify the securities and type
-to retrieve in the options along with a postman environment file for
-authentication, and other parameters such as `startDate`, `endDate`
-or `currencyId`.
+You can fetch time series data of various kinds. Specify the securities and
+type to retrieve in the options along with a postman environment file for
+authentication, and other parameters such as `startDate`, `endDate` or
+`currencyId`.
 
-### Time Series with Morningstar standalone for Highcharts:
+### Time Series with Morningstar standalone for Highcharts
 
 ```js
 const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
@@ -61,7 +59,7 @@ Highcharts.stockChart('container', {
 });
 ```
 
-### Time Series with Morningstar connectors for Dashboards:
+### Time Series with Morningstar connectors for Dashboards
 
 ```js
 Dashboards.board('container', {
@@ -116,6 +114,11 @@ Dashboards.board('container', {
 You will find examples of how to use the time series connector in our demos.
 
 - **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-TimeSeriesConnector to retrieve Dividend time series.
+`TimeSeriesConnector` to retrieve `Dividend` time series.
 
-[Morningstar’s Time Series API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/time-series/overview
+## Morningstar API Reference
+
+For more details, see [Morningstar’s Time Series API].
+
+<!-- Links -->
+[Morningstar’s Time Series API]: https://developer.morningstar.com/direct-web-services/documentation/enterprise-component-apis/time-series/about

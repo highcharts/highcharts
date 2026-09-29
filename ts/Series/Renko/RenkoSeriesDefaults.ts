@@ -18,7 +18,6 @@
  *
  * */
 
-import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type RenkoSeriesOptions from './RenkoSeriesOptions';
 
 /* *
@@ -69,7 +68,7 @@ const RenkoDefaults: RenkoSeriesOptions = {
     stickyTracking: true,
     borderRadius: {
         where: 'all'
-    } as BorderRadiusOptionsObject,
+    },
     tooltip: {
         pointFormat:
             '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low:.2f} - {point.y:.2f}</b><br/>'
@@ -91,8 +90,7 @@ const RenkoDefaults: RenkoSeriesOptions = {
  * @extends   series,plotOptions.renko
  * @product   highstock
  * @excluding boost, compare, compareStart, connectNulls, cumulative,
- * cumulativeStart, dataGrouping, dataParser, dataSorting, dataURL,
- * dragDrop, marker, step
+ * cumulativeStart, dataGrouping, dataSorting, dragDrop, marker, step
  * @requires  modules/renko
  * @apioption series.renko
  */

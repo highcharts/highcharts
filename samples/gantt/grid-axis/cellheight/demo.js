@@ -5,9 +5,9 @@ Highcharts.ganttChart('container', {
     xAxis: [{
         min: '2014-11-17',
         max: '2014-11-30',
-        // Set the first axis to have a height of 30px
+        // Set the first axis to have a height of 36px
         grid: {
-            cellHeight: 30
+            cellHeight: 36
         }
     }, {
         // Set the second axis to have a height of 60px

@@ -44,6 +44,8 @@ import type ContourSeriesOptions from './ContourSeriesOptions';
  *               softThreshold, stacking, step, threshold
  *
  * @product      highcharts highmaps
+ * @requires     modules/coloraxis
+ * @requires     modules/contour
  * @optionparent plotOptions.contour
  */
 const ContourSeriesDefaults: ContourSeriesOptions = {
@@ -64,6 +66,14 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      * @type      {boolean}
      * @default   false
      * @apioption plotOptions.contour.smoothColoring
+     */
+
+    /**
+     * The color of the contour lines.
+     *
+     * @type      {Highcharts.ColorType}
+     * @default   #000000
+     * @apioption plotOptions.contour.lineColor
      */
 
     /**
@@ -165,19 +175,19 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
  * @sample highcharts/demo/contour-mountain/
  *         Simple contour
  *
- * @extends      series,plotOptions.contour
- * @excluding    cropThreshold, dataParser, dataURL, dragDrop ,pointRange,
- *               stack, allowPointSelect, boostBlending, boostThreshold, color,
- *               colorIndex, connectEnds, connectNulls, crisp, dashStyle,
- *               inactiveOtherPoints, jitter, linecap, negativeColor,
- *               pointInterval, pointStart, pointIntervalUnit, lineWidth,
- *               onPoint, pointPlacement, shadow, stacking, step, threshold,
- *               zoneAxis, zones, onPoint, grouping, groupPadding,
- *               groupZPadding
+ * @extends   series,plotOptions.contour
+ * @excluding allowPointSelect, boostBlending, boostThreshold, color,
+ *            colorIndex, connectEnds, connectNulls, crisp, cropThreshold,
+ *            dashStyle, dragDrop, grouping, groupPadding, groupZPadding,
+ *            inactiveOtherPoints, jitter, linecap, lineWidth, negativeColor,
+ *            onPoint, pointInterval, pointIntervalUnit, pointPlacement,
+ *            pointRange, pointStart, shadow, stack, stacking, step, threshold,
+ *            zoneAxis, zones
  *
- *
- * @product      highcharts highmaps
- * @apioption    series.contour
+ * @product   highcharts highmaps
+ * @requires  modules/coloraxis
+ * @requires  modules/contour
+ * @apioption series.contour
  */
 
 /**

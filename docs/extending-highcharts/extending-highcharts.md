@@ -15,12 +15,16 @@ Since version 2.3, Highcharts is built in a modular way with extensions in mind.
 Highcharts plugins should be wrapped in an anonymous self-executing function in order to prevent variable pollution to the global scope. A good practice is to wrap plugins like this:
 
 ```js
-(function (H) {
-    const { Chart, Series } = H; // shortcuts to Highcharts classes
+(({ Chart, Series }) => { // Destructure Highcharts properties
 
-    let localVar; // local variable
+    const myVariable1 = 'one',
+        myVariable2 = 'two';
+
+    // Extend something
+    Series.prototype.someProperty = 'some-value';
 
     doSomething();
+
 }(Highcharts));
 ```
 
@@ -123,7 +127,7 @@ H.wrap(H.Tooltip.prototype, 'refresh', function (proceed, points) {
         var series = point.series,
             chart = series.chart,
             pointX = point.plotX + series.xAxis.pos,
-            pointY = H.pick(point.plotClose, point.plotY) + series.yAxis.pos;
+            pointY = (point.plotClose ?? point.plotY) + series.yAxis.pos;
 
         // If trackball functionality does not already exist
         if (!series.options.marker) {

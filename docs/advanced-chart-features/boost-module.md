@@ -34,6 +34,12 @@ The main boost configuration is set in the `boost` property in the chart options
 
 ```js
 {
+    dataTable: {
+        columns: {
+            x: new Uint8Array([0, 1, 3, 4]),
+            y: new Uint8Array([6, 4, 7, 3])
+        }
+    },
     boost: {
         useGPUTranslations: true,
         // Chart-level boost when there are more than 5 series in the chart
@@ -48,9 +54,8 @@ The main boost configuration is set in the `boost` property in the chart options
     },
 
     series: [{
-        boostThreshold: 1,  // Boost when there are more than 1
-                            // point in the series.
-        data: [ [0, 1], [1, 2], [2, 3] ]
+        // Boost when there is more than 1 point in the series
+        boostThreshold: 1
     }]
 };
 ```
@@ -59,8 +64,12 @@ _Configuration for a boosted line chart._
 
 Configuration Data Options
 --------------------------
+We recommend configuring data in a
+[DataTable](https://api.highcharts.com/highcharts/dataTable) with typed arrays
+as columns. This performs up to 20% faster than `series.data` options in a chart
+with 500k data points.
 
-In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
+Should you choose to use `series.data` instead, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
 
 Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode will not kick in.
 

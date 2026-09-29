@@ -1,0 +1,15 @@
+* {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+#container {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 400px;
+}
+
+#grid-container {
+    max-width: 800px;
+    margin: 0 auto;
+    height: 300px;
+}

@@ -7,19 +7,6 @@
     margin: 0 auto;
 }
 
-.outer-pane {
-    fill: #efefef;
-}
-
-.middle-pane {
-    stroke-width: 1px;
-    stroke: #aaa;
-}
-
-.inner-pane {
-    fill: #ddd;
-}
-
 .green-band {
     fill: #55bf3b;
     fill-opacity: 1;

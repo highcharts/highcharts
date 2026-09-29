@@ -1,5 +1,6 @@
-function getData(n) {
-    const arr = [];
+function getDataTableOptions(n) {
+    const xColumn = new Float64Array(n),
+        yColumn = new Float64Array(n);
     let a,
         b,
         c,
@@ -19,19 +20,24 @@ function getData(n) {
         } else {
             spike = 0;
         }
-        arr.push([
-            i,
-            2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
-        ]);
+        xColumn[i] = i;
+        yColumn[i] = 2 * Math.sin(i / 100) + a + b + c + spike + Math.random();
     }
-    return arr;
+    return {
+        columns: {
+            x: xColumn,
+            y: yColumn
+        }
+    };
 }
 const n = 500000,
-    data = getData(n);
+    dataTable = getDataTableOptions(n);
 
 
 console.time('line');
 Highcharts.chart('container', {
+
+    dataTable,
 
     chart: {
         zooming: {
@@ -58,7 +64,6 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        data: data,
         lineWidth: 0.5
     }]
 

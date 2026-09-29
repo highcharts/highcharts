@@ -31,6 +31,9 @@ import type { JSONData } from '../Converters/JSONConverterOptions';
 
 /**
  * Options of the JSONConnector.
+ *
+ * @sample grid-lite/basic/data-connector-json
+ *         Grid with JSON connector
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
     /**

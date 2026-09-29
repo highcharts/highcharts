@@ -61,9 +61,9 @@ import {
     find,
     fireEvent,
     isNumber,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -598,6 +598,11 @@ namespace ExportData {
     function downloadCSV(
         this: Exporting
     ): void {
+        if (!this.chart.series.some(isExportableSeries)) {
+            error('Warning: No data to export', false, this.chart);
+            return;
+        }
+
         this.wrapLoading((): void => {
             const csv = this.getCSV(true);
 
@@ -624,6 +629,11 @@ namespace ExportData {
     function downloadXLS(
         this: Exporting
     ): void {
+        if (!this.chart.series.some(isExportableSeries)) {
+            error('Warning: No data to export', false, this.chart);
+            return;
+        }
+
         this.wrapLoading((): void => {
             const uri = 'data:application/vnd.ms-excel;base64,',
                 template =
@@ -680,15 +690,13 @@ namespace ExportData {
         let csv = '';
         const rows = this.getDataRows(),
             csvOptions = this.options?.csv,
-            decimalPoint = pick(
-                csvOptions?.decimalPoint,
+            decimalPoint = csvOptions?.decimalPoint ?? (
                 csvOptions?.itemDelimiter !== ',' && useLocalDecimalPoint ?
                     (1.1).toLocaleString()[1] :
                     '.'
             ),
             // Use ';' for direct to Excel
-            itemDelimiter = pick(
-                csvOptions?.itemDelimiter,
+            itemDelimiter = csvOptions?.itemDelimiter ?? (
                 decimalPoint === ',' ? ';' : ','
             ),
             // '\n' isn't working with the js csv data extraction
@@ -896,11 +904,7 @@ namespace ExportData {
                 mockSeries: ExportDataSeries,
                 j: number;
 
-            if (
-                series.options.includeInDataExport !== false &&
-                !series.options.isInternal &&
-                series.visible !== false // #55
-            ) {
+            if (isExportableSeries(series)) {
 
                 // Build a lookup for X axis index and the position of the first
                 // series that belongs to that X axis. Includes -1 for non-axis
@@ -949,9 +953,15 @@ namespace ExportData {
                     xAxis: series.xAxis
                 };
 
-                // Export directly from options.data because we need the
-                // uncropped data (#7913), and we need to support Boost (#7026).
-                series.options.data?.forEach(function eachData(
+                // Export raw data because we need the uncropped data (#7913),
+                // and we need to support Boost (#7026).
+                const data = new Array(series.dataTable.rowCount)
+                        .fill(void 0).map((_, i): PointOptions =>
+                            series.dataTable.getRowObject(i) as PointOptions
+                        ),
+                    xColumn = series.getColumn('x');
+
+                (data || []).forEach(function eachData(
                     options: (PointOptions | PointShortOptions),
                     pIdx: number
                 ): void {
@@ -971,9 +981,10 @@ namespace ExportData {
                         );
                     }
 
-                    series.pointClass.prototype.applyOptions.apply(
+                    series.pointClass.prototype.applyOptions.call(
                         mockPoint,
-                        [options]
+                        options,
+                        xColumn[pIdx]
                     );
 
                     const name = series.data[pIdx] && series.data[pIdx].name;
@@ -1046,16 +1057,18 @@ namespace ExportData {
                                 [prop]
                             ) as number;
                         // Allow values from nested properties (#20470)
-                        rows[key][i + j] = pick(
-                            // Y axis category if present
-                            categoryAndDatetimeMap.categoryMap[prop][val],
-                            // Datetime yAxis
-                            categoryAndDatetimeMap.dateTimeValueAxisMap[prop] ?
-                                time.dateFormat(csvOptions.dateFormat, val) :
-                                null,
-                            // Linear/log yAxis
-                            val
-                        );
+                        rows[key][i + j] =
+                            categoryAndDatetimeMap.categoryMap[prop][val] ??
+                            (
+                                categoryAndDatetimeMap
+                                    .dateTimeValueAxisMap[prop] ?
+                                    time.dateFormat(
+                                        csvOptions.dateFormat,
+                                        val
+                                    ) :
+                                    null
+                            ) ??
+                            val;
                         j++;
                     }
                 });
@@ -1115,11 +1128,10 @@ namespace ExportData {
                             row.x
                         );
                     } else if (xAxis.categories) {
-                        category = pick(
-                            xAxis.names[row.x],
-                            xAxis.categories[row.x],
-                            row.x
-                        );
+                        category =
+                            xAxis.names[row.x] ??
+                            xAxis.categories[row.x] ??
+                            row.x;
                     } else {
                         category = row.x;
                     }
@@ -1221,10 +1233,9 @@ namespace ExportData {
             chart = exporting.chart,
             options = chart.options,
             decimalPoint =
-                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
-            useMultiLevelHeaders = pick(
-                exporting.options.useMultiLevelHeaders, true
-            ),
+                useLocalDecimalPoint ? (1.1).toLocaleString()[1] : void 0,
+            useMultiLevelHeaders =
+                exporting.options.useMultiLevelHeaders ?? true,
             rows = exporting.getDataRows(useMultiLevelHeaders),
             topHeaders = useMultiLevelHeaders ? rows.shift() : null,
             subHeaders = rows.shift(),
@@ -1255,7 +1266,7 @@ namespace ExportData {
             ): AST.Node {
                 const children: Array<AST.Node> = [];
 
-                let textContent = pick(value, ''),
+                let textContent = (value ?? ''),
                     className =
                         'highcharts-text' + (classes ? ' ' + classes : '');
 
@@ -1499,6 +1510,24 @@ namespace ExportData {
     }
 
     /**
+     * Whether the series contributes columns to the exported data.
+     *
+     * @internal
+     *
+     * @requires modules/exporting
+     * @requires modules/export-data
+     */
+    function isExportableSeries(
+        series: Series
+    ): boolean {
+        return (
+            series.options.includeInDataExport !== false &&
+            !series.options.isInternal &&
+            series.visible !== false // #55
+        );
+    }
+
+    /**
      * Toggle showing data table.
      *
      * @internal
@@ -1517,7 +1546,7 @@ namespace ExportData {
         const chart = this.chart,
             // Create the div
             createContainer =
-                (show = pick(show, !this.isDataTableVisible)) &&
+                (show = (show ?? !this.isDataTableVisible)) &&
                 !this.dataTableDiv;
 
         if (createContainer) {
@@ -1787,6 +1816,11 @@ export default ExportData;
  *  API Declarations
  *
  * */
+
+/**
+ * @class
+ * @name Highcharts.Exporting
+ */
 
 /**
  * Function callback to execute while data rows are processed for exporting.

@@ -66,11 +66,13 @@ class RenkoSeries extends ColumnSeries {
     public hasDerivedData = true;
     public allowDG = false;
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
         this.renkoData = [];
     }
 
+    /** @internal */
     public setData(
         data: (PointOptions | PointShortOptions)[],
         redraw?: boolean,
@@ -80,6 +82,7 @@ class RenkoSeries extends ColumnSeries {
         super.setData(data, redraw, animation, false);
     }
 
+    /** @internal */
     public getXExtremes(xData: number[]): { min: number; max: number } {
         this.processData();
 
@@ -90,11 +93,14 @@ class RenkoSeries extends ColumnSeries {
         };
     }
 
+    /** @internal */
     public getProcessedData(): Series.ProcessedDataObject {
         const modified = this.dataTable.getModified();
         const processedXData: number[] = [];
         const processedYData: number[] = [];
         const processedLowData: number[] = [];
+        const processedColorData: (ColorType|undefined)[] = [];
+        const processedUpTrendData: (boolean|undefined)[] = [];
         const xData = this.getColumn('x', true);
         const yData = this.getColumn('y', true);
         if (!this.renkoData || this.renkoData.length > 0) {
@@ -158,13 +164,17 @@ class RenkoSeries extends ColumnSeries {
             processedXData.push(point.x);
             processedYData.push(point.y);
             processedLowData.push(point.low);
+            processedColorData.push(point.color);
+            processedUpTrendData.push(point.upTrend);
         }
 
-        this.processedData = renkoData;
+        this.hasProcessedDataTable = true;
 
         modified.setColumn('x', processedXData);
         modified.setColumn('y', processedYData);
         modified.setColumn('low', processedLowData);
+        modified.setColumn('color', processedColorData as any);
+        modified.setColumn('upTrend', processedUpTrendData);
 
         return {
             modified,
@@ -180,6 +190,7 @@ class RenkoSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: RenkoSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         RenkoSeriesDefaults
@@ -205,6 +216,7 @@ class RenkoSeries extends ColumnSeries {
 }
 
 interface RenkoSeries {
+    /** @internal */
     pointClass: typeof RenkoPoint;
 }
 

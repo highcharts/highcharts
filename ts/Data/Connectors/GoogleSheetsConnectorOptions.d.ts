@@ -33,6 +33,9 @@ import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 /**
  * Options of the GoogleSheetsConnector.
+ *
+ * @sample grid-lite/basic/data-connector-google-sheets
+ *         Grid with Google Sheets connector
  */
 export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
     /**

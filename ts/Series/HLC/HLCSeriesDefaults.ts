@@ -36,8 +36,7 @@ import type HLCSeriesOptions from './HLCSeriesOptions';
  *         HLC chart
  *
  * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, crisp, stacking,
- *               stack
+ * @excluding    borderColor, borderRadius, borderWidth, crisp, stack, stacking
  * @product      highstock
  * @optionparent plotOptions.hlc
  */
@@ -68,6 +67,20 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
      * @default   close
      * @apioption plotOptions.hlc.colorKey
      */
+
+    /**
+     * What type of legend symbol to render for this series. The default
+     * `hlc` shows two stems, each with a tick on the right representing the
+     * closing value.
+     *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
+     *
+     * @default   hlc
+     * @product   highstock
+     * @apioption plotOptions.hlc.legendSymbol
+     */
+    legendSymbol: 'hlc',
 
     /**
      * The pixel width of the line/border. Defaults to `1`.
@@ -145,7 +158,6 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.hlc
- * @excluding dataParser, dataURL
  * @product   highstock
  * @apioption series.hlc
  */

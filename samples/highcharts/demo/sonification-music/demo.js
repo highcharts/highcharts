@@ -61,11 +61,6 @@ function onRender() {
 
     // Set plot border radius
     chart.plotBackground.attr('r', '9px');
-
-    // Expose y axis titles to screen readers directly
-    chart.yAxis.forEach(function (a) {
-        a.axisGroup.div.setAttribute('aria-hidden', 'false');
-    });
 }
 
 

@@ -167,19 +167,57 @@ QUnit.test('Nested properties in maps', function (assert) {
         }),
         points = chart.series[0].points;
 
-    assert.ok(
-        points[0].name === 'Frank' &&
-            points[0].value === 1 &&
-            points[0].dataLabel &&
-            !points[0].options.test,
-        'Point 1 has correct options'
+    assert.strictEqual(points[0].name, 'Frank', 'Point 1 name should be Frank');
+    assert.strictEqual(points[0].value, 1, 'Point 1 value should be 1');
+    assert.ok(points[0].dataLabel, 'Point 1 should have dataLabel');
+    assert.strictEqual(
+        points[0].options.test,
+        undefined,
+        'Point 1 test should be undefined'
     );
 
-    assert.ok(
-        points[1].name === 'Bob' &&
-            points[1].value === 2 &&
-            !points[1].options.dataLabels.enabled &&
-            points[1].options.test.test2.test3.test4 === 'Test string',
-        'Point 2 has correct options'
+    assert.strictEqual(points[1].name, 'Bob', 'Point 2 name should be Bob');
+    assert.strictEqual(points[1].value, 2, 'Point 2 value should be 2');
+    assert.notOk(
+        points[1].options.dataLabels.enabled,
+        'Point 2 dataLabels.enabled should be falsy'
+    );
+    assert.strictEqual(
+        points[1].options.test.test2.test3.test4,
+        'Test string',
+        'Point 2 test property should be Test string'
     );
 });
+
+QUnit.test(
+    'Nested keys should not allow prototype pollution',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                series: [
+                    {
+                        keys: [
+                            '__proto__.polluted',
+                            'constructor.prototype.alsoPolluted',
+                            'y'
+                        ],
+                        data: [['yes', 'yes', 1]]
+                    }
+                ]
+            }),
+            point = chart.series[0].points[0];
+
+        assert.strictEqual(
+            {}.polluted,
+            undefined,
+            'Object.prototype should not be polluted through __proto__'
+        );
+
+        assert.strictEqual(
+            {}.alsoPolluted,
+            undefined,
+            'Object.prototype should not be polluted through constructor'
+        );
+
+        assert.strictEqual(point.y, 1, 'Remaining keys should still apply');
+    }
+);

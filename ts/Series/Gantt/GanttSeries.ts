@@ -61,6 +61,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: GanttSeriesOptions = merge(
         XRangeSeries.defaultOptions,
         GanttSeriesDefaults
@@ -72,6 +73,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass?: typeof Chart,
@@ -119,6 +121,20 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
+    public getColumn(columnName: string): Array<number> {
+        const time = this.chart.time;
+        if (columnName === 'x') {
+            const startColumn = super.getColumn('start');
+            if (startColumn.length) {
+                return startColumn.map((val: number|string): number =>
+                    time.parse(val) ?? NaN // #24849
+                );
+            }
+        }
+        return super.getColumn.apply(this, arguments);
+    }
+
     /**
      * Draws a single point in the series.
      *
@@ -138,7 +154,7 @@ class GanttSeries extends XRangeSeries {
      */
     public drawPoint(
         point: GanttPoint,
-        verb: string
+        verb: ('animate'|'attr')
     ): void {
         const series = this,
             seriesOpts = series.options,
@@ -219,7 +235,9 @@ class GanttSeries extends XRangeSeries {
  * */
 
 interface GanttSeries{
+    /** @internal */
     keyboardMoveVertical: boolean;
+    /** @internal */
     pointClass: typeof GanttPoint;
 }
 

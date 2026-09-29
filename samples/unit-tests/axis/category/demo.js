@@ -62,6 +62,21 @@ QUnit.test('Categories undefined, inferred from names', function (assert) {
         'Second series, first point, lands at 0 because name ' +
             'exists in categories'
     );
+
+    chart.update({
+        xAxis: {
+            categories: ['Cat1', 'Cat2']
+        }
+    });
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions.map(
+            pos => chart.xAxis[0].ticks[pos].label.textStr
+        ),
+        ['Cat1', 'Cat2', '2'],
+        'Explicit categories should take precedence over point names ' +
+        '(Arguably we should use the point.name instead of `2`, but this test' +
+        ' is based on the legacy functionality)'
+    );
 });
 
 QUnit.test(
@@ -827,68 +842,30 @@ QUnit.test(
 );
 
 QUnit.test('Test different point.name types.', function (assert) {
-    var UNDEFINED,
-        labels = ['0', true, false, NaN, '', 'Proper', '6', 0, Infinity],
-        chart = $('#container')
-            .highcharts({
-                xAxis: {
-                    type: 'category'
-                },
-                chart: {
-                    width: 600
-                },
-                series: [
-                    {
-                        data: [
-                            {
-                                name: null,
-                                y: 0
-                            },
-                            {
-                                name: labels[1],
-                                y: 1
-                            },
-                            {
-                                name: labels[2],
-                                y: 2
-                            },
-                            {
-                                name: labels[3],
-                                y: 3
-                            },
-                            {
-                                name: labels[4],
-                                y: 4
-                            },
-                            {
-                                name: labels[5],
-                                y: 5
-                            },
-                            {
-                                name: UNDEFINED,
-                                y: 5
-                            },
-                            {
-                                name: labels[7],
-                                y: 7
-                            },
-                            {
-                                name: labels[8],
-                                y: 8
-                            }
-                        ]
-                    }
-                ]
-            })
-            .highcharts();
+    const names = [
+            true, false, NaN, '', 'Proper', '6', 0, Infinity, null, undefined
+        ],
+        chart = Highcharts.chart('container', {
+            xAxis: {
+                type: 'category'
+            },
+            chart: {
+                width: 600
+            },
+            series: [
+                {
+                    data: names.map((name, y) => ({ name, y }))
+                }
+            ]
+        });
 
-    $.each(chart.xAxis[0].tickPositions, function (i, pos) {
-        assert.strictEqual(
-            chart.xAxis[0].ticks[pos].label.textStr.toString(),
-            labels[pos].toString(),
-            'X axis label for position ' + pos
-        );
-    });
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions.map(
+            pos => chart.xAxis[0].ticks[pos].label.textStr
+        ),
+        names.map(String).slice(0, 8),
+        'Names, except nullish, should be displayed as categories'
+    );
 });
 
 QUnit.test('Updating above cropThreshold', function (assert) {

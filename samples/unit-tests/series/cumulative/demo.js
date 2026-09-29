@@ -103,7 +103,20 @@ QUnit.test('Stock: general tests for the Cumulative Sum', function (assert) {
 });
 
 QUnit.test('cumulative start option', function (assert) {
-    const data = [1, 1, 1, 1, 1];
+    const data = [1, 1, 1, 1, 1],
+        originalData = [
+            [1, 100],
+            [2, -300],
+            [3, 50],
+            [4, -200],
+            [5, -300],
+            [6, 150],
+            [7, 10],
+            [8, 20],
+            [9, 15],
+            [10, -5]
+        ];
+
     const chart = Highcharts.stockChart('container', {
         plotOptions: {
             series: {
@@ -153,5 +166,56 @@ QUnit.test('cumulative start option', function (assert) {
         point1,
         chart.yAxis[0].toPixels(0),
         'Frist Point should start at 0'
+    );
+
+    chart.update({
+        series: [{
+            cumulativeStart: true,
+            data: originalData
+        }]
+    }, false, true);
+    chart.xAxis[0].setExtremes(6, 10);
+
+    const visiblePoints = chart.series[0].points.filter(
+        point => point.x >= 6 && point.x <= 10
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].dataMin,
+        150,
+        `The cumulativeStart dataMin should start from the first visible
+        point.`
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].dataMax,
+        195,
+        `The cumulativeStart dataMax should exclude the pre-visible
+        shoulder point.`
+    );
+
+    visiblePoints.forEach(point => {
+        assert.ok(
+            point.plotY >= 0 && point.plotY <= chart.plotHeight,
+            'The visible cumulative points should be inside the plot area.'
+        );
+    });
+
+    chart.series[0].update({
+        cumulativeStart: false
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].dataMin,
+        -300,
+        `Without cumulativeStart, the pre-visible shoulder point should
+        still affect cumulative extremes.`
+    );
+
+    assert.strictEqual(
+        chart.yAxis[0].dataMax,
+        -105,
+        `Without cumulativeStart, the highest cumulative value should be
+        preserved.`
     );
 });

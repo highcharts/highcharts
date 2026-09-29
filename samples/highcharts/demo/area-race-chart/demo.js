@@ -57,7 +57,7 @@ const chart = Highcharts.chart('container', {
         complete: function (options) {
             for (let i = 0; i < options.series.length; i++) {
                 formatRevenue[i] = arrToAssociative(options.series[i].data);
-                options.series[i].data = null;
+                options.series[i].data = [];
             }
         }
     },
@@ -238,6 +238,10 @@ function pause(button) {
 }
 
 function update(sliderClicked) {
+    if (!sliderClicked) {
+        input.value = parseInt(input.value, 10) + 1;
+    }
+
     chart.update(
         {
             subtitle: {
@@ -272,10 +276,13 @@ function update(sliderClicked) {
         }
     }
 
-    // Add current year
-    for (let i = 0; i < series.length; i++) {
-        const newY = formatRevenue[i][input.value];
-        series[i].addPoint([newY], false);
+    // If slider moved
+    if (yearIndex !== dataLength - 1) {
+        // Add current year
+        for (let i = 0; i < series.length; i++) {
+            const newY = formatRevenue[i][input.value];
+            series[i].addPoint([newY], false);
+        }
     }
 
     labels.forEach(label => {
@@ -292,18 +299,22 @@ function update(sliderClicked) {
         chart.redraw();
     }
 
-    input.value = parseInt(input.value, 10) + 1;
-
-    if (input.value > endYear) {
+    if (input.value === endYear) {
         // Auto-pause
         pause(btn);
     }
 }
 
 function play(button) {
-    // Reset slider at the end
-    if (input.value > endYear) {
+    // Reset slider and series data at the end
+    if (input.value === endYear) {
         input.value = startYear;
+        for (let i = 0; i < chart.series.length; i++) {
+            chart.series[i].setData(
+                chart.series[i].options.data.slice(0, 1), false
+            );
+        }
+        chart.redraw();
     }
     button.title = 'pause';
     button.className = 'fa fa-pause';
@@ -329,4 +340,5 @@ input.addEventListener('click', function () {
 // Stop animation when clicking and dragging range bar
 input.addEventListener('input', function () {
     pause(btn);
+    update(true);
 });

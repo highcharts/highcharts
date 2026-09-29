@@ -21,8 +21,6 @@
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -56,7 +54,7 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         },
         overflow: false as any,
         style: {
-            color: Palette.neutralColor100
+            color: 'var(--highcharts-neutral-color-100)'
         }
     },
     legendSymbol: 'lineMarker',
@@ -87,7 +85,6 @@ export default MapPointSeriesDefaults;
  *
  *
  * @extends   series,plotOptions.mappoint
- * @excluding dataParser, dataURL
  * @product   highmaps
  * @apioption series.mappoint
  */

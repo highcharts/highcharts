@@ -197,7 +197,7 @@ export interface SunburstSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *            ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *            minSize, navigatorOptions, pointRange
  *
- * @excluding dataParser, dataURL, stack, dataSorting, boostThreshold,
+ * @excluding stack, dataSorting, boostThreshold,
  *            boostBlending
  *
  * @product highcharts
@@ -211,7 +211,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * zoom in on its children. Deprecated and replaced by
      * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
      *
-     * @deprecated
+     * @deprecated 7.0.3
      *
      * @default false
      *
@@ -315,7 +315,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * Options for the button appearing when traversing down in a sunburst.
      * Since v9.3.3 the `traverseUpButton` is replaced by `breadcrumbs`.
      *
-     * @deprecated
+     * @deprecated 9.3.3
      *
      * @since 6.0.0
      *

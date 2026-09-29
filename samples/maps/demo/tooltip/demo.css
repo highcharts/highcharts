@@ -9,7 +9,7 @@ body {
     margin: 0 auto;
 }
 
-.highcharts-tooltip > span {
+.highcharts-tooltip div {
     padding: 10px;
     white-space: normal !important;
     width: 200px;

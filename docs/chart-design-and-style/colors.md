@@ -6,26 +6,26 @@ radial gradients. Unless specified below, this applies to all color options in
 the Highcharts API, whether it is called `color`, `backgroundColor`,
 `borderColor`, `lineColor`, `fill`, `stroke` etc.
 
+Palette and CSS variables
+-------------------------
+Although all color options can be set as literal colors, the default design
+system in Highcharts relies on the _palette_ options and CSS variables (since
+v13). The recommended way of styling Highcharts is to define a base palette,
+then optionally deviate from it with more targeted chart options. Read more
+under the [palette API](https://api.highcharts.com/highcharts/palette) and the
+[branding docs
+article](https://www.highcharts.com/docs/chart-design-and-style/branding).
+
+
 Solid colors
 ------------
 
-Highcharts supports any color that the browser recognizes. Internally, colors on
-the following formats are parsed, and color conversions like brightening or
-interpolation are performed by JavaScript:
-* Three-digit hex: `#fff`
-* Four-digit hex (with opacity): `#ffff`
-* Six-digit hex: `#ffffff`
-* Eight-digit hex (with opacity): `#ffffffff`
-* Rgb: `rgb(255, 255, 255)`
-* Rgba (with opacity): `rgba(255, 255, 255, 1)`
-
-Additionally, Highcharts v12.2 introduced browser-native brightening and
-interpolation via CSS functions, allowing full support for any color format that
-is recognized by the browser, including CSS variables. See the [CSS
+Highcharts supports any color that the browser recognizes, including CSS
+variables since v12.2, for example hex and rgb formats. See the [CSS
 variables](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/colors-css-variables/)
 demo to see how this can be applied to a themed heatmap with color theming.
 
-See here for [more information about using color indices in Highcharts](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
+See here for more information about using [color indices in styled mode](https://www.highcharts.com/docs/chart-design-and-style/style-by-css).
 
 Linear gradients
 ----------------
@@ -60,7 +60,7 @@ See the online example of a [linear gradient chart background](https://jsfiddle.
 Radial gradients
 ----------------
 
-Since Highcharts 2.3 radial gradients have been supported. They have a similar syntax to that of SVG:
+Radial gradients also have a similar syntax to that of SVG:
 
 ```js
 color: {
@@ -84,9 +84,7 @@ See the demo of [radial gradients in a pie chart](https://highcharts.com/demo/pi
 Pattern fills
 -------------
 
-Since Highcharts v6.1, pattern fills are supported natively.
-
-To enable this new functionality, load the pattern-fill.js module. Example loading the latest version from our CDN:
+Pattern fills are supported through options. To enable this functionality, load the `pattern-fill.js` module. Example loading the latest version from our CDN:
 
 ```html
 <script src="https://code.highcharts.com/modules/pattern-fill.js"></script>

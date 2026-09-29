@@ -381,12 +381,10 @@ function cloud() {
                         series: {
                             className: 'highcharts-live-kpi',
                             dataLabels: {
-                                format: '<div style="text-align:center; ' +
-                                'margin-top: -20px">' +
-                            '<div style="font-size:1.2em;">{y}%</div>' +
-                            '<div style="font-size:14px; opacity:0.4; ' +
-                            'text-align: center;">CPU</div>' +
-                            '</div>',
+                                format:
+                                '<div style="font-size:1em;">{y:.0f}%</div>' +
+                                '<div style="font-size:14px; opacity:0.4; ' +
+                                'text-align: center;">CPU</div>',
                                 useHTML: true
                             }
                         }
@@ -436,12 +434,10 @@ function cloud() {
                         series: {
                             className: 'highcharts-live-kpi',
                             dataLabels: {
-                                format: '<div style="text-align:center; ' +
-                                'margin-top: -20px">' +
-                            '<div style="font-size:1.2em;">{y} MB</div>' +
+                                format:
+                            '<div style="font-size:1em;">{y:.1f} MB</div>' +
                             '<div style="font-size:14px; opacity:0.4; ' +
-                            'text-align: center;">Memory</div>' +
-                            '</div>',
+                            'text-align: center;">Memory</div>',
                                 useHTML: true
                             }
                         }
@@ -494,12 +490,10 @@ function cloud() {
                     plotOptions: {
                         series: {
                             dataLabels: {
-                                format: '<div style="text-align:center; ' +
-                                'margin-top: -20px">' +
-                            '<div style="font-size:1.2em;">{y} GB</div>' +
+                                format:
+                            '<div style="font-size:1em;">{y} GB</div>' +
                             '<div style="font-size:14px; opacity:0.4; ' +
-                            'text-align: center;">Disk space</div>' +
-                            '</div>',
+                            'text-align: center;">Disk space</div>',
                                 useHTML: true
                             }
                         }
@@ -905,12 +899,6 @@ function weather() {
             type: 'solidgauge'
         },
         pane: {
-            background: {
-                innerRadius: '90%',
-                outerRadius: '120%',
-                shape: 'arc'
-            },
-            center: ['50%', '70%'],
             endAngle: 90,
             startAngle: -90
         },
@@ -933,8 +921,6 @@ function weather() {
                 y: -25
             },
             enableMouseTracking: false,
-            innerRadius: '90%',
-            radius: '120%',
             clip: false
         }],
         accessibility: {
@@ -1769,7 +1755,7 @@ const dashboards = {
         className: 'cloud',
         name: 'Cloud Monitoring Dashboard',
         demoCardLabel: 'Highcharts Cloud dashboard demo',
-        chartDescription: `A purely decorative dashboard showing how 
+        chartDescription: `A purely decorative dashboard showing how
         you can visualize AWS server data on a dashboard.`
     },
     weather: {
@@ -1777,7 +1763,7 @@ const dashboards = {
         className: 'weather',
         name: 'Live Weather Dashboard',
         demoCardLabel: 'Highcharts live weather dashboard demo',
-        chartDescription: `A purely decorative dashboard showing how 
+        chartDescription: `A purely decorative dashboard showing how
         you can visualize live weather data on a dashboard.`
     }
 };

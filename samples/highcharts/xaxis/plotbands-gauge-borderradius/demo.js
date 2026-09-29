@@ -10,24 +10,15 @@ Highcharts.chart('container', {
 
     pane: {
         startAngle: -150,
-        endAngle: 150,
-        background: {
-            backgroundColor: 'transparent',
-            borderWidth: 0
-        }
+        endAngle: 150
     },
 
     // The value axis
     yAxis: {
         min: 0,
         max: 120,
+        endOnTick: false,
 
-        minorTickInterval: 0,
-        tickColor: '#ffffff',
-        tickLength: 40,
-        tickPixelInterval: 40,
-        tickWidth: 2,
-        lineWidth: 0,
         title: {
             text: 'km/h'
         },
@@ -43,19 +34,16 @@ Highcharts.chart('container', {
             from: 1,
             to: 70,
             color: '#55BF3B',
-            innerRadius: '82%',
             borderRadius: '50%'
         }, {
             from: 50,
             to: 90,
             color: '#DDDF0D',
-            innerRadius: '82%',
             zIndex: 1
         }, {
             from: 70,
             to: 119,
             color: '#DF5353',
-            innerRadius: '82%',
             borderRadius: '50%'
         }]
     },

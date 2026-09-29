@@ -16,6 +16,7 @@
  *
  * */
 
+/** @internal */
 interface ColumnMetricsObject {
     offset: number;
     width: number;
@@ -29,4 +30,5 @@ interface ColumnMetricsObject {
  *
  * */
 
+/** @internal */
 export default ColumnMetricsObject;

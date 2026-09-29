@@ -15,6 +15,7 @@
  *
  * */
 
+import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
@@ -64,7 +65,7 @@ export interface AnimationOptions {
 }
 
 export interface AnimationStepCallbackFunction {
-    (this: SVGElement, ...args: Array<any>): void;
+    (this: HTMLDOMElement|SVGElement|undefined, ...args: Array<any>): void;
 }
 
 /* *

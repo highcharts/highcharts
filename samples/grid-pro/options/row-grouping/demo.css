@@ -1,0 +1,30 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.controls {
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+#container {
+    min-height: 420px;
+    padding: 8px;
+}
+
+.highcharts-light #container .hcg-row-tree .hcg-cell-aggregated,
+#container .hcg-row-tree .hcg-cell-aggregated {
+    color: #69707d;
+    font-style: italic;
+}
+
+@media (prefers-color-scheme: dark) {
+    #container .hcg-row-tree .hcg-cell-aggregated {
+        color: #a0a0a0;
+    }
+}
+
+.highcharts-dark #container .hcg-row-tree .hcg-cell-aggregated {
+    color: #a0a0a0;
+}

@@ -27,6 +27,7 @@ import type {
 import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
+import DataTableCore from '../../../Data/DataTableCore.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
@@ -36,8 +37,7 @@ import {
     extend,
     fireEvent,
     isArray,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
@@ -94,7 +94,6 @@ const tableToMultiYData = <TLinkedSeries extends LineSeriesType>(
 /**
  * The SMA series type.
  *
- * @internal
  */
 class SMAIndicator extends LineSeries {
 
@@ -120,6 +119,7 @@ class SMAIndicator extends LineSeries {
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
+     * @internal
      */
     public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
 
@@ -190,10 +190,13 @@ class SMAIndicator extends LineSeries {
 
     public data!: Array<SMAPoint>;
 
+    /** @internal */
     public dataEventsToUnbind!: Array<Function>;
 
+    /** @internal */
     public linkedParent!: LineSeriesType&IndicatorLinkedSeriesBase;
 
+    /** @internal */
     public nameBase?: string;
 
     public options!: SMAOptions;
@@ -231,7 +234,7 @@ class SMAIndicator extends LineSeries {
                 ): void {
                     params.push(
                         (this.options.params as any)[component] +
-                        pick(this.nameSuffixes[index], '')
+                        (this.nameSuffixes[index] ?? '')
                     );
                 },
                 this
@@ -398,10 +401,8 @@ class SMAIndicator extends LineSeries {
 
     /** @internal */
     public recalculateValues(): void {
-        const croppedDataValues = [],
-            indicator = this,
+        const indicator = this,
             table = this.dataTable,
-            oldData = indicator.points || [],
             oldDataLength = indicator.dataTable.rowCount,
             emptySet: IndicatorValuesObject<typeof LineSeries.prototype> = {
                 values: [],
@@ -409,8 +410,6 @@ class SMAIndicator extends LineSeries {
                 yData: []
             };
         let overwriteData = true,
-            oldFirstPointIndex,
-            oldLastPointIndex,
             min,
             max;
 
@@ -446,6 +445,8 @@ class SMAIndicator extends LineSeries {
                     indicator.options.params as any
                 ) || emptySet
             ) : emptySet;
+
+        processedData.xData.length = processedData.values.length;
 
         // Reset
         delete indicator.linkedParent.xData;
@@ -491,37 +492,7 @@ class SMAIndicator extends LineSeries {
                     max as any
                 );
 
-                const keys = ['x', ...(indicator.pointArrayMap || ['y'])];
-                for (
-                    let i = 0;
-                    i < (croppedData.modified?.rowCount || 0);
-                    i++
-                ) {
-                    const values = keys.map((key): number =>
-                        this.getColumn(key)[i] || 0
-                    );
-                    croppedDataValues.push(values);
-                }
-
-                const indicatorXData = indicator.getColumn('x');
-                oldFirstPointIndex = processedData.xData.indexOf(
-                    indicatorXData[0]
-                );
-                oldLastPointIndex = processedData.xData.indexOf(
-                    indicatorXData[indicatorXData.length - 1]
-                );
-
-                // Check if indicator points should be shifted (#8572)
-                if (
-                    oldFirstPointIndex === -1 &&
-                    oldLastPointIndex === processedData.xData.length - 2
-                ) {
-                    if (croppedDataValues[0][0] === oldData[0].x) {
-                        croppedDataValues.shift();
-                    }
-                }
-
-                indicator.updateData(croppedDataValues);
+                indicator.setData(croppedData.modified, false);
 
             } else if (
                 indicator.updateAllPoints || // #18710
@@ -530,16 +501,35 @@ class SMAIndicator extends LineSeries {
                 processedData.xData.length !== oldDataLength + 1
             ) {
                 overwriteData = false;
-                indicator.updateData(processedData.values as any);
+
+                this.setData(new DataTableCore({
+                    columns: {
+                        x: processedData.xData,
+                        ...valueColumns
+                    }
+                }), false);
+
             }
         }
 
         if (overwriteData) {
-            table.setColumns({
-                ...valueColumns,
-                x: processedData.xData as Array<number>
-            });
-            indicator.options.data = (processedData.values as any);
+            const columns = valueColumns;
+            columns.x = processedData.xData;
+
+            // Add the processedData.values to the data table
+            processedData.values.reduce((columns, val, i): any => {
+                Object.keys(val).forEach((key): void => {
+                    if (!columns[key]) {
+                        columns[key] = [];
+                    }
+                    columns[key][i] = val[key as any];
+                });
+                return columns;
+            }, columns);
+
+            table.setColumns(columns);
+            delete indicator.xColumn;
+            delete indicator.xColumnIsNumbers;
         }
 
         if (
@@ -584,7 +574,6 @@ class SMAIndicator extends LineSeries {
  *
  * */
 
-/** @internal */
 interface SMAIndicator extends IndicatorBase {
     calculateOn: CalculateOnObject;
     hasDerivedData: boolean;
@@ -610,7 +599,6 @@ extend(SMAIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sma: typeof SMAIndicator;
@@ -624,7 +612,6 @@ SeriesRegistry.registerSeriesType('sma', SMAIndicator);
  *
  * */
 
-/** @internal */
 export default SMAIndicator;
 
 /* *
@@ -640,7 +627,7 @@ export default SMAIndicator;
  * @extends   series,plotOptions.sma
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL, useOhlcData
+ * @excluding useOhlcData
  * @requires  stock/indicators/indicators
  * @apioption series.sma
  */

@@ -144,21 +144,21 @@ QUnit.test('Series.update', function (assert) {
     // Color
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('stroke'),
-        Highcharts.getOptions().colors[0],
+        'var(--highcharts-color-0)',
         'Color initial'
     );
     chart.series[0].update({
-        color: color ? null : Highcharts.getOptions().colors[1]
+        color: color ? null : 'var(--highcharts-color-1)'
     });
     color = !color;
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('stroke'),
-        Highcharts.getOptions().colors[1],
+        'var(--highcharts-color-1)',
         'Color changed - graph'
     );
     assert.strictEqual(
         chart.series[0].points[0].graphic.element.getAttribute('fill'),
-        Highcharts.getOptions().colors[1],
+        'var(--highcharts-color-1)',
         'Color changed - marker'
     );
 
@@ -308,6 +308,33 @@ QUnit.test('Series.update', function (assert) {
         chart.series[0].options.animation, false, 'Series ' +
         'animation on update should always be false even if set from options'
     );
+
+    // Type registered after chart creation (#24254)
+    const lateColumnType = 'latecolumn';
+    assert.notOk(
+        chart.options.plotOptions[lateColumnType],
+        'Chart should not have plotOptions for a type registered later (#24254)'
+    );
+
+    Highcharts.seriesType(lateColumnType, 'column', {
+        customProp: 'from-defaults'
+    });
+
+    chart.series[0].update({ type: lateColumnType });
+
+    assert.strictEqual(
+        chart.series[0].type,
+        lateColumnType,
+        'Series should update without throwing (#24254)'
+    );
+    assert.strictEqual(
+        chart.series[0].options.customProp,
+        'from-defaults',
+        'Should use default plotOptions for the new type (#24254)'
+    );
+
+    delete Highcharts.seriesTypes[lateColumnType];
+    delete Highcharts.getOptions().plotOptions[lateColumnType];
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {
@@ -638,7 +665,7 @@ QUnit.test('Series.update and setData', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].options.data[0].customProp,
+        chart.series[0].points[0].options.customProp,
         true,
         'Custom property should be available in options after update (#11244)'
     );

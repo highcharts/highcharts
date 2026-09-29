@@ -1,7 +1,8 @@
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
-            productName: [
+            productKind: [
                 'Phone',
                 'Bread',
                 'Shirt',
@@ -40,7 +41,7 @@ Grid.grid('container', {
         }
     },
     columns: [{
-        id: 'productName',
+        id: 'productKind',
         dataType: 'string',
         cells: {
             editMode: {
@@ -56,7 +57,7 @@ Grid.grid('container', {
             }
         },
         header: {
-            format: 'Product name'
+            format: 'Product Kind'
         }
     }, {
         id: 'sku',
@@ -74,7 +75,7 @@ Grid.grid('container', {
             }
         },
         header: {
-            format: 'SKU code'
+            format: 'SKU Code'
         }
     }, {
         id: 'category',

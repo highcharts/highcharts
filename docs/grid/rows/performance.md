@@ -49,6 +49,14 @@ Use [`rendering.rows.minVisibleRows`](https://api.highcharts.com/grid/rendering.
 }
 ```
 
+## Wide data sets
+Many columns affect performance the same way many rows do. Grid applies the same
+technique horizontally: only the columns visible in the viewport are rendered,
+automatically from 20 columns up. For very wide grids,
+[`rendering.columns.strictWidths`](https://api.highcharts.com/grid/rendering.columns.strictWidths)
+additionally skips per-column width calculations. See
+[Column virtualization](https://www.highcharts.com/docs/grid/columns/virtualization).
+
 ## Rendering
 ```js
 {

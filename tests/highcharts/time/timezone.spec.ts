@@ -7,13 +7,8 @@
  *
  * This replaces the previous QUnit-based approach with native Playwright tests.
  */
+/* eslint-disable playwright/no-skipped-test */
 import { test, expect } from '~/fixtures.ts';
-import { join } from 'node:path';
-
-// Paths relative to repo root (where Playwright runs from)
-// Using 1970-2030 data file to ensure timezone data is available for test dates
-const MOMENT_PATH = join('node_modules', 'moment', 'moment.js');
-const MOMENT_TZ_PATH = join('node_modules', 'moment-timezone', 'builds', 'moment-timezone-with-data-1970-2030.min.js');
 
 const TIMEZONES = [
     'Australia/Melbourne',
@@ -27,9 +22,9 @@ const TIMEZONES = [
 ] as const;
 
 /**
- * Helper to set up a page with Highcharts and optionally moment-timezone
+ * Helper to set up a page with Highcharts
  */
-async function setupPage(page: import('@playwright/test').Page, needsMoment = false) {
+async function setupPage(page: import('@playwright/test').Page) {
     await page.setContent(`
         <!DOCTYPE html>
         <html>
@@ -41,22 +36,63 @@ async function setupPage(page: import('@playwright/test').Page, needsMoment = fa
     // Load Highcharts from local code via route rewriting
     await page.addScriptTag({ url: 'https://code.highcharts.com/highcharts.js' });
     await page.waitForFunction(() => !!(window as any).Highcharts);
+}
 
-    if (needsMoment) {
-        // Load moment first, then moment-timezone (which depends on moment)
-        await page.addScriptTag({ path: MOMENT_PATH });
-        await page.waitForFunction(() => !!(window as any).moment);
-        await page.addScriptTag({ path: MOMENT_TZ_PATH });
-        await page.waitForFunction(() => !!(window as any).moment.tz);
+async function hasIntlTimeZoneSupport(
+    page: import('@playwright/test').Page,
+    timeZone: string
+): Promise<boolean> {
+    return page.evaluate((tz: string): boolean => {
+        try {
+            new Intl.DateTimeFormat('en', { timeZone: tz });
+            return true;
+        } catch {
+            return false;
+        }
+    }, timeZone);
+}
+
+async function getUnsupportedIntlTimeZones(
+    page: import('@playwright/test').Page,
+    timeZones: Array<string>
+): Promise<Array<string>> {
+    const unsupported: Array<string> = [];
+
+    for (const timeZone of timeZones) {
+        if (!(await hasIntlTimeZoneSupport(page, timeZone))) {
+            unsupported.push(timeZone);
+        }
     }
+
+    return unsupported;
 }
 
 for (const tz of TIMEZONES) {
     test.describe(`Timezone: ${tz}`, () => {
         test.use({ timezoneId: tz });
 
+        test.afterEach(async ({ page }, testInfo) => {
+            if (testInfo.status !== testInfo.expectedStatus) {
+                const userAgent = await page.evaluate(
+                    () => navigator.userAgent
+                );
+                console.log(`userAgent: ${userAgent}`);
+            }
+        });
+
         test('Time.dateFormat with fixed CET timezone across DST', async ({ page }) => {
-            await setupPage(page, true);
+            await setupPage(page);
+
+            const unsupportedTimeZones = await getUnsupportedIntlTimeZones(
+                page,
+                [tz, 'CET']
+            );
+            test.skip(
+                unsupportedTimeZones.length > 0,
+                `Browser Intl does not support timezone(s): ${
+                    unsupportedTimeZones.join(', ')
+                }`
+            );
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
@@ -94,7 +130,7 @@ for (const tz of TIMEZONES) {
         });
 
         test('Time.parse with timezone information', async ({ page }) => {
-            await setupPage(page, false);
+            await setupPage(page);
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
@@ -112,8 +148,8 @@ for (const tz of TIMEZONES) {
                 ];
 
                 const expected = new Date(samples[0]).toISOString();
-                const results: { 
-                    sample: string; parsed: string; matches: boolean 
+                const results: {
+                    sample: string; parsed: string; matches: boolean
                 }[] = [];
 
                 samples.forEach(sample => {
@@ -131,14 +167,14 @@ for (const tz of TIMEZONES) {
 
             for (const r of result.results) {
                 expect(
-                    r.matches, 
+                    r.matches,
                     `${r.sample} should parse to ${result.expected}, got ${r.parsed}`
                 ).toBe(true);
             }
         });
 
         test('Time.parse short month format', async ({ page }) => {
-            await setupPage(page, false);
+            await setupPage(page);
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
@@ -159,7 +195,7 @@ for (const tz of TIMEZONES) {
         });
 
         test('Time ticks across DST transition', async ({ page }) => {
-            await setupPage(page, true);
+            await setupPage(page);
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
@@ -191,11 +227,11 @@ for (const tz of TIMEZONES) {
         });
 
         test('Chart timezone option', async ({ page }) => {
-            await setupPage(page, true);
+            await setupPage(page);
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
-                
+
                 const chart = Highcharts.chart('container', {
                     title: { text: 'Timezone test' },
                     time: { timezone: 'Europe/Oslo' },
@@ -220,11 +256,11 @@ for (const tz of TIMEZONES) {
         });
 
         test('Chart.update timezone change', async ({ page }) => {
-            await setupPage(page, true);
+            await setupPage(page);
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
-                
+
                 const chart = Highcharts.chart('container', {
                     chart: { width: 600, height: 200 },
                     time: { timezone: 'Europe/Oslo' },
@@ -269,11 +305,11 @@ for (const tz of TIMEZONES) {
         });
 
         test('Updating from global to instance time', async ({ page }) => {
-            await setupPage(page, true);
+            await setupPage(page);
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
-                
+
                 const chart = Highcharts.chart('container', {
                     series: [{ data: [1, 3, 2, 4] }]
                 });

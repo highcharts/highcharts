@@ -81,8 +81,8 @@ You can also test your knowledge on the TypeScript
   ([handbook](https://www.typescriptlang.org/docs/handbook/utility-types.html))
 - Make use of parentheses around type lists. (`Array<(number|null|string)>`)
 - Do not use `any` type in new code as it is only used for the migration phase
-- Add paragraphs around conditional types `(A extends B ? C : D)`, type lists
-  `(A|B)`, and type unions `(A&B)`.
+- Add parentheses around conditional types `(A extends B ? C : D)`, type unions
+  `(A|B)`, and type intersections `(A&B)`.
 
 
 ### Use TypeScript definition files

@@ -32,14 +32,11 @@ import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 import type Tick from '../Tick';
 import type { TreeGridAxisComposition } from './TreeGridAxis';
 import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
-
-import { Palette } from '../../Color/Palettes.js';
 import {
     addEvent,
     correctFloat,
     isNumber,
     isObject,
-    pick,
     removeEvent,
     wrap
 } from '../../../Shared/Utilities.js';
@@ -165,7 +162,7 @@ function renderLabelIcon(
         icon
             .attr({
                 cursor: 'pointer',
-                'fill': pick(params.color, Palette.neutralColor60),
+                'fill': params.color || 'var(--highcharts-neutral-color-60)',
                 'stroke-width': 1,
                 stroke: options.lineColor,
                 strokeWidth: options.lineWidth || 0
@@ -195,10 +192,7 @@ function wrapGetLabelPosition(
     step: number
 ): PositionObject {
     const tick = this,
-        lbOptions = pick(
-            tick.options?.labels,
-            labelOptions
-        ),
+        lbOptions = (tick.options?.labels ?? labelOptions),
         pos = tick.pos,
         axis = tick.axis,
         isTreeGrid = axis.type === 'treegrid',
@@ -261,7 +255,7 @@ function wrapRenderLabel(
             tickPositions
         } = axis,
         mapOfPosToGridNode = axisGrid.mapOfPosToGridNode,
-        labelOptions = pick(tickOptions?.labels, axisOptions?.labels),
+        labelOptions = (tickOptions?.labels ?? axisOptions?.labels),
         symbolOptions = (
             labelOptions && isObject(labelOptions.symbol, true) ?
                 labelOptions.symbol :

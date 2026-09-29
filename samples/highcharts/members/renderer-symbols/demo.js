@@ -68,12 +68,12 @@ Object.keys(Highcharts.SVGRenderer.prototype.symbols)
             height + 2 * padding
         );
 
-        // The box
+        // The reference box
         renderer.rect(
-            padding,
-            padding,
-            width,
-            height
+            padding - 0.5,
+            padding - 0.5,
+            width + 1,
+            height + 1
         ).attr({
             stroke: '#8884',
             'stroke-width': 1

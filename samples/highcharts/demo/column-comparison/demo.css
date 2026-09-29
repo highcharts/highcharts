@@ -32,7 +32,6 @@ body {
     cursor: pointer;
     border: 1px solid silver;
     border-right-width: 0;
-    background-color: #f8f8f8;
     font-size: 1rem;
     padding: 0.5rem;
     transition-duration: 0.3s;

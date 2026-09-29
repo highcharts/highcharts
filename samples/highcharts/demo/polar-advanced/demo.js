@@ -224,7 +224,8 @@ Highcharts.chart('container', {
         background: {
             borderColor: colors[4],
             backgroundColor: toggleableGradient,
-            innerRadius: '40%'
+            innerRadius: '40%',
+            shape: 'circle'
         }
     }, {
         size: '55%',
@@ -233,7 +234,9 @@ Highcharts.chart('container', {
         background: {
             borderWidth: 0,
             backgroundColor: toggleableGradient,
-            outerRadius: '75%'
+            outerRadius: '75%',
+            innerRadius: 0,
+            shape: 'circle'
         }
 
     // ...And this the one we alter
@@ -247,7 +250,8 @@ Highcharts.chart('container', {
             borderColor: colors[4],
             backgroundColor: '#46465C',
             innerRadius: '55%',
-            outerRadius: '100%'
+            outerRadius: '100%',
+            shape: 'circle'
         }
     }],
     xAxis: [{
@@ -271,7 +275,7 @@ Highcharts.chart('container', {
                 const
                     from = weekendOffset * (week + 1),
                     to = from - 1;
-                return { from, to, color: '#BBBAC5' };
+                return { from, to, color: '#BBBAC5', thickness: 10 };
             }
         ),
         ...monthExtremes,

@@ -17,7 +17,8 @@ QUnit.test('General waterfall tests', function (assert) {
                     null,
                     5,
                     { isSum: true }
-                ]
+                ],
+                upColor: 'lightgreen' // #24734
             }
         ]
     });

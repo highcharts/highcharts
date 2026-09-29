@@ -35,9 +35,13 @@ const { composed } = H;
  *
  * */
 
+/** @internal */
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** Shared by Series/PointAndFigure and Series/Contour. */
+        /**
+         * Shared by Series/PointAndFigure and Series/Contour.
+         * @internal
+         */
         cross: SymbolFunction;
     }
 }
@@ -59,7 +63,7 @@ namespace CrossSymbol {
     /**
      * Register the shared `cross` symbol on a renderer class.
      *
-     * @private
+     * @internal
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
@@ -71,7 +75,7 @@ namespace CrossSymbol {
 
     /**
      * Cross marker path.
-     * @private
+     * @internal
      */
     function cross(
         x: number,
@@ -95,4 +99,5 @@ namespace CrossSymbol {
  *
  * */
 
+/** @internal */
 export default CrossSymbol;

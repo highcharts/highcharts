@@ -35,11 +35,14 @@ import type { ColumnDataType } from './Table/Column';
 import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../Data/DataTable';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type { GridIconName, IconRegistryValue } from './UI/SvgIcons';
+import type {
+    CellContextMenuOptions
+} from './Table/CellContextMenu/CellContextMenuOptions';
+import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -91,133 +94,6 @@ export type StyleValue<T> = CSSObject | StyleCallback<T>;
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
 
 /**
- * Registry of built-in action IDs for the cell context menu.
- * Composed features can extend this via module augmentation.
- */
-export interface CellContextMenuBuiltInActionIdRegistry {}
-
-/**
- * Built-in action ID for the cell context menu.
- */
-export type CellContextMenuActionId =
-    keyof CellContextMenuBuiltInActionIdRegistry | (string & {});
-
-/**
- * Options for a single cell context menu item.
- */
-export interface CellContextMenuActionItemOptions {
-    /**
-     * The label shown in the menu.
-     */
-    label: string;
-
-    /**
-     * Optional icon name for the menu item (built-in name from the default
-     * registry or custom name from rendering.icons).
-     */
-    icon?: string;
-
-    /**
-     * Whether the menu item should be disabled.
-     */
-    disabled?: boolean;
-
-    /**
-     * Whether to render a divider instead of a button.
-     */
-    separator?: false;
-
-    /**
-     * Callback executed when the menu item is clicked.
-     *
-     * The cell is available on `this` and is also passed as the first argument
-     * to support arrow functions.
-     */
-    onClick?: (
-        this: TableCell,
-        cell: TableCell
-    ) => void;
-
-    /**
-     * Nested submenu items.
-     */
-    items?: Array<CellContextMenuItemOptions>;
-}
-
-/**
- * Options for a divider item in the cell context menu.
- */
-export interface CellContextMenuDividerItemOptions {
-    /**
-     * Whether to render a divider instead of a button.
-     */
-    separator: true;
-
-    /**
-     * Optional label for accessibility or testing.
-     * Not rendered as a clickable item.
-     */
-    label?: string;
-}
-
-/**
- * Options for a built-in item in the cell context menu.
- */
-export interface CellContextMenuBuiltInItemOptions {
-    /**
-     * Built-in action ID.
-     */
-    actionId: CellContextMenuActionId;
-
-    /**
-     * Optional custom label for this built-in action.
-     */
-    label?: string;
-
-    /**
-     * Optional icon override for this built-in action.
-     */
-    icon?: GridIconName;
-
-    /**
-     * Whether this built-in action should be disabled.
-     */
-    disabled?: boolean;
-
-    /**
-     * Nested submenu items.
-     */
-    items?: Array<CellContextMenuItemOptions>;
-}
-
-/**
- * Options for a single cell context menu item.
- */
-export type CellContextMenuItemOptions =
-    CellContextMenuDividerItemOptions |
-    CellContextMenuActionItemOptions |
-    CellContextMenuBuiltInItemOptions |
-    CellContextMenuActionId;
-
-/**
- * Cell context menu options.
- */
-export interface CellContextMenuOptions {
-    /**
-     * Whether the cell context menu is enabled. When omitted, the menu is
-     * enabled when `items` are provided, or when a composed feature registers
-     * visible built-in actions for the current cell.
-     */
-    enabled?: boolean;
-
-    /**
-     * List of items to show in the cell context menu.
-     */
-    items?: Array<CellContextMenuItemOptions>;
-}
-
-
-/**
  * Options to control the content and the user experience of a grid structure.
  */
 export interface Options {
@@ -266,12 +142,14 @@ export interface Options {
     data?: DataProviderOptionsType;
 
     /**
-     * Data table with the data to display in the grid structure.
+     * Data table with the data to display in the grid structure. Deprecated,
+     * use {@link https://api.highcharts.com/grid/data.local.dataTable | `data.dataTable`}
+     * instead.
      *
-     * @deprecated
-     * Use `data.dataTable` instead.
+     * @deprecated 2.3.0
+     * @deprnote Use `data.dataTable` instead.
      */
-    dataTable?: DataTable | DataTableOptions;
+    dataTable?: DataTable | DataTableOptionsObject;
 
     /**
      * Options for the description of the grid.
@@ -359,8 +237,9 @@ export interface RenderingSettings {
     table?: TableSettings;
 
     /**
-     * The theme of the Grid. It will set the class name on the container.
-     * Can be set to the empty string to disable the theme.
+     * Theme class name(s) on the grid container.
+     * A non-empty value also adds `.hcg-themed`, which applies table surface
+     * styles. An empty string disables theming.
      *
      * @default 'hcg-theme-default'
      */
@@ -372,9 +251,64 @@ export interface RenderingSettings {
  */
 export interface ColumnsSettings {
     /**
+     * Buffer of columns to render outside the visible area from the left and
+     * from the right while scrolling. The bigger the buffer, the less flicker
+     * will be seen while scrolling, but the more columns will have to be
+     * rendered.
+     *
+     * Cannot be lower than 0.
+     *
+     * @default 2
+     */
+    bufferSize?: number;
+
+    /**
      * Options for the columns resizing.
      */
     resizing?: ResizingOptions;
+
+    /**
+     * Whether all columns should use one fixed width, resolved from
+     * `columnDefaults.width` or a fallback width. When enabled, the grid skips
+     * per-column width and offset calculations, column resizing mode
+     * initialization and column resize handles.
+     *
+     * Enabling this option can improve initialization performance for very wide
+     * grids, especially together with column virtualization.
+     *
+     * @sample grid-lite/options/columns-virtualization
+     *         Column virtualization
+     *
+     * @default false
+     */
+    strictWidths?: boolean;
+
+    /**
+     * Columns virtualization option renders columns that are visible in the
+     * viewport only. In case of wide data sets, the enabled option improves
+     * performance and saves memory.
+     *
+     * The option is automatically set to `true` when the number of columns
+     * reaches the `virtualizationThreshold` option value. If defined, it takes
+     * precedence over the `virtualizationThreshold` option.
+     *
+     * @sample grid-lite/options/columns-virtualization
+     *         Column virtualization
+     *
+     * @default undefined
+     */
+    virtualization?: boolean;
+
+    /**
+     * The columns virtualization threshold option sets the column count limit
+     * at which virtualization is activated. When the number of columns reaches
+     * this threshold, virtualization is enabled to optimize performance.
+     *
+     * The option has no effect when the `virtualization` option is defined.
+     *
+     * @default 20
+     */
+    virtualizationThreshold?: number;
 }
 
 /**
@@ -459,7 +393,7 @@ export interface RowsSettings {
      * only. In case of large data set, the enabled option improve performance
      * and saves memory.
      *
-     * The option is automatically set to `true` when the number of rows exceeds
+     * The option is automatically set to `true` when the number of rows reaches
      * the `virtualizationThreshold` option value. If defined, it takes the
      * precedence over the `virtualizationThreshold` option.
      *
@@ -472,7 +406,7 @@ export interface RowsSettings {
 
     /**
      * The rows virtualization threshold option sets the row count limit at
-     * which virtualization is activated. When the number of rows exceeds this
+     * which virtualization is activated. When the number of rows reaches this
      * threshold, virtualization is enabled to optimize performance.
      *
      * The option has no effect when the `virtualization` option is defined.
@@ -480,6 +414,17 @@ export interface RowsSettings {
      * @default 50
      */
     virtualizationThreshold?: number;
+
+    /**
+     * Additional CSS class names applied to every body row (`<tr>`).
+     */
+    className?: string;
+
+    /**
+     * Additional CSS class names applied to even body rows (`<tr>`), matching
+     * the `.hcg-row-even` parity used by the grid.
+     */
+    evenClassName?: string;
 
 }
 
@@ -641,6 +586,12 @@ export interface ColumnCellOptions {
      * Callback function to resolve the value of an unbound column cell.
      * For bound columns, overrides only the rendered content - sorting,
      * filtering, and export remain unaffected.
+     *
+     * Use it with `dataId: null` to derive the value from the other columns of
+     * the same row. Such a column is unbound, so it is never editable, and it
+     * is re-resolved whenever a cell of its row is edited. For plain
+     * aggregation, prefer the declarative `columnAggregator` option, which this
+     * callback overrides when both are set.
      */
     valueGetter?: CellValueGetterCallback;
 
@@ -649,6 +600,7 @@ export interface ColumnCellOptions {
      * context menu will be shown on right-click.
      *
      * @sample grid-lite/demo/cell-context-menu Cell context menu
+     * @sample grid-pro/basic/cell-context-menu Cell context menu with built-ins
      */
     contextMenu?: CellContextMenuOptions;
 
@@ -987,7 +939,33 @@ export interface LangOptions extends LangOptionsCore {
     setFilter?: string;
 
     /**
+     * Placeholder for the filter value input when the operator select is
+     * visible.
+     *
+     * @default 'Value...'
+     */
+    filterValuePlaceholder?: string;
+
+    /**
+     * Language options for column filtering operators.
+     */
+    columnFilteringOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
+     * Language options for column filtering operator labels on datetime
+     * columns. Overrides matching keys from `columnFilteringOperators`.
+     */
+    columnFilteringDateTimeOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
      * Language options for column filtering conditions.
+     *
+     * @deprecated 3.1.0
+     * @deprnote Use `columnFilteringOperators` instead.
      */
     columnFilteringConditions?: Partial<
         Record<ColumnFilteringCondition, string>
@@ -1015,25 +993,119 @@ export interface TimeOptions {
 }
 
 /**
- * Column filtering options.
+ * Active filtering rule for a column.
+ */
+export interface FilteringRule {
+    /**
+     * The operator to use for filtering the column.
+     */
+    operator?: ColumnFilteringCondition;
+
+    /**
+     * The value that is used with the operator to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
+
+/**
+ * Applied column filter state used internally when filtering is executed.
  */
 export interface FilteringCondition {
     /**
+     * The operator applied to the column filter.
+     */
+    condition?: ColumnFilteringCondition;
+
+    /**
+     * The value applied to the column filter.
+     */
+    value?: string | number | boolean | null;
+}
+
+/**
+ * Column filtering options.
+ */
+export interface ColumnFilteringOptions {
+    /**
+     * The active filtering rule applied to the column.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'weight',
+     *   filtering: {
+     *     enabled: true,
+     *     rule: {
+     *       operator: 'greaterThan',
+     *       value: 100
+     *     }
+     *   }
+     * }]
+     * ```
+     */
+    rule?: FilteringRule;
+
+    /**
+     * Restricts the list of available filtering operators for the column.
+     *
+     * If set, the UI will only display the provided operators that are valid
+     * for the column's `dataType`. Invalid operators are ignored.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'name',
+     *   dataType: 'string',
+     *   filtering: {
+     *     enabled: true,
+     *     operators: ['contains', 'beginsWith']
+     *   }
+     * }]
+     * ```
+     */
+    operators?: Array<ColumnFilteringCondition>;
+
+    /**
      * The condition to use for filtering the column.
+     *
+     * @deprecated 3.1.0
+     * @deprnote Use `rule.operator` instead.
      */
     condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
+     *
+     * @deprecated 3.1.0
+     * @deprnote Use `rule.value` instead.
      */
     value?: string | number | boolean | null;
-}
 
-export interface ColumnFilteringOptions extends FilteringCondition {
+    /**
+     * Restricts the list of available filtering conditions for the column.
+     *
+     * @deprecated 3.1.0
+     * @deprnote Use `operators` instead.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'name',
+     *   dataType: 'string',
+     *   filtering: {
+     *     enabled: true,
+     *     conditions: ['contains', 'beginsWith']
+     *   }
+     * }]
+     * ```
+     */
+    conditions?: Array<ColumnFilteringCondition>;
+
     /**
      * Whether the filtering is enabled or not.
      *
      * @sample grid-lite/basic/column-filtering Column filtering
+     * @default false
      */
     enabled?: boolean;
 
@@ -1047,6 +1119,22 @@ export interface ColumnFilteringOptions extends FilteringCondition {
      * @default false
      */
     inline?: boolean;
+
+    /**
+     * Hides the operator select in filtering UI.
+     *
+     * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise
+     * the first operator for the column `dataType` or
+     * {@link ColumnFilteringOptions.operators}. Not supported for `boolean`
+     * columns (no value input).
+     *
+     * @sample grid-lite/options/inline-filtering-hide-select
+     *         Inline filtering with hidden operator select
+     *
+     * @default true when {@link ColumnFilteringOptions.operators} has a
+     *         single entry, otherwise `false`
+     */
+    hideOperatorSelect?: boolean;
 }
 
 /* *

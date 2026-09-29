@@ -5,8 +5,11 @@ authors:
 compareTooltips: true
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 7
   - Scatter and bubble charts:
       priority: 1
 ...

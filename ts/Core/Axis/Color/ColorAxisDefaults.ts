@@ -21,8 +21,6 @@
 import type ColorAxisOptions from './ColorAxisOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
-import { Palette } from '../../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -73,12 +71,15 @@ import { Palette } from '../../Color/Palettes.js';
  *               Min color and max color
  *
  * @extends      xAxis
- * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
- *               categories, crosshair, dateTimeLabelFormats, left,
+ * @excluding    alignTicks, allowDecimals, alternateGridColor, angle, breaks,
+ *               categories, crosshair, crossing, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
- *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
+ *               offset, opposite, pane, panningEnabled, plotBands, plotLines,
+ *               reversedStacks, scrollbar, showEmpty, startOfWeek,
+ *               tickPlacement, title, top, uniqueNames, units,
+ *               zoomEnabled
  * @product      highcharts highstock highmaps
+ * @requires     modules/coloraxis
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */
@@ -250,7 +251,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      */
-    gridLineColor: Palette.backgroundColor,
+    gridLineColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the grid lines extending from the axis across the
@@ -315,6 +316,18 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
     marker: {
 
         /**
+         * The symbol of the marker. Can be one of the predefined symbols
+         * ('circle', 'square', 'diamond', 'triangle', 'triangle-down') or a
+         * custom symbol URL.
+         *
+         * @type   {string}
+         * @since  13.0.0
+         * @sample highcharts/coloraxis/marker
+         *         Marker symbol options
+         * @apioption colorAxis.marker.symbol
+         */
+
+        /**
          * Animation for the marker as it moves between values. Set to `false`
          * to disable animation.
          *
@@ -328,18 +341,38 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
         },
 
         /**
-         * Maps to stroke-width because marker options are passed as crosshair.
-         * @internal
+         * The fill color of the marker.
+         * @internal */
+        clip: false,
+
+        /**
+         * The color of the marker's outline.
+         *
+         * @sample highcharts/coloraxis/marker
+         *         Marker symbol options
          */
-        width: 0.01,
+        lineColor: 'var(--highcharts-neutral-color-40)',
+
+        /**
+         * The width of the marker's outline.
+         */
+        lineWidth: 0,
 
         /**
          * The color of the marker.
          *
+         * @sample  highcharts/coloraxis/marker
+         *          Marker symbol options
          * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
-        color: Palette.neutralColor40
+        color: 'var(--highcharts-neutral-color-40)',
+
+        /**
+         * Maps to stroke-width because marker options are passed as crosshair.
+         * @internal
+         */
+        width: 0.01
     },
 
     /**
@@ -388,7 +421,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
-    minColor: Palette.highlightColor10,
+    minColor: 'var(--highcharts-highlight-color-10)',
 
     /**
      * The color to represent the maximum of the color axis. Unless
@@ -408,7 +441,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
-    maxColor: Palette.highlightColor100,
+    maxColor: 'var(--highcharts-highlight-color-100)',
 
     /**
      * Color stops for the gradient of a scalar color axis. Use this in

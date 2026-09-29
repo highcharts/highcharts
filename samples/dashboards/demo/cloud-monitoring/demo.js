@@ -24,10 +24,8 @@ const KPIOptions = {
         ]
     },
     pane: {
-        background: {
-            innerRadius: '80%',
-            outerRadius: '100%'
-        }
+        innerSize: '80%',
+        borderRadius: '50%'
     },
     accessibility: {
         typeDescription: 'The gauge chart with 1 data point.'
@@ -377,9 +375,8 @@ const setupDashboard = instanceId => {
                     series: {
                         className: 'highcharts-live-kpi',
                         dataLabels: {
-                            format: '<div style="text-align:center; ' +
-                                'margin-top: -20px">' +
-                            '<div style="font-size:1.2em;">{y}%</div>' +
+                            format: '<div style="text-align:center">' +
+                            '<div style="font-size:0.6em;">{y:.1f}%</div>' +
                             '<div style="font-size:14px; opacity:0.4; ' +
                             'text-align: center;">CPU</div>' +
                             '</div>',
@@ -432,9 +429,8 @@ const setupDashboard = instanceId => {
                     series: {
                         className: 'highcharts-live-kpi',
                         dataLabels: {
-                            format: '<div style="text-align:center; ' +
-                                'margin-top: -20px">' +
-                            '<div style="font-size:1.2em;">{y} MB</div>' +
+                            format: '<div style="text-align:center">' +
+                            '<div style="font-size:0.6em;">{y:.0f} MB</div>' +
                             '<div style="font-size:14px; opacity:0.4; ' +
                             'text-align: center;">Memory</div>' +
                             '</div>',
@@ -489,9 +485,8 @@ const setupDashboard = instanceId => {
                 plotOptions: {
                     series: {
                         dataLabels: {
-                            format: '<div style="text-align:center; ' +
-                                'margin-top: -20px">' +
-                            '<div style="font-size:1.2em;">{y} GB</div>' +
+                            format: '<div style="text-align:center">' +
+                            '<div style="font-size:0.6em;">{y:.0f} GB</div>' +
                             '<div style="font-size:14px; opacity:0.4; ' +
                             'text-align: center;">Disk space</div>' +
                             '</div>',

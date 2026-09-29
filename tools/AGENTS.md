@@ -58,15 +58,18 @@ Then verify that the generated `build/dist/*/index.html` files contain
 package-local `href="examples/.../index.html"` links and the expected category
 headings for each product.
 
-## Sample generator checksum caveat
+## Sample generator pre-commit check
 
-The repo pre-commit path runs `npm run test:precommit`, which starts with
-`npx gulp test --modified`. That task performs a repo-wide sample generator
-consistency check before applying modified-test filtering.
+The repo pre-commit path runs `npm run test:precommit`. It starts with
+`npx gulp generate-samples --check`, which regenerates all samples from
+`samples/**/config.ts` and then inspects git status for generated sample assets
+that are modified but not staged.
 
-If it fails with `generated samples not in sync with config.ts` while the change
-did not touch `samples/`, check whether ignored `.generated-checksum` files are
-missing and generated sample files have newer mtimes than `config.ts`. This can
-be local workspace mtime drift rather than a problem with the current change.
-Record the exact failing command and run the focused verification for the files
-you changed before bypassing hooks.
+If it fails, stage the regenerated sample files and retry:
+
+```bash
+git add .
+```
+
+The check intentionally validates git index state instead of local checksum
+files, so it is resilient to branch-local generator/template changes.

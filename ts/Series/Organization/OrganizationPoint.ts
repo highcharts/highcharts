@@ -29,7 +29,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sankey: { prototype: { pointClass: SankeyPointClass } }
 } = SeriesRegistry.seriesTypes;
-import { defined, find, pick } from '../../Shared/Utilities.js';
+import { defined, find } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -72,24 +72,33 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
+    /** @internal */
     public description?: string;
 
+    /** @internal */
     public fromNode!: OrganizationPoint;
 
+    /** @internal */
     public image?: OrganizationSeriesNodeOptions['image'];
 
+    /** @internal */
     public linksFrom!: Array<OrganizationPoint>;
 
+    /** @internal */
     public linksTo!: Array<OrganizationPoint>;
 
+    /** @internal */
     public nodeHeight?: number;
 
     public options!: OrganizationPointOptions;
 
+    /** @internal */
     public series!: OrganizationSeries;
 
+    /** @internal */
     public title?: string;
 
+    /** @internal */
     public toNode!: OrganizationPoint;
 
     /* *
@@ -144,10 +153,8 @@ class OrganizationPoint extends SankeyPointClass {
 
             // Default all children of the hanging node
             // to have hanging layout
-            (node.options as any).layout = pick(
-                (node.options as any).layout,
-                'hanging'
-            );
+            (node.options as any).layout =
+                (node.options as any).layout ?? 'hanging';
             node.hangsFrom = fromNode;
 
             find(

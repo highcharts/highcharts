@@ -39,7 +39,7 @@ import type XRangePoint from '../../Series/XRange/XRangePoint';
 
 import DraggableChart from './DraggableChart.js';
 const { flipResizeSide } = DraggableChart;
-import { isNumber, merge, pick } from '../../Shared/Utilities.js';
+import { isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -440,10 +440,8 @@ const column: Record<string, Partial<SeriesDragDropPropsObject>> = {
             // We flip whether or not we update the top or bottom of the guide
             // box at threshold, but if we drag the mouse fast, the top has not
             // reached threshold before we cross over and update the bottom.
-            const plotThreshold = pick(
-                    point.yBottom, // Added support for stacked series. (#18741)
-                    point.series.translatedThreshold
-                ),
+            const plotThreshold =
+                    point.yBottom ?? point.series.translatedThreshold,
                 plotY = guideBox.attr('y') as number,
                 threshold = isNumber(point.stackY) ? (
                     point.stackY - (point.y || 0)

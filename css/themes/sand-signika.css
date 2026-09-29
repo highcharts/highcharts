@@ -3,8 +3,6 @@
 @import url("../highcharts.css");
 
 :root {
-    --highcharts-background-color: none;
-
     /* Colors for data series and points. */
     --highcharts-color-0: #f45b5b;
     --highcharts-color-1: #8085e9;
@@ -24,38 +22,36 @@
     font-family: Signika, arial, helvetica, sans-serif;
 }
 
-.highcharts-axis-labels {
-    font-size: 1em;
+.highcharts-background {
+    fill: light-dark(transparent, var(--highcharts-background-color));
 }
 
-.highcharts-tooltip-box {
+.highcharts-axis-labels {
+    font-size: 0.8em;
+}
+
+.highcharts-tooltip-box,
+.highcharts-tooltip-box .highcharts-label-box {
     stroke-width: 0;
-    fill: #ffffff;
+    fill: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-tooltip text {
+    fill: var(--highcharts-background-color);
+}
+
+.highcharts-legend-box {
+    fill: var(--highcharts-neutral-color-10);
 }
 
 .highcharts-legend-item > text {
-    font-size: 1.1em;
-}
-
-/* Boxplot */
-.highcharts-boxplot-box {
-    fill: #505053;
+    font-size: 0.8em;
 }
 
 /* Navigator */
-.highcharts-navigator-xaxis .highcharts-grid-line {
-    stroke: #d0d0d8;
-}
-
 .highcharts-navigator-series {
     fill: var(--highcharts-color-0);
     stroke: var(--highcharts-color-0);
-}
-
-/* Scrollbar */
-.highcharts-scrollbar-track {
-    stroke: #c0c0c8;
-    fill: #f2f2f2;
 }
 
 /* Title */
@@ -64,17 +60,8 @@
 }
 
 /* Buttons */
-.highcharts-button {
-    fill: #ffffff;
-    stroke: #c0c0c8;
-}
-
-.highcharts-button text {
-    fill: #000000;
-}
-
 .highcharts-button-pressed {
-    fill: #d0d0d8;
+    fill: var(--highcharts-neutral-color-10);
 }
 
 .highcharts-button-box {

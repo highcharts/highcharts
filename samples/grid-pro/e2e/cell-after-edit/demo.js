@@ -12,6 +12,9 @@ Grid.grid('container', {
     columns: [{
         id: 'cbx',
         cells: {
+            editMode: {
+                enabled: true
+            },
             renderer: {
                 type: 'checkbox'
             },

@@ -147,7 +147,7 @@ export interface IKHSenkouSpanOptions {
         /**
          * Color of the area between Senkou Span A and B.
          *
-         * @deprecated
+         * @deprecated 7.0.0
          */
         fill: ColorType;
     };

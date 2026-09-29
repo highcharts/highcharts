@@ -1,2 +1,0 @@
-# Sonification Navigation
-This demo shows how custom keyboard navigation can be set up with the sonification module. It also demonstrates use of the SonificationSpeaker for more flexible custom speaker announcements. Click "Play chart" to get started and enable the keyboard navigation.

@@ -42,21 +42,15 @@ export interface GeoJSONGeometryPoint extends BaseGeometry {
 
 /**
  * A latitude/longitude object.
- *
- * @interface Highcharts.MapLonLatObject
  */
 export interface MapLonLatObject {
     /**
      * The latitude.
-     * @name Highcharts.MapLonLatObject#lat
-     * @type {number}
      */
     lat: number;
 
     /**
      * The longitude.
-     * @name Highcharts.MapLonLatObject#lon
-     * @type {number}
      */
     lon: number;
 }

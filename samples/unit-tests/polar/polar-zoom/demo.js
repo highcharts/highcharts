@@ -48,6 +48,7 @@ QUnit.test('Axes zoom', function (assert) {
             }
         },
         pane: {
+            center: ['50%', '50%'],
             size: 200
         },
         yAxis: {

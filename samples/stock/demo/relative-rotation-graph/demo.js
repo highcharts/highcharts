@@ -1,18 +1,9 @@
-Highcharts.addEvent(Highcharts.Chart, 'load', function () {
-    if (this.options.chart.className.indexOf('rounded-plot-border') !== -1) {
-        this.plotBorder.attr({
-            rx: 10,
-            ry: 10,
-            zIndex: 6
-        });
-    }
-});
-
 Highcharts.chart('container', {
     chart: {
         type: 'scatter',
         height: '90%',
         backgroundColor: 'var(--highcharts-neutral-color-3, #f7f7f8)',
+        plotBorderRadius: 10,
         plotBorderWidth: 10,
         plotBorderColor: 'var(--highcharts-background-color, #fff)',
         spacing: [10, 85, 15, 20],
@@ -30,6 +21,7 @@ Highcharts.chart('container', {
             type: 'path',
             strokeWidth: 0
         },
+        zIndex: 0,
         shapes: [{
             fill: {
                 radialGradient: {

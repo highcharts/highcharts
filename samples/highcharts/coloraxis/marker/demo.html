@@ -1,0 +1,21 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/coloraxis.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="color" path="colorAxis.marker.color" value="#ffffff01"></highcharts-control>
+      <highcharts-control path="colorAxis.marker.lineColor" value="#ffffff"></highcharts-control>
+      <highcharts-control path="colorAxis.marker.lineWidth" value="3"></highcharts-control>
+      <highcharts-control path="colorAxis.marker.symbol" value="circle" options="circle,square,diamond"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

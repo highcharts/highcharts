@@ -29,7 +29,7 @@ import Component from '../../Component';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorComponent from '../NavigatorComponent.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
-import { addEvent, defined, pick } from '../../../../Shared/Utilities.js';
+import { addEvent, defined } from '../../../../Shared/Utilities.js';
 
 const { Filter: FilterModifier } = DataModifier.types;
 
@@ -124,14 +124,14 @@ const syncPair: SyncPair = {
                 minIndex = cursor.firstRow;
 
                 if (cursor.columns) {
-                    extremesColumn = pick(cursor.columns[0], extremesColumn);
+                    extremesColumn = (cursor.columns[0] ?? extremesColumn);
                 }
             } else if (cursor.state === 'xAxis.extremes.max' + groupKey) {
-                extremesColumn = pick(cursor.column, extremesColumn);
-                maxIndex = pick(cursor.row, maxIndex);
+                extremesColumn = (cursor.column ?? extremesColumn);
+                maxIndex = (cursor.row ?? maxIndex);
             } else {
-                extremesColumn = pick(cursor.column, extremesColumn);
-                minIndex = pick(cursor.row, minIndex);
+                extremesColumn = (cursor.column ?? extremesColumn);
+                minIndex = (cursor.row ?? minIndex);
             }
 
             const modifier = table.getModifier();

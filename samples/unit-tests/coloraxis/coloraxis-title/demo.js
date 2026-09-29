@@ -62,8 +62,8 @@ QUnit.test(
 
         if (title && symbol) {
         // SVG coordinates: lower Y means higher on the screen
-            const titleY = title.getBBox().y;
-            const symbolY = symbol.getBBox().y;
+            const titleY = title.getBBox(true).y;
+            const symbolY = symbol.getBBox(true).y;
 
             assert.ok(
                 titleY < symbolY,

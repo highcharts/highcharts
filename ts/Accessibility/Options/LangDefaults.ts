@@ -251,7 +251,7 @@ const langOptions: DeepPartial<LangOptions> = {
         /**
          * Stock tools language options for accessibility.
          *
-         * @since next
+         * @since 12.6.0
          */
         stockTools: {
             groupLabel: 'Stock chart tools',

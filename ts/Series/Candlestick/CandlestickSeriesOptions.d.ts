@@ -45,7 +45,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @excluding borderColor,borderRadius,borderWidth
  *
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  *
  * @product highstock
  */
@@ -67,6 +67,20 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @product highstock
      */
     lineColor?: ColorType;
+
+    /**
+     * What type of legend symbol to render for this series. The default
+     * `candlestick` shows two candles, each a wick with a rectangular body.
+     * The first stands for a falling point, the second for a rising one.
+     *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
+     *
+     * @default candlestick
+     *
+     * @product highstock
+     */
+    legendSymbol?: string;
 
     states?: SeriesStatesOptions<CandlestickSeriesOptions>;
 

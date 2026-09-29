@@ -1,12 +1,20 @@
 Highcharts.chart('container', {
 
     chart: {
-        backgroundColor: '#0c1524',
         style: {
             fontFamily: 'Segoe UI, Roboto, Helvetica, Arial, sans-serif'
-        },
-        spacingTop: 24,
-        spacingBottom: 16
+        }
+    },
+
+    palette: {
+        colorScheme: 'dark',
+        colors: [
+            '#fb7185', '#fbbf24', '#f97316',
+            '#38bdf8', '#34d399', '#a78bfa'
+        ],
+        dark: {
+            backgroundColor: '#0c1524'
+        }
     },
 
     title: {
@@ -86,33 +94,12 @@ Highcharts.chart('container', {
         nodes: [
             {
                 id: 'Norway',
-                color: '#38bdf8',
                 dataLabels: {
                     style: {
                         fontWeight: '700',
                         fontSize: '0.95rem'
                     }
                 }
-            },
-            {
-                id: 'Germany',
-                color: '#fb7185'
-            },
-            {
-                id: 'Denmark',
-                color: '#fbbf24'
-            },
-            {
-                id: 'Netherlands',
-                color: '#f97316'
-            },
-            {
-                id: 'Sweden',
-                color: '#34d399'
-            },
-            {
-                id: 'UK',
-                color: '#a78bfa'
             }
         ],
         dataLabels: {

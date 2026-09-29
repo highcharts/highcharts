@@ -47,8 +47,7 @@ import type { SVGPath } from '../../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import T from '../../Core/Templating.js';
 const { format } = T;
 import D from '../../Core/Defaults.js';
@@ -62,14 +61,12 @@ const {
     boxIntersectLine,
     intersectRect
 } = SLU;
-import { Palette } from '../../Core/Color/Palettes';
 import {
     addEvent,
     extend,
     fireEvent,
     internalClearTimeout,
     isNumber,
-    pick,
     pushUnique,
     syncTimeout
 } from '../../Shared/Utilities.js';
@@ -174,7 +171,7 @@ function checkClearPoint(
 ): (false|LabelClearPointObject) {
     const chart = series.chart,
         seriesLabelOptions = series.options.label || {},
-        onArea = pick(seriesLabelOptions.onArea, !!series.area),
+        onArea = (seriesLabelOptions.onArea ?? !!series.area),
         findDistanceToOthers = (onArea || seriesLabelOptions.connectorAllowed),
         leastDistance = 16,
         boxesToAvoid = chart.boxesToAvoid;
@@ -454,7 +451,7 @@ function drawSeriesLabels(chart: Chart): void {
         }
 
         const colorClass = (
-                'highcharts-color-' + pick(series.colorIndex, 'none')
+                'highcharts-color-' + (series.colorIndex ?? 'none')
             ),
             isNew = !series.labelBySeries,
             minFontSize = labelOptions.minFontSize,
@@ -469,7 +466,7 @@ function drawSeriesLabels(chart: Chart): void {
             paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
             points = series.interpolatedPoints,
-            onArea = pick(labelOptions.onArea, !!series.area),
+            onArea = (labelOptions.onArea ?? !!series.area),
             results: Array<LabelClearPointObject> = [],
             xData = series.getColumn('x');
 
@@ -504,11 +501,13 @@ function drawSeriesLabels(chart: Chart): void {
         ): boolean {
             const leftBound = Math.max(
                     paneLeft,
-                    pick(areaMin, -Infinity)
+                    (areaMin ?? -Infinity
+                    )
                 ),
                 rightBound = Math.min(
                     paneLeft + paneWidth,
-                    pick(areaMax, Infinity)
+                    (areaMax ?? Infinity
+                    )
                 );
             return (
                 x > leftBound &&
@@ -559,7 +558,7 @@ function drawSeriesLabels(chart: Chart): void {
 
                 if (!chart.renderer.styledMode) {
                     const color = typeof series.color === 'string' ?
-                        series.color : Palette.neutralColor60;
+                        series.color : 'var(--highcharts-neutral-color-60)';
                     label.css(extend<CSSObject>({
                         color: onArea ?
                             chart.renderer.getContrast(color) :
@@ -816,7 +815,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
         paneHeight = inverted ? xAxis.len : yAxis.len,
         paneWidth = inverted ? yAxis.len : xAxis.len,
         seriesLabelOptions = series.options.label || {},
-        onArea = pick(seriesLabelOptions.onArea, !!series.area),
+        onArea = (seriesLabelOptions.onArea ?? !!series.area),
         translatedThreshold =
             yAxis.getThreshold(series.options.threshold as any),
         grid: Record<string, number> = {},
@@ -918,13 +917,13 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
                     if (inverted) {
                         ctlPoint.chartCenterX = paneLeft + paneWidth - (
                             (plotHigh ? plotHigh : point.plotY || 0) +
-                            pick(point.yBottom, translatedThreshold)
+                            (point.yBottom ?? translatedThreshold)
                         ) / 2;
 
                     } else {
                         ctlPoint.chartCenterY = paneTop + (
                             (plotHigh ? plotHigh : plotY) +
-                            pick(point.yBottom, translatedThreshold)
+                            (point.yBottom ?? translatedThreshold)
                         ) / 2;
                     }
                 }

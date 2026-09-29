@@ -6,7 +6,7 @@ Please refer to [Contributing: Writing content for the changelog](../CONTRIBUTIN
 
 ## Workflow of generating the changelog
 
-1. Run the script that copies PR descriptions since the last release into markdown files for each product. When including feature branches (typically on minor/major releases), remember to add the `branches` argument: `--branches master,v11`.  
+1. Run the script that copies PR descriptions since the last release into markdown files for each product. When including feature branches (typically on minor/major releases), remember to add the `branches` argument: `--branches master,v11`.
 To generate the changelog for other products like Grid, Dashboards, etc., use the `--product` argument: `--product Grid`. Make sure the correct version is specified in `build-properties.json` file.
 
     ```
@@ -28,10 +28,8 @@ To generate the changelog for other products like Grid, Dashboards, etc., use th
     node changelog/generate
     ```
 
-4. Optionally, make edits to the generated markdown files that could not be done upstream.
+4. Optionally, make edits to the generated markdown files that could not be done
+   upstream.
 
-5. Run the script that assembles the content of all markdown files in to a HTML file and uploads it to S3, where the website will pick it up. If testing, run `node changelog/generate-html` first.
-
-    ```
-    node changelog/upload
-    ```
+5. Optionally, run `node changelog/generate-html` to review the final result.
+   (Previously there was a `node changelog/generate-html` step that is now automated.)

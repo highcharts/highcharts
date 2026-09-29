@@ -45,7 +45,7 @@ import {
     extend,
     isNumber,
     merge,
-    pick
+    splat
 } from '../../Shared/Utilities.js';
 import { composeTextPath } from '../../Extensions/TextPath.js';
 composeTextPath(SVGElement);
@@ -95,6 +95,7 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
+    /** @internal */
     public alignDataLabel(
         point: OrganizationPoint,
         dataLabel: SVGLabel,
@@ -104,10 +105,10 @@ class OrganizationSeries extends SankeySeries {
         const shapeArgs = point.shapeArgs,
             text = dataLabel.text;
         if (options.useHTML && shapeArgs) {
-            const pAdjust = (
-                (this.options.borderWidth as any) +
-                2 * (this.options.dataLabels as any).padding
-            );
+            const padding = splat(this.options.dataLabels.padding || 0),
+                borderWidth = this.options.borderWidth || 0,
+                padjustX = borderWidth + 2 * padding[3 % padding.length],
+                padjustY = borderWidth + 2 * padding[0 % padding.length];
 
             let width = shapeArgs.width || 0,
                 height = shapeArgs.height || 0;
@@ -117,8 +118,8 @@ class OrganizationSeries extends SankeySeries {
                 height = shapeArgs.width || 0;
             }
 
-            height -= pAdjust;
-            width -= pAdjust;
+            width -= padjustX;
+            height -= padjustY;
 
             text.foreignObject?.attr({
                 x: 0,
@@ -157,6 +158,7 @@ class OrganizationSeries extends SankeySeries {
         super.alignDataLabel.apply(this, arguments);
     }
 
+    /** @internal */
     public createNode(id: string): OrganizationPoint {
         const node: OrganizationPoint = super.createNode.call(this, id) as any;
 
@@ -167,6 +169,7 @@ class OrganizationSeries extends SankeySeries {
 
     }
 
+    /** @internal */
     public pointAttribs(
         point: OrganizationPoint,
         state?: StatesOptionsKey
@@ -181,48 +184,45 @@ class OrganizationSeries extends SankeySeries {
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            stateOptions: OrganizationSeriesOptions =
-                (levelOptions.states &&
-                    (levelOptions.states as any)[state as any]) ||
-                {},
-            borderRadius = pick(
-                stateOptions.borderRadius,
-                options.borderRadius,
-                levelOptions.borderRadius,
+            stateOptions = levelOptions.states?.[state || 'normal'] || {},
+            borderRadius = (
+                stateOptions.borderRadius ??
+                options.borderRadius ??
+                levelOptions.borderRadius ??
                 series.options.borderRadius
             ),
 
-            linkColor = pick(
-                stateOptions.linkColor,
-                options.linkColor,
-                levelOptions.linkColor,
-                series.options.linkColor,
-                stateOptions.link && stateOptions.link.color,
-                options.link && options.link.color,
-                levelOptions.link && levelOptions.link.color,
-                series.options.link && series.options.link.color
+            linkColor = (
+                stateOptions.linkColor ??
+                options.linkColor ??
+                levelOptions.linkColor ??
+                series.options.linkColor ??
+                stateOptions.link?.color ??
+                options.link?.color ??
+                levelOptions.link?.color ??
+                series.options.link?.color
             ),
 
-            linkLineWidth = pick(
-                stateOptions.linkLineWidth,
-                options.linkLineWidth,
-                levelOptions.linkLineWidth,
-                series.options.linkLineWidth,
-                stateOptions.link && stateOptions.link.lineWidth,
-                options.link && options.link.lineWidth,
-                levelOptions.link && levelOptions.link.lineWidth,
-                series.options.link && series.options.link.lineWidth
+            linkLineWidth = (
+                stateOptions.linkLineWidth ??
+                options.linkLineWidth ??
+                levelOptions.linkLineWidth ??
+                series.options.linkLineWidth ??
+                stateOptions.link?.lineWidth ??
+                options.link?.lineWidth ??
+                levelOptions.link?.lineWidth ??
+                series.options.link?.lineWidth
             ),
 
-            linkOpacity = pick(
-                stateOptions.linkOpacity,
-                options.linkOpacity,
-                levelOptions.linkOpacity,
-                series.options.linkOpacity,
-                stateOptions.link && stateOptions.link.linkOpacity,
-                options.link && options.link.linkOpacity,
-                levelOptions.link && levelOptions.link.linkOpacity,
-                series.options.link && series.options.link.linkOpacity
+            linkOpacity = (
+                stateOptions.linkOpacity ??
+                options.linkOpacity ??
+                levelOptions.linkOpacity ??
+                series.options.linkOpacity ??
+                stateOptions.link?.linkOpacity ??
+                options.link?.linkOpacity ??
+                levelOptions.link?.linkOpacity ??
+                series.options.link?.linkOpacity
             );
 
         if (!point.isNode) {
@@ -239,19 +239,17 @@ class OrganizationSeries extends SankeySeries {
         return attribs;
     }
 
+    /** @internal */
     public translateLink(point: OrganizationPoint): void {
-        const chart = this.chart,
-            options = this.options,
+        const { chart, options } = this,
             fromNode = point.fromNode,
             toNode = point.toNode,
-            linkWidth = pick(options.linkLineWidth, options.link.lineWidth, 0),
-            factor = pick((options.link as any).offset, 0.5),
-            type = pick(
-                point.options.link && point.options.link.type,
-                options.link.type
-            );
+            linkWidth = options.linkLineWidth ?? options.link.lineWidth ?? 0,
+            factor = options.link.offset ?? 0.5,
+            type = point.options.link?.type ?? options.link.type;
+
         if (fromNode.shapeArgs && toNode.shapeArgs) {
-            const hangingIndent: number = options.hangingIndent as any,
+            const hangingIndent = options.hangingIndent || 0,
                 hangingRight = options.hangingSide === 'right',
                 toOffset = toNode.options.offset,
                 percentOffset =
@@ -365,7 +363,7 @@ class OrganizationSeries extends SankeySeries {
                             ['L', xMiddle, y2],
                             ['L', x2, y2]
                         ],
-                        pick(options.linkRadius, options.link.radius)
+                        options.linkRadius ?? options.link.radius
                     )
                 };
             }
@@ -380,6 +378,7 @@ class OrganizationSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public translateNode(
         node: OrganizationPoint,
         column: SankeyColumnComposition.ArrayComposition<OrganizationPoint>
@@ -457,6 +456,7 @@ class OrganizationSeries extends SankeySeries {
         }
     }
 
+    /** @internal */
     public drawDataLabels(): void {
         const dlOptions = this.options.dataLabels;
 
@@ -481,10 +481,12 @@ class OrganizationSeries extends SankeySeries {
  * */
 
 interface OrganizationSeries {
+    /** @internal */
     pointClass: typeof OrganizationPoint;
 }
 extend(OrganizationSeries.prototype, {
-    pointClass: OrganizationPoint
+    pointClass: OrganizationPoint,
+    useCircularLayout: false
 });
 
 /* *

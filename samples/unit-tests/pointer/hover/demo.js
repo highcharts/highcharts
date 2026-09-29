@@ -108,10 +108,12 @@ QUnit.test('Testing hovering over panes.', function (assert) {
 
             pane: [
                 {
-                    center: ['25%', '50%']
+                    center: ['25%', '50%'],
+                    margin: 20
                 },
                 {
-                    center: ['75%', '50%']
+                    center: ['75%', '50%'],
+                    margin: 20
                 }
             ],
 
@@ -152,9 +154,8 @@ QUnit.test('Testing hovering over panes.', function (assert) {
 
     controller.moveTo(x, y);
 
-    assert.strictEqual(
-        chart.hoverPoint,
-        chart.series[0].points[2],
+    assert.ok(
+        chart.hoverPoint === chart.series[0].points[2],
         'The other pane\'s point should be ignored' // #11148
     );
 

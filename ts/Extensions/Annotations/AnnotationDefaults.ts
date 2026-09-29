@@ -8,7 +8,6 @@ import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptio
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
 import { defined } from '../../Shared/Utilities.js';
 
 /* *
@@ -180,7 +179,7 @@ const AnnotationDefaults: AnnotationOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor100,
+        borderColor: 'var(--highcharts-neutral-color-100)',
 
         /**
          * The border radius in pixels for the annotation's label.
@@ -688,8 +687,8 @@ const AnnotationDefaults: AnnotationOptions = {
          */
         style: {
             cursor: 'pointer',
-            fill: Palette.backgroundColor,
-            stroke: Palette.neutralColor100,
+            fill: 'var(--highcharts-background-color)',
+            stroke: 'var(--highcharts-neutral-color-100)',
             'stroke-width': 2
         },
 
@@ -808,20 +807,20 @@ const AnnotationDefaults: AnnotationOptions = {
          */
 
         /**
-         * This number defines which `xAxis` the point is connected to.
+         * This option defines which `xAxis` the point is connected to.
          * It refers to either the axis id or the index of the axis
          * in the `xAxis` array.
          *
-         * @type {number}
+         * @type {number|string}
          * @apioption annotations.typeOptions.xAxis
          */
 
         /**
-         * This number defines which `yAxis` the point is connected to.
+         * This option defines which `yAxis` the point is connected to.
          * It refers to either the axis id or the index of the axis
          * in the `yAxis` array.
          *
-         * @type {number}
+         * @type {number|string}
          * @apioption annotations.typeOptions.yAxis
          */
 

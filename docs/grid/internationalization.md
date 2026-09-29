@@ -41,6 +41,60 @@ Grid.setOptions({
 
 You only need to override the strings you want to change. The remaining `lang` options fall back to the built-in defaults. For a full list of available options, see the [API reference](https://api.highcharts.com/grid/lang).
 
+### Column filtering labels
+
+Column filtering uses `lang.columnFilteringOperators` for default operator
+labels on string, number, and boolean columns, and for shared labels such as
+`empty` and `notEmpty` on all column types.
+
+Datetime columns use the same operator keys as number columns in configuration
+and API, but the filter UI can show date-specific text. Override selected
+operators with `lang.columnFilteringDateTimeOperators`:
+
+```js
+Grid.setOptions({
+    lang: {
+        columnFilteringOperators: {
+            greaterThan: 'Greater than',
+            equals: 'Equals',
+            contains: 'Contains',
+            empty: 'Empty',
+            notEmpty: 'Not empty'
+        },
+        columnFilteringDateTimeOperators: {
+            equals: 'On',
+            doesNotEqual: 'Not on',
+            greaterThan: 'After',
+            greaterThanOrEqualTo: 'On or after',
+            lessThan: 'Before',
+            lessThanOrEqualTo: 'On or before'
+        }
+    }
+});
+```
+
+You only need to include the keys you want to change. Any operator not listed
+in `columnFilteringDateTimeOperators` falls back to
+`columnFilteringOperators`, then to a readable default derived from the
+operator name.
+
+| Operator key | Default datetime UI label |
+|--------------|---------------------------|
+| `equals` | On |
+| `doesNotEqual` | Not on |
+| `greaterThan` | After |
+| `greaterThanOrEqualTo` | On or after |
+| `lessThan` | Before |
+| `lessThanOrEqualTo` | On or before |
+
+For how operators map to filtering configuration, see
+[Column filtering](https://www.highcharts.com/docs/grid/columns/filtering),
+including the [upgrading](https://www.highcharts.com/docs/grid/columns/filtering#upgrading-column-filtering)
+section if you are migrating from older option names.
+
+The `lang.columnFilteringConditions` option is deprecated. Use
+`lang.columnFilteringOperators` instead.
+
 ## Locale resolution
 
 Locale-aware formatting follows this order:

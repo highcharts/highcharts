@@ -65,14 +65,15 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true,
             rotation: -90,
-            color: '#FFFFFF',
             inside: true,
             verticalAlign: 'top',
             format: '{point.y:.1f}', // one decimal
+            backgroundColor: 'contrast',
             y: 10, // 10 pixels down from the top
             style: {
                 fontSize: '13px',
-                fontFamily: 'Verdana, sans-serif'
+                fontFamily: 'Verdana, sans-serif',
+                textOutline: 'none'
             }
         }
     }]

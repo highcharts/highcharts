@@ -17,6 +17,7 @@
  *
  * */
 
+import DataTableCore from '../../Data/DataTableCore.js';
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -82,6 +83,7 @@ class PointAndFigureSeries extends ScatterSeries {
      *
     * */
 
+    /** @internal */
     public static defaultOptions: PointAndFigureSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         PointAndFigureSeriesDefaults
@@ -93,6 +95,7 @@ class PointAndFigureSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -111,8 +114,10 @@ class PointAndFigureSeries extends ScatterSeries {
 
     public points!: Array<PointAndFigurePoint>;
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public yData!: Array<number>;
 
     public allowDG = false;
@@ -123,12 +128,14 @@ class PointAndFigureSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
         this.pnfDataGroups = [];
     }
 
+    /** @internal */
     public getProcessedData(): Series.ProcessedDataObject {
         if (!this.pnfDataGroups) {
             return {
@@ -140,7 +147,6 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         const series = this,
-            modified = this.dataTable.getModified(),
             options = series.options,
             xData = series.getColumn('x', true),
             yData = series.getColumn('y', true),
@@ -148,7 +154,11 @@ class PointAndFigureSeries extends ScatterSeries {
             calculatedBoxSize = isNumber(boxSize) ?
                 boxSize : relativeLength(boxSize, yData[0]),
             pnfDataGroups = series.pnfDataGroups,
-            reversal = calculatedBoxSize * options.reversalAmount;
+            reversal = calculatedBoxSize * options.reversalAmount,
+            dataTable = this.dataTable.getModified(),
+            modified = dataTable === this.dataTable ?
+                dataTable :
+                new DataTableCore();
 
         series.calculatedBoxSize = calculatedBoxSize;
 
@@ -248,6 +258,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         const processedXData: number[] = [];
         const processedYData: number[] = [];
+        const processedUpTrendData: boolean[] = [];
 
         pnfDataGroups.forEach((point): void => {
             const x = point.x,
@@ -256,6 +267,7 @@ class PointAndFigureSeries extends ScatterSeries {
             point.y.forEach((y): void => {
                 processedXData.push(x);
                 processedYData.push(y);
+                processedUpTrendData.push(upTrend);
                 finalData.push({
                     x,
                     y,
@@ -265,8 +277,9 @@ class PointAndFigureSeries extends ScatterSeries {
         });
         modified.setColumn('x', processedXData);
         modified.setColumn('y', processedYData);
+        modified.setColumn('upTrend', processedUpTrendData);
         series.pnfDataGroups = pnfDataGroups;
-        series.processedData = finalData;
+        series.hasProcessedDataTable = true;
 
         return {
             modified,
@@ -276,6 +289,7 @@ class PointAndFigureSeries extends ScatterSeries {
         };
     }
 
+    /** @internal */
     public markerAttribs(
         point: Point
     ): SVGAttributes {
@@ -298,6 +312,7 @@ class PointAndFigureSeries extends ScatterSeries {
         return attribs;
     }
 
+    /** @internal */
     public translate(): void {
         const metrics = this.getColumnMetrics(),
             calculatedBoxSize = this.calculatedBoxSize;
@@ -317,17 +332,26 @@ class PointAndFigureSeries extends ScatterSeries {
  * */
 
 interface PointAndFigureGroup {
+    /** @internal */
     x: number;
+    /** @internal */
     y: Array<number>;
+    /** @internal */
     upTrend: boolean;
 }
 
 interface PointAndFigureSeries {
+    /** @internal */
     takeOrdinalPosition: boolean;
+    /** @internal */
     pnfDataGroups: Array<PointAndFigureGroup>;
+    /** @internal */
     getColumnMetrics: typeof columnProto.getColumnMetrics;
+    /** @internal */
     markerWidth: number;
+    /** @internal */
     markerHeight: number;
+    /** @internal */
     calculatedBoxSize: number;
 }
 

@@ -26,7 +26,6 @@ import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
@@ -40,7 +39,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Channel series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pc
  *
@@ -71,6 +69,7 @@ class PCIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/price-channel
      * @optionparent plotOptions.pc
+     * @internal
      */
     public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -98,7 +97,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palettes.colors[2],
+                lineColor: 'var(--highcharts-color-2)',
                 /**
                  * Pixel width of the line.
                  */
@@ -113,7 +112,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palettes.colors[8],
+                lineColor: 'var(--highcharts-color-8)',
                 /**
                  * Pixel width of the line.
                  */
@@ -141,6 +140,7 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PCParamsOptions
@@ -219,7 +219,6 @@ MultipleLinesComposition.compose(PCIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pc: typeof PCIndicator;
@@ -234,7 +233,6 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  *
  * */
 
-/** @internal */
 export default PCIndicator;
 
 /* *
@@ -250,7 +248,7 @@ export default PCIndicator;
  * @extends      series,plotOptions.pc
  * @since        7.0.0
  * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding    allAreas, colorAxis, compare, compareBase,
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking

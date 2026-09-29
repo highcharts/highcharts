@@ -37,7 +37,7 @@ import type Time from '../Time';
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-const { dateFormats } = H;
+const { composed, dateFormats } = H;
 import Tick from './Tick.js';
 import {
     defined,
@@ -47,9 +47,9 @@ import {
     isNumber,
     isObject as isObjectUtils,
     merge,
-    pick,
     wrap,
-    addEvent
+    addEvent,
+    pushUnique
 } from '../../Shared/Utilities.js';
 import { timeUnits } from '../Utilities.js';
 
@@ -218,7 +218,7 @@ function applyGridOptions(axis: Axis): void {
         options.labels = {};
     }
     */
-    options.labels.align = pick(options.labels.align, 'center');
+    options.labels.align = (options.labels.align ?? 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc
 
@@ -250,9 +250,7 @@ function compose<T extends typeof Axis>(
     TickClass: typeof Tick
 ): (T&typeof GridAxis) {
 
-    if (!AxisClass.keepProps.includes('grid')) {
-        AxisClass.keepProps.push('grid');
-
+    if (pushUnique(composed, 'Axis.Grid')) {
         AxisClass.prototype.getMaxLabelDimensions = getMaxLabelDimensions;
 
         wrap(AxisClass.prototype, 'unsquish', wrapUnsquish);
@@ -413,48 +411,55 @@ function onAfterGetTitlePosition(
     if (gridOptions.enabled === true) {
         // Compute anchor points for each of the title align options
         const {
-            axisTitle,
-            height: axisHeight,
-            horiz,
-            left: axisLeft,
-            offset,
-            opposite,
-            options,
-            top: axisTop,
-            width: axisWidth
-        } = axis;
-        const tickSize = axis.tickSize();
-        const titleWidth = axisTitle?.getBBox().width;
-        const xOption = options.title.x;
-        const yOption = options.title.y;
-        const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
-        const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
-            axisTitle
-        ).f : 0;
-        const crispCorr = tickSize ? tickSize[0] / 2 : 0;
-
-        // TODO account for alignment
-        // the position in the perpendicular direction of the axis
-        const offAxis = (
-            (horiz ? axisTop + axisHeight : axisLeft) +
-            (horiz ? 1 : -1) * // Horizontal axis reverses the margin
-            (opposite ? -1 : 1) * // So does opposite axes
-            crispCorr +
-            (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
-        );
+                axisTitle,
+                height: axisHeight,
+                horiz,
+                left: axisLeft,
+                offset,
+                opposite,
+                options,
+                top: axisTop,
+                width: axisWidth
+            } = axis,
+            tickSize = axis.tickSize(),
+            titleWidth = axisTitle?.getBBox().width,
+            title = options.title,
+            { x, y } = title,
+            margin = title.margin ?? (horiz ? 5 : 10),
+            titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
+                axisTitle
+            ).f : 0,
+            crispCorr = tickSize ? tickSize[0] / 2 : 0,
+            offAxis = (
+                (horiz ? axisTop + axisHeight : axisLeft) +
+                (horiz ? 1 : -1) * // Horizontal axis reverses the margin
+                (opposite ? -1 : 1) * // So does opposite axes
+                crispCorr +
+                (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
+            );
 
         e.titlePosition.x = horiz ?
-            axisLeft - (titleWidth || 0) / 2 - titleMargin + xOption :
-            offAxis + (opposite ? axisWidth : 0) + offset + xOption;
+            axisLeft - (titleWidth || 0) / 2 - margin + x :
+            offAxis + (opposite ? axisWidth : 0) + offset + x;
         e.titlePosition.y = horiz ?
             (
                 offAxis -
                 (opposite ? axisHeight : 0) +
                 (opposite ? titleFontSize : -titleFontSize) / 2 +
                 offset +
-                yOption
+                y
             ) :
-            axisTop - titleMargin + yOption;
+            axisTop - margin + y;
+
+        // In a vertical grid axis, allow text alignment for column titles
+        if (!horiz) {
+            const [slotWidth = 0] = tickSize || [];
+            if (title.textAlign === 'left') {
+                e.titlePosition.x -= slotWidth / 2;
+            } else if (title.textAlign === 'right') {
+                e.titlePosition.x += slotWidth / 2;
+            }
+        }
     }
 }
 
@@ -474,7 +479,14 @@ function onAfterInit(this: Axis): void {
     }
 
     if (gridOptions.columns) {
-        const columns = axis.grid.columns = [] as Array<GridAxisComposition>;
+        axis.grid.columns ||= [];
+
+        const columns = axis.grid.columns;
+
+        // Destroy existing columns. In a future update we could consider
+        // matching and updating existing columns instead of recreating all.
+        columns.forEach((column): void => column.destroy());
+        columns.length = 0;
 
         let columnIndex = axis.grid.columnIndex = 0;
 
@@ -973,8 +985,8 @@ function onAfterSetOptions(
                             _________________________
             Into this:    |_____|_____|_____|_____|
                                 ^                 ^    */
-            options.minPadding = pick(userOptions.minPadding, 0);
-            options.maxPadding = pick(userOptions.maxPadding, 0);
+            options.minPadding = (userOptions.minPadding ?? 0);
+            options.maxPadding = (userOptions.maxPadding ?? 0);
         }
 
         // If borderWidth is set, then use its value for tick and
@@ -1024,20 +1036,19 @@ function onAfterTickSize(
     e: { tickSize?: [number, number] }
 ): void {
     const {
-        horiz,
-        maxLabelDimensions,
-        options: {
-            grid: gridOptions = {}
-        }
-    } = this;
-    if (gridOptions.enabled && maxLabelDimensions) {
-        const labelPadding = this.options.labels.distance * 2;
-        const distance = horiz ?
-            (
-                gridOptions.cellHeight ||
-                labelPadding + maxLabelDimensions.height
-            ) :
-            labelPadding + maxLabelDimensions.width;
+            horiz,
+            maxLabelDimensions,
+            options
+        } = this,
+        { labels, grid = {} } = options;
+    if (grid.enabled && maxLabelDimensions) {
+        const labelPadding = (labels.distance ?? 15) * 2,
+            distance = horiz ?
+                (
+                    grid.cellHeight ||
+                    labelPadding + maxLabelDimensions.height
+                ) :
+                labelPadding + maxLabelDimensions.width;
         if (isArray(e.tickSize)) {
             e.tickSize[0] = distance;
         } else {
@@ -1058,15 +1069,20 @@ function onChartAfterSetChartSize(this: Chart): void {
 
 /** @internal */
 function onDestroy(
-    this: Axis,
-    e: { keepEvents: boolean }
+    this: Axis
 ): void {
     const {
         grid
     } = this as GridAxisComposition;
 
+    // Axes created before the Gantt module was loaded have no grid
+    // additions to be destroyed (#24644).
+    if (!grid) {
+        return;
+    }
+
     (grid.columns || []).forEach(
-        (column): void => column.destroy(e.keepEvents)
+        (column): void => column.destroy()
     );
     grid.columns = void 0;
 }
@@ -1081,7 +1097,10 @@ function onInit(
 ): void {
     const axis = this;
     const userOptions = e.userOptions || {};
-    const gridOptions = userOptions.grid || {};
+    const gridOptions = merge(
+        { borderColor: 'var(--highcharts-neutral-color-20)' },
+        userOptions.grid || {}
+    );
 
     if (gridOptions.enabled && defined(gridOptions.borderColor)) {
         userOptions.tickColor = userOptions.lineColor = (
@@ -1095,6 +1114,9 @@ function onInit(
 
     axis.hiddenLabels = [];
     axis.hiddenMarks = [];
+    if (gridOptions.enabled) {
+        axis.clippable = false;
+    }
 }
 
 /**
@@ -1231,23 +1253,31 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     } = ctx;
     if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
-        const series = (
-            axis.linkedParent || axis
-        ).series[0];
+        const allSeries = (axis.linkedParent || axis).series;
+        const allSeriesData = allSeries
+            .reduce<(typeof allSeries)[number]['options']['data']>(
+            (acc, series): (typeof allSeries)[number]['options']['data'] => {
+                if (series.is('gantt')) {
+                    return acc?.concat(series.options?.data ?? []);
+                }
+                return acc;
+            },
+        []
+        ) ?? [];
         const isFirst = value === tickPos[0];
         const isLast = value === tickPos[tickPos.length - 1];
-        const point: (Point|undefined) =
-            series && find(series.options.data as any, function (
-                p: Point
+        const point =
+            allSeries[0] && find(allSeriesData, function (
+                p
             ): boolean {
-                return p[axis.isXAxis ? 'x' : 'y'] === value;
+                return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
             });
         let pointCopy;
 
-        if (point && series.is('gantt')) {
+        if (point) {
             // For the Gantt set point aliases to the pointCopy
             // to do not change the original point
-            pointCopy = merge(point);
+            pointCopy = merge(point as any);
             H.seriesTypes.gantt.prototype.pointClass
                 .setGanttPointAliases(pointCopy as any, axis.chart);
         }
@@ -1317,7 +1347,7 @@ function onTrimTicks(this: Axis): void {
     if (
         gridOptions.enabled === true &&
         !categoryAxis &&
-        (axis.isXAxis || axis.isLinked)
+        (axis.isXAxis || axis.linkedParent)
     ) {
         if (
             (endMoreThanMin || startLessThanMin) && !options.startOnTick
@@ -1593,7 +1623,7 @@ export default GridAxis;
  * Set border color for the label grid lines.
  *
  * @type      {Highcharts.ColorString}
- * @default   #e6e6e6
+ * @default   #cccccc
  * @apioption xAxis.grid.borderColor
  */
 

@@ -31,8 +31,7 @@ import {
     defined,
     internalClearTimeout,
     isObject,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
@@ -80,11 +79,7 @@ const zoomBy = function (
     mouseY: number,
     options: MouseWheelZoomOptions
 ): boolean {
-    const type = pick(
-        options.type,
-        chart.zooming.type,
-        ''
-    );
+    const type = (options.type ?? chart.zooming.type ?? '');
 
     let axes: Array<Axis> = [];
     if (type === 'x') {
@@ -289,7 +284,7 @@ export default MouseWheelZoomComposition;
  *
  * @type      {boolean}
  * @default   false
- * @since {next}
+ * @since     12.5.0
  * @requires  modules/mouse-wheel-zoom
  * @sample    {highcharts} highcharts/mouse-wheel-zoom/reset-zoom-button
  *            Enable reset zoom button for mouse wheel zooming

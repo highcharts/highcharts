@@ -5,8 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'yAxis.plotBands[0].outerRadius',
-        value: '105%',
-        min: 100,
+        value: '95%',
+        min: 50,
         max: 120
     }, {
         path: 'yAxis.plotBands[0].thickness',

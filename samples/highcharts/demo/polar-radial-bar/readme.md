@@ -1,2 +1,0 @@
-# Inverted polar bar
-The inverted [polar bar](https://api.highcharts.com/highcharts/chart.polar) is a type of series that simply represents inverted column series on polar coordinate system. As opposed to non-inverted variant, shape of points are circular.

@@ -1,4 +1,15 @@
 body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
     background: var(--highcharts-background-color);
     color: var(--highcharts-neutral-color-100);
 }
@@ -7,4 +18,29 @@ body {
     max-width: 800px;
     min-width: 360px;
     margin: 0 auto;
+}
+
+/* Custom CSS for the color axis ticks and marker */
+.highcharts-coloraxis .highcharts-tick {
+    stroke-linecap: round;
+    translate: -6px 0;
+    filter:
+        drop-shadow(0 0 1px rgba(0, 0, 0, 0.1))
+        drop-shadow(0 1px 1px rgba(0, 0, 0, 0.09))
+        drop-shadow(0 3px 2px rgba(0, 0, 0, 0.05))
+        drop-shadow(0 6px 2px rgba(0, 0, 0, 0.01));
+    transition: opacity 0.3s ease;
+}
+
+/* When the map is hovered, hide the ticks */
+.highcharts-root:has(.highcharts-series-group:hover) .highcharts-tick {
+    opacity: 0;
+}
+
+.highcharts-coloraxis-marker {
+    filter:
+        drop-shadow(0 0 1px rgba(0, 0, 0, 0.1))
+        drop-shadow(0 1px 1px rgba(0, 0, 0, 0.09))
+        drop-shadow(0 3px 2px rgba(0, 0, 0, 0.05))
+        drop-shadow(0 6px 2px rgba(0, 0, 0, 0.01));
 }

@@ -2,19 +2,20 @@
 // Data retrieved from https://www.ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
 // Radialize the colors
 Highcharts.setOptions({
-    colors: Highcharts.getOptions().colors.map(function (color) {
-        return {
-            radialGradient: {
-                cx: 0.5,
-                cy: 0.3,
-                r: 0.7
-            },
-            stops: [
-                [0, color],
-                [1, Highcharts.color(color).brighten(-0.3).get('rgb')] // darken
-            ]
-        };
-    })
+    colors: Highcharts.getOptions().colors.map(color => ({
+        radialGradient: {
+            cx: 0.5,
+            cy: 0.3,
+            r: 0.7
+        },
+        stops: [
+            // The `color` is a CSS color string on the form
+            // `var(--highcharts-color-{n})`, where `n` is the index of the
+            // color in the `palette.colors` array.
+            [0, color],
+            [1, `color-mix(${color} 70%, black 30%)`] // darken
+        ]
+    }))
 });
 
 // Build the chart

@@ -1,13 +1,19 @@
-// Prepare the data
-const data = [],
-    n = 1000000;
-
-for (let i = 0; i < n; i += 1) {
-    data.push([
-        Math.pow(Math.random(), 2) * 100,
-        Math.pow(Math.random(), 2) * 100
-    ]);
+function getDataTableOptions(n) {
+    const xColumn = new Float64Array(n),
+        yColumn = new Float64Array(n);
+    for (let i = 0; i < n; i += 1) {
+        xColumn[i] = Math.pow(Math.random(), 2) * 100;
+        yColumn[i] = Math.pow(Math.random(), 2) * 100;
+    }
+    return {
+        columns: {
+            x: xColumn,
+            y: yColumn
+        }
+    };
 }
+const n = 1000000,
+    dataTable = getDataTableOptions(n);
 
 if (!Highcharts.Series.prototype.renderCanvas) {
     throw 'Module not loaded';
@@ -16,6 +22,8 @@ if (!Highcharts.Series.prototype.renderCanvas) {
 console.time('scatter');
 console.time('asyncRender');
 Highcharts.chart('container', {
+
+    dataTable,
 
     chart: {
         zooming: {
@@ -44,7 +52,7 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Scatter chart with ' +
-            Highcharts.numberFormat(data.length, 0, ' ') + ' points'
+            Highcharts.numberFormat(n, 0, ' ') + ' points'
     },
 
     subtitle: {
@@ -60,7 +68,6 @@ Highcharts.chart('container', {
         type: 'scatter',
         color: 'rgb(152, 0, 67)',
         fillOpacity: 0.1,
-        data: data,
         marker: {
             radius: 0.5
         },

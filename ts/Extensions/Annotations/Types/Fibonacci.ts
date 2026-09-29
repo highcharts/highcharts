@@ -11,17 +11,16 @@
  *
  * */
 
+import type { AnnotationOptions } from '../AnnotationOptions';
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
 import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
-import CrookedLine from './CrookedLine';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import { merge } from '../../../Shared/Utilities.js';
 
@@ -36,6 +35,7 @@ if (defaultOptions.annotations?.types) {
          *
          * @extends      annotations.types.crookedLine
          * @product      highstock
+         * @requires     modules/annotations-advanced
          * @optionparent annotations.types.fibonacci
          */
         {
@@ -83,7 +83,7 @@ if (defaultOptions.annotations?.types) {
                 /**
                  * The color of line.
                  */
-                lineColor: Palette.neutralColor40,
+                lineColor: 'var(--highcharts-neutral-color-40)',
 
                 /**
                  * An array of colors for the lines.
@@ -109,7 +109,7 @@ if (defaultOptions.annotations?.types) {
                 overflow: 'none' as any,
                 shape: 'rect',
                 style: {
-                    color: Palette.neutralColor80
+                    color: 'var(--highcharts-neutral-color-80)'
                 },
                 verticalAlign: 'middle',
                 y: 0
@@ -394,7 +394,7 @@ namespace Fibonacci {
          * @extends   annotations.types.crookedLine.labelOptions
          * @apioption annotations.types.fibonacci.typeOptions.labels
          */
-        labels: Array<CrookedLine.Options['labelOptions']>;
+        labels: Array<AnnotationOptions['labelOptions']>;
 
         /**
          * The color of line.

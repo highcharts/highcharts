@@ -1,0 +1,7 @@
+---
+ name: AAL intraday ticks with bid-ask spread and volume
+ authors:
+   - Paweł Dalek
+ requiresManualTesting: true
+ js_wrap: b
+...

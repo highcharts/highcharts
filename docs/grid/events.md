@@ -131,6 +131,7 @@ Row pinning events are configured in `rendering.rows.pinning.events`:
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 events: {
                     beforeRowPin: function (event) {
                         console.log(

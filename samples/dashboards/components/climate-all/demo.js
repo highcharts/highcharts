@@ -337,12 +337,7 @@ async function setupBoard() {
                     type: 'solidgauge'
                 },
                 pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
+                    innerSize: '70%',
                     endAngle: 90,
                     startAngle: -90
                 },
@@ -354,9 +349,7 @@ async function setupBoard() {
                     },
                     animation: false,
                     animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
+                    enableMouseTracking: false
                 }],
                 title: {
                     text: 'Average Temperature',
@@ -364,8 +357,8 @@ async function setupBoard() {
                 },
                 yAxis: {
                     labels: {
-                        distance: 4,
-                        y: 12
+                        distance: '-15%',
+                        y: 15
                     },
                     max: 50,
                     min: -10,
@@ -407,12 +400,7 @@ async function setupBoard() {
                     type: 'solidgauge'
                 },
                 pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
+                    innerSize: '70%',
                     endAngle: 90,
                     startAngle: -90
                 },
@@ -424,9 +412,7 @@ async function setupBoard() {
                     },
                     animation: false,
                     animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
+                    enableMouseTracking: false
                 }],
                 title: {
                     text: 'Maximal Temperature',
@@ -434,8 +420,8 @@ async function setupBoard() {
                 },
                 yAxis: {
                     labels: {
-                        distance: 4,
-                        y: 12
+                        distance: '-15%',
+                        y: 15
                     },
                     max: 50,
                     min: -10,
@@ -478,12 +464,7 @@ async function setupBoard() {
                     type: 'solidgauge'
                 },
                 pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
+                    innerSize: '70%',
                     endAngle: 90,
                     startAngle: -90
                 },
@@ -495,9 +476,7 @@ async function setupBoard() {
                     },
                     animation: false,
                     animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
+                    enableMouseTracking: false
                 }],
                 title: {
                     text: 'Days with Rain',
@@ -505,8 +484,8 @@ async function setupBoard() {
                 },
                 yAxis: {
                     labels: {
-                        distance: 4,
-                        y: 12
+                        distance: '-15%',
+                        y: 15
                     },
                     max: 10,
                     min: 0,
@@ -547,12 +526,7 @@ async function setupBoard() {
                     type: 'solidgauge'
                 },
                 pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
+                    innerSize: '70%',
                     endAngle: 90,
                     startAngle: -90
                 },
@@ -564,9 +538,7 @@ async function setupBoard() {
                     },
                     animation: false,
                     animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
+                    enableMouseTracking: false
                 }],
                 title: {
                     text: 'Days with Ice',
@@ -574,8 +546,8 @@ async function setupBoard() {
                 },
                 yAxis: {
                     labels: {
-                        distance: 4,
-                        y: 12
+                        distance: '-15%',
+                        y: 15
                     },
                     max: 10,
                     min: 0,
@@ -617,12 +589,7 @@ async function setupBoard() {
                     type: 'solidgauge'
                 },
                 pane: {
-                    background: {
-                        innerRadius: '90%',
-                        outerRadius: '120%',
-                        shape: 'arc'
-                    },
-                    center: ['50%', '70%'],
+                    innerSize: '70%',
                     endAngle: 90,
                     startAngle: -90
                 },
@@ -634,9 +601,7 @@ async function setupBoard() {
                     },
                     animation: false,
                     animationLimit: 0,
-                    enableMouseTracking: false,
-                    innerRadius: '90%',
-                    radius: '120%'
+                    enableMouseTracking: false
                 }],
                 title: {
                     text: 'Days with Frost',
@@ -644,8 +609,8 @@ async function setupBoard() {
                 },
                 yAxis: {
                     labels: {
-                        distance: 4,
-                        y: 12
+                        distance: '-15%',
+                        y: 15
                     },
                     max: 10,
                     min: 0,

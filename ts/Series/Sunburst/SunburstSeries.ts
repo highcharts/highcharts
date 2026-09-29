@@ -146,6 +146,9 @@ function getDlOptions(
         )[0],
         options = merge<SunburstDataLabelOptions>(optionsLevel, optionsPoint),
         style = options.style = options.style || {},
+        padding: Array<number> = splat(options.padding || 0),
+        paddingLeft = padding[3 % padding.length],
+        paddingRight = padding[1 % padding.length],
         { innerArcLength = 0, outerArcLength = 0 } = point;
 
     let rotationRad: (number|undefined),
@@ -252,7 +255,7 @@ function getDlOptions(
 
         // Apply padding (#8515)
         width = Math.max(
-            (width || 0) - 2 * (options.padding || 0),
+            (width || 0) - paddingLeft - paddingRight,
             1
         );
 
@@ -282,8 +285,8 @@ function getDlOptions(
             options.textPath.enabled = false;
             // Setting width and padding
             width = Math.max(
-                (point.shapeExisting.r * 2) -
-                2 * (options.padding || 0), 1
+                (point.shapeExisting.r * 2) - paddingLeft - paddingRight,
+                1
             );
         } else if (
             point.dlOptions?.textPath &&
@@ -299,7 +302,8 @@ function getDlOptions(
             // Setting width and padding
             width = Math.max(
                 (outerArcLength + innerArcLength) / 2 -
-                2 * (options.padding || 0), 1
+                    paddingLeft - paddingRight,
+                1
             );
             style.whiteSpace = 'nowrap';
         }
@@ -461,6 +465,7 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: SunburstSeriesOptions = merge(
         TreemapSeries.defaultOptions,
         SunburstSeriesDefaults
@@ -472,22 +477,28 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public center!: Array<number>;
 
     public data!: Array<SunburstPoint>;
 
+    /** @internal */
     public mapOptionsToLevel!: Record<string, SunburstSeriesLevelOptions>;
 
+    /** @internal */
     public nodeMap!: Record<string, SunburstNode>;
 
     public options!: SunburstSeriesOptions;
 
     public points!: Array<SunburstPoint>;
 
+    /** @internal */
     public shapeRoot?: SunburstNode.NodeValuesObject;
 
+    /** @internal */
     public startAndEndRadians!: CU.RadianAngles;
 
+    /** @internal */
     public tree!: SunburstNode;
 
     /* *
@@ -496,6 +507,7 @@ class SunburstSeries extends TreemapSeries {
      *
      * */
 
+    /** @internal */
     public alignDataLabel(
         point: SunburstPoint,
         dataLabel: SVGLabel,
@@ -558,6 +570,7 @@ class SunburstSeries extends TreemapSeries {
         }
     }
 
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
@@ -768,6 +781,7 @@ class SunburstSeries extends TreemapSeries {
         }, [] as Array<SunburstNode.NodeValuesObject>);
     }
 
+    /** @internal */
     public setRootNode(
         id: string,
         redraw?: boolean,
@@ -859,6 +873,7 @@ class SunburstSeries extends TreemapSeries {
         }
     }
 
+    /** @internal */
     public translate(this: SunburstSeries): void {
         const series = this,
             options = series.options,
@@ -960,9 +975,13 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
+    /** @internal */
     getCenter: typeof CU['getCenter'];
+    /** @internal */
     pointClass: typeof SunburstPoint;
+    /** @internal */
     utils: typeof SunburstUtilities;
+    /** @internal */
     NodeClass: typeof SunburstNode;
 }
 
@@ -999,6 +1018,7 @@ namespace SunburstSeries {
         idRoot: string;
         innerR: number;
         point: SunburstPoint;
+        /** @internal */
         radians: CU.RadianAngles;
         shapeExisting: SunburstNode.NodeValuesObject;
         shapePreviousRoot?: SunburstNode.NodeValuesObject;

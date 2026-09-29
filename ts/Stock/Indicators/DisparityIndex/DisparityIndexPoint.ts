@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class DisparityIndexPoint extends SMAPoint {
+    /** @internal */
     public series: DisparityIndexIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class DisparityIndexPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default DisparityIndexPoint;

@@ -25,8 +25,6 @@ import type Point from '../../Core/Series/Point';
 import type TimelinePoint from './TimelinePoint';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -103,15 +101,15 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          */
         alternate: true,
 
-        backgroundColor: Palette.backgroundColor,
+        backgroundColor: 'var(--highcharts-background-color)',
 
         borderWidth: 1,
 
-        borderColor: Palette.neutralColor40,
+        borderColor: 'var(--highcharts-neutral-color-40)',
 
         borderRadius: 3,
 
-        color: Palette.neutralColor80,
+        color: 'var(--highcharts-neutral-color-80)',
 
         /**
          * The color of the line connecting the data label to the point.
@@ -181,6 +179,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             return format;
         },
 
+        padding: 5,
+
         style: {
             textOutline: 'none',
             fontWeight: 'normal',
@@ -221,7 +221,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
  *
  * @extends   series,plotOptions.timeline
  * @excluding animationLimit, boostThreshold, connectEnds, connectNulls,
- *            cropThreshold, dashStyle, dataParser, dataURL, findNearestPointBy,
+ *            cropThreshold, dashStyle, findNearestPointBy,
  *            getExtremesFromAll, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPlacement, pointStart, softThreshold,
  *            stacking, stack, step, threshold, turboThreshold, zoneAxis, zones,

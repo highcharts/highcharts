@@ -19,10 +19,12 @@
  * */
 
 import type HLCSeriesOptions from './HLCSeriesOptions';
+import type Legend from '../../Core/Legend/Legend';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type Series from '../../Core/Series/Series';
 
 import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
@@ -30,6 +32,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
+import FinancialSymbols from '../FinancialSymbols.js';
 
 import D from '../../Core/Defaults.js';
 import { crisp, extend, merge } from '../../Shared/Utilities.js';
@@ -58,6 +61,16 @@ class HLCSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
+    public static compose(
+        _SeriesClass: typeof Series,
+        LegendClass: typeof Legend,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        FinancialSymbols.compose(LegendClass, SVGRendererClass);
+    }
+
+    /** @internal */
     public static defaultOptions: HLCSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         HLCSeriesDefaults
@@ -75,6 +88,7 @@ class HLCSeries extends ColumnSeries {
 
     public points!: Array<HLCPoint>;
 
+    /** @internal */
     public yData!: Array<Array<number>>;
 
     /* *
@@ -116,14 +130,14 @@ class HLCSeries extends ColumnSeries {
     }
 
     /**
-     * Function to create SVGPath of the point based on the
-     * plot positions of this point.
+     * Function to create SVGPath of the point based on the plot positions of
+     * this point.
      * @private
      */
-    protected getPointPath(point: HLCPoint, graphic: SVGElement): SVGPath {
+    protected getPointPath(point: HLCPoint): SVGPath {
         // Crisp vector coordinates
-        const strokeWidth = graphic.strokeWidth(),
-            series = point.series,
+        const series = point.series,
+            strokeWidth = series.borderWidth,
             // #2596:
             crispX = crisp(point.plotX || 0, strokeWidth),
             halfWidth = Math.round((point.shapeArgs as any).width / 2);
@@ -147,51 +161,6 @@ class HLCSeries extends ColumnSeries {
         return path;
     }
 
-
-    /**
-     * Draw single point
-     * @private
-     */
-    public drawSinglePoint(point: HLCPoint): void {
-        const series = point.series,
-            chart = series.chart;
-
-        let path: SVGPath,
-            graphic = point.graphic;
-
-        if (typeof point.plotY !== 'undefined') {
-
-            // Create and/or update the graphic
-            if (!graphic) {
-                point.graphic = graphic = chart.renderer.path()
-                    .add(series.group);
-            }
-
-            if (!chart.styledMode) {
-                graphic.attr(
-                    series.pointAttribs(
-                        point,
-                        (point.selected && 'select') as any
-                    )
-                ); // #3897
-            }
-
-            // Crisp vector coordinates
-            path = series.getPointPath(point, graphic);
-            graphic[!graphic ? 'attr' : 'animate']({ d: path })
-                .addClass(point.getClassName(), true);
-
-        }
-    }
-
-    /**
-     * Draw the data points
-     * @private
-     */
-    public drawPoints(): void {
-        this.points.forEach(this.drawSinglePoint);
-    }
-
     /**
      * @private
      * @function Highcharts.seriesTypes.hlc#init
@@ -207,8 +176,8 @@ class HLCSeries extends ColumnSeries {
      * @private
      */
     public pointAttribs(
-        point: HLCPoint,
-        state: StatesOptionsKey
+        point?: HLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(
             this,
@@ -216,11 +185,14 @@ class HLCSeries extends ColumnSeries {
             state
         );
 
-        delete attribs.fill;
+        if (point) {
+            delete attribs.fill;
+        }
 
         return attribs;
     }
 
+    /** @internal */
     public toYData(point: HLCPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.high, point.low, point.close];
@@ -239,13 +211,18 @@ class HLCSeries extends ColumnSeries {
             translated = names.map(
                 (name: string): string =>
                     `plot${name.charAt(0).toUpperCase() + name.slice(1)}`
-            );
+            ),
+            lineWidth = series.options.lineWidth ?? 1;
         translated.push('yBottom');
         names.push('low');
         super.translate.apply(series);
 
+        series.borderWidth = lineWidth;
+
         // Do the translation
-        series.points.forEach(function (point): void {
+        series.points.concat(
+            series.condemnedPoints as Array<HLCPoint>
+        ).forEach((point): void => {
             names.forEach(
                 function (name: string, i: number): void {
                     let value = (point as any)[name];
@@ -258,8 +235,20 @@ class HLCSeries extends ColumnSeries {
                     }
                 });
 
-            // Align the tooltip to the high value to avoid covering the
-            // point
+            // The data label box
+            const {
+                x = 0,
+                y = 0,
+                width = 0,
+                height = 0
+            } = point.shapeArgs || {};
+            point.dlBox = { x, y, width, height };
+
+            // The new shape args overwrite those of ColumnSeries
+            point.shapeType = 'path';
+            point.shapeArgs = { d: series.getPointPath(point) };
+
+            // Align the tooltip to the high value to avoid covering the point
             (point.tooltipPos as any)[1] =
                 (point.plotHigh as any) + yAxis.pos - series.chart.plotTop;
         });
@@ -274,8 +263,8 @@ class HLCSeries extends ColumnSeries {
  * */
 
 interface HLCSeries {
+    /** @internal */
     pointClass: typeof HLCPoint;
-    pointAttrToOptions: Record<string, string>;
 }
 extend(HLCSeries.prototype, {
     pointClass: HLCPoint,
@@ -293,9 +282,13 @@ extend(HLCSeries.prototype, {
 
 // Extend default lang options with OHLC terms
 const HLCDefaultLangOptions = {
+    /** @internal */
     stockOpen: 'Open',
+    /** @internal */
     stockHigh: 'High',
+    /** @internal */
     stockLow: 'Low',
+    /** @internal */
     stockClose: 'Close'
 };
 
@@ -325,6 +318,7 @@ declare module '../../Core/Series/SeriesType' {
         hlc: typeof HLCSeries;
     }
 }
+
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *

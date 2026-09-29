@@ -192,7 +192,7 @@ export interface BreadcrumbsButtonsFormatter {
  *
  * @callback Highcharts.BreadcrumbsClickCallbackFunction
  *
- * @param {Highcharts.Event} e
+ * @param {Event} e
  * Event.
  *
  * @param {Highcharts.BreadcrumbOptions} breadcrumb
@@ -291,7 +291,7 @@ export interface BreadcrumbsOptions {
      * `spacingBox`.
      *
      * @type    {Highcharts.ButtonRelativeToValue}
-     * @default plotBox
+     * @default 'plotBox'
      * @since   10.0.0
      * @product highcharts highmaps
      */
