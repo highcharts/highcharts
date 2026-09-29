@@ -195,14 +195,9 @@ const panBy = function (
             };
         };
 
-    // The wheel sends a constant pixel delta per notch. For an ordinal x-axis
-    // the pan is handled by `OrdinalAxis` `onChartPan`, which works in whole
-    // point units. Simply rounding the pixel step to points would make the
-    // on-screen pan speed grow with the zoom level (points get wider, so a
-    // whole point spans more pixels). Instead, accumulate the pixel movement
-    // and only pan by the whole points it adds up to, carrying the remainder
-    // over to the next notch. This keeps a constant on-screen speed, matching
-    // a non-ordinal axis.
+    // To keep the on-screen pan speed constant at different zoom levels,
+    // accumulate the pixel movement and pan only when it adds up to
+    // a whole point. Keep any leftover pixels for the next notch.
     let panX = howMuch;
     if (type !== 'y' && ordinalAxis?.isOrdinal && ordinalAxis.ordinal) {
         const closestPointRange = ordinalAxis.closestPointRange ||
@@ -227,10 +222,6 @@ const panBy = function (
         }
     }
 
-    // Mimic an offset-only drag so that `pan` handlers reading
-    // `chart.mouseDownX` and the event's `chartX` see the intended movement.
-    // The `mouseWheel` flag lets the ordinal pan handler use single-point
-    // granularity (see `OrdinalAxis` `onChartPan`).
     const panEvent: AnyRecord = {
         originalEvent: { chartX: panX, chartY: howMuch },
         mouseWheel: true
@@ -239,10 +230,6 @@ const panBy = function (
     chart.mouseDownX = 0;
     chart.mouseDownY = 0;
 
-    // Expose the pan type for the duration of the event so that axis pan
-    // handlers, notably the ordinal axis (see `OrdinalAxis` `onChartPan`),
-    // can decide whether and how to intercept this pan. Restored right after
-    // since `fireEvent` runs synchronously.
     chartOptions.panning = {
         enabled: prevPanning?.enabled ?? true,
         type
