@@ -75,7 +75,6 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
  *
  * */
 
-/** @internal */
 interface MapPointPoint extends ScatterPoint {
     /** @internal */
     bounds?: MapBounds;

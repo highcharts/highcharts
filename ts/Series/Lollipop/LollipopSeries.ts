@@ -59,7 +59,6 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * Lollipop series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.lollipop
  *
@@ -143,7 +142,6 @@ class LollipopSeries extends Series {
  *
  * */
 
-/** @internal */
 interface LollipopSeries {
     /** @internal */
     alignDataLabel: typeof colProto['alignDataLabel'];
@@ -176,9 +174,6 @@ extend(LollipopSeries.prototype, {
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         lollipop: typeof LollipopSeries;

@@ -45,7 +45,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.mapbubble
  *
@@ -107,7 +106,6 @@ class MapBubbleSeries extends BubbleSeries {
  *
  * */
 
-/** @internal */
 interface MapBubbleSeries {
     /** @internal */
     type: string;

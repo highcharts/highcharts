@@ -47,7 +47,6 @@ import { extend, fireEvent, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.mappoint
  *
@@ -278,7 +277,6 @@ SVGRenderer.prototype.symbols.mapmarker = mapmarker;
  *
  * */
 
-/** @internal */
 interface MapPointSeries {
     /** @internal */
     bounds: MapBounds | undefined;

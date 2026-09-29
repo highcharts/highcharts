@@ -83,7 +83,6 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @internal
  * @class
  * @name Highcharts.seriesTypes.networkgraph
  *
@@ -519,7 +518,6 @@ class NetworkgraphSeries extends Series {
  *
  * */
 
-/** @internal */
 interface NetworkgraphSeries
     extends DragNodesSeries, NodesComposition.SeriesComposition{
     pointClass: typeof NetworkgraphPoint;
