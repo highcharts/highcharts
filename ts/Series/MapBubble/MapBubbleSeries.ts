@@ -45,7 +45,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.mapbubble
  *

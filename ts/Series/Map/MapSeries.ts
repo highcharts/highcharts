@@ -116,7 +116,6 @@ declare module '../../Core/Series/SeriesOptions' {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.map
  *

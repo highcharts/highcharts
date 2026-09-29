@@ -83,7 +83,6 @@ declare module '../../Core/Series/SeriesBase' {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.networkgraph
  *
