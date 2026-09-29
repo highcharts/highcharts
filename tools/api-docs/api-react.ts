@@ -74,6 +74,9 @@ interface ComponentDoc {
     crossref?: string;
     // Highcharts modules the component loads, e.g. `modules/exporting`.
     modules?: string[];
+    // Option defaults the component sets over Highcharts' ones, by option
+    // path, e.g. `{ useHTML: 'true' }` for the tooltip.
+    defaults?: Record<string, string>;
 }
 
 
@@ -182,6 +185,9 @@ const MASTERS_PATH = 'highcharts/es-modules/masters/';
 // Static imports of a module file (`import 'x.src.js'`, `import X from ...`).
 // Dynamic `import()` calls only load on demand, so they don't count.
 const STATIC_IMPORT_RE = /^import\s(?:[^'"]*\sfrom\s)?['"]([^'"]+)\.src\.js['"]/gm;
+
+// The option a component's children set, e.g. `childOption: "format"`.
+const CHILD_OPTION_RE = /\bchildOption:\s*"([^"]*)"/;
 
 // Description for the `options` prop that every series/indicator has; its
 // pointer opens the full series config.
@@ -365,6 +371,79 @@ function getLoadedModules(jsPath: string, packageRoot: string): string[] {
     ));
 
     return [...modules];
+}
+
+
+// The option a component's children set, read from its `.js` file. Empty when
+// the children set no option.
+function getChildOption(jsPath: string): string {
+    if (!FSSync.existsSync(jsPath)) {
+        return '';
+    }
+    const text = FSSync.readFileSync(jsPath, 'utf8');
+    return text.match(CHILD_OPTION_RE)?.[1] || '';
+}
+
+
+// The option defaults a component sets over Highcharts' ones, read from the
+// `defaultOptions` of its `_HCReact` in its `.js` file, by option path.
+function getDefaultOptions(
+    jsPath: string,
+    componentName: string
+): Record<string, string> {
+    const defaults: Record<string, string> = {};
+    if (!FSSync.existsSync(jsPath)) {
+        return defaults;
+    }
+    const src = TSCompiler.createSourceFile(
+        jsPath,
+        FSSync.readFileSync(jsPath, 'utf8'),
+        TSCompiler.ScriptTarget.Latest
+    );
+    const collect = (
+        object: TSCompiler.ObjectLiteralExpression,
+        prefix: string
+    ): void => {
+        for (const prop of object.properties) {
+            if (!TSCompiler.isPropertyAssignment(prop)) {
+                continue;
+            }
+            const path = prefix + prop.name.getText(src);
+            const value = prop.initializer;
+            if (TSCompiler.isObjectLiteralExpression(value)) {
+                collect(value, `${path}.`);
+            } else {
+                // Written like the Highcharts defaults: strings unquoted.
+                defaults[path] = TSCompiler.isStringLiteral(value) ?
+                    value.text :
+                    value.getText(src);
+            }
+        }
+    };
+
+    for (const statement of src.statements) {
+        const expr = TSCompiler.isExpressionStatement(statement) &&
+            statement.expression;
+        if (
+            !expr ||
+            !TSCompiler.isBinaryExpression(expr) ||
+            expr.left.getText(src) !== `${componentName}._HCReact` ||
+            !TSCompiler.isObjectLiteralExpression(expr.right)
+        ) {
+            continue;
+        }
+        for (const prop of expr.right.properties) {
+            if (
+                TSCompiler.isPropertyAssignment(prop) &&
+                prop.name.getText(src) === 'defaultOptions' &&
+                TSCompiler.isObjectLiteralExpression(prop.initializer)
+            ) {
+                collect(prop.initializer, '');
+            }
+        }
+    }
+
+    return defaults;
 }
 
 
@@ -603,7 +682,8 @@ function extractComponentsFromFile(
     });
 
     // Chart elements and modules point at one options subtree as a whole, so
-    // they list no props; series and indicators keep theirs as basic options.
+    // they list only `children`; series and indicators keep theirs as basic
+    // options.
     const pointsAtSubtree = (
         category === 'Chart elements' ||
         category === 'Modules'
@@ -649,6 +729,26 @@ function extractComponentsFromFile(
                         props.push(sp);
                     }
                 }
+            }
+        } else if (propsIfaceName && interfaces.has(propsIfaceName)) {
+            // The subtree has every prop but `children`, so list only that.
+            const childOption = getChildOption(
+                src.fileName.replace(/\.d\.ts$/, '.js')
+            );
+            const children = childOption && extractPropsFromInterface(
+                interfaces.get(propsIfaceName)!,
+                src,
+                checker,
+                externalTypeAliases
+            ).find(p => p.name === 'children');
+            if (children) {
+                const optionPage =
+                    `${categoryKey(category)}.${c.name}.${childOption}`;
+                props = [{
+                    ...children,
+                    description: `Sets <a href="${optionPage}">` +
+                        `${childOption.split('.').pop()}</a>.`
+                }];
             }
         }
 
@@ -784,12 +884,11 @@ function extractComponents(
             toSourceFile(filePath, packageRoot),
             checker
         );
-        const modules = getLoadedModules(
-            filePath.replace(/\.d\.ts$/, '.js'),
-            packageRoot
-        );
+        const jsPath = filePath.replace(/\.d\.ts$/, '.js');
+        const modules = getLoadedModules(jsPath, packageRoot);
         for (const c of extracted) {
             c.modules = modules;
+            c.defaults = getDefaultOptions(jsPath, c.name);
             // The entry files hold charts (→ Charts) and generic series
             // bases (→ Series types).
             if (c.category === 'Core') {
@@ -907,7 +1006,10 @@ function buildTreeReact(
                     ...(c.crossref ?
                         { crossref: [CROSSREF_PRODUCT, c.crossref] } :
                         {}),
-                    ...(c.modules?.length ? { modules: c.modules } : {})
+                    ...(c.modules?.length ? { modules: c.modules } : {}),
+                    ...(c.defaults && Object.keys(c.defaults).length ?
+                        { defaults: c.defaults } :
+                        {})
                 },
                 meta: {
                     fullname: `${catKey}.${c.name}`,
