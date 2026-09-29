@@ -93,7 +93,6 @@ function scaledPointPos(
 /**
  * The Geo Heatmap series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.geoheatmap
  *
