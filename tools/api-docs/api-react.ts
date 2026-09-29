@@ -292,7 +292,8 @@ function toOptionsPath(typeText: string): string | undefined {
 
 
 // The basic prop names for the generic series components, read from the
-// `SeriesProps` type's string union, plus the catch-all `options`.
+// `SeriesProps` type's string union (`Extract<...>` or a mapped `[F in ...]`),
+// plus the catch-all `options`.
 function genericSeriesPropNames(
     externalTypeAliases: Map<string, TSCompiler.TypeAliasDeclaration>,
     src: TSCompiler.SourceFile
@@ -302,7 +303,7 @@ function genericSeriesPropNames(
         return [];
     }
     const union = alias.type.getText(src).match(
-        /Extract<\s*((?:"[^"]+"\s*\|\s*)*"[^"]+")/
+        /(?:Extract<|\[\w+\s+in)\s*((?:"[^"]+"\s*\|\s*)*"[^"]+")/
     );
     const names = union ?
         (union[1].match(/"([^"]+)"/g) || []).map(s => s.slice(1, -1)) :
@@ -463,18 +464,20 @@ function resolveTypeText(
     if (!member.type) {
         return sourceText;
     }
+    const type = checker.getTypeAtLocation(member.type);
+    // Use the resolved type; fall back to the source text when it can't resolve
+    // (e.g. `highcharts` isn't installed). An unresolved type is the checker's
+    // error type, flagged as `any` but printed as the name it references.
+    if (type.flags & TSCompiler.TypeFlags.Any) {
+        return sourceText;
+    }
     const resolved = checker.typeToString(
-        checker.getTypeAtLocation(member.type),
+        type,
         member,
         TSCompiler.TypeFormatFlags.NoTruncation |
         TSCompiler.TypeFormatFlags.UseAliasDefinedOutsideCurrentScope
     );
-    // Use the resolved type; fall back to the source text when it can't resolve
-    // (e.g. `highcharts` isn't installed).
-    if (!resolved || resolved === 'any' || resolved === sourceText) {
-        return sourceText;
-    }
-    return resolved;
+    return resolved || sourceText;
 }
 
 
@@ -563,12 +566,12 @@ function isComponentishParamType(typeText: string): boolean {
 }
 
 
-// The Highcharts series type from the `import type { SeriesXxxOptions }` line
-// (e.g. `arearange`); used for the basic props and the `options` pointer.
-function detectSeriesType(src: TSCompiler.SourceFile): string | undefined {
-    const text = src.getFullText();
-    const m = text.match(/import type \{ Series(\w+)Options \}/);
-    return m ? m[1].toLowerCase() : undefined;
+// The Highcharts series options type the file imports (e.g.
+// `SeriesArearangeOptions`); names the series type and types `options`.
+function detectSeriesOptionsType(
+    src: TSCompiler.SourceFile
+): string | undefined {
+    return src.getFullText().match(/import type \{ (Series\w+Options) \}/)?.[1];
 }
 
 
@@ -771,8 +774,9 @@ function extractComponentsFromFile(
     // Series & indicators: merge the wrapper and its `<Name>Series` into one;
     // the basic props become leaves, and `options` points to the full config.
     if (category === 'Series types' || category === 'Technical indicators') {
-        const seriesType = detectSeriesType(src);
-        const seriesPath = seriesType && `options/series/${seriesType}`;
+        const optionsType = detectSeriesOptionsType(src);
+        const seriesPath = optionsType &&
+            `options/series/${optionsType.slice(6, -7).toLowerCase()}`;
         const byName = new Map(components.map(c => [c.name, c]));
         const out: ComponentDoc[] = [];
         for (const c of components) {
@@ -787,7 +791,10 @@ function extractComponentsFromFile(
 
             const basicProps = (seriesEntity?.props ?? c.props).map(p => {
                 if (p.name === 'options') {
-                    return seriesOptionsProp(seriesPath || undefined, p.type);
+                    return seriesOptionsProp(
+                        seriesPath || undefined,
+                        optionsType || p.type
+                    );
                 }
                 if (!seriesPath) {
                     return p;
@@ -819,7 +826,8 @@ function extractComponentsFromFile(
     if (category === 'Core') {
         const genericNames = genericSeriesPropNames(externalTypeAliases, src);
         for (const comp of components) {
-            if (!comp.name.endsWith('Series') || !genericNames.length) {
+            // Without names, list no props rather than the chart's ones.
+            if (!comp.name.endsWith('Series')) {
                 continue;
             }
             comp.props = genericNames.map(name => (
