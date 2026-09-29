@@ -24,6 +24,7 @@ import USGS from './USGS.js';
  *
  * */
 
+/** @internal */
 export interface TilesProviderRegistry {
     Esri: typeof Esri;
     LimaLabs: typeof LimaLabs;
