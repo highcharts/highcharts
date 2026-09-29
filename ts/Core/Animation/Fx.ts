@@ -512,6 +512,14 @@ class Fx {
                 if (startX[i] === endX[0]) {
                     shift = i;
                     break;
+                // Moving left -> Shared x in the middle,
+                // different edges (#25280).
+                } else if (
+                    endX.length > 2 &&
+                    startX[i] === endX[Math.floor(endX.length / 2)]
+                ) {
+                    shift = i - Math.floor(endX.length / 2);
+                    break;
                 // Moving right
                 } else if (
                     startX[0] ===
