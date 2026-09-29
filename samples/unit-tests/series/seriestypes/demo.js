@@ -42,3 +42,16 @@ Object.keys(Highcharts.Series.types).forEach(function (type) {
         );
     }
 });
+
+QUnit.test('Unknown prototype-named series types', function (assert) {
+    ['toString', '__proto__'].forEach(type => {
+        assert.throws(
+            () => Highcharts.chart('container', {
+                chart: { type },
+                series: [{ data: [1] }]
+            }),
+            /Highcharts error #17/,
+            `${type} reports the standard unknown-series error`
+        );
+    });
+});
