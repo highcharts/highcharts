@@ -47,19 +47,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.flags
  *
- * @excluding animation, boostBlending, boostThreshold, borderColor,
- *            borderWidth, colorByPoint, cropThreshold, dataGrouping, depth,
- *            edgeColor, edgeWidth, groupZPadding, lowMarker, nullInteraction,
- *            onPoint, pointPadding, pointWidth, startFromThreshold,
- *            threshold, trackByArea, turboThreshold, zoomEnabled
- *
- * @excluding animation, boostBlending, boostThreshold, borderColor,
- *            borderWidth, colorByPoint, connectNulls, cropThreshold,
- *            dashStyle, dataGrouping, depth, edgeColor, edgeWidth, gapSize,
- *            gapUnit, groupZPadding, linecap, lowMarker, marker,
- *            nullInteraction, onPoint, pointPadding, pointWidth,
- *            startFromThreshold, step, threshold, trackByArea,
- *            turboThreshold, useOhlcData, zoomEnabled
+ * @excluding animation, borderColor, borderWidth, colorByPoint, connectNulls,
+ *            cropThreshold, dashStyle, dataGrouping, gapSize, gapUnit, linecap,
+ *            lowMarker, marker, pointPadding, pointWidth, step, turboThreshold,
+ *            useOhlcData
  *
  * @product highstock
  */
@@ -89,19 +80,42 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     borderRadius?: number;
 
     /**
+     * An array of data points for the series. For the `flags` series type,
+     * points can be given in the following ways:
+     *
+     * 1. An array of objects with named values. The following snippet shows
+     *    only a few settings, see the complete options set below. If the
+     *    total number of data points exceeds the series'
+     *    [turboThreshold](#series.flags.turboThreshold), this option is not
+     *    available.
+     *    ```js
+     *    data: [{
+     *        x: 1,
+     *        title: "A",
+     *        text: "First event"
+     *    }, {
+     *        x: 1,
+     *        title: "B",
+     *        text: "Second event"
+     *    }]
+     *    ```
+     *
+     * @extends series.line.data
+     *
+     * @excluding dataLabels, marker, name, y
+     */
+    data?: Array<FlagsPointOptions>;
+
+    /**
      * The fill color for the flags.
      *
      * @default var(--highcharts-background-color)
-     *
-     * @product highstock
      */
     fillColor?: ColorType;
 
     /**
      * Fixed height of the flag's shape. By default, height is
      * autocalculated according to the flag's title.
-     *
-     * @product highstock
      */
     height?: number;
 
@@ -120,8 +134,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * `.highcharts-flag-series.highcharts-point` rule.
      *
      * @default #000000
-     *
-     * @product highstock
      */
     lineColor?: ColorType;
 
@@ -129,8 +141,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * The pixel width of the flag's line/border.
      *
      * @default 1
-     *
-     * @product highstock
      */
     lineWidth?: number;
 
@@ -147,8 +157,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @since 4.2.2
      *
-     * @product highstock
-     *
      * @validvalue ["y", "open", "high", "low", "close"]
      */
     onKey?: 'close'|'high'|'low'|'open'|'y';
@@ -159,8 +167,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/plotoptions/flags/
      *         Flags on series and on x axis
-     *
-     * @product highstock
      */
     onSeries?: string;
 
@@ -173,8 +179,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *         Different shapes
      *
      * @default 'flag'
-     *
-     * @product highstock
      */
     shape?: FlagsShapeValue;
 
@@ -186,8 +190,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *         A greater stack distance
      *
      * @default 12
-     *
-     * @product highstock
      */
     stackDistance?: number;
 
@@ -200,8 +202,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * `.highcharts-flag-series .highcharts-point` rule.
      *
      * @default { "color": "var(--highcharts-neutral-color-100)", "fontSize": "0.7em", "fontWeight": "bold" }
-     *
-     * @product highstock
      */
     style?: CSSObject;
 
@@ -212,8 +212,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @since 5.0.0
      *
-     * @product highstock
-     *
      * @validvalue ["left", "center", "right"]
      */
     textAlign?: AlignValue;
@@ -223,10 +221,16 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * level, or individually for each point. Defaults to `"A"`.
      *
      * @default A
-     *
-     * @product highstock
      */
     title?: string;
+
+    /**
+     * Specific tooltip options for flag series. Flag series tooltips are
+     * different from most other types in that a flag doesn't have a data
+     * value, so the tooltip rather displays the `text` option for each
+     * point.
+     */
+    tooltip?: FlagsSeriesTooltipOptions;
 
     /**
      * Whether to use HTML to render the flag texts. Using HTML allows for
@@ -237,8 +241,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * @default false
      *
      * @since 1.3
-     *
-     * @product highstock
      */
     useHTML?: boolean;
 
@@ -248,8 +250,6 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highstock} stock/demo/flags-shapes/
      *         Flags with fixed width
-     *
-     * @product highstock
      */
     width?: number;
 
@@ -258,51 +258,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * the series (if onSeries is defined), or the x axis.
      *
      * @default -30
-     *
-     * @product highstock
      */
     y?: number;
-
-    /**
-     * An array of data points for the series. For the `flags` series type,
-     * points can be given in the following ways:
-     *
-     * 1. An array of objects with named values. The following snippet shows
-     *  only a
-     *    few settings, see the complete options set below. If the total number
-     *  of
-     *    data points exceeds the series'
-     *    [turboThreshold](#series.flags.turboThreshold), this option is not
-     *    available.
-     *    ```js
-     *    data: [{
-     *        x: 1,
-     *        title: "A",
-     *        text: "First event"
-     *    }, {
-     *        x: 1,
-     *        title: "B",
-     *        text: "Second event"
-     *    }]
-     *    ```
-     *
-     * @extends series.line.data
-     *
-     * @excluding dataLabels, marker, name, y
-     *
-     * @product highstock
-     */
-    data?: Array<FlagsPointOptions>;
-
-    /**
-     * Specific tooltip options for flag series. Flag series tooltips are
-     * different from most other types in that a flag doesn't have a data
-     * value, so the tooltip rather displays the `text` option for each
-     * point.
-     *
-     * @product highstock
-     */
-    tooltip?: FlagsSeriesTooltipOptions;
 
     /* *
      *
@@ -319,6 +276,8 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     nullInteraction?: undefined;
     onPoint?: undefined;
     startFromThreshold?: undefined;
+    /** @internal */
+    threshold?: ColumnSeriesOptions['threshold'];
     trackByArea?: undefined;
     zoomEnabled?: undefined;
 }
