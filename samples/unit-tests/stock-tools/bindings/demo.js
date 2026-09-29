@@ -699,6 +699,28 @@ QUnit.test(
             'px from the second point.'
         );
 
+        point = series.points[0];
+
+        chart.navigationBindings.options.bindings.verticalLabel.start.call(
+            chart.navigationBindings,
+            {
+                chartX: chart.plotLeft + point.plotX + 1,
+                chartY: yAxis.top + yAxis.len / 2
+            }
+        );
+
+        assert.deepEqual(
+            chart.annotations[1].options.typeOptions.point,
+            {
+                x: 0,
+                xAxis: 0,
+                y: 4,
+                yAxis: 0
+            },
+            'Annotation should be attached to a point with x equal to zero ' +
+            '(#25246).'
+        );
+
         chart.update({
             chart: {
                 inverted: true
@@ -717,7 +739,7 @@ QUnit.test(
             }
         );
 
-        annotationBBox = chart.annotations[1].graphic.getBBox();
+        annotationBBox = chart.annotations[2].graphic.getBBox();
 
         assert.close(
             (

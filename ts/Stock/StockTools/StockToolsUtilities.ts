@@ -288,7 +288,11 @@ function attractToPoint(
         }
     });
 
-    if (closestPoint && closestPoint.x && closestPoint.y) {
+    if (
+        closestPoint &&
+        isNumber(closestPoint.x) &&
+        isNumber(closestPoint.y)
+    ) {
         return {
             x: closestPoint.x,
             y: closestPoint.y,
