@@ -40,10 +40,42 @@ export interface OrganizationDataLabelsFormatterCallbackFunction {
 
 
 export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
+
+    /**
+     * Callback to format data labels for _nodes_ in the organization chart.
+     * The `nodeFormat` option takes precedence over the `nodeFormatter`.
+     */
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
+
+    /**
+     * The format string specifying what to show for *links* in the
+     * organization chart.
+     *
+     * Best to use with
+     * [`linkTextPath`](#series.organization.dataLabels.linkTextPath) enabled.
+     *
+     * @sample highcharts/series-organization/link-labels
+     *         Organization chart with link labels
+     *
+     * @since 11.0.0
+     *
+     * @product highcharts
+     */
     linkFormat?: string;
+
+    /**
+     * Callback to format data labels for _links_ in the organization chart.
+     * The `linkFormat` option takes precedence over the `linkFormatter`.
+     *
+     * @since 11.0.0
+     *
+     * @product highcharts
+     */
     linkFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
 
+    /**
+     * Text styles for the data labels.
+     */
     style?: SankeyDataLabelOptions['style'] & {
         /** @default '0.9em' */
         fontSize?: Required<SankeyDataLabelOptions>['style']['fontSize'];
