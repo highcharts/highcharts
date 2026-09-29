@@ -2068,12 +2068,15 @@ namespace AxisDefaults {
          */
 
         /**
-         * The axis title, showing next to the axis line.
+         * The axis title, showing next to the axis line. Set to `null` to
+         * disable the title.
          *
          * @productdesc {highmaps}
          * In Highmaps, the axis is hidden by default, but adding an axis title
          * is still possible. X axis and Y axis titles will appear at the bottom
          * and left by default.
+         *
+         * @type {null|*}
          */
         title: {
 
@@ -3084,7 +3087,7 @@ namespace AxisDefaults {
              * @sample {highcharts} highcharts/xaxis/title-text/
              *         Custom HTML
              *
-             * @type    {string|undefined}
+             * @type    {string|null}
              * @default {highcharts} Values
              * @default {highstock} undefined
              * @product highcharts highstock gantt
