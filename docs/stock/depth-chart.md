@@ -1,8 +1,8 @@
 ---
 description: >-
   Build a depth chart with bid and ask series to show supply and demand by
-  price; the vertical axis sums offers at or below each price, while the
-  horizontal axis shows offer prices.
+  price. The horizontal axis shows offer prices, while the vertical axis shows
+  cumulative order volume in each direction.
 ---
 
 Depth Chart
