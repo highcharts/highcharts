@@ -42,6 +42,7 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      */
     color?: ColorType;
 
+    /** @internal */
     column?: number;
 
     /**
@@ -59,16 +60,34 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      */
     from?: string;
 
+    /** @internal */
     height?: number;
 
+    /** @internal */
     level?: number;
 
+    /**
+     * Determines color mode for the individual _link_. Overrides the series
+     * [linkColorMode](#series.sankey.linkColorMode). Available options:
+     *
+     * - `from` color of the sankey link will be the same as the 'from node'
+     *
+     * - `gradient` color of the sankey link will be set to gradient between
+     * colors of 'from node' and 'to node'
+     *
+     * - `to` color of the sankey link will be same as the 'to node'.
+     *
+     * @product highcharts
+     */
     linkColorMode?: ('from'|'gradient'|'to');
 
+    /** @internal */
     offset?: (number|string);
 
+    /** @internal */
     offsetHorizontal?: (number|string);
 
+    /** @internal */
     offsetVertical?: (number|string);
 
     /**
@@ -85,6 +104,7 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      */
     weight?: (number|null);
 
+    /** @internal */
     width?: number;
 
 }

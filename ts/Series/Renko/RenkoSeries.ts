@@ -53,7 +53,7 @@ interface RenkoData {
 /**
  * The renko series type.
  *
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.renko
  *
@@ -222,7 +222,6 @@ class RenkoSeries extends ColumnSeries {
      * */
 }
 
-/** @internal */
 interface RenkoSeries {
     /** @internal */
     pointClass: typeof RenkoPoint;
@@ -237,7 +236,6 @@ extend(RenkoSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         renko: typeof RenkoSeries;
@@ -252,5 +250,4 @@ SeriesRegistry.registerSeriesType('renko', RenkoSeries);
  *
  * */
 
-/** @internal */
 export default RenkoSeries;

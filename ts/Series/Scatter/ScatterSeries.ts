@@ -55,7 +55,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Scatter series type.
  *
- * @internal
+ * @private
  */
 class ScatterSeries extends LineSeries {
 
@@ -65,6 +65,7 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         LineSeries.defaultOptions,
         ScatterSeriesDefaults
@@ -160,8 +161,8 @@ class ScatterSeries extends LineSeries {
  *
  * */
 
-/** @internal */
 interface ScatterSeries {
+    /** @internal */
     pointClass: typeof ScatterPoint;
 }
 extend(ScatterSeries.prototype, {
@@ -193,7 +194,6 @@ addEvent(ScatterSeries, 'afterTranslate', function (): void {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         scatter: typeof ScatterSeries;
@@ -208,5 +208,4 @@ SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
  *
  * */
 
-/** @internal */
 export default ScatterSeries;

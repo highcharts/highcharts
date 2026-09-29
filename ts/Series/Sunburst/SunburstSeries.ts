@@ -457,7 +457,6 @@ function cbSetTreeValuesBefore(
  *
  * */
 
-/** @internal */
 class SunburstSeries extends TreemapSeries {
 
     /* *
@@ -975,7 +974,6 @@ class SunburstSeries extends TreemapSeries {
  *
  * */
 
-/** @internal */
 interface SunburstSeries {
     /** @internal */
     getCenter: typeof CU['getCenter'];
@@ -1006,7 +1004,6 @@ extend(SunburstSeries.prototype, {
  *
  * */
 
-/** @internal */
 namespace SunburstSeries {
 
     /* *
@@ -1015,6 +1012,7 @@ namespace SunburstSeries {
      *
      * */
 
+    /** @internal */
     export interface AnimationParams {
         center: PositionObject;
         idPreviousRoot?: string;
@@ -1029,6 +1027,7 @@ namespace SunburstSeries {
         visible: boolean;
     }
 
+    /** @internal */
     export interface DlOptionsParams {
         level: SunburstSeriesLevelOptions;
         optionsPoint: SunburstPointOptions;
@@ -1036,6 +1035,7 @@ namespace SunburstSeries {
         shapeArgs: SunburstNode.NodeValuesObject;
     }
 
+    /** @internal */
     export interface SetRootNodeObject {
         newRootId?: string;
         previousRootId?: string;
@@ -1052,7 +1052,6 @@ namespace SunburstSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sunburst: typeof SunburstSeries;
@@ -1066,5 +1065,4 @@ SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
  *
  * */
 
-/** @internal */
 export default SunburstSeries;

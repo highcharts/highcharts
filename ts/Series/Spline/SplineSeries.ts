@@ -38,7 +38,7 @@ import { merge } from '../../Shared/Utilities.js';
 /**
  * Spline series type.
  *
- * @internal
+ * @private
  */
 class SplineSeries extends LineSeries {
 
@@ -48,6 +48,7 @@ class SplineSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: SplineSeriesOptions = merge(
         LineSeries.defaultOptions,
         SplineSeriesDefaults
@@ -253,8 +254,8 @@ class SplineSeries extends LineSeries {
  *
  * */
 
-/** @internal */
 interface SplineSeries {
+    /** @internal */
     pointClass: typeof SplinePoint;
 }
 
@@ -264,7 +265,6 @@ interface SplineSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         spline: typeof SplineSeries;
@@ -278,5 +278,4 @@ SeriesRegistry.registerSeriesType('spline', SplineSeries);
  *
  * */
 
-/** @internal */
 export default SplineSeries;

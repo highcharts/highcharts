@@ -67,7 +67,7 @@ composeTextPath(SVGElement);
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.sankey
  *
@@ -81,6 +81,7 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         ColumnSeries.defaultOptions,
         SankeySeriesDefaults
@@ -157,6 +158,7 @@ class SankeySeries extends ColumnSeries {
      */
     public flowTop = 0;
 
+    /** @internal */
     public group!: SVGElement;
 
     /** @internal */
@@ -1359,7 +1361,6 @@ extend(SankeySeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sankey: typeof SankeySeries;
@@ -1374,7 +1375,6 @@ SeriesRegistry.registerSeriesType('sankey', SankeySeries);
  *
  * */
 
-/** @internal */
 export default SankeySeries;
 
 /* *

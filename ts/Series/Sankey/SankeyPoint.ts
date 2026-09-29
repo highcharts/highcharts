@@ -37,7 +37,6 @@ const {
  *
  * */
 
-/** @internal */
 class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -61,6 +60,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     /** @internal */
     public isCircular?: boolean;
 
+    /** @internal */
     public level!: number;
 
     /** @internal */

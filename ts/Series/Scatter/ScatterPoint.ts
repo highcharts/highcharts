@@ -26,9 +26,9 @@ import type ScatterSeries from './ScatterSeries';
  *
  * */
 
-/** @internal */
 declare class ScatterPoint extends LinePoint {
     public options: ScatterPointOptions;
+    /** @internal */
     public series: ScatterSeries;
 }
 
@@ -38,5 +38,4 @@ declare class ScatterPoint extends LinePoint {
  *
  * */
 
-/** @internal */
 export default ScatterPoint;

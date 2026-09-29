@@ -26,16 +26,20 @@ import type SplineSeries from './SplineSeries';
  *
  * */
 
-/** @internal */
 declare class SplinePoint extends LinePoint {
+    /** @internal */
     public controlPoints?: {
         low: [number, number];
         high: [number, number];
     };
+    /** @internal */
     public doCurve?: boolean;
     public options: SplinePointOptions;
+    /** @internal */
     public rightContX?: number;
+    /** @internal */
     public rightContY?: number;
+    /** @internal */
     public series: SplineSeries;
 }
 
@@ -45,5 +49,4 @@ declare class SplinePoint extends LinePoint {
  *
  * */
 
-/** @internal */
 export default SplinePoint;

@@ -26,9 +26,9 @@ import type StreamgraphSeries from './StreamgraphSeries';
  *
  * */
 
-/** @internal */
 declare class StreamgraphPoint extends AreaSplinePoint {
     public options: StreamgraphPointOptions;
+    /** @internal */
     public series: StreamgraphSeries;
 }
 
@@ -38,5 +38,4 @@ declare class StreamgraphPoint extends AreaSplinePoint {
  *
  * */
 
-/** @internal */
 export default StreamgraphPoint;
