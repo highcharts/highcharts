@@ -472,7 +472,7 @@ QUnit.test(
                     data: [2, 4, 3]
                 }, {
                     type: 'column',
-                    data: [2, 4, 3],
+                    data: [2, 0, 3],
                     yAxis: 1
                 }]
             }),
@@ -587,6 +587,28 @@ QUnit.test(
             coordsY.axis.options.id,
             'bottomYAxis',
             'Y coord on the bottom yAxis - the bottom yAxis should be found.'
+        );
+
+        const point = chart.series[1].points[1];
+
+        chart.navigationBindings.options.bindings.verticalLabel.start.call(
+            chart.navigationBindings,
+            {
+                chartX: chart.plotLeft + point.plotX,
+                chartY: chart.yAxis[1].top + chart.yAxis[1].len / 2
+            }
+        );
+
+        assert.deepEqual(
+            chart.annotations[0]?.options.typeOptions.point,
+            {
+                x: 1,
+                xAxis: 0,
+                y: 0,
+                yAxis: 1
+            },
+            'Annotation should be attached to a point with y equal to zero ' +
+            '(#25246).'
         );
 
         chart.yAxis[0].update({
@@ -710,7 +732,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            chart.annotations[1].options.typeOptions.point,
+            chart.annotations[1]?.options.typeOptions.point,
             {
                 x: 0,
                 xAxis: 0,
