@@ -64,7 +64,6 @@ declare module '../Core/Series/SeriesBase' {
     }
 }
 
-/** @internal */
 export interface GraphIntegrationObject {
     [name: string]: Function;
     barycenter: Function;
@@ -222,5 +221,4 @@ const GraphLayoutComposition = {
     layouts
 };
 
-/** @internal */
 export default GraphLayoutComposition;
