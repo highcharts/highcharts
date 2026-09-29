@@ -220,5 +220,4 @@ const VariwideComposition = {
     compose
 };
 
-/** @internal */
 export default VariwideComposition;

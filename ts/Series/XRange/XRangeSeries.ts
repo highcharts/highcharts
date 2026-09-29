@@ -109,7 +109,7 @@ function onAxisAfterGetSeriesExtremes(
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.xrange
  *
@@ -698,7 +698,6 @@ class XRangeSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface XRangeSeries {
     /** @internal */
     pointClass: typeof XRangePoint;
@@ -735,7 +734,6 @@ extend(XRangeSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         xrange: typeof XRangeSeries;
@@ -750,5 +748,4 @@ SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
  *
  * */
 
-/** @internal */
 export default XRangeSeries;

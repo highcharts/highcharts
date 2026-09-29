@@ -47,7 +47,7 @@ import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The vector series class.
  *
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.vector
  *
@@ -253,7 +253,6 @@ class VectorSeries extends ScatterSeries {
  *
  * */
 
-/** @internal */
 interface VectorSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -293,7 +292,6 @@ extend(VectorSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vector: typeof VectorSeries;
@@ -308,5 +306,4 @@ SeriesRegistry.registerSeriesType('vector', VectorSeries);
  *
  * */
 
-/** @internal */
 export default VectorSeries;

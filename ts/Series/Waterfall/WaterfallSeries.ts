@@ -91,7 +91,7 @@ function ownProp(obj: unknown, key: string): boolean {
 /**
  * Waterfall series type.
  *
- * @internal
+ * @private
  */
 class WaterfallSeries extends ColumnSeries {
 
@@ -612,7 +612,6 @@ class WaterfallSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface WaterfallSeries {
     /** @internal */
     pointClass: typeof WaterfallPoint;
@@ -934,7 +933,6 @@ namespace WaterfallSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         waterfall: typeof WaterfallSeries;
@@ -949,5 +947,4 @@ SeriesRegistry.registerSeriesType('waterfall', WaterfallSeries);
  *
  * */
 
-/** @internal */
 export default WaterfallSeries;

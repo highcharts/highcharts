@@ -54,47 +54,39 @@ import {
  *
  * */
 
-/** @internal */
 export interface NelderMeadCentroidObject {
     i: number;
     sum: number;
 }
 
-/** @internal */
 export interface NelderMeadPointArray extends Array<number> {
     fx: number;
 }
 
-/** @internal */
 export interface NelderMeadTestFunction {
     (point: NelderMeadPointArray): number;
 }
 
-/** @internal */
 export interface VennLabelPositionObject {
     point: PositionObject;
     margin: number;
 }
 
-/** @internal */
 export interface VennLabelValuesObject {
     position: PositionObject;
     width: number;
 }
 
-/** @internal */
 export interface VennLabelOverlapObject {
     coordinates: PositionObject;
     loss: number;
 }
 
-/** @internal */
 export interface VennPropsObject {
     overlapping?: Record<string, number>;
     totalOverlap?: number;
 }
 
-/** @internal */
 export interface VennRelationObject extends VennPropsObject {
     circle?: CircleObject;
     sets: Array<string>;
@@ -966,5 +958,4 @@ const VennUtils = {
     sortByTotalOverlap
 };
 
-/** @internal */
 export default VennUtils;

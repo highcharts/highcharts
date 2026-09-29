@@ -74,7 +74,7 @@ const {
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.wordcloud
  *
@@ -522,7 +522,6 @@ class WordcloudSeries extends ColumnSeries {
  * Prototype properties
  *
  * */
-/** @internal */
 interface WordcloudSeries {
     /** @internal */
     placementStrategy: Record<string, WordcloudSeries.WordcloudPlacementFunction>;
@@ -597,7 +596,6 @@ extend(WordcloudSeries.prototype, {
  * Registry
  *
  * */
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wordcloud: typeof WordcloudSeries;
@@ -658,5 +656,4 @@ namespace WordcloudSeries {
  *
  * */
 
-/** @internal */
 export default WordcloudSeries;

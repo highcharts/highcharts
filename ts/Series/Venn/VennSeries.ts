@@ -78,7 +78,7 @@ import {
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.venn
  *
@@ -664,7 +664,6 @@ class VennSeries extends ScatterSeries {
  *
  * */
 
-/** @internal */
 interface VennSeries {
     /** @internal */
     directTouch: boolean;
@@ -712,7 +711,6 @@ addEvent(VennSeries, 'afterSetOptions', function (
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         venn: typeof VennSeries;
@@ -727,5 +725,4 @@ SeriesRegistry.registerSeriesType('venn', VennSeries);
  *
  * */
 
-/** @internal */
 export default VennSeries;

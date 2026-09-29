@@ -37,7 +37,6 @@ import { extend } from '../../Shared/Utilities.js';
  *
  * */
 
-/** @internal */
 class WordcloudPoint extends ColumnPoint {
 
     /* *
@@ -79,7 +78,6 @@ class WordcloudPoint extends ColumnPoint {
  *
  * */
 
-/** @internal */
 interface WordcloudPoint {
     /** @internal */
     weight: number;
@@ -95,5 +93,4 @@ extend(WordcloudPoint.prototype, {
  *
  * */
 
-/** @internal */
 export default WordcloudPoint;

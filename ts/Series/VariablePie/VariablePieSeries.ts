@@ -60,7 +60,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * The variablepie series type.
  *
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.variablepie
  *
@@ -394,7 +394,6 @@ class VariablePieSeries extends PieSeries {
  *
  * */
 
-/** @internal */
 interface VariablePieSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -413,7 +412,6 @@ extend(VariablePieSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         variablepie: typeof VariablePieSeries;
@@ -428,7 +426,6 @@ SeriesRegistry.registerSeriesType('variablepie', VariablePieSeries);
  *
  * */
 
-/** @internal */
 export default VariablePieSeries;
 
 /* *

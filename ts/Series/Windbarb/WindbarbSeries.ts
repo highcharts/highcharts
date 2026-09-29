@@ -92,7 +92,7 @@ function registerApproximation(): void {
  * */
 
 /**
- * @internal
+ * @private
  * @class
  * @name Highcharts.seriesTypes.windbarb
  *
@@ -415,7 +415,6 @@ extend(WindbarbSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         windbarb: typeof WindbarbSeries;
@@ -432,5 +431,4 @@ registerApproximation();
  *
  * */
 
-/** @internal */
 export default WindbarbSeries;
