@@ -27,8 +27,8 @@ interface TRIXIndicator extends TEMAIndicator {
     pointClass: typeof TRIXPoint;
 }
 
-/** @internal */
 declare class TRIXPoint extends TEMAPoint {
+    /** @internal */
     public series: TRIXIndicator;
 }
 
@@ -38,5 +38,4 @@ declare class TRIXPoint extends TEMAPoint {
  *
  * */
 
-/** @internal */
 export default TRIXPoint;

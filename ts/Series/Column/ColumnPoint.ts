@@ -36,14 +36,19 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
-/** @internal */
 export class ColumnPoint extends Point {
+    /** @internal */
     allowShadow?: boolean;
+    /** @internal */
     barX!: number;
+    /** @internal */
     group?: SVGElement;
+    /** @internal */
     opacity?: number;
     options!: ColumnPointOptions;
+    /** @internal */
     pointWidth?: number;
+    /** @internal */
     series!: ColumnSeries;
 }
 
@@ -53,5 +58,4 @@ export class ColumnPoint extends Point {
  *
  * */
 
-/** @internal */
 export default ColumnPoint;

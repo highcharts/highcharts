@@ -54,7 +54,6 @@ import {
  *
  * @requires modules/item-series
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.item
  *
@@ -68,6 +67,7 @@ class ItemSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ItemSeriesOptions = merge(
         PieSeries.defaultOptions,
         ItemSeriesDefaults
@@ -79,16 +79,19 @@ class ItemSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public borderWidth?: number;
 
     public data!: Array<ItemPoint>;
 
+    /** @internal */
     public itemSize?: number;
 
     public options!: ItemSeriesOptions;
 
     public points!: Array<ItemPoint>;
 
+    /** @internal */
     public slots?: Array<ItemSeries.GeometryObject>;
 
     /* *

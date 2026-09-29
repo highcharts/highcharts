@@ -443,7 +443,9 @@ class GaugeSeries extends Series {
     public points!: Array<GaugePoint>;
     public options!: GaugeSeriesOptions;
 
+    /** @internal */
     public yAxis!: RadialAxis.AxisComposition;
+    /** @internal */
     public pivot?: SVGElement;
 
     /* *

@@ -45,14 +45,19 @@ class HeatmapPoint extends ScatterPoint {
 
     public options!: HeatmapPointOptions;
 
+    /** @internal */
     public pointPadding?: number;
 
+    /** @internal */
     public series!: HeatmapSeries;
 
+    /** @internal */
     public value!: (number|null);
 
+    /** @internal */
     public x!: number;
 
+    /** @internal */
     public y!: number;
 
     /* *

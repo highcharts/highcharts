@@ -47,7 +47,9 @@ class PictorialPoint extends ColumnPoint {
      * */
 
     public options!: PictorialPointOptions;
+    /** @internal */
     public series!: PictorialSeries;
+    /** @internal */
     public pathDef!: string | SVGPath | undefined;
 
     /* *
@@ -56,6 +58,7 @@ class PictorialPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public setState(): void {
         const point = this;
 
