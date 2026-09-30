@@ -10,6 +10,13 @@ This document provides reference patterns for test migrations and documents the 
   - Native Playwright (highcharts): 78 passing (includes 56 timezone tests across 8 browser timezones)
   - Native Playwright (dashboards): 34 passing, 1 skipped
 
+## Visual capture readiness tests
+
+Use the actual boost canvas fallback with WebGL disabled. Pause the Playwright
+clock before creating the chart, start capture, then advance its animation-frame
+chunks. Assert that the PNG embedded in the captured SVG contains drawn pixels;
+`chart.hasLoaded` alone does not establish that boost drawing has completed.
+
 ## Completed Migrations (Node.js)
 
 These tests were migrated from QUnit/Karma to Node.js native `node:test`:

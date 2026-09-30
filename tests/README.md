@@ -791,10 +791,13 @@ are limited to the visual project and retain offline execution. See the
 [fixture provenance](visual/data/README.md) before refreshing those responses.
 
 SVG capture waits for the selected chart's load handler and the sample's initial
-XHR data requests to finish. Image markers can delay the load handler, and charts
-can emit their load event before CSV data arrives, so both checks are needed.
-Pending requests share the chart's 10-second readiness timeout and are aborted
-during sample cleanup. Once ready, capture
+XHR data requests and boost draws to finish. Image markers can delay the load
+handler, and charts can emit their load event before CSV data arrives or boost
+drawing finishes.
+Pending requests and boost draws share the chart's 10-second readiness timeout.
+Boost tracking starts before sample execution and ends at `renderedCanvas`,
+including synchronous draws and overlapping redraws. Sample cleanup aborts
+requests and clears render tracking. Once ready, capture
 yields to queued zero-delay sample updates and checks readiness again. Empty
 datasets remain valid.
 
