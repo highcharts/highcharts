@@ -13,7 +13,10 @@
         "no-else-return": 2,
         "no-nested-ternary": 0,
         "no-param-reassign": 0, // Would be useful, but takes some work
-        "no-restricted-properties": 0, // Complains about .substr and .substring. Not yet.
+        "no-restricted-properties": [2, // Replaces the default .substr/.substring list
+            {"object": "yaml", "property": "load", "message": "Use safeLoad, the full schema compiles !!js/function tags."},
+            {"object": "YAML", "property": "load", "message": "Use safeLoad, the full schema compiles !!js/function tags."}
+        ],
         "no-unmodified-loop-condition": 0,
         "no-unused-vars": 1,
         "no-useless-escape": 0, // @todo: Useful but a bit risky to change. 54 errors.
