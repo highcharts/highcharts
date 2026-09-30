@@ -87,4 +87,16 @@ QUnit.test('Sync between data table and series', async assert => {
         'After updating a column in the DataTable, the corresponding points ' +
         'should be updated in the series'
     );
+
+    // Series.update should not break the sync (#25441)
+    chart.series[0].update({ color: 'red' });
+    dataTable.setColumn('Cost', [20, 21, 22, 23]);
+
+    await delay(1);
+    assert.strictEqual(
+        chart.series[0].points[0].y,
+        20,
+        'After updating a column in the DataTable, the corresponding points ' +
+        'should be updated in the series even after Series.update'
+    );
 });

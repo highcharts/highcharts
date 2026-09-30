@@ -2133,7 +2133,7 @@ class Series {
             return;
         }
 
-        const { chart, eventsToUnbind } = this,
+        const { chart } = this,
             queueRedraw = (): void => {
                 clearTimeout(chart.redrawTimeout);
                 chart.redrawTimeout = setTimeout(
@@ -2142,7 +2142,7 @@ class Series {
                 );
             };
 
-        eventsToUnbind.push(addEvent(
+        addEvent(
             dataTable,
             'afterSetRows',
             (e: RowEvent): void => {
@@ -2171,9 +2171,9 @@ class Series {
                     }
                 }
             }
-        ));
+        );
 
-        eventsToUnbind.push(addEvent(
+        addEvent(
             dataTable,
             'afterDeleteRows',
             (e: RowEvent): void => {
@@ -2191,15 +2191,15 @@ class Series {
                     queueRedraw();
                 }
             }
-        ));
+        );
 
-        eventsToUnbind.push(addEvent(
+        addEvent(
             dataTable,
             'afterSetColumns',
             (e: ColumnEvent): void => {
                 this.setData(e.target);
             }
-        ));
+        );
 
         this.hasBoundDataTableEvents = true;
     }
