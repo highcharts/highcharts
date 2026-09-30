@@ -600,7 +600,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            chart.annotations[0]?.options.typeOptions.point,
+            chart.annotations[0].options.typeOptions.point,
             {
                 x: 1,
                 xAxis: 0,
@@ -732,7 +732,7 @@ QUnit.test(
         );
 
         assert.deepEqual(
-            chart.annotations[1]?.options.typeOptions.point,
+            chart.annotations[1].options.typeOptions.point,
             {
                 x: 0,
                 xAxis: 0,
