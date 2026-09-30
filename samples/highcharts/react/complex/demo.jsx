@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Chart, Series, Title, getHighcharts } from '@highcharts/react/index';
 import {
+    Chart,
+    Series,
+    Title,
+    getHighcharts,
     Tooltip,
     PlotOptions,
     Legend,
@@ -9,7 +12,7 @@ import {
     Credits,
     YAxis,
     XAxis
-} from '@highcharts/react/options';
+} from '@highcharts/react';
 
 import {
     Data
