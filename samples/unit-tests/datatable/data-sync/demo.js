@@ -99,4 +99,18 @@ QUnit.test('Sync between data table and series', async assert => {
         'After updating a column in the DataTable, the corresponding points ' +
         'should be updated in the series even after Series.update'
     );
+
+    dataTable.setColumns({
+        Year: [2020, 2021, 2022, 2023],
+        Cost: [0, 1, 2, 3],
+        Revenue: [10, 11, 12, 13]
+    });
+    dataTable.deleteRows(0);
+
+    assert.strictEqual(
+        chart.series[0].points.length,
+        3,
+        'After deleting a row in the DataTable, only one point ' +
+        'should be removed from the series'
+    );
 });
