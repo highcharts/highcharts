@@ -108,6 +108,41 @@ test('capture waits for overlapping boost redraws and export draws', async ({
     )).toBe(false);
 });
 
+test('series updates preserve pending draws until the new render finishes', async ({
+    page
+}) => {
+    await prepareBoostSample(page);
+    await page.addScriptTag({ path:
+        'samples/highcharts/boost/scatter-colorbypoint/demo.js'
+    });
+    await page.clock.runFor(16);
+    await page.evaluate(() => {
+        window.Highcharts.charts[0].series[0].update({ color: '#00ff00' });
+    });
+
+    let captured = false;
+    const capturing = captureVisualSVG(page, 100, 10).then(svg => {
+        captured = true;
+        return svg;
+    });
+    await page.evaluate(() => undefined);
+    // The old draw ends at 48 ms, but the update's draw ends at 64 ms.
+    await page.clock.runFor(37);
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRenders()
+    )).toBe(true);
+    expect(captured).toBe(false);
+
+    await page.clock.runFor(200);
+    const svg = await capturing;
+    expect(svg).toBe(await page.evaluate(() =>
+        (window as any).VisualComparator.getSVG(window.Highcharts.charts[0])
+    ));
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRenders()
+    )).toBe(false);
+});
+
 test('synchronous and hidden boost series do not leave pending draws', async ({
     page
 }) => {

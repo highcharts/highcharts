@@ -182,8 +182,11 @@
                     renders.delete(this);
                 }
             });
-            Highcharts.addEvent(Highcharts.Series, 'destroy', function () {
-                renders.delete(this);
+            Highcharts.addEvent(Highcharts.Series, 'destroy', function (event) {
+                // Series.update reuses this object while its old draw continues.
+                if (!event.keepEventsForUpdate) {
+                    renders.delete(this);
+                }
             });
             function startRender() {
                 renders.set(this, (renders.get(this) || 0) + 1);
