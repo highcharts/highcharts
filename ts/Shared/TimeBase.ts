@@ -18,7 +18,7 @@
  *
  * */
 
-import type { LangOptionsCore } from './LangOptionsCore';
+import type { LangOptionsCore } from './LangOptionsCore.js';
 
 import H from '../Core/Globals.js';
 const {
@@ -45,7 +45,7 @@ import { error, timeUnits } from '../Core/Utilities.js';
  *
  * */
 
-declare module '../Core/Options' {
+declare module '../Core/Options.js' {
     interface Options {
         time?: TimeBase.TimeOptions;
     }

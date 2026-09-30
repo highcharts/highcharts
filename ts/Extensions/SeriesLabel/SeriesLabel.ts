@@ -31,21 +31,21 @@
  *
  * */
 
-import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
-import type { BBoxObject } from '../../Core/Renderer/BBoxObject';
+import type { AnimationOptions } from '../../Core/Animation/AnimationOptions.js';
+import type { BBoxObject } from '../../Core/Renderer/BBoxObject.js';
 import type Chart from '../../Core/Chart/Chart.js';
-import type { CSSObject } from '../../Core/Renderer/CSSObject';
-import type { PositionObject } from '../../Core/Renderer/PositionObject';
+import type { CSSObject } from '../../Core/Renderer/CSSObject.js';
+import type { PositionObject } from '../../Core/Renderer/PositionObject.js';
 import type {
     LabelIntersectBoxObject,
     SeriesLabelOptions
-} from './SeriesLabelOptions';
-import type SplineSeries from '../../Series/Spline/SplineSeries';
-import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { SVGPath } from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolOptions';
+} from './SeriesLabelOptions.js';
+import type SplineSeries from '../../Series/Spline/SplineSeries.js';
+import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type { SVGPath } from '../../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolOptions.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import T from '../../Core/Templating.js';
@@ -78,7 +78,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
@@ -88,7 +88,7 @@ declare module '../../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         interpolatedPoints?: Array<ControlPoint>;
         labelBySeries?: SVGElement;
@@ -96,7 +96,7 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Series labels are placed as close to the series as possible in a
@@ -123,7 +123,7 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         connector: SymbolFunction;
     }

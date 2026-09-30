@@ -25,21 +25,21 @@
 import type {
     ConnectorOptions as ComponentConnectorOptions,
     Options as ComponentOptions
-} from '../Component';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
+} from '../Component.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
 import type {
     Column as DataTableColumn
-} from '../../../Data/DataTable';
-import type TextOptions from '../TextOptions';
-import type KPIComponent from './KPIComponent';
-import type { FormulaType } from './KPIComponent';
+} from '../../../Data/DataTable.js';
+import type TextOptions from '../TextOptions.js';
+import type KPIComponent from './KPIComponent.js';
+import type { FormulaType } from './KPIComponent.js';
 
-import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
+import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes.js';
 import type {
     OptionsEntry as SyncOptionsEntry,
     OptionsRecord as SyncOptionsRecord,
     RawOptionsRecord as SyncRawOptionsRecord
-} from '../Sync/Sync';
+} from '../Sync/Sync.js';
 
 
 /* *

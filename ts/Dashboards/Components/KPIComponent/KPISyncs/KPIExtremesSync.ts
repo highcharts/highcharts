@@ -21,11 +21,11 @@
  *
  * */
 
-import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
-import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync.js';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor.js';
 import type KPIComponent from '../KPIComponent.js';
 
-import Component from '../../Component';
+import Component from '../../Component.js';
 import { defined } from '../../../../Shared/Utilities.js';
 
 

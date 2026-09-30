@@ -18,18 +18,18 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Chart from '../../Core/Chart/Chart';
-import type ColumnMetricsObject from './ColumnMetricsObject';
-import type ColumnPoint from './ColumnPoint';
-import type ColumnSeriesOptions from './ColumnSeriesOptions';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type StackItem from '../../Core/Axis/Stacking/StackItem';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColumnMetricsObject from './ColumnMetricsObject.js';
+import type ColumnPoint from './ColumnPoint.js';
+import type ColumnSeriesOptions from './ColumnSeriesOptions.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type StackItem from '../../Core/Axis/Stacking/StackItem.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
@@ -58,7 +58,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         barW?: number;
@@ -1010,7 +1010,7 @@ extend(ColumnSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         column: typeof ColumnSeries;
     }

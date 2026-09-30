@@ -18,7 +18,7 @@
  *
  * */
 
-import type PieDataLabelOptions from '../Pie/PieDataLabelOptions';
+import type PieDataLabelOptions from '../Pie/PieDataLabelOptions.js';
 
 /* *
  *

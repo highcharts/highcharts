@@ -16,14 +16,14 @@
  *
  * */
 
-import type BulletPointOptions from './BulletPointOptions';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
+import type BulletPointOptions from './BulletPointOptions.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+} from '../Column/ColumnSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *

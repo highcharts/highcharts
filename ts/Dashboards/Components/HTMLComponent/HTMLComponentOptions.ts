@@ -25,8 +25,8 @@
 import type {
     ConnectorOptions as ComponentConnectorOptions,
     Options as ComponentOptions
-} from '../Component';
-import type AST from '../../../Core/Renderer/HTML/AST';
+} from '../Component.js';
+import type AST from '../../../Core/Renderer/HTML/AST.js';
 
 /* *
  *

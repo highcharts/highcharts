@@ -19,12 +19,12 @@
  *
  * */
 
-import type ColorMapComposition from '../ColorMapComposition';
-import type { DrawPointParams } from '../DrawPointUtilities';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type TreemapNode from './TreemapNode';
-import type TreemapPointOptions from './TreemapPointOptions';
-import type TreemapSeries from './TreemapSeries';
+import type ColorMapComposition from '../ColorMapComposition.js';
+import type { DrawPointParams } from '../DrawPointUtilities.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type TreemapNode from './TreemapNode.js';
+import type TreemapPointOptions from './TreemapPointOptions.js';
+import type TreemapSeries from './TreemapSeries.js';
 
 import DPU from '../DrawPointUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

@@ -20,8 +20,8 @@
  *
  * */
 
-import type XRangePoint from './XRangePoint';
-import type XRangeSeriesOptions from './XRangeSeriesOptions';
+import type XRangePoint from './XRangePoint.js';
+import type XRangeSeriesOptions from './XRangeSeriesOptions.js';
 
 import { isObject, isNumber, correctFloat } from '../../Shared/Utilities.js';
 

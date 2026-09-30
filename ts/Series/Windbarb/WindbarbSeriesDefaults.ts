@@ -20,7 +20,7 @@
  *
  * */
 
-import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
+import type WindbarbSeriesOptions from './WindbarbSeriesOptions.js';
 
 /* *
  *

@@ -11,16 +11,16 @@
  *
  * */
 
-import type { AnnotationEventObject } from '../EventEmitter';
+import type { AnnotationEventObject } from '../EventEmitter.js';
 import type {
     AnnotationMockPointFunction
-} from '../AnnotationOptions';
-import type { AnnotationPointType } from '../AnnotationSeries';
-import type Controllable from '../Controllables/Controllable';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
+} from '../AnnotationOptions.js';
+import type { AnnotationPointType } from '../AnnotationSeries.js';
+import type Controllable from '../Controllables/Controllable.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
 import type {
     AnnotationMockPointOptionsObject
-} from '../AnnotationMockPointOptionsObject';
+} from '../AnnotationMockPointOptionsObject.js';
 
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
@@ -257,7 +257,7 @@ class CrookedLine extends Annotation {
  * */
 
 /** @internal */
-declare module './AnnotationType' {
+declare module './AnnotationType.js' {
     interface AnnotationTypeRegistry {
         crookedLine: typeof CrookedLine;
     }

@@ -18,9 +18,9 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type GlobalsBase from '../../Core/GlobalsBase';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Chart from '../../Core/Chart/Chart.js';
+import type GlobalsBase from '../../Core/GlobalsBase.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -42,13 +42,13 @@ import { type ErrorMessageEventObject } from '../../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         errorElements?: Array<SVGElement>;
     }
 }
 
-declare module '../../Core/Chart/ChartOptions'{
+declare module '../../Core/Chart/ChartOptions.js'{
     interface ChartOptions {
         /**
          * Whether to display errors on the chart. When `false`, the errors will

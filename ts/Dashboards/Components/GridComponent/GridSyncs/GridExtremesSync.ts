@@ -21,11 +21,11 @@
  *
  * */
 
-import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
-import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync.js';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor.js';
 import type GridComponent from '../GridComponent.js';
 
-import Component from '../../Component';
+import Component from '../../Component.js';
 import { hasDataTableProvider } from '../GridDataProvider.js';
 
 /* *

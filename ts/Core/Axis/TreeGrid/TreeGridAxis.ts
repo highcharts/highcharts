@@ -18,30 +18,30 @@
  *
  * */
 
-import type Axis from '../Axis';
+import type Axis from '../Axis.js';
 import type {
     AxisBreakOptions,
     AxisCollectionKey,
     AxisLabelOptions,
     AxisOptions
-} from '../AxisOptions';
-import type Chart from '../../Chart/Chart';
-import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions';
-import type { DeepPartial } from '../../../Shared/Types';
-import type GanttPoint from '../../../Series/Gantt/GanttPoint';
-import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions';
-import type GanttSeries from '../../../Series/Gantt/GanttSeries';
+} from '../AxisOptions.js';
+import type Chart from '../../Chart/Chart.js';
+import type { ChartAddSeriesEventObject } from '../../Chart/ChartOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type GanttPoint from '../../../Series/Gantt/GanttPoint.js';
+import type GanttPointOptions from '../../../Series/Gantt/GanttPointOptions.js';
+import type GanttSeries from '../../../Series/Gantt/GanttSeries.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Series/PointOptions';
-import type Series from '../../Series/Series';
-import type Tick from '../Tick';
+} from '../../Series/PointOptions.js';
+import type Series from '../../Series/Series.js';
+import type Tick from '../Tick.js';
 import type {
     TreeGetOptionsObject,
     TreeNode,
     TreePointOptionsObject
-} from '../../../Gantt/Tree';
+} from '../../../Gantt/Tree.js';
 
 import BrokenAxis from '../BrokenAxis.js';
 import GridAxis from '../GridAxis.js';
@@ -70,28 +70,28 @@ import {
  * */
 
 /** @internal */
-declare module '../AxisComposition' {
+declare module '../AxisComposition.js' {
     interface AxisComposition {
         treeGrid?: TreeGridAxisComposition['treeGrid'];
     }
 }
 
 /** @internal */
-declare module '../AxisBase' {
+declare module '../AxisBase.js' {
     interface AxisBase {
         utils: TreeGridAxisUtilsObject;
     }
 }
 
 /** @internal */
-declare module '../AxisType' {
+declare module '../AxisType.js' {
     interface AxisTypeRegistry {
         TreeGridAxis: TreeGridAxisComposition;
     }
 }
 
 /** @internal */
-declare module '../../Series/PointOptions' {
+declare module '../../Series/PointOptions.js' {
     interface PointOptions extends TreePointOptionsObject {
         collapsed?: boolean;
         /**

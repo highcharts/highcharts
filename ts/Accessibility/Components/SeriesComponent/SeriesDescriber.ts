@@ -21,14 +21,14 @@
  *
  * */
 
-import type Accessibility from '../../Accessibility';
-import type { AnnotationPoint } from '../../../Extensions/Annotations/AnnotationSeries';
-import type Axis from '../../../Core/Axis/Axis';
-import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
-import type Point from '../../../Core/Series/Point';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type Series from '../../../Core/Series/Series';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type Accessibility from '../../Accessibility.js';
+import type { AnnotationPoint } from '../../../Extensions/Annotations/AnnotationSeries.js';
+import type Axis from '../../../Core/Axis/Axis.js';
+import type { DOMElementType } from '../../../Core/Renderer/DOMElementType.js';
+import type Point from '../../../Core/Series/Point.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
+import type Series from '../../../Core/Series/Series.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const { getPointAnnotationTexts } = AnnotationsA11y;
@@ -67,7 +67,7 @@ import {
  *
  * */
 
-declare module '../../../Core/Series/PointBase' {
+declare module '../../../Core/Series/PointBase.js' {
     interface PointBase {
         /** @requires modules/accessibility */
         hasMockGraphic?: boolean;

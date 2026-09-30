@@ -16,8 +16,8 @@
  *
  * */
 
-import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type BubbleSeriesOptions from '../Bubble/BubbleSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

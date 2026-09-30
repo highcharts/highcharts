@@ -14,10 +14,10 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
-import type Series from '../../Core/Series/Series';
-import type Point from '../../Core/Series/Point';
-import type TimelineChannel from './TimelineChannel';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Series from '../../Core/Series/Series.js';
+import type Point from '../../Core/Series/Point.js';
+import type TimelineChannel from './TimelineChannel.js';
 import SonificationTimeline from './SonificationTimeline.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import SonificationSpeaker from './SonificationSpeaker.js';

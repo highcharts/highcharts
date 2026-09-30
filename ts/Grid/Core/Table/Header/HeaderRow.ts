@@ -22,9 +22,9 @@
  *  Imports
  *
  * */
-import type { GroupedHeaderOptions } from '../../Options';
-import type Cell from '../Cell';
-import type { FocusCursor } from '../Table';
+import type { GroupedHeaderOptions } from '../../Options.js';
+import type Cell from '../Cell.js';
+import type { FocusCursor } from '../Table.js';
 
 import Table from '../Table.js';
 import Row from '../Row.js';

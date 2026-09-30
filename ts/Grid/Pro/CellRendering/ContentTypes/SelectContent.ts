@@ -23,10 +23,10 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
-import type { EditModeContent } from '../../CellEditing/CellEditMode';
-import type SelectRenderer from '../Renderers/SelectRenderer';
-import type TableCell from '../../../Core/Table/Body/TableCell';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable.js';
+import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
+import type SelectRenderer from '../Renderers/SelectRenderer.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
 
 import CellContentPro from '../CellContentPro.js';
 import AST from '../../../../Core/Renderer/HTML/AST.js';

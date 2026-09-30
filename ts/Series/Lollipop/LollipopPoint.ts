@@ -18,9 +18,9 @@
  *
  * */
 
-import type LollipopPointOptions from './LollipopPointOptions';
-import type LollipopSeries from './LollipopSeries';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type LollipopPointOptions from './LollipopPointOptions.js';
+import type LollipopSeries from './LollipopSeries.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend } from '../../Shared/Utilities.js';

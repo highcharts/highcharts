@@ -16,8 +16,8 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type HLCPointOptions from '../HLC/HLCPointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type HLCPointOptions from '../HLC/HLCPointOptions.js';
 
 /* *
  *

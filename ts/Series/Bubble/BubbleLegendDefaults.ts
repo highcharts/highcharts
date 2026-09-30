@@ -19,7 +19,7 @@
  *
  * */
 
-import type BubbleLegendItem from './BubbleLegendItem';
+import type BubbleLegendItem from './BubbleLegendItem.js';
 
 /* *
  *

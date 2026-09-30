@@ -20,12 +20,12 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
-import type Point from '../Core/Series/Point';
-import type PointerEvent from '../Core/PointerEvent';
-import type ReingoldFruchtermanLayout from './Networkgraph/ReingoldFruchtermanLayout';
-import type Series from '../Core/Series/Series';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type Chart from '../Core/Chart/Chart.js';
+import type Point from '../Core/Series/Point.js';
+import type PointerEvent from '../Core/PointerEvent.js';
+import type ReingoldFruchtermanLayout from './Networkgraph/ReingoldFruchtermanLayout.js';
+import type Series from '../Core/Series/Series.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions.js';
 
 import H from '../Core/Globals.js';
 const { composed } = H;

@@ -18,7 +18,7 @@
  *
  * */
 
-import type PolygonSeriesOptions from './PolygonSeriesOptions';
+import type PolygonSeriesOptions from './PolygonSeriesOptions.js';
 
 /* *
  *

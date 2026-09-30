@@ -20,7 +20,7 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
+import type Chart from '../Core/Chart/Chart.js';
 
 import { find } from '../Shared/Utilities.js';
 

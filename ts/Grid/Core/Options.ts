@@ -25,29 +25,29 @@ import type {
     A11yOptions,
     HeaderCellA11yOptions,
     LangAccessibilityOptions
-} from './Accessibility/A11yOptions';
+} from './Accessibility/A11yOptions.js';
 import type {
     PaginationLangOptions,
     PaginationOptions
-} from './Pagination/PaginationOptions';
-import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
-import type { ColumnDataType } from './Table/Column';
-import type { DataProviderOptionsType } from './Data/DataProviderType';
-import type DataTable from '../../Data/DataTable';
-import type { CellType as DataTableCellType } from '../../Data/DataTable';
-import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
-import type Cell from './Table/Cell';
-import type Column from './Table/Column';
-import type TableCell from './Table/Body/TableCell';
+} from './Pagination/PaginationOptions.js';
+import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing.js';
+import type { ColumnDataType } from './Table/Column.js';
+import type { DataProviderOptionsType } from './Data/DataProviderType.js';
+import type DataTable from '../../Data/DataTable.js';
+import type { CellType as DataTableCellType } from '../../Data/DataTable.js';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions.js';
+import type Cell from './Table/Cell.js';
+import type Column from './Table/Column.js';
+import type TableCell from './Table/Body/TableCell.js';
 import type {
     CellContextMenuOptions
-} from './Table/CellContextMenu/CellContextMenuOptions';
-import type { IconRegistryValue } from './UI/SvgIcons';
-import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
+} from './Table/CellContextMenu/CellContextMenuOptions.js';
+import type { IconRegistryValue } from './UI/SvgIcons.js';
+import type { LangOptionsCore } from '../../Shared/LangOptionsCore.js';
 import type {
     Condition as ColumnFilteringCondition
-} from './Table/Actions/ColumnFiltering/FilteringTypes';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+} from './Table/Actions/ColumnFiltering/FilteringTypes.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 
 
 /* *

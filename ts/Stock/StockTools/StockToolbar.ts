@@ -20,14 +20,14 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type {
     StockToolsGuiDefinitionsButtonsOptions,
     StockToolsGuiDefinitionsOptions,
     StockToolsGuiOptions,
     StockToolsOptions
-} from './StockToolsOptions';
+} from './StockToolsOptions.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
@@ -35,7 +35,7 @@ import StockToolsUtilities from './StockToolsUtilities.js';
 import getIcon from '../../Shared/BaseFormUtils.js';
 import StockToolsIcons from '../../Stock/StockTools/StockToolsIcons.js';
 
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes.js';
 import {
     addEvent,
     createElement,

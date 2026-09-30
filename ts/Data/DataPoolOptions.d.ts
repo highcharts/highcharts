@@ -20,14 +20,14 @@
  *
  * */
 
-import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
+import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType.js';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* API docs */
-import type CSVConnectorOptions from './Connectors/CSVConnectorOptions';
-import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions';
-import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions';
-import type JSONConnectorOptions from './Connectors/JSONConnectorOptions';
+import type CSVConnectorOptions from './Connectors/CSVConnectorOptions.js';
+import type GoogleSheetsConnectorOptions from './Connectors/GoogleSheetsConnectorOptions.js';
+import type HTMLTableConnectorOptions from './Connectors/HTMLTableConnectorOptions.js';
+import type JSONConnectorOptions from './Connectors/JSONConnectorOptions.js';
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 

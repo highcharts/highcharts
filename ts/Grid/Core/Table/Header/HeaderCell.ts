@@ -24,13 +24,13 @@
  *
  * */
 
-import type { GroupedHeaderOptions } from '../../Options';
-import type { NoIdColumnOptions } from '../Column';
-import type CSSObject from '../../../../Core/Renderer/CSSObject';
+import type { GroupedHeaderOptions } from '../../Options.js';
+import type { NoIdColumnOptions } from '../Column.js';
+import type CSSObject from '../../../../Core/Renderer/CSSObject.js';
 
 import Cell from '../Cell.js';
-import Column from '../Column';
-import Row from '../Row';
+import Column from '../Column.js';
+import Row from '../Row.js';
 import {
     makeHTMLElement,
     setHTMLContent,

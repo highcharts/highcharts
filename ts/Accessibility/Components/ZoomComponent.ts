@@ -22,14 +22,14 @@
  * */
 
 
-import type Chart from '../../Core/Chart/Chart';
+import type Chart from '../../Core/Chart/Chart.js';
 import type {
     DOMElementType,
     SVGDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type MapChart from '../../Core/Chart/MapChart';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type ProxyElement from '../ProxyElement';
+} from '../../Core/Renderer/DOMElementType.js';
+import type MapChart from '../../Core/Chart/MapChart.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type ProxyElement from '../ProxyElement.js';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import CU from '../Utils/ChartUtilities.js';

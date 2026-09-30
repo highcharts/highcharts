@@ -16,13 +16,13 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type ColorType from '../Color/ColorType';
-import type { DeepPartial } from '../../Shared/Types';
-import type { EventCallback } from '../Callback';
-import type Point from './Point';
-import type PointerEvent from '../PointerEvent';
-import type { PointTypeOptions } from './PointType';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type ColorType from '../Color/ColorType.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { EventCallback } from '../Callback.js';
+import type Point from './Point.js';
+import type PointerEvent from '../PointerEvent.js';
+import type { PointTypeOptions } from './PointType.js';
 import type {
     StateGenericOptions,
     StateHoverOptions,
@@ -30,8 +30,8 @@ import type {
     StateNormalOptions,
     StateSelectOptions,
     StatesOptions
-} from './StatesOptions';
-import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+} from './StatesOptions.js';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType.js';
 
 /* *
  *

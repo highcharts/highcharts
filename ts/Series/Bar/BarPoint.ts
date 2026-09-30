@@ -16,9 +16,9 @@
  *
  * */
 
-import type BarPointOptions from './BarPointOptions';
-import type BarSeries from './BarSeries';
-import type ColumnPoint from '../Column/ColumnPoint';
+import type BarPointOptions from './BarPointOptions.js';
+import type BarSeries from './BarSeries.js';
+import type ColumnPoint from '../Column/ColumnPoint.js';
 
 /* *
  *

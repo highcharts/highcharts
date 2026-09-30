@@ -23,7 +23,7 @@
  *
  * */
 
-import type Grid from '../Grid';
+import type Grid from '../Grid.js';
 import type ToolbarButton from './ToolbarButton.js';
 
 /* *

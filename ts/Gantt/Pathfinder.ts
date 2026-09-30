@@ -18,12 +18,12 @@
  *
  * */
 
-import type Axis from '../Core/Axis/Axis';
-import type { ConnectorsMarkerOptions } from './ConnectorsOptions';
-import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
-import type { PathfinderAlgorithmFunction } from './PathfinderAlgorithms';
-import type Series from '../Core/Series/Series';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type Axis from '../Core/Axis/Axis.js';
+import type { ConnectorsMarkerOptions } from './ConnectorsOptions.js';
+import type GanttPointOptions from '../Series/Gantt/GanttPointOptions.js';
+import type { PathfinderAlgorithmFunction } from './PathfinderAlgorithms.js';
+import type Series from '../Core/Series/Series.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -39,14 +39,14 @@ import { addEvent, defined, splat } from '../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Chart/ChartBase'{
+declare module '../Core/Chart/ChartBase.js'{
     interface ChartBase {
         pathfinder?: Pathfinder;
     }
 }
 
 /** @internal */
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         pathfinderRemoveRenderEvent?: Function;
     }

@@ -19,7 +19,7 @@
  *
  * */
 
-import type WordcloudSeriesOptions from './WordcloudSeriesOptions';
+import type WordcloudSeriesOptions from './WordcloudSeriesOptions.js';
 
 /* *
  *

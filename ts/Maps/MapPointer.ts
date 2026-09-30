@@ -18,10 +18,10 @@
  *
  * */
 
-import type MapChart from '../Core/Chart/MapChart';
-import type MapNavigation from './MapNavigation';
-import type Pointer from '../Core/Pointer';
-import type PointerEvent from '../Core/PointerEvent';
+import type MapChart from '../Core/Chart/MapChart.js';
+import type MapNavigation from './MapNavigation.js';
+import type Pointer from '../Core/Pointer.js';
+import type PointerEvent from '../Core/PointerEvent.js';
 
 import {
     defined,
@@ -37,7 +37,7 @@ import {
  * */
 
 /** @internal */
-declare module '../Core/PointerEvent' {
+declare module '../Core/PointerEvent.js' {
     interface PointerEvent {
         deltaY?: number;
         /** @deprecated */

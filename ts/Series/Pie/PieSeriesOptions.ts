@@ -16,23 +16,23 @@
  *
  * */
 
-import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
-import type ColorType from '../../Core/Color/ColorType';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type PieDataLabelOptions from './PieDataLabelOptions';
+import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type PieDataLabelOptions from './PieDataLabelOptions.js';
 import type {
     PieSeriesPointOptions,
     PiePointOptions
-} from './PiePointOptions';
+} from './PiePointOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
+} from '../../Core/Series/PointOptions.js';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
-import { SeriesTooltipOptions } from '../../Core/TooltipOptions';
+} from '../../Core/Series/SeriesOptions.js';
+import { SeriesTooltipOptions } from '../../Core/TooltipOptions.js';
 
 /* *
  *

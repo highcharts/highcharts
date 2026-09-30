@@ -18,11 +18,11 @@
 import type {
     KlingerOptions,
     KlingerParamsOptions
-} from './KlingerOptions';
-import type KlingerPoint from './KlingerPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './KlingerOptions.js';
+import type KlingerPoint from './KlingerPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -413,7 +413,7 @@ MultipleLinesComposition.compose(KlingerIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;
     }

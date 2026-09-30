@@ -15,7 +15,7 @@
  *
  * */
 
-import type { Options as MenuItemOptions } from './MenuItem';
+import type { Options as MenuItemOptions } from './MenuItem.js';
 
 import MenuItem from './MenuItem.js';
 

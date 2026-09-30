@@ -9,11 +9,11 @@
  *
  * */
 
-import type ControlPointOptions from './ControlPointOptions';
+import type ControlPointOptions from './ControlPointOptions.js';
 import type {
     AnnotationMockPointOptions
-} from './AnnotationOptions';
-import { AnnotationPointType } from './AnnotationSeries';
+} from './AnnotationOptions.js';
+import { AnnotationPointType } from './AnnotationSeries.js';
 
 /* *
  *

@@ -16,7 +16,7 @@
  *
  * */
 
-import type BBoxObject from './BBoxObject';
+import type BBoxObject from './BBoxObject.js';
 
 /* *
  *

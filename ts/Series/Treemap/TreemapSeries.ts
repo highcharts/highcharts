@@ -19,24 +19,24 @@
  *
  * */
 
-import type { AxisOptions } from '../../Core/Axis/AxisOptions';
-import type { BreadcrumbOptions } from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition';
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+import type { AxisOptions } from '../../Core/Axis/AxisOptions.js';
+import type { BreadcrumbOptions } from '../../Extensions/Breadcrumbs/BreadcrumbsOptions.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 import type {
     TreemapDataLabelOptions,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions
-} from './TreemapSeriesOptions';
+} from './TreemapSeriesOptions.js';
 
 import Breadcrumbs from '../../Extensions/Breadcrumbs/Breadcrumbs.js';
 import Color from '../../Core/Color/Color.js';
@@ -56,7 +56,7 @@ const {
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapNode from './TreemapNode.js';
 import TreemapPoint from './TreemapPoint.js';
-import TreemapPointOptions from './TreemapPointOptions';
+import TreemapPointOptions from './TreemapPointOptions.js';
 import TreemapSeriesDefaults from './TreemapSeriesDefaults.js';
 import TreemapUtilities from './TreemapUtilities.js';
 import TU from '../TreeUtilities.js';
@@ -2005,7 +2005,7 @@ namespace TreemapSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         treemap: typeof TreemapSeries;
     }

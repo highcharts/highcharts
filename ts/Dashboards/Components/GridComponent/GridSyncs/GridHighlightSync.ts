@@ -21,13 +21,13 @@
  *
  * */
 
-import type { SyncPair } from '../../Sync/Sync';
-import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
+import type { SyncPair } from '../../Sync/Sync.js';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor.js';
 import type GridComponent from '../GridComponent.js';
-import type { GridHighlightSyncOptions } from '../GridComponentOptions';
-import type { TableCellEvent } from '../../../Plugins/GridTypes';
+import type { GridHighlightSyncOptions } from '../GridComponentOptions.js';
+import type { TableCellEvent } from '../../../Plugins/GridTypes.js';
 
-import Component from '../../Component';
+import Component from '../../Component.js';
 import { hasDataTableProvider } from '../GridDataProvider.js';
 import { addEvent, removeEvent } from '../../../../Shared/Utilities.js';
 

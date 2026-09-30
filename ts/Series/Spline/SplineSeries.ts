@@ -18,9 +18,9 @@
  *
  * */
 
-import type SplinePoint from './SplinePoint';
-import type SplineSeriesOptions from './SplineSeriesOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SplinePoint from './SplinePoint.js';
+import type SplineSeriesOptions from './SplineSeriesOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -273,7 +273,7 @@ interface SplineSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         spline: typeof SplineSeries;
     }

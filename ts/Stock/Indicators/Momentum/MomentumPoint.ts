@@ -13,8 +13,8 @@
  *
  * */
 
-import type MomentumIndicator from './MomentumIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type MomentumIndicator from './MomentumIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

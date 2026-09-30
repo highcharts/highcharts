@@ -26,9 +26,9 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type SortModifierOptions from './SortModifierOptions';
-import type { SortModifierOrderByOption } from './SortModifierOptions';
+} from '../DataEvent.js';
+import type SortModifierOptions from './SortModifierOptions.js';
+import type { SortModifierOrderByOption } from './SortModifierOptions.js';
 
 import DataModifier from './DataModifier.js';
 import { merge } from '../../Shared/Utilities.js';
@@ -292,7 +292,7 @@ class SortModifier extends DataModifier {
  *
  * */
 
-declare module './DataModifierType' {
+declare module './DataModifierType.js' {
     interface DataModifierTypes {
         Sort: typeof SortModifier;
     }

@@ -16,8 +16,8 @@
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
-import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
+} from '../SMA/SMAOptions.js';
+import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions.js';
 
 /* *
  *

@@ -13,8 +13,8 @@
  *
  * */
 
-import type BBIndicator from './BBIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type BBIndicator from './BBIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

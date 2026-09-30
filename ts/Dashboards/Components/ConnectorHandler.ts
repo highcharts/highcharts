@@ -12,11 +12,11 @@
  *
  * */
 
-import type DataModifier from '../../Data/Modifiers/DataModifier';
+import type DataModifier from '../../Data/Modifiers/DataModifier.js';
 
-import type { ConnectorTypes as ComponentConnectorTypes } from './Component';
+import type { ConnectorTypes as ComponentConnectorTypes } from './Component.js';
 
-import Component from './Component';
+import Component from './Component.js';
 import DataTable, {
     type SetModifierEvent as DataTableSetModifierEvent
 } from '../../Data/DataTable.js';
@@ -29,7 +29,7 @@ import Globals from '../Globals.js';
  *
  * */
 
-declare module '../../Data/Connectors/DataConnector' {
+declare module '../../Data/Connectors/DataConnector.js' {
     export default interface DataConnector {
         /**
          * Components that are fed by the connector.

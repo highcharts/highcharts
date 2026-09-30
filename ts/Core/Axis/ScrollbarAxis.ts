@@ -18,9 +18,9 @@
  *
  * */
 
-import type Axis from './Axis';
-import type ScrollbarType from '../../Stock/Scrollbar/Scrollbar';
-import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions';
+import type Axis from './Axis.js';
+import type ScrollbarType from '../../Stock/Scrollbar/Scrollbar.js';
+import type ScrollbarOptions from '../../Stock/Scrollbar/ScrollbarOptions.js';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -38,13 +38,13 @@ import {
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         scrollbar?: ScrollbarType;
     }
 }
 
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     interface AxisOptions {
         /**
          * An optional scrollbar to display on the X axis in response to

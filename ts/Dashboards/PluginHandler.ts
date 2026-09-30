@@ -20,7 +20,7 @@
  *
  * */
 
-import type { AnyRecord } from '../Shared/Types';
+import type { AnyRecord } from '../Shared/Types.js';
 
 import Board from './Board.js';
 import Sync from './Components/Sync/Sync.js';

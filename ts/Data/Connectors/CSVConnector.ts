@@ -26,11 +26,11 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type CSVConnectorOptions from './CSVConnectorOptions';
+} from '../DataEvent.js';
+import type CSVConnectorOptions from './CSVConnectorOptions.js';
 import type {
     ColumnCollection as DataTableColumnCollection
-} from '../DataTable';
+} from '../DataTable.js';
 
 import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector, {
@@ -223,7 +223,7 @@ export interface Event extends DataConnectorEvent {
  *
  * */
 
-declare module './DataConnectorType' {
+declare module './DataConnectorType.js' {
     interface DataConnectorTypes {
         CSV: typeof CSVConnector;
     }

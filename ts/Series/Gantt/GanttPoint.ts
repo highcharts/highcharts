@@ -19,9 +19,9 @@
  *
  * */
 
-import type GanttPointOptions from './GanttPointOptions';
-import type GanttSeries from './GanttSeries';
-import type Chart from '../../Core/Chart/Chart';
+import type GanttPointOptions from './GanttPointOptions.js';
+import type GanttSeries from './GanttSeries.js';
+import type Chart from '../../Core/Chart/Chart.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

@@ -18,10 +18,10 @@
  *
  * */
 
-import type { FlagsShapeValue } from './FlagsPointOptions';
-import type FlagsSeriesOptions from './FlagsSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type { FlagsShapeValue } from './FlagsPointOptions.js';
+import type FlagsSeriesOptions from './FlagsSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
@@ -56,13 +56,13 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         allowDG?: boolean;
     }
 }
 
-declare module '../../Core/Series/StatesOptions' {
+declare module '../../Core/Series/StatesOptions.js' {
     interface StateOptionsBase {
         shape?: FlagsShapeValue;
     }
@@ -489,7 +489,7 @@ extend(FlagsSeries.prototype, {
  * */
 
 /** @internal */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypesDictionary {
         flags: typeof FlagsSeries;
     }

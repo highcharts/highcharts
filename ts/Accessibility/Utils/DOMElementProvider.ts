@@ -21,7 +21,7 @@
  *
  * */
 
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 import H from '../../Core/Globals.js';
 const { doc } = H;

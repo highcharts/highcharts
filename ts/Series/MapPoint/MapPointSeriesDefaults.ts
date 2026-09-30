@@ -18,8 +18,8 @@
  *
  * */
 
-import type MapPointSeriesOptions from './MapPointSeriesOptions';
-import type Point from '../../Core/Series/Point';
+import type MapPointSeriesOptions from './MapPointSeriesOptions.js';
+import type Point from '../../Core/Series/Point.js';
 
 /* *
  *

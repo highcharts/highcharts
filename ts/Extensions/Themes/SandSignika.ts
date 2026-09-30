@@ -21,8 +21,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type { DefaultOptions } from '../../Core/Options';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { DefaultOptions } from '../../Core/Options.js';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;

@@ -18,11 +18,11 @@
 import type {
     DEMAOptions,
     DEMAParamsOptions
-} from './DEMAOptions';
-import type DEMAPoint from './DEMAPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './DEMAOptions.js';
+import type DEMAPoint from './DEMAPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -228,7 +228,7 @@ interface DEMAIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
     }

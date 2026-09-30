@@ -16,10 +16,10 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 /* *
  *

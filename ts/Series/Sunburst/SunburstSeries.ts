@@ -21,16 +21,16 @@
  *
  * */
 
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SunburstPointOptions from './SunburstPointOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SunburstPointOptions from './SunburstPointOptions.js';
 import type {
     SunburstDataLabelOptions,
     SunburstSeriesLevelOptions,
     SunburstSeriesOptions
-} from './SunburstSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+} from './SunburstSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import CU from '../CenteredUtilities.js';
 const {
@@ -1049,7 +1049,7 @@ namespace SunburstSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         sunburst: typeof SunburstSeries;
     }

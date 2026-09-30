@@ -16,12 +16,12 @@
  *
  * */
 
-import type { DeepPartial } from '../Shared/Types';
+import type { DeepPartial } from '../Shared/Types.js';
 import type {
     LonLatArray,
     MapViewOptions
-} from './MapViewOptions';
-import type MapPointOptions from '../Series/Map/MapPointOptions';
+} from './MapViewOptions.js';
+import type MapPointOptions from '../Series/Map/MapPointOptions.js';
 
 /* *
  *

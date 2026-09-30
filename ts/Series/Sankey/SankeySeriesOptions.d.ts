@@ -18,29 +18,29 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type NodesComposition from '../NodesComposition';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
-import type SankeyPoint from './SankeyPoint';
+} from '../Column/ColumnSeriesOptions.js';
+import type NodesComposition from '../NodesComposition.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type SankeyDataLabelOptions from './SankeyDataLabelOptions.js';
+import type SankeyPoint from './SankeyPoint.js';
 import type {
     SankeyPointOptions,
     SankeyPointDataLabelOptions
-} from './SankeyPointOptions';
+} from './SankeyPointOptions.js';
 import type {
     SeriesStateHoverOptions,
     SeriesStateInactiveOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
-import type Templating from '../../Core/Templating';
-import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import { StateGenericOptions } from '../../Core/Series/StatesOptions';
+} from '../../Core/Series/SeriesOptions.js';
+import type Templating from '../../Core/Templating.js';
+import type { AnimationOptions } from '../../Core/Animation/AnimationOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import { StateGenericOptions } from '../../Core/Series/StatesOptions.js';
 
 /* *
  *

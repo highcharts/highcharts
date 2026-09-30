@@ -18,7 +18,7 @@
  *
  * */
 
-import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
+import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
 
 /* *
  *

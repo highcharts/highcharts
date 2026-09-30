@@ -57,7 +57,7 @@ import './Functions/XOR.js';
 
 export type {
     FormulaParserError
-} from './FormulaParser';
+} from './FormulaParser.js';
 
 
 export type {
@@ -70,7 +70,7 @@ export type {
     Reference,
     Term,
     Value
-} from './FormulaTypes';
+} from './FormulaTypes.js';
 
 
 /* *

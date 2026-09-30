@@ -19,8 +19,8 @@
  *
  * */
 
-import type BreadcrumbsOptions from './BreadcrumbsOptions';
-import type { LangOptions } from '../../Core/Options';
+import type BreadcrumbsOptions from './BreadcrumbsOptions.js';
+import type { LangOptions } from '../../Core/Options.js';
 
 /* *
  *

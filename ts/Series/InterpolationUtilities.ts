@@ -18,9 +18,9 @@
  *
  * */
 
-import type HeatmapSeries from './Heatmap/HeatmapSeries';
-import type GeoHeatmapSeries from './GeoHeatmap/GeoHeatmapSeries';
-import type Point from '../Core/Series/Point';
+import type HeatmapSeries from './Heatmap/HeatmapSeries.js';
+import type GeoHeatmapSeries from './GeoHeatmap/GeoHeatmapSeries.js';
+import type Point from '../Core/Series/Point.js';
 
 import H from '../Core/Globals.js';
 import { defined } from '../Shared/Utilities.js';

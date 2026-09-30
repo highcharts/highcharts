@@ -20,13 +20,13 @@
  *
  * */
 
-import type Accessibility from './Accessibility';
-import type { EventCallback } from '../Core/Callback';
-import type { DOMElementType } from '../Core/Renderer/DOMElementType';
-import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type ProxyProvider from './ProxyProvider';
+import type Accessibility from './Accessibility.js';
+import type { EventCallback } from '../Core/Callback.js';
+import type { DOMElementType } from '../Core/Renderer/DOMElementType.js';
+import type HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
+import type KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type ProxyProvider from './ProxyProvider.js';
 import type { EventOptions } from '../Shared/Utilities.js';
 
 import CU from './Utils/ChartUtilities.js';

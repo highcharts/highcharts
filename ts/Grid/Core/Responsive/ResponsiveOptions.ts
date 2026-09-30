@@ -21,9 +21,9 @@
  *
  * */
 
-import type { DeepPartial } from '../../../Shared/Types';
-import type { Options } from '../Options';
-import type Grid from '../Grid';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type { Options } from '../Options.js';
+import type Grid from '../Grid.js';
 
 
 /* *

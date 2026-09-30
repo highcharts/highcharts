@@ -18,8 +18,8 @@
  *
  * */
 
-import type HeatmapPoint from './HeatmapPoint';
-import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
+import type HeatmapPoint from './HeatmapPoint.js';
+import type HeatmapSeriesOptions from './HeatmapSeriesOptions.js';
 
 import { isNumber } from '../../Shared/Utilities.js';
 

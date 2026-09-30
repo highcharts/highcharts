@@ -21,7 +21,7 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
 import type {
     ClusterAndNoiseObject,
     GroupMapObject,
@@ -32,20 +32,20 @@ import type {
     MarkerClusterPreventCollisionObject,
     MarkerClusterSplitDataArray,
     MarkerClusterSplitDataObject
-} from './MarkerClusters';
+} from './MarkerClusters.js';
 import type {
     MarkerClusterLayoutAlgorithmOptions,
     MarkerClusterOptions
-} from './MarkerClusterOptions';
-import type Options from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type { PointClickEvent } from '../../Core/Series/PointOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type ScatterPoint from '../../Series/Scatter/ScatterPoint';
-import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
-import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions';
-import type Series from '../../Core/Series/Series';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from './MarkerClusterOptions.js';
+import type Options from '../../Core/Options.js';
+import type Point from '../../Core/Series/Point.js';
+import type { PointClickEvent } from '../../Core/Series/PointOptions.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type ScatterPoint from '../../Series/Scatter/ScatterPoint.js';
+import type ScatterSeries from '../../Series/Scatter/ScatterSeries.js';
+import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions.js';
+import type Series from '../../Core/Series/Series.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';

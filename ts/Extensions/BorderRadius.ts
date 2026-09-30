@@ -19,12 +19,12 @@
  *
  * */
 
-import type ColumnSeries from '../Series/Column/ColumnSeries';
-import type PieSeries from '../Series/Pie/PieSeries';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
-import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions';
+import type ColumnSeries from '../Series/Column/ColumnSeries.js';
+import type PieSeries from '../Series/Pie/PieSeries.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import type SymbolOptions from '../Core/Renderer/SVG/SymbolOptions.js';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -98,7 +98,7 @@ export interface BorderRadiusOptionsObject {
 
 }
 
-declare module '../Core/Renderer/SVG/SVGAttributes' {
+declare module '../Core/Renderer/SVG/SVGAttributes.js' {
     interface SVGAttributes {
 
         /**
@@ -124,7 +124,7 @@ declare module '../Core/Renderer/SVG/SVGAttributes' {
     }
 }
 
-declare module '../Core/Renderer/SVG/SymbolOptions' {
+declare module '../Core/Renderer/SVG/SymbolOptions.js' {
     interface SymbolOptions {
 
         /**

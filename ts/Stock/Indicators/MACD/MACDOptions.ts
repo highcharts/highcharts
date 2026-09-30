@@ -13,16 +13,16 @@
  *
  * */
 
-import type ColorString from '../../../Core/Color/ColorString';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type ColorString from '../../../Core/Color/ColorString.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
+} from '../SMA/SMAOptions.js';
 import type {
     SeriesStatesOptions,
     SeriesZonesOptions
-} from '../../../Core/Series/SeriesOptions';
+} from '../../../Core/Series/SeriesOptions.js';
 
 /* *
 *

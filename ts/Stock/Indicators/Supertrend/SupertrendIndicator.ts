@@ -15,10 +15,10 @@
  *
  * */
 
-import type ColorType from '../../../Core/Color/ColorType';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type ColorType from '../../../Core/Color/ColorType.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     SupertrendOptions,
     SupertrendParamsOptions,
@@ -27,9 +27,9 @@ import type {
     SupertrendGappedExtensionObject,
     SupertrendGroupedPointsObject,
     SupertrendLineObject
-} from './SupertrendOptions';
-import type SupertrendPoint from './SupertrendPoint';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+} from './SupertrendOptions.js';
+import type SupertrendPoint from './SupertrendPoint.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -679,7 +679,7 @@ extend(SupertrendIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
     }

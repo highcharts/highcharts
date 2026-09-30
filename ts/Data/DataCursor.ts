@@ -22,7 +22,7 @@
  * */
 
 
-import type DataTable from './DataTable';
+import type DataTable from './DataTable.js';
 
 
 /* *

@@ -21,9 +21,9 @@
  *
  * */
 
-import type { ConnectorTypes as ComponentConnectorTypes } from '../Component';
-import type { Options } from './GridComponentOptions';
-import type { DeepPartial } from '../../../Shared/Types';
+import type { ConnectorTypes as ComponentConnectorTypes } from '../Component.js';
+import type { Options } from './GridComponentOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
 import { uniqueKey } from '../../../Core/Utilities.js';

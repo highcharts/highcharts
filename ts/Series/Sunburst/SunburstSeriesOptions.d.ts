@@ -19,19 +19,19 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SunburstPointOptions from './SunburstPointOptions';
-import type SunburstSeries from './SunburstSeries';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type SunburstPointOptions from './SunburstPointOptions.js';
+import type SunburstSeries from './SunburstSeries.js';
 import type {
     TreemapSeriesLevelColorVariationOptions,
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions,
     TreemapSeriesUpButtonOptions
-} from '../Treemap/TreemapSeriesOptions';
+} from '../Treemap/TreemapSeriesOptions.js';
 
 /* *
  *

@@ -24,8 +24,8 @@
  *
  * */
 
-import type VennPointOptions from './VennPointOptions';
-import type VennSeries from './VennSeries';
+import type VennPointOptions from './VennPointOptions.js';
+import type VennSeries from './VennSeries.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { isNumber } from '../../Shared/Utilities.js';

@@ -18,8 +18,8 @@
  *
  * */
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { ExportingButtonOptions } from './ExportingOptions';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { ExportingButtonOptions } from './ExportingOptions.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type { ExportingButtonOptions } from './ExportingOptions';
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * A collection of options for buttons and menus appearing in the

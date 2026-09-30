@@ -16,7 +16,7 @@
  *
  * */
 
-import type PositionObject from './PositionObject';
+import type PositionObject from './PositionObject.js';
 
 /* *
  *

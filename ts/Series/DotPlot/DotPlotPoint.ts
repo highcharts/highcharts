@@ -16,10 +16,10 @@
  *
  * */
 
-import type ColumnPoint from '../Column/ColumnPoint';
-import type DotPlotPointOptions from './DotPlotPointOptions';
-import type DotPlotSeries from './DotPlotSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type ColumnPoint from '../Column/ColumnPoint.js';
+import type DotPlotPointOptions from './DotPlotPointOptions.js';
+import type DotPlotSeries from './DotPlotSeries.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 /* *
  *

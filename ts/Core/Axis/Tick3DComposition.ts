@@ -20,8 +20,8 @@
  *
  * */
 
-import type Position3DObject from '../Renderer/Position3DObject';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type Position3DObject from '../Renderer/Position3DObject.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
 import type Tick from './Tick.js';
 
 import H from '../Globals.js';

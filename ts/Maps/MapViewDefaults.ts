@@ -20,7 +20,7 @@
 
 import type {
     MapViewOptions
-} from './MapViewOptions';
+} from './MapViewOptions.js';
 
 /* *
  *

@@ -15,14 +15,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     StochasticOptions,
     StochasticParamsOptions
-} from './StochasticOptions';
-import type StochasticPoint from './StochasticPoint';
+} from './StochasticOptions.js';
+import type StochasticPoint from './StochasticPoint.js';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
@@ -289,7 +289,7 @@ MultipleLinesComposition.compose(StochasticIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
     }

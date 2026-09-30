@@ -21,14 +21,14 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGAttributes3D from '../../Core/Renderer/SVG/SVGAttributes3D';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
+import type Chart from '../../Core/Chart/Chart.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGAttributes3D from '../../Core/Renderer/SVG/SVGAttributes3D.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
@@ -42,7 +42,7 @@ import { error } from '../../Core/Utilities.js';
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGElementBase' {
+declare module '../../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         finishedOnAdd?: boolean;
         lowerGroup?: SVGElement;
@@ -53,7 +53,7 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+declare module '../../Core/Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         funnel3d(shapeArgs: SVGAttributes): SVGElement;
         funnel3dPath(shapeArgs: SVGAttributes): Funnel3DPathsObject;

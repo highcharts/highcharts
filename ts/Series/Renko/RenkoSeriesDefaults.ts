@@ -18,7 +18,7 @@
  *
  * */
 
-import type RenkoSeriesOptions from './RenkoSeriesOptions';
+import type RenkoSeriesOptions from './RenkoSeriesOptions.js';
 
 /* *
  *

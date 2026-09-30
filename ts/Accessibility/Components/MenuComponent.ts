@@ -20,10 +20,10 @@
  *
  * */
 
-import type Accessibility from '../Accessibility';
-import type { Exporting } from '../../Extensions/Exporting/Exporting';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type ProxyElement from '../ProxyElement';
+import type Accessibility from '../Accessibility.js';
+import type { Exporting } from '../../Extensions/Exporting/Exporting.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type ProxyElement from '../ProxyElement.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 

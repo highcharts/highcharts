@@ -11,9 +11,9 @@
  *
  * */
 
-import type Annotation from '../Annotation';
-import type { ControllableShapeOptions } from './ControllableOptions';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type Annotation from '../Annotation.js';
+import type { ControllableShapeOptions } from './ControllableOptions.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 import Controllable from './Controllable.js';
 import ControllableLabel from './ControllableLabel.js';
@@ -150,7 +150,7 @@ interface ControllableImage {
  * */
 
 /** @internal */
-declare module './ControllableType' {
+declare module './ControllableType.js' {
     interface ControllableShapeTypeRegistry {
         image: typeof ControllableImage;
     }

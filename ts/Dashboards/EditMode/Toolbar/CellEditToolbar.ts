@@ -15,11 +15,11 @@
  *
  * */
 
-import type CellHTML from '../../Layout/CellHTML';
-import type { Options as EditToolbarOptions } from './EditToolbar';
-import type { Options as MenuItemOptions } from '../Menu/MenuItem';
+import type CellHTML from '../../Layout/CellHTML.js';
+import type { Options as EditToolbarOptions } from './EditToolbar.js';
+import type { Options as MenuItemOptions } from '../Menu/MenuItem.js';
 
-import type { Options as EditModeOptions } from '../EditMode';
+import type { Options as EditModeOptions } from '../EditMode.js';
 
 import EditMode from '../EditMode.js';
 import Cell, { isCell } from '../../Layout/Cell.js';

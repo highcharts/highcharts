@@ -21,7 +21,7 @@
  * */
 
 
-import type AreaSeriesOptions from './AreaSeriesOptions';
+import type AreaSeriesOptions from './AreaSeriesOptions.js';
 
 
 /* *

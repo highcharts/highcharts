@@ -21,11 +21,11 @@
  *
  * */
 
-import type { DataEventDetail } from '../../../Data/DataEvent';
+import type { DataEventDetail } from '../../../Data/DataEvent.js';
 import type {
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
-import type DataModifierOptions from '../../../Data/Modifiers/DataModifierOptions';
+} from '../../../Data/DataTable.js';
+import type DataModifierOptions from '../../../Data/Modifiers/DataModifierOptions.js';
 
 import DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import DataTable from '../../../Data/DataTable.js';

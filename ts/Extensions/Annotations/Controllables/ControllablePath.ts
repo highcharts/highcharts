@@ -11,15 +11,15 @@
  *
  * */
 
-import type Annotation from '../Annotation';
-import type AST from '../../../Core/Renderer/HTML/AST';
-import type Chart from '../../../Core/Chart/Chart';
-import type { ControllableShapeOptions } from './ControllableOptions';
-import type MockPointOptions from '../AnnotationMockPointOptionsObject';
-import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
+import type Annotation from '../Annotation.js';
+import type AST from '../../../Core/Renderer/HTML/AST.js';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type { ControllableShapeOptions } from './ControllableOptions.js';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject.js';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 
 import Controllable from './Controllable.js';
 import ControllableDefaults from './ControllableDefaults.js';
@@ -35,7 +35,7 @@ import { uniqueKey } from '../../../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module './ControllableBase' {
+declare module './ControllableBase.js' {
     /** @internal */
     interface ControllableBase {
         markerEnd?: SVGElement;
@@ -43,7 +43,7 @@ declare module './ControllableBase' {
     }
 }
 
-declare module '../../../Core/Options'{
+declare module '../../../Core/Options.js'{
     interface Options {
         /**
          * Options for configuring markers for annotations.
@@ -84,7 +84,7 @@ declare module '../../../Core/Options'{
 }
 
 /** @internal */
-declare module '../../../Core/Renderer/SVG/SVGRendererBase' {
+declare module '../../../Core/Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
@@ -496,7 +496,7 @@ interface ControllablePath {
  * */
 
 /** @internal */
-declare module './ControllableType' {
+declare module './ControllableType.js' {
     interface ControllableShapeTypeRegistry {
         path: typeof ControllablePath;
     }

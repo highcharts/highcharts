@@ -21,11 +21,11 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type GradientColor from '../../Core/Color/GradientColor.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;

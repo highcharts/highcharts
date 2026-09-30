@@ -16,9 +16,9 @@
  *
  * */
 
-import type ColumnPointType from '../Column/ColumnPoint';
-import type HistogramPointOptions from './HistogramPointOptions';
-import type HistogramSeries from './HistogramSeries';
+import type ColumnPointType from '../Column/ColumnPoint.js';
+import type HistogramPointOptions from './HistogramPointOptions.js';
+import type HistogramSeries from './HistogramSeries.js';
 
 /* *
  *

@@ -18,7 +18,7 @@
  *
  * */
 
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type SeriesOptions from '../Core/Series/SeriesOptions.js';
 
 import H from '../Core/Globals.js';
 const { deg2rad } = H;

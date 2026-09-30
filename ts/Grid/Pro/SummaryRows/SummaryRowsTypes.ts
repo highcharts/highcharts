@@ -24,11 +24,11 @@
 import type {
     CellType as DataTableCellType,
     RowObject as DataTableRowObject
-} from '../../../Data/DataTable';
-import type { AggregatorOption } from '../Aggregation/AggregationTypes';
-import type { StyleValue } from '../../Core/GridUtils';
-import type SummaryTableCell from './SummaryTableCell';
-import type SummaryTableRow from './SummaryTableRow';
+} from '../../../Data/DataTable.js';
+import type { AggregatorOption } from '../Aggregation/AggregationTypes.js';
+import type { StyleValue } from '../../Core/GridUtils.js';
+import type SummaryTableCell from './SummaryTableCell.js';
+import type SummaryTableRow from './SummaryTableRow.js';
 
 
 /* *

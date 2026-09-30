@@ -18,16 +18,16 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type { NetworkgraphDataLabelsOptions } from './NetworkgraphSeriesOptions';
-import type NodesComposition from '../NodesComposition';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type { NetworkgraphDataLabelsOptions } from './NetworkgraphSeriesOptions.js';
+import type NodesComposition from '../NodesComposition.js';
 import type {
     PointMarkerOptions,
     PointOptions
-} from '../../Core/Series/PointOptions';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
+} from '../../Core/Series/PointOptions.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
 
 /* *
  *
@@ -35,7 +35,7 @@ import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel'
  *
  * */
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointMarkerStateInactiveOptions
     {
         animation?: (boolean|Partial<AnimationOptions>);

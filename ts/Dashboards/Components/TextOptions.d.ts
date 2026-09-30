@@ -15,7 +15,7 @@
  *
  * */
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 
 /**
  * Options for configuring a more custom text.

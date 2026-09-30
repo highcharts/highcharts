@@ -18,8 +18,8 @@
 import type {
     Options as MenuItemOptions,
     ToggleOptions as MenuItemToggleOptions
-} from './Menu/MenuItem';
-import type { Options as MenuOptions } from './Menu/Menu';
+} from './Menu/MenuItem.js';
+import type { Options as MenuOptions } from './Menu/Menu.js';
 
 import EditGlobals from './EditGlobals.js';
 import MenuItem from './Menu/MenuItem.js';

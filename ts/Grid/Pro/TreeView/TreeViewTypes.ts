@@ -22,16 +22,16 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
-import type DataTable from '../../../Data/DataTable';
+import type { RowId } from '../../Core/Data/DataProvider.js';
+import type DataTable from '../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
+} from '../../../Data/DataTable.js';
 import type {
     AggregatorCallback,
     AggregatorOption,
     AggregatorResult
-} from '../Aggregation/AggregationTypes';
+} from '../Aggregation/AggregationTypes.js';
 
 
 /* *

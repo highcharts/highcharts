@@ -18,7 +18,7 @@
  *
  * */
 
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
 
 /* *
  *

@@ -17,8 +17,8 @@
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
+} from '../SMA/SMAOptions.js';
+import type { PointMarkerOptions } from '../../../Core/Series/PointOptions.js';
 
 /* *
  *

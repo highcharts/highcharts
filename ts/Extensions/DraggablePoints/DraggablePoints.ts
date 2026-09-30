@@ -19,22 +19,22 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
+import type Axis from '../../Core/Axis/Axis.js';
 import type Chart from '../../Core/Chart/Chart.js';
 import type {
     DragDropHandleOptions,
     DragDropOptions
-} from './DragDropOptions';
-import type { DragDropPositionObject } from './DraggableChart';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
-import type Point from '../../Core/Series/Point';
-import type PointerEvent from '../../Core/PointerEvent';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type Series from '../../Core/Series/Series';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type XRangePoint from '../../Series/XRange/XRangePoint';
+} from './DragDropOptions.js';
+import type { DragDropPositionObject } from './DraggableChart.js';
+import type { MapLonLatObject } from '../../Maps/GeoJSON.js';
+import type Point from '../../Core/Series/Point.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type Series from '../../Core/Series/Series.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type XRangePoint from '../../Series/XRange/XRangePoint.js';
 
 import DDU from './DragDropUtilities.js';
 const {
@@ -54,7 +54,7 @@ import { addEvent, clamp, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /** @requires modules/draggable-points */
         getDropValues(
@@ -67,7 +67,7 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointOptions {
         /**
          * Point specific options for the draggable-points module. Overrides
@@ -84,7 +84,7 @@ declare module '../../Core/Series/PointOptions' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @requires modules/draggable-points */
         dragDropProps?: (Record<string, Partial<SeriesDragDropPropsObject>>|null);
@@ -93,7 +93,7 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or

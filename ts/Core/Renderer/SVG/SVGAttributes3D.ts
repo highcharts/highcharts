@@ -16,8 +16,8 @@
  *
  * */
 
-import type Position3DObject from '../../Renderer/Position3DObject';
-import type SVGAttributes from './SVGAttributes';
+import type Position3DObject from '../../Renderer/Position3DObject.js';
+import type SVGAttributes from './SVGAttributes.js';
 
 /* *
  *

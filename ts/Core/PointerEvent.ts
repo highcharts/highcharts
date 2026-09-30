@@ -16,9 +16,9 @@
  *
  * */
 
-import type Point from './Series/Point';
-import type Pointer from './Pointer';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
+import type Point from './Series/Point.js';
+import type Pointer from './Pointer.js';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes.js';
 
 /* *
  *

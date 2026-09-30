@@ -16,7 +16,7 @@
  *
  * */
 
-import type AreaPointOptions from '../Area/AreaPointOptions';
+import type AreaPointOptions from '../Area/AreaPointOptions.js';
 
 /* *
  *

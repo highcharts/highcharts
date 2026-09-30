@@ -18,19 +18,19 @@
  *
  * */
 
-import type Axis from './Axis/Axis';
-import type BBoxObject from './Renderer/BBoxObject';
-import type Chart from './Chart/Chart';
-import type { DOMElementType } from './Renderer/DOMElementType';
-import type NodesComposition from '../Series/NodesComposition';
-import type Options from './Options';
-import type Point from './Series/Point';
+import type Axis from './Axis/Axis.js';
+import type BBoxObject from './Renderer/BBoxObject.js';
+import type Chart from './Chart/Chart.js';
+import type { DOMElementType } from './Renderer/DOMElementType.js';
+import type NodesComposition from '../Series/NodesComposition.js';
+import type Options from './Options.js';
+import type Point from './Series/Point.js';
 import type {
     GetSelectionMarkerAttrsEvent,
     PointerEvent
-} from './PointerEvent';
-import type Series from './Series/Series';
-import type SVGElement from './Renderer/SVG/SVGElement';
+} from './PointerEvent.js';
+import type Series from './Series/Series.js';
+import type SVGElement from './Renderer/SVG/SVGElement.js';
 
 import H from './Globals.js';
 const {
@@ -38,7 +38,7 @@ const {
     composed,
     isTouchDevice
 } = H;
-import SVGAttributes from './Renderer/SVG/SVGAttributes';
+import SVGAttributes from './Renderer/SVG/SVGAttributes.js';
 import {
     addEvent,
     attr,
@@ -61,7 +61,7 @@ import {
  *
  * */
 
-declare module './Chart/ChartBase'{
+declare module './Chart/ChartBase.js'{
     interface ChartBase {
         cancelClick?: boolean;
         hoverPoint?: Point;

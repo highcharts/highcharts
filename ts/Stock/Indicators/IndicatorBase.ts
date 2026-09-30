@@ -13,7 +13,7 @@
  *
  * */
 
-import type Series from '../../Core/Series/Series';
+import type Series from '../../Core/Series/Series.js';
 
 /* *
  *

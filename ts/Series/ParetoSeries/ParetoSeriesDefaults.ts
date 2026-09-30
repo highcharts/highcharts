@@ -18,7 +18,7 @@
  *
  * */
 
-import type ParetoSeriesOptions from './ParetoSeriesOptions';
+import type ParetoSeriesOptions from './ParetoSeriesOptions.js';
 
 /* *
  *

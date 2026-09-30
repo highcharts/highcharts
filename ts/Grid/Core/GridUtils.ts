@@ -14,7 +14,7 @@
  *
  * */
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';

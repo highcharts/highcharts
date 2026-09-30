@@ -18,7 +18,7 @@
  *
  * */
 
-import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
+import type CandlestickSeriesOptions from './CandlestickSeriesOptions.js';
 
 /* *
  *

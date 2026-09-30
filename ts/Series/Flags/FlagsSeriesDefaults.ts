@@ -18,7 +18,7 @@
  *
  * */
 
-import type FlagsSeriesOptions from './FlagsSeriesOptions';
+import type FlagsSeriesOptions from './FlagsSeriesOptions.js';
 
 /* *
  *

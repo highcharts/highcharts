@@ -19,14 +19,14 @@
  *
  * */
 
-import type BellcurvePoint from './BellcurvePoint';
-import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
+import type BellcurvePoint from './BellcurvePoint.js';
+import type BellcurveSeriesOptions from './BellcurveSeriesOptions.js';
 
 import BellcurveSeriesDefaults from './BellcurveSeriesDefaults.js';
 import DerivedComposition from '../DerivedComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { areaspline: AreaSplineSeries } = SeriesRegistry.seriesTypes;
-import AnimationOptions from '../../Core/Animation/AnimationOptions';
+import AnimationOptions from '../../Core/Animation/AnimationOptions.js';
 import { correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -246,7 +246,7 @@ DerivedComposition.compose(BellcurveSeries);
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         bellcurve: typeof BellcurveSeries;
     }

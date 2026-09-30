@@ -20,13 +20,13 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
-import type Column from '../Core/Table/Column';
-import type TableCell from '../Core/Table/Body/TableCell';
-import type HeaderCell from '../Core/Table/Header/HeaderCell';
-import type { GridEvent } from '../Core/GridUtils';
-import type Grid from '../Core/Grid';
-import type { ProcessUpdateDiffEvent } from '../Core/Grid';
+import type { AnyRecord } from '../../Shared/Types.js';
+import type Column from '../Core/Table/Column.js';
+import type TableCell from '../Core/Table/Body/TableCell.js';
+import type HeaderCell from '../Core/Table/Header/HeaderCell.js';
+import type { GridEvent } from '../Core/GridUtils.js';
+import type Grid from '../Core/Grid.js';
+import type { ProcessUpdateDiffEvent } from '../Core/Grid.js';
 
 import Globals from '../../Core/Globals.js';
 import {
@@ -316,7 +316,7 @@ export interface GridEvents {
     afterRedraw?: GridEventCallback;
 }
 
-declare module '../Core/Options' {
+declare module '../Core/Options.js' {
 
     interface Options {
         /**

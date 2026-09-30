@@ -20,12 +20,12 @@
  *
  * */
 
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type OHLCSeriesOptions from './OHLCSeriesOptions';
-import type Series from '../../Core/Series/Series';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type OHLCSeriesOptions from './OHLCSeriesOptions.js';
+import type Series from '../../Core/Series/Series.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -234,7 +234,7 @@ extend(OHLCSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         ohlc: typeof OHLCSeries;
     }

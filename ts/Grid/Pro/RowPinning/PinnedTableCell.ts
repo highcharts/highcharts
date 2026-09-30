@@ -18,11 +18,11 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
 import type {
     TableCellAfterDataMutationEvent
-} from '../../Core/Table/Body/TableCell';
-import type PinnedTableRow from './PinnedTableRow';
+} from '../../Core/Table/Body/TableCell.js';
+import type PinnedTableRow from './PinnedTableRow.js';
 
 import TableCell from '../../Core/Table/Body/TableCell.js';
 import { defined, fireEvent } from '../../../Shared/Utilities.js';

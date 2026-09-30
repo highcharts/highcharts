@@ -19,23 +19,23 @@
  *
  * */
 
-import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type BoxPlotPoint from '../../Series/BoxPlot/BoxPlotPoint';
-import type BulletPoint from '../../Series/Bullet/BulletPoint';
-import type ColumnPoint from '../../Series/Column/ColumnPoint';
-import type ColumnRangePoint from '../../Series/ColumnRange/ColumnRangePoint';
-import type DragDropOptions from './DragDropOptions';
-import type { SeriesDragDropPropsObject } from './DraggablePoints';
-import type ErrorBarPoint from '../../Series/ErrorBar/ErrorBarPoint';
-import type GanttPoint from '../../Series/Gantt/GanttPoint';
-import type OHLCPoint from '../../Series/OHLC/OHLCPoint';
-import type Point from '../../Core/Series/Point';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type WaterfallPoint from '../../Series/Waterfall/WaterfallPoint';
-import type XRangePoint from '../../Series/XRange/XRangePoint';
+import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type BoxPlotPoint from '../../Series/BoxPlot/BoxPlotPoint.js';
+import type BulletPoint from '../../Series/Bullet/BulletPoint.js';
+import type ColumnPoint from '../../Series/Column/ColumnPoint.js';
+import type ColumnRangePoint from '../../Series/ColumnRange/ColumnRangePoint.js';
+import type DragDropOptions from './DragDropOptions.js';
+import type { SeriesDragDropPropsObject } from './DraggablePoints.js';
+import type ErrorBarPoint from '../../Series/ErrorBar/ErrorBarPoint.js';
+import type GanttPoint from '../../Series/Gantt/GanttPoint.js';
+import type OHLCPoint from '../../Series/OHLC/OHLCPoint.js';
+import type Point from '../../Core/Series/Point.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type WaterfallPoint from '../../Series/Waterfall/WaterfallPoint.js';
+import type XRangePoint from '../../Series/XRange/XRangePoint.js';
 
 import DraggableChart from './DraggableChart.js';
 const { flipResizeSide } = DraggableChart;
@@ -92,7 +92,7 @@ export interface BoxPlotSeriesDragDropOptions extends DragDropOptions {
     draggableQ3?: boolean;
 }
 
-declare module '../../Series/BoxPlot/BoxPlotSeriesOptions' {
+declare module '../../Series/BoxPlot/BoxPlotSeriesOptions.js' {
     interface BoxPlotSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -117,7 +117,7 @@ export interface ErrorBarSeriesDragDropOptions extends BoxPlotSeriesDragDropOpti
     draggableQ3?: undefined;
 }
 
-declare module '../../Series/ErrorBar/ErrorBarSeriesOptions' {
+declare module '../../Series/ErrorBar/ErrorBarSeriesOptions.js' {
     interface ErrorBarSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -149,7 +149,7 @@ export interface BulletSeriesDragDropOptions extends DragDropOptions {
     draggableTarget?: boolean;
 }
 
-declare module '../../Series/Bullet/BulletSeriesOptions' {
+declare module '../../Series/Bullet/BulletSeriesOptions.js' {
     interface BulletSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -210,7 +210,7 @@ export interface OHLCSeriesDragDropOptions extends DragDropOptions {
     draggableOpen?: boolean;
 }
 
-declare module '../../Series/OHLC/OHLCSeriesOptions' {
+declare module '../../Series/OHLC/OHLCSeriesOptions.js' {
     interface OHLCSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -252,7 +252,7 @@ export interface ColumnRangeSeriesDragDropOptions extends DragDropOptions {
     draggableLow?: boolean;
 }
 
-declare module '../../Series/ColumnRange/ColumnRangeSeriesOptions' {
+declare module '../../Series/ColumnRange/ColumnRangeSeriesOptions.js' {
     interface ColumnRangeSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -294,7 +294,7 @@ export interface AreaRangeSeriesDragDropOptions extends DragDropOptions {
     draggableLow?: boolean;
 }
 
-declare module '../../Series/AreaRange/AreaRangeSeriesOptions' {
+declare module '../../Series/AreaRange/AreaRangeSeriesOptions.js' {
     interface AreaRangeSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -336,7 +336,7 @@ export interface XrangeSeriesDragDropOptions extends DragDropOptions {
     draggableX2?: boolean;
 }
 
-declare module '../../Series/XRange/XRangeSeriesOptions' {
+declare module '../../Series/XRange/XRangeSeriesOptions.js' {
     interface XRangeSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or
@@ -378,7 +378,7 @@ export interface GanttSeriesDragDropOptions extends DragDropOptions {
     draggableStart?: boolean;
 }
 
-declare module '../../Series/Gantt/GanttSeriesOptions' {
+declare module '../../Series/Gantt/GanttSeriesOptions.js' {
     interface GanttSeriesOptions {
         /**
          * The draggable-points module allows points to be moved around or

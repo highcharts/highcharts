@@ -15,14 +15,14 @@
  *
  * */
 
-import type { Options as EditModeOptions } from '../EditMode';
+import type { Options as EditModeOptions } from '../EditMode.js';
 
 import EditMode from '../EditMode.js';
 import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
-import type { Options as EditToolbarOptions } from './EditToolbar';
-import type { Options as MenuItemOptions } from '../Menu/MenuItem';
+import type { Options as EditToolbarOptions } from './EditToolbar.js';
+import type { Options as MenuItemOptions } from '../Menu/MenuItem.js';
 
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';

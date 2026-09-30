@@ -20,11 +20,11 @@
  *
  * */
 
-import type VectorPoint from './VectorPoint';
-import type VectorSeriesOptions from './VectorSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type VectorPoint from './VectorPoint.js';
+import type VectorSeriesOptions from './VectorSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
@@ -292,7 +292,7 @@ extend(VectorSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         vector: typeof VectorSeries;
     }

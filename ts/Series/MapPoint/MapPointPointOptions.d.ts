@@ -16,9 +16,9 @@
  *
  * */
 
-import type { GeoJSONGeometryPoint } from '../../Maps/GeoJSON';
-import type { LonLatArray } from '../../Maps/MapViewOptions';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type { GeoJSONGeometryPoint } from '../../Maps/GeoJSON.js';
+import type { LonLatArray } from '../../Maps/MapViewOptions.js';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
 
 /* *
  *

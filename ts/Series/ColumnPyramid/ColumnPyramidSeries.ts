@@ -18,8 +18,8 @@
  *
  * */
 
-import type ColumnPyramidPoint from './ColumnPyramidPoint';
-import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
+import type ColumnPyramidPoint from './ColumnPyramidPoint.js';
+import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions.js';
 
 import ColumnPyramidSeriesDefaults from './ColumnPyramidSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -276,7 +276,7 @@ interface ColumnPyramidSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         columnpyramid: typeof ColumnPyramidSeries;
     }

@@ -18,23 +18,23 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Chart from '../../Core/Chart/Chart';
-import type Chart3D from '../../Core/Chart/Chart3D';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnRangeSeries from '../ColumnRange/ColumnRangeSeries';
-import type ColumnSeries from '../Column/ColumnSeries';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Position3DObject from '../../Core/Renderer/Position3DObject';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Chart3D from '../../Core/Chart/Chart3D.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColumnPoint from '../Column/ColumnPoint.js';
+import type ColumnRangeSeries from '../ColumnRange/ColumnRangeSeries.js';
+import type ColumnSeries from '../Column/ColumnSeries.js';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type Position3DObject from '../../Core/Renderer/Position3DObject.js';
 import type Series from '../../Core/Series/Series.js';
 import type {
     StackBoxProps,
     default as StackItem
-} from '../../Core/Axis/Stacking/StackItem';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from '../../Core/Axis/Stacking/StackItem.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -54,7 +54,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /** @internal */
         columnGroup: SVGElement;
@@ -62,7 +62,7 @@ declare module '../../Core/Chart/ChartBase' {
 }
 
 /** @internal */
-declare module '../../Core/Series/DataLabelOptions' {
+declare module '../../Core/Series/DataLabelOptions.js' {
     interface DataLabelOptions {
         /** @internal */
         outside3dPlot?: (boolean|null);
@@ -70,7 +70,7 @@ declare module '../../Core/Series/DataLabelOptions' {
 }
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /** @internal */
         height?: number;
@@ -84,7 +84,7 @@ declare module '../../Core/Series/PointBase' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         z: number;
@@ -96,7 +96,7 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Depth of the columns in a 3D column chart.

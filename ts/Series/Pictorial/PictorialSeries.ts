@@ -22,9 +22,9 @@ import '../Column/ColumnSeries.js';
 import { composePatternFill } from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
-import type ColumnSeriesType from '../Column/ColumnSeries';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type PictorialSeriesOptions from './PictorialSeriesOptions';
+import type ColumnSeriesType from '../Column/ColumnSeries.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
+import type PictorialSeriesOptions from './PictorialSeriesOptions.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -36,7 +36,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import { PictorialPathOptions } from './PictorialSeriesOptions';
+import { PictorialPathOptions } from './PictorialSeriesOptions.js';
 import {
     addEvent,
     defined,
@@ -85,7 +85,7 @@ export interface StackShadowOptions {
  *
  * */
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         stackShadow?: StackShadowOptions;
     }
@@ -571,7 +571,7 @@ PictorialSeries.prototype.pointClass = PictorialPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pictorial: typeof PictorialSeries;
     }

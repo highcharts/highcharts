@@ -23,13 +23,13 @@
  *
  * */
 
-import type Column from '../../../Core/Table/Column';
-import type { DateInputRendererBaseOptions } from './DateInputRendererBase';
-import type TableCell from '../../../Core/Table/Body/TableCell';
-import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
+import type Column from '../../../Core/Table/Column.js';
+import type { DateInputRendererBaseOptions } from './DateInputRendererBase.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type { EditModeRenderer } from '../../CellEditing/CellEditMode.js';
 import type {
     EditModeRendererTypeName
-} from '../../CellEditing/CellEditingComposition';
+} from '../../CellEditing/CellEditingComposition.js';
 
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
@@ -119,7 +119,7 @@ export interface DateTimeInputRendererOptions
  *
  * */
 
-declare module '../CellRendererType' {
+declare module '../CellRendererType.js' {
     interface CellRendererTypeRegistry {
         dateTimeInput: typeof DateTimeInputRenderer
     }

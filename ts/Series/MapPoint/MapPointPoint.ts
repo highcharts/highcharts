@@ -18,10 +18,10 @@
  *
  * */
 
-import type MapPointPointOptions from './MapPointPointOptions';
-import type MapPointSeries from './MapPointSeries';
-import type { MapBounds } from '../../Maps/MapViewOptions';
-import type ScatterPoint from './../Scatter/ScatterPoint';
+import type MapPointPointOptions from './MapPointPointOptions.js';
+import type MapPointSeries from './MapPointSeries.js';
+import type { MapBounds } from '../../Maps/MapViewOptions.js';
+import type ScatterPoint from './../Scatter/ScatterPoint.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { isNumber } from '../../Shared/Utilities.js';

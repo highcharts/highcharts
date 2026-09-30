@@ -19,9 +19,9 @@
  *
  * */
 
-import type LinePointOptions from '../Line/LinePointOptions';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
-import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
+import type LinePointOptions from '../Line/LinePointOptions.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
+import type TimelineDataLabelOptions from './TimelineDataLabelOptions.js';
 
 /* *
  *

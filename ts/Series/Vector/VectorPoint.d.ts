@@ -18,9 +18,9 @@
  *
  * */
 
-import type ScatterPoint from '../Scatter/ScatterPoint';
-import type VectorPointOptions from './VectorPointOptions';
-import type VectorSeries from './VectorSeries';
+import type ScatterPoint from '../Scatter/ScatterPoint.js';
+import type VectorPointOptions from './VectorPointOptions.js';
+import type VectorSeries from './VectorSeries.js';
 
 /* *
  *

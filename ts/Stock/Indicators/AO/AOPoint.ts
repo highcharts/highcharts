@@ -13,8 +13,8 @@
  *
  * */
 
-import type AOIndicator from './AOIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type AOIndicator from './AOIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

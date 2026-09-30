@@ -22,8 +22,8 @@
  *
  * */
 
-import type { Options } from '../../Core/Options';
-import type { RowId } from '../../Core/Data/DataProvider';
+import type { Options } from '../../Core/Options.js';
+import type { RowId } from '../../Core/Data/DataProvider.js';
 import type {
     DeprecatedTreeViewOptions,
     RowGroupingOptions,
@@ -31,7 +31,7 @@ import type {
     TreeInputPathSeparator,
     TreeExpandedLevels,
     TreeViewOptions
-} from './TreeViewTypes';
+} from './TreeViewTypes.js';
 
 import {
     isArray,

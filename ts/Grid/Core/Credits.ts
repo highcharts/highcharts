@@ -23,8 +23,8 @@
  *
  * */
 
-import type { CreditsOptions } from './Options';
-import type Grid from './Grid';
+import type { CreditsOptions } from './Options.js';
+import type Grid from './Grid.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';

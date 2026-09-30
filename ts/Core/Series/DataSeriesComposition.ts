@@ -20,12 +20,12 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
 import type {
     PointOptions,
     PointShortOptions
-} from './PointOptions';
-import type Series from './Series';
+} from './PointOptions.js';
+import type Series from './Series.js';
 import type {
     CellType,
     Column,
@@ -52,7 +52,7 @@ import {
  * */
 
 /** @internal */
-declare module './SeriesBase' {
+declare module './SeriesBase.js' {
     interface SeriesBase {
         datas?: DataSeriesAdditions;
     }
@@ -60,7 +60,7 @@ declare module './SeriesBase' {
 
 // Unmark as internal when in the future.
 /** @internal */
-declare module './SeriesOptions' {
+declare module './SeriesOptions.js' {
     interface SeriesOptions {
         /* *
         * Indicates data is structured as columns instead of rows.

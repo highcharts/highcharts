@@ -16,15 +16,15 @@
  *
  * */
 
-import type ColorType from '../Color/ColorType';
-import type DashStyleValue from '../Renderer/DashStyleValue';
-import type { DeepPartial } from '../../Shared/Types';
-import type { PointMarkerOptions } from './PointOptions';
+import type ColorType from '../Color/ColorType.js';
+import type DashStyleValue from '../Renderer/DashStyleValue.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { PointMarkerOptions } from './PointOptions.js';
 import type {
     SeriesOptions,
     SeriesStateHoverHaloOptions
-} from './SeriesOptions';
-import type { AnimationOptions } from '../Animation/AnimationOptions';
+} from './SeriesOptions.js';
+import type { AnimationOptions } from '../Animation/AnimationOptions.js';
 
 /* *
  *

@@ -13,8 +13,8 @@
  *
  * */
 
-import type TEMAIndicator from './TEMAIndicator';
-import type EMAPoint from '../EMA/EMAPoint';
+import type TEMAIndicator from './TEMAIndicator.js';
+import type EMAPoint from '../EMA/EMAPoint.js';
 
 /* *
  *

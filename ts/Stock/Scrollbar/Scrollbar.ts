@@ -18,14 +18,14 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
-import type { DeepPartial } from '../../Shared/Types';
-import type PointerEvent from '../../Core/PointerEvent';
-import type ScrollbarOptions from './ScrollbarOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type ScrollbarOptions from './ScrollbarOptions.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -55,7 +55,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         scrollbarsOffsets?: [number, number];
     }

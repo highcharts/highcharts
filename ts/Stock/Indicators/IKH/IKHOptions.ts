@@ -13,13 +13,13 @@
  *  Imports
  *
  * */
-import type ColorType from '../../../Core/Color/ColorType';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type IKHIndicator from './IKHIndicator';
-import type IKHPoint from './IKHPoint';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
-import type { SMAParamsOptions, SMAOptions } from '../SMA/SMAOptions';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type ColorType from '../../../Core/Color/ColorType.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type IKHIndicator from './IKHIndicator.js';
+import type IKHPoint from './IKHPoint.js';
+import type { PointMarkerOptions } from '../../../Core/Series/PointOptions.js';
+import type { SMAParamsOptions, SMAOptions } from '../SMA/SMAOptions.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 /* *
  *

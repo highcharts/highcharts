@@ -15,8 +15,8 @@
  *
  * */
 
-import type SMAPointType from '../SMA/SMAPoint';
-import type PivotPointsIndicator from './PivotPointsIndicator';
+import type SMAPointType from '../SMA/SMAPoint.js';
+import type PivotPointsIndicator from './PivotPointsIndicator.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const SMAPoint: typeof SMAPointType =

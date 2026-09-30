@@ -20,9 +20,9 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type ParallelCoordinates from './ParallelCoordinates';
+import type Axis from '../../Core/Axis/Axis.js';
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
+import type ParallelCoordinates from './ParallelCoordinates.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -42,7 +42,7 @@ import {
  *
  * */
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         /**
          * Parallel coordinates only. Format that will be used for point.y
@@ -76,7 +76,7 @@ declare module '../../Core/Axis/AxisOptions' {
 }
 
 /** @internal */
-declare module '../../Core/Axis/AxisComposition' {
+declare module '../../Core/Axis/AxisComposition.js' {
     interface AxisComposition {
         parallelCoordinates?: ParallelAxis.Composition['parallelCoordinates'];
     }

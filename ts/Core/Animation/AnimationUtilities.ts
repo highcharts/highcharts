@@ -18,14 +18,14 @@
  *
  * */
 
-import type AnimationOptions from './AnimationOptions';
-import type Chart from '../Chart/Chart';
-import type CSSObject from '../Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type Series from '../Series/Series';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type AnimationOptions from './AnimationOptions.js';
+import type Chart from '../Chart/Chart.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type Series from '../Series/Series.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
 
 import Fx from './Fx.js';
 import {

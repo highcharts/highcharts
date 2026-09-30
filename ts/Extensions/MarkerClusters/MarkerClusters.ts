@@ -21,25 +21,25 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Chart from '../../Core/Chart/Chart.js';
 import type {
     MarkerClusterLayoutAlgorithmOptions,
     MarkerClusterOptions,
     MarkerClusterZonesOptions
-} from './MarkerClusterOptions';
-import type Options from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
+} from './MarkerClusterOptions.js';
+import type Options from '../../Core/Options.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointClickEvent,
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from '../../Core/Series/PointOptions.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
+import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import D from '../../Core/Defaults.js';
@@ -65,7 +65,7 @@ import { error } from '../../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         isCluster?: boolean;
         clusteredData?: Array<MarkerClusterSplitDataObject>;
@@ -74,7 +74,7 @@ declare module '../../Core/Series/PointBase' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         markerClusterInfo?: MarkerClusterInfoObject;
         markerClusterAlgorithms?: Record<string, MarkerClusterAlgorithmFunction>;

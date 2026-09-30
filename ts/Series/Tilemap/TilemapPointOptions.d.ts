@@ -18,8 +18,8 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type HeatmapPointOptions from '../Heatmap/HeatmapPointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type HeatmapPointOptions from '../Heatmap/HeatmapPointOptions.js';
 
 /* *
  *

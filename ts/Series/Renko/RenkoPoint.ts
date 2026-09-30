@@ -18,8 +18,8 @@
  *
  * */
 
-import type RenkoSeries from './RenkoSeries';
-import type RenkoPointOptions from './RenkoPointOptions';
+import type RenkoSeries from './RenkoSeries.js';
+import type RenkoPointOptions from './RenkoPointOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

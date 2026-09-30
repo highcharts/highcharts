@@ -18,10 +18,10 @@
 import type {
     APOOptions,
     APOParamsOptions
-} from './APOOptions';
-import type APOPoint from './APOPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './APOOptions.js';
+import type APOPoint from './APOPoint.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -192,7 +192,7 @@ extend(APOIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         apo: typeof APOIndicator;
     }

@@ -18,13 +18,13 @@
  *
  * */
 
-import type AreaPoint from './AreaPoint';
-import type AreaSeriesOptions from './AreaSeriesOptions';
-import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
-import type StackItem from '../../Core/Axis/Stacking/StackItem';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type AreaPoint from './AreaPoint.js';
+import type AreaSeriesOptions from './AreaSeriesOptions.js';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions.js';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis.js';
+import type StackItem from '../../Core/Axis/Stacking/StackItem.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import AreaSeriesDefaults from './AreaSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -47,7 +47,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SVGPath' {
+declare module '../../Core/Renderer/SVG/SVGPath.js' {
     interface SVGPath {
         /** @internal */
         isArea?: boolean;
@@ -57,7 +57,7 @@ declare module '../../Core/Renderer/SVG/SVGPath' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         areaPath?: SVGPath;
@@ -522,7 +522,7 @@ extend(AreaSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         area: typeof AreaSeries;
     }

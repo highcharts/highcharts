@@ -13,8 +13,8 @@
  *
  * */
 
-import type APOIndicator from './APOIndicator';
-import type EMAPoint from '../EMA/EMAPoint';
+import type APOIndicator from './APOIndicator.js';
+import type EMAPoint from '../EMA/EMAPoint.js';
 
 
 /* *

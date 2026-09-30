@@ -16,10 +16,10 @@
  *
  * */
 
-import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
-import type DataGroupingOptions from '../../Extensions/DataGrouping/DataGroupingOptions';
-import type HeikinAshiPointOptions from './HeikinAshiPointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions.js';
+import type DataGroupingOptions from '../../Extensions/DataGrouping/DataGroupingOptions.js';
+import type HeikinAshiPointOptions from './HeikinAshiPointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *

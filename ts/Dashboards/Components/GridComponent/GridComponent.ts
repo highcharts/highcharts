@@ -21,20 +21,20 @@
  *
  * */
 
-import type Board from '../../Board';
-import type Cell from '../../Layout/Cell';
-import type { Grid, GridNamespace } from '../../Plugins/GridTypes';
-import type { Options } from './GridComponentOptions';
-import type DataTable from '../../../Data/DataTable';
+import type Board from '../../Board.js';
+import type Cell from '../../Layout/Cell.js';
+import type { Grid, GridNamespace } from '../../Plugins/GridTypes.js';
+import type { Options } from './GridComponentOptions.js';
+import type DataTable from '../../../Data/DataTable.js';
 
-import type { EventTypes as ComponentEventTypes } from '../Component';
+import type { EventTypes as ComponentEventTypes } from '../Component.js';
 
 import Component from '../Component.js';
 import GridSyncs from './GridSyncs/GridSyncs.js';
 import GridComponentDefaults from './GridComponentDefaults.js';
 import { hasDataTableProvider } from './GridDataProvider.js';
 import DU from '../../Utilities.js';
-import SidebarPopup from '../../EditMode/SidebarPopup';
+import SidebarPopup from '../../EditMode/SidebarPopup.js';
 import { diffObjects, getStyle, merge } from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 

@@ -11,17 +11,17 @@
  *
  * */
 
-import type ColorType from '../../../Core/Color/ColorType';
+import type ColorType from '../../../Core/Color/ColorType.js';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions
-} from '../AnnotationOptions';
+} from '../AnnotationOptions.js';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { AnnotationLabelOptionsOptions } from '../AnnotationOptions';
+import { AnnotationLabelOptionsOptions } from '../AnnotationOptions.js';
 import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
@@ -161,7 +161,7 @@ namespace ElliottWave {
  * */
 
 /** @internal */
-declare module './AnnotationType' {
+declare module './AnnotationType.js' {
     interface AnnotationTypeRegistry {
         elliottWave: typeof ElliottWave;
     }

@@ -18,10 +18,10 @@
  *
  * */
 
-import type ErrorBarPoint from './ErrorBarPoint';
-import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
-import type { BoxPlotPointValKey } from '../BoxPlot/BoxPlotSeriesOptions';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type ErrorBarPoint from './ErrorBarPoint.js';
+import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions.js';
+import type { BoxPlotPointValKey } from '../BoxPlot/BoxPlotSeriesOptions.js';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject.js';
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
@@ -138,7 +138,7 @@ extend(ErrorBarSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         errorbar: typeof ErrorBarSeries;
     }

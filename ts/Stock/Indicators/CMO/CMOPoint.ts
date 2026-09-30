@@ -13,8 +13,8 @@
  *
  * */
 
-import type CMOIndicator from './CMOIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type CMOIndicator from './CMOIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

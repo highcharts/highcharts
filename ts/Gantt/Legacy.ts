@@ -18,7 +18,7 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
+import type Chart from '../Core/Chart/Chart.js';
 import { error } from '../Core/Utilities.js';
 
 import { merge } from '../Shared/Utilities.js';

@@ -23,9 +23,9 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
-import type JSONConverterOptions from './JSONConverterOptions';
+} from '../DataEvent.js';
+import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions.js';
+import type JSONConverterOptions from './JSONConverterOptions.js';
 
 import DataConverter from './DataConverter.js';
 import DataConverterUtils from './DataConverterUtils.js';
@@ -350,7 +350,7 @@ class JSONConverter extends DataConverter {
  *
  * */
 
-declare module './DataConverterType' {
+declare module './DataConverterType.js' {
     interface DataConverterTypes {
         JSON: typeof JSONConverter;
     }

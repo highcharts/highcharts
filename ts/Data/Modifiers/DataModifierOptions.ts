@@ -24,7 +24,7 @@
  * */
 
 
-import type { DataModifierTypes } from './DataModifierType';
+import type { DataModifierTypes } from './DataModifierType.js';
 
 
 /* *

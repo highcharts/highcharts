@@ -25,8 +25,8 @@ import type {
     LonLatArray,
     MapBounds,
     ProjectedXYArray
-} from '../MapViewOptions';
-import type ProjectionDefinition from '../ProjectionDefinition';
+} from '../MapViewOptions.js';
+import type ProjectionDefinition from '../ProjectionDefinition.js';
 
 /* *
  *

@@ -4,11 +4,11 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type Funnel3DPointOptions from './Funnel3DPointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions.js';
+import type Funnel3DPointOptions from './Funnel3DPointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
 
 /* *
  *

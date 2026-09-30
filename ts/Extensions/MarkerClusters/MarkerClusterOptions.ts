@@ -19,16 +19,16 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Point from '../../Core/Series/Point';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointClickEvent,
     PointMarkerOptions,
     PointMarkerStateHoverOptions,
     PointMarkerStatesOptions
-} from '../../Core/Series/PointOptions';
-import type { StateGenericOptions } from '../../Core/Series/StatesOptions';
+} from '../../Core/Series/PointOptions.js';
+import type { StateGenericOptions } from '../../Core/Series/StatesOptions.js';
 
 /* *
  *
@@ -36,7 +36,7 @@ import type { StateGenericOptions } from '../../Core/Series/StatesOptions';
  *
  * */
 
-declare module '../../Series/Scatter/ScatterSeriesOptions' {
+declare module '../../Series/Scatter/ScatterSeriesOptions.js' {
     interface ScatterSeriesOptions {
         /**
          * Options for marker clusters, the concept of sampling the data
@@ -66,7 +66,7 @@ declare module '../../Series/Scatter/ScatterSeriesOptions' {
     }
 }
 
-declare module '../../Core/TooltipOptions' {
+declare module '../../Core/TooltipOptions.js' {
     interface TooltipOptions {
         /**
          * The HTML of the cluster point's in the tooltip. Works only with

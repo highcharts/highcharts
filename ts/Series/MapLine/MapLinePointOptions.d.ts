@@ -16,7 +16,7 @@
  *
  * */
 
-import type MapPointOptions from '../Map/MapPointOptions';
+import type MapPointOptions from '../Map/MapPointOptions.js';
 
 /* *
  *
@@ -26,17 +26,17 @@ import type MapPointOptions from '../Map/MapPointOptions';
 
 // Extend interfaces so pointAttrToOptions' stroke-width can be 'lineWidth'.
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         lineWidth?: number;
     }
 }
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointOptions {
         lineWidth?: number;
     }
 }
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         lineWidth?: number;
     }

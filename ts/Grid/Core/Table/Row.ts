@@ -23,8 +23,8 @@
  *
  * */
 
-import type Cell from './Cell';
-import type Column from './Column';
+import type Cell from './Cell.js';
+import type Column from './Column.js';
 
 import Table from './Table.js';
 import GridUtils from '../GridUtils.js';

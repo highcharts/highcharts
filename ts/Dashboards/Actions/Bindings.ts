@@ -23,12 +23,12 @@
  *
  * */
 
-import type { ComponentType } from '../Components/ComponentType';
-import type Board from '../Board';
-import type { BindedGUIElementEvent } from '../Layout/GUIElement';
-import type Cell from '../Layout/Cell';
-import type Layout from '../Layout/Layout';
-import type Row from '../Layout/Row';
+import type { ComponentType } from '../Components/ComponentType.js';
+import type Board from '../Board.js';
+import type { BindedGUIElementEvent } from '../Layout/GUIElement.js';
+import type Cell from '../Layout/Cell.js';
+import type Layout from '../Layout/Layout.js';
+import type Row from '../Layout/Row.js';
 import type Component from '../Components/Component.js';
 import type { Options as ComponentOptions } from '../Components/Component.js';
 

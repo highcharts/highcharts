@@ -18,8 +18,8 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
-import type { PieSeriesOptions } from './PieSeriesOptions';
+import type Point from '../../Core/Series/Point.js';
+import type { PieSeriesOptions } from './PieSeriesOptions.js';
 
 /* *
  *

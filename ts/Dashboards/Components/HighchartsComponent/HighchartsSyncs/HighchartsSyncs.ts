@@ -21,7 +21,7 @@
  *
  * */
 
-import type { PredefinedSyncConfig } from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync.js';
 import HighchartsExtremesSync from './HighchartsExtremesSync.js';
 import HighchartsHighlightSync from './HighchartsHighlightSync.js';
 import HighchartsVisibilitySync from './HighchartsVisibilitySync.js';

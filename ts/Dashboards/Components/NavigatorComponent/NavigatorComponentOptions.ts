@@ -25,14 +25,14 @@
 import type {
     ConnectorOptions as ComponentConnectorOptions,
     Options as ComponentOptions
-} from '../Component';
+} from '../Component.js';
 import type {
     OptionsEntry as SyncOptionsEntry,
     RawOptionsRecord as SyncRawOptionsRecord
-} from '../Sync/Sync';
+} from '../Sync/Sync.js';
 import type {
     Options as HighchartsOptions
-} from '../../Plugins/HighchartsTypes';
+} from '../../Plugins/HighchartsTypes.js';
 
 
 /* *

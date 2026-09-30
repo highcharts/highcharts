@@ -21,7 +21,7 @@
 import type {
     PaneBackgroundOptions,
     PaneOptions
-} from './PaneOptions';
+} from './PaneOptions.js';
 
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;

@@ -20,7 +20,7 @@
  *
  * */
 
-import type AxisType from '../../Core/Axis/AxisType';
+import type AxisType from '../../Core/Axis/AxisType.js';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -46,7 +46,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Extensions/Annotations/NavigationBindingsBase' {
+declare module '../../Extensions/Annotations/NavigationBindingsBase.js' {
     interface NavigationBindingsBase {
         /** @requires modules/stock-tools */
         utils: Partial<typeof STU>;

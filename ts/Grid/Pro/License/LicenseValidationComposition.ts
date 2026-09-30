@@ -22,7 +22,7 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
+import type Grid from '../../Core/Grid.js';
 
 import { validate } from './LicenseValidation.js';
 import Globals from '../../Core/Globals.js';
@@ -66,7 +66,7 @@ function validateLicense(this: Grid): void {
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * Grid Key for Grid Pro. Get your Grid Key at:

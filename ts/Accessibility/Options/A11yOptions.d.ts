@@ -18,15 +18,15 @@
  *
  * */
 
-import type Accessibility from '../Accessibility';
-import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type Options from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
-import type InfoRegionsComponent from '../Components/InfoRegionsComponent';
-import type NewDataAnnouncer from '../Components/SeriesComponent/NewDataAnnouncer';
+import type Accessibility from '../Accessibility.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type Options from '../../Core/Options.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
+import type InfoRegionsComponent from '../Components/InfoRegionsComponent.js';
+import type NewDataAnnouncer from '../Components/SeriesComponent/NewDataAnnouncer.js';
 /* *
  *
  *  Declarations
@@ -185,49 +185,49 @@ export interface SeriesAccessibilityOptions {
     point: AccessibilityPointOptions;
 }
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         accessibility?: AxisAccessibilityOptions;
     }
 }
 
-declare module '../../Core/Legend/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions.js' {
     interface LegendOptions {
         accessibility?: LegendAccessibilityOptions;
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface Options {
         accessibility?: AccessibilityOptions;
     }
 }
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointOptions {
         accessibility?: PointAccessibilityOptionsObject;
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         accessibility?: SeriesAccessibilityOptions;
     }
 }
 
-declare module '../../Extensions/Annotations/Controllables/ControllableOptions' {
+declare module '../../Extensions/Annotations/Controllables/ControllableOptions.js' {
     interface ControllableLabelOptions {
         accessibility?: AnnotationsAccessibilityOptionsObject;
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingOptions' {
+declare module '../../Extensions/Exporting/ExportingOptions.js' {
     interface ExportingOptions {
         accessibility?: ExportingAccessibilityOptions;
     }
 }
 
-declare module '../../Stock/Navigator/NavigatorOptions' {
+declare module '../../Stock/Navigator/NavigatorOptions.js' {
     interface NavigatorOptions {
         accessibility?: NavigatorAccessibilityOptions;
     }

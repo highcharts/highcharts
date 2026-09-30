@@ -20,8 +20,8 @@
  *
  * */
 
-import type ItemPointOptions from './ItemPointOptions';
-import type ItemSeries from './ItemSeries';
+import type ItemPointOptions from './ItemPointOptions.js';
+import type ItemSeries from './ItemSeries.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend } from '../../Shared/Utilities.js';

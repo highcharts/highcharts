@@ -18,8 +18,8 @@
  *
  * */
 
-import type ScatterPoint from './ScatterPoint';
-import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type ScatterPoint from './ScatterPoint.js';
+import type ScatterSeriesOptions from './ScatterSeriesOptions.js';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -36,7 +36,7 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /**
          * Allow scatter points on the edge to be interacted
@@ -192,7 +192,7 @@ addEvent(ScatterSeries, 'afterTranslate', function (): void {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         scatter: typeof ScatterSeries;
     }

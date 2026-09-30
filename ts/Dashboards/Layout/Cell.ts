@@ -23,12 +23,12 @@
  *
  * */
 
-import type Component from '../Components/Component';
-import type CSSJSONObject from '../CSSJSONObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type LayoutType from './Layout';
-import type { Options as LayoutOptions } from './Layout';
-import type Row from './Row';
+import type Component from '../Components/Component.js';
+import type CSSJSONObject from '../CSSJSONObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type LayoutType from './Layout.js';
+import type { Options as LayoutOptions } from './Layout.js';
+import type Row from './Row.js';
 import type CellHTML from './CellHTML.js';
 
 import EditGlobals from '../EditMode/EditGlobals.js';

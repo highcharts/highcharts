@@ -18,18 +18,18 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject.js';
 import type {
     MapNavigationButtonOptions,
     MapNavigationOptions
-} from './MapNavigationOptions';
-import type MapChart from '../Core/Chart/MapChart';
-import type Pointer from '../Core/Pointer';
-import type PointerEvent from '../Core/PointerEvent';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+} from './MapNavigationOptions.js';
+import type MapChart from '../Core/Chart/MapChart.js';
+import type Pointer from '../Core/Pointer.js';
+import type PointerEvent from '../Core/PointerEvent.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
@@ -53,7 +53,7 @@ import {
  * */
 
 /** @internal */
-declare module '../Core/Chart/ChartBase' {
+declare module '../Core/Chart/ChartBase.js' {
     interface ChartBase {
         mapNavigation: MapNavigation;
     }

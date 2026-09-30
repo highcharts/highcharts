@@ -18,7 +18,7 @@
  *
  * */
 
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
 
 import Chart from '../Core/Chart/Chart.js';
 import DataTableCore from '../Data/DataTableCore.js';
@@ -47,14 +47,14 @@ import {
 type CenterObject = { positions: Array<number> };
 type zData = Array<number|null>;
 
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         onPoint?: SeriesOnPointComposition.Additions;
         onPointSupported?: boolean;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         onPoint?: OnPoint;
     }

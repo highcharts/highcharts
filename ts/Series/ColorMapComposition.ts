@@ -18,11 +18,11 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type Point from '../Core/Series/Point';
-import type ScatterPoint from './Scatter/ScatterPoint';
-import type ScatterSeries from './Scatter/ScatterSeries';
+import type ColorType from '../Core/Color/ColorType.js';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue.js';
+import type Point from '../Core/Series/Point.js';
+import type ScatterPoint from './Scatter/ScatterPoint.js';
+import type ScatterSeries from './Scatter/ScatterSeries.js';
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
@@ -38,7 +38,7 @@ import { addEvent, defined } from '../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         /** @internal */
         dataLabelOnNull?: boolean;

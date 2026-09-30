@@ -18,10 +18,10 @@
  *
  * */
 
-import type { BBoxObject as BBoxObjectImport } from '../../Core/Renderer/BBoxObject';
-import type FunnelPointOptions from './FunnelPointOptions';
-import type FunnelSeries from './FunnelSeries';
-import type PiePoint from '../Pie/PiePoint';
+import type { BBoxObject as BBoxObjectImport } from '../../Core/Renderer/BBoxObject.js';
+import type FunnelPointOptions from './FunnelPointOptions.js';
+import type FunnelSeries from './FunnelSeries.js';
+import type PiePoint from '../Pie/PiePoint.js';
 
 /* *
  *

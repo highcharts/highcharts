@@ -18,7 +18,7 @@
  *
  * */
 
-import type ExportingOptions from '../Exporting/ExportingOptions';
+import type ExportingOptions from '../Exporting/ExportingOptions.js';
 
 /* *
  *

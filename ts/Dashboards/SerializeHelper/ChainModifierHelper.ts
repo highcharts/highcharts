@@ -20,15 +20,15 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
-import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions';
-import type DataModifier from '../../Data/Modifiers/DataModifier';
-import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType';
-import type { JSONObject } from '../JSON';
+import type { AnyRecord } from '../../Shared/Types.js';
+import type ChainModifierOptions from '../../Data/Modifiers/ChainModifierOptions.js';
+import type DataModifier from '../../Data/Modifiers/DataModifier.js';
+import type { DataModifierTypeOptions } from '../../Data/Modifiers/DataModifierType.js';
+import type { JSONObject } from '../JSON.js';
 
 import ChainModifier from '../../Data/Modifiers/ChainModifier.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable.js';
 
 /* *
  *

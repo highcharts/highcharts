@@ -18,7 +18,7 @@
  * */
 
 export { default as Grid } from './Core/Grid.js';
-export type { default as Options } from './Core/Options';
+export type { default as Options } from './Core/Options.js';
 export {
     default as CellContextMenuBuiltInActions
 } from './Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';

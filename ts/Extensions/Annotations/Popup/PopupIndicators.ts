@@ -20,16 +20,16 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
-import type AnnotationOptions from '../AnnotationOptions';
-import type Chart from '../../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
+import type AnnotationChart from '../AnnotationChart.js';
+import type AnnotationOptions from '../AnnotationOptions.js';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import type {
     default as Popup,
     PopupFieldsTree
-} from './Popup';
-import type Series from '../../../Core/Series/Series';
-import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator';
+} from './Popup.js';
+import type Series from '../../../Core/Series/Series.js';
+import type SMAIndicator from '../../../Stock/Indicators/SMA/SMAIndicator.js';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import H from '../../../Core/Globals.js';

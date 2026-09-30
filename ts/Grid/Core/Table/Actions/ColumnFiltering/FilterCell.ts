@@ -24,7 +24,7 @@
 
 import type Row from '../../Row.js';
 import type Column from '../../Column.js';
-import type { GroupedHeaderOptions } from '../../../Options';
+import type { GroupedHeaderOptions } from '../../../Options.js';
 
 import HeaderCell from '../../Header/HeaderCell.js';
 import { fireEvent } from '../../../../../Shared/Utilities.js';

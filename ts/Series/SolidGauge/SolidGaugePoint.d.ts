@@ -16,9 +16,9 @@
  *
  * */
 
-import type SolidGaugePointOptions from './SolidGaugePointOptions';
-import type SolidGaugeSeries from './SolidGaugeSeries';
-import type GaugePoint from '../Gauge/GaugePoint';
+import type SolidGaugePointOptions from './SolidGaugePointOptions.js';
+import type SolidGaugeSeries from './SolidGaugeSeries.js';
+import type GaugePoint from '../Gauge/GaugePoint.js';
 
 /* *
  *

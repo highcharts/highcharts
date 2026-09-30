@@ -18,9 +18,9 @@
  *
  * */
 
-import type PolygonPoint from './PolygonPoint';
-import type PolygonSeriesOptions from './PolygonSeriesOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type PolygonPoint from './PolygonPoint.js';
+import type PolygonSeriesOptions from './PolygonSeriesOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -121,7 +121,7 @@ extend(PolygonSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         polygon: typeof PolygonSeries;
     }

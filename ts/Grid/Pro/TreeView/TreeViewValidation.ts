@@ -22,9 +22,9 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import type TableCell from '../../Core/Table/Body/TableCell';
-import type { RuleDefinition } from '../ColumnTypes/Validator';
+import type Grid from '../../Core/Grid.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
+import type { RuleDefinition } from '../ColumnTypes/Validator.js';
 
 import Validator from '../ColumnTypes/Validator.js';
 import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';
@@ -277,7 +277,7 @@ function syncTreePathValidationRules(grid: Grid): void {
  *
  * */
 
-declare module '../ColumnTypes/Validator' {
+declare module '../ColumnTypes/Validator.js' {
     interface RulesRegistryType {
         treeViewPathSyntax?: RuleDefinition;
         treeViewPathUnique?: RuleDefinition;

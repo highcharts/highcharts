@@ -16,8 +16,8 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *

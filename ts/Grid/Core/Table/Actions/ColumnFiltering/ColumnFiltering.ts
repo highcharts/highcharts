@@ -25,13 +25,13 @@
  *
  * */
 
-import type { Column, ColumnDataType } from '../../Column';
-import type { Condition } from './FilteringTypes';
-import type FilterCell from './FilterCell';
+import type { Column, ColumnDataType } from '../../Column.js';
+import type { Condition } from './FilteringTypes.js';
+import type FilterCell from './FilterCell.js';
 import type {
     FilteringCondition,
     LangOptions
-} from '../../../Options';
+} from '../../../Options.js';
 
 import { makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';

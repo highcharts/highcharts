@@ -13,8 +13,8 @@
  *
  * */
 
-import type PriceEnvelopesIndicator from './PriceEnvelopesIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type PriceEnvelopesIndicator from './PriceEnvelopesIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

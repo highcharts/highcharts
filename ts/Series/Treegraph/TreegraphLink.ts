@@ -18,9 +18,9 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
+import type ColorString from '../../Core/Color/ColorString.js';
 import type PointOptions from '../../Core/Series/PointOptions.js';
-import type TreegraphSeries from './TreegraphSeries';
+import type TreegraphSeries from './TreegraphSeries.js';
 import type { OrganizationLinkOptions } from '../Organization/OrganizationSeriesOptions.js';
 
 import Point from '../../Core/Series/Point.js';

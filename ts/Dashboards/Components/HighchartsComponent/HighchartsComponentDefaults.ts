@@ -21,8 +21,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../../Shared/Types';
-import type Options from './HighchartsComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Options from './HighchartsComponentOptions.js';
 
 import Component from '../Component.js';
 import { merge } from '../../../Shared/Utilities.js';

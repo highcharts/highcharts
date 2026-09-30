@@ -18,14 +18,14 @@
  *
  * */
 
-import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
-import type { NetworkgraphDataLabelsOptions } from '../Networkgraph/NetworkgraphSeriesOptions';
+import type ArcDiagramPointOptions from './ArcDiagramPointOptions.js';
+import type { NetworkgraphDataLabelsOptions } from '../Networkgraph/NetworkgraphSeriesOptions.js';
 import type {
     SankeySeriesNodeOptions,
     SankeySeriesOptions
-} from '../Sankey/SankeySeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+} from '../Sankey/SankeySeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *

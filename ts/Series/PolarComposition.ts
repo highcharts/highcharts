@@ -21,29 +21,29 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type AreaSplineRangeSeries from './AreaSplineRange/AreaSplineRangeSeries';
-import type Axis from '../Core/Axis/Axis';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
-import type ChartOptions from '../Core/Chart/ChartOptions';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnSeries from './Column/ColumnSeries';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type LineSeries from './Line/LineSeries';
-import type Point from '../Core/Series/Point';
-import type Pointer from '../Core/Pointer';
+} from '../Core/Renderer/AlignObject.js';
+import type AreaSplineRangeSeries from './AreaSplineRange/AreaSplineRangeSeries.js';
+import type Axis from '../Core/Axis/Axis.js';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
+import type Chart from '../Core/Chart/Chart.js';
+import type ChartOptions from '../Core/Chart/ChartOptions.js';
+import type ColumnPoint from './Column/ColumnPoint.js';
+import type ColumnSeries from './Column/ColumnSeries.js';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions.js';
+import type LineSeries from './Line/LineSeries.js';
+import type Point from '../Core/Series/Point.js';
+import type Pointer from '../Core/Pointer.js';
 import type {
     GetSelectionMarkerAttrsEvent,
     PointerEvent
-} from '../Core/PointerEvent';
-import type SplineSeries from './Spline/SplineSeries';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGLabel from '../Core/Renderer/SVG/SVGLabel';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
-import type Tick from '../Core/Axis/Tick';
+} from '../Core/PointerEvent.js';
+import type SplineSeries from './Spline/SplineSeries.js';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import type Tick from '../Core/Axis/Tick.js';
 
 import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import { borderRadiusObject } from '../Extensions/BorderRadius.js';
@@ -76,27 +76,27 @@ import { uniqueKey } from '../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Axis/AxisBase' {
+declare module '../Core/Axis/AxisBase.js' {
     interface AxisBase {
         center?: Array<number>;
     }
 }
 
 /** @internal */
-declare module '../Core/Chart/ChartBase' {
+declare module '../Core/Chart/ChartBase.js' {
     interface ChartBase {
         polar: ChartOptions['polar'];
     }
 }
 
-declare module '../Core/Chart/ChartOptions' {
+declare module '../Core/Chart/ChartOptions.js' {
     interface ChartOptions {
         polar?: boolean;
     }
 }
 
 /** @internal */
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         rectPlotX?: PolarPoint['rectPlotX'];
         rectPlotY?: PolarPoint['rectPlotY'];
@@ -105,7 +105,7 @@ declare module '../Core/Series/PointBase' {
 }
 
 /** @internal */
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
@@ -113,7 +113,7 @@ declare module '../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Polar charts only. Whether to connect the ends of a line series

@@ -20,8 +20,8 @@
  *
  * */
 
-import type { ExportingOptions } from '../Exporting/ExportingOptions';
-import type { LangOptions } from '../../Core/Options';
+import type { ExportingOptions } from '../Exporting/ExportingOptions.js';
+import type { LangOptions } from '../../Core/Options.js';
 
 /* *
  *

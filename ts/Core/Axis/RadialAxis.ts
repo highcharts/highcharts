@@ -19,23 +19,23 @@
  * */
 
 import type Axis from './Axis.js';
-import type Chart from '../Chart/Chart';
-import type { DeepPartial } from '../../Shared/Types';
-import type { DefaultOptions } from '../Options';
-import type Pane from '../../Extensions/Pane/Pane';
+import type Chart from '../Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { DefaultOptions } from '../Options.js';
+import type Pane from '../../Extensions/Pane/Pane.js';
 import type {
     PaneBackgroundOptions,
     PaneBackgroundShapeValue
 } from '../../Extensions/Pane/PaneOptions.js';
-import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions';
-import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions';
-import type Point from '../Series/Point';
-import type PositionObject from '../Renderer/PositionObject';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
-import type Tick from './Tick';
-import type RadialAxisOptions from './RadialAxisOptions';
+import type PlotBandOptions from './PlotLineOrBand/PlotBandOptions.js';
+import type PlotLineOptions from './PlotLineOrBand/PlotLineOptions.js';
+import type Point from '../Series/Point.js';
+import type PositionObject from '../Renderer/PositionObject.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
+import type Tick from './Tick.js';
+import type RadialAxisOptions from './RadialAxisOptions.js';
 import RadialAxisDefaults from './RadialAxisDefaults.js';
 
 import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
@@ -68,7 +68,7 @@ import {
  *
  * */
 
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     interface AxisOptions {
         /**
          * In a polar chart, this is the angle of the Y axis in degrees, where
@@ -107,13 +107,13 @@ declare module './AxisOptions' {
 }
 
 /** @internal */
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         RadialAxis: RadialAxis.AxisComposition;
     }
 }
 
-declare module '../Chart/ChartBase'{
+declare module '../Chart/ChartBase.js'{
     interface ChartBase {
         /**
          * The flag is set to `true` if a series of the chart is inverted.
@@ -122,7 +122,7 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module './PlotLineOrBand/PlotBandOptions' {
+declare module './PlotLineOrBand/PlotBandOptions.js' {
     interface PlotBandOptions {
         /**
          * In a gauge chart, this option determines the inner radius of the
@@ -172,7 +172,7 @@ declare module './PlotLineOrBand/PlotBandOptions' {
 }
 
 /** @internal */
-declare module './PlotLineOrBand/PlotLineOptions' {
+declare module './PlotLineOrBand/PlotLineOptions.js' {
     interface PlotLineOptions {
         chartX?: number;
         chartY?: number;

@@ -22,12 +22,12 @@
  *
  * */
 
-import type { ColumnDataType } from '../../Core/Table/Column';
-import type { EditModeContent } from '../CellEditing/CellEditMode';
-import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Body/TableCell';
-import type { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
+import type { ColumnDataType } from '../../Core/Table/Column.js';
+import type { EditModeContent } from '../CellEditing/CellEditMode.js';
+import type Table from '../../Core/Table/Table.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
+import type { CellRendererTypeRegistry } from '../CellRendering/CellRendererType.js';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';

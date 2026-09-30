@@ -20,20 +20,20 @@
  *  Imports
  *
  * */
-import type Row from '../Layout/Row';
-import type Board from '../Board';
-import type { GUIOptions as BoardGUIOptions } from '../Board';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type Row from '../Layout/Row.js';
+import type Board from '../Board.js';
+import type { GUIOptions as BoardGUIOptions } from '../Board.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type {
     Options as CellEditToolbarOptions
-} from './Toolbar/CellEditToolbar';
-import type { Options as ConfirmationPopupOptions } from './ConfirmationPopup';
-import type { Options as DragDropOptions } from '../Actions/DragDrop';
-import type { LangOptions } from './EditGlobals';
-import type { Options as EditContextMenuOptions } from './EditContextMenu';
-import type { Options as ResizerOptions } from '../Actions/Resizer';
-import type { Options as RowEditToolbarOptions } from './Toolbar/RowEditToolbar';
-import type { Options as SidebarPopupOptions } from './SidebarPopup';
+} from './Toolbar/CellEditToolbar.js';
+import type { Options as ConfirmationPopupOptions } from './ConfirmationPopup.js';
+import type { Options as DragDropOptions } from '../Actions/DragDrop.js';
+import type { LangOptions } from './EditGlobals.js';
+import type { Options as EditContextMenuOptions } from './EditContextMenu.js';
+import type { Options as ResizerOptions } from '../Actions/Resizer.js';
+import type { Options as RowEditToolbarOptions } from './Toolbar/RowEditToolbar.js';
+import type { Options as SidebarPopupOptions } from './SidebarPopup.js';
 
 import Cell, { isCell } from '../Layout/Cell.js';
 import CellHTML, { isCellHTML } from '../Layout/CellHTML.js';

@@ -23,7 +23,7 @@
  * */
 
 
-import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
+import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions.js';
 
 
 /* *

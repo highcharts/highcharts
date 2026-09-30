@@ -18,17 +18,17 @@
  *
  * */
 
-import type RenkoSeriesOptions from './RenkoSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type Series from '../../Core/Series/Series';
-import type PointOptions from '../../Core/Series/PointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+import type RenkoSeriesOptions from './RenkoSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type Series from '../../Core/Series/Series.js';
+import type PointOptions from '../../Core/Series/PointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
 
 import RenkoPoint from './RenkoPoint.js';
 import RenkoSeriesDefaults from './RenkoSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
 import {
     extend,
     isNumber,
@@ -229,7 +229,7 @@ extend(RenkoSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         renko: typeof RenkoSeries;
     }

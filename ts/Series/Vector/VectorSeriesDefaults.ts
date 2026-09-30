@@ -20,7 +20,7 @@
  *
  * */
 
-import type VectorSeriesOptions from './VectorSeriesOptions';
+import type VectorSeriesOptions from './VectorSeriesOptions.js';
 
 /* *
  *

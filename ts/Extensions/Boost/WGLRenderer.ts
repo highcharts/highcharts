@@ -17,17 +17,17 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type BoostOptions from './BoostOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type ColorMapComposition from '../../Series/ColorMapComposition';
-import type { ColorType } from '../../Core/Color/ColorType';
-import type Point from '../../Core/Series/Point';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type Series from '../../Core/Series/Series';
-import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type { WGLDrawModeValue } from './WGLDrawMode';
-import type WGLOptions from './WGLOptions';
+import type Axis from '../../Core/Axis/Axis.js';
+import type BoostOptions from './BoostOptions.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColorMapComposition from '../../Series/ColorMapComposition.js';
+import type { ColorType } from '../../Core/Color/ColorType.js';
+import type Point from '../../Core/Series/Point.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type Series from '../../Core/Series/Series.js';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { WGLDrawModeValue } from './WGLDrawMode.js';
+import type WGLOptions from './WGLOptions.js';
 
 import BoostChart from './BoostChart.js';
 const { getBoostClipRect } = BoostChart;

@@ -20,7 +20,7 @@
 
 import type {
     SeriesTypePlotOptions
-} from '../../Core/Series/SeriesType';
+} from '../../Core/Series/SeriesType.js';
 
 /* *
  *

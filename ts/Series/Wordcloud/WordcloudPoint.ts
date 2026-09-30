@@ -19,16 +19,16 @@
  *
  * */
 
-import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
-import type SizeObject from '../../Core/Renderer/SizeObject';
-import type WordcloudPointOptions from './WordcloudPointOptions';
-import type WordcloudUtils from './WordcloudUtils';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject.js';
+import type SizeObject from '../../Core/Renderer/SizeObject.js';
+import type WordcloudPointOptions from './WordcloudPointOptions.js';
+import type WordcloudUtils from './WordcloudUtils.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
-import WordcloudSeries from './WordcloudSeries';
+import WordcloudSeries from './WordcloudSeries.js';
 import { extend } from '../../Shared/Utilities.js';
 
 /* *

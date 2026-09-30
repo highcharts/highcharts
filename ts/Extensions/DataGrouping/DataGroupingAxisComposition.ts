@@ -18,9 +18,9 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type AxisType from '../../Core/Axis/AxisType';
-import type DataGroupingOptions from './DataGroupingOptions';
+import type Axis from '../../Core/Axis/Axis.js';
+import type AxisType from '../../Core/Axis/AxisType.js';
+import type DataGroupingOptions from './DataGroupingOptions.js';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
@@ -32,7 +32,7 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         applyGrouping(e: PostProcessDataEvent): void;
         getGroupPixelWidth(): number;

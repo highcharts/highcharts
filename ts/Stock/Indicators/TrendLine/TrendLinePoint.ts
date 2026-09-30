@@ -12,8 +12,8 @@
  *
  * */
 
-import type SMAPoint from '../SMA/SMAPoint';
-import type TrendLineIndicator from './TrendLineIndicator';
+import type SMAPoint from '../SMA/SMAPoint.js';
+import type TrendLineIndicator from './TrendLineIndicator.js';
 
 /* *
  *

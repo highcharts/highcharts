@@ -22,36 +22,36 @@ import type {
     AlignObject,
     AlignValue,
     VerticalAlignValue
-} from '../Renderer/AlignObject';
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type AxisOptions from '../Axis/AxisOptions';
-import type AxisType from '../Axis/AxisType';
-import type BBoxObject from '../Renderer/BBoxObject';
-import type ColorAxisOptions from '../Axis/Color/ColorAxisOptions';
+} from '../Renderer/AlignObject.js';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type AxisOptions from '../Axis/AxisOptions.js';
+import type AxisType from '../Axis/AxisType.js';
+import type BBoxObject from '../Renderer/BBoxObject.js';
+import type ColorAxisOptions from '../Axis/Color/ColorAxisOptions.js';
 import type {
     CSSObject,
     CursorValue
-} from '../Renderer/CSSObject';
-import type { EventCallback } from '../Callback';
+} from '../Renderer/CSSObject.js';
+import type { EventCallback } from '../Callback.js';
 import type {
     NumberFormatterCallbackFunction,
     Options
-} from '../Options';
-import type ChartBase from './ChartBase';
-import type ChartOptions from './ChartOptions';
+} from '../Options.js';
+import type ChartBase from './ChartBase.js';
+import type ChartOptions from './ChartOptions.js';
 import type {
     ChartPanningOptions,
     ChartZoomingOptions
-} from './ChartOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type Point from '../Series/Point';
-import type PointerEvent from '../PointerEvent';
-import type SeriesOptions from '../Series/SeriesOptions';
+} from './ChartOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type Point from '../Series/Point.js';
+import type PointerEvent from '../PointerEvent.js';
+import type SeriesOptions from '../Series/SeriesOptions.js';
 import type {
     SeriesTypeOptions
-} from '../Series/SeriesType';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+} from '../Series/SeriesType.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
 
 import {
     animate,
@@ -64,7 +64,7 @@ const {
     defaultOptions
 } = D;
 import DataTableCore from '../../Data/DataTableCore.js';
-import { DataTableOptionsObject } from '../../Data/DataTableOptions';
+import { DataTableOptionsObject } from '../../Data/DataTableOptions.js';
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
@@ -80,11 +80,11 @@ import Pointer from '../Pointer.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGElement from '../Renderer/SVG/SVGElement';
+import SVGElement from '../Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import AST from '../Renderer/HTML/AST.js';
-import { AxisCollectionKey } from '../Axis/AxisOptions';
+import { AxisCollectionKey } from '../Axis/AxisOptions.js';
 import Tick from '../Axis/Tick.js';
 import {
     addEvent,
@@ -123,7 +123,7 @@ import { error, uniqueKey } from '../Utilities.js';
  * */
 
 /** @internal */
-declare module '../Axis/AxisBase' {
+declare module '../Axis/AxisBase.js' {
     interface AxisBase {
         extKey?: string;
         index?: number;
@@ -132,14 +132,14 @@ declare module '../Axis/AxisBase' {
 }
 
 /** @internal */
-declare module '../Renderer/SVG/SVGRendererBase' {
+declare module '../Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         plotBox: BBoxObject;
         spacingBox: BBoxObject;
     }
 }
 
-declare module './ChartBase' {
+declare module './ChartBase.js' {
     interface ChartBase {
         /** @internal */
         resetZoomButton?: SVGElement;
@@ -164,7 +164,7 @@ declare module './ChartBase' {
 }
 
 /** @internal */
-declare module './ChartOptions' {
+declare module './ChartOptions.js' {
     interface ChartOptions {
         forExport?: boolean;
         renderer?: string;
@@ -172,7 +172,7 @@ declare module './ChartOptions' {
     }
 }
 
-declare module '../Options' {
+declare module '../Options.js' {
     interface Options {
 
         /**
@@ -232,13 +232,13 @@ declare module '../Options' {
     }
 }
 
-declare module '../Series/PointBase' {
+declare module '../Series/PointBase.js' {
     interface PointBase {
         touched?: boolean;
     }
 }
 
-declare module '../Series/SeriesBase' {
+declare module '../Series/SeriesBase.js' {
     interface SeriesBase {
         index?: number;
         touched?: boolean;

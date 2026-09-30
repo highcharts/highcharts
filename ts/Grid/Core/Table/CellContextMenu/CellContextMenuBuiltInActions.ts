@@ -22,9 +22,9 @@
  *
  * */
 
-import type TableCell from '../Body/TableCell';
-import type Grid from '../../Grid';
-import type { RowId } from '../../Data/DataProvider';
+import type TableCell from '../Body/TableCell.js';
+import type Grid from '../../Grid.js';
+import type { RowId } from '../../Data/DataProvider.js';
 import type {
     CellContextMenuActionId,
     CellContextMenuBuiltInItemOptions,
@@ -32,8 +32,8 @@ import type {
     CellContextMenuGroupId,
     CellContextMenuItemOptions,
     CellContextMenuTypedDividerItemOptions
-} from './CellContextMenuOptions';
-import type { GridIconName } from '../../UI/SvgIcons';
+} from './CellContextMenuOptions.js';
+import type { GridIconName } from '../../UI/SvgIcons.js';
 
 import {
     isNumber,

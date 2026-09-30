@@ -23,7 +23,7 @@
  *
  * */
 
-import type { AnyRecord } from '../Shared/Types';
+import type { AnyRecord } from '../Shared/Types.js';
 
 import { error as coreError } from '../Core/Utilities.js';
 

@@ -24,25 +24,25 @@
  *
  * */
 
-import type { DataConnectorTypes } from './DataConnectorType';
+import type { DataConnectorTypes } from './DataConnectorType.js';
 import type {
     DataConnectorOptions,
     MetaColumn,
     Metadata
-} from './DataConnectorOptions';
+} from './DataConnectorOptions.js';
 import type {
     DataEvent,
     DataEventCallback,
     DataEventEmitter
-} from '../DataEvent';
-import type DataConverterType from '../Converters/DataConverterType';
+} from '../DataEvent.js';
+import type DataConverterType from '../Converters/DataConverterType.js';
 
 import DataConverter from '../Converters/DataConverter.js';
 import DataModifier from '../Modifiers/DataModifier.js';
 import DataTable, {
     type ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
-import { DeepPartial } from '../../Shared/Types';
+import { DeepPartial } from '../../Shared/Types.js';
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *

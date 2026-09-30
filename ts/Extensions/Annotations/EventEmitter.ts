@@ -18,21 +18,21 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type AnnotationChart from './AnnotationChart';
-import type AnnotationOptions from './AnnotationOptions';
+import type Annotation from './Annotation.js';
+import type AnnotationChart from './AnnotationChart.js';
+import type AnnotationOptions from './AnnotationOptions.js';
 import type {
     ControllableLabelType,
     ControllableShapeType
-} from './Controllables/ControllableType';
-import type { ControlPointOptionsObject } from './ControlPointOptions';
-import type ControlTarget from './ControlTarget';
-import type { CursorValue } from '../../Core/Renderer/CSSObject';
-import type DOMElementType from '../../Core/Renderer/DOMElementType';
-import type { EventCallback } from '../../Core/Callback';
-import type PointerEvent from '../../Core/PointerEvent';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from './Controllables/ControllableType.js';
+import type { ControlPointOptionsObject } from './ControlPointOptions.js';
+import type ControlTarget from './ControlTarget.js';
+import type { CursorValue } from '../../Core/Renderer/CSSObject.js';
+import type DOMElementType from '../../Core/Renderer/DOMElementType.js';
+import type { EventCallback } from '../../Core/Callback.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import H from '../../Core/Globals.js';
 const {

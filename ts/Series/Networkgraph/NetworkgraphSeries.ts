@@ -20,12 +20,12 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { DragNodesSeries } from '../DragNodesComposition';
-import type NetworkgraphChart from './NetworkgraphChart';
-import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DragNodesSeries } from '../DragNodesComposition.js';
+import type NetworkgraphChart from './NetworkgraphChart.js';
+import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
@@ -70,7 +70,7 @@ composeTextPath(SVGElement);
  *
  * */
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         layout?: ReingoldFruchtermanLayout;
     }
@@ -582,7 +582,7 @@ extend(NetworkgraphSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         networkgraph: typeof NetworkgraphSeries;
     }

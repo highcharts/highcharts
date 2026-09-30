@@ -19,16 +19,16 @@
  *
  * */
 
-import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SizeObject from '../../Core/Renderer/SizeObject';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SizeObject from '../../Core/Renderer/SizeObject.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import type {
     WordcloudSeriesOptions,
     WordcloudSeriesRotationOptions
-} from './WordcloudSeriesOptions';
+} from './WordcloudSeriesOptions.js';
 
 import DPU from '../DrawPointUtilities.js';
 import H from '../../Core/Globals.js';
@@ -596,7 +596,7 @@ extend(WordcloudSeries.prototype, {
  * Registry
  *
  * */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         wordcloud: typeof WordcloudSeries;
     }

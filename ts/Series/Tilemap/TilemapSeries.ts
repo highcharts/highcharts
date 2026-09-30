@@ -20,8 +20,8 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type TilemapSeriesOptions from './TilemapSeriesOptions';
+import type Axis from '../../Core/Axis/Axis.js';
+import type TilemapSeriesOptions from './TilemapSeriesOptions.js';
 
 import H from '../../Core/Globals.js';
 const {
@@ -45,19 +45,19 @@ import { addEvent, extend, merge, pushUnique } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         recomputingForTilemap?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         getSeriesPixelPadding?(axis: Axis): Record<string, number>;
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesStateHoverHaloOptions {
         enabled?: boolean;
     }
@@ -317,7 +317,7 @@ extend(TilemapSeries.prototype, { // Prototype functions
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         tilemap: typeof TilemapSeries;
     }

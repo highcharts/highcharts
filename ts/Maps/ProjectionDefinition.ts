@@ -23,7 +23,7 @@ import type {
     LonLatArray,
     MapBounds,
     ProjectedXYArray
-} from './MapViewOptions';
+} from './MapViewOptions.js';
 
 /* *
  *

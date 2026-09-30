@@ -16,8 +16,8 @@
  *
  * */
 
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *

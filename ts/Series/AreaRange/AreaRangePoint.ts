@@ -18,11 +18,11 @@
  *
  * */
 
-import type AreaRangePointOptions from './AreaRangePointOptions';
-import type AreaRangeSeries from './AreaRangeSeries';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type AreaRangePointOptions from './AreaRangePointOptions.js';
+import type AreaRangeSeries from './AreaRangeSeries.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -43,7 +43,7 @@ import { defined, isNumber } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /**
          * Range series only. The high or maximum value for each data point.

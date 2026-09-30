@@ -20,12 +20,12 @@
  *
  * */
 
-import type Accessibility from '../../Accessibility';
+import type Accessibility from '../../Accessibility.js';
 import type {
     AccessibilityAnnounceNewDataOptions
-} from '../../Options/A11yOptions';
-import type Chart from '../../../Core/Chart/Chart';
-import type Series from '../../../Core/Series/Series';
+} from '../../Options/A11yOptions.js';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type Series from '../../../Core/Series/Series.js';
 
 import H from '../../../Core/Globals.js';
 const { composed } = H;

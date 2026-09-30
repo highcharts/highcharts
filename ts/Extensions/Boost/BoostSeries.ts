@@ -17,22 +17,22 @@
  *
  * */
 
-import type { BoostChartComposition } from './BoostChart';
+import type { BoostChartComposition } from './BoostChart.js';
 import type {
     BoostTargetAdditions,
     BoostTargetObject
-} from './BoostTargetObject';
-import type Chart from '../../Core/Chart/Chart';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type Point from '../../Core/Series/Point';
+} from './BoostTargetObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
-import type * as Types from '../../Shared/Types';
-import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
-import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+} from '../../Core/Series/PointOptions.js';
+import type Series from '../../Core/Series/Series.js';
+import type * as Types from '../../Shared/Types.js';
+import type SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType.js';
 import BoostableMap from './BoostableMap.js';
 import Boostables from './Boostables.js';
 import BoostChart from './BoostChart.js';
@@ -71,7 +71,7 @@ import { error } from '../../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     /** @internal */
     interface SeriesBase extends BoostTargetObject {
         boosted?: boolean;
@@ -83,7 +83,7 @@ declare module '../../Core/Series/SeriesBase' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     /** @internal */
     interface SeriesOptions {
         boostData?: Array<unknown>;

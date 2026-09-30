@@ -16,13 +16,13 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
-import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
+import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *

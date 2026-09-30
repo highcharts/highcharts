@@ -19,24 +19,24 @@
  *
  * */
 
-import type ColumnSeries from '../../Series/Column/ColumnSeries';
+import type ColumnSeries from '../../Series/Column/ColumnSeries.js';
 import type {
     CSSObject,
     CursorValue
-} from '../../Core/Renderer/CSSObject';
-import type Drilldown from './Drilldown';
-import type MapSeries from '../../Series/Map/MapSeries';
-import type Options from '../../Core/Options';
-import type PieSeries from '../../Series/Pie/PieSeries';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
+} from '../../Core/Renderer/CSSObject.js';
+import type Drilldown from './Drilldown.js';
+import type MapSeries from '../../Series/Map/MapSeries.js';
+import type Options from '../../Core/Options.js';
+import type PieSeries from '../../Series/Pie/PieSeries.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
 import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
-} from '../../Core/Series/SeriesType';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from '../../Core/Series/SeriesType.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import {
@@ -55,7 +55,7 @@ import {
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /** @internal */
         drilldown?: string;
@@ -89,7 +89,7 @@ declare module '../../Core/Series/PointBase' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         drilldownLevel?: Drilldown.LevelObject;
         isDrilling?: boolean;
@@ -104,7 +104,7 @@ declare module '../../Core/Series/SeriesBase' {
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         _ddSeriesId?: number;
         /**

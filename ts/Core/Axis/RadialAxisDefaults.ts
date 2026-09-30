@@ -20,8 +20,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type RadialAxisOptions from './RadialAxisOptions';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type RadialAxisOptions from './RadialAxisOptions.js';
 
 /**
  * Circular axis around the perimeter of a polar chart.

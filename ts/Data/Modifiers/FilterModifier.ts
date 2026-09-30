@@ -25,12 +25,12 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
+} from '../DataEvent.js';
 import type {
     CallbackCondition,
     FilterCondition,
     FilterModifierOptions
-} from './FilterModifierOptions';
+} from './FilterModifierOptions.js';
 
 import DataModifier from './DataModifier.js';
 import { isFunction, merge } from '../../Shared/Utilities.js';
@@ -256,7 +256,7 @@ class FilterModifier extends DataModifier {
  * */
 
 
-declare module './DataModifierType' {
+declare module './DataModifierType.js' {
     interface DataModifierTypes {
         Filter: typeof FilterModifier;
     }

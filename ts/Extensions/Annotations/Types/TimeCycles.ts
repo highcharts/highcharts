@@ -13,15 +13,15 @@
  *
  * */
 
-import type { AnnotationEventObject } from '../EventEmitter';
+import type { AnnotationEventObject } from '../EventEmitter.js';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions
-} from '../AnnotationOptions';
-import type { ControlPointOptionsObject } from '../ControlPointOptions';
-import type MockPointOptions from '../AnnotationMockPointOptionsObject';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+} from '../AnnotationOptions.js';
+import type { ControlPointOptionsObject } from '../ControlPointOptions.js';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
 
 import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
@@ -368,7 +368,7 @@ namespace TimeCycles {
  * */
 
 /** @internal */
-declare module './AnnotationType' {
+declare module './AnnotationType.js' {
     interface AnnotationTypeRegistry {
         timeCycles: typeof TimeCycles;
     }

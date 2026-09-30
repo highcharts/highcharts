@@ -16,8 +16,8 @@
  *
  * */
 
-import type ColorString from './ColorString';
-import type GradientColor from './GradientColor';
+import type ColorString from './ColorString.js';
+import type GradientColor from './GradientColor.js';
 
 /* *
  *

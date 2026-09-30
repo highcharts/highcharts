@@ -17,12 +17,12 @@
  *  Imports
  *
  * */
-import type PieDataLabelOptions from './PieDataLabelOptions';
-import type PiePoint from './PiePoint';
-import type PieSeries from './PieSeries';
-import type Point from '../../Core/Series/Point';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type PieDataLabelOptions from './PieDataLabelOptions.js';
+import type PiePoint from './PiePoint.js';
+import type PieSeries from './PieSeries.js';
+import type Point from '../../Core/Series/Point.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
@@ -50,7 +50,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SVGElementBase' {
+declare module '../../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         connector?: SVGElement;
         dataLabelPosition?: DataLabel.LabelPositionObject;

@@ -21,7 +21,7 @@
  *
  * */
 
-import type CylinderSeriesOptions from './CylinderSeriesOptions';
+import type CylinderSeriesOptions from './CylinderSeriesOptions.js';
 
 /* *
  *

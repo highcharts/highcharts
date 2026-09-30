@@ -15,13 +15,13 @@
  *
  * */
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     PPOOptions,
     PPOParamsOptions
-} from './PPOOptions';
-import type PPOPoint from './PPOPoint';
+} from './PPOOptions.js';
+import type PPOPoint from './PPOPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -198,7 +198,7 @@ extend(PPOIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         ppo: typeof PPOIndicator;
     }

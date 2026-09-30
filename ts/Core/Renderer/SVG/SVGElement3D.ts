@@ -20,13 +20,13 @@
  *
  * */
 
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type ColorType from '../../Color/ColorType';
-import type SVGArc3D from './SVGArc3D';
-import type SVGAttributes3D from './SVGAttributes3D';
-import type SVGCuboid from './SVGCuboid';
-import type SVGPath from './SVGPath';
-import type SVGRenderer3D from './SVGRenderer3D';
+import type AnimationOptions from '../../Animation/AnimationOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type SVGArc3D from './SVGArc3D.js';
+import type SVGAttributes3D from './SVGAttributes3D.js';
+import type SVGCuboid from './SVGCuboid.js';
+import type SVGPath from './SVGPath.js';
+import type SVGRenderer3D from './SVGRenderer3D.js';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;

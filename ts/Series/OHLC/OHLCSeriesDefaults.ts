@@ -18,7 +18,7 @@
  *
  * */
 
-import type OHLCSeriesOptions from './OHLCSeriesOptions';
+import type OHLCSeriesOptions from './OHLCSeriesOptions.js';
 
 /* *
  *

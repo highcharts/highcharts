@@ -16,23 +16,23 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type ColorType from '../Color/ColorType';
-import type { CursorValue } from '../Renderer/CSSObject';
-import type DashStyleValue from '../Renderer/DashStyleValue';
-import type DataTableCore from '../../Data/DataTableCore';
-import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type { EventCallback } from '../Callback';
-import type Point from './Point';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type ColorType from '../Color/ColorType.js';
+import type { CursorValue } from '../Renderer/CSSObject.js';
+import type DashStyleValue from '../Renderer/DashStyleValue.js';
+import type DataTableCore from '../../Data/DataTableCore.js';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { EventCallback } from '../Callback.js';
+import type Point from './Point.js';
 import type {
     PointEventsOptions,
     PointMarkerOptions,
     PointOptions,
     PointShortOptions
-} from './PointOptions';
-import type Series from './Series';
-import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
+} from './PointOptions.js';
+import type Series from './Series.js';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject.js';
 import type {
     StateGenericOptions,
     StateHoverOptions,
@@ -40,8 +40,8 @@ import type {
     StateNormalOptions,
     StateSelectOptions,
     StatesOptions
-} from './StatesOptions';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+} from './StatesOptions.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
 
 /* *
  *

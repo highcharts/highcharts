@@ -19,9 +19,9 @@
  *
  * */
 
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
-import type { SunburstDataLabelOptions } from './SunburstSeriesOptions';
-import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
+import type { SunburstDataLabelOptions } from './SunburstSeriesOptions.js';
+import type TreemapPointOptions from '../Treemap/TreemapPointOptions.js';
 
 /* *
  *

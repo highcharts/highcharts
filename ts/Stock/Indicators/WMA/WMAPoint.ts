@@ -13,8 +13,8 @@
  *
  * */
 
-import type WMAIndicator from './WMAIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type WMAIndicator from './WMAIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

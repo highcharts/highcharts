@@ -13,8 +13,8 @@
  *
  * */
 
-import type KeltnerChannelsIndicator from './KeltnerChannelsIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type KeltnerChannelsIndicator from './KeltnerChannelsIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

@@ -16,8 +16,8 @@
  *
  * */
 
-import type AnnotationOptions from './AnnotationOptions';
-import type { DeepPartial } from '../../Shared/Types';
+import type AnnotationOptions from './AnnotationOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 /* *
  *
@@ -25,7 +25,7 @@ import type { DeepPartial } from '../../Shared/Types';
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * Configure the Popup strings in the chart. Requires the
@@ -40,7 +40,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../Exporting/NavigationOptions' {
+declare module '../Exporting/NavigationOptions.js' {
     interface NavigationOptions {
         /**
          * Additional options to be merged into all annotations.

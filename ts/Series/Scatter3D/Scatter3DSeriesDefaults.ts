@@ -20,7 +20,7 @@
  *
  * */
 
-import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
+import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions.js';
 
 /* *
  *

@@ -18,13 +18,13 @@
  *
  * */
 
-import type ColorAxis from '../../Core/Axis/Color/ColorAxis';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
+import type ColorAxis from '../../Core/Axis/Color/ColorAxis.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
+import type HeatmapSeriesOptions from './HeatmapSeriesOptions.js';
 import type Point from '../../Core/Series/Point.js';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Color from '../../Core/Color/Color.js';
 import ColorMapComposition from '../ColorMapComposition.js';
@@ -60,14 +60,14 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         /** @requires Series/Heatmap/HeatmapSeries */
         ellipse: SymbolTypeRegistry['circle'];
     }
 }
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         valueMax?: number;
         valueMin?: number;
@@ -609,7 +609,7 @@ ColorMapComposition.compose(HeatmapSeries);
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         heatmap: typeof HeatmapSeries;
     }

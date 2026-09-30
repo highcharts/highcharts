@@ -22,8 +22,8 @@
 import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
-} from './DataTable';
-import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
+} from './DataTable.js';
+import type { TypedArray, TypedArrayConstructor } from '../Shared/Types.js';
 
 
 /**

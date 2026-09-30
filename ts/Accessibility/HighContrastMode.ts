@@ -20,9 +20,9 @@
  *
  * */
 
-import type Accessibility from './Accessibility';
-import type ColorType from '../Core/Color/ColorType';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type Accessibility from './Accessibility.js';
+import type ColorType from '../Core/Color/ColorType.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions.js';
 
 import H from '../Core/Globals.js';
 const {
@@ -42,13 +42,13 @@ interface HighContrastState {
     applying?: boolean;
 }
 
-declare module '../Core/Chart/ChartBase'{
+declare module '../Core/Chart/ChartBase.js'{
     interface ChartBase {
         highContrastState?: HighContrastState;
     }
 }
 
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         borderColor?: ColorType;
     }

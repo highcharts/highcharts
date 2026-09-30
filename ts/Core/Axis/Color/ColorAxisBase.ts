@@ -18,13 +18,13 @@
  *
  * */
 
-import type AxisComposition from '../AxisComposition';
-import type AxisOptions from '../AxisOptions';
-import type Chart from '../../Chart/Chart';
-import type { ColorAxisDataClassOptions } from './ColorAxisOptions';
-import type ColorType from '../../Color/ColorType';
-import type { GradientColorStop } from '../../Color/GradientColor';
-import type Point from '../../Series/Point';
+import type AxisComposition from '../AxisComposition.js';
+import type AxisOptions from '../AxisOptions.js';
+import type Chart from '../../Chart/Chart.js';
+import type { ColorAxisDataClassOptions } from './ColorAxisOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type { GradientColorStop } from '../../Color/GradientColor.js';
+import type Point from '../../Series/Point.js';
 
 import Color from '../../Color/Color.js';
 import { merge } from '../../../Shared/Utilities.js';

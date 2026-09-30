@@ -18,7 +18,7 @@
  *
  * */
 
-import type WindbarbPointOptions from './WindbarbPointOptions';
+import type WindbarbPointOptions from './WindbarbPointOptions.js';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import WindbarbSeries from './WindbarbSeries.js';

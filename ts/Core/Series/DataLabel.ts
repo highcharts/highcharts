@@ -18,19 +18,19 @@
  *
  * */
 
-import type { AlignValue } from '../Renderer/AlignObject';
-import type BBoxObject from '../Renderer/BBoxObject';
-import type ColorString from '../Color/ColorString';
-import type CorePositionObject from '../../Core/Renderer/PositionObject';
-import type DataLabelOptions from './DataLabelOptions';
-import type PiePoint from '../../Series/Pie/PiePoint';
-import type Point from './Point';
-import type Series from './Series';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGLabel from '../Renderer/SVG/SVGLabel';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type AnimationOptions from '../Animation/AnimationOptions';
+import type { AlignValue } from '../Renderer/AlignObject.js';
+import type BBoxObject from '../Renderer/BBoxObject.js';
+import type ColorString from '../Color/ColorString.js';
+import type CorePositionObject from '../../Core/Renderer/PositionObject.js';
+import type DataLabelOptions from './DataLabelOptions.js';
+import type PiePoint from '../../Series/Pie/PiePoint.js';
+import type Point from './Point.js';
+import type Series from './Series.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../Renderer/SVG/SVGLabel.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
 
 import { getDeferredAnimation } from '../Animation/AnimationUtilities.js';
 import F from '../Templating.js';
@@ -57,7 +57,7 @@ import {
  * */
 
 /** @internal */
-declare module './PointBase' {
+declare module './PointBase.js' {
     interface PointBase {
         bottom?: number;
         contrastColor?: ColorString;
@@ -74,7 +74,7 @@ declare module './PointBase' {
     }
 }
 
-declare module './PointOptions' {
+declare module './PointOptions.js' {
     interface PointOptions {
         /**
          * Individual data label for each point. The options are the same as
@@ -113,7 +113,7 @@ export type PointDataLabelOptions =
     DataLabelOptions & PointDataLabelOptionsModifier;
 
 /** @internal */
-declare module './SeriesBase' {
+declare module './SeriesBase.js' {
     interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
@@ -157,7 +157,7 @@ declare module './SeriesBase' {
     }
 }
 
-declare module './SeriesOptions' {
+declare module './SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Options for the series data labels, appearing next to each data
@@ -186,7 +186,7 @@ declare module './SeriesOptions' {
 }
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SVGElementBase' {
+declare module '../../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         options?: DataLabelOptions;
     }

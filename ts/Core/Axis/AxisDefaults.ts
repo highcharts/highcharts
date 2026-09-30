@@ -18,13 +18,13 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
+import type { DeepPartial } from '../../Shared/Types.js';
 import type {
     AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
-} from './AxisOptions';
-import type StackItem from './Stacking/StackItem';
+} from './AxisOptions.js';
+import type StackItem from './Stacking/StackItem.js';
 
 /* *
  *

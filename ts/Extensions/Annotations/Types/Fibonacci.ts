@@ -11,11 +11,11 @@
  *
  * */
 
-import type { AnnotationOptions } from '../AnnotationOptions';
-import type ColorString from '../../../Core/Color/ColorString';
-import type Controllable from '../Controllables/Controllable';
-import type MockPointOptions from '../AnnotationMockPointOptionsObject';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import type { AnnotationOptions } from '../AnnotationOptions.js';
+import type ColorString from '../../../Core/Color/ColorString.js';
+import type Controllable from '../Controllables/Controllable.js';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
 
 import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
@@ -337,7 +337,7 @@ interface Fibonacci {
  * */
 
 /** @internal */
-declare module './AnnotationType' {
+declare module './AnnotationType.js' {
     interface AnnotationTypeRegistry {
         fibonacci: typeof Fibonacci;
     }

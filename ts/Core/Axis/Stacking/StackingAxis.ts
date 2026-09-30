@@ -18,10 +18,10 @@
  *
  * */
 
-import type Chart from '../../Chart/Chart';
-import type Series from '../../Series/Series';
-import type { StackOverflowValue } from './StackingOptions';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
+import type Chart from '../../Chart/Chart.js';
+import type Series from '../../Series/Series.js';
+import type { StackOverflowValue } from './StackingOptions.js';
+import type SVGElement from '../../Renderer/SVG/SVGElement.js';
 
 import { getDeferredAnimation } from '../../Animation/AnimationUtilities.js';
 import Axis from '../Axis.js';
@@ -45,21 +45,21 @@ import {
  * */
 
 /** @internal */
-declare module '../AxisComposition' {
+declare module '../AxisComposition.js' {
     interface AxisComposition {
         stacking?: AxisAdditions;
     }
 }
 
 /** @internal */
-declare module '../../Chart/ChartBase'{
+declare module '../../Chart/ChartBase.js'{
     interface ChartBase {
         getStacks(): void;
     }
 }
 
 /** @internal */
-declare module '../../Series/PointBase' {
+declare module '../../Series/PointBase.js' {
     interface PointBase {
         leftCliff?: number;
         rightCliff?: number;
@@ -67,7 +67,7 @@ declare module '../../Series/PointBase' {
 }
 
 /** @internal */
-declare module '../../Series/SeriesBase' {
+declare module '../../Series/SeriesBase.js' {
     interface SeriesBase {
         isRadialBar?: boolean;
         negStacks?: boolean;
@@ -729,7 +729,7 @@ namespace StackingAxis {
  * */
 
 /** @internal */
-declare module '../AxisType' {
+declare module '../AxisType.js' {
     interface AxisTypeRegistry {
         StackingAxis: StackingAxis;
     }

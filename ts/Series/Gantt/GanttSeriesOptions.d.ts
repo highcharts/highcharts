@@ -17,17 +17,17 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
 import type {
     ConnectorsOptions
-} from '../../Gantt/ConnectorsOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type GanttPointOptions from './GanttPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../../Gantt/ConnectorsOptions.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type GanttPointOptions from './GanttPointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 import type {
     XRangeSeriesOptions,
     XRangeSeriesTooltipOptions
-} from '../XRange/XRangeSeriesOptions';
+} from '../XRange/XRangeSeriesOptions.js';
 
 /* *
  *

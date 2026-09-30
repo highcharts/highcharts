@@ -18,14 +18,14 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type DataLabel from '../../Core/Series/DataLabel';
-import type PieDataLabelOptions from './PieDataLabelOptions';
-import type PiePointOptions from './PiePointOptions';
-import type PieSeries from './PieSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type DataLabel from '../../Core/Series/DataLabel.js';
+import type PieDataLabelOptions from './PieDataLabelOptions.js';
+import type PiePointOptions from './PiePointOptions.js';
+import type PieSeries from './PieSeries.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import { setAnimation } from '../../Core/Animation/AnimationUtilities.js';
 import Point from '../../Core/Series/Point.js';
@@ -42,7 +42,7 @@ import {
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /**
          * Pie series only. Whether to display a slice offset from the center.

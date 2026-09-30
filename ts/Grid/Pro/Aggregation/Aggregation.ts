@@ -23,11 +23,11 @@
 
 import type {
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
+} from '../../../Data/DataTable.js';
 import type {
     Arguments as FormulaArguments
-} from '../../../Data/Formula/Formula';
-import type { AggregatorOption } from './AggregationTypes';
+} from '../../../Data/Formula/Formula.js';
+import type { AggregatorOption } from './AggregationTypes.js';
 
 import { isCellValue } from '../../../Data/DataTable.js';
 import Formula from '../../../Data/Formula/Formula.js';

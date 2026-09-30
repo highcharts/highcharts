@@ -18,10 +18,10 @@
  *
  * */
 
-import type Axis from './Axis';
+import type Axis from './Axis.js';
 import type Chart from '../Chart/Chart.js';
-import type StackingAxis from './Stacking/StackingAxis';
-import type SVGLabel from '../Renderer/SVG/SVGLabel';
+import type StackingAxis from './Stacking/StackingAxis.js';
+import type SVGLabel from '../Renderer/SVG/SVGLabel.js';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -35,14 +35,14 @@ import { addEvent, objectEach, pushUnique } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }
 }
 
 /** @internal */
-declare module '../../Core/Axis/AxisType' {
+declare module '../../Core/Axis/AxisType.js' {
     interface AxisTypeRegistry {
         WaterfallAxis: WaterfallAxis;
     }

@@ -21,11 +21,11 @@
 import type {
     PaneBackgroundOptions,
     PaneOptions
-} from './PaneOptions';
-import type { PaneChart } from './PaneComposition';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from './PaneOptions.js';
+import type { PaneChart } from './PaneComposition.js';
+import type RadialAxis from '../../Core/Axis/RadialAxis.js';
+import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import CU from '../../Series/CenteredUtilities.js';
 import PaneComposition from './PaneComposition.js';
@@ -47,7 +47,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         pane?: Pane;
     }

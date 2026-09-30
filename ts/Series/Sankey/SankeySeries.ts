@@ -20,15 +20,15 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
-import type SankeyPointOptions from './SankeyPointOptions';
+import type Chart from '../../Core/Chart/Chart.js';
+import type SankeyDataLabelOptions from './SankeyDataLabelOptions.js';
+import type SankeyPointOptions from './SankeyPointOptions.js';
 import type {
     SankeySeriesLevelOptions,
     SankeySeriesOptions
-} from './SankeySeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+} from './SankeySeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import H from '../../Core/Globals.js';
 import NodesComposition from '../NodesComposition.js';
@@ -809,7 +809,7 @@ extend(SankeySeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         sankey: typeof SankeySeries;
     }

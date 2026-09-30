@@ -23,8 +23,8 @@
  *
  * */
 
-import type TableCell from './Body/TableCell';
-import type { RowId } from '../Data/DataProvider';
+import type TableCell from './Body/TableCell.js';
+import type { RowId } from '../Data/DataProvider.js';
 
 import GridUtils from '../GridUtils.js';
 import ColumnResizing from './ColumnResizing/ColumnResizing.js';

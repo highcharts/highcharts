@@ -25,7 +25,7 @@ import CrossSymbol from '../CrossSymbol.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
+import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions.js';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
@@ -369,7 +369,7 @@ extend(PointAndFigureSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pointandfigure: typeof PointAndFigureSeries;
     }

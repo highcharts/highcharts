@@ -18,18 +18,18 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions';
-import type BubbleSeriesType from '../Bubble/BubbleSeries';
-import type Chart from '../../Core/Chart/Chart';
-import type { DragNodesPoint, DragNodesSeries } from '../DragNodesComposition';
-import type Legend from '../../Core/Legend/Legend';
-import type NetworkgraphSeries from '../Networkgraph/NetworkgraphSeries';
-import type PackedBubbleChart from './PackedBubbleChart';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type PackedBubblePointOptions from './PackedBubblePointOptions';
-import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type Axis from '../../Core/Axis/Axis.js';
+import type { BubblePointMarkerOptions } from '../Bubble/BubblePointOptions.js';
+import type BubbleSeriesType from '../Bubble/BubbleSeries.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DragNodesPoint, DragNodesSeries } from '../DragNodesComposition.js';
+import type Legend from '../../Core/Legend/Legend.js';
+import type NetworkgraphSeries from '../Networkgraph/NetworkgraphSeries.js';
+import type PackedBubbleChart from './PackedBubbleChart.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type PackedBubblePointOptions from './PackedBubblePointOptions.js';
+import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -1347,7 +1347,7 @@ namespace PackedBubbleSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         packedbubble: typeof PackedBubbleSeries;
     }

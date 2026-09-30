@@ -24,7 +24,7 @@
  *
  * */
 
-import type VennSeriesOptions from './VennSeriesOptions';
+import type VennSeriesOptions from './VennSeriesOptions.js';
 
 /* *
  *

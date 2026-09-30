@@ -18,9 +18,9 @@
  *
  * */
 
-import type BubblePointOptions from './BubblePointOptions';
-import type BubbleSeries from './BubbleSeries';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type BubblePointOptions from './BubblePointOptions.js';
+import type BubbleSeries from './BubbleSeries.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend } from '../../Shared/Utilities.js';

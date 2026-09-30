@@ -19,11 +19,11 @@
  *
  * */
 
-import type DataConnectorOptions from './DataConnectorOptions';
+import type DataConnectorOptions from './DataConnectorOptions.js';
 import type {
     BasicColumn as DataTableBasicColumn
-} from '../DataTable';
-import type { DataTableConnectorOptions } from './DataConnectorOptions';
+} from '../DataTable.js';
+import type { DataTableConnectorOptions } from './DataConnectorOptions.js';
 
 /* *
  *

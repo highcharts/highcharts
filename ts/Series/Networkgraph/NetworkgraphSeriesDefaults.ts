@@ -22,9 +22,9 @@
 
 import type {
     NetworkgraphSeriesOptions
-} from './NetworkgraphSeriesOptions';
-import type NetworkgraphPoint from './NetworkgraphPoint';
-import type Point from '../../Core/Series/Point';
+} from './NetworkgraphSeriesOptions.js';
+import type NetworkgraphPoint from './NetworkgraphPoint.js';
+import type Point from '../../Core/Series/Point.js';
 
 /* *
  *

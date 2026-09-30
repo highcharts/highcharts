@@ -18,9 +18,9 @@
  *
  * */
 
-import type { StandaloneNavigatorOptions } from './NavigatorOptions';
-import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
-import type { Options } from '../../Core/Options';
+import type { StandaloneNavigatorOptions } from './NavigatorOptions.js';
+import type { SeriesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { Options } from '../../Core/Options.js';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
@@ -30,7 +30,7 @@ import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /** @internal */
-declare module '../../Core/GlobalsBase' {
+declare module '../../Core/GlobalsBase.js' {
     interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }

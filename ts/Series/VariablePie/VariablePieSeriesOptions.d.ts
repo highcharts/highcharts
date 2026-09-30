@@ -21,10 +21,10 @@
 import type {
     PieSeriesOptions,
     PieSeriesTooltipOptions
-} from '../Pie/PieSeriesOptions';
-import type PointShortOptions from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type VariablePiePointOptions from './VariablePiePointOptions';
+} from '../Pie/PieSeriesOptions.js';
+import type PointShortOptions from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type VariablePiePointOptions from './VariablePiePointOptions.js';
 
 /* *
  *

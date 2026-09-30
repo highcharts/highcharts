@@ -19,7 +19,7 @@
  *
  * */
 
-import type DragDropOptions from './DragDropOptions';
+import type DragDropOptions from './DragDropOptions.js';
 
 /* *
  *

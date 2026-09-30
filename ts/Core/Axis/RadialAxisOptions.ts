@@ -18,7 +18,7 @@
  *
  * */
 
-import type { YAxisOptions } from './AxisOptions';
+import type { YAxisOptions } from './AxisOptions.js';
 
 /* *
  *

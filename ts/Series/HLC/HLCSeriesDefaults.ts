@@ -18,7 +18,7 @@
  *
  * */
 
-import type HLCSeriesOptions from './HLCSeriesOptions';
+import type HLCSeriesOptions from './HLCSeriesOptions.js';
 
 /* *
  *

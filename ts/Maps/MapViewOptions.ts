@@ -16,13 +16,13 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type ProjectionOptions from './ProjectionOptions';
+import type ColorType from '../Core/Color/ColorType.js';
+import type ProjectionOptions from './ProjectionOptions.js';
 import type {
     GeoJSONGeometryMultiPoint,
     MultiLineString,
     Polygon
-} from './GeoJSON';
+} from './GeoJSON.js';
 
 /* *
  *
@@ -30,7 +30,7 @@ import type {
  *
  * */
 
-declare module '../Core/Options' {
+declare module '../Core/Options.js' {
     interface Options {
 
         /**

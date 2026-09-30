@@ -26,9 +26,9 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type HTMLTableConnectorOptions from './HTMLTableConnectorOptions';
-import type HTMLTableConverterOptions from '../Converters/HTMLTableConverterOptions';
+} from '../DataEvent.js';
+import type HTMLTableConnectorOptions from './HTMLTableConnectorOptions.js';
+import type HTMLTableConverterOptions from '../Converters/HTMLTableConverterOptions.js';
 
 import DataConnector, {
     type Event as DataConnectorEvent
@@ -213,7 +213,7 @@ export type CombinedHTMLTableConnectorOptions =
  *
  * */
 
-declare module './DataConnectorType' {
+declare module './DataConnectorType.js' {
     interface DataConnectorTypes {
         HTMLTable: typeof HTMLTableConnector;
     }

@@ -11,17 +11,17 @@
  *
  * */
 
-import type { AnnotationEventObject } from '../EventEmitter';
-import type Controllable from '../Controllables/Controllable';
-import type ControllableCircle from '../Controllables/ControllableCircle';
-import type ControllableEllipse from '../Controllables/ControllableEllipse';
-import type ControllableRect from '../Controllables/ControllableRect';
-import type ControlPoint from '../ControlPoint';
-import type ControlPointOptions from '../ControlPointOptions';
-import type { DeepPartial } from '../../../Shared/Types';
-import type MockPointOptions from '../AnnotationMockPointOptionsObject';
-import type PointerEvent from '../../../Core/PointerEvent';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type { AnnotationEventObject } from '../EventEmitter.js';
+import type Controllable from '../Controllables/Controllable.js';
+import type ControllableCircle from '../Controllables/ControllableCircle.js';
+import type ControllableEllipse from '../Controllables/ControllableEllipse.js';
+import type ControllableRect from '../Controllables/ControllableRect.js';
+import type ControlPoint from '../ControlPoint.js';
+import type ControlPointOptions from '../ControlPointOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject.js';
+import type PointerEvent from '../../../Core/PointerEvent.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
 
 import Annotation from '../Annotation.js';
 import MockPoint from '../MockPoint.js';
@@ -392,7 +392,7 @@ namespace BasicAnnotation {
  * */
 
 /** @internal */
-declare module './AnnotationType' {
+declare module './AnnotationType.js' {
     interface AnnotationTypeRegistry {
         basicAnnotation: typeof BasicAnnotation;
     }

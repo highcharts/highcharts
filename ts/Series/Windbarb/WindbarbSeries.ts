@@ -20,12 +20,12 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
+import type Chart from '../../Core/Chart/Chart.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type WindbarbSeriesOptions from './WindbarbSeriesOptions.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
@@ -415,7 +415,7 @@ extend(WindbarbSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         windbarb: typeof WindbarbSeries;
     }

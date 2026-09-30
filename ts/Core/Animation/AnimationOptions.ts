@@ -15,8 +15,8 @@
  *
  * */
 
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
 
 /* *
  *

@@ -18,13 +18,13 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Renderer/AlignObject';
-import type ColorString from '../../Color/ColorString';
-import type ColorType from '../../Color/ColorType';
-import type CSSObject from '../../Renderer/CSSObject';
-import type Templating from '../../Templating';
-import type PlotLineOrBand from './PlotLineOrBand';
-import type { BorderRadiusOptionsObject } from '../../../Extensions/BorderRadius';
+} from '../../Renderer/AlignObject.js';
+import type ColorString from '../../Color/ColorString.js';
+import type ColorType from '../../Color/ColorType.js';
+import type CSSObject from '../../Renderer/CSSObject.js';
+import type Templating from '../../Templating.js';
+import type PlotLineOrBand from './PlotLineOrBand.js';
+import type { BorderRadiusOptionsObject } from '../../../Extensions/BorderRadius.js';
 
 /* *
  *

@@ -18,9 +18,9 @@
  *
  * */
 
-import type CSSObject from '../CSSObject';
-import type HTMLAttributes from '../HTML/HTMLAttributes';
-import type SVGAttributes from '../SVG/SVGAttributes';
+import type CSSObject from '../CSSObject.js';
+import type HTMLAttributes from '../HTML/HTMLAttributes.js';
+import type SVGAttributes from '../SVG/SVGAttributes.js';
 
 import H from '../../Globals.js';
 const {

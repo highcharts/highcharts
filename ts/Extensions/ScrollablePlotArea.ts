@@ -20,17 +20,17 @@
  *
  * */
 
-import type Axis from '../Core/Axis/Axis';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
-import type CSSObject from '../Core/Renderer/CSSObject';
+import type Axis from '../Core/Axis/Axis.js';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
+import type Chart from '../Core/Chart/Chart.js';
+import type CSSObject from '../Core/Renderer/CSSObject.js';
 import type {
     DOMElementType,
     HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
-import type Series from '../Core/Series/Series';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+} from '../Core/Renderer/DOMElementType.js';
+import type Series from '../Core/Series/Series.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 import { stop } from '../Core/Animation/AnimationUtilities.js';
 import H from '../Core/Globals.js';
@@ -102,7 +102,7 @@ interface ScrollablePlotAreaOptions {
 
 }
 
-declare module '../Core/Chart/ChartOptions' {
+declare module '../Core/Chart/ChartOptions.js' {
     interface ChartOptions {
         /**
          * Options for a scrollable plot area. This feature provides a minimum
@@ -138,7 +138,7 @@ declare module '../Core/Chart/ChartOptions' {
 }
 
 /** @internal */
-declare module '../Core/Chart/ChartBase'{
+declare module '../Core/Chart/ChartBase.js'{
     interface ChartBase {
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;

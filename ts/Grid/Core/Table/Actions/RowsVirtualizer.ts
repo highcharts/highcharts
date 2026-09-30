@@ -23,7 +23,7 @@
  *
  * */
 
-import type { RowsSettings } from '../../Options';
+import type { RowsSettings } from '../../Options.js';
 
 import Table from '../Table.js';
 import TableRow from '../Body/TableRow.js';

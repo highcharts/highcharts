@@ -23,7 +23,7 @@
 import type {
     DOMElementType,
     HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+} from '../../Core/Renderer/DOMElementType.js';
 
 import H from '../../Core/Globals.js';
 import { css } from '../../Shared/Utilities.js';

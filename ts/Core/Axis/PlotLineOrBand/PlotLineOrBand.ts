@@ -18,19 +18,19 @@
  *
  * */
 
-import type Chart from '../../Chart/Chart';
-import type { DeepPartial } from '../../../Shared/Types';
+import type Chart from '../../Chart/Chart.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
-} from './PlotBandOptions';
+} from './PlotBandOptions.js';
 import type {
     PlotLineLabelOptions,
     PlotLineOptions
-} from './PlotLineOptions';
-import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type SVGPath from '../../Renderer/SVG/SVGPath';
+} from './PlotLineOptions.js';
+import type SVGAttributes from '../../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Renderer/SVG/SVGPath.js';
 
 import Axis from '../Axis.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';

@@ -16,10 +16,10 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { GraphLayoutType } from '../GraphLayoutComposition';
-import type NetworkgraphChart from '../Networkgraph/NetworkgraphChart';
-import type PackedBubblePoint from './PackedBubblePoint';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { GraphLayoutType } from '../GraphLayoutComposition.js';
+import type NetworkgraphChart from '../Networkgraph/NetworkgraphChart.js';
+import type PackedBubblePoint from './PackedBubblePoint.js';
 
 /* *
  *

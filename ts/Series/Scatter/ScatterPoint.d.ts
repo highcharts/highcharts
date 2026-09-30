@@ -16,9 +16,9 @@
  *
  * */
 
-import type LinePoint from '../Line/LinePoint';
-import type ScatterPointOptions from './ScatterPointOptions';
-import type ScatterSeries from './ScatterSeries';
+import type LinePoint from '../Line/LinePoint.js';
+import type ScatterPointOptions from './ScatterPointOptions.js';
+import type ScatterSeries from './ScatterSeries.js';
 
 /* *
  *

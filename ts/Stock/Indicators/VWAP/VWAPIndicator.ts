@@ -20,15 +20,15 @@
  *
  * */
 
-import type Chart from '../../../Core/Chart/Chart';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     VWAPOptions,
     VWAPParamsOptions
-} from './VWAPOptions';
-import type VWAPPoint from './VWAPPoint';
+} from './VWAPOptions.js';
+import type VWAPPoint from './VWAPPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
@@ -259,7 +259,7 @@ interface VWAPIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         vwap: typeof VWAPIndicator;
     }

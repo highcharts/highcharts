@@ -18,7 +18,7 @@
  *
  * */
 
-import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
+import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions.js';
 
 /* *
  *

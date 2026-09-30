@@ -13,8 +13,8 @@
  *
  * */
 
-import type DEMAIndicator from './DEMAIndicator';
-import type EMAPoint from '../EMA/EMAPoint';
+import type DEMAIndicator from './DEMAIndicator.js';
+import type EMAPoint from '../EMA/EMAPoint.js';
 
 /* *
  *

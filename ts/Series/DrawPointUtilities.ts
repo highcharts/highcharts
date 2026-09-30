@@ -11,12 +11,12 @@
  *
  * */
 
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type Point from '../Core/Series/Point';
-import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import type CSSObject from '../Core/Renderer/CSSObject.js';
+import type Point from '../Core/Series/Point.js';
+import type ShadowOptionsObject from '../Core/Renderer/ShadowOptionsObject.js';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 /* *
  *

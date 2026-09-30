@@ -18,8 +18,8 @@
  *
  * */
 
-import type PiePointOptions from '../Pie/PiePointOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type PiePointOptions from '../Pie/PiePointOptions.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *

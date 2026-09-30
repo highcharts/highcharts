@@ -18,16 +18,16 @@
  *
  * */
 
-import { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
-import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
+import { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius.js';
+import type DependencyWheelPointOptions from './DependencyWheelPointOptions.js';
 import type {
     SankeySeriesNodeOptions,
     SankeySeriesOptions
-} from '../Sankey/SankeySeriesOptions';
-import type SankeyDataLabelOptions from '../Sankey/SankeyDataLabelOptions';
-import type { SankeyDataLabelsFormatterCallbackFunction } from '../Sankey/SankeyDataLabelOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../Sankey/SankeySeriesOptions.js';
+import type SankeyDataLabelOptions from '../Sankey/SankeyDataLabelOptions.js';
+import type { SankeyDataLabelsFormatterCallbackFunction } from '../Sankey/SankeyDataLabelOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

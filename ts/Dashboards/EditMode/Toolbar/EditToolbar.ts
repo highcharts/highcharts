@@ -18,7 +18,7 @@
 'use strict';
 
 import EditMode from '../EditMode.js';
-import type { Options as MenuOptions } from '../Menu/Menu';
+import type { Options as MenuOptions } from '../Menu/Menu.js';
 
 import Menu from '../Menu/Menu.js';
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';

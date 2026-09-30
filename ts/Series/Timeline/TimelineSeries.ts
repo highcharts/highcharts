@@ -23,15 +23,15 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
-import type TimelinePointOptions from './TimelinePointOptions';
-import type TimelineSeriesOptions from './TimelineSeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
+import type TimelineDataLabelOptions from './TimelineDataLabelOptions.js';
+import type TimelinePointOptions from './TimelinePointOptions.js';
+import type TimelineSeriesOptions from './TimelineSeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -499,7 +499,7 @@ extend(TimelineSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         timeline: typeof TimelineSeries;
     }

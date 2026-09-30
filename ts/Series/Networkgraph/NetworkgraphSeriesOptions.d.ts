@@ -18,34 +18,34 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
-import type { EventCallback } from '../../Core/Callback';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions.js';
+import type { EventCallback } from '../../Core/Callback.js';
 import type {
     NetworkgraphDataOptions,
     NetworkgraphPointOptions
-} from './NetworkgraphPointOptions';
-import type NetworkgraphPoint from './NetworkgraphPoint';
-import type NetworkgraphSeries from './NetworkgraphSeries';
-import type NodesComposition from '../NodesComposition';
-import type Point from '../../Core/Series/Point';
+} from './NetworkgraphPointOptions.js';
+import type NetworkgraphPoint from './NetworkgraphPoint.js';
+import type NetworkgraphSeries from './NetworkgraphSeries.js';
+import type NodesComposition from '../NodesComposition.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
+} from '../../Core/Series/PointOptions.js';
+import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
 import type {
     SeriesEventsOptions,
     SeriesOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions.js';
 import type {
     OrganizationLinkOptions
-} from '../Organization/OrganizationSeriesOptions';
+} from '../Organization/OrganizationSeriesOptions.js';
 import type {
     TreegraphLinkOptions
-} from '../Treegraph/TreegraphLink';
+} from '../Treegraph/TreegraphLink.js';
 
 /* *
  *
@@ -53,7 +53,7 @@ import type {
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesStateInactiveOptions {
         linkOpacity?: number;
     }
@@ -61,7 +61,7 @@ declare module '../../Core/Series/SeriesOptions' {
 
 // Prevent ColorType (link.color) getting loosened by DeepPartial in
 // StateGenericOptions, with care about inheritance.
-declare module '../../Core/Series/StatesOptions' {
+declare module '../../Core/Series/StatesOptions.js' {
     interface StateOptionsBase {
         link?: (
             SeriesLinkOptionsBase &

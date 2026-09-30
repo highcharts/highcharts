@@ -18,7 +18,7 @@
  *
  * */
 
-import type RangeSelectorOptions from './RangeSelectorOptions';
+import type RangeSelectorOptions from './RangeSelectorOptions.js';
 
 /* *
  *

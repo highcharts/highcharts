@@ -11,10 +11,10 @@
  *
  * */
 
-import type AnnotationChart from './AnnotationChart';
-import type ControlPointOptions from './ControlPointOptions';
-import type ControlTarget from './ControlTarget';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type AnnotationChart from './AnnotationChart.js';
+import type ControlPointOptions from './ControlPointOptions.js';
+import type ControlTarget from './ControlTarget.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import EventEmitter from './EventEmitter.js';
 import { merge } from '../../Shared/Utilities.js';
@@ -26,7 +26,7 @@ import { merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module './AnnotationMockPointOptionsObject' {
+declare module './AnnotationMockPointOptionsObject.js' {
     interface AnnotationMockPointOptionsObject {
         controlPoint?: ControlPointOptions;
     }

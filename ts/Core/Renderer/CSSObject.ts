@@ -15,9 +15,9 @@
  *
  * */
 
-import type { AlignValue } from './AlignObject';
-import type ColorString from '../Color/ColorString';
-import ColorType from '../Color/ColorType';
+import type { AlignValue } from './AlignObject.js';
+import type ColorString from '../Color/ColorString.js';
+import ColorType from '../Color/ColorType.js';
 
 /* *
  *

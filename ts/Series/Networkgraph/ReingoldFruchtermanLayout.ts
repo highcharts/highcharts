@@ -20,11 +20,11 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { GraphIntegrationObject } from '../GraphLayoutComposition';
-import type NetworkgraphPoint from './NetworkgraphPoint';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { GraphIntegrationObject } from '../GraphLayoutComposition.js';
+import type NetworkgraphPoint from './NetworkgraphPoint.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
 
 import EulerIntegration from './EulerIntegration.js';
 import H from '../../Core/Globals.js';

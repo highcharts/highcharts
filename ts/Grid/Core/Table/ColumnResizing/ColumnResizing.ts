@@ -23,7 +23,7 @@
  *
  * */
 
-import type Table from '../Table';
+import type Table from '../Table.js';
 
 import ResizingMode from './ResizingMode.js';
 import AdjacentResizingMode from './AdjacentResizingMode.js';

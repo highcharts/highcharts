@@ -20,7 +20,7 @@
  *
  * */
 
-import type Time from '../Core/Time';
+import type Time from '../Core/Time.js';
 
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
@@ -33,7 +33,7 @@ import { getNestedProperty } from '../Shared/Utilities.js';
  *
  * */
 
-declare module '../Core/Chart/ChartBase' {
+declare module '../Core/Chart/ChartBase.js' {
     interface ChartBase extends A11yI18nComposition.ChartComposition {
         // Nothing to add
     }

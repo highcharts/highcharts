@@ -26,8 +26,8 @@
 import type {
     Arguments,
     Value
-} from '../FormulaTypes';
-import type DataTable from '../../DataTable';
+} from '../FormulaTypes.js';
+import type DataTable from '../../DataTable.js';
 
 
 import FormulaProcessor from '../FormulaProcessor.js';

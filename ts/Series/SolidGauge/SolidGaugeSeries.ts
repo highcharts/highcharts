@@ -20,10 +20,10 @@
  *
  * */
 
-import type SolidGaugePoint from './SolidGaugePoint';
-import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SolidGaugePoint from './SolidGaugePoint.js';
+import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -313,7 +313,7 @@ interface SolidGaugeSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         solidgauge: typeof SolidGaugeSeries;
     }

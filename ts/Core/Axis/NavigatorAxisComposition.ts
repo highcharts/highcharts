@@ -19,8 +19,8 @@
  * */
 
 import type Axis from './Axis.js';
-import type { AxisSetExtremesEventObject } from './AxisOptions';
-import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
+import type { AxisSetExtremesEventObject } from './AxisOptions.js';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
 
 import H from '../Globals.js';
 const { composed, isTouchDevice } = H;
@@ -39,7 +39,7 @@ import {
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         navigatorAxis?: NavigatorAxisAdditions;
     }

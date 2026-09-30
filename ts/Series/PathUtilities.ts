@@ -18,7 +18,7 @@
  *
  * */
 
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 const getLinkPath = {
     'default': getOrthogonalPath,

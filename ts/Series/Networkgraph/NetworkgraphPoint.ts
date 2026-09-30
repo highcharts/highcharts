@@ -20,12 +20,12 @@
  *
  * */
 
-import type { DragNodesPoint } from '../DragNodesComposition';
-import type NetworkgraphPointOptions from './NetworkgraphPointOptions';
-import type NetworkgraphSeries from './NetworkgraphSeries';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { DragNodesPoint } from '../DragNodesComposition.js';
+import type NetworkgraphPointOptions from './NetworkgraphPointOptions.js';
+import type NetworkgraphSeries from './NetworkgraphSeries.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

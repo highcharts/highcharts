@@ -18,7 +18,7 @@
  *
  * */
 
-import type ConnectorsOptions from './ConnectorsOptions';
+import type ConnectorsOptions from './ConnectorsOptions.js';
 
 /* *
  *

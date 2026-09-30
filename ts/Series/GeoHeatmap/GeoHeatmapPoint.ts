@@ -40,14 +40,14 @@ const {
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectBase' {
+declare module '../../Core/Series/KDPointSearchObjectBase.js' {
     interface KDPointSearchObjectBase {
         lat?: number;
         lon?: number;
     }
 }
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         lat?: number;
         lon?: number;

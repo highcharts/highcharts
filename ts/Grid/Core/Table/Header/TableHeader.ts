@@ -24,7 +24,7 @@
  *
  * */
 
-import type { GroupedHeaderOptions } from '../../Options';
+import type { GroupedHeaderOptions } from '../../Options.js';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';

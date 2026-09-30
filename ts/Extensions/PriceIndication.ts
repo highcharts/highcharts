@@ -19,9 +19,9 @@
  *
  * */
 
-import type { AxisCrosshairOptions } from '../Core/Axis/AxisOptions';
-import type Series from '../Core/Series/Series';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type { AxisCrosshairOptions } from '../Core/Axis/AxisOptions.js';
+import type Series from '../Core/Series/Series.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
@@ -34,7 +34,7 @@ import { addEvent, clamp, merge, pushUnique } from '../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         lastPrice?: SVGElement;
         lastPriceLabel?: SVGElement;
@@ -43,7 +43,7 @@ declare module '../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * The line marks the last price from all points.

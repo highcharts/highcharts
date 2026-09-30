@@ -13,8 +13,8 @@
  *
  * */
 
-import type OBVIndicator from './OBVIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type OBVIndicator from './OBVIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

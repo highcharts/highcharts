@@ -18,7 +18,7 @@
  *
  * */
 
-import type PiePointOptions from '../Pie/PiePointOptions';
+import type PiePointOptions from '../Pie/PiePointOptions.js';
 
 /* *
  *

@@ -20,10 +20,10 @@
  *
  * */
 
-import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
-import type { TypedArray } from '../../Shared/Types';
-import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type VariwideSeriesOptions from './VariwideSeriesOptions';
+import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis.js';
+import type { TypedArray } from '../../Shared/Types.js';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
+import type VariwideSeriesOptions from './VariwideSeriesOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -347,7 +347,7 @@ extend(VariwideSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         variwide: typeof VariwideSeries;
     }

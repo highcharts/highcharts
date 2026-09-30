@@ -18,7 +18,7 @@
  *
  * */
 
-import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
+import type SankeyPointOptions from '../Sankey/SankeyPointOptions.js';
 
 /* *
  *

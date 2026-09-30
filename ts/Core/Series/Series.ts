@@ -18,49 +18,49 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type Axis from '../Axis/Axis';
-import type AxisType from '../Axis/AxisType';
-import type Chart from '../Chart/Chart';
-import type ColorType from '../Color/ColorType';
-import type DataExtremesObject from './DataExtremesObject';
-import type DataLabelOptions from './DataLabelOptions';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type Axis from '../Axis/Axis.js';
+import type AxisType from '../Axis/AxisType.js';
+import type Chart from '../Chart/Chart.js';
+import type ColorType from '../Color/ColorType.js';
+import type DataExtremesObject from './DataExtremesObject.js';
+import type DataLabelOptions from './DataLabelOptions.js';
 import type {
     Column,
     ColumnCollection,
     ColumnEvent,
     RowEvent,
     RowObject
-} from '../../Data/DataTable';
-import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
-import type { DeepPartial, TypedArray } from '../../Shared/Types';
-import type { EventCallback } from '../Callback';
-import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
-import type Legend from '../Legend/Legend';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type PointerEvent from '../PointerEvent';
+} from '../../Data/DataTable.js';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions.js';
+import type { DeepPartial, TypedArray } from '../../Shared/Types.js';
+import type { EventCallback } from '../Callback.js';
+import type KDPointSearchObjectBase from './KDPointSearchObjectBase.js';
+import type Legend from '../Legend/Legend.js';
+import type LineSeries from '../../Series/Line/LineSeries.js';
+import type PointerEvent from '../PointerEvent.js';
 import type {
     PointOptions,
     PointShortOptions
-} from './PointOptions';
-import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type SeriesBase from './SeriesBase';
+} from './PointOptions.js';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
+import type SeriesBase from './SeriesBase.js';
 import type {
     NonPlotOptions,
     SeriesOptions,
     SeriesZonesOptions
-} from './SeriesOptions';
+} from './SeriesOptions.js';
 import type {
     SeriesTypeRegistry,
     SeriesTypeOptions,
     SeriesTypePlotOptions
-} from './SeriesType';
-import type StackItem from '../Axis/Stacking/StackItem';
-import type { StatesOptionsKey } from './StatesOptions';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type { SymbolKey } from '../Renderer/SVG/SymbolType';
-import type TooltipOptions from '../TooltipOptions';
+} from './SeriesType.js';
+import type StackItem from '../Axis/Stacking/StackItem.js';
+import type { StatesOptionsKey } from './StatesOptions.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType.js';
+import type TooltipOptions from '../TooltipOptions.js';
 
 import {
     animObject,
@@ -118,20 +118,20 @@ import { error, insertItem } from '../Utilities.js';
  * */
 
 /** @internal */
-declare module '../Chart/ChartBase'{
+declare module '../Chart/ChartBase.js'{
     interface ChartBase {
         runTrackerClick?: boolean;
     }
 }
 
 /** @internal */
-declare module '../Renderer/SVG/SVGElementBase' {
+declare module '../Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         survive?: boolean;
     }
 }
 
-declare module './PointBase' {
+declare module './PointBase.js' {
     interface PointBase {
         /**
          * Contains the point's index in the `Series.points` array.
@@ -171,7 +171,7 @@ declare module './PointBase' {
 }
 
 /** @internal */
-declare module './SeriesBase' {
+declare module './SeriesBase.js' {
     interface SeriesBase {
         _hasPointMarkers?: boolean;
         keysAffectYAxis?: Array<string>;

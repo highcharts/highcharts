@@ -25,10 +25,10 @@
 import type {
     DataEventCallback,
     DataEventEmitter
-} from './DataEvent';
-import type DataConnectorType from './Connectors/DataConnectorType';
-import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
-import type DataPoolOptions from './DataPoolOptions';
+} from './DataEvent.js';
+import type DataConnectorType from './Connectors/DataConnectorType.js';
+import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType.js';
+import type DataPoolOptions from './DataPoolOptions.js';
 
 import DataConnector from './Connectors/DataConnector.js';
 import { addEvent, fireEvent, merge } from '../Shared/Utilities.js';

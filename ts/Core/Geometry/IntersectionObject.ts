@@ -15,8 +15,8 @@
  *
  * */
 
-import type PositionObject from '../Renderer/PositionObject';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type PositionObject from '../Renderer/PositionObject.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
 
 /* *
  *

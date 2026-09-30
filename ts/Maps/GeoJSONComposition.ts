@@ -18,17 +18,17 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
+import type Chart from '../Core/Chart/Chart.js';
 import type {
     GeoJSON,
     GeoJSONFeature,
     MapLonLatObject,
     TopoJSON
-} from './GeoJSON';
-import type MapPointOptions from '../Series/Map/MapPointOptions';
-import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
-import type { ProjectedXY } from './MapViewOptions';
-import type Series from '../Core/Series/Series';
+} from './GeoJSON.js';
+import type MapPointOptions from '../Series/Map/MapPointOptions.js';
+import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions.js';
+import type { ProjectedXY } from './MapViewOptions.js';
+import type Series from '../Core/Series/Series.js';
 
 import H from '../Core/Globals.js';
 const { win } = H;
@@ -43,7 +43,7 @@ import { error } from '../Core/Utilities.js';
  *
  * */
 
-declare module '../Core/Chart/ChartBase'{
+declare module '../Core/Chart/ChartBase.js'{
     interface ChartBase {
         /**
          * @requires modules/map
@@ -158,7 +158,7 @@ declare module '../Core/Chart/ChartBase'{
     }
 }
 
-declare module '../Core/Chart/ChartOptions'{
+declare module '../Core/Chart/ChartOptions.js'{
     interface ChartOptions {
         /**
          * Allows to manually load the proj4 library from Highcharts options

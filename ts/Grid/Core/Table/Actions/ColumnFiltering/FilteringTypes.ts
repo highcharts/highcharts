@@ -24,7 +24,7 @@
  *
  * */
 
-import type { ColumnDataType } from '../../Column';
+import type { ColumnDataType } from '../../Column.js';
 
 /* *
  *

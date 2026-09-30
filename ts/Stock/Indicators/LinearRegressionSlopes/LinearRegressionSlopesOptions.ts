@@ -15,7 +15,7 @@
  * */
 
 import type LinearRegressionOptions from
-    '../LinearRegression/LinearRegressionOptions';
+    '../LinearRegression/LinearRegressionOptions.js';
 
 /* *
  *

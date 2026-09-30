@@ -15,7 +15,7 @@
  *
  * */
 
-import type CSSJSONObject from '../../CSSJSONObject';
+import type CSSJSONObject from '../../CSSJSONObject.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';

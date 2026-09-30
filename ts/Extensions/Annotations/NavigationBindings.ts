@@ -18,20 +18,20 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type AnnotationChart from './AnnotationChart';
-import type Chart from '../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type NavigationBindingsBase from './NavigationBindingsBase';
-import type NavigationBindingsOptions from './NavigationBindingsOptions';
-import type NavigationOptions from '../Exporting/NavigationOptions';
-import type Pointer from '../../Core/Pointer';
-import type PointerEvent from '../../Core/PointerEvent';
+import type Annotation from './Annotation.js';
+import type AnnotationChart from './AnnotationChart.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type NavigationBindingsBase from './NavigationBindingsBase.js';
+import type NavigationBindingsOptions from './NavigationBindingsOptions.js';
+import type NavigationOptions from '../Exporting/NavigationOptions.js';
+import type Pointer from '../../Core/Pointer.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
 import type {
     default as Popup,
     PopupFieldsObject,
     PopupFieldsTree
-} from './Popup/Popup';
+} from './Popup/Popup.js';
 
 import ChartNavigationComposition from '../../Core/Chart/ChartNavigationComposition.js';
 import D from '../../Core/Defaults.js';
@@ -68,7 +68,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Globals' {
+declare module '../../Core/Globals.js' {
     interface GlobalsBase {
         // TODO: NavigationBindings is a private class. Can be initialized
         // through either stock-tools or annotations modules. If the class will
@@ -79,7 +79,7 @@ declare module '../../Core/Globals' {
 }
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         navigationBindings?: NavigationBindings;
         /** @requires modules/annotations */
@@ -88,7 +88,7 @@ declare module '../../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module '../../Core/PointerEvent' {
+declare module '../../Core/PointerEvent.js' {
     interface PointerEvent {
         activeAnnotation?: boolean;
     }

@@ -11,7 +11,7 @@
  *
  * */
 
-import type AST from '../../../Core/Renderer/HTML/AST';
+import type AST from '../../../Core/Renderer/HTML/AST.js';
 
 /**
  * Options for configuring markers for annotations.

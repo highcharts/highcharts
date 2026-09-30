@@ -4,7 +4,7 @@
  *
  * */
 
-import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
+import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions.js';
 
 /* *
  *

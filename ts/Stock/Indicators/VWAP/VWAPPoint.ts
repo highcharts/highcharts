@@ -13,8 +13,8 @@
  *
  * */
 
-import type VWAPIndicator from './VWAPIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type VWAPIndicator from './VWAPIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

@@ -13,8 +13,8 @@
  *
  * */
 
-import type StochasticIndicator from './StochasticIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type StochasticIndicator from './StochasticIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

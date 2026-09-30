@@ -16,9 +16,9 @@
  *
  * */
 
-import type MapLinePointOptions from './MapLinePointOptions';
-import type MapLineSeries from './MapLineSeries';
-import type MapPoint from '../Map/MapPoint';
+import type MapLinePointOptions from './MapLinePointOptions.js';
+import type MapLineSeries from './MapLineSeries.js';
+import type MapPoint from '../Map/MapPoint.js';
 
 /* *
  *

@@ -22,15 +22,15 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import type { GridEvent } from '../../Core/GridUtils';
-import type DataTable from '../../../Data/DataTable';
-import type RowPinningView from './RowPinningView';
+import type Grid from '../../Core/Grid.js';
+import type { GridEvent } from '../../Core/GridUtils.js';
+import type DataTable from '../../../Data/DataTable.js';
+import type RowPinningView from './RowPinningView.js';
 import type {
     RowObject as RowObjectType,
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
-import type { RowId as DataProviderRowId } from '../../Core/Data/DataProvider';
+} from '../../../Data/DataTable.js';
+import type { RowId as DataProviderRowId } from '../../Core/Data/DataProvider.js';
 
 import {
     hasDataTableProvider
@@ -252,7 +252,7 @@ export interface RowPinningLangA11yOptions {
     };
 }
 
-declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
+declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions.js' {
     interface CellContextMenuBuiltInActionIdRegistry {
         pinRowTop: never;
         pinRowBottom: never;
@@ -264,7 +264,7 @@ declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * Language options for the row pinning feature.
@@ -313,7 +313,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Accessibility/A11yOptions' {
+declare module '../../Core/Accessibility/A11yOptions.js' {
     interface A11yAnnouncementsOptions {
         /**
          * Enable accessibility announcements for row pinning changes.
@@ -331,13 +331,13 @@ declare module '../../Core/Accessibility/A11yOptions' {
     }
 }
 
-declare module '../../Core/Grid' {
+declare module '../../Core/Grid.js' {
     export default interface Grid {
         rowPinning?: RowPinningController;
     }
 }
 
-declare module '../../Core/Table/Table' {
+declare module '../../Core/Table/Table.js' {
     export default interface Table {
         rowPinningView?: RowPinningView;
     }

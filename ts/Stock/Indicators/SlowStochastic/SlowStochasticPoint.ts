@@ -13,8 +13,8 @@
  *
  * */
 
-import type SlowStochasticIndicator from './SlowStochasticIndicator';
-import type StochasticPoint from '../Stochastic/StochasticPoint';
+import type SlowStochasticIndicator from './SlowStochasticIndicator.js';
+import type StochasticPoint from '../Stochastic/StochasticPoint.js';
 
 /* *
  *

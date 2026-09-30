@@ -19,11 +19,11 @@
  * */
 import DataConverter, {
     type Type as DataConverterType
-} from './DataConverter';
+} from './DataConverter.js';
 import type {
     Column as DataTableColumn,
     ColumnCollection as DataTableColumnCollection
-} from '../DataTable';
+} from '../DataTable.js';
 
 import { isNumber } from '../../Shared/Utilities.js';
 

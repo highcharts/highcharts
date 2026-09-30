@@ -20,11 +20,11 @@
  *
  * */
 
-import type Axis from './Axis';
-import type Point from '../Series/Point';
-import type Position3DObject from '../Renderer/Position3DObject';
-import type RadialAxis from './RadialAxis';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type Axis from './Axis.js';
+import type Point from '../Series/Point.js';
+import type Position3DObject from '../Renderer/Position3DObject.js';
+import type RadialAxis from './RadialAxis.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
 import type Tick from './Tick.js';
 
 import Axis3DDefaults from './Axis3DDefaults.js';
@@ -48,21 +48,21 @@ import { addEvent, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         axis3D?: Axis3DAdditions;
     }
 }
 
 /** @internal */
-declare module '../Renderer/Position3DObject' {
+declare module '../Renderer/Position3DObject.js' {
     interface Position3DObject {
         matrix?: Array<number>;
     }
 }
 
 /** @internal */
-declare module '../Series/PointBase' {
+declare module '../Series/PointBase.js' {
     interface PointBase {
         crosshairPos?: number;
         axisXpos?: number;

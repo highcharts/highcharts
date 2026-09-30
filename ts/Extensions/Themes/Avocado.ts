@@ -22,9 +22,9 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type { DefaultOptions } from '../../Core/Options';
-import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { DefaultOptions } from '../../Core/Options.js';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType.js';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;

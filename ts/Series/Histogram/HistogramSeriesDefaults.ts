@@ -18,7 +18,7 @@
  *
  * */
 
-import type HistogramSeriesOptions from './HistogramSeriesOptions';
+import type HistogramSeriesOptions from './HistogramSeriesOptions.js';
 
 /* *
  *

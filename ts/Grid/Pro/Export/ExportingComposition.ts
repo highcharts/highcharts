@@ -22,7 +22,7 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
+import type Grid from '../../Core/Grid.js';
 
 import { defaultOptions } from '../../Core/Defaults.js';
 import Exporting from './Exporting.js';
@@ -67,7 +67,7 @@ function initExporting(this: Grid): void {
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * Options for the exporting.
@@ -123,7 +123,7 @@ declare module '../../Core/Options' {
         }
     }
 }
-declare module '../../Core/Grid' {
+declare module '../../Core/Grid.js' {
     export default interface Grid {
         exporting?: Exporting;
     }

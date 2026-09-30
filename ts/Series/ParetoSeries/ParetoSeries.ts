@@ -18,8 +18,8 @@
  *
  * */
 
-import type ParetoPoint from './ParetoPoint';
-import type ParetoSeriesOptions from './ParetoSeriesOptions';
+import type ParetoPoint from './ParetoPoint.js';
+import type ParetoSeriesOptions from './ParetoSeriesOptions.js';
 
 import DerivedComposition from '../DerivedComposition.js';
 import ParetoSeriesDefaults from './ParetoSeriesDefaults.js';
@@ -182,7 +182,7 @@ DerivedComposition.compose(ParetoSeries);
 /**
  * @internal
  */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pareto: typeof ParetoSeries;
     }

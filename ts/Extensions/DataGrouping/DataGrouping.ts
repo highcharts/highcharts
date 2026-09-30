@@ -18,10 +18,10 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Series from '../../Core/Series/Series';
-import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
-import type Tooltip from '../../Core/Tooltip';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Series from '../../Core/Series/Series.js';
+import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject.js';
+import type Tooltip from '../../Core/Tooltip.js';
 
 import DataGroupingAxisComposition from './DataGroupingAxisComposition.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';

@@ -18,8 +18,8 @@
  *
  * */
 
-import type BulletPointOptions from './BulletPointOptions';
-import type BulletSeries from './BulletSeries';
+import type BulletPointOptions from './BulletPointOptions.js';
+import type BulletSeries from './BulletSeries.js';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';

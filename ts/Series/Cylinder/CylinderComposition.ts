@@ -21,15 +21,15 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Position3DObject from '../../Core/Renderer/Position3DObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Position3DObject from '../../Core/Renderer/Position3DObject.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 
 import H from '../../Core/Globals.js';
 const {
@@ -48,7 +48,7 @@ import { extend } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+declare module '../../Core/Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         /**
          * @internal

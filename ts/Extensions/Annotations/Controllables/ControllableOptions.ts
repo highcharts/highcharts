@@ -19,21 +19,21 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../../Core/Renderer/AlignObject';
-import type { AnnotationPoint } from '../AnnotationSeries';
-import type ColorType from '../../../Core/Color/ColorType';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type ControlTargetOptions from '../ControlTargetOptions';
-import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
+} from '../../../Core/Renderer/AlignObject.js';
+import type { AnnotationPoint } from '../AnnotationSeries.js';
+import type ColorType from '../../../Core/Color/ColorType.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type ControlTargetOptions from '../ControlTargetOptions.js';
+import type DashStyleValue from '../../../Core/Renderer/DashStyleValue.js';
 import type {
     DataLabelsOverflowValue
-} from '../../../Core/Series/DataLabelOptions';
-import type Templating from '../../../Core/Templating';
+} from '../../../Core/Series/DataLabelOptions.js';
+import type Templating from '../../../Core/Templating.js';
 import type {
     ShadowOptionsObject
-} from '../../../Core/Renderer/ShadowOptionsObject';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType';
+} from '../../../Core/Renderer/ShadowOptionsObject.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
+import type { SymbolKey } from '../../../Core/Renderer/SVG/SymbolType.js';
 
 /* *
  *

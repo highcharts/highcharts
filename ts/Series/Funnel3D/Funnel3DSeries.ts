@@ -21,10 +21,10 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import Funnel3DComposition from './Funnel3DComposition.js';
 import Funnel3DSeriesDefaults from './Funnel3DSeriesDefaults.js';
@@ -382,7 +382,7 @@ extend(Funnel3DSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         funnel3d: typeof Funnel3DSeries;
     }

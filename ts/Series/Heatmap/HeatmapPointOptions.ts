@@ -16,8 +16,8 @@
  *
  * */
 
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
 
 /* *
  *

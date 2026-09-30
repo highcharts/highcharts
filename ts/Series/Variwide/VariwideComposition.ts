@@ -20,12 +20,12 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type Tick from '../../Core/Axis/Tick';
-import type VariwideSeries from './VariwideSeries';
+import type Axis from '../../Core/Axis/Axis.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type Tick from '../../Core/Axis/Tick.js';
+import type VariwideSeries from './VariwideSeries.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -38,14 +38,14 @@ import { addEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         variwide?: boolean;
         zData?: Array<number>;
     }
 }
 
-declare module '../../Core/Axis/TickBase' {
+declare module '../../Core/Axis/TickBase.js' {
     interface TickBase {
         postTranslate(
             xy: PositionObject,

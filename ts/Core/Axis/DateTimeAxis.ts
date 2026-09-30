@@ -18,11 +18,11 @@
  *
  * */
 
-import type Axis from './Axis';
-import type AxisOptions from './AxisOptions';
-import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time';
-import type { TypedArray } from '../../Shared/Types';
+import type Axis from './Axis.js';
+import type AxisOptions from './AxisOptions.js';
+import type TickPositionsArray from './TickPositionsArray.js';
+import type Time from '../Time.js';
+import type { TypedArray } from '../../Shared/Types.js';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -41,7 +41,7 @@ import { timeUnits } from '../Utilities.js';
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
         getTimeTicks(
@@ -57,7 +57,7 @@ declare module './AxisComposition' {
 }
 
 /** @internal */
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     interface AxisOptions {
         dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
         units?: Array<[Time.TimeUnit, (Array<number>|null)]>;
@@ -65,13 +65,13 @@ declare module './AxisOptions' {
 }
 
 /** @internal */
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis.Composition;
     }
 }
 
-declare module '../Series/SeriesOptions' {
+declare module '../Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * If no x values are given for the points in a series, `pointInterval`
@@ -127,7 +127,7 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
-declare module './TimeTicksInfoObject' {
+declare module './TimeTicksInfoObject.js' {
     interface TimeTicksInfoObject extends Time.TimeNormalizedObject {
         // Nothing to add
     }

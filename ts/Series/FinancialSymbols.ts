@@ -1,7 +1,7 @@
 'use strict';
 
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import H from '../Core/Globals.js';
 import { pushUnique } from '../Shared/Utilities.js';
 const { composed } = H;
@@ -9,7 +9,7 @@ const { composed } = H;
 /* *
  * Declarations
  * */
-declare module '../Core/Renderer/SVG/SymbolType' {
+declare module '../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         hlc: SymbolFunction;
         ohlc: SymbolFunction;

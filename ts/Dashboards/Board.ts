@@ -25,16 +25,16 @@
  *
  * */
 
-import type Component from './Components/Component';
-import type { Options as ComponentOptions } from './Components/Component';
-import type ComponentType from './Components/ComponentType';
-import type DataPoolOptions from '../Data/DataPoolOptions';
-import type { DeepPartial } from '../Shared/Types';
-import type EditMode from './EditMode/EditMode';
-import type { Options as EditModeOptions } from './EditMode/EditMode';
-import type Fullscreen from './EditMode/Fullscreen';
-import type { Options as LayoutOptions } from './Layout/Layout';
-import type { MountedComponent } from './Actions/Bindings';
+import type Component from './Components/Component.js';
+import type { Options as ComponentOptions } from './Components/Component.js';
+import type ComponentType from './Components/ComponentType.js';
+import type DataPoolOptions from '../Data/DataPoolOptions.js';
+import type { DeepPartial } from '../Shared/Types.js';
+import type EditMode from './EditMode/EditMode.js';
+import type { Options as EditModeOptions } from './EditMode/EditMode.js';
+import type Fullscreen from './EditMode/Fullscreen.js';
+import type { Options as LayoutOptions } from './Layout/Layout.js';
+import type { MountedComponent } from './Actions/Bindings.js';
 
 import Bindings from './Actions/Bindings.js';
 import ComponentRegistry from './Components/ComponentRegistry.js';

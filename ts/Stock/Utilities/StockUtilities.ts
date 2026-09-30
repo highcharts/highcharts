@@ -18,7 +18,7 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
+import type Chart from '../../Core/Chart/Chart.js';
 import { defined } from '../../Shared/Utilities.js';
 
 /* *

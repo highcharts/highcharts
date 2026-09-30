@@ -18,10 +18,10 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type VariwidePointOptions from './VariwidePointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type VariwidePointOptions from './VariwidePointOptions.js';
 
 /* *
  *

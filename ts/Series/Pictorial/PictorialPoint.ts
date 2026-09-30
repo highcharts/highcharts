@@ -16,10 +16,10 @@
  *
  * */
 
-import type ColumnPointType from '../Column/ColumnPoint';
-import type PictorialPointOptions from './PictorialPointOptions';
-import type PictorialSeries from './PictorialSeries';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type ColumnPointType from '../Column/ColumnPoint.js';
+import type PictorialPointOptions from './PictorialPointOptions.js';
+import type PictorialSeries from './PictorialSeries.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PictorialUtilities from './PictorialUtilities.js';

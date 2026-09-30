@@ -11,7 +11,7 @@
 
 'use strict';
 
-import type PaletteOptions from './PaletteOptions';
+import type PaletteOptions from './PaletteOptions.js';
 
 /**
  * The palette object specifies colors for the charts and how to apply them.

@@ -26,9 +26,9 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type DataConnector from '../Connectors/DataConnector';
-import type HTMLTableConverterOptions from './HTMLTableConverterOptions';
+} from '../DataEvent.js';
+import type DataConnector from '../Connectors/DataConnector.js';
+import type HTMLTableConverterOptions from './HTMLTableConverterOptions.js';
 
 import DataConverter from './DataConverter.js';
 import type {
@@ -548,7 +548,7 @@ class HTMLTableConverter extends DataConverter {
  *
  * */
 
-declare module './DataConverterType' {
+declare module './DataConverterType.js' {
     interface DataConverterTypes {
         HTMLTable: typeof HTMLTableConverter;
     }

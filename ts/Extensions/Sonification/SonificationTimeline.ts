@@ -14,9 +14,9 @@
 
 'use strict';
 
-import type SonificationSpeaker from './SonificationSpeaker';
-import type Chart from '../../Core/Chart/Chart';
-import type Point from '../../Core/Series/Point';
+import type SonificationSpeaker from './SonificationSpeaker.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Point from '../../Core/Series/Point.js';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';

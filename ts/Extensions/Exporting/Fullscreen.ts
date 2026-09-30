@@ -26,7 +26,7 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
+import type Chart from '../../Core/Chart/Chart.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
@@ -39,7 +39,7 @@ import { addEvent, fireEvent, pushUnique } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /**
          * @name Highcharts.Chart#fullscreen
@@ -50,7 +50,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/Chart/ChartOptions' {
+declare module '../../Core/Chart/ChartOptions.js' {
     interface ChartEventsOptions {
         /**
          * Fires when a fullscreen is closed through the context menu item,

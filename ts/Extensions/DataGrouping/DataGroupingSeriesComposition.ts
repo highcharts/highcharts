@@ -21,20 +21,20 @@
 import type {
     ApproximationArray,
     ApproximationKeyValue
-} from './ApproximationType';
-import type Axis from '../../Core/Axis/Axis';
-import type DataGroupingOptions from './DataGroupingOptions';
-import type { ColumnCollection } from '../../Data/DataTable';
-import type IndicatorBase from '../../Stock/Indicators/IndicatorBase';
-import type Point from '../../Core/Series/Point';
+} from './ApproximationType.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type DataGroupingOptions from './DataGroupingOptions.js';
+import type { ColumnCollection } from '../../Data/DataTable.js';
+import type IndicatorBase from '../../Stock/Indicators/IndicatorBase.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
-import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type { TypedArray } from '../../Shared/Types';
+} from '../../Core/Series/PointOptions.js';
+import type Series from '../../Core/Series/Series.js';
+import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject.js';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType.js';
+import type { TypedArray } from '../../Shared/Types.js';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
@@ -64,13 +64,13 @@ import { error } from '../../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Axis/TimeTicksInfoObject' {
+declare module '../../Core/Axis/TimeTicksInfoObject.js' {
     interface TimeTicksInfoObject {
         gapSize?: number;
     }
 }
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /**
          * Highcharts Stock only. If a point object is created by data
@@ -96,7 +96,7 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         allGroupedTable?: DataTableCore;

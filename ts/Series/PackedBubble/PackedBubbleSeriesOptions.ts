@@ -20,19 +20,19 @@ import type {
     BubbleSeriesOptions,
     BubbleSeriesTooltipOptions,
     BubbleSizeByValue
-} from '../Bubble/BubbleSeriesOptions';
-import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOptions';
-import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
-import type PackedBubbleLayout from './PackedBubbleLayout';
-import type PackedBubblePointOptions from './PackedBubblePointOptions';
+} from '../Bubble/BubbleSeriesOptions.js';
+import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOptions.js';
+import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions.js';
+import type PackedBubbleLayout from './PackedBubbleLayout.js';
+import type PackedBubblePointOptions from './PackedBubblePointOptions.js';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
+} from '../../Core/Series/PointOptions.js';
 
 /* *
  *

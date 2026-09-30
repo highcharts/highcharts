@@ -20,7 +20,7 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
+import type Point from '../../Core/Series/Point.js';
 
 import QuadTreeNode from './QuadTreeNode.js';
 

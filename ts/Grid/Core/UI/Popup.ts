@@ -23,8 +23,8 @@
  *
  * */
 
-import type Grid from '../Grid';
-import type Button from './Button';
+import type Grid from '../Grid.js';
+import type Button from './Button.js';
 
 import GridUtils from '../GridUtils.js';
 import Globals from '../Globals.js';

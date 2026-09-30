@@ -23,7 +23,7 @@
  *
  * */
 
-import type { CellRendererTypeRegistry } from './CellRendererType';
+import type { CellRendererTypeRegistry } from './CellRendererType.js';
 
 
 /* *

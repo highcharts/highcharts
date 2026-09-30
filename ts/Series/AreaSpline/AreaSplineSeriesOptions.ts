@@ -16,8 +16,8 @@
  *
  * */
 
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type AreaSeriesOptions from '../Area/AreaSeriesOptions.js';
 
 /* *
  *

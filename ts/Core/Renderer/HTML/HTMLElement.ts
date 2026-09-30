@@ -18,11 +18,11 @@
  *
  * */
 
-import type BBoxObject from '../BBoxObject';
-import type CSSObject from '../CSSObject';
+import type BBoxObject from '../BBoxObject.js';
+import type CSSObject from '../CSSObject.js';
 import type {
     HTMLDOMElement
-} from '../DOMElementType';
+} from '../DOMElementType.js';
 import type SVGRenderer from '../SVG/SVGRenderer.js';
 
 import AST from './AST.js';
@@ -46,7 +46,7 @@ import {
  *
  * */
 
-declare module '../SVG/SVGRendererBase' {
+declare module '../SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         /** @requires Core/Renderer/HTML/HTMLElement */
         html(str: string, x: number, y: number): HTMLElement;

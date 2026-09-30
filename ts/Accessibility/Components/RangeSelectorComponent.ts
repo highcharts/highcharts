@@ -22,9 +22,9 @@
  * */
 
 
-import type Accessibility from '../Accessibility';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Accessibility from '../Accessibility.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import Announcer from '../Utils/Announcer.js';

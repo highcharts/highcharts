@@ -18,10 +18,10 @@
  *
  * */
 
-import type HLCPointOptions from './HLCPointOptions';
-import type HLCSeries from './HLCSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type HLCPointOptions from './HLCPointOptions.js';
+import type HLCSeries from './HLCSeries.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

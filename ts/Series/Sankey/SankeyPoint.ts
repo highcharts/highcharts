@@ -20,8 +20,8 @@
  *
  * */
 
-import type SankeyPointOptions from './SankeyPointOptions';
-import type SankeySeries from './SankeySeries';
+import type SankeyPointOptions from './SankeyPointOptions.js';
+import type SankeySeries from './SankeySeries.js';
 
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';

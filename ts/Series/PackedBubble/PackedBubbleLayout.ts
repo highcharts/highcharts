@@ -18,12 +18,12 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type PackedBubblePoint from './PackedBubblePoint';
-import type PackedBubbleSeries from './PackedBubbleSeries';
-import type Point from '../../Core/Series/Point';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
+import type Chart from '../../Core/Chart/Chart.js';
+import type PackedBubblePoint from './PackedBubblePoint.js';
+import type PackedBubbleSeries from './PackedBubbleSeries.js';
+import type Point from '../../Core/Series/Point.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
+import type Series from '../../Core/Series/Series.js';
 
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
@@ -37,7 +37,7 @@ import { addEvent, defined } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
         allParentNodes: Array<PackedBubblePoint>;

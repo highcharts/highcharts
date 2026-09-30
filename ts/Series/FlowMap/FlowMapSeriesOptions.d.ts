@@ -16,8 +16,8 @@
  *
  * */
 
-import MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions';
-import type { MarkerEndOptions } from './FlowMapPointOptions';
+import MapLineSeriesOptions from '../MapLine/MapLineSeriesOptions.js';
+import type { MarkerEndOptions } from './FlowMapPointOptions.js';
 
 
 /* *

@@ -18,10 +18,10 @@
 import type {
     ChaikinOptions,
     ChaikinParamsOptions
-} from './ChaikinOptions';
-import type ChaikinPoint from './ChaikinPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './ChaikinOptions.js';
+import type ChaikinPoint from './ChaikinPoint.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import AD from '../AD/ADIndicator.js'; // For historic reasons, AD is built into Chaikin
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -212,7 +212,7 @@ extend(ChaikinIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
     }

@@ -22,10 +22,10 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
-import type Table from '../../Core/Table/Table';
-import type TableRow from '../../Core/Table/Body/TableRow';
-import type { TreeProjectionState } from './TreeViewTypes';
+import type { RowId } from '../../Core/Data/DataProvider.js';
+import type Table from '../../Core/Table/Table.js';
+import type TableRow from '../../Core/Table/Body/TableRow.js';
+import type { TreeProjectionState } from './TreeViewTypes.js';
 
 import { defined } from '../../../Shared/Utilities.js';
 

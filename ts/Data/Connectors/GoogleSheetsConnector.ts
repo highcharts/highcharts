@@ -27,13 +27,13 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions';
-import type { GoogleSpreadsheetJSON } from '../Converters/GoogleSheetsConverterOptions';
+} from '../DataEvent.js';
+import type GoogleSheetsConnectorOptions from './GoogleSheetsConnectorOptions.js';
+import type { GoogleSpreadsheetJSON } from '../Converters/GoogleSheetsConverterOptions.js';
 import type {
     ColumnCollection as DataTableColumnCollection
-} from '../DataTable';
-import type { AnyRecord } from '../../Shared/Types';
+} from '../DataTable.js';
+import type { AnyRecord } from '../../Shared/Types.js';
 
 import DataConnector, {
     type Event as DataConnectorEvent
@@ -344,7 +344,7 @@ export function buildQueryRange(
  *
  * */
 
-declare module './DataConnectorType' {
+declare module './DataConnectorType.js' {
     interface DataConnectorTypes {
         GoogleSheets: typeof GoogleSheetsConnector;
     }

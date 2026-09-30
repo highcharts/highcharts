@@ -21,10 +21,10 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type { DefaultOptions } from '../../Core/Options';
-import type Fibonacci from '../Annotations/Types/Fibonacci';
-import type Measure from '../Annotations/Types/Measure';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { DefaultOptions } from '../../Core/Options.js';
+import type Fibonacci from '../Annotations/Types/Fibonacci.js';
+import type Measure from '../Annotations/Types/Measure.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';

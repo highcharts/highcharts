@@ -18,11 +18,11 @@
  *
  * */
 
-import type GaugePointOptions from './GaugePointOptions';
-import type GaugeSeries from './GaugeSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type GaugePointOptions from './GaugePointOptions.js';
+import type GaugeSeries from './GaugeSeries.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

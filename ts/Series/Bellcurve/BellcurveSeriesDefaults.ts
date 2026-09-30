@@ -19,7 +19,7 @@
  *
  * */
 
-import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
+import type BellcurveSeriesOptions from './BellcurveSeriesOptions.js';
 
 /* *
  *

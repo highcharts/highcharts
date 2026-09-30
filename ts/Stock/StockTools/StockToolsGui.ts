@@ -20,15 +20,15 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type ChartOptions from '../../Core/Chart/ChartOptions';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type NavigationBindings from '../../Extensions/Annotations/NavigationBindings';
-import type Options from '../../Core/Options';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ChartOptions from '../../Core/Chart/ChartOptions.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
+import type Options from '../../Core/Options.js';
 import type {
     LangStockToolsOptions,
     StockToolsOptions
-} from './StockToolsOptions';
+} from './StockToolsOptions.js';
 
 import D from '../../Core/Defaults.js';
 const { setOptions } = D;
@@ -45,7 +45,7 @@ import { addEvent, getStyle, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         stockTools?: Toolbar;
         /** @requires modules/stock-tools */
@@ -54,7 +54,7 @@ declare module '../../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
     }

@@ -18,9 +18,9 @@
  *
  * */
 
-import type { AlignValue } from '../Renderer/AlignObject';
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type AxisComposition from './AxisComposition';
+import type { AlignValue } from '../Renderer/AlignObject.js';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type AxisComposition from './AxisComposition.js';
 import type {
     AxisCollectionKey,
     AxisCrosshairOptions,
@@ -31,25 +31,25 @@ import type {
     AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
-} from './AxisOptions';
-import type AxisBase from './AxisBase';
-import type { AxisType, AxisTypeOptions } from './AxisType';
-import type Chart from '../Chart/Chart';
-import type { ColorAxisMarkerOptions } from './Color/ColorAxisOptions';
-import type CSSObject from '../Renderer/CSSObject';
-import type { DeepPartial, TypedArray } from '../../Shared/Types';
-import type { EventCallback } from '../Callback';
-import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
-import type Point from '../Series/Point';
-import type PointerEvent from '../PointerEvent';
-import type PositionObject from '../Renderer/PositionObject';
-import type Series from '../Series/Series';
-import type SizeObject from '../Renderer/SizeObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type TickPositionsArray from './TickPositionsArray';
+} from './AxisOptions.js';
+import type AxisBase from './AxisBase.js';
+import type { AxisType, AxisTypeOptions } from './AxisType.js';
+import type Chart from '../Chart/Chart.js';
+import type { ColorAxisMarkerOptions } from './Color/ColorAxisOptions.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type { DeepPartial, TypedArray } from '../../Shared/Types.js';
+import type { EventCallback } from '../Callback.js';
+import type FontMetricsObject from '../Renderer/FontMetricsObject.js';
+import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand.js';
+import type Point from '../Series/Point.js';
+import type PointerEvent from '../PointerEvent.js';
+import type PositionObject from '../Renderer/PositionObject.js';
+import type Series from '../Series/Series.js';
+import type SizeObject from '../Renderer/SizeObject.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type TickPositionsArray from './TickPositionsArray.js';
 
 import { animObject } from '../Animation/AnimationUtilities.js';
 import AxisDefaults from './AxisDefaults.js';
@@ -109,7 +109,7 @@ extend(defaultOptions, { xAxis, yAxis: merge(xAxis, yAxis) });
  *
  * */
 
-declare module '../Series/SeriesOptions' {
+declare module '../Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * When this is true, the series will not cause the Y axis to cross

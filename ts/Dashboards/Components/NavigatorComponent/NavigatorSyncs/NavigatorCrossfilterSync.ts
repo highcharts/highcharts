@@ -21,14 +21,14 @@
  *
  * */
 
-import type { AxisExtremesObject } from '../../../Plugins/HighchartsTypes';
-import type { SyncPair } from '../../Sync/Sync';
+import type { AxisExtremesObject } from '../../../Plugins/HighchartsTypes.js';
+import type { SyncPair } from '../../Sync/Sync.js';
 import type NavigatorComponent from '../NavigatorComponent.js';
 import type {
     CrossfilterSyncOptions
-} from '../NavigatorComponentOptions';
+} from '../NavigatorComponentOptions.js';
 
-import Component from '../../Component';
+import Component from '../../Component.js';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
 import { addEvent } from '../../../../Shared/Utilities.js';

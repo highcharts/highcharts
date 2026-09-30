@@ -13,8 +13,8 @@
  *
  * */
 
-import type ATRIndicator from './ATRIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type ATRIndicator from './ATRIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

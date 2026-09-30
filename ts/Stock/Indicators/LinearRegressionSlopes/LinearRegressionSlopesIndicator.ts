@@ -21,8 +21,8 @@
 import type {
     LinearRegressionOptions,
     RegressionLineParametersObject
-} from '../LinearRegression/LinearRegressionOptions';
-import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
+} from '../LinearRegression/LinearRegressionOptions.js';
+import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -116,7 +116,7 @@ extend(LinearRegressionSlopesIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         linearregressionslope: typeof LinearRegressionSlopesIndicator;
         linearRegressionSlope: typeof LinearRegressionSlopesIndicator;

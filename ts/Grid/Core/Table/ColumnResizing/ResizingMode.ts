@@ -23,10 +23,10 @@
  *
  * */
 
-import type { ColumnResizingMode } from './ColumnResizing';
-import type Table from '../Table';
+import type { ColumnResizingMode } from './ColumnResizing.js';
+import type Table from '../Table.js';
 import type Column from '../Column.js';
-import type ColumnsResizer from '../Actions/ColumnsResizer';
+import type ColumnsResizer from '../Actions/ColumnsResizer.js';
 
 import { measureWidthOverhead } from '../../GridUtils.js';
 import { clamp, defined } from '../../../../Shared/Utilities.js';

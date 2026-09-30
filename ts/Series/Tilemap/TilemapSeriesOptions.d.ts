@@ -18,13 +18,13 @@
  *
  * */
 
-import type HeatmapSeriesOptions from '../Heatmap/HeatmapSeriesOptions';
+import type HeatmapSeriesOptions from '../Heatmap/HeatmapSeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TilemapPointOptions from './TilemapPointOptions';
+} from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type TilemapPointOptions from './TilemapPointOptions.js';
 
 /* *
  *

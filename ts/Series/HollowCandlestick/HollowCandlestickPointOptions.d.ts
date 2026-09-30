@@ -16,7 +16,7 @@
  *
  * */
 
-import CandlestickPointOptions from '../Candlestick/CandlestickPointOptions';
+import CandlestickPointOptions from '../Candlestick/CandlestickPointOptions.js';
 
 /* *
  *

@@ -18,9 +18,9 @@
  *
  * */
 
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
-import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions.js';
+import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType.js';
 
 import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import rect from '../../Core/Renderer/SVG/Symbols.js';

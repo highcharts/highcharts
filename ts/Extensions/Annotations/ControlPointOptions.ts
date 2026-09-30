@@ -4,14 +4,14 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type { AnnotationEventObject } from './EventEmitter';
-import type Controllable from './Controllables/Controllable';
-import type ControlPoint from './ControlPoint';
-import type ControlTarget from './ControlTarget';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+import type Annotation from './Annotation.js';
+import type { AnnotationEventObject } from './EventEmitter.js';
+import type Controllable from './Controllables/Controllable.js';
+import type ControlPoint from './ControlPoint.js';
+import type ControlTarget from './ControlTarget.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
 
 /* *
  *

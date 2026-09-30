@@ -18,24 +18,24 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type ColorType from '../Color/ColorType';
-import type { EventCallback } from '../Callback';
-import type PointBase from './PointBase';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type ColorType from '../Color/ColorType.js';
+import type { EventCallback } from '../Callback.js';
+import type PointBase from './PointBase.js';
 import type {
     PointEventsOptions,
     PointMarkerOptions,
     PointOptions,
     PointShortOptions
-} from './PointOptions';
-import type Series from './Series';
-import type { StatesOptionsKey } from './StatesOptions';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGLabel from '../Renderer/SVG/SVGLabel';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type { SymbolKey } from '../Renderer/SVG/SymbolType';
-import type { DeepPartial } from '../../Shared/Types';
+} from './PointOptions.js';
+import type Series from './Series.js';
+import type { StatesOptionsKey } from './StatesOptions.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../Renderer/SVG/SVGLabel.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 import AST from '../Renderer/HTML/AST.js';
 import { animObject } from '../Animation/AnimationUtilities.js';
@@ -68,7 +68,7 @@ import { uniqueKey } from '../Utilities.js';
  * */
 
 /** @internal */
-declare module './PointBase' {
+declare module './PointBase.js' {
     interface PointBase {
         className?: string;
         events?: PointEventsOptions;

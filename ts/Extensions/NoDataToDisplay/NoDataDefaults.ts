@@ -21,8 +21,8 @@
  *
  * */
 
-import type { LangOptions } from '../../Core/Options';
-import type { NoDataOptions } from './NoDataOptions';
+import type { LangOptions } from '../../Core/Options.js';
+import type { NoDataOptions } from './NoDataOptions.js';
 
 /* *
  *

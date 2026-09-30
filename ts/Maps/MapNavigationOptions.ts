@@ -19,9 +19,9 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
+} from '../Core/Renderer/AlignObject.js';
+import type CSSObject from '../Core/Renderer/CSSObject.js';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject.js';
 
 /* *
  *
@@ -29,7 +29,7 @@ import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
  *
  * */
 
-declare module '../Core/Options' {
+declare module '../Core/Options.js' {
     interface Options {
         /**
          * The `mapNavigation` option handles buttons for navigation in addition to

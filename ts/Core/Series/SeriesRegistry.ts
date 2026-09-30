@@ -18,8 +18,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type { SeriesTypeRegistry } from './SeriesType';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { SeriesTypeRegistry } from './SeriesType.js';
 import type Series from './Series.js';
 
 import H from '../Globals.js';

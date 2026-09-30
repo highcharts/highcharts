@@ -21,8 +21,8 @@
  *
  * */
 
-import type Funnel3DPointOptions from './Funnel3DPointOptions';
-import type Funnel3DSeries from './Funnel3DSeries';
+import type Funnel3DPointOptions from './Funnel3DPointOptions.js';
+import type Funnel3DSeries from './Funnel3DSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend } from '../../Shared/Utilities.js';
 const {

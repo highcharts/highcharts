@@ -18,9 +18,9 @@
  *
  * */
 
-import type OHLCPointOptions from './OHLCPointOptions';
-import type OHLCSeries from './OHLCSeries';
-import type Series from './../../Core/Series/Series';
+import type OHLCPointOptions from './OHLCPointOptions.js';
+import type OHLCSeries from './OHLCSeries.js';
+import type Series from './../../Core/Series/Series.js';
 
 import Point from './../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

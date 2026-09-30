@@ -17,18 +17,18 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type { BoostSeriesComposition } from './BoostSeries';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type { BoostSeriesComposition } from './BoostSeries.js';
 import type {
     BoostTargetAdditions,
     BoostTargetObject
-} from './BoostTargetObject';
-import type Chart from '../../Core/Chart/Chart';
-import type Pointer from '../../Core/Pointer';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { TypedArray } from '../../Shared/Types';
+} from './BoostTargetObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Pointer from '../../Core/Pointer.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type { TypedArray } from '../../Shared/Types.js';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
@@ -57,7 +57,7 @@ export declare class BoostChartComposition extends Chart {
 }
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostChartAdditions;

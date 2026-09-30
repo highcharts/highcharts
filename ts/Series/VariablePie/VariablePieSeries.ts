@@ -19,9 +19,9 @@
  *  Imports
  *
  * */
-import type DataLabel from '../../Core/Series/DataLabel';
-import type VariablePiePoint from './VariablePiePoint';
-import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
+import type DataLabel from '../../Core/Series/DataLabel.js';
+import type VariablePiePoint from './VariablePiePoint.js';
+import type VariablePieSeriesOptions from './VariablePieSeriesOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -43,7 +43,7 @@ import {
  *
  * */
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         maxPxSize?: number;
         minPxSize?: number;
@@ -411,7 +411,7 @@ extend(VariablePieSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         variablepie: typeof VariablePieSeries;
     }

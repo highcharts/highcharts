@@ -20,17 +20,17 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
+import type { AnyRecord } from '../../Shared/Types.js';
 import type {
     State as DataCursorState,
     TableId as DataCursorTableId,
     Type as DataCursorType
 } from '../../Data/DataCursor.js';
-import type { JSONArray, JSONObject } from '../JSON';
+import type { JSONArray, JSONObject } from '../JSON.js';
 
 import DataCursor from '../../Data/DataCursor.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable.js';
 
 /* *
  *

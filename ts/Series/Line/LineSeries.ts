@@ -18,13 +18,13 @@
  *
  * */
 
-import type LinePoint from './LinePoint';
-import type LineSeriesOptions from './LineSeriesOptions';
-import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
-import type SplineSeries from '../Spline/SplineSeries';
-import type SplinePoint from '../Spline/SplinePoint';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type LinePoint from './LinePoint.js';
+import type LineSeriesOptions from './LineSeriesOptions.js';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions.js';
+import type SplineSeries from '../Spline/SplineSeries.js';
+import type SplinePoint from '../Spline/SplinePoint.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -366,7 +366,7 @@ interface LineSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         line: typeof LineSeries;
     }

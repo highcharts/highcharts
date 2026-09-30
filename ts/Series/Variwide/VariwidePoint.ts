@@ -20,8 +20,8 @@
  *
  * */
 
-import type VariwidePointOptions from './VariwidePointOptions';
-import type VariwideSeries from './VariwideSeries';
+import type VariwidePointOptions from './VariwidePointOptions.js';
+import type VariwideSeries from './VariwideSeries.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { isNumber } from '../../Shared/Utilities.js';
@@ -35,7 +35,7 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         crosshairWidth?: VariwidePoint['crosshairWidth'];
     }

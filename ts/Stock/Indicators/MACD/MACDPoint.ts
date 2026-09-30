@@ -13,8 +13,8 @@
  *
  * */
 
-import type MACDIndicator from './MACDIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type MACDIndicator from './MACDIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

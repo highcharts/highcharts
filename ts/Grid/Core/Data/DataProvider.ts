@@ -22,15 +22,15 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type DataTable from '../../../Data/DataTable.js';
 import type {
     RowObject as RowObjectType,
     CellType as DataTableCellType,
     Column as DataTableColumnType
-} from '../../../Data/DataTable';
+} from '../../../Data/DataTable.js';
 import { defined } from '../../../Shared/Utilities.js';
-import type QueryingController from '../Querying/QueryingController';
-import type { ColumnDataType } from '../Table/Column';
+import type QueryingController from '../Querying/QueryingController.js';
+import type { ColumnDataType } from '../Table/Column.js';
 
 
 /**

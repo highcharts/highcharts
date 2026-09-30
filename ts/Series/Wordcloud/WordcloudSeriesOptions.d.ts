@@ -20,14 +20,14 @@
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+} from '../Column/ColumnSeriesOptions.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type WordcloudPointOptions from './WordcloudPointOptions';
+} from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type WordcloudPointOptions from './WordcloudPointOptions.js';
 
 /* *
  *

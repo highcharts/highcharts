@@ -16,8 +16,8 @@
  *
  * */
 
-import type { MapBounds } from './MapViewOptions';
-import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
+import type { MapBounds } from './MapViewOptions.js';
+import type { ProjectionRegistryName } from './Projections/ProjectionRegistry.js';
 
 /* *
  *

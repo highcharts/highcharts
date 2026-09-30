@@ -17,16 +17,16 @@
 
 'use strict';
 
-import type CSSJSONObject from '../CSSJSONObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type Layout from './Layout';
-import type { Options as CellOptions } from './Cell';
+import type CSSJSONObject from '../CSSJSONObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type Layout from './Layout.js';
+import type { Options as CellOptions } from './Cell.js';
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import {
     defined,
     fireEvent,

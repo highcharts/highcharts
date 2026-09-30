@@ -21,17 +21,17 @@
 import type {
     AxisOptions,
     AxisSetExtremesEventObject
-} from '../../Core/Axis/AxisOptions';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+} from '../../Core/Axis/AxisOptions.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type {
     RangeSelectorButtonOptions,
     RangeSelectorOptions,
     RangeSelectorPositionOptions
-} from './RangeSelectorOptions';
-import type Time from '../../Core/Time';
-import type { ButtonThemeStatesObject } from '../../Core/Renderer/SVG/ButtonThemeObject';
+} from './RangeSelectorOptions.js';
+import type Time from '../../Core/Time.js';
+import type { ButtonThemeStatesObject } from '../../Core/Renderer/SVG/ButtonThemeObject.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -65,7 +65,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         newMax?: number;
         range?: (number|RangeSelectorButtonOptions);
@@ -73,7 +73,7 @@ declare module '../../Core/Axis/AxisBase' {
 }
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         extraBottomMargin?: boolean;
         extraTopMargin?: boolean;
@@ -83,7 +83,7 @@ declare module '../../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module './RangeSelectorOptions' {
+declare module './RangeSelectorOptions.js' {
     export interface RangeSelectorButtonOptions {
         _offsetMax?: number;
         _offsetMin?: number;

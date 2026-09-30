@@ -15,12 +15,12 @@
  *
  * */
 
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisOptions from '../AxisOptions';
-import type ColorType from '../../Color/ColorType';
-import type GradientColor from '../../Color/GradientColor';
-import type LegendOptions from '../../Legend/LegendOptions';
-import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
+import type AnimationOptions from '../../Animation/AnimationOptions.js';
+import type AxisOptions from '../AxisOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type GradientColor from '../../Color/GradientColor.js';
+import type LegendOptions from '../../Legend/LegendOptions.js';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType.js';
 
 /* *
  *
@@ -28,7 +28,7 @@ import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
  *
  * */
 
-declare module '../../Series/SeriesOptions' {
+declare module '../../Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * When using dual or multiple color axes, this number defines which

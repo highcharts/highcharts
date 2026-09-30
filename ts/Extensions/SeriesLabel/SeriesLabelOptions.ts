@@ -10,9 +10,9 @@
  *
  * */
 
-import type { CSSObject } from '../../Core/Renderer/CSSObject';
-import type Templating from '../../Core/Templating';
-import type Series from '../../Core/Series/Series';
+import type { CSSObject } from '../../Core/Renderer/CSSObject.js';
+import type Templating from '../../Core/Templating.js';
+import type Series from '../../Core/Series/Series.js';
 
 /* *
  *

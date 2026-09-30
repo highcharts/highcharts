@@ -18,12 +18,12 @@
  *
  * */
 
-import type OrganizationPoint from './OrganizationPoint';
-import type Point from '../../Core/Series/Point';
+import type OrganizationPoint from './OrganizationPoint.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     SankeyDataLabelOptions
-} from '../Sankey/SankeyDataLabelOptions';
-import type SankeyPoint from '../Sankey/SankeyPoint';
+} from '../Sankey/SankeyDataLabelOptions.js';
+import type SankeyPoint from '../Sankey/SankeyPoint.js';
 
 /* *
  *

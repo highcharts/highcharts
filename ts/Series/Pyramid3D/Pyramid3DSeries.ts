@@ -20,8 +20,8 @@
  *
  * */
 
-import type Pyramid3DPoint from './Pyramid3DPoint';
-import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
+import type Pyramid3DPoint from './Pyramid3DPoint.js';
+import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions.js';
 
 import Pyramid3DSeriesDefaults from './Pyramid3DSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -93,7 +93,7 @@ interface Pyramid3DSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pyramid3d: typeof Pyramid3DSeries;
     }

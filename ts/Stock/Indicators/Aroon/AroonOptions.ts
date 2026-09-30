@@ -14,13 +14,13 @@
  *
  * */
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type MultipleLinesComposition from '../MultipleLinesComposition.js';
+import type { PointMarkerOptions } from '../../../Core/Series/PointOptions.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
+} from '../SMA/SMAOptions.js';
 
 /* *
  *

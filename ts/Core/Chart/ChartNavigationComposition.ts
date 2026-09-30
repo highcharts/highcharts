@@ -17,8 +17,8 @@
  *
  * */
 
-import type Chart from './Chart';
-import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions';
+import type Chart from './Chart.js';
+import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type NavigationOptions from '../../Extensions/Exporting/NavigationOptions
  * */
 
 /** @internal */
-declare module './ChartBase'{
+declare module './ChartBase.js'{
     interface ChartBase {
         navigation?: ChartNavigationComposition.Additions;
     }

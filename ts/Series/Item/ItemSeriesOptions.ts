@@ -21,13 +21,13 @@
 import type {
     ItemPointOptions,
     ItemPointMarkerOptions
-} from './ItemPointOptions';
-import type PieSeriesOptions from '../Pie/PieSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+} from './ItemPointOptions.js';
+import type PieSeriesOptions from '../Pie/PieSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

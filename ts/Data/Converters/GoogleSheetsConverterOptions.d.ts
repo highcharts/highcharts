@@ -18,9 +18,9 @@
  *
  * */
 
-import type { GoogleSheetsBeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
+import type { GoogleSheetsBeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions.js';
 
-import type { Options as DataConverterOptions } from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter.js';
 
 /* *
  *

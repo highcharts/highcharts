@@ -19,12 +19,12 @@
  * */
 
 import type Chart from '../Chart/Chart.js';
-import type { NavigatorAxisComposition } from './NavigatorAxisComposition';
-import type FlagSeries from '../../Series/Flags/FlagsSeries';
+import type { NavigatorAxisComposition } from './NavigatorAxisComposition.js';
+import type FlagSeries from '../../Series/Flags/FlagsSeries.js';
 import type Point from '../Series/Point.js';
-import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time';
-import type { TypedArray } from '../../Shared/Types';
+import type TickPositionsArray from './TickPositionsArray.js';
+import type Time from '../Time.js';
+import type { TypedArray } from '../../Shared/Types.js';
 
 import Axis from './Axis.js';
 import DataTableCore from '../../Data/DataTableCore.js';
@@ -46,7 +46,7 @@ import { error, timeUnits } from '../Utilities.js';
  *
  * */
 
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         /** @internal */
         ordinal?: OrdinalAxis.Additions;
@@ -58,21 +58,21 @@ declare module './AxisComposition' {
 }
 
 /** @internal */
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     interface AxisOptions {
         keepOrdinalPadding?: boolean;
     }
 }
 
 /** @internal */
-declare module './TimeTicksInfoObject' {
+declare module './TimeTicksInfoObject.js' {
     interface TimeTicksInfoObject {
         segmentStarts?: Array<number>;
     }
 }
 
 /** @internal */
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis.Composition;
     }

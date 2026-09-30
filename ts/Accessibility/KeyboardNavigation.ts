@@ -20,12 +20,12 @@
  *
  * */
 
-import type Accessibility from './Accessibility';
+import type Accessibility from './Accessibility.js';
 import type {
     DOMElementType,
     HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
-import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
+} from '../Core/Renderer/DOMElementType.js';
+import type KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';

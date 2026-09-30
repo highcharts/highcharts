@@ -18,9 +18,9 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
-import type Position3DObject from './Renderer/Position3DObject';
-import type PositionObject from './Renderer/PositionObject';
+import type Chart from './Chart/Chart.js';
+import type Position3DObject from './Renderer/Position3DObject.js';
+import type PositionObject from './Renderer/PositionObject.js';
 
 import H from './Globals.js';
 const { deg2rad } = H;
@@ -32,7 +32,7 @@ const { deg2rad } = H;
  * */
 
 /** @internal */
-declare module './Chart/ChartBase'{
+declare module './Chart/ChartBase.js'{
     interface ChartBase {
         scale3d?: number;
     }

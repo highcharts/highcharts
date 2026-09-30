@@ -20,9 +20,9 @@
  *
  * */
 
-import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import ArcDiagramPoint from './ArcDiagramPoint.js';
 import ArcDiagramSeriesDefaults from './ArcDiagramSeriesDefaults.js';
@@ -549,7 +549,7 @@ extend(ArcDiagramSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         arcdiagram: typeof ArcDiagramSeries;
     }

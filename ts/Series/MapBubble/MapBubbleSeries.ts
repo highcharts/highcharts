@@ -18,9 +18,9 @@
  *
  * */
 
-import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
-import type Point from '../../Core/Series/Point';
-import type PointerEvent from '../../Core/PointerEvent';
+import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
@@ -350,7 +350,7 @@ extend(MapBubbleSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         mapbubble: typeof MapBubbleSeries;
     }

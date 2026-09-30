@@ -16,10 +16,10 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type { LonLatArray } from '../../Maps/MapViewOptions';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
-import type MapLinePointOptions from '../MapLine/MapLinePointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { LonLatArray } from '../../Maps/MapViewOptions.js';
+import type { MapLonLatObject } from '../../Maps/GeoJSON.js';
+import type MapLinePointOptions from '../MapLine/MapLinePointOptions.js';
 
 
 /* *

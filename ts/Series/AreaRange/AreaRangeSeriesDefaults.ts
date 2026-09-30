@@ -18,7 +18,7 @@
  *
  * */
 
-import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
+import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions.js';
 
 /* *
  *

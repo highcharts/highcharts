@@ -20,10 +20,10 @@
  *
  * */
 
-import type OrganizationPointOptions from './OrganizationPointOptions';
-import type OrganizationSeries from './OrganizationSeries';
-import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
-import type SankeyPoint from './../Sankey/SankeyPoint';
+import type OrganizationPointOptions from './OrganizationPointOptions.js';
+import type OrganizationSeries from './OrganizationSeries.js';
+import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions.js';
+import type SankeyPoint from './../Sankey/SankeyPoint.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

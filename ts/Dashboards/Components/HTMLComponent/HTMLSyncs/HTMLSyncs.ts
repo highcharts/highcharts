@@ -21,7 +21,7 @@
  *
  * */
 
-import type { PredefinedSyncConfig } from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync.js';
 
 
 /* *

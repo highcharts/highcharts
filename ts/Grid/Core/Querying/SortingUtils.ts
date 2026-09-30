@@ -17,9 +17,9 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
-import type Grid from '../Grid';
-import type { ColumnSortingOrder } from '../Options';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
+import type Grid from '../Grid.js';
+import type { ColumnSortingOrder } from '../Options.js';
 
 /* *
  *

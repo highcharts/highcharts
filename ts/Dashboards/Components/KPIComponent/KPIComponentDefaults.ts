@@ -22,8 +22,8 @@
  * */
 
 
-import type { DeepPartial } from '../../../Shared/Types';
-import type Options from './KPIComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Options from './KPIComponentOptions.js';
 
 import Component from '../Component.js';
 

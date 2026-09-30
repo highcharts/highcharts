@@ -17,11 +17,11 @@
  *
  * */
 
-import type CircleObject from './CircleObject';
-import type GeometryObject from './GeometryObject';
-import type IntersectionObject from './IntersectionObject';
-import type PositionObject from '../Renderer/PositionObject';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type CircleObject from './CircleObject.js';
+import type GeometryObject from './GeometryObject.js';
+import type IntersectionObject from './IntersectionObject.js';
+import type PositionObject from '../Renderer/PositionObject.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
 
 import Geometry from './GeometryUtilities.js';
 import { correctFloat } from '../../Shared/Utilities.js';

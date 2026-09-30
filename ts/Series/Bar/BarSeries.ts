@@ -18,8 +18,8 @@
  *
  * */
 
-import type BarPoint from './BarPoint';
-import type BarSeriesOptions from './BarSeriesOptions';
+import type BarPoint from './BarPoint.js';
+import type BarSeriesOptions from './BarSeriesOptions.js';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -95,7 +95,7 @@ extend(BarSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         bar: typeof BarSeries;
     }

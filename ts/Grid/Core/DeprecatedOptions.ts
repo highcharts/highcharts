@@ -19,12 +19,12 @@
  *
  * */
 
-import type { Options } from './Options';
+import type { Options } from './Options.js';
 import type {
     DeprecatedOptionMatchSegment,
     DeprecatedOptionMetadata
-} from './DeprecatedOptionsMetadata';
-import type { DeepPartial } from '../../Shared/Types';
+} from './DeprecatedOptionsMetadata.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 import { error } from '../../Core/Utilities.js';
 import { isObject } from '../../Shared/Utilities.js';

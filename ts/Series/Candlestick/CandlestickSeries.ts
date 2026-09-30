@@ -18,11 +18,11 @@
  *
  * */
 
-import type CandlestickPoint from './CandlestickPoint';
-import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type CandlestickPoint from './CandlestickPoint.js';
+import type CandlestickSeriesOptions from './CandlestickSeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -198,7 +198,7 @@ interface CandlestickSeries{
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType.js'{
     interface SeriesTypeRegistry {
         candlestick: typeof CandlestickSeries;
     }

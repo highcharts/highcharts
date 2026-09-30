@@ -16,10 +16,10 @@
  *
  * */
 
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type GaugeSeriesOptions from '../Gauge/GaugeSeriesOptions';
-import type SolidGaugePointOptions from './SolidGaugePointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type GaugeSeriesOptions from '../Gauge/GaugeSeriesOptions.js';
+import type SolidGaugePointOptions from './SolidGaugePointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

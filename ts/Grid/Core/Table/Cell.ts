@@ -23,13 +23,13 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type TableRow from './Body/TableRow';
-import type HeaderRow from './Header/HeaderRow';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type TableRow from './Body/TableRow.js';
+import type HeaderRow from './Header/HeaderRow.js';
 
-import Column from './Column';
-import Row from './Row';
+import Column from './Column.js';
+import Row from './Row.js';
 import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
 import { fireEvent } from '../../../Shared/Utilities.js';

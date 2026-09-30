@@ -22,16 +22,16 @@
  * */
 
 
-import type { ConnectorOptions as ConnectorHandlerOptions } from '../ConnectorHandler';
-import type { Options as ComponentOptions } from '../Component';
+import type { ConnectorOptions as ConnectorHandlerOptions } from '../ConnectorHandler.js';
+import type { Options as ComponentOptions } from '../Component.js';
 import type {
     OptionsEntry as SyncOptionsEntry,
     OptionsRecord as SyncOptionsRecord,
     RawOptionsRecord as SyncRawOptionsRecord
-} from '../Sync/Sync';
+} from '../Sync/Sync.js';
 import type {
     Options as HighchartsOptions
-} from '../../Plugins/HighchartsTypes';
+} from '../../Plugins/HighchartsTypes.js';
 
 
 /* *

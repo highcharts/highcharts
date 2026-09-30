@@ -15,25 +15,25 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type { AlignValue } from '../Renderer/AlignObject';
-import type Axis from './Axis';
-import type Chart from '../Chart/Chart';
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type DashStyleValue from '../Renderer/DashStyleValue';
-import type { DeepPartial } from '../../Shared/Types';
-import type { EventCallback, FormatterCallback } from '../Callback';
-import type GradientColor from '../Color/GradientColor';
-import type { OptionsOverflowValue } from '../Options';
-import type Point from '../Series/Point';
-import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type { AlignValue } from '../Renderer/AlignObject.js';
+import type Axis from './Axis.js';
+import type Chart from '../Chart/Chart.js';
+import type ColorType from '../Color/ColorType.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type DashStyleValue from '../Renderer/DashStyleValue.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { EventCallback, FormatterCallback } from '../Callback.js';
+import type GradientColor from '../Color/GradientColor.js';
+import type { OptionsOverflowValue } from '../Options.js';
+import type Point from '../Series/Point.js';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType.js';
 import type {
     RangeSelectorButtonOptions
-} from '../../Stock/RangeSelector/RangeSelectorOptions';
-import type Tick from './Tick';
-import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time';
+} from '../../Stock/RangeSelector/RangeSelectorOptions.js';
+import type Tick from './Tick.js';
+import type TickPositionsArray from './TickPositionsArray.js';
+import type Time from '../Time.js';
 
 /* *
  *
@@ -41,7 +41,7 @@ import type Time from '../Time';
  *
  * */
 
-declare module '../Options'{
+declare module '../Options.js'{
     /** @internal */
     interface DefaultOptions {
         xAxis?: DeepPartial<XAxisOptions>;

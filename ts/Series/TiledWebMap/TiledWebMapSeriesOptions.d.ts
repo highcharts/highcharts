@@ -15,9 +15,9 @@
  *
  * */
 
-import type MapSeriesOptions from '../Map/MapSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { TilesProviderRegistryName } from '../../Maps/TilesProviders/TilesProviderRegistry';
+import type MapSeriesOptions from '../Map/MapSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { TilesProviderRegistryName } from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 
 /* *
  *

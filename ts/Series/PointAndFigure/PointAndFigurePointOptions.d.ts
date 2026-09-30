@@ -10,7 +10,7 @@
  *
  * */
 
-import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterPoint from '../Scatter/ScatterPoint.js';
 
 /* *
  *

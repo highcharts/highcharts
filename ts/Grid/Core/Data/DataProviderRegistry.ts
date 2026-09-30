@@ -22,7 +22,7 @@
  *
  * */
 
-import type { DataProviderTypeRegistry } from './DataProviderType';
+import type { DataProviderTypeRegistry } from './DataProviderType.js';
 
 
 /* *

@@ -26,11 +26,11 @@ import type {
     RowObject as RowObjectType,
     Column as DataTableColumnType,
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
-import type { DataProviderOptions, RowId } from '../../Core/Data/DataProvider';
-import type { ColumnDataType } from '../../Core/Table/Column';
-import type QueryingController from '../../Core/Querying/QueryingController';
-import type { DataSourceOptions } from './DataSourceHelper';
+} from '../../../Data/DataTable.js';
+import type { DataProviderOptions, RowId } from '../../Core/Data/DataProvider.js';
+import type { ColumnDataType } from '../../Core/Table/Column.js';
+import type QueryingController from '../../Core/Querying/QueryingController.js';
+import type { DataSourceOptions } from './DataSourceHelper.js';
 
 import { DataProvider } from '../../Core/Data/DataProvider.js';
 import DataProviderRegistry from '../../Core/Data/DataProviderRegistry.js';
@@ -883,7 +883,7 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
     idColumn?: string;
 }
 
-declare module '../../Core/Data/DataProviderType' {
+declare module '../../Core/Data/DataProviderType.js' {
     interface DataProviderTypeRegistry {
         remote: typeof RemoteDataProvider;
     }

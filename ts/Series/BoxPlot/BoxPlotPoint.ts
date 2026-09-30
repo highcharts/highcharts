@@ -16,15 +16,15 @@
  *
  * */
 
-import type BoxPlotPointOptions from './BoxPlotPointOptions';
-import type BoxPlotSeries from './BoxPlotSeries';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type BoxPlotPointOptions from './BoxPlotPointOptions.js';
+import type BoxPlotSeries from './BoxPlotSeries.js';
+import type ColumnPoint from '../Column/ColumnPoint.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type GradientColor from '../../Core/Color/GradientColor.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 /* *
  *

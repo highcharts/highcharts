@@ -18,10 +18,10 @@
  *
  * */
 
-import type AxisBase from './AxisBase';
-import type { XAxisOptions } from './AxisOptions';
+import type AxisBase from './AxisBase.js';
+import type { XAxisOptions } from './AxisOptions.js';
 import type Chart from '../Chart/Chart.js';
-import type { DeepPartial } from '../../Shared/Types';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 import Axis from './Axis.js';
 import D from '../Defaults.js';
@@ -34,20 +34,20 @@ import { splat, merge, addEvent } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         ZAxis: ZAxis;
     }
 }
 
-declare module '../Chart/ChartBase'{
+declare module '../Chart/ChartBase.js'{
     interface ChartBase {
         zAxis?: Array<ZAxis>;
         addZAxis(options: DeepPartial<XAxisOptions>): Axis;
     }
 }
 
-declare module '../Options' {
+declare module '../Options.js' {
     interface Options {
         /**
          * The Z axis or depth axis for 3D plots.

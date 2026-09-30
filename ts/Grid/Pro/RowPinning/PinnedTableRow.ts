@@ -18,10 +18,10 @@
  *
  * */
 
-import type Cell from '../../Core/Table/Cell';
-import type Column from '../../Core/Table/Column';
-import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
-import type { RowId } from '../../Core/Data/DataProvider';
+import type Cell from '../../Core/Table/Cell.js';
+import type Column from '../../Core/Table/Column.js';
+import type { RowObject as DataTableRowObject } from '../../../Data/DataTable.js';
+import type { RowId } from '../../Core/Data/DataProvider.js';
 
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import PinnedTableCell from './PinnedTableCell.js';

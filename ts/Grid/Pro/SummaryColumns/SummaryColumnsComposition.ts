@@ -21,22 +21,22 @@
  *
  * */
 
-import type DataModifier from '../../../Data/Modifiers/DataModifier';
-import type DataTable from '../../../Data/DataTable';
+import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
+import type DataTable from '../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
-import type { RowId } from '../../Core/Data/DataProvider';
-import type Grid from '../../Core/Grid';
-import type { GridRefreshSourceColumnIdsEvent } from '../../Core/Grid';
-import type { NoIdColumnOptions } from '../../Core/Table/Column';
-import type TableCell from '../../Core/Table/Body/TableCell';
+} from '../../../Data/DataTable.js';
+import type { RowId } from '../../Core/Data/DataProvider.js';
+import type Grid from '../../Core/Grid.js';
+import type { GridRefreshSourceColumnIdsEvent } from '../../Core/Grid.js';
+import type { NoIdColumnOptions } from '../../Core/Table/Column.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
 import type {
     TableCellGetEditabilityEvent
-} from '../../Core/Table/Body/TableCell';
-import type { IndividualColumnOptions } from '../../Core/Options';
-import type { SummaryColumnSpec } from './SummaryColumnsModifier';
-import type { AggregatorOption } from '../Aggregation/AggregationTypes';
+} from '../../Core/Table/Body/TableCell.js';
+import type { IndividualColumnOptions } from '../../Core/Options.js';
+import type { SummaryColumnSpec } from './SummaryColumnsModifier.js';
+import type { AggregatorOption } from '../Aggregation/AggregationTypes.js';
 
 import Aggregation from '../Aggregation/Aggregation.js';
 import Column from '../../Core/Table/Column.js';
@@ -633,7 +633,7 @@ function isMaterialized(grid: Grid, columnId: string): boolean {
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface IndividualColumnOptions {
         /**
          * Aggregator deriving the column value from the other columns of the

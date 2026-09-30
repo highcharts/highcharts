@@ -21,11 +21,11 @@
  *
  * */
 
-import type { AnyRecord, DeepPartial } from '../../Shared/Types';
-import type Component from '../Components/Component';
-import type { Options as ComponentOptions } from '../Components/Component';
-import type { Options as EditableOption } from '../Components/EditableOptions';
-import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
+import type { AnyRecord, DeepPartial } from '../../Shared/Types.js';
+import type Component from '../Components/Component.js';
+import type { Options as ComponentOptions } from '../Components/Component.js';
+import type { Options as EditableOption } from '../Components/EditableOptions.js';
+import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions.js';
 
 import EditRenderer from './EditRenderer.js';
 import EditGlobals from './EditGlobals.js';

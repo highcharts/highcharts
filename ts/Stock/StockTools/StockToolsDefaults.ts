@@ -23,7 +23,7 @@
 import type {
     LangOptions,
     StockToolsOptions
-} from './StockToolsOptions';
+} from './StockToolsOptions.js';
 
 /* *
  *

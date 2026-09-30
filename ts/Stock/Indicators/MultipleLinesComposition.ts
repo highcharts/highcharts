@@ -18,13 +18,13 @@
  *
  * */
 
-import type LinePoint from '../../Series/Line/LinePoint';
-import type Point from '../../Core/Series/Point';
-import type SMAIndicator from './SMA/SMAIndicator';
-import type SMAOptions from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type LinePoint from '../../Series/Line/LinePoint.js';
+import type Point from '../../Core/Series/Point.js';
+import type SMAIndicator from './SMA/SMAIndicator.js';
+import type SMAOptions from './SMA/SMAOptions.js';
+import type SMAPoint from './SMA/SMAPoint.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

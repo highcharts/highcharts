@@ -23,10 +23,10 @@
  *
  * */
 
-import type Cell from '../Cell';
-import type Column from '../Column';
-import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable';
-import type { RowId } from '../../Data/DataProvider';
+import type Cell from '../Cell.js';
+import type Column from '../Column.js';
+import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable.js';
+import type { RowId } from '../../Data/DataProvider.js';
 
 import Row from '../Row.js';
 import Table from '../Table.js';

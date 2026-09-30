@@ -20,22 +20,22 @@
  *
  * */
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions.js';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
 import type Chart from '../Core/Chart/Chart.js';
-import type ColorString from '../Core/Color/ColorString';
+import type ColorString from '../Core/Color/ColorString.js';
 import type Point from '../Core/Series/Point.js';
-import type PositionObject from '../Core/Renderer/PositionObject';
+import type PositionObject from '../Core/Renderer/PositionObject.js';
 import type Series from '../Core/Series/Series.js';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type { SVGDOMElement } from '../Core/Renderer/DOMElementType';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
+import type { SVGDOMElement } from '../Core/Renderer/DOMElementType.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
-import MapPoint from '../Series/Map/MapPoint';
+import MapPoint from '../Series/Map/MapPoint.js';
 import {
     addEvent,
     defined,
@@ -54,7 +54,7 @@ import {
  * */
 
 /** @internal */
-declare module '../Core/Renderer/SVG/SVGRendererBase' {
+declare module '../Core/Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         defIds?: Array<string>;
         idCounter?: number;
@@ -67,7 +67,7 @@ declare module '../Core/Renderer/SVG/SVGRendererBase' {
 }
 
 /** @internal */
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         /** @requires modules/pattern-fill */
         calculatePatternDimensions(
@@ -1085,7 +1085,7 @@ function onPatternScaleCorrection(
  *
  * */
 
-declare module '../Core/Color/ColorType' {
+declare module '../Core/Color/ColorType.js' {
     interface ColorTypeRegistry {
         PatternFill: PatternObject;
     }

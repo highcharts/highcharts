@@ -14,11 +14,11 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
-import type CMOPoint from './CMOPoint';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
+import type { CMOOptions, CMOParamsOptions } from './CMOOptions.js';
+import type CMOPoint from './CMOPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -201,7 +201,7 @@ interface CMOIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         cmo: typeof CMOIndicator;
     }

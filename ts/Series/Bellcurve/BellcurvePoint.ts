@@ -17,9 +17,9 @@
  *
  * */
 
-import type AreaSplinePoint from '../AreaSpline/AreaSplinePoint';
-import type BellcurvePointOptions from './BellcurvePointOptions';
-import type BellcurveSeries from './BellcurveSeries';
+import type AreaSplinePoint from '../AreaSpline/AreaSplinePoint.js';
+import type BellcurvePointOptions from './BellcurvePointOptions.js';
+import type BellcurveSeries from './BellcurveSeries.js';
 
 /* *
  *

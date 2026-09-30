@@ -13,8 +13,8 @@
  *
  * */
 
-import type TEMAPoint from '../TEMA/TEMAPoint';
-import type TEMAIndicator from '../TEMA/TEMAIndicator';
+import type TEMAPoint from '../TEMA/TEMAPoint.js';
+import type TEMAIndicator from '../TEMA/TEMAIndicator.js';
 
 /* *
  *

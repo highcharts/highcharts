@@ -16,7 +16,7 @@
  *
  * */
 
-import type Annotation from '../Annotation';
+import type Annotation from '../Annotation.js';
 
 /* *
  *

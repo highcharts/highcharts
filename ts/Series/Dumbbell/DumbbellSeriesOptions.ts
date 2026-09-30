@@ -16,15 +16,15 @@
  *
  * */
 
-import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type DumbbellPointOptions from './DumbbellPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DumbbellPointOptions from './DumbbellPointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
+} from '../../Core/Series/PointOptions.js';
 
 /* *
  *

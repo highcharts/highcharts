@@ -18,8 +18,8 @@
  *
  * */
 
-import type { LangOptions } from '../../Core/Options';
-import type { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions';
+import type { LangOptions } from '../../Core/Options.js';
+import type { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions.js';
 
 /* *
  *
@@ -208,7 +208,7 @@ export interface LangAccessibilityZoomOptions {
     resetZoomButton: string;
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface LangOptions {
         accessibility?: LangAccessibilityOptions;
     }

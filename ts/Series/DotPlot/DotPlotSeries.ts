@@ -28,10 +28,10 @@
  *
  * */
 
-import type DotPlotPoint from './DotPlotPoint';
-import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type DotPlotPoint from './DotPlotPoint.js';
+import type DotPlotSeriesOptions from './DotPlotSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DotPlotSeriesDefaults from './DotPlotSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -240,7 +240,7 @@ extend(DotPlotSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         dotplot: typeof DotPlotSeries;
     }

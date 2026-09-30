@@ -19,12 +19,12 @@
  *
  * */
 
-import type CorePoint from '../Core/Series/Point';
-import type CorePointOptions from '../Core/Series/PointOptions';
-import type SankeySeries from '../Series/Sankey/SankeySeries';
-import type TreegraphSeries from '../Series/Treegraph/TreegraphSeries';
-import type CoreSeries from '../Core/Series/Series';
-import type ColorType from '../Core/Color/ColorType';
+import type CorePoint from '../Core/Series/Point.js';
+import type CorePointOptions from '../Core/Series/PointOptions.js';
+import type SankeySeries from '../Series/Sankey/SankeySeries.js';
+import type TreegraphSeries from '../Series/Treegraph/TreegraphSeries.js';
+import type CoreSeries from '../Core/Series/Series.js';
+import type ColorType from '../Core/Color/ColorType.js';
 
 import Color from '../Core/Color/Color.js';
 import {

@@ -21,14 +21,14 @@
  *
  * */
 
-import type { RowId } from '../../../Core/Data/DataProvider';
-import type TableCell from '../../../Core/Table/Body/TableCell';
-import type TreeProjectionController from '../Projection/TreeProjectionController';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type TreeProjectionController from '../Projection/TreeProjectionController.js';
 import type {
     TreeProjectionRowState,
     TreeProjectionState
-} from '../TreeViewTypes';
-import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer';
+} from '../TreeViewTypes.js';
+import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer.js';
 
 import { getTreeViewRowId } from '../TreeViewRowResolver.js';
 import { defined } from '../../../../Shared/Utilities.js';

@@ -16,10 +16,10 @@
  *
  * */
 
-import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
-import type RenkoPointOptions from './RenkoPointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type ColorType from '../../Core/Color/ColorType';
+import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions.js';
+import type RenkoPointOptions from './RenkoPointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
 
 /* *
  *

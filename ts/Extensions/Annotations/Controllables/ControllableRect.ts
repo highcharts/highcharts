@@ -11,10 +11,10 @@
  *
  * */
 
-import type Annotation from '../Annotation';
-import type AnnotationMockPointOptionsObject from '../AnnotationMockPointOptionsObject';
-import type { ControllableShapeOptions } from './ControllableOptions';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type Annotation from '../Annotation.js';
+import type AnnotationMockPointOptionsObject from '../AnnotationMockPointOptionsObject.js';
+import type { ControllableShapeOptions } from './ControllableOptions.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
@@ -186,7 +186,7 @@ interface ControllableRect {
  * */
 
 /** @internal */
-declare module './ControllableType' {
+declare module './ControllableType.js' {
     interface ControllableShapeTypeRegistry {
         rect: typeof ControllableRect;
     }

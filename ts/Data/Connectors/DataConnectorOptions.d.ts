@@ -21,8 +21,8 @@
  *
  * */
 
-import type { DataTableValue } from '../DataTableOptions';
-import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType';
+import type { DataTableValue } from '../DataTableOptions.js';
+import type { DataModifierTypeOptions } from '../Modifiers/DataModifierType.js';
 
 /* *
  *

@@ -4,8 +4,8 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *

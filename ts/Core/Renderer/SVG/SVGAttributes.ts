@@ -16,13 +16,13 @@
  *
  * */
 
-import type ColorType from '../../Color/ColorType';
+import type ColorType from '../../Color/ColorType.js';
 import type {
     CSSObject,
     CursorValue
-} from '../CSSObject';
-import type DashStyleValue from '../DashStyleValue';
-import type SVGPath from './SVGPath';
+} from '../CSSObject.js';
+import type DashStyleValue from '../DashStyleValue.js';
+import type SVGPath from './SVGPath.js';
 
 /* *
  *

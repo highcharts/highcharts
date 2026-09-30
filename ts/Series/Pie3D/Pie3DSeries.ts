@@ -20,9 +20,9 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
-import type Series from '../../Core/Series/Series';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type Series from '../../Core/Series/Series.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import H from '../../Core/Globals.js';
 const {
@@ -46,7 +46,7 @@ import { extend, pushUnique } from '../../Shared/Utilities.js';
  * Internal types
  * @internal
  */
-declare module '../Pie/PieSeriesOptions' {
+declare module '../Pie/PieSeriesOptions.js' {
     interface PieSeriesOptions {
         depth?: number;
         edgeColor?: ColorString;

@@ -15,16 +15,16 @@
  *  Imports
  *
  * */
-import type Chart from '../../Core/Chart/Chart';
+import type Chart from '../../Core/Chart/Chart.js';
 import type {
     ChartAfterAddSeriesCallbackFunction
-} from '../../Core/Chart/ChartOptions';
-import type Point from '../../Core/Series/Point';
+} from '../../Core/Chart/ChartOptions.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions.js';
-import type Series from '../../Core/Series/Series';
+import type Series from '../../Core/Series/Series.js';
 
 import {
     addEvent,
@@ -39,13 +39,13 @@ import {
  *  Declarations
  *
  * */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         hasInitializedLinkedSeries?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         enabledDataSorting?: boolean;
     }

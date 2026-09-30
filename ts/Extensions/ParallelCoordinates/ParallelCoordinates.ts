@@ -20,12 +20,12 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
-import type { DeepPartial } from '../../Shared/Types';
-import type Options from '../../Core/Options';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type Options from '../../Core/Options.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
 
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
@@ -39,7 +39,7 @@ import { addEvent, defined, merge, splat } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         hasParallelCoordinates?: boolean;
         parallelInfo?: ParallelCoordinates.InfoObject;

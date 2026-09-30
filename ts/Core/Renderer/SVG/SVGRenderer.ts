@@ -18,26 +18,26 @@
  *
  * */
 
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type BBoxObject from '../BBoxObject';
-import type ButtonThemeObject from './ButtonThemeObject';
-import type ColorString from '../../Color/ColorString';
-import type CSSObject from '../CSSObject';
+import type AnimationOptions from '../../Animation/AnimationOptions.js';
+import type BBoxObject from '../BBoxObject.js';
+import type ButtonThemeObject from './ButtonThemeObject.js';
+import type ColorString from '../../Color/ColorString.js';
+import type CSSObject from '../CSSObject.js';
 import type {
     DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
-} from '../DOMElementType';
-import type { EventCallback } from '../../../Core/Callback';
-import type FontMetricsObject from '../FontMetricsObject';
-import type { PaletteOptions } from '../../Color/PaletteOptions';
-import type PositionObject from '../PositionObject';
-import type ShadowOptionsObject from '../ShadowOptionsObject';
-import type SVGAttributes from './SVGAttributes';
-import type SVGPath from './SVGPath';
-import type SVGRendererBase from './SVGRendererBase';
-import type SymbolOptions from './SymbolOptions';
-import type { SymbolKey } from './SymbolType';
+} from '../DOMElementType.js';
+import type { EventCallback } from '../../../Core/Callback.js';
+import type FontMetricsObject from '../FontMetricsObject.js';
+import type { PaletteOptions } from '../../Color/PaletteOptions.js';
+import type PositionObject from '../PositionObject.js';
+import type ShadowOptionsObject from '../ShadowOptionsObject.js';
+import type SVGAttributes from './SVGAttributes.js';
+import type SVGPath from './SVGPath.js';
+import type SVGRendererBase from './SVGRendererBase.js';
+import type SymbolOptions from './SymbolOptions.js';
+import type { SymbolKey } from './SymbolType.js';
 
 import AST from '../HTML/AST.js';
 import D from '../../Defaults.js';

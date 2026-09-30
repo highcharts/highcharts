@@ -20,14 +20,14 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
-import type RectangleObject from '../../Core/Renderer/RectangleObject';
-import type Series from '../../Core/Series/Series';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Point from '../../Core/Series/Point.js';
+import type RectangleObject from '../../Core/Renderer/RectangleObject.js';
+import type Series from '../../Core/Series/Series.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
-} from './XRangePointOptions';
+} from './XRangePointOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -42,7 +42,7 @@ import { extend } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         tooltipDateKeys?: Array<string>;
     }

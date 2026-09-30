@@ -11,27 +11,27 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
+import type AnnotationChart from '../AnnotationChart.js';
 import type {
     AnnotationDraggableValue,
     AnnotationOptions,
     AnnotationShapeOptionsOptions,
     AnnotationTypeOptions
-} from '../AnnotationOptions';
-import type { AnnotationEventObject } from '../EventEmitter';
-import type Axis from '../../../Core/Axis/Axis';
-import type Controllable from '../Controllables/Controllable';
+} from '../AnnotationOptions.js';
+import type { AnnotationEventObject } from '../EventEmitter.js';
+import type Axis from '../../../Core/Axis/Axis.js';
+import type Controllable from '../Controllables/Controllable.js';
 import type {
     ControllableLabelOptions,
     ControllableShapeOptions
-} from '../Controllables/ControllableOptions';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type DashStyleValue from '../../../Core/Renderer/DashStyleValue';
-import type Templating from '../../../Core/Templating';
-import type MockPointOptions from '../AnnotationMockPointOptionsObject';
-import type Point from '../../../Core/Series/Point';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+} from '../Controllables/ControllableOptions.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type DashStyleValue from '../../../Core/Renderer/DashStyleValue.js';
+import type Templating from '../../../Core/Templating.js';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject.js';
+import type Point from '../../../Core/Series/Point.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
 
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
@@ -1402,7 +1402,7 @@ namespace Measure {
  * */
 
 /** @internal */
-declare module './AnnotationType'{
+declare module './AnnotationType.js'{
     interface AnnotationTypeRegistry {
         measure: typeof Measure;
     }

@@ -39,7 +39,7 @@ const {
     fireEventOnWrappedOrUnwrappedElement
 } = CU;
 
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     clamp,
     internalClearTimeout,

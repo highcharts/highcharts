@@ -16,11 +16,11 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type LinePointOptions from './LinePointOptions';
-import type LineSeries from './LineSeries';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type LinePointOptions from './LinePointOptions.js';
+import type LineSeries from './LineSeries.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
 
 /* *
  *
@@ -29,7 +29,7 @@ import type Series from '../../Core/Series/Series';
  * */
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         clientX?: number;
         dist?: number;

@@ -24,8 +24,8 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
-import type DataTable from '../DataTable';
+import type DataEvent from '../DataEvent.js';
+import type DataTable from '../DataTable.js';
 
 
 /* *

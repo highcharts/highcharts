@@ -16,8 +16,8 @@
  *
  * */
 
-import type AreaPointOptions from './AreaPointOptions';
-import type AreaSeries from './AreaSeries';
+import type AreaPointOptions from './AreaPointOptions.js';
+import type AreaSeries from './AreaSeries.js';
 import LinePoint from '../Line/LinePoint.js';
 
 /* *
@@ -27,7 +27,7 @@ import LinePoint from '../Line/LinePoint.js';
  * */
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         // Kept in PointBase so non-area point classes used by spline logic
         // (for example SplinePoint in getPointSpline) can safely read it.

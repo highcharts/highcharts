@@ -18,26 +18,26 @@
  *
  * */
 
-import type AlignObject from '../AlignObject';
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type BBoxObject from '../BBoxObject';
-import type ColorString from '../../Color/ColorString';
-import type ColorType from '../../Color/ColorType';
-import type CSSObject from '../CSSObject';
-import type { DeepPartial } from '../../../Shared/Types';
+import type AlignObject from '../AlignObject.js';
+import type AnimationOptions from '../../Animation/AnimationOptions.js';
+import type BBoxObject from '../BBoxObject.js';
+import type ColorString from '../../Color/ColorString.js';
+import type ColorType from '../../Color/ColorType.js';
+import type CSSObject from '../CSSObject.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 import type {
     DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
-} from '../DOMElementType';
-import type FontMetricsObject from '../FontMetricsObject';
-import type GradientColor from '../../Color/GradientColor';
-import type RectangleObject from '../RectangleObject';
-import type ShadowOptionsObject from '../ShadowOptionsObject';
-import type SVGAttributes from './SVGAttributes';
-import type SVGElementBase from './SVGElementBase';
-import type SVGPath from './SVGPath';
-import type SVGRenderer from './SVGRenderer';
+} from '../DOMElementType.js';
+import type FontMetricsObject from '../FontMetricsObject.js';
+import type GradientColor from '../../Color/GradientColor.js';
+import type RectangleObject from '../RectangleObject.js';
+import type ShadowOptionsObject from '../ShadowOptionsObject.js';
+import type SVGAttributes from './SVGAttributes.js';
+import type SVGElementBase from './SVGElementBase.js';
+import type SVGPath from './SVGPath.js';
+import type SVGRenderer from './SVGRenderer.js';
 
 import {
     animate,
@@ -85,7 +85,7 @@ import { uniqueKey } from '../../Utilities.js';
  *
  * */
 
-declare module '../CSSObject' {
+declare module '../CSSObject.js' {
     interface CSSObject {
         strokeWidth?: (number|string);
     }

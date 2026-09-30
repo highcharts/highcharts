@@ -26,19 +26,19 @@ import type {
     Chart,
     Highcharts as H,
     Options as HighchartsOptions
-} from '../../Plugins/HighchartsTypes';
-import type Cell from '../../Layout/Cell';
+} from '../../Plugins/HighchartsTypes.js';
+import type Cell from '../../Layout/Cell.js';
 import type {
     CrossfilterSyncOptions,
     Options
-} from './NavigatorComponentOptions';
-import type { DeepPartial } from '../../../Shared/Types';
+} from './NavigatorComponentOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 import type {
     FilterModifierOptions
-} from '../../../Data/Modifiers/FilterModifierOptions';
+} from '../../../Data/Modifiers/FilterModifierOptions.js';
 import type {
     Range as NavigatorSyncRange
-} from './NavigatorSyncs/NavigatorSyncUtils';
+} from './NavigatorSyncs/NavigatorSyncUtils.js';
 
 
 import Component from '../Component.js';

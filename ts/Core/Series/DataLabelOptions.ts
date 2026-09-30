@@ -19,14 +19,14 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Renderer/AlignObject';
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type ColorString from '../Color/ColorString';
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type Point from './Point';
-import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
-import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
+} from '../Renderer/AlignObject.js';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type ColorString from '../Color/ColorString.js';
+import type ColorType from '../Color/ColorType.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type Point from './Point.js';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject.js';
+import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType.js';
 
 /* *
  *

@@ -13,8 +13,8 @@
  *
  * */
 
-import type NATRIndicator from './NATRIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type NATRIndicator from './NATRIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

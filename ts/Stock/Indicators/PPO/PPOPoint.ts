@@ -12,8 +12,8 @@
  *  Imports
  *
  * */
-import type PPOIndicator from './PPOIndicator';
-import type EMAPoint from '../EMA/EMAPoint';
+import type PPOIndicator from './PPOIndicator.js';
+import type EMAPoint from '../EMA/EMAPoint.js';
 
 /* *
  *

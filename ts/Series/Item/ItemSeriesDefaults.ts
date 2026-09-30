@@ -20,7 +20,7 @@
  *
  * */
 
-import type ItemSeriesOptions from './ItemSeriesOptions';
+import type ItemSeriesOptions from './ItemSeriesOptions.js';
 
 import SeriesDefaults from '../../Core/Series/SeriesDefaults.js';
 import { merge } from '../../Shared/Utilities.js';

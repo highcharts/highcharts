@@ -18,7 +18,7 @@
  * */
 
 
-import type { ComponentTypeRegistry } from './ComponentType';
+import type { ComponentTypeRegistry } from './ComponentType.js';
 
 /* *
  *

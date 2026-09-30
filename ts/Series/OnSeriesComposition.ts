@@ -18,13 +18,13 @@
  *
  * */
 
-import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
-import type Point from '../Core/Series/Point';
+import type CoreSeriesOptions from '../Core/Series/SeriesOptions.js';
+import type Point from '../Core/Series/Point.js';
 
 import ColumnSeries from './Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
-import SplinePoint from './Spline/SplinePoint';
+import SplinePoint from './Spline/SplinePoint.js';
 const { prototype: columnProto } = ColumnSeries;
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;

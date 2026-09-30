@@ -16,9 +16,9 @@
  *
  * */
 
-import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
-import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
-import type { TreegraphLinkOptions } from './TreegraphLink';
+import type TreemapPointOptions from '../Treemap/TreemapPointOptions.js';
+import type { CollapseButtonOptions } from './TreegraphSeriesOptions.js';
+import type { TreegraphLinkOptions } from './TreegraphLink.js';
 
 /* *
  *

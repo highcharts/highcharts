@@ -17,21 +17,21 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
 import type Chart from '../../Core/Chart/Chart.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition.js';
 import type {
     NavigatorHandlesOptions,
     NavigatorOptions
-} from './NavigatorOptions';
-import type PointerEvent from '../../Core/PointerEvent';
-import type ScrollbarOptions from '../Scrollbar/ScrollbarOptions';
+} from './NavigatorOptions.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type ScrollbarOptions from '../Scrollbar/ScrollbarOptions.js';
 import type Series from '../../Core/Series/Series.js';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 import ChartNavigatorComposition from './ChartNavigatorComposition.js';

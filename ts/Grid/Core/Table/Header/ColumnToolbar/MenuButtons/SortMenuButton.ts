@@ -23,9 +23,9 @@
  *
  * */
 
-import type MenuPopup from '../MenuPopup';
-import type { LangOptions } from '../../../../Options';
-import type Column from '../../../Column';
+import type MenuPopup from '../MenuPopup.js';
+import type { LangOptions } from '../../../../Options.js';
+import type Column from '../../../Column.js';
 
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import StateHelpers from '../StateHelpers.js';

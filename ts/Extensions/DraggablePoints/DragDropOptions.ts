@@ -4,14 +4,14 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type { CursorValue } from '../../Core/Renderer/CSSObject';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { CursorValue } from '../../Core/Renderer/CSSObject.js';
 import type {
     PointDragCallbackFunction,
     PointDragStartCallbackFunction,
     PointDropCallbackFunction
-} from './DraggablePoints';
+} from './DraggablePoints.js';
 
 /* *
  *
@@ -311,7 +311,7 @@ export interface DragDropHandleOptions {
     zIndex?: number;
 }
 
-declare module '../../Core/Chart/ChartOptions' {
+declare module '../../Core/Chart/ChartOptions.js' {
     interface ChartOptions {
         /**
          * Deprecated. Use
@@ -346,7 +346,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointEventsOptions {
         /**
          * Callback that fires while dragging a point. The mouse event is

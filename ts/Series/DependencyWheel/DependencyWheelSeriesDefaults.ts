@@ -20,7 +20,7 @@
  *
  * */
 
-import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
+import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions.js';
 
 /* *
  *

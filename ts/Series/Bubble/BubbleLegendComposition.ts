@@ -19,11 +19,11 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Legend from '../../Core/Legend/Legend';
-import type Options from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Legend from '../../Core/Legend/Legend.js';
+import type Options from '../../Core/Options.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
 
 import BubbleLegendDefaults from './BubbleLegendDefaults.js';
 import BubbleLegendItem from './BubbleLegendItem.js';

@@ -11,17 +11,17 @@
  *
  * */
 
-import type { AnnotationEventObject } from '../EventEmitter';
+import type { AnnotationEventObject } from '../EventEmitter.js';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions
-} from '../AnnotationOptions';
-import type Controllable from '../Controllables/Controllable';
-import type { ControlPointOptionsObject } from '../ControlPointOptions';
+} from '../AnnotationOptions.js';
+import type Controllable from '../Controllables/Controllable.js';
+import type { ControlPointOptionsObject } from '../ControlPointOptions.js';
 import type {
     AnnotationMockPointOptionsObject
-} from '../AnnotationMockPointOptionsObject';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
+} from '../AnnotationMockPointOptionsObject.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
 
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
@@ -384,7 +384,7 @@ namespace Tunnel {
  * */
 
 /** @internal */
-declare module './AnnotationType'{
+declare module './AnnotationType.js'{
     interface AnnotationTypeRegistry {
         tunnel: typeof Tunnel;
     }

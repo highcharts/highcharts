@@ -16,9 +16,9 @@
  *
  * */
 
-import type AreaPoint from '../Area/AreaPoint';
-import type AreaSplinePointOptions from './AreaSplinePointOptions';
-import type AreaSplineSeries from './AreaSplineSeries';
+import type AreaPoint from '../Area/AreaPoint.js';
+import type AreaSplinePointOptions from './AreaSplinePointOptions.js';
+import type AreaSplineSeries from './AreaSplineSeries.js';
 import SplinePoint from '../Spline/SplinePoint.js';
 
 /* *

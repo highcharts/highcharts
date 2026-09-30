@@ -16,8 +16,8 @@
  *
  * */
 
-import type { NonPlotOptions } from './SeriesOptions';
-import type Series from './Series';
+import type { NonPlotOptions } from './SeriesOptions.js';
+import type Series from './Series.js';
 
 /* *
  *

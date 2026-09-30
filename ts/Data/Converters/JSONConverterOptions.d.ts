@@ -21,9 +21,9 @@
 import type {
     ColumnIdsOptions,
     JSONBeforeParseCallbackFunction
-} from '../Connectors/JSONConnectorOptions';
+} from '../Connectors/JSONConnectorOptions.js';
 
-import type { Options as DataConverterOptions } from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter.js';
 
 /* *
  *

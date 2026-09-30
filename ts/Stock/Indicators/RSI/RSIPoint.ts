@@ -13,8 +13,8 @@
  *
  * */
 
-import type RSIIndicator from './RSIIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type RSIIndicator from './RSIIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

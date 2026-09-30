@@ -12,8 +12,8 @@
  *
  * */
 
-import type SupertrendIndicator from './SupertrendIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type SupertrendIndicator from './SupertrendIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

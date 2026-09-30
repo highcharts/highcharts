@@ -20,11 +20,11 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Series from '../../Core/Series/Series';
-import type Point from '../../Core/Series/Point';
-import type { Options } from '../../Core/Options';
-import type { PropMetrics } from './TimelineFromChart';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Series from '../../Core/Series/Series.js';
+import type Point from '../../Core/Series/Point.js';
+import type { Options } from '../../Core/Options.js';
+import type { PropMetrics } from './TimelineFromChart.js';
 
 /* *
  *
@@ -58,7 +58,7 @@ import {
 } from '../../Shared/Utilities.js';
 
 
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /**
          * Sonification capabilities for the chart.
@@ -95,7 +95,7 @@ declare module '../../Core/Chart/ChartBase' {
         updateSonificationEnabled: () => void;
     }
 }
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /**
          * Play a sonification of a series.
@@ -109,7 +109,7 @@ declare module '../../Core/Series/SeriesBase' {
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
     }
 }
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /**
          * Play a sonification of a point.
@@ -123,7 +123,7 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
-declare module '../../Core/GlobalsBase' {
+declare module '../../Core/GlobalsBase.js' {
     interface GlobalsBase {
         /**
          * Global Sonification classes and objects.
@@ -722,11 +722,11 @@ namespace Sonification {
         /**
          * SynthPatch presets.
          */
-        InstrumentPresets?: typeof import('./InstrumentPresets').default;
+        InstrumentPresets?: typeof import('./InstrumentPresets.js').default;
         /**
          * Musical scale presets.
          */
-        Scales?: typeof import('./Scales').default;
+        Scales?: typeof import('./Scales.js').default;
         /**
          * SynthPatch class.
          */

@@ -21,7 +21,7 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
+import type ColorType from '../../Core/Color/ColorType.js';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;

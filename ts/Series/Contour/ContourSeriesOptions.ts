@@ -16,8 +16,8 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions.js';
 
 
 /* *

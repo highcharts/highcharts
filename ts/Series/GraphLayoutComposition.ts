@@ -20,9 +20,9 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
-import type Point from '../Core/Series/Point';
-import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout';
+import type Chart from '../Core/Chart/Chart.js';
+import type Point from '../Core/Series/Point.js';
+import type RFLayout from './Networkgraph/ReingoldFruchtermanLayout.js';
 
 import { setAnimation } from '../Core/Animation/AnimationUtilities.js';
 import H from '../Core/Globals.js';
@@ -35,13 +35,13 @@ import { addEvent, fireEvent, pushUnique } from '../Shared/Utilities.js';
  *
  * */
 
-declare module '../Core/Chart/ChartBase' {
+declare module '../Core/Chart/ChartBase.js' {
     interface ChartBase {
         graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
 
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         dispX?: number;
         dispY?: number;
@@ -55,7 +55,7 @@ declare module '../Core/Series/PointBase' {
     }
 }
 
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         forces?: Array<string>;
     }

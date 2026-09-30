@@ -20,8 +20,8 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type ParallelCoordinatesOptions from './ParallelCoordinatesOptions';
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
+import type ParallelCoordinatesOptions from './ParallelCoordinatesOptions.js';
 
 /* *
  *

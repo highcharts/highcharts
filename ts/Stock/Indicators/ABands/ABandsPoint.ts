@@ -13,8 +13,8 @@
  *
  * */
 
-import type ABandsIndicator from './ABandsIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type ABandsIndicator from './ABandsIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

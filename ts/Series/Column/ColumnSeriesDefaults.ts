@@ -18,7 +18,7 @@
  *
  * */
 
-import type ColumnSeriesOptions from './ColumnSeriesOptions';
+import type ColumnSeriesOptions from './ColumnSeriesOptions.js';
 
 /* *
  *

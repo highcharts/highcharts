@@ -21,10 +21,10 @@
  * */
 
 import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
-import type { EventCallback } from '../../Core/Callback';
+import type { EventCallback } from '../../Core/Callback.js';
 
 import H from '../../Core/Globals.js';
-import DOMElementType from '../../Core/Renderer/DOMElementType';
+import DOMElementType from '../../Core/Renderer/DOMElementType.js';
 
 /* *
  *

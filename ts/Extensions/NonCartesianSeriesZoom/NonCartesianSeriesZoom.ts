@@ -18,11 +18,11 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Series from '../../Core/Series/Series';
-import type Point from '../../Core/Series/Point';
-import type Tooltip from '../../Core/Tooltip';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Series from '../../Core/Series/Series.js';
+import type Point from '../../Core/Series/Point.js';
+import type Tooltip from '../../Core/Tooltip.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
@@ -48,14 +48,14 @@ type Zooming = {
 };
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         dataLabelsParentGroups?: Array<SVGElement>;
         zooming?: Zooming
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Whether to zoom non-cartesian series. If `chart.zooming` is set, the

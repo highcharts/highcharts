@@ -21,13 +21,13 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type AxisResizeOptions from './AxisResizeOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type PointerEvent from '../../Core/PointerEvent';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
+import type Axis from '../../Core/Axis/Axis.js';
+import type AxisResizeOptions from './AxisResizeOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions.js';
 
 import {
     addEvent,
