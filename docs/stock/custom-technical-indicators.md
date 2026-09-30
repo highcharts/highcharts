@@ -392,7 +392,7 @@ Example configuration should look like:
   import React from 'react';
   import { useMemo } from 'react';
   import { StockChart, setHighcharts } from '@highcharts/react/Stock';
-  import { Accessibility } from "@highcharts/react/options/Accessibility";
+  import { Accessibility } from "@highcharts/react/modules/Accessibility";
   import Highcharts from 'highcharts/esm/highstock.src.js';
   import 'highcharts/esm/indicators/indicators.src.js';
   import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';

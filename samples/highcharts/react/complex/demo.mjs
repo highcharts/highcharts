@@ -2,9 +2,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Chart, Series, Title, getHighcharts, Tooltip, PlotOptions, Legend, Subtitle, Credits, YAxis, XAxis } from '@highcharts/react';
-import { Data } from '@highcharts/react/options/Data';
-import { Exporting } from '@highcharts/react/options/Exporting';
-import { Accessibility } from '@highcharts/react/options/Accessibility';
+import { Data } from '@highcharts/react/modules/Data';
+import { Exporting } from '@highcharts/react/modules/Exporting';
+import { Accessibility } from '@highcharts/react/modules/Accessibility';
 export default function ChartComponent() {
     return /*#__PURE__*/ React.createElement("div", null, /*#__PURE__*/ React.createElement(Chart, null, /*#__PURE__*/ React.createElement(Title, null, "Fruit collection"), /*#__PURE__*/ React.createElement(Subtitle, null, "Comparing apples, pears, and oranges"), /*#__PURE__*/ React.createElement(Credits, {
         href: "https://www.highcharts.com"
