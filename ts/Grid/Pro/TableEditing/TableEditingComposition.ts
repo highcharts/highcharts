@@ -365,6 +365,7 @@ declare module '../../Core/Options' {
          * Options for built-in structural table editing.
          *
          * @sample grid-pro/basic/table-editing Table editing
+         * @sample grid-pro/basic/table-editing-empty Building an empty table
          */
         tableEditing?: TableEditingOptions;
     }
