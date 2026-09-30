@@ -80,9 +80,12 @@ async function jsDocNamespace() {
             ))
     );
 
-    if (codeFiles.includes('code/highcharts.src.js')) {
+    // Main master first; `getFilePaths` returns native separators (Windows)
+    const mainMaster = path.join('code', 'highcharts.src.js');
+
+    if (codeFiles.includes(mainMaster)) {
         codeFiles.unshift(
-            ...codeFiles.splice(codeFiles.indexOf('code/highcharts.src.js'), 1)
+            ...codeFiles.splice(codeFiles.indexOf(mainMaster), 1)
         );
     }
 

@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
         "allowImportingTsExtensions": true,
-        "module": "ES2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "noEmit": true,
-        "target": "ES2022"
+        "strict": false,
+        "target": "ES2022",
+        "types": ["node"]
     }
 }

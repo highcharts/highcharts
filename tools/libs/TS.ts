@@ -3501,6 +3501,8 @@ function resolveReferenceInImportInfo (
             Path.dirname(importInfo.meta.file),
             importInfo.from
         );
+        // `./Types.js` may point to `./Types.d.ts`
+        const _fromDts = `${_from.replace(JSX, '')}.d.ts`;
 
         let _sourceInfo: (SourceInfo|undefined);
 
@@ -3516,9 +3518,9 @@ function resolveReferenceInImportInfo (
         } else if (FS.existsSync(Path.join(`${_from}.ts`))) {
             _sourceInfo =
                 getSourceInfo(`${_from}.ts`, void 0, !!importInfo.node);
-        } else if (FS.existsSync(Path.join(`${_from}.d.ts`))) {
+        } else if (FS.existsSync(Path.join(_fromDts))) {
             _sourceInfo =
-                getSourceInfo(`${_from}.d.ts`, void 0, !!importInfo.node);
+                getSourceInfo(_fromDts, void 0, !!importInfo.node);
         } else {
             return importInfo;
         }

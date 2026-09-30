@@ -10,7 +10,6 @@
  *
  * */
 
-/// <reference types="@webgpu/types" />
 'use strict';
 
 
@@ -20,8 +19,8 @@
  *
  * */
 
-import type ContourSeriesOptions from './ContourSeriesOptions';
-import type { DeepPartial } from '../../Shared/Types';
+import type ContourSeriesOptions from './ContourSeriesOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
@@ -44,6 +43,28 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/*
+ * TypeScript 6 ships WebGPU interfaces in `lib.dom`, but not the usage flag
+ * namespaces.
+ */
+declare const GPUBufferUsage: {
+    readonly COPY_DST: GPUFlagsConstant;
+    readonly INDEX: GPUFlagsConstant;
+    readonly STORAGE: GPUFlagsConstant;
+    readonly UNIFORM: GPUFlagsConstant;
+    readonly VERTEX: GPUFlagsConstant;
+};
+declare const GPUTextureUsage: {
+    readonly COPY_SRC: GPUFlagsConstant;
+    readonly RENDER_ATTACHMENT: GPUFlagsConstant;
+};
 
 
 /* *
@@ -248,7 +269,8 @@ export default class ContourSeries extends ScatterSeries {
             renderer = chart.renderer,
             canvas = series.canvas as HTMLCanvasElement,
             gpu = navigator.gpu,
-            context = series.context = canvas.getContext('webgpu');
+            context = series.context =
+                canvas.getContext('webgpu') as GPUCanvasContext | null;
 
         if (!gpu || !context) {
             error(37, false, chart);
@@ -364,12 +386,12 @@ export default class ContourSeries extends ScatterSeries {
                 device.queue.writeBuffer(
                     vertexBuffer,
                     0,
-                    vertices as GPUAllowSharedBufferSource
+                    vertices as AllowSharedBufferSource
                 );
                 device.queue.writeBuffer(
                     indexBuffer,
                     0,
-                    indices as GPUAllowSharedBufferSource
+                    indices as AllowSharedBufferSource
                 );
 
                 const vertexBufferLayout: GPUVertexBufferLayout = {
@@ -677,14 +699,14 @@ export default class ContourSeries extends ScatterSeries {
             this.device.queue.writeBuffer(
                 stopsBuffer,
                 0,
-                array as GPUAllowSharedBufferSource
+                array as AllowSharedBufferSource
             );
 
             // Write the count to the buffer
             this.device.queue.writeBuffer(
                 countBuffer,
                 0,
-                new Uint32Array([length]) as GPUAllowSharedBufferSource
+                new Uint32Array([length]) as AllowSharedBufferSource
             );
 
             if (renderFrame) {
@@ -871,14 +893,14 @@ extend(ContourSeries.prototype, {
 });
 
 // Registry
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;
     }
 }
 
 /** @internal */
-declare module '../../Core/Chart/Chart' {
+declare module '../../Core/Chart/Chart.js' {
     export default interface Chart {
         /** @internal */
         backgroundSeriesGroup?: SVGElement;
