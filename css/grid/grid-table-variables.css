@@ -204,6 +204,11 @@
         --ig-cell-column-font-family: var(--hcg-column-even-font-family, var(--hcg-column-font-family));
     }
 
+    .hcg-table tbody :where(.hcg-cell).hcg-context-menu-cell {
+        box-shadow: inset var(--ig-target-ring);
+    }
+
+    /* After the marker, so a cell that is both keeps the stronger ring. */
     .hcg-table tbody :where(.hcg-cell):focus {
         box-shadow: inset var(--ig-focus-ring);
     }
