@@ -11,7 +11,7 @@ body {
 .highcharts-tooltip {
     th {
         font-weight: normal;
-        opacity: 0.7;
+        color: var(--highcharts-neutral-color-60);
     }
 
     td {

@@ -35,7 +35,7 @@ const gaugeOptions = {
     plotOptions: {
         solidgauge: {
             dataLabels: {
-                y: -15
+                y: -18
             }
         }
     }

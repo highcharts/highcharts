@@ -85,7 +85,7 @@ export function buildIndexFromColumns(
 
     if (!separator) {
         throw new Error(
-            'TreeView: `data.treeView.input.separator` must not be empty.'
+            'TreeView: `treeView.input.separator` must not be empty.'
         );
     }
 

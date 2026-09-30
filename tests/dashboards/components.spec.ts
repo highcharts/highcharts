@@ -1419,3 +1419,52 @@ test.describe('Highcharts Component', () => {
         expect(result.tableModifiedRowCount, 'DataTable should have 1 row after extremes changed.').toBe(1);
     });
 });
+
+test.describe('Navigator Component', () => {
+    test('Destroy unregisters the chart', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
+
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error): void => {
+            pageErrors.push(error.message);
+        });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'navigator-cell' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    type: 'Navigator',
+                    renderTo: 'navigator-cell'
+                }]
+            }, true);
+
+            const component = dashboard.mountedComponents[0].component;
+            const chart = component.chart;
+
+            component.resize();
+            component.destroy();
+
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            return Highcharts.charts.includes(chart);
+        });
+
+        expect(pageErrors, 'Destroy should not raise a Highstock error.').toEqual([]);
+        expect(
+            result,
+            'Destroyed navigator chart should be removed from Highcharts.charts.'
+        ).toBe(false);
+    });
+});

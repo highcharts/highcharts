@@ -47,7 +47,7 @@ export interface PaneBackgroundOptions {
      *
      * @sample   highcharts/pane/background
      *           Pane background options
-     * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
+     * @default 'var(--highcharts-neutral-color-3)'
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -139,7 +139,7 @@ export interface PaneOptions {
      *           Speedometer gauge with multiple backgrounds
      * @requires highcharts-more
      */
-    background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
+    background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>|null;
     /**
      * The border radius of the elements of the pane. This affects the pane
      * background, plot bands and solid gauges, unless they have specific

@@ -13,9 +13,7 @@
 
 import type { AnnotationEventObject } from '../EventEmitter';
 import type {
-    AnnotationMockPointFunction,
-    AnnotationOptions,
-    AnnotationTypeOptions
+    AnnotationMockPointFunction
 } from '../AnnotationOptions';
 import type { AnnotationPointType } from '../AnnotationSeries';
 import type Controllable from '../Controllables/Controllable';
@@ -54,15 +52,15 @@ if (defaultOptions.annotations?.types) {
          */
         typeOptions: {
             /**
-             * This number defines which xAxis the point is connected to.
+             * This option defines which `xAxis` the point is connected to.
              * It refers to either the axis id or the index of the axis
-             * in the xAxis array.
+             * in the `xAxis` array.
              */
             xAxis: 0,
             /**
-             * This number defines which yAxis the point is connected to.
+             * This option defines which `yAxis` the point is connected to.
              * It refers to either the axis id or the index of the axis
-             * in the xAxis array.
+             * in the `yAxis` array.
              */
             yAxis: 0,
 
@@ -251,33 +249,6 @@ class CrookedLine extends Annotation {
     }
 }
 
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace CrookedLine {
-    /**
-     * Options for the crooked line annotation type.
-     *
-     * @sample highcharts/annotations-advanced/crooked-line/
-     *         Crooked line
-     *
-     * @product      highstock
-     * @optionparent annotations.types.crookedLine
-     */
-    export interface Options extends AnnotationOptions {
-        /**
-         * Additional options for an annotation with the type.
-         */
-        typeOptions: AnnotationTypeOptions;
-    }
-    export interface TypeOptions extends AnnotationTypeOptions {
-        points?: Array<AnnotationMockPointOptionsObject>;
-    }
-}
 
 /* *
  *

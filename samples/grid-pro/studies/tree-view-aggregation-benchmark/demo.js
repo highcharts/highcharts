@@ -179,16 +179,15 @@ async function buildGrid() {
     const start = performance.now();
     state.grid = await Grid.grid('container', {
         data: {
-            columns: sourceData.columns,
-            treeView: {
-                enabled: true,
-                input: {
-                    type: 'path',
-                    showFullPath: false
-                },
-                treeColumn: 'path',
-                expandedRowIds: []
-            }
+            columns: sourceData.columns
+        },
+        treeView: {
+            enabled: true,
+            input: {
+                type: 'path',
+                showFullPath: false
+            },
+            treeColumn: 'path'
         },
         columnDefaults: {
             width: 118,
@@ -212,9 +211,7 @@ async function buildGrid() {
             cells: {
                 format: '${value:,0f}'
             },
-            treeView: {
-                aggregator: 'SUM'
-            }
+            rowAggregator: 'SUM'
         }, {
             id: 'actual',
             header: {
@@ -223,9 +220,7 @@ async function buildGrid() {
             cells: {
                 format: '${value:,0f}'
             },
-            treeView: {
-                aggregator: 'SUM'
-            }
+            rowAggregator: 'SUM'
         }, {
             id: 'headcount',
             header: {
@@ -234,9 +229,7 @@ async function buildGrid() {
             cells: {
                 format: '{value:,0f}'
             },
-            treeView: {
-                aggregator: 'SUM'
-            }
+            rowAggregator: 'SUM'
         }, {
             id: 'utilization',
             header: {
@@ -245,9 +238,7 @@ async function buildGrid() {
             cells: {
                 format: '{(multiply 100 value):.1f}%'
             },
-            treeView: {
-                aggregator: 'AVERAGE'
-            }
+            rowAggregator: 'AVERAGE'
         }, {
             id: 'risk',
             header: {
@@ -275,9 +266,7 @@ async function buildGrid() {
                     );
                 }
             },
-            treeView: {
-                aggregator: 'MAX'
-            }
+            rowAggregator: 'MAX'
         }],
         header: [
             'path',

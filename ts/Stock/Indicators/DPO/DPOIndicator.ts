@@ -31,8 +31,7 @@ const {
 import {
     correctFloat,
     extend,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -51,10 +50,8 @@ function accumulatePoints(
     index: number,
     subtract?: boolean
 ): number {
-    const price = pick<(number | undefined), number>(
-        (yVal[i] as any)[index], (yVal[i] as any
-    )
-    );
+    const price = ((yVal[i] as any)[index] ?? (yVal[i] as any
+    ));
 
     if (subtract) {
         return correctFloat(sum - price);
@@ -71,7 +68,6 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -102,6 +98,7 @@ class DPOIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/dpo
      * @optionparent plotOptions.dpo
+     * @internal
      */
     public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -133,6 +130,7 @@ class DPOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DPOParamsOptions
@@ -175,10 +173,8 @@ class DPOIndicator extends SMAIndicator {
 
             // Adding the last period point
             sum = accumulatePoints(sum, yVal, periodIndex, index);
-            price = pick<(number | undefined), number>(
-                (yVal[rangeIndex] as any)[index], (yVal[rangeIndex] as any
-            )
-            );
+            price = (yVal[rangeIndex] as any)[index] ??
+                (yVal[rangeIndex] as any);
 
             oscillator = price - sum / period;
 
@@ -204,7 +200,6 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -219,7 +214,6 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -234,7 +228,6 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
-/** @internal */
 export default DPOIndicator;
 
 /* *
@@ -250,7 +243,7 @@ export default DPOIndicator;
  * @extends   series,plotOptions.dpo
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
  * @requires  stock/indicators/indicators

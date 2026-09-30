@@ -22,7 +22,7 @@
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DataLabel from '../../Core/Series/DataLabel';
-import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
+import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
@@ -48,7 +48,6 @@ import {
     fireEvent,
     isArray,
     merge,
-    pick,
     pushUnique,
     relativeLength,
     splat
@@ -71,13 +70,15 @@ const baseAlignDataLabel = SeriesRegistry.series.prototype.alignDataLabel;
 /**
  * Get positions - either an integer or a percentage string must be
  * given.
- * @private
+ *
  * @param {number|string|undefined} length
  *        Length
  * @param {number} relativeTo
  *        Relative factor
  * @return {number}
  *         Relative position
+ *
+ * @internal
  */
 function getLength(
     length: (number|string|undefined),
@@ -95,7 +96,6 @@ function getLength(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.funnel
  *
@@ -109,6 +109,7 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: FunnelSeriesOptions = merge(
         PieSeries.defaultOptions,
         FunnelSeriesDefaults
@@ -120,6 +121,7 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public centerX?: number;
 
     public data!: Array<FunnelPoint>;
@@ -135,9 +137,7 @@ class FunnelSeries extends PieSeries {
      * */
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public alignDataLabel(
         point: FunnelPoint,
         dataLabel: SVGLabel,
@@ -233,10 +233,9 @@ class FunnelSeries extends PieSeries {
         }
     }
 
-
     /**
      * Extend the data label method.
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
         (
@@ -246,7 +245,15 @@ class FunnelSeries extends PieSeries {
         ).prototype.drawDataLabels.call(this);
     }
 
-    /** @private */
+    /**
+     * Override pie-specific functionality not supported in funnel.
+     * @internal
+     */
+    public verifyDataLabelOverflow(): boolean {
+        return true;
+    }
+
+    /** @internal */
     public getDataLabelPosition(
         point: FunnelPoint,
         distance: number
@@ -285,7 +292,7 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Overrides the pie translate method.
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -316,7 +323,8 @@ class FunnelSeries extends PieSeries {
                     0
             ),
             roundingFactors = (
-                angle: number
+                angle: number,
+                maxT: number
             ): Record<string, Array<number>> => {
                 const tan = Math.tan(angle / 2),
                     cosA = Math.cos(alpha),
@@ -340,11 +348,12 @@ class FunnelSeries extends PieSeries {
 
         let sum = 0,
             cumulative = 0, // Start at top
+            firstIdx = -1,
+            lastIdx = -1,
             tempWidth,
             path: SVGPath,
             fraction,
             alpha: number, // The angle between top and left point's edges
-            maxT: number,
             x1: number,
             y1: number,
             x2: number,
@@ -406,13 +415,19 @@ class FunnelSeries extends PieSeries {
 
         */
 
-        // get the total sum
+        // Get the total sum and the first and last contributing points,
+        // which take the outer rounding regardless of trailing null, zero
+        // or hidden points (#24820)
         for (const point of points) {
             if (
                 point.y && point.isValid() &&
                 (!ignoreHiddenPoint || point.visible !== false)
             ) {
                 sum += point.y;
+                if (firstIdx === -1) {
+                    firstIdx = point.index;
+                }
+                lastIdx = point.index;
             }
         }
 
@@ -455,8 +470,8 @@ class FunnelSeries extends PieSeries {
 
             if (borderRadius && (
                 radiusScope === 'point' ||
-                point.index === 0 ||
-                point.index === points.length - 1 ||
+                point.index === firstIdx ||
+                point.index === lastIdx ||
                 y5 !== null
             )) {
                 // Creating the path of funnel points with rounded corners
@@ -464,22 +479,16 @@ class FunnelSeries extends PieSeries {
                 const h = Math.abs(y3 - y1),
                     xSide = x2 - x4,
                     lBase = x4 - x3,
-                    lSide = Math.sqrt(xSide * xSide + h * h);
+                    lSide = Math.sqrt(xSide * xSide + h * h),
+                    lTop = x2 - x1;
 
                 // If xSide equals zero, return Infinity to avoid dividing
                 // by zero (#20319)
                 alpha = Math.atan(xSide !== 0 ? h / xSide : Infinity);
-                maxT = lSide / 2;
-                if (y5 !== null) {
-                    maxT = Math.min(maxT, Math.abs(y5 - y3) / 2);
-                }
-                if (lBase >= 1) {
-                    maxT = Math.min(maxT, lBase / 2);
-                }
 
                 // Creating a point base
-                let f = roundingFactors(alpha);
-                if (radiusScope === 'stack' && point.index !== 0) {
+                let f = roundingFactors(alpha, Math.min(lTop, lSide) / 2);
+                if (radiusScope === 'stack' && point.index !== firstIdx) {
                     path = [
                         ['M', x1, y1],
                         ['L', x2, y1]
@@ -505,8 +514,15 @@ class FunnelSeries extends PieSeries {
 
                 if (y5 !== null) {
                     // Closure of point with extension
-                    const fr = roundingFactors(Math.PI / 2);
-                    f = roundingFactors(Math.PI / 2 + alpha);
+                    const lNeck = Math.abs(y5 - y3),
+                        fr = roundingFactors(
+                            Math.PI / 2,
+                            Math.min(lBase, lNeck) / 2
+                        );
+                    f = roundingFactors(
+                        Math.PI / 2 + alpha,
+                        Math.min(lSide, lNeck) / 2
+                    );
                     path.push(
                         ['L', x4 + f.dx[0], y3 - f.dy[0]],
                         [
@@ -519,7 +535,7 @@ class FunnelSeries extends PieSeries {
 
                     if (
                         radiusScope === 'stack' &&
-                        point.index !== points.length - 1
+                        point.index !== lastIdx
                     ) {
                         path.push(['L', x4, y5], ['L', x3, y5]);
                     } else {
@@ -552,8 +568,11 @@ class FunnelSeries extends PieSeries {
                     );
                 } else if (lBase >= 1) {
                     // Closure of point without extension
-                    f = roundingFactors(Math.PI - alpha);
-                    if (radiusScope === 'stack' && point.index === 0) {
+                    f = roundingFactors(
+                        Math.PI - alpha,
+                        Math.min(lSide, lBase) / 2
+                    );
+                    if (radiusScope === 'stack' && point.index !== lastIdx) {
                         path.push(['L', x4, y3], ['L', x3, y3]);
                     } else {
                         path.push(
@@ -575,7 +594,7 @@ class FunnelSeries extends PieSeries {
                     }
                 } else {
                     // Creating a rounded tip of the "pyramid"
-                    f = roundingFactors(Math.PI - alpha * 2);
+                    f = roundingFactors(Math.PI - alpha * 2, lSide / 2);
                     path.push(
                         ['L', x3 + f.dx[0], y3 - f.dy[0]],
                         [
@@ -624,7 +643,7 @@ class FunnelSeries extends PieSeries {
                 y: y1,
                 topWidth: x2 - x1,
                 bottomWidth: x4 - x3,
-                height: Math.abs(pick(y5, y3) - y1),
+                height: Math.abs((y5 ?? y3) - y1),
                 width: NaN
             };
 
@@ -647,13 +666,11 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Funnel items don't have angles (#2289).
-     * @private
+     * @internal
      */
     public sortByAngle(points: Array<FunnelPoint>): void {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
     }
-
-
 }
 
 /* *
@@ -664,7 +681,11 @@ class FunnelSeries extends PieSeries {
 
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
+
+    /** @internal */
     getWidthAt(y: number): number; // Added during translate
+
+    /** @internal */
     getXPos(
         y: number,
         half: boolean,
@@ -681,6 +702,7 @@ extend(FunnelSeries.prototype, {
  *
  * */
 
+/** @internal */
 namespace FunnelSeries {
 
     /* *
@@ -689,7 +711,7 @@ namespace FunnelSeries {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -704,12 +726,12 @@ namespace FunnelSeries {
 
     }
 
-    /** @private */
+    /** @internal */
     function onChartAfterHideAllOverlappingLabels(
         this: Chart
     ): void {
         for (const series of this.series) {
-            let dataLabelsOptions = series.options && series.options.dataLabels;
+            let dataLabelsOptions = series.options?.dataLabels;
 
             if (isArray(dataLabelsOptions)) {
                 dataLabelsOptions = dataLabelsOptions[0];

@@ -310,3 +310,25 @@ QUnit.test('Script injection through AST options', assert => {
         'No script tag should be allowed in the definitions'
     );
 });
+
+QUnit.test('CSS injection through chart options', assert => {
+    const done = assert.async();
+    Highcharts.chart('container', {
+        series: [{
+            data: [1, 4, 3, 5],
+            type: 'column'
+        }],
+        subtitle: {
+            text: 'Subtitle<style>body { background-color: red }</style>',
+            useHTML: true
+        }
+    });
+    setTimeout(() => { // Takes some ms before the style is updated
+        assert.notEqual(
+            window.getComputedStyle(document.body).backgroundColor,
+            'rgb(255, 0, 0)',
+            'No CSS injection should be allowed through AST options'
+        );
+        done();
+    }, 300);
+});

@@ -50,12 +50,16 @@ class TilemapPoint extends HeatmapPoint {
 
     public options!: TilemapPointOptions;
 
+    /** @internal */
     public pointPadding?: number;
 
+    /** @internal */
     public radius!: number;
 
+    /** @internal */
     public series!: TilemapSeries;
 
+    /** @internal */
     public tileEdges!: Record<string, number>;
 
     /* *

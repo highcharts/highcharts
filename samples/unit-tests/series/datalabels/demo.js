@@ -431,9 +431,12 @@ QUnit.test(
                     ],
                     dataLabels: {
                         enabled: true,
-                        formatter: function () {
-                            if (this.y > 0.5 && this.y < 4.5) {
-                                return this.y;
+                        formatter: function (options) {
+                            // Read the value the label is aligned to, `high`
+                            // or `low` (#23904)
+                            const value = this[options.alignToKey];
+                            if (value > 0.5 && value < 4.5) {
+                                return value;
                             }
                             return null;
                         }
@@ -529,7 +532,7 @@ QUnit.test('defer:true and exporting (#10661)', assert => {
     chart.series[0].points[0].onMouseOut();
     assert.strictEqual(
         chart.series[0].points[0].dataLabel.element.getAttribute('opacity'),
-        '1',
+        null,
         `Hovering over points without markers should not set labels opacity,
         #17957.`
     );

@@ -869,24 +869,24 @@ export interface AnnotationTypeOptions {
     type?: string;
 
     /**
-     * This number defines which `xAxis` the point is connected to.
+     * This option defines which `xAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis
      * in the `xAxis` array.
      *
-     * @type {number}
+     * @type {number|string}
      * @apioption annotations.typeOptions.xAxis
      */
-    xAxis?: number;
+    xAxis?: (number|string);
 
     /**
-     * This number defines which `yAxis` the point is connected to.
+     * This option defines which `yAxis` the point is connected to.
      * It refers to either the axis id or the index of the axis
      * in the `yAxis` array.
      *
-     * @type {number}
+     * @type {number|string}
      * @apioption annotations.typeOptions.yAxis
      */
-    yAxis?: number;
+    yAxis?: (number|string);
 
     /** @internal */
     yOffset?: number;

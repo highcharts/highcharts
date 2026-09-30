@@ -19,7 +19,6 @@
  * */
 
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
-import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type LollipopPoint from '../Lollipop/LollipopPoint';
@@ -36,7 +35,7 @@ const {
     columnrange: ColumnRangeSeries
 } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import { extend, merge, pick } from '../../Shared/Utilities.js';
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -59,7 +58,6 @@ declare module '../../Core/Series/StatesOptions' {
 /**
  * The dumbbell series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.dumbbell
  *
@@ -73,6 +71,7 @@ class DumbbellSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: DumbbellSeriesOptions = merge(
         AreaRangeSeries.defaultOptions,
         DumbbellSeriesDefaults
@@ -87,7 +86,9 @@ class DumbbellSeries extends AreaRangeSeries {
     public data!: Array<DumbbellPoint>;
     public options!: DumbbellSeriesOptions;
     public points!: Array<DumbbellPoint>;
+    /** @internal */
     public columnMetrics!: ColumnMetricsObject;
+    /** @internal */
     public lowColor?: ColorType;
 
 
@@ -100,7 +101,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
-     * @private
+     * @internal
      *
      * @param {Highcharts.Point} point The point to inspect.
      *
@@ -115,36 +116,27 @@ class DumbbellSeries extends AreaRangeSeries {
             seriesOptions = series.options,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            connectorWidthPlus = pick(
+            connectorWidthPlus = (
                 seriesOptions.states &&
                 seriesOptions.states.hover &&
-                seriesOptions.states.hover.connectorWidthPlus,
-                1
-            ),
-            dashStyle = pick(pointOptions.dashStyle, seriesOptions.dashStyle),
+                seriesOptions.states.hover.connectorWidthPlus
+            ) ?? 1,
+            dashStyle = (pointOptions.dashStyle ?? seriesOptions.dashStyle),
             pxThreshold = yAxis.toPixels(seriesOptions.threshold || 0, true),
             pointHeight = chart.inverted ?
                 yAxis.len - pxThreshold : pxThreshold;
 
-        let connectorWidth = pick<number|undefined, number>(
-                pointOptions.connectorWidth,
-                seriesOptions.connectorWidth as any
-            ),
-            connectorColor = pick<
-            ColorType|undefined,
-            ColorString|undefined,
-            ColorType|undefined,
-            ColorType|undefined,
-            ColorType
-            >(
-                pointOptions.connectorColor,
-                seriesOptions.connectorColor,
-                pointOptions.color,
-                point.zone ? point.zone.color : void 0,
-                point.color as any
-            ),
-            pointTop = pick(point.plotLow, point.plotY),
-            pointBottom = pick(point.plotHigh, pointHeight),
+        let connectorWidth =
+                pointOptions.connectorWidth ??
+                seriesOptions.connectorWidth as any,
+            connectorColor =
+                pointOptions.connectorColor ??
+                seriesOptions.connectorColor ??
+                pointOptions.color ??
+                (point.zone ? point.zone.color : void 0) ??
+                point.color as any,
+            pointTop = (point.plotLow ?? point.plotY),
+            pointBottom = (point.plotHigh ?? pointHeight),
             origProps;
 
         if (typeof pointTop !== 'number') {
@@ -179,19 +171,12 @@ class DumbbellSeries extends AreaRangeSeries {
             };
             point.y = (point as DumbbellPoint).high;
             point.zone = point.zone ? point.getZone() : void 0;
-            connectorColor = pick<
-            ColorType|undefined,
-            ColorString|undefined,
-            ColorType|undefined,
-            ColorType|undefined,
-            ColorType
-            >(
-                pointOptions.connectorColor,
-                seriesOptions.connectorColor,
-                pointOptions.color,
-                point.zone ? point.zone.color : void 0,
-                point.color as any
-            );
+            connectorColor =
+                pointOptions.connectorColor ??
+                seriesOptions.connectorColor ??
+                pointOptions.color ??
+                (point.zone ? point.zone.color : void 0) ??
+                point.color as any;
             extend(point, origProps);
         }
 
@@ -220,13 +205,13 @@ class DumbbellSeries extends AreaRangeSeries {
 
     /**
      * Draw connector line that connects dumbbell point's low and high values.
-     * @private
+     * @internal
      * @param {Highcharts.Point} point
      *        The point to inspect.
      */
     public drawConnector(point: (DumbbellPoint|LollipopPoint)): void {
         const series = this,
-            animationLimit = pick(series.options.animationLimit, 250),
+            animationLimit = (series.options.animationLimit ?? 250),
             verb = point.connector && series.chart.pointCount < animationLimit ?
                 'animate' : 'attr';
 
@@ -244,7 +229,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Return the width and x offset of the dumbbell adjusted for grouping,
      * groupPadding, pointPadding, pointWidth etc.
-     * @private
+     * @internal
      */
     public getColumnMetrics(): ColumnMetricsObject {
         const metrics = ColumnSeries.prototype
@@ -258,7 +243,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -292,7 +277,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -326,15 +311,14 @@ class DumbbellSeries extends AreaRangeSeries {
 
             if (lowerGraphic) {
                 zoneColor = point.zone && point.zone.color;
-                lowerGraphicColor = pick(
-                    point.options.lowColor,
-                    seriesLowMarker?.fillColor,
-                    seriesLowColor,
-                    point.options.color,
-                    zoneColor,
-                    point.color,
-                    series.color
-                );
+                lowerGraphicColor =
+                    point.options.lowColor ??
+                    seriesLowMarker?.fillColor ??
+                    seriesLowColor ??
+                    point.options.color ??
+                    zoneColor ??
+                    point.color ??
+                    series.color;
                 if (!chart.styledMode) {
                     lowerGraphic.attr({
                         fill: lowerGraphicColor
@@ -349,7 +333,7 @@ class DumbbellSeries extends AreaRangeSeries {
     /**
      * Get presentational attributes.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#pointAttribs
      *
      * @param {Highcharts.Point} point
@@ -376,7 +360,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
     /**
      * Set the shape arguments for dumbbells.
-     * @private
+     * @internal
      */
     public setShapeArgs(): void {
         ColumnSeries.prototype.translate.apply(this);
@@ -393,6 +377,7 @@ class DumbbellSeries extends AreaRangeSeries {
 
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
+    /** @internal */
     crispCol: typeof ColumnSeries.prototype.crispCol;
     trackerGroups: Array<string>;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];

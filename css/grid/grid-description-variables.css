@@ -1,4 +1,8 @@
-.hcg-container .hcg-description {
+/*
+ * Description surface applies under `.hcg-themed`. With `theme: ''`, utility
+ * classNames on `description.className` win without `!important`.
+ */
+.hcg-themed .hcg-description {
     color: var(--hcg-description-color, var(--ig-color));
     font-weight: var(--hcg-description-font-weight, var(--ig-font-weight));
     font-size: var(--hcg-description-font-size, var(--ig-font-size));

@@ -38,7 +38,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -65,6 +64,7 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: SolidGaugeSeriesOptions = merge(
         GaugeSeries.defaultOptions,
         SolidGaugeSeriesDefaults
@@ -80,9 +80,13 @@ class SolidGaugeSeries extends GaugeSeries {
     public points!: Array<SolidGaugePoint>;
     public options!: SolidGaugeSeriesOptions;
 
+    /** @internal */
     public axis!: SolidGaugeAxis;
+    /** @internal */
     public yAxis!: SolidGaugeAxis;
+    /** @internal */
     public startAngleRad!: SolidGaugeSeries['thresholdAngleRad'];
+    /** @internal */
     public thresholdAngleRad!: number;
 
     /* *
@@ -93,6 +97,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
+    /** @internal */
     public translate(): void {
         const axis = this.yAxis;
 
@@ -109,6 +114,7 @@ class SolidGaugeSeries extends GaugeSeries {
     }
 
     // Draw the points where each point is one needle.
+    /** @internal */
     public drawPoints(): void {
         const series = this,
             yAxis = series.yAxis,
@@ -139,9 +145,7 @@ class SolidGaugeSeries extends GaugeSeries {
                 true
             );
         }
-        this.thresholdAngleRad = pick(
-            thresholdAngleRad, yAxis.startAngleRad
-        );
+        this.thresholdAngleRad = (thresholdAngleRad ?? yAxis.startAngleRad);
 
         for (const point of series.points) {
             // #10630 null point should not be draw
@@ -282,6 +286,7 @@ class SolidGaugeSeries extends GaugeSeries {
     }
 
     // Extend the pie slice animation by animating from start angle and up.
+    /** @internal */
     public animate(init?: boolean): void {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
@@ -298,6 +303,7 @@ class SolidGaugeSeries extends GaugeSeries {
  * */
 
 interface SolidGaugeSeries {
+    /** @internal */
     pointClass: typeof SolidGaugePoint;
 }
 

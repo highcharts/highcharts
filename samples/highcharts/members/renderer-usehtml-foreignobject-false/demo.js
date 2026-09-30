@@ -154,6 +154,16 @@
             });
         }
 
+        opacitySetter(value, string, element) {
+            return SVGElement.prototype.opacitySetter
+                .call(this, value, string, element);
+        }
+
+        visibilitySetter(value, string, element) {
+            return SVGElement.prototype.visibilitySetter
+                .call(this, value, string, element);
+        }
+
         updateTransform() {
             // Aligning non added elements is expensive
             if (!this.added) {

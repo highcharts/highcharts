@@ -1,3 +1,18 @@
+QUnit.test(
+    'Only one body element in the document when using useHTML (#24839)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {});
+
+        chart.renderer.text('Hello', 10, 10, true).add();
+
+        assert.strictEqual(
+            document.querySelectorAll('body').length,
+            1,
+            'There should only be one body element in the document'
+        );
+    }
+);
+
 QUnit.test('Hide label with useHTML (#4938)', function (assert) {
     var chart = Highcharts.chart('container', {}),
         renderer = chart.renderer,
@@ -18,6 +33,27 @@ QUnit.test('Hide label with useHTML (#4938)', function (assert) {
         'Group element is hidden'
     );
 });
+
+QUnit.test(
+    'hide() must visually hide a useHTML element (#24606)',
+    function (assert) {
+        const renderer = new Highcharts.Renderer(
+                document.getElementById('container'),
+                400,
+                300
+            ),
+            text = renderer.text('Label', 100, 100, true).add();
+
+        text.hide();
+
+        assert.strictEqual(
+            window.getComputedStyle(text.element).visibility,
+            'hidden',
+            'Text element is hidden'
+        );
+
+        renderer.destroy();
+    });
 
 QUnit.test('Legend rtl and useHTML (#4449)', function (assert) {
     var ren = new Highcharts.Renderer(
@@ -359,8 +395,8 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         getTextContent(text2),
         'Consistent result between different strings. #6258'
     );
-    // TODO 0px does not work, because ellipsis and breaks are not applied
-    // when width is considered falsy.
+
+    // In accordance with HTML/CSS, 0px does not work
     style.width = '1px';
     text1.destroy();
     text1 = ren.text('01234567', 0, 100).css(style).add();
@@ -368,6 +404,14 @@ QUnit.test('textOverflow: ellipsis.', function (assert) {
         getTextContent(text1),
         '',
         'Width was too small for ellipsis.'
+    );
+
+    text1.destroy();
+    text1 = ren.text('0123-4567', 0, 100).css({ lineClamp: 1, ...style }).add();
+    assert.strictEqual(
+        getTextContent(text1),
+        '',
+        'Width was too small for ellipsis (with lineClamp and hyphenation).'
     );
 
     /**
@@ -516,6 +560,68 @@ QUnit.test('lineClamp', function (assert) {
             height,
             2.5,
             'The HTML bounding box should be approximately the same as the SVG'
+        );
+    } finally {
+        ren.destroy();
+    }
+});
+
+QUnit.test('lineClamp with textOverflow ellipsis (#24724)', function (assert) {
+    const ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            600,
+            400
+        ),
+        str = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
+            'Nullam in dui mauris.';
+
+    /**
+     * Render the string with and without `useHTML` for a given line clamp, and
+     * return the rendered heights. Note that `getBBox` can't be used here,
+     * because the SVG and HTML texts share the same bounding box cache key.
+     * @param {number} lineClamp The line clamp to apply
+     * @return {Array<number>} The SVG and the HTML height
+     */
+    function heights(lineClamp) {
+        return [false, true].map(
+            useHTML => ren
+                .text(str, 30, 30, useHTML)
+                .css({
+                    width: '200px',
+                    textOverflow: 'ellipsis',
+                    lineClamp
+                })
+                .add()
+                .element
+                .getBoundingClientRect()
+                .height
+        );
+    }
+
+    try {
+        const [svg1, html1] = heights(1),
+            [svg2, html2] = heights(2);
+
+        assert.close(
+            html1,
+            svg1,
+            2.5,
+            'With `lineClamp: 1`, the HTML text should stay on one line like ' +
+            'the SVG text'
+        );
+
+        assert.ok(
+            html2 > html1,
+            'With `lineClamp: 2`, the HTML text should wrap instead of ' +
+            'staying on one line'
+        );
+
+        assert.close(
+            html2,
+            svg2,
+            2.5,
+            'With `lineClamp: 2`, the HTML text should be clamped to the ' +
+            'same height as the SVG text'
         );
     } finally {
         ren.destroy();

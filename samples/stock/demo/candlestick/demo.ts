@@ -99,7 +99,8 @@
                         [0, 'rgba(0, 117, 219, 0.12)'],
                         [1, 'rgba(0, 113, 219, 0)']
                     ]
-                }
+                },
+                type: 'areaspline'
             },
             xAxis: {
                 lineWidth: 1,

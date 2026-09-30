@@ -59,6 +59,23 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      */
     color: 'var(--highcharts-neutral-color-100)',
 
+    dataLabels: {
+
+        /**
+         * Callback JavaScript function to format the data label. Note that if
+         * a `format` is defined, the format takes precedence and the formatter
+         * is ignored.
+         *
+         * The default formatter renders the value of the point key the label
+         * is [aligned to](#plotOptions.errorbar.dataLabels.alignToKey). Define
+         * a [format](#plotOptions.errorbar.dataLabels.format) or `formatter`
+         * to display other values.
+         *
+         * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+         */
+
+    },
+
     grouping: false,
 
     /**
@@ -95,7 +112,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
  * is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.errorbar
- * @excluding dataParser, dataURL, stack, stacking, boostThreshold,
+ * @excluding stack, stacking, boostThreshold,
  *            boostBlending
  * @product   highcharts
  * @requires  highcharts-more

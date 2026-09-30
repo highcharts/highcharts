@@ -40,12 +40,11 @@ import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
 import DataTableCore from './DataTableCore.js';
 
 import ColumnUtils from './ColumnUtils.js';
-const { splice, setLength } = ColumnUtils;
+const { setLength, splice } = ColumnUtils;
 
 import {
     addEvent,
     defined,
-    extend,
     fireEvent,
     isNumber
 } from '../Shared/Utilities.js';
@@ -834,6 +833,10 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         const table = this;
         const column = table.columns[columnId];
 
+        if (!column) {
+            return false;
+        }
+
         // Normal array
         if (Array.isArray(column)) {
             return (column.indexOf(cellValue) !== -1);
@@ -898,6 +901,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             if (columnId !== newColumnId) {
                 columns[newColumnId] = columns[columnId];
                 delete columns[columnId];
+                table.versionTag = uniqueKey();
             }
 
             return true;
@@ -958,7 +962,9 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         }
 
         if (rowIndex >= table.rowCount) {
-            table.rowCount = (rowIndex + 1);
+            // Typed arrays ignore out-of-range writes, so make room first
+            table.applyRowCount(rowIndex + 1);
+            column = columns[columnId];
         }
 
         column[rowIndex] = cellValue;
@@ -1009,7 +1015,8 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         const table = this,
             tableColumns = table.columns,
             tableModifier = table.modifier,
-            columnIds = Object.keys(columns);
+            columnIds = Object.keys(columns),
+            columnStart = rowIndex || 0;
 
         let rowCount = table.rowCount;
 
@@ -1025,9 +1032,17 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             super.setColumns(
                 columns,
                 rowIndex,
-                extend(eventDetail, { silent: true })
+                { ...eventDetail, silent: true }
             );
         } else {
+            // Resolved up front, so that every column is allocated only once
+            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+                rowCount = Math.max(
+                    rowCount,
+                    columnStart + columns[columnIds[i]].length
+                );
+            }
+
             for (
                 let i = 0,
                     iEnd = columnIds.length,
@@ -1051,29 +1066,37 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
 
                 if (!tableColumn) {
                     tableColumn = new ArrayConstructor(rowCount);
-                } else if (ArrayConstructor === Array) {
-                    if (!Array.isArray(tableColumn)) {
+                } else {
+                    if (
+                        ArrayConstructor === Array &&
+                        !Array.isArray(tableColumn)
+                    ) {
                         tableColumn = Array.from(tableColumn);
                     }
-                } else if (tableColumn.length < rowCount) {
-                    tableColumn =
-                        new ArrayConstructor(rowCount) as TypedArray;
-                    tableColumn.set(
-                        tableColumns[columnId] as ArrayLike<number>
-                    );
+
+                    if (tableColumn.length < rowCount) {
+                        if (ArrayConstructor === Array) {
+                            tableColumn = setLength(tableColumn, rowCount);
+                        } else {
+                            const grown =
+                                new ArrayConstructor(rowCount) as TypedArray;
+                            grown.set(tableColumn as ArrayLike<number>);
+                            tableColumn = grown;
+                        }
+                    }
                 }
                 tableColumns[columnId] = tableColumn;
 
-                for (
-                    let i = (rowIndex || 0),
-                        iEnd = column.length;
-                    i < iEnd;
-                    ++i
-                ) {
-                    tableColumn[i] = column[i];
+                if (Array.isArray(tableColumn)) {
+                    for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
+                        tableColumn[columnStart + j] = column[j];
+                    }
+                } else {
+                    tableColumn.set(
+                        column as ArrayLike<number>,
+                        columnStart
+                    );
                 }
-
-                rowCount = Math.max(rowCount, column.length);
             }
 
             this.applyRowCount(rowCount);
@@ -1253,6 +1276,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             columns = table.columns,
             columnIds = Object.keys(columns),
             modifier = table.modifier,
+            initialRowCount = table.rowCount,
             rowCount = rows.length;
 
         table.emit({
@@ -1263,6 +1287,11 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             rows
         });
 
+        // Typed arrays ignore out-of-range writes, `insert` grows via `splice`
+        if (!insert && rowIndex + rowCount > table.rowCount) {
+            table.applyRowCount(rowIndex + rowCount);
+        }
+
         for (
             let i = 0,
                 i2 = rowIndex,
@@ -1271,39 +1300,37 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             ++i, ++i2
         ) {
             row = rows[i];
-            if (Object.keys(row).length === 0) { // Is empty Object
-                for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
-                    const column = columns[columnIds[j]];
 
-                    if (insert) {
-                        columns[columnIds[j]] = splice(
-                            column, i2, 0, true, [null]
-                        ).array;
-                    } else {
-                        column[i2] = null;
-                    }
-                }
-            } else if (Array.isArray(row)) {
-                for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
-                    columns[columnIds[j]][i2] = row[j];
-                }
-            } else {
+            // Only row objects carrying keys are delegated to the core
+            if (!Array.isArray(row) && Object.keys(row).length) {
                 super.setRow(row, i2, insert, { silent: true });
+                continue;
+            }
+
+            // Array rows are applied by column position, blank rows clear
+            // every column
+            const values = Array.isArray(row) && row.length ? row : void 0;
+
+            for (let j = 0, jEnd = columnIds.length; j < jEnd; ++j) {
+                const columnId = columnIds[j],
+                    value = values ? values[j] : null;
+
+                if (insert) {
+                    columns[columnId] = splice(
+                        columns[columnId], i2, 0, true, [value]
+                    ).array;
+                } else {
+                    columns[columnId][i2] = value;
+                }
             }
         }
 
         const indexRowCount = insert ?
-            rowCount + rows.length :
+            initialRowCount + rowCount :
             rowIndex + rowCount;
+
         if (indexRowCount > table.rowCount) {
-            table.rowCount = indexRowCount;
-            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
-                const columnId = columnIds[i];
-                columns[columnId] = setLength(
-                    columns[columnId],
-                    indexRowCount
-                );
-            }
+            table.applyRowCount(indexRowCount);
         }
 
         if (modifier) {
@@ -1335,6 +1362,26 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
  * Possible value types for a table cell.
  */
 export type CellType = (boolean|number|null|string|undefined);
+
+/**
+ * Type guard narrowing an arbitrary value to a valid table cell value.
+ *
+ * @param {*} value
+ * Candidate value.
+ *
+ * @return {boolean}
+ * `true` when the value is a valid `CellType`.
+ */
+export function isCellValue(value: unknown): value is CellType {
+    const valueType = typeof value;
+    return (
+        value === null ||
+        valueType === 'undefined' ||
+        valueType === 'boolean' ||
+        valueType === 'number' ||
+        valueType === 'string'
+    );
+}
 
 /**
  * Conventional array of table cells typed as `CellType`.

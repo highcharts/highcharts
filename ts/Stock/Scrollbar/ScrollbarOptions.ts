@@ -138,7 +138,7 @@ export interface ScrollbarOptions {
     enabled?: boolean;
 
     /**
-     * The height of the scrollbar. If `buttonsEnabled` is true , the height
+     * The height of the scrollbar. If `buttonsEnabled` is true, the height
      * also applies to the width of the scroll arrows so that they are always
      * squares.
      *
@@ -158,7 +158,7 @@ export interface ScrollbarOptions {
      * @sample stock/scrollbar/liveredraw
      *         Setting live redraw to false
      *
-     * @default true
+     * @default undefined
      * @since 1.3
      */
     liveRedraw?: boolean;

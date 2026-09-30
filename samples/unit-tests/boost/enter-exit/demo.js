@@ -149,7 +149,7 @@
                     },
                     boost: {
                         useGPUTranslations: true,
-                        usePreAllocated: true
+                        usePreallocated: true
                     },
                     xAxis: {
                         min: 0,

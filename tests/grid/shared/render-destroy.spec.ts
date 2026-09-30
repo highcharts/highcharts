@@ -24,3 +24,21 @@ test.describe('Render and destroy grid', () => {
     });
 });
 
+test.describe('Destroy registry', () => {
+    test('Repeated destroy should not remove another live grid', async ({
+        page
+    }) => {
+        await page.goto('/grid-lite/basic/destroy-registry');
+
+        await page.locator('#destroy-btn').click();
+        await page.locator('#destroy-btn').click();
+
+        const ids = await page.evaluate(() =>
+            (window as any).Grid.grids.map(
+                (grid: { id?: string }) => grid?.id
+            )
+        );
+
+        expect(ids).toEqual(['second']);
+    });
+});

@@ -97,7 +97,7 @@ declare module '../../Core/Series/StatesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectEnds, connectNulls, gapSize, gapUnit,
  *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock
@@ -113,7 +113,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @default #ffffff
+     * @default var(--highcharts-background-color)
      *
      * @product highcharts highstock gantt
      */
@@ -286,11 +286,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @excluding marker
      *
-     * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
-     *
      * @product highcharts highstock
-     *
-     * @apioption series.column.data
      */
     data?: Array<(ColumnPointOptions|PointShortOptions)>;
 
@@ -354,14 +350,18 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * The minimal height for a column or width for a bar. By default,
      * 0 values are not shown. To visualize a 0 (or close to zero) point,
      * set the minimal point length to a pixel value like 3\. In stacked
-     * column charts, minPointLength might not be respected for tightly
-     * packed values.
+     * column charts, the length is applied to each point in isolation, so
+     * tightly packed values may overlap. See the stacked sample below for a
+     * plugin that lays out the stack as a whole instead.
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength/
      *         Zero base value
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-minpointlength-stacked/
+     *         Stack-aware minimum length
      *
      * @product highcharts highstock gantt
      */
@@ -432,32 +432,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     startFromThreshold?: boolean;
 
     states?: SeriesStatesOptions<ColumnSeriesOptions>;
-
-    /**
-     * Options for the hovered point. These settings override the normal
-     * state options when a point is moused over or touched.
-     *
-     * @extends plotOptions.series.states.hover
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.hover
-     */
-
-    /**
-     * Options for the selected point. These settings override the
-     * normal state options when a point is selected.
-     *
-     * @extends plotOptions.series.states.select
-     *
-     * @excluding halo, lineWidth, lineWidthPlus, marker
-     *
-     * @product highcharts highstock gantt
-     *
-     * @apioption series.column.states.select
-     */
 
     /**
      * The Y axis value to serve as the base for the columns, for

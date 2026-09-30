@@ -261,6 +261,44 @@ QUnit.test('Funnel path', function (assert) {
         0,
         'The fourth point should not have rounded corners (#20319)'
     );
+
+    series.update({
+        borderRadius: 20,
+        data: [40, 30, 20]
+    });
+
+    const lastPointPath = series.points[2].graphic.d;
+
+    series.update({
+        data: [40, 30, 20, null]
+    });
+
+    assert.strictEqual(
+        series.points[2].graphic.d,
+        lastPointPath,
+        'A trailing null point should not affect the rounding of the last ' +
+        'visible point (#24820)'
+    );
+
+    series.update({
+        data: [40, 30, 20, 0]
+    });
+
+    assert.strictEqual(
+        series.points[2].graphic.d,
+        lastPointPath,
+        'A trailing zero point should not affect the rounding of the last ' +
+        'visible point (#24820)'
+    );
+
+    series.points[2].setVisible(false);
+
+    assert.strictEqual(
+        series.points[1].graphic.d.split(' ').filter(s => s === 'C').length,
+        4,
+        'After hiding the last point, the point above should take the ' +
+        'bottom rounding (#24820)'
+    );
 });
 
 QUnit.test('Funnel dataLabels', function (assert) {

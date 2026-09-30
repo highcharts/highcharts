@@ -61,6 +61,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: GanttSeriesOptions = merge(
         XRangeSeries.defaultOptions,
         GanttSeriesDefaults
@@ -72,6 +73,7 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         AxisClass: typeof Axis,
         ChartClass?: typeof Chart,
@@ -119,13 +121,14 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    /** @internal */
     public getColumn(columnName: string): Array<number> {
         const time = this.chart.time;
         if (columnName === 'x') {
             const startColumn = super.getColumn('start');
             if (startColumn.length) {
                 return startColumn.map((val: number|string): number =>
-                    time.parse(val) || 0
+                    time.parse(val) ?? NaN // #24849
                 );
             }
         }
@@ -232,7 +235,9 @@ class GanttSeries extends XRangeSeries {
  * */
 
 interface GanttSeries{
+    /** @internal */
     keyboardMoveVertical: boolean;
+    /** @internal */
     pointClass: typeof GanttPoint;
 }
 
