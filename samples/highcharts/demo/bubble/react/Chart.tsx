@@ -1,6 +1,6 @@
 import {
     Chart,
-    DataTable,
+    Highcharts,
     Title,
     Subtitle,
     XAxis,
@@ -13,9 +13,61 @@ import { BubbleSeries } from '@highcharts/react/series/Bubble';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
 
+const dataTable = new Highcharts.DataTable({
+    columns: {
+        CountryCode: [
+            'BE',
+            'DE',
+            'FI',
+            'NL',
+            'SE',
+            'ES',
+            'FR',
+            'NO',
+            'UK',
+            'IT',
+            'RU',
+            'US',
+            'HU',
+            'PT',
+            'NZ'
+        ],
+        CountryName: [
+            'Belgium',
+            'Germany',
+            'Finland',
+            'Netherlands',
+            'Sweden',
+            'Spain',
+            'France',
+            'Norway',
+            'United Kingdom',
+            'Italy',
+            'Russia',
+            'United States',
+            'Hungary',
+            'Portugal',
+            'New Zealand'
+        ],
+        FatIntake: [
+            95, 86.5, 80.8, 80.4, 80.3, 78.4, 74.2, 73.5, 71, 69.2, 68.6, 65.5,
+            65.4, 63.4, 64
+        ],
+        SugarIntake: [
+            95, 102.9, 91.5, 102.5, 86.1, 70.1, 68.5, 83.1, 93.2, 57.6, 20,
+            126.4, 50.8, 51.8, 82.9
+        ],
+        Obesity: [
+            13.8, 14.7, 15.8, 12, 11.8, 16.6, 14.5, 10, 24.7, 10.4, 16, 35.3,
+            28.5, 15.4, 31.3
+        ]
+    }
+});
+
 export default function BubbleChart() {
     return (
         <Chart
+            dataTable={dataTable}
             options={{
                 chart: {
                     plotBorderWidth: 1,
@@ -32,56 +84,6 @@ export default function BubbleChart() {
                 Source: <a href="http://www.euromonitor.com/">Euromonitor</a>{' '}
                 and <a href="https://data.oecd.org/">OECD</a>
             </Subtitle>
-            <DataTable
-                columns={{
-                    CountryCode: [
-                        'BE',
-                        'DE',
-                        'FI',
-                        'NL',
-                        'SE',
-                        'ES',
-                        'FR',
-                        'NO',
-                        'UK',
-                        'IT',
-                        'RU',
-                        'US',
-                        'HU',
-                        'PT',
-                        'NZ'
-                    ],
-                    CountryName: [
-                        'Belgium',
-                        'Germany',
-                        'Finland',
-                        'Netherlands',
-                        'Sweden',
-                        'Spain',
-                        'France',
-                        'Norway',
-                        'United Kingdom',
-                        'Italy',
-                        'Russia',
-                        'United States',
-                        'Hungary',
-                        'Portugal',
-                        'New Zealand'
-                    ],
-                    FatIntake: [
-                        95, 86.5, 80.8, 80.4, 80.3, 78.4, 74.2, 73.5, 71, 69.2,
-                        68.6, 65.5, 65.4, 63.4, 64
-                    ],
-                    SugarIntake: [
-                        95, 102.9, 91.5, 102.5, 86.1, 70.1, 68.5, 83.1, 93.2,
-                        57.6, 20, 126.4, 50.8, 51.8, 82.9
-                    ],
-                    Obesity: [
-                        13.8, 14.7, 15.8, 12, 11.8, 16.6, 14.5, 10, 24.7, 10.4,
-                        16, 35.3, 28.5, 15.4, 31.3
-                    ]
-                }}
-            />
             <XAxis
                 gridLineWidth={1}
                 minPadding={0.06}
@@ -173,6 +175,14 @@ export default function BubbleChart() {
                     minSize: 20
                 }}
             />
+            <Exporting />
+            <Accessibility
+                point={{
+                    valueDescriptionFormat:
+                        '{index}. {point.name}, fat: {point.x}g, ' +
+                        'sugar: {point.y}g, obesity: {point.z}%.'
+                }}
+            />
             <BubbleSeries
                 options={{
                     dataMapping: {
@@ -183,13 +193,6 @@ export default function BubbleChart() {
                         'custom.countryName': 'CountryName'
                     },
                     colorByPoint: true
-                }}
-            />
-            <Exporting />
-            <Accessibility
-                point={{
-                    valueDescriptionFormat:
-                        '{index}. {point.name}, fat: {point.x}g, sugar: {point.y}g, obesity: {point.z}%.'
                 }}
             />
         </Chart>
