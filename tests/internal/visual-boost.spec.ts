@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { captureVisualSVG } from './visual-capture';
+import { captureVisualSVG } from '../visual/visual-capture';
 import { setTestingOptions } from '../utils';
 
 test.use({ launchOptions: { args: ['--disable-webgl'] } });

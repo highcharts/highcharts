@@ -117,6 +117,9 @@ Available projects include browser variants:
 - `qunit`, `qunit-firefox`
 - `visual`, `internal`
 
+Visual capture harness regressions live in `tests/internal/visual-boost.spec.ts`
+and run with `--project=internal`. The `visual` project compares sample SVGs.
+
 ### By File
 
 ```sh
