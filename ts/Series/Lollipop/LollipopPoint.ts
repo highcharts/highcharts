@@ -58,10 +58,14 @@ class LollipopPoint extends Point {
      *
      * */
 
+    /** @internal */
     public connector?: SVGElement;
     public options!: LollipopPointOptions;
+    /** @internal */
     public series!: LollipopSeries;
+    /** @internal */
     public plotX!: number;
+    /** @internal */
     public pointWidth!: number;
 }
 

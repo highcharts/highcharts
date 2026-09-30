@@ -58,6 +58,7 @@ class MapPoint extends ScatterPoint {
      * Get the projected path based on the geometry. May also be called on
      * mapData options (not point instances), hence static.
      * @private
+     * @internal
      */
     public static getProjectedPath(
         point: MapPoint,
@@ -85,28 +86,39 @@ class MapPoint extends ScatterPoint {
      *
      * */
 
+    /** @internal */
     public bounds?: MapBounds;
 
+    /** @internal */
     public colorInterval?: number;
 
+    /** @internal */
     public geometry?: GeoJSONGeometryMultiPoint;
 
+    /** @internal */
     public group?: SVGElement;
 
+    /** @internal */
     public insetIndex?: number;
 
+    /** @internal */
     public middleX?: number;
 
+    /** @internal */
     public middleY?: number;
 
     public options!: MapPointOptions;
 
+    /** @internal */
     public path!: SVGPath;
 
+    /** @internal */
     public projectedPath?: SVGPath;
 
+    /** @internal */
     public properties?: Record<string, (number|string)>;
 
+    /** @internal */
     public series!: MapSeries;
 
     /* *
@@ -152,6 +164,7 @@ class MapPoint extends ScatterPoint {
     /**
      * Get the bounds in terms of projected units
      * @private
+     * @internal
      */
     public getProjectedBounds(
         projection: Projection
@@ -221,6 +234,7 @@ class MapPoint extends ScatterPoint {
         }
     }
 
+    /** @internal */
     public setVisible(
         vis?: boolean
     ): void {
@@ -308,8 +322,11 @@ class MapPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface MapPoint extends ColorMapComposition.PointComposition {
+    /** @internal */
     value: ColorMapComposition.PointComposition['value'];
+    /** @internal */
     isValid: ColorMapComposition.PointComposition['isValid'];
 }
 extend(MapPoint.prototype, {

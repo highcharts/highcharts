@@ -97,7 +97,7 @@ declare module '../../Core/Series/StatesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectEnds, connectNulls, gapSize, gapUnit,
  *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock
@@ -350,14 +350,18 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * The minimal height for a column or width for a bar. By default,
      * 0 values are not shown. To visualize a 0 (or close to zero) point,
      * set the minimal point length to a pixel value like 3\. In stacked
-     * column charts, minPointLength might not be respected for tightly
-     * packed values.
+     * column charts, the length is applied to each point in isolation, so
+     * tightly packed values may overlap. See the stacked sample below for a
+     * plugin that lays out the stack as a whole instead.
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength/
      *         Zero base value
      *
      * @sample {highcharts} highcharts/plotoptions/column-minpointlength-pos-and-neg/
      *         Positive and negative close to zero values
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-minpointlength-stacked/
+     *         Stack-aware minimum length
      *
      * @product highcharts highstock gantt
      */
@@ -441,15 +445,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     threshold?: (number|null);
 
     tooltip?: ColumnSeriesTooltipOptions;
-
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
 }
 
 export interface ColumnSeriesTooltipOptions extends SeriesTooltipOptions {

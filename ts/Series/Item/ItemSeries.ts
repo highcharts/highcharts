@@ -54,7 +54,6 @@ import {
  *
  * @requires modules/item-series
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.item
  *
@@ -68,6 +67,7 @@ class ItemSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ItemSeriesOptions = merge(
         PieSeries.defaultOptions,
         ItemSeriesDefaults
@@ -79,16 +79,19 @@ class ItemSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public borderWidth?: number;
 
     public data!: Array<ItemPoint>;
 
+    /** @internal */
     public itemSize?: number;
 
     public options!: ItemSeriesOptions;
 
     public points!: Array<ItemPoint>;
 
+    /** @internal */
     public slots?: Array<ItemSeries.GeometryObject>;
 
     /* *
@@ -99,7 +102,7 @@ class ItemSeries extends PieSeries {
 
     /**
      * Fade in the whole chart.
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         const group = this.group;
@@ -117,6 +120,9 @@ class ItemSeries extends PieSeries {
         }
     }
 
+    /**
+     * @internal
+     */
     public drawDataLabels(): void {
         if (this.center && this.slots) {
             super.drawDataLabels();
@@ -129,6 +135,9 @@ class ItemSeries extends PieSeries {
         }
     }
 
+    /**
+     * @internal
+     */
     public drawPoints(): void {
         const series = this,
             options = this.options,
@@ -271,6 +280,9 @@ class ItemSeries extends PieSeries {
         }
     }
 
+    /**
+     * @internal
+     */
     public getRows(): number {
         const chart = this.chart,
             total = this.total || 0;
@@ -309,7 +321,7 @@ class ItemSeries extends PieSeries {
 
     /**
      * Get the semi-circular slots.
-     * @private
+     * @internal
      */
     public getSlots(): (Array<ItemSeries.GeometryObject>|undefined) {
         const series = this,
@@ -406,7 +418,7 @@ class ItemSeries extends PieSeries {
             (isCircle ? rows.length : 0);
 
         /**
-         * @private
+         * @internal
          * @param {Highcharts.ItemRowContainerObject} item
          * Wrapped object with angle and row
          */
@@ -456,6 +468,9 @@ class ItemSeries extends PieSeries {
         return slots;
     }
 
+    /**
+     * @internal
+     */
     public translate(positions?: Array<number>): void {
         // Initialize chart without setting data, #13379.
         if (
@@ -511,15 +526,24 @@ namespace ItemSeries {
      *
      * */
 
+    /**
+     * @internal
+     */
     export interface GeometryObject extends CoreGeometryObject {
         angle: number;
     }
 
+    /**
+     * @internal
+     */
     export interface RowContainerObject {
         angle: number;
         row: RowObject;
     }
 
+    /**
+     * @internal
+     */
     export interface RowObject {
         colCount: number;
         rowLength: number;
