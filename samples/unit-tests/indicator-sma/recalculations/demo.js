@@ -448,18 +448,10 @@ QUnit.test(
             }),
             main = chart.get('main');
 
-        function expectedIndicatorLength(parentRowCount, indicatorPeriod) {
-            return parentRowCount - indicatorPeriod + 1;
-        }
-
-        function expectedSmaLength(mainRowCount) {
-            return expectedIndicatorLength(mainRowCount, period);
-        }
-
         function assertSmaSynced(label) {
             const sma = chart.get('sma'),
                 modifiedRows = sma.dataTable.getModified().rowCount,
-                expectedLength = expectedSmaLength(main.dataTable.rowCount);
+                expectedLength = main.dataTable.rowCount - period + 1;
 
             assert.strictEqual(
                 sma.points.length,
