@@ -1443,6 +1443,8 @@ const defaultOptions: DefaultOptions = {
          *         Legend with vertical scrollable extension
          * @sample highcharts/legend/scrollable-horizontal/
          *         Legend with horizontal scrollable extension
+         * @sample highcharts/legend/navigation-horizontal-plugin/
+         *         Legend with horizontal navigation extension
          *
          */
         navigation: {
@@ -3115,6 +3117,10 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The URL for the credits label.
+         *
+         * URLs that do not start with one of the
+         * [AST.allowedReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedReferences),
+         * for example `javascript:` URLs, are ignored.
          *
          * @sample {highcharts} highcharts/credits/href/
          *         Custom URL and text

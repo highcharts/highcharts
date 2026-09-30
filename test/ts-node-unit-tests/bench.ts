@@ -3,8 +3,10 @@ import type { BenchResults, BenchmarkResult, BenchmarkDetails } from './benchmar
 import { readdirSync, existsSync } from 'node:fs';
 import { readdir, mkdir, writeFile, rm, lstat } from 'node:fs/promises';
 import { join, relative, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { argv, exit } from 'node:process';
+import { pathToFileURL } from 'node:url';
 
 import yargs from 'yargs';
 import * as swc from '@swc/core';
@@ -127,7 +129,7 @@ function quartile (arr: number[], q:number) {
 };
 
 async function runRest(testFile: string) : Promise<BenchResults>{
-    const { config } = await import(testFile);
+    const { config } = await import(pathToFileURL(testFile).href);
 
     const results = [];
     await mkdir(join(__dirname, 'test-data'), { recursive: true });
@@ -197,7 +199,7 @@ async function benchmark(){
 
         const testFiles = result.filter(file => {
             if (pattern && typeof pattern === 'string') {
-                return new RegExp(pattern).test(file);
+                return file.includes(pattern);
             }
 
             return file.includes('.bench.ts');

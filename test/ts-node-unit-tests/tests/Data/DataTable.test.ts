@@ -110,6 +110,28 @@ describe('DataTable', () => {
                 'Table should retrieve only existing column.'
             );
         });
+
+        it('should update the version tag only on an effective rename', () => {
+            const table = new DataTable({ columns: { column1: [true] } });
+            const versionTag = table.getVersionTag();
+
+            table.changeColumnId('column1', 'column1');
+            table.changeColumnId('nonexistant', 'newColumn');
+
+            strictEqual(
+                table.getVersionTag(),
+                versionTag,
+                'Renames without effect should keep the version tag.'
+            );
+
+            table.changeColumnId('column1', 'newColumn');
+
+            notStrictEqual(
+                table.getVersionTag(),
+                versionTag,
+                'Renaming a column should update the version tag.'
+            );
+        });
     });
 
     describe('Column Retrieve', () => {
@@ -490,6 +512,22 @@ describe('DataTable', () => {
         });
     });
 
+    describe('hasRowWith', () => {
+        it('should return false when the column does not exist', () => {
+            const table = new DataTable({
+                columns: {
+                    x: [1]
+                }
+            });
+
+            strictEqual(
+                table.hasRowWith('missing', 1),
+                false,
+                'Missing column should return false for a numeric value.'
+            );
+        });
+    });
+
     describe('getRows', () => {
         it('should return row with non-existing column', () => {
             const table = new DataTable({ columns: { 'a': [0] } });
@@ -544,6 +582,29 @@ describe('DataTable', () => {
                 'Row values are the same after clone.'
             );
         });
+
+        it('should splice array rows in when inserting', () => {
+            const table = new DataTable({
+                columns: { a: [1, 2, 3], b: [4, 5, 6] }
+            });
+
+            table.setRows([[9, 8], [7, 6]], 1, true);
+
+            strictEqual(
+                table.getRowCount(),
+                5,
+                'Inserting two rows should grow the table by two.'
+            );
+
+            deepStrictEqual(
+                table.getColumns(),
+                {
+                    a: [1, 9, 7, 2, 3],
+                    b: [4, 8, 6, 5, 6]
+                },
+                'Existing rows should be shifted, not overwritten.'
+            );
+        });
     });
 
     describe('setColumns', () => {
@@ -567,6 +628,43 @@ describe('DataTable', () => {
                     y: [0, 1, 2]
                 },
                 'Table should contain three rows of valid values.'
+            );
+        });
+
+        it('should apply all values from a nonzero row index', () => {
+            const table = new DataTable({
+                columns: {
+                    x: [0, 1, 2]
+                }
+            });
+
+            table.setColumns({ x: [8, 9] }, 1);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                [0, 8, 9],
+                'Values should be applied from the requested row on.'
+            );
+        });
+
+        it('should extend a typed column for offset values', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setColumns({ x: new Float32Array([3, 4]) }, 2);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 3, 4]),
+                'The typed column should grow through the destination range.'
+            );
+            strictEqual(
+                table.getRowCount(),
+                4,
+                'The row count should include the offset values.'
             );
         });
 
@@ -733,6 +831,77 @@ describe('DataTable', () => {
             strictEqual(columns.y[3], undefined, 'y[3] should be undefined');
             strictEqual(columns.y[4], undefined, 'y[4] should be undefined');
             strictEqual(columns.y[5], undefined, 'y[5] should be undefined');
+        });
+
+        it('should not mutate the passed event detail', () => {
+            // A leaked `silent` flag would mute a later call reusing it.
+            const eventDetail = {};
+            const table = new DataTable({ columns: { column1: [1] } });
+
+            table.setColumns({ column1: [2] }, void 0, eventDetail);
+
+            deepStrictEqual(
+                eventDetail,
+                {},
+                'Passed event detail should not be mutated.'
+            );
+        });
+    });
+
+    describe('growing typed array columns', () => {
+        it('should keep a value set beyond the last row', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2]),
+                    y: [1, 2]
+                }
+            });
+
+            table.setCell('x', 3, 7);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 0, 7]),
+                'The cell beyond the last row should be kept.'
+            );
+            strictEqual(
+                table.getColumn('y')?.length,
+                4,
+                'The untouched column should follow the new row count.'
+            );
+        });
+
+        it('should keep rows appended beyond the last row', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setRows([[3], [4]]);
+            table.setRow({ x: 5 }, 5);
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 3, 4, 0, 5]),
+                'Appended rows should be kept.'
+            );
+        });
+
+        it('should grow when a longer column is added', () => {
+            const table = new DataTable({
+                columns: {
+                    x: new Float32Array([1, 2])
+                }
+            });
+
+            table.setColumns({ y: [1, 2, 3] });
+
+            deepStrictEqual(
+                table.getColumn('x'),
+                new Float32Array([1, 2, 0]),
+                'The typed column should follow the new row count.'
+            );
         });
     });
 

@@ -55,7 +55,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *            pointWidth, shadow, step, softThreshold, stacking,
  *            threshold, zoneAxis, zones, boostBlending
  *
- * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding data, boostThreshold, boostBlending
  *
  * @requires modules/pareto
  */

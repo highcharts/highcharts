@@ -52,7 +52,7 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
  *
  * @excluding boostThreshold, boostBlending
  *
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  *
  * @product highcharts
  *

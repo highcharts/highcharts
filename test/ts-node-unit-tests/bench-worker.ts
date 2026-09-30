@@ -1,7 +1,7 @@
 import { parentPort } from 'node:worker_threads';
 import { resolve, dirname } from 'node:path';
 import { writeFileSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { register } from 'tsx/esm/api';
 
@@ -55,7 +55,7 @@ parentPort.on('message', async value =>{
 
     if (value.testFile && value.size) {
         try {
-            const mod = await import(value.testFile);
+            const mod = await import(pathToFileURL(value.testFile).href);
             // tsx can expose either ESM exports or a CommonJS default wrapper.
             const { before, default: test } = typeof mod.default === 'function' ?
                 mod : mod.default ?? mod;

@@ -61,6 +61,7 @@ class VectorSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: VectorSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         VectorSeriesDefaults
@@ -74,8 +75,10 @@ class VectorSeries extends ScatterSeries {
 
     public data!: Array<VectorPoint>;
 
+    /** @internal */
     public lengthData?: Array<number>;
 
+    /** @internal */
     public lengthMax!: number;
 
     public options!: VectorSeriesOptions;

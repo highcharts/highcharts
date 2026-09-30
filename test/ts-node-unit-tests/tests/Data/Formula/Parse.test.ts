@@ -1,5 +1,5 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual, strictEqual } from 'node:assert';
+import { deepStrictEqual, strictEqual, throws } from 'node:assert';
 
 import Formula from '../../../../../ts/Data/Formula/Formula';
 
@@ -21,6 +21,26 @@ describe('Formula.parseFormula', () => {
                 10
             ],
             'Parsing should result in the expected structure.'
+        );
+    });
+
+    it('should reject too deeply nested formulas', () => {
+        throws(
+            () => Formula.parseFormula(
+                '('.repeat(10000) + '1' + ')'.repeat(10000),
+                false
+            ),
+            { name: 'FormulaParseError' },
+            'Deep nesting should throw a parse error, not a RangeError.'
+        );
+
+        strictEqual(
+            Formula.processFormula(Formula.parseFormula(
+                '('.repeat(100) + '1' + ')'.repeat(100),
+                false
+            )),
+            1,
+            'Nesting within the limit should still parse and process.'
         );
     });
 
@@ -53,6 +73,25 @@ describe('Formula.parseFormula', () => {
             true,
             'Formula `2 >= 1` should return TRUE.'
         );
+    });
+
+    it('should keep comma decimals with alternative separators', () => {
+        const cases: Array<[string, number]> = [
+            ['SUM(1,5;2,25)', 3.75],
+            ['1,5*2', 3],
+            ['1,5+2,5', 4],
+            ['-1,5', -1.5],
+            ['1,5e+2', 150],
+            ['SUM(1,5;SUM(0,25;0,5))', 2.25]
+        ];
+
+        for (const [text, expected] of cases) {
+            strictEqual(
+                Formula.processFormula(Formula.parseFormula(text, true)),
+                expected,
+                `Formula \`${text}\` should process to ${expected}.`
+            );
+        }
     });
 
     it('should parse and process <=', () => {

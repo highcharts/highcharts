@@ -48,6 +48,12 @@ function transformVisualSampleScript(script: string | undefined): string {
 
     transformed = transformed.replace(/(\s)animation:\s/g, '$1_animation: ');
 
+    // Playwright aborts /favicon.ico requests before route handlers can run.
+    transformed = transformed.replaceAll(
+        'https://www.highcharts.com/favicon.ico',
+        'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2021/05/19085042/favicon-1.ico'
+    );
+
     return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
