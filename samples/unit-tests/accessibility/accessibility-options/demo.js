@@ -409,6 +409,33 @@ QUnit.test('HCM colors override series colors', function (assert) {
         'System color high contrast themes should keep browser adjustments.'
     );
 
+    chart.update({
+        accessibility: {
+            highContrastTheme: {
+                colors: ['#f00']
+            }
+        }
+    });
+
+    assert.strictEqual(
+        getForcedColorAdjust(chart),
+        'none',
+        'Switching to author colors should opt out of browser adjustments.'
+    );
+
+    chart.update({
+        accessibility: {
+            highContrastTheme: {
+                colors: ['windowText']
+            }
+        }
+    });
+
+    assert.notOk(
+        getForcedColorAdjust(chart),
+        'Switching back to system colors should restore browser adjustments.'
+    );
+
     chart.options.accessibility.highContrastTheme.plotOptions.series
         .marker.lineWidth = 3;
     chart.update({
@@ -426,7 +453,7 @@ QUnit.test('HCM colors override series colors', function (assert) {
 });
 
 QUnit.test(
-    'HCM recognizes gradient and Color instance theme colors',
+    'HCM recognizes gradient, pattern and type specific theme colors',
     function (assert) {
         const linearGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
@@ -458,14 +485,46 @@ QUnit.test(
                 highContrastMode: true,
                 highContrastTheme: {
                     plotOptions: {
-                        series: {
-                            color: Highcharts.color('#0f0')
+                        pie: {
+                            colors: ['#f00', '#0f0']
                         }
                     }
                 }
             },
             series: [{
-                type: 'line',
+                type: 'pie',
+                data: [1, 2]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[1].graphic.attr('fill'),
+            '#0f0',
+            'Type specific high contrast colors should be rendered.'
+        );
+
+        assert.strictEqual(
+            getForcedColorAdjust(chart),
+            'none',
+            'Type specific high contrast colors should be preserved in ' +
+            'forced colors mode.'
+        );
+
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: [{
+                        pattern: {
+                            path: 'M 0 0 L 10 10',
+                            width: 10,
+                            height: 10
+                        }
+                    }]
+                }
+            },
+            series: [{
+                type: 'column',
                 data: [1, 2, 3]
             }]
         });
@@ -473,7 +532,8 @@ QUnit.test(
         assert.strictEqual(
             getForcedColorAdjust(chart),
             'none',
-            'Color instances should be recognized as author colors.'
+            'Pattern high contrast colors should be preserved in forced ' +
+            'colors mode.'
         );
 
         chart = Highcharts.chart('container', {

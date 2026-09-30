@@ -72,8 +72,7 @@ const systemColorKeywords = new Set([
 /**
  * Detect whether a color was picked by the chart author, as opposed to one of
  * the CSS system color keywords that forced colors mode supplies. Gradients
- * are judged by their stops, and `Highcharts.color` instances by the input
- * they hold.
+ * are judged by their stops, and pattern fills are always author defined.
  *
  * @internal
  * @param {*} [color] The color option to check.
@@ -81,10 +80,9 @@ const systemColorKeywords = new Set([
  */
 function isAuthorColor(color?: unknown): boolean {
     if (isObject(color, true)) {
-        // Unwrap `Highcharts.color()` instances to the input they were made
-        // from, duck-typed to keep `Color` out of the Grid bundles
-        if ('input' in color) {
-            return isAuthorColor(color.input);
+        // Pattern fills are drawn from the author's own definition
+        if ('pattern' in color) {
+            return true;
         }
 
         // A gradient is author defined when any of its stops is
@@ -175,6 +173,7 @@ function hasAuthorDefinedSeriesColors(theme: AnyRecord): boolean {
         const seriesOptions = plotOptions[seriesType] || {};
 
         return (
+            seriesOptions.colors?.some(isAuthorColor) ||
             isAuthorColor(seriesOptions.color) ||
             isAuthorColor(seriesOptions.fillColor) ||
             isAuthorColor(seriesOptions.lineColor) ||
@@ -356,11 +355,12 @@ function setHighContrastTheme(
         // Opt the plotted series out of forced colors, so that the author's
         // own colors survive. Scoped to the series group, leaving axes,
         // legend and tooltip to follow the user's system setting (#15921).
+        const seriesGroupStyle = chart.seriesGroup?.element.style;
+
         if (preserveAuthorColors) {
-            chart.seriesGroup?.element.style.setProperty(
-                'forced-color-adjust',
-                'none'
-            );
+            seriesGroupStyle?.setProperty('forced-color-adjust', 'none');
+        } else {
+            seriesGroupStyle?.removeProperty('forced-color-adjust');
         }
     } finally {
         delete highContrastState.applying;
