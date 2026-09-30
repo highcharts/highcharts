@@ -121,3 +121,78 @@ QUnit.test('Deprecated chart option in Standalone Navigator', function (
         'option, #24715.'
     );
 });
+
+QUnit.test('Inverted standalone navigator layout, #24717', function (assert) {
+    const navigator = Highcharts.navigator('container', {
+        chartOptions: {
+            chart: {
+                inverted: true,
+                width: 50,
+                height: 300
+            }
+        },
+        series: [{
+            data: [[0, 0], [600, 1]]
+        }]
+    });
+
+    const nav = navigator.navigator,
+        chart = nav.chart,
+        scrollbar = nav.scrollbar,
+        layout = () => ({
+            left: nav.left,
+            top: nav.top,
+            scrollbarX: scrollbar.x,
+            scrollbarY: scrollbar.y
+        }),
+        initialLayout = layout();
+
+    // For a vertical scrollbar, `width` is its thickness across the chart
+    assert.ok(
+        scrollbar.x >= 0 &&
+            scrollbar.x + scrollbar.width <= chart.chartWidth,
+        'Scrollbar should render within the chart, not off its left edge.'
+    );
+
+    assert.ok(
+        scrollbar.x < nav.left,
+        'Scrollbar should sit to the left of the navigator.'
+    );
+
+    chart.redraw();
+
+    assert.deepEqual(
+        layout(),
+        initialLayout,
+        'Navigator and scrollbar should not move on the first redraw.'
+    );
+});
+
+QUnit.test('Standalone navigator stays at the top, #24717', function (assert) {
+    const navigator = Highcharts.navigator('container', {
+        chartOptions: {
+            chart: {
+                width: 600,
+                height: 150
+            }
+        },
+        series: [{
+            data: [[0, 0], [600, 1]]
+        }]
+    });
+
+    const nav = navigator.navigator,
+        scrollbar = nav.scrollbar;
+
+    // The navigator is the whole chart, so a taller chart must not push it
+    // towards the bottom the way it would in a chart with a plot area
+    assert.ok(
+        nav.top < nav.height,
+        'Navigator should sit at the top of a chart taller than itself.'
+    );
+
+    assert.ok(
+        scrollbar.y < nav.top + nav.height + scrollbar.height,
+        'Scrollbar should follow the navigator, not the chart bottom.'
+    );
+});

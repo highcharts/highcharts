@@ -21,11 +21,15 @@
 import type { StandaloneNavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
 import type { Options } from '../../Core/Options';
+import type Navigator from './Navigator';
+import type { SetRangeEvent } from './Navigator';
+
 import Chart from '../../Core/Chart/Chart.js';
-import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
 import Axis from '../../Core/Axis/Axis.js';
-import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
+import standaloneNavigatorDefaults, {
+    getChartDefaults
+} from './StandaloneNavigatorDefaults.js';
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
@@ -146,11 +150,16 @@ class StandaloneNavigator {
         userOptions: StandaloneNavigatorOptions
     ) {
         this.userOptions = userOptions = compatChartOptions(userOptions);
+
+        const inverted = userOptions.chartOptions?.chart?.inverted;
+
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
+            getChartDefaults(inverted),
             userOptions.chartOptions,
-            { navigator: userOptions }
+            { navigator: userOptions },
+            { navigator: { enabled: true }, scrollbar: { enabled: true } }
         );
 
         // For a non-inverted navigator, the height option sets the chart
@@ -158,7 +167,7 @@ class StandaloneNavigator {
         // #24715).
         if (
             this.chartOptions.chart &&
-            !this.chartOptions.chart.inverted &&
+            !inverted &&
             !userOptions.chartOptions?.chart?.height &&
             userOptions.height
         ) {
@@ -166,19 +175,7 @@ class StandaloneNavigator {
         }
 
         const chart = new Chart(element, this.chartOptions);
-
-        chart.options = merge(
-            chart.options,
-            { navigator: { enabled: true }, scrollbar: { enabled: true } }
-        );
-
-        if (this.chartOptions.navigator && this.chartOptions.scrollbar) {
-            this.chartOptions.navigator.enabled = true;
-            this.chartOptions.scrollbar.enabled = true;
-        }
-
-        this.navigator = new Navigator(chart);
-        chart.navigator = this.navigator;
+        this.navigator = chart.navigator as Navigator;
         this.initNavigator();
     }
 
@@ -405,15 +402,21 @@ class StandaloneNavigator {
         redraw?: boolean
     ): void {
         newOptions = compatChartOptions(newOptions, this.navigator.chart);
+
+        const wasInverted = this.userOptions.chartOptions?.chart?.inverted;
+
         this.userOptions = merge(this.userOptions, newOptions);
 
-        const chartUserOptions = this.userOptions.chartOptions?.chart;
+        const chartUserOptions = this.userOptions.chartOptions?.chart,
+            isInverted = chartUserOptions?.inverted;
 
         this.chartOptions = merge(
             this.chartOptions,
+            isInverted !== wasInverted ?
+                getChartDefaults(isInverted) : void 0,
             (
                 newOptions.height &&
-                !chartUserOptions?.inverted &&
+                !isInverted &&
                 !chartUserOptions?.height
             ) ? { chart: { height: newOptions.height } } : void 0,
             newOptions.chartOptions,
@@ -456,7 +459,6 @@ class StandaloneNavigator {
      */
     public initNavigator(): void {
         const nav = this.navigator;
-        nav.top = 1;
         nav.xAxis.setScale();
         nav.yAxis.setScale();
         nav.xAxis.render();
