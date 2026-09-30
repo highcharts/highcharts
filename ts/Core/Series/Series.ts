@@ -300,6 +300,7 @@ class Series {
     public static keepProps = [
         'colorIndex',
         'eventOptions',
+        'hasBoundDataTableEvents',
         'navigatorSeries',
         'symbolIndex',
         'baseSeries'
