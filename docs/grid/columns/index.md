@@ -104,6 +104,111 @@ Grid.grid('container', {
 // Rendered columns: sum, sales, price, product
 ```
 
+## Summary columns (`columnAggregator`)
+
+A summary column derives its value from the other columns of the same row, for
+example a `Total` column summing quarterly columns. It is the per-row mirror of
+a summary row. Set `columnAggregator` to an aggregation function name (`SUM`,
+`AVERAGE`, `MIN`, `MAX`, `COUNT`, `MEDIAN`, `PRODUCT`, ...) and list the source
+columns in `aggregatedColumns`:
+
+```js
+Grid.grid('container', {
+    data: {
+        columns: {
+            region: ['North', 'South'],
+            q1: [120, 80],
+            q2: [140, 85]
+        }
+    },
+    columns: [{
+        // No source column provides `total`, so the column is unbound.
+        id: 'total',
+        columnAggregator: 'SUM',
+        aggregatedColumns: ['q1', 'q2']
+    }]
+});
+```
+
+- `aggregatedColumns` is optional. When omitted, every other numeric column of
+  the table is aggregated, skipping columns that are derived themselves. List
+  the columns explicitly when the table holds numeric columns that must stay out
+  of the result, such as an id or a year.
+- Without an explicit `dataType`, a summary column is assumed numeric.
+- The header and body cells always carry the `hcg-summary-column` class, so
+  styling them needs no `className` of your own.
+- The cells are derived, so they are never editable.
+- The value is re-resolved whenever a cell of its row is edited.
+- By default only the rendered cells are resolved, which keeps the column out of
+  sorting, filtering, and exports. Set `materialize` to change that.
+
+### Sorting, filtering and exporting (`materialize`)
+
+Sorting and filtering are stages of the data pipeline, not of rendering: they run
+on the data table before anything aggregates. A summary column resolved per cell
+has no column in that table, so there is nothing to sort by.
+
+`materialize: true` writes the aggregate into the queried table ahead of the
+sorting and filtering modifiers, which makes the column behave like a regular
+data column — while the cells stay read-only:
+
+```js
+columns: [{
+    id: 'total',
+    columnAggregator: 'SUM',
+    aggregatedColumns: ['q1', 'q2'],
+    materialize: true
+}]
+```
+
+What it costs, and when not to use it:
+
+- One pass over every row on each query, instead of resolving only the cells on
+  screen. With virtualized data that is the difference between all rows and a
+  screenful.
+- A cell edit becomes a requery rather than a cheap refresh of the row.
+- It needs a local data provider. Sorting and filtering of a remote provider run
+  on the server, which knows nothing about the column, so `materialize` is
+  ignored there and reported in the console.
+- The aggregator callback runs before sorting and filtering, so its `rowIndex`
+  addresses the source table, and `rowId` is only resolved when `data.idColumn`
+  is set.
+- Under TreeView or row grouping the column behaves like any other data column:
+  give it a `rowAggregator` for parent rows to aggregate it.
+
+Pass a callback to decide per row, returning a function name or a falsy value to
+skip aggregation and leave the column's own data in place:
+
+```js
+columns: [{
+    id: 'total',
+    aggregatedColumns: ['q1', 'q2'],
+    columnAggregator: context => context.rowIndex === 0 ? false : 'SUM'
+}]
+```
+
+For logic no Formula function covers, use `cells.valueGetter` instead. It
+receives the cell, derives the value from `cell.row.data`, takes precedence over
+`columnAggregator`, and follows edits the same way:
+
+```js
+columns: [{
+    id: 'margin',
+    dataId: null,
+    dataType: 'number',
+    cells: {
+        valueGetter: cell => cell.row.data.revenue - cell.row.data.cost
+    }
+}]
+```
+
+See the
+[summary columns demo](https://www.highcharts.com/samples/grid-pro/options/summary-columns).
+
+Aggregating *down* a column instead — one value per column over many rows — is
+what [`rowAggregator`](https://www.highcharts.com/docs/grid/rows/grouping) and
+summary rows do.
+
 ## Styling and Theming
 
 Use column-level classes, inline styles, and theme variables to control how

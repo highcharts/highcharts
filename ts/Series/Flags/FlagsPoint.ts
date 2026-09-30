@@ -46,26 +46,36 @@ class FlagsPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public _y?: number;
 
+    /** @internal */
     public anchorX?: number;
 
     public options!: FlagsPointOptions;
 
+    /** @internal */
     public series!: FlagsSeries;
 
+    /** @internal */
     public fillColor?: ColorType;
 
+    /** @internal */
     public lineWidth?: number;
 
+    /** @internal */
     public raised?: boolean;
 
+    /** @internal */
     public stackIndex?: number;
 
+    /** @internal */
     public style?: CSSObject;
 
+    /** @internal */
     public ttBelow?: boolean = false;
 
+    /** @internal */
     public unbindMouseOver?: Function;
 
     /* *
@@ -75,7 +85,7 @@ class FlagsPoint extends ColumnPoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public isValid(): boolean {
         // #9233 - Prevent from treating flags as null points (even if
@@ -84,7 +94,7 @@ class FlagsPoint extends ColumnPoint {
     }
 
     /**
-     * @private
+     * @internal
      */
     public hasNewShapeType(): (boolean|undefined) {
         const shape = this.options.shape || this.series.options.shape;

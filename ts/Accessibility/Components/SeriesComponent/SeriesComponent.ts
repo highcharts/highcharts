@@ -34,7 +34,10 @@ import ForcedMarkers from './ForcedMarkers.js';
 import NewDataAnnouncer from './NewDataAnnouncer.js';
 import Series from '../../../Core/Series/Series.js';
 import SeriesDescriber from './SeriesDescriber.js';
-const { describeSeries } = SeriesDescriber;
+const {
+    compose: composeSeriesDescriber,
+    describeSeries
+} = SeriesDescriber;
 import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 
 
@@ -47,9 +50,10 @@ import SeriesKeyboardNavigation from './SeriesKeyboardNavigation.js';
 /**
  * The SeriesComponent class
  *
- * @private
  * @class
  * @name Highcharts.SeriesComponent
+ *
+ * @internal
  */
 class SeriesComponent extends AccessibilityComponent {
 
@@ -61,9 +65,7 @@ class SeriesComponent extends AccessibilityComponent {
      * */
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart,
         PointClass: typeof Point,
@@ -71,6 +73,7 @@ class SeriesComponent extends AccessibilityComponent {
     ): void {
         NewDataAnnouncer.compose(SeriesClass);
         ForcedMarkers.compose(SeriesClass);
+        composeSeriesDescriber(PointClass);
         SeriesKeyboardNavigation.compose(ChartClass, PointClass, SeriesClass);
     }
 
@@ -108,9 +111,7 @@ class SeriesComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public hideTooltipFromATWhenShown(): void {
         const component = this;
 
@@ -132,9 +133,7 @@ class SeriesComponent extends AccessibilityComponent {
     }
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public hideSeriesLabelsFromATWhenShown(): void {
         this.addEvent(
             this.chart as any,
@@ -175,7 +174,8 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Get keyboard navigation handler for this component.
-     * @private
+     *
+     * @internal
      */
     public getKeyboardNavigation(): KeyboardNavigationHandler {
         return (this.keyboardNavigation as any).getKeyboardNavigationHandler();
@@ -184,7 +184,8 @@ class SeriesComponent extends AccessibilityComponent {
 
     /**
      * Remove traces
-     * @private
+     *
+     * @internal
      */
     public destroy(): void {
         (this as any).newDataAnnouncer.destroy();
@@ -200,6 +201,7 @@ class SeriesComponent extends AccessibilityComponent {
  *
  * */
 
+/** @internal */
 interface SeriesComponent {
     chart: SeriesKeyboardNavigation.ChartComposition;
 }
@@ -211,4 +213,5 @@ interface SeriesComponent {
  *
  * */
 
+/** @internal */
 export default SeriesComponent;

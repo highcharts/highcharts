@@ -25,7 +25,6 @@ import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
-import Color from '../Core/Color/Color.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -76,18 +75,19 @@ const systemColorKeywords = new Set([
  * are judged by their stops, and `Highcharts.color` instances by the input
  * they hold.
  *
- * @private
+ * @internal
  * @param {*} [color] The color option to check.
  * @return {boolean} True if the author picked the color.
  */
 function isAuthorColor(color?: unknown): boolean {
-    // Unwrap `Highcharts.color()` instances to the input they were made from
-    if (color instanceof Color) {
-        return isAuthorColor(color.input);
-    }
-
-    // A gradient is author defined when any of its stops is
     if (isObject(color, true)) {
+        // Unwrap `Highcharts.color()` instances to the input they were made
+        // from, duck-typed to keep `Color` out of the Grid bundles
+        if ('input' in color) {
+            return isAuthorColor(color.input);
+        }
+
+        // A gradient is author defined when any of its stops is
         const stops = (color as GradientColor).stops;
 
         return isArray(stops) && stops.some(
@@ -107,17 +107,20 @@ function isAuthorColor(color?: unknown): boolean {
  *
  * */
 
+/** @internal */
 interface HighContrastState {
     active?: boolean;
     applying?: boolean;
 }
 
+/** @internal */
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
         highContrastState?: HighContrastState;
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         borderColor?: ColorType;
@@ -134,8 +137,9 @@ declare module '../Core/Series/PointBase' {
  * Detect WHCM in the browser.
  *
  * @function Highcharts#isHighContrastModeActive
- * @private
  * @return {boolean} Returns true if the browser is in High Contrast mode.
+ *
+ * @internal
  */
 function isHighContrastModeActive(): boolean {
     // Test BG image for IE
@@ -186,9 +190,9 @@ function hasAuthorDefinedSeriesColors(theme: AnyRecord): boolean {
  * a separate file.
  *
  * @function Highcharts#setHighContrastTheme
- * @private
  * @param {Highcharts.AccessibilityChart} chart The chart to set the theme of.
- * @return {void}
+ *
+ * @internal
  */
 function setHighContrastTheme(
     chart: Accessibility.ChartComposition
@@ -369,9 +373,11 @@ function setHighContrastTheme(
  *
  * */
 
+/** @internal */
 const whcm = {
     isHighContrastModeActive,
     setHighContrastTheme
 };
 
+/** @internal */
 export default whcm;

@@ -32,11 +32,10 @@ const { parse: color } = Color;
 import D from '../Defaults.js';
 const { defaultOptions: genericDefaultOptions } = D;
 import Fx from '../Animation/Fx.js';
-import Math3D from '../Math3D.js';
-const {
+import {
     perspective,
     shapeArea3D
-} = Math3D;
+} from '../Math3D.js';
 import Series from '../Series/Series.js';
 import {
     addEvent,

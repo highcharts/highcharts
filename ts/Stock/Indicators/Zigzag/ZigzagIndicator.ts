@@ -40,7 +40,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Zig Zag series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.zigzag
  *
@@ -69,6 +68,7 @@ class ZigzagIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/zigzag
      * @optionparent plotOptions.zigzag
+     * @internal
      */
     public static defaultOptions: ZigzagOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -120,6 +120,7 @@ class ZigzagIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ZigzagParamsOptions
@@ -266,7 +267,6 @@ class ZigzagIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ZigzagIndicator {
     nameComponents: Array<string>;
     nameSuffixes: Array<string>;
@@ -286,7 +286,6 @@ extend(ZigzagIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         zigzag: typeof ZigzagIndicator;
@@ -301,7 +300,6 @@ SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
  *
  * */
 
-/** @internal */
 export default ZigzagIndicator;
 
 /* *
@@ -317,7 +315,6 @@ export default ZigzagIndicator;
  * @extends   series,plotOptions.zigzag
  * @since     6.0.0
  * @product   highstock
- * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/zigzag
  * @apioption series.zigzag
