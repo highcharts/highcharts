@@ -19,6 +19,7 @@
  * */
 
 import type HLCSeriesOptions from './HLCSeriesOptions.js';
+import type Legend from '../../Core/Legend/Legend.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
@@ -63,9 +64,10 @@ class HLCSeries extends ColumnSeries {
     /** @internal */
     public static compose(
         _SeriesClass: typeof Series,
+        LegendClass: typeof Legend,
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        FinancialSymbols.compose(SVGRendererClass);
+        FinancialSymbols.compose(LegendClass, SVGRendererClass);
     }
 
     /** @internal */

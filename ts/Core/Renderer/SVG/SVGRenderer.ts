@@ -903,7 +903,7 @@ class SVGRenderer implements SVGRendererBase {
         // (#667).
         addEvent(
             label.element, isMS ? 'mouseover' : 'mouseenter',
-            function (): void {
+            (): void => {
                 if (curState !== 3) {
                     label.setState(1);
                 }
@@ -911,7 +911,7 @@ class SVGRenderer implements SVGRendererBase {
         );
         addEvent(
             label.element, isMS ? 'mouseout' : 'mouseleave',
-            function (): void {
+            (): void => {
                 if (curState !== 3) {
                     label.setState(curState);
                 }
@@ -947,21 +947,11 @@ class SVGRenderer implements SVGRendererBase {
         // Presentational attributes
         if (!styledMode) {
             label.css(extend({ cursor: 'default' } as CSSObject, normalStyle));
-
-            // HTML labels don't need to handle pointer events because click and
-            // mouseenter/mouseleave is bound to the underlying <g> element.
-            // Should this be reconsidered, we need more complex logic to share
-            // events between the <g> and its <div> counterpart, and avoid
-            // triggering mouseenter/mouseleave when hovering from one to the
-            // other (#17440).
-            if (useHTML) {
-                label.text.css({ pointerEvents: 'none' });
-            }
         }
 
         return label
             .on('touchstart', (e: Event): void => e.stopPropagation())
-            .on('click', function (e: Event): void {
+            .on('click', (e: Event): void => {
                 if (curState !== 3) {
                     callback?.call(label, e);
                 }

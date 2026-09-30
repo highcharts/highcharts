@@ -18,23 +18,21 @@
  *
  * */
 
-import type FlowMapPointOptions from './FlowMapPointOptions.js';
-import type FlowMapSeries from './FlowMapSeries.js';
+import type { FlowMapPointOptions } from './FlowMapPointOptions.js';
+import type { FlowMapSeries } from './FlowMapSeries.js';
 import type { MapLonLatObject } from '../../Maps/GeoJSON.js';
-import type PositionObject from '../../Core/Renderer/PositionObject.js';
-import type ColorMapComposition from '../ColorMapComposition.js';
+import type { PositionObject } from '../../Core/Renderer/PositionObject.js';
+import type { ColorMapComposition } from '../ColorMapComposition.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { LonLatArray } from '../../Maps/MapViewOptions.js';
 const {
-    seriesTypes: {
-        mapline: {
-            prototype: {
-                pointClass: MapLinePoint
-            }
+    mapline: {
+        prototype: {
+            pointClass: MapLinePoint
         }
     }
-} = SeriesRegistry;
+} = SeriesRegistry.seriesTypes;
 import { isNumber, isString } from '../../Shared/Utilities.js';
 
 /* *
@@ -68,9 +66,7 @@ class FlowMapPoint extends MapLinePoint {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     isValid(): boolean {
         let valid = !!(this.options.to && this.options.from);
         [this.options.to, this.options.from]

@@ -32,8 +32,15 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D.js';
 
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
-const { charts } = H;
-import { extend, merge } from '../../Shared/Utilities.js';
+const {
+    charts,
+    composed
+} = H;
+import {
+    extend,
+    merge,
+    pushUnique
+} from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /* *
@@ -42,6 +49,7 @@ import { error } from '../../Core/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         finishedOnAdd?: boolean;
@@ -53,6 +61,7 @@ declare module '../../Core/Renderer/SVG/SVGElementBase.js' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         funnel3d(shapeArgs: SVGAttributes): SVGElement;
@@ -60,6 +69,7 @@ declare module '../../Core/Renderer/SVG/SVGRendererBase.js' {
     }
 }
 
+/** @internal */
 interface Funnel3DPathsObject extends SVGPath3D {
     backLower: SVGPath;
     backUpper: SVGPath;
@@ -75,14 +85,13 @@ interface Funnel3DPathsObject extends SVGPath3D {
  *
  * */
 
-/** @private */
-function compose(
+/** @internal */
+export function composeFunnel3D(
     SVGRendererClass: typeof SVGRenderer
 ): void {
-    const rendererProto =
-        SVGRendererClass.prototype as SVGRenderer3D.Composition;
+    const rendererProto = SVGRendererClass.prototype;
 
-    if (!rendererProto.funnel3d) {
+    if (pushUnique(composed, 'Funnel3dSeries')) {
         rendererProto.Element3D.types.funnel3d = SVGElement3DFunnel;
 
         extend(rendererProto, {
@@ -90,10 +99,9 @@ function compose(
             funnel3dPath: rendererFunnel3dPath
         });
     }
-
 }
 
-/** @private */
+/** @internal */
 function rendererFunnel3d(
     this: SVGRenderer3D.Composition,
     shapeArgs: SVGAttributes
@@ -144,7 +152,7 @@ function rendererFunnel3d(
 
 /**
  * Generates paths and zIndexes.
- * @private
+ * @internal
  */
 function rendererFunnel3dPath(
     this: SVGRenderer3D.Composition,
@@ -311,15 +319,3 @@ function rendererFunnel3dPath(
 
     return ret;
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-const Funnel3DComposition = {
-    compose
-};
-
-export default Funnel3DComposition;

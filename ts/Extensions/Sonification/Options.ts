@@ -1522,8 +1522,8 @@ const Options: DeepPartial<OptionsType> = {
             /**
              * Name of the voice synthesis to prefer for speech tracks.
              *
-             * If not available, falls back to the default voice for the
-             * selected language.
+             * If not available, a suitable voice for the configured
+             * language is selected automatically.
              *
              * Different platforms provide different voices for web speech
              * synthesis.

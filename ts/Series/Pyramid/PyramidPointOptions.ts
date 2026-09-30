@@ -18,7 +18,7 @@
  *
  * */
 
-import type FunnelPointOptions from '../Funnel/FunnelPointOptions.js';
+import type { FunnelPointOptions } from '../Funnel/FunnelPointOptions.js';
 
 /* *
  *
