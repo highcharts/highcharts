@@ -31,15 +31,14 @@ import Axis3DDefaults from './Axis3DDefaults.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
-const { deg2rad } = H;
-import Math3D from '../Math3D.js';
-const {
+const { composed, deg2rad } = H;
+import {
     perspective,
     perspective3D,
     shapeArea
-} = Math3D;
+} from '../Math3D.js';
 import Tick3D from './Tick3DComposition.js';
-import { addEvent, merge, wrap } from '../../Shared/Utilities.js';
+import { addEvent, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -301,14 +300,9 @@ function wrapAxisGetSlotWidth(
         chart.frameShapes &&
         chart.is3d() &&
         gridGroup &&
-        tick &&
-        tick.label
+        tick?.label
     ) {
-        const firstGridLine = (
-                (gridGroup.element.childNodes[0] as any).getBBox()
-            ),
-            frame3DLeft = chart.frameShapes.left.getBBox(),
-            options3d = chart.options.chart.options3d as any,
+        const options3d = chart.options.chart.options3d as any,
             origin = {
                 x: chart.plotWidth / 2,
                 y: chart.plotHeight / 2,
@@ -352,16 +346,16 @@ function wrapAxisGetSlotWidth(
 
         labelPos = perspective3D(labelPos, origin, origin.vd);
 
-        // If tick is first one, check whether next label position is
-        // already calculated, then return difference between the first and
-        // the second label. If there is no next label position calculated,
-        // return the difference between the first grid line and left 3d
-        // frame.
+        // If the tick is the first one, check whether the next label position
+        // is already calculated, then return the difference between the first
+        // and the second label. If there is no next label position calculated,
+        // return the difference between the first grid line and left 3d frame.
         return Math.abs(
             prevLabelPos ?
-                labelPos.x - prevLabelPos.x : nextLabelPos ?
+                labelPos.x - prevLabelPos.x :
+                nextLabelPos ?
                     nextLabelPos.x - labelPos.x :
-                    firstGridLine.x - frame3DLeft.x
+                    axis.len / (tickPositions.length + 1)
         );
     }
     return proceed.apply(axis, [].slice.call(arguments, 1));
@@ -410,10 +404,8 @@ class Axis3DAdditions {
 
         Tick3D.compose(TickClass);
 
-        if (!AxisClass.keepProps.includes('axis3D')) {
+        if (pushUnique(composed, 'Axis.3D')) {
             merge(true, defaultOptions.xAxis, Axis3DDefaults);
-
-            AxisClass.keepProps.push('axis3D');
 
             addEvent(AxisClass, 'init', onAxisInit);
             addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);

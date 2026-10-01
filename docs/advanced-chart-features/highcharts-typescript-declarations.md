@@ -1,3 +1,10 @@
+---
+description: >-
+  Set up Highcharts with its bundled TypeScript declarations, configure
+  imports and build tools, extend existing types for custom functionality, and
+  address migration issues or errors in chart options.
+---
+
 Highcharts TypeScript Declarations
 ==================================
 

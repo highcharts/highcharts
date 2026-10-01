@@ -37,7 +37,7 @@ const {
 /**
  * Find color of point based on color axis.
  *
- * @function Highcharts.colorFromPoint
+ * @internal
  *
  * @param {number | null} value
  *        Value to find corresponding color on the color axis.
@@ -75,7 +75,7 @@ function colorFromPoint(
 
 /**
  * Method responsible for creating a canvas for interpolation image.
- * @private
+ * @internal
  */
 function getContext(
     series: HeatmapSeries | GeoHeatmapSeries

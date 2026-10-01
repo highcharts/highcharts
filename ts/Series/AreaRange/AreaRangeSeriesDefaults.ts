@@ -217,7 +217,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  *
  *
  * @extends   series,plotOptions.arearange
- * @excluding dataParser, dataURL, stack, stacking
+ * @excluding stack, stacking
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.arearange

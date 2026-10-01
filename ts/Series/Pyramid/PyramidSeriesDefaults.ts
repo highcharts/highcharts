@@ -61,7 +61,7 @@ const PyramidSeriesDefaults: PyramidSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pyramid
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostThreshold, boostBlending
  * @product   highcharts
  * @requires  modules/funnel

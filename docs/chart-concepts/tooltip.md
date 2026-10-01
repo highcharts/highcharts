@@ -1,3 +1,10 @@
+---
+description: >-
+  Customize tooltip appearance, content, and positioning with chart options or
+  CSS. Learn about formatters, HTML content, shared and split tooltips, fixed
+  placement, and crosshairs that connect points to axes.
+---
+
 Tooltip
 =======
 

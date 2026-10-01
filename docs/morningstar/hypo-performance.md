@@ -1,3 +1,10 @@
+---
+description: >-
+  Build hypothetical return requests for portfolios and benchmarks with the
+  HypoPerformanceConnector, choose a view and calculation settings, and
+  configure currency, date range, taxes, fees, rebalancing, and holdings.
+---
+
 # Hypothetical Performance
 
 Using Morningstar **Historical Performance** data, financial advisors can

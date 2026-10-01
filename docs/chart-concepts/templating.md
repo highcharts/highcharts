@@ -1,3 +1,11 @@
+---
+description: >-
+  Write format strings using variables, number and date formatting,
+  conditional blocks, and helpers. Learn how to combine expressions, add
+  custom helpers, debug templates, and work within their context and security
+  limits.
+---
+
 Templating
 ==========
 

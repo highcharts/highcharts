@@ -1,3 +1,10 @@
+---
+description: >-
+  Update module loading for Highcharts v12 by removing factory calls and
+  choosing ESM for asynchronous imports. Learn which internal module
+  mechanisms were removed and see examples for different environments.
+---
+
 # A wind of change with Highcharts version 12
 
 Highcharts v12 has introduced new Webpack-based UMDs (Universal Module Definition) to make Highcharts modules easier to use and faster.
