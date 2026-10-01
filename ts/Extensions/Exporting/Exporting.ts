@@ -1991,11 +1991,13 @@ export class Exporting {
         const cssWidth: string = chart.renderTo.style.width,
             cssHeight: string = chart.renderTo.style.height,
             sourceWidth: (number|CSSLength) = options.exporting?.sourceWidth ||
-                options.chart.width ||
+                (typeof options.chart.width === 'string' ?
+                    chart.chartWidth : options.chart.width) ||
                 (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
                 (options.isGantt ? 800 : 600),
             sourceHeight: (number | string) = options.exporting?.sourceHeight ||
-                options.chart.height ||
+                (typeof options.chart.height === 'string' ?
+                    chart.chartHeight : options.chart.height) ||
                 (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
                 400;
 
