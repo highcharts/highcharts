@@ -46,6 +46,7 @@ declare module '../Core/Series/PointBase' {
         dispX?: number;
         dispY?: number;
         fromNode?: Point;
+        inDragMode?: boolean;
         linksFrom?: Array<Point>;
         linksTo?: Array<Point>;
         mass?: number;
@@ -180,8 +181,17 @@ function onChartRender(
         }
     };
 
-    // Don't animate layout when series is dragged
-    if (this.graphLayoutsLookup && !this.pointer?.hasDragged) {
+    // Don't restart layout when chart is panned
+    if (
+        this.graphLayoutsLookup && (
+            !this.pointer?.hasDragged ||
+            this.graphLayoutsLookup.some((layout): boolean =>
+                layout.nodes.some(
+                    (node): boolean => !!node.inDragMode
+                )
+            )
+        )
+    ) {
         setAnimation(false, this);
         // Start simulation
         this.graphLayoutsLookup.forEach((layout): void => layout.start());
