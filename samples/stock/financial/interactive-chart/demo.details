@@ -3,5 +3,6 @@ name: Interactive Chart
 description: Interactive price chart with range selectors showing percentage change per period.
 tags:
   - Morningstar
+requiresManualTesting: true
 js_wrap: b
 ...
