@@ -589,7 +589,7 @@ QUnit.test(
             'Y coord on the bottom yAxis - the bottom yAxis should be found.'
         );
 
-        const point = chart.series[1].points[1];
+        let point = chart.series[1].points[1];
 
         chart.navigationBindings.options.bindings.verticalLabel.start.call(
             chart.navigationBindings,
@@ -608,6 +608,28 @@ QUnit.test(
                 yAxis: 1
             },
             'Annotation should be attached to a point with y equal to zero ' +
+            '(#25246).'
+        );
+
+        point = chart.series[1].points[0];
+
+        chart.navigationBindings.options.bindings.verticalLabel.start.call(
+            chart.navigationBindings,
+            {
+                chartX: chart.plotLeft + point.plotX,
+                chartY: chart.yAxis[1].top + chart.yAxis[1].len / 2
+            }
+        );
+
+        assert.deepEqual(
+            chart.annotations[1].options.typeOptions.point,
+            {
+                x: 0,
+                xAxis: 0,
+                y: 2,
+                yAxis: 1
+            },
+            'Annotation should be attached to a point with x equal to zero ' +
             '(#25246).'
         );
 
@@ -721,28 +743,6 @@ QUnit.test(
             'px from the second point.'
         );
 
-        point = series.points[0];
-
-        chart.navigationBindings.options.bindings.verticalLabel.start.call(
-            chart.navigationBindings,
-            {
-                chartX: chart.plotLeft + point.plotX + 1,
-                chartY: yAxis.top + yAxis.len / 2
-            }
-        );
-
-        assert.deepEqual(
-            chart.annotations[1].options.typeOptions.point,
-            {
-                x: 0,
-                xAxis: 0,
-                y: 4,
-                yAxis: 0
-            },
-            'Annotation should be attached to a point with x equal to zero ' +
-            '(#25246).'
-        );
-
         chart.update({
             chart: {
                 inverted: true
@@ -761,7 +761,7 @@ QUnit.test(
             }
         );
 
-        annotationBBox = chart.annotations[2].graphic.getBBox();
+        annotationBBox = chart.annotations[1].graphic.getBBox();
 
         assert.close(
             (
