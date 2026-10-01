@@ -645,19 +645,27 @@ text.highcharts-data-label {
  *
  **/
 
-/* Styling of first row (national results) */
-#election-grid .highcharts-grid-row[data-row-index="0"] {
+/* Styling of the pinned national summary row */
+#election-grid .hcg-summary-row {
     font-weight: bold;
-    border-top: 1px solid #000;
-    border-bottom: 1px solid #000;
+}
+
+/* Winning party per column pair. Scoped to the grid, so that it outweighs
+   the cell colour coming from the Grid stylesheet. */
+#election-grid .hcg-cell.democrat {
+    color: var(--highcharts-color-0);
+}
+
+#election-grid .hcg-cell.republican {
+    color: var(--highcharts-color-1);
+}
+
+#election-grid .hcg-summary-row .hcg-cell {
+    height: 60px;
 }
 
 #election-grid .highcharts-grid-container {
     height: 400px;
-}
-
-.highcharts-grid-row[data-row-index="0"] td {
-    height: 60px;
 }
 
 /* Safari fix for manual dark mode */
