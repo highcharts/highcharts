@@ -148,6 +148,10 @@ class MapPointSeries extends ScatterSeries {
             this.points.forEach((p): void => {
 
                 let { x = void 0, y = void 0 } = p;
+
+                // Map points have no size, and `y` is a coordinate or a color
+                // value, so rank all data labels equally (#23585)
+                p.labelrank = p.options.labelrank ?? 0;
                 const svgTransform = (
                     isNumber(p.insetIndex) &&
                     mapView.insets[p.insetIndex].getSVGTransform()

@@ -164,6 +164,35 @@ QUnit.test('Sankey', function (assert) {
     );
 });
 
+QUnit.test('Sankey data label rank follows node size', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'sankey',
+            dataLabels: {
+                enabled: true,
+                allowOverlap: false
+            },
+            data: [
+                ['Large source', 'Large target', 10],
+                ['Small source', 'Small target', 1]
+            ]
+        }]
+    });
+
+    const nodes = chart.series[0].nodeLookup;
+
+    assert.strictEqual(
+        nodes['Large source'].dataLabel.labelrank,
+        10,
+        'The larger Sankey node has the higher data label rank'
+    );
+    assert.strictEqual(
+        nodes['Small source'].dataLabel.labelrank,
+        1,
+        'The smaller Sankey node has the lower data label rank'
+    );
+});
+
 QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

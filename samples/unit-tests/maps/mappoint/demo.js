@@ -120,3 +120,29 @@ QUnit.test('MapPoint with LineWidth', function (assert) {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test('MapPoint data labels do not rank by y value', function (assert) {
+    const chart = Highcharts.mapChart('container', {
+        mapView: {
+            center: [0, 0],
+            zoom: 1
+        },
+        series: [{
+            type: 'mappoint',
+            dataLabels: {
+                enabled: true,
+                allowOverlap: false
+            },
+            data: [
+                { lat: 0, lon: 0, name: 'First', y: 1 },
+                { lat: 0, lon: 0, name: 'Second', y: 10 }
+            ]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.dataLabel.labelrank),
+        [0, 0],
+        'Map point data label ranks are independent of their y values'
+    );
+});
