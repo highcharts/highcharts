@@ -166,7 +166,8 @@
         "jsdoc/require-param-type": 2, // @todo
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-builtins": 0, // @todo
-        "node/no-unsupported-features/es-syntax": 0 // @todo
+        "node/no-unsupported-features/es-syntax": 0, // @todo
+        "node/no-unsupported-features/node-builtins": 0
     },
     "settings": {
         "jsdoc": {
