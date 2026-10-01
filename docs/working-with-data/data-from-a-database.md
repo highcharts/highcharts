@@ -1,3 +1,10 @@
+---
+description: >-
+  Understand how server-generated data reaches a client-side chart. Follow PHP
+  and MySQL examples for regular intervals or explicit timestamps, and
+  consider JSON encoding as an alternative for producing chart options.
+---
+
 Data from a database
 ====================
 

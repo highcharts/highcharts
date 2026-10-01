@@ -1,3 +1,10 @@
+---
+description: >-
+  Add drilldown behavior with its React component, define top-level points
+  that reference drilldown IDs, and provide matching child series inside the
+  component while configuring axis options as needed.
+---
+
 # Drilldown
 
 You can add [drilldown](https://www.highcharts.com/docs/chart-concepts/drilldown) to your chart using the `Drilldown` component:
