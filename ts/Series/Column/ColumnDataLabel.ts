@@ -28,8 +28,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import { merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *

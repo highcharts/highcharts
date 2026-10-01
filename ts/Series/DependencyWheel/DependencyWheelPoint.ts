@@ -26,10 +26,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    sankey: { prototype: { pointClass: SankeyPoint } }
-} = SeriesRegistry.seriesTypes;
+import SankeySeries from '../Sankey/SankeySeries.js';
+const { prototype: { pointClass: SankeyPoint } } = SankeySeries;
 import { pInt, wrap } from '../../Shared/Utilities.js';
 
 /* *

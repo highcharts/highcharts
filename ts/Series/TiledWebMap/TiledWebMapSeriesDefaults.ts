@@ -45,6 +45,7 @@ import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
  * pointDescriptionFormatter, selected, shadow, showCheckbox,
  * sonification, stickyTracking, tooltip, type
  * @product      highmaps
+ * @requires     modules/map
  * @requires     modules/tiledwebmap
  * @optionparent plotOptions.tiledwebmap
  */
@@ -80,6 +81,7 @@ const TiledWebMapSeriesDefaults: TiledWebMapSeriesOptions = {
  * nullInteraction, onPoint, point, pointDescriptionFormatter, selected, shadow,
  * showCheckbox, stickyTracking, tooltip, type
  * @product   highmaps
+ * @requires  modules/map
  * @requires  modules/tiledwebmap
  * @apioption series.tiledwebmap
  */

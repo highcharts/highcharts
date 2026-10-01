@@ -25,11 +25,9 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import OHLCSeries from '../OHLC/OHLCSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries,
-    ohlc: OHLCSeries
-} = SeriesRegistry.seriesTypes;
 import { crisp, merge } from '../../Shared/Utilities.js';
 
 /* *

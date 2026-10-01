@@ -27,7 +27,7 @@ const { composed } = H;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { bubble } = SeriesRegistry.seriesTypes;
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import {
@@ -188,27 +188,27 @@ namespace SeriesOnPointComposition {
         /**
          * @ignore
          */
-        public getColumn = bubble.prototype.getColumn;
+        public getColumn = seriesTypes.bubble.prototype.getColumn;
 
         /**
          * @ignore
          */
-        public getRadii = bubble.prototype.getRadii;
+        public getRadii = seriesTypes.bubble.prototype.getRadii;
 
         /**
          * @ignore
          */
-        public getRadius = bubble.prototype.getRadius;
+        public getRadius = seriesTypes.bubble.prototype.getRadius;
 
         /**
          * @ignore
          */
-        public getPxExtremes = bubble.prototype.getPxExtremes;
+        public getPxExtremes = seriesTypes.bubble.prototype.getPxExtremes;
 
         /**
          * @ignore
          */
-        public getZExtremes = bubble.prototype.getZExtremes;
+        public getZExtremes = seriesTypes.bubble.prototype.getZExtremes;
 
         /**
          * Draw connector line that starts from the initial point's position

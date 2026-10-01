@@ -41,9 +41,8 @@ import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
+import Series from '../../Series/Series.js';
 import SeriesClass from '../../Series/Series';
-const { series: Series } = SeriesRegistry;
 import {
     defined,
     extend,

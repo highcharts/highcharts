@@ -4,6 +4,8 @@
  * @module highcharts/indicators/trix
  * @requires highcharts
  * @requires highcharts/modules/stock
+ * @requires highcharts/indicators/indicators
+ * @requires highcharts/indicators/tema
  *
  * Indicator series type for Highcharts Stock
  *

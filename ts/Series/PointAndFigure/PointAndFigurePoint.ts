@@ -18,17 +18,13 @@
 *
 * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import PointAndFigureSeries from './PointAndFigureSeries.js';
 const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
+    prototype: {
+        pointClass: ScatterPoint
     }
-} = SeriesRegistry;
+} = ScatterSeries;
 
 /* *
  *

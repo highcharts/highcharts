@@ -28,15 +28,13 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import NodesComposition from '../NodesComposition.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import Series from '../../Core/Series/Series.js';
 const {
-    series: {
-        prototype: seriesProto,
-        prototype: {
-            pointClass: Point
-        }
+    prototype: seriesProto,
+    prototype: {
+        pointClass: Point
     }
-} = SeriesRegistry;
+} = Series;
 import {
     addEvent,
     css,

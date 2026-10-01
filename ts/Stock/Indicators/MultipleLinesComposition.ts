@@ -20,16 +20,15 @@
 
 import type LinePoint from '../../Series/Line/LinePoint';
 import type Point from '../../Core/Series/Point';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type SMAOptions from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SMAIndicator from './SMA/SMAIndicator.js';
 const {
-    sma: { prototype: smaProto }
-} = SeriesRegistry.seriesTypes;
+    prototype: smaProto
+} = SMAIndicator;
 import { defined, merge } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 

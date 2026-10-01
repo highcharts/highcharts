@@ -27,11 +27,9 @@
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const {
-    scatter: { prototype: { pointClass: ScatterPoint } }
-} = SeriesRegistry.seriesTypes;
+const { prototype: { pointClass: ScatterPoint } } = ScatterSeries;
 
 /* *
  *

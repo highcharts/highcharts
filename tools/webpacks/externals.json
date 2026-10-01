@@ -309,9 +309,146 @@
             "Series/XRange/XRangeSeries"
         ],
         "included": [
-            "modules/gantt",
-            "modules/xrange"
+            "modules/xrange",
+            "modules/gantt"
+        ],
+        "esmExcluded": [
+            "modules/gantt"
         ],
         "namespacePath": ".Series.types.xrange"
+    },
+    {
+        "files": [
+            "Stock/Indicators/Aroon/AroonIndicator"
+        ],
+        "included": [
+            "indicators/aroon",
+            "indicators/indicators-all"
+        ],
+        "namespacePath": ".Series.types.aroon"
+    },
+    {
+        "files": [
+            "Stock/Indicators/ATR/ATRIndicator"
+        ],
+        "included": [
+            "indicators/atr",
+            "indicators/indicators-all"
+        ],
+        "namespacePath": ".Series.types.atr"
+    },
+    {
+        "files": [
+            "Stock/Indicators/EMA/EMAIndicator"
+        ],
+        "included": [
+            "indicators/indicators",
+            "indicators/indicators-all"
+        ],
+        "namespacePath": ".Series.types.ema"
+    },
+    {
+        "files": [
+            "Stock/Indicators/SMA/SMAIndicator"
+        ],
+        "included": [
+            "indicators/indicators",
+            "indicators/indicators-all"
+        ],
+        "namespacePath": ".Series.types.sma"
+    },
+    {
+        "files": [
+            "Stock/Indicators/Stochastic/StochasticIndicator"
+        ],
+        "included": [
+            "indicators/stochastic",
+            "indicators/indicators-all"
+        ],
+        "namespacePath": ".Series.types.stochastic"
+    },
+    {
+        "files": [
+            "Stock/Indicators/TEMA/TEMAIndicator"
+        ],
+        "included": [
+            "indicators/tema",
+            "indicators/indicators-all"
+        ],
+        "namespacePath": ".Series.types.tema"
+    },
+    {
+        "files": [
+            "Series/Candlestick/CandlestickSeries"
+        ],
+        "included": [
+            "modules/stock"
+        ],
+        "namespacePath": ".Series.types.candlestick"
+    },
+    {
+        "files": [
+            "Series/Dumbbell/DumbbellSeries"
+        ],
+        "included": [
+            "modules/dumbbell"
+        ],
+        "namespacePath": ".Series.types.dumbbell"
+    },
+    {
+        "files": [
+            "Series/Funnel3D/Funnel3DSeries"
+        ],
+        "included": [
+            "modules/funnel3d"
+        ],
+        "namespacePath": ".Series.types.funnel3d"
+    },
+    {
+        "files": [
+            "Series/Heatmap/HeatmapSeries"
+        ],
+        "included": [
+            "modules/map",
+            "modules/heatmap"
+        ],
+        "namespacePath": ".Series.types.heatmap"
+    },
+    {
+        "files": [
+            "Series/Map/MapSeries"
+        ],
+        "included": [
+            "modules/map"
+        ],
+        "namespacePath": ".Series.types.map"
+    },
+    {
+        "files": [
+            "Series/MapLine/MapLineSeries"
+        ],
+        "included": [
+            "modules/map"
+        ],
+        "namespacePath": ".Series.types.mapline"
+    },
+    {
+        "files": [
+            "Series/Sankey/SankeySeries"
+        ],
+        "included": [
+            "modules/sankey"
+        ],
+        "namespacePath": ".Series.types.sankey"
+    },
+    {
+        "files": [
+            "Series/Treemap/TreemapSeries"
+        ],
+        "included": [
+            "modules/treemap",
+            "modules/sunburst"
+        ],
+        "namespacePath": ".Series.types.treemap"
     }
 ]

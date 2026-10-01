@@ -42,12 +42,8 @@ const {
 } = IU;
 import Point from '../../Core/Series/Point.js';
 import PointerEvent from '../../Core/PointerEvent.js';
+import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        map: MapSeries
-    }
-} = SeriesRegistry;
 import {
     addEvent,
     extend,
@@ -123,6 +119,7 @@ class GeoHeatmapSeries extends MapSeries {
      * @product      highmaps
      * @excluding    allAreas, dragDrop, findNearestPointBy, geometry, joinBy,
      * negativeColor, onPoint, stickyTracking
+     * @requires     modules/map
      * @requires     modules/geoheatmap
      * @optionparent plotOptions.geoheatmap
      */
@@ -768,6 +765,7 @@ export default GeoHeatmapSeries;
  *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
  *            stickyTracking
  * @product   highmaps
+ * @requires  modules/map
  * @requires  modules/geoheatmap
  * @apioption series.geoheatmap
  */

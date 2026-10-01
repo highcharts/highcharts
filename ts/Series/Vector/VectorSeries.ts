@@ -28,13 +28,9 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
 import { arrayMax, extend, merge } from '../../Shared/Utilities.js';
 

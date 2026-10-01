@@ -33,13 +33,9 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 
 /* *

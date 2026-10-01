@@ -30,11 +30,9 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import MapPointPoint from './MapPointPoint.js';
 import MapPointSeriesDefaults from './MapPointSeriesDefaults.js';
+import MapSeries from '../Map/MapSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    map: MapSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import '../../Core/Defaults.js';
 import '../Scatter/ScatterSeries.js';

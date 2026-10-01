@@ -34,14 +34,11 @@ const {
     composed,
     noop
 } = H;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: { prototype: columnProto },
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+const { prototype: columnProto } = ColumnSeries;
 import {
     addEvent,
     arrayMax,

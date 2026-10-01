@@ -29,11 +29,9 @@ import DependencyWheelSeriesDefaults from './DependencyWheelSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
+import PieSeries from '../Pie/PieSeries.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: PieSeries,
-    sankey: SankeySeries
-} = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import { composeTextPath } from '../../Extensions/TextPath.js';
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';

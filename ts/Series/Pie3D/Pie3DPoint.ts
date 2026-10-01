@@ -23,10 +23,8 @@
 import type Pie3DSeries from './Pie3DSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    pie: { prototype: { pointClass: PiePoint } }
-} = SeriesRegistry.seriesTypes;
+import PieSeries from '../Pie/PieSeries.js';
+const { prototype: { pointClass: PiePoint } } = PieSeries;
 
 /* *
  *

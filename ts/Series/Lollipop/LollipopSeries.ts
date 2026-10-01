@@ -21,20 +21,16 @@
 import type LollipopSeriesOptions from './LollipopSeriesOptions';
 
 import LollipopPoint from './LollipopPoint.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Series from '../../Core/Series/Series.js';
 const {
-    seriesTypes: {
-        column: {
-            prototype: colProto
-        },
-        dumbbell: {
-            prototype: dumbbellProto
-        },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
+    prototype: colProto
+} = ColumnSeries;
+const {
+    prototype: dumbbellProto
+} = DumbbellSeries;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *

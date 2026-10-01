@@ -20,10 +20,8 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: { prototype: lineProto }
-} = SeriesRegistry.seriesTypes;
+import LineSeries from '../Line/LineSeries.js';
+const { prototype: lineProto } = LineSeries;
 import { pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *

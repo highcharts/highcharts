@@ -20,20 +20,12 @@
 
 import type HeikinAshiSeries from './HeikinAshiSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
 const {
-    candlestick: {
-        prototype: {
-            pointClass: CandlestickPoint
-        }
-    },
-    hlc: {
-        prototype: {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            pointClass: HLCPoint
-        }
+    prototype: {
+        pointClass: CandlestickPoint
     }
-} = SeriesRegistry.seriesTypes;
+} = CandlestickSeries;
 
 /* *
  *

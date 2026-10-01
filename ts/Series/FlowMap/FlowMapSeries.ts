@@ -27,19 +27,16 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import FlowMapPoint from './FlowMapPoint.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import MapLineSeries from '../MapLine/MapLineSeries.js';
+import MapSeries from '../Map/MapSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
-    seriesTypes: {
-        column: ColumnSeries,
-        map: MapSeries,
-        mapline: MapLineSeries
+    prototype: {
+        pointClass: Point
     }
-} = SeriesRegistry;
+} = Series;
 import {
     addEvent,
     arrayMax,

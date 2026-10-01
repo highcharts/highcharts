@@ -26,10 +26,8 @@ import type CylinderSeriesOptions from './CylinderSeriesOptions';
 import CylinderComposition from './CylinderComposition.js';
 import CylinderPoint from './CylinderPoint.js';
 import CylinderSeriesDefaults from './CylinderSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *

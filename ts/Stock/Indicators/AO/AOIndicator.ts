@@ -20,15 +20,12 @@ import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import ColumnSeries from '../../../Series/Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    column: {
-        prototype: columnProto
-    },
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import {
     correctFloat,
     extend,

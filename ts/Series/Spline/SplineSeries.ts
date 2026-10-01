@@ -22,10 +22,8 @@ import type SplinePoint from './SplinePoint';
 import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import { merge } from '../../Shared/Utilities.js';
 
 /* *
