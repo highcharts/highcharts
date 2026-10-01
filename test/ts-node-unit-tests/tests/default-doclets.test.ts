@@ -5,7 +5,8 @@
  * How it works:
  * - Scans `ts/**\/*Options.ts` files (excludes Dashboards, Grid, masters, .d.ts)
  * - For each Options file that has a matching `*Defaults.ts` sibling, finds all
- *   `const x: SomeType = { ... }` variable declarations in the Defaults file
+ *   `const x: SomeType = { ... }` variable declarations in the Defaults file,
+ *   also where the type is wrapped in `Partial<>` or `DeepPartial<>`
  * - For each such typed const, looks up the interface with the same name in the
  *   Options file and collects @default doclets from its properties
  * - Reports mismatches between documented and actual defaults
@@ -15,9 +16,11 @@
  *   (e.g. plotOptions.pie.innerSize)
  * - Separately, scans all Options files for @default doclets with template
  *   expressions (e.g. ${palette.*}), which are never valid default values
+ * - Counts defaults that are set in the Defaults const or documented by an
+ *   @apioption block, but have no @default doclet on the interface member
  * - Counts @default doclets whose property is neither set in the Defaults const
- *   nor documented by an @apioption block, as those can't be verified. To list
- *   them as failures, run from repo root:
+ *   nor documented by an @apioption block, as those can't be verified
+ * - To list both counted groups as failures, run from repo root:
  *   `DEFAULT_DOCLETS_STRICT=1 npx tsx --test test/ts-node-unit-tests/tests/default-doclets.test.ts`
  *
  * Limitations:
@@ -25,6 +28,10 @@
  *   verified where an @apioption block in the same Defaults file documents them
  * - Recurses only into inline type literals — does not follow named type references
  *   (e.g. a property typed as `SomeOtherOptions` won't have its members checked)
+ * - Missing @default doclets are only reported for members declared inline in
+ *   the interface, not for members of parent interfaces or named types
+ * - Object values in the Defaults const are not expected to have a @default
+ *   doclet, since their members are checked on their own
  * - @default doclets that are not valid TS literals are compared as raw text,
  *   and a quoted string matches the same text without quotes ('y' and y)
  */
@@ -54,9 +61,15 @@ interface DefaultsObject {
     optionParent?: string;
 }
 
+/**
+ * Collects the `@default` doclets of an interface by property path. If `paths`
+ * is given, it also receives the path of every inline member, with or without
+ * a doclet.
+ */
 function collectDefaultTags(
     sourceFile: TS.SourceFile,
-    interfaceName: string
+    interfaceName: string,
+    paths?: Set<string>
 ): DefaultMap {
     const defaults: DefaultMap = new Map();
 
@@ -65,7 +78,7 @@ function collectDefaultTags(
             TS.isInterfaceDeclaration(statement) &&
             statement.name.text === interfaceName
         ) {
-            collectMembers(defaults, statement.members, '');
+            collectMembers(defaults, statement.members, '', paths);
         }
     }
 
@@ -85,7 +98,8 @@ function collectDefaultsFromObject(
 function collectMembers(
     defaults: DefaultMap,
     members: TS.NodeArray<TS.TypeElement>,
-    prefix: string
+    prefix: string,
+    paths?: Set<string>
 ): void {
     for (const member of members) {
         if (!TS.isPropertySignature(member) || !member.type) {
@@ -101,11 +115,13 @@ function collectMembers(
         const path = getPath(prefix, name);
         const docletDefault = getDocletDefault(member);
 
+        paths?.add(path);
+
         if (docletDefault) {
             defaults.set(path, docletDefault);
         }
 
-        collectTypeMembers(defaults, member.type, path);
+        collectTypeMembers(defaults, member.type, path, paths);
     }
 }
 
@@ -141,15 +157,16 @@ function collectObjectProperties(
 function collectTypeMembers(
     defaults: DefaultMap,
     typeNode: TS.TypeNode,
-    prefix: string
+    prefix: string,
+    paths?: Set<string>
 ): void {
     if (TS.isParenthesizedTypeNode(typeNode)) {
-        collectTypeMembers(defaults, typeNode.type, prefix);
+        collectTypeMembers(defaults, typeNode.type, prefix, paths);
         return;
     }
 
     if (TS.isTypeLiteralNode(typeNode)) {
-        collectMembers(defaults, typeNode.members, prefix);
+        collectMembers(defaults, typeNode.members, prefix, paths);
         return;
     }
 
@@ -158,7 +175,7 @@ function collectTypeMembers(
         TS.isUnionTypeNode(typeNode)
     ) {
         for (const nestedType of typeNode.types) {
-            collectTypeMembers(defaults, nestedType, prefix);
+            collectTypeMembers(defaults, nestedType, prefix, paths);
         }
     }
 }
@@ -179,6 +196,38 @@ function collectApiOptionDefaults(sourceFile: TS.SourceFile): DefaultMap {
     return defaults;
 }
 
+/**
+ * Collects the defaults that an Options interface should document, by
+ * property path: the values set in the Defaults object, and the `@default` of
+ * each `@apioption` block below its `@optionparent`. Object values are
+ * skipped, since their members are collected on their own.
+ */
+function collectKnownDefaults(
+    defaultsObject: DefaultsObject,
+    apiOptionDefaults: DefaultMap
+): DefaultMap {
+    const { defaults, optionParent } = defaultsObject;
+    const known: DefaultMap = new Map();
+
+    if (optionParent) {
+        const prefix = `${optionParent}.`;
+
+        for (const [apiOption, value] of apiOptionDefaults) {
+            if (apiOption.startsWith(prefix)) {
+                known.set(apiOption.slice(prefix.length), value);
+            }
+        }
+    }
+
+    for (const [path, value] of defaults) {
+        if (!value.startsWith('{')) {
+            known.set(path, value);
+        }
+    }
+
+    return known;
+}
+
 function getDefaultsObjects(
     sourceFile: TS.SourceFile
 ): Map<string, DefaultsObject> {
@@ -190,11 +239,12 @@ function getDefaultsObjects(
         }
 
         for (const declaration of statement.declarationList.declarations) {
+            const typeName = declaration.type &&
+                getOptionsTypeName(declaration.type);
+
             if (
                 !TS.isIdentifier(declaration.name) ||
-                !declaration.type ||
-                !TS.isTypeReferenceNode(declaration.type) ||
-                !TS.isIdentifier(declaration.type.typeName) ||
+                !typeName ||
                 !declaration.initializer ||
                 !TS.isObjectLiteralExpression(declaration.initializer)
             ) {
@@ -204,7 +254,7 @@ function getDefaultsObjects(
             const optionParentTag = TS.getJSDocTags(declaration)
                 .find(tag => tag.tagName.text === 'optionparent');
 
-            defaults.set(declaration.type.typeName.text, {
+            defaults.set(typeName, {
                 defaults: collectDefaultsFromObject(declaration.initializer),
                 optionParent: optionParentTag &&
                     stringifyComment(optionParentTag.comment) || void 0
@@ -213,6 +263,32 @@ function getDefaultsObjects(
     }
 
     return defaults;
+}
+
+/**
+ * Returns the name of the Options interface that a Defaults object is typed
+ * with. `Partial<FooOptions>` and `DeepPartial<FooOptions>` return
+ * `FooOptions`.
+ */
+function getOptionsTypeName(typeNode: TS.TypeNode): (string|undefined) {
+    if (
+        !TS.isTypeReferenceNode(typeNode) ||
+        !TS.isIdentifier(typeNode.typeName)
+    ) {
+        return;
+    }
+
+    const name = typeNode.typeName.text;
+    const typeArguments = typeNode.typeArguments;
+
+    if (
+        (name === 'Partial' || name === 'DeepPartial') &&
+        typeArguments?.length === 1
+    ) {
+        return getOptionsTypeName(typeArguments[0]);
+    }
+
+    return name;
 }
 
 function getDocletDefault(node: TS.Node): (string|undefined) {
@@ -760,6 +836,72 @@ describe('Helper: getDefaultsObjects', () => {
     });
 });
 
+describe('Helper: collectDefaultTags with paths', () => {
+    it('collects the path of every inline member', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                /** @default true */
+                enabled?: boolean;
+                label?: {
+                    text?: string;
+                };
+                style?: CSSObject;
+            }
+        `);
+
+        const paths = new Set<string>();
+
+        collectDefaultTags(src, 'FooOptions', paths);
+        strictEqual(
+            [...paths].join(),
+            'enabled,label,label.text,style'
+        );
+    });
+});
+
+describe('Helper: getOptionsTypeName', () => {
+    it('unwraps Partial and DeepPartial', () => {
+        const src = parseSource(`
+            const a: FooOptions = {};
+            const b: Partial<FooOptions> = {};
+            const c: DeepPartial<FooOptions> = {};
+            const d: Record<string, FooOptions> = {};
+        `);
+
+        const names = src.statements.map(statement => getOptionsTypeName(
+            (statement as TS.VariableStatement)
+                .declarationList.declarations[0].type as TS.TypeNode
+        ));
+
+        strictEqual(names.join(), 'FooOptions,FooOptions,FooOptions,Record');
+    });
+});
+
+describe('Helper: collectKnownDefaults', () => {
+    it('merges Defaults values with @apioption defaults of the parent', () => {
+        const known = collectKnownDefaults(
+            {
+                defaults: new Map([
+                    ['enabled', 'true'],
+                    ['label', "{ text: 'hello' }"],
+                    ['label.text', "'hello'"]
+                ]),
+                optionParent: 'plotOptions.foo'
+            },
+            new Map([
+                ['plotOptions.foo.size', '10'],
+                ['plotOptions.bar.size', '20'],
+                ['series.foo.size', '30']
+            ])
+        );
+
+        strictEqual(
+            [...known].map(entry => entry.join('=')).join(),
+            "size=10,enabled=true,label.text='hello'"
+        );
+    });
+});
+
 describe('Helper: isSameDefault', () => {
     it('matches a quoted string with the same bare text', () => {
         strictEqual(isSameDefault("'chart'", 'chart'), true);
@@ -782,6 +924,7 @@ describe('Options @default doclets', () => {
     it('should match paired defaults files', (t) => {
         const failures: Array<string> = [];
         const unverified: Array<string> = [];
+        const undocumented: Array<string> = [];
         let checksPerformed = 0;
         let pairedCount = 0;
 
@@ -802,14 +945,31 @@ describe('Options @default doclets', () => {
             const defaultsObjects = getDefaultsObjects(defaultsSource);
             const apiOptionDefaults = collectApiOptionDefaults(defaultsSource);
 
-            for (const [
-                interfaceName,
-                { defaults: actualDefaults, optionParent }
-            ] of defaultsObjects) {
+            for (const [interfaceName, defaultsObject] of defaultsObjects) {
+                const {
+                    defaults: actualDefaults,
+                    optionParent
+                } = defaultsObject;
+                const memberPaths = new Set<string>();
                 const docletDefaults = collectDefaultTags(
                     optionsSource,
-                    interfaceName
+                    interfaceName,
+                    memberPaths
                 );
+
+                for (const [path, value] of collectKnownDefaults(
+                    defaultsObject,
+                    apiOptionDefaults
+                )) {
+                    // Members declared elsewhere, e.g. in a named type or a
+                    // parent interface, are not checked
+                    if (memberPaths.has(path) && !docletDefaults.has(path)) {
+                        undocumented.push(
+                            `${optionsPath} | ${interfaceName}.${path} | ` +
+                            `missing @default ${value}`
+                        );
+                    }
+                }
 
                 for (const [path, expected] of docletDefaults) {
                     let actual = actualDefaults.get(path);
@@ -861,14 +1021,24 @@ describe('Options @default doclets', () => {
         );
 
         if (STRICT) {
-            failures.push(...unverified);
-        } else if (unverified.length) {
-            t.diagnostic(
-                `${unverified.length} @default doclet(s) can't be verified: ` +
-                'property is neither set in Defaults nor documented by ' +
-                '@apioption. ' +
-                'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
-            );
+            failures.push(...unverified, ...undocumented);
+        } else {
+            if (unverified.length) {
+                t.diagnostic(
+                    `${unverified.length} @default doclet(s) can't be ` +
+                    'verified: property is neither set in Defaults nor ' +
+                    'documented by @apioption. ' +
+                    'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
+                );
+            }
+
+            if (undocumented.length) {
+                t.diagnostic(
+                    `${undocumented.length} default(s) set in Defaults ` +
+                    'have no @default doclet in Options. ' +
+                    'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
+                );
+            }
         }
 
         strictEqual(failures.length, 0, failures.join('\n'));
