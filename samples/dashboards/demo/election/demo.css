@@ -7,9 +7,12 @@
  *  Variables
  *
  **/
-:root,
-.highcharts-light,
-.highcharts-dark {
+
+/* Qualified with `html`, so that the party colours outweigh the `:root`
+   palette of highcharts.css whichever stylesheet is applied last. */
+html:root,
+html.highcharts-light,
+html.highcharts-dark {
     /* Democrat */
     --highcharts-color-0: #4d8adb;
     --highcharts-color-0-light: #d7e3f3;
