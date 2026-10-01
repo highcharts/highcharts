@@ -1,5 +1,9 @@
 ---
 slug: index
+description: >-
+  Find starting points for creating charts and dashboards, learning about
+  Grid, and answering common questions, with links to product demos and API
+  references for options and functions.
 ---
 
 # Highcharts Documentation

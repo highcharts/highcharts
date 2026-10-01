@@ -1,3 +1,10 @@
+---
+description: >-
+  Load Highcharts Gantt as a standalone library or module, initialize a chart
+  with ganttChart and its container and configuration, and review a simple
+  chart example with an optional callback.
+---
+
 Getting started with Gantt
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Explore fixed-income exposure tables for super, primary, and secondary
+  sectors, including breakdown and per-region variants, then select table
+  columns such as long, short, or net values for charting.
+---
+
 # Fixed Income Sectors Breakdown
 
 The **Fixed Income Sectors Breakdown** view provides the

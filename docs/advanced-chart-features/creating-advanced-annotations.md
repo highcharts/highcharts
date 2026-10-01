@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a custom Fibonacci retracement annotation from point coordinates.
+  Follow the steps to calculate levels, create horizontal lines and labels,
+  add colored backgrounds, and combine them into annotation options.
+---
+
 Creating custom annotations
 ===
 

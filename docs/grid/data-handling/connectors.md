@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Connectors"
+description: >-
+  Load CSV, JSON, Google Sheets, or HTML table data into a local DataTable
+  with connectors, select among returned tables, refresh on change, and
+  distinguish loading from remote querying.
 ---
 
 # Connectors

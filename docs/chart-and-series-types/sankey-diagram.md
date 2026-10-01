@@ -1,3 +1,10 @@
+---
+description: >-
+  Define weighted links between nodes with from, to, and weight, then
+  customize generated nodes and spacing. Learn how cyclic links wrap around
+  the diagram and how row order affects return flows.
+---
+
 Sankey diagram
 ===
 
