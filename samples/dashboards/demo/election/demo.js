@@ -771,7 +771,7 @@ function updateControlComponent(year) {
 
     link.textContent = 'Wikipedia';
     link.target = '_blank';
-    if (Highcharts.AST.allowedReferences.some(ref => wikiUrl.startsWith(ref))) {
+    if (wikiUrl.startsWith('https://')) {
         link.href = wikiUrl;
     }
 
