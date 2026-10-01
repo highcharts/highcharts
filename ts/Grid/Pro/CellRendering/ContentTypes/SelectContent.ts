@@ -31,6 +31,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell.js';
 import CellContentPro from '../CellContentPro.js';
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../../Core/Globals.js';
+import { setUserAttributes } from '../../../Core/GridUtils.js';
 
 
 /* *
@@ -104,11 +105,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
         select.name = cell.column.id + '-' + cell.row.id;
         select.classList.add(Globals.getClassName('input'));
 
-        if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]): void => {
-                select.setAttribute(key, value);
-            });
-        }
+        setUserAttributes(select, options.attributes);
 
         this.update();
 

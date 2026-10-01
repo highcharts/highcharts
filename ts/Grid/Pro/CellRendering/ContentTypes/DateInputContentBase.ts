@@ -31,6 +31,7 @@ import type TableCell from '../../../Core/Table/Body/TableCell.js';
 import CellContentPro from '../CellContentPro.js';
 import CellRenderer from '../CellRenderer.js';
 import Globals from '../../../Core/Globals.js';
+import { setUserAttributes } from '../../../Core/GridUtils.js';
 
 
 /* *
@@ -105,11 +106,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
         input.name = cell.column.id + '-' + cell.row.id;
         input.classList.add(Globals.getClassName('input'));
 
-        if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]): void => {
-                input.setAttribute(key, value);
-            });
-        }
+        setUserAttributes(input, options.attributes);
 
         this.update();
 

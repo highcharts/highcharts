@@ -1,3 +1,10 @@
+---
+description: >-
+  Use arearange, areasplinerange, or columnrange to show low and high
+  values, including horizontal ranges through chart inversion. The article
+  covers accepted data formats and separate labels and markers for bounds.
+---
+
 Range series
 ============
 

@@ -1,3 +1,11 @@
+---
+description: >-
+  Extend and register Dashboards components for reusable HTML, threshold-based
+  component changes, data-backed revenue displays, or embedded YouTube videos,
+  then add custom components to the edit-mode sidebar and expose editable
+  options.
+---
+
 # Custom Dashboards components
 
 ## Custom HTML Component

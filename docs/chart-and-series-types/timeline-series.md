@@ -1,3 +1,10 @@
+---
+description: >-
+  Place labeled events at equal intervals or exact timestamps, and show
+  longer descriptions in tooltips. The article covers module setup, vertical
+  timelines, alternating labels, and marker and connector styling.
+---
+
 Timeline chart
 ===
 
