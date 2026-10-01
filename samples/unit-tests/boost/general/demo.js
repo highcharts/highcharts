@@ -1201,16 +1201,16 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             },
             series: [
                 {
-                    type: 'area',
-                    boostThreshold: 1,
-                    data: [1, 2, 3, 4, 5]
-                },
-                {
                     type: 'line',
                     lineWidth: 3,
                     boostThreshold: 1,
                     zIndex: 20,
                     data: [5, 4, 3, 2, 1]
+                },
+                {
+                    type: 'area',
+                    boostThreshold: 1,
+                    data: [1, 2, 3, 4, 5]
                 }
             ]
         });
@@ -1221,6 +1221,24 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             `A boosted line series sharing the chart-level boost target with
             a boosted non-line series should not apply the line-width dilate
             filter, or it would wash out the other series (#24728).`
+        );
+
+        chart.series[1].hide();
+
+        assert.strictEqual(
+            chart.boost.target.attr('filter'),
+            'url(#linewidth)',
+            `A hidden boosted non-line series should not prevent the dilate
+            filter on the shared boost target (#24728).`
+        );
+
+        chart.series[1].show();
+
+        assert.strictEqual(
+            chart.boost.target.attr('filter'),
+            'none',
+            `Showing the boosted non-line series again should remove the
+            dilate filter from the shared boost target (#24728).`
         );
 
         const lineOnlyChart = Highcharts.chart('container', {
@@ -1236,7 +1254,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                 },
                 {
                     type: 'line',
-                    lineWidth: 3,
+                    lineWidth: 1,
                     boostThreshold: 1,
                     data: [5, 4, 3, 2, 1]
                 }
@@ -1247,8 +1265,34 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             lineOnlyChart.boost.target.attr('filter'),
             'url(#linewidth)',
             `When every boosted series sharing the chart-level boost target
-            is a line, the dilate filter should still apply so the line
-            width is respected (#23666).`
+            is a line, a thin line rendered after a thick one should not
+            clear the dilate filter (#23666).`
+        );
+
+        const seriesLevelChart = Highcharts.chart('container', {
+            boost: {
+                allowForce: false
+            },
+            series: [
+                {
+                    type: 'area',
+                    boostThreshold: 1,
+                    data: [1, 2, 3, 4, 5]
+                },
+                {
+                    type: 'line',
+                    lineWidth: 3,
+                    boostThreshold: 1,
+                    data: [5, 4, 3, 2, 1]
+                }
+            ]
+        });
+
+        assert.strictEqual(
+            seriesLevelChart.series[1].boost.target.attr('filter'),
+            'url(#linewidth)',
+            `A boosted line series with its own boost target should apply the
+            dilate filter regardless of other boosted series (#24728).`
         );
     }
 );

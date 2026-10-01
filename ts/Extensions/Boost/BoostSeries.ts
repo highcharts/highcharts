@@ -1348,23 +1348,24 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (chartBoost && this.type === 'line') {
+    if (chartBoost) {
         const boostTarget = seriesBoost?.target || chartBoost.target,
             // The dilate filter is applied to the whole render target, so
-            // it must stay off when that target is shared with a
+            // it must stay off when that target is shared with a visible
             // non-line series (chart-level boosting). Otherwise it would
             // also dilate/blur their pixels, washing out the chart
-            // (#24728). Note `this.is('line')` would also match `area`
-            // and other types inheriting from the line series, so an
-            // exact type check is used here and below.
+            // (#24728). A target shared only by line series keeps the
+            // filter, so a thin line must not clear it (#23666).
             sharesTargetWithNonLine = !seriesBoost?.target &&
                 chart.series.some((otherSeries): boolean =>
-                    otherSeries !== this &&
+                    otherSeries.visible &&
                     !!otherSeries.boosted &&
                     otherSeries.type !== 'line'
                 );
 
-        if (lineWidth > 1 && !sharesTargetWithNonLine) {
+        if (sharesTargetWithNonLine) {
+            boostTarget?.attr({ filter: 'none' });
+        } else if (lineWidth > 1 && this.type === 'line') {
             chartBoost.lineWidthFilter?.remove();
             chartBoost.lineWidthFilter = chart.renderer.definition({
                 tagName: 'filter',
@@ -1383,8 +1384,6 @@ function seriesRenderCanvas(this: Series): void {
             boostTarget?.attr({
                 filter: 'url(#linewidth)'
             });
-        } else {
-            boostTarget?.attr({ filter: 'none' });
         }
     }
 
