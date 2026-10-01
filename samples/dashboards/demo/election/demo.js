@@ -728,16 +728,16 @@ async function updateResultComponent(electionTable, year) {
     document.querySelector('div#dem-cand img').src = imgDemUrl;
     document.querySelector('div#rep-cand img').src = imgRepUrl;
 
-    // Election information
+    // Election information.
     let el = document.getElementById('info-dem1');
-    el.innerHTML = `${candDem}: ${demColVotes}`;
+    el.textContent = `${candDem}: ${demColVotes}`;
     el = document.getElementById('info-dem2');
-    el.innerHTML = formatVotes(demVotes, demPercent, 'Total Votes');
+    el.textContent = formatVotes(demVotes, demPercent, 'Total Votes');
 
     el = document.getElementById('info-rep1');
-    el.innerHTML = `${candRep}: ${repColVotes}`;
+    el.textContent = `${candRep}: ${repColVotes}`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = formatVotes(repVotes, repPercent, 'Total Votes');
+    el.textContent = formatVotes(repVotes, repPercent, 'Total Votes');
 
     // Result bar
     el = document.getElementById('bar-dem');
@@ -748,7 +748,7 @@ async function updateResultComponent(electionTable, year) {
     // Votes needed to win
     const neededVotes = Math.floor(totalColVotes / 2) + 1;
     el = document.getElementById('info-to-win');
-    el.innerHTML = neededVotes + ' to win';
+    el.textContent = neededVotes + ' to win';
 }
 
 
@@ -759,16 +759,26 @@ function updateControlComponent(year) {
     const descContainer = document.getElementById('election-description');
 
     // Update title with year
-    title.innerHTML = year + ' ' + commonTitle;
+    title.textContent = year + ' ' + commonTitle;
 
-    // Brief text about the election
-    const brief = el.querySelector('descr').innerHTML;
+    // Brief text about the election. The markup is already parsed, so it is
+    // cloned rather than round-tripped through innerHTML.
+    const brief = el.querySelector('descr').cloneNode(true);
 
-    // Wikipedia link
-    const wikiUrl = el.querySelector('wiki').innerHTML;
+    // Wikipedia link, built as a node with a vetted href
+    const wikiUrl = el.querySelector('wiki').textContent.trim();
+    const link = document.createElement('a');
+
+    link.textContent = 'Wikipedia';
+    link.target = '_blank';
+    if (Highcharts.AST.allowedReferences.some(ref => wikiUrl.startsWith(ref))) {
+        link.href = wikiUrl;
+    }
 
     // Update custom HTML component
-    descContainer.innerHTML = `${brief}<a href="${wikiUrl}" target="_blank">Wikipedia</a>.`;
+    descContainer.replaceChildren(
+        ...brief.childNodes, link, document.createTextNode('.')
+    );
 }
 
 
