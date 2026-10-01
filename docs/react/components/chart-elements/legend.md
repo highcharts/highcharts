@@ -1,3 +1,10 @@
+---
+description: >-
+  Customize a chart legend with the Legend component, pass legend API options
+  as props, and set the label format through child content such as a template
+  string.
+---
+
 # Legend
 
 You can customize the [chart legend](https://www.highcharts.com/docs/chart-concepts/legend) using the `Legend` component:

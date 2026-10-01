@@ -1,3 +1,10 @@
+---
+description: >-
+  Display proportions as pie sectors, create concentric donut rings with
+  multiple sized series, and use radial gradients for slice shading. The
+  page includes a demo and links to the pie series options.
+---
+
 Pie chart
 =========
 

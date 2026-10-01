@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a Renko series that plots price changes in fixed-size bricks without
+  using time to determine each point, set boxSize, configure a navigator
+  series, and compare its behavior with other price charts.
+---
+
 # Highcharts: Understanding Renko Series
 
 Highcharts offers a variety of charting methods for visualizing price data, and one of these is the `Renko` series.

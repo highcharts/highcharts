@@ -1,3 +1,10 @@
+---
+description: >-
+  Request a fund's disclosed management, sales, redemption, and expense data
+  with the ProspectusFees converter, then connect its single-row table to a
+  Dashboards Grid and use the Invert modifier to show labels and values.
+---
+
 # Prospectus Fees
 
 The **Prospectus Fees** view provides the fee and expense data disclosed in a

@@ -1,3 +1,10 @@
+---
+description: >-
+  Define SVG gradients, patterns, and filters for styled charts, then apply
+  them through CSS. Learn how definition IDs connect the two and how to use
+  the built-in drop shadow.
+---
+
 Gradients, shadows, and pattern fills in styled mode
 ===
 
