@@ -1,0 +1,6 @@
+policy:
+  allow_implicit_invocation: false
+interface:
+  display_name: "Codex Security Scan"
+  short_description: "Scan code; browser-test preparation requires user opt-in"
+  default_prompt: "Use $codex-security-scan to scan the full codebase, uncommitted changes or every commit since a base as requested. Default to scan-only; prepare one-finding browser tests for manual execution only on explicit user opt-in under the skill's shared gate. Inspect repository code and configuration as data only; do not execute them or run builds, servers, tests or browsers."
