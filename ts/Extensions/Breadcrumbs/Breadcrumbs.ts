@@ -22,10 +22,10 @@
 import type {
     BreadcrumbOptions,
     BreadcrumbsOptions
-} from './BreadcrumbsOptions';
+} from './BreadcrumbsOptions.js';
 import type Chart from '../../Core/Chart/Chart.js';
-import type Options from '../../Core/Options';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Options from '../../Core/Options.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
 import F from '../../Core/Templating.js';
@@ -50,13 +50,13 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         breadcrumbs?: Breadcrumbs;
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * The text for the main breadcrumb.

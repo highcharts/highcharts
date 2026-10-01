@@ -17,11 +17,11 @@
 import type {
     ADOptions,
     ADParamsOptions
-} from './ADOptions';
-import type ADPoint from './ADPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './ADOptions.js';
+import type ADPoint from './ADPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -215,7 +215,7 @@ extend(ADIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         ad: typeof ADIndicator;
     }

@@ -20,7 +20,7 @@ import type { Exporting } from '../Exporting/Exporting.js';
  *
  * */
 
-declare module '../Exporting/ExportingOptions' {
+declare module '../Exporting/ExportingOptions.js' {
     interface ExportMenuItemDefinitionsDefaults {
         /**
          * @requires modules/export-data
@@ -57,7 +57,7 @@ declare module '../Exporting/ExportingOptions' {
     }
 }
 
-declare module '../Exporting/ExportingOptions' {
+declare module '../Exporting/ExportingOptions.js' {
     interface ExportingOptions {
         /**
          * Options for exporting data to CSV or Excel, or displaying the data
@@ -151,7 +151,7 @@ declare module '../Exporting/ExportingOptions' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * The text for the menu item.
@@ -208,7 +208,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * When set to `false` will prevent the series data from being included

@@ -18,14 +18,14 @@
  *
  * */
 
-import type FlowMapSeriesOptions from './FlowMapSeriesOptions';
-import type { LonLatArray } from '../..//Maps/MapViewOptions';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
-import type { MarkerEndOptions } from './FlowMapPointOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type FlowMapSeriesOptions from './FlowMapSeriesOptions.js';
+import type { LonLatArray } from '../..//Maps/MapViewOptions.js';
+import type { MapLonLatObject } from '../../Maps/GeoJSON.js';
+import type { MarkerEndOptions } from './FlowMapPointOptions.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import FlowMapPoint from './FlowMapPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -697,7 +697,7 @@ extend(FlowMapSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         flowmap: typeof FlowMapSeries;
     }

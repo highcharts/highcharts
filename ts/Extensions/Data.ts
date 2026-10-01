@@ -20,11 +20,11 @@
  *
  * */
 
-import type XAxisOptions from '../Core/Axis/AxisOptions';
-import type { DateFormatObject } from '../Data/Converters/DataConverter';
-import type JSON from '../Core/JSON';
-import type Options from '../Core/Options';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type XAxisOptions from '../Core/Axis/AxisOptions.js';
+import type { DateFormatObject } from '../Data/Converters/DataConverter.js';
+import type JSON from '../Core/JSON.js';
+import type Options from '../Core/Options.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions.js';
 
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -56,7 +56,7 @@ import { error } from '../Core/Utilities.js';
  *
  * */
 
-declare module '../Core/Chart/ChartBase' {
+declare module '../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /**
          * The data parser for this chart.
@@ -72,7 +72,7 @@ declare module '../Core/Chart/ChartBase' {
         liveDataURL?: string;
     }
 }
-declare module '../Core/Options' {
+declare module '../Core/Options.js' {
     interface Options {
 
         /**

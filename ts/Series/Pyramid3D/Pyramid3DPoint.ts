@@ -18,9 +18,9 @@
  *
  * */
 
-import type Funnel3DPoint from '../Funnel3D/Funnel3DPoint';
-import type Pyramid3DPointOptions from './Pyramid3DPointOptions';
-import type Pyramid3DSeries from './Pyramid3DSeries';
+import type Funnel3DPoint from '../Funnel3D/Funnel3DPoint.js';
+import type Pyramid3DPointOptions from './Pyramid3DPointOptions.js';
+import type Pyramid3DSeries from './Pyramid3DSeries.js';
 
 /* *
  *

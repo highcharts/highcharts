@@ -17,7 +17,7 @@
 import type {
     AroonOptions,
     AroonParamsOptions
-} from '../Aroon/AroonOptions';
+} from '../Aroon/AroonOptions.js';
 
 /* *
 *

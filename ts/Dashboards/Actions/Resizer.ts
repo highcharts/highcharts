@@ -16,14 +16,14 @@
  * */
 import type {
     HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type { JSONObject } from '../JSON';
+} from '../../Core/Renderer/DOMElementType.js';
+import type { JSONObject } from '../JSON.js';
 import type Cell from '../Layout/Cell.js';
-import type { JSON as SerializableJSON } from '../Serializable';
+import type { JSON as SerializableJSON } from '../Serializable.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 
-import EditMode from '../EditMode/EditMode';
+import EditMode from '../EditMode/EditMode.js';
 import {
     addEvent,
     createElement,

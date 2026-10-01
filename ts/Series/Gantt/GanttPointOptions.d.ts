@@ -17,11 +17,11 @@
  *
  * */
 
-import type { GanttDependencyOptions } from './GanttSeriesOptions';
+import type { GanttDependencyOptions } from './GanttSeriesOptions.js';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
-} from '../../Series/XRange/XRangePointOptions';
+} from '../../Series/XRange/XRangePointOptions.js';
 
 /* *
  *

@@ -24,10 +24,10 @@
  *
  * */
 
-import type CircleObject from '../../Core/Geometry/CircleObject';
-import type DataTableCore from '../../Data/DataTableCore';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type VennPointOptions from './VennPointOptions';
+import type CircleObject from '../../Core/Geometry/CircleObject.js';
+import type DataTableCore from '../../Data/DataTableCore.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type VennPointOptions from './VennPointOptions.js';
 
 import CU from '../../Core/Geometry/CircleUtilities.js';
 const {

@@ -18,8 +18,8 @@
  *
  * */
 
-import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions';
-import type AreaSplinePoint from './AreaSplinePoint';
+import type AreaSplineSeriesOptions from './AreaSplineSeriesOptions.js';
+import type AreaSplinePoint from './AreaSplinePoint.js';
 
 import SplineSeries from '../Spline/SplineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -95,7 +95,7 @@ extend(AreaSplineSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         areaspline: typeof AreaSplineSeries;
     }

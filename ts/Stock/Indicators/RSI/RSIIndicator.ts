@@ -15,14 +15,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     RSIOptions,
     RSIParamsOptions
-} from './RSIOptions';
-import type RSIPoint from './RSIPoint';
+} from './RSIOptions.js';
+import type RSIPoint from './RSIPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -228,7 +228,7 @@ interface RSIIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
     }

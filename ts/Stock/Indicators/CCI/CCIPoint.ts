@@ -13,8 +13,8 @@
  *
  * */
 
-import type CCIIndicator from './CCIIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type CCIIndicator from './CCIIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

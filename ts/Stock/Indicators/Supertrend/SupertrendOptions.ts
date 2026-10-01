@@ -14,15 +14,15 @@
  *
  * */
 
-import type ColorType from '../../../Core/Color/ColorType';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type LinePoint from '../../../Series/Line/LinePoint';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type ColorType from '../../../Core/Color/ColorType.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type LinePoint from '../../../Series/Line/LinePoint.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
-import type SupertrendPoint from './SupertrendPoint';
+} from '../SMA/SMAOptions.js';
+import type SupertrendPoint from './SupertrendPoint.js';
 
 /* *
  *

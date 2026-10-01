@@ -18,9 +18,9 @@
  *
  * */
 
-import type { DeepPartial } from '../Shared/Types';
-import type { DefaultOptions, Options } from './Options';
-import type Legend from './Legend/Legend';
+import type { DeepPartial } from '../Shared/Types.js';
+import type { DefaultOptions, Options } from './Options.js';
+import type Legend from './Legend/Legend.js';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
 import H from './Globals.js';
@@ -37,7 +37,7 @@ import { fireEvent, merge } from '../Shared/Utilities.js';
  *
  * */
 
-declare module './GlobalsBase' {
+declare module './GlobalsBase.js' {
     interface GlobalsBase {
         /**
          * Global default settings.

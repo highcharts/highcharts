@@ -22,16 +22,16 @@
  * */
 
 
-import type Accessibility from '../Accessibility';
-import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
+import type Accessibility from '../Accessibility.js';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart.js';
 import type {
     DOMElementType,
     HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+} from '../../Core/Renderer/DOMElementType.js';
 import type {
     ScreenReaderFormatterCallbackFunction,
     ScreenReaderSectionFormatterContext
-} from '../Options/A11yOptions';
+} from '../Options/A11yOptions.js';
 
 import A11yI18n from '../A11yI18n.js';
 import AccessibilityComponent from '../AccessibilityComponent.js';

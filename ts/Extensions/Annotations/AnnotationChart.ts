@@ -21,13 +21,13 @@
 import type {
     AnnotationOptions,
     ChartOptions
-} from './AnnotationOptions';
-import type AnnotationSeries from './AnnotationSeries';
-import type Chart from '../../Core/Chart/Chart';
-import type { DeepPartial } from '../../Shared/Types';
-import type NavigationBindings from './NavigationBindings';
-import type Pointer from '../../Core/Pointer';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from './AnnotationOptions.js';
+import type AnnotationSeries from './AnnotationSeries.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type NavigationBindings from './NavigationBindings.js';
+import type Pointer from '../../Core/Pointer.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Annotation from './Annotation.js';
 import {
@@ -46,7 +46,7 @@ import {
  *
  * */
 
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
 
         /* *

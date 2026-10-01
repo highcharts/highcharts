@@ -18,9 +18,9 @@
  *
  * */
 
-import type AxisType from '../../Core/Axis/AxisType';
-import type Chart from '../../Core/Chart/Chart';
-import type Pointer from '../../Core/Pointer';
+import type AxisType from '../../Core/Axis/AxisType.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Pointer from '../../Core/Pointer.js';
 
 import { defined, find, isNumber } from '../../Shared/Utilities.js';
 

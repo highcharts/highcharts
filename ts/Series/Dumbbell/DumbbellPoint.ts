@@ -19,8 +19,8 @@
  * */
 
 import type DumbbellSeries from './DumbbellSeries.js';
-import type DumbbellPointOptions from './DumbbellPointOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type DumbbellPointOptions from './DumbbellPointOptions.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 import { extend } from '../../Shared/Utilities.js';

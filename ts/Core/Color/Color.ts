@@ -18,9 +18,9 @@
  *
  * */
 
-import type ColorString from './ColorString';
-import type { ColorBase, ColorType } from './ColorType';
-import type GradientColor from './GradientColor';
+import type ColorString from './ColorString.js';
+import type { ColorBase, ColorType } from './ColorType.js';
+import type GradientColor from './GradientColor.js';
 
 import H from '../Globals.js';
 const {

@@ -23,10 +23,10 @@
  *
  * */
 
-import type CheckboxRenderer from '../Renderers/CheckboxRenderer';
-import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
-import type { EditModeContent } from '../../CellEditing/CellEditMode';
-import type TableCell from '../../../Core/Table/Body/TableCell';
+import type CheckboxRenderer from '../Renderers/CheckboxRenderer.js';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable.js';
+import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';

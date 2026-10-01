@@ -18,7 +18,7 @@
  *
  * */
 
-import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
+import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions.js';
 
 /* *
  *

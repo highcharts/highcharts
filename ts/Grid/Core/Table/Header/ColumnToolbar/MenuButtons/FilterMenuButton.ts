@@ -23,8 +23,8 @@
  *
  * */
 
-import type MenuPopup from '../MenuPopup';
-import type { LangOptions } from '../../../../Options';
+import type MenuPopup from '../MenuPopup.js';
+import type { LangOptions } from '../../../../Options.js';
 
 import FilterPopup from '../FilterPopup.js';
 import StateHelpers from '../StateHelpers.js';

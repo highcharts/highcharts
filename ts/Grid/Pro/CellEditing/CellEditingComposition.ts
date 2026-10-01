@@ -24,14 +24,14 @@
  *
  * */
 
-import type CellRendererType from '../CellRendering/CellRendererType';
-import type Column from '../../Core/Table/Column';
-import type { DeepPartial } from '../../../Shared/Types';
-import type { EditModeRenderer } from './CellEditMode';
-import type { GridEvent } from '../../Core/GridUtils';
-import type Options from '../../Core/Options';
-import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Body/TableCell';
+import type CellRendererType from '../CellRendering/CellRendererType.js';
+import type Column from '../../Core/Table/Column.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type { EditModeRenderer } from './CellEditMode.js';
+import type { GridEvent } from '../../Core/GridUtils.js';
+import type Options from '../../Core/Options.js';
+import type Table from '../../Core/Table/Table.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -358,7 +358,7 @@ export interface CellEditingLangA11yOptions {
     }
 }
 
-declare module '../../Core/Table/Table' {
+declare module '../../Core/Table/Table.js' {
     export default interface Table {
         /**
          * The cell editing instance for the table.
@@ -367,7 +367,7 @@ declare module '../../Core/Table/Table' {
     }
 }
 
-declare module '../../Core/Table/Column' {
+declare module '../../Core/Table/Column.js' {
     export default interface Column {
         /**
          * The edit mode renderer for the column.
@@ -376,7 +376,7 @@ declare module '../../Core/Table/Column' {
     }
 }
 
-declare module '../../Core/Table/Body/TableCell' {
+declare module '../../Core/Table/Body/TableCell.js' {
     export default interface TableCell {
         /**
          * The HTML span element that contains the 'editable' hint for the cell.
@@ -385,7 +385,7 @@ declare module '../../Core/Table/Body/TableCell' {
     }
 }
 
-declare module '../GridEvents' {
+declare module '../GridEvents.js' {
     interface CellEvents {
         /**
          * Callback function to be called after editing of cell value.
@@ -394,7 +394,7 @@ declare module '../GridEvents' {
     }
 }
 
-declare module '../../Core/Accessibility/A11yOptions' {
+declare module '../../Core/Accessibility/A11yOptions.js' {
     interface A11yAnnouncementsOptions {
         /**
          * Enable accessibility announcements for the cell editing.
@@ -412,7 +412,7 @@ declare module '../../Core/Accessibility/A11yOptions' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface ColumnCellOptions {
         /**
          * Whether to enabled the cell edit mode functionality. It allows to

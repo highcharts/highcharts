@@ -16,8 +16,8 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type OHLCPointOptions from '../OHLC/OHLCPointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type OHLCPointOptions from '../OHLC/OHLCPointOptions.js';
 
 /* *
  *

@@ -21,13 +21,13 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Renderer/AlignObject';
-import type Axis from '../Axis';
-import type BBoxObject from '../../Renderer/BBoxObject';
-import type StackingAxis from './StackingAxis';
-import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type SVGLabel from '../../Renderer/SVG/SVGLabel';
+} from '../../Renderer/AlignObject.js';
+import type Axis from '../Axis.js';
+import type BBoxObject from '../../Renderer/BBoxObject.js';
+import type StackingAxis from './StackingAxis.js';
+import type SVGAttributes from '../../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../../Renderer/SVG/SVGLabel.js';
 
 import T from '../../Templating.js';
 const { format } = T;

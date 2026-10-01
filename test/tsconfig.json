@@ -5,9 +5,13 @@
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strict": false,
-        "module": "none",
-        "moduleResolution": "node",
+        // Test controller assigns read-only event props (throws when strict)
+        "alwaysStrict": false,
+        "module": "NodeNext",
+        "moduleDetection": "auto",
+        "moduleResolution": "NodeNext",
         "target": "es5",
+        "ignoreDeprecations": "6.0",
         "lib": [
             "dom",
             "es5"

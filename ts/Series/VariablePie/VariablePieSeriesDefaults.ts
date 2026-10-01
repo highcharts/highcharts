@@ -20,7 +20,7 @@
  *
  * */
 
-import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
+import type VariablePieSeriesOptions from './VariablePieSeriesOptions.js';
 
 /* *
  *

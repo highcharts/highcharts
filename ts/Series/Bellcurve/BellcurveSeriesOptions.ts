@@ -17,11 +17,11 @@
  *
  * */
 
-import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type BellcurvePointOptions from './BellcurvePointOptions';
+import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type BellcurvePointOptions from './BellcurvePointOptions.js';
 
 /* *
  *

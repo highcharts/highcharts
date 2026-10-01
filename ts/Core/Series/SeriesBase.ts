@@ -16,7 +16,7 @@
  *
  * */
 
-import type PointBase from './PointBase';
+import type PointBase from './PointBase.js';
 
 /* *
  *

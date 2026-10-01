@@ -16,10 +16,10 @@
  *
  * */
 
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
 
 /* *
  *

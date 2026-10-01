@@ -23,9 +23,9 @@
  *
  * */
 
-import type { ColumnsSettings } from '../../Options';
+import type { ColumnsSettings } from '../../Options.js';
 
-import type Table from '../Table';
+import type Table from '../Table.js';
 
 import Globals from '../../Globals.js';
 import { defined } from '../../../../Shared/Utilities.js';

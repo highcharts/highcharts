@@ -16,9 +16,9 @@
  *
  * */
 
-import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
-import type PackedBubblePoint from './PackedBubblePoint';
-import type Point from '../../Core/Series/Point';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions.js';
+import type PackedBubblePoint from './PackedBubblePoint.js';
+import type Point from '../../Core/Series/Point.js';
 
 /* *
  *

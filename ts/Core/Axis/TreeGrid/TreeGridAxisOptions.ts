@@ -17,8 +17,8 @@
  *
  * */
 
-import type AxisOptions from '../AxisOptions';
-import type ColorType from '../../Color/ColorType';
+import type AxisOptions from '../AxisOptions.js';
+import type ColorType from '../../Color/ColorType.js';
 
 /* *
  *
@@ -26,7 +26,7 @@ import type ColorType from '../../Color/ColorType';
  *
  * */
 
-declare module '../AxisOptions' {
+declare module '../AxisOptions.js' {
     interface AxisBreakOptions {
         showPoints?: boolean;
         maxOffset?: number;

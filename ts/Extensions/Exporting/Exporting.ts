@@ -20,32 +20,32 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type Axis from '../../Core/Axis/Axis';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type { EventCallback } from '../../Core/Callback';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { EventCallback } from '../../Core/Callback.js';
 import type {
     ExportingOptions,
     ExportingButtonOptions
-} from './ExportingOptions';
-import type ExportingBase from './ExportingBase';
+} from './ExportingOptions.js';
+import type ExportingBase from './ExportingBase.js';
 import type {
     DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import type { LangOptions } from '../../Core/Options';
-import type NavigationOptions from './NavigationOptions';
-import type Options from '../../Core/Options';
-import type { PatternObject } from '../PatternFill';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+} from '../../Core/Renderer/DOMElementType.js';
+import type GradientColor from '../../Core/Color/GradientColor.js';
+import type { LangOptions } from '../../Core/Options.js';
+import type NavigationOptions from './NavigationOptions.js';
+import type Options from '../../Core/Options.js';
+import type { PatternObject } from '../PatternFill.js';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -127,7 +127,7 @@ AST.allowedTags.push(
  * */
 
 /** @internal */
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         // TODO: Consider making this Axis property instead of AxisOptions to
         // avoid polluting user options.
@@ -135,7 +135,7 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /**
          * Exporting object.
@@ -195,7 +195,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/Chart/ChartOptions' {
+declare module '../../Core/Chart/ChartOptions.js' {
     interface ChartEventsOptions {
         /**
          * Fires after a chart is printed through the context menu item or the
@@ -225,7 +225,7 @@ declare module '../../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../../Core/GlobalsBase' {
+declare module '../../Core/GlobalsBase.js' {
     interface GlobalsBase {
         Exporting: typeof Exporting;
     }

@@ -14,11 +14,11 @@
  *
  * */
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
+} from '../SMA/SMAOptions.js';
 
 /* *
  *

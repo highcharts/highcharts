@@ -20,10 +20,10 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
-import type AnnotationOptions from '../AnnotationOptions';
-import type Chart from '../../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
+import type AnnotationChart from '../AnnotationChart.js';
+import type AnnotationOptions from '../AnnotationOptions.js';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 
 import BaseForm from '../../../Shared/BaseForm.js';
 import Color from '../../../Core/Color/Color.js';

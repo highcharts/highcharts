@@ -23,7 +23,7 @@
  * */
 
 
-import type { Arguments } from '../FormulaTypes';
+import type { Arguments } from '../FormulaTypes.js';
 import type DataTable from '../../DataTable.js';
 
 

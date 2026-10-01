@@ -20,7 +20,7 @@
  *
  * */
 
-import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
+import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions.js';
 
 /* *
  *

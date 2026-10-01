@@ -10,8 +10,8 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
-import type Options from '../../Core/Options';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Options from '../../Core/Options.js';
 
 import G from '../../Core/Globals.js';
 import mapping from './DependencyMapping.js';

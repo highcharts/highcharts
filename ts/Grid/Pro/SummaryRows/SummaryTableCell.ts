@@ -23,9 +23,9 @@
 
 import type {
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
-import type SummaryTableRow from './SummaryTableRow';
-import type { CSSObject } from '../../../Core/Renderer/CSSObject';
+} from '../../../Data/DataTable.js';
+import type SummaryTableRow from './SummaryTableRow.js';
+import type { CSSObject } from '../../../Core/Renderer/CSSObject.js';
 
 import TableCell from '../../Core/Table/Body/TableCell.js';
 import {

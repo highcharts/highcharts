@@ -20,7 +20,7 @@
  *
  * */
 
-import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
+import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions.js';
 
 /* *
  *

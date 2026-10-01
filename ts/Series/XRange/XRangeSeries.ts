@@ -20,16 +20,16 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import type DataTableCore from '../../Data/DataTableCore';
-import type SeriesClass from '../../Core/Series/Series';
+import type Axis from '../../Core/Axis/Axis.js';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject.js';
+import type DataTableCore from '../../Data/DataTableCore.js';
+import type SeriesClass from '../../Core/Series/Series.js';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
-} from './XRangePointOptions';
-import type XRangeSeriesOptions from './XRangeSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+} from './XRangePointOptions.js';
+import type XRangeSeriesOptions from './XRangeSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import H from '../../Core/Globals.js';
 const {
@@ -735,7 +735,7 @@ extend(XRangeSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         xrange: typeof XRangeSeries;
     }

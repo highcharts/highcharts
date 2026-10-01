@@ -24,9 +24,9 @@
  * */
 
 import type MenuItem from './Menu/MenuItem.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type EditMode from './EditMode.js';
-import type { LangAccessibilityOptions, LangOptions } from './EditGlobals';
+import type { LangAccessibilityOptions, LangOptions } from './EditGlobals.js';
 
 import EditGlobals from './EditGlobals.js';
 import { createElement, defined, find, merge } from '../../Shared/Utilities.js';

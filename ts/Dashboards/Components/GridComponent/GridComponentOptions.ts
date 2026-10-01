@@ -21,17 +21,17 @@
  *
  * */
 
-import type { GridOptions } from '../../Plugins/GridTypes';
+import type { GridOptions } from '../../Plugins/GridTypes.js';
 import type {
     ConnectorOptions as ComponentConnectorOptions,
     ConnectorTypes as ComponentConnectorTypes,
     Options as ComponentOptions
-} from '../Component';
+} from '../Component.js';
 import type {
     OptionsEntry as SyncOptionsEntry,
     OptionsRecord as SyncOptionsRecord,
     RawOptionsRecord as SyncRawOptionsRecord
-} from '../Sync/Sync';
+} from '../Sync/Sync.js';
 
 /* *
  *

@@ -20,7 +20,7 @@
  *
  * */
 
-import type VariwideSeriesOptions from './VariwideSeriesOptions';
+import type VariwideSeriesOptions from './VariwideSeriesOptions.js';
 
 /* *
  *

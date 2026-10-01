@@ -15,15 +15,15 @@
  *
  * */
 
-import type { AlignValue, VerticalAlignValue } from './Renderer/AlignObject';
-import type AnimationOptions from './Animation/AnimationOptions';
-import type ColorType from './Color/ColorType';
-import type CSSObject from './Renderer/CSSObject';
-import type F from './Templating';
-import type Point from './Series/Point';
-import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
-import type Time from './Time';
-import type Tooltip from './Tooltip';
+import type { AlignValue, VerticalAlignValue } from './Renderer/AlignObject.js';
+import type AnimationOptions from './Animation/AnimationOptions.js';
+import type ColorType from './Color/ColorType.js';
+import type CSSObject from './Renderer/CSSObject.js';
+import type F from './Templating.js';
+import type Point from './Series/Point.js';
+import type ShadowOptionsObject from './Renderer/ShadowOptionsObject.js';
+import type Time from './Time.js';
+import type Tooltip from './Tooltip.js';
 
 /* *
  *
@@ -31,13 +31,13 @@ import type Tooltip from './Tooltip';
  *
  * */
 
-declare module './Options' {
+declare module './Options.js' {
     interface Options {
         tooltip?: TooltipOptions;
     }
 }
 
-declare module './Series/SeriesOptions' {
+declare module './Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * A configuration object for the tooltip rendering of each single

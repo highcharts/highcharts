@@ -20,12 +20,12 @@
  *
  * */
 
-import type CoreGeometryObject from '../../Core/Geometry/GeometryObject';
-import type { ItemPointMarkerOptions } from './ItemPointOptions';
-import type ItemSeriesOptions from './ItemSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+import type CoreGeometryObject from '../../Core/Geometry/GeometryObject.js';
+import type { ItemPointMarkerOptions } from './ItemPointOptions.js';
+import type ItemSeriesOptions from './ItemSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
 
 import ItemPoint from './ItemPoint.js';
 import ItemSeriesDefaults from './ItemSeriesDefaults.js';
@@ -558,7 +558,7 @@ namespace ItemSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         item: typeof ItemSeries;
     }

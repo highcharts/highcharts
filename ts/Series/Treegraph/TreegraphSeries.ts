@@ -20,8 +20,8 @@
 
 import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type TreegraphSeriesOptions from './TreegraphSeriesOptions.js';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
@@ -800,7 +800,7 @@ extend(TreegraphSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         treegraph: typeof TreegraphSeries;
     }

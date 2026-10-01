@@ -18,10 +18,10 @@
  *
  * */
 
-import type { RowId } from '../../../Core/Data/DataProvider';
-import type Table from '../../../Core/Table/Table';
-import type TableCell from '../../../Core/Table/Body/TableCell';
-import type { TreeProjectionState } from '../TreeViewTypes';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
+import type Table from '../../../Core/Table/Table.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type { TreeProjectionState } from '../TreeViewTypes.js';
 
 import TableRow from '../../../Core/Table/Body/TableRow.js';
 import Globals from '../../../Core/Globals.js';

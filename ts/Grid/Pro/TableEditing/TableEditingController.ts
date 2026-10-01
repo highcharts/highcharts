@@ -18,21 +18,21 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import type DataTable from '../../../Data/DataTable';
+import type Grid from '../../Core/Grid.js';
+import type DataTable from '../../../Data/DataTable.js';
 import type {
     CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
+} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import type {
     Column as DataTableColumn,
     RowObject as DataTableRowObject
-} from '../../../Data/DataTable';
+} from '../../../Data/DataTable.js';
 import type {
     DataTableProvider,
     RowId
-} from '../../Core/Data/DataProvider';
-import type { DataTableValue } from '../../../Data/DataTableOptions';
-import type { IndividualColumnOptions } from '../../Core/Options';
+} from '../../Core/Data/DataProvider.js';
+import type { DataTableValue } from '../../../Data/DataTableOptions.js';
+import type { IndividualColumnOptions } from '../../Core/Options.js';
 
 import {
     hasDataTableProvider

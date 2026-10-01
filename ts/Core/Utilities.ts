@@ -18,10 +18,10 @@
  *
  * */
 
-import type AxisType from './Axis/AxisType';
-import type Series from './Series/Series';
-import type Time from './Time';
-import type Chart from './Chart/Chart';
+import type AxisType from './Axis/AxisType.js';
+import type Series from './Series/Series.js';
+import type Time from './Time.js';
+import type Chart from './Chart/Chart.js';
 
 import {
     attr,

@@ -21,12 +21,12 @@
  *
  * */
 
-import type Table from '../../Core/Table/Table';
-import type TableRow from '../../Core/Table/Body/TableRow';
+import type Table from '../../Core/Table/Table.js';
+import type TableRow from '../../Core/Table/Body/TableRow.js';
 import type {
     SummaryRenderRow,
     SummaryRowPosition
-} from './SummaryRowsTypes';
+} from './SummaryRowsTypes.js';
 
 import SummaryTableRow from './SummaryTableRow.js';
 import Globals from '../../Core/Globals.js';

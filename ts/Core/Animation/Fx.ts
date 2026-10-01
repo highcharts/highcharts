@@ -18,11 +18,11 @@
  *
  * */
 
-import type AnimationOptions from './AnimationOptions';
-import type FxBase from './FxBase';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type AnimationOptions from './AnimationOptions.js';
+import type FxBase from './FxBase.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
 
 import Color from '../Color/Color.js';
 const { parse: color } = Color;

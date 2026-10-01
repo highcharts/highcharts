@@ -11,19 +11,19 @@
  *
  * */
 
-import type { AlignObject } from '../../../Core/Renderer/AlignObject';
-import type Annotation from '../Annotation';
-import type AnnotationChart from '../AnnotationChart';
-import type { AnnotationPointType } from '../AnnotationSeries';
-import type BBoxObject from '../../../Core/Renderer/BBoxObject';
-import type { ControllableLabelOptions } from './ControllableOptions';
-import type ControlTarget from '../ControlTarget';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer';
-import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions';
+import type { AlignObject } from '../../../Core/Renderer/AlignObject.js';
+import type Annotation from '../Annotation.js';
+import type AnnotationChart from '../AnnotationChart.js';
+import type { AnnotationPointType } from '../AnnotationSeries.js';
+import type BBoxObject from '../../../Core/Renderer/BBoxObject.js';
+import type { ControllableLabelOptions } from './ControllableOptions.js';
+import type ControlTarget from '../ControlTarget.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
+import type SymbolOptions from '../../../Core/Renderer/SVG/SymbolOptions.js';
 
 import Controllable from './Controllable.js';
 import F from '../../../Core/Templating.js';
@@ -42,7 +42,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../../Core/Renderer/SVG/SymbolType' {
+declare module '../../../Core/Renderer/SVG/SymbolType.js' {
     /** @internal */
     interface SymbolTypeRegistry {
         /** @requires Extensions/ControllableLabel */
@@ -596,7 +596,7 @@ interface ControllableLabel {
  * */
 
 /** @internal */
-declare module './ControllableType' {
+declare module './ControllableType.js' {
     interface ControllableLabelTypeRegistry {
         label: typeof ControllableLabel;
     }

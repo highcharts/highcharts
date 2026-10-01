@@ -20,7 +20,7 @@
  *
  * */
 
-import type FunnelSeriesOptions from './FunnelSeriesOptions';
+import type FunnelSeriesOptions from './FunnelSeriesOptions.js';
 
 /* *
  *

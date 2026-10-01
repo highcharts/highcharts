@@ -22,7 +22,7 @@
  * */
 
 
-import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType';
+import type { SVGDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';

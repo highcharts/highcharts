@@ -21,9 +21,9 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type AxisResizeOptions from './AxisResizeOptions';
-import type Pointer from '../../Core/Pointer';
+import type Axis from '../../Core/Axis/Axis.js';
+import type AxisResizeOptions from './AxisResizeOptions.js';
+import type Pointer from '../../Core/Pointer.js';
 
 import AxisResizer from './AxisResizer.js';
 import AxisResizerDefaults from './AxisResizerDefaults.js';
@@ -40,13 +40,13 @@ import { addEvent, merge, pushUnique, wrap } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         resizer?: AxisResizer;
     }
 }
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         /**
          * Maximal size of a resizable axis. Could be set as a percent
@@ -91,7 +91,7 @@ declare module '../../Core/Axis/AxisOptions' {
 }
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         activeResizer?: boolean;
     }

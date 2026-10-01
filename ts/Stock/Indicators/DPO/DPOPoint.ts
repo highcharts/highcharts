@@ -13,8 +13,8 @@
  *
  * */
 
-import type DPOIndicator from './DPOIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type DPOIndicator from './DPOIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

@@ -18,9 +18,9 @@
  *
  * */
 
-import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions.js';
+import type RadialAxis from '../../Core/Axis/RadialAxis.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import ColumnRangePoint from './ColumnRangePoint.js';
 import ColumnRangeSeriesDefaults from './ColumnRangeSeriesDefaults.js';
@@ -274,7 +274,7 @@ extend(ColumnRangeSeries.prototype, {
 /**
  * @internal
  */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         columnrange: typeof ColumnRangeSeries;
     }

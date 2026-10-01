@@ -20,10 +20,10 @@
  *
  * */
 
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
-import type Point from '../../Core/Series/Point';
-import type SankeyPoint from './SankeyPoint';
-import type SankeySeries from './SankeySeries';
+import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type SankeyPoint from './SankeyPoint.js';
+import type SankeySeries from './SankeySeries.js';
 
 /* *
  *

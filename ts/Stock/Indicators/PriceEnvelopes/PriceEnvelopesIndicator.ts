@@ -15,14 +15,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     PriceEnvelopesOptions,
     PriceEnvelopesParamsOptions
-} from './PriceEnvelopesOptions';
-import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
+} from './PriceEnvelopesOptions.js';
+import type PriceEnvelopesPoint from './PriceEnvelopesPoint.js';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -284,7 +284,7 @@ namespace PriceEnvelopesIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof PriceEnvelopesIndicator;
     }

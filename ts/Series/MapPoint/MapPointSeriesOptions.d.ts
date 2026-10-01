@@ -4,15 +4,15 @@
  *
  * */
 
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type MapPointPointOptions from './MapPointPointOptions';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type MapPointPointOptions from './MapPointPointOptions.js';
 import type {
     ScatterSeriesOptions,
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
 import type {
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

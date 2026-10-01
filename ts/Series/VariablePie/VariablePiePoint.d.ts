@@ -18,9 +18,9 @@
  *
  * */
 
-import type PiePoint from '../Pie/PiePoint';
-import type VariablePiePointOptions from './VariablePiePointOptions';
-import type VariablePieSeries from './VariablePieSeries';
+import type PiePoint from '../Pie/PiePoint.js';
+import type VariablePiePointOptions from './VariablePiePointOptions.js';
+import type VariablePieSeries from './VariablePieSeries.js';
 
 /* *
  *

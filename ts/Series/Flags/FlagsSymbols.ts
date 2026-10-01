@@ -4,10 +4,10 @@
  *
  * */
 
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
-import type Symbols from '../../Core/Renderer/SVG/Symbols';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions.js';
+import type Symbols from '../../Core/Renderer/SVG/Symbols.js';
 
 import H from '../../Core/Globals.js';
 import { pushUnique } from '../../Shared/Utilities.js';
@@ -19,7 +19,7 @@ const { composed } = H;
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         /** @requires Series/Flags */
         circlepin: SymbolFunction;

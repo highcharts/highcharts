@@ -18,13 +18,13 @@
  *
  * */
 
-import type MapChart from '../../Core/Chart/MapChart';
-import type MapPointPointOptions from './MapPointPointOptions';
-import type MapPointSeriesOptions from './MapPointSeriesOptions';
-import type { MapBounds } from '../../Maps/MapViewOptions';
-import type { ProjectedXY } from '../../Maps/MapViewOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+import type MapChart from '../../Core/Chart/MapChart.js';
+import type MapPointPointOptions from './MapPointPointOptions.js';
+import type MapPointSeriesOptions from './MapPointSeriesOptions.js';
+import type { MapBounds } from '../../Maps/MapViewOptions.js';
+import type { ProjectedXY } from '../../Maps/MapViewOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions.js';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -264,7 +264,7 @@ const mapmarker = (
         ['Z']
     ];
 };
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         /** @requires Highcharts Maps */
         mapmarker: typeof mapmarker;
@@ -300,7 +300,7 @@ extend(MapPointSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         mappoint: typeof MapPointSeries;
     }

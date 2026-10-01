@@ -4,9 +4,9 @@
  *
  * */
 
-import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptions';
-import type { AnnotationPoint } from './AnnotationSeries';
-import type ControlPointOptions from './ControlPointOptions';
+import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptions.js';
+import type { AnnotationPoint } from './AnnotationSeries.js';
+import type ControlPointOptions from './ControlPointOptions.js';
 
 import { defined } from '../../Shared/Utilities.js';
 

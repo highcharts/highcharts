@@ -17,7 +17,7 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
+import type ColorString from '../../Core/Color/ColorString.js';
 
 /* *
  *

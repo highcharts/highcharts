@@ -13,7 +13,7 @@
 import type {
     ProviderDefinition,
     Themes
-} from '../ProviderDefinition';
+} from '../ProviderDefinition.js';
 
 /* *
  *

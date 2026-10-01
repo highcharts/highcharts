@@ -16,12 +16,12 @@
  *
  * */
 
-import type { LegendItemClickCallback } from '../../Core/Legend/LegendOptions';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type PieDataLabelOptions from './PieDataLabelOptions';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
-import type { PointEventsOptions } from '../../Core/Series/PointOptions';
-import type { SeriesPointOptions } from '../../Core/Series/SeriesOptions';
+import type { LegendItemClickCallback } from '../../Core/Legend/LegendOptions.js';
+import type LinePointOptions from '../Line/LinePointOptions.js';
+import type PieDataLabelOptions from './PieDataLabelOptions.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
+import type { PointEventsOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesPointOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

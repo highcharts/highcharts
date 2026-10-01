@@ -22,8 +22,8 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
-import type TableCell from '../../Core/Table/Body/TableCell';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
 
 
 /* *

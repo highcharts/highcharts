@@ -16,9 +16,9 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type WaterfallPointOptions from './WaterfallPointOptions';
-import type WaterfallSeries from './WaterfallSeries';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type WaterfallPointOptions from './WaterfallPointOptions.js';
+import type WaterfallSeries from './WaterfallSeries.js';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import Point from '../../Core/Series/Point.js';

@@ -16,20 +16,20 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPointOptions from './ColumnPointOptions';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type ColumnPointOptions from './ColumnPointOptions.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius.js';
 import type {
     SeriesOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
+} from '../../Core/Series/PointOptions.js';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions.js';
 
 /* *
  *
@@ -37,13 +37,13 @@ import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         borderWidth?: number;
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
@@ -73,7 +73,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Core/Series/StatesOptions' {
+declare module '../../Core/Series/StatesOptions.js' {
     interface StateOptionsBase {
         borderDashStyle?: DashStyleValue;
         borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);

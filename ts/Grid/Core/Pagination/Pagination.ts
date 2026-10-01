@@ -22,21 +22,21 @@
  *
  * */
 
-import type Grid from '../Grid';
+import type Grid from '../Grid.js';
 import type {
     PaginationOptions,
     PaginationLangOptions,
     PageSizeSelectorOptions,
     PageButtonsOptions,
     PageInfoOptions
-} from './PaginationOptions';
-import type { DeepPartial } from '../../../Shared/Types';
+} from './PaginationOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 
 import { createGridIcon } from '../UI/SvgIcons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import PaginationController from '../Querying/PaginationController';
+import PaginationController from '../Querying/PaginationController.js';
 import {
     defined,
     fireEvent,

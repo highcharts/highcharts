@@ -16,12 +16,12 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type WaterfallPointOptions from './WaterfallPointOptions';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type WaterfallPointOptions from './WaterfallPointOptions.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
 
 /* *
  *

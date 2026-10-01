@@ -19,8 +19,8 @@
  *
  * */
 
-import type { Options as BoardOptions } from './Board';
-import type { DeepPartial } from '../Shared/Types';
+import type { Options as BoardOptions } from './Board.js';
+import type { DeepPartial } from '../Shared/Types.js';
 
 import { merge } from '../Shared/Utilities.js';
 

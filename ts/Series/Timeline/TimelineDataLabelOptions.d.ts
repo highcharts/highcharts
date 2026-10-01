@@ -19,13 +19,13 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
+import type ColorType from '../../Core/Color/ColorType.js';
 import type {
     DataLabelsFormatterCallbackFunction,
     DataLabelOptions
-} from '../../Core/Series/DataLabelOptions';
-import type Point from '../../Core/Series/Point';
-import type TimelinePoint from './TimelinePoint';
+} from '../../Core/Series/DataLabelOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type TimelinePoint from './TimelinePoint.js';
 
 /* *
  *

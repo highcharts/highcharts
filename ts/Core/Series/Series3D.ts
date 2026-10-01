@@ -20,8 +20,8 @@
  *
  * */
 
-import type Position3DObject from '../Renderer/Position3DObject';
-import type ZAxis from '../Axis/ZAxis';
+import type Position3DObject from '../Renderer/Position3DObject.js';
+import type ZAxis from '../Axis/ZAxis.js';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -42,7 +42,7 @@ import {
  * */
 
 /** @internal */
-declare module './PointBase' {
+declare module './PointBase.js' {
     interface PointBase {
         plotZ?: number;
         z?: number;
@@ -50,7 +50,7 @@ declare module './PointBase' {
 }
 
 /** @internal */
-declare module './SeriesBase' {
+declare module './SeriesBase.js' {
     interface SeriesBase {
         zAxis?: ZAxis;
         rawPointsX?: Array<number>;

@@ -15,8 +15,8 @@
  *
  * */
 
-import type EditMode from '../EditMode';
-import type { Options as MenuItemOptions } from './MenuItem';
+import type EditMode from '../EditMode.js';
+import type { Options as MenuItemOptions } from './MenuItem.js';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';

@@ -26,8 +26,8 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type CSVConverterOptions from './CSVConverterOptions';
+} from '../DataEvent.js';
+import type CSVConverterOptions from './CSVConverterOptions.js';
 
 import DataConverter from './DataConverter.js';
 import type {
@@ -520,7 +520,7 @@ class CSVConverter extends DataConverter {
  *
  * */
 
-declare module './DataConverterType' {
+declare module './DataConverterType.js' {
     interface DataConverterTypes {
         CSV: typeof CSVConverter;
     }

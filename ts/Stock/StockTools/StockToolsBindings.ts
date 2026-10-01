@@ -20,18 +20,18 @@
  *
  * */
 
-import type Annotation from '../../Extensions/Annotations/Annotation';
+import type Annotation from '../../Extensions/Annotations/Annotation.js';
 import type {
     AnnotationOptions
-} from '../../Extensions/Annotations/AnnotationOptions';
-import type AxisType from '../../Core/Axis/AxisType';
-import type { DeepPartial } from '../../Shared/Types';
-import type FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions';
-import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
+} from '../../Extensions/Annotations/AnnotationOptions.js';
+import type AxisType from '../../Core/Axis/AxisType.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType.js';
+import type { YAxisOptions } from '../../Core/Axis/AxisOptions.js';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
@@ -57,7 +57,7 @@ import { fireEvent, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Extensions/Annotations/NavigationBindingsBase' {
+declare module '../../Extensions/Annotations/NavigationBindingsBase.js' {
     interface NavigationBindingsBase {
         toggledAnnotations?: boolean;
         verticalCounter?: number;

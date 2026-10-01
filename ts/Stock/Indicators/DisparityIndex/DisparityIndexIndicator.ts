@@ -22,11 +22,11 @@
 import type {
     DisparityIndexOptions,
     DisparityIndexParamsOptions
-} from './DisparityIndexOptions';
-import type DisparityIndexPoint from './DisparityIndexPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './DisparityIndexOptions.js';
+import type DisparityIndexPoint from './DisparityIndexPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -217,7 +217,7 @@ extend(DisparityIndexIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         disparityindex: typeof DisparityIndexIndicator;
     }

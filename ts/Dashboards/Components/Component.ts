@@ -24,35 +24,35 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
-import type Board from '../Board';
+import type { AnyRecord } from '../../Shared/Types.js';
+import type Board from '../Board.js';
 import type {
     ComponentType,
     ComponentTypeRegistry
-} from './ComponentType';
-import type DataConnectorType from '../../Data/Connectors/DataConnectorType';
-import type Row from '../Layout/Row';
-import type SidebarPopup from '../EditMode/SidebarPopup';
-import type TextOptions from './TextOptions';
+} from './ComponentType.js';
+import type DataConnectorType from '../../Data/Connectors/DataConnectorType.js';
+import type Row from '../Layout/Row.js';
+import type SidebarPopup from '../EditMode/SidebarPopup.js';
+import type TextOptions from './TextOptions.js';
 
 import Cell, { isCell } from '../Layout/Cell.js';
 import CellHTML from '../Layout/CellHTML.js';
 import CallbackRegistry from '../CallbackRegistry.js';
-import type { ConnectorOptions as ComponentConnectorOptions } from './ConnectorHandler';
+import type { ConnectorOptions as ComponentConnectorOptions } from './ConnectorHandler.js';
 
 import ConnectorHandler from './ConnectorHandler.js';
 import DataTable from '../../Data/DataTable.js';
 import type {
     Options as EditableOption,
     OptionsBindings as EditableOptionsBindings
-} from './EditableOptions';
+} from './EditableOptions.js';
 
 import EditableOptions from './EditableOptions.js';
 import type {
     OptionsRecord as SyncOptionsRecord,
     PredefinedSyncConfig,
     RawOptionsRecord as SyncRawOptionsRecord
-} from './Sync/Sync';
+} from './Sync/Sync.js';
 
 import Sync from './Sync/Sync.js';
 

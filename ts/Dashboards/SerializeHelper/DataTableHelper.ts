@@ -20,13 +20,13 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
-import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
-import type { JSONArray, JSONPrimitive } from '../JSON';
+import type { AnyRecord } from '../../Shared/Types.js';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions.js';
+import type { JSONArray, JSONPrimitive } from '../JSON.js';
 
 import DataTable from '../../Data/DataTable.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable.js';
 
 /* *
  *

@@ -17,7 +17,7 @@
  *
  * */
 
-import type PositionObject from '../Renderer/PositionObject';
+import type PositionObject from '../Renderer/PositionObject.js';
 
 /* *
  *

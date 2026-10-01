@@ -19,9 +19,9 @@
  *  Imports
  *
  * */
-import type ComponentType from '../Components/ComponentType';
-import type EditMode from './EditMode';
-import type Row from '../Layout/Row';
+import type ComponentType from '../Components/ComponentType.js';
+import type EditMode from './EditMode.js';
+import type Row from '../Layout/Row.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import CellHTML, { isCellHTML } from '../Layout/CellHTML.js';

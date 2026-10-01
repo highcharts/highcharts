@@ -21,7 +21,7 @@
  *
  * */
 
-import type TableCell from '../Body/TableCell';
+import type TableCell from '../Body/TableCell.js';
 
 import CellContextMenuBuiltInActions from './CellContextMenuBuiltInActions.js';
 import Globals from '../../Globals.js';

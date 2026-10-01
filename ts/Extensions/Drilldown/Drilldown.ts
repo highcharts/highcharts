@@ -19,31 +19,31 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type Axis from '../../Core/Axis/Axis';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type { BreadcrumbOptions } from '../Breadcrumbs/BreadcrumbsOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
-import type DrilldownOptions from './DrilldownOptions';
-import type Options from '../../Core/Options';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type { BreadcrumbOptions } from '../Breadcrumbs/BreadcrumbsOptions.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DrilldownOptions from './DrilldownOptions.js';
+import type Options from '../../Core/Options.js';
 import type MapPointType from '../../Series/Map/MapPoint.js';
 import type MapSeriesType from '../../Series/Map/MapSeries.js';
-import type Point from '../../Core/Series/Point';
+import type Point from '../../Core/Series/Point.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/PointOptions.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
 import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
-} from '../../Core/Series/SeriesType';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type Tick from '../../Core/Axis/Tick';
+} from '../../Core/Series/SeriesType.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type Tick from '../../Core/Axis/Tick.js';
 
 import { animObject, stop } from '../../Core/Animation/AnimationUtilities.js';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
@@ -72,7 +72,7 @@ import {
 type AxisDDPointsArray = Array<boolean|Point>;
 type AxisDDPointsRecord = Record<string, AxisDDPointsArray>;
 
-declare module '../../Core/Axis/AxisBase' {
+declare module '../../Core/Axis/AxisBase.js' {
     interface AxisBase {
         /** @internal */
         ddPoints?: AxisDDPointsRecord;
@@ -114,13 +114,13 @@ declare module '../../Core/Axis/AxisBase' {
 }
 
 /** @internal */
-declare module '../../Core/Axis/TickBase' {
+declare module '../../Core/Axis/TickBase.js' {
     interface TickBase {
         drillable(): void;
     }
 }
 
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /** @internal */
         ddDupes?: Array<string>;
@@ -181,7 +181,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * Options for drill down, the concept of inspecting increasingly high
@@ -216,7 +216,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointOptions {
         /**
          * The `id` of a series in the [drilldown.series](#drilldown.series)
@@ -235,7 +235,7 @@ declare module '../../Core/Series/PointOptions' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementBase' {
+declare module '../../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         /**
          * A general fadeIn method.

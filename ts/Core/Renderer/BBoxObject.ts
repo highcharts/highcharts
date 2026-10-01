@@ -16,8 +16,8 @@
  *
  * */
 
-import type PositionObject from './PositionObject';
-import type SizeObject from './SizeObject';
+import type PositionObject from './PositionObject.js';
+import type SizeObject from './SizeObject.js';
 
 /* *
  *

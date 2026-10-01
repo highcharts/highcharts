@@ -23,9 +23,9 @@
  *
  * */
 
-import type { AnyRecord } from '../../../../Shared/Types';
-import type SparklineRenderer from '../Renderers/SparklineRenderer';
-import type TableCell from '../../../Core/Table/Body/TableCell';
+import type { AnyRecord } from '../../../../Shared/Types.js';
+import type SparklineRenderer from '../Renderers/SparklineRenderer.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';

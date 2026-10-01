@@ -11,18 +11,18 @@
  *
  * */
 
-import type AnnotationChart from './AnnotationChart';
+import type AnnotationChart from './AnnotationChart.js';
 import type {
     AnnotationPoint,
     AnnotationPointType
-} from './AnnotationSeries';
-import type Axis from '../../Core/Axis/Axis';
-import type ControlTarget from './ControlTarget';
+} from './AnnotationSeries.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type ControlTarget from './ControlTarget.js';
 import type {
     AnnotationMockPointOptionsObject
-} from './AnnotationMockPointOptionsObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type Series from '../../Core/Series/Series';
+} from './AnnotationMockPointOptionsObject.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type Series from '../../Core/Series/Series.js';
 
 import NBU from './NavigationBindingsUtilities.js';
 const { getAxisFromOptions } = NBU;
@@ -37,7 +37,7 @@ import { defined, fireEvent } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module './AnnotationSeries' {
+declare module './AnnotationSeries.js' {
     interface AnnotationPoint {
         /** @internal */
         command?: string;
@@ -54,7 +54,7 @@ declare module './AnnotationSeries' {
 }
 
 /** @internal */
-declare module './AnnotationMockPointOptionsObject' {
+declare module './AnnotationMockPointOptionsObject.js' {
     interface AnnotationMockPointOptionsObject {
         command?: string;
         series?: undefined;

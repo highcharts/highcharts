@@ -13,8 +13,8 @@
  *
  * */
 
-import type PSARIndicator from './PSARIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type PSARIndicator from './PSARIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

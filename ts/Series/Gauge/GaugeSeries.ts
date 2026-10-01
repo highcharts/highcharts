@@ -21,14 +21,14 @@
 import type {
     GaugeSeriesDialOptions,
     GaugeSeriesOptions
-} from './GaugeSeriesOptions';
+} from './GaugeSeriesOptions.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+} from '../../Core/Series/PointOptions.js';
+import type RadialAxis from '../../Core/Axis/RadialAxis.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
@@ -56,13 +56,13 @@ import {
  *
  * */
 
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         angular?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         fixedBox?: boolean;
         forceDL?: boolean;
@@ -739,7 +739,7 @@ extend(GaugeSeries.prototype, {
 /**
  * @private
  */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         gauge: typeof GaugeSeries;
     }

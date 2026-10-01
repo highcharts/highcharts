@@ -22,26 +22,26 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
-import type Grid from '../../Core/Grid';
-import type Column from '../../Core/Table/Column';
-import type HeaderCell from '../../Core/Table/Header/HeaderCell';
-import type Options from '../../Core/Options';
-import type Table from '../../Core/Table/Table';
-import type { DeepPartial } from '../../../Shared/Types';
-import type { RestoreCellFocusEvent } from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Body/TableCell';
+import type DataTable from '../../../Data/DataTable.js';
+import type Grid from '../../Core/Grid.js';
+import type Column from '../../Core/Table/Column.js';
+import type HeaderCell from '../../Core/Table/Header/HeaderCell.js';
+import type Options from '../../Core/Options.js';
+import type Table from '../../Core/Table/Table.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type { RestoreCellFocusEvent } from '../../Core/Table/Table.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
 import type {
     TableCellAfterDataMutationEvent,
     TableCellGetEditabilityEvent
-} from '../../Core/Table/Body/TableCell';
-import type { RowId } from '../../Core/Data/DataProvider';
+} from '../../Core/Table/Body/TableCell.js';
+import type { RowId } from '../../Core/Data/DataProvider.js';
 import type {
     FilterCondition
-} from '../../../Data/Modifiers/FilterModifierOptions';
+} from '../../../Data/Modifiers/FilterModifierOptions.js';
 import type {
     ResolveFilterConditionEvent
-} from '../../Core/Querying/FilteringController';
+} from '../../Core/Querying/FilteringController.js';
 import type {
     DeprecatedTreeViewOptions,
     RowGroupingOptions,
@@ -49,15 +49,15 @@ import type {
     TreeViewColumnAggregatorOption,
     TreeViewColumnOptions,
     TreeViewOptions
-} from './TreeViewTypes';
+} from './TreeViewTypes.js';
 import type {
     NormalizedTreeInputOptions
-} from './TreeViewOptionsNormalizer';
+} from './TreeViewOptionsNormalizer.js';
 import type {
     AfterTreeRowToggleEvent,
     BeforeTreeRowToggleEvent
-} from './Projection/TreeProjectionController';
-import type TreeStickyRowController from './UI/TreeStickyRowController';
+} from './Projection/TreeProjectionController.js';
+import type TreeStickyRowController from './UI/TreeStickyRowController.js';
 
 import FilteringController from '../../Core/Querying/FilteringController.js';
 import Globals from '../../Core/Globals.js';
@@ -589,7 +589,7 @@ function onAfterCellRender(this: TableCell): void {
  *
  * */
 
-declare module '../../Core/Grid' {
+declare module '../../Core/Grid.js' {
     export default interface Grid {
         treeView?: TreeProjectionController;
     }
@@ -602,13 +602,13 @@ declare module '../../Core/Grid' {
     }
 }
 
-declare module '../../Core/Table/Table' {
+declare module '../../Core/Table/Table.js' {
     export default interface Table {
         treeStickyRowController?: TreeStickyRowController;
     }
 }
 
-declare module '../GridEvents' {
+declare module '../GridEvents.js' {
     interface GridEvents {
         /**
          * Callback function to be called before a tree row is toggled.
@@ -624,7 +624,7 @@ declare module '../GridEvents' {
     }
 }
 
-declare module '../../Core/Data/LocalDataProvider' {
+declare module '../../Core/Data/LocalDataProvider.js' {
     interface LocalDataProviderOptions {
         /**
          * Tree view options for local provider (Grid Pro module).
@@ -636,7 +636,7 @@ declare module '../../Core/Data/LocalDataProvider' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * Tree view options, turning hierarchical data into expandable parent

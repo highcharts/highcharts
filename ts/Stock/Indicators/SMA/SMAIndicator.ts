@@ -17,14 +17,14 @@
 import type {
     IndicatorBase,
     IndicatorLinkedSeriesBase
-} from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeriesType from '../../../Series/Line/LineSeries';
+} from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeriesType from '../../../Series/Line/LineSeries.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from './SMAOptions';
-import type SMAPoint from './SMAPoint';
+} from './SMAOptions.js';
+import type SMAPoint from './SMAPoint.js';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import DataTableCore from '../../../Data/DataTableCore.js';
@@ -599,7 +599,7 @@ extend(SMAIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         sma: typeof SMAIndicator;
     }

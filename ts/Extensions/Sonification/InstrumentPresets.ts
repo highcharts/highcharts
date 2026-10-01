@@ -14,7 +14,7 @@
 
 'use strict';
 
-import type SynthPatch from './SynthPatch';
+import type SynthPatch from './SynthPatch.js';
 
 /** @internal */
 const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {

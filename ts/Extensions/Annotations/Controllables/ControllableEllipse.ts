@@ -13,16 +13,16 @@
  *
  * */
 
-import type Annotation from '../Annotation';
-import type { AnnotationPointType } from '../AnnotationSeries';
-import type { ControllableShapeOptions } from './ControllableOptions';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type Annotation from '../Annotation.js';
+import type { AnnotationPointType } from '../AnnotationSeries.js';
+import type { ControllableShapeOptions } from './ControllableOptions.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
-import AxisType from '../../../Core/Axis/AxisType';
-import BBoxObject from '../../../Core/Renderer/BBoxObject';
+import AxisType from '../../../Core/Axis/AxisType.js';
+import BBoxObject from '../../../Core/Renderer/BBoxObject.js';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
-import MockPointOptions from '../AnnotationMockPointOptionsObject';
+import MockPointOptions from '../AnnotationMockPointOptionsObject.js';
 import { defined, merge } from '../../../Shared/Utilities.js';
 
 /* *
@@ -334,7 +334,7 @@ interface ControllableEllipse {
  * */
 
 /** @internal */
-declare module './ControllableType' {
+declare module './ControllableType.js' {
     interface ControllableShapeTypeRegistry {
         ellipse: typeof ControllableEllipse;
     }

@@ -20,7 +20,7 @@
  *
  * */
 
-import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
+import type DotPlotSeriesOptions from './DotPlotSeriesOptions.js';
 
 /* *
  *

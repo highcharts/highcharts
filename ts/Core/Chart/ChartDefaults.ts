@@ -18,7 +18,7 @@
  *
  * */
 
-import type ChartOptions from './ChartOptions';
+import type ChartOptions from './ChartOptions.js';
 
 /* *
  *

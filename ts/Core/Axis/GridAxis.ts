@@ -21,18 +21,18 @@
 import type {
     AxisLabelFormatterContextObject,
     AxisOptions
-} from './AxisOptions';
-import type { AxisTypeOptions } from './AxisType';
-import type ChartOptions from '../Chart/ChartOptions';
-import type ColorType from '../Color/ColorType';
-import type { DeepPartial } from '../../Shared/Types';
-import type Point from '../Series/Point';
-import type PositionObject from '../Renderer/PositionObject';
-import type SizeObject from '../Renderer/SizeObject';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type TickPositionsArray from './TickPositionsArray';
-import type Time from '../Time';
+} from './AxisOptions.js';
+import type { AxisTypeOptions } from './AxisType.js';
+import type ChartOptions from '../Chart/ChartOptions.js';
+import type ColorType from '../Color/ColorType.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type Point from '../Series/Point.js';
+import type PositionObject from '../Renderer/PositionObject.js';
+import type SizeObject from '../Renderer/SizeObject.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type TickPositionsArray from './TickPositionsArray.js';
+import type Time from '../Time.js';
 
 import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
@@ -60,14 +60,14 @@ import { timeUnits } from '../Utilities.js';
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         grid?: GridAxisComposition['grid'];
     }
 }
 
 /** @internal */
-declare module './AxisBase' {
+declare module './AxisBase.js' {
     interface AxisBase {
         axisBorder?: SVGElement;
         hiddenLabels: Array<SVGElement>;
@@ -83,7 +83,7 @@ declare module './AxisBase' {
     }
 }
 
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     /** @internal */
     interface AxisLabelFormatterContextObject {
         point?: Point;
@@ -96,21 +96,21 @@ declare module './AxisOptions' {
 }
 
 /** @internal */
-declare module '../Chart/ChartBase'{
+declare module '../Chart/ChartBase.js'{
     interface ChartBase {
         marginRight: ChartOptions['marginRight'];
     }
 }
 
 /** @internal */
-declare module './TickBase' {
+declare module './TickBase.js' {
     interface TickBase {
         slotWidth?: number;
     }
 }
 
 /** @internal */
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         GridAxis: GridAxisComposition;
     }

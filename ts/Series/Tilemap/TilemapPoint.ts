@@ -20,9 +20,9 @@
  *
  * */
 
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type TilemapPointOptions from './TilemapPointOptions';
-import type TilemapSeries from './TilemapSeries';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type TilemapPointOptions from './TilemapPointOptions.js';
+import type TilemapSeries from './TilemapSeries.js';
 
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

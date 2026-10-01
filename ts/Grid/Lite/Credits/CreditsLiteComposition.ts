@@ -14,8 +14,8 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import Table from '../../Core/Table/Table';
+import type Grid from '../../Core/Grid.js';
+import Table from '../../Core/Table/Table.js';
 
 import Globals from '../../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';

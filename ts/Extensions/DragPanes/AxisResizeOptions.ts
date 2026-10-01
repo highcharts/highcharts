@@ -19,9 +19,9 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type { CursorValue } from '../../Core/Renderer/CSSObject';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { CursorValue } from '../../Core/Renderer/CSSObject.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
 
 /* *
  *

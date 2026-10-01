@@ -21,7 +21,7 @@
  *
  * */
 
-import type SunburstSeriesOptions from './SunburstSeriesOptions';
+import type SunburstSeriesOptions from './SunburstSeriesOptions.js';
 
 /* *
  *

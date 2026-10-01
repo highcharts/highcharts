@@ -21,12 +21,12 @@
  *
  * */
 
-import type { RowId } from '../../../Core/Data/DataProvider';
-import type Table from '../../../Core/Table/Table';
-import type TableRow from '../../../Core/Table/Body/TableRow';
-import type TableCell from '../../../Core/Table/Body/TableCell';
-import type TreeProjectionController from '../Projection/TreeProjectionController';
-import type { TreeRowToggleTriggerEvent } from '../Projection/TreeProjectionController';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
+import type Table from '../../../Core/Table/Table.js';
+import type TableRow from '../../../Core/Table/Body/TableRow.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type TreeProjectionController from '../Projection/TreeProjectionController.js';
+import type { TreeRowToggleTriggerEvent } from '../Projection/TreeProjectionController.js';
 
 import TreeStickyRowController from './TreeStickyRowController.js';
 import { getTreeViewCellContext } from './TreeViewCellContext.js';

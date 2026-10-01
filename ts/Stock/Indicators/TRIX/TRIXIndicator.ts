@@ -15,9 +15,9 @@
  *
  * */
 
-import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import type { TRIXOptions } from './TRIXOptions';
-import type TRIXPoint from './TRIXPoint';
+import type TEMAIndicatorType from '../TEMA/TEMAIndicator.js';
+import type { TRIXOptions } from './TRIXOptions.js';
+import type TRIXPoint from './TRIXPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
@@ -119,7 +119,7 @@ interface TRIXIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         trix: typeof TRIXIndicator;
     }

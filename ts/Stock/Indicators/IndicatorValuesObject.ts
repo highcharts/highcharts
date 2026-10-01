@@ -12,8 +12,8 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesBase } from './IndicatorBase';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from './IndicatorBase.js';
+import type LineSeries from '../../Series/Line/LineSeries.js';
 
 /* *
  *

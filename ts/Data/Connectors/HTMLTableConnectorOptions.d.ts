@@ -18,7 +18,7 @@
  *
  * */
 
-import type DataConnectorOptions from './DataConnectorOptions';
+import type DataConnectorOptions from './DataConnectorOptions.js';
 
 
 /* *

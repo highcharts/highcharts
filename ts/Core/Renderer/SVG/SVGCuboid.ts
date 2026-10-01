@@ -16,8 +16,8 @@
  *
  * */
 
-import type SVGPath from './SVGPath';
-import type SVGPath3D from './SVGPath3D';
+import type SVGPath from './SVGPath.js';
+import type SVGPath3D from './SVGPath3D.js';
 
 /* *
  *

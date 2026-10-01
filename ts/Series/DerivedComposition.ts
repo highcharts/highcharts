@@ -11,9 +11,9 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
-import type CoreSeriesOptions from '../Core/Series/SeriesOptions';
-import type { DeepPartial } from '../Shared/Types';
+import type Chart from '../Core/Chart/Chart.js';
+import type CoreSeriesOptions from '../Core/Series/SeriesOptions.js';
+import type { DeepPartial } from '../Shared/Types.js';
 
 import H from '../Core/Globals.js';
 const { noop } = H;
@@ -27,7 +27,7 @@ import { addEvent, defined } from '../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         hasDerivedData?: DerivedComposition.SeriesComposition['hasDerivedData'];

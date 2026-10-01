@@ -18,14 +18,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     WMAOptions,
     WMAParamsOptions
-} from './WMAOptions';
-import type WMAPoint from './WMAPoint';
+} from './WMAOptions.js';
+import type WMAPoint from './WMAPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
@@ -229,7 +229,7 @@ interface WMAIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
     }

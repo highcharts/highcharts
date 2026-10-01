@@ -18,14 +18,14 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type ControllableEllipse from './Controllables/ControllableEllipse';
-import type { DeepPartial } from '../../Shared/Types';
-import type { LangOptions } from '../../Core/Options';
-import type { NavigationOptions } from '../Exporting/NavigationOptions';
-import type MockPointOptions from './AnnotationMockPointOptionsObject';
-import type NavigationBindings from './NavigationBindings';
-import type PointerEvent from '../../Core/PointerEvent';
+import type Annotation from './Annotation.js';
+import type ControllableEllipse from './Controllables/ControllableEllipse.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { LangOptions } from '../../Core/Options.js';
+import type { NavigationOptions } from '../Exporting/NavigationOptions.js';
+import type MockPointOptions from './AnnotationMockPointOptionsObject.js';
+import type NavigationBindings from './NavigationBindings.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
 
 import NBU from './NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;

@@ -18,9 +18,9 @@
  *
  * */
 
-import type FunnelPoint from '../Funnel/FunnelPoint';
-import type PyramidPointOptions from './PyramidPointOptions';
-import type PyramidSeries from './PyramidSeries';
+import type FunnelPoint from '../Funnel/FunnelPoint.js';
+import type PyramidPointOptions from './PyramidPointOptions.js';
+import type PyramidSeries from './PyramidSeries.js';
 
 /* *
  *

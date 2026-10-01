@@ -18,20 +18,20 @@
 
 import type {
     ColorAxisComposition
-} from '../../Core/Axis/Color/ColorAxisComposition';
-import type { ColorType } from '../../Core/Color/ColorType';
-import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
-import type { MapPointOptions } from './MapPointOptions';
+} from '../../Core/Axis/Color/ColorAxisComposition.js';
+import type { ColorType } from '../../Core/Color/ColorType.js';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions.js';
+import type { MapPointOptions } from './MapPointOptions.js';
 import type {
     PointOptions,
     PointShortOptions,
     PointMarkerOptions
-} from '../../Core/Series/PointOptions';
-import type { ScatterSeriesOptions } from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/PointOptions.js';
+import type { ScatterSeriesOptions } from '../Scatter/ScatterSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 import type {
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
 
 /* *
  *

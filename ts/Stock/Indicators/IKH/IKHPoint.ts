@@ -13,8 +13,8 @@
  *
  * */
 
-import type IKHIndicator from './IKHIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type IKHIndicator from './IKHIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

@@ -14,8 +14,8 @@
 
 import type {
     MapBounds
-} from './MapViewOptions';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+} from './MapViewOptions.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 /**
  * Compute bounds from a path element.

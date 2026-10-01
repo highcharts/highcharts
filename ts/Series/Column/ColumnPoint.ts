@@ -16,9 +16,9 @@
  *
  * */
 
-import type ColumnSeries from './ColumnSeries';
-import type ColumnPointOptions from './ColumnPointOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type ColumnSeries from './ColumnSeries.js';
+import type ColumnPointOptions from './ColumnPointOptions.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Point from '../../Core/Series/Point.js';
 
@@ -29,7 +29,7 @@ import Point from '../../Core/Series/Point.js';
  * */
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         /** @internal */
         allowShadow?: boolean;

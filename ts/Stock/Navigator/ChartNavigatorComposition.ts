@@ -18,11 +18,11 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
+import type Chart from '../../Core/Chart/Chart.js';
 
-import type Navigator from './Navigator';
-import type Scrollbar from '../Scrollbar/Scrollbar';
-import type Series from '../../Core/Series/Series';
+import type Navigator from './Navigator.js';
+import type Scrollbar from '../Scrollbar/Scrollbar.js';
+import type Series from '../../Core/Series/Series.js';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
@@ -35,7 +35,7 @@ import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         navigator?: Navigator;
         scrollbar?: Scrollbar;
@@ -44,14 +44,14 @@ declare module '../../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         baseSeries?: Series;
         navigatorSeries?: Series;

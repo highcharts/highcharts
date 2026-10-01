@@ -18,8 +18,8 @@
  *
  * */
 
-import type TickPositionsArray from './Axis/TickPositionsArray';
-import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+import type TickPositionsArray from './Axis/TickPositionsArray.js';
+import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject.js';
 
 import TimeBase from '../Shared/TimeBase.js';
 import { defined, extend } from '../Shared/Utilities.js';
@@ -32,7 +32,7 @@ import { timeUnits } from './Utilities.js';
  * */
 
 
-declare module './Axis/TickPositionsArray'{
+declare module './Axis/TickPositionsArray.js'{
     interface TickPositionsArray {
         info?: TimeTicksInfoObject;
     }

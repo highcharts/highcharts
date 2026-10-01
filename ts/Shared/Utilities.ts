@@ -9,14 +9,14 @@
  *
  * */
 
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType';
-import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type CSSObject from '../Core/Renderer/CSSObject.js';
+import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes.js';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
 import type { AnyRecord, DeepPartial, TypedArray } from './Types.js';
 
 import H from '../Core/Globals.js';
-import { EventCallback } from '../Core/Callback';
+import { EventCallback } from '../Core/Callback.js';
 const {
     doc,
     win

@@ -18,14 +18,14 @@
 import type {
     OBVOptions,
     OBVParamsOptions
-} from './OBVOptions';
-import type OBVPoint from './OBVPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './OBVOptions.js';
+import type OBVPoint from './OBVPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import type Series from '../../../Core/Series/Series';
+import type Series from '../../../Core/Series/Series.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
@@ -209,7 +209,7 @@ extend(OBVIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         obv: typeof OBVIndicator;
     }

@@ -15,19 +15,19 @@
  *
  * */
 
-import type ColorString from '../../../Core/Color/ColorString';
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type ColorString from '../../../Core/Color/ColorString.js';
+import type ColumnSeries from '../../../Series/Column/ColumnSeries.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     MACDOptions,
     MACDGappedExtensionObject,
     MACDParamsOptions
-} from './MACDOptions';
-import type MACDPoint from './MACDPoint';
-import type Series from '../../../Core/Series/Series';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+} from './MACDOptions.js';
+import type MACDPoint from './MACDPoint.js';
+import type Series from '../../../Core/Series/Series.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
@@ -557,7 +557,7 @@ extend(MACDIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         macd: typeof MACDIndicator;
     }

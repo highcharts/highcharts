@@ -16,14 +16,14 @@
  *
  * */
 
-import type { AlignValue } from '../AlignObject';
-import type BBoxObject from '../BBoxObject';
-import type ColorType from '../../Color/ColorType';
-import type CSSObject from '../CSSObject';
-import type SVGAttributes from './SVGAttributes';
-import type SVGPath from './SVGPath';
-import type SVGRenderer from './SVGRenderer';
-import type { SymbolKey } from './SymbolType';
+import type { AlignValue } from '../AlignObject.js';
+import type BBoxObject from '../BBoxObject.js';
+import type ColorType from '../../Color/ColorType.js';
+import type CSSObject from '../CSSObject.js';
+import type SVGAttributes from './SVGAttributes.js';
+import type SVGPath from './SVGPath.js';
+import type SVGRenderer from './SVGRenderer.js';
+import type { SymbolKey } from './SymbolType.js';
 
 import SVGElement from './SVGElement.js';
 import {

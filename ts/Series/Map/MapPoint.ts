@@ -18,16 +18,16 @@
  *
  * */
 
-import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
-import type MapPointOptions from './MapPointOptions';
-import type MapSeries from './MapSeries';
-import type { MapBounds } from '../../Maps/MapViewOptions';
-import type PointerEvent from '../../Core/PointerEvent';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type Projection from '../../Maps/Projection';
+import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON.js';
+import type MapPointOptions from './MapPointOptions.js';
+import type MapSeries from './MapSeries.js';
+import type { MapBounds } from '../../Maps/MapViewOptions.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type Projection from '../../Maps/Projection.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
 
 import ColorMapComposition from '../ColorMapComposition.js';
 import MU from '../../Maps/MapUtilities.js';

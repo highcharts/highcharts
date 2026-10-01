@@ -21,14 +21,14 @@
  *
  * */
 
-import type TableCell from '../Body/TableCell';
-import type { ContextMenu as ContextMenuType } from '../../UI/ContextMenu';
+import type TableCell from '../Body/TableCell.js';
+import type { ContextMenu as ContextMenuType } from '../../UI/ContextMenu.js';
 import type {
     CellContextMenuDividerItemOptions
-} from './CellContextMenuOptions';
+} from './CellContextMenuOptions.js';
 import type {
     ResolvedCellContextMenuItemOptions
-} from './CellContextMenuBuiltInActions';
+} from './CellContextMenuBuiltInActions.js';
 
 import ContextMenu from '../../UI/ContextMenu.js';
 import ContextMenuButton from '../../UI/ContextMenuButton.js';

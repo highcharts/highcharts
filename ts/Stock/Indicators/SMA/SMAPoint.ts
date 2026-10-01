@@ -13,8 +13,8 @@
  *
  * */
 
-import type LinePoint from '../../../Series/Line/LinePoint';
-import type SMAIndicator from './SMAIndicator';
+import type LinePoint from '../../../Series/Line/LinePoint.js';
+import type SMAIndicator from './SMAIndicator.js';
 
 /* *
  *

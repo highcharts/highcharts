@@ -18,11 +18,11 @@
  *
  * */
 
-import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions';
-import type { FunnelPointOptions } from './FunnelPointOptions';
-import type PieSeriesOptions from '../Pie/PieSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { ColorType } from '../../Core/Color/ColorType';
+import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions.js';
+import type { FunnelPointOptions } from './FunnelPointOptions.js';
+import type PieSeriesOptions from '../Pie/PieSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { ColorType } from '../../Core/Color/ColorType.js';
 
 /* *
  *

@@ -16,7 +16,7 @@
  *
  * */
 
-import type { ColorType } from '../../Core/Color/ColorType';
+import type { ColorType } from '../../Core/Color/ColorType.js';
 
 /* *
  *
@@ -24,7 +24,7 @@ import type { ColorType } from '../../Core/Color/ColorType';
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * The pane serves as a container for axes and backgrounds for circular

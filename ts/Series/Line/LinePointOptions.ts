@@ -16,7 +16,7 @@
  *
  * */
 
-import type PointOptions from '../../Core/Series/PointOptions';
+import type PointOptions from '../../Core/Series/PointOptions.js';
 
 /* *
  *

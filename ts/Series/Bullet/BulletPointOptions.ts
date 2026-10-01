@@ -16,8 +16,8 @@
  *
  * */
 
-import type { BulletTargetOptions } from './BulletSeriesOptions';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type { BulletTargetOptions } from './BulletSeriesOptions.js';
+import type ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *

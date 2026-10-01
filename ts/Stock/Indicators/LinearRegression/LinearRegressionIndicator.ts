@@ -17,15 +17,15 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
 import type {
     LinearRegressionOptions,
     LinearRegressionParamsOptions,
     RegressionLineParametersObject
-} from './LinearRegressionOptions';
-import type LinearRegressionPoint from './LinearRegressionPoint';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './LinearRegressionOptions.js';
+import type LinearRegressionPoint from './LinearRegressionPoint.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -382,7 +382,7 @@ extend(LinearRegressionIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         linearregression: typeof LinearRegressionIndicator;
         linearRegression: typeof LinearRegressionIndicator;

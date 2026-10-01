@@ -18,7 +18,7 @@
  *
  * */
 
-import type { LabelIntersectBoxObject } from './SeriesLabelOptions';
+import type { LabelIntersectBoxObject } from './SeriesLabelOptions.js';
 
 /* *
  *

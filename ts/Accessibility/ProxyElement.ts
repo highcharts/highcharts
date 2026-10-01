@@ -24,16 +24,16 @@
  *
  * */
 
-import type Accessibility from './Accessibility';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type Accessibility from './Accessibility.js';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
 import type {
     DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
-} from '../Core/Renderer/DOMElementType';
-import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
-import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+} from '../Core/Renderer/DOMElementType.js';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes.js';
+import type HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 type Nullable<T> = {
     [P in keyof T]: T[P] | null;

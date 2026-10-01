@@ -20,11 +20,11 @@
  *
  * */
 
-import type Accessibility from '../../Accessibility';
+import type Accessibility from '../../Accessibility.js';
 import type {
     AccessibilityKeyboardNavigationSeriesNavigationOptions
-} from '../../Options/A11yOptions';
-import type KeyboardEvent from '../../../Core/KeyboardEvent';
+} from '../../Options/A11yOptions.js';
+import type KeyboardEvent from '../../../Core/KeyboardEvent.js';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import Point from '../../../Core/Series/Point.js';
@@ -51,14 +51,14 @@ const {
  * */
 
 /** @internal */
-declare module '../../../Core/Chart/ChartBase'{
+declare module '../../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         highlightedPoint?: Point;
     }
 }
 
 /** @internal */
-declare module '../../../Core/Series/SeriesBase' {
+declare module '../../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @requires modules/accessibility */
         keyboardMoveVertical?: boolean;

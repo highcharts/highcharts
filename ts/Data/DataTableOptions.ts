@@ -21,7 +21,7 @@
  *
  * */
 
-import type { TypedArray } from '../Shared/Types';
+import type { TypedArray } from '../Shared/Types.js';
 
 
 /* *

@@ -23,8 +23,8 @@
  *
  * */
 
-import type { Options, LangOptions } from './Options';
-import type { DeepPartial } from '../../Shared/Types';
+import type { Options, LangOptions } from './Options.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import Pagination from './Pagination/Pagination.js';

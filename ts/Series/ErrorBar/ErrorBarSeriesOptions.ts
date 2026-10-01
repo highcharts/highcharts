@@ -16,12 +16,12 @@
  *
  * */
 
-import type BoxPlotSeriesOptions from '../BoxPlot/BoxPlotSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type ErrorBarPointOptions from './ErrorBarPointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import { BoxPlotSeriesTooltipOptions } from '../BoxPlot/BoxPlotSeriesOptions';
+import type BoxPlotSeriesOptions from '../BoxPlot/BoxPlotSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type ErrorBarPointOptions from './ErrorBarPointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import { BoxPlotSeriesTooltipOptions } from '../BoxPlot/BoxPlotSeriesOptions.js';
 
 /* *
  *

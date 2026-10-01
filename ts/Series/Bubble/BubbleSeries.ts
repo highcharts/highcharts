@@ -18,15 +18,15 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type BubbleSeriesOptions from './BubbleSeriesOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type Legend from '../../Core/Legend/Legend';
-import type Point from '../../Core/Series/Point';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase';
-import type PointerEvent from '../../Core/PointerEvent';
+import type Axis from '../../Core/Axis/Axis.js';
+import type BubbleSeriesOptions from './BubbleSeriesOptions.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Legend from '../../Core/Legend/Legend.js';
+import type Point from '../../Core/Series/Point.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import H from '../../Core/Globals.js';
@@ -61,14 +61,14 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         bubbleZExtremes?: BubbleZExtremes;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         bubblePadding?: BubbleSeries['bubblePadding'];
         radii?: BubbleSeries['radii'];
@@ -1001,7 +1001,7 @@ addEvent(BubbleSeries, 'update', (e): void => {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         bubble: typeof BubbleSeries;
     }

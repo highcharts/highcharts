@@ -20,11 +20,11 @@
  *
  * */
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type OrganizationPoint from './OrganizationPoint';
-import type OrganizationSeriesOptions from './OrganizationSeriesOptions';
-import type Point from '../../Core/Series/Point';
-import type SankeyPoint from '../Sankey/SankeyPoint';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type OrganizationPoint from './OrganizationPoint.js';
+import type OrganizationSeriesOptions from './OrganizationSeriesOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type SankeyPoint from '../Sankey/SankeyPoint.js';
 
 /* *
  *

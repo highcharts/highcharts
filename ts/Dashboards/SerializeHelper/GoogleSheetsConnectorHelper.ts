@@ -20,10 +20,10 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
-import type { JSONObject } from '../JSON';
-import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
+import type { AnyRecord } from '../../Shared/Types.js';
+import type { JSONObject } from '../JSON.js';
+import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable.js';
 
 import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';

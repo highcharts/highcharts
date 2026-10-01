@@ -18,8 +18,8 @@
  *
  * */
 
-import type ExportingOptions from './ExportingOptions';
-import type NavigationOptions from './NavigationOptions';
+import type ExportingOptions from './ExportingOptions.js';
+import type NavigationOptions from './NavigationOptions.js';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;

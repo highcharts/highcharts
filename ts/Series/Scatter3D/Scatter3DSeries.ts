@@ -20,8 +20,8 @@
  *
  * */
 
-import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import { pointCameraDistance } from '../../Core/Math3D.js';
 import Scatter3DPoint from './Scatter3DPoint.js';
@@ -123,7 +123,7 @@ extend(Scatter3DSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         scatter3d: typeof Scatter3DSeries;
     }

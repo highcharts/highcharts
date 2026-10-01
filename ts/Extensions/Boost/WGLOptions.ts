@@ -18,8 +18,8 @@
 import type {
     BoostDebugOptions,
     BoostOptions
-} from './BoostOptions';
-import type ColorString from '../../Core/Color/ColorString';
+} from './BoostOptions.js';
+import type ColorString from '../../Core/Color/ColorString.js';
 
 /* *
  *

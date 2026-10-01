@@ -19,8 +19,8 @@
  *
  * */
 
-import type GanttPoint from './GanttPoint';
-import type GanttSeriesOptions from './GanttSeriesOptions';
+import type GanttPoint from './GanttPoint.js';
+import type GanttSeriesOptions from './GanttSeriesOptions.js';
 
 import { isNumber } from '../../Shared/Utilities.js';
 

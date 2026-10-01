@@ -22,7 +22,7 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
+import type Grid from '../../Core/Grid.js';
 import Globals from '../../Core/Globals.js';
 import {
     defined,

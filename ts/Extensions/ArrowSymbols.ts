@@ -18,8 +18,8 @@
  *
  * */
 
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
  *
  * */
 
-declare module '../Core/Renderer/SVG/SymbolType' {
+declare module '../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         /** @requires modules/arrow-symbols */
         arrow: typeof arrow;

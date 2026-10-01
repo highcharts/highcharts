@@ -12,8 +12,8 @@
  *
  * */
 
-import type AroonOscillatorIndicator from './AroonOscillatorIndicator';
-import type AroonPoint from '../Aroon/AroonPoint';
+import type AroonOscillatorIndicator from './AroonOscillatorIndicator.js';
+import type AroonPoint from '../Aroon/AroonPoint.js';
 
 /* *
  *

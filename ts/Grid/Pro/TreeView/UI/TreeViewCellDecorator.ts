@@ -21,8 +21,8 @@
  *
  * */
 
-import type TableCell from '../../../Core/Table/Body/TableCell';
-import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer.js';
 
 import Globals from '../../../Core/Globals.js';
 import TreeViewGlobals from '../TreeViewGlobals.js';

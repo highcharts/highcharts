@@ -20,8 +20,8 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DOMElementProvider from './DOMElementProvider.js';
@@ -45,7 +45,7 @@ import { attr, internalClearTimeout } from '../../Shared/Utilities.js';
  *
  * @internal
  */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         announcerContainer?: HTMLDOMElement;
     }

@@ -218,7 +218,7 @@ export interface BoostOptions {
     usePreallocated?: boolean;
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface Options {
         /**
          * Options for the Boost module. The Boost module allows certain series
@@ -273,7 +273,7 @@ declare module '../../Core/Options'{
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Sets the color blending in the boost module.

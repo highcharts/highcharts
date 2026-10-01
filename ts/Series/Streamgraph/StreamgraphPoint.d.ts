@@ -16,9 +16,9 @@
  *
  * */
 
-import type AreaSplinePoint from '../AreaSpline/AreaSplinePoint';
-import type StreamgraphPointOptions from './StreamgraphPointOptions';
-import type StreamgraphSeries from './StreamgraphSeries';
+import type AreaSplinePoint from '../AreaSpline/AreaSplinePoint.js';
+import type StreamgraphPointOptions from './StreamgraphPointOptions.js';
+import type StreamgraphSeries from './StreamgraphSeries.js';
 
 /* *
  *

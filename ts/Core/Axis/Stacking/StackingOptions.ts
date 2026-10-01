@@ -18,14 +18,14 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Renderer/AlignObject';
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type ColorType from '../../Color/ColorType';
-import type CSSObject from '../../Renderer/CSSObject';
-import type { DataLabelsOverflowValue } from '../../Series/DataLabelOptions';
-import type StackItem from './StackItem';
-import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
-import type Templating from '../../Templating';
+} from '../../Renderer/AlignObject.js';
+import type AnimationOptions from '../../Animation/AnimationOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type CSSObject from '../../Renderer/CSSObject.js';
+import type { DataLabelsOverflowValue } from '../../Series/DataLabelOptions.js';
+import type StackItem from './StackItem.js';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType.js';
+import type Templating from '../../Templating.js';
 
 /* *
  *
@@ -33,7 +33,7 @@ import type Templating from '../../Templating';
  *
  * */
 
-declare module '../AxisOptions' {
+declare module '../AxisOptions.js' {
     interface AxisOptions {
         /**
          * The stack labels show the total value for each bar in a stacked
@@ -48,7 +48,7 @@ declare module '../AxisOptions' {
     }
 }
 
-declare module '../../Series/SeriesOptions' {
+declare module '../../Series/SeriesOptions.js' {
     interface SeriesOptions {
 
         /**

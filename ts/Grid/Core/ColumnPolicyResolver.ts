@@ -23,7 +23,7 @@
  *
  * */
 
-import type { NoIdColumnOptions } from './Table/Column';
+import type { NoIdColumnOptions } from './Table/Column.js';
 import { defined } from '../../Shared/Utilities.js';
 /* *
  *

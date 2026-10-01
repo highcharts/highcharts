@@ -18,8 +18,8 @@
  *
  * */
 
-import type BulletSeriesOptions from './BulletSeriesOptions';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type BulletSeriesOptions from './BulletSeriesOptions.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
 
 import BulletPoint from './BulletPoint.js';
 import BulletSeriesDefaults from './BulletSeriesDefaults.js';
@@ -282,7 +282,7 @@ BulletSeries.prototype.pointClass = BulletPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         bullet: typeof BulletSeries;
     }

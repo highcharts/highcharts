@@ -18,16 +18,16 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
-import type { AreaRangeDataLabelOptions } from './AreaRangeSeriesOptions';
-import type AreaPoint from '../Area/AreaPoint';
-import type { DeepPartial } from '../../Shared/Types';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
+import type Axis from '../../Core/Axis/Axis.js';
+import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions.js';
+import type { AreaRangeDataLabelOptions } from './AreaRangeSeriesOptions.js';
+import type AreaPoint from '../Area/AreaPoint.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
+import type RadialAxis from '../../Core/Axis/RadialAxis.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import H from '../../Core/Globals.js';
@@ -742,7 +742,7 @@ RangeDataLabel.compose(AreaRangeSeries);
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;
     }

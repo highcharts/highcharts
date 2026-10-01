@@ -18,12 +18,12 @@
  *
  * */
 
-import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColumnSeries from './ColumnSeries';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Point from '../../Core/Series/Point';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type ColumnSeries from './ColumnSeries.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DataLabel from '../../Core/Series/DataLabel.js';
 import H from '../../Core/Globals.js';

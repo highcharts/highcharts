@@ -29,13 +29,13 @@ import type {
     DataEventCallback,
     DataEventDetail,
     DataEventEmitter
-} from './DataEvent';
-import type DataModifier from './Modifiers/DataModifier';
+} from './DataEvent.js';
+import type DataModifier from './Modifiers/DataModifier.js';
 import type {
     DataTableOptionsObject,
     DataTableValue
-} from './DataTableOptions';
-import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
+} from './DataTableOptions.js';
+import type { TypedArray, TypedArrayConstructor } from '../Shared/Types.js';
 
 import DataTableCore from './DataTableCore.js';
 

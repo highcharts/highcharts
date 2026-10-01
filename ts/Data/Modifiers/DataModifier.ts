@@ -26,11 +26,11 @@ import type {
     DataEventCallback,
     DataEventDetail,
     DataEventEmitter
-} from '../DataEvent';
-import type DataModifierEvent from './DataModifierEvent';
-import type DataModifierOptions from './DataModifierOptions';
-import type DataTable from '../DataTable';
-import type { DataModifierTypes } from './DataModifierType';
+} from '../DataEvent.js';
+import type DataModifierEvent from './DataModifierEvent.js';
+import type DataModifierOptions from './DataModifierOptions.js';
+import type DataTable from '../DataTable.js';
+import type { DataModifierTypes } from './DataModifierType.js';
 
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 

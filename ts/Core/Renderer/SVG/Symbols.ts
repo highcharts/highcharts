@@ -18,9 +18,9 @@
  *
  * */
 
-import type SVGPath from './SVGPath';
-import type SymbolOptions from './SymbolOptions';
-import type { SymbolTypeRegistry } from './SymbolType';
+import type SVGPath from './SVGPath.js';
+import type SymbolOptions from './SymbolOptions.js';
+import type { SymbolTypeRegistry } from './SymbolType.js';
 
 import { defined, isNumber } from '../../../Shared/Utilities.js';
 
@@ -502,7 +502,7 @@ function triangleDown(
  *
  * */
 
-declare module './SymbolType' {
+declare module './SymbolType.js' {
     interface SymbolTypeRegistry {
         arc: typeof arc;
         callout: typeof callout;

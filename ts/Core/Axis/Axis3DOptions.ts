@@ -15,7 +15,7 @@
  *
  * */
 
-import type AxisOptions from './AxisOptions';
+import type AxisOptions from './AxisOptions.js';
 
 /* *
  *
@@ -24,7 +24,7 @@ import type AxisOptions from './AxisOptions';
  * */
 
 
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     interface AxisLabelOptions extends Axis3DLabelOptions {
         // Nothing to add
     }

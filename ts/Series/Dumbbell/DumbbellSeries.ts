@@ -18,11 +18,11 @@
  *
  * */
 
-import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import type LollipopPoint from '../Lollipop/LollipopPoint';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type DumbbellSeriesOptions from './DumbbellSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject.js';
+import type LollipopPoint from '../Lollipop/LollipopPoint.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import DumbbellPoint from './DumbbellPoint.js';
 import DumbbellSeriesDefaults from './DumbbellSeriesDefaults.js';
@@ -43,7 +43,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Series/StatesOptions' {
+declare module '../../Core/Series/StatesOptions.js' {
     interface StateOptionsBase {
         connectorWidthPlus?: number;
     }
@@ -400,7 +400,7 @@ extend(DumbbellSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         dumbbell: typeof DumbbellSeries;
     }

@@ -21,11 +21,11 @@
 
 import type {
     AnimationStepCallbackFunction
-} from '../../Core/Animation/AnimationOptions';
+} from '../../Core/Animation/AnimationOptions.js';
 import type GeoHeatmapSeriesOptions from './GeoHeatmapSeriesOptions.js';
 import type { InterpolationObject } from './GeoHeatmapSeriesOptions.js';
 import type MapView from '../../Maps/MapView.js';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     animObject,
     stop
@@ -738,7 +738,7 @@ extend(GeoHeatmapSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         geoheatmap: typeof GeoHeatmapSeries;
     }

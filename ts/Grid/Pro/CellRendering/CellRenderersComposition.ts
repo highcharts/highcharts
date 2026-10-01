@@ -23,10 +23,10 @@
  *
  * */
 
-import type Column from '../../Core/Table/Column';
-import type CellContent from '../../Core/Table/CellContent/CellContent';
-import type CellRendererType from './CellRendererType';
-import type TableCell from '../../Core/Table/Body/TableCell';
+import type Column from '../../Core/Table/Column.js';
+import type CellContent from '../../Core/Table/CellContent/CellContent.js';
+import type CellRendererType from './CellRendererType.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
 
 import CellRendererRegistry from './CellRendererRegistry.js';
 import Globals from '../../Core/Globals.js';
@@ -106,7 +106,7 @@ function createCellContent(this: Column, cell: TableCell): CellContent {
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface ColumnCellOptions {
         /**
          * Options to control the cell content rendering.
@@ -118,7 +118,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Table/Column' {
+declare module '../../Core/Table/Column.js' {
     export default interface Column {
         /**
          * The cell view renderer instance for the column.

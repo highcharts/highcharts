@@ -19,7 +19,7 @@
  * */
 
 import HollowCandlestickPoint from './HollowCandlestickPoint.js';
-import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
+import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -377,7 +377,7 @@ HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType'{
+declare module '../../Core/Series/SeriesType.js'{
     interface SeriesTypeRegistry {
         hollowcandlestick: typeof HollowCandlestickSeries;
     }

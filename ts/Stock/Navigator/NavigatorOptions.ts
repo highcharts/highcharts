@@ -17,15 +17,15 @@
 import type {
     AxisOptions,
     YAxisOptions
-} from '../../Core/Axis/AxisOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type { DeepPartial } from '../../Shared/Types';
-import type { Options } from '../../Core/Options';
-import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
+} from '../../Core/Axis/AxisOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { Options } from '../../Core/Options.js';
+import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType.js';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
-} from '../../Core/Series/SeriesType';
+} from '../../Core/Series/SeriesType.js';
 /* *
  *
  *  Declarations
@@ -36,7 +36,7 @@ type NavigatorSeriesOptions<
     T extends keyof SeriesTypePlotOptions = 'areaspline'
 > = SeriesTypeOptions & NonNullable<SeriesTypePlotOptions[T]>;
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface XAxisOptions {
         /**
          * Maximum range which can be set using the navigator's handles.
@@ -52,7 +52,7 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface Options {
         /**
          * The navigator is a small series below the main series, displaying
@@ -65,7 +65,7 @@ declare module '../../Core/Options'{
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Options for the corresponding navigator series if `showInNavigator`

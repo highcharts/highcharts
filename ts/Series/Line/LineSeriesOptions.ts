@@ -16,10 +16,10 @@
  *
  * */
 
-import type { LinePointOptions } from './LinePointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { LinePointOptions } from './LinePointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

@@ -13,8 +13,8 @@
  *
  * */
 
-import type DisparityIndexIndicator from './DisparityIndexIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type DisparityIndexIndicator from './DisparityIndexIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

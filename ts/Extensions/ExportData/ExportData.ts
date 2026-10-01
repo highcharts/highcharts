@@ -24,17 +24,17 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type { EventCallback } from '../../Core/Callback';
-import type { Exporting } from '../Exporting/Exporting';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type Axis from '../../Core/Axis/Axis.js';
+import type { EventCallback } from '../../Core/Callback.js';
+import type { Exporting } from '../Exporting/Exporting.js';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/PointOptions.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -71,7 +71,7 @@ import { error } from '../../Core/Utilities.js';
  *
  * */
 
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         /**
          * Deprecated. Use
@@ -167,14 +167,14 @@ declare module '../../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         exportKey?: string;
         keyToAxis?: Record<string, string>;
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingBase' {
+declare module '../../Extensions/Exporting/ExportingBase.js' {
     interface ExportingBase {
         /** @internal */
         ascendingOrderInTable?: boolean;
@@ -331,7 +331,7 @@ declare module '../../Extensions/Exporting/ExportingBase' {
     }
 }
 
-declare module '../../Core/Chart/ChartOptions' {
+declare module '../../Core/Chart/ChartOptions.js' {
     interface ChartEventsOptions {
         /**
          * Callback that fires while exporting data. This allows the

@@ -20,9 +20,9 @@
  *
  * */
 
-import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
-import type ArcDiagramSeries from './ArcDiagramSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type ArcDiagramPointOptions from './ArcDiagramPointOptions.js';
+import type ArcDiagramSeries from './ArcDiagramSeries.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend } from '../../Shared/Utilities.js';

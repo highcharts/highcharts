@@ -16,8 +16,8 @@
  *
  * */
 
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

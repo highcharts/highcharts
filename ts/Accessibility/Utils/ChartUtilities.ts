@@ -20,14 +20,14 @@
  *
  * */
 
-import type Accessibility from '../Accessibility';
-import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
-import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
-import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Accessibility from '../Accessibility.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DOMElementType } from '../../Core/Renderer/DOMElementType.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import H from '../../Core/Globals.js';
 const { doc } = H;

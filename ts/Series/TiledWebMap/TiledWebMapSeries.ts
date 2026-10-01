@@ -17,12 +17,12 @@
  *
  * */
 
-import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
-import type MapChart from '../../Core/Chart/MapChart';
+import type { AnimationStepCallbackFunction } from '../../Core/Animation/AnimationOptions.js';
+import type { MapLonLatObject } from '../../Maps/GeoJSON.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
+import type MapChart from '../../Core/Chart/MapChart.js';
 
 import { stop } from '../../Core/Animation/AnimationUtilities.js';
 import Fx from '../../Core/Animation/Fx.js';
@@ -825,7 +825,7 @@ class TiledWebMapSeries extends MapSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         tiledwebmap: typeof TiledWebMapSeries;
     }

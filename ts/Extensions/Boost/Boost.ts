@@ -17,15 +17,15 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type { AxisSetExtremesEventObject } from '../../Core/Axis/AxisOptions';
-import type Chart from '../../Core/Chart/Chart';
-import Color from '../../Core/Color/Color';
-import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
-import type Series from '../../Core/Series/Series';
-import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type Point from '../../Core/Series/Point';
+import type Axis from '../../Core/Axis/Axis.js';
+import type { AxisSetExtremesEventObject } from '../../Core/Axis/AxisOptions.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import Color from '../../Core/Color/Color.js';
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement.js';
+import type Series from '../../Core/Series/Series.js';
+import type SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type Point from '../../Core/Series/Point.js';
 
 import BoostChart from './BoostChart.js';
 import BoostSeries from './BoostSeries.js';

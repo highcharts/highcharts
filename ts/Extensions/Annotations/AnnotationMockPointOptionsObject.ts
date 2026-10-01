@@ -16,10 +16,10 @@
  *
  * */
 
-import type AxisType from '../../Core/Axis/AxisType';
+import type AxisType from '../../Core/Axis/AxisType.js';
 import type {
     ControllableLabelOptions
-} from './Controllables/ControllableOptions';
+} from './Controllables/ControllableOptions.js';
 
 /* *
  *

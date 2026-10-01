@@ -18,7 +18,7 @@
  *
  * */
 
-import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
+import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions.js';
 
 /* *
  *

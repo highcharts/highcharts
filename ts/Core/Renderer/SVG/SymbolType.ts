@@ -16,8 +16,8 @@
  *
  * */
 
-import type SVGPath from './SVGPath';
-import type SymbolOptions from './SymbolOptions';
+import type SVGPath from './SVGPath.js';
+import type SymbolOptions from './SymbolOptions.js';
 
 /* *
  *

@@ -21,7 +21,7 @@
  *
  * */
 
-import type { PredefinedSyncConfig } from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync.js';
 import GridExtremesSync from './GridExtremesSync.js';
 import GridHighlightSync from './GridHighlightSync.js';
 import GridVisibilitySync from './GridVisibilitySync.js';

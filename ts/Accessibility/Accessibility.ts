@@ -20,15 +20,15 @@
  *
  * */
 
-import type AccessibilityComponent from './AccessibilityComponent';
-import type Chart from '../Core/Chart/Chart';
-import type Legend from '../Core/Legend/Legend';
-import type { Options } from '../Core/Options';
-import type Point from '../Core/Series/Point';
-import type RangeSelector from '../Stock/RangeSelector/RangeSelector';
-import type Series from '../Core/Series/Series';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type AccessibilityComponent from './AccessibilityComponent.js';
+import type Chart from '../Core/Chart/Chart.js';
+import type Legend from '../Core/Legend/Legend.js';
+import type { Options } from '../Core/Options.js';
+import type Point from '../Core/Series/Point.js';
+import type RangeSelector from '../Stock/RangeSelector/RangeSelector.js';
+import type Series from '../Core/Series/Series.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
@@ -69,7 +69,7 @@ import { addEvent, extend, fireEvent, merge } from '../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Chart/ChartBase' {
+declare module '../Core/Chart/ChartBase.js' {
     interface ChartBase {
         a11yDirty?: boolean;
         accessibility?: Accessibility;

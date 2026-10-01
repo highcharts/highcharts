@@ -16,10 +16,10 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type LinePointOptions from '../Line/LinePointOptions.js';
+import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
  *
  * */
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointOptions {
 
         /**

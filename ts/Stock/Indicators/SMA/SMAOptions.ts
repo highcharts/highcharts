@@ -14,8 +14,8 @@
  *
  * */
 
-import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions';
-import type { SeriesTooltipOptions } from '../../../Core/TooltipOptions';
+import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions.js';
+import type { SeriesTooltipOptions } from '../../../Core/TooltipOptions.js';
 
 /* *
  *

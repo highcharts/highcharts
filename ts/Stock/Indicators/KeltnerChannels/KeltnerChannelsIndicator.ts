@@ -14,14 +14,14 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
 import type {
     KeltnerChannelsOptions,
     KeltnerChannelsParamsOptions
-} from './KeltnerChannelsOptions';
-import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './KeltnerChannelsOptions.js';
+import type KeltnerChannelsPoint from './KeltnerChannelsPoint.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -274,7 +274,7 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
     }

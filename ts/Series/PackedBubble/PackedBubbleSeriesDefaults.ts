@@ -4,9 +4,9 @@
  *
  * */
 
-import type PackedBubblePoint from './PackedBubblePoint';
-import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
-import type Point from '../../Core/Series/Point';
+import type PackedBubblePoint from './PackedBubblePoint.js';
+import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions.js';
+import type Point from '../../Core/Series/Point.js';
 
 import { isNumber } from '../../Shared/Utilities.js';
 

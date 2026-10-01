@@ -16,7 +16,7 @@
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
+} from '../SMA/SMAOptions.js';
 
 /* *
  *

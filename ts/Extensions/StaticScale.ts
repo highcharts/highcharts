@@ -18,8 +18,8 @@
  *
  * */
 
-import type Axis from '../Core/Axis/Axis';
-import type Chart from '../Core/Chart/Chart';
+import type Axis from '../Core/Axis/Axis.js';
+import type Chart from '../Core/Chart/Chart.js';
 
 import {
     addEvent,
@@ -36,7 +36,7 @@ const { composed } = H;
  *
  * */
 
-declare module '../Core/Axis/AxisOptions' {
+declare module '../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         /**
          * For vertical axes only. Setting the static scale ensures that each
@@ -60,14 +60,14 @@ declare module '../Core/Axis/AxisOptions' {
 }
 
 /** @internal */
-declare module '../Core/Axis/AxisBase' {
+declare module '../Core/Axis/AxisBase.js' {
     interface AxisBase {
         staticScale?: number;
     }
 }
 
 /** @internal */
-declare module '../Core/Chart/ChartBase'{
+declare module '../Core/Chart/ChartBase.js'{
     interface ChartBase {
         redrawTrigger?: string;
         initiatedScale?: boolean;

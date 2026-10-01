@@ -22,16 +22,16 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
-import type { RowId } from '../../../Core/Data/DataProvider';
+import type DataTable from '../../../../Data/DataTable.js';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
 import type {
     TreeInputPathSeparator,
     TreeIndexBuildResult,
     TreeNodeRecord
-} from '../TreeViewTypes';
+} from '../TreeViewTypes.js';
 import type {
     NormalizedTreeInputPathOptions
-} from '../TreeViewOptionsNormalizer';
+} from '../TreeViewOptionsNormalizer.js';
 
 import {
     buildPathHierarchy,

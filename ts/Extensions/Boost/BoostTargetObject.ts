@@ -4,9 +4,9 @@
  *
  * */
 
-import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type WGLRenderer from './WGLRenderer';
+import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type WGLRenderer from './WGLRenderer.js';
 
 /* *
  *

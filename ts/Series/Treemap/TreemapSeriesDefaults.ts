@@ -19,8 +19,8 @@
  *
  * */
 
-import type TreemapPoint from './TreemapPoint';
-import type TreemapSeriesOptions from './TreemapSeriesOptions';
+import type TreemapPoint from './TreemapPoint.js';
+import type TreemapSeriesOptions from './TreemapSeriesOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { isString } from '../../Shared/Utilities.js';

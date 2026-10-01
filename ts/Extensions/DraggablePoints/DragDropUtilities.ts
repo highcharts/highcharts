@@ -19,9 +19,9 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { EventCallback } from '../../Core/Callback';
-import type PointerEvent from '../../Core/PointerEvent';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { EventCallback } from '../../Core/Callback.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
 import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
 
 /* *

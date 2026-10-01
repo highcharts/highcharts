@@ -20,12 +20,12 @@
  *
  * */
 
-import type { DragNodesPoint } from '../DragNodesComposition';
-import type { GraphIntegrationObject } from '../GraphLayoutComposition';
-import type NetworkgraphPoint from './NetworkgraphPoint';
-import type Point from '../../Core/Series/Point';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout';
+import type { DragNodesPoint } from '../DragNodesComposition.js';
+import type { GraphIntegrationObject } from '../GraphLayoutComposition.js';
+import type NetworkgraphPoint from './NetworkgraphPoint.js';
+import type Point from '../../Core/Series/Point.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
 
 /* *
  *

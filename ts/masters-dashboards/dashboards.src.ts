@@ -18,8 +18,8 @@
  *
  * */
 
-import type { Highcharts as HighchartsNamespace } from '../Dashboards/Plugins/HighchartsTypes';
-import type { GridNamespace } from '../Dashboards/Plugins/GridTypes';
+import type { Highcharts as HighchartsNamespace } from '../Dashboards/Plugins/HighchartsTypes.js';
+import type { GridNamespace } from '../Dashboards/Plugins/GridTypes.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';

@@ -24,12 +24,12 @@
 
 import type {
     DateInputRendererBaseOptions
-} from '../Renderers/DateInputRendererBase';
-import type { EditModeContent } from '../../CellEditing/CellEditMode';
-import type TableCell from '../../../Core/Table/Body/TableCell';
+} from '../Renderers/DateInputRendererBase.js';
+import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
 
 import CellContentPro from '../CellContentPro.js';
-import CellRenderer from '../CellRenderer';
+import CellRenderer from '../CellRenderer.js';
 import Globals from '../../../Core/Globals.js';
 import { setUserAttributes } from '../../../Core/GridUtils.js';
 

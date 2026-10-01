@@ -16,8 +16,8 @@
  *
  * */
 
-import type Color from './Color';
-import type ColorType from './ColorType';
+import type Color from './Color.js';
+import type ColorType from './ColorType.js';
 
 /* *
  *

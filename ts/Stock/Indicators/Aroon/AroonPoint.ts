@@ -12,8 +12,8 @@
  *
  * */
 
-import type AroonIndicator from './AroonIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type AroonIndicator from './AroonIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

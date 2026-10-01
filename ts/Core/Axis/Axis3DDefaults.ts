@@ -20,7 +20,7 @@
  *
  * */
 
-import type AxisOptions from './AxisOptions';
+import type AxisOptions from './AxisOptions.js';
 
 /* *
  *

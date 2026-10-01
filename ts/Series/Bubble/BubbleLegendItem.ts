@@ -19,20 +19,20 @@
  *
  * */
 
-import type { AlignValue } from '../../Core/Renderer/AlignObject';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type BubbleSeries from './BubbleSeries';
-import type { BubbleSizeByValue } from './BubbleSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type Templating from '../../Core/Templating';
+import type { AlignValue } from '../../Core/Renderer/AlignObject.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type BubbleSeries from './BubbleSeries.js';
+import type { BubbleSizeByValue } from './BubbleSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type Templating from '../../Core/Templating.js';
 import type {
     LegendItemObject,
     LegendItem
-} from '../../Core/Legend/LegendItem';
-import type Point from '../../Core/Series/Point';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from '../../Core/Legend/LegendItem.js';
+import type Point from '../../Core/Series/Point.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 import F from '../../Core/Templating.js';
@@ -55,28 +55,28 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Legend/LegendBase' {
+declare module '../../Core/Legend/LegendBase.js' {
     interface LegendBase {
         bubbleLegend?: BubbleLegendItem;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         isBubble?: boolean;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         ignoreSeries?: boolean;
         isBubble?: boolean;
     }
 }
 
-declare module '../../Core/Legend/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions.js' {
     interface LegendOptions {
         /**
          * The bubble legend is an additional element in legend which

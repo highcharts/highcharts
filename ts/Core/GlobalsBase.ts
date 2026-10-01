@@ -16,12 +16,12 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
-import type { DeepPartial } from '../Shared/Types';
-import type Options from './Options';
-import type { SeriesTypeRegistry } from './Series/SeriesType';
-import type SizeObject from './Renderer/SizeObject';
-import type Time from './Time';
+import type Chart from './Chart/Chart.js';
+import type { DeepPartial } from '../Shared/Types.js';
+import type Options from './Options.js';
+import type { SeriesTypeRegistry } from './Series/SeriesType.js';
+import type SizeObject from './Renderer/SizeObject.js';
+import type Time from './Time.js';
 
 /* *
  *

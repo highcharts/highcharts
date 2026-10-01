@@ -30,13 +30,13 @@ import type {
     Options,
     GroupedHeaderOptions,
     IndividualColumnOptions
-} from './Options';
-import type { RowId } from './Data/DataProvider';
-import type { DataProviderType } from './Data/DataProviderType';
-import type Column from './Table/Column';
-import type { NoIdColumnOptions } from './Table/Column';
+} from './Options.js';
+import type { RowId } from './Data/DataProvider.js';
+import type { DataProviderType } from './Data/DataProviderType.js';
+import type Column from './Table/Column.js';
+import type { NoIdColumnOptions } from './Table/Column.js';
 import type Popup from './UI/Popup.js';
-import type { DeepPartial } from '../../Shared/Types';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';

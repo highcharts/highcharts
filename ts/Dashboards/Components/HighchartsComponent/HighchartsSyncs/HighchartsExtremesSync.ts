@@ -21,16 +21,16 @@
  *
  * */
 
-import type { Axis, Series } from '../../../Plugins/HighchartsTypes';
-import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Axis, Series } from '../../../Plugins/HighchartsTypes.js';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync.js';
 import type HighchartsComponent from '../HighchartsComponent.js';
-import type { ConnectorOptions } from '../HighchartsComponentOptions';
+import type { ConnectorOptions } from '../HighchartsComponentOptions.js';
 import type {
     Event as DataCursorEvent,
     Type as DataCursorType
-} from '../../../../Data/DataCursor';
+} from '../../../../Data/DataCursor.js';
 
-import Component from '../../Component';
+import Component from '../../Component.js';
 import { addEvent, isString } from '../../../../Shared/Utilities.js';
 
 

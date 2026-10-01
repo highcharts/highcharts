@@ -16,11 +16,11 @@
  *
  * */
 
-import type AxisOptions from './AxisOptions';
-import type Chart from '../Chart/Chart';
-import type { DeepPartial } from '../../Shared/Types';
-import type Series from '../Series/Series';
-import type Tick from './Tick';
+import type AxisOptions from './AxisOptions.js';
+import type Chart from '../Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type Series from '../Series/Series.js';
+import type Tick from './Tick.js';
 
 /* *
  *

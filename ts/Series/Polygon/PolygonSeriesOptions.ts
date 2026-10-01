@@ -15,17 +15,17 @@
  *  Imports
  *
  * */
-import type ColorType from '../../Core/Color/ColorType';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type PolygonPointOptions from './PolygonPointOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type PolygonPointOptions from './PolygonPointOptions.js';
 import type {
     ScatterSeriesOptions,
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
+} from '../../Core/Series/PointOptions.js';
 
 /* *
  *

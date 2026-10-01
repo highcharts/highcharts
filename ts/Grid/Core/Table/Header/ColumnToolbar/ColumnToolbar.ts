@@ -23,9 +23,9 @@
  *
  * */
 
-import type Grid from '../../../Grid';
-import type Toolbar from '../../../UI/Toolbar';
-import type Column from '../../Column';
+import type Grid from '../../../Grid.js';
+import type Toolbar from '../../../UI/Toolbar.js';
+import type Column from '../../Column.js';
 
 import GridUtils from '../../../GridUtils.js';
 import Globals from '../../../Globals.js';

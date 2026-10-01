@@ -23,12 +23,12 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type JSONConnectorOptions from './JSONConnectorOptions';
-import type { JSONData } from '../Converters/JSONConverterOptions';
+} from '../DataEvent.js';
+import type JSONConnectorOptions from './JSONConnectorOptions.js';
+import type { JSONData } from '../Converters/JSONConverterOptions.js';
 import type {
     ColumnCollection as DataTableColumnCollection
-} from '../DataTable';
+} from '../DataTable.js';
 
 import DataConnector, {
     type Event as DataConnectorEvent
@@ -232,7 +232,7 @@ export interface Event extends DataConnectorEvent {
  *
  * */
 
-declare module './DataConnectorType' {
+declare module './DataConnectorType.js' {
     interface DataConnectorTypes {
         JSON: typeof JSONConnector;
     }

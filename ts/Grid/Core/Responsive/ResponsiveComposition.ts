@@ -22,10 +22,10 @@
  *
  * */
 
-import type { DeepPartial } from '../../../Shared/Types';
-import type Grid from '../../Core/Grid';
-import type { Options } from '../Options';
-import type { ResponsiveOptions, RuleOptions } from './ResponsiveOptions';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Grid from '../../Core/Grid.js';
+import type { Options } from '../Options.js';
+import type { ResponsiveOptions, RuleOptions } from './ResponsiveOptions.js';
 
 import Globals from '../../Core/Globals.js';
 import {
@@ -367,7 +367,7 @@ function onResize(this: Grid, entry: ResizeObserverEntry): void {
  *
  * */
 
-declare module '../Options' {
+declare module '../Options.js' {
     interface Options {
         /**
          * Allows setting a set of rules to apply for different screen or grid
@@ -379,7 +379,7 @@ declare module '../Options' {
     }
 }
 
-declare module '../Grid' {
+declare module '../Grid.js' {
     export default interface Grid {
         /**
          * Tracks the ResizeObserver instance for the grid.

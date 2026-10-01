@@ -4,7 +4,7 @@
  *
  * */
 
-import type BulletSeriesOptions from './BulletSeriesOptions';
+import type BulletSeriesOptions from './BulletSeriesOptions.js';
 
 /* *
  *

@@ -18,12 +18,12 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type Options from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+import type Chart from '../../Core/Chart/Chart.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type Options from '../../Core/Options.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
 /* *
  *
  *  Declarations
@@ -1038,7 +1038,7 @@ export interface SeriesAccessibilityOptions {
     point: AccessibilityPointOptions;
 }
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
 
         /**
@@ -1052,7 +1052,7 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Legend/LegendOptions' {
+declare module '../../Core/Legend/LegendOptions.js' {
     interface LegendOptions {
 
         /**
@@ -1066,7 +1066,7 @@ declare module '../../Core/Legend/LegendOptions' {
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface Options {
 
         /**
@@ -1083,7 +1083,7 @@ declare module '../../Core/Options'{
     }
 }
 
-declare module '../../Core/Series/PointOptions' {
+declare module '../../Core/Series/PointOptions.js' {
     interface PointOptions {
 
         /**
@@ -1095,7 +1095,7 @@ declare module '../../Core/Series/PointOptions' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
 
         /**
@@ -1108,7 +1108,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Extensions/Annotations/Controllables/ControllableOptions' {
+declare module '../../Extensions/Annotations/Controllables/ControllableOptions.js' {
     interface ControllableLabelOptions {
 
         /**
@@ -1121,7 +1121,7 @@ declare module '../../Extensions/Annotations/Controllables/ControllableOptions' 
     }
 }
 
-declare module '../../Extensions/Exporting/ExportingOptions' {
+declare module '../../Extensions/Exporting/ExportingOptions.js' {
     interface ExportingOptions {
 
         /**
@@ -1135,7 +1135,7 @@ declare module '../../Extensions/Exporting/ExportingOptions' {
     }
 }
 
-declare module '../../Stock/Navigator/NavigatorOptions' {
+declare module '../../Stock/Navigator/NavigatorOptions.js' {
     interface NavigatorOptions {
 
         /**

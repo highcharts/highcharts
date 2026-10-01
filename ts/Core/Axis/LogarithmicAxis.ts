@@ -18,7 +18,7 @@
  *
  * */
 
-import type Axis from './Axis';
+import type Axis from './Axis.js';
 
 
 import H from '../Globals.js';
@@ -36,14 +36,14 @@ import {
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         logarithmic?: LogarithmicAxis.Additions;
     }
 }
 
 /** @internal */
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         LogarithmicAxis: LogarithmicAxis.Composition;
     }

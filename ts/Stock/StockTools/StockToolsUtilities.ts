@@ -20,18 +20,18 @@
  *
  * */
 
-import type Annotation from '../../Extensions/Annotations/Annotation';
-import type { AxisPositions } from './StockTools';
-import type AxisType from '../../Core/Axis/AxisType';
-import type Chart from '../../Core/Chart/Chart';
-import type FlagsPoint from '../../Series/Flags/FlagsPoint';
-import type { FlagsShapeValue } from '../../Series/Flags/FlagsPointOptions';
-import type FlagsSeriesOptions from '../../Series/Flags/FlagsSeriesOptions';
-import type NavigationBindings from '../../Extensions/Annotations/NavigationBindings';
-import type Point from '../../Core/Series/Point';
-import type Pointer from '../../Core/Pointer';
-import type PointerEvent from '../../Core/PointerEvent';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Annotation from '../../Extensions/Annotations/Annotation.js';
+import type { AxisPositions } from './StockTools.js';
+import type AxisType from '../../Core/Axis/AxisType.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type FlagsPoint from '../../Series/Flags/FlagsPoint.js';
+import type { FlagsShapeValue } from '../../Series/Flags/FlagsPointOptions.js';
+import type FlagsSeriesOptions from '../../Series/Flags/FlagsSeriesOptions.js';
+import type NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
+import type Point from '../../Core/Series/Point.js';
+import type Pointer from '../../Core/Pointer.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import D from '../../Core/Defaults.js';
 const { getOptions } = D;

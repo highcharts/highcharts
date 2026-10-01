@@ -18,14 +18,14 @@
  *
  * */
 
-import type ColorType from '../Color/ColorType';
-import type Legend from './Legend';
-import type LegendItem from './LegendItem';
-import type Point from '../Series/Point';
-import type Series from '../Series/Series';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
+import type ColorType from '../Color/ColorType.js';
+import type Legend from './Legend.js';
+import type LegendItem from './LegendItem.js';
+import type Point from '../Series/Point.js';
+import type Series from '../Series/Series.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type SymbolOptions from '../Renderer/SVG/SymbolOptions.js';
 
 import { extend, merge } from '../../Shared/Utilities.js';
 
@@ -35,19 +35,19 @@ import { extend, merge } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../Axis/AxisBase' {
+declare module '../Axis/AxisBase.js' {
     interface AxisBase extends LegendItem {
         // Nothing to add
     }
 }
 
-declare module '../Series/PointBase' {
+declare module '../Series/PointBase.js' {
     interface PointBase extends LegendItem {
         // Nothing to add
     }
 }
 
-declare module '../Series/SeriesBase' {
+declare module '../Series/SeriesBase.js' {
     interface SeriesBase extends LegendItem {
         /**
          * Legend data for the series.
@@ -64,7 +64,7 @@ declare module '../Series/SeriesBase' {
     }
 }
 
-declare module '../Series/SeriesOptions' {
+declare module '../Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * What type of legend symbol to render for this series. Can be one of

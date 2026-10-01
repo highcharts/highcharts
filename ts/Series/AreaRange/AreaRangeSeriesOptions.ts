@@ -16,15 +16,15 @@
  *
  * */
 
-import type AreaRangePointOptions from './AreaRangePointOptions';
-import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type AreaRangePointOptions from './AreaRangePointOptions.js';
+import type AreaSeriesOptions from '../Area/AreaSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
+} from '../../Core/Series/PointOptions.js';
 
 /* *
  *
@@ -32,7 +32,7 @@ import type {
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         trackByArea?: boolean;
     }

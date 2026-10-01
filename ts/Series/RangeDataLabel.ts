@@ -13,11 +13,11 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type Point from '../Core/Series/Point';
-import type Series from '../Core/Series/Series';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions.js';
+import type Point from '../Core/Series/Point.js';
+import type Series from '../Core/Series/Series.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 import ColumnSeries from './Column/ColumnSeries.js';
 import {

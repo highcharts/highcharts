@@ -21,7 +21,7 @@
  *
  * */
 
-import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
+import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

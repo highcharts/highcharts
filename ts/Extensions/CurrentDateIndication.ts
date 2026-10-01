@@ -19,13 +19,13 @@
  *
  * */
 
-import type ColorString from '../Core/Color/ColorString';
-import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions';
+import type ColorString from '../Core/Color/ColorString.js';
+import type { PlotBandLabelOptions } from '../Core/Axis/PlotLineOrBand/PlotBandOptions.js';
 import type {
     PlotLineLabelOptions,
     PlotLineOptions
-} from '../Core/Axis/PlotLineOrBand/PlotLineOptions';
-import type Time from '../Core/Time';
+} from '../Core/Axis/PlotLineOrBand/PlotLineOptions.js';
+import type Time from '../Core/Time.js';
 
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
@@ -39,7 +39,7 @@ import { addEvent, merge, pushUnique, wrap } from '../Shared/Utilities.js';
  *
  * */
 
-declare module '../Core/Axis/AxisOptions' {
+declare module '../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         /**
          * Show an indicator on the axis for the current date and time. Can be a

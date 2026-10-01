@@ -26,8 +26,8 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type GoogleSheetsConverterOptions from './GoogleSheetsConverterOptions';
+} from '../DataEvent.js';
+import type GoogleSheetsConverterOptions from './GoogleSheetsConverterOptions.js';
 
 import DataConverter from './DataConverter.js';
 import type {
@@ -188,7 +188,7 @@ class GoogleSheetsConverter extends DataConverter {
  *
  * */
 
-declare module './DataConverterType' {
+declare module './DataConverterType.js' {
     interface DataConverterTypes {
         GoogleSheets: typeof GoogleSheetsConverter;
     }

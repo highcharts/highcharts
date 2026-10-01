@@ -24,7 +24,7 @@
  *
  * */
 
-import type Grid from '../Grid';
+import type Grid from '../Grid.js';
 
 
 /* *

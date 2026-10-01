@@ -25,17 +25,17 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type DataTable from '../DataTable';
+} from '../DataEvent.js';
+import type DataTable from '../DataTable.js';
 import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
-} from '../DataTable';
-import type { Formula } from '../Formula/Formula';
+} from '../DataTable.js';
+import type { Formula } from '../Formula/Formula.js';
 import type {
     MathModifierColumnFormulaOptions,
     MathModifierOptions
-} from './MathModifierOptions';
+} from './MathModifierOptions.js';
 
 
 import DataModifier from './DataModifier.js';
@@ -298,7 +298,7 @@ class MathModifier extends DataModifier {
  * */
 
 
-declare module './DataModifierType' {
+declare module './DataModifierType.js' {
     interface DataModifierTypes {
         Math: typeof MathModifier
     }

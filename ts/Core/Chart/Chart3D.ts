@@ -20,10 +20,10 @@
  *
  * */
 
-import type ColorType from '../Color/ColorType';
-import type Position3DObject from '../Renderer/Position3DObject';
-import type SeriesOptions from '../Series/SeriesOptions';
-import type SVGElement3D from '../Renderer/SVG/SVGElement3D';
+import type ColorType from '../Color/ColorType.js';
+import type Position3DObject from '../Renderer/Position3DObject.js';
+import type SeriesOptions from '../Series/SeriesOptions.js';
+import type SVGElement3D from '../Renderer/SVG/SVGElement3D.js';
 
 import Axis from '../Axis/Axis.js';
 import Chart from './Chart.js';
@@ -51,13 +51,13 @@ import {
  * */
 
 /** @internal */
-declare module '../Animation/FxBase' {
+declare module '../Animation/FxBase.js' {
     interface FxBase {
         matrixSetter?(): void;
     }
 }
 
-declare module '../Chart/ChartBase'{
+declare module '../Chart/ChartBase.js'{
     interface ChartBase {
         /** @internal */
         chart3d?: Chart3D.Additions;
@@ -67,7 +67,7 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module '../Chart/ChartOptions' {
+declare module '../Chart/ChartOptions.js' {
     interface ChartOptions {
         /**
          * Options to render chart in 3 dimensions.

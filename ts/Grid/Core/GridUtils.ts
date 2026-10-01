@@ -14,8 +14,8 @@
  *
  * */
 
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { AnyRecord } from '../../Shared/Types';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { AnyRecord } from '../../Shared/Types.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';

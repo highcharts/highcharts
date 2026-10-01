@@ -15,16 +15,16 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LinePoint from '../../../Series/Line/LinePoint';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LinePoint from '../../../Series/Line/LinePoint.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
-} from './PivotPointsOptions';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+} from './PivotPointsOptions.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
 
 import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';

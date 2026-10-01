@@ -20,10 +20,10 @@
  *
  * */
 
-import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
-import type ParallelCoordinates from './ParallelCoordinates';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type Series from '../../Core/Series/Series';
+import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint.js';
+import type ParallelCoordinates from './ParallelCoordinates.js';
+import type RadialAxis from '../../Core/Axis/RadialAxis.js';
+import type Series from '../../Core/Series/Series.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;

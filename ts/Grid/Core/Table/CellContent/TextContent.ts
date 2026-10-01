@@ -22,11 +22,11 @@
  *
  * */
 
-import type { ColumnDataType } from '../Column';
+import type { ColumnDataType } from '../Column.js';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
-import TableCell from '../Body/TableCell';
+import TableCell from '../Body/TableCell.js';
 
 import GridUtils from '../../GridUtils.js';
 const {

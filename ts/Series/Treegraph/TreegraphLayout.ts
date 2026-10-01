@@ -18,7 +18,7 @@
  *
  * */
 
-import type TreegraphSeries from './TreegraphSeries';
+import type TreegraphSeries from './TreegraphSeries.js';
 
 import TreegraphNode from './TreegraphNode.js';
 

@@ -21,11 +21,11 @@
  *
  * */
 
-import type Accessibility from '../../Accessibility';
-import type Chart from '../../../Core/Chart/Chart';
-import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler';
-import type Point from '../../../Core/Series/Point';
-import type Tooltip from '../../../Core/Tooltip';
+import type Accessibility from '../../Accessibility.js';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
+import type Point from '../../../Core/Series/Point.js';
+import type Tooltip from '../../../Core/Tooltip.js';
 
 import AccessibilityComponent from '../../AccessibilityComponent.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';

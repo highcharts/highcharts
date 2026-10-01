@@ -22,9 +22,9 @@
  *
  * */
 
-import type Column from '../../Core/Table/Column';
-import type TableCell from '../../Core/Table/Body/TableCell';
-import type CellContent from '../../Core/Table/CellContent/CellContent';
+import type Column from '../../Core/Table/Column.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
+import type CellContent from '../../Core/Table/CellContent/CellContent.js';
 
 /* *
  *

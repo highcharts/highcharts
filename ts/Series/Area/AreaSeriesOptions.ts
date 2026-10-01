@@ -16,11 +16,11 @@
  *
  * */
 
-import type AreaPointOptions from './AreaPointOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type AreaPointOptions from './AreaPointOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

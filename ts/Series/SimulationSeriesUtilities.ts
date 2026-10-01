@@ -10,9 +10,9 @@
  *  Imports
  *
  * */
-import type NetworkgraphSeries from './Networkgraph/NetworkgraphSeries';
-import type PackedBubbleSeries from './PackedBubble/PackedBubbleSeries';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type NetworkgraphSeries from './Networkgraph/NetworkgraphSeries.js';
+import type PackedBubbleSeries from './PackedBubble/PackedBubbleSeries.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 
 import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import { syncTimeout } from '../Shared/Utilities.js';

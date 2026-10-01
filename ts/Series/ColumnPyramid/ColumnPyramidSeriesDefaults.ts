@@ -18,7 +18,7 @@
  *
  * */
 
-import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
+import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions.js';
 
 /* *
  *

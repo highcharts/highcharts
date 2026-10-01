@@ -16,7 +16,7 @@
  *
  * */
 
-import type Time from '../Time';
+import type Time from '../Time.js';
 
 /* *
  *

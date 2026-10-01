@@ -24,7 +24,7 @@
 import type {
     FilterModifierOptions,
     LogicalMultipleCondition
-} from '../../../../Data/Modifiers/FilterModifierOptions';
+} from '../../../../Data/Modifiers/FilterModifierOptions.js';
 import { defined } from '../../../../Shared/Utilities.js';
 
 

@@ -19,10 +19,10 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
+} from '../Core/Renderer/AlignObject.js';
+import type ColorString from '../Core/Color/ColorString.js';
+import type ColorType from '../Core/Color/ColorType.js';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue.js';
 
 /* *
  *
@@ -30,13 +30,13 @@ import type DashStyleValue from '../Core/Renderer/DashStyleValue';
  *
  * */
 
-declare module '../Core/Options'{
+declare module '../Core/Options.js'{
     interface Options {
         connectors?: ConnectorsOptions;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         connectors?: ConnectorsOptions;
     }

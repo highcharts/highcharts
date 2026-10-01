@@ -18,8 +18,8 @@
  *
  * */
 
-import type MapPoint from './MapPoint';
-import type MapSeriesOptions from './MapSeriesOptions';
+import type MapPoint from './MapPoint.js';
+import type MapSeriesOptions from './MapSeriesOptions.js';
 
 import { isNumber } from '../../Shared/Utilities.js';
 

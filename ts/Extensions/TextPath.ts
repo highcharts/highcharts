@@ -20,13 +20,13 @@
  *
  * */
 
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import SVGElement from '../Core/Renderer/SVG/SVGElement';
-import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type PositionObject from '../Core/Renderer/PositionObject.js';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions.js';
+import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
 import H from '../Core/Globals.js';
-import Point from '../Core/Series/Point';
-import BBoxObject from '../Core/Renderer/BBoxObject';
+import Point from '../Core/Series/Point.js';
+import BBoxObject from '../Core/Renderer/BBoxObject.js';
 import {
     addEvent,
     defined,
@@ -35,7 +35,7 @@ import {
     pushUnique
 } from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
-import { DeepPartial } from '../Shared/Types';
+import { DeepPartial } from '../Shared/Types.js';
 const { composed, deg2rad } = H;
 
 /* *
@@ -44,7 +44,7 @@ const { composed, deg2rad } = H;
  *
  * */
 
-declare module '../Core/Series/DataLabelOptions' {
+declare module '../Core/Series/DataLabelOptions.js' {
     interface DataLabelOptions {
         /**
          * Options for a label text which should follow marker's shape.
@@ -107,7 +107,7 @@ interface TextPathObject {
 }
 
 /** @internal */
-declare module '../Core/Renderer/SVG/SVGElementBase' {
+declare module '../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
 
         /**

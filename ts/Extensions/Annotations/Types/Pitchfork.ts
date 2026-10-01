@@ -11,12 +11,12 @@
  *
  * */
 
-import type { AnnotationPointType } from '../AnnotationSeries';
+import type { AnnotationPointType } from '../AnnotationSeries.js';
 import type {
     AnnotationShapeOptionsOptions
-} from '../AnnotationOptions';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
-import type MockPointOptions from '../AnnotationMockPointOptionsObject';
+} from '../AnnotationOptions.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject.js';
 
 import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
@@ -306,7 +306,7 @@ namespace Pitchfork {
  * */
 
 /** @internal */
-declare module './AnnotationType'{
+declare module './AnnotationType.js'{
     interface AnnotationTypeRegistry {
         pitchfork: typeof Pitchfork;
     }

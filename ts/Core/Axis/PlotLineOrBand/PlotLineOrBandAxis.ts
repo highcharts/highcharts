@@ -18,12 +18,12 @@
  *
  * */
 
-import type Axis from '../Axis';
-import type { DeepPartial } from '../../../Shared/Types';
-import type PlotBandOptions from './PlotBandOptions';
-import type PlotLineOptions from './PlotLineOptions';
-import type PlotLineOrBand from './PlotLineOrBand';
-import type SVGPath from '../../Renderer/SVG/SVGPath';
+import type Axis from '../Axis.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type PlotBandOptions from './PlotBandOptions.js';
+import type PlotLineOptions from './PlotLineOptions.js';
+import type PlotLineOrBand from './PlotLineOrBand.js';
+import type SVGPath from '../../Renderer/SVG/SVGPath.js';
 
 import {
     addEvent,
@@ -38,7 +38,7 @@ import {
  *
  * */
 
-declare module '../AxisOptions' {
+declare module '../AxisOptions.js' {
     interface AxisOptions {
         plotBands?: Array<PlotBandOptions>;
         plotLines?: Array<PlotLineOptions>;

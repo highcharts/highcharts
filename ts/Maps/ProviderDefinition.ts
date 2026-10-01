@@ -19,7 +19,7 @@
  *
  * */
 
-import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
+import type { ProjectionRegistryName } from './Projections/ProjectionRegistry.js';
 
 /* *
  *

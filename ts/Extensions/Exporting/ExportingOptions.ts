@@ -19,13 +19,13 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Core/Renderer/AlignObject';
-import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
-import type ColorString from '../../Core/Color/ColorString';
-import type { Exporting } from './Exporting';
-import type Options from '../../Core/Options';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+} from '../../Core/Renderer/AlignObject.js';
+import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type { Exporting } from './Exporting.js';
+import type Options from '../../Core/Options.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes.js';
 
 /* *
  *
@@ -33,7 +33,7 @@ import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * Exporting module menu. The tooltip title for the context menu holding

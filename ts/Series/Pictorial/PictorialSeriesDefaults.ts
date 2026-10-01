@@ -19,7 +19,7 @@
  *
  * */
 
-import type PictorialSeriesOptions from './PictorialSeriesOptions';
+import type PictorialSeriesOptions from './PictorialSeriesOptions.js';
 
 /* *
  *

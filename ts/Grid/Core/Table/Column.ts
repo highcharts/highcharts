@@ -26,27 +26,27 @@
 import type {
     CellValueGetterCallback,
     IndividualColumnOptions
-} from '../Options';
-import type Cell from './Cell';
-import type CellContent from './CellContent/CellContent';
-import type HeaderCell from './Header/HeaderCell';
-import type { DeepPartial } from '../../../Shared/Types';
-import type { NonArrayColumnOptions } from '../Grid';
+} from '../Options.js';
+import type Cell from './Cell.js';
+import type CellContent from './CellContent/CellContent.js';
+import type HeaderCell from './Header/HeaderCell.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type { NonArrayColumnOptions } from '../Grid.js';
 import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
-} from '../../../Data/DataTable';
+} from '../../../Data/DataTable.js';
 
 import {
     hasDataTableProvider
 } from '../Data/DataProvider.js';
 import Table from './Table.js';
-import ColumnSorting from './Actions/ColumnSorting';
+import ColumnSorting from './Actions/ColumnSorting.js';
 import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
 import Templating from '../../../Core/Templating.js';
 import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
-import TableCell from './Body/TableCell';
+import TableCell from './Body/TableCell.js';
 import GridUtils from '../GridUtils.js';
 import { defined, fireEvent } from '../../../Shared/Utilities.js';
 

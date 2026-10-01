@@ -18,10 +18,10 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FlagsPointOptions from './FlagsPointOptions';
-import type FlagsSeries from './FlagsSeries';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type FlagsPointOptions from './FlagsPointOptions.js';
+import type FlagsSeries from './FlagsSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { isNumber } from '../../Shared/Utilities.js';
 const {

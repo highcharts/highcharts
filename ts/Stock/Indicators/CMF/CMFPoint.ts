@@ -13,8 +13,8 @@
  *
  * */
 
-import type CMFIndicator from './CMFIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type CMFIndicator from './CMFIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

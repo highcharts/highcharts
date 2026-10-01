@@ -24,11 +24,11 @@
 import type {
     CMFOptions,
     CMFParamsOptions
-} from './CMFOptions';
-import type CMFPoint from './CMFPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './CMFOptions.js';
+import type CMFPoint from './CMFPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
@@ -338,7 +338,7 @@ interface CMFIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         cmf: typeof CMFIndicator;
     }

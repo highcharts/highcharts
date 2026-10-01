@@ -16,19 +16,19 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
-import type Point from '../../Core/Series/Point';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type { TreegraphLinkOptions } from './TreegraphLink';
-import type TreegraphPoint from './TreegraphPoint';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
+import type { TreegraphLinkOptions } from './TreegraphLink.js';
+import type TreegraphPoint from './TreegraphPoint.js';
 import type {
     TreemapSeriesLevelOptions,
     TreemapSeriesOptions,
     TreemapSeriesTooltipOptions
-} from '../Treemap/TreemapSeriesOptions';
+} from '../Treemap/TreemapSeriesOptions.js';
 
 /* *
  *

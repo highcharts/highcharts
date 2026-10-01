@@ -13,8 +13,8 @@
  *
  * */
 
-import type ChaikinIndicator from './ChaikinIndicator';
-import type EMAPoint from '../EMA/EMAPoint';
+import type ChaikinIndicator from './ChaikinIndicator.js';
+import type EMAPoint from '../EMA/EMAPoint.js';
 
 /* *
  *

@@ -22,7 +22,7 @@
  *
  * */
 
-import type Pagination from '../../Core/Pagination/Pagination';
+import type Pagination from '../../Core/Pagination/Pagination.js';
 
 import Globals from '../../../Core/Globals.js';
 import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
@@ -100,7 +100,7 @@ export function compose(
     );
 }
 
-declare module '../../Core/Pagination/PaginationOptions' {
+declare module '../../Core/Pagination/PaginationOptions.js' {
     interface PaginationOptions {
         /**
          * Pagination events.

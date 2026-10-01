@@ -15,11 +15,11 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type MomentumOptions from './MomentumOptions';
-import type MomentumPoint from './MomentumPoint';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
+import type MomentumOptions from './MomentumOptions.js';
+import type MomentumPoint from './MomentumPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
@@ -171,7 +171,7 @@ extend(MomentumIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
     }

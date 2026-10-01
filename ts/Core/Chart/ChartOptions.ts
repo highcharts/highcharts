@@ -15,21 +15,21 @@
  *
  * */
 
-import type { AlignObject } from '../Renderer/AlignObject';
-import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions';
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type Axis from '../Axis/Axis';
-import type Chart from './Chart';
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type { NumberFormatterCallbackFunction } from '../Options';
-import type { PointerEvent } from '../PointerEvent';
-import type Series from '../Series/Series';
-import type { SeriesTypeOptions } from '../Series/SeriesType';
-import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
+import type { AlignObject } from '../Renderer/AlignObject.js';
+import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions.js';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type Axis from '../Axis/Axis.js';
+import type Chart from './Chart.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type { GeoJSON, TopoJSON } from '../../Maps/GeoJSON.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type { NumberFormatterCallbackFunction } from '../Options.js';
+import type { PointerEvent } from '../PointerEvent.js';
+import type Series from '../Series/Series.js';
+import type { SeriesTypeOptions } from '../Series/SeriesType.js';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
 
 /* *
  *
@@ -38,14 +38,14 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  * */
 
 /** @internal */
-declare module './ChartBase'{
+declare module './ChartBase.js'{
     interface ChartBase {
         marginRight: ChartOptions['marginRight'];
         polar: ChartOptions['polar'];
     }
 }
 
-declare module '../Options' {
+declare module '../Options.js' {
     interface Options {
         /**
          * General options for the chart.

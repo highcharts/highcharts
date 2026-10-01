@@ -18,7 +18,7 @@
  *
  * */
 
-import type ScrollbarOptions from './ScrollbarOptions';
+import type ScrollbarOptions from './ScrollbarOptions.js';
 
 /* *
  *

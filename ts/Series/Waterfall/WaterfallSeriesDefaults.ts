@@ -18,7 +18,7 @@
  *
  * */
 
-import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
+import type WaterfallSeriesOptions from './WaterfallSeriesOptions.js';
 
 /* *
  *

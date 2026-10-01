@@ -20,7 +20,7 @@ import { diffObjects, extend, find, merge } from '../Shared/Utilities.js';
  * */
 
 import type Chart from './Chart/Chart.js';
-import type GlobalOptions from './Options';
+import type GlobalOptions from './Options.js';
 import { uniqueKey } from './Utilities.js';
 
 
@@ -31,14 +31,14 @@ import { uniqueKey } from './Utilities.js';
  * */
 
 /** @internal */
-declare module './Chart/ChartBase' {
+declare module './Chart/ChartBase.js' {
     interface ChartBase {
         /** @requires Core/Responsive */
         setResponsive(redraw?: boolean, reset?: boolean): void;
     }
 }
 
-declare module './Options' {
+declare module './Options.js' {
     interface Options {
         /** @internal */
         isResponsiveOptions?: boolean;

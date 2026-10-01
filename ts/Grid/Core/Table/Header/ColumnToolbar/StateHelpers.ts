@@ -23,7 +23,7 @@
  *
  * */
 
-import type Column from '../../Column';
+import type Column from '../../Column.js';
 
 
 /* *

@@ -26,13 +26,13 @@
  *
  * */
 
-import type { DataConverterTypes } from './DataConverterType';
+import type { DataConverterTypes } from './DataConverterType.js';
 import type {
     DataEvent,
     DataEventCallback,
     DataEventEmitter
-} from '../DataEvent';
-import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions';
+} from '../DataEvent.js';
+import type { ColumnIdsOptions } from '../Connectors/JSONConnectorOptions.js';
 
 import DataTable, {
     type Column as DataTableColumn

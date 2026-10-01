@@ -21,12 +21,12 @@
  *
  * */
 
-import type DataModifierOptions from './DataModifierOptions';
-import type DataTable from '../DataTable';
+import type DataModifierOptions from './DataModifierOptions.js';
+import type DataTable from '../DataTable.js';
 import type {
     CellType as DataTableCellType,
     RowObject as DataTableRowObject
-} from '../DataTable';
+} from '../DataTable.js';
 
 
 /* *

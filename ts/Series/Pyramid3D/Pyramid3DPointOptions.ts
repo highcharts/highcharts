@@ -18,7 +18,7 @@
  *
  * */
 
-import type Funnel3DPointOptions from '../Funnel3D/Funnel3DPointOptions';
+import type Funnel3DPointOptions from '../Funnel3D/Funnel3DPointOptions.js';
 
 /* *
  *

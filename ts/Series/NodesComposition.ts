@@ -11,12 +11,12 @@
  *
  * */
 
-import type Point from '../Core/Series/Point';
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
-import type Series from '../Core/Series/Series';
-import type SeriesOptions from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
+import type Point from '../Core/Series/Point.js';
+import type AnimationOptions from '../Core/Animation/AnimationOptions.js';
+import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions.js';
+import type Series from '../Core/Series/Series.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions.js';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions.js';
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const {
@@ -44,13 +44,13 @@ import {
  *
  * */
 
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         name?: string;
     }
 }
 
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         nodes?: Array<NodesComposition.PointComposition>;
     }

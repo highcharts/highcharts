@@ -16,11 +16,11 @@
  *
  * */
 
-import type CandlestickPointOptions from './CandlestickPointOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type CandlestickPointOptions from './CandlestickPointOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

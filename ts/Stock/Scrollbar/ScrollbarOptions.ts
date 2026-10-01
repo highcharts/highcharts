@@ -15,7 +15,7 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
+import type ColorType from '../../Core/Color/ColorType.js';
 
 /* *
  *
@@ -23,7 +23,7 @@ import type ColorType from '../../Core/Color/ColorType';
  *
  * */
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface Options {
         /**
          * The scrollbar is a means of panning over the X axis of a stock chart.

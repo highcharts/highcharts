@@ -20,8 +20,8 @@
  *
  * */
 
-import type Pie3DSeries from './Pie3DSeries';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type Pie3DSeries from './Pie3DSeries.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

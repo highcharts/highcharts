@@ -21,17 +21,17 @@
 import type {
     AxisLabelOptions,
     AxisOptions
-} from '../AxisOptions';
-import type ColorType from '../../Color/ColorType';
-import type CSSObject from '../../Renderer/CSSObject';
-import type PositionObject from '../../Renderer/PositionObject';
-import type SVGAttributes from '../../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type SVGRenderer from '../../Renderer/SVG/SVGRenderer';
-import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
-import type Tick from '../Tick';
-import type { TreeGridAxisComposition } from './TreeGridAxis';
-import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
+} from '../AxisOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type CSSObject from '../../Renderer/CSSObject.js';
+import type PositionObject from '../../Renderer/PositionObject.js';
+import type SVGAttributes from '../../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Renderer/SVG/SVGElement.js';
+import type SVGRenderer from '../../Renderer/SVG/SVGRenderer.js';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType.js';
+import type Tick from '../Tick.js';
+import type { TreeGridAxisComposition } from './TreeGridAxis.js';
+import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions.js';
 import {
     addEvent,
     correctFloat,

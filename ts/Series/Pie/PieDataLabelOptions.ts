@@ -16,9 +16,9 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type DataLabel from '../../Core/Series/DataLabel';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DataLabel from '../../Core/Series/DataLabel.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
 
 /* *
  *

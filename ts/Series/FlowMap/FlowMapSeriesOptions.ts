@@ -16,10 +16,10 @@
  *
  * */
 
-import type { ColorType } from '../../Core/Color/ColorType';
-import type { MapSeriesTooltipOptions } from '../Map/MapSeriesOptions';
-import type { MapLineSeriesOptions } from '../MapLine/MapLineSeriesOptions';
-import type { FlowMapPointOptions, MarkerEndOptions } from './FlowMapPointOptions';
+import type { ColorType } from '../../Core/Color/ColorType.js';
+import type { MapSeriesTooltipOptions } from '../Map/MapSeriesOptions.js';
+import type { MapLineSeriesOptions } from '../MapLine/MapLineSeriesOptions.js';
+import type { FlowMapPointOptions, MarkerEndOptions } from './FlowMapPointOptions.js';
 
 
 /* *

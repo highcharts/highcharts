@@ -18,17 +18,17 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
-import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions.js';
 import type {
     SankeySeriesLevelOptions,
     SankeySeriesNodeOptions,
     SankeySeriesOptions
-} from '../Sankey/SankeySeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../Sankey/SankeySeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 import type {
     SeriesLinkOptionsBase
-} from '../Networkgraph/NetworkgraphSeriesOptions';
+} from '../Networkgraph/NetworkgraphSeriesOptions.js';
 
 /* *
  *
@@ -36,7 +36,7 @@ import type {
  *
  * */
 
-declare module '../Sankey/SankeySeriesOptions' {
+declare module '../Sankey/SankeySeriesOptions.js' {
     interface SankeySeriesOptions {
         /** @requires OrganizationSeries */
         linkColor?: OrganizationSeriesOptions['linkColor'];

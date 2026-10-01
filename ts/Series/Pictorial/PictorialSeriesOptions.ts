@@ -16,8 +16,8 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 /* *
  *

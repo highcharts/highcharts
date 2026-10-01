@@ -16,7 +16,7 @@
  *
  * */
 
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnPointOptions from '../Column/ColumnPointOptions.js';
 
 /* *
  *

@@ -24,13 +24,13 @@
  *
  * */
 
-import type { AnyRecord } from '../../../../Shared/Types';
-import type Column from '../../../Core/Table/Column';
-import type TableCell from '../../../Core/Table/Body/TableCell';
-import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
+import type { AnyRecord } from '../../../../Shared/Types.js';
+import type Column from '../../../Core/Table/Column.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable.js';
 import type {
     EditModeRendererTypeName
-} from '../../CellEditing/CellEditingComposition';
+} from '../../CellEditing/CellEditingComposition.js';
 
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
@@ -150,7 +150,7 @@ export interface SparklineRendererOptions extends CellRendererOptions {
  *
  * */
 
-declare module '../CellRendererType' {
+declare module '../CellRendererType.js' {
 
     interface CellRendererTypeRegistry {
         sparkline: typeof SparklineRenderer;

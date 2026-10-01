@@ -15,9 +15,9 @@
  *
  * */
 
-import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type { CSSObject } from '../../Core/Renderer/CSSObject';
-import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import type { CSSObject } from '../../Core/Renderer/CSSObject.js';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes.js';
 
 import Globals from '../Globals.js';
 import { addEvent, createElement, objectEach } from '../../Shared/Utilities.js';

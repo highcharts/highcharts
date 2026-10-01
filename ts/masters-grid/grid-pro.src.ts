@@ -16,7 +16,7 @@
  *
  * */
 
-import type _Options from '../Grid/Core/Options';
+import type _Options from '../Grid/Core/Options.js';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';

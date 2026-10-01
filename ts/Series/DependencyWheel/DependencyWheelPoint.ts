@@ -20,11 +20,11 @@
  *
  * */
 
-import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
-import type DependencyWheelSeries from './DependencyWheelSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+import type DependencyWheelPointOptions from './DependencyWheelPointOptions.js';
+import type DependencyWheelSeries from './DependencyWheelSeries.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

@@ -21,7 +21,7 @@
  *
  * */
 
-import type * as D from '../../Grid';
+import type * as D from '../../Grid/index.js';
 
 
 /* *
@@ -37,7 +37,7 @@ export {
     TableCell,
     TableCellEvent,
     Options as GridOptions
-} from '../../Grid';
+} from '../../Grid/index.js';
 export type GridNamespace = typeof D;
 
 

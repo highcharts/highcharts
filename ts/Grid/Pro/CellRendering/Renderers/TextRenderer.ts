@@ -23,11 +23,11 @@
  *
  * */
 
-import type { Column, ColumnDataType } from '../../../Core/Table/Column';
-import type TableCell from '../../../Core/Table/Body/TableCell';
+import type { Column, ColumnDataType } from '../../../Core/Table/Column.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
 import type {
     EditModeRendererTypeName
-} from '../../CellEditing/CellEditingComposition';
+} from '../../CellEditing/CellEditingComposition.js';
 
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
@@ -139,7 +139,7 @@ export interface TextRendererOptions extends CellRendererOptions {
  *
  * */
 
-declare module '../CellRendererType' {
+declare module '../CellRendererType.js' {
     interface CellRendererTypeRegistry {
         text: typeof TextRenderer;
     }

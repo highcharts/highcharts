@@ -20,8 +20,8 @@
  *
  * */
 
-import type { JSONObject } from '../JSON';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
+import type { JSONObject } from '../JSON.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable.js';
 
 import DataConverter, {
     type Options as DataConverterOptions

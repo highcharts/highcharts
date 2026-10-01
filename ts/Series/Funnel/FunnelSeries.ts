@@ -20,13 +20,13 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type DataLabel from '../../Core/Series/DataLabel';
-import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions';
-import type FunnelPoint from './FunnelPoint';
-import type FunnelSeriesOptions from './FunnelSeriesOptions';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type DataLabel from '../../Core/Series/DataLabel.js';
+import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions.js';
+import type FunnelPoint from './FunnelPoint.js';
+import type FunnelSeriesOptions from './FunnelSeriesOptions.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 import FunnelSeriesDefaults from './FunnelSeriesDefaults.js';
@@ -756,7 +756,7 @@ namespace FunnelSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         funnel: typeof FunnelSeries;
     }

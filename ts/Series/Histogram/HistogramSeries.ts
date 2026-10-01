@@ -18,9 +18,9 @@
  *
  * */
 
-import type HistogramPoint from './HistogramPoint';
-import type HistogramPointOptions from './HistogramPointOptions';
-import type HistogramSeriesOptions from './HistogramSeriesOptions';
+import type HistogramPoint from './HistogramPoint.js';
+import type HistogramPointOptions from './HistogramPointOptions.js';
+import type HistogramSeriesOptions from './HistogramSeriesOptions.js';
 
 import DerivedComposition from '../DerivedComposition.js';
 import HistogramSeriesDefaults from './HistogramSeriesDefaults.js';
@@ -28,7 +28,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import AnimationOptions from '../../Core/Animation/AnimationOptions';
+import AnimationOptions from '../../Core/Animation/AnimationOptions.js';
 import {
     arrayMax,
     arrayMin,
@@ -314,7 +314,7 @@ DerivedComposition.compose(HistogramSeries);
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         histogram: typeof HistogramSeries;
     }

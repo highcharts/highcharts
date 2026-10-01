@@ -13,8 +13,8 @@
  *
  * */
 
-import type KlingerIndicator from './KlingerIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type KlingerIndicator from './KlingerIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

@@ -22,13 +22,13 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import type Table from '../../Core/Table/Table';
-import type Column from '../../Core/Table/Column';
-import type TableRow from '../../Core/Table/Body/TableRow';
-import type TableCell from '../../Core/Table/Body/TableCell';
-import type { DeepPartial } from '../../../Shared/Types';
-import type Options from '../../Core/Options';
+import type Grid from '../../Core/Grid.js';
+import type Table from '../../Core/Table/Table.js';
+import type Column from '../../Core/Table/Column.js';
+import type TableRow from '../../Core/Table/Body/TableRow.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Options from '../../Core/Options.js';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';

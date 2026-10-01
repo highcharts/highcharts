@@ -13,8 +13,8 @@
  *
  * */
 
-import type ZigzagIndicator from './ZigzagIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type ZigzagIndicator from './ZigzagIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

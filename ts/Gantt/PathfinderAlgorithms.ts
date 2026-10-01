@@ -18,9 +18,9 @@
  *
  * */
 
-import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type Point from '../Core/Series/Point.js';
+import type PositionObject from '../Core/Renderer/PositionObject.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 import PathUtilities from '../Series/PathUtilities.js';
 /* *

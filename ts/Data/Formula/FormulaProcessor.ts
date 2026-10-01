@@ -24,8 +24,8 @@ import { defined } from '../../Shared/Utilities.js';
  * */
 
 
-import type DataTable from '../DataTable';
-import type { CellType as DataTableCellType } from '../DataTable';
+import type DataTable from '../DataTable.js';
+import type { CellType as DataTableCellType } from '../DataTable.js';
 import type {
     Arguments,
     Formula,
@@ -36,7 +36,7 @@ import type {
     Reference,
     Term,
     Value
-} from './FormulaTypes';
+} from './FormulaTypes.js';
 
 
 import FormulaTypes from './FormulaTypes.js';

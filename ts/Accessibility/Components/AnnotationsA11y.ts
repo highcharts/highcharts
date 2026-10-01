@@ -22,14 +22,14 @@
  * */
 
 
-import type Accessibility from '../Accessibility';
-import type Annotation from '../../Extensions/Annotations/Annotation';
-import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart';
-import type { AnnotationPoint } from '../../Extensions/Annotations/AnnotationSeries';
+import type Accessibility from '../Accessibility.js';
+import type Annotation from '../../Extensions/Annotations/Annotation.js';
+import type AnnotationChart from '../../Extensions/Annotations/AnnotationChart.js';
+import type { AnnotationPoint } from '../../Extensions/Annotations/AnnotationSeries.js';
 import type {
     ControllableLabelType
-} from '../../Extensions/Annotations/Controllables/ControllableType';
-import type Point from '../../Core/Series/Point';
+} from '../../Extensions/Annotations/Controllables/ControllableType.js';
+import type Point from '../../Core/Series/Point.js';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {

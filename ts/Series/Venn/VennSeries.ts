@@ -24,22 +24,22 @@
  *
  * */
 
-import type CircleObject from '../../Core/Geometry/CircleObject';
-import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
+import type CircleObject from '../../Core/Geometry/CircleObject.js';
+import type IntersectionObject from '../../Core/Geometry/IntersectionObject.js';
 import type {
     NelderMeadPointArray,
     VennLabelPositionObject,
     VennLabelValuesObject,
     VennRelationObject
-} from './VennUtils';
-import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type VennSeriesOptions from './VennSeriesOptions';
+} from './VennUtils.js';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type VennSeriesOptions from './VennSeriesOptions.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Color from '../../Core/Color/Color.js';
@@ -711,7 +711,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         venn: typeof VennSeries;
     }

@@ -18,7 +18,7 @@ import { error } from '../../Core/Utilities.js';
  *
  * */
 
-import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
+import type BubbleSeries from '../../Series/Bubble/BubbleSeries.js';
 import { clamp } from '../../Shared/Utilities.js';
 
 /* *

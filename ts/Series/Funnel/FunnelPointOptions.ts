@@ -18,11 +18,11 @@
  *
  * */
 
-import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions';
-import type PiePointOptions from '../Pie/PiePointOptions';
+import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions.js';
+import type PiePointOptions from '../Pie/PiePointOptions.js';
 import type {
     PointDataLabelOptionsModifier
-} from '../../Core/Series/DataLabel';
+} from '../../Core/Series/DataLabel.js';
 
 /* *
  *

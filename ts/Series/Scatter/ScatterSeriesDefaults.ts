@@ -18,8 +18,8 @@
  *
  * */
 
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
-import type ScatterSeries from './ScatterSeries';
+import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions.js';
+import type ScatterSeries from './ScatterSeries.js';
 
 /* *
  *

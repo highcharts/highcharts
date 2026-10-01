@@ -20,8 +20,8 @@
  *
  * */
 
-import type PyramidPoint from './PyramidPoint';
-import type PyramidSeriesOptions from './PyramidSeriesOptions';
+import type PyramidPoint from './PyramidPoint.js';
+import type PyramidSeriesOptions from './PyramidSeriesOptions.js';
 
 import FunnelSeries from '../Funnel/FunnelSeries.js';
 import PyramidSeriesDefaults from './PyramidSeriesDefaults.js';
@@ -99,7 +99,7 @@ interface PyramidSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pyramid: typeof PyramidSeries;
     }

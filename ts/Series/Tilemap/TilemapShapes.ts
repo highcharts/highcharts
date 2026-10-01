@@ -20,14 +20,14 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Point from '../../Core/Series/Point';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type TilemapPoint from './TilemapPoint';
-import type TilemapSeries from './TilemapSeries';
-import type { TilemapShapeValue } from './TilemapSeriesOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type TilemapPoint from './TilemapPoint.js';
+import type TilemapSeries from './TilemapSeries.js';
+import type { TilemapShapeValue } from './TilemapSeriesOptions.js';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;

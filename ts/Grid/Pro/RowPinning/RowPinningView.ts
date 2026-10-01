@@ -23,8 +23,8 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
-import type { RowId } from '../../Core/Data/DataProvider';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable.js';
+import type { RowId } from '../../Core/Data/DataProvider.js';
 
 import Table from '../../Core/Table/Table.js';
 import TableCell from '../../Core/Table/Body/TableCell.js';

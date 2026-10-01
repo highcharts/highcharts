@@ -1,21 +1,20 @@
 {
     "compilerOptions": {
-        "esModuleInterop": false,
         "noEmit": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
+        "strict": false,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
-        "baseUrl": "../../",
-        "module": "umd",
-        "moduleResolution": "node",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "rootDir": "../../",
         "lib": ["es5", "dom"],
         "paths": {
-            "highcharts": ["code/highcharts"],
-            "highcharts/*": ["code/*"],
-            "@highcharts/dashboards": ["code/dashboards/dashboards"],
-            "@highcharts/dashboards/*": ["code/dashboards/dashboards/*"]
+            "highcharts": ["../../code/highcharts"],
+            "highcharts/*": ["../../code/*"],
+            "@highcharts/dashboards": ["../../code/dashboards/dashboards"],
+            "@highcharts/dashboards/*": ["../../code/dashboards/dashboards/*"]
         },
         "types": []
     }

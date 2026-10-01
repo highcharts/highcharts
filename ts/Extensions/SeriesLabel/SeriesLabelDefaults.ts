@@ -18,7 +18,7 @@
  *
  * */
 
-import type { SeriesLabelOptions } from './SeriesLabelOptions';
+import type { SeriesLabelOptions } from './SeriesLabelOptions.js';
 
 /* *
  *

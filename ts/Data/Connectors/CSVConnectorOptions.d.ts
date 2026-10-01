@@ -19,8 +19,8 @@
  *
  * */
 
-import type DataConnectorOptions from './DataConnectorOptions';
-import type { DataTableConnectorOptions } from './DataConnectorOptions';
+import type DataConnectorOptions from './DataConnectorOptions.js';
+import type { DataTableConnectorOptions } from './DataConnectorOptions.js';
 
 
 /* *

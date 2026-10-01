@@ -22,16 +22,16 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Core/Renderer/AlignObject';
-import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions';
-import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+} from '../../Core/Renderer/AlignObject.js';
+import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions.js';
+import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
-import type Breadcrumbs from './Breadcrumbs';
+} from '../../Core/Series/PointOptions.js';
+import type SeriesOptions from '../../Core/Series/SeriesOptions.js';
+import type Breadcrumbs from './Breadcrumbs.js';
 
 /* *
  *
@@ -39,7 +39,7 @@ import type Breadcrumbs from './Breadcrumbs';
  *
  * */
 
-declare module '../Drilldown/DrilldownOptions' {
+declare module '../Drilldown/DrilldownOptions.js' {
     interface DrilldownOptions {
         /**
          * Options for the breadcrumbs, the navigation at the top leading the
@@ -54,7 +54,7 @@ declare module '../Drilldown/DrilldownOptions' {
     }
 }
 
-declare module '../../Series/Treemap/TreemapSeriesOptions' {
+declare module '../../Series/Treemap/TreemapSeriesOptions.js' {
     interface TreemapSeriesOptions {
         /**
          * Options for the breadcrumbs, the navigation at the top leading the
@@ -70,7 +70,7 @@ declare module '../../Series/Treemap/TreemapSeriesOptions' {
     }
 }
 
-declare module '../../Extensions/Exporting/NavigationOptions' {
+declare module '../../Extensions/Exporting/NavigationOptions.js' {
     interface NavigationOptions {
         /**
          * Options for breadcrumbs. Breadcrumbs general options are defined in

@@ -18,10 +18,10 @@
  *
  * */
 
-import type { AxisCollectionKey } from './AxisOptions';
-import type Pane from '../../Extensions/Pane/Pane';
-import type RadialAxis from './RadialAxis';
-import type RadialAxisOptions from './RadialAxisOptions';
+import type { AxisCollectionKey } from './AxisOptions.js';
+import type Pane from '../../Extensions/Pane/Pane.js';
+import type RadialAxis from './RadialAxis.js';
+import type RadialAxisOptions from './RadialAxisOptions.js';
 
 import { extend } from '../../Shared/Utilities.js';
 import ColorAxisBase from './Color/ColorAxisBase.js';

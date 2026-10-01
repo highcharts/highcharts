@@ -22,19 +22,19 @@
  *
  * */
 
-import type { DataProviderOptions, RowId } from './DataProvider';
-import { DataTableValue } from '../../../Data/DataTableOptions';
-import type { ColumnDataType } from '../Table/Column';
+import type { DataProviderOptions, RowId } from './DataProvider.js';
+import { DataTableValue } from '../../../Data/DataTableOptions.js';
+import type { ColumnDataType } from '../Table/Column.js';
 import type {
     RowObject as RowObjectType,
     CellType as DataTableCellType
-} from '../../../Data/DataTable';
-import type { DataEvent } from '../../../Data/DataEvent';
-import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
+} from '../../../Data/DataTable.js';
+import type { DataEvent } from '../../../Data/DataEvent.js';
+import type DataConnectorType from '../../../Data/Connectors/DataConnectorType.js';
 import type {
     DataConnectorTypeOptions
-} from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional, TypedArray } from '../../../Shared/Types';
+} from '../../../Data/Connectors/DataConnectorType.js';
+import type { MakeOptional, TypedArray } from '../../../Shared/Types.js';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -621,7 +621,7 @@ export interface LocalDataProviderOptions extends DataProviderOptions {
     idColumn?: string;
 }
 
-declare module './DataProviderType' {
+declare module './DataProviderType.js' {
     interface DataProviderTypeRegistry {
         local: typeof LocalDataProvider;
     }

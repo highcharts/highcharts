@@ -20,12 +20,12 @@
  *
  * */
 
-import type Accessibility from './Accessibility';
+import type Accessibility from './Accessibility.js';
 import type {
     AccessibilityKeyboardNavigationFocusBorderOptions
-} from './Options/A11yOptions';
-import type { DOMElementType } from '../Core/Renderer/DOMElementType';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+} from './Options/A11yOptions.js';
+import type { DOMElementType } from '../Core/Renderer/DOMElementType.js';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
 
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
@@ -38,7 +38,7 @@ import { addEvent } from '../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Chart/ChartBase'{
+declare module '../Core/Chart/ChartBase.js'{
     interface ChartBase {
         focusElement?: SVGElement;
         /** @requires modules/accessibility */
@@ -52,7 +52,7 @@ declare module '../Core/Chart/ChartBase'{
 }
 
 /** @internal */
-declare module '../Core/Renderer/SVG/SVGElementBase' {
+declare module '../Core/Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         focusBorder?: SVGElement;
         /** @requires modules/accessibility */

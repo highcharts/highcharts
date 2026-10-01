@@ -21,9 +21,9 @@
  *
  * */
 
-import type Point from '../../Core/Series/Point';
-import type TimelinePoint from './TimelinePoint';
-import type TimelineSeriesOptions from './TimelineSeriesOptions';
+import type Point from '../../Core/Series/Point.js';
+import type TimelinePoint from './TimelinePoint.js';
+import type TimelineSeriesOptions from './TimelineSeriesOptions.js';
 
 /* *
  *

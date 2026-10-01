@@ -18,8 +18,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions.js';
 
 /* *
  *

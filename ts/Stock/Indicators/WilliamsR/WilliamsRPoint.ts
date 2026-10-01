@@ -13,8 +13,8 @@
  *
  * */
 
-import type WilliamsRIndicator from './WilliamsRIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type WilliamsRIndicator from './WilliamsRIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

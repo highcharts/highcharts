@@ -23,12 +23,12 @@
  *
  * */
 
-import type Table from '../../Core/Table/Table';
+import type Table from '../../Core/Table/Table.js';
 import type {
     RuleKey,
     RuleDefinition,
     ValidationNotificationsType
-} from './Validator';
+} from './Validator.js';
 
 import Validator from './Validator.js';
 import Globals from '../../Core/Globals.js';
@@ -80,7 +80,7 @@ function destroy(this: Table): void {
  *
  * */
 
-declare module '../../Core/Table/Table' {
+declare module '../../Core/Table/Table.js' {
     export default interface Table {
         /**
          * The validator object.
@@ -89,7 +89,7 @@ declare module '../../Core/Table/Table' {
     }
 }
 
-declare module '../../Pro/CellEditing/CellEditingComposition' {
+declare module '../../Pro/CellEditing/CellEditingComposition.js' {
     interface ColumnEditModeOptions {
         /**
          * Validation options for the column.
@@ -106,7 +106,7 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * Localized validation notifications for predefined rules or custom

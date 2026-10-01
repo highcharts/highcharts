@@ -21,13 +21,13 @@
 import type {
     ConnectorsMarkerOptions,
     ConnectorsOptions
-} from './ConnectorsOptions';
-import type Pathfinder from './Pathfinder';
-import type { PathfinderAlgorithmResultObject } from './PathfinderAlgorithms';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+} from './ConnectorsOptions.js';
+import type Pathfinder from './Pathfinder.js';
+import type { PathfinderAlgorithmResultObject } from './PathfinderAlgorithms.js';
+import type PositionObject from '../Core/Renderer/PositionObject.js';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';

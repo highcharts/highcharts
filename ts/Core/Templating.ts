@@ -18,8 +18,8 @@
  *
  * */
 
-import type TimeBase from '../Shared/TimeBase';
-import type { LangOptionsCore } from '../Shared/LangOptionsCore';
+import type TimeBase from '../Shared/TimeBase.js';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore.js';
 
 import D from './Defaults.js';
 const {

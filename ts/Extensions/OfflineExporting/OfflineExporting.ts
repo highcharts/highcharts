@@ -20,15 +20,15 @@
  *
  * */
 
-import type { Exporting } from '../Exporting/Exporting';
+import type { Exporting } from '../Exporting/Exporting.js';
 import type {
     DOMElementType,
     HTMLDOMElement,
     SVGDOMElement
-} from '../../Core/Renderer/DOMElementType';
-import type ExportingOptions from '../Exporting/ExportingOptions';
-import type { PdfFontOptions } from '../Exporting/ExportingOptions';
-import type Options from '../../Core/Options';
+} from '../../Core/Renderer/DOMElementType.js';
+import type ExportingOptions from '../Exporting/ExportingOptions.js';
+import type { PdfFontOptions } from '../Exporting/ExportingOptions.js';
+import type Options from '../../Core/Options.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -57,7 +57,7 @@ import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /**
          * Deprecated. Use
@@ -74,7 +74,7 @@ declare module '../../Core/Chart/ChartBase' {
 }
 
 
-declare module '../../Core/GlobalsBase' {
+declare module '../../Core/GlobalsBase.js' {
     interface GlobalsBase {
         /**
          * Deprecated. Use

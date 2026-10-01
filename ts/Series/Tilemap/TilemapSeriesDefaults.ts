@@ -20,7 +20,7 @@
  *
  * */
 
-import type TilemapSeriesOptions from './TilemapSeriesOptions';
+import type TilemapSeriesOptions from './TilemapSeriesOptions.js';
 
 /* *
  *

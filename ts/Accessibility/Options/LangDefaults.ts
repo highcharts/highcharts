@@ -20,8 +20,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type LangOptions from './LangOptions';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type LangOptions from './LangOptions.js';
 
 /* *
  *

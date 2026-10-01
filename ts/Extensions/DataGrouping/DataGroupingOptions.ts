@@ -16,8 +16,8 @@
  *
  * */
 
-import type { ApproximationKeyValue } from './ApproximationType';
-import type Time from '../../Core/Time';
+import type { ApproximationKeyValue } from './ApproximationType.js';
+import type Time from '../../Core/Time.js';
 
 /* *
  *
@@ -25,7 +25,7 @@ import type Time from '../../Core/Time';
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Data grouping is the concept of sampling the data values into larger
@@ -52,7 +52,7 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
-declare module '../../Series/Column/ColumnSeries' {
+declare module '../../Series/Column/ColumnSeries.js' {
     interface ColumnSeries {
         /**
          * The approximate pixel width of each group. If for example a series

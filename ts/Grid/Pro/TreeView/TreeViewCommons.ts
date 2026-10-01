@@ -21,8 +21,8 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
-import type { TreeInputPathSeparator } from './TreeViewTypes';
+import type { RowId } from '../../Core/Data/DataProvider.js';
+import type { TreeInputPathSeparator } from './TreeViewTypes.js';
 
 import {
     defined,

@@ -18,14 +18,14 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Core/Renderer/AlignObject';
-import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
-import type ColorString from '../../Core/Color/ColorString';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+} from '../../Core/Renderer/AlignObject.js';
+import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type DataGroupingOptions from
-    '../../Extensions/DataGrouping/DataGroupingOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type Time from '../../Core/Time';
+    '../../Extensions/DataGrouping/DataGroupingOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type Time from '../../Core/Time.js';
 
 /* *
  *
@@ -33,7 +33,7 @@ import type Time from '../../Core/Time';
  *
  * */
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface LangOptions {
         /**
          * The text for the label for the "from" input box in the range

@@ -16,9 +16,9 @@
  *
  * */
 
-import type { BubblePointMarkerOptions } from './BubblePointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
+import type { BubblePointMarkerOptions } from './BubblePointOptions.js';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions.js';
+import type { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions.js';
 
 /* *
  *

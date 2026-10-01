@@ -18,12 +18,12 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Renderer/AlignObject';
-import type { ColorType } from '../../Color/ColorType';
-import type CSSObject from '../../Renderer/CSSObject';
-import type DashStyleValue from '../../Renderer/DashStyleValue';
-import type Templating from '../../Templating';
-import type PlotLineOrBand from './PlotLineOrBand';
+} from '../../Renderer/AlignObject.js';
+import type { ColorType } from '../../Color/ColorType.js';
+import type CSSObject from '../../Renderer/CSSObject.js';
+import type DashStyleValue from '../../Renderer/DashStyleValue.js';
+import type Templating from '../../Templating.js';
+import type PlotLineOrBand from './PlotLineOrBand.js';
 
 /* *
  *

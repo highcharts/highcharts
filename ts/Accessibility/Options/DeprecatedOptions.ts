@@ -76,9 +76,9 @@
 import type {
     AxisAccessibilityOptions,
     SeriesAccessibilityOptions
-} from './A11yOptions';
-import type Options from '../../Core/Options';
-import type Series from '../../Core/Series/Series';
+} from './A11yOptions.js';
+import type Options from '../../Core/Options.js';
+import type Series from '../../Core/Series/Series.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -90,14 +90,14 @@ import { error } from '../../Core/Utilities.js';
  *
  * */
 
-declare module '../../Core/Axis/AxisOptions' {
+declare module '../../Core/Axis/AxisOptions.js' {
     interface AxisOptions {
         /** @deprecated */
         description?: AxisAccessibilityOptions['description'];
     }
 }
 
-declare module '../../Core/Series/SeriesOptions'{
+declare module '../../Core/Series/SeriesOptions.js'{
     interface SeriesOptions {
         /**
          * Deprecated. Use

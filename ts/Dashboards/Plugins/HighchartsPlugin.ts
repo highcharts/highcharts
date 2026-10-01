@@ -23,8 +23,8 @@
 import type {
     DashboardsPlugin,
     Event as PluginHandlerEvent
-} from '../PluginHandler';
-import type { Highcharts as H } from './HighchartsTypes';
+} from '../PluginHandler.js';
+import type { Highcharts as H } from './HighchartsTypes.js';
 
 import HighchartsComponent from '../Components/HighchartsComponent/HighchartsComponent.js';
 import KPIComponent from '../Components/KPIComponent/KPIComponent.js';
@@ -36,7 +36,7 @@ import NavigatorComponent from '../Components/NavigatorComponent/NavigatorCompon
  *
  * */
 
-declare module '../Components/ComponentType' {
+declare module '../Components/ComponentType.js' {
     interface ComponentTypeRegistry {
         Highcharts: typeof HighchartsComponent;
         KPI: typeof KPIComponent;

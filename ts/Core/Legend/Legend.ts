@@ -18,24 +18,24 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type AreaSeries from '../../Series/Area/AreaSeries';
-import type Axis from '../Axis/Axis';
-import type BBoxObject from '../Renderer/BBoxObject';
-import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
-import type { EventCallback } from '../Callback';
-import type Chart from '../Chart/Chart';
-import type ColorAxis from '../Axis/Color/ColorAxis';
-import type CSSObject from '../Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type FontMetricsObject from '../Renderer/FontMetricsObject';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type LegendBase from './LegendBase';
-import type { LegendItemObject } from './LegendItem';
-import type LegendOptions from './LegendOptions';
-import type { StatesOptionsKey } from '../Series/StatesOptions';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type AreaSeries from '../../Series/Area/AreaSeries.js';
+import type Axis from '../Axis/Axis.js';
+import type BBoxObject from '../Renderer/BBoxObject.js';
+import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem.js';
+import type { EventCallback } from '../Callback.js';
+import type Chart from '../Chart/Chart.js';
+import type ColorAxis from '../Axis/Color/ColorAxis.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type FontMetricsObject from '../Renderer/FontMetricsObject.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type LegendBase from './LegendBase.js';
+import type { LegendItemObject } from './LegendItem.js';
+import type LegendOptions from './LegendOptions.js';
+import type { StatesOptionsKey } from '../Series/StatesOptions.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
 
 import {
     animObject,
@@ -76,13 +76,13 @@ import {
  *
  * */
 
-declare module '../Chart/ChartBase' {
+declare module '../Chart/ChartBase.js' {
     interface ChartBase {
         legend: Legend;
     }
 }
 
-declare module '../Series/SeriesOptions' {
+declare module '../Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * The sequential index of the series in the legend.

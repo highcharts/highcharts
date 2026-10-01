@@ -13,8 +13,8 @@
  *
  * */
 
-import type ROCIndicator from './ROCIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type ROCIndicator from './ROCIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

@@ -18,9 +18,9 @@
  *
  * */
 
-import type Point from './Point';
-import type Series from './Series';
-import type { PlotOptionsOf } from './SeriesOptions';
+import type Point from './Point.js';
+import type Series from './Series.js';
+import type { PlotOptionsOf } from './SeriesOptions.js';
 
 /* *
  *

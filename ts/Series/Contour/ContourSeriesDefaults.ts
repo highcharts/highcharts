@@ -19,7 +19,7 @@
  *
  * */
 
-import type ContourSeriesOptions from './ContourSeriesOptions';
+import type ContourSeriesOptions from './ContourSeriesOptions.js';
 
 
 /* *

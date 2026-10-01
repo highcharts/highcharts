@@ -23,7 +23,7 @@
  *
  * */
 
-import type Component from '../Component';
+import type Component from '../Component.js';
 
 import SyncEmitter from './Emitter.js';
 import SyncHandler from './Handler.js';

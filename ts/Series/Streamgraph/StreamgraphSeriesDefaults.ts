@@ -20,7 +20,7 @@
  *
  * */
 
-import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
+import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions.js';
 
 /* *
  *

@@ -16,7 +16,7 @@
  *
  * */
 
-import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
+import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions.js';
 
 /* *
  *

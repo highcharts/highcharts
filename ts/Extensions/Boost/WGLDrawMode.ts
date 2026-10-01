@@ -17,7 +17,7 @@
  *
  * */
 
-import type { SeriesTypeRegistry } from '../../Core/Series/SeriesType';
+import type { SeriesTypeRegistry } from '../../Core/Series/SeriesType.js';
 
 /* *
  *

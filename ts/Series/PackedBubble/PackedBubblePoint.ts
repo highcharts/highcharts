@@ -18,12 +18,12 @@
  *
  * */
 
-import type BubblePointType from '../Bubble/BubblePoint';
-import type { DragNodesPoint } from '../DragNodesComposition';
-import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint';
-import type PackedBubblePointOptions from './PackedBubblePointOptions';
-import type PackedBubbleSeries from './PackedBubbleSeries';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type BubblePointType from '../Bubble/BubblePoint.js';
+import type { DragNodesPoint } from '../DragNodesComposition.js';
+import type NetworkgraphPoint from '../Networkgraph/NetworkgraphPoint.js';
+import type PackedBubblePointOptions from './PackedBubblePointOptions.js';
+import type PackedBubbleSeries from './PackedBubbleSeries.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
@@ -44,7 +44,7 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         degree?: number;
     }

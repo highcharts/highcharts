@@ -23,8 +23,8 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type InvertModifierOptions from './InvertModifierOptions';
+} from '../DataEvent.js';
+import type InvertModifierOptions from './InvertModifierOptions.js';
 
 import DataModifier from './DataModifier.js';
 import { merge } from '../../Shared/Utilities.js';
@@ -185,7 +185,7 @@ class InvertModifier extends DataModifier {
  * */
 
 
-declare module './DataModifierType' {
+declare module './DataModifierType.js' {
     interface DataModifierTypes {
         Invert: typeof InvertModifier;
     }

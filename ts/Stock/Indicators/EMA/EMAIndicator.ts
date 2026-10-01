@@ -18,11 +18,11 @@
 import type {
     EMAOptions,
     EMAParamsOptions
-} from './EMAOptions';
-import type EMAPoint from './EMAPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './EMAOptions.js';
+import type EMAPoint from './EMAPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -225,7 +225,7 @@ interface EMAIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         ema: typeof EMAIndicator;
     }

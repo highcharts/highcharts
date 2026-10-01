@@ -3,8 +3,7 @@
     "compilerOptions": {
         "composite": false,
         "declaration": true,
-        "baseUrl": "./",
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "outDir": "../../code/grid/es-modules",
         "rootDir": "../",
     },

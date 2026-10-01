@@ -23,8 +23,8 @@
  *
  * */
 
-import type Column from '../Column';
-import type Table from '../Table';
+import type Column from '../Column.js';
+import type Table from '../Table.js';
 
 import { measureWidthOverhead } from '../../GridUtils.js';
 import { clamp, defined } from '../../../../Shared/Utilities.js';

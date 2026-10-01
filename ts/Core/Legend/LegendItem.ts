@@ -16,13 +16,13 @@
  *
  * */
 
-import type BBoxObject from '../Renderer/BBoxObject';
-import type Chart from '../Chart/Chart';
-import type ColorAxis from '../Axis/Color/ColorAxis';
-import type ColorType from '../Color/ColorType';
-import type Legend from './Legend';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type BBoxObject from '../Renderer/BBoxObject.js';
+import type Chart from '../Chart/Chart.js';
+import type ColorAxis from '../Axis/Color/ColorAxis.js';
+import type ColorType from '../Color/ColorType.js';
+import type Legend from './Legend.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type { SymbolKey } from '../Renderer/SVG/SymbolType.js';
 
 /* *
  *

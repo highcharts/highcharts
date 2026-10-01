@@ -14,16 +14,16 @@
  *
  * */
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type ColorType from '../../../Core/Color/ColorType';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type ColorType from '../../../Core/Color/ColorType.js';
 import type DataGroupingOptions from
-    '../../../Extensions/DataGrouping/DataGroupingOptions';
-import type MultipleLinesComposition from '../MultipleLinesComposition';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
+    '../../../Extensions/DataGrouping/DataGroupingOptions.js';
+import type MultipleLinesComposition from '../MultipleLinesComposition.js';
+import type { PointMarkerOptions } from '../../../Core/Series/PointOptions.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
+} from '../SMA/SMAOptions.js';
 
 /* *
  *

@@ -18,8 +18,8 @@
  *
  * */
 
-import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type GlobalsBase from './GlobalsBase';
+import type { HTMLDOMElement } from './Renderer/DOMElementType.js';
+import type GlobalsBase from './GlobalsBase.js';
 
 /* *
  *
@@ -92,8 +92,6 @@ declare global {
         msMatchesSelector: Element['matches'];
         /** @deprecated */
         msRequestFullscreen: Function;
-        /** @deprecated */
-        webkitMatchesSelector: Element['matches'];
         /** @deprecated */
         webkitRequestFullScreen: Function;
     }

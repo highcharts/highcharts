@@ -17,9 +17,9 @@
  *
  * */
 
-import type ColorString from './ColorString';
-import type { PaletteOptions } from './PaletteOptions';
-import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+import type ColorString from './ColorString.js';
+import type { PaletteOptions } from './PaletteOptions.js';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 
 import Color from './Color.js';
 import H from '../Globals.js';
@@ -38,7 +38,7 @@ import {
  *  Declarations
  *
  * */
-declare module '../Chart/ChartBase' {
+declare module '../Chart/ChartBase.js' {
     interface ChartBase {
         palette: Palette|undefined;
     }

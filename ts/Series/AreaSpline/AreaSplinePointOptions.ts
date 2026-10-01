@@ -16,7 +16,7 @@
  *
  * */
 
-import type SplinePointOptions from '../Spline/SplinePointOptions';
+import type SplinePointOptions from '../Spline/SplinePointOptions.js';
 
 /* *
  *

@@ -21,9 +21,9 @@
  *
  * */
 
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type ColorString from '../Core/Color/ColorString';
-import type { JSONObject } from './JSON';
+import type CSSObject from '../Core/Renderer/CSSObject.js';
+import type ColorString from '../Core/Color/ColorString.js';
+import type { JSONObject } from './JSON.js';
 
 /* *
  *

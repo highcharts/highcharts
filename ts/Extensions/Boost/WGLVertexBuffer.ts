@@ -17,8 +17,8 @@
  *
  * */
 
-import type { WGLDrawModeValue } from './WGLDrawMode';
-import type WGLShader from './WGLShader';
+import type { WGLDrawModeValue } from './WGLDrawMode.js';
+import type WGLShader from './WGLShader.js';
 
 /* *
  *

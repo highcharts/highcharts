@@ -16,16 +16,16 @@
  *
  * */
 
-import type { AlignValue } from '../../Core/Renderer/AlignObject';
-import type ColorType from '../../Core/Color/ColorType';
+import type { AlignValue } from '../../Core/Renderer/AlignObject.js';
+import type ColorType from '../../Core/Color/ColorType.js';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type FlagsPointOptions from './FlagsPointOptions';
-import type { FlagsShapeValue } from './FlagsPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../Column/ColumnSeriesOptions.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type FlagsPointOptions from './FlagsPointOptions.js';
+import type { FlagsShapeValue } from './FlagsPointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

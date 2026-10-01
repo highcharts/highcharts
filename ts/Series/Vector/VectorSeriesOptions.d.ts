@@ -21,13 +21,13 @@
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
+} from '../../Core/Series/PointOptions.js';
 import type {
     ScatterSeriesOptions,
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type VectorPointOptions from './VectorPointOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type VectorPointOptions from './VectorPointOptions.js';
 
 /* *
  *

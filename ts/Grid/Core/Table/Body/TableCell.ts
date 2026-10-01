@@ -23,11 +23,11 @@
  *
  * */
 
-import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
-import type CSSObject from '../../../../Core/Renderer/CSSObject';
-import type { RowId } from '../../Data/DataProvider';
-import type Column from '../Column';
-import type TableRow from './TableRow';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable.js';
+import type CSSObject from '../../../../Core/Renderer/CSSObject.js';
+import type { RowId } from '../../Data/DataProvider.js';
+import type Column from '../Column.js';
+import type TableRow from './TableRow.js';
 
 import Globals from '../../Globals.js';
 import Cell from '../Cell.js';

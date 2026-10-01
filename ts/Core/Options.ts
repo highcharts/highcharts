@@ -15,16 +15,16 @@
  *
  * */
 
-import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
-import type Chart from './Chart/Chart';
-import type ColorString from './Color/ColorString';
-import type CSSObject from './Renderer/CSSObject';
-import type DataTableCore from '../Data/DataTableCore';
-import type { DataTableOptionsObject } from '../Data/DataTableOptions';
-import type PaletteOptions from './Color/PaletteOptions';
-import type { SeriesTypePlotOptions } from './Series/SeriesType';
-import type { SymbolKey } from './Renderer/SVG/SymbolType';
-import type { LangOptionsCore } from '../Shared/LangOptionsCore';
+import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject.js';
+import type Chart from './Chart/Chart.js';
+import type ColorString from './Color/ColorString.js';
+import type CSSObject from './Renderer/CSSObject.js';
+import type DataTableCore from '../Data/DataTableCore.js';
+import type { DataTableOptionsObject } from '../Data/DataTableOptions.js';
+import type PaletteOptions from './Color/PaletteOptions.js';
+import type { SeriesTypePlotOptions } from './Series/SeriesType.js';
+import type { SymbolKey } from './Renderer/SVG/SymbolType.js';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore.js';
 
 /* *
  *

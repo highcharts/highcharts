@@ -19,11 +19,11 @@
  *
  * */
 
-import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
-import type WordcloudPoint from './WordcloudPoint';
-import type WordcloudSeries from './WordcloudSeries';
+import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
+import type WordcloudPoint from './WordcloudPoint.js';
+import type WordcloudSeries from './WordcloudSeries.js';
 
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;

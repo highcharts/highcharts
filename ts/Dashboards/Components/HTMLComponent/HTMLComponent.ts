@@ -24,8 +24,8 @@
  * */
 
 import type Cell from '../../Layout/Cell.js';
-import type Options from './HTMLComponentOptions';
-import type { EventTypes as ComponentEventTypes } from '../Component';
+import type Options from './HTMLComponentOptions.js';
+import type { EventTypes as ComponentEventTypes } from '../Component.js';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
@@ -389,7 +389,7 @@ export type ComponentType = HTMLComponent;
 /** @internal */
 export type HTMLComponentEvents = ComponentEventTypes;
 
-declare module '../ComponentType' {
+declare module '../ComponentType.js' {
     interface ComponentTypeRegistry {
         HTML: typeof HTMLComponent;
     }

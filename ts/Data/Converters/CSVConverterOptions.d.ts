@@ -18,9 +18,9 @@
  *
  * */
 
-import type { CSVBeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions';
+import type { CSVBeforeParseCallbackFunction } from '../Connectors/CSVConnectorOptions.js';
 
-import type { Options as DataConverterOptions } from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter.js';
 
 /* *
  *

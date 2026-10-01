@@ -16,9 +16,9 @@
  *
  * */
 
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPyramidPointOptions from './ColumnPyramidPointOptions';
-import type ColumnPyramidSeries from './ColumnPyramidSeries';
+import type ColumnPoint from '../Column/ColumnPoint.js';
+import type ColumnPyramidPointOptions from './ColumnPyramidPointOptions.js';
+import type ColumnPyramidSeries from './ColumnPyramidSeries.js';
 
 /* *
  *

@@ -20,8 +20,8 @@
  *
  * */
 
-import type A11yOptions from './A11yOptions';
-import type { DeepPartial } from '../../Shared/Types';
+import type A11yOptions from './A11yOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 /* *
  *

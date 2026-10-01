@@ -21,11 +21,11 @@
  *
  * */
 
-import type { PointShortOptions, PointOptions } from '../../Core/Series/PointOptions';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
-import type TimelinePointOptions from './TimelinePointOptions';
-import type TimelineSeries from './TimelineSeries';
+import type { PointShortOptions, PointOptions } from '../../Core/Series/PointOptions.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type TimelineDataLabelOptions from './TimelineDataLabelOptions.js';
+import type TimelinePointOptions from './TimelinePointOptions.js';
+import type TimelineSeries from './TimelineSeries.js';
 
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';

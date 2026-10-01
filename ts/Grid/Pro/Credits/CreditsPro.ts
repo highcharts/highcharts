@@ -23,7 +23,7 @@
  *
  * */
 
-import type { CreditsOptions } from '../../Core/Options';
+import type { CreditsOptions } from '../../Core/Options.js';
 
 import Globals from '../../Core/Globals.js';
 import Credits from '../../Core/Credits.js';

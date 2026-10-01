@@ -16,8 +16,8 @@
  *
  * */
 
-import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

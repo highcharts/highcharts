@@ -21,9 +21,9 @@
  *
  * */
 
-import type BBoxObject from '../Renderer/BBoxObject';
-import type Point from '../Series/Point';
-import type SVGElement from '../Renderer/SVG/SVGElement';
+import type BBoxObject from '../Renderer/BBoxObject.js';
+import type Point from '../Series/Point.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
 
 import { stop } from '../Animation/AnimationUtilities.js';
 import Chart from '../Chart/Chart.js';
@@ -43,14 +43,14 @@ import {
  * */
 
 /** @internal */
-declare module '../Chart/ChartBase' {
+declare module '../Chart/ChartBase.js' {
     interface ChartBase {
         hideOverlappingLabels(labels: Array<SVGElement | undefined>): void;
     }
 }
 
 /** @internal */
-declare module '../Renderer/SVG/SVGElementBase' {
+declare module '../Renderer/SVG/SVGElementBase.js' {
     interface SVGElementBase {
         absoluteBox?: BBoxObject;
     }

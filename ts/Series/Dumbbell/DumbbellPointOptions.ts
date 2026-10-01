@@ -16,9 +16,9 @@
  *
  * */
 
-import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type AreaRangePointOptions from '../AreaRange/AreaRangePointOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
 
 /* *
  *

@@ -21,18 +21,18 @@
  *
  * */
 
-import type ChainModifierOptions from './ChainModifierOptions';
+import type ChainModifierOptions from './ChainModifierOptions.js';
 import type {
     DataEvent,
     DataEventCallback,
     DataEventDetail
-} from '../DataEvent';
-import type DataModifierEvent from './DataModifierEvent';
+} from '../DataEvent.js';
+import type DataModifierEvent from './DataModifierEvent.js';
 import type {
     DataModifierType,
     DataModifierTypeOptions
-} from './DataModifierType';
-import type { AnyRecord } from '../../Shared/Types';
+} from './DataModifierType.js';
+import type { AnyRecord } from '../../Shared/Types.js';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -377,7 +377,7 @@ export interface ModifierEvent extends DataEvent {
  *
  * */
 
-declare module './DataModifierType' {
+declare module './DataModifierType.js' {
     interface DataModifierTypes {
         Chain: typeof ChainModifier;
     }

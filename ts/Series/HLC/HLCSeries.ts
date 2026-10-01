@@ -18,13 +18,13 @@
  *
  * */
 
-import type HLCSeriesOptions from './HLCSeriesOptions';
-import type Legend from '../../Core/Legend/Legend';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type Series from '../../Core/Series/Series';
+import type HLCSeriesOptions from './HLCSeriesOptions.js';
+import type Legend from '../../Core/Legend/Legend.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type Series from '../../Core/Series/Series.js';
 
 import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
@@ -304,7 +304,7 @@ extend(
  * */
 
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface LangOptions {
         stockOpen?: string;
         stockHigh?: string;
@@ -313,7 +313,7 @@ declare module '../../Core/Options'{
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         hlc: typeof HLCSeries;
     }

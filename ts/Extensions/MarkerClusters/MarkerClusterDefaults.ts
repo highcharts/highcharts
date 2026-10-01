@@ -21,8 +21,8 @@
  *
  * */
 
-import type MarkerClusterOptions from './MarkerClusterOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type MarkerClusterOptions from './MarkerClusterOptions.js';
+import type TooltipOptions from '../../Core/TooltipOptions.js';
 
 /* *
  *

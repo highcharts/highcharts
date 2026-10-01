@@ -16,9 +16,9 @@
  *
  * */
 
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
 
 /* *
  *

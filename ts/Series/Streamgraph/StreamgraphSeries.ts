@@ -20,8 +20,8 @@
  *
  * */
 
-import type StreamgraphPoint from './StreamgraphPoint';
-import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
+import type StreamgraphPoint from './StreamgraphPoint.js';
+import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -118,7 +118,7 @@ extend(StreamgraphSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         streamgraph: typeof StreamgraphSeries;
     }

@@ -15,14 +15,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     PCOptions,
     PCParamsOptions
-} from '../PC/PCOptions';
-import type PCPoint from './PCPoint';
+} from '../PC/PCOptions.js';
+import type PCPoint from './PCPoint.js';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
@@ -219,7 +219,7 @@ MultipleLinesComposition.compose(PCIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pc: typeof PCIndicator;
     }

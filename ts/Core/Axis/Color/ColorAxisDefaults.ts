@@ -18,8 +18,8 @@
  *
  * */
 
-import type ColorAxisOptions from './ColorAxisOptions';
-import type { DeepPartial } from '../../../Shared/Types';
+import type ColorAxisOptions from './ColorAxisOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 
 /* *
  *

@@ -20,16 +20,16 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions.js';
 import type {
     OrganizationSeriesLevelOptions,
     OrganizationSeriesOptions
-} from './OrganizationSeriesOptions';
+} from './OrganizationSeriesOptions.js';
 import type SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import OrganizationPoint from './OrganizationPoint.js';
 import OrganizationSeriesDefaults from './OrganizationSeriesDefaults.js';
@@ -495,7 +495,7 @@ extend(OrganizationSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         organization: typeof OrganizationSeries;
     }

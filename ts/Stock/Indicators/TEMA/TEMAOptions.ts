@@ -17,7 +17,7 @@
 import type {
     EMAOptions,
     EMAParamsOptions
-} from '../EMA/EMAOptions';
+} from '../EMA/EMAOptions.js';
 
 /* *
  *

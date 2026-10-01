@@ -23,16 +23,16 @@ import type {
     AxisLabelFormatterContextObject,
     AxisLabelOptions,
     AxisOptions
-} from './AxisOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type PositionObject from '../Renderer/PositionObject';
-import type TickBase from './TickBase';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+} from './AxisOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type PositionObject from '../Renderer/PositionObject.js';
+import type TickBase from './TickBase.js';
+import type SVGAttributes from '../Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import type Time from '../Time.js';
-import type TimeTicksInfoObject from './TimeTicksInfoObject';
+import type TimeTicksInfoObject from './TimeTicksInfoObject.js';
 
 import F from '../Templating.js';
 import H from '../Globals.js';
@@ -56,7 +56,7 @@ import {
  * */
 
 /** @internal */
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     interface AxisLabelFormatterContextObject {
         tickPositionInfo?: TimeTicksInfoObject;
     }

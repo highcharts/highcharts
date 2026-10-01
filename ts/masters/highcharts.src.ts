@@ -10,8 +10,8 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import type { LangOptionsCore } from '../Shared/LangOptionsCore';
-import type TimeBase from '../Shared/TimeBase';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore.js';
+import type TimeBase from '../Shared/TimeBase.js';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import {

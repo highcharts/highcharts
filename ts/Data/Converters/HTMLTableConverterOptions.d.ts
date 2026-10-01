@@ -18,7 +18,7 @@
  *
  * */
 
-import type { Options as DataConverterOptions } from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter.js';
 
 /* *
  *

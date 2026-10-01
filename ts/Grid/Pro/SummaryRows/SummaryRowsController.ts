@@ -21,20 +21,20 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type DataTable from '../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType,
     RowObject as DataTableRowObject
-} from '../../../Data/DataTable';
-import type Grid from '../../Core/Grid';
-import type { StyleValue } from '../../Core/GridUtils';
-import type SummaryTableCell from './SummaryTableCell';
+} from '../../../Data/DataTable.js';
+import type Grid from '../../Core/Grid.js';
+import type { StyleValue } from '../../Core/GridUtils.js';
+import type SummaryTableCell from './SummaryTableCell.js';
 import type {
     SummaryAggregatorOption,
     SummaryColumnOptions,
     SummaryRenderRow,
     SummaryRowOptions
-} from './SummaryRowsTypes';
+} from './SummaryRowsTypes.js';
 
 import Aggregation from '../Aggregation/Aggregation.js';
 import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';

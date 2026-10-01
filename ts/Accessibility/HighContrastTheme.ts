@@ -20,9 +20,9 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type { DeepPartial } from '../Shared/Types';
-import type Options from '../Core/Options';
+import type ColorType from '../Core/Color/ColorType.js';
+import type { DeepPartial } from '../Shared/Types.js';
+import type Options from '../Core/Options.js';
 
 /* *
  *
@@ -31,7 +31,7 @@ import type Options from '../Core/Options';
  * */
 
 /** @internal */
-declare module '../Core/Series/DataLabelOptions' {
+declare module '../Core/Series/DataLabelOptions.js' {
     interface DataLabelOptions {
         connectorColor?: ColorType;
     }

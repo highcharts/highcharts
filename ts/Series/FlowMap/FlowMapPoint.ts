@@ -18,14 +18,14 @@
  *
  * */
 
-import type { FlowMapPointOptions } from './FlowMapPointOptions';
-import type { FlowMapSeries } from './FlowMapSeries';
-import type { MapLonLatObject } from '../../Maps/GeoJSON';
-import type { PositionObject } from '../../Core/Renderer/PositionObject';
+import type { FlowMapPointOptions } from './FlowMapPointOptions.js';
+import type { FlowMapSeries } from './FlowMapSeries.js';
+import type { MapLonLatObject } from '../../Maps/GeoJSON.js';
+import type { PositionObject } from '../../Core/Renderer/PositionObject.js';
 import type { ColorMapComposition } from '../ColorMapComposition.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { LonLatArray } from '../../Maps/MapViewOptions';
+import { LonLatArray } from '../../Maps/MapViewOptions.js';
 const {
     mapline: {
         prototype: {

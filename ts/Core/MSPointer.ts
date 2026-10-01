@@ -18,9 +18,9 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
-import type Options from './Options';
-import type PointerEvent from './PointerEvent';
+import type Chart from './Chart/Chart.js';
+import type Options from './Options.js';
+import type PointerEvent from './PointerEvent.js';
 
 import H from './Globals.js';
 const {
@@ -31,7 +31,7 @@ const {
     win
 } = H;
 import Pointer from './Pointer.js';
-import DOMElementType from './Renderer/DOMElementType';
+import DOMElementType from './Renderer/DOMElementType.js';
 import {
     addEvent,
     attr,

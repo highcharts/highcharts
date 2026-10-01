@@ -18,14 +18,14 @@
  *
  * */
 
-import type BoxPlotPoint from './BoxPlotPoint';
-import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type BoxPlotPoint from './BoxPlotPoint.js';
+import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions.js';
 import type {
     BoxPlotPointValKey
-} from './BoxPlotSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+} from './BoxPlotSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import BoxPlotSeriesDefaults from './BoxPlotSeriesDefaults.js';
@@ -441,7 +441,7 @@ RangeDataLabel.compose(BoxPlotSeries);
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         boxplot: typeof BoxPlotSeries;
     }

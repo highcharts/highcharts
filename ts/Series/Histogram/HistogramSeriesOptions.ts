@@ -19,10 +19,10 @@
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type HistogramPointOptions from './HistogramPointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+} from '../Column/ColumnSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type HistogramPointOptions from './HistogramPointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
 
 /* *
  *

@@ -15,14 +15,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     TEMAOptions,
     TEMAParamsOptions
-} from './TEMAOptions';
-import type TEMAPoint from './TEMAPoint';
+} from './TEMAOptions.js';
+import type TEMAPoint from './TEMAPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { ema: EMAIndicator } = SeriesRegistry.seriesTypes;
@@ -315,7 +315,7 @@ interface TEMAIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
     }

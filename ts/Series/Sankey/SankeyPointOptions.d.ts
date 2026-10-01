@@ -18,11 +18,11 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
-import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
-import type NodesComposition from '../NodesComposition';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type ColumnPointOptions from '../Column/ColumnPointOptions.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
+import type SankeyDataLabelOptions from './SankeyDataLabelOptions.js';
+import type NodesComposition from '../NodesComposition.js';
 
 /* *
  *

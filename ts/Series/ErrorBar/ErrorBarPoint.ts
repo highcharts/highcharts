@@ -16,9 +16,9 @@
  *
  * */
 
-import type ErrorBarPointOptions from './ErrorBarPointOptions';
-import type ErrorBarSeries from '../ErrorBar/ErrorBarSeries';
-import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint';
+import type ErrorBarPointOptions from './ErrorBarPointOptions.js';
+import type ErrorBarSeries from '../ErrorBar/ErrorBarSeries.js';
+import type BoxPlotPoint from '../BoxPlot/BoxPlotPoint.js';
 
 /* *
  *

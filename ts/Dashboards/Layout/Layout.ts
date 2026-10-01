@@ -16,9 +16,9 @@
  * */
 
 import type Board from '../Board.js';
-import type CSSJSONObject from '../CSSJSONObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type { Options as RowOptions } from './Row';
+import type CSSJSONObject from '../CSSJSONObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { Options as RowOptions } from './Row.js';
 
 import Cell from './Cell.js';
 import Row from './Row.js';

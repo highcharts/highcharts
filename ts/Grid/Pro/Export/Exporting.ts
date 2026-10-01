@@ -22,14 +22,14 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import type { ExportingOptions } from '../../Core/Options';
-import type DataTable from '../../../Data/DataTable';
+import type Grid from '../../Core/Grid.js';
+import type { ExportingOptions } from '../../Core/Options.js';
+import type DataTable from '../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
-} from '../../../Data/DataTable';
-import type { ColumnDataType } from '../../Core/Table/Column';
+} from '../../../Data/DataTable.js';
+import type { ColumnDataType } from '../../Core/Table/Column.js';
 
 import {
     hasDataTableProvider

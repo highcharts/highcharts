@@ -14,9 +14,9 @@
  * */
 
 import type LinearRegressionAngleIndicator from
-    './LinearRegressionAngleIndicator';
+    './LinearRegressionAngleIndicator.js';
 import type LinearRegressionPoint from
-    '../LinearRegression/LinearRegressionPoint';
+    '../LinearRegression/LinearRegressionPoint.js';
 
 /* *
  *

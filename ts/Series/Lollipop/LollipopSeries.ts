@@ -18,7 +18,7 @@
  *
  * */
 
-import type LollipopSeriesOptions from './LollipopSeriesOptions';
+import type LollipopSeriesOptions from './LollipopSeriesOptions.js';
 
 import LollipopPoint from './LollipopPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -43,7 +43,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../../Core/Series/StatesOptions' {
+declare module '../../Core/Series/StatesOptions.js' {
     interface StateOptionsBase {
         connectorWidthPlus?: number;
     }
@@ -239,7 +239,7 @@ extend(LollipopSeries.prototype, {
 /**
  * @private
  */
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         lollipop: typeof LollipopSeries;
     }

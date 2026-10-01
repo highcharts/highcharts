@@ -23,16 +23,16 @@
  *
  * */
 
-import type Board from '../../Board';
-import type Cell from '../../Layout/Cell';
+import type Board from '../../Board.js';
+import type Cell from '../../Layout/Cell.js';
 import type {
     Chart,
     Options as ChartOptions,
     Highcharts as H
-} from '../../Plugins/HighchartsTypes';
-import type Options from './KPIComponentOptions';
-import type SidebarPopup from '../../EditMode/SidebarPopup';
-import type { DeepPartial } from '../../../Shared/Types';
+} from '../../Plugins/HighchartsTypes.js';
+import type Options from './KPIComponentOptions.js';
+import type SidebarPopup from '../../EditMode/SidebarPopup.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';

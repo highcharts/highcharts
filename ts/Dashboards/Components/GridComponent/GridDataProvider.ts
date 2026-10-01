@@ -15,7 +15,7 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type DataTable from '../../../Data/DataTable.js';
 
 /* *
  *

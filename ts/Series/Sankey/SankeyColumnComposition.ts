@@ -20,8 +20,8 @@
  *
  * */
 
-import type SankeySeries from './SankeySeries';
-import type SankeyPoint from './SankeyPoint';
+import type SankeySeries from './SankeySeries.js';
+import type SankeyPoint from './SankeyPoint.js';
 
 import {
     defined,

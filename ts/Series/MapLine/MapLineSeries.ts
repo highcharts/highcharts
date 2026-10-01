@@ -19,9 +19,9 @@
  * */
 
 import type MapLinePoint from './MapLinePoint.js';
-import type MapLineSeriesOptions from './MapLineSeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type MapLineSeriesOptions from './MapLineSeriesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 
 import MapLineSeriesDefaults from './MapLineSeriesDefaults.js';
 import MapSeries from '../Map/MapSeries.js';
@@ -122,7 +122,7 @@ extend(MapLineSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         mapline: typeof MapLineSeries;
     }

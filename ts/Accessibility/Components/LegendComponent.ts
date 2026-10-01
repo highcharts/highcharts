@@ -22,12 +22,12 @@
  * */
 
 
-import type Accessibility from '../Accessibility';
+import type Accessibility from '../Accessibility.js';
 import type Chart from '../../Core/Chart/Chart.js';
-import type { DeepPartial } from '../../Shared/Types';
-import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type ProxyElement from '../ProxyElement';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { LegendAccessibilityOptions } from '../Options/A11yOptions.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type ProxyElement from '../ProxyElement.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import H from '../../Core/Globals.js';
@@ -61,21 +61,21 @@ const {
 
 
 /** @internal */
-declare module '../../Core/Legend/LegendItem' {
+declare module '../../Core/Legend/LegendItem.js' {
     interface LegendItem {
         a11yProxyElement?: ProxyElement;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         a11yProxyElement?: ProxyElement;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         a11yProxyElement?: ProxyElement;
     }

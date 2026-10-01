@@ -18,12 +18,12 @@
  *
  * */
 
-import type TreegraphPointOptions from './TreegraphPointOptions';
-import type TreegraphNode from './TreegraphNode';
-import type TreegraphLink from './TreegraphLink';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type TreegraphPointOptions from './TreegraphPointOptions.js';
+import type TreegraphNode from './TreegraphNode.js';
+import type TreegraphLink from './TreegraphLink.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
-import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
+import type { CollapseButtonOptions } from './TreegraphSeriesOptions.js';
 
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -36,7 +36,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import TreegraphSeries from './TreegraphSeries';
+import TreegraphSeries from './TreegraphSeries.js';
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *

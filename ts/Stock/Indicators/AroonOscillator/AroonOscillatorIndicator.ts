@@ -18,10 +18,10 @@
 import type {
     AroonOscillatorOptions,
     AroonOscillatorParamsOptions
-} from '../AroonOscillator/AroonOscillatorOptions';
-import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from '../AroonOscillator/AroonOscillatorOptions.js';
+import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -158,7 +158,7 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         aroonoscillator: typeof AroonOscillatorIndicator;
     }

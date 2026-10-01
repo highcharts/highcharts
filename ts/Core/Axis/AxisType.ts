@@ -16,7 +16,7 @@
  *
  * */
 
-import type Axis from './Axis';
+import type Axis from './Axis.js';
 
 /* *
  *

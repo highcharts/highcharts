@@ -18,8 +18,8 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Series from '../../Core/Series/Series';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Series from '../../Core/Series/Series.js';
 
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
@@ -43,14 +43,14 @@ import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
 /** @internal */
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         baseSeries?: Series;
         navigatorSeries?: Series;

@@ -4,10 +4,10 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Pane from './Pane';
-import type Pointer from '../../Core/Pointer';
-import type Series from '../../Core/Series/Series';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Pane from './Pane.js';
+import type Pointer from '../../Core/Pointer.js';
+import type Series from '../../Core/Series/Series.js';
 
 import {
     addEvent,
@@ -22,7 +22,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         hoverPane?: Pane;
         pane?: Array<Pane>;

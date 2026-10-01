@@ -18,19 +18,19 @@
  *
  * */
 
-import type AnimationOptions from '../Core/Animation/AnimationOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type { DeepPartial } from '../Shared/Types';
+import type AnimationOptions from '../Core/Animation/AnimationOptions.js';
+import type BBoxObject from '../Core/Renderer/BBoxObject.js';
+import type { DeepPartial } from '../Shared/Types.js';
 import type {
     GeoJSON,
     MapLonLatObject,
     Polygon,
     MapDataType
-} from './GeoJSON';
-import type MapChart from '../Core/Chart/MapChart';
-import type MapSeries from '../Series/Map/MapSeries';
-import type PointerEvent from '../Core/PointerEvent';
-import type PositionObject from '../Core/Renderer/PositionObject';
+} from './GeoJSON.js';
+import type MapChart from '../Core/Chart/MapChart.js';
+import type MapSeries from '../Series/Map/MapSeries.js';
+import type PointerEvent from '../Core/PointerEvent.js';
+import type PositionObject from '../Core/Renderer/PositionObject.js';
 import type {
     LonLatArray,
     MapBounds,
@@ -39,9 +39,9 @@ import type {
     MapViewPaddingType,
     ProjectedXY,
     ProjectedXYArray
-} from './MapViewOptions';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+} from './MapViewOptions.js';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 import H from '../Core/Globals.js';
 const { composed } = H;

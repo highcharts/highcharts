@@ -19,15 +19,15 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Renderer/AlignObject';
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type { EventCallback } from '../Callback';
-import type ColorType from '../Color/ColorType';
-import type CSSObject from '../Renderer/CSSObject';
-import type F from '../Templating';
-import type Legend from './Legend';
-import type PointerEvent from '../PointerEvent';
-import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
+} from '../Renderer/AlignObject.js';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type { EventCallback } from '../Callback.js';
+import type ColorType from '../Color/ColorType.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type F from '../Templating.js';
+import type Legend from './Legend.js';
+import type PointerEvent from '../PointerEvent.js';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject.js';
 
 /* *
  *
@@ -35,13 +35,13 @@ import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
  *
  * */
 
-declare module '../Options' {
+declare module '../Options.js' {
     interface Options {
         legend: LegendOptions;
     }
 }
 
-declare module '../Series/SeriesOptions' {
+declare module '../Series/SeriesOptions.js' {
     interface SeriesEventsOptions {
         /**
          * Fires when the legend item belonging to the series is clicked. One

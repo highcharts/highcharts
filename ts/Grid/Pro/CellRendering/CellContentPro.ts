@@ -22,8 +22,8 @@
  *
  * */
 
-import type CellRenderer from './CellRenderer';
-import type TableCell from '../../Core/Table/Body/TableCell';
+import type CellRenderer from './CellRenderer.js';
+import type TableCell from '../../Core/Table/Body/TableCell.js';
 
 import CellContent from '../../Core/Table/CellContent/CellContent.js';
 

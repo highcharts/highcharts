@@ -22,9 +22,9 @@
  *
  * */
 
-import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
-import type QueryingController from '../../Core/Querying/QueryingController';
-import type { ColumnSortingOrder } from '../../Core/Options';
+import type { RemoteFetchCallbackResult } from './RemoteDataProvider.js';
+import type QueryingController from '../../Core/Querying/QueryingController.js';
+import type { ColumnSortingOrder } from '../../Core/Options.js';
 
 import { defined } from '../../../Shared/Utilities.js';
 import T from '../../../Core/Templating.js';

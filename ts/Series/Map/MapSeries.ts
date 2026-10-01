@@ -21,25 +21,25 @@
 import type {
     AnimationOptions,
     AnimationStepCallbackFunction
-} from '../../Core/Animation/AnimationOptions';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type { RowObject } from '../../Data/DataTable';
-import type { MapDataType } from '../../Maps/GeoJSON';
-import type { MapBounds } from '../../Maps/MapViewOptions';
-import type MapPointOptions from './MapPointOptions';
-import type MapSeriesOptions from './MapSeriesOptions';
+} from '../../Core/Animation/AnimationOptions.js';
+import type ColumnPoint from '../Column/ColumnPoint.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { RowObject } from '../../Data/DataTable.js';
+import type { MapDataType } from '../../Maps/GeoJSON.js';
+import type { MapBounds } from '../../Maps/MapViewOptions.js';
+import type MapPointOptions from './MapPointOptions.js';
+import type MapSeriesOptions from './MapSeriesOptions.js';
 import type {
     PointOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+} from '../../Core/Series/PointOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import type {
     SeriesTypeOptions
-} from '../../Core/Series/SeriesType';
+} from '../../Core/Series/SeriesType.js';
 
 import { animObject, stop } from '../../Core/Animation/AnimationUtilities.js';
 import ColorMapComposition from '../ColorMapComposition.js';
@@ -78,7 +78,7 @@ import {
  *
  * */
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         clearBounds?(): void;
         getProjectedBounds?(): MapBounds|undefined;
@@ -102,7 +102,7 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /** @requires modules/map */
         mapData?: MapDataType;
@@ -1086,7 +1086,7 @@ ColorMapComposition.compose(MapSeries);
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         map: typeof MapSeries;
     }

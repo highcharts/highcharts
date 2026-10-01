@@ -12,9 +12,9 @@
 
 'use strict';
 
-import type AreaSeries from '../Area/AreaSeries';
-import type AreaPoint from '../Area/AreaPoint';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type AreaSeries from '../Area/AreaSeries.js';
+import type AreaPoint from '../Area/AreaPoint.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;

@@ -18,26 +18,26 @@
  *
  * */
 
-import type Axis from '../Axis/Axis';
+import type Axis from '../Axis/Axis.js';
 import type {
     AxisCollectionKey,
     AxisOptions,
     YAxisOptions
-} from '../Axis/AxisOptions';
-import type BBoxObject from '../Renderer/BBoxObject';
-import type CSSObject from '../Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type Options from '../Options';
-import type PointerEvent from '../PointerEvent';
-import type Series from '../Series/Series';
+} from '../Axis/AxisOptions.js';
+import type BBoxObject from '../Renderer/BBoxObject.js';
+import type CSSObject from '../Renderer/CSSObject.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type Options from '../Options.js';
+import type PointerEvent from '../PointerEvent.js';
+import type Series from '../Series/Series.js';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
-} from '../Series/SeriesType';
-import type SVGElement from '../Renderer/SVG/SVGElement';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
+} from '../Series/SeriesType.js';
+import type SVGElement from '../Renderer/SVG/SVGElement.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 
 import Chart from '../Chart/Chart.js';
 import F from '../Templating.js';
@@ -70,14 +70,14 @@ import {
  * */
 
 /** @internal */
-declare module '../Axis/AxisBase' {
+declare module '../Axis/AxisBase.js' {
     interface AxisBase {
         crossLabel?: SVGElement;
     }
 }
 
 /** @internal */
-declare module './ChartBase' {
+declare module './ChartBase.js' {
     interface ChartBase {
         fixedRange?: number;
         setFixedRange(range: number|undefined): void;
@@ -85,14 +85,14 @@ declare module './ChartBase' {
 }
 
 /** @internal */
-declare module '../Options'{
+declare module '../Options.js'{
     interface Options {
         isStock?: boolean;
     }
 }
 
 /** @internal */
-declare module '../Series/SeriesBase' {
+declare module '../Series/SeriesBase.js' {
     interface SeriesBase {
         clipBox?: BBoxObject;
         forceCropping(): boolean|undefined;
@@ -100,7 +100,7 @@ declare module '../Series/SeriesBase' {
 }
 
 /** @internal */
-declare module '../Renderer/SVG/SVGRendererBase' {
+declare module '../Renderer/SVG/SVGRendererBase.js' {
     interface SVGRendererBase {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
     }

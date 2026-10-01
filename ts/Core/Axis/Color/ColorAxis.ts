@@ -18,22 +18,22 @@
  *
  * */
 
-import type Chart from '../../Chart/Chart';
+import type Chart from '../../Chart/Chart.js';
 import type {
     ColorAxisDataClassOptions,
     ColorAxisOptions
-} from './ColorAxisOptions';
-import type { DeepPartial } from '../../../Shared/Types';
-import type Fx from '../../Animation/Fx';
-import type GradientColor from '../../Color/GradientColor';
-import type Legend from '../../Legend/Legend';
-import type { LegendItemObject } from '../../Legend/LegendItem';
-import type Point from '../../Series/Point';
-import type PointerEvent from '../../PointerEvent';
-import type { StatesOptionsKey } from '../../Series/StatesOptions';
-import type SVGPath from '../../Renderer/SVG/SVGPath';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type PositionObject from '../../Renderer/PositionObject';
+} from './ColorAxisOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Fx from '../../Animation/Fx.js';
+import type GradientColor from '../../Color/GradientColor.js';
+import type Legend from '../../Legend/Legend.js';
+import type { LegendItemObject } from '../../Legend/LegendItem.js';
+import type Point from '../../Series/Point.js';
+import type PointerEvent from '../../PointerEvent.js';
+import type { StatesOptionsKey } from '../../Series/StatesOptions.js';
+import type SVGPath from '../../Renderer/SVG/SVGPath.js';
+import type SVGElement from '../../Renderer/SVG/SVGElement.js';
+import type PositionObject from '../../Renderer/PositionObject.js';
 
 import Axis from '../Axis.js';
 import ColorAxisBase from './ColorAxisBase.js';
@@ -42,7 +42,7 @@ import ColorAxisDefaults from './ColorAxisDefaults.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
-import SeriesClass from '../../Series/Series';
+import SeriesClass from '../../Series/Series.js';
 const { series: Series } = SeriesRegistry;
 import {
     defined,
@@ -60,20 +60,20 @@ import {
  *
  * */
 
-declare module '../../Axis/AxisBase' {
+declare module '../../Axis/AxisBase.js' {
     interface AxisBase {
         labelLeft?: number;
         labelRight?: number;
     }
 }
 
-declare module '../../Chart/ChartBase' {
+declare module '../../Chart/ChartBase.js' {
     interface ChartBase {
         colorAxis?: Array<ColorAxis>;
     }
 }
 
-declare module '../../../Core/Options'{
+declare module '../../../Core/Options.js'{
     interface Options {
         colorAxis?: (
             DeepPartial<ColorAxisOptions>|
@@ -82,13 +82,13 @@ declare module '../../../Core/Options'{
     }
 }
 
-declare module '../../Series/PointBase' {
+declare module '../../Series/PointBase.js' {
     interface PointBase {
         dataClass?: number;
     }
 }
 
-declare module '../../Series/SeriesBase' {
+declare module '../../Series/SeriesBase.js' {
     interface SeriesBase {
         axisTypes?: Array<string>;
         colorAxis?: ColorAxis;

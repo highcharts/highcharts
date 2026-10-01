@@ -21,14 +21,14 @@
  *
  * */
 
-import type { Point, Series } from '../../../Plugins/HighchartsTypes';
-import type { SyncPair } from '../../Sync/Sync';
-import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
+import type { Point, Series } from '../../../Plugins/HighchartsTypes.js';
+import type { SyncPair } from '../../Sync/Sync.js';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor.js';
 import type HighchartsComponent from '../HighchartsComponent.js';
 import type { HCConnectorHandler } from '../HighchartsComponent.js';
 import type {
     HighchartsHighlightSyncOptions
-} from '../HighchartsComponentOptions';
+} from '../HighchartsComponentOptions.js';
 
 import Component from '../../Component.js';
 import U from '../../../Utilities.js';

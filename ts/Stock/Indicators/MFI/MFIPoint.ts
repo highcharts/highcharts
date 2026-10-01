@@ -12,8 +12,8 @@
  *
  * */
 
-import type MFIIndicator from './MFIIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type MFIIndicator from './MFIIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

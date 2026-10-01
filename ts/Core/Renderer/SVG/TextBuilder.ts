@@ -21,10 +21,10 @@
 import type {
     DOMElementType,
     SVGDOMElement
-} from '../DOMElementType';
-import type SVGAttributes from './SVGAttributes';
-import type SVGElement from './SVGElement';
-import type SVGRenderer from './SVGRenderer';
+} from '../DOMElementType.js';
+import type SVGAttributes from './SVGAttributes.js';
+import type SVGElement from './SVGElement.js';
+import type SVGRenderer from './SVGRenderer.js';
 
 import AST from '../HTML/AST.js';
 import H from '../../Globals.js';

@@ -20,8 +20,8 @@
  *
  * */
 
-import type Scatter3DPointOptions from './Scatter3DPointOptions';
-import type Scatter3DSeries from './Scatter3DSeries';
+import type Scatter3DPointOptions from './Scatter3DPointOptions.js';
+import type Scatter3DSeries from './Scatter3DSeries.js';
 
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { defined } from '../../Shared/Utilities.js';

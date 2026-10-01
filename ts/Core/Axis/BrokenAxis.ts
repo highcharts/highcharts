@@ -18,14 +18,14 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
-import type Axis from './Axis';
-import type { AxisBreakOptions } from './AxisOptions';
-import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type Point from '../Series/Point';
-import type Series from '../Series/Series';
-import type SVGPath from '../Renderer/SVG/SVGPath';
+import type AnimationOptions from '../Animation/AnimationOptions.js';
+import type Axis from './Axis.js';
+import type { AxisBreakOptions } from './AxisOptions.js';
+import type { AxisBreakBorderObject, AxisBreakObject } from './BreakObject.js';
+import type LineSeries from '../../Series/Line/LineSeries.js';
+import type Point from '../Series/Point.js';
+import type Series from '../Series/Series.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
 
 import H from '../Globals.js';
 const { composed } = H;
@@ -46,13 +46,13 @@ import {
  * */
 
 /** @internal */
-declare module './AxisComposition' {
+declare module './AxisComposition.js' {
     interface AxisComposition {
         brokenAxis?: BrokenAxis.Additions;
     }
 }
 
-declare module './AxisOptions' {
+declare module './AxisOptions.js' {
     /**
      * An array defining breaks in the axis, the sections defined will be
      * left out and all the points shifted closer to each other.
@@ -133,14 +133,14 @@ declare module './AxisOptions' {
 }
 
 /** @internal */
-declare module './AxisType' {
+declare module './AxisType.js' {
     interface AxisTypeRegistry {
         BrokenAxis: BrokenAxis.Composition;
     }
 }
 
 /** @internal */
-declare module '../Series/SeriesBase' {
+declare module '../Series/SeriesBase.js' {
     interface SeriesBase {
         /** @requires modules/broken-axis */
         drawBreaks(axis: Axis, keys: Array<string>): void;
@@ -149,7 +149,7 @@ declare module '../Series/SeriesBase' {
     }
 }
 
-declare module '../Series/SeriesOptions' {
+declare module '../Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Defines when to display a gap in the graph, together with the

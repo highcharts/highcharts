@@ -618,8 +618,11 @@ function resolveImportedSourceInfo(
         return TSLib.getSourceInfo(`${fromPath}.ts`);
     }
 
-    if (FS.existsSync(`${fromPath}.d.ts`)) {
-        return TSLib.getSourceInfo(`${fromPath}.d.ts`);
+    // `./Types.js` may point to `./Types.d.ts`
+    const dtsPath = `${fromPath.replace(/\.jsx?$/u, '')}.d.ts`;
+
+    if (FS.existsSync(dtsPath)) {
+        return TSLib.getSourceInfo(dtsPath);
     }
 
     return void 0;
@@ -1886,13 +1889,13 @@ function autoCompleteGridInfos(): void {
             ) {
                 // Resolve the module path relative to the source file's
                 // directory, keeping it as a relative path to match cache
-                // keys.
+                // keys. The `.js` extension is dropped to try `.ts`/`.d.ts`.
                 const modulePath = Path.normalize(
                     Path.join(
                         Path.dirname(sourceInfo.path),
                         info.name
                     )
-                ).replace(/\\/gu, '/');
+                ).replace(/\\/gu, '/').replace(/\.jsx?$/u, '');
 
                 // Try .ts first (Grid source files), then .d.ts
                 let targetInfo: TSLib.SourceInfo | undefined;

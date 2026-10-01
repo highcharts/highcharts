@@ -18,23 +18,23 @@
  *
  * */
 
-import type { DeepPartial } from '../Shared/Types';
-import type { GeoJSONGeometryMultiPoint } from './GeoJSON';
+import type { DeepPartial } from '../Shared/Types.js';
+import type { GeoJSONGeometryMultiPoint } from './GeoJSON.js';
 import type {
     LonLatArray,
     MapBounds,
     ProjectedXYArray
-} from './MapViewOptions';
+} from './MapViewOptions.js';
 import type {
     default as ProjectionDefinition,
     Projector
-} from './ProjectionDefinition';
+} from './ProjectionDefinition.js';
 import type {
     ProjectionOptions,
     ProjectionRotationOption
-} from './ProjectionOptions';
-import type { ProjectionRegistryName } from './Projections/ProjectionRegistry';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+} from './ProjectionOptions.js';
+import type { ProjectionRegistryName } from './Projections/ProjectionRegistry.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
 
 import PC from '../Core/Geometry/PolygonClip.js';
 const {

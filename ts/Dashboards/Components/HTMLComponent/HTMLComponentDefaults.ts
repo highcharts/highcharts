@@ -22,8 +22,8 @@
  * */
 
 
-import type { DeepPartial } from '../../../Shared/Types';
-import type Options from './HTMLComponentOptions';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Options from './HTMLComponentOptions.js';
 
 import Component from '../Component.js';
 

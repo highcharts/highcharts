@@ -14,11 +14,11 @@
  *
  * */
 
-import type MultipleLinesComposition from '../MultipleLinesComposition';
+import type MultipleLinesComposition from '../MultipleLinesComposition.js';
 import type {
     StochasticOptions,
     StochasticParamsOptions
-} from '../Stochastic/StochasticOptions';
+} from '../Stochastic/StochasticOptions.js';
 
 /* *
  *

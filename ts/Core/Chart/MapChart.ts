@@ -18,13 +18,13 @@
  *
  * */
 
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type MapPoint from '../../Series/Map/MapPoint';
-import type MapPointer from '../../Maps/MapPointer';
-import type MapView from '../../Maps/MapView';
-import type Options from '../Options';
-import type SVGPath from '../Renderer/SVG/SVGPath';
-import type { MapDataType } from '../../Maps/GeoJSON';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type MapPoint from '../../Series/Map/MapPoint.js';
+import type MapPointer from '../../Maps/MapPointer.js';
+import type MapView from '../../Maps/MapView.js';
+import type Options from '../Options.js';
+import type SVGPath from '../Renderer/SVG/SVGPath.js';
+import type { MapDataType } from '../../Maps/GeoJSON.js';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
@@ -39,7 +39,7 @@ import { isNumber, merge } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module './ChartBase'{
+declare module './ChartBase.js'{
     interface ChartBase {
         mapView?: MapView;
     }

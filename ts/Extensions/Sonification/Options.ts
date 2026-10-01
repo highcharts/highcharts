@@ -14,13 +14,13 @@
 
 'use strict';
 
-import type Chart from '../../Core/Chart/Chart';
-import type { DeepPartial } from '../../Shared/Types';
-import type OptionsType from '../../Core/Options';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
-import type SonificationTimeline from './SonificationTimeline';
-import type SynthPatch from './SynthPatch';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type OptionsType from '../../Core/Options.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
+import type SonificationTimeline from './SonificationTimeline.js';
+import type SynthPatch from './SynthPatch.js';
 
 declare global {
     namespace Sonification {
@@ -662,7 +662,7 @@ declare global {
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface Options {
         /**
          * Options for configuring sonification and audio charts.
@@ -701,7 +701,7 @@ declare module '../../Core/Options'{
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
         /**
          * Sonification/audio chart options for a series.

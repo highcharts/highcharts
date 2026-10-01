@@ -16,9 +16,9 @@
  *
  * */
 
-import type ParetoPointOptions from './ParetoPointOptions';
-import type ParetoSeries from './ParetoSeries';
-import type Point from '../../Core/Series/Point';
+import type ParetoPointOptions from './ParetoPointOptions.js';
+import type ParetoSeries from './ParetoSeries.js';
+import type Point from '../../Core/Series/Point.js';
 
 /* *
  *

@@ -22,27 +22,27 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type DataTable from '../../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType,
     ColumnCollection
-} from '../../../../Data/DataTable';
-import type Grid from '../../../Core/Grid';
-import type { ColumnOptions } from '../../../Core/Options';
-import type { RowMetaRecord } from '../../../Core/Grid';
-import type { RowId } from '../../../Core/Data/DataProvider';
-import type { DataProviderOptionsType } from '../../../Core/Data/DataProviderType';
-import type { LocalDataProviderOptions } from '../../../Core/Data/LocalDataProvider';
+} from '../../../../Data/DataTable.js';
+import type Grid from '../../../Core/Grid.js';
+import type { ColumnOptions } from '../../../Core/Options.js';
+import type { RowMetaRecord } from '../../../Core/Grid.js';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
+import type { DataProviderOptionsType } from '../../../Core/Data/DataProviderType.js';
+import type { LocalDataProviderOptions } from '../../../Core/Data/LocalDataProvider.js';
 import type {
     TreeIndexBuildResult,
     TreeViewColumnAggregatorOption,
     TreeProjectionRowState,
     TreeProjectionState
-} from '../TreeViewTypes';
+} from '../TreeViewTypes.js';
 import type {
     NormalizedTreeInputOptions,
     ResolvedTreeViewOptions
-} from '../TreeViewOptionsNormalizer';
+} from '../TreeViewOptionsNormalizer.js';
 
 import {
     buildIndexFromColumns as buildPathIndexFromColumns

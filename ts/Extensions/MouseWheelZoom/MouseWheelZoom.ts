@@ -18,12 +18,12 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type Axis from '../../Core/Axis/Axis';
-import type GlobalsBase from '../../Core/GlobalsBase';
-import type PointerEvent from '../../Core/PointerEvent';
-import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
-import type DOMElementType from '../../Core/Renderer/DOMElementType';
+import type Chart from '../../Core/Chart/Chart.js';
+import type Axis from '../../Core/Axis/Axis.js';
+import type GlobalsBase from '../../Core/GlobalsBase.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type MouseWheelZoomOptions from './MouseWheelZoomOptions.js';
+import type DOMElementType from '../../Core/Renderer/DOMElementType.js';
 
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
 import {

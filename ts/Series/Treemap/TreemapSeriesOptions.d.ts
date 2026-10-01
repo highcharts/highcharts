@@ -20,23 +20,23 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Core/Renderer/AlignObject';
-import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
-import type ColorString from '../../Core/Color/ColorString';
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+} from '../../Core/Renderer/AlignObject.js';
+import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
 import type {
     ScatterSeriesOptions,
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
 import type {
     SeriesOptions,
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
-import type TreemapPointOptions from './TreemapPointOptions';
-import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions';
+} from '../../Core/Series/SeriesOptions.js';
+import type TreemapPointOptions from './TreemapPointOptions.js';
+import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions.js';
 
 /* *
  *

@@ -16,7 +16,7 @@
  * */
 import type Row from '../Layout/Row.js';
 import type Cell from '../Layout/Cell.js';
-import type { ContextDetails } from './ContextDetection';
+import type { ContextDetails } from './ContextDetection.js';
 import Globals from '../Globals.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import EditMode from '../EditMode/EditMode.js';

@@ -21,9 +21,9 @@
  *
  * */
 
-import type { NoDataOptions } from './NoDataOptions';
-import type { Options } from '../../Core/Options';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { NoDataOptions } from './NoDataOptions.js';
+import type { Options } from '../../Core/Options.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -37,7 +37,7 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase' {
+declare module '../../Core/Chart/ChartBase.js' {
     interface ChartBase {
         /**
          * The no-data label instance.
@@ -69,7 +69,7 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface LangOptions {
         /**
          * The text to display when the chart contains no data.

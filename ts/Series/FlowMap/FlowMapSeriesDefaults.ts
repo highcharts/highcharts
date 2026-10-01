@@ -16,7 +16,7 @@
  *
  * */
 
-import type { FlowMapSeriesOptions } from './FlowMapSeriesOptions';
+import type { FlowMapSeriesOptions } from './FlowMapSeriesOptions.js';
 
 /* *
  *

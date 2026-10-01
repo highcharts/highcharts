@@ -20,18 +20,18 @@
  *
  * */
 
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type ColorType from '../../Color/ColorType';
-import type Fx from '../../Animation/Fx';
-import type Position3DObject from '../../Renderer/Position3DObject';
-import type PositionObject from '../../Renderer/PositionObject';
-import type SVGArc3D from './SVGArc3D';
-import type SVGAttributes from './SVGAttributes';
-import type SVGAttributes3D from './SVGAttributes3D';
-import type SVGCuboid from './SVGCuboid';
-import type SVGElement from './SVGElement';
-import type SVGPath from './SVGPath';
-import type SVGRenderer from './SVGRenderer';
+import type AnimationOptions from '../../Animation/AnimationOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type Fx from '../../Animation/Fx.js';
+import type Position3DObject from '../../Renderer/Position3DObject.js';
+import type PositionObject from '../../Renderer/PositionObject.js';
+import type SVGArc3D from './SVGArc3D.js';
+import type SVGAttributes from './SVGAttributes.js';
+import type SVGAttributes3D from './SVGAttributes3D.js';
+import type SVGCuboid from './SVGCuboid.js';
+import type SVGElement from './SVGElement.js';
+import type SVGPath from './SVGPath.js';
+import type SVGRenderer from './SVGRenderer.js';
 
 import { animObject } from '../../Animation/AnimationUtilities.js';
 import Color from '../../Color/Color.js';
@@ -55,7 +55,7 @@ import { defined, extend, merge } from '../../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module './SVGElementBase' {
+declare module './SVGElementBase.js' {
     interface SVGElementBase {
         attribs?: SVGAttributes;
         parts?: Array<string>;
@@ -66,7 +66,7 @@ declare module './SVGElementBase' {
 }
 
 /** @internal */
-declare module './SVGRendererBase' {
+declare module './SVGRendererBase.js' {
     interface SVGRendererBase {
         Element3D: typeof SVGElement3D;
         arc3d(attribs: SVGAttributes): SVGElement;

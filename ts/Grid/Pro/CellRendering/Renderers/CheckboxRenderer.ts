@@ -24,12 +24,12 @@
  *
  * */
 
-import type Column from '../../../Core/Table/Column';
-import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
-import type TableCell from '../../../Core/Table/Body/TableCell';
+import type Column from '../../../Core/Table/Column.js';
+import type { EditModeRenderer } from '../../CellEditing/CellEditMode.js';
+import type TableCell from '../../../Core/Table/Body/TableCell.js';
 import type {
     EditModeRendererTypeName
-} from '../../CellEditing/CellEditingComposition';
+} from '../../CellEditing/CellEditingComposition.js';
 
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
@@ -134,7 +134,7 @@ export interface CheckboxAttributes {
  *
  * */
 
-declare module '../CellRendererType' {
+declare module '../CellRendererType.js' {
     interface CellRendererTypeRegistry {
         checkbox: typeof CheckboxRenderer
     }

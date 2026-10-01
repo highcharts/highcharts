@@ -18,11 +18,11 @@
  *
  * */
 
-import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
-import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
-import type ColorString from '../../Core/Color/ColorString';
-import type { OrganizationLinkOptions } from './OrganizationSeriesOptions';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
+import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions.js';
+import type SankeyPointOptions from '../Sankey/SankeyPointOptions.js';
+import type ColorString from '../../Core/Color/ColorString.js';
+import type { OrganizationLinkOptions } from './OrganizationSeriesOptions.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
 
 /* *
  *

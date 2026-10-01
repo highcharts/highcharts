@@ -21,9 +21,9 @@
  *
  * */
 
-import type Cell from '../../Core/Table/Cell';
-import type Column from '../../Core/Table/Column';
-import type { SummaryRenderRow } from './SummaryRowsTypes';
+import type Cell from '../../Core/Table/Cell.js';
+import type Column from '../../Core/Table/Column.js';
+import type { SummaryRenderRow } from './SummaryRowsTypes.js';
 
 import TableRow from '../../Core/Table/Body/TableRow.js';
 import SummaryTableCell from './SummaryTableCell.js';

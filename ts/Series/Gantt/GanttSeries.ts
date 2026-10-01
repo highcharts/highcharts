@@ -19,12 +19,12 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
-import type GanttSeriesOptions from './GanttSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type Tick from '../../Core/Axis/Tick';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type GanttSeriesOptions from './GanttSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type Tick from '../../Core/Axis/Tick.js';
 
 import GanttPoint from './GanttPoint.js';
 import GanttSeriesDefaults from './GanttSeriesDefaults.js';
@@ -253,7 +253,7 @@ extend(GanttSeries.prototype, { // Props - series member overrides
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         gantt: typeof GanttSeries;
     }

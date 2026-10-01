@@ -18,7 +18,7 @@
  *
  * */
 
-import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
+import type DumbbellSeriesOptions from './DumbbellSeriesOptions.js';
 
 /* *
  *

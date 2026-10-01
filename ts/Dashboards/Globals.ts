@@ -25,8 +25,8 @@
  *
  * */
 
-import type { GUIElementType } from './Layout/GUIElement';
-import type Board from './Board';
+import type { GUIElementType } from './Layout/GUIElement.js';
+import type Board from './Board.js';
 
 /* *
  *

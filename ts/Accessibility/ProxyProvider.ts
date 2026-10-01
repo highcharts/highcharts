@@ -24,10 +24,10 @@
  *
  * */
 
-import type Accessibility from './Accessibility';
-import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
-import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
-import type { NullableHTMLAttributes } from './ProxyElement';
+import type Accessibility from './Accessibility.js';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes.js';
+import type { NullableHTMLAttributes } from './ProxyElement.js';
 
 import H from '../Core/Globals.js';
 const { doc } = H;

@@ -18,9 +18,9 @@
  *
  * */
 
-import type PieSeriesOptions from './PieSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type PieSeriesOptions from './PieSeriesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import CU from '../CenteredUtilities.js';
 const { getStartAndEndRadians } = CU;
@@ -45,7 +45,7 @@ import {
  *
  * */
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /* *
         *
@@ -577,7 +577,7 @@ extend(PieSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         pie: typeof PieSeries;
     }

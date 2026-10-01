@@ -21,7 +21,7 @@
  *
  * */
 
-import type CylinderSeriesOptions from './CylinderSeriesOptions';
+import type CylinderSeriesOptions from './CylinderSeriesOptions.js';
 
 import CylinderComposition from './CylinderComposition.js';
 import CylinderPoint from './CylinderPoint.js';
@@ -100,7 +100,7 @@ extend(CylinderSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         cylinder: typeof CylinderSeries;
     }

@@ -21,11 +21,11 @@
  *
  * */
 
-import type { GridNamespace } from './GridTypes';
+import type { GridNamespace } from './GridTypes.js';
 import type {
     DashboardsPlugin,
     Event as PluginHandlerEvent
-} from '../PluginHandler';
+} from '../PluginHandler.js';
 import GridComponent from '../Components/GridComponent/GridComponent.js';
 
 
@@ -35,7 +35,7 @@ import GridComponent from '../Components/GridComponent/GridComponent.js';
  *
  * */
 
-declare module '../Components/ComponentType' {
+declare module '../Components/ComponentType.js' {
     interface ComponentTypeRegistry {
         Grid: typeof GridComponent;
     }

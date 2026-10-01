@@ -18,10 +18,10 @@
  *
  * */
 
-import type { XAxisOptions } from './Axis/AxisOptions';
-import type { ChartOptions } from './Chart/ChartOptions';
-import type { SeriesOptions } from './Series/SeriesOptions';
-import type { LegendOptions } from './Legend/LegendOptions';
+import type { XAxisOptions } from './Axis/AxisOptions.js';
+import type { ChartOptions } from './Chart/ChartOptions.js';
+import type { SeriesOptions } from './Series/SeriesOptions.js';
+import type { LegendOptions } from './Legend/LegendOptions.js';
 
 import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';

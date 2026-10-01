@@ -19,22 +19,22 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Chart from '../../Core/Chart/Chart';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
 import type {
     DragDropGuideBoxOptions,
     DragDropOptions
-} from './DragDropOptions';
-import type Point from '../../Core/Series/Point';
-import type PointerEvent from '../../Core/PointerEvent';
-import type Series from '../../Core/Series/Series';
+} from './DragDropOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type PointerEvent from '../../Core/PointerEvent.js';
+import type Series from '../../Core/Series/Series.js';
 import type {
     PointDropEventObject,
     SeriesDragDropPropsObject
-} from './DraggablePoints';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+} from './DraggablePoints.js';
+import type PositionObject from '../../Core/Renderer/PositionObject.js';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import DDU from './DragDropUtilities.js';
@@ -56,7 +56,7 @@ import { addEvent, isArray, merge } from '../../Shared/Utilities.js';
  * */
 
 /** @internal */
-declare module '../../Core/Chart/ChartBase'{
+declare module '../../Core/Chart/ChartBase.js'{
     interface ChartBase {
         /** @requires modules/draggable-points */
         dragDropData?: DragDropDataObject;

@@ -20,9 +20,9 @@
  *
  * */
 
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type Symbols from '../../Core/Renderer/SVG/Symbols';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import type Symbols from '../../Core/Renderer/SVG/Symbols.js';
 
 /* *
  *
@@ -31,7 +31,7 @@ import type Symbols from '../../Core/Renderer/SVG/Symbols';
  * */
 
 /** @internal */
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/Exporting */
         menu: SymbolFunction;

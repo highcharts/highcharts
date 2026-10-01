@@ -22,18 +22,18 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type DataTable from '../../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType
-} from '../../../../Data/DataTable';
-import type { RowId } from '../../../Core/Data/DataProvider';
+} from '../../../../Data/DataTable.js';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
 import type {
     TreeIndexBuildResult,
     TreeNodeRecord
-} from '../TreeViewTypes';
+} from '../TreeViewTypes.js';
 import type {
     NormalizedTreeInputGroupingOptions
-} from '../TreeViewOptionsNormalizer';
+} from '../TreeViewOptionsNormalizer.js';
 
 import { normalizeRowIdValue } from '../TreeViewCommons.js';
 import { defined } from '../../../../Shared/Utilities.js';

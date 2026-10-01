@@ -18,7 +18,7 @@
  *
  * */
 
-import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
+import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions.js';
 
 /* *
  *

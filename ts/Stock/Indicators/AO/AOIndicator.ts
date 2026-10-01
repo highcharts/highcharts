@@ -14,11 +14,11 @@
  *
  * */
 
-import type AOOptions from './AOOptions';
-import type AOPoint from './AOPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type AOOptions from './AOOptions.js';
+import type AOPoint from './AOPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
@@ -283,7 +283,7 @@ extend(AOIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
     }

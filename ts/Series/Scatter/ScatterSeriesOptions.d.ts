@@ -16,16 +16,16 @@
  *
  * */
 
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type ScatterPointOptions from './ScatterPointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type ScatterPointOptions from './ScatterPointOptions.js';
 import type {
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+} from '../../Core/Series/SeriesOptions.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import { SeriesTooltipOptions } from '../../Core/TooltipOptions';
+} from '../../Core/Series/PointOptions.js';
+import { SeriesTooltipOptions } from '../../Core/TooltipOptions.js';
 
 /* *
  *

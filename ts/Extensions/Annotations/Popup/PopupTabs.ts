@@ -20,9 +20,9 @@
  *
  * */
 
-import type AnnotationChart from '../AnnotationChart';
-import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
-import type Popup from './Popup';
+import type AnnotationChart from '../AnnotationChart.js';
+import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+import type Popup from './Popup.js';
 
 import H from '../../../Core/Globals.js';
 const { doc } = H;

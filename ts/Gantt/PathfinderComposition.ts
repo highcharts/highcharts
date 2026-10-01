@@ -18,15 +18,15 @@
  *
  * */
 
-import type Chart from '../Core/Chart/Chart';
+import type Chart from '../Core/Chart/Chart.js';
 import type {
     ConnectorsMarkerOptions,
     ConnectorsOptions
-} from './ConnectorsOptions';
-import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
-import type Pathfinder from './Pathfinder';
-import type Point from '../Core/Series/Point';
-import type PositionObject from '../Core/Renderer/PositionObject';
+} from './ConnectorsOptions.js';
+import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions.js';
+import type Pathfinder from './Pathfinder.js';
+import type Point from '../Core/Series/Point.js';
+import type PositionObject from '../Core/Renderer/PositionObject.js';
 
 import ConnectorsDefaults from './ConnectorsDefaults.js';
 import D from '../Core/Defaults.js';
@@ -41,7 +41,7 @@ import { error } from '../Core/Utilities.js';
  * */
 
 /** @internal */
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         getMarkerVector(
             radians: number,
@@ -56,7 +56,7 @@ declare module '../Core/Series/PointBase' {
 }
 
 /** @internal */
-declare module '../Core/Series/PointOptions' {
+declare module '../Core/Series/PointOptions.js' {
     interface PointOptions {
         connect?: (
             PointConnectOptionsObject|

@@ -20,8 +20,8 @@
  *
  * */
 
-import type { AnyRecord } from '../Shared/Types';
-import type { JSONObject } from './JSON';
+import type { AnyRecord } from '../Shared/Types.js';
+import type { JSONObject } from './JSON.js';
 
 /* *
  *

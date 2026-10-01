@@ -16,16 +16,16 @@
  *
  * */
 
-import type BoxPlotPointOptions from './BoxPlotPointOptions';
+import type BoxPlotPointOptions from './BoxPlotPointOptions.js';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../Column/ColumnSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

@@ -18,7 +18,7 @@
  *
  * */
 
-import type { ApproximationArray } from './ApproximationType';
+import type { ApproximationArray } from './ApproximationType.js';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import {
@@ -184,7 +184,7 @@ function sum(
  *
  * */
 
-declare module './ApproximationType' {
+declare module './ApproximationType.js' {
     interface ApproximationTypeRegistry {
         average: typeof average,
         averages: typeof averages,

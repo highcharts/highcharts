@@ -39,7 +39,7 @@ const {
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectBase' {
+declare module '../../Core/Series/KDPointSearchObjectBase.js' {
     interface KDPointSearchObjectBase {
         plotX?: number;
         plotY?: number;

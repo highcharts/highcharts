@@ -16,18 +16,18 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
 import type {
     HeatmapPointMarkerOptions,
     HeatmapPointOptions
-} from './HeatmapPointOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
+} from './HeatmapPointOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
 import type {
     ScatterSeriesOptions,
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *
@@ -35,7 +35,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare module '../../Core/Series/StatesOptions' {
+declare module '../../Core/Series/StatesOptions.js' {
     interface StateOptionsBase {
         brightness?: number;
         height?: number;

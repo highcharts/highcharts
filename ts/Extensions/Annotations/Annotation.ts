@@ -18,32 +18,32 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type { AnnotationPointType } from './AnnotationSeries';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type { AnnotationPointType } from './AnnotationSeries.js';
 import type {
     AnnotationLabelOptions,
     AnnotationOptions,
     AnnotationShapeOptions
-} from './AnnotationOptions';
-import type { AnnotationTypeRegistry } from './Types/AnnotationType';
-import type AxisType from '../../Core/Axis/AxisType';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Chart from '../../Core/Chart/Chart';
+} from './AnnotationOptions.js';
+import type { AnnotationTypeRegistry } from './Types/AnnotationType.js';
+import type AxisType from '../../Core/Axis/AxisType.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type Chart from '../../Core/Chart/Chart.js';
 import type {
     ControllableLabelType,
     ControllableShapeType,
     ControllableType
-} from './Controllables/ControllableType';
+} from './Controllables/ControllableType.js';
 import type {
     ControllableLabelOptions,
     ControllableShapeOptions
-} from './Controllables/ControllableOptions';
+} from './Controllables/ControllableOptions.js';
 import type {
     AnnotationMockPointOptionsObject
-} from './AnnotationMockPointOptionsObject';
+} from './AnnotationMockPointOptionsObject.js';
 import type NavigationBindings from './NavigationBindings.js';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import {
     getDeferredAnimation
@@ -78,7 +78,7 @@ import {
  *
  * */
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options.js'{
     interface DefaultOptions {
         annotations?: AnnotationOptions;
     }

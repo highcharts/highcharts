@@ -16,11 +16,11 @@
  *
  * */
 
-import type Scatter3DPointOptions from './Scatter3DPointOptions';
+import type Scatter3DPointOptions from './Scatter3DPointOptions.js';
 import type {
     ScatterSeriesOptions,
     ScatterSeriesTooltipOptions
-} from '../Scatter/ScatterSeriesOptions';
+} from '../Scatter/ScatterSeriesOptions.js';
 
 /* *
  *

@@ -18,7 +18,7 @@
  *
  * */
 
-import type { DragNodesChart } from '../DragNodesComposition';
+import type { DragNodesChart } from '../DragNodesComposition.js';
 import type ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
 
 /* *

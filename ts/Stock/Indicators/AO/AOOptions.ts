@@ -14,11 +14,11 @@
  *
  * */
 
-import type ColorString from '../../../Core/Color/ColorString';
-import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
+import type ColorString from '../../../Core/Color/ColorString.js';
+import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions.js';
 import type {
     SMAOptions
-} from '../SMA/SMAOptions';
+} from '../SMA/SMAOptions.js';
 
 /* *
 *

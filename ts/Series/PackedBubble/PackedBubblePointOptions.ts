@@ -16,10 +16,10 @@
  *
  * */
 
-import type BubblePointOptions from '../Bubble/BubblePointOptions';
-import type NetworkgraphPointOptions from '../Networkgraph/NetworkgraphPointOptions';
-import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
-import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
+import type BubblePointOptions from '../Bubble/BubblePointOptions.js';
+import type NetworkgraphPointOptions from '../Networkgraph/NetworkgraphPointOptions.js';
+import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions.js';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel.js';
 
 /* *
  *

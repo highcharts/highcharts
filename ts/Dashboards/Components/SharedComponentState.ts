@@ -21,10 +21,10 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
+import type { AnyRecord } from '../../Shared/Types.js';
 
 import Serializable from '../Serializable.js';
-import type { JSON as SerializableJSON } from '../Serializable';
+import type { JSON as SerializableJSON } from '../Serializable.js';
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *

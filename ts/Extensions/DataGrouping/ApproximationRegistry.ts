@@ -18,7 +18,7 @@
  *
  * */
 
-import type { ApproximationTypeRegistry } from './ApproximationType';
+import type { ApproximationTypeRegistry } from './ApproximationType.js';
 
 /* *
  *

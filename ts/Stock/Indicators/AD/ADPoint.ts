@@ -12,8 +12,8 @@
  *
  * */
 
-import type ADIndicator from './ADIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type ADIndicator from './ADIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

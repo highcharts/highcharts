@@ -18,7 +18,7 @@
  *
  * */
 
-import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions.js';
 
 /* *
  *

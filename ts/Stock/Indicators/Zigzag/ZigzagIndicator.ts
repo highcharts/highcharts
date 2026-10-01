@@ -18,14 +18,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     ZigzagOptions,
     ZigzagParamsOptions
-} from './ZigzagOptions';
-import type ZigzagPoint from './ZigzagPoint';
+} from './ZigzagOptions.js';
+import type ZigzagPoint from './ZigzagPoint.js';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
@@ -286,7 +286,7 @@ extend(ZigzagIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         zigzag: typeof ZigzagIndicator;
     }

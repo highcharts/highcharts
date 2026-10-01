@@ -11,16 +11,16 @@
  *
  * */
 
-import type Annotation from './Annotation';
-import type AnnotationChart from './AnnotationChart';
-import type { AnnotationMockPointOptions } from './AnnotationOptions';
-import type { AnnotationPointType } from './AnnotationSeries';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Controllable from './Controllables/Controllable';
-import type ControlTargetOptions from './ControlTargetOptions';
+import type Annotation from './Annotation.js';
+import type AnnotationChart from './AnnotationChart.js';
+import type { AnnotationMockPointOptions } from './AnnotationOptions.js';
+import type { AnnotationPointType } from './AnnotationSeries.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type Controllable from './Controllables/Controllable.js';
+import type ControlTargetOptions from './ControlTargetOptions.js';
 import type {
     AnnotationMockPointOptionsObject
-} from './AnnotationMockPointOptionsObject';
+} from './AnnotationMockPointOptionsObject.js';
 
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';

@@ -18,12 +18,12 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
+import type WaterfallSeriesOptions from './WaterfallSeriesOptions.js';
 
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
@@ -54,7 +54,7 @@ import {
  *
  * */
 
-declare module '../../Core/Series/SeriesBase' {
+declare module '../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         showLine?: WaterfallSeries['showLine'];
@@ -931,7 +931,7 @@ namespace WaterfallSeries {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         waterfall: typeof WaterfallSeries;
     }

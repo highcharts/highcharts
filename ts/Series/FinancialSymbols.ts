@@ -18,11 +18,11 @@
  *
  * */
 
-import type Legend from '../Core/Legend/Legend';
-import type OHLCSeries from './OHLC/OHLCSeries';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
-import type { SymbolFunction } from '../Core/Renderer/SVG/SymbolType';
+import type Legend from '../Core/Legend/Legend.js';
+import type OHLCSeries from './OHLC/OHLCSeries.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath.js';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
+import type { SymbolFunction } from '../Core/Renderer/SVG/SymbolType.js';
 
 import H from '../Core/Globals.js';
 import { addEvent, crisp, pushUnique } from '../Shared/Utilities.js';
@@ -36,7 +36,7 @@ const { composed } = H;
  * */
 
 /** @internal */
-declare module '../Core/Renderer/SVG/SymbolType' {
+declare module '../Core/Renderer/SVG/SymbolType.js' {
     interface SymbolTypeRegistry {
         candlestick: SymbolFunction;
         hlc: SymbolFunction;

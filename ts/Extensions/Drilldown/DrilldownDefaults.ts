@@ -19,7 +19,7 @@
  *
  * */
 
-import type DrilldownOptions from './DrilldownOptions';
+import type DrilldownOptions from './DrilldownOptions.js';
 
 /* *
  *

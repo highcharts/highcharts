@@ -18,13 +18,13 @@
  *
  * */
 
-import type { AnnotationEventObject } from '../EventEmitter';
+import type { AnnotationEventObject } from '../EventEmitter.js';
 import type {
     AnnotationOptions,
     AnnotationTypeOptions
-} from '../AnnotationOptions';
-import type { ControlPointOptionsObject } from '../ControlPointOptions';
-import type PositionObject from '../../../Core/Renderer/PositionObject';
+} from '../AnnotationOptions.js';
+import type { ControlPointOptionsObject } from '../ControlPointOptions.js';
+import type PositionObject from '../../../Core/Renderer/PositionObject.js';
 
 import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
@@ -33,7 +33,7 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import { AnnotationMockPointFunction } from '../AnnotationOptions';
+import { AnnotationMockPointFunction } from '../AnnotationOptions.js';
 import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
@@ -342,7 +342,7 @@ namespace FibonacciTimeZones {
  * */
 
 /** @internal */
-declare module './AnnotationType'{
+declare module './AnnotationType.js'{
     interface AnnotationTypeRegistry {
         fibonacciTimeZones: typeof FibonacciTimeZones;
     }

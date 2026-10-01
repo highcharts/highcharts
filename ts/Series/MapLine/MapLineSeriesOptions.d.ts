@@ -4,11 +4,11 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type MapLinePointOptions from './MapLinePointOptions';
-import type MapSeriesOptions from '../Map/MapSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type MapLinePointOptions from './MapLinePointOptions.js';
+import type MapSeriesOptions from '../Map/MapSeriesOptions.js';
+import type { PointShortOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
 
 /* *
  *

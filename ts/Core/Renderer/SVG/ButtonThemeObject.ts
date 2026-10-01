@@ -16,8 +16,8 @@
  *
  * */
 
-import type SVGAttributes from './SVGAttributes';
-import type CSSObject from '../CSSObject';
+import type SVGAttributes from './SVGAttributes.js';
+import type CSSObject from '../CSSObject.js';
 
 /* *
  *

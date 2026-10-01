@@ -18,11 +18,11 @@
 import type {
     ABandsOptions,
     ABandsParamsOptions
-} from './ABandsOptions';
-import type ABandsPoint from './ABandsPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './ABandsOptions.js';
+import type ABandsPoint from './ABandsPoint.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -285,7 +285,7 @@ MultipleLinesComposition.compose(ABandsIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         abands: typeof ABandsIndicator;
     }

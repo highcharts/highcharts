@@ -23,7 +23,7 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
+import type Grid from '../../Core/Grid.js';
 
 import CreditsPro from './CreditsPro.js';
 import Globals from '../../Core/Globals.js';
@@ -74,7 +74,7 @@ function initCredits(this: Grid): void {
  *
  * */
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * Options for the credits label.
@@ -85,7 +85,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Grid' {
+declare module '../../Core/Grid.js' {
     export default interface Grid {
         credits?: CreditsPro;
     }

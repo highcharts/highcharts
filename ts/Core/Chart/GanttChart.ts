@@ -22,10 +22,10 @@
 import type {
     AxisOptions,
     YAxisOptions
-} from '../Axis/AxisOptions';
-import type { DeepPartial } from '../../Shared/Types';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type Options from '../Options';
+} from '../Axis/AxisOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { HTMLDOMElement } from '../Renderer/DOMElementType.js';
+import type Options from '../Options.js';
 
 import Chart from './Chart.js';
 import D from '../Defaults.js';
@@ -38,7 +38,7 @@ import { isArray, merge, splat } from '../../Shared/Utilities.js';
  *
  * */
 
-declare module '../Options' {
+declare module '../Options.js' {
     interface Options {
 
         /** @internal */

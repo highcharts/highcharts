@@ -18,7 +18,7 @@
  *
  * */
 
-import type NavigatorOptions from './NavigatorOptions';
+import type NavigatorOptions from './NavigatorOptions.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;

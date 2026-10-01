@@ -1,16 +1,14 @@
 {
     "compilerOptions": {
-        "downlevelIteration": true,
         "sourceMap": false,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strict": false,
         "stripInternal": true,
-        "baseUrl": "../",
-        "module": "es2022",
+        "module": "NodeNext",
         "moduleDetection": "auto",
         "allowUmdGlobalAccess": true,
-        "moduleResolution": "node",
+        "moduleResolution": "NodeNext",
         "target": "ES2022",
         "lib": [
             "dom",
@@ -18,10 +16,10 @@
             "ES2017.SharedMemory"
         ],
         "paths": {
-            "highcharts": ["code/highcharts"],
-            "highcharts/*": ["code/*"],
-            "@highcharts/dashboards": ["code/dashboards/dashboards"],
-            "@highcharts/dashboards/*": ["code/dashboards/dashboards/*"]
+            "highcharts": ["../code/highcharts"],
+            "highcharts/*": ["../code/*"],
+            "@highcharts/dashboards": ["../code/dashboards/dashboards"],
+            "@highcharts/dashboards/*": ["../code/dashboards/dashboards/*"]
         },
         "types": [
             // disable node types

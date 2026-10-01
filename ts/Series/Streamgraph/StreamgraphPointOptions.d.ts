@@ -16,7 +16,7 @@
  *
  * */
 
-import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions';
+import type AreaSplinePointOptions from '../AreaSpline/AreaSplinePointOptions.js';
 
 /* *
  *

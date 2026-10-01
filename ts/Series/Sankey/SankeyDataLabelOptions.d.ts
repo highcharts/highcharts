@@ -18,9 +18,9 @@
  *
  * */
 
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type Point from '../../Core/Series/Point';
-import type SankeyPoint from './SankeyPoint';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type Point from '../../Core/Series/Point.js';
+import type SankeyPoint from './SankeyPoint.js';
 
 /* *
  *

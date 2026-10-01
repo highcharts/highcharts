@@ -13,8 +13,8 @@
  *
  * */
 
-import type DMIIndicator from './DMIIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type DMIIndicator from './DMIIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

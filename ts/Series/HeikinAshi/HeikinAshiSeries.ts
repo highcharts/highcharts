@@ -18,9 +18,9 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions';
-import type Series from '../../Core/Series/Series';
+import type Axis from '../../Core/Axis/Axis.js';
+import type HeikinAshiSeriesOptions from './HeikinAshiSeriesOptions.js';
+import type Series from '../../Core/Series/Series.js';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
@@ -289,7 +289,7 @@ HeikinAshiSeries.prototype.pointClass = HeikinAshiPoint;
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         heikinashi: typeof HeikinAshiSeries;
     }

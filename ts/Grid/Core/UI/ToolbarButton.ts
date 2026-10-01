@@ -23,9 +23,9 @@
  *
  * */
 
-import type Toolbar from './Toolbar';
-import type Button from './Button';
-import type Popup from './Popup';
+import type Toolbar from './Toolbar.js';
+import type Button from './Button.js';
+import type Popup from './Popup.js';
 
 import { createGridIcon } from './SvgIcons.js';
 import Globals, { ClassNameKey } from '../Globals.js';

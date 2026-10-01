@@ -18,12 +18,12 @@
  *
  * */
 
-import type Grid from '../../Core/Grid';
-import type { DeepPartial } from '../../../Shared/Types';
-import type Options from '../../Core/Options';
+import type Grid from '../../Core/Grid.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type Options from '../../Core/Options.js';
 import type {
     CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
+} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -263,7 +263,7 @@ function isColumnActionVisible(context: CellContextMenuContext): boolean {
  *
  * */
 
-declare module '../../Core/Grid' {
+declare module '../../Core/Grid.js' {
     export default interface Grid {
         /**
          * Structural table editing controller.
@@ -272,7 +272,7 @@ declare module '../../Core/Grid' {
     }
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Options.js' {
     interface Options {
         /**
          * Options for built-in structural table editing.
@@ -290,7 +290,7 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
+declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions.js' {
     interface CellContextMenuBuiltInActionIdRegistry {
         addRowAbove: never;
         addRowBelow: never;

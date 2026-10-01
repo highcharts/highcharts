@@ -16,9 +16,9 @@
  *
  * */
 
-import type CandlestickPointOptions from './CandlestickPointOptions';
-import type CandlestickSeries from './CandlestickSeries';
-import type OHLCPoint from '../OHLC/OHLCPoint';
+import type CandlestickPointOptions from './CandlestickPointOptions.js';
+import type CandlestickSeries from './CandlestickSeries.js';
+import type OHLCPoint from '../OHLC/OHLCPoint.js';
 
 /* *
  *

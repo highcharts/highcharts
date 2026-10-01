@@ -17,7 +17,7 @@
  *
  * */
 
-import type MapPointOptions from '../Map/MapPointOptions';
+import type MapPointOptions from '../Map/MapPointOptions.js';
 
 /* *
  *

@@ -16,8 +16,8 @@
  *
  * */
 
-import type PointOptions from './PointOptions';
-import type SeriesBase from './SeriesBase';
+import type PointOptions from './PointOptions.js';
+import type SeriesBase from './SeriesBase.js';
 
 /* *
  *

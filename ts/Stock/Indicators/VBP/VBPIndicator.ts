@@ -20,22 +20,22 @@
  *
  * */
 
-import type AxisType from '../../../Core/Axis/AxisType';
-import type Chart from '../../../Core/Chart/Chart';
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
-import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type DataExtremesObject from '../../../Core/Series/DataExtremesObject';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import type AxisType from '../../../Core/Axis/AxisType.js';
+import type Chart from '../../../Core/Chart/Chart.js';
+import type ColumnSeries from '../../../Series/Column/ColumnSeries.js';
+import type CSSObject from '../../../Core/Renderer/CSSObject.js';
+import type DataExtremesObject from '../../../Core/Series/DataExtremesObject.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
 import type {
     VBPOptions,
     VBPParamsOptions
-} from './VBPOptions';
-import type { TypedArray } from '../../../Shared/Types';
+} from './VBPOptions.js';
+import type { TypedArray } from '../../../Shared/Types.js';
 import VBPPoint from './VBPPoint.js';
 
 import { animObject } from '../../../Core/Animation/AnimationUtilities.js';
@@ -974,7 +974,7 @@ namespace VBPIndicator {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         vbp: typeof VBPIndicator;
     }

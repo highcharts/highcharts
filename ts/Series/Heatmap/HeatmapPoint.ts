@@ -18,10 +18,10 @@
  *
  * */
 
-import type ColorMapComposition from '../ColorMapComposition';
-import type HeatmapPointOptions from './HeatmapPointOptions';
-import type HeatmapSeries from './HeatmapSeries';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type ColorMapComposition from '../ColorMapComposition.js';
+import type HeatmapPointOptions from './HeatmapPointOptions.js';
+import type HeatmapSeries from './HeatmapSeries.js';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

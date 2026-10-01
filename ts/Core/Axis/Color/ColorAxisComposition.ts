@@ -18,18 +18,18 @@
  *
  * */
 
-import type Axis from '../Axis';
-import type Chart from '../../Chart/Chart';
-import type ColorAxis from './ColorAxis';
-import type ColorAxisOptions from './ColorAxisOptions';
-import type ColorType from '../../Color/ColorType';
-import type Fx from '../../Animation/Fx';
-import type Legend from '../../Legend/Legend';
-import type Point from '../../Series/Point';
-import type Series from '../../Series/Series';
-import type SeriesOptions from '../../Series/SeriesOptions';
-import type SVGElement from '../../Renderer/SVG/SVGElement';
-import type TreemapSeries from '../../../Series/Treemap/TreemapSeries';
+import type Axis from '../Axis.js';
+import type Chart from '../../Chart/Chart.js';
+import type ColorAxis from './ColorAxis.js';
+import type ColorAxisOptions from './ColorAxisOptions.js';
+import type ColorType from '../../Color/ColorType.js';
+import type Fx from '../../Animation/Fx.js';
+import type Legend from '../../Legend/Legend.js';
+import type Point from '../../Series/Point.js';
+import type Series from '../../Series/Series.js';
+import type SeriesOptions from '../../Series/SeriesOptions.js';
+import type SVGElement from '../../Renderer/SVG/SVGElement.js';
+import type TreemapSeries from '../../../Series/Treemap/TreemapSeries.js';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
@@ -46,14 +46,14 @@ import {
  *
  * */
 
-declare module '../../Series/PointBase' {
+declare module '../../Series/PointBase.js' {
     interface PointBase {
         /** @requires ColorSeriesMixin */
         setVisible(vis?: boolean): void;
     }
 }
 
-declare module '../../Series/SeriesBase' {
+declare module '../../Series/SeriesBase.js' {
     interface SeriesBase {
         /** @requires ColorSeriesMixin */
         translateColors(): void;

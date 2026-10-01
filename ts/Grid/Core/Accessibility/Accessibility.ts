@@ -24,8 +24,8 @@
  *
  * */
 
-import type Grid from '../Grid';
-import type { ColumnSortingOrder, FilteringCondition } from '../Options';
+import type Grid from '../Grid.js';
+import type { ColumnSortingOrder, FilteringCondition } from '../Options.js';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
 import {

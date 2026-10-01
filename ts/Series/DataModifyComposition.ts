@@ -18,7 +18,7 @@
  *
  * */
 
-import type DataExtremesObject from '../Core/Series/DataExtremesObject';
+import type DataExtremesObject from '../Core/Series/DataExtremesObject.js';
 
 import Axis from '../Core/Axis/Axis.js';
 import Point from '../Core/Series/Point.js';
@@ -43,7 +43,7 @@ import {
  *
  * */
 
-declare module '../Core/Axis/AxisBase' {
+declare module '../Core/Axis/AxisBase.js' {
     interface AxisBase {
         setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
@@ -55,14 +55,14 @@ declare module '../Core/Axis/AxisBase' {
     }
 }
 
-declare module '../Core/Series/PointBase' {
+declare module '../Core/Series/PointBase.js' {
     interface PointBase {
         change?: number;
         cumulativeSum?: number;
     }
 }
 
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         /** @internal */
         dataModify?: DataModifyComposition.Additions;
@@ -71,7 +71,7 @@ declare module '../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../Core/Series/SeriesOptions.js' {
     interface SeriesOptions {
 
         /**

@@ -21,12 +21,12 @@
 
 import type {
     SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
-import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
-import type TimelinePointOptions from './TimelinePointOptions';
+} from '../../Core/Series/SeriesOptions.js';
+import type LineSeriesOptions from '../Line/LineSeriesOptions.js';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions.js';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions.js';
+import type TimelineDataLabelOptions from './TimelineDataLabelOptions.js';
+import type TimelinePointOptions from './TimelinePointOptions.js';
 
 /* *
  *

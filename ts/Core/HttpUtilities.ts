@@ -18,7 +18,7 @@
  *
  * */
 
-import type JSON from './JSON';
+import type JSON from './JSON.js';
 
 import G from '../Core/Globals.js';
 const { win } = G;

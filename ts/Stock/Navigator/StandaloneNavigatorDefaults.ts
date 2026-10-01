@@ -18,8 +18,8 @@
  *
  * */
 
-import type { DeepPartial } from '../../Shared/Types';
-import type { Options } from '../../Core/Options';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { Options } from '../../Core/Options.js';
 
 /* *
  *

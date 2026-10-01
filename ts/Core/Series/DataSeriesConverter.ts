@@ -22,10 +22,10 @@
  *
  * */
 
-import type { DataEventDetail } from '../../Data/DataEvent';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type PointOptions from './PointOptions';
-import type SeriesOptions from './SeriesOptions';
+import type { DataEventDetail } from '../../Data/DataEvent.js';
+import type LineSeries from '../../Series/Line/LineSeries.js';
+import type PointOptions from './PointOptions.js';
+import type SeriesOptions from './SeriesOptions.js';
 
 import type {
     CellType,

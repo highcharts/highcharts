@@ -15,14 +15,14 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 import type {
     WilliamsROptions,
     WilliamsRParamsOptions
-} from './WilliamsROptions';
-import type WilliamsRPoint from './WilliamsRPoint';
+} from './WilliamsROptions.js';
+import type WilliamsRPoint from './WilliamsRPoint.js';
 
 import AU from '../ArrayUtilities.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -182,7 +182,7 @@ extend(WilliamsRIndicator.prototype, {
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         williamsr: typeof WilliamsRIndicator;
     }

@@ -16,15 +16,15 @@
  *
  * */
 
-import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
-import type ColorType from '../../Core/Color/ColorType';
+import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions.js';
+import type ColorType from '../../Core/Color/ColorType.js';
 import type {
     PointMarkerOptions,
     PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { StackOverflowValue } from '../../Core/Axis/Stacking/StackingOptions';
-import type StreamgraphPointOptions from './StreamgraphPointOptions';
+} from '../../Core/Series/PointOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type { StackOverflowValue } from '../../Core/Axis/Stacking/StackingOptions.js';
+import type StreamgraphPointOptions from './StreamgraphPointOptions.js';
 
 /* *
  *

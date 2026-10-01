@@ -20,8 +20,8 @@
  *
  * */
 
-import type { EventCallback } from '../../Core/Callback';
-import type { DOMElementType } from '../../Core/Renderer/DOMElementType';
+import type { EventCallback } from '../../Core/Callback.js';
+import type { DOMElementType } from '../../Core/Renderer/DOMElementType.js';
 
 import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
 import H from '../../Core/Globals.js';

@@ -13,8 +13,8 @@
  *
  * */
 
-import type LinearRegressionIndicator from './LinearRegressionIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type LinearRegressionIndicator from './LinearRegressionIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

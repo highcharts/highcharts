@@ -16,7 +16,7 @@
  *
  * */
 
-import type BubblePointOptions from '../Bubble/BubblePointOptions';
+import type BubblePointOptions from '../Bubble/BubblePointOptions.js';
 
 /* *
  *

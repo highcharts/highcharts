@@ -23,10 +23,10 @@
  * */
 
 
-import type DataModifierOptions from './DataModifierOptions';
+import type DataModifierOptions from './DataModifierOptions.js';
 import type {
     CellType as DataTableCellType
-} from '../DataTable';
+} from '../DataTable.js';
 
 
 /* *

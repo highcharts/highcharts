@@ -11,15 +11,15 @@
  *
  * */
 
-import type Annotation from '../Annotation';
-import type AnnotationChart from '../AnnotationChart';
-import type { AnnotationPoint } from '../AnnotationSeries';
-import type Axis from '../../../Core/Axis/Axis';
-import type ControllableBase from './ControllableBase';
-import type ControllableOptions from './ControllableOptions';
-import type { DeepPartial } from '../../../Shared/Types';
-import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type Annotation from '../Annotation.js';
+import type AnnotationChart from '../AnnotationChart.js';
+import type { AnnotationPoint } from '../AnnotationSeries.js';
+import type Axis from '../../../Core/Axis/Axis.js';
+import type ControllableBase from './ControllableBase.js';
+import type ControllableOptions from './ControllableOptions.js';
+import type { DeepPartial } from '../../../Shared/Types.js';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
 
 import ControlTarget from '../ControlTarget.js';
 import { merge } from '../../../Shared/Utilities.js';

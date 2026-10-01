@@ -25,8 +25,8 @@
  *
  * */
 
-import type Board from '../../Board';
-import type Cell from '../../Layout/Cell';
+import type Board from '../../Board.js';
+import type Cell from '../../Layout/Cell.js';
 import type {
     Chart,
     Options as ChartOptions,
@@ -34,17 +34,17 @@ import type {
     Series,
     SeriesOptions,
     Point
-} from '../../Plugins/HighchartsTypes';
+} from '../../Plugins/HighchartsTypes.js';
 import type {
     ColumnAssignmentOptions,
     ConnectorOptions,
     ConstructorType,
     Options
-} from './HighchartsComponentOptions';
-import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions';
-import type SidebarPopup from '../../EditMode/SidebarPopup';
+} from './HighchartsComponentOptions.js';
+import type MathModifierOptions from '../../../Data/Modifiers/MathModifierOptions.js';
+import type SidebarPopup from '../../EditMode/SidebarPopup.js';
 
-import type { EventTypes as ComponentEventTypes } from '../Component';
+import type { EventTypes as ComponentEventTypes } from '../Component.js';
 
 import Component from '../Component.js';
 import DataConverter from '../../../Data/Converters/DataConverter.js';
@@ -52,7 +52,7 @@ import DataTable from '../../../Data/DataTable.js';
 import Globals from '../../Globals.js';
 import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
-import ConnectorHandler from '../../Components/ConnectorHandler';
+import ConnectorHandler from '../../Components/ConnectorHandler.js';
 import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
 import DU from '../../Utilities.js';
 import {

@@ -21,16 +21,16 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type DataTable from '../../../../Data/DataTable.js';
 import type {
     CellType as DataTableCellType
-} from '../../../../Data/DataTable';
-import type { RowId } from '../../../Core/Data/DataProvider';
+} from '../../../../Data/DataTable.js';
+import type { RowId } from '../../../Core/Data/DataProvider.js';
 import type {
     TreeProjectionRowState,
     TreeProjectionState,
     TreeViewColumnAggregatorOption
-} from '../TreeViewTypes';
+} from '../TreeViewTypes.js';
 import Aggregation from '../../Aggregation/Aggregation.js';
 import { defined } from '../../../../Shared/Utilities.js';
 

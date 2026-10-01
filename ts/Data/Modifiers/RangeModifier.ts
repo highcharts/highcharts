@@ -26,8 +26,8 @@
 
 import type {
     DataEventDetail
-} from '../DataEvent';
-import type { RangeModifierOptions } from './RangeModifierOptions';
+} from '../DataEvent.js';
+import type { RangeModifierOptions } from './RangeModifierOptions.js';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -157,7 +157,7 @@ class RangeModifier extends DataModifier {
  * */
 
 
-declare module './DataModifierType' {
+declare module './DataModifierType.js' {
     interface DataModifierTypes {
         Range: typeof RangeModifier;
     }

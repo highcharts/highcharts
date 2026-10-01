@@ -22,21 +22,21 @@
  *
  * */
 
-import type AreaSeries from '../Series/Area/AreaSeries';
+import type AreaSeries from '../Series/Area/AreaSeries.js';
 import type {
     BoostTargetAdditions,
     BoostTargetObject
-} from './Boost/BoostTargetObject';
-import type BubbleSeries from '../Series/Bubble/BubbleSeries';
-import type Chart from '../Core/Chart/Chart';
-import type ColumnSeries from '../Series/Column/ColumnSeries';
-import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
-import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type { TypedArray } from '../Shared/Types';
-import type ScatterSeries from '../Series/Scatter/ScatterSeries';
-import type Series from '../Core/Series/Series';
-import type SeriesRegistry from '../Core/Series/SeriesRegistry';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+} from './Boost/BoostTargetObject.js';
+import type BubbleSeries from '../Series/Bubble/BubbleSeries.js';
+import type Chart from '../Core/Chart/Chart.js';
+import type ColumnSeries from '../Series/Column/ColumnSeries.js';
+import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries.js';
+import type HTMLElement from '../Core/Renderer/HTML/HTMLElement.js';
+import type { TypedArray } from '../Shared/Types.js';
+import type ScatterSeries from '../Series/Scatter/ScatterSeries.js';
+import type Series from '../Core/Series/Series.js';
+import type SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes.js';
 
 import BoostChart from './Boost/BoostChart.js';
 const {
@@ -72,7 +72,7 @@ import {
  * made public, refactor to match BoostDebugOptions interface.
  * @internal
  */
-declare module './Boost/BoostOptions' {
+declare module './Boost/BoostOptions.js' {
     interface BoostOptions {
         timeRendering?: boolean;
         timeSeriesProcessing?: boolean;
@@ -81,7 +81,7 @@ declare module './Boost/BoostOptions' {
 }
 
 /** @internal */
-declare module '../Core/Series/SeriesBase' {
+declare module '../Core/Series/SeriesBase.js' {
     interface SeriesBase extends BoostTargetObject {
         /** @internal */
         cvsStrokeBatch?: number;

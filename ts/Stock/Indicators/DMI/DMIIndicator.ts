@@ -22,11 +22,11 @@
 import type {
     DMIOptions,
     DMIParamsOptions
-} from './DMIOptions';
-import type DMIPoint from './DMIPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+} from './DMIOptions.js';
+import type DMIPoint from './DMIPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
 
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -384,7 +384,7 @@ MultipleLinesComposition.compose(DMIIndicator);
  *
  * */
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         dmi: typeof DMIIndicator;
     }

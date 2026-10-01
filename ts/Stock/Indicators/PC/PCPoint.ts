@@ -13,8 +13,8 @@
  *
  * */
 
-import type PCIndicator from './PCIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type PCIndicator from './PCIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

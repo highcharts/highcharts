@@ -18,16 +18,16 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
-import type Point from './Series/Point';
-import type Pointer from './Pointer';
-import type PointerEvent from './PointerEvent';
-import type PositionObject from './Renderer/PositionObject';
-import type Series from './Series/Series';
-import type SizeObject from './Renderer/SizeObject';
-import type SVGAttributes from './Renderer/SVG/SVGAttributes';
-import type SVGElement from './Renderer/SVG/SVGElement';
-import type TooltipOptions from './TooltipOptions';
+import type Chart from './Chart/Chart.js';
+import type Point from './Series/Point.js';
+import type Pointer from './Pointer.js';
+import type PointerEvent from './PointerEvent.js';
+import type PositionObject from './Renderer/PositionObject.js';
+import type Series from './Series/Series.js';
+import type SizeObject from './Renderer/SizeObject.js';
+import type SVGAttributes from './Renderer/SVG/SVGAttributes.js';
+import type SVGElement from './Renderer/SVG/SVGElement.js';
+import type TooltipOptions from './TooltipOptions.js';
 
 import { animObject } from './Animation/AnimationUtilities.js';
 import F from './Templating.js';
@@ -78,19 +78,19 @@ const clearTimeouts = (tooltip: Tooltip): void => {
  *
  * */
 
-declare module './Chart/ChartBase' {
+declare module './Chart/ChartBase.js' {
     interface ChartBase {
         tooltip?: Tooltip;
     }
 }
 
-declare module './Series/PointBase' {
+declare module './Series/PointBase.js' {
     interface PointBase {
         isHeader?: boolean;
     }
 }
 
-declare module './Series/SeriesBase' {
+declare module './Series/SeriesBase.js' {
     interface SeriesBase {
         noSharedTooltip?: boolean;
         tt?: SVGElement;

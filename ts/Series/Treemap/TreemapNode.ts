@@ -18,9 +18,9 @@
  *
  * */
 
-import type TreemapSeries from './TreemapSeries';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type TreemapPoint from './TreemapPoint';
+import type TreemapSeries from './TreemapSeries.js';
+import type BBoxObject from '../../Core/Renderer/BBoxObject.js';
+import type TreemapPoint from './TreemapPoint.js';
 
 /* *
  *

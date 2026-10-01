@@ -20,14 +20,14 @@
  *
  * */
 
-import type Annotation from '../Annotation';
-import type AnnotationOptions from '../AnnotationOptions';
+import type Annotation from '../Annotation.js';
+import type AnnotationOptions from '../AnnotationOptions.js';
 import type {
     HTMLDOMElement,
     SVGDOMElement
-} from '../../../Core/Renderer/DOMElementType';
-import type NavigationBindings from '../NavigationBindings';
-import type Pointer from '../../../Core/Pointer';
+} from '../../../Core/Renderer/DOMElementType.js';
+import type NavigationBindings from '../NavigationBindings.js';
+import type Pointer from '../../../Core/Pointer.js';
 
 import H from '../../../Core/Globals.js';
 const { composed } = H;

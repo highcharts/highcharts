@@ -20,13 +20,13 @@
  *
  * */
 
-import type Accessibility from '../../Accessibility';
+import type Accessibility from '../../Accessibility.js';
 import type {
     PointMarkerOptions,
     PointOptions
-} from '../../../Core/Series/PointOptions';
+} from '../../../Core/Series/PointOptions.js';
 import type Series from '../../../Core/Series/Series.js';
-import type SeriesOptions from '../../../Core/Series/SeriesOptions';
+import type SeriesOptions from '../../../Core/Series/SeriesOptions.js';
 import H from '../../../Core/Globals.js';
 const { composed } = H;
 import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';

@@ -14,13 +14,13 @@
  * */
 
 import type DataGroupingOptions from
-    '../../../Extensions/DataGrouping/DataGroupingOptions';
-import type DataLabelOptions from '../../../Core/Series/DataLabelOptions';
+    '../../../Extensions/DataGrouping/DataGroupingOptions.js';
+import type DataLabelOptions from '../../../Core/Series/DataLabelOptions.js';
 import type {
     SMAOptions,
     SMAParamsOptions
-} from '../SMA/SMAOptions';
-import type VBPIndicator from './VBPIndicator';
+} from '../SMA/SMAOptions.js';
+import type VBPIndicator from './VBPIndicator.js';
 
 /* *
  *

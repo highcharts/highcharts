@@ -15,22 +15,22 @@
  *
  * */
 
-import type ColorType from '../../../Core/Color/ColorType';
+import type ColorType from '../../../Core/Color/ColorType.js';
 import type {
     IKHDrawSenkouSpanObject,
     IKHGapExtensionObject,
     IKHOptions,
     IKHParamsOptions,
     IKHSenkouSpanOptions
-} from './IKHOptions';
-import type IKHPoint from './IKHPoint';
-import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LinePoint from '../../../Series/Line/LinePoint';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type { TypedArray } from '../../../Shared/Types';
+} from './IKHOptions.js';
+import type IKHPoint from './IKHPoint.js';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject.js';
+import type LinePoint from '../../../Series/Line/LinePoint.js';
+import type LineSeries from '../../../Series/Line/LineSeries.js';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement.js';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath.js';
+import type { TypedArray } from '../../../Shared/Types.js';
 
 import ApproximationRegistry from '../../../Extensions/DataGrouping/ApproximationRegistry.js';
 import Axis from '../../../Core/Axis/Axis.js';
@@ -55,7 +55,7 @@ import {
  * */
 
 /** @internal */
-declare module '../../../Core/Series/SeriesBase' {
+declare module '../../../Core/Series/SeriesBase.js' {
     interface SeriesBase {
         fillGraph?: boolean;
     }
@@ -967,7 +967,7 @@ extend(IKHIndicator.prototype, {
 
 ApproximationRegistry['ichimoku-averages'] = ichimokuAverages;
 
-declare module '../../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
     }

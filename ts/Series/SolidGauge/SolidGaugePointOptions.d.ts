@@ -16,7 +16,7 @@
  *
  * */
 
-import type GaugePointOptions from '../Gauge/GaugePointOptions';
+import type GaugePointOptions from '../Gauge/GaugePointOptions.js';
 
 /* *
  *

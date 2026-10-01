@@ -16,7 +16,7 @@
 
 'use strict';
 
-import type TimelineChannel from './TimelineChannel';
+import type TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 /** @internal */
 interface MIDIEvent {

@@ -18,8 +18,8 @@
  *
  * */
 
-import type MapChart from '../Core/Chart/MapChart';
-import type MapNavigationOptions from './MapNavigationOptions';
+import type MapChart from '../Core/Chart/MapChart.js';
+import type MapNavigationOptions from './MapNavigationOptions.js';
 
 /* *
  *

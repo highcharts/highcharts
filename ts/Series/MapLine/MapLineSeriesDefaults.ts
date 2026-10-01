@@ -18,7 +18,7 @@
  *
  * */
 
-import type MapLineSeriesOptions from './MapLineSeriesOptions';
+import type MapLineSeriesOptions from './MapLineSeriesOptions.js';
 
 /* *
  *

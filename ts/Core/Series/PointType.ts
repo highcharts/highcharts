@@ -16,7 +16,7 @@
  *
  * */
 
-import type Point from './Point';
+import type Point from './Point.js';
 
 /* *
  *

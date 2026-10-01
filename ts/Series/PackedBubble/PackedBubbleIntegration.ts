@@ -18,9 +18,9 @@
  *
  * */
 
-import type { GraphIntegrationObject } from '../GraphLayoutComposition';
-import type PackedBubbleLayout from './PackedBubbleLayout';
-import type PackedBubblePoint from './PackedBubblePoint';
+import type { GraphIntegrationObject } from '../GraphLayoutComposition.js';
+import type PackedBubbleLayout from './PackedBubbleLayout.js';
+import type PackedBubblePoint from './PackedBubblePoint.js';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;

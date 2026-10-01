@@ -16,7 +16,7 @@
  *
  * */
 
-import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions';
+import type BoxPlotPointOptions from '../BoxPlot/BoxPlotPointOptions.js';
 
 /* *
  *

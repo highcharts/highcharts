@@ -19,32 +19,32 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../../Core/Renderer/AlignObject';
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type Annotation from './Annotation';
+} from '../../Core/Renderer/AlignObject.js';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type Annotation from './Annotation.js';
 import type {
     AnnotationMockPointOptionsObject
-} from './AnnotationMockPointOptionsObject';
-import type AST from '../../Core/Renderer/HTML/AST';
-import type ColorType from '../../Core/Color/ColorType';
-import type Controllable from './Controllables/Controllable';
-import type ControlPointOptions from './ControlPointOptions';
-import type ControlTargetOptions from './ControlTargetOptions';
-import type CoreOptions from '../../Core/Options';
-import type CSSObject from '../../Core/Renderer/CSSObject';
+} from './AnnotationMockPointOptionsObject.js';
+import type AST from '../../Core/Renderer/HTML/AST.js';
+import type ColorType from '../../Core/Color/ColorType.js';
+import type Controllable from './Controllables/Controllable.js';
+import type ControlPointOptions from './ControlPointOptions.js';
+import type ControlTargetOptions from './ControlTargetOptions.js';
+import type CoreOptions from '../../Core/Options.js';
+import type CSSObject from '../../Core/Renderer/CSSObject.js';
 import type {
     DataLabelsOverflowValue
-} from '../../Core/Series/DataLabelOptions';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type { DeepPartial } from '../../Shared/Types';
-import type { EventCallback } from '../../Core/Callback';
-import type NavigationOptions from '../Exporting/NavigationOptions';
-import type Point from '../../Core/Series/Point';
+} from '../../Core/Series/DataLabelOptions.js';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue.js';
+import type { DeepPartial } from '../../Shared/Types.js';
+import type { EventCallback } from '../../Core/Callback.js';
+import type NavigationOptions from '../Exporting/NavigationOptions.js';
+import type Point from '../../Core/Series/Point.js';
 import type {
     ShadowOptionsObject
-} from '../../Core/Renderer/ShadowOptionsObject';
-import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type Templating from '../../Core/Templating';
+} from '../../Core/Renderer/ShadowOptionsObject.js';
+import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType.js';
+import type Templating from '../../Core/Templating.js';
 
 /* *
  *

@@ -20,7 +20,7 @@
  *
  * */
 
-import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
+import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions.js';
 
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
@@ -415,7 +415,7 @@ extend(DependencyWheelSeries.prototype, {
  *
  * */
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType.js' {
     interface SeriesTypeRegistry {
         dependencywheel: typeof DependencyWheelSeries;
     }

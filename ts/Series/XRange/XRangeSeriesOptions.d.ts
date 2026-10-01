@@ -21,11 +21,11 @@
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
-} from '../Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type XRangePointOptions from './XRangePointOptions';
-import type { XRangePointPartialFillOptions } from './XRangePointOptions';
+} from '../Column/ColumnSeriesOptions.js';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions.js';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions.js';
+import type XRangePointOptions from './XRangePointOptions.js';
+import type { XRangePointPartialFillOptions } from './XRangePointOptions.js';
 
 /* *
  *

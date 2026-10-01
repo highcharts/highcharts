@@ -4,10 +4,10 @@
  *
  * */
 
-import type AnnotationChart from './AnnotationChart';
-import type MockPoint from './MockPoint';
-import type Point from '../../Core/Series/Point';
-import type Series from '../../Core/Series/Series';
+import type AnnotationChart from './AnnotationChart.js';
+import type MockPoint from './MockPoint.js';
+import type Point from '../../Core/Series/Point.js';
+import type Series from '../../Core/Series/Series.js';
 
 /* *
  *
@@ -16,7 +16,7 @@ import type Series from '../../Core/Series/Series';
  * */
 
 /** @internal */
-declare module '../../Core/Series/PointBase' {
+declare module '../../Core/Series/PointBase.js' {
     interface PointBase {
         mock?: boolean;
     }

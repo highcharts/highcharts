@@ -15,7 +15,7 @@
 'use strict';
 
 import type Point from '../../Core/Series/Point.js';
-import type SonificationSpeaker from './SonificationSpeaker';
+import type SonificationSpeaker from './SonificationSpeaker.js';
 import SonificationInstrument from './SonificationInstrument.js';
 
 

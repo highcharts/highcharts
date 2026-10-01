@@ -17,7 +17,7 @@
  * */
 
 
-import type { ChartZoomingOptions } from '../../Core/Chart/ChartOptions';
+import type { ChartZoomingOptions } from '../../Core/Chart/ChartOptions.js';
 
 /* *
  *
@@ -25,7 +25,7 @@ import type { ChartZoomingOptions } from '../../Core/Chart/ChartOptions';
  *
  * */
 
-declare module '../../Core/Chart/ChartOptions'{
+declare module '../../Core/Chart/ChartOptions.js'{
     interface ChartZoomingOptions {
         /**
          * The mouse wheel zoom is a feature included in Highcharts Stock, but

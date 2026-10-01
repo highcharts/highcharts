@@ -21,13 +21,13 @@ import type {
     AlignObject,
     AlignValue,
     VerticalAlignValue
-} from '../../Core/Renderer/AlignObject';
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions';
-import type Chart from '../../Core/Chart/Chart';
-import type { CSSObject } from '../../Core/Renderer/CSSObject';
-import type Drilldown from './Drilldown';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+} from '../../Core/Renderer/AlignObject.js';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions.js';
+import type { ButtonRelativeToValue } from '../../Maps/MapNavigationOptions.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type { CSSObject } from '../../Core/Renderer/CSSObject.js';
+import type Drilldown from './Drilldown.js';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType.js';
 
 /* *
  *
@@ -35,7 +35,7 @@ import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
  *
  * */
 
-declare module '../../Core/Chart/ChartOptions' {
+declare module '../../Core/Chart/ChartOptions.js' {
     interface ChartEventsOptions {
         /**
          * Fires when a drilldown point is clicked, before the new series is

@@ -16,9 +16,9 @@
  *
  * */
 
-import type LinePoint from '../Line/LinePoint';
-import type SplinePointOptions from './SplinePointOptions';
-import type SplineSeries from './SplineSeries';
+import type LinePoint from '../Line/LinePoint.js';
+import type SplinePointOptions from './SplinePointOptions.js';
+import type SplineSeries from './SplineSeries.js';
 
 /* *
  *

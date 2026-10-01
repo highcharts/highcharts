@@ -3,11 +3,12 @@
     "compilerOptions": {
         "composite": false,
         "declaration": false,
-        "module": "es6",
-        "moduleResolution": "node",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "outDir": "../../code/es5/es-modules/",
         "rootDir": "../",
         "target": "es5",
+        "ignoreDeprecations": "6.0",
         "lib": [
             "DOM",
             "ES5",

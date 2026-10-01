@@ -23,7 +23,7 @@
  *
  * */
 
-import type Component from '../Components/Component';
+import type Component from '../Components/Component.js';
 
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';

@@ -18,9 +18,9 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis';
-import type Chart from '../../Core/Chart/Chart';
-import type RangeSelector from './RangeSelector';
+import type Axis from '../../Core/Axis/Axis.js';
+import type Chart from '../../Core/Chart/Chart.js';
+import type RangeSelector from './RangeSelector.js';
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../../Core/Globals.js';

@@ -23,7 +23,7 @@
  *
  * */
 
-import type Button from '../../../UI/Button';
+import type Button from '../../../UI/Button.js';
 
 import ColumnFiltering from '../../Actions/ColumnFiltering/ColumnFiltering.js';
 import Popup, { PopupOptions } from '../../../UI/Popup.js';

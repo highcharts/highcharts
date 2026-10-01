@@ -17,7 +17,7 @@
  *
  * */
 
-import type MapSeriesOptions from '../Map/MapSeriesOptions';
+import type MapSeriesOptions from '../Map/MapSeriesOptions.js';
 
 /* *
  *

@@ -16,12 +16,12 @@ import type {
     AnnotationOptions,
     AnnotationShapeOptionsOptions,
     AnnotationTypeOptions
-} from '../AnnotationOptions';
-import type { AnnotationPointType } from '../AnnotationSeries';
-import type Controllable from '../Controllables/Controllable';
+} from '../AnnotationOptions.js';
+import type { AnnotationPointType } from '../AnnotationSeries.js';
+import type Controllable from '../Controllables/Controllable.js';
 import type {
     AnnotationMockPointOptionsObject
-} from '../AnnotationMockPointOptionsObject';
+} from '../AnnotationMockPointOptionsObject.js';
 
 import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
@@ -283,7 +283,7 @@ namespace VerticalLine {
  * */
 
 /** @internal */
-declare module './AnnotationType'{
+declare module './AnnotationType.js'{
     interface AnnotationTypeRegistry {
         verticalLine: typeof VerticalLine;
     }

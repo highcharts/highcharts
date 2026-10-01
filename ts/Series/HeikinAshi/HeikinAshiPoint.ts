@@ -18,7 +18,7 @@
  *
  * */
 
-import type HeikinAshiSeries from './HeikinAshiSeries';
+import type HeikinAshiSeries from './HeikinAshiSeries.js';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

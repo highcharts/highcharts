@@ -20,13 +20,13 @@
  *
  * */
 
-import type { AnyRecord } from '../../Shared/Types';
-import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions';
-import type { JSONObject } from '../JSON';
+import type { AnyRecord } from '../../Shared/Types.js';
+import type InvertModifierOptions from '../../Data/Modifiers/InvertModifierOptions.js';
+import type { JSONObject } from '../JSON.js';
 
-import InvertModifier from '../../Data/Modifiers/InvertModifier';
+import InvertModifier from '../../Data/Modifiers/InvertModifier.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable.js';
 
 /* *
  *

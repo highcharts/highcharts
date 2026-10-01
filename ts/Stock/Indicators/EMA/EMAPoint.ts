@@ -13,8 +13,8 @@
  *
  * */
 
-import type EMAIndicator from './EMAIndicator';
-import type SMAPoint from '../SMA/SMAPoint';
+import type EMAIndicator from './EMAIndicator.js';
+import type SMAPoint from '../SMA/SMAPoint.js';
 
 /* *
  *

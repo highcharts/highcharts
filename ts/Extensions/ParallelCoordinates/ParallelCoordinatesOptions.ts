@@ -18,8 +18,8 @@
  *
  * */
 
-import type AxisOptions from '../../Core/Axis/AxisOptions';
-import type { DeepPartial } from '../../Shared/Types';
+import type AxisOptions from '../../Core/Axis/AxisOptions.js';
+import type { DeepPartial } from '../../Shared/Types.js';
 
 /* *
  *
@@ -27,7 +27,7 @@ import type { DeepPartial } from '../../Shared/Types';
  *
  * */
 
-declare module '../../Core/Chart/ChartOptions' {
+declare module '../../Core/Chart/ChartOptions.js' {
     interface ChartOptions extends ParallelCoordinatesOptions {
         // Nothing to add
     }

@@ -23,7 +23,7 @@
  * */
 
 
-import type DataModifierOptions from './DataModifierOptions';
+import type DataModifierOptions from './DataModifierOptions.js';
 
 
 /* *
