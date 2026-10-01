@@ -18,8 +18,10 @@
 *
 * */
 
+import type { PointAndFigurePointOptions } from './PointAndFigurePointOptions';
+import type PointAndFigureSeries from './PointAndFigureSeries';
+
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import type PointAndFigureSeries from './PointAndFigureSeries.js';
 const {
     seriesTypes: {
         scatter: {
@@ -36,10 +38,6 @@ const {
  *
  * */
 
-/**
- * @internal
- * @class
- */
 class PointAndFigurePoint extends ScatterPoint {
 
     /* *
@@ -51,7 +49,8 @@ class PointAndFigurePoint extends ScatterPoint {
     /** @internal */
     public upTrend!: boolean;
 
-    /** @internal */
+    public options!: PointAndFigurePointOptions;
+
     public series!: PointAndFigureSeries;
 
     /* *
@@ -78,7 +77,6 @@ class PointAndFigurePoint extends ScatterPoint {
     /**
      * Extend the parent method by adding up or down to the class name.
      * @internal
-     * @function Highcharts.seriesTypes.pointandfigure#getClassName
      */
     public getClassName(): string {
         return super.getClassName.call(this) +
@@ -97,5 +95,4 @@ class PointAndFigurePoint extends ScatterPoint {
  *
  * */
 
-/** @internal */
 export default PointAndFigurePoint;

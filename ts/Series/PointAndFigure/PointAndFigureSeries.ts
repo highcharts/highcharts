@@ -69,7 +69,6 @@ const {
 /**
  * The series type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pointandfigure
  *
@@ -120,6 +119,7 @@ class PointAndFigureSeries extends ScatterSeries {
     /** @internal */
     public yData!: Array<number>;
 
+    /** @internal */
     public allowDG = false;
 
     /* *
@@ -371,7 +371,6 @@ extend(PointAndFigureSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pointandfigure: typeof PointAndFigureSeries;
@@ -386,5 +385,4 @@ SeriesRegistry.registerSeriesType('pointandfigure', PointAndFigureSeries);
  *
  * */
 
-/** @internal */
 export default PointAndFigureSeries;
