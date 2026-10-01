@@ -35,30 +35,61 @@ import DU from '../../Utilities.js';
 import { diffObjects, merge } from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
-// TODO: This may affect the AST parsing in Highcharts
-// should look into adding these as options if possible
-// Needs to go in a composition in the Highcharts plugin
-AST.allowedTags = [
-    ...AST.allowedTags,
-    'option',
-    'select',
-    'label',
-    'input',
-    'textarea'
-];
-AST.allowedAttributes = [
-    ...AST.allowedAttributes,
-    'for',
-    'value',
-    'checked',
-    'src',
-    'name',
-    'selected'
-];
-AST.allowedReferences = [
-    ...AST.allowedReferences,
-    'data:image/'
-];
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Runs the callback with the form tags, attributes and image references this
+ * component needs added to the shared allow lists, then restores them.
+ *
+ * Widening the lists when the module is imported would hand the extra tags to
+ * every other component, including ones that render values straight from a
+ * connector. Only raster image subtypes are added, as `data:image/svg+xml`
+ * can carry a script.
+ *
+ * @internal
+ */
+function withComponentTags<T>(callback: () => T): T {
+    const tags = AST.allowedTags,
+        attributes = AST.allowedAttributes,
+        references = AST.allowedReferences;
+
+    AST.allowedTags = [
+        ...tags,
+        'option',
+        'select',
+        'label',
+        'input',
+        'textarea'
+    ];
+    AST.allowedAttributes = [
+        ...attributes,
+        'for',
+        'value',
+        'checked',
+        'src',
+        'name',
+        'selected'
+    ];
+    AST.allowedReferences = [
+        ...references,
+        'data:image/gif',
+        'data:image/jpeg',
+        'data:image/png',
+        'data:image/webp'
+    ];
+
+    try {
+        return callback();
+    } finally {
+        AST.allowedTags = tags;
+        AST.allowedAttributes = attributes;
+        AST.allowedReferences = references;
+    }
+}
 
 /* *
  *
@@ -250,8 +281,12 @@ class HTMLComponent extends Component {
             this.contentElement.firstChild.remove();
         }
 
-        const parser = new AST(this.options.elements || []);
-        parser.addToDOM(this.contentElement);
+        // The allow lists are only consulted here, in `addToDOM`, not while
+        // the markup is parsed into nodes.
+        withComponentTags((): void => {
+            const parser = new AST(this.options.elements || []);
+            parser.addToDOM(this.contentElement);
+        });
     }
 
     /**
