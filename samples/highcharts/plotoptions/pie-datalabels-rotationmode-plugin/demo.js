@@ -8,17 +8,21 @@
  * rendered upside down on the left hemisphere, for better consistency in an
  * animated wheel of fortune setup.
  *
- * Updated 2026-09-27
+ * Known issues:
+ * - When animating more than 180 degrees, the data labels will rotate along the
+ *   shortest path. That's why the range input is set to -90 to 89 degrees in
+ *   the demo.
+ *
+ * Updated 2026-10-01
  */
-(({ animate, animObject, merge, wrap }) => {
+(({ animate, animObject, relativeLength, wrap }) => {
 
     // Wrap the placeDataLabels method to apply the rotation mode
     wrap(
         Highcharts.seriesTypes.pie.prototype,
         'placeDataLabels',
         function (proceed) {
-            const seriesDLOptions = this.options.dataLabels,
-                animation = animObject(this.chart.renderer.globalAnimation);
+            const animation = animObject(this.chart.renderer.globalAnimation);
 
             // Call the original placeDataLabels method
             proceed.apply(this);
@@ -26,13 +30,16 @@
             // Apply rotation mode if specified
             for (const point of this.points) {
                 for (const dataLabel  of point.dataLabels || []) {
-                    const options = merge(seriesDLOptions, dataLabel.options);
+                    const options = dataLabel.options;
                     if (
                         options.rotationMode === 'perpendicular' ||
                         options.rotationMode === 'perpendicular-fixed'
                     ) {
                         const radius = this.center[2] / 2,
-                            { distance } = options,
+                            distance = relativeLength(
+                                options.distance || 0,
+                                radius
+                            ),
                             lastAngle = dataLabel.lastPerpendicularAngle,
                             vertical = options.style.writingMode ===
                                 'vertical-rl',
