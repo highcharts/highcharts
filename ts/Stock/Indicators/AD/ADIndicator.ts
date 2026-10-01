@@ -62,8 +62,8 @@ class ADIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/accumulation-distribution
+     * @requires     indicators/indicators
+     * @requires     indicators/accumulation-distribution
      * @optionparent plotOptions.ad
      * @internal
      */
@@ -243,8 +243,8 @@ export default ADIndicator;
  * @extends   series,plotOptions.ad
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/accumulation-distribution
+ * @requires  indicators/indicators
+ * @requires  indicators/accumulation-distribution
  * @apioption series.ad
  */
 

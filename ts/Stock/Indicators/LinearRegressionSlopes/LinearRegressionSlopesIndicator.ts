@@ -62,8 +62,8 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregressionslope
      * @internal
      */
@@ -156,8 +156,8 @@ export default LinearRegressionSlopesIndicator;
  * @extends   series,plotOptions.linearregressionslope
  * @since     7.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregressionslope
  */
 

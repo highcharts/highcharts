@@ -43,8 +43,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/roc
+ * @requires     indicators/indicators
+ * @requires     indicators/roc
  * @interface Highcharts.ROCOptions
  */
 export interface ROCOptions extends SMAOptions {
