@@ -5,17 +5,35 @@
  * How it works:
  * - Scans `ts/**\/*Options.ts` files (excludes Dashboards, Grid, masters, .d.ts)
  * - For each Options file that has a matching `*Defaults.ts` sibling, finds all
- *   `const x: SomeType = { ... }` variable declarations in the Defaults file
+ *   `const x: SomeType = { ... }` variable declarations in the Defaults file,
+ *   also where the type is wrapped in `Partial<>` or `DeepPartial<>`
  * - For each such typed const, looks up the interface with the same name in the
  *   Options file and collects @default doclets from its properties
  * - Reports mismatches between documented and actual defaults
+ * - For properties not set in the Defaults const, compares the doclet with the
+ *   @default of the @apioption block in the Defaults file whose path is the
+ *   const's @optionparent plus the property path
+ *   (e.g. plotOptions.pie.innerSize)
+ * - Separately, scans all Options files for @default doclets with template
+ *   expressions (e.g. ${palette.*}), which are never valid default values
+ * - Counts defaults that are set in the Defaults const or documented by an
+ *   @apioption block, but have no @default doclet on the interface member
+ * - Counts @default doclets whose property is neither set in the Defaults const
+ *   nor documented by an @apioption block, as those can't be verified
+ * - To list both counted groups as failures, run from repo root:
+ *   `DEFAULT_DOCLETS_STRICT=1 npx tsx --test test/ts-node-unit-tests/tests/default-doclets.test.ts`
  *
  * Limitations:
- * - Only checks properties that are explicitly set in the Defaults const; properties
- *   whose defaults come from parent merges or inheritance are not verified here
+ * - Properties whose defaults come from parent merges or inheritance are only
+ *   verified where an @apioption block in the same Defaults file documents them
  * - Recurses only into inline type literals — does not follow named type references
  *   (e.g. a property typed as `SomeOtherOptions` won't have its members checked)
- * - Skips @default doclets that contain template expressions (e.g. ${palette.*})
+ * - Missing @default doclets are only reported for members declared inline in
+ *   the interface, not for members of parent interfaces or named types
+ * - Object values in the Defaults const are not expected to have a @default
+ *   doclet, since their members are checked on their own
+ * - @default doclets that are not valid TS literals are compared as raw text,
+ *   and a quoted string matches the same text without quotes ('y' and y)
  */
 
 import { describe, it } from 'node:test';
@@ -34,12 +52,24 @@ const IGNORE_GLOBS = [
     'ts/masters*/**',
     '**/*.d.ts'
 ];
+const STRICT = !!process.env.DEFAULT_DOCLETS_STRICT;
 
 type DefaultMap = Map<string, string>;
 
+interface DefaultsObject {
+    defaults: DefaultMap;
+    optionParent?: string;
+}
+
+/**
+ * Collects the `@default` doclets of an interface by property path. If `paths`
+ * is given, it also receives the path of every inline member, with or without
+ * a doclet.
+ */
 function collectDefaultTags(
     sourceFile: TS.SourceFile,
-    interfaceName: string
+    interfaceName: string,
+    paths?: Set<string>
 ): DefaultMap {
     const defaults: DefaultMap = new Map();
 
@@ -48,7 +78,7 @@ function collectDefaultTags(
             TS.isInterfaceDeclaration(statement) &&
             statement.name.text === interfaceName
         ) {
-            collectMembers(defaults, statement.members, '');
+            collectMembers(defaults, statement.members, '', paths);
         }
     }
 
@@ -68,7 +98,8 @@ function collectDefaultsFromObject(
 function collectMembers(
     defaults: DefaultMap,
     members: TS.NodeArray<TS.TypeElement>,
-    prefix: string
+    prefix: string,
+    paths?: Set<string>
 ): void {
     for (const member of members) {
         if (!TS.isPropertySignature(member) || !member.type) {
@@ -84,11 +115,13 @@ function collectMembers(
         const path = getPath(prefix, name);
         const docletDefault = getDocletDefault(member);
 
+        paths?.add(path);
+
         if (docletDefault) {
             defaults.set(path, docletDefault);
         }
 
-        collectTypeMembers(defaults, member.type, path);
+        collectTypeMembers(defaults, member.type, path, paths);
     }
 }
 
@@ -124,15 +157,16 @@ function collectObjectProperties(
 function collectTypeMembers(
     defaults: DefaultMap,
     typeNode: TS.TypeNode,
-    prefix: string
+    prefix: string,
+    paths?: Set<string>
 ): void {
     if (TS.isParenthesizedTypeNode(typeNode)) {
-        collectTypeMembers(defaults, typeNode.type, prefix);
+        collectTypeMembers(defaults, typeNode.type, prefix, paths);
         return;
     }
 
     if (TS.isTypeLiteralNode(typeNode)) {
-        collectMembers(defaults, typeNode.members, prefix);
+        collectMembers(defaults, typeNode.members, prefix, paths);
         return;
     }
 
@@ -141,13 +175,63 @@ function collectTypeMembers(
         TS.isUnionTypeNode(typeNode)
     ) {
         for (const nestedType of typeNode.types) {
-            collectTypeMembers(defaults, nestedType, prefix);
+            collectTypeMembers(defaults, nestedType, prefix, paths);
         }
     }
 }
 
-function getDefaultsObjects(sourceFile: TS.SourceFile): Map<string, DefaultMap> {
-    const defaults = new Map<string, DefaultMap>();
+function collectApiOptionDefaults(sourceFile: TS.SourceFile): DefaultMap {
+    const defaults: DefaultMap = new Map();
+
+    for (const [block] of sourceFile.text.matchAll(/\/\*\*[\s\S]*?\*\//gu)) {
+        const tags = parseDocletTags(block);
+        const apiOption = tags.get('apioption')?.split(/\s/u)[0];
+        const docletDefault = normalizeDocletDefault(tags.get('default'));
+
+        if (apiOption && docletDefault && !defaults.has(apiOption)) {
+            defaults.set(apiOption, docletDefault);
+        }
+    }
+
+    return defaults;
+}
+
+/**
+ * Collects the defaults that an Options interface should document, by
+ * property path: the values set in the Defaults object, and the `@default` of
+ * each `@apioption` block below its `@optionparent`. Object values are
+ * skipped, since their members are collected on their own.
+ */
+function collectKnownDefaults(
+    defaultsObject: DefaultsObject,
+    apiOptionDefaults: DefaultMap
+): DefaultMap {
+    const { defaults, optionParent } = defaultsObject;
+    const known: DefaultMap = new Map();
+
+    if (optionParent) {
+        const prefix = `${optionParent}.`;
+
+        for (const [apiOption, value] of apiOptionDefaults) {
+            if (apiOption.startsWith(prefix)) {
+                known.set(apiOption.slice(prefix.length), value);
+            }
+        }
+    }
+
+    for (const [path, value] of defaults) {
+        if (!value.startsWith('{')) {
+            known.set(path, value);
+        }
+    }
+
+    return known;
+}
+
+function getDefaultsObjects(
+    sourceFile: TS.SourceFile
+): Map<string, DefaultsObject> {
+    const defaults = new Map<string, DefaultsObject>();
 
     for (const statement of sourceFile.statements) {
         if (!TS.isVariableStatement(statement)) {
@@ -155,25 +239,56 @@ function getDefaultsObjects(sourceFile: TS.SourceFile): Map<string, DefaultMap> 
         }
 
         for (const declaration of statement.declarationList.declarations) {
+            const typeName = declaration.type &&
+                getOptionsTypeName(declaration.type);
+
             if (
                 !TS.isIdentifier(declaration.name) ||
-                !declaration.type ||
-                !TS.isTypeReferenceNode(declaration.type) ||
-                !TS.isIdentifier(declaration.type.typeName) ||
+                !typeName ||
                 !declaration.initializer ||
                 !TS.isObjectLiteralExpression(declaration.initializer)
             ) {
                 continue;
             }
 
-            defaults.set(
-                declaration.type.typeName.text,
-                collectDefaultsFromObject(declaration.initializer)
-            );
+            const optionParentTag = TS.getJSDocTags(declaration)
+                .find(tag => tag.tagName.text === 'optionparent');
+
+            defaults.set(typeName, {
+                defaults: collectDefaultsFromObject(declaration.initializer),
+                optionParent: optionParentTag &&
+                    stringifyComment(optionParentTag.comment) || void 0
+            });
         }
     }
 
     return defaults;
+}
+
+/**
+ * Returns the name of the Options interface that a Defaults object is typed
+ * with. `Partial<FooOptions>` and `DeepPartial<FooOptions>` return
+ * `FooOptions`.
+ */
+function getOptionsTypeName(typeNode: TS.TypeNode): (string|undefined) {
+    if (
+        !TS.isTypeReferenceNode(typeNode) ||
+        !TS.isIdentifier(typeNode.typeName)
+    ) {
+        return;
+    }
+
+    const name = typeNode.typeName.text;
+    const typeArguments = typeNode.typeArguments;
+
+    if (
+        (name === 'Partial' || name === 'DeepPartial') &&
+        typeArguments?.length === 1
+    ) {
+        return getOptionsTypeName(typeArguments[0]);
+    }
+
+    return name;
 }
 
 function getDocletDefault(node: TS.Node): (string|undefined) {
@@ -184,17 +299,94 @@ function getDocletDefault(node: TS.Node): (string|undefined) {
         return;
     }
 
-    const comment = stringifyComment(defaultTag.comment);
+    return normalizeDocletDefault(stringifyComment(defaultTag.comment));
+}
 
+/**
+ * Compares two normalized defaults. A quoted string matches the same text
+ * without quotes, since Defaults files often write strings without quotes,
+ * such as `@default y`.
+ */
+function isSameDefault(a: string, b: string): boolean {
+    const unquote = (value: string): string => (
+        /^'.*'$/su.test(value) ?
+            value.slice(1, -1).replace(/\\(.)/gu, '$1') :
+            value
+    );
+
+    return a === b || unquote(a) === unquote(b);
+}
+
+function normalizeDocletDefault(
+    comment: (string|undefined)
+): (string|undefined) {
     if (
         !comment ||
-        /^\{[a-z|]+\}\s/u.test(comment) ||
-        comment.includes('${')
+        /^\{[a-z|]+\}\s/u.test(comment)
     ) {
         return;
     }
 
-    return normalizeTextValue(comment);
+    return normalizeTextValue(comment) ?? comment;
+}
+
+/**
+ * Reads the tags of a raw JSDoc block. The text of a tag runs until the next
+ * line that starts with a tag, so a value on several lines, such as an array,
+ * stays whole.
+ */
+function parseDocletTags(block: string): Map<string, string> {
+    const tags = new Map<string, string>();
+    let lines: (Array<string>|undefined);
+
+    for (const line of block.slice(3, -2).split('\n')) {
+        const text = line.replace(/^\s*\*?\s?/u, '');
+        const match = text.match(/^@(\w+)\s*(.*)$/u);
+
+        if (match) {
+            // If a tag repeats, keep the first one
+            lines = tags.has(match[1]) ? void 0 : [match[2]];
+
+            if (lines) {
+                tags.set(match[1], match[2]);
+            }
+            continue;
+        }
+
+        if (lines) {
+            lines.push(text);
+            tags.set([...tags.keys()].pop() as string, lines.join('\n'));
+        }
+    }
+
+    for (const [name, text] of tags) {
+        tags.set(name, text.trim());
+    }
+
+    return tags;
+}
+
+function collectTemplateDefaults(sourceFile: TS.SourceFile): Array<string> {
+    const found: Array<string> = [];
+    const visit = (node: TS.Node): void => {
+        for (const tag of TS.getJSDocTags(node)) {
+            const comment = stringifyComment(tag.comment);
+
+            if (tag.tagName.text === 'default' && comment.includes('${')) {
+                const { line } = sourceFile
+                    .getLineAndCharacterOfPosition(tag.getStart());
+
+                found.push(
+                    `${sourceFile.fileName}:${line + 1}: @default ${comment}`
+                );
+            }
+        }
+        TS.forEachChild(node, visit);
+    };
+
+    visit(sourceFile);
+
+    return found;
 }
 
 function getPath(prefix: string, name: string): string {
@@ -365,14 +557,7 @@ function normalizeObjectPropertyName(
 }
 
 function normalizeTextValue(text: string): (string|undefined) {
-    const sourceFile = TS.createSourceFile(
-        'default-doclet.ts',
-        `const value = (${text});`,
-        TS.ScriptTarget.Latest,
-        true,
-        TS.ScriptKind.TS
-    );
-    const statement = sourceFile.statements[0];
+    const statement = parseSource(`const value = (${text});`).statements[0];
 
     if (
         !statement ||
@@ -382,13 +567,18 @@ function normalizeTextValue(text: string): (string|undefined) {
         return;
     }
 
-    const declaration = statement.declarationList.declarations[0];
+    const initializer = statement.declarationList.declarations[0].initializer;
 
-    if (!declaration.initializer) {
+    // Reject text the parser could not consume fully, e.g. `${palette.x}`
+    if (
+        !initializer ||
+        !TS.isParenthesizedExpression(initializer) ||
+        initializer.expression.getText() !== text
+    ) {
         return;
     }
 
-    return normalizeExpression(declaration.initializer);
+    return normalizeExpression(initializer);
 }
 
 function normalizeWhitespace(text: string): string {
@@ -418,14 +608,18 @@ function stringifyComment(
         .trim();
 }
 
-function parseSource(code: string): TS.SourceFile {
+function parseSource(code: string, fileName = 'test.ts'): TS.SourceFile {
     return TS.createSourceFile(
-        'test.ts',
+        fileName,
         code,
         TS.ScriptTarget.Latest,
         true,
         TS.ScriptKind.TS
     );
+}
+
+function readSource(path: string): TS.SourceFile {
+    return parseSource(TS.sys.readFile(join(REPO_ROOT, path)) || '', path);
 }
 
 describe('Helper: normalizeTextValue', () => {
@@ -456,6 +650,12 @@ describe('Helper: normalizeTextValue', () => {
             normalizeTextValue("['a', 'b']"),
             "['a', 'b']"
         );
+    });
+
+    it('returns undefined for text that is not a valid literal', () => {
+        strictEqual(normalizeTextValue('${palette.backgroundColor}'), void 0);
+        strictEqual(normalizeTextValue('10\nDesktop'), void 0);
+        strictEqual(normalizeTextValue('%e %b %Y'), void 0);
     });
 });
 
@@ -506,7 +706,7 @@ describe('Helper: collectDefaultTags', () => {
         strictEqual(defaults.size, 0);
     });
 
-    it('skips @default containing template expressions', () => {
+    it('keeps @default that is not a valid literal as raw text', () => {
         const src = parseSource(
             'interface FooOptions {\n' +
             '    /** @default ${palette.backgroundColor} */\n' +
@@ -515,7 +715,27 @@ describe('Helper: collectDefaultTags', () => {
         );
 
         const defaults = collectDefaultTags(src, 'FooOptions');
-        strictEqual(defaults.size, 0);
+        strictEqual(defaults.get('color'), '${palette.backgroundColor}');
+    });
+});
+
+describe('Helper: collectTemplateDefaults', () => {
+    it('finds @default with template expressions at any depth', () => {
+        const src = parseSource(
+            'interface FooOptions {\n' +
+            '    style: CSSObject & {\n' +
+            '        /** @default ${palette.neutralColor80} */\n' +
+            '        color?: string;\n' +
+            '    };\n' +
+            "    /** @default 'var(--highcharts-background-color)' */\n" +
+            '    backgroundColor?: string;\n' +
+            '}'
+        );
+
+        strictEqual(
+            collectTemplateDefaults(src).join(),
+            'test.ts:3: @default ${palette.neutralColor80}'
+        );
     });
 });
 
@@ -562,16 +782,151 @@ describe('Helper: collectDefaultsFromObject', () => {
     });
 });
 
+describe('Helper: collectApiOptionDefaults', () => {
+    it('collects @default by @apioption path, with multi-line values', () => {
+        const src = parseSource(`
+            const FooDefaults: FooOptions = {
+                /**
+                 * Bare text value.
+                 *
+                 * @type      {string}
+                 * @default   y
+                 * @apioption plotOptions.foo.onKey
+                 */
+
+                /**
+                 * @default [
+                 *     "#2caffe",
+                 *     "#544fc5"
+                 * ]
+                 * @apioption plotOptions.foo.colors
+                 */
+
+                /**
+                 * @apioption plotOptions.foo.noDefault
+                 */
+                enabled: true
+            };
+        `);
+
+        const defaults = collectApiOptionDefaults(src);
+        strictEqual(defaults.get('plotOptions.foo.onKey'), 'y');
+        strictEqual(
+            defaults.get('plotOptions.foo.colors'),
+            "['#2caffe', '#544fc5']"
+        );
+        strictEqual(defaults.has('plotOptions.foo.noDefault'), false);
+    });
+});
+
+describe('Helper: getDefaultsObjects', () => {
+    it('reads @optionparent of the typed const', () => {
+        const src = parseSource(`
+            /**
+             * @optionparent plotOptions.foo
+             */
+            const FooDefaults: FooOptions = {
+                enabled: true
+            };
+        `);
+
+        const foo = getDefaultsObjects(src).get('FooOptions');
+        strictEqual(foo?.optionParent, 'plotOptions.foo');
+        strictEqual(foo?.defaults.get('enabled'), 'true');
+    });
+});
+
+describe('Helper: collectDefaultTags with paths', () => {
+    it('collects the path of every inline member', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                /** @default true */
+                enabled?: boolean;
+                label?: {
+                    text?: string;
+                };
+                style?: CSSObject;
+            }
+        `);
+
+        const paths = new Set<string>();
+
+        collectDefaultTags(src, 'FooOptions', paths);
+        strictEqual(
+            [...paths].join(),
+            'enabled,label,label.text,style'
+        );
+    });
+});
+
+describe('Helper: getOptionsTypeName', () => {
+    it('unwraps Partial and DeepPartial', () => {
+        const src = parseSource(`
+            const a: FooOptions = {};
+            const b: Partial<FooOptions> = {};
+            const c: DeepPartial<FooOptions> = {};
+            const d: Record<string, FooOptions> = {};
+        `);
+
+        const names = src.statements.map(statement => getOptionsTypeName(
+            (statement as TS.VariableStatement)
+                .declarationList.declarations[0].type as TS.TypeNode
+        ));
+
+        strictEqual(names.join(), 'FooOptions,FooOptions,FooOptions,Record');
+    });
+});
+
+describe('Helper: collectKnownDefaults', () => {
+    it('merges Defaults values with @apioption defaults of the parent', () => {
+        const known = collectKnownDefaults(
+            {
+                defaults: new Map([
+                    ['enabled', 'true'],
+                    ['label', "{ text: 'hello' }"],
+                    ['label.text', "'hello'"]
+                ]),
+                optionParent: 'plotOptions.foo'
+            },
+            new Map([
+                ['plotOptions.foo.size', '10'],
+                ['plotOptions.bar.size', '20'],
+                ['series.foo.size', '30']
+            ])
+        );
+
+        strictEqual(
+            [...known].map(entry => entry.join('=')).join(),
+            "size=10,enabled=true,label.text='hello'"
+        );
+    });
+});
+
+describe('Helper: isSameDefault', () => {
+    it('matches a quoted string with the same bare text', () => {
+        strictEqual(isSameDefault("'chart'", 'chart'), true);
+        strictEqual(isSameDefault('chart', "'chart'"), true);
+        strictEqual(isSameDefault("'it\\'s'", "it's"), true);
+    });
+
+    it('does not match different values', () => {
+        strictEqual(isSameDefault('80', '90'), false);
+        strictEqual(isSameDefault("'chart'", "'map'"), false);
+    });
+});
+
 describe('Options @default doclets', () => {
+    const optionsFiles = glob.sync(OPTIONS_GLOB, {
+        cwd: REPO_ROOT,
+        ignore: IGNORE_GLOBS
+    });
+
     it('should match paired defaults files', (t) => {
         const failures: Array<string> = [];
+        const unverified: Array<string> = [];
+        const undocumented: Array<string> = [];
         let checksPerformed = 0;
         let pairedCount = 0;
-
-        const optionsFiles = glob.sync(OPTIONS_GLOB, {
-            cwd: REPO_ROOT,
-            ignore: IGNORE_GLOBS
-        });
 
         for (const optionsPath of optionsFiles) {
             const defaultsPath = optionsPath.replace(
@@ -585,37 +940,64 @@ describe('Options @default doclets', () => {
 
             pairedCount++;
 
-            const optionsSource = TS.createSourceFile(
-                optionsPath,
-                TS.sys.readFile(join(REPO_ROOT, optionsPath)) || '',
-                TS.ScriptTarget.Latest,
-                true,
-                TS.ScriptKind.TS
-            );
-            const defaultsSource = TS.createSourceFile(
-                defaultsPath,
-                TS.sys.readFile(join(REPO_ROOT, defaultsPath)) || '',
-                TS.ScriptTarget.Latest,
-                true,
-                TS.ScriptKind.TS
-            );
+            const optionsSource = readSource(optionsPath);
+            const defaultsSource = readSource(defaultsPath);
             const defaultsObjects = getDefaultsObjects(defaultsSource);
+            const apiOptionDefaults = collectApiOptionDefaults(defaultsSource);
 
-            for (const [interfaceName, actualDefaults] of defaultsObjects) {
+            for (const [interfaceName, defaultsObject] of defaultsObjects) {
+                const {
+                    defaults: actualDefaults,
+                    optionParent
+                } = defaultsObject;
+                const memberPaths = new Set<string>();
                 const docletDefaults = collectDefaultTags(
                     optionsSource,
-                    interfaceName
+                    interfaceName,
+                    memberPaths
                 );
 
+                for (const [path, value] of collectKnownDefaults(
+                    defaultsObject,
+                    apiOptionDefaults
+                )) {
+                    // Members declared elsewhere, e.g. in a named type or a
+                    // parent interface, are not checked
+                    if (memberPaths.has(path) && !docletDefaults.has(path)) {
+                        undocumented.push(
+                            `${optionsPath} | ${interfaceName}.${path} | ` +
+                            `missing @default ${value}`
+                        );
+                    }
+                }
+
                 for (const [path, expected] of docletDefaults) {
-                    if (!actualDefaults.has(path)) {
+                    let actual = actualDefaults.get(path);
+                    let source = 'Defaults';
+
+                    if (typeof actual === 'undefined') {
+                        const apiOption = optionParent &&
+                            getPath(optionParent, path);
+
+                        actual = apiOption ?
+                            apiOptionDefaults.get(apiOption) :
+                            void 0;
+                        source = `@apioption ${apiOption}`;
+                    }
+
+                    if (typeof actual === 'undefined') {
+                        unverified.push(
+                            `${optionsPath} | ${interfaceName}.${path} | ` +
+                            `@default ${expected} can't be verified: ` +
+                            'property is neither set in Defaults nor ' +
+                            'documented by @apioption'
+                        );
                         continue;
                     }
 
                     checksPerformed++;
-                    const actual = actualDefaults.get(path);
 
-                    if (actual !== expected) {
+                    if (!isSameDefault(actual, expected)) {
                         failures.push(
                             [
                                 `${relative(REPO_ROOT, join(
@@ -624,7 +1006,7 @@ describe('Options @default doclets', () => {
                                 ))}`,
                                 `${interfaceName}.${path}`,
                                 `expected @default ${expected}`,
-                                `actual ${actual}`
+                                `actual ${actual} (${source})`
                             ].join(' | ')
                         );
                     }
@@ -636,6 +1018,35 @@ describe('Options @default doclets', () => {
             `Checked ${checksPerformed} @default doclet(s) across ` +
             `${optionsFiles.length} Options files ` +
             `(${pairedCount} paired with Defaults).`
+        );
+
+        if (STRICT) {
+            failures.push(...unverified, ...undocumented);
+        } else {
+            if (unverified.length) {
+                t.diagnostic(
+                    `${unverified.length} @default doclet(s) can't be ` +
+                    'verified: property is neither set in Defaults nor ' +
+                    'documented by @apioption. ' +
+                    'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
+                );
+            }
+
+            if (undocumented.length) {
+                t.diagnostic(
+                    `${undocumented.length} default(s) set in Defaults ` +
+                    'have no @default doclet in Options. ' +
+                    'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
+                );
+            }
+        }
+
+        strictEqual(failures.length, 0, failures.join('\n'));
+    });
+
+    it('should not use template expressions', () => {
+        const failures = optionsFiles.flatMap(
+            optionsPath => collectTemplateDefaults(readSource(optionsPath))
         );
 
         strictEqual(failures.length, 0, failures.join('\n'));
