@@ -3,6 +3,5 @@ name: Growth Chart Hypothetical
 description: Renders a hypothetical portfolio growth chart versus benchmark using the HypoPerformance connector.
 tags:
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...

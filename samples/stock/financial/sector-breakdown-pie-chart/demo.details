@@ -4,6 +4,5 @@ description: Displays global stock sector breakdown as a pie chart synchronized 
 tags:
   - Dashboards
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...

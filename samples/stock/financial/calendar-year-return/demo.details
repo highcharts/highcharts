@@ -3,6 +3,5 @@ name: Calendar Year Return
 description: Displays portfolio calendar year returns as a column chart compared to a benchmark.
 tags:
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...

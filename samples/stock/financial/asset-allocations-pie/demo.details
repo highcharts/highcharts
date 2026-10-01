@@ -4,6 +4,5 @@ description: Shows fund asset allocation as a donut pie chart with a data grid.
 tags:
   - Dashboards
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...

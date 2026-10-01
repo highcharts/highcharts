@@ -3,6 +3,5 @@ name: X-Ray US Trailing Returns
 description: Displays trailing returns for a US portfolio versus its benchmark as a column chart.
 tags:
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...

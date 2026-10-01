@@ -3,6 +3,5 @@ name: Credit Quality Breakdown
 description: Compares credit quality distribution between two funds as a grouped column chart.
 tags:
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...

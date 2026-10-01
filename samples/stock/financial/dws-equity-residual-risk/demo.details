@@ -3,6 +3,5 @@ name: DWS Equity Residual Risk
 description: Shows daily and monthly Alpha, Beta, and R-Square residual risk as column charts.
 tags:
   - Morningstar
-requiresManualTesting: true
 js_wrap: b
 ...
