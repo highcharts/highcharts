@@ -61,29 +61,86 @@ body {
 
 /* Link the series colors to axis colors */
 .highcharts-color-0 {
-    fill: #7cb5ec;
-    stroke: #7cb5ec;
+    fill: #1c84e4;
+    stroke: #1c84e4;
 }
 
 .highcharts-axis.highcharts-color-0 .highcharts-axis-line {
-    stroke: #7cb5ec;
+    stroke: #1c84e4;
 }
 
 .highcharts-axis.highcharts-color-0 text {
-    fill: #7cb5ec;
+    fill: #1c84e4;
 }
 
 .highcharts-color-1 {
-    fill: #90ed7d;
-    stroke: #90ed7d;
+    fill: #30b914;
+    stroke: #30b914;
 }
 
 .highcharts-axis.highcharts-color-1 .highcharts-axis-line {
-    stroke: #90ed7d;
+    stroke: #30b914;
 }
 
 .highcharts-axis.highcharts-color-1 text {
-    fill: #90ed7d;
+    fill: #30b914;
+}
+
+@media (prefers-color-scheme: dark) {
+    /* Lighter color for dark mode */
+    .highcharts-color-0 {
+        fill: #7cb5ec;
+        stroke: #7cb5ec;
+    }
+
+    .highcharts-axis.highcharts-color-0 .highcharts-axis-line {
+        stroke: #7cb5ec;
+    }
+
+    .highcharts-axis.highcharts-color-0 text {
+        fill: #7cb5ec;
+    }
+
+    .highcharts-color-1 {
+        fill: #90ed7d;
+        stroke: #90ed7d;
+    }
+
+    .highcharts-axis.highcharts-color-1 .highcharts-axis-line {
+        stroke: #90ed7d;
+    }
+
+    .highcharts-axis.highcharts-color-1 text {
+        fill: #90ed7d;
+    }
+}
+
+.highcharts-dark {
+    .highcharts-color-0 {
+        fill: #7cb5ec;
+        stroke: #7cb5ec;
+    }
+
+    .highcharts-axis.highcharts-color-0 .highcharts-axis-line {
+        stroke: #7cb5ec;
+    }
+
+    .highcharts-axis.highcharts-color-0 text {
+        fill: #7cb5ec;
+    }
+
+    .highcharts-color-1 {
+        fill: #90ed7d;
+        stroke: #90ed7d;
+    }
+
+    .highcharts-axis.highcharts-color-1 .highcharts-axis-line {
+        stroke: #90ed7d;
+    }
+
+    .highcharts-axis.highcharts-color-1 text {
+        fill: #90ed7d;
+    }
 }
 
 .highcharts-description {
