@@ -185,9 +185,9 @@ function onChartRender(
     if (
         this.graphLayoutsLookup && (
             !this.pointer?.hasDragged ||
-            this.graphLayoutsLookup.some((layout): boolean | undefined =>
-                layout.nodes.some((node): boolean | undefined =>
-                    node.inDragMode
+            this.graphLayoutsLookup.some((layout): boolean =>
+                layout.nodes.some(
+                    (node): boolean => !!node.inDragMode
                 )
             )
         )

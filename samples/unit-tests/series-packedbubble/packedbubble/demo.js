@@ -281,10 +281,10 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
 
         requestAnimationFrame(() => {
             assert.close(
-                parentNode.plotX,
+                parentNode.graphic.attr('x') + parentNodeRadius,
                 startX + 2 * dx,
                 1,
-                'Parent node should be dragged, #25421.'
+                'Dragged parent node graphic should follow the mouse, #25421.'
             );
             assert.close(
                 parentNode.graphic.attr('x') + parentNodeRadius,
