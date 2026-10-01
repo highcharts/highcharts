@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import {
     access,
     mkdtemp,
@@ -13,6 +14,20 @@ import { join } from 'node:path';
 import test from 'node:test';
 
 const require = createRequire(import.meta.url);
+const { require: requireTS } = require('tsx/cjs/api');
+const {
+    appendError,
+    recordCandidateResult,
+    resetVisualRun,
+    writeReference
+} = requireTS('../../tests/visual/visual-results.ts', import.meta.url);
+const VisualReporter = requireTS(
+    '../../tests/visual/visual-reporter.ts', import.meta.url
+).default;
+const workflow = require('js-yaml').safeLoad(await readFile(
+    new URL('../../.github/workflows/nightly.yml', import.meta.url), 'utf8'
+));
+const visualSteps = workflow.jobs.nightly_visual_diff.steps;
 const commandArgv = { _: [], $0: 'node' };
 Object.defineProperty(require('yargs'), 'argv', {
     value: commandArgv
@@ -357,9 +372,11 @@ test('fails when the selected nightly archive is no longer current', async () =>
 });
 
 test('submits nightly visual results with GitHub Actions metadata', async () => {
-    const sampleRoot = await mkdtemp(join(tmpdir(), 'highcharts-nightly-submit-'));
-    const resultsPath = join(sampleRoot, 'results.json');
-    const errorsPath = join(sampleRoot, 'errors.log');
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-submit-'));
+    const sampleRoot = join(root, 'samples');
+    const referenceRoot = join(root, 'tmp/nightly-reference-samples');
+    const resultsPath = join(root, 'test/visual-test-results.json');
+    const errorsPath = join(root, 'test/visual-test-errors.log');
     const previousEnvironment = {
         GITHUB_RUN_ATTEMPT: process.env.GITHUB_RUN_ATTEMPT,
         GITHUB_RUN_ID: process.env.GITHUB_RUN_ID,
@@ -377,15 +394,14 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
     const requests = [];
 
     try {
-        await writeSample(sampleRoot, 'highcharts/demo/basic-line', {
-            'reference.svg': '<svg>old</svg>',
-            'candidate.svg': '<svg>new</svg>',
-            'diff.gif': 'GIF89a'
+        const id = 'highcharts/demo/basic-line';
+        writeReference(root, id, '<svg>new</svg>');
+        copyNightlyReferences({ sampleRoot, referenceRoot });
+        await writeSample(sampleRoot, id, {
+            'reference.svg': '<svg>old</svg>'
         });
-        await writeFile(resultsPath, JSON.stringify({
-            meta: { browser: 'Firefox' },
-            'highcharts/demo/basic-line': 12
-        }));
+        resetVisualRun(root, [id]);
+        recordCandidateResult(root, id, 12, '<svg>new</svg>', Buffer.from('GIF89a'));
 
         process.env.GITHUB_RUN_ATTEMPT = '2';
         process.env.GITHUB_RUN_ID = '9876';
@@ -399,6 +415,7 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
         Object.assign(commandArgv, {
             _: [],
             errorsPath,
+            referenceRoot,
             resultsPath,
             sampleRoot,
             tag: '13.0.1'
@@ -422,7 +439,6 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
         assert.equal(manifest.productVersion, '13.0.1');
         assert.deepEqual(manifest.testReport, {
             meta: {
-                browser: 'Firefox',
                 version: '13.0.1'
             },
             'highcharts/demo/basic-line': 12
@@ -438,13 +454,16 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
                 artifact.data
             ]),
             [
-                ['reference', Buffer.from('<svg>old</svg>').toString('base64')],
+                ['reference', Buffer.from('<svg>new</svg>').toString('base64')],
                 ['candidate', Buffer.from('<svg>new</svg>').toString('base64')],
                 ['difference', Buffer.from('GIF89a').toString('base64')]
             ]
         );
+        appendError(root, 'Sample execution failed');
+        assert.equal(await updateNightlyTestResults(), false);
+        assert.equal(requests.length, 3, 'Sample errors must prevent publication');
     } finally {
-        await rm(sampleRoot, { recursive: true, force: true });
+        await rm(root, { recursive: true, force: true });
         if (previousFetch === undefined) {
             delete globalThis.fetch;
         } else {
@@ -461,5 +480,81 @@ test('submits nightly visual results with GitHub Actions metadata', async () => 
                 process.env[key] = value;
             }
         }
+    }
+});
+
+test('nightly selects every eligible product sample and gates publication', () => {
+    const { selectVisualSamples } = requireTS(
+        '../../tests/visual/visual-samples.ts', import.meta.url
+    );
+    const job = workflow.jobs.nightly_visual_diff;
+    assert.deepEqual(
+        selectVisualSamples(process.cwd(), {
+            manifest: job.env?.VISUAL_TEST_MANIFEST,
+            filter: job.env?.VISUAL_TEST_PATH
+        }).map(sample => sample.id).sort(),
+        selectVisualSamples(process.cwd()).map(sample => sample.id).sort()
+    );
+    const orderedNames = [
+        'Generate nightly references',
+        'Preserve generated reference images',
+        'Sync references from Visual Review API',
+        'Run nightly visual comparison',
+        'Verify nightly visual completion',
+        'Publish nightly visual results'
+    ];
+    const steps = visualSteps.filter(step => orderedNames.includes(step.name));
+    assert.deepEqual(steps.map(step => step.name), orderedNames);
+    for (const step of steps) {
+        assert.equal(step['continue-on-error'], undefined);
+        assert.equal(step.if, undefined, 'Each step requires prior success');
+    }
+    assert.equal(steps[0].env.VISUAL_TEST_REFERENCE, '1');
+    assert.equal(job.env?.VISUAL_TEST_REFERENCE, undefined);
+    assert.equal(steps[3].env?.VISUAL_TEST_REFERENCE, undefined);
+});
+
+test('nightly completion gate handles actual Playwright reporter outcomes', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'highcharts-nightly-completion-'));
+    const id = 'highcharts/demo/basic-line';
+    const gate = visualSteps.find(step =>
+        step.name === 'Verify nightly visual completion'
+    ).run;
+    try {
+        for (const scenario of ['success', 'sample-error', 'terminal-error']) {
+            const reporter = new VisualReporter({ root, referenceMode: false });
+            const sample = {
+                title: id,
+                location: { file: '/tests/visual/visual.spec.ts' },
+                results: [{ status: scenario === 'sample-error' ? 'failed' : 'passed' }],
+                annotations: scenario === 'sample-error' ?
+                    [{ type: 'visual-sample-error' }] : []
+            };
+            reporter.onBegin({}, { allTests: () => [sample] });
+            reporter.onTestBegin(sample);
+            writeReference(root, id, '<svg/>');
+            if (scenario === 'sample-error') {
+                appendError(root, 'Sample execution failed');
+            } else {
+                recordCandidateResult(root, id, 0);
+            }
+            if (scenario === 'terminal-error') {
+                reporter.onError({ message: 'Browser terminated' });
+            }
+            reporter.onEnd({ status: scenario === 'success' ? 'passed' : 'failed' });
+            assert.equal(
+                spawnSync('bash', ['-e', '-c', gate], { cwd: root }).status,
+                scenario === 'success' ? 0 : 1,
+                scenario
+            );
+            const completion = readFile(join(root, 'test/visual-test-complete'));
+            if (scenario === 'terminal-error') {
+                await assert.rejects(completion, { code: 'ENOENT' });
+            } else {
+                assert.equal((await completion).length, 0);
+            }
+        }
+    } finally {
+        await rm(root, { recursive: true, force: true });
     }
 });
