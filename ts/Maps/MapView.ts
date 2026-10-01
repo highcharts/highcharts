@@ -502,12 +502,12 @@ class MapView {
                 { height, width } = fullField,
                 padArr = isArray(pad) ? pad : [pad, pad, pad, pad];
 
-            const { relativeLength } = this.chart;
+            const chart = this.chart;
             this.padding = [
-                relativeLength(padArr[0], height),
-                relativeLength(padArr[1], width),
-                relativeLength(padArr[2], height),
-                relativeLength(padArr[3], width)
+                chart.relativeLength(padArr[0], height),
+                chart.relativeLength(padArr[1], width),
+                chart.relativeLength(padArr[2], height),
+                chart.relativeLength(padArr[3], width)
             ];
 
             // Apply the playing field, corrected with padding

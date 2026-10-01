@@ -2159,7 +2159,28 @@ class Navigator {
                 'getMargins',
                 function (): void {
                     const chart = this,
-                        navigator = chart.navigator as Navigator;
+                        navigator = chart.navigator as Navigator,
+                        scrollbarOptions = navigator.scrollbarOptions,
+                        navHeight = navigator.navigatorOptions.height || 0,
+                        scrollbarHeight = scrollbarOptions?.height || 0,
+                        plotHeight = chart.plotHeight;
+
+                    // Re-resolve against the current plot height (#23989)
+                    navigator.height = navigator.navigatorEnabled ?
+                        chart.relativeLength(navHeight, plotHeight) : 0;
+                    navigator.scrollbarHeight = navigator.scrollbarEnabled ?
+                        chart.relativeLength(scrollbarHeight, plotHeight) : 0;
+                    navigator.scrollButtonSize = (
+                        scrollbarOptions?.buttonsEnabled &&
+                        navigator.scrollbarHeight
+                    ) || 0;
+
+                    // Sync the navigator's own axes so their length updates too
+                    if (navigator.xAxis && navigator.yAxis) {
+                        const dim = chart.inverted ? 'width' : 'height';
+                        navigator.xAxis.options[dim] = navigator.height;
+                        navigator.yAxis.options[dim] = navigator.height;
+                    }
 
                     let marginName: keyof Chart = navigator.opposite ?
                         'plotTop' : 'marginBottom';

@@ -461,7 +461,7 @@ class GaugeSeries extends Series {
     public translate(): void {
 
         const series = this,
-            { relativeLength } = series.chart,
+            chart = series.chart,
             yAxis = series.yAxis,
             options = series.options,
             center = yAxis.center;
@@ -477,18 +477,22 @@ class GaugeSeries extends Series {
                     options.dial,
                     point.dial
                 ),
-                radius = relativeLength(dialOptions.radius, center[2] / 2),
-                baseLength = relativeLength(dialOptions.baseLength, radius),
+                radius = chart.relativeLength(
+                    dialOptions.radius, center[2] / 2
+                ),
+                baseLength = chart.relativeLength(
+                    dialOptions.baseLength, radius
+                ),
                 rearLength = Math.min(
-                    relativeLength(dialOptions.rearLength, radius),
+                    chart.relativeLength(dialOptions.rearLength, radius),
                     radius
                 ),
                 baseWidth = Math.min(
-                    relativeLength(dialOptions.baseWidth, radius),
+                    chart.relativeLength(dialOptions.baseWidth, radius),
                     radius
                 ),
-                topWidth = relativeLength(dialOptions.topWidth, radius),
-                borderRadius = relativeLength(
+                topWidth = chart.relativeLength(dialOptions.topWidth, radius),
+                borderRadius = chart.relativeLength(
                     dialOptions.borderRadius, radius
                 ),
                 // Border radius at the base

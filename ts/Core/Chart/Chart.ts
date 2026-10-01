@@ -1895,11 +1895,13 @@ class Chart {
      * @internal
      * @function Highcharts.Chart#relativeLength
      */
-    public relativeLength = (
+    public relativeLength(
         value: (number|CSSLength|null|undefined),
         base: number,
         offset?: number
-    ): number => relativeLength(value, base, offset, this.renderTo);
+    ): number {
+        return relativeLength(value, base, offset, this.renderTo);
+    }
 
     /**
      * Internal function to get the available size of the container element
