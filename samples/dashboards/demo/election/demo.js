@@ -764,16 +764,12 @@ function updateControlComponent(year) {
     // Brief text about the election. The markup is already parsed, so it is
     // cloned rather than round-tripped through innerHTML.
     const brief = el.querySelector('descr').cloneNode(true);
-
-    // Wikipedia link, built as a node with a vetted href
-    const wikiUrl = el.querySelector('wiki').textContent.trim();
     const link = document.createElement('a');
 
     link.textContent = 'Wikipedia';
     link.target = '_blank';
-    if (wikiUrl.startsWith('https://')) {
-        link.href = wikiUrl;
-    }
+    link.href = 'https://en.wikipedia.org/wiki/' + Number(year) +
+        '_United_States_presidential_election';
 
     // Update custom HTML component
     descContainer.replaceChildren(
