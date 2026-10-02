@@ -15,11 +15,14 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import StandaloneNavigator from '../../Stock/Navigator/StandaloneNavigator.js';
-import NavigatorComposition from '../../Stock/Navigator/NavigatorComposition.js';
+import Navigator from '../../Stock/Navigator/Navigator.js';
+import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
 
 const G: AnyRecord = Highcharts;
 G.StandaloneNavigator = G.StandaloneNavigator || StandaloneNavigator;
 G.navigator = G.StandaloneNavigator.navigator;
-NavigatorComposition.compose(G.Chart, G.Axis, G.Series);
+
+Scrollbar.compose(G.Axis);
+Navigator.compose(G.Chart, G.Axis, G.Series);
 
 export default Highcharts;
