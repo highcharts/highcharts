@@ -1,3 +1,10 @@
+---
+description: >-
+  Request rolling return history for one or more securities with the
+  TimeSeriesConnector by selecting the RollingReturn series type, and note
+  that the first security sets the start date for multiple-security requests.
+---
+
 # Rolling Return
 
 This type yields rolling return time series data for single or multiple

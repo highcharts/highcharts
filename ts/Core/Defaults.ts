@@ -770,6 +770,14 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * A CSS class name to apply to the title's container div,
+         * allowing unique CSS styling for each chart.
+         *
+         * @type      {string}
+         * @apioption title.className
+         */
+
+        /**
          * The margin between the title and the plot area, or if a subtitle
          * is present, the margin between the subtitle and the plot area.
          *
@@ -834,6 +842,14 @@ const defaultOptions: DefaultOptions = {
          * @default undefined
          * @since 2.0
          * @apioption subtitle.align
+         */
+
+        /**
+         * A CSS class name to apply to the subtitle's container div,
+         * allowing unique CSS styling for each chart.
+         *
+         * @type      {string}
+         * @apioption subtitle.className
          */
 
         /**
@@ -1427,6 +1443,8 @@ const defaultOptions: DefaultOptions = {
          *         Legend with vertical scrollable extension
          * @sample highcharts/legend/scrollable-horizontal/
          *         Legend with horizontal scrollable extension
+         * @sample highcharts/legend/navigation-horizontal-plugin/
+         *         Legend with horizontal navigation extension
          *
          */
         navigation: {
@@ -3099,6 +3117,10 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * The URL for the credits label.
+         *
+         * URLs that do not start with one of the
+         * [AST.allowedReferences](https://api.highcharts.com/class-reference/Highcharts.AST#.allowedReferences),
+         * for example `javascript:` URLs, are ignored.
          *
          * @sample {highcharts} highcharts/credits/href/
          *         Custom URL and text

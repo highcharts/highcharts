@@ -37,7 +37,6 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * The areasplinerange series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.areasplinerange
  *
@@ -51,6 +50,7 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: AreaSplineRangeSeriesOptions = merge(
         AreaRangeSeries.defaultOptions
     );
@@ -73,7 +73,6 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
  *
  * */
 
-/** @internal */
 interface AreaSplineRangeSeries extends AreaRangeSeries {
     pointClass: typeof AreaSplineRangePoint;
     getPointSpline: typeof splineProto.getPointSpline;
@@ -106,7 +105,6 @@ SeriesRegistry.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
  *
  * */
 
-/** @internal */
 export default AreaSplineRangeSeries;
 
 /* *
@@ -158,7 +156,7 @@ export default AreaSplineRangeSeries;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.areasplinerange
- * @excluding dataParser, dataURL, stack, step, boostThreshold, boostBlending
+ * @excluding stack, step, boostThreshold, boostBlending
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange

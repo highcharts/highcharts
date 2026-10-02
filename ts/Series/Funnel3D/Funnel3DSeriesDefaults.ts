@@ -35,29 +35,32 @@ import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
  */
 const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
 
+    animation: false,
+
     /** @ignore-option */
     center: ['50%', '50%'],
 
-    /**
-     * The max width of the series compared to the width of the plot area,
-     * or the pixel width if it is a number.
-     *
-     * @type    {number|string}
-     * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-     * @product highcharts
-     */
-    width: '90%',
+    colorByPoint: true,
+
+    dataLabels: {
+        align: 'right',
+        crop: false,
+        inside: false,
+        overflow: 'allow'
+    },
 
     /**
-     * The width of the neck, the lower part of the funnel. A number defines
-     * pixel width, a percentage string defines a percentage of the plot
-     * area width.
-     *
-     * @type    {number|string}
-     * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-     * @product highcharts
+     * The width of the outline around the top and bottom ellipses of each
+     * funnel segment. Its color is set by `edgeColor` and defaults to the
+     * point color.
      */
-    neckWidth: '30%',
+    edgeWidth: 0,
+
+    /**
+     * By default sides fill is set to a gradient through this option being
+     * set to `true`. Set to `false` to get solid color for the sides.
+     */
+    gradientForSides: true,
 
     /**
      * The height of the series. If it is a number it defines
@@ -66,7 +69,6 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
      *
      * @type    {number|string}
      * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-     * @product highcharts
      */
     height: '100%',
 
@@ -76,46 +78,36 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
      * of the plot area height.
      *
      * @type    {number|string}
-     * @sample  {highcharts} highcharts/demo/funnel3d/ Funnel3d demo
-     * @product highcharts
+     * @sample  highcharts/demo/funnel3d/ Funnel3d
      */
     neckHeight: '25%',
 
     /**
+     * The width of the neck, the lower part of the funnel. A number defines
+     * pixel width, a percentage string defines a percentage of the plot
+     * area width.
+     *
+     * @type    {number|string}
+     * @sample  highcharts/demo/funnel3d/ Funnel3d
+     */
+    neckWidth: '30%',
+
+    /**
      * A reversed funnel has the widest area down. A reversed funnel with
      * no neck width and neck height is a pyramid.
-     *
-     * @product highcharts
      */
     reversed: false,
 
-    /**
-     * By default sides fill is set to a gradient through this option being
-     * set to `true`. Set to `false` to get solid color for the sides.
-     *
-     * @product highcharts
-     */
-    gradientForSides: true,
-
-    animation: false,
-
-    edgeWidth: 0,
-
-    colorByPoint: true,
-
     showInLegend: false,
 
-    dataLabels: {
-
-        align: 'right',
-
-        crop: false,
-
-        inside: false,
-
-        overflow: 'allow'
-
-    }
+    /**
+     * The max width of the series compared to the width of the plot area,
+     * or the pixel width if it is a number.
+     *
+     * @type    {number|string}
+     * @sample  highcharts/demo/funnel3d/ Funnel3d
+     */
+    width: '90%'
 
 };
 
@@ -123,8 +115,8 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
  * A `funnel3d` series. If the [type](#series.funnel3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
  *
- * @sample {highcharts} highcharts/demo/funnel3d/
- *         Funnel3d demo
+ * @sample highcharts/demo/funnel3d/
+ *         Funnel3d
  *
  * @since     7.1.0
  * @extends   series,plotOptions.funnel3d

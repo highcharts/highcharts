@@ -521,17 +521,17 @@ export interface AxisLabelOptions {
     autoRotationLimit: number;
 
     /**
-     * The label's pixel distance from the perimeter of the plot area.
-     * On cartesian charts, this is overridden if the `labels.y` setting
-     * is set.
+     * The label's pixel distance from the perimeter of the plot area. On
+     * cartesian charts, this is overridden if the `labels.y` setting is set.
+     * Defaults to a smart guess based on the orientation of the axis and
+     * whether it is straight or circular.
      *
      * @sample {highcharts} highcharts/yaxis/labels-distance/
      *         Polar chart, labels centered under the arc
      *
-     * @default 15
      * @product highcharts gantt
      */
-    distance: number;
+    distance?: number;
 
     /**
      * Enable or disable the axis labels.

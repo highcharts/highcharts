@@ -1,6 +1,10 @@
 ---
 tags: ["grid-pro"]
 sidebar_label: "Grid Key"
+description: >-
+  Learn what the Grid Pro Grid Key validates, how it differs from a private
+  License ID, where to configure or obtain the key, and how expiry relates to
+  license type.
 ---
 
 # What is the Grid Key?

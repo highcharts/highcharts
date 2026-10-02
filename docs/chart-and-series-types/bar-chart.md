@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare bar and column orientation, review the series options shared by
+  bar charts, and use a trellis layout to place several charts in an HTML
+  table grid.
+---
+
 Bar chart
 =========
 

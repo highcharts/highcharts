@@ -41,7 +41,6 @@ import {
 /**
  * The bullet series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bullet
  *
@@ -55,6 +54,7 @@ class BulletSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BulletSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         BulletSeriesDefaults
@@ -72,6 +72,7 @@ class BulletSeries extends ColumnSeries {
 
     public points!: Array<BulletPoint>;
 
+    /** @internal */
     public targetData!: Array<number>;
 
     /* *
@@ -225,6 +226,7 @@ class BulletSeries extends ColumnSeries {
      *
      * @ignore
      * @function Highcharts.Series#getExtremes
+     * @internal
      */
     public getExtremes(yData?: Array<number>): DataExtremesObject {
         const dataExtremes = super.getExtremes.call(this, yData),
@@ -262,7 +264,6 @@ class BulletSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface BulletSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -281,7 +282,6 @@ BulletSeries.prototype.pointClass = BulletPoint;
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof BulletSeries;
@@ -296,5 +296,4 @@ SeriesRegistry.registerSeriesType('bullet', BulletSeries);
  *
  * */
 
-/** @internal */
 export default BulletSeries;

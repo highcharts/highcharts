@@ -331,7 +331,11 @@ abstract class Component {
         const renderTo = options.renderTo;
         this.board = board || cell?.row?.layout?.board || {};
         this.parentElement =
-            cell?.container || document.querySelector('#' + renderTo);
+            cell?.container || (
+                renderTo ?
+                    document.querySelector('#' + CSS.escape(renderTo)) :
+                    null
+            );
         this.cell = cell;
 
         this.options = merge(
@@ -918,6 +922,9 @@ abstract class Component {
         /**
          * TODO: Should perhaps set an `isActive` flag to false.
          */
+
+        // Cancel pending resize timeouts e.g chart components.
+        this.resizeTimeouts.forEach(clearTimeout);
 
         if (this.sync.isSyncing) {
             this.sync.stop();
