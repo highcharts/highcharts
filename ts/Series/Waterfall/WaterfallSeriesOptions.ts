@@ -60,9 +60,6 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
  */
 export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
 
-    /**
-     * @type {Highcharts.ColorType}
-     */
     color?: ColorType;
 
     /**
@@ -147,8 +144,6 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @since 3.0
      *
      * @product highcharts
@@ -164,8 +159,6 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the stroke dash-array can be set with the
      * `.highcharts-graph` class.
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @since 3.0
      *
      * @product highcharts
@@ -177,8 +170,6 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      *
      * In styled mode, the stroke can be set with the `.highcharts-graph`
      * class.
-     *
-     * @type {Highcharts.ColorType}
      *
      * @since 3.0
      *
@@ -205,8 +196,6 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/demo/waterfall/
      *         Waterfall
-     *
-     * @type {Highcharts.ColorType}
      *
      * @product highcharts
      */
