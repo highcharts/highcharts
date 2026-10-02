@@ -7,7 +7,7 @@ import type { JSHandle, Page } from '@playwright/test';
 
 import { join, extname, normalize } from 'node:path';
 import { globSync } from 'glob';
-import { load as yamlLoad } from 'js-yaml';
+import { JSON_SCHEMA, load as yamlLoad } from 'js-yaml';
 import { existsSync, readFileSync } from 'node:fs';
 import * as ts from 'typescript';
 
@@ -300,7 +300,7 @@ export function getSample(
             const content = readFileSync(globPath, { encoding: 'utf8'});
 
             if (type === 'details') {
-                obj[type] = yamlLoad(content) as object;
+                obj[type] = yamlLoad(content, { schema: JSON_SCHEMA });
             } else {
                 obj[type] = content;
             }
