@@ -10,7 +10,6 @@
  *
  * */
 
-/// <reference types="@webgpu/types" />
 'use strict';
 
 
@@ -44,6 +43,29 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/*
+ * TypeScript 6 ships WebGPU interfaces in `lib.dom`, but not the usage flag
+ * namespaces.
+ */
+declare const GPUBufferUsage: {
+    readonly COPY_DST: GPUFlagsConstant;
+    readonly INDEX: GPUFlagsConstant;
+    readonly STORAGE: GPUFlagsConstant;
+    readonly UNIFORM: GPUFlagsConstant;
+    readonly VERTEX: GPUFlagsConstant;
+};
+declare const GPUTextureUsage: {
+    readonly COPY_SRC: GPUFlagsConstant;
+    readonly RENDER_ATTACHMENT: GPUFlagsConstant;
+};
 
 
 /* *
@@ -248,7 +270,8 @@ export default class ContourSeries extends ScatterSeries {
             renderer = chart.renderer,
             canvas = series.canvas as HTMLCanvasElement,
             gpu = navigator.gpu,
-            context = series.context = canvas.getContext('webgpu');
+            context = series.context =
+                canvas.getContext('webgpu') as GPUCanvasContext | null;
 
         if (!gpu || !context) {
             error(37, false, chart);
@@ -361,16 +384,8 @@ export default class ContourSeries extends ScatterSeries {
                     isInvertedUniform: isInvertedUniformBuffer
                 } = buffers;
 
-                device.queue.writeBuffer(
-                    vertexBuffer,
-                    0,
-                    vertices as GPUAllowSharedBufferSource
-                );
-                device.queue.writeBuffer(
-                    indexBuffer,
-                    0,
-                    indices as GPUAllowSharedBufferSource
-                );
+                device.queue.writeBuffer(vertexBuffer, 0, vertices);
+                device.queue.writeBuffer(indexBuffer, 0, indices);
 
                 const vertexBufferLayout: GPUVertexBufferLayout = {
                     arrayStride: 12,
@@ -674,17 +689,13 @@ export default class ContourSeries extends ScatterSeries {
             const { array, length } = this.getColorAxisStopsData();
 
             // Write the stops to the buffer
-            this.device.queue.writeBuffer(
-                stopsBuffer,
-                0,
-                array as GPUAllowSharedBufferSource
-            );
+            this.device.queue.writeBuffer(stopsBuffer, 0, array);
 
             // Write the count to the buffer
             this.device.queue.writeBuffer(
                 countBuffer,
                 0,
-                new Uint32Array([length]) as GPUAllowSharedBufferSource
+                new Uint32Array([length])
             );
 
             if (renderFrame) {
