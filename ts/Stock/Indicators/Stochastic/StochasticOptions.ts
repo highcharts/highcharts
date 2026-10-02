@@ -44,8 +44,8 @@ import type {
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/stochastic
+ * @requires     indicators/indicators
+ * @requires     indicators/stochastic
  * @interface Highcharts.StochasticOptions
  */
 export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {

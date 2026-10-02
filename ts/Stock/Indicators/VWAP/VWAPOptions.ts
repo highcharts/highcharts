@@ -36,8 +36,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        6.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/vwap
+ * @requires     indicators/indicators
+ * @requires     indicators/vwap
  * @interface Highcharts.VWAPOptions
  */
 export interface VWAPOptions extends SMAOptions {

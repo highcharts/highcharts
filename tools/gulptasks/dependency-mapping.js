@@ -21,7 +21,6 @@ function treeToMappingRecursive(key, branch, keyPath, mapping = {}) {
         ] = branch.doclet.requires.map(
             r => r
                 .replace(/module:/u, '')
-                .replace(/^stock\//u, '')
         );
     }
     return mapping;

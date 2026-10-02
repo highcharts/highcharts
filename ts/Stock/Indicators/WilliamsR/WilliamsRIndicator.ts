@@ -64,8 +64,8 @@ class WilliamsRIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/williams-r
+     * @requires     indicators/indicators
+     * @requires     indicators/williams-r
      * @optionparent plotOptions.williamsr
      * @internal
      */
@@ -214,8 +214,8 @@ export default WilliamsRIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/williams-r
+ * @requires  indicators/indicators
+ * @requires  indicators/williams-r
  * @apioption series.williamsr
  */
 

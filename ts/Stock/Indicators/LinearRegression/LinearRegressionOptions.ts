@@ -35,8 +35,8 @@ import type {
  * @extends      plotOptions.sma
  * @since        7.0.0
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/regressions
+ * @requires     indicators/indicators
+ * @requires     indicators/regressions
  * @interface Highcharts.LinearRegressionOptions
  */
 export interface LinearRegressionOptions extends SMAOptions {
