@@ -1,3 +1,10 @@
+---
+description: >-
+  Define each arrow with x and y position, length, and direction, then set
+  how the longest vector maps to pixels. Learn how rotation origin changes
+  the arrow’s pivot and direction.
+---
+
 Vector plot
 ===
 

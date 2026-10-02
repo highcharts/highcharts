@@ -26,14 +26,13 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
-import Funnel3DComposition from './Funnel3DComposition.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import { composeFunnel3D } from './Funnel3DComposition.js';
 import Funnel3DSeriesDefaults from './Funnel3DSeriesDefaults.js';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import Math3D from '../../Core/Math3D.js';
-const { perspective } = Math3D;
-import ColumnSeries from '../Column/ColumnSeries.js';
+import { perspective } from '../../Core/Math3D.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
@@ -47,7 +46,6 @@ import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 /**
  * The funnel3d series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.funnel3d
  * @augments seriesTypes.column
@@ -63,7 +61,9 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    public static compose = Funnel3DComposition.compose;
+    /** @internal */
+    public static compose = composeFunnel3D;
+
     /** @internal */
     public static defaultOptions: Funnel3DSeriesOptions = merge(
         ColumnSeries.defaultOptions,
@@ -94,9 +94,7 @@ class Funnel3DSeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public alignDataLabel(
         point: Funnel3DPoint,
         _dataLabel: SVGLabel,
@@ -149,18 +147,15 @@ class Funnel3DSeries extends ColumnSeries {
         }
 
         point.dlBox = dlBox;
-        ColumnSeries.prototype.alignDataLabel.apply(
-            series,
-            arguments
-        );
+        super.alignDataLabel.apply(series, arguments);
     }
 
     /**
      * Override default axis options with series required options for axes.
-     * @private
+     * @internal
      */
     public bindAxes(): void {
-        Series.prototype.bindAxes.apply(this, arguments);
+        super.bindAxes.apply(this, arguments);
 
         extend(this.xAxis.options, {
             gridLineWidth: 0,
@@ -177,9 +172,7 @@ class Funnel3DSeries extends ColumnSeries {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public translate(): void {
         Series.prototype.translate.apply(this, arguments);
 
@@ -363,8 +356,12 @@ class Funnel3DSeries extends ColumnSeries {
  * */
 
 interface Funnel3DSeries {
+    /** @internal */
     getWidthAt(y: number): number; // Added during translate
+
     pointClass: typeof Funnel3DPoint;
+
+    /** @internal */
     translate3dShapes(): void;
 }
 extend(Funnel3DSeries.prototype, {

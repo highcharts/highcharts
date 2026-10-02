@@ -22,7 +22,7 @@
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DataLabel from '../../Core/Series/DataLabel';
-import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
+import type { FunnelDataLabelOptions } from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
@@ -69,13 +69,15 @@ const baseAlignDataLabel = Series.prototype.alignDataLabel;
 /**
  * Get positions - either an integer or a percentage string must be
  * given.
- * @private
+ *
  * @param {number|string|undefined} length
  *        Length
  * @param {number} relativeTo
  *        Relative factor
  * @return {number}
  *         Relative position
+ *
+ * @internal
  */
 function getLength(
     length: (number|string|undefined),
@@ -93,7 +95,6 @@ function getLength(
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.funnel
  *
@@ -135,9 +136,7 @@ class FunnelSeries extends PieSeries {
      * */
 
 
-    /**
-     * @private
-     */
+    /** @internal */
     public alignDataLabel(
         point: FunnelPoint,
         dataLabel: SVGLabel,
@@ -233,10 +232,9 @@ class FunnelSeries extends PieSeries {
         }
     }
 
-
     /**
      * Extend the data label method.
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
         (
@@ -246,7 +244,15 @@ class FunnelSeries extends PieSeries {
         ).prototype.drawDataLabels.call(this);
     }
 
-    /** @private */
+    /**
+     * Override pie-specific functionality not supported in funnel.
+     * @internal
+     */
+    public verifyDataLabelOverflow(): boolean {
+        return true;
+    }
+
+    /** @internal */
     public getDataLabelPosition(
         point: FunnelPoint,
         distance: number
@@ -285,7 +291,7 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Overrides the pie translate method.
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -659,13 +665,11 @@ class FunnelSeries extends PieSeries {
 
     /**
      * Funnel items don't have angles (#2289).
-     * @private
+     * @internal
      */
     public sortByAngle(points: Array<FunnelPoint>): void {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
     }
-
-
 }
 
 /* *
@@ -676,7 +680,11 @@ class FunnelSeries extends PieSeries {
 
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
+
+    /** @internal */
     getWidthAt(y: number): number; // Added during translate
+
+    /** @internal */
     getXPos(
         y: number,
         half: boolean,
@@ -693,6 +701,7 @@ extend(FunnelSeries.prototype, {
  *
  * */
 
+/** @internal */
 namespace FunnelSeries {
 
     /* *
@@ -701,7 +710,7 @@ namespace FunnelSeries {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart
     ): void {
@@ -716,12 +725,12 @@ namespace FunnelSeries {
 
     }
 
-    /** @private */
+    /** @internal */
     function onChartAfterHideAllOverlappingLabels(
         this: Chart
     ): void {
         for (const series of this.series) {
-            let dataLabelsOptions = series.options && series.options.dataLabels;
+            let dataLabelsOptions = series.options?.dataLabels;
 
             if (isArray(dataLabelsOptions)) {
                 dataLabelsOptions = dataLabelsOptions[0];

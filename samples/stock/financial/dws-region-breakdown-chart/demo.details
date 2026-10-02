@@ -1,0 +1,7 @@
+---
+name: DWS Region Breakdown Chart
+description: Displays regional fixed income exposure as a column chart for a DWS fund.
+tags:
+  - Morningstar
+js_wrap: b
+...

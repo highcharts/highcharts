@@ -1,3 +1,10 @@
+---
+description: >-
+  Synchronize component highlights, visibility, extremes, or Navigator
+  crossfilter behavior through a shared connector, configure groups and event
+  directions, or define custom emitters and handlers for new sync behavior.
+---
+
 # Synchronizing Dashboards components
 
 In addition to sharing data via the data pool, **Dashboards** components can use the synchronization mechanism to aid visualization, navigation and highlighting of specific data.

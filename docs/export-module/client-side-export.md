@@ -1,3 +1,10 @@
+---
+description: >-
+  Export chart images in the browser and configure server fallback. Learn
+  which modules and libraries local PDF export needs, review browser
+  limitations, and supply fonts for non-Latin text.
+---
+
 Client side export
 ===
 
