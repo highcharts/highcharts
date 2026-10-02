@@ -55,6 +55,7 @@ import {
     isFunction,
     isNumber,
     isObject,
+    isSafeKey,
     isString,
     merge,
     removeEvent
@@ -1184,9 +1185,7 @@ class Point {
         const nestedKeys = key.split('.');
 
         // Reject nested keys that would allow prototype pollution
-        if (nestedKeys.some((nestedKey): boolean => (
-            nestedKey === '__proto__' || nestedKey === 'constructor'
-        ))) {
+        if (!nestedKeys.every(isSafeKey)) {
             return object;
         }
 

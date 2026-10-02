@@ -35,7 +35,7 @@ import type { DataTableOptionsObject } from './DataTableOptions.js';
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
 
-import { fireEvent, objectEach } from '../Shared/Utilities.js';
+import { fireEvent, isSafeKey, objectEach } from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
 
 
@@ -83,7 +83,7 @@ class DataTableCore {
         options: DataTableOptionsObject = {}
     ) {
         // Reject IDs that would pollute the prototype of ID-keyed maps.
-        const id = this.isPollutingKey(options.id) ? void 0 : options.id;
+        const id = isSafeKey(options.id || '') ? options.id : void 0;
 
         this.autoId = !id;
         this.columns = {};
@@ -94,10 +94,7 @@ class DataTableCore {
         let rowCount = 0;
 
         objectEach(options.columns || {}, (column, columnId): void => {
-            if (
-                columnId === '__proto__' ||
-                columnId === 'constructor'
-            ) {
+            if (!isSafeKey(columnId)) {
                 return;
             }
 
@@ -159,18 +156,6 @@ class DataTableCore {
      *
      * */
 
-
-    /**
-     * Checks whether a key would pollute the prototype if used to index a
-     * plain object (e.g. as a column ID or table ID).
-     *
-     * @private
-     * @param {string|undefined} key The key to check.
-     * @return {boolean} True if the key is unsafe to use.
-     */
-    protected isPollutingKey(key?: string): boolean {
-        return key === '__proto__' || key === 'constructor';
-    }
 
     /**
      * Applies a row count to the table by setting the `rowCount` property and
@@ -364,15 +349,10 @@ class DataTableCore {
     ): void {
         let rowCount = this.rowCount;
         objectEach(columns, (column, columnId): void => {
-            if (
-                columnId === '__proto__' ||
-                columnId === 'constructor'
-            ) {
-                return;
+            if (isSafeKey(columnId)) {
+                this.columns[columnId] = column.slice();
+                rowCount = column.length;
             }
-
-            this.columns[columnId] = column.slice();
-            rowCount = column.length;
         });
         this.applyRowCount(rowCount);
 
@@ -425,7 +405,7 @@ class DataTableCore {
                 const rowKey = rowKeys[i];
 
                 if (
-                    !this.isPollutingKey(rowKey) &&
+                    isSafeKey(rowKey) &&
                     !Object.hasOwnProperty.call(columns, rowKey)
                 ) {
                     columns[rowKey] = new Array(this.rowCount);

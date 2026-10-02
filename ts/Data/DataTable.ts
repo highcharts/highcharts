@@ -46,7 +46,8 @@ import {
     addEvent,
     defined,
     fireEvent,
-    isNumber
+    isNumber,
+    isSafeKey
 } from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
 
@@ -894,26 +895,20 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         columnId: string,
         newColumnId: string
     ): boolean {
-        if (
-            columnId === '__proto__' ||
-            columnId === 'constructor' ||
-            newColumnId === '__proto__' ||
-            newColumnId === 'constructor'
-        ) {
-            return false;
-        }
+        if (isSafeKey(columnId) && isSafeKey(newColumnId)) {
 
-        const table = this,
-            columns = table.columns;
+            const table = this,
+                columns = table.columns;
 
-        if (Object.hasOwnProperty.call(columns, columnId)) {
-            if (columnId !== newColumnId) {
-                columns[newColumnId] = columns[columnId];
-                delete columns[columnId];
-                table.versionTag = uniqueKey();
+            if (Object.hasOwnProperty.call(columns, columnId)) {
+                if (columnId !== newColumnId) {
+                    columns[newColumnId] = columns[columnId];
+                    delete columns[columnId];
+                    table.versionTag = uniqueKey();
+                }
+
+                return true;
             }
-
-            return true;
         }
 
         return false;
@@ -948,10 +943,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         cellValue: CellType,
         eventDetail?: DataEventDetail
     ): void {
-        if (
-            columnId === '__proto__' ||
-            columnId === 'constructor'
-        ) {
+        if (!isSafeKey(columnId)) {
             return;
         }
 
@@ -1076,10 +1068,7 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
             ) {
                 columnId = columnIds[i];
 
-                if (
-                    columnId === '__proto__' ||
-                    columnId === 'constructor'
-                ) {
+                if (!isSafeKey(columnId)) {
                     continue;
                 }
 

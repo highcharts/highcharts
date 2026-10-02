@@ -528,15 +528,14 @@ export function diffObjects(
                 }
 
             } else if (
-                newer[key] !== older[key] ||
-                // If the newer key is explicitly undefined, keep it (#10525)
-                (key in newer && !(key in older))
+                (
+                    newer[key] !== older[key] ||
+                    // If the newer key is explicitly undefined, keep it
+                    // (#10525)
+                    (key in newer && !(key in older))
+                ) && isSafeKey(key)
             ) {
-
-                if (key !== '__proto__' && key !== 'constructor') {
-                    ret[key] = keeper[key];
-                }
-
+                ret[key] = keeper[key];
             }
         });
     }
@@ -596,11 +595,9 @@ export function extend<T>(a: (T|undefined), b: Partial<T>): T {
         // own, enumerable properties through `JSON.parse`, in which case
         // assigning them would mutate the prototype of the target instead of
         // adding a property.
-        if (n === '__proto__' || n === 'constructor') {
-            continue;
+        if (isSafeKey(n)) {
+            (a as any)[n] = (b as any)[n];
         }
-
-        (a as any)[n] = (b as any)[n];
     }
     return a;
 }
@@ -846,7 +843,7 @@ export function getNestedProperty(path: string, parent: unknown): unknown {
         // Filter on the key
         if (
             typeof pathElement === 'undefined' ||
-            pathElement === '__proto__'
+            !isSafeKey(pathElement)
         ) {
             return; // Undefined
         }
@@ -1090,6 +1087,18 @@ export function isString(s: unknown): s is string {
 }
 
 /**
+ * Utility function to check if a key is safe for prototype pollution
+ *
+ * @param {*} key
+ *        The item to check.
+ *
+ * @return {boolean}
+ *         True if the argument is a safe key.
+ */
+export const isSafeKey = (key: string): boolean =>
+    key !== '__proto__' && key !== 'constructor';
+
+/**
  * Utility function to check if an item is an array.
  *
  * @function Highcharts.isArray
@@ -1206,24 +1215,22 @@ export function merge<T>(
             copy = {};
         }
 
-        objectEach(original, function (value, key): void {
+        objectEach(original, (value, key): void => {
 
             // Prototype pollution (#14883)
-            if (key === '__proto__' || key === 'constructor') {
-                return;
-            }
+            if (isSafeKey(key)) {
+                // Copy the contents of objects, but not arrays or DOM nodes
+                if (
+                    isObject(value, true) &&
+                    !isClass(value) &&
+                    !isDOMElement(value)
+                ) {
+                    copy[key] = doCopy(copy[key] || {}, value);
 
-            // Copy the contents of objects, but not arrays or DOM nodes
-            if (
-                isObject(value, true) &&
-                !isClass(value) &&
-                !isDOMElement(value)
-            ) {
-                copy[key] = doCopy(copy[key] || {}, value);
-
-            // Primitives and arrays are copied over directly
-            } else {
-                copy[key] = original[key];
+                // Primitives and arrays are copied over directly
+                } else {
+                    copy[key] = original[key];
+                }
             }
         });
         return copy;
