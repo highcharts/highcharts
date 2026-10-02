@@ -25,7 +25,7 @@ import type Scrollbar from '../Scrollbar/Scrollbar';
 import type Series from '../../Core/Series/Series';
 
 import H from '../../Core/Globals.js';
-const { isTouchDevice } = H;
+const { composed, isTouchDevice } = H;
 import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
@@ -64,8 +64,6 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * */
 
-const composedMembers: Array<unknown> = [];
-
 /* *
  *
  *  Variables
@@ -85,8 +83,7 @@ function compose(
     ChartClass: typeof Chart,
     NavigatorClass: typeof Navigator
 ): void {
-
-    if (pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composed, 'Navigator.Chart')) {
         const chartProto = ChartClass.prototype;
         NavigatorConstructor = NavigatorClass;
 
