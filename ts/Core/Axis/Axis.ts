@@ -2235,10 +2235,11 @@ class Axis {
 
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
+        // Empty series must not affect ticks (#23555).
         const minTickInterval = options.minTickInterval ?? (
-            dateTime && !axis.series.some((s): boolean|undefined => !s.sorted) ?
-                axis.closestPointRange :
-                0
+            dateTime &&
+            !axis.series.some((s): boolean => !s.sorted && s.hasData()) ?
+                axis.closestPointRange : 0
         );
         if (
             !tickIntervalOption &&
