@@ -168,6 +168,7 @@ class TreemapPoint extends ScatterPoint {
  *
  * */
 
+/** @internal */
 interface TreemapPoint extends ColorMapComposition.PointComposition {
     /** @internal */
     setVisible: typeof PiePoint.prototype.setVisible;

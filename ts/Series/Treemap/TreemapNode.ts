@@ -101,7 +101,6 @@ interface TreemapNode {
  *
  * */
 
-/** @internal */
 namespace TreemapNode {
 
     /* *
@@ -110,7 +109,6 @@ namespace TreemapNode {
      *
      * */
 
-    /** @internal */
     export interface NodeValuesObject extends BBoxObject {
         direction: number;
         val: number;
