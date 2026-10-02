@@ -270,8 +270,18 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  *     }]
  *  ```
  *
+ *  When you provide the data as tuples, the keys option has to be set as well.
+ *
+ *  ```js
+ *     keys: ['from', 'to', 'weight'],
+ *     data: [
+ *         ['Category1', 'Category2', 2],
+ *         ['Category1', 'Category3', 5]
+ *     ]
+ *  ```
+ *
  * @basic
- * @type      {Array<*>}
+ * @type      {Array<*>|Array<Array<(string|number)>>}
  * @extends   series.sankey.data
  * @product   highcharts
  * @excluding outgoing

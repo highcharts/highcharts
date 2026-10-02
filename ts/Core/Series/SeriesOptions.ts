@@ -53,15 +53,16 @@ export interface DataMappingItem {
     /**
      * The column from which to read the value for this data point property.
      * This can be either a column id (string) or a column index (number) in the
-     * data table.
+     * data table. Defaults to the column with the same id as the point
+     * property.
      */
-    column: number|string;
+    column?: number|string;
     /**
      * The data table from which to read the value for this data point property.
      * This can be either a data table id (string) or a data table index
-     * (number).
+     * (number). Defaults to the first data table.
      */
-    dataTable: number|string;
+    dataTable?: number|string;
 }
 
 export type NonPlotOptions = (
