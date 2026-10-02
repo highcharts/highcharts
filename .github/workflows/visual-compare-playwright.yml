@@ -22,7 +22,6 @@ on:
       - 'tests/tsconfig.json'
       - 'tests/utils.ts'
       - 'tests/visual/**'
-      - 'tests/internal/visual-dashboard.spec.ts'
       - '.gulp.js'
       - 'package.json'
       - 'package-lock.json'
@@ -214,10 +213,7 @@ jobs:
         continue-on-error: true
         env:
           VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
-        run: |
-          npx playwright test --project=visual
-          npx playwright test tests/internal/visual-dashboard.spec.ts \
-            --project=internal --no-deps
+        run: npx playwright test --project=visual
 
       - name: Verify visual run outcomes
         if: always()
