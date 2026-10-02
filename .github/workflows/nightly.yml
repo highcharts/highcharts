@@ -278,6 +278,9 @@ jobs:
   nightly_dist:
     runs-on: ubuntu-latest
     needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
+    concurrency:
+      group: nightly-dist
+      cancel-in-progress: false
     steps:
       - name: Checkout highcharts
         uses: actions/checkout@v6
@@ -300,17 +303,8 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
 
-      - name: Set git config
-        working-directory: ./highcharts-dist
-        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
-        run: |
-          git config --global user.name "CircleCI"
-          git config --global user.email "technical+circleci_mu@highsoft.com"
-          git config --global core.editor vi
-
       - name: Reset nightly branch to master
         working-directory: ./highcharts-dist
-        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
         run: git reset --hard origin/master
 
       - name: Install and build
@@ -325,10 +319,33 @@ jobs:
       - name: Upload to github
         working-directory: ./highcharts-dist
         if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
+        env:
+          # Dedicated, passphrase-free SSH private key encoded as base64.
+          # Register its public key as a signing key on highsoft-bot.
+          SIGNING_KEY: ${{ secrets.DIST_SSH_SIGNING_KEY_BASE64 }}
         run: |
-          git add .
-          git commit -m "Nightly build - ${{github.run_id}}"
-          git push --force-with-lease -u origin nightly
+          # dist-release builds from master; keep the published nightly history.
+          git reset --soft origin/nightly
+          git add --all
+
+          if git diff --cached --quiet; then
+            echo "The nightly distribution is already current."
+            exit 0
+          fi
+
+          : "${SIGNING_KEY:?Set the DIST_SSH_SIGNING_KEY_BASE64 Actions secret}"
+          signing_key=$(mktemp "${RUNNER_TEMP}/nightly-signing-key.XXXXXX")
+          trap 'rm -f "${signing_key}"' EXIT
+          printf '%s' "${SIGNING_KEY}" | base64 --decode > "${signing_key}"
+          chmod 600 "${signing_key}"
+          ssh-keygen -y -P '' -f "${signing_key}" > /dev/null
+
+          git config user.name "CircleCI"
+          git config user.email "technical+circleci_mu@highsoft.com"
+          git config gpg.format ssh
+          git config user.signingkey "${signing_key}"
+          git commit -S -m "Nightly build - ${GITHUB_RUN_ID}"
+          git push origin HEAD:refs/heads/nightly
 
   nightly_changelog:
     runs-on: ubuntu-latest
