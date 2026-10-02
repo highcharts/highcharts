@@ -512,14 +512,6 @@ class Fx {
                 if (startX[i] === endX[0]) {
                     shift = i;
                     break;
-                // Moving left -> Shared x in the middle,
-                // different edges (#25280).
-                } else if (
-                    endX.length > 2 &&
-                    startX[i] === endX[Math.floor(endX.length / 2)]
-                ) {
-                    shift = i - Math.floor(endX.length / 2);
-                    break;
                 // Moving right
                 } else if (
                     startX[0] ===
@@ -527,6 +519,17 @@ class Fx {
                 ) {
                     shift = i;
                     reverse = true;
+                    break;
+                // Shared x in the middle, both edges may differ (#25280).
+                } else if (
+                    endX.length > 2 &&
+                    startX[i] === endX[Math.floor(endX.length / 2)]
+                ) {
+                    const diff = i - Math.floor(endX.length / 2);
+                    // Shift is always a pad count (>= 0); reverse covers
+                    // sliding either way (new points on the left vs right).
+                    shift = Math.abs(diff);
+                    reverse = diff < 0;
                     break;
                 // Fixed from the right side, "scaling" left
                 } else if (

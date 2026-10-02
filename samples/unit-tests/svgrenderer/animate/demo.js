@@ -392,6 +392,31 @@ QUnit.test(
             12,
             '11 -> 12 middle-align should pad start to end length.'
         );
+
+        // Shared middle x, both edges differ, match left of end mid (#25280).
+        const slidePath = [
+            ['M', 0, 120],
+            ['L', 10, 120],
+            ['L', 20, 120],
+            ['L', 30, 120],
+            ['L', 40, 120]
+        ];
+        const slideDiffNeg = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [200, 300, 400, 500, 600],
+                endX: [50, 150, 300, 550, 650],
+                isArea: false
+            },
+            slidePath.map(seg => seg.slice()),
+            slidePath.map(seg => seg.slice())
+        );
+
+        assert.strictEqual(
+            slideDiffNeg[0].length,
+            6,
+            'Middle-align with diff < 0 should use shift = 1 (reverse pad).'
+        );
     }
 );
 
