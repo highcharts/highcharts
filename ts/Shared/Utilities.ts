@@ -528,12 +528,10 @@ export function diffObjects(
                 }
 
             } else if (
-                (
-                    newer[key] !== older[key] ||
-                    // If the newer key is explicitly undefined, keep it
-                    // (#10525)
-                    (key in newer && !(key in older))
-                ) && isSafeKey(key)
+                newer[key] !== older[key] ||
+                // If the newer key is explicitly undefined, keep it
+                // (#10525)
+                (key in newer && !(key in older))
             ) {
                 ret[key] = keeper[key];
             }
@@ -1216,21 +1214,17 @@ export function merge<T>(
         }
 
         objectEach(original, (value, key): void => {
+            // Copy the contents of objects, but not arrays or DOM nodes
+            if (
+                isObject(value, true) &&
+                !isClass(value) &&
+                !isDOMElement(value)
+            ) {
+                copy[key] = doCopy(copy[key] || {}, value);
 
-            // Prototype pollution (#14883)
-            if (isSafeKey(key)) {
-                // Copy the contents of objects, but not arrays or DOM nodes
-                if (
-                    isObject(value, true) &&
-                    !isClass(value) &&
-                    !isDOMElement(value)
-                ) {
-                    copy[key] = doCopy(copy[key] || {}, value);
-
-                // Primitives and arrays are copied over directly
-                } else {
-                    copy[key] = original[key];
-                }
+            // Primitives and arrays are copied over directly
+            } else {
+                copy[key] = original[key];
             }
         });
         return copy;
@@ -1353,7 +1347,8 @@ export function normalizeTickInterval(
 }
 
 /**
- * Iterate over object key pairs in an object.
+ * Safely iterate over object key pairs in an object. This function includes
+ * guards against `hasOwnProperty` and prototype pollution.
  *
  * @function Highcharts.objectEach<T>
  *
@@ -1375,7 +1370,7 @@ export function objectEach<TObject, TContext>(
     ctx?: TContext
 ): void {
     for (const key in obj) {
-        if (Object.hasOwnProperty.call(obj, key)) {
+        if (Object.hasOwnProperty.call(obj, key) && isSafeKey(key)) {
             fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
         }
     }
