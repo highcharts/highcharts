@@ -19,10 +19,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import { perspective } from '../../Core/Math3D.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: { prototype: lineProto }
-} = SeriesRegistry.seriesTypes;
+import LineSeries from '../Line/LineSeries.js';
+const { prototype: lineProto } = LineSeries;
 import { pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *

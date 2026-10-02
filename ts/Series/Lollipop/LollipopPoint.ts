@@ -22,27 +22,25 @@ import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
 const {
-    series: {
-        prototype: {
-            pointClass: Point
-        }
-    },
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        },
-        dumbbell: {
-            prototype: {
-                pointClass: DumbbellPoint
-            }
-        }
+    prototype: {
+        pointClass: Point
     }
-} = SeriesRegistry;
+} = Series;
+const {
+    prototype: {
+        pointClass: ScatterPoint
+    }
+} = ScatterSeries;
+const {
+    prototype: {
+        pointClass: DumbbellPoint
+    }
+} = DumbbellSeries;
 
 /* *
  *

@@ -25,8 +25,8 @@ import type {
 import type WilliamsRPoint from './WilliamsRPoint';
 
 import AU from '../ArrayUtilities.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *

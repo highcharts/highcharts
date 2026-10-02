@@ -26,17 +26,13 @@ import type { OrganizationLinkOptions } from '../Organization/OrganizationSeries
 import Point from '../../Core/Series/Point.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { extend } from '../../Shared/Utilities.js';
 const {
-    seriesTypes: {
-        column: {
-            prototype: {
-                pointClass: ColumnPoint
-            }
-        }
+    prototype: {
+        pointClass: ColumnPoint
     }
-} = SeriesRegistry;
+} = ColumnSeries;
 
 /* *
  *

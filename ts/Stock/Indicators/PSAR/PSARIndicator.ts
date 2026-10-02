@@ -29,11 +29,9 @@ import type {
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import { merge } from '../../../Shared/Utilities.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *

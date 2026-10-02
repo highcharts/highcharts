@@ -27,16 +27,12 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import BubbleSeries from '../Bubble/BubbleSeries.js';
 const {
-    seriesTypes: {
-        bubble: {
-            prototype: {
-                pointClass: BubblePoint
-            }
-        }
+    prototype: {
+        pointClass: BubblePoint
     }
-} = SeriesRegistry;
+} = BubbleSeries;
 
 /* *
  *

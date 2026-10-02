@@ -24,17 +24,15 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
+import MapPointSeries from '../MapPoint/MapPointSeries.js';
+import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        map: {
-            prototype: mapProto
-        },
-        mappoint: {
-            prototype: mapPointProto
-        }
-    }
-} = SeriesRegistry;
+    prototype: mapProto
+} = MapSeries;
+const {
+    prototype: mapPointProto
+} = MapPointSeries;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *

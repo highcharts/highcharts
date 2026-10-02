@@ -22,16 +22,13 @@
 import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import MapSeries from '../Map/MapSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-
 const {
-    map: {
-        prototype: {
-            pointClass: MapPoint
-        }
+    prototype: {
+        pointClass: MapPoint
     }
-} = SeriesRegistry.seriesTypes;
+} = MapSeries;
 
 
 /* *

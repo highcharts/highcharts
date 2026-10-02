@@ -28,10 +28,8 @@ import type Series from '../../Core/Series/Series';
 
 import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import FinancialSymbols from '../FinancialSymbols.js';
 
 import D from '../../Core/Defaults.js';

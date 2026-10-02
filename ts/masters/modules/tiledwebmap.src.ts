@@ -3,6 +3,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/tiledwebmap
  * @requires highcharts
+ * @requires highcharts/modules/map
  *
  * (c) 2009-2026
  *

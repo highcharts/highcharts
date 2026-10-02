@@ -24,18 +24,12 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import ColumnRangePoint from './ColumnRangePoint.js';
 import ColumnRangeSeriesDefaults from './ColumnRangeSeriesDefaults.js';
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        arearange: AreaRangeSeries,
-        column: ColumnSeries,
-        column: {
-            prototype: columnProto
-        }
-    }
-} = SeriesRegistry;
 import {
     addEvent,
     clamp,

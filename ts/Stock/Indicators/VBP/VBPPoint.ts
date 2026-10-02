@@ -15,14 +15,12 @@
  *
  * */
 
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import SMAIndicator from '../SMA/SMAIndicator.js';
 const {
-    sma: {
-        prototype: {
-            pointClass: SMAPoint
-        }
+    prototype: {
+        pointClass: SMAPoint
     }
-} = SeriesRegistry.seriesTypes;
+} = SMAIndicator;
 import type VBPIndicator from './VBPIndicator';
 
 /* *

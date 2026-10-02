@@ -19,19 +19,15 @@
  * */
 
 import BubblePoint from '../Bubble/BubblePoint.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import MapSeries from '../Map/MapSeries.js';
 import { extend } from '../../Shared/Utilities.js';
 const {
-    seriesTypes: {
-        map: {
-            prototype: {
-                pointClass: {
-                    prototype: mapPointProto
-                }
-            }
+    prototype: {
+        pointClass: {
+            prototype: mapPointProto
         }
     }
-} = SeriesRegistry;
+} = MapSeries;
 
 /* *
  *

@@ -26,16 +26,12 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
 import Point from '../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import TreemapSeries from '../Treemap/TreemapSeries.js';
 const {
-    seriesTypes: {
-        treemap: {
-            prototype: {
-                pointClass: TreemapPoint
-            }
-        }
+    prototype: {
+        pointClass: TreemapPoint
     }
-} = SeriesRegistry;
+} = TreemapSeries;
 import TreegraphSeries from './TreegraphSeries';
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 

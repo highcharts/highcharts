@@ -21,12 +21,10 @@
 import type RenkoSeries from './RenkoSeries';
 import type RenkoPointOptions from './RenkoPointOptions';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const {
-    column: {
-        prototype: { pointClass: ColumnPoint }
-    }
-} = SeriesRegistry.seriesTypes;
+    prototype: { pointClass: ColumnPoint }
+} = ColumnSeries;
 
 /* *
  *

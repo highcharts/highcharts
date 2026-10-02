@@ -24,10 +24,8 @@ import type Point from '../Core/Series/Point';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
 
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const {
-    column: { prototype: columnProto }
-} = SeriesRegistry.seriesTypes;
+import ColumnSeries from './Column/ColumnSeries.js';
+const { prototype: columnProto } = ColumnSeries;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import { addEvent, defined } from '../Shared/Utilities.js';
 

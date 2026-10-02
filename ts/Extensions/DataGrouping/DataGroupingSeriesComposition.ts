@@ -31,7 +31,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { TypedArray } from '../../Shared/Types';
@@ -41,12 +40,10 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import Series from '../../Core/Series/Series.js';
 const {
-    series: {
-        prototype: seriesProto
-    }
-} = SeriesRegistry;
+    prototype: seriesProto
+} = Series;
 import {
     addEvent,
     defined,

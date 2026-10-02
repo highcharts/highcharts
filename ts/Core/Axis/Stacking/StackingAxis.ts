@@ -19,14 +19,13 @@
  * */
 
 import type Chart from '../../Chart/Chart';
-import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
 
 import { getDeferredAnimation } from '../../Animation/AnimationUtilities.js';
 import Axis from '../Axis.js';
-import SeriesRegistry from '../../Series/SeriesRegistry.js';
-const { series: { prototype: seriesProto } } = SeriesRegistry;
+import Series from '../../Series/Series.js';
+const { prototype: seriesProto } = Series;
 import StackItem from './StackItem.js';
 import {
     addEvent,

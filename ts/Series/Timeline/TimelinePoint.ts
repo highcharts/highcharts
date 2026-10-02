@@ -28,11 +28,10 @@ import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeries from './TimelineSeries';
 
 import Point from '../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    line: { prototype: { pointClass: LinePoint } },
-    pie: { prototype: { pointClass: PiePoint } }
-} = SeriesRegistry.seriesTypes;
+import LineSeries from '../Line/LineSeries.js';
+import PieSeries from '../Pie/PieSeries.js';
+const { prototype: { pointClass: LinePoint } } = LineSeries;
+const { prototype: { pointClass: PiePoint } } = PieSeries;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     defined,

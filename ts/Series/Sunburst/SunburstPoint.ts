@@ -25,13 +25,10 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: { prototype: { pointClass: Point } },
-    seriesTypes: {
-        treemap: { prototype: { pointClass: TreemapPoint } }
-    }
-} = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
+import TreemapSeries from '../Treemap/TreemapSeries.js';
+const { prototype: { pointClass: Point } } = Series;
+const { prototype: { pointClass: TreemapPoint } } = TreemapSeries;
 import SunburstNode from './SunburstNode';
 import { correctFloat, extend, pInt } from '../../Shared/Utilities.js';
 

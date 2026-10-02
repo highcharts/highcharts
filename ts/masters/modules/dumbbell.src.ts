@@ -3,6 +3,7 @@
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/dumbbell
  * @requires highcharts
+ * @requires highcharts/highcharts-more
  *
  * (c) 2009-2026 Highsoft AS
  * Author: Sebastian Bochan, Rafał Sebestjański

@@ -28,6 +28,8 @@ import ArcDiagramPoint from './ArcDiagramPoint.js';
 import ArcDiagramSeriesDefaults from './ArcDiagramSeriesDefaults.js';
 import SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import Series from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import SankeySeries from '../Sankey/SankeySeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -41,12 +43,6 @@ import {
 composeTextPath(SVGElement);
 
 const { prototype: { symbols } } = SVGRenderer;
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        sankey: SankeySeries
-    }
-} = SeriesRegistry;
 
 /* *
  *

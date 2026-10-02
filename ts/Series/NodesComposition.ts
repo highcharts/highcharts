@@ -14,21 +14,18 @@
 import type Point from '../Core/Series/Point';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
-import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+import Series from '../Core/Series/Series.js';
 const {
-    series: {
-        prototype: seriesProto,
-        prototype: {
-            pointClass: {
-                prototype: pointProto
-            }
+    prototype: seriesProto,
+    prototype: {
+        pointClass: {
+            prototype: pointProto
         }
     }
-} = SeriesRegistry;
+} = Series;
 import {
     addEvent,
     defined,

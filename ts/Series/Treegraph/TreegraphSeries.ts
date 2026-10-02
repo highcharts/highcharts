@@ -26,17 +26,13 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import Series from '../../Core/Series/Series.js';
+import TreemapSeries from '../Treemap/TreemapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        treemap: TreemapSeries,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
+    prototype: seriesProto
+} = Series;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import TreegraphNode from './TreegraphNode.js';

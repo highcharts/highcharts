@@ -28,10 +28,8 @@ import type SMAPoint from './SMAPoint';
 
 import Chart from '../../../Core/Chart/Chart.js';
 import DataTableCore from '../../../Data/DataTableCore.js';
+import LineSeries from '../../../Series/Line/LineSeries.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    line: LineSeries
-} = SeriesRegistry.seriesTypes;
 import {
     addEvent,
     extend,

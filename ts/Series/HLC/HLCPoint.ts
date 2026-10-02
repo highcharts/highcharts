@@ -23,14 +23,12 @@ import type HLCSeries from './HLCSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 const {
-    column: {
-        prototype: {
-            pointClass: ColumnPoint
-        }
+    prototype: {
+        pointClass: ColumnPoint
     }
-} = SeriesRegistry.seriesTypes;
+} = ColumnSeries;
 
 /* *
  *

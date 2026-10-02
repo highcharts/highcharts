@@ -22,12 +22,11 @@ import type {
     AnnotationMockPointOptionsObject
 } from './AnnotationMockPointOptionsObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type Series from '../../Core/Series/Series';
 
 import NBU from './NavigationBindingsUtilities.js';
 const { getAxisFromOptions } = NBU;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: { prototype: seriesProto } } = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
 import { defined, fireEvent } from '../../Shared/Utilities.js';
 
 /* *

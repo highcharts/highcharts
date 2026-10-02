@@ -40,15 +40,12 @@ const { noop } = H;
 import PackedBubblePoint from './PackedBubblePoint.js';
 import PackedBubbleSeriesDefaults from './PackedBubbleSeriesDefaults.js';
 import PackedBubbleLayout from './PackedBubbleLayout.js';
+import BubbleSeries from '../Bubble/BubbleSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        bubble: BubbleSeries
-    }
-} = SeriesRegistry;
+    prototype: seriesProto
+} = Series;
 import D from '../SimulationSeriesUtilities.js';
 const {
     initDataLabels,

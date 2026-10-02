@@ -23,14 +23,11 @@
 import type ItemPointOptions from './ItemPointOptions';
 import type ItemSeries from './ItemSeries';
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import PieSeries from '../Pie/PieSeries.js';
+import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    series: { prototype: { pointClass: Point } },
-    seriesTypes: {
-        pie: { prototype: { pointClass: PiePoint } }
-    }
-} = SeriesRegistry;
+const { prototype: { pointClass: Point } } = Series;
+const { prototype: { pointClass: PiePoint } } = PieSeries;
 
 /* *
  *
