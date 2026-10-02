@@ -94,12 +94,10 @@ class DataTableCore {
         let rowCount = 0;
 
         objectEach(options.columns || {}, (column, columnId): void => {
-            if (!isSafeKey(columnId)) {
-                return;
+            if (isSafeKey(columnId)) {
+                this.columns[columnId] = column.slice();
+                rowCount = Math.max(rowCount, column.length);
             }
-
-            this.columns[columnId] = column.slice();
-            rowCount = Math.max(rowCount, column.length);
         });
 
         this.applyRowCount(rowCount);

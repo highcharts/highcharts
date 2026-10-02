@@ -895,20 +895,21 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         columnId: string,
         newColumnId: string
     ): boolean {
-        if (isSafeKey(columnId) && isSafeKey(newColumnId)) {
+        const table = this,
+            columns = table.columns;
 
-            const table = this,
-                columns = table.columns;
-
-            if (Object.hasOwnProperty.call(columns, columnId)) {
-                if (columnId !== newColumnId) {
-                    columns[newColumnId] = columns[columnId];
-                    delete columns[columnId];
-                    table.versionTag = uniqueKey();
-                }
-
-                return true;
+        if (
+            Object.hasOwnProperty.call(columns, columnId) &&
+            isSafeKey(columnId) &&
+            isSafeKey(newColumnId)
+        ) {
+            if (columnId !== newColumnId) {
+                columns[newColumnId] = columns[columnId];
+                delete columns[columnId];
+                table.versionTag = uniqueKey();
             }
+
+            return true;
         }
 
         return false;
