@@ -108,3 +108,136 @@ test.describe('Grid Pro - validation', () => {
     });
 });
 
+test.describe('Grid Pro - notification escaping', () => {
+    test('Notifications are rendered as text, not markup', async ({ page }) => {
+        await page.setContent(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+                    <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-pro.css">
+                </head>
+                <body><div id="container"></div></body>
+            </html>
+        `, { waitUntil: 'networkidle' });
+
+        await page.evaluate(() => {
+            (window as any).Grid.grid('container', {
+                data: { columns: { product: ['Apples'] } },
+                columnDefaults: {
+                    cells: { editMode: { enabled: true } }
+                },
+                columns: [{
+                    id: 'product',
+                    dataType: 'string',
+                    cells: {
+                        editMode: {
+                            validationRules: [{
+                                validate: (): boolean => false,
+                                notification: function (
+                                    { rawValue }: { rawValue: string }
+                                ): string {
+                                    return 'Bad: ' + rawValue;
+                                }
+                            }]
+                        }
+                    }
+                }]
+            });
+        });
+
+        const cell = page.locator('td[data-column-id="product"]').first();
+        await cell.dblclick();
+        const input = cell.locator('input').first();
+        await input.clear();
+        await input.fill('<img src=x onerror="window.__x=1"><b>B</b>');
+        await page.keyboard.press('Enter');
+
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('<b>B</b>');
+        await expect(notification.locator('img')).toHaveCount(0);
+        await expect(notification.locator('b')).toHaveCount(0);
+        expect(await page.evaluate(() => (window as any).__x)).toBeUndefined();
+    });
+});
+
+test.describe('Grid Pro - non-finite values', () => {
+    // A text input lets a non-finite literal reach a number or datetime
+    // column, where the built-in input types would not.
+    async function loadGrid(page: any, dataType: string, value: unknown) {
+        await page.setContent(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+                    <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-pro.css">
+                </head>
+                <body><div id="container"></div></body>
+            </html>
+        `, { waitUntil: 'networkidle' });
+
+        await page.evaluate(([type, first]: [string, unknown]) => {
+            (window as any).Grid.grid('container', {
+                data: { columns: { a: [first, first] } },
+                columnDefaults: {
+                    cells: { editMode: { enabled: true } }
+                },
+                columns: [{
+                    id: 'a',
+                    dataType: type,
+                    cells: { editMode: { renderer: { type: 'textInput' } } }
+                }]
+            });
+        }, [dataType, value]);
+        await page.locator('td[data-column-id="a"]').first().waitFor();
+    }
+
+    async function type(page: any, text: string) {
+        const cell = page.locator('td[data-column-id="a"]').first();
+        await cell.dblclick();
+        const input = cell.locator('input').first();
+        await input.clear();
+        await input.fill(text);
+        await page.keyboard.press('Enter');
+        return cell;
+    }
+
+    test('Infinity is rejected in a datetime column', async ({ page }) => {
+        const errors: string[] = [];
+        page.on('pageerror', (e: Error) => errors.push(e.message));
+
+        await loadGrid(page, 'datetime', 1700000000000);
+        await type(page, 'Infinity');
+
+        await expect(page.locator('.hcg-notification-error').first())
+            .toBeVisible();
+        // Storing it would throw while formatting the cell, outside the
+        // try/catch in TableCell.setValue, breaking editing until reload.
+        expect(errors).toEqual([]);
+
+        // Cancelling leaves the grid editable.
+        await page.keyboard.press('Escape');
+        const other = page.locator('td[data-column-id="a"]').nth(1);
+        await other.dblclick();
+        await expect(other.locator('input')).toHaveCount(1);
+    });
+
+    test('Infinity is rejected in a number column', async ({ page }) => {
+        await loadGrid(page, 'number', 1);
+
+        await type(page, 'Infinity');
+        await expect(page.locator('.hcg-notification-error').first())
+            .toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await type(page, '-Infinity');
+        await expect(page.locator('.hcg-notification-error').first())
+            .toBeVisible();
+
+        await page.keyboard.press('Escape');
+        const cell = await type(page, '42');
+        await expect(page.locator('.hcg-notification-error')).toBeHidden();
+        await expect(cell).toContainText('42');
+    });
+});
