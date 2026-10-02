@@ -16,9 +16,13 @@ on:
       - 'tests/globals.d.ts'
       - 'tests/qunit/utils/browser-log-note-reporter.ts'
       - 'tests/setup-highcharts.mts'
+      - 'tests/setup-dashboards.mts'
+      - 'tests/setup-build-utils.mts'
+      - 'tests/setup-visual.mts'
       - 'tests/tsconfig.json'
       - 'tests/utils.ts'
       - 'tests/visual/**'
+      - 'tests/internal/visual-dashboard.spec.ts'
       - 'package.json'
       - 'package-lock.json'
       - 'tests/package.json'
@@ -73,6 +77,9 @@ jobs:
             tests/globals.d.ts \
             tests/qunit/utils/browser-log-note-reporter.ts \
             tests/setup-highcharts.mts \
+            tests/setup-dashboards.mts \
+            tests/setup-build-utils.mts \
+            tests/setup-visual.mts \
             tests/package.json \
             tests/package-lock.json \
             tests/tsconfig.json \
@@ -203,7 +210,10 @@ jobs:
         continue-on-error: true
         env:
           VISUAL_TEST_MANIFEST: ${{ runner.temp }}/visual-samples.json
-        run: npx playwright test --project=visual
+        run: |
+          npx playwright test --project=visual
+          npx playwright test tests/internal/visual-dashboard.spec.ts \
+            --project=internal --no-deps
 
       - name: Verify visual run outcomes
         if: always()
