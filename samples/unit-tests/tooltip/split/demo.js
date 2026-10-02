@@ -234,6 +234,11 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         type: 'scatter'
     });
 
+    // Scatter takes part in shared and split tooltips by default. Opt out to
+    // keep covering the non-shared fallback inside the split container, which
+    // is what #17720 was about.
+    chart.series[0].noSharedTooltip = true;
+
     // Force refresh tooltip position for non-headless tests.
     delete chart.pointer.chartPosition;
     chart.tooltip.refresh(chart.series[0].points[0]);
@@ -683,6 +688,10 @@ QUnit.test('Split tooltip, hovering between series', assert => {
         controller = new TestController(chart),
         controlPos = endPoint.plotX + plotLeft,
         endTest = assert.async();
+
+    // The scatter series must stay out of the split tooltip for this test to
+    // exercise the fallback label that animates in from the previous point.
+    series[1].noSharedTooltip = true;
 
     controller.moveTo(
         startPoint.plotX + plotLeft,

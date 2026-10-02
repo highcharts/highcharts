@@ -377,3 +377,63 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
         'Tooltip should NOT have anchorY for multiple points'
     );
 });
+
+QUnit.test(
+    'Scatter and bubble use shared tooltips with default formats',
+    function (assert) {
+        [
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: 'x = <b>1</b>, y = <b>12</b><br/>'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: 'x = <b>1</b>, y = <b>12</b>, ' +
+                    'Size: <b>2</b><br/>'
+            }
+        ].forEach(function (testCase) {
+            const chart = Highcharts.chart('container', {
+                    chart: {
+                        type: testCase.type
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    series: [{
+                        name: 'Temperature',
+                        data: testCase.data
+                    }, {
+                        name: 'Humidity',
+                        data: testCase.data
+                    }]
+                }),
+                points = chart.series.map(series => series.points[0]);
+
+            points[0].onMouseOver();
+
+            assert.strictEqual(
+                chart.hoverPoints.length,
+                2,
+                `Both ${testCase.type} series should be in the shared tooltip`
+            );
+            assert.deepEqual(
+                chart.tooltip.bodyFormatter(points),
+                points.map(point =>
+                    '<span style="color:' + point.color + '">●</span> ' +
+                    point.series.name + ':<br/>\u00A0\u00A0' +
+                    testCase.expected
+                ),
+                `${testCase.type} should use the default point format`
+            );
+            assert.strictEqual(
+                chart.tooltip.headerFooterFormatter(points[0]),
+                '',
+                'A lone numeric x value should be omitted from the header'
+            );
+
+            chart.destroy();
+        });
+    }
+);
