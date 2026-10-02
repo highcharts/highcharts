@@ -4,5 +4,6 @@ description: Shows fund asset allocation as a bar chart alongside a synchronized
 tags:
   - Dashboards
   - Morningstar
+requiresManualTesting: true
 js_wrap: b
 ...
