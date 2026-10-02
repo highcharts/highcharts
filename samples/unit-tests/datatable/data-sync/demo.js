@@ -114,4 +114,12 @@ QUnit.test('Sync between data table and series', async assert => {
         [5, 6, 7],
         'The series should not write back into the given data table.'
     );
+
+    seriesTable.setColumn('y', [9, 8, 7]);
+
+    assert.deepEqual(
+        Array.from(seriesWithTable.getColumn('y')),
+        [9, 8, 7],
+        'Updating the given data table should update the series.'
+    );
 });
