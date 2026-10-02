@@ -102,4 +102,22 @@ describe('visual test sample eligibility', () => {
             await rm(root, { recursive: true, force: true });
         }
     });
+
+    it('rejects JS-specific YAML tags in demo.details', async () => {
+        const root = await mkdtemp(join(tmpdir(), 'hc-visual-eligibility-'));
+
+        try {
+            await mkdir(join(root, 'samples', 'js-tag'), { recursive: true });
+            await writeFile(
+                join(root, 'samples', 'js-tag', 'demo.details'),
+                'requiresManualTesting: !!js/function "function(){return 1}"\n'
+            );
+            throws(
+                () => getVisualSampleSkipReason(root, 'js-tag'),
+                /unknown tag !<tag:yaml.org,2002:js\/function>/u
+            );
+        } finally {
+            await rm(root, { recursive: true, force: true });
+        }
+    });
 });
