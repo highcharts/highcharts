@@ -20,6 +20,7 @@
 
 import type { StandaloneNavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { Options } from '../../Core/Options';
 import type Navigator from './Navigator';
 import type { SetRangeEvent } from './Navigator';
@@ -30,7 +31,12 @@ import Axis from '../../Core/Axis/Axis.js';
 import standaloneNavigatorDefaults, {
     getChartDefaults
 } from './StandaloneNavigatorDefaults.js';
-import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    fireEvent,
+    merge
+} from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /** @internal */
@@ -74,6 +80,22 @@ function compatChartOptions(
     }
 
     return options;
+}
+
+/** @internal */
+function getSizeOptions(
+    options: StandaloneNavigatorOptions
+): DeepPartial<Options> {
+    const { height, width, margin, inverted } =
+            options.chartOptions?.chart || {},
+        chartHeight = height ?? (inverted ? void 0 : options.height || void 0);
+
+    return merge(
+        getChartDefaults(inverted),
+        defined(margin) ? { chart: { margin } } : void 0,
+        defined(width) ? { chart: { width } } : void 0,
+        defined(chartHeight) ? { chart: { height: chartHeight } } : void 0
+    );
 }
 
 /* *
@@ -151,28 +173,14 @@ class StandaloneNavigator {
     ) {
         this.userOptions = userOptions = compatChartOptions(userOptions);
 
-        const inverted = userOptions.chartOptions?.chart?.inverted;
-
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
-            getChartDefaults(inverted),
             userOptions.chartOptions,
+            getSizeOptions(userOptions),
             { navigator: userOptions },
             { navigator: { enabled: true } }
         );
-
-        // For a non-inverted navigator, the height option sets the chart
-        // height unless it is set explicitly in chart options (#21268,
-        // #24715).
-        if (
-            this.chartOptions.chart &&
-            !inverted &&
-            !userOptions.chartOptions?.chart?.height &&
-            userOptions.height
-        ) {
-            this.chartOptions.chart.height = userOptions.height;
-        }
 
         const chart = new Chart(element, this.chartOptions);
         this.navigator = chart.navigator as Navigator;
@@ -403,23 +411,12 @@ class StandaloneNavigator {
     ): void {
         newOptions = compatChartOptions(newOptions, this.navigator.chart);
 
-        const wasInverted = this.userOptions.chartOptions?.chart?.inverted;
-
         this.userOptions = merge(this.userOptions, newOptions);
-
-        const chartUserOptions = this.userOptions.chartOptions?.chart,
-            isInverted = chartUserOptions?.inverted;
 
         this.chartOptions = merge(
             this.chartOptions,
-            isInverted !== wasInverted ?
-                getChartDefaults(isInverted) : void 0,
-            (
-                newOptions.height &&
-                !isInverted &&
-                !chartUserOptions?.height
-            ) ? { chart: { height: newOptions.height } } : void 0,
             newOptions.chartOptions,
+            getSizeOptions(this.userOptions),
             { navigator: newOptions }
         );
 

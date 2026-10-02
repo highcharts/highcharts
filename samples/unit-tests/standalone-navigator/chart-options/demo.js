@@ -72,6 +72,31 @@ QUnit.test('Chart options in Standalone Navigator', function (assert) {
         'Navigator height should be kept after inverting, #24715.'
     );
 
+    navigator.update({
+        chartOptions: {
+            chart: {
+                inverted: false
+            }
+        }
+    });
+
+    assert.notOk(
+        navigator.navigator.chart.inverted,
+        'Standalone navigator chart should be back to normal orientation.'
+    );
+
+    assert.strictEqual(
+        navigator.navigator.chart.container.offsetHeight,
+        250,
+        'Chart height should be restored after turning inverted off, #24714.'
+    );
+
+    assert.strictEqual(
+        navigator.navigator.height,
+        80,
+        'Navigator height should survive the round trip, #24714.'
+    );
+
     assert.ok(
         navigator.navigator.scrollbar,
         'Scrollbar should be enabled by default.'
@@ -224,5 +249,37 @@ QUnit.test('Standalone navigator stays at the top, #24714', function (assert) {
     assert.ok(
         scrollbar.y < nav.top + nav.height + scrollbar.height,
         'Scrollbar should follow the navigator, not the chart bottom.'
+    );
+
+    navigator.destroy();
+
+    const sized = Highcharts.navigator('container', {
+        height: 100,
+        series: [{
+            data: [[0, 0], [600, 1]]
+        }]
+    });
+
+    assert.strictEqual(
+        sized.navigator.chart.chartHeight,
+        100,
+        'Navigator height should set the chart height, #24714.'
+    );
+
+    sized.update({ chartOptions: { chart: { inverted: true } } });
+    sized.update({ chartOptions: { chart: { inverted: false } } });
+
+    assert.strictEqual(
+        sized.navigator.chart.chartHeight,
+        100,
+        'Chart height should be restored after a round trip, #24714.'
+    );
+
+    sized.update({ chartOptions: { chart: { inverted: true } } });
+
+    assert.strictEqual(
+        sized.navigator.chart.chartWidth,
+        70,
+        'Inverted navigator should take its breadth across the width.'
     );
 });
