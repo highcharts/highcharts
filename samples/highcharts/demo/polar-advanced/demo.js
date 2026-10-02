@@ -327,7 +327,6 @@ Highcharts.chart('container', {
         borderRadius: 14,
         borderColor: 'transparent',
         borderWidth: 0,
-        lineHeight: 8,
         itemStyle: {
             color: '#FFF',
             fontSize: '0.8em'
@@ -358,7 +357,6 @@ Highcharts.chart('container', {
                 },
                 chartOptions: {
                     legend: {
-                        lineHeight: 16,
                         padding: 3,
                         borderWidth: 0.5,
                         itemStyle: {
