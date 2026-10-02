@@ -6,7 +6,6 @@ function logAnim(msg) {
 }
 
 // Set up the image path
-const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/';
 
 // reduced motion
 // eslint-disable-next-line max-len
@@ -2762,7 +2761,7 @@ const products = [
         name: 'Highcharts Stock',
         tagline: 'Financial visualization and analysis tools',
         id: 'stockTitle',
-        icon: 'icon-stock.svg',
+        icon: 'stock',
         chart: stockWithAnnotations,
         // eslint-disable-next-line max-len
         demoTitle: 'Stock data with annotations',
@@ -2778,7 +2777,7 @@ const products = [
         name: 'Highcharts Stock',
         tagline: 'Financial visualization and analysis tools',
         id: 'stockTitle',
-        icon: 'icon-stock.svg',
+        icon: 'stock',
         chart: cs,
         // eslint-disable-next-line max-len
         demoTitle: 'Candlestick chart',
@@ -2796,7 +2795,7 @@ const products = [
         tagline: 'Tools for JavaScript data tables',
         id: 'gridTitle',
         chart: grid,
-        icon: 'icon-grid.svg',
+        icon: 'grid',
         // eslint-disable-next-line max-len
         stopLink: `<button class="stop-link" 
          id="stop-grid">(Stop chart animation)</button>`,
@@ -2814,7 +2813,7 @@ const products = [
         name: 'Highcharts Core',
         tagline: '40+ Chart Types',
         id: 'coreTitle',
-        icon: 'icon-core.svg',
+        icon: 'core',
         chart: coreChart,
         stopLink: null,
         demoTitle: 'Pie Chart',
@@ -2832,7 +2831,7 @@ const products = [
         tagline: 'Time-saving dashboard tools',
         id: 'dashboardsTitle',
         chart: dashboards,
-        icon: 'icon-dashboards.svg',
+        icon: 'dashboards',
         demoTitle: 'Personal finance dashboard',
         stopLink: null,
         demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
@@ -2850,7 +2849,7 @@ const products = [
         tagline: 'Data mapped to geography',
         id: 'mapsTitle',
         chart: animatedMap,
-        icon: 'icon-maps.svg',
+        icon: 'maps',
         demoTitle: 'Animated Map',
         demoDesc: 'Maps can tell stories when connected to data.',
         // eslint-disable-next-line max-len
@@ -2870,7 +2869,7 @@ const products = [
         id: 'ganttTitle',
         chart: gantt,
         stopLink: null,
-        icon: 'icon-gantt.svg',
+        icon: 'gantt',
         demoTitle: 'Gantt chart',
         demoDesc: `Use Gantts to track tasks, dependencies, and 
         progress.`,
@@ -2904,7 +2903,9 @@ products.forEach((p, index) => {
     item.id = 'title-' + index;
     item.ariaHidden = 'true';
     item.innerHTML = `
-        <img src="${imagePath + p.icon}" width="28" height="28" alt="">
+        <svg class="product-icon" aria-hidden="true">
+            <use href="#product-icon-${p.icon}"></use>
+        </svg>
         <div><h2>${p.name}</h2><p>${p.tagline}</p></div>
     `;
     titleInner.appendChild(item);
