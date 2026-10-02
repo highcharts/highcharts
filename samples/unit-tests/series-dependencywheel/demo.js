@@ -76,3 +76,32 @@ QUnit.test('Dependency wheel', function (assert) {
         'Node sum correct after point remove'
     );
 });
+
+QUnit.test('Arc diagram data label rank follows node size', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'arcdiagram',
+            dataLabels: {
+                enabled: true,
+                allowOverlap: false
+            },
+            data: [
+                ['Large source', 'Large target', 10],
+                ['Small source', 'Small target', 1]
+            ]
+        }]
+    });
+
+    const nodes = chart.series[0].nodes;
+
+    assert.strictEqual(
+        nodes[0].dataLabel.labelrank,
+        10,
+        'The larger arc diagram node has the higher data label rank'
+    );
+    assert.strictEqual(
+        nodes[2].dataLabel.labelrank,
+        1,
+        'The smaller arc diagram node has the lower data label rank'
+    );
+});
