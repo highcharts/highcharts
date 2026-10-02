@@ -280,7 +280,8 @@ module.exports = function (config) {
     if (argv.visualcompare || argv.reference) {
         files = [
             ...files,
-            'node_modules/@highcharts/connectors-morningstar/connectors-morningstar.js'
+            'node_modules/@highcharts/connectors-morningstar/connectors-morningstar.js',
+            'node_modules/@highcharts/connectors-morningstar/connectors-morningstar-dws.js'
         ];
     }
 
