@@ -26,6 +26,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 export interface MapBubbleSeriesOptions extends BubbleSeriesOptions {
+
+    /**
+     * States for the map bubble series.
+     */
     states?: SeriesStatesOptions<MapBubbleSeriesOptions>;
 }
 
