@@ -244,7 +244,6 @@ class SparklineContent extends CellContentPro {
             try {
                 data = JSON.parse(trimmedValue);
             } catch {
-                // Throwing here would abort the cell render
                 const { column } = this.cell;
 
                 if (!warnedColumns.has(column)) {
