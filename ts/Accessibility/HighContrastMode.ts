@@ -162,6 +162,13 @@ function isHighContrastModeActive(): boolean {
     return win.matchMedia && win.matchMedia('(forced-colors: active)').matches;
 }
 
+/**
+ * Detect whether a high contrast theme contains author-defined series colors.
+ *
+ * @internal
+ * @param {*} theme The high contrast theme to check.
+ * @return {boolean} True if the theme contains author-defined series colors.
+ */
 function hasAuthorDefinedSeriesColors(theme: AnyRecord): boolean {
     if (theme.colors?.some(isAuthorColor)) {
         return true;
@@ -212,11 +219,13 @@ function setHighContrastTheme(
         const theme: AnyRecord = chart.options.accessibility.highContrastTheme,
             userTheme: AnyRecord =
                 chart.userOptions.accessibility?.highContrastTheme || {},
-            preserveAuthorColors = hasAuthorDefinedSeriesColors(userTheme);
+            preserveAuthorColors = hasAuthorDefinedSeriesColors(theme);
 
         chart.update(theme, false);
 
-        const customColors = userTheme.colors,
+        const customColors = theme.colors?.some(isAuthorColor) ?
+                theme.colors :
+                void 0,
             hasCustomColors = !!customColors?.length,
             defaultPlotOpts = theme.plotOptions?.series || {},
             userDefaultPlotOpts = userTheme.plotOptions?.series || {};
@@ -231,7 +240,7 @@ function setHighContrastTheme(
                     userDefaultPlotOpts,
                     userTheme.plotOptions?.[s.type]
                 ),
-                colorIndex = pick(s.colorIndex, 0),
+                colorIndex = pick(s.colorIndex, s.index, 0),
                 isFilledLineSeries = !!(s.graph && (s as AnyRecord).area),
                 seriesColor = hasCustomColors ?
                     customColors[colorIndex % customColors.length] :

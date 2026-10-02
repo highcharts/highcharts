@@ -274,9 +274,11 @@ QUnit.test('HCM colors override series colors', function (assert) {
                 data: [1, 2, 3]
             }, {
                 type: 'line',
+                color: '#abc',
                 data: [3, 2, 1]
             }, {
                 type: 'column',
+                color: '#def',
                 data: [2, 2, 2]
             }]
         });
@@ -450,6 +452,45 @@ QUnit.test('HCM colors override series colors', function (assert) {
         '3',
         'Reapplying the theme should preserve its marker line width.'
     );
+});
+
+QUnit.test('HCM colors set through global options', function (assert) {
+    const colors = ['#f00', '#0f0'],
+        originalTheme = Highcharts.merge(
+            Highcharts.defaultOptions.accessibility.highContrastTheme
+        );
+
+    Highcharts.setOptions({
+        accessibility: {
+            highContrastTheme: {
+                colors: colors
+            }
+        }
+    });
+
+    const chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].graph && chart.series[0].graph.attr('stroke'),
+        colors[0],
+        'Global high contrast colors should be rendered.'
+    );
+
+    assert.strictEqual(
+        getForcedColorAdjust(chart),
+        'none',
+        'Global high contrast colors should be preserved in forced colors ' +
+        'mode.'
+    );
+
+    Highcharts.defaultOptions.accessibility.highContrastTheme = originalTheme;
 });
 
 QUnit.test(
