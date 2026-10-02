@@ -4,5 +4,6 @@ description: Displays market capitalization breakdown as a donut pie chart synch
 tags:
   - Dashboards
   - Morningstar
+requiresManualTesting: true
 js_wrap: b
 ...

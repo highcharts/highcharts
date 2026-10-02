@@ -4,5 +4,6 @@ description: Shows the top 5 portfolio holdings as a bubble chart with a data gr
 tags:
   - Dashboards
   - Morningstar
+requiresManualTesting: true
 js_wrap: b
 ...
