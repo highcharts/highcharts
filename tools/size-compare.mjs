@@ -7,7 +7,7 @@
 // Cleanup: git worktree remove --force tmp/size-base
 //
 // UMD: minified size of each file. ESM: what an entry adds on top of the four
-// products and its @requires, i.e. bundle(deps + entry) - bundle(deps). For ESM
+// products and its @requires in either tree, i.e. bundle(deps + entry) - bundle(deps). For ESM
 // use the min column, gzip deltas of such differences are noisy.
 /* eslint-disable no-console, node/no-unpublished-import */
 import { execSync } from 'node:child_process';
@@ -49,6 +49,9 @@ function size(code) {
     return { min: code.length, gz: gzipSize.sync(code) };
 }
 
+// Many entries share the same @requires, so reuse their deps-only bundles
+const depsCache = {};
+
 async function bundle(dir, contents) {
     const { outputFiles } = await esbuild.build({
         stdin: { contents, resolveDir: dir },
@@ -64,7 +67,9 @@ async function bundle(dir, contents) {
 
 async function measure(root, flavor) {
     const dir = join(root, FLAVORS[flavor]),
+        // Forward slashes, Windows paths break the filter and the imports
         files = globSync('**/*.src.js', { cwd: dir })
+            .map(f => f.replaceAll('\\', '/'))
             .filter(f => !/^(?:esm|es-modules|es5|grid|dashboards)\//u.test(f)),
         out = {};
 
@@ -77,11 +82,16 @@ async function measure(root, flavor) {
             out[f] = size(code);
             return;
         }
-        const deps = PRODUCTS + [
-                ...src.matchAll(/@requires highcharts\/(\S+)/gu)
-            ].map(m => `\nimport './${m[1]}.src.js';`).join(''),
+        // @requires of both trees, so both subtract the same deps
+        const deps = PRODUCTS + [...new Set([BASE, ROOT].flatMap(r => {
+                const p = join(r, FLAVORS[flavor], f);
+                return existsSync(p) ? [
+                    ...readFileSync(p, 'utf8')
+                        .matchAll(/@requires highcharts\/(\S+)/gu)
+                ].map(m => m[1]) : [];
+            }))].map(m => `\nimport './${m}.src.js';`).join(''),
             [d, s] = await Promise.all([
-                bundle(dir, deps),
+                depsCache[dir + deps] ??= bundle(dir, deps),
                 bundle(dir, `${deps}\nimport './${f}';`)
             ]);
         out[f] = { min: s.min - d.min, gz: s.gz - d.gz };
@@ -97,6 +107,7 @@ async function main() {
     const lines = [`# Size comparison: ${ref.slice(0, 10)} -> working tree`];
 
     for (const flavor of Object.keys(FLAVORS)) {
+        console.log(`Measuring ${flavor}...`);
         const [a, b] = await Promise.all([
                 measure(BASE, flavor), measure(ROOT, flavor)
             ]),
