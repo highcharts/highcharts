@@ -73,11 +73,13 @@ class Validator {
             notification: 'Value cannot be empty.'
         },
         number: {
-            validate: ({ rawValue }): boolean => !isNaN(+rawValue),
+            validate: ({ rawValue }): boolean => Number.isFinite(+rawValue),
             notification: 'Value has to be a number.'
         },
         datetime: {
-            validate: ({ value }): boolean => !defined(value) || !isNaN(+value),
+            validate: ({ value }): boolean => (
+                !defined(value) || Number.isFinite(+value)
+            ),
             notification: 'Value has to be parsed to a valid timestamp.'
         },
         'boolean': {
