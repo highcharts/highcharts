@@ -305,3 +305,34 @@ QUnit.test('Polar chart without stickyTracking, #17359.', function (assert) {
         'The tooltip should not be displayed when not hovering over the series.'
     );
 });
+
+QUnit.test('Should not hover condemned points (#25063)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                animation: true
+            },
+            tooltip: {
+                enabled: true
+            },
+            series: [{
+                data: [2, 3, 4]
+            }]
+        }),
+        controller = new TestController(chart),
+        point = chart.series[0].points[1],
+        x = chart.plotLeft + point.plotX,
+        y = chart.plotTop + point.plotY;
+
+    chart.renderer.globalAnimation = {
+        duration: 100
+    };
+
+    point.destroy();
+    controller.moveTo(x, y);
+
+    assert.notStrictEqual(
+        chart.hoverPoint,
+        point,
+        'Condemned point is not hovered'
+    );
+});

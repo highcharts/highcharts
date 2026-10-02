@@ -1793,8 +1793,9 @@ class Pointer {
                 chart.hoverPoint.firePointEvent('mouseOut');
             }
 
-            // Hover point may have been destroyed in the event handlers (#7127)
-            if (!hoverPoint.series) {
+            // Hover point may have been destroyed (#7127) or condemned (#25063)
+            // in the event handlers.
+            if (!hoverPoint.series || hoverPoint.condemned) {
                 return;
             }
 
