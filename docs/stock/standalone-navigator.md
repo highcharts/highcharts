@@ -58,9 +58,9 @@ are set, `chartOptions` takes precedence.
 The `height` option applies to the navigator series area only. The scrollbar is
 a separate component with its own `scrollbar.height`, and it is rendered below
 the navigator, so the chart height must leave room for both. When the navigator
-is inverted, `height` still means the thickness of the navigator strip, but the
-strip runs vertically with the scrollbar to its left, so it is the chart width
-that must leave room for both.
+is inverted, the strip runs vertically with the scrollbar to its left, so
+`height` is measured horizontally and it is the chart width that must leave
+room for both.
 
 ## Managing Navigator Range
 

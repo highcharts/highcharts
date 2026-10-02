@@ -159,7 +159,7 @@ class StandaloneNavigator {
             getChartDefaults(inverted),
             userOptions.chartOptions,
             { navigator: userOptions },
-            { navigator: { enabled: true }, scrollbar: { enabled: true } }
+            { navigator: { enabled: true } }
         );
 
         // For a non-inverted navigator, the height option sets the chart

@@ -71,6 +71,36 @@ QUnit.test('Chart options in Standalone Navigator', function (assert) {
         80,
         'Navigator height should be kept after inverting, #24715.'
     );
+
+    assert.ok(
+        navigator.navigator.scrollbar,
+        'Scrollbar should be enabled by default.'
+    );
+
+    navigator.destroy();
+
+    const noScrollbar = Highcharts.navigator('container', {
+        chartOptions: {
+            scrollbar: {
+                enabled: false
+            }
+        },
+        series: [{
+            data: [1, 2, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        noScrollbar.navigator.chart.container
+            .querySelectorAll('.highcharts-scrollbar').length,
+        0,
+        'No scrollbar should be rendered when disabled, #24714.'
+    );
+
+    assert.ok(
+        noScrollbar.navigator.navigatorEnabled,
+        'The navigator itself should stay enabled, #24714.'
+    );
 });
 
 QUnit.test('Deprecated chart option in Standalone Navigator', function (
@@ -122,7 +152,7 @@ QUnit.test('Deprecated chart option in Standalone Navigator', function (
     );
 });
 
-QUnit.test('Inverted standalone navigator layout, #24717', function (assert) {
+QUnit.test('Inverted standalone navigator layout, #24714', function (assert) {
     const navigator = Highcharts.navigator('container', {
         chartOptions: {
             chart: {
@@ -168,7 +198,7 @@ QUnit.test('Inverted standalone navigator layout, #24717', function (assert) {
     );
 });
 
-QUnit.test('Standalone navigator stays at the top, #24717', function (assert) {
+QUnit.test('Standalone navigator stays at the top, #24714', function (assert) {
     const navigator = Highcharts.navigator('container', {
         chartOptions: {
             chart: {
