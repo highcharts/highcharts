@@ -40,6 +40,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/KDPointSearchObjectBase' {
     interface KDPointSearchObjectBase {
         lat?: number;
@@ -47,6 +48,7 @@ declare module '../../Core/Series/KDPointSearchObjectBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         lat?: number;
@@ -87,7 +89,7 @@ class GeoHeatmapPoint extends MapPoint {
 
 
     /**
-     * @private
+     * @internal
      */
     public applyOptions(
         options: (GeoHeatmapPointOptions | PointShortOptions),
