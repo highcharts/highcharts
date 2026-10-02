@@ -26,6 +26,7 @@
 import type { AnyRecord } from '../Shared/Types';
 
 import { error as coreError } from '../Core/Utilities.js';
+import { isSafeKey } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -54,14 +55,12 @@ function deepClone(value: any, excludedKeys?: string[]): any {
         const keys = Object.keys(value);
 
         for (const key of keys) {
-            if (key === '__proto__' || key === 'constructor') {
-                continue;
-            }
-
-            if (excludedKeys && excludedKeys.includes(key)) {
-                clone[key] = value[key];
-            } else {
-                clone[key] = deepClone(value[key], excludedKeys);
+            if (isSafeKey(key)) {
+                if (excludedKeys && excludedKeys.includes(key)) {
+                    clone[key] = value[key];
+                } else {
+                    clone[key] = deepClone(value[key], excludedKeys);
+                }
             }
         }
 

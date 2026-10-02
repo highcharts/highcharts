@@ -55,6 +55,7 @@ import {
     isFunction,
     isNumber,
     isObject,
+    isSafeKey,
     isString,
     merge,
     removeEvent
@@ -1184,32 +1185,28 @@ class Point {
         const nestedKeys = key.split('.');
 
         // Reject nested keys that would allow prototype pollution
-        if (nestedKeys.some((nestedKey): boolean => (
-            nestedKey === '__proto__' || nestedKey === 'constructor'
-        ))) {
-            return object;
+        if (nestedKeys.every(isSafeKey)) {
+            nestedKeys.reduce(function (
+                result: any,
+                key: string,
+                i: number,
+                arr: Array<string>
+            ): T {
+                const isLastKey = arr.length - 1 === i;
+
+                result[key] = (
+                    isLastKey ?
+                        value :
+                        // Inherited objects are shared with everything else on
+                        // that prototype, so start a fresh one instead
+                        isObject(result[key], true) &&
+                        Object.hasOwnProperty.call(result, key) ?
+                            result[key] :
+                            {}
+                );
+                return result[key];
+            }, object);
         }
-
-        nestedKeys.reduce(function (
-            result: any,
-            key: string,
-            i: number,
-            arr: Array<string>
-        ): T {
-            const isLastKey = arr.length - 1 === i;
-
-            result[key] = (
-                isLastKey ?
-                    value :
-                    // Inherited objects are shared with everything else on
-                    // that prototype, so start a fresh one instead
-                    isObject(result[key], true) &&
-                    Object.hasOwnProperty.call(result, key) ?
-                        result[key] :
-                        {}
-            );
-            return result[key];
-        }, object);
         return object;
     }
 
