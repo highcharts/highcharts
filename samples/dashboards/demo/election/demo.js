@@ -27,6 +27,93 @@ const electionYears = ['2020', '2016', '2012', '2008'];
 // Election data loaded from CSV and converted to JSON
 let electionData;
 
+// Class name marking the party that won the column pair the cell belongs to.
+// Electoral and popular votes are compared separately, so a state can come
+// out blue on one pair and red on the other.
+function winnerClassName(party, own, rival) {
+    return '{#if (gt row.data.' + own + ' row.data.' + rival + ')}' +
+        party + '{/if}';
+}
+
+// Columns the map and the result panel read, not shown in the grid
+const hiddenColumnIds = [
+    'demPercent',
+    'repPercent',
+    'postal-code',
+    'demVoteSummary',
+    'repVoteSummary'
+];
+
+// The grid columns. Passed whole on every update, because updating
+// `columns` replaces the array rather than merging into it.
+function getGridColumns(candDem, candRep) {
+    return [{
+        id: 'state',
+        header: {
+            format: 'State'
+        }
+    }, {
+        id: 'demColVotes',
+        header: {
+            format: candDem ? candDem + ' (Democrat)' : 'Dem. electors'
+        },
+        cells: {
+            className: winnerClassName(
+                'democrat', 'demColVotes', 'repColVotes'
+            )
+        }
+    }, {
+        id: 'repColVotes',
+        header: {
+            format: candRep ? candRep + ' (Republican)' : 'Rep. electors'
+        },
+        cells: {
+            className: winnerClassName(
+                'republican', 'repColVotes', 'demColVotes'
+            )
+        }
+    }, {
+        id: 'demVotes',
+        header: {
+            format: 'Dem. votes'
+        },
+        cells: {
+            className: winnerClassName('democrat', 'demVotes', 'repVotes'),
+            formatter: formatVotesCell
+        }
+    }, {
+        id: 'repVotes',
+        header: {
+            format: 'Rep. votes'
+        },
+        cells: {
+            className: winnerClassName('republican', 'repVotes', 'demVotes'),
+            formatter: formatVotesCell
+        }
+    }, {
+        id: 'totalVotes',
+        header: {
+            format: 'Total votes'
+        },
+        cells: {
+            formatter: function () {
+                return Number(this.value).toLocaleString('en-US');
+            }
+        }
+        // Columns backing the map and the result panel, not shown in the grid
+    }, ...hiddenColumnIds.map(id => ({ id, enabled: false }))];
+}
+
+// Renders a vote count with its share of the row total. Works for a state
+// row and for the aggregated national row alike.
+function formatVotesCell() {
+    const votes = Number(this.value);
+    const total = Number(this.row.data.totalVotes);
+
+    return votes.toLocaleString('en-US') +
+        (total ? ' (' + (votes / total * 100).toFixed(1) + '%)' : '');
+}
+
 // Convert a cell value to a number.
 function convertToNumber(value, useNaN) {
     switch (typeof value) {
@@ -329,51 +416,24 @@ async function setupDashboard() {
             renderTo: 'election-grid',
             type: 'Grid',
             connector: {
-                id: 'votes' + defaultYear
+                id: 'grid' + defaultYear
             },
             title: {
                 text: 'Updating...' // Populated later
             },
             gridOptions: {
-                rendering: {
-                    columns: {
-                        included: [
-                            'state', 'demColVotes', 'repColVotes',
-                            'demVoteSummary', 'repVoteSummary', 'totalVotes'
-                        ]
-                    }
+                // The national totals are aggregated by the grid and stuck
+                // above the states instead of sitting in the data.
+                summaryRows: {
+                    id: 'national',
+                    position: 'top',
+                    aggregator: 'SUM',
+                    columns: [{
+                        id: 'state',
+                        value: 'National'
+                    }]
                 },
-                columnDefaults: {
-                    sorting: {
-                        enabled: false
-                    }
-                },
-                columns: [{
-                    id: 'state',
-                    header: {
-                        format: 'State'
-                    }
-                }, {
-                    id: 'demVoteSummary',
-                    header: {
-                        format: 'Dem. votes'
-                    }
-                }, {
-                    id: 'repVoteSummary',
-                    header: {
-                        format: 'Rep. votes'
-                    }
-                }, {
-                    id: 'totalVotes',
-                    header: {
-                        format: 'Total votes'
-                    },
-                    cells: {
-                        formatter: function () {
-                            return Number(this.value).toLocaleString('en-US');
-                        }
-                    }
-                }]
+                columns: getGridColumns()
             }
         }]
     }, true);
@@ -538,8 +598,9 @@ async function setupDashboard() {
                                 repVotes = 0;
                             }
                         }
-                        rowObj.repColVotes = repVotes;
-                        rowObj.demColVotes = demVotes;
+                        // Numbers, so that the grid can aggregate them
+                        rowObj.repColVotes = Number(repVotes);
+                        rowObj.demColVotes = Number(demVotes);
                         rowObjNational.repColVotes += Number(repVotes);
                         rowObjNational.demColVotes += Number(demVotes);
 
@@ -613,14 +674,22 @@ async function setupDashboard() {
         const connectors = [];
 
         electionYears.forEach(function (year) {
-            connectors.push(
-                {
-                    id: 'votes' + year,
-                    type: 'JSON',
-                    firstRowAsNames: true,
-                    data: electionData[year].data
-                }
-            );
+            const data = electionData[year].data;
+
+            connectors.push({
+                id: 'votes' + year,
+                type: 'JSON',
+                firstRowAsNames: true,
+                data: data
+            }, {
+                // The grid renders the national totals as a pinned summary
+                // row, so its own connector leaves out the national row
+                // (index 1) that the other components read.
+                id: 'grid' + year,
+                type: 'JSON',
+                firstRowAsNames: true,
+                data: [data[0], ...data.slice(2)]
+            });
         });
         return connectors;
     }
@@ -728,16 +797,16 @@ async function updateResultComponent(electionTable, year) {
     document.querySelector('div#dem-cand img').src = imgDemUrl;
     document.querySelector('div#rep-cand img').src = imgRepUrl;
 
-    // Election information
+    // Election information.
     let el = document.getElementById('info-dem1');
-    el.innerHTML = `${candDem}: ${demColVotes}`;
+    el.textContent = `${candDem}: ${demColVotes}`;
     el = document.getElementById('info-dem2');
-    el.innerHTML = formatVotes(demVotes, demPercent, 'Total Votes');
+    el.textContent = formatVotes(demVotes, demPercent, 'Total Votes');
 
     el = document.getElementById('info-rep1');
-    el.innerHTML = `${candRep}: ${repColVotes}`;
+    el.textContent = `${candRep}: ${repColVotes}`;
     el = document.getElementById('info-rep2');
-    el.innerHTML = formatVotes(repVotes, repPercent, 'Total Votes');
+    el.textContent = formatVotes(repVotes, repPercent, 'Total Votes');
 
     // Result bar
     el = document.getElementById('bar-dem');
@@ -748,7 +817,7 @@ async function updateResultComponent(electionTable, year) {
     // Votes needed to win
     const neededVotes = Math.floor(totalColVotes / 2) + 1;
     el = document.getElementById('info-to-win');
-    el.innerHTML = neededVotes + ' to win';
+    el.textContent = neededVotes + ' to win';
 }
 
 
@@ -759,16 +828,22 @@ function updateControlComponent(year) {
     const descContainer = document.getElementById('election-description');
 
     // Update title with year
-    title.innerHTML = year + ' ' + commonTitle;
+    title.textContent = year + ' ' + commonTitle;
 
-    // Brief text about the election
-    const brief = el.querySelector('descr').innerHTML;
+    // Brief text about the election. The markup is already parsed, so it is
+    // cloned rather than round-tripped through innerHTML.
+    const brief = el.querySelector('descr').cloneNode(true);
+    const link = document.createElement('a');
 
-    // Wikipedia link
-    const wikiUrl = el.querySelector('wiki').innerHTML;
+    link.textContent = 'Wikipedia';
+    link.target = '_blank';
+    link.href = 'https://en.wikipedia.org/wiki/' + Number(year) +
+        '_United_States_presidential_election';
 
     // Update custom HTML component
-    descContainer.innerHTML = `${brief}<a href="${wikiUrl}" target="_blank">Wikipedia</a>.`;
+    descContainer.replaceChildren(
+        ...brief.childNodes, link, document.createTextNode('.')
+    );
 }
 
 
@@ -817,23 +892,13 @@ async function updateGridComponent(component, year) {
             text: year + ' ' + commonTitle
         },
         connector: {
-            id: 'votes' + year
+            id: 'grid' + year
         },
         gridOptions: {
             credits: {
                 enabled: false
             },
-            columns: [{
-                id: 'repColVotes',
-                header: {
-                    format: candRep + ' (Republican)'
-                }
-            }, {
-                id: 'demColVotes',
-                header: {
-                    format: candDem + ' (Democrat)'
-                }
-            }]
+            columns: getGridColumns(candDem, candRep)
         }
     });
 }
