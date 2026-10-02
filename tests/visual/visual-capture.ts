@@ -34,6 +34,7 @@ export async function captureVisualSVG(
         const isReady = () => {
             const chart = getChart();
             return !window.HCVisualSetup?.hasPendingRequests?.() &&
+                !window.HCVisualSetup?.hasPendingRenders?.() &&
                 (chart ? chart.hasLoaded :
                     document.getElementsByTagName('svg').length);
         };
@@ -51,6 +52,11 @@ export async function captureVisualSVG(
                 return svg;
             }
             await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
+        if (window.HCVisualSetup?.hasPendingRenders?.()) {
+            throw new Error(
+                `Boost rendering failed to finish within ${maxAttempts * retryDelay}ms.`
+            );
         }
         throw new Error(
             `Chart or data failed to load within ${maxAttempts * retryDelay}ms.`

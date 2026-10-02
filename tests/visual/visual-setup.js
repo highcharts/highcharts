@@ -9,6 +9,7 @@
         var Highcharts = window.Highcharts;
         var originalSend = window.XMLHttpRequest.prototype.send;
         var pendingRequests = new Set();
+        var pendingRenders = new Map();
 
         function trackDataRequests() {
             const requests = pendingRequests = new Set();
@@ -164,6 +165,53 @@
             }
             return unbinder;
         };
+
+        function trackBoostRenders() {
+            pendingRenders = new Map();
+            const renders = pendingRenders;
+            const seriesPrototype = Highcharts.Series.prototype;
+            if (!seriesPrototype.renderCanvas) {
+                return;
+            }
+
+            Highcharts.addEvent(Highcharts.Series, 'renderedCanvas', function () {
+                const remaining = (renders.get(this) || 0) - 1;
+                if (remaining > 0) {
+                    renders.set(this, remaining);
+                } else {
+                    renders.delete(this);
+                }
+            });
+            Highcharts.addEvent(Highcharts.Series, 'destroy', function (event) {
+                // Series.update reuses this object while its old draw continues.
+                if (!event.keepEventsForUpdate) {
+                    renders.delete(this);
+                }
+            });
+            function startRender() {
+                renders.set(this, (renders.get(this) || 0) + 1);
+            }
+            if (seriesPrototype.canvasToSVG) {
+                // The canvas fallback has no renderCanvas start event. Wrap
+                // it before drawing, since small draws complete synchronously.
+                Highcharts.wrap(seriesPrototype, 'renderCanvas', function (
+                    proceed, ...args
+                ) {
+                    if (this.visible) {
+                        startRender.call(this);
+                    }
+                    return proceed.apply(this, args);
+                });
+            } else {
+                // WebGL emits this only after its hidden/panning early exits.
+                Highcharts.addEvent(Highcharts.Series, 'renderCanvas', function () {
+                    // WebGL skips its completion event during export.
+                    if (!this.chart.renderer.forExport) {
+                        startRender.call(this);
+                    }
+                });
+            }
+        }
 
         var origSetOptions = Highcharts.setOptions;
         var optionsDirty = false;
@@ -428,9 +476,11 @@
                 if (cleanupMode === 'strict') {
                     ensurePrototypeSnapshots();
                 }
+                trackBoostRenders();
             },
             afterSample() {
                 cleanupDataRequests();
+                pendingRenders.clear();
                 restoreWrappedFunctions();
                 restoreAddedEvents();
                 if (cleanupMode === 'strict') {
@@ -443,6 +493,9 @@
             markOptionsClean,
             hasPendingRequests() {
                 return pendingRequests.size > 0;
+            },
+            hasPendingRenders() {
+                return pendingRenders.size > 0;
             },
             configure,
             deepClone,
