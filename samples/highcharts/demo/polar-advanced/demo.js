@@ -321,7 +321,7 @@ Highcharts.chart('container', {
         enabled: true,
         floating: true,
         layout: 'vertical',
-        verticalAlign: 'center',
+        verticalAlign: 'middle',
         align: 'center',
         backgroundColor: '#1f1836',
         borderRadius: 14,
