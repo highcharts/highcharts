@@ -29,7 +29,7 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
-import Series from '../../Core/Series/Series.js';
+import type Series from '../../Core/Series/Series.js';
 import {
     extend,
     isNumber,
@@ -69,7 +69,6 @@ const {
 /**
  * The series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.pointandfigure
  *
@@ -120,6 +119,7 @@ class PointAndFigureSeries extends ScatterSeries {
     /** @internal */
     public yData!: Array<number>;
 
+    /** @internal */
     public allowDG = false;
 
     /* *
@@ -166,7 +166,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         /**
          * Get the Y value of last data point, from the last PNF group.
-         * @private
+         * @internal
          * @function Highcharts.seriesTypes.pointandfigure#getLastPoint
          */
         function getLastPoint(pnfDataGroups: Array<PointAndFigureGroup>): number {
@@ -176,7 +176,7 @@ class PointAndFigureSeries extends ScatterSeries {
 
         /**
          * Push new data point to the last PNF group.
-         * @private
+         * @internal
          * @function Highcharts.seriesTypes.pointandfigure#pushNewPoint
          */
         function pushNewPoint(
@@ -331,6 +331,7 @@ class PointAndFigureSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface PointAndFigureGroup {
     /** @internal */
     x: number;
@@ -340,6 +341,7 @@ interface PointAndFigureGroup {
     upTrend: boolean;
 }
 
+/** @internal */
 interface PointAndFigureSeries {
     /** @internal */
     takeOrdinalPosition: boolean;
