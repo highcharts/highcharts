@@ -819,6 +819,85 @@
         });
     });
 
+    QUnit.test('Navigator inherits Gantt uniqueNames (#24975)', assert => {
+        const chart = Highcharts.ganttChart('container', {
+                yAxis: [{
+                    uniqueNames: false
+                }, {
+                    uniqueNames: true
+                }],
+                navigator: {
+                    enabled: true,
+                    series: {
+                        type: 'gantt'
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 3,
+                        type: 'treegrid'
+                    }
+                },
+                series: [{
+                    yAxis: 1,
+                    data: [
+                        'Prototyping',
+                        'Development',
+                        'Testing',
+                        'Development',
+                        'Testing',
+                        'Release'
+                    ].map((name, i) => ({
+                        name,
+                        start: i + 1,
+                        end: i + 2
+                    }))
+                }]
+            }),
+            navigator = chart.navigator,
+            navigatorSeries = navigator.series[0],
+            repeatedPoints = navigatorSeries.points.filter(point => (
+                point.name === 'Development' || point.name === 'Testing'
+            ));
+
+        assert.strictEqual(
+            navigator.yAxis.uniqueNames,
+            true,
+            'Navigator should inherit uniqueNames from the base series axis.'
+        );
+        assert.deepEqual(
+            navigatorSeries.dataTable.getColumn('y'),
+            chart.series[0].dataTable.getColumn('y'),
+            'Navigator and main series should use the same Y positions.'
+        );
+        assert.strictEqual(
+            repeatedPoints.length,
+            4,
+            'Every repeated-name point should exist in the navigator.'
+        );
+        assert.ok(
+            repeatedPoints.every(point => (
+                point.y >= navigator.yAxis.min &&
+                point.y <= navigator.yAxis.max
+            )),
+            'Repeated-name navigator points should remain inside the range.'
+        );
+
+        chart.update({
+            navigator: {
+                enabled: true,
+                yAxis: {
+                    uniqueNames: false
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart.navigator.yAxis.uniqueNames,
+            false,
+            'Explicit navigator uniqueNames should override the main axis.'
+        );
+    });
+
     QUnit.test('Gantt using the keys feature #13768', function (assert) {
         var chart = Highcharts.ganttChart('container', {
             series: [
