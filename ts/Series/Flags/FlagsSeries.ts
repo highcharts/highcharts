@@ -488,9 +488,8 @@ extend(FlagsSeries.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypesDictionary {
+    interface SeriesTypeRegistry {
         flags: typeof FlagsSeries;
     }
 }
