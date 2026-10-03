@@ -39,14 +39,6 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * @sample stock/demo/candlestick/
  *         Candlestick chart
  *
- * @extends plotOptions.ohlc
- *
- * @extends series,plotOptions.candlestick
- *
- * @excluding borderColor,borderRadius,borderWidth
- *
- * @excluding marker
- *
  * @product highstock
  */
 export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
@@ -62,7 +54,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @default #000000
+     * @default 'var(--highcharts-neutral-color-100)'
      *
      * @product highstock
      */
@@ -76,7 +68,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @sample {highstock} stock/plotoptions/financial-legend-symbols/
      *         Financial series legend symbols
      *
-     * @default candlestick
+     * @default 'candlestick'
      *
      * @product highstock
      */
@@ -96,15 +88,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @product highstock
      */
     upLineColor?: ColorType;
-
-    /**
-     *
-     * @extends plotOptions.column.states.hover
-     *
-     * @product highstock
-     *
-     * @apioption series.candlestick.upLineColor.hover
-     */
 
     /**
      * An array of data points for the series. For the `candlestick` series
@@ -158,8 +141,6 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *    }]
      *    ```
      *
-     * @extends series.ohlc.data
-     *
      * @excluding y
      *
      * @product highstock
@@ -184,7 +165,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @sample {highstock} highcharts/css/candlestick/
      *         Colors in styled mode
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @product highstock
      */
@@ -205,6 +186,17 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @product highstock
      */
     threshold?: (number|null);
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    borderColor?: undefined;
+    borderRadius?: undefined;
+    borderWidth?: undefined;
+    marker?: undefined;
 
 }
 
