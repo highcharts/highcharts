@@ -759,10 +759,11 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
     controlPoints?: Array<ControlPointOptions>;
 
     /**
-     * Id of the marker which will be drawn at the final vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the final vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
      * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
@@ -770,12 +771,13 @@ export interface AnnotationShapeOptions extends AnnotationShapeOptionsOptions {
     markerEnd?: string;
 
     /**
-     * Id of the marker which will be drawn at the first vertex of
-     * the path. Custom markers can be defined in defs property.
+     * Id of the marker which will be drawn at the first vertex of the path. The
+     * `arrow` and `reverse-arrow` markers are available by default; custom
+     * markers can be defined in the [defs](#defs) option.
      *
-     * @see [defs.markers](#defs.markers)
+     * @see [defs](#defs)
      *
-     * @sample {highcharts} highcharts/annotations/custom-markers/
+     * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
      */
     markerStart?: string;
