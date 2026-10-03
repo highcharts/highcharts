@@ -93,16 +93,17 @@ historical time series.
 Examples of using the **Investment Details Connector** are available in our
 demos:
 
-- **Highcharts Core + Morningstar Asset Allocation Breakdown**
+- [Highcharts Core + Morningstar Asset Allocation Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/asset-allocation-pie/)
 - **Highcharts Core + Morningstar Asset Allocation Breakdown (Pre-fetched JSON)**
-- **Highcharts Core + Morningstar Country and Region Exposure**
-- **Highcharts Core + Morningstar Equity Aggregates Residual Risk**
-- **Highcharts Core + Morningstar Equity Residual Risk**
-- **Highcharts Core + Morningstar Equity Sectors Breakdown**
-- **Highcharts Core + Morningstar Equity Style Box**
-- **Highcharts Core + Morningstar Equity Style Box Time Series**
+- [Highcharts Core + Morningstar Country and Region Exposure](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-region-breakdown-chart/)
+- [Highcharts Core + Morningstar Equity Aggregates Residual Risk](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-aggregates-residual-risk/)
+- [Highcharts Core + Morningstar Equity Residual Risk](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-residual-risk/)
+- [Highcharts Core + Morningstar Equity Sectors Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-sector-breakdown-bar-chart/)
+- [Highcharts Core + Morningstar Equity Sectors Breakdown (Spider)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-sector-breakdown-spider/)
+- [Highcharts Core + Morningstar Equity Style Box](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-style-box/)
+- [Highcharts Core + Morningstar Equity Style Box Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/equity-style-box-grid/)
 - **Highcharts Core + Morningstar Fixed Income Region Sectors Breakdown**
-- **Highcharts Core + Morningstar Fixed Income Sectors Breakdown**
+- [Highcharts Core + Morningstar Fixed Income Sectors Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/demo/fixed-income-sectors-tree/)
 - **Highcharts Dashboards Grid + Morningstar Prospectus Fees**
 
 ## Morningstar API Reference

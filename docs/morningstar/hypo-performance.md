@@ -128,6 +128,12 @@ Example request:
     await connector.load();
 ```
 
+## Relevant demos
+
+You will find examples of how to use `HypoPerformanceConnector` in our demos.
+
+- [Highcharts Core + Morningstar Growth Chart Hypothetical](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/growth-chart-hypo/)
+
 ## Morningstar API Reference
 
 For more details, see [Morningstar's Hypothetical Performance API].
