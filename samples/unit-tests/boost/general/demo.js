@@ -176,6 +176,79 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     }
 );
 
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'Boosted columnrange should stay visible after zooming (#24986)',
+    async function (assert) {
+        const data = Array.from({ length: 12 }, (_, x) => (
+                x < 5 ? [x, 10 + x, 15 + x] : [x, 60 + x, 65 + x]
+            )),
+            chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'columnrange'
+                },
+                xAxis: {
+                    minRange: 0.1
+                },
+                yAxis: {
+                    min: 0,
+                    max: 80
+                },
+                series: [{
+                    boostThreshold: 6,
+                    cropThreshold: 1,
+                    data
+                }]
+            }),
+            series = chart.series[0];
+
+        chart.xAxis[0].setExtremes(5, 11);
+
+        assert.ok(series.boosted, 'The zoomed series should remain boosted');
+
+        let svg = chart.renderTo.querySelector('svg'),
+            imageEl = svg.querySelector('.highcharts-boost-canvas'),
+            pixel = await sampleImagePixelAtSVGPoint(
+                svg,
+                imageEl,
+                chart.xAxis[0].toPixels(8),
+                chart.yAxis[0].toPixels(70.5)
+            );
+
+        assert.strictEqual(
+            pixel.hex,
+            '#2caffe',
+            'The cropped point should use its matching low and high values'
+        );
+
+        chart.xAxis[0].setExtremes(8, 9);
+
+        assert.notOk(series.boosted, 'A closer zoom should exit boost mode');
+        assert.ok(
+            series.points.some(point => point.graphic),
+            'The zoomed points should be visible in SVG mode'
+        );
+
+        chart.xAxis[0].setExtremes();
+
+        assert.ok(series.boosted, 'Resetting zoom should restore boost mode');
+
+        svg = chart.renderTo.querySelector('svg');
+        imageEl = svg.querySelector('.highcharts-boost-canvas');
+        pixel = await sampleImagePixelAtSVGPoint(
+            svg,
+            imageEl,
+            chart.xAxis[0].toPixels(2),
+            chart.yAxis[0].toPixels(14.5)
+        );
+
+        assert.strictEqual(
+            pixel.hex,
+            '#2caffe',
+            'The full boosted series should be restored after reset'
+        );
+    }
+);
+
 QUnit.test(
     'Boost enabled false and boostThreshold conflict (#9052)',
     function (assert) {
