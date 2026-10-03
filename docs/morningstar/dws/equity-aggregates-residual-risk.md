@@ -93,7 +93,7 @@ Highcharts.chart('container', {
 You will find examples of how to use `EquityAggregatesResidualRisk` converter
 in our demos.
 
-- **Highcharts Core + Morningstar Equity Aggregates Residual Risk**
+- [Highcharts Core + Morningstar Equity Aggregates Residual Risk](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-aggregates-residual-risk/)
 
 ## Morningstar API Reference
 

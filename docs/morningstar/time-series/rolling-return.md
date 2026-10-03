@@ -39,9 +39,7 @@ const dividendConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnect
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Rolling Return time series. Specify type
-`RollingReturn`.
+- [Highcharts Stock + Morningstar TimeSeries](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

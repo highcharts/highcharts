@@ -106,7 +106,7 @@ You will find examples of how to use `FixedIncomeSectorsBreakdown` converter in
 our demos.
 
 - **Highcharts Core + Morningstar Fixed Income Region Sectors Breakdown**
-- **Highcharts Core + Morningstar Fixed Income Sectors Breakdown**
+- [Highcharts Core + Morningstar Fixed Income Sectors Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/demo/fixed-income-sectors-tree/)
 
 ## Morningstar API Reference
 
