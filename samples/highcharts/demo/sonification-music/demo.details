@@ -6,7 +6,10 @@ js_wrap: b
 requiresManualTesting: true
 use_png_thumbnail: true
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Inspiration:
+      priority: 5
   - Audio charts
 ...

@@ -4,8 +4,11 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Inspiration:
+      priority: 11
   - More chart types:
       priority: 10
 ...
