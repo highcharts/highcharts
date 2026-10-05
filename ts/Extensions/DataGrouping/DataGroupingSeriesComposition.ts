@@ -163,7 +163,7 @@ declare module '../../Core/Series/SeriesBase' {
         groupData(
             table: DataTableCore,
             groupPositions: Array<number>,
-            approximation: (string|Function)
+            approximation?: (ApproximationKeyValue|Function)
         ): DataGroupingResultObject;
     }
 }
@@ -455,37 +455,38 @@ function applyGrouping(
 
         const xMin = extremes.min,
             xMax = extremes.max,
+            // Processed data may extend beyond axis (#4907)
+            groupMin = Math.min(xMin, xData[0]),
+            groupMax = Math.max(xMax, xData[xData.length - 1]),
             groupIntervalFactor = (
                 ordinal &&
                 xAxis.ordinal &&
                 xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
             ) || 1,
-            interval =
-            (groupPixelWidth * (xMax - xMin) / plotSizeX) *
-                groupIntervalFactor,
+            interval = Math.max(
+                (groupPixelWidth * (xMax - xMin) / plotSizeX) *
+                    groupIntervalFactor,
+                // Limit the group count when zoomed in between sparse points,
+                // #23958
+                (groupMax - groupMin) / plotSizeX
+            ),
             groupPositions = xAxis.getTimeTicks(
                 DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
                     interval,
-                    (dataGroupingOptions as any).units ||
-                        DataGroupingDefaults.units
+                    dataGroupingOptions.units || DataGroupingDefaults.units
                 ),
-                // Processed data may extend beyond axis (#4907)
-                Math.min(xMin, xData[0]),
-                Math.max(
-                    xMax,
-                    xData[xData.length - 1]
-                ),
+                groupMin,
+                groupMax,
                 xAxis.options.startOfWeek,
                 processedXData,
                 series.closestPointRange
             ),
-            groupedData = seriesProto.groupData.apply(
+            { info } = groupPositions,
+            groupedData = seriesProto.groupData.call(
                 series,
-                [
-                    table,
-                    groupPositions,
-                    (dataGroupingOptions as any).approximation
-                ]
+                table,
+                groupPositions,
+                dataGroupingOptions.approximation
             );
 
         let modified = groupedData.modified,
@@ -515,8 +516,8 @@ function applyGrouping(
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
             if (
-                !(groupPositions.info as any).segmentStarts ||
-                (groupPositions.info as any).segmentStarts.indexOf(i) === -1
+                !info?.segmentStarts ||
+                info.segmentStarts.indexOf(i) === -1
             ) {
                 gapSize = Math.max(
                     groupPositions[i] - groupPositions[i - 1],
@@ -524,9 +525,8 @@ function applyGrouping(
                 );
             }
         }
-        currentDataGrouping = groupPositions.info;
-        (currentDataGrouping as any).gapSize = gapSize;
-        series.closestPointRange = (groupPositions.info as any).totalRange;
+        currentDataGrouping = extend(info, { gapSize });
+        series.closestPointRange = currentDataGrouping.totalRange;
         series.groupMap = groupedData.groupMap;
         series.currentDataGrouping = currentDataGrouping;
 
@@ -694,7 +694,7 @@ function groupData(
     this: Series,
     table: DataTableCore,
     groupPositions: Array<number>,
-    approximation: (ApproximationKeyValue|Function)
+    approximation?: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
     const xData = (table === this.dataTable) ?
             // If the table is the series dataTable, get the cached x data

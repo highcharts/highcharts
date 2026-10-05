@@ -431,6 +431,39 @@
         );
     });
 
+    QUnit.test(
+        'Forced data grouping zoomed in between sparse points (#23958)',
+        function (assert) {
+            const chart = Highcharts.stockChart('container', {
+                xAxis: {
+                    min: Date.UTC(2024, 0, 1)
+                },
+                series: [{
+                    dataGrouping: {
+                        forced: true
+                    },
+                    data: [
+                        [Date.UTC(2024, 0, 1), 1],
+                        [Date.UTC(2024, 0, 8), 2],
+                        [Date.UTC(2024, 0, 15), 3]
+                    ]
+                }]
+            });
+
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 10),
+                Date.UTC(2024, 0, 10, 0, 0, 1)
+            );
+
+            assert.deepEqual(
+                chart.series[0].getColumn('x', true),
+                [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
+                'A one second range between weekly points should group the ' +
+                'shoulder points without excessive group positions'
+            );
+        }
+    );
+
     QUnit.test('Switch from grouped to non-grouped', function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {
