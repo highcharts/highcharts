@@ -308,31 +308,52 @@ QUnit.test('Polar chart without stickyTracking, #17359.', function (assert) {
 
 QUnit.test('Should not hover condemned points (#25063)', function (assert) {
     const chart = Highcharts.chart('container', {
-            chart: {
-                animation: true
-            },
             tooltip: {
-                enabled: true
+                shared: true
             },
             series: [{
                 data: [2, 3, 4]
+            }, {
+                data: [1, 2, 3]
             }]
         }),
-        controller = new TestController(chart),
-        point = chart.series[0].points[1],
-        x = chart.plotLeft + point.plotX,
-        y = chart.plotTop + point.plotY;
+        [condemned, livePoint] = chart.series.map(s => s.points[1]);
 
     chart.renderer.globalAnimation = {
         duration: 100
     };
+    condemned.destroy();
 
-    point.destroy();
-    controller.moveTo(x, y);
+    new TestController(chart).moveTo(
+        chart.plotLeft + condemned.plotX,
+        chart.plotTop + condemned.plotY
+    );
 
-    assert.notStrictEqual(
+    assert.deepEqual(
+        chart.hoverPoints,
+        [livePoint],
+        'Only the closest live point should be hovered'
+    );
+
+    // Mouse over the fading out graphic of the condemned point
+    chart.series[0].points[0].onMouseOver();
+    condemned.onMouseOver();
+
+    assert.strictEqual(
         chart.hoverPoint,
-        point,
-        'Condemned point is not hovered'
+        livePoint,
+        'Mouse over a condemned point should hover the closest live point'
+    );
+
+    // Without a pointer event, like from the dashboards highlight sync
+    assert.strictEqual(
+        chart.pointer.getHoverData(
+            condemned,
+            condemned.series,
+            chart.series,
+            true
+        ).hoverPoint,
+        void 0,
+        'Condemned point should not be hovered without a pointer event'
     );
 });
