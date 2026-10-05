@@ -26,7 +26,6 @@ import ColumnRangePoint from './ColumnRangePoint.js';
 import ColumnRangeSeriesDefaults from './ColumnRangeSeriesDefaults.js';
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -87,38 +86,55 @@ class ColumnRangeSeries extends AreaRangeSeries {
 
     /** @internal */
     public translate(): void {
-        return columnProto.translate.apply(this);
+        return ColumnSeries.prototype.translate.apply(this);
     }
 
     // Public crispCol(): BBoxObject {
-    //     return columnProto.crispCol.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.crispCol.apply(this, arguments as any);
     // }
     // public drawPoints(): void {
-    //     return columnProto.drawPoints.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.drawPoints.apply(
+    //         this, arguments as any
+    //     );
     // }
     // public drawTracker(): void {
-    //     return columnProto.drawTracker.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.drawTracker.apply(
+    //         this, arguments as any
+    //     );
     // }
     // public getColumnMetrics(): ColumnMetricsObject {
-    //     return columnProto.getColumnMetrics.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.getColumnMetrics.apply(
+    //         this, arguments as any
+    //     );
     // }
     /** @internal */
     public pointAttribs(): SVGAttributes {
-        return columnProto.pointAttribs.apply(this, arguments as any);
+        return ColumnSeries.prototype.pointAttribs.apply(
+            this,
+            arguments as any
+        );
     }
     // Public adjustForMissingColumns(): number {
-    //     return columnProto.adjustForMissingColumns.apply(this, arguments);
+    //     return ColumnSeries.prototype.adjustForMissingColumns.apply(
+    //         this, arguments
+    //     );
     // }
     // public animate(): void {
-    //     return columnProto.animate.apply(this, arguments as any);
+    //     return ColumnSeries.prototype.animate.apply(this, arguments as any);
     // }
     /** @internal */
     public translate3dPoints(): void {
-        return columnProto.translate3dPoints.apply(this, arguments as any);
+        return ColumnSeries.prototype.translate3dPoints.apply(
+            this,
+            arguments as any
+        );
     }
     /** @internal */
     public translate3dShapes(): void {
-        return columnProto.translate3dShapes.apply(this, arguments as any);
+        return ColumnSeries.prototype.translate3dShapes.apply(
+            this,
+            arguments as any
+        );
     }
 
     /**
@@ -235,28 +251,29 @@ interface ColumnRangeSeries {
     pointClass: typeof ColumnRangePoint;
     points: Array<ColumnRangePoint>;
     /** @internal */
-    adjustForMissingColumns: typeof columnProto.adjustForMissingColumns;
+    adjustForMissingColumns:
+        typeof ColumnSeries.prototype.adjustForMissingColumns;
     /** @internal */
-    animate: typeof columnProto.animate,
+    animate: typeof ColumnSeries.prototype.animate,
     /** @internal */
-    crispCol: typeof columnProto.crispCol;
+    crispCol: typeof ColumnSeries.prototype.crispCol;
     /** @internal */
-    drawPoints: typeof columnProto.drawPoints,
+    drawPoints: typeof ColumnSeries.prototype.drawPoints,
     /** @internal */
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
 }
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     pointClass: ColumnRangePoint,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    adjustForMissingColumns: columnProto.adjustForMissingColumns,
-    animate: columnProto.animate,
-    crispCol: columnProto.crispCol,
+    adjustForMissingColumns: ColumnSeries.prototype.adjustForMissingColumns,
+    animate: ColumnSeries.prototype.animate,
+    crispCol: ColumnSeries.prototype.crispCol,
     drawGraph: noop,
-    drawPoints: columnProto.drawPoints,
+    drawPoints: ColumnSeries.prototype.drawPoints,
     getSymbol: noop,
-    drawTracker: columnProto.drawTracker,
-    getColumnMetrics: columnProto.getColumnMetrics
+    drawTracker: ColumnSeries.prototype.drawTracker,
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics
 });
 
 /* *

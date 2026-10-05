@@ -28,8 +28,15 @@ import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js'
 import HeatmapSeries from '../Heatmap/HeatmapSeries.js';
 import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const { prototype: { pointClass: Point } } = Series;
-const { prototype: { pointClass: HeatmapPoint } } = HeatmapSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
+const HeatmapPoint = HeatmapSeries.prototype.pointClass;
 
 /* *
  *

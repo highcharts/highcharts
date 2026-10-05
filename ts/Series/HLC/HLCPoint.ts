@@ -24,11 +24,14 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
-const {
-    prototype: {
-        pointClass: ColumnPoint
-    }
-} = ColumnSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

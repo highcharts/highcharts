@@ -25,7 +25,14 @@ import type VariwideSeries from './VariwideSeries';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const { prototype: { pointClass: ColumnPoint } } = ColumnSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

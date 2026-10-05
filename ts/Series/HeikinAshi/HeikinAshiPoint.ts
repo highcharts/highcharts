@@ -21,11 +21,14 @@
 import type HeikinAshiSeries from './HeikinAshiSeries';
 
 import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
-const {
-    prototype: {
-        pointClass: CandlestickPoint
-    }
-} = CandlestickSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const CandlestickPoint = CandlestickSeries.prototype.pointClass;
 
 /* *
  *

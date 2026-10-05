@@ -28,11 +28,14 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
 import BubbleSeries from '../Bubble/BubbleSeries.js';
-const {
-    prototype: {
-        pointClass: BubblePoint
-    }
-} = BubbleSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const BubblePoint = BubbleSeries.prototype.pointClass;
 
 /* *
  *

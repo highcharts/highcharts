@@ -11,21 +11,13 @@
  *
  * */
 
-import type Point from '../Core/Series/Point';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 
+import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
-const {
-    prototype: seriesProto,
-    prototype: {
-        pointClass: {
-            prototype: pointProto
-        }
-    }
-} = Series;
 import {
     addEvent,
     defined,
@@ -277,7 +269,7 @@ namespace NodesComposition {
         this.data = ([] as Array<PointComposition>)
             .concat(this.points || [], this.nodes);
 
-        return seriesProto.destroy.apply(this, arguments);
+        return Series.prototype.destroy.apply(this, arguments);
     }
 
     /**
@@ -291,7 +283,7 @@ namespace NodesComposition {
         const chart = this.chart,
             nodeLookup = {} as Record<string, PointComposition>;
 
-        seriesProto.generatePoints.call(this);
+        Series.prototype.generatePoints.call(this);
 
         if (!this.nodes) {
             this.nodes = []; // List of Point-like node items
@@ -353,7 +345,7 @@ namespace NodesComposition {
             });
             this.nodes.length = 0;
         }
-        seriesProto.setData.apply(this, arguments);
+        Series.prototype.setData.apply(this, arguments);
     }
 
     /**
@@ -371,17 +363,17 @@ namespace NodesComposition {
         if (state !== 'select') {
             others.forEach((linkOrNode): void => {
                 if (linkOrNode && linkOrNode.series) {
-                    pointProto.setState.apply(linkOrNode, args);
+                    Point.prototype.setState.apply(linkOrNode, args);
 
                     if (!linkOrNode.isNode) {
                         if (linkOrNode.fromNode.graphic) {
-                            pointProto.setState.apply(
+                            Point.prototype.setState.apply(
                                 linkOrNode.fromNode,
                                 args
                             );
                         }
                         if (linkOrNode.toNode && linkOrNode.toNode.graphic) {
-                            pointProto.setState.apply(
+                            Point.prototype.setState.apply(
                                 linkOrNode.toNode,
                                 args
                             );
@@ -391,7 +383,7 @@ namespace NodesComposition {
             });
         }
 
-        pointProto.setState.apply(this, args);
+        Point.prototype.setState.apply(this, args);
     }
 
     /**
@@ -411,7 +403,7 @@ namespace NodesComposition {
             dataLength = data?.length || 0,
             linkConfig = data?.[this.index];
 
-        pointProto.update.call(
+        Point.prototype.update.call(
             this,
             options,
             this.isNode ? false : redraw, // Hold the redraw for nodes

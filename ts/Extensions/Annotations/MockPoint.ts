@@ -26,7 +26,6 @@ import type PositionObject from '../../Core/Renderer/PositionObject';
 import NBU from './NavigationBindingsUtilities.js';
 const { getAxisFromOptions } = NBU;
 import Series from '../../Core/Series/Series.js';
-const { prototype: seriesProto } = Series;
 import { defined, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
@@ -226,7 +225,7 @@ class MockPoint {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: seriesProto.getPlotBox
+            getPlotBox: Series.prototype.getPlotBox
         };
 
         /**

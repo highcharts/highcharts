@@ -24,12 +24,14 @@ import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
 import MapSeries from '../Map/MapSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const {
-    prototype: {
-        pointClass: MapPoint
-    }
-} = MapSeries;
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const MapPoint = MapSeries.prototype.pointClass;
 
 /* *
  *

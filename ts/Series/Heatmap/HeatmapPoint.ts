@@ -24,8 +24,15 @@ import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import ScatterSeries from '../Scatter/ScatterSeries.js';
-const { prototype: { pointClass: ScatterPoint } } = ScatterSeries;
 import { clamp, defined, extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *

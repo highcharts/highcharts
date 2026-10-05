@@ -25,7 +25,6 @@ import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterSeries from './Scatter/ScatterSeries';
 
 import ColumnSeries from './Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import { addEvent, defined } from '../Shared/Utilities.js';
 
@@ -110,7 +109,7 @@ export namespace ColorMapComposition {
         pointArrayMap: ['value'],
         trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
         colorAttribs: seriesColorAttribs,
-        pointAttribs: columnProto.pointAttribs
+        pointAttribs: ColumnSeries.prototype.pointAttribs
     };
 
     /* *

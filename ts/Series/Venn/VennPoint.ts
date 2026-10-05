@@ -29,7 +29,14 @@ import type VennSeries from './VennSeries';
 
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const { prototype: { pointClass: ScatterPoint } } = ScatterSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *

@@ -23,14 +23,18 @@
 import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
 import type ArcDiagramSeries from './ArcDiagramSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import NodesComposition from '../NodesComposition.js';
 import SankeySeries from '../Sankey/SankeySeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    prototype: {
-        pointClass: SankeyPoint
-    }
-} = SankeySeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SankeyPoint = SankeySeries.prototype.pointClass;
 
 /* *
  *

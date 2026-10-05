@@ -22,11 +22,14 @@ import type TreegraphSeries from './TreegraphSeries.js';
 
 import TreegraphPoint from './TreegraphPoint.js';
 import TreemapSeries from '../Treemap/TreemapSeries.js';
-const {
-    prototype: {
-        NodeClass: TreemapNode
-    }
-} = TreemapSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const TreemapNode = TreemapSeries.prototype.NodeClass;
 
 /* *
  *

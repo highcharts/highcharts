@@ -26,8 +26,15 @@ import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions'
 import type SankeyPoint from './../Sankey/SankeyPoint';
 
 import SankeySeries from '../Sankey/SankeySeries.js';
-const { prototype: { pointClass: SankeyPointClass } } = SankeySeries;
 import { defined, find } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SankeyPointClass = SankeySeries.prototype.pointClass;
 
 /* *
  *

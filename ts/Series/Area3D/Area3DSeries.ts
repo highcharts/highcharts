@@ -20,7 +20,6 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import { perspective } from '../../Core/Math3D.js';
 import LineSeries from '../Line/LineSeries.js';
-const { prototype: lineProto } = LineSeries;
 import { pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
@@ -64,7 +63,7 @@ function wrapAreaSeriesGetGraphPath(
         return svgPath;
     }
 
-    const getGraphPath = lineProto.getGraphPath,
+    const getGraphPath = LineSeries.prototype.getGraphPath,
         options = series.options,
         translatedThreshold = Math.round( // #10909
             series.yAxis.getThreshold(options.threshold as any)

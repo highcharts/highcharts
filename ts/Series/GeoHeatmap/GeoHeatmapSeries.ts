@@ -119,7 +119,6 @@ class GeoHeatmapSeries extends MapSeries {
      * @product      highmaps
      * @excluding    allAreas, dragDrop, findNearestPointBy, geometry, joinBy,
      * negativeColor, onPoint, stickyTracking
-     * @requires     modules/map
      * @requires     modules/geoheatmap
      * @optionparent plotOptions.geoheatmap
      */
@@ -765,7 +764,6 @@ export default GeoHeatmapSeries;
  *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
  *            stickyTracking
  * @product   highmaps
- * @requires  modules/map
  * @requires  modules/geoheatmap
  * @apioption series.geoheatmap
  */

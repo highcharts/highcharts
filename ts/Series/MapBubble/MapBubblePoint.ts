@@ -21,13 +21,14 @@
 import BubblePoint from '../Bubble/BubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    prototype: {
-        pointClass: {
-            prototype: mapPointProto
-        }
-    }
-} = MapSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const MapPoint = MapSeries.prototype.pointClass;
 
 /* *
  *
@@ -71,12 +72,12 @@ class MapBubblePoint extends BubblePoint {
 
 interface MapBubblePoint {
     /** @internal */
-    getProjectedBounds: typeof mapPointProto.getProjectedBounds;
+    getProjectedBounds: typeof MapPoint.prototype.getProjectedBounds;
 }
 
 extend(MapBubblePoint.prototype, {
-    applyOptions: mapPointProto.applyOptions,
-    getProjectedBounds: mapPointProto.getProjectedBounds
+    applyOptions: MapPoint.prototype.applyOptions,
+    getProjectedBounds: MapPoint.prototype.getProjectedBounds
 });
 
 /* *

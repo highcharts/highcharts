@@ -24,7 +24,14 @@ import type GanttSeries from './GanttSeries';
 import type Chart from '../../Core/Chart/Chart';
 
 import XRangeSeries from '../XRange/XRangeSeries.js';
-const { prototype: { pointClass: XRangePoint } } = XRangeSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const XRangePoint = XRangeSeries.prototype.pointClass;
 
 /* *
  *

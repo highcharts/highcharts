@@ -26,7 +26,14 @@ import type CylinderSeries from './CylinderSeries';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const { prototype: { pointClass: ColumnPoint } } = ColumnSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

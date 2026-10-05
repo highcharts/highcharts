@@ -41,9 +41,6 @@ import DataTableCore from '../../Data/DataTableCore.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
 import Series from '../../Core/Series/Series.js';
-const {
-    prototype: seriesProto
-} = Series;
 import {
     addEvent,
     defined,
@@ -223,7 +220,7 @@ export interface DataGroupingResultObject {
  *
  * */
 
-const baseGeneratePoints = seriesProto.generatePoints;
+const baseGeneratePoints = Series.prototype.generatePoints;
 
 /* *
  *
@@ -476,7 +473,7 @@ function applyGrouping(
                 processedXData,
                 series.closestPointRange
             ),
-            groupedData = seriesProto.groupData.apply(
+            groupedData = Series.prototype.groupData.apply(
                 series,
                 [
                     table,

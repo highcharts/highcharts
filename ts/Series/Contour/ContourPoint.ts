@@ -20,8 +20,14 @@
  * */
 
 import ScatterSeries from '../Scatter/ScatterSeries.js';
-const { prototype: { pointClass: ScatterPoint } } = ScatterSeries;
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *

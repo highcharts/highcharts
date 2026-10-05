@@ -40,9 +40,6 @@ import {
     relativeLength
 } from '../../Shared/Utilities.js';
 const { composed } = H;
-const {
-    prototype: columnProto
-} = ColumnSeries;
 
 
 /* *
@@ -345,7 +342,7 @@ interface PointAndFigureSeries {
     /** @internal */
     pnfDataGroups: Array<PointAndFigureGroup>;
     /** @internal */
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
     /** @internal */
     markerWidth: number;
     /** @internal */
@@ -357,7 +354,7 @@ interface PointAndFigureSeries {
 extend(PointAndFigureSeries.prototype, {
     takeOrdinalPosition: true,
     pnfDataGroups: [],
-    getColumnMetrics: columnProto.getColumnMetrics,
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
     pointClass: PointAndFigurePoint,
     sorted: true
 });

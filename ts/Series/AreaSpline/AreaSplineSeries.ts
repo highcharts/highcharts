@@ -24,7 +24,6 @@ import type AreaSplinePoint from './AreaSplinePoint';
 import SplineSeries from '../Spline/SplineSeries.js';
 import AreaSeries from '../Area/AreaSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { prototype: areaProto } = AreaSeries;
 import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -74,17 +73,17 @@ class AreaSplineSeries extends SplineSeries {
 interface AreaSplineSeries extends SplineSeries {
     pointClass: typeof AreaSplinePoint;
     /** @internal */
-    getGraphPath: typeof areaProto.getGraphPath,
+    getGraphPath: typeof AreaSeries.prototype.getGraphPath,
     /** @internal */
-    getStackPoints: typeof areaProto.getStackPoints;
+    getStackPoints: typeof AreaSeries.prototype.getStackPoints;
     /** @internal */
-    drawGraph: typeof areaProto.drawGraph;
+    drawGraph: typeof AreaSeries.prototype.drawGraph;
 }
 
 extend(AreaSplineSeries.prototype, {
-    getGraphPath: areaProto.getGraphPath,
-    getStackPoints: areaProto.getStackPoints,
-    drawGraph: areaProto.drawGraph
+    getGraphPath: AreaSeries.prototype.getGraphPath,
+    getStackPoints: AreaSeries.prototype.getStackPoints,
+    drawGraph: AreaSeries.prototype.drawGraph
 });
 
 /* *

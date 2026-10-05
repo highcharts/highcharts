@@ -26,8 +26,15 @@ import type ItemSeries from './ItemSeries';
 import PieSeries from '../Pie/PieSeries.js';
 import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const { prototype: { pointClass: Point } } = Series;
-const { prototype: { pointClass: PiePoint } } = PieSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const PiePoint = PieSeries.prototype.pointClass;
+const Point = Series.prototype.pointClass;
 
 /* *
  *

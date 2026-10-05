@@ -26,6 +26,7 @@ import type NetworkgraphChart from './NetworkgraphChart';
 import type NetworkgraphSeriesOptions from './NetworkgraphSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import DragNodesComposition from '../DragNodesComposition.js';
@@ -40,12 +41,6 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    prototype: columnProto
-} = ColumnSeries;
-const {
-    prototype: lineProto
-} = LineSeries;
 
 import D from '../SimulationSeriesUtilities.js';
 const {
@@ -432,7 +427,7 @@ class NetworkgraphSeries extends Series {
 
         // Render markers:
         series.points = series.nodes;
-        lineProto.render.call(this);
+        LineSeries.prototype.render.call(this);
         series.points = points;
 
         points.forEach(function (
@@ -567,7 +562,7 @@ extend(NetworkgraphSeries.prototype, {
     initDataLabels: initDataLabels,
     buildKDTree: noop,
     createNode: NodesComposition.createNode,
-    drawTracker: columnProto.drawTracker,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     onMouseDown: DragNodesComposition.onMouseDown,
     onMouseMove: DragNodesComposition.onMouseMove,
     onMouseUp: DragNodesComposition.onMouseUp,

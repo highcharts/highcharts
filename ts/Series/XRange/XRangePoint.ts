@@ -30,9 +30,16 @@ import type {
 } from './XRangePointOptions';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: { pointClass: ColumnPoint } } = ColumnSeries;
 import XRangeSeries from './XRangeSeries.js';
 import { extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

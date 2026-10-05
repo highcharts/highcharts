@@ -16,12 +16,15 @@
  * */
 
 import SMAIndicator from '../SMA/SMAIndicator.js';
-const {
-    prototype: {
-        pointClass: SMAPoint
-    }
-} = SMAIndicator;
 import type VBPIndicator from './VBPIndicator';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SMAPoint = SMAIndicator.prototype.pointClass;
 
 /* *
  *

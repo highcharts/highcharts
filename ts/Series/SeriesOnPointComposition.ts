@@ -20,14 +20,13 @@
 
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
+import BubbleSeries from './Bubble/BubbleSeries.js';
 import Chart from '../Core/Chart/Chart.js';
 import DataTableCore from '../Data/DataTableCore.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import {
@@ -242,27 +241,27 @@ namespace SeriesOnPointComposition {
         /**
          * @ignore
          */
-        public getColumn = seriesTypes.bubble.prototype.getColumn;
+        public getColumn = BubbleSeries.prototype.getColumn;
 
         /**
          * @ignore
          */
-        public getRadii = seriesTypes.bubble.prototype.getRadii;
+        public getRadii = BubbleSeries.prototype.getRadii;
 
         /**
          * @ignore
          */
-        public getRadius = seriesTypes.bubble.prototype.getRadius;
+        public getRadius = BubbleSeries.prototype.getRadius;
 
         /**
          * @ignore
          */
-        public getPxExtremes = seriesTypes.bubble.prototype.getPxExtremes;
+        public getPxExtremes = BubbleSeries.prototype.getPxExtremes;
 
         /**
          * @ignore
          */
-        public getZExtremes = seriesTypes.bubble.prototype.getZExtremes;
+        public getZExtremes = BubbleSeries.prototype.getZExtremes;
 
         /**
          * Draw connector line that starts from the initial point's position

@@ -22,9 +22,14 @@ import type RenkoSeries from './RenkoSeries';
 import type RenkoPointOptions from './RenkoPointOptions';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
-const {
-    prototype: { pointClass: ColumnPoint }
-} = ColumnSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

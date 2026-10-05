@@ -22,13 +22,17 @@ import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
 import type FlagsSeries from './FlagsSeries';
+
 import ColumnSeries from '../Column/ColumnSeries.js';
 import { isNumber } from '../../Shared/Utilities.js';
-const {
-    prototype: {
-        pointClass: ColumnPoint
-    }
-} = ColumnSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

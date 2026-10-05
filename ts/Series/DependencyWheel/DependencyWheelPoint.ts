@@ -27,8 +27,15 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import SankeySeries from '../Sankey/SankeySeries.js';
-const { prototype: { pointClass: SankeyPoint } } = SankeySeries;
 import { pInt, wrap } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const SankeyPoint = SankeySeries.prototype.pointClass;
 
 /* *
  *

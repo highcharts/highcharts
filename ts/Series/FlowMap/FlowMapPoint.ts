@@ -26,12 +26,15 @@ import type { ColorMapComposition } from '../ColorMapComposition.js';
 
 import MapLineSeries from '../MapLine/MapLineSeries.js';
 import { LonLatArray } from '../../Maps/MapViewOptions';
-const {
-    prototype: {
-        pointClass: MapLinePoint
-    }
-} = MapLineSeries;
 import { isNumber, isString } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const MapLinePoint = MapLineSeries.prototype.pointClass;
 
 /* *
  *

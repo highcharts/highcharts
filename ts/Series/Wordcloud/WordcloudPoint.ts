@@ -25,9 +25,16 @@ import type WordcloudPointOptions from './WordcloudPointOptions';
 import type WordcloudUtils from './WordcloudUtils';
 
 import ColumnSeries from '../Column/ColumnSeries.js';
-const { prototype: { pointClass: ColumnPoint } } = ColumnSeries;
 import WordcloudSeries from './WordcloudSeries';
 import { extend } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

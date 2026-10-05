@@ -30,8 +30,6 @@ import type TimelineSeries from './TimelineSeries';
 import Point from '../../Core/Series/Point.js';
 import LineSeries from '../Line/LineSeries.js';
 import PieSeries from '../Pie/PieSeries.js';
-const { prototype: { pointClass: LinePoint } } = LineSeries;
-const { prototype: { pointClass: PiePoint } } = PieSeries;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import {
     defined,
@@ -39,6 +37,15 @@ import {
     merge,
     objectEach
 } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const LinePoint = LineSeries.prototype.pointClass;
+const PiePoint = PieSeries.prototype.pointClass;
 
 /* *
  *

@@ -20,11 +20,14 @@
 
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import PointAndFigureSeries from './PointAndFigureSeries.js';
-const {
-    prototype: {
-        pointClass: ScatterPoint
-    }
-} = ScatterSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *

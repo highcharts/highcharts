@@ -31,7 +31,6 @@ import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
-const { prototype: areaProto } = AreaSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import RangeDataLabel from '../RangeDataLabel.js';
@@ -361,7 +360,7 @@ class AreaRangeSeries extends AreaSeries {
 
         const highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
-            getGraphPath = areaProto.getGraphPath,
+            getGraphPath = AreaSeries.prototype.getGraphPath,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
@@ -482,9 +481,9 @@ class AreaRangeSeries extends AreaSeries {
             rangeOptions.forEach(RangeDataLabel.applyAlignToKeyValue);
             series.options.dataLabels = rangeOptions;
 
-            if (areaProto.drawDataLabels) {
+            if (AreaSeries.prototype.drawDataLabels) {
                 // #1209
-                areaProto.drawDataLabels.call(series);
+                AreaSeries.prototype.drawDataLabels.call(series);
             }
             series.options.dataLabels = dataLabelOptions;
 
@@ -557,7 +556,7 @@ class AreaRangeSeries extends AreaSeries {
         const originalSettings = series.modifyMarkerSettings();
 
         // Draw bottom points
-        areaProto.drawPoints.apply(series, arguments);
+        AreaSeries.prototype.drawPoints.apply(series, arguments);
 
         // Restore previous state
         series.restoreMarkerSettings(originalSettings);
@@ -607,7 +606,7 @@ class AreaRangeSeries extends AreaSeries {
         }
 
         // Draw top points
-        areaProto.drawPoints.apply(series, arguments);
+        AreaSeries.prototype.drawPoints.apply(series, arguments);
 
         // Reset top points preliminary modifications
         i = 0;

@@ -33,11 +33,6 @@ import MapLineSeries from '../MapLine/MapLineSeries.js';
 import MapSeries from '../Map/MapSeries.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    prototype: {
-        pointClass: Point
-    }
-} = Series;
 import {
     addEvent,
     arrayMax,
@@ -49,6 +44,14 @@ import {
     relativeLength
 } from '../../Shared/Utilities.js';
 import FlowMapSeriesDefaults from './FlowMapSeriesDefaults.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
 
 /**
  * The flowmap series type

@@ -27,11 +27,17 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Series from '../../Core/Series/Series.js';
 import TreemapSeries from '../Treemap/TreemapSeries.js';
-const { prototype: { pointClass: Point } } = Series;
-const { prototype: { pointClass: TreemapPoint } } = TreemapSeries;
 import SunburstNode from './SunburstNode';
 import { correctFloat, extend, pInt } from '../../Shared/Utilities.js';
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
+const TreemapPoint = TreemapSeries.prototype.pointClass;
 
 /* *
  *

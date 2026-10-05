@@ -26,21 +26,16 @@ import DumbbellSeries from '../Dumbbell/DumbbellSeries.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import Series from '../../Core/Series/Series.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    prototype: {
-        pointClass: Point
-    }
-} = Series;
-const {
-    prototype: {
-        pointClass: ScatterPoint
-    }
-} = ScatterSeries;
-const {
-    prototype: {
-        pointClass: DumbbellPoint
-    }
-} = DumbbellSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const Point = Series.prototype.pointClass;
+const ScatterPoint = ScatterSeries.prototype.pointClass;
+const DumbbellPoint = DumbbellSeries.prototype.pointClass;
 
 /* *
  *

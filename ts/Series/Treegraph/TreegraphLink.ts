@@ -28,11 +28,14 @@ import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    prototype: {
-        pointClass: ColumnPoint
-    }
-} = ColumnSeries;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnPoint = ColumnSeries.prototype.pointClass;
 
 /* *
  *

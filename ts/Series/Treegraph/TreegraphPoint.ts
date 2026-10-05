@@ -27,13 +27,16 @@ import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
 import Point from '../../Core/Series/Point.js';
 import TreemapSeries from '../Treemap/TreemapSeries.js';
-const {
-    prototype: {
-        pointClass: TreemapPoint
-    }
-} = TreemapSeries;
 import TreegraphSeries from './TreegraphSeries';
 import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const TreemapPoint = TreemapSeries.prototype.pointClass;
 
 /* *
  *
