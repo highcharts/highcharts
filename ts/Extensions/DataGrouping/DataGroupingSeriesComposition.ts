@@ -466,9 +466,10 @@ function applyGrouping(
             interval = Math.max(
                 (groupPixelWidth * (xMax - xMin) / plotSizeX) *
                     groupIntervalFactor,
-                // Limit the group count when zoomed in between sparse points,
-                // #23958
-                (groupMax - groupMin) / plotSizeX
+                // Limit group positions across processed data (#23958)
+                dataGroupingOptions.groupAll ?
+                    0 :
+                    (groupMax - groupMin) / plotSizeX / 100
             ),
             groupPositions = xAxis.getTimeTicks(
                 DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
@@ -516,7 +517,8 @@ function applyGrouping(
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
             if (
-                !info?.segmentStarts ||
+                !info ||
+                !info.segmentStarts ||
                 info.segmentStarts.indexOf(i) === -1
             ) {
                 gapSize = Math.max(

@@ -458,8 +458,48 @@
             assert.deepEqual(
                 chart.series[0].getColumn('x', true),
                 [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
-                'A one second range between weekly points should group the ' +
-                'shoulder points without excessive group positions'
+                'A one second range between weekly points, with xAxis.min ' +
+                'disabling the automatic minRange, should group the shoulder ' +
+                'points without excessive group positions'
+            );
+
+            chart.series[0].setData([
+                [Date.UTC(2024, 0, 5, 16), 1],
+                ...Array.from({ length: 61 }, (_, i) => [
+                    Date.UTC(2024, 0, 8, 9, 30 + i),
+                    i
+                ]),
+                [Date.UTC(2024, 0, 9, 9, 30), 1]
+            ]);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9, 30),
+                Date.UTC(2024, 0, 8, 10, 30)
+            );
+
+            assert.ok(
+                chart.series[0].currentDataGrouping.totalRange < 6e4,
+                'An hour of minute data next to a shoulder point three ' +
+                'days away should be grouped by less than a minute'
+            );
+
+            chart.series[0].update({
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: Array.from({ length: 8760 }, (_, i) => [
+                    Date.UTC(2024, 0, 1) + i * 36e5,
+                    i
+                ])
+            });
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 5, 1),
+                Date.UTC(2024, 5, 1, 2)
+            );
+
+            assert.ok(
+                chart.series[0].currentDataGrouping.totalRange < 3e5,
+                'With groupAll, a two hour range of hourly data from a ' +
+                'whole year should be grouped by less than five minutes'
             );
         }
     );
