@@ -11,7 +11,7 @@ QUnit.test(
 
         let caughtError;
         const onGlobalError = e => {
-                caughtError = e.error || new Error(e.message);
+                caughtError = e.message;
             },
             destroyChart = () => {
                 chart.destroy();
