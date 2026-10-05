@@ -120,10 +120,10 @@ Dashboards.board('container', {
 
 You will find examples of how to use the `TimeSeriesConnector` in our demos.
 
-- [Highcharts Stock + Morningstar TimeSeries](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
-- [Highcharts Stock + Morningstar OHLCV TimeSeries](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/magnum-ice-cream/)
-- [Highcharts Stock + Morningstar AAL Intraday Ticks](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/american-airlines-group/)
-- [Highcharts Stock + Morningstar Swedish Healthcare Instruments](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/swedish-healthcare-instruments/)
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
+- [Highcharts Stock + Morningstar OHLCV Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/magnum-ice-cream/)
+- [Highcharts Dashboards + Morningstar AAL Intraday Ticks](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/american-airlines-group/)
+- [Highcharts Dashboards + Morningstar Swedish Healthcare Instruments](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/swedish-healthcare-instruments/)
 
 ## Morningstar API Reference
 

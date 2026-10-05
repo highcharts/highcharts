@@ -132,7 +132,7 @@ Example request:
 
 You will find examples of how to use `HypoPerformanceConnector` in our demos.
 
-- [Highcharts Core + Morningstar Growth Chart Hypothetical](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/growth-chart-hypo/)
+- [Highcharts Stock + Morningstar Growth Chart Hypothetical](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/growth-chart-hypo/)
 
 ## Morningstar API Reference
 

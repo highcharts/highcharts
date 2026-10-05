@@ -133,7 +133,7 @@ Highcharts.chart('container', {
 
 You will find examples of how to use `SecurityCompareConnector` in our demos.
 
-- [Highcharts Core + Morningstar Returns Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/returns-chart/)
+- [Highcharts Stock + Morningstar Returns Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/returns-chart/)
 - [Highcharts Core + Morningstar Country Breakdown Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/country-breakdown-chart/)
 - [Highcharts Core + Morningstar Region Breakdown Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/region-breakdown-chart/)
 - [Highcharts Core + Morningstar Credit Quality Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/credit-quality-breakdown/)

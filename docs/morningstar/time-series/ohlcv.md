@@ -37,7 +37,7 @@ const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector(
 
 ## Relevant demos
 
-- [Highcharts Stock + Morningstar OHLCV TimeSeries](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/magnum-ice-cream/)
+- [Highcharts Stock + Morningstar OHLCV Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/magnum-ice-cream/)
 
 ## Morningstar API Reference
 

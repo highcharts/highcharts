@@ -143,7 +143,7 @@ Highcharts.chart('container', {
 You will find examples of how to use `EquityStyleBox` converter in our demos.
 
 - [Highcharts Core + Morningstar Equity Style Box](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-style-box/)
-- [Highcharts Core + Morningstar Equity Style Box Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/equity-style-box-grid/)
+- [Highcharts Grid + Morningstar Equity Style Box Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/equity-style-box-grid/)
 
 ## Morningstar API Reference
 
