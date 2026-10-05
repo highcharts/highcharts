@@ -776,7 +776,8 @@ class ColumnSeries extends Series {
             options = series.options,
             nullInteraction = options.nullInteraction,
             { styledMode, renderer } = chart,
-            animationLimit = options.animationLimit || 250;
+            allowAnimation = chart.pointCount() <
+                (options.animationLimit || 1000);
         let shapeArgs;
 
         // Draw the columns
@@ -784,7 +785,7 @@ class ColumnSeries extends Series {
             const plotY = point.plotY;
             let graphic = point.graphic,
                 shouldUpdate = !!graphic,
-                verb = graphic && chart.pointCount < animationLimit ?
+                verb = graphic && allowAnimation ?
                     'animate' : 'attr';
 
             if (isNumber(plotY) && (point.y !== null || nullInteraction)) {
@@ -800,10 +801,7 @@ class ColumnSeries extends Series {
                     let initialAttr = shapeArgs;
 
                     // New points fade in from old axis position
-                    if (
-                        point.origin &&
-                        chart.pointCount < animationLimit
-                    ) {
+                    if (point.origin && allowAnimation) {
                         initialAttr = merge(
                             shapeArgs,
                             point.getOrigin(point.origin, shapeArgs)

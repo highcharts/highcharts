@@ -426,7 +426,7 @@ export interface SeriesOptions {
      * For some series, there is a limit that shuts down animation
      * by default when the total number of points in the chart is too high.
      * For example, for a column chart and its derivatives, animation does
-     * not run if there is more than 250 points totally. To disable this
+     * not run if there is more than 1000 points totally. To disable this
      * cap, set `animationLimit` to `Infinity`. This option works if animation
      * is fired on individual points, not on a group of points like e.g. during
      * the initial animation.
