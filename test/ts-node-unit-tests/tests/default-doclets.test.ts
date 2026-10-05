@@ -36,7 +36,7 @@
  *   and a quoted string matches the same text without quotes ('y' and y)
  */
 
-import { describe, it } from 'node:test';
+import { before, describe, it } from 'node:test';
 import { strictEqual } from 'node:assert';
 import { existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -915,104 +915,133 @@ describe('Helper: isSameDefault', () => {
     });
 });
 
+interface PairedFilesResult {
+    checksPerformed: number;
+    failures: Array<string>;
+    pairedCount: number;
+    undocumented: Array<string>;
+    unverified: Array<string>;
+}
+
+/**
+ * Compares the Options files with their Defaults files. All checks on the
+ * paired files share this result, so each file is read only once.
+ */
+function checkPairedFiles(optionsFiles: Array<string>): PairedFilesResult {
+    const failures: Array<string> = [];
+    const unverified: Array<string> = [];
+    const undocumented: Array<string> = [];
+    let checksPerformed = 0;
+    let pairedCount = 0;
+
+    for (const optionsPath of optionsFiles) {
+        const defaultsPath = optionsPath.replace(
+            /Options\.ts$/u,
+            'Defaults.ts'
+        );
+
+        if (!existsSync(join(REPO_ROOT, defaultsPath))) {
+            continue;
+        }
+
+        pairedCount++;
+
+        const optionsSource = readSource(optionsPath);
+        const defaultsSource = readSource(defaultsPath);
+        const defaultsObjects = getDefaultsObjects(defaultsSource);
+        const apiOptionDefaults = collectApiOptionDefaults(defaultsSource);
+
+        for (const [interfaceName, defaultsObject] of defaultsObjects) {
+            const {
+                defaults: actualDefaults,
+                optionParent
+            } = defaultsObject;
+            const memberPaths = new Set<string>();
+            const docletDefaults = collectDefaultTags(
+                optionsSource,
+                interfaceName,
+                memberPaths
+            );
+
+            for (const [path, value] of collectKnownDefaults(
+                defaultsObject,
+                apiOptionDefaults
+            )) {
+                // Members declared elsewhere, e.g. in a named type or a
+                // parent interface, are not checked
+                if (memberPaths.has(path) && !docletDefaults.has(path)) {
+                    undocumented.push(
+                        `${optionsPath} | ${interfaceName}.${path} | ` +
+                        `missing @default ${value}`
+                    );
+                }
+            }
+
+            for (const [path, expected] of docletDefaults) {
+                let actual = actualDefaults.get(path);
+                let source = 'Defaults';
+
+                if (typeof actual === 'undefined') {
+                    const apiOption = optionParent &&
+                        getPath(optionParent, path);
+
+                    actual = apiOption ?
+                        apiOptionDefaults.get(apiOption) :
+                        void 0;
+                    source = `@apioption ${apiOption}`;
+                }
+
+                if (typeof actual === 'undefined') {
+                    unverified.push(
+                        `${optionsPath} | ${interfaceName}.${path} | ` +
+                        `@default ${expected} can't be verified: ` +
+                        'property is neither set in Defaults nor ' +
+                        'documented by @apioption'
+                    );
+                    continue;
+                }
+
+                checksPerformed++;
+
+                if (!isSameDefault(actual, expected)) {
+                    failures.push(
+                        [
+                            `${relative(REPO_ROOT, join(
+                                REPO_ROOT,
+                                optionsPath
+                            ))}`,
+                            `${interfaceName}.${path}`,
+                            `expected @default ${expected}`,
+                            `actual ${actual} (${source})`
+                        ].join(' | ')
+                    );
+                }
+            }
+        }
+    }
+
+    return {
+        checksPerformed,
+        failures,
+        pairedCount,
+        undocumented,
+        unverified
+    };
+}
+
 describe('Options @default doclets', () => {
     const optionsFiles = glob.sync(OPTIONS_GLOB, {
         cwd: REPO_ROOT,
         ignore: IGNORE_GLOBS
     });
+    let result: PairedFilesResult;
+
+    before(() => {
+        result = checkPairedFiles(optionsFiles);
+    });
 
     it('should match paired defaults files', (t) => {
-        const failures: Array<string> = [];
-        const unverified: Array<string> = [];
-        const undocumented: Array<string> = [];
-        let checksPerformed = 0;
-        let pairedCount = 0;
-
-        for (const optionsPath of optionsFiles) {
-            const defaultsPath = optionsPath.replace(
-                /Options\.ts$/u,
-                'Defaults.ts'
-            );
-
-            if (!existsSync(join(REPO_ROOT, defaultsPath))) {
-                continue;
-            }
-
-            pairedCount++;
-
-            const optionsSource = readSource(optionsPath);
-            const defaultsSource = readSource(defaultsPath);
-            const defaultsObjects = getDefaultsObjects(defaultsSource);
-            const apiOptionDefaults = collectApiOptionDefaults(defaultsSource);
-
-            for (const [interfaceName, defaultsObject] of defaultsObjects) {
-                const {
-                    defaults: actualDefaults,
-                    optionParent
-                } = defaultsObject;
-                const memberPaths = new Set<string>();
-                const docletDefaults = collectDefaultTags(
-                    optionsSource,
-                    interfaceName,
-                    memberPaths
-                );
-
-                for (const [path, value] of collectKnownDefaults(
-                    defaultsObject,
-                    apiOptionDefaults
-                )) {
-                    // Members declared elsewhere, e.g. in a named type or a
-                    // parent interface, are not checked
-                    if (memberPaths.has(path) && !docletDefaults.has(path)) {
-                        undocumented.push(
-                            `${optionsPath} | ${interfaceName}.${path} | ` +
-                            `missing @default ${value}`
-                        );
-                    }
-                }
-
-                for (const [path, expected] of docletDefaults) {
-                    let actual = actualDefaults.get(path);
-                    let source = 'Defaults';
-
-                    if (typeof actual === 'undefined') {
-                        const apiOption = optionParent &&
-                            getPath(optionParent, path);
-
-                        actual = apiOption ?
-                            apiOptionDefaults.get(apiOption) :
-                            void 0;
-                        source = `@apioption ${apiOption}`;
-                    }
-
-                    if (typeof actual === 'undefined') {
-                        unverified.push(
-                            `${optionsPath} | ${interfaceName}.${path} | ` +
-                            `@default ${expected} can't be verified: ` +
-                            'property is neither set in Defaults nor ' +
-                            'documented by @apioption'
-                        );
-                        continue;
-                    }
-
-                    checksPerformed++;
-
-                    if (!isSameDefault(actual, expected)) {
-                        failures.push(
-                            [
-                                `${relative(REPO_ROOT, join(
-                                    REPO_ROOT,
-                                    optionsPath
-                                ))}`,
-                                `${interfaceName}.${path}`,
-                                `expected @default ${expected}`,
-                                `actual ${actual} (${source})`
-                            ].join(' | ')
-                        );
-                    }
-                }
-            }
-        }
+        const { checksPerformed, failures, pairedCount } = result;
 
         t.diagnostic(
             `Checked ${checksPerformed} @default doclet(s) across ` +
@@ -1020,9 +1049,13 @@ describe('Options @default doclets', () => {
             `(${pairedCount} paired with Defaults).`
         );
 
-        if (STRICT) {
-            failures.push(...unverified, ...undocumented);
-        } else {
+        strictEqual(failures.length, 0, failures.join('\n'));
+    });
+
+    it('should only have verifiable @default doclets', (t) => {
+        const { unverified } = result;
+
+        if (!STRICT) {
             if (unverified.length) {
                 t.diagnostic(
                     `${unverified.length} @default doclet(s) can't be ` +
@@ -1031,7 +1064,16 @@ describe('Options @default doclets', () => {
                     'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
                 );
             }
+            return;
+        }
 
+        strictEqual(unverified.length, 0, unverified.join('\n'));
+    });
+
+    it('should document defaults set in Defaults files', (t) => {
+        const { undocumented } = result;
+
+        if (!STRICT) {
             if (undocumented.length) {
                 t.diagnostic(
                     `${undocumented.length} default(s) set in Defaults ` +
@@ -1039,9 +1081,10 @@ describe('Options @default doclets', () => {
                     'Set DEFAULT_DOCLETS_STRICT=1 to list them.'
                 );
             }
+            return;
         }
 
-        strictEqual(failures.length, 0, failures.join('\n'));
+        strictEqual(undocumented.length, 0, undocumented.join('\n'));
     });
 
     it('should not use template expressions', () => {
