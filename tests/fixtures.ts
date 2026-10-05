@@ -30,7 +30,9 @@ const contentTypes: Record<string, string> = {
 async function replaceHCCode(route: Route) {
     const url = route.request().url();
     let relativePath = url.split('/code.highcharts.com/')[1]
-        .replace(/^(stock|maps|gantt)\//u, '');
+        .replace(/^(stock|maps|gantt)\//u, '')
+        // Locally both Grid products are built into the same folder
+        .replace(/^grid-(lite|pro)\/(css\/)?/u, 'grid/');
 
     if (relativePath.endsWith('.js') && !relativePath.endsWith('.src.js')) {
         relativePath = relativePath.replace('.js', '.src.js');
@@ -423,63 +425,6 @@ export async function setupRoutes(page: Page){
                 handler: replaceHCCode
             },
             {
-                pattern: '**/cdn.jsdelivr.net/npm/@highcharts/**',
-                handler: async (route) => {
-                    const url = new URL(route.request().url());
-                    const pathname = url.pathname;
-
-                    // Extract path after /npm/@highcharts/
-                    const match = pathname.match(/\/npm\/@highcharts\/(.+)/);
-                    if (!match) {
-                        await route.abort();
-                        return;
-                    }
-
-                    const relativePath = match[1];
-                    let localPath: string;
-
-                    // Handle grid-lite.js and grid-pro.js
-                    if (relativePath === 'grid-lite/grid-lite.js') {
-                        localPath = join('code', 'grid', 'grid-lite.src.js');
-                    } else if (relativePath === 'grid-pro/grid-pro.js') {
-                        localPath = join('code', 'grid', 'grid-pro.src.js');
-                    } else if (relativePath === 'grid-lite/grid-lite.css') {
-                        localPath = join('css', 'grid', 'grid-lite.css');
-                    } else if (relativePath === 'grid-pro/grid-pro.css') {
-                        localPath = join('css', 'grid', 'grid-pro.css');
-                    } else {
-                        await route.abort();
-                        return;
-                    }
-
-
-                    const ext = extname(localPath);
-
-
-                    try {
-                        const body = await readFile(
-                            join(__dirname, '..', localPath)
-                        );
-
-                        test.info().annotations.push({
-                            type: 'redirect',
-                            description: `${url} --> ${localPath}`
-                        });
-
-                        await route.fulfill({
-                            status: 200,
-                            body,
-                            contentType: contentTypes[ext] ??
-                                'application/javascript'
-                        });
-                        return;
-                    } catch (error) {
-                        console.error(`Failed to load ${localPath}:`, error);
-                        await route.abort();
-                    }
-                }
-            },
-            {
                 pattern: 'https://code.jquery.com/qunit/**',
                 handler: async (route) => {
                     const url = new URL(route.request().url());
@@ -690,6 +635,13 @@ export async function setupRoutes(page: Page){
                 pattern: '**/grid-lite/**',
                 handler: async (route) => {
                     const url = new URL(route.request().url());
+
+                    // Product files, not samples - let the CDN routes serve them
+                    if (url.hostname === 'code.highcharts.com') {
+                        await route.fallback();
+                        return;
+                    }
+
                     const pathMatch = url.pathname.match(/\/grid-lite\/(.+)/);
                     if (pathMatch) {
                         let relativePath = pathMatch[1];
@@ -741,15 +693,6 @@ export async function setupRoutes(page: Page){
                                     join(__dirname, '..', htmlPath), 'utf8'
                                 );
 
-                                // Replace CDN URLs with code.highcharts.com URLs
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
-                                    'https://code.highcharts.com/grid/$2.js'
-                                );
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
-                                    'https://code.highcharts.com/grid/$2.css'
-                                );
 
                                 // Check if demo.css exists and inject it
                                 const cssPath = htmlPath.replace(
@@ -759,25 +702,19 @@ export async function setupRoutes(page: Page){
                                     const cssContent = await readFile(
                                         join(__dirname, '..', cssPath), 'utf8'
                                     );
-                                    // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent
-                                        .replace(
-                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                            'https://code.highcharts.com/grid/$2.css'
-                                        );
                                     // Inject CSS in head or at the beginning
                                     if (htmlBody.includes('</head>')) {
                                         htmlBody = htmlBody.replace(
                                             '</head>',
-                                            `<style>${cssWithReplacedUrls}</style></head>`
+                                            `<style>${cssContent}</style></head>`
                                         );
                                     } else if (htmlBody.includes('<head>')) {
                                         htmlBody = htmlBody.replace(
                                             '<head>',
-                                            `<head><style>${cssWithReplacedUrls}</style>`
+                                            `<head><style>${cssContent}</style>`
                                         );
                                     } else {
-                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
+                                        htmlBody = `<style>${cssContent}</style>\n${htmlBody}`;
                                     }
                                 }
 
@@ -849,6 +786,13 @@ export async function setupRoutes(page: Page){
                 pattern: '**/grid-pro/**',
                 handler: async (route) => {
                     const url = new URL(route.request().url());
+
+                    // Product files, not samples - let the CDN routes serve them
+                    if (url.hostname === 'code.highcharts.com') {
+                        await route.fallback();
+                        return;
+                    }
+
                     const pathMatch = url.pathname.match(/\/grid-pro\/(.+)/);
                     if (pathMatch) {
                         let relativePath = pathMatch[1];
@@ -890,33 +834,18 @@ export async function setupRoutes(page: Page){
                             try {
                                 let htmlBody = await readFile(join(__dirname, '..', htmlPath), 'utf8');
 
-                                // Replace CDN URLs with code.highcharts.com URLs
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
-                                    'https://code.highcharts.com/grid/$2.js'
-                                );
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
-                                    'https://code.highcharts.com/grid/$2.css'
-                                );
 
                                 // Check if demo.css exists and inject it
                                 const cssPath = htmlPath.replace('demo.html', 'demo.css');
                                 if (existsSync(join(__dirname, '..', cssPath))) {
                                     const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
-                                    // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent
-                                        .replace(
-                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                            'https://code.highcharts.com/grid/$2.css'
-                                        );
                                     // Inject CSS in head or at the beginning
                                     if (htmlBody.includes('</head>')) {
-                                        htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
+                                        htmlBody = htmlBody.replace('</head>', `<style>${cssContent}</style></head>`);
                                     } else if (htmlBody.includes('<head>')) {
-                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssWithReplacedUrls}</style>`);
+                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssContent}</style>`);
                                     } else {
-                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
+                                        htmlBody = `<style>${cssContent}</style>\n${htmlBody}`;
                                     }
                                 }
 
@@ -1016,33 +945,18 @@ export async function setupRoutes(page: Page){
                             try {
                                 let htmlBody = await readFile(join(__dirname, '..', htmlPath), 'utf8');
 
-                                // Replace CDN URLs with code.highcharts.com URLs
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.js/gu,
-                                    'https://code.highcharts.com/grid/$2.js'
-                                );
-                                htmlBody = htmlBody.replace(
-                                    /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/(grid-lite|grid-pro)\.css/gu,
-                                    'https://code.highcharts.com/grid/$2.css'
-                                );
 
                                 // Check if demo.css exists and inject it
                                 const cssPath = htmlPath.replace('demo.html', 'demo.css');
                                 if (existsSync(join(__dirname, '..', cssPath))) {
                                     const cssContent = await readFile(join(__dirname, '..', cssPath), 'utf8');
-                                    // Replace CDN URLs in CSS @import
-                                    const cssWithReplacedUrls = cssContent
-                                        .replace(
-                                            /https:\/\/cdn\.jsdelivr\.net\/npm\/@highcharts\/(grid-lite|grid-pro)\/css\/(grid-lite|grid-pro)\.css/gu,
-                                            'https://code.highcharts.com/grid/$2.css'
-                                        );
                                     // Inject CSS in head or at the beginning
                                     if (htmlBody.includes('</head>')) {
-                                        htmlBody = htmlBody.replace('</head>', `<style>${cssWithReplacedUrls}</style></head>`);
+                                        htmlBody = htmlBody.replace('</head>', `<style>${cssContent}</style></head>`);
                                     } else if (htmlBody.includes('<head>')) {
-                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssWithReplacedUrls}</style>`);
+                                        htmlBody = htmlBody.replace('<head>', `<head><style>${cssContent}</style>`);
                                     } else {
-                                        htmlBody = `<style>${cssWithReplacedUrls}</style>\n${htmlBody}`;
+                                        htmlBody = `<style>${cssContent}</style>\n${htmlBody}`;
                                     }
                                 }
 
