@@ -234,14 +234,17 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         true,
         'Series should lack parentNode'
     );
+});
 
+QUnit.test('Packed Bubble parent node dragging, #25421', function (assert) {
     if (!window.requestAnimationFrame) {
+        assert.ok(true, 'Skipped: requestAnimationFrame unavailable.');
         return;
     }
 
     const done = assert.async();
 
-    chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'packedbubble'
         },
