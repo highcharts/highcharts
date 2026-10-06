@@ -1,3 +1,10 @@
+---
+description: >-
+  Load risk scores for up to two portfolios with the RiskScoreConnector,
+  provide holdings using supported identifier types and weights or values, and
+  inspect invalid holdings in connector metadata.
+---
+
 # Portfolio Risk Score
 
 This type analyzes the specified portfolios and yields a risk score.

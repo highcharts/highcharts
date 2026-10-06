@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Installation"
+description: >-
+  Choose Grid Lite or Grid Pro, install through npm, a CDN, or self-hosted
+  files, and follow framework setup examples; use Pro features with a valid
+  Grid Key.
 ---
 
 # Highcharts Grid installation

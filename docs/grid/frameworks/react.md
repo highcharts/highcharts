@@ -1,5 +1,9 @@
 ---
 sidebar_label: "React"
+description: >-
+  Install the Grid Lite or Grid Pro React package, render Grid with options
+  managed in state, access its instance through a ref or callback, and update
+  data by changing state.
 ---
 
 # Highcharts Grid with React

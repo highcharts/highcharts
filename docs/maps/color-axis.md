@@ -1,3 +1,10 @@
+---
+description: >-
+  Map numeric or categorized values to colors with a gradient or data
+  classes. Learn how min and max, color stops, and logarithmic scaling can
+  change a scalar axis’s range.
+---
+
 Color axis
 ===
 

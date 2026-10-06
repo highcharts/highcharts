@@ -1,6 +1,10 @@
 ---
 sidebar_label: "Overview"
 tags: ["grid-pro"]
+description: >-
+  Find how Grid Pro enables inline cell editing through cells.editMode, choose
+  built-in or custom input renderers, and apply predefined or custom
+  validation rules before committing values.
 ---
 
 # Editing overview

@@ -1,3 +1,10 @@
+---
+description: >-
+  Accumulate positive and negative values across sequential columns, then
+  mark intermediate subtotals and the final total without supplying their y
+  values. The article also covers separate colors for up and down points.
+---
+
 Waterfall series
 ================
 
