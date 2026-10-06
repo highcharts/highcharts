@@ -517,9 +517,7 @@ function applyGrouping(
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
             if (
-                !info ||
-                !info.segmentStarts ||
-                info.segmentStarts.indexOf(i) === -1
+                !info?.segmentStarts?.includes(i)
             ) {
                 gapSize = Math.max(
                     groupPositions[i] - groupPositions[i - 1],
