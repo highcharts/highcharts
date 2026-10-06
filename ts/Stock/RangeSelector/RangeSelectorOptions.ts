@@ -417,7 +417,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
      *
-     * @default   %e %b %Y
+     * @default   '%[ebY]'
      */
     inputDateFormat: Time.DateTimeFormat;
 
@@ -451,7 +451,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
      *
-     * @default   %Y-%m-%d
+     * @default   '%Y-%m-%d'
      */
     inputEditDateFormat: string;
 
