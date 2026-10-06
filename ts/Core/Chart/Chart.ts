@@ -4250,10 +4250,11 @@ class Chart {
             const {
                     horiz,
                     len,
+                    logarithmic: log,
                     minPointOffset = 0,
                     options,
-                    reversed,
-                    tickInterval
+                    paddedTicks: ticks = [],
+                    reversed
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
@@ -4373,22 +4374,25 @@ class Chart {
                     defined(optionsMax) ? 0 : options.maxPadding
                 );
 
-            if (!axis.categories) {
-                const previousTick = (val: number): number => {
-                    const intv = tickInterval;
-                    if (val < 0) {
-                        val -= intv;
-                    }
-                    return Math.trunc(val / intv) * intv;
-                };
+            if (
+                !axis.categories &&
+                (options.startOnTick || options.endOnTick)
+            ) {
+                const toVal = (val: number): number => (
+                        log ? log.lin2log(val) : val
+                    ),
+                    span = (axis.max ?? 0) - (axis.min ?? 0),
+                    minShift = options.startOnTick ? 0 : span,
+                    maxShift = options.endOnTick ? 0 : span;
 
-                if (options.startOnTick) {
-                    paddedMin = previousTick(paddedMin);
-                }
+                paddedMin = ticks
+                    .map((t): number => toVal(t - minShift))
+                    .filter((val): boolean => val <= paddedMin)
+                    .pop() ?? paddedMin;
 
-                if (options.endOnTick) {
-                    paddedMax = previousTick(paddedMax) + tickInterval;
-                }
+                paddedMax = ticks
+                    .map((t): number => toVal(t + maxShift))
+                    .find((val): boolean => val >= paddedMax) ?? paddedMax;
             }
 
             // Calculate the floor and the ceiling

@@ -42,6 +42,7 @@ import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import {
     addEvent,
     attr,
+    correctFloat,
     css,
     defined,
     extend,
@@ -594,40 +595,48 @@ class Pointer {
             if (axis.isPanning) {
                 axis.isPanning = false;
 
-                if (
-                    startOnTick ||
-                    endOnTick ||
-                    axis.series.some((s): boolean|undefined => s.boosted)
+                const {
+                    logarithmic: log,
+                    min,
+                    max,
+                    paddedTicks: ticks = []
+                } = axis;
+
+                let { userMin: newMin, userMax: newMax } = axis;
+
+                if (startOnTick || endOnTick) {
+                    if (ticks.length && isNumber(min) && isNumber(max)) {
+                        const toVal = (val: number): number => (
+                                log ? log.lin2log(val) : val
+                            ),
+                            snap = (val: number): number => ticks.reduce(
+                                (a, b): number => (
+                                    Math.abs(b - val) < Math.abs(a - val) ?
+                                        b :
+                                        a
+                                )
+                            );
+
+                        newMin = toVal(
+                            startOnTick ?
+                                snap(min) :
+                                correctFloat(min + snap(max) - max)
+                        );
+                        newMax = toVal(
+                            endOnTick ?
+                                snap(max) :
+                                correctFloat(max + snap(min) - min)
+                        );
+                    }
+                } else if (
+                    !axis.series.some((s): boolean|undefined => s.boosted)
                 ) {
-                    const { tickInterval } = axis,
-                        userMin = axis.userMin ?? NaN,
-                        userMax = axis.userMax ?? NaN,
-                        round = (val: number): number =>
-                            Math.round(val / tickInterval) * tickInterval;
-
-                    let newMin = userMin,
-                        newMax = userMax;
-
-                    if (startOnTick) {
-                        newMin = round(userMin);
-
-                        if (!endOnTick) {
-                            newMax += newMin - userMin;
-                        }
-                    }
-
-                    if (endOnTick) {
-                        newMax = round(userMax);
-
-                        if (!startOnTick) {
-                            newMin += newMax - userMax;
-                        }
-                    }
-
-                    axis.forceRedraw = true;
-                    axis.setExtremes(newMin, newMax, false);
-                    redraw = true;
+                    continue;
                 }
+
+                axis.forceRedraw = true;
+                axis.setExtremes(newMin, newMax, false);
+                redraw = true;
             }
         }
 
