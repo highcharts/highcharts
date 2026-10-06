@@ -212,6 +212,14 @@
         text-overflow: ellipsis;
     }
 
+    /* A cell with no value has nothing in flow to form a line box, so its
+       row would collapse by exactly one line. The zero width space restores
+       it from the cell's own line-height, so it follows the theme, and
+       generated content never reaches the clipboard. */
+    > tbody > tr > :where(.hcg-cell)::before {
+        content: "\200B";
+    }
+
     > tbody > tr.hcg-mocked-row > :where(.hcg-cell) {
         white-space: nowrap;
     }
