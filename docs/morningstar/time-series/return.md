@@ -1,3 +1,10 @@
+---
+description: >-
+  Fetch return time-series data for one or more securities by setting the
+  Return series type on TimeSeriesConnector; when multiple securities are
+  requested, the first security determines the series start date.
+---
+
 # Return
 
 This type yields return time series data for single or multiple securities.

@@ -1,5 +1,10 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Set shared column behavior with columnDefaults and override individual
+  columns, choose which provider columns render, derive per-row summary
+  columns, and find guides to headers, sizing, sorting, filtering, and
+  styling.
 ---
 
 # Columns overview

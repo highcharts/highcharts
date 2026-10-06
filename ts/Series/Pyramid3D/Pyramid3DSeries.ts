@@ -56,6 +56,7 @@ class Pyramid3DSeries extends Funnel3DSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: Pyramid3DSeriesOptions = merge(
         Funnel3DSeries.defaultOptions,
         Pyramid3DSeriesDefaults

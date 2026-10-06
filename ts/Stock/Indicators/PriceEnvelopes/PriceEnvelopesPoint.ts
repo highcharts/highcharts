@@ -22,13 +22,18 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class PriceEnvelopesPoint extends SMAPoint {
+    /** @internal */
     public bottom: number;
+    /** @internal */
     public middle: number;
+    /** @internal */
     public plotBottom: number;
+    /** @internal */
     public plotTop: number;
+    /** @internal */
     public series: PriceEnvelopesIndicator;
+    /** @internal */
     public top: number;
 }
 
@@ -38,5 +43,4 @@ declare class PriceEnvelopesPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default PriceEnvelopesPoint;
