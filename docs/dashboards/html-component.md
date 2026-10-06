@@ -1,3 +1,10 @@
+---
+description: >-
+  Install the HTML component, place it in a dashboard cell, and define content
+  as an elements tree or HTML string; the guide also covers nested elements,
+  CSS styling, custom extensions, and synchronization limits.
+---
+
 # HTML Component
 
 The HTML Component serves as a fundamental building block in dashboards. It offers the versatility to incorporate diverse HTML content. It is a simple yet potent tool for constructing dashboards with dynamic content. The configuration structure resembles an Abstract Syntax Tree (AST), enabling definition of tag names, attributes, and nested elements or can be defined as a string representing the HTML code.

@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how data providers, column options, and row rendering fit together in
+  Highcharts Grid, then navigate to focused guides for data handling,
+  interaction, styling, accessibility, and framework setup.
+---
+
 # Understanding Highcharts Grid
 
 Highcharts Grid displays structured data in columns and rows, using a standard

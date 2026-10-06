@@ -7,7 +7,7 @@ import type { JSHandle, Page } from '@playwright/test';
 
 import { join, extname, normalize } from 'node:path';
 import { globSync } from 'glob';
-import { load as yamlLoad } from 'js-yaml';
+import { JSON_SCHEMA, load as yamlLoad } from 'js-yaml';
 import { existsSync, readFileSync } from 'node:fs';
 import * as ts from 'typescript';
 
@@ -276,12 +276,16 @@ if (!highchartsCssPath) {
 // Prefer the built CSS but fall back to the source file when dist assets are absent.
 export const highchartsCSS = readFileSync(highchartsCssPath, 'utf8');
 
-export function getSample(path: string, injectCSS: boolean = false) {
+export function getSample(
+    path: string,
+    injectCSS: boolean = false,
+    scriptFile = 'demo.{js,mjs,ts}'
+) {
     path = normalize(path.replace(/\\/g, '/')).replace(/\\/g, '/');
     const files = {
         html: 'demo.html',
         css: 'demo.css',
-        script: 'demo.{js,mjs,ts}',
+        script: scriptFile,
         details: 'demo.details'
     };
 
@@ -294,7 +298,7 @@ export function getSample(path: string, injectCSS: boolean = false) {
             const content = readFileSync(globPath, { encoding: 'utf8'});
 
             if (type === 'details') {
-                obj[type] = yamlLoad(content) as object;
+                obj[type] = yamlLoad(content, { schema: JSON_SCHEMA });
             } else {
                 obj[type] = content;
             }

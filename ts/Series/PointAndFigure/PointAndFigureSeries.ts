@@ -83,6 +83,7 @@ class PointAndFigureSeries extends ScatterSeries {
      *
     * */
 
+    /** @internal */
     public static defaultOptions: PointAndFigureSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         PointAndFigureSeriesDefaults
@@ -94,6 +95,7 @@ class PointAndFigureSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -112,8 +114,10 @@ class PointAndFigureSeries extends ScatterSeries {
 
     public points!: Array<PointAndFigurePoint>;
 
+    /** @internal */
     public xData!: Array<number>;
 
+    /** @internal */
     public yData!: Array<number>;
 
     public allowDG = false;
@@ -124,12 +128,14 @@ class PointAndFigureSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
         this.pnfDataGroups = [];
     }
 
+    /** @internal */
     public getProcessedData(): Series.ProcessedDataObject {
         if (!this.pnfDataGroups) {
             return {
@@ -283,6 +289,7 @@ class PointAndFigureSeries extends ScatterSeries {
         };
     }
 
+    /** @internal */
     public markerAttribs(
         point: Point
     ): SVGAttributes {
@@ -305,6 +312,7 @@ class PointAndFigureSeries extends ScatterSeries {
         return attribs;
     }
 
+    /** @internal */
     public translate(): void {
         const metrics = this.getColumnMetrics(),
             calculatedBoxSize = this.calculatedBoxSize;
@@ -324,17 +332,26 @@ class PointAndFigureSeries extends ScatterSeries {
  * */
 
 interface PointAndFigureGroup {
+    /** @internal */
     x: number;
+    /** @internal */
     y: Array<number>;
+    /** @internal */
     upTrend: boolean;
 }
 
 interface PointAndFigureSeries {
+    /** @internal */
     takeOrdinalPosition: boolean;
+    /** @internal */
     pnfDataGroups: Array<PointAndFigureGroup>;
+    /** @internal */
     getColumnMetrics: typeof columnProto.getColumnMetrics;
+    /** @internal */
     markerWidth: number;
+    /** @internal */
     markerHeight: number;
+    /** @internal */
     calculatedBoxSize: number;
 }
 

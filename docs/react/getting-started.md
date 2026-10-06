@@ -1,3 +1,10 @@
+---
+description: >-
+  Install @highcharts/react, create a chart with a series component, add chart
+  elements or module components, and use the linked guides for chart options,
+  series types, and bundling.
+---
+
 # Getting started
 
 > **Tip:** Want to see what's new? Check the [Highcharts React changelog](https://github.com/highcharts/highcharts-react/blob/master/CHANGELOG.md) for the latest features, improvements, and fixes.

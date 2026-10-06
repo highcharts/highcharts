@@ -1041,15 +1041,16 @@ namespace AxisDefaults {
             /**
              * The label's pixel distance from the perimeter of the plot area.
              * On cartesian charts, this is overridden if the `labels.y` setting
-             * is set.
+             * is set. Defaults to 15 unless the labels are aligned inside the
+             * plot area, in which case it defaults to 0.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
              *
              * @type      {number}
              * @product   highcharts gantt
+             * @apioption xAxis.labels.distance
              */
-            distance: 15,
 
             /**
              * Enable or disable the axis labels.
@@ -1326,18 +1327,18 @@ namespace AxisDefaults {
          */
 
         /**
-         * Index of another axis that this axis is linked to. When an axis is
-         * linked to a master axis, it will take the same extremes as
-         * the master, but as assigned by min or max or by setExtremes.
-         * It can be used to show additional info, or to ease reading the
-         * chart by duplicating the scales.
+         * Index or [id](#xAxis.id) of another axis that this axis is linked to.
+         * When an axis is linked to a master axis, it will take the same
+         * extremes as the master, but as assigned by min or max or by
+         * `setExtremes`. It can be used to show additional info, or to ease
+         * reading the chart by duplicating the scales.
          *
          * @sample {highcharts} highcharts/xaxis/linkedto/
          *         Different string formats of the same date
          * @sample {highcharts} highcharts/yaxis/linkedto/
          *         Y values on both sides
          *
-         * @type      {number}
+         * @type      {number|string}
          * @since     2.0.2
          * @product   highcharts highstock gantt
          * @apioption xAxis.linkedTo

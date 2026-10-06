@@ -1,0 +1,6 @@
+---
+ name: Destroy registry
+ authors:
+   - Sebastian Bochan
+ js_wrap: b
+...

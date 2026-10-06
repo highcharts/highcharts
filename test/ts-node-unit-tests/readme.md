@@ -1,17 +1,26 @@
-# Highcharts Unit tests
+# Highcharts Node tests
 
-Unit tests for the compiled Highcharts modules in pure Typescript + Node. No DOM required.
+Node tests for Highcharts modules and repository tooling. No DOM required.
 
 ## Overview
 These tests utilise the built-in [assert](https://nodejs.org/api/assert.html) and [test](https://nodejs.org/api/test.html) modules of Node,
 as well as [tsx](https://tsx.is/) to run from TypeScript sources.
 
 ## How-to:
-From the root folder run `node --import tsx --test test/ts-node-unit-tests/tests/**`.
+From the repository root, run `npm run test-node` for the module and doclet
+tests, or `npm run test-node:tooling` for the visual and benchmark tooling
+tests. The module command builds Highcharts before running the tests. The
+tooling command does not need a build.
 
-Optionally the `--watch` flag can be used to automatically rerun on changes.
+Run `npm run test-node:watch` to rerun module tests on changes.
 
-The tests will also run as part of the pre-commit script.
+The module tests also run as part of the pre-commit script and the Highcharts CI
+workflow's Node unit tests job. Dependency changes in `package.json` or
+`package-lock.json` trigger the workflow as well.
+
+Relevant staged files trigger the tooling tests through lint-staged. The Test
+tooling workflow runs them on Linux and Windows with both LTS and latest
+Node.js. Nightly CI runs both commands.
 
 ## Caveats
 * `ts-node` doesn't support all the settings in `.tsconfig.json`, such as path rewriting. As a result, imports will have to be relative from the test folder.
@@ -22,8 +31,9 @@ Run using `npm run benchmark`.
 
 Optional arguments:
 * `--context [base|actual]`, sets the context for comparisions
-* `--pattern [regex]`, match benchmark files by the given pattern.
-I.e. `*.bench.local.ts`.
+* `--pattern [substring]`, match file paths containing the literal text, e.g.
+  `Stock/` or `.bench.local.ts`. Regular expressions and wildcards are not
+  interpreted.
 
 Reports for each test will be output to `tmp/benchmarks/actual/` (or `tmp/benchmarks/base/` depending on the context).
 
@@ -36,7 +46,11 @@ and a default export, which is the main test.
 
 The config for now only contains the sample sizes the test is run with.
 
-The test can return any number, but generally it is assumed to be a duration.
+The test must return a finite number (including zero), usually a duration.
+
+Import errors, missing default functions, invalid results and failed benchmark
+iterations stop the runner with a nonzero exit code. Failed iterations are not
+recorded as timings.
 
 The `before` function is optional, but if defined it should return an object that contains a fileName and a function used to generate a dataset. The dataset is cached locally to speed up the total testing time.
 
