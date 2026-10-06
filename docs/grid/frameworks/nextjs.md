@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Next.js"
+description: >-
+  Install the Grid React package for a Next.js app, load it dynamically with
+  server-side rendering disabled, access the Grid instance through a ref or
+  callback, and update options from state.
 ---
 
 # Highcharts Grid with Next.js

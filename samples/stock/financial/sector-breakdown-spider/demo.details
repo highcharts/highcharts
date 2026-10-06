@@ -1,0 +1,7 @@
+---
+name: Sector Breakdown Spider
+description: Displays sector breakdown for two securities as a polar spider chart for radar comparison.
+tags:
+  - Morningstar
+js_wrap: b
+...

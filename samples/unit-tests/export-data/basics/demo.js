@@ -1295,6 +1295,44 @@ QUnit.test('Toggle data table (#13690)', function (assert) {
         'The table should re-render after a data update, #14320.'
     );
     chart.exporting.hideData();
+
+    // No series left to export, #25090
+    chart.series[0].remove();
+
+    assert.strictEqual(
+        chart.exporting.getCSV(),
+        '',
+        'A chart without series should produce no CSV content.'
+    );
+
+    let warning;
+    const removeEvent = Highcharts.addEvent(
+        Highcharts,
+        'displayError',
+        e => {
+            warning = e.code;
+        }
+    );
+
+    chart.exporting.downloadCSV();
+
+    assert.strictEqual(
+        warning,
+        'Warning: No data to export',
+        'The CSV download should be skipped with a warning, instead of ' +
+            'writing a file containing only a byte order mark, #25090.'
+    );
+
+    warning = void 0;
+    chart.exporting.downloadXLS();
+
+    assert.strictEqual(
+        warning,
+        'Warning: No data to export',
+        'The XLS download should be skipped with a warning, #25090.'
+    );
+
+    removeEvent();
 });
 
 QUnit.test('Point without y data, but with value (#13785)', function (assert) {

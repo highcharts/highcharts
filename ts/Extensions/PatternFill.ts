@@ -43,7 +43,6 @@ import {
     extend,
     isObject,
     merge,
-    pick,
     removeEvent,
     wrap
 } from '../Shared/Utilities.js';
@@ -620,11 +619,14 @@ function onRendererComplexColor(
 
         // Add it. This function does nothing if an element with this ID
         // already exists.
-        this.addPattern(pattern, !this.forExport && pick(
-            (pattern as any).animation,
-            this.globalAnimation,
-            { duration: 100 }
-        ));
+        this.addPattern(
+            pattern,
+            !this.forExport && (
+                (pattern as any).animation ??
+                this.globalAnimation ??
+                { duration: 100 }
+            )
+        );
 
         value = `url(${this.url}#${pattern.id + (this.forExport ? '-export' : '')})`;
 
@@ -827,7 +829,7 @@ function rendererAddPattern(
     options: PatternOptionsObject,
     animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
-    const animate = pick(animation, true),
+    const animate = (animation ?? true),
         animationOptions = animObject(animate),
         color: ColorString = options.color ||
             'var(--highcharts-neutral-color-80)',
@@ -918,7 +920,7 @@ function rendererAddPattern(
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;
-            attribs['stroke-width'] = pick(path.strokeWidth, 2);
+            attribs['stroke-width'] = (path.strokeWidth ?? 2);
             attribs.fill = path.fill || 'none';
         }
         if (path.transform) {
@@ -937,7 +939,7 @@ function rendererAddPattern(
                 ): void {
                     // Onload
                     this.animate({
-                        opacity: pick(options.opacity, 1)
+                        opacity: (options.opacity ?? 1)
                     }, animationOptions);
                     removeEvent(this.element, 'load');
                 }

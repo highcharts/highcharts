@@ -62,7 +62,7 @@ function visualize(boxes, len, y) {
 
             renderer.path([
                 'M',
-                box.pos + box.size * Highcharts.pick(box.align, 0.5),
+                box.pos + box.size * (box.align ?? 0.5),
                 y + 20,
                 'L', box.target, y + 45, 'z'
             ])

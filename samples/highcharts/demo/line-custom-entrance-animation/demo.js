@@ -70,27 +70,20 @@
                 }, animation);
         }
 
-        if (axis.plotLinesAndBands) {
-            axis.plotLinesAndBands.forEach(plotLine => {
-                const animation = H.animObject(plotLine.options.animation);
+        axis.plotLines.forEach(plotLine => {
+            const animation = H.animObject(plotLine.options.animation);
 
-                // Init
-                plotLine.label.attr({
-                    opacity: 0
-                });
-
-                // Animate
-                animateSVGPath(
-                    plotLine.svgElem,
-                    animation,
-                    function () {
-                        plotLine.label.animate({
-                            opacity: 1
-                        });
-                    }
-                );
-            });
-        }
+            // Animate
+            animateSVGPath(
+                plotLine.svgElem,
+                animation,
+                () => {
+                    plotLine.label.css({
+                        opacity: 1
+                    });
+                }
+            );
+        });
     });
 }(Highcharts));
 
@@ -126,7 +119,11 @@ Highcharts.chart('container', {
             label: {
                 text: 'Max Inflation',
                 align: 'right',
-                x: -20
+                x: -20,
+                style: {
+                    opacity: 0,
+                    transition: 'opacity 0.5s ease-in-out'
+                }
             }
         }]
     }, {
@@ -158,11 +155,19 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        yAxis: 0
+        yAxis: 0,
+        tooltip: {
+            valueDecimals: 1,
+            valueSuffix: '%'
+        }
     }, {
         yAxis: 1,
         animation: {
             defer: 1000
+        },
+        tooltip: {
+            valueDecimals: 1,
+            valueSuffix: '%'
         }
     }, {
         yAxis: 2,

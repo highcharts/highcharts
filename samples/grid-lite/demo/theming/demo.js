@@ -4,18 +4,18 @@ const { merge } = Grid;
 const config = {
     data: {
         columns: {
-            firstName: [
+            First: [
                 'Alice', 'Bob', 'Charlie', 'Diana', 'Evan', 'Fiona', 'George',
                 'Hannah', 'Ian', 'Julia', 'Kevin', 'Laura', 'Michael', 'Nina',
                 'Oscar', 'Paula', 'Quincy', 'Rachel', 'Steven', 'Tina'
             ],
-            lastName: [
+            Last: [
                 'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller',
                 'Davis', 'Garcia', 'Rodriguez', 'Martinez', 'Hernandez',
                 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor',
                 'Moore', 'Jackson', 'Martin'
             ],
-            email: [
+            Email: [
                 'alice.smith@example.com', 'bob.johnson@example.com',
                 'charlie.williams@example.com', 'diana.brown@example.com',
                 'evan.jones@example.com', 'fiona.miller@example.com',
@@ -27,11 +27,11 @@ const config = {
                 'quincy.taylor@example.com', 'rachel.moore@example.com',
                 'steven.jackson@example.com', 'tina.martin@example.com'
             ],
-            age: [
+            Age: [
                 28, 34, 45, 22, 31, 39, 50, 27, 36, 29,
                 41, 33, 52, 40, 38, 26, 44, 32, 37, 30
             ],
-            department: [
+            Department: [
                 'Engineering', 'Marketing', 'Finance', 'HR', 'Operations',
                 'Sales', 'IT', 'Customer Support', 'Research', 'Development',
                 'Engineering', 'Marketing', 'Finance', 'HR', 'Operations',

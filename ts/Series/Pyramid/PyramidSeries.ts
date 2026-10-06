@@ -37,7 +37,7 @@ import { merge } from '../../Shared/Utilities.js';
 /**
  * Pyramid series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pyramid
  *
@@ -88,6 +88,7 @@ class PyramidSeries extends FunnelSeries {
  *
  * */
 
+/** @internal */
 interface PyramidSeries {
     pointClass: typeof PyramidPoint;
 }
