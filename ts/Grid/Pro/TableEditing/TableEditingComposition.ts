@@ -19,6 +19,7 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type HeaderCell from '../../Core/Table/Header/HeaderCell';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type {
@@ -33,6 +34,9 @@ import {
     registerBuiltInAction,
     registerBuiltInGroup
 } from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+import {
+    registerHeaderContextMenuAction
+} from '../../Core/Table/Header/HeaderContextMenu.js';
 import TableEditingController, {
     emptyStateButtonClassName,
     type TableEditingOptions
@@ -68,11 +72,19 @@ export const defaultOptions: DeepPartial<Options> = {
             addColumnAfter: 'Add column after',
             deleteColumn: 'Delete column',
             addFirstRow: 'Add row',
-            addFirstColumn: 'Add column'
+            addFirstColumn: 'Add column',
+            renameColumn: 'Rename column',
+            changeColumnId: 'Change column id'
         }
     },
     tableEditing: {
-        enabled: false
+        enabled: false,
+        columnRenaming: {
+            enabled: true
+        },
+        columnIdEditing: {
+            enabled: false
+        }
     }
 };
 
@@ -149,6 +161,22 @@ export interface TableEditingLangOptions {
      * @default 'Add column'
      */
     addFirstColumn?: string;
+
+    /**
+     * Label of the header context menu action that changes the displayed name
+     * of a column, and the accessible name of the input it opens.
+     *
+     * @default 'Rename column'
+     */
+    renameColumn?: string;
+
+    /**
+     * Label of the header context menu action that changes the id a column
+     * has in the data, and the accessible name of the input it opens.
+     *
+     * @default 'Change column id'
+     */
+    changeColumnId?: string;
 }
 
 /**
@@ -156,9 +184,13 @@ export interface TableEditingLangOptions {
  *
  * @param GridClass
  * The class to extend.
+ *
+ * @param HeaderCellClass
+ * The header cell class the rename triggers are attached to.
  */
 export function compose(
-    GridClass: typeof Grid
+    GridClass: typeof Grid,
+    HeaderCellClass: typeof HeaderCell
 ): void {
     if (!pushUnique(Globals.composed, 'TableEditing')) {
         return;
@@ -169,6 +201,35 @@ export function compose(
 
     addEvent(GridClass, 'beforeLoad', initTableEditing);
     addEvent(GridClass, 'afterRenderViewport', renderEmptyStateButton);
+    addEvent(HeaderCellClass, 'keyDown', onHeaderCellKeyDown);
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.renameColumn || '',
+        icon: 'pencil',
+        isVisible: (context): boolean =>
+            context.grid.tableEditing?.canRenameColumn(context.column) === true,
+        onClick: (context): void => {
+            context.grid.tableEditing?.startRenamingColumn(
+                context.cell,
+                'name'
+            );
+        }
+    });
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.changeColumnId || '',
+        icon: 'key',
+        isVisible: (context): boolean =>
+            context.grid.tableEditing?.canEditColumnId(context.column) === true,
+        isDisabled: (context): boolean =>
+            context.grid.tableEditing
+                ?.getColumnIdBlocker(context.column) !== void 0,
+        onClick: (context): void => {
+            context.grid.tableEditing?.startRenamingColumn(context.cell, 'id');
+        }
+    });
 }
 
 /**
@@ -322,6 +383,34 @@ function renderEmptyStateButton(this: Grid): void {
         '.' + Globals.getClassName('noData')
     );
     contentWrapper.insertBefore(button, noData?.nextSibling || null);
+}
+
+/**
+ * Opens the header for editing on F2, the keyboard counterpart of the context
+ * menu actions. Renaming is the one it reaches for, since changing an id is
+ * the rarer and more consequential of the two.
+ *
+ * @param e
+ * Header cell key down event.
+ *
+ * @param e.originalEvent
+ * The native keyboard event.
+ */
+function onHeaderCellKeyDown(
+    this: HeaderCell,
+    e: { originalEvent: KeyboardEvent }
+): void {
+    const tableEditing = this.row.viewport.grid.tableEditing;
+
+    if (e.originalEvent.key !== 'F2' || !tableEditing) {
+        return;
+    }
+
+    e.originalEvent.preventDefault();
+    tableEditing.startRenamingColumn(
+        this,
+        tableEditing.canRenameColumn(this.column) ? 'name' : 'id'
+    );
 }
 
 /**

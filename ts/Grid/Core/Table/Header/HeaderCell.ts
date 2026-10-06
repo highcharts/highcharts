@@ -335,10 +335,42 @@ class HeaderCell extends Cell {
         }
     }
 
+    protected override initEvents(): void {
+        this.cellEvents.push(['contextmenu', (e): void => {
+            this.onContextMenu(e as MouseEvent);
+        }]);
+
+        super.initEvents();
+    }
+
+    /**
+     * Opens the header context menu, unless nothing applies to this column
+     * and the native browser menu is the better answer.
+     *
+     * @param e
+     * Mouse event object.
+     */
+    private onContextMenu(e: MouseEvent): void {
+        const opened = this.row.viewport.openHeaderContextMenu(
+            this,
+            e.clientX,
+            e.clientY
+        );
+
+        if (opened) {
+            e.preventDefault();
+        }
+    }
+
     public override onKeyDown(e: KeyboardEvent): void {
         if (!this.column || e.target !== this.htmlElement) {
             return;
         }
+
+        fireEvent(this, 'keyDown', {
+            target: this,
+            originalEvent: e
+        });
 
         if (e.key === 'Enter') {
             this.toolbar?.focus({
