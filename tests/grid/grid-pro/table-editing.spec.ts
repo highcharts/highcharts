@@ -276,7 +276,7 @@ test.describe('Table editing column rename', () => {
         await renderGrid(page, { data: { columns: {} } });
         await page.locator(EMPTY_STATE_BUTTON).click();
         await page.locator(EMPTY_STATE_BUTTON).click();
-        await page.waitForSelector('#container tbody td');
+        await expect(page.locator('#container tbody td')).toHaveCount(1);
 
         const anyHeader = '#container thead th';
         const height = (): Promise<number | undefined> => page
@@ -290,6 +290,75 @@ test.describe('Table editing column rename', () => {
 
         await page.keyboard.press('Escape');
         expect(await height()).toBe(before);
+    });
+
+    test('Without a format the input starts from the column id', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await startRename(page);
+
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('product');
+    });
+
+    test('With a format the input starts from the raw template', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columns: [{ id: 'product', header: { format: '{id} (kg)' } }]
+        });
+
+        // The header shows the expanded text, the input the template.
+        await expect(page.locator(LABEL)).toHaveText('product (kg)');
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('{id} (kg)');
+    });
+
+    test('A columnDefaults format also seeds the input raw', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columnDefaults: {
+                cells: { editMode: { enabled: true } },
+                header: { format: '{id}!' }
+            }
+        });
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('{id}!');
+    });
+
+    test('Submitting the template renders it expanded', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill('{id} (kg)');
+        await page.keyboard.press('Enter');
+
+        await expect(page.locator(LABEL)).toHaveText('product (kg)');
+
+        // Reopening must give the template back, not the rendered text.
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('{id} (kg)');
+    });
+
+    test('A format from the header option is seeded and written back there', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            header: [{ columnId: 'product', format: 'Produce' }]
+        });
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('Produce');
+
+        await page.locator(RENAME_INPUT).fill('Fruit');
+        await page.keyboard.press('Enter');
+
+        // A header entry outranks the column options, so writing to the
+        // column would survive until the next full render and then revert.
+        await page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            grid.dirtyFlags.add('grid');
+            await grid.redraw();
+        });
+
+        await expect(page.locator(LABEL)).toHaveText('Fruit');
     });
 
     test('Opening the menu leaves the sorting alone', async ({ page }) => {
@@ -312,14 +381,98 @@ test.describe('Table editing column rename', () => {
         await expect(page.locator(LABEL)).toHaveText('product');
     });
 
-    test('An empty name is discarded', async ({ page }) => {
+    /** Returns the format currently stored for the product column. */
+    function storedFormat(page: Page): Promise<string | undefined> {
+        return page.evaluate(() => (window as any).Grid.grids[0]
+            .viewport.getColumn('product').options.header?.format);
+    }
+
+    /** Forces a full render, the only one that rebuilds the header. */
+    function fullRedraw(page: Page): Promise<void> {
+        return page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            grid.dirtyFlags.add('grid');
+            await grid.redraw();
+        });
+    }
+
+    test('An empty input removes the format', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columns: [{ id: 'product', header: { format: 'Produce' } }]
+        });
+
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill('');
+        await page.keyboard.press('Enter');
+
+        // No format left, so the header falls back to the column id.
+        expect(await storedFormat(page)).toBeUndefined();
+        await expect(page.locator(LABEL)).toHaveText('product');
+
+        await fullRedraw(page);
+        await expect(page.locator(LABEL)).toHaveText('product');
+    });
+
+    test('A space clears the format to a blank label', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columns: [{ id: 'product', header: { format: 'Produce' } }]
+        });
+
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill(' ');
+        await page.keyboard.press('Enter');
+
+        expect(await storedFormat(page)).toBe('');
+        await expect(page.locator(LABEL)).toHaveText('');
+
+        // A blank label leaves the column with no accessible name, so the id
+        // stands in for it.
+        await expect(page.locator(HEADER)).toHaveAttribute(
+            'aria-label', 'product'
+        );
+
+        await fullRedraw(page);
+        await expect(page.locator(LABEL)).toHaveText('');
+
+        // Reopening must offer the blank format, not fall back to the id.
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('');
+    });
+
+    test('Submitting the id of a column without a format writes nothing', async ({ page }) => {
         await renderGrid(page, ONE_COLUMN);
 
         await startRename(page);
-        await page.locator(RENAME_INPUT).fill('   ');
         await page.keyboard.press('Enter');
 
-        await expect(page.locator(LABEL)).toHaveText('product');
+        expect(await storedFormat(page)).toBeUndefined();
+    });
+
+    test('Blank labels keep the header row height', async ({ page }) => {
+        // With no toolbar buttons and no label text, nothing else holds the
+        // header row up.
+        await renderGrid(page, {
+            data: { columns: { a: ['x'], b: [1] } },
+            columns: [
+                { id: 'a', header: { format: 'A' } },
+                { id: 'b', header: { format: 'B' } }
+            ],
+            columnDefaults: { sorting: { enabled: false } }
+        });
+
+        const row = '#container thead tr';
+        const before = (await page.locator(row).boundingBox())?.height;
+
+        await page.evaluate(() => (window as any).Grid.grids[0].update({
+            columns: [
+                { id: 'a', header: { format: '' } },
+                { id: 'b', header: { format: '' } }
+            ]
+        }, true));
+
+        expect((await page.locator(row).boundingBox())?.height).toBe(before);
     });
 
     test('The renamed label survives a redraw', async ({ page }) => {

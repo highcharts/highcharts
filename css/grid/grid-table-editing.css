@@ -37,8 +37,11 @@
     outline: none;
 
     /* The themed input brings its own rounded focus ring, which would sit
-       inside the container's one. */
+       inside the container's one. The radius goes with it: the input clips
+       its content, so it would round the text selection against the square
+       ring around it. */
     box-shadow: none;
+    border-radius: unset;
     padding: 0;
     background-color: transparent;
     font: inherit;

@@ -272,6 +272,12 @@
         white-space: nowrap;
     }
 
+    /* Same reason as the body cells: a blank label leaves no line box, and
+       a header whose every label is blank would collapse to its padding. */
+    .hcg-header-cell-content::before {
+        content: "\200B";
+    }
+
     .hcg-header-cell-container.hcg-no-width .hcg-header-cell-content {
         visibility: hidden;
         transition: none;

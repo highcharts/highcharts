@@ -157,9 +157,9 @@ Right clicking a column header opens its own context menu. It holds two
 separate actions, because a column has two names: the one it shows and the one
 it has in the data.
 
-Either action turns the header into a text input: `Enter` saves, `Escape`
-discards, and so does an empty value. `F2` on a focused header opens the one
-that is available, preferring *Rename column*.
+Either action turns the header into a text input: `Enter` saves and `Escape`
+discards. `F2` on a focused header opens the one that is available, preferring
+*Rename column*.
 
 ### Rename column
 
@@ -169,6 +169,15 @@ so only the displayed name changes. The data keeps its column ids and nothing
 configured against them can break. This is on by default; set
 `tableEditing.columnRenaming.enabled` to `false` to leave displayed names
 fixed while rows and columns stay editable.
+
+The input holds the raw format, not the text it rendered to, so a `{id}`
+stays editable as `{id}`. A column without a format starts from its id, and
+submitting that id back writes nothing.
+
+Clearing the input to nothing removes the format, which puts the header back
+on its fallback: the `columnDefaults` format if there is one, otherwise the
+column id. Leaving a space behind instead keeps a format that is deliberately
+blank, for a header with no label at all.
 
 A column with a `header.formatter` is not offered the action, since the
 formatter would overwrite whatever is typed.

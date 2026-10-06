@@ -566,9 +566,10 @@ class TableEditingController {
     }
 
     /**
-     * Closes the header input, optionally writing the typed name. An empty or
-     * unchanged name is always discarded. A taken column id keeps the input
-     * open instead, marked as rejected.
+     * Closes the header input, optionally writing the typed name. An
+     * unchanged name is discarded, and so is an empty id. An empty name is
+     * kept: it clears the format, which is a value of its own. A taken column
+     * id keeps the input open instead, marked as rejected.
      *
      * @param submit
      * Whether to save the typed name.
@@ -582,29 +583,55 @@ class TableEditingController {
             return;
         }
 
-        const name = input.value.trim();
+        const raw = input.value;
+        const name = raw.trim();
 
-        if (submit && name && name !== this.getRenamingSeed(cell)) {
-            if (this.renamingTarget === 'id') {
-                if (!this.isFreeColumnId(name)) {
-                    this.renamingRejected = true;
-                    input.setAttribute('aria-invalid', 'true');
-                    input.parentElement?.classList.add(renamingErrorClassName);
-                    input.focus();
-                    return;
-                }
-
+        if (this.renamingTarget === 'id') {
+            if (!submit || !name || name === this.getRenamingSeed(cell)) {
                 this.closeRenamingInput();
-                void this.renameColumnId(column, name);
                 return;
             }
 
-            column.setOptions({ header: { format: name } });
-            cell.value = column.format(name);
+            if (!this.isFreeColumnId(name)) {
+                this.renamingRejected = true;
+                input.setAttribute('aria-invalid', 'true');
+                input.parentElement?.classList.add(renamingErrorClassName);
+                input.focus();
+                return;
+            }
+
+            this.closeRenamingInput();
+            void this.renameColumnId(column, name);
+            return;
+        }
+
+        const current = this.getColumnFormat(cell);
+
+        // A blank input removes the format, so the header falls back to the
+        // column id. Whitespace keeps a format that is deliberately blank.
+        const next = raw === '' ? void 0 : name;
+
+        // Typing the id back into a column that has no format leaves it as
+        // it was, so there is nothing to write.
+        const same = next === current ||
+            (current === void 0 && next === column.id);
+
+        if (submit && !same) {
+            this.setColumnFormat(cell, next);
+
+            const effective = this.getColumnFormat(cell);
+
+            cell.value = effective === void 0 ?
+                column.id :
+                column.format(effective);
 
             // The cell labels itself with the column id, which renaming does
-            // not touch, so it would keep announcing the old name.
-            cell.htmlElement.setAttribute('aria-label', cell.value);
+            // not touch, so it would keep announcing the old name. A blank
+            // label leaves nothing to announce, so the id stands in.
+            cell.htmlElement.setAttribute(
+                'aria-label',
+                cell.value || column.id
+            );
 
             if (cell.headerContent) {
                 setHTMLContent(cell.headerContent, cell.value);
@@ -638,12 +665,79 @@ class TableEditingController {
      * @param cell
      * Header cell being renamed.
      */
+    /**
+     * Writes a new format where the current one lives. A `header` option
+     * entry outranks the column options, so writing to the column would look
+     * right until the next full render undid it.
+     *
+     * @param cell
+     * Header cell being renamed.
+     *
+     * @param format
+     * The typed format.
+     */
+    private setColumnFormat(
+        cell: HeaderCell,
+        format: string | undefined
+    ): void {
+        const column = cell.column;
+        const superHeader = cell.superColumnOptions.header;
+
+        if (!column) {
+            return;
+        }
+
+        if (superHeader?.format !== void 0) {
+            const { grid } = this;
+
+            for (const options of [grid.options, grid.userOptions]) {
+                setHeaderColumnFormat(options?.header, column.id, format);
+            }
+
+            // The cell holds its own copy until the header rebuilds it.
+            if (format === void 0) {
+                delete superHeader.format;
+            } else {
+                superHeader.format = format;
+            }
+            return;
+        }
+
+        if (format !== void 0) {
+            column.setOptions({ header: { format } });
+            return;
+        }
+
+        // Merging cannot express a removal, but the column policy holds the
+        // user options by reference, so dropping the key here is enough.
+        delete this.grid.columnPolicy
+            .getIndividualColumnOptions(column.id)?.header?.format;
+    }
+
+    /**
+     * Returns the raw format behind a header cell, resolved the way the cell
+     * resolves it, or undefined when the column has none.
+     *
+     * @param cell
+     * Header cell to read.
+     */
+    private getColumnFormat(cell: HeaderCell): string | undefined {
+        return cell.superColumnOptions.header?.format ??
+            cell.column?.options.header?.format;
+    }
+
     private getRenamingSeed(cell: HeaderCell): string {
+        const column = cell.column;
+
         // The id action edits the id, so a displayed name coming from a
         // format would be a misleading thing to put in the input.
-        return this.renamingTarget === 'id' ?
-            (cell.column?.id || '') :
-            cell.value;
+        if (this.renamingTarget === 'id') {
+            return column?.id || '';
+        }
+
+        // The raw format, not the text it rendered to: the input edits the
+        // template, so `{id}` has to stay `{id}`.
+        return this.getColumnFormat(cell) ?? column?.id ?? '';
     }
 
     private isFreeColumnId(columnId: string): boolean {
@@ -1028,6 +1122,54 @@ class TableEditingController {
  *  Functions
  *
  * */
+
+/**
+ * Sets the format of a column's entry in a `header` option tree, in place.
+ * Only object entries are visited: a plain string entry carries no format,
+ * so such a column reads its format from the column options instead.
+ *
+ * @param header
+ * Header option tree, or a branch of one.
+ *
+ * @param columnId
+ * Column whose entry to write.
+ *
+ * @param format
+ * The new format, or undefined to remove it.
+ *
+ * @return
+ * Whether the entry was found.
+ */
+function setHeaderColumnFormat(
+    header: Array<GroupedHeaderOptions|string> | undefined,
+    columnId: string,
+    format: string | undefined
+): boolean {
+    if (!header) {
+        return false;
+    }
+
+    for (const entry of header) {
+        if (typeof entry === 'string') {
+            continue;
+        }
+
+        if (entry.columnId === columnId) {
+            if (format === void 0) {
+                delete entry.format;
+            } else {
+                entry.format = format;
+            }
+            return true;
+        }
+
+        if (setHeaderColumnFormat(entry.columns, columnId, format)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Repoints a column id inside a `header` option tree, in place.
