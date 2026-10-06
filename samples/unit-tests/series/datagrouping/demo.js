@@ -470,7 +470,7 @@
                     i
                 ]),
                 [Date.UTC(2024, 0, 9, 9, 30), 1]
-            ]);
+            ], false);
             chart.xAxis[0].setExtremes(
                 Date.UTC(2024, 0, 8, 9, 30),
                 Date.UTC(2024, 0, 8, 10, 30)
@@ -490,7 +490,7 @@
                     Date.UTC(2024, 0, 1) + i * 36e5,
                     i
                 ])
-            });
+            }, false);
             chart.xAxis[0].setExtremes(
                 Date.UTC(2024, 5, 1),
                 Date.UTC(2024, 5, 1, 2)
@@ -500,6 +500,24 @@
                 chart.series[0].currentDataGrouping.totalRange < 3e5,
                 'With groupAll, a two hour range of hourly data from a ' +
                 'whole year should be grouped by less than five minutes'
+            );
+
+            chart.series[0].setData([
+                [Date.UTC(2024, 0, 1), 1],
+                [Date.UTC(2024, 0, 8), 2],
+                [Date.UTC(2024, 0, 15), 3]
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 10),
+                Date.UTC(2024, 0, 10, 0, 0, 1)
+            );
+
+            assert.deepEqual(
+                chart.series[0].getColumn('x', true),
+                [Date.UTC(2024, 0, 8), Date.UTC(2024, 0, 15)],
+                'With groupAll, a one second range between weekly points ' +
+                'should group the shoulder points without excessive group ' +
+                'positions'
             );
         }
     );

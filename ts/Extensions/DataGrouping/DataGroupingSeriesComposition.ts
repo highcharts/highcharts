@@ -467,9 +467,7 @@ function applyGrouping(
                 (groupPixelWidth * (xMax - xMin) / plotSizeX) *
                     groupIntervalFactor,
                 // Limit group positions across processed data (#23958)
-                dataGroupingOptions.groupAll ?
-                    0 :
-                    (groupMax - groupMin) / plotSizeX / 100
+                (groupMax - groupMin) / Math.max(plotSizeX, xData.length) / 100
             ),
             groupPositions = xAxis.getTimeTicks(
                 DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
@@ -516,9 +514,7 @@ function applyGrouping(
             // the group to capture varying group sizes like months or DST
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
-            if (
-                !info?.segmentStarts?.includes(i)
-            ) {
+            if (!info?.segmentStarts?.includes(i)) {
                 gapSize = Math.max(
                     groupPositions[i] - groupPositions[i - 1],
                     gapSize
