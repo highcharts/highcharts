@@ -61,6 +61,9 @@ test.describe('Grid Pro - validation', () => {
         await expect(notification).toBeVisible();
         await expect(notification).toContainText('empty'); // First rule
         await expect(notification).toContainText('The value must contain "URL"'); // Custom rule
+
+        // Two messages, so one separator between them
+        await expect(notification.locator('br')).toHaveCount(1);
     });
 
     test('Lang support', async ({ page }) => {
@@ -108,3 +111,56 @@ test.describe('Grid Pro - validation', () => {
     });
 });
 
+test.describe('Grid Pro - notification escaping', () => {
+    test('Notifications are rendered as text, not markup', async ({ page }) => {
+        await page.setContent(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <script src="https://code.highcharts.com/grid/grid-pro.js"></script>
+                    <link rel="stylesheet" href="https://code.highcharts.com/grid/grid-pro.css">
+                </head>
+                <body><div id="container"></div></body>
+            </html>
+        `, { waitUntil: 'networkidle' });
+
+        await page.evaluate(() => {
+            (window as any).Grid.grid('container', {
+                data: { columns: { product: ['Apples'] } },
+                columnDefaults: {
+                    cells: { editMode: { enabled: true } }
+                },
+                columns: [{
+                    id: 'product',
+                    dataType: 'string',
+                    cells: {
+                        editMode: {
+                            validationRules: [{
+                                validate: (): boolean => false,
+                                notification: function (
+                                    { rawValue }: { rawValue: string }
+                                ): string {
+                                    return 'Bad: ' + rawValue;
+                                }
+                            }]
+                        }
+                    }
+                }]
+            });
+        });
+
+        const cell = page.locator('td[data-column-id="product"]').first();
+        await cell.dblclick();
+        const input = cell.locator('input').first();
+        await input.clear();
+        await input.fill('<img src=x onerror="window.__x=1"><b>B</b>');
+        await page.keyboard.press('Enter');
+
+        const notification = page.locator('.hcg-notification-error').first();
+        await expect(notification).toBeVisible();
+        await expect(notification).toContainText('<b>B</b>');
+        await expect(notification.locator('img')).toHaveCount(0);
+        await expect(notification.locator('b')).toHaveCount(0);
+        expect(await page.evaluate(() => (window as any).__x)).toBeUndefined();
+    });
+});
