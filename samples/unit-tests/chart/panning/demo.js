@@ -865,3 +865,101 @@ QUnit.test(
         assert.strictEqual(actualMin, -75, 'Min must be -75; not panning');
     }
 );
+
+QUnit.test(
+    'Panning should keep the range with startOnTick and endOnTick (#4183)',
+    function (assert) {
+        const data = Array.from({ length: 74 }, (_, i) => i % 10);
+        const pan = (
+            coll,
+            axisOptions,
+            extremes,
+            move,
+            times = 1,
+            series = {}
+        ) => {
+            const chart = Highcharts.chart('container', {
+                    chart: {
+                        width: 600,
+                        height: 400,
+                        animation: false,
+                        panning: {
+                            enabled: true,
+                            type: 'xy'
+                        }
+                    },
+                    [coll]: axisOptions,
+                    series: [{
+                        data,
+                        pointStart: 3,
+                        pointInterval: 10,
+                        animation: false,
+                        ...series
+                    }]
+                }),
+                axis = chart[coll][0],
+                controller = new TestController(chart);
+
+            axis.setExtremes(...extremes, true, false);
+            for (let i = 0; i < times; i++) {
+                delete chart.pointer.chartPosition;
+                controller.mouseDown(300, 200);
+                controller.mouseMove(300 + move[0], 200 + move[1]);
+                controller.mouseUp(300 + move[0], 200 + move[1]);
+            }
+
+            const { min, max } = axis.getExtremes();
+            return [min, max];
+        };
+
+        assert.deepEqual(
+            pan('xAxis', {
+                startOnTick: true,
+                endOnTick: true
+            }, [100, 200], [-70, 0], 3),
+            [160, 260],
+            'Linear axis should keep the range on ticks'
+        );
+
+        assert.deepEqual(
+            pan('xAxis', { startOnTick: true }, [100, 205], [-70, 0], 3),
+            [160, 265],
+            'With only startOnTick, the max should move along with the min'
+        );
+
+        assert.deepEqual(
+            pan('xAxis', { startOnTick: true }, [620, 725], [-250, 0]),
+            [640, 745],
+            'With only startOnTick, panning beyond the end of the data ' +
+            'should keep the last point visible'
+        );
+
+        assert.deepEqual(
+            pan('xAxis', { endOnTick: true }, [10, 120], [250, 0]),
+            [-10, 100],
+            'With only endOnTick, panning beyond the start of the data ' +
+            'should keep the first point visible'
+        );
+
+        assert.deepEqual(
+            pan('xAxis', {
+                type: 'datetime',
+                startOnTick: true,
+                endOnTick: true
+            }, [Date.UTC(2024, 0, 1), Date.UTC(2024, 6, 1)], [-70, 0], 3, {
+                pointStart: Date.UTC(2023, 0, 3),
+                pointInterval: 10 * 24 * 36e5
+            }),
+            [Date.UTC(2024, 3, 1), Date.UTC(2024, 9, 1)],
+            'Datetime axis should keep the range on month starts'
+        );
+
+        assert.deepEqual(
+            pan('yAxis', { type: 'logarithmic' }, [0.001, 10], [0, 70], 1, {
+                data: data.map(i => 10 ** (i - 4))
+            }),
+            [0.01, 100],
+            'Logarithmic axis should keep the range on ticks'
+        );
+    }
+);
