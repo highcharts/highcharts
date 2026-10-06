@@ -93,6 +93,8 @@ historical time series.
 Examples of using the **Investment Details Connector** are available in our
 demos:
 
+<iframe style="width: 100%; border: none;" src="https://www.highcharts.com/samples/embed/stock/financial/dws-equity-style-box" allow="fullscreen"></iframe>
+
 - [Highcharts Dashboards + Morningstar Asset Allocation Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/asset-allocation-pie/)
 - [Highcharts Core + Morningstar Country and Region Exposure](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-region-breakdown-chart/)
 - [Highcharts Core + Morningstar Equity Aggregates Residual Risk](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-equity-aggregates-residual-risk/)

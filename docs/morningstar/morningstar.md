@@ -12,6 +12,12 @@ With the **Highcharts Connectors** for the **Morningstar Direct Web Services**
 you can access finance-related information to different kinds of financial
 assets. This requires a Highcharts license and a Morningstar subscription.
 
+The dashboard below combines several connectors in one view: portfolio
+performance from the Time Series API, a holdings grid, and KPIs fed by the
+`RiskScoreConnector` and `GoalAnalysisConnector`.
+
+<iframe style="width: 100%; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-portfolio" allow="fullscreen"></iframe>
+
 ## Versions
 
 There are two versions of the scripts, and the difference between them is the
