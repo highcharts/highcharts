@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       pushToDist:
-        description: 'Whether to update the nightly branch on highcharts-dist'
+        description: 'Whether to update highcharts-dist nightly (master runs only)'
         required: false
         default: true
         type: boolean
@@ -278,23 +278,22 @@ jobs:
   nightly_dist:
     runs-on: ubuntu-latest
     needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
-    concurrency:
-      group: nightly-dist
-      cancel-in-progress: false
     steps:
       - name: Checkout highcharts
         uses: actions/checkout@v6
         with:
           path: highcharts
+          ref: ${{ github.sha }}
+          persist-credentials: false
 
       - name: Checkout highcharts-dist
         uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-dist
-          token: ${{ secrets.PR_COMMENT_TOKEN }}
           path: highcharts-dist
-          ref: 'nightly'
+          ref: 'master'
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -302,10 +301,6 @@ jobs:
           node-version: 'lts/*'
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
-
-      - name: Reset nightly branch to master
-        working-directory: ./highcharts-dist
-        run: git reset --hard origin/master
 
       - name: Install and build
         working-directory: ./highcharts
@@ -316,16 +311,64 @@ jobs:
           npx gulp dist-verify
           npx gulp dist-release --force-yes
 
+      - name: Upload distribution artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: nightly-dist-${{ github.sha }}
+          path: |
+            highcharts-dist/
+            !highcharts-dist/.git
+            !highcharts-dist/.git/**
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
+
+  nightly_dist_publish:
+    runs-on: ubuntu-latest
+    needs: nightly_dist
+    if: ${{ github.ref == 'refs/heads/master' && (github.event_name == 'schedule' || inputs.pushToDist) }}
+    # Configure master-only access and environment secrets before enabling.
+    # See nightly.md for the credential migration.
+    environment: nightly-dist
+    concurrency:
+      group: nightly-dist
+      cancel-in-progress: false
+    steps:
+      - name: Download distribution artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: nightly-dist-${{ github.sha }}
+          path: nightly-dist
+
+      - name: Validate distribution artifact
+        run: |
+          test -s nightly-dist/highcharts.js
+          test -s nightly-dist/package.json
+          invalid_files=$(find nightly-dist \( -name .git -o \( ! -type f -a ! -type d \) \) -print -quit)
+          if [ -n "${invalid_files}" ]; then
+            echo "::error::Distribution artifact contains Git metadata or special files."
+            exit 1
+          fi
+
+      - name: Checkout highcharts-dist
+        uses: actions/checkout@v6
+        with:
+          repository: highcharts/highcharts-dist
+          token: ${{ secrets.NIGHTLY_DIST_TOKEN }}
+          path: highcharts-dist
+          ref: 'nightly'
+          fetch-depth: 0
+
+      - name: Copy distribution files
+        run: rsync --archive --checksum --delete --exclude='.git' nightly-dist/ highcharts-dist/
+
       - name: Upload to github
         working-directory: ./highcharts-dist
-        if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
         env:
           # Dedicated, passphrase-free SSH private key encoded as base64.
           # Register its public key as a signing key on highsoft-bot.
-          SIGNING_KEY: ${{ secrets.DIST_SSH_SIGNING_KEY_BASE64 }}
+          SIGNING_KEY: ${{ secrets.NIGHTLY_DIST_SIGNING_KEY_BASE64 }}
         run: |
-          # dist-release builds from master; keep the published nightly history.
-          git reset --soft origin/nightly
           git add --all
 
           if git diff --cached --quiet; then
@@ -333,7 +376,7 @@ jobs:
             exit 0
           fi
 
-          : "${SIGNING_KEY:?Set the DIST_SSH_SIGNING_KEY_BASE64 Actions secret}"
+          : "${SIGNING_KEY:?Set NIGHTLY_DIST_SIGNING_KEY_BASE64 in the nightly-dist environment}"
           signing_key=$(mktemp "${RUNNER_TEMP}/nightly-signing-key.XXXXXX")
           trap 'rm -f "${signing_key}"' EXIT
           printf '%s' "${SIGNING_KEY}" | base64 --decode > "${signing_key}"
