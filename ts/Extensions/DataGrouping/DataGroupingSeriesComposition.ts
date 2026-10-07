@@ -455,38 +455,59 @@ function applyGrouping(
 
         const xMin = extremes.min,
             xMax = extremes.max,
-            // Processed data may extend beyond axis (#4907)
-            groupMin = Math.min(xMin, xData[0]),
-            groupMax = Math.max(xMax, xData[xData.length - 1]),
+            last = xData.length - 1,
+            { startOfWeek } = xAxis.options,
             groupIntervalFactor = (
                 ordinal &&
                 xAxis.ordinal &&
                 xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
             ) || 1,
-            interval = Math.max(
-                (groupPixelWidth * (xMax - xMin) / plotSizeX) *
-                    groupIntervalFactor,
-                // Limit group positions across processed data (#23958)
-                (groupMax - groupMin) / Math.max(plotSizeX, xData.length) / 100
-            ),
-            groupPositions = xAxis.getTimeTicks(
-                DateTimeAxis.Additions.prototype.normalizeTimeTickInterval(
-                    interval,
+            normalizedInterval = DateTimeAxis.Additions.prototype
+                .normalizeTimeTickInterval(
+                    Math.max(
+                        (groupPixelWidth * (xMax - xMin) / plotSizeX) *
+                            groupIntervalFactor,
+                        // Don't group far finer than the data (#23958)
+                        (series.basePointRange || 0) / 100
+                    ),
                     dataGroupingOptions.units || DataGroupingDefaults.units
                 ),
-                groupMin,
-                groupMax,
-                xAxis.options.startOfWeek,
+            // Processed data may extend beyond axis (#4907), but skip the gaps
+            // to the shoulder points (#23958)
+            groupPositions = xAxis.getTimeTicks(
+                normalizedInterval,
+                Math.min(xMin, xData[Math.min(1, last)]),
+                Math.max(xMax, xData[Math.max(last - 1, 0)]),
+                startOfWeek,
                 processedXData,
                 series.closestPointRange
             ),
             { info } = groupPositions,
-            groupedData = seriesProto.groupData.call(
-                series,
-                table,
-                groupPositions,
-                dataGroupingOptions.approximation
+            getGroupStart = (x: number): number => chart.time.getTimeTicks(
+                normalizedInterval,
+                x,
+                x,
+                startOfWeek
+            )[0],
+            lastStart = getGroupStart(xData[last]),
+            leftShoulder = +(xData[0] < groupPositions[0]),
+            rightShoulder = +(
+                lastStart > groupPositions[groupPositions.length - 1]
             );
+
+        if (leftShoulder) {
+            groupPositions.unshift(getGroupStart(xData[0]));
+        }
+        if (rightShoulder) {
+            groupPositions.push(lastStart);
+        }
+
+        const groupedData = seriesProto.groupData.call(
+            series,
+            table,
+            groupPositions,
+            dataGroupingOptions.approximation
+        );
 
         let modified = groupedData.modified,
             groupedXData = modified.getColumn('x', true) as
@@ -509,12 +530,16 @@ function applyGrouping(
         }
 
         // Record what data grouping values were used
-        for (i = 1; i < groupPositions.length; i++) {
+        for (
+            i = 1 + leftShoulder;
+            i < groupPositions.length - rightShoulder;
+            i++
+        ) {
             // The grouped gapSize needs to be the largest distance between
             // the group to capture varying group sizes like months or DST
             // crossing (#10000). Also check that the gap is not at the
             // start of a segment.
-            if (!info?.segmentStarts?.includes(i)) {
+            if (!info?.segmentStarts?.includes(i - leftShoulder)) {
                 gapSize = Math.max(
                     groupPositions[i] - groupPositions[i - 1],
                     gapSize

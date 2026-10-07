@@ -482,6 +482,35 @@
                 'days away should be grouped by less than a minute'
             );
 
+            const hourOfSeconds = Array.from({ length: 3600 }, (_, i) => [
+                Date.UTC(2024, 0, 8, 9) + i * 1000,
+                i
+            ]);
+
+            chart.series[0].setData(hourOfSeconds, false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9),
+                Date.UTC(2024, 0, 8, 10)
+            );
+
+            const { totalRange } = chart.series[0].currentDataGrouping;
+
+            chart.series[0].setData([
+                [Date.UTC(2023, 0, 8, 9), 0],
+                ...hourOfSeconds
+            ], false);
+            chart.xAxis[0].setExtremes(
+                Date.UTC(2024, 0, 8, 9),
+                Date.UTC(2024, 0, 8, 10)
+            );
+
+            assert.strictEqual(
+                chart.series[0].currentDataGrouping.totalRange,
+                totalRange,
+                'An hour of second data should keep its grouping when a ' +
+                'stray point a year earlier is added'
+            );
+
             chart.series[0].update({
                 dataGrouping: {
                     groupAll: true
