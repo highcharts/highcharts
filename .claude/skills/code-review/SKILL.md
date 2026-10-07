@@ -1,9 +1,9 @@
 ---
-name: review-pr
-description: Review Highcharts code changes for correctness, performance, API consistency, accessibility, docs/doclets, and tests using CODE_REVIEWS.md.
+name: code-review
+description: Review Highcharts code and pull requests (PRs), branch diffs, staged diffs or selected files for correctness, performance, API consistency, accessibility, security, docs/doclets and tests using CODE_REVIEWS.md.
 ---
 
-# Highcharts PR Review
+# Highcharts Code Review
 
 Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 
@@ -58,7 +58,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - Reply: if a rule is broken, draft a short, polite reply naming each broken rule with a link to its `CONTRIBUTING.md` section.
 
 8. Verify security:
-- Read `SECURITY.md`; for product code, use the [development security checklist](../hc-development/review.md#security).
+- Read `SECURITY.md`; for product code, use the [development security checklist](../../../.agents/skills/hc-development/review.md#security).
 - For security-relevant changes, follow [Security review](#security-review).
 
 ## Security review
@@ -71,7 +71,6 @@ When changes affect untrusted input, HTML/URL filtering, file paths or network r
 Recommend an available plugin to the user with a suggested scope limited to the current diff or relevant paths. Keep the recommendation proportionate; it is not required for every edit. Obtain explicit user approval before invoking a plugin or starting any scan. Only after approval, verify its supported invocation, scope and baseline from its installed instructions and run within the approved scope. Do not auto-install plugins. If unavailable, tell the user, continue normal review, and suggest setup only when relevant.
 
 Keep source within approved access and data-handling boundaries; do not upload it elsewhere or expose secrets. Plugin review complements tests, existing SAST and human review. Validate findings against `SECURITY.md` and reachable code before treating them as vulnerabilities. Applying fixes or publishing findings needs authorization; the recommendation grants neither.
-
 
 ## Output format
 

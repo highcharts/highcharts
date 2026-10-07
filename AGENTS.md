@@ -12,6 +12,7 @@ Scope: instructions for coding/review agents working in this repository.
 
 - Source of truth is `.agents/skills`.
 - Mirror skills to `.claude/skills` with `npm run sync:skills`.
+- The same command mirrors `code-review` to `.github/skills/code-review` for GitHub Copilot code review; edit the canonical skill, not the mirrors.
 - Use `npm run sync:skills -- --help` to inspect script options.
 
 ## Guides
@@ -19,7 +20,7 @@ Scope: instructions for coding/review agents working in this repository.
 Read only what the task needs:
 
 - For changes in `ts/`, with their tests and samples, use the `hc-development` skill in `.agents/skills/hc-development/SKILL.md`. It condenses what developers need from `CONTRIBUTING.md`, `repo-guidelines.md` and `CODE_REVIEWS.md`.
-- For code review, use the `review-pr` skill in `.agents/skills/review-pr/SKILL.md`.
+- For code review, use the `code-review` skill in `.agents/skills/code-review/SKILL.md`.
 - Other docs: `CONTRIBUTING.md` (bug reports, pull requests, changelog), `repo-guidelines.md` (issues, new series types, prose style), `CODE_REVIEWS.md` (review criteria), `ts/DOCLETS.md` (doclets), `samples/README.md` (samples), `tests/AGENTS.md` (tests; details in `test/readme.md` and `tests/README.md`).
 
 ## Tooling Guardrails
