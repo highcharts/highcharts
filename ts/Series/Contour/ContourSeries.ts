@@ -52,7 +52,6 @@ const {
  *
  * */
 
-/** @internal */
 export default class ContourSeries extends ScatterSeries {
 
     /* *
@@ -93,14 +92,19 @@ export default class ContourSeries extends ScatterSeries {
     /** @internal */
     public renderFrame?: () => void;
 
+    /** @internal */
     private foreignObject?: SVGForeignObjectElement;
 
+    /** @internal */
     private canvas?: HTMLCanvasElement;
 
+    /** @internal */
     private adapter?: GPUAdapter | null;
 
+    /** @internal */
     private device?: GPUDevice;
 
+    /** @internal */
     private buffers?: Record<string, GPUBuffer>;
 
     /** @internal */
@@ -192,6 +196,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public override drawPoints(): void {
         const { group } = this;
         if (!group) {
@@ -713,6 +718,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour interval from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourInterval(): number {
         const interval = this.options.contourInterval ?? ((): number => {
@@ -732,6 +738,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour offset from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourOffset(): number {
         const offset = this.options.contourOffset ?? 0;
@@ -744,6 +751,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the smooth coloring from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getSmoothColoring(): number {
         return this.options.smoothColoring ? 1 : 0;
@@ -752,6 +760,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the lineWidth from the series options, which controls the
      * visibility of contour lines, in format of the WebGPU uniform.
+     * @internal
      */
     private getLineWidth(): number {
         return this.userOptions.lineWidth ?? 1;
@@ -760,6 +769,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour line color from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourLineColor(): number[] {
         const { lineColor = '#000000' } = this.options;
@@ -768,6 +778,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the extremes of the x and y axes in format of the WebGPU uniform.
+     * @internal
      */
     private getFrameExtremes(): number[] {
         const { xAxis, yAxis } = this;
@@ -782,6 +793,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the extremes of the data in format of the WebGPU uniform.
+     * @internal
      */
     private getValueAxisExtremes(): number[] {
         const series = this;
@@ -811,6 +823,7 @@ export default class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
+    /** @internal */
     private getColorAxisStopsData(): { array: Float32Array, length: number } {
         const colorAxisStops = this.colorAxis?.stops;
 
@@ -870,7 +883,12 @@ extend(ContourSeries.prototype, {
     invertible: false
 });
 
-// Registry
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;
