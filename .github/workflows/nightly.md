@@ -13,12 +13,12 @@ Before merging, configure the `nightly-dist` GitHub environment:
   do not allow tags or arbitrary protected branches.
 - Set `NIGHTLY_DIST_TOKEN` to a dedicated bot token with contents write access to
   `highcharts/highcharts-dist` only.
-- Set `NIGHTLY_DIST_SIGNING_KEY_BASE64` to the base64 private SSH signing key
+- Set `DIST_SSH_SIGNING_KEY_BASE64` to the base64 private SSH signing key
   whose public key is registered on `highsoft-bot`.
 - Remove `highcharts-dist` write access from `PR_COMMENT_TOKEN`, which other
   workflows still use for comments. Revoke any old token retaining that access.
-- Remove repository/organization access to `DIST_SSH_SIGNING_KEY_BASE64` and any
-  repository/organization copies of the new publication secrets.
+- After migration, remove repository/organization copies of
+  `DIST_SSH_SIGNING_KEY_BASE64` and `NIGHTLY_DIST_TOKEN`.
 
 The environment policy is required: a branch writer could change the workflow
 and remove its YAML ref check. Publication secrets must therefore be available

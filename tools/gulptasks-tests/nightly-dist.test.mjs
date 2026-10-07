@@ -98,7 +98,8 @@ describe('nightly distribution credential boundary', () => {
         ok(publisher.steps.indexOf(step('Validate distribution artifact')) <
             publisher.steps.indexOf(checkout));
         ok(!JSON.stringify(publisher).includes('PR_COMMENT_TOKEN'));
-        ok(!JSON.stringify(publisher).includes('secrets.DIST_SSH_SIGNING_KEY_BASE64'));
+        strictEqual(step('Upload to github').env.SIGNING_KEY,
+            '${{ secrets.DIST_SSH_SIGNING_KEY_BASE64 }}');
         ok(!publisher.steps.some(item =>
             item.uses?.startsWith('actions/setup-node@') ||
             /\b(npm|npx|gulp)\b/u.test(item.run || '')));

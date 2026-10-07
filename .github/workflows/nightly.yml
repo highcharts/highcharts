@@ -367,7 +367,7 @@ jobs:
         env:
           # Dedicated, passphrase-free SSH private key encoded as base64.
           # Register its public key as a signing key on highsoft-bot.
-          SIGNING_KEY: ${{ secrets.NIGHTLY_DIST_SIGNING_KEY_BASE64 }}
+          SIGNING_KEY: ${{ secrets.DIST_SSH_SIGNING_KEY_BASE64 }}
         run: |
           git add --all
 
@@ -376,7 +376,7 @@ jobs:
             exit 0
           fi
 
-          : "${SIGNING_KEY:?Set NIGHTLY_DIST_SIGNING_KEY_BASE64 in the nightly-dist environment}"
+          : "${SIGNING_KEY:?Set DIST_SSH_SIGNING_KEY_BASE64 in the nightly-dist environment}"
           signing_key=$(mktemp "${RUNNER_TEMP}/nightly-signing-key.XXXXXX")
           trap 'rm -f "${signing_key}"' EXIT
           printf '%s' "${SIGNING_KEY}" | base64 --decode > "${signing_key}"
