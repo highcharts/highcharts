@@ -38,6 +38,9 @@ import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type {
+    HeaderContextMenuOptions
+} from './Table/Header/HeaderContextMenu';
 import type TableCell from './Table/Body/TableCell';
 import type {
     CellContextMenuOptions
@@ -624,6 +627,11 @@ export interface ColumnHeaderOptions {
      * @default undefined
      */
     className?: string;
+
+    /**
+     * Options for the context menu of the column header.
+     */
+    contextMenu?: HeaderContextMenuOptions;
 
     /**
      * The format of the column header. Use `{id}` to display the column id.

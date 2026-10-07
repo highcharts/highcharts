@@ -127,7 +127,9 @@ Grid.grid('container', {
 Table editing labels are configured under `lang.tableEditing`, for example
 `lang.tableEditing.rows`, `lang.tableEditing.addRowAbove` and
 `lang.tableEditing.deleteColumn`. The two labels of the empty table buttons
-are `lang.tableEditing.addFirstRow` and `lang.tableEditing.addFirstColumn`.
+are `lang.tableEditing.addFirstRow` and `lang.tableEditing.addFirstColumn`, and
+the two header menu actions are `lang.tableEditing.renameColumn` and
+`lang.tableEditing.changeColumnId`.
 
 ## Editing an empty table
 
@@ -146,9 +148,85 @@ Two things are worth knowing when building a table from scratch:
 - The rows and columns this creates are empty, and filling them in needs
   [`cells.editMode`](https://www.highcharts.com/docs/grid/editing/index).
   Enabling `tableEditing` on its own does not make cells editable.
-- A new column is named after its id, `column1`, `column2` and so on. Set
-  [`columns[].header.format`](https://api.highcharts.com/grid/columns.header.format)
-  to show a different name.
+- A new column is named after its id, `column1`, `column2` and so on. See
+  renaming below for how the user gives it a real name.
+
+## The header context menu
+
+Right clicking a column header opens its own context menu, holding everything
+that applies to that column: *Rename column* and *Change column id*, then the
+same *Add column before*, *Add column after* and *Delete column* the cell menu
+offers under its *Columns* group.
+
+Those three stay in the cell menu as well. The header can be turned off with
+[`rendering.header.enabled`](https://api.highcharts.com/grid/rendering.header.enabled),
+and the cell menu is then the only way left to add or delete a column.
+
+A column action invoked from the header leaves the focus on the header of the
+column it produced, rather than on a body cell that was never pointed at.
+
+### Renaming a column and changing its id
+
+The menu holds two separate naming actions, because a column has two names:
+the one it shows and the one it has in the data.
+
+Either turns the header into a text input: `Enter` saves and `Escape`
+discards. `F2` on a focused header opens the one that is available, preferring
+*Rename column*.
+
+#### Rename column
+
+Sets
+[`columns[].header.format`](https://api.highcharts.com/grid/columns.header.format),
+so only the displayed name changes. The data keeps its column ids and nothing
+configured against them can break. This is on by default; set
+`tableEditing.columnRenaming.enabled` to `false` to leave displayed names
+fixed while rows and columns stay editable.
+
+The input holds the raw format, not the text it rendered to, so a `{id}`
+stays editable as `{id}`. A column without a format starts from its id, and
+submitting that id back writes nothing.
+
+Clearing the input to nothing removes the format, which puts the header back
+on its fallback: the `columnDefaults` format if there is one, otherwise the
+column id. Leaving a space behind instead keeps a format that is deliberately
+blank, for a header with no label at all.
+
+A column with a `header.formatter` is not offered the action, since the
+formatter would overwrite whatever is typed.
+
+Note that CSV and JSON exports are keyed by column id, so a renamed column
+still exports under its id.
+
+#### Change column id
+
+Renames the column in the data, which is usually what a table built by its end
+user wants. It is off by default:
+
+```js
+Grid.grid('container', {
+    tableEditing: {
+        enabled: true,
+        columnIdEditing: {
+            enabled: true
+        }
+    }
+});
+```
+
+Everything Grid holds the old id in moves along with it: the column options,
+the `header` layout, `data.idColumn` and the current sorting. The displayed
+name is left alone, since renaming is its own action.
+
+The action is offered greyed out when Grid cannot move the id safely: when the
+column reads its data through
+[`columns[].dataId`](https://api.highcharts.com/grid/columns.dataId), or when
+its id is also held by a feature the change does not migrate, such as the tree
+view columns or `summaryColumns.aggregatedColumns`. Typing an id another column
+already uses leaves the input open and marked instead of saving.
+
+Set `columns[].header.contextMenu.enabled` to `false` to drop the header menu
+on a single column.
 
 ## Nested submenus
 

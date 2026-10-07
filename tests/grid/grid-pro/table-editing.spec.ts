@@ -228,3 +228,567 @@ test.describe('Table editing focus', () => {
         expect(await focused(page)).toBe('body');
     });
 });
+
+test.describe('Table editing column rename', () => {
+    const ONE_COLUMN = { data: { columns: { product: ['Apples'] } } };
+    const HEADER = '#container thead th[data-column-id="product"]';
+    const LABEL = HEADER + ' .hcg-header-cell-content';
+    const RENAME_INPUT = HEADER + ' input';
+    const RENAME_ITEM = '.hcg-menu-item:has-text("Rename column")';
+
+    /** Returns the data keys, which renaming must leave alone. */
+    function dataKeys(page: Page): Promise<string[]> {
+        return page.evaluate(() => (window as any).Grid.grids[0]
+            .dataProvider.getDataTable().getColumnIds());
+    }
+
+    /** Opens the header context menu and picks the rename action. */
+    async function startRename(page: Page, header = HEADER): Promise<void> {
+        await page.locator(header).click({ button: 'right' });
+        await page.locator(RENAME_ITEM).click();
+    }
+
+    test('The header context menu renames the column label', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('product');
+
+        // The input replaces the label in place, so it must not widen the
+        // header or spill out of it.
+        const header = await page.locator(HEADER).boundingBox();
+        const input = await page.locator(RENAME_INPUT).boundingBox();
+        expect(input.x).toBeGreaterThanOrEqual(header.x);
+        expect(input.x + input.width).toBeLessThanOrEqual(
+            header.x + header.width
+        );
+
+        await page.locator(RENAME_INPUT).fill('Produce');
+        await page.keyboard.press('Enter');
+
+        await expect(page.locator(LABEL)).toHaveText('Produce');
+        expect(await dataKeys(page)).toEqual(['product']);
+    });
+
+    test('Entering edit mode keeps the header height', async ({ page }) => {
+        // A table seeded from empty has no row pinning the header height, so
+        // anything taken out of the header flow makes the row jump.
+        await renderGrid(page, { data: { columns: {} } });
+        await page.locator(EMPTY_STATE_BUTTON).click();
+        await page.locator(EMPTY_STATE_BUTTON).click();
+        await expect(page.locator('#container tbody td')).toHaveCount(1);
+
+        const anyHeader = '#container thead th';
+        const height = (): Promise<number | undefined> => page
+            .locator(anyHeader).first().boundingBox()
+            .then((box): number | undefined => box?.height);
+        const before = await height();
+
+        await page.locator(anyHeader).first().click({ button: 'right' });
+        await page.locator(RENAME_ITEM).click();
+        expect(await height()).toBe(before);
+
+        await page.keyboard.press('Escape');
+        expect(await height()).toBe(before);
+    });
+
+    test('Without a format the input starts from the column id', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await startRename(page);
+
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('product');
+    });
+
+    test('With a format the input starts from the raw template', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columns: [{ id: 'product', header: { format: '{id} (kg)' } }]
+        });
+
+        // The header shows the expanded text, the input the template.
+        await expect(page.locator(LABEL)).toHaveText('product (kg)');
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('{id} (kg)');
+    });
+
+    test('A columnDefaults format also seeds the input raw', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columnDefaults: {
+                cells: { editMode: { enabled: true } },
+                header: { format: '{id}!' }
+            }
+        });
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('{id}!');
+    });
+
+    test('Submitting the template renders it expanded', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill('{id} (kg)');
+        await page.keyboard.press('Enter');
+
+        await expect(page.locator(LABEL)).toHaveText('product (kg)');
+
+        // Reopening must give the template back, not the rendered text.
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('{id} (kg)');
+    });
+
+    test('A format from the header option is seeded and written back there', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            header: [{ columnId: 'product', format: 'Produce' }]
+        });
+
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('Produce');
+
+        await page.locator(RENAME_INPUT).fill('Fruit');
+        await page.keyboard.press('Enter');
+
+        // A header entry outranks the column options, so writing to the
+        // column would survive until the next full render and then revert.
+        await page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            grid.dirtyFlags.add('grid');
+            await grid.redraw();
+        });
+
+        await expect(page.locator(LABEL)).toHaveText('Fruit');
+    });
+
+    test('The header menu holds every column action', async ({ page }) => {
+        await renderGrid(page, {
+            data: { columns: { product: ['Apples'], stock: [100] } },
+            tableEditing: {
+                enabled: true,
+                columnIdEditing: { enabled: true }
+            }
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+
+        await expect(page.locator('.hcg-menu-item')).toHaveText([
+            'Rename column',
+            'Change column id',
+            'Add column before',
+            'Add column after',
+            'Delete column'
+        ]);
+        // Naming and structure are separate concerns in one menu.
+        await expect(page.locator('.hcg-menu-divider')).toHaveCount(1);
+    });
+
+    test('A menu taller than the grid scrolls instead of being cut off', async ({ page }) => {
+        await page.setContent(PAGE, { waitUntil: 'networkidle' });
+        await page.evaluate(async () => {
+            // Short enough that the five item menu cannot fit.
+            const container = document.getElementById('container');
+            container.style.height = '170px';
+            await (window as any).Grid.grid(container, {
+                data: { columns: { product: ['Apples'], stock: [100] } },
+                tableEditing: {
+                    enabled: true,
+                    columnIdEditing: { enabled: true }
+                }
+            }, true);
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+
+        const fit = await page.evaluate(() => {
+            const popup = document.querySelector('.hcg-popup');
+            const wrapper = popup.parentElement;
+            const p = popup.getBoundingClientRect();
+            const w = wrapper.getBoundingClientRect();
+            return {
+                insideTop: p.top >= w.top,
+                insideBottom: p.bottom <= w.bottom,
+                scrolls: popup.scrollHeight > popup.clientHeight
+            };
+        });
+
+        expect(fit).toEqual({
+            insideTop: true,
+            insideBottom: true,
+            scrolls: true
+        });
+
+        // The items past the fold still have to be reachable by keyboard.
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+
+        expect(await page.evaluate(() => {
+            const popup = document.querySelector('.hcg-popup');
+            const el = document.activeElement;
+            const p = popup.getBoundingClientRect();
+            const e = el.getBoundingClientRect();
+            return {
+                label: el.innerText.trim(),
+                visible: e.top >= p.top - 1 && e.bottom <= p.bottom + 1
+            };
+        })).toEqual({ label: 'Delete column', visible: true });
+    });
+
+    test('A column action from the header returns the focus to the header', async ({ page }) => {
+        await renderGrid(page, {
+            data: { columns: { product: ['Apples'], stock: [100] } }
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await page.locator(
+            '.hcg-menu-item:has-text("Add column after")'
+        ).click();
+        await expect(page.locator('#container thead th')).toHaveCount(3);
+
+        // Invoked from the header, so the focus has no business jumping into
+        // a body cell the user never pointed at.
+        expect(await focused(page)).toBe('th[column3@-]');
+    });
+
+    test('The cell menu keeps the column actions, for a hidden header', async ({ page }) => {
+        await renderGrid(page, {
+            data: { columns: { product: ['Apples'], stock: [100] } },
+            rendering: { header: { enabled: false } }
+        });
+
+        await expect(page.locator('#container thead th')).toHaveCount(0);
+
+        await page.locator('#container tbody td').first()
+            .click({ button: 'right' });
+        await page.locator('.hcg-menu-item', { hasText: 'Columns' }).first()
+            .click();
+        await page.locator(
+            '.hcg-menu-item:has-text("Add column after")'
+        ).click();
+
+        expect(await dataKeys(page)).toHaveLength(3);
+    });
+
+    test('Opening the menu leaves the sorting alone', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await page.locator(HEADER).click({ button: 'right' });
+
+        expect(await page.evaluate(() => (window as any).Grid.grids[0]
+            .querying.sorting.currentSortings)).toBeFalsy();
+    });
+
+    test('F2 opens the rename and Escape discards it', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+
+        await page.locator(HEADER).focus();
+        await page.keyboard.press('F2');
+        await page.locator(RENAME_INPUT).fill('Produce');
+        await page.keyboard.press('Escape');
+
+        await expect(page.locator(RENAME_INPUT)).toHaveCount(0);
+        await expect(page.locator(LABEL)).toHaveText('product');
+    });
+
+    /** Returns the format currently stored for the product column. */
+    function storedFormat(page: Page): Promise<string | undefined> {
+        return page.evaluate(() => (window as any).Grid.grids[0]
+            .viewport.getColumn('product').options.header?.format);
+    }
+
+    /** Forces a full render, the only one that rebuilds the header. */
+    function fullRedraw(page: Page): Promise<void> {
+        return page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            grid.dirtyFlags.add('grid');
+            await grid.redraw();
+        });
+    }
+
+    test('An empty input removes the format', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columns: [{ id: 'product', header: { format: 'Produce' } }]
+        });
+
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill('');
+        await page.keyboard.press('Enter');
+
+        // No format left, so the header falls back to the column id.
+        expect(await storedFormat(page)).toBeUndefined();
+        await expect(page.locator(LABEL)).toHaveText('product');
+
+        await fullRedraw(page);
+        await expect(page.locator(LABEL)).toHaveText('product');
+    });
+
+    test('A space clears the format to a blank label', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            columns: [{ id: 'product', header: { format: 'Produce' } }]
+        });
+
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill(' ');
+        await page.keyboard.press('Enter');
+
+        expect(await storedFormat(page)).toBe('');
+        await expect(page.locator(LABEL)).toHaveText('');
+
+        // A blank label leaves the column with no accessible name, so the id
+        // stands in for it.
+        await expect(page.locator(HEADER)).toHaveAttribute(
+            'aria-label', 'product'
+        );
+
+        await fullRedraw(page);
+        await expect(page.locator(LABEL)).toHaveText('');
+
+        // Reopening must offer the blank format, not fall back to the id.
+        await startRename(page);
+        await expect(page.locator(RENAME_INPUT)).toHaveValue('');
+    });
+
+    test('Submitting the id of a column without a format writes nothing', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+
+        await startRename(page);
+        await page.keyboard.press('Enter');
+
+        expect(await storedFormat(page)).toBeUndefined();
+    });
+
+    test('Blank labels keep the header row height', async ({ page }) => {
+        // With no toolbar buttons and no label text, nothing else holds the
+        // header row up.
+        await renderGrid(page, {
+            data: { columns: { a: ['x'], b: [1] } },
+            columns: [
+                { id: 'a', header: { format: 'A' } },
+                { id: 'b', header: { format: 'B' } }
+            ],
+            columnDefaults: { sorting: { enabled: false } }
+        });
+
+        const row = '#container thead tr';
+        const before = (await page.locator(row).boundingBox())?.height;
+
+        await page.evaluate(() => (window as any).Grid.grids[0].update({
+            columns: [
+                { id: 'a', header: { format: '' } },
+                { id: 'b', header: { format: '' } }
+            ]
+        }, true));
+
+        expect((await page.locator(row).boundingBox())?.height).toBe(before);
+    });
+
+    test('The renamed label survives a redraw', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+
+        await startRename(page);
+        await page.locator(RENAME_INPUT).fill('Produce');
+        await page.keyboard.press('Enter');
+
+        await page.evaluate(
+            () => (window as any).Grid.grids[0].update({}, true)
+        );
+        await expect(page.locator(LABEL)).toHaveText('Produce');
+    });
+
+    test('Disabled table editing offers no header menu', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            tableEditing: { enabled: false }
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await expect(page.locator(RENAME_ITEM)).toHaveCount(0);
+    });
+
+    test('Disabled column renaming offers no rename', async ({ page }) => {
+        await renderGrid(page, {
+            ...ONE_COLUMN,
+            tableEditing: { enabled: true, columnRenaming: { enabled: false } }
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await expect(page.locator(RENAME_ITEM)).toHaveCount(0);
+    });
+
+    test('Changing the id is not offered unless asked for', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await page.locator(HEADER).click({ button: 'right' });
+
+        await expect(page.locator(RENAME_ITEM)).toHaveCount(1);
+        await expect(page.locator(
+            '.hcg-menu-item:has-text("Change column id")'
+        )).toHaveCount(0);
+    });
+
+    test('A header formatter blocks the rename, since it would win', async ({ page }) => {
+        await renderGrid(page, ONE_COLUMN);
+        await page.evaluate(() => (window as any).Grid.grids[0].update({
+            columns: [{
+                id: 'product',
+                header: { formatter: () => 'Fixed' }
+            }]
+        }, true));
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await expect(page.locator(RENAME_ITEM)).toHaveCount(0);
+        await expect(page.locator(LABEL)).toHaveText('Fixed');
+    });
+});
+
+test.describe('Table editing column id change', () => {
+    const TWO_COLUMNS = {
+        data: { columns: { product: ['Apples'], stock: [100] } },
+        tableEditing: {
+            enabled: true,
+            columnIdEditing: { enabled: true }
+        }
+    };
+    const HEADER = '#container thead th[data-column-id="product"]';
+    const RENAME_INPUT = '#container thead th input';
+    const ID_ITEM = '.hcg-menu-item:has-text("Change column id")';
+
+    /** Returns the data keys, which an id change must move. */
+    function dataKeys(page: Page): Promise<string[]> {
+        return page.evaluate(() => (window as any).Grid.grids[0]
+            .dataProvider.getDataTable().getColumnIds());
+    }
+
+    /** Opens the header context menu and picks the id action. */
+    async function renameTo(page: Page, name: string): Promise<void> {
+        await page.locator(HEADER).click({ button: 'right' });
+        await page.locator(ID_ITEM).click();
+        await page.locator(RENAME_INPUT).fill(name);
+        await page.keyboard.press('Enter');
+    }
+
+    test('Changing the id moves the data key and keeps the column order', async ({ page }) => {
+        await renderGrid(page, TWO_COLUMNS);
+        await renameTo(page, 'produce');
+
+        expect(await dataKeys(page)).toEqual(['produce', 'stock']);
+        await expect(
+            page.locator('#container thead th[data-column-id="produce"]')
+        ).toHaveCount(1);
+        await expect(
+            page.locator('#container tbody td').first()
+        ).toHaveAttribute('data-value', 'Apples');
+    });
+
+    test('Column options follow the new id', async ({ page }) => {
+        await renderGrid(page, {
+            ...TWO_COLUMNS,
+            columns: [{ id: 'product', width: 220 }]
+        });
+        await renameTo(page, 'produce');
+
+        expect(await page.evaluate(() => (window as any).Grid.grids[0]
+            .viewport.getColumn('produce').options.width)).toBe(220);
+    });
+
+    test('A taken id is refused and keeps the input open', async ({ page }) => {
+        await renderGrid(page, TWO_COLUMNS);
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await page.locator(ID_ITEM).click();
+        await page.locator(RENAME_INPUT).fill('stock');
+        await page.keyboard.press('Enter');
+
+        await expect(page.locator(RENAME_INPUT)).toHaveAttribute(
+            'aria-invalid', 'true'
+        );
+        expect(await dataKeys(page)).toEqual(['product', 'stock']);
+    });
+
+    test('The grouped header follows the new id', async ({ page }) => {
+        await renderGrid(page, {
+            ...TWO_COLUMNS,
+            header: [{ format: 'Group', columns: ['product', 'stock'] }]
+        });
+        await renameTo(page, 'produce');
+
+        await expect(
+            page.locator('#container thead th[data-column-id="produce"]')
+        ).toHaveCount(1);
+    });
+
+    test('The displayed name is left alone, since renaming is its own action', async ({ page }) => {
+        await renderGrid(page, {
+            ...TWO_COLUMNS,
+            columns: [{ id: 'product', header: { format: 'Produce' } }]
+        });
+        await renameTo(page, 'fruit');
+
+        expect(await dataKeys(page)).toEqual(['fruit', 'stock']);
+        await expect(page.locator(
+            '#container thead th[data-column-id="fruit"]' +
+            ' .hcg-header-cell-content'
+        )).toHaveText('Produce');
+    });
+
+    test('Sorting keeps applying after the rename', async ({ page }) => {
+        await renderGrid(page, {
+            ...TWO_COLUMNS,
+            data: { columns: { product: ['Pears', 'Apples'], stock: [40, 100] } },
+            columns: [{ id: 'product', sorting: { order: 'asc' } }]
+        });
+        await renameTo(page, 'produce');
+
+        await expect(
+            page.locator('#container tbody td').first()
+        ).toHaveAttribute('data-value', 'Apples');
+    });
+
+    test('Sorting applied by clicking the header also survives', async ({ page }) => {
+        await renderGrid(page, {
+            ...TWO_COLUMNS,
+            data: { columns: { product: ['Pears', 'Apples'], stock: [40, 100] } }
+        });
+        await page.locator(HEADER).click();
+        await expect(
+            page.locator('#container tbody td').first()
+        ).toHaveAttribute('data-value', 'Apples');
+
+        await renameTo(page, 'produce');
+
+        await expect(
+            page.locator('#container tbody td').first()
+        ).toHaveAttribute('data-value', 'Apples');
+    });
+
+    test('A column read through dataId is refused', async ({ page }) => {
+        await renderGrid(page, {
+            ...TWO_COLUMNS,
+            columns: [{ id: 'label', dataId: 'product' }]
+        });
+
+        await page.locator(
+            '#container thead th[data-column-id="label"]'
+        ).click({ button: 'right' });
+
+        await expect(page.locator(ID_ITEM)).toBeDisabled();
+    });
+
+    test('A header formatter blocks renaming but not the id', async ({ page }) => {
+        await renderGrid(page, TWO_COLUMNS);
+        await page.evaluate(() => (window as any).Grid.grids[0].update({
+            columns: [{
+                id: 'product',
+                header: { formatter: () => 'Fixed' }
+            }]
+        }, true));
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await expect(page.locator(
+            '.hcg-menu-item:has-text("Rename column")'
+        )).toHaveCount(0);
+        await expect(page.locator(ID_ITEM)).toBeEnabled();
+    });
+});

@@ -23,6 +23,7 @@
  *
  * */
 
+import type HeaderCell from './Header/HeaderCell';
 import type TableCell from './Body/TableCell';
 import type { RowId } from '../Data/DataProvider';
 
@@ -43,6 +44,9 @@ import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import CellContextMenu from './CellContextMenu/CellContextMenu.js';
 import CellContextMenuBuiltInActions from './CellContextMenu/CellContextMenuBuiltInActions.js';
+import HeaderContextMenu, {
+    resolveHeaderContextMenuItems
+} from './Header/HeaderContextMenu.js';
 import { CellContextMenuLongPress } from './CellContextMenu/CellContextMenuLongPress.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
@@ -190,6 +194,11 @@ class Table {
      * Cell context menu instance (lazy created).
      */
     private cellContextMenu?: CellContextMenu;
+
+    /**
+     * Header context menu instance (lazy created).
+     */
+    private headerContextMenu?: HeaderContextMenu;
 
     /**
      * The iOS long-press polyfill for cell context menus.
@@ -920,6 +929,55 @@ class Table {
         }
 
         this.cellContextMenu.showAt(tableCell, clientX, clientY);
+
+        return true;
+    }
+
+    /**
+     * Opens the context menu of a column header, when any action applies.
+     *
+     * @param headerCell
+     * The target header cell.
+     *
+     * @param clientX
+     * The viewport X coordinate for anchoring.
+     *
+     * @param clientY
+     * The viewport Y coordinate for anchoring.
+     *
+     * @returns
+     * True if the menu was opened.
+     *
+     * @internal
+     */
+    public openHeaderContextMenu(
+        headerCell: HeaderCell,
+        clientX: number,
+        clientY: number
+    ): boolean {
+        const items = resolveHeaderContextMenuItems(headerCell);
+
+        if (!items.length) {
+            return false; // Keep native browser menu
+        }
+
+        if (!this.headerContextMenu) {
+            this.headerContextMenu = new HeaderContextMenu(this.grid);
+        }
+
+        // Close any existing popups before opening a new menu.
+        // Copy to array to avoid mutation during iteration.
+        for (const popup of Array.from(this.grid.popups)) {
+            if (popup !== this.headerContextMenu) {
+                popup.hide();
+            }
+        }
+
+        if (this.headerContextMenu.isVisible) {
+            this.headerContextMenu.hide();
+        }
+
+        this.headerContextMenu.showAt(headerCell, items, clientX, clientY);
 
         return true;
     }

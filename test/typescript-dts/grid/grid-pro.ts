@@ -59,7 +59,13 @@ function test_grid() {
             }
         },
         tableEditing: {
-            enabled: true
+            enabled: true,
+            columnRenaming: {
+                enabled: true
+            },
+            columnIdEditing: {
+                enabled: true
+            }
         },
         lang: {
             rowPinning: {
@@ -81,7 +87,9 @@ function test_grid() {
                 addColumnAfter: 'Add column after',
                 deleteColumn: 'Delete column',
                 addFirstRow: 'Add row',
-                addFirstColumn: 'Add column'
+                addFirstColumn: 'Add column',
+                renameColumn: 'Rename column',
+                changeColumnId: 'Change column id'
             }
         },
         header: [{

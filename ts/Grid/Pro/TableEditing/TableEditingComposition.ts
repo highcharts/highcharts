@@ -19,6 +19,7 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type HeaderCell from '../../Core/Table/Header/HeaderCell';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type {
@@ -33,8 +34,12 @@ import {
     registerBuiltInAction,
     registerBuiltInGroup
 } from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+import {
+    registerHeaderContextMenuAction
+} from '../../Core/Table/Header/HeaderContextMenu.js';
 import TableEditingController, {
     emptyStateButtonClassName,
+    type ColumnEditingContext,
     type TableEditingOptions
 } from './TableEditingController.js';
 import {
@@ -68,11 +73,19 @@ export const defaultOptions: DeepPartial<Options> = {
             addColumnAfter: 'Add column after',
             deleteColumn: 'Delete column',
             addFirstRow: 'Add row',
-            addFirstColumn: 'Add column'
+            addFirstColumn: 'Add column',
+            renameColumn: 'Rename column',
+            changeColumnId: 'Change column id'
         }
     },
     tableEditing: {
-        enabled: false
+        enabled: false,
+        columnRenaming: {
+            enabled: true
+        },
+        columnIdEditing: {
+            enabled: false
+        }
     }
 };
 
@@ -149,6 +162,22 @@ export interface TableEditingLangOptions {
      * @default 'Add column'
      */
     addFirstColumn?: string;
+
+    /**
+     * Label of the header context menu action that changes the displayed name
+     * of a column, and the accessible name of the input it opens.
+     *
+     * @default 'Rename column'
+     */
+    renameColumn?: string;
+
+    /**
+     * Label of the header context menu action that changes the id a column
+     * has in the data, and the accessible name of the input it opens.
+     *
+     * @default 'Change column id'
+     */
+    changeColumnId?: string;
 }
 
 /**
@@ -156,9 +185,13 @@ export interface TableEditingLangOptions {
  *
  * @param GridClass
  * The class to extend.
+ *
+ * @param HeaderCellClass
+ * The header cell class the rename triggers are attached to.
  */
 export function compose(
-    GridClass: typeof Grid
+    GridClass: typeof Grid,
+    HeaderCellClass: typeof HeaderCell
 ): void {
     if (!pushUnique(Globals.composed, 'TableEditing')) {
         return;
@@ -169,6 +202,71 @@ export function compose(
 
     addEvent(GridClass, 'beforeLoad', initTableEditing);
     addEvent(GridClass, 'afterRenderViewport', renderEmptyStateButton);
+    addEvent(HeaderCellClass, 'keyDown', onHeaderCellKeyDown);
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.renameColumn || '',
+        icon: 'pencil',
+        isVisible: (context): boolean =>
+            context.grid.tableEditing?.canRenameColumn(context.column) === true,
+        onClick: (context): void => {
+            context.grid.tableEditing?.startRenamingColumn(
+                context.cell,
+                'name'
+            );
+        }
+    });
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.changeColumnId || '',
+        icon: 'key',
+        isVisible: (context): boolean =>
+            context.grid.tableEditing?.canEditColumnId(context.column) === true,
+        isDisabled: (context): boolean =>
+            context.grid.tableEditing
+                ?.getColumnIdBlocker(context.column) !== void 0,
+        onClick: (context): void => {
+            context.grid.tableEditing?.startRenamingColumn(context.cell, 'id');
+        }
+    });
+
+    // The same structural actions the cell menu offers, so that a column can
+    // be worked on from the header it belongs to. They stay in the cell menu
+    // as well, which is the only route left when the header is turned off.
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addColumnBefore || '',
+        icon: 'addColumnLeft',
+        isVisible: isColumnActionVisible,
+        startsGroup: true,
+        onClick: (context): void => {
+            void context.grid.tableEditing?.addColumnBefore(context);
+        }
+    });
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addColumnAfter || '',
+        icon: 'addColumnRight',
+        isVisible: isColumnActionVisible,
+        onClick: (context): void => {
+            void context.grid.tableEditing?.addColumnAfter(context);
+        }
+    });
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.deleteColumn || '',
+        icon: 'trash',
+        isVisible: isColumnActionVisible,
+        isDisabled: (context): boolean =>
+            !context.grid.tableEditing?.canDeleteColumn(context),
+        onClick: (context): void => {
+            void context.grid.tableEditing?.deleteColumn(context);
+        }
+    });
 }
 
 /**
@@ -325,6 +423,34 @@ function renderEmptyStateButton(this: Grid): void {
 }
 
 /**
+ * Opens the header for editing on F2, the keyboard counterpart of the context
+ * menu actions. Renaming is the one it reaches for, since changing an id is
+ * the rarer and more consequential of the two.
+ *
+ * @param e
+ * Header cell key down event.
+ *
+ * @param e.originalEvent
+ * The native keyboard event.
+ */
+function onHeaderCellKeyDown(
+    this: HeaderCell,
+    e: { originalEvent: KeyboardEvent }
+): void {
+    const tableEditing = this.row.viewport.grid.tableEditing;
+
+    if (e.originalEvent.key !== 'F2' || !tableEditing) {
+        return;
+    }
+
+    e.originalEvent.preventDefault();
+    tableEditing.startRenamingColumn(
+        this,
+        tableEditing.canRenameColumn(this.column) ? 'name' : 'id'
+    );
+}
+
+/**
  * Returns whether row actions should be visible.
  *
  * @param context
@@ -340,7 +466,7 @@ function isRowActionVisible(context: CellContextMenuContext): boolean {
  * @param context
  * Context menu runtime context.
  */
-function isColumnActionVisible(context: CellContextMenuContext): boolean {
+function isColumnActionVisible(context: ColumnEditingContext): boolean {
     return context.grid.tableEditing?.canEditColumns(context) === true;
 }
 

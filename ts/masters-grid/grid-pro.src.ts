@@ -164,7 +164,7 @@ RowPinningComposition.compose(
     G.Grid, G.Table, G.Column,
     G.TableRow, G.TableCell
 );
-TableEditingComposition.compose(G.Grid);
+TableEditingComposition.compose(G.Grid, G.HeaderCell);
 TreeViewComposition.compose(G.Grid, G.Table, G.TableCell, G.HeaderCell);
 SummaryRowsComposition.compose(G.Grid, G.Table, G.TableCell);
 SummaryColumnsComposition.compose(G.Grid, G.Column, G.TableCell);

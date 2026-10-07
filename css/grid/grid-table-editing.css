@@ -16,3 +16,41 @@
     padding: 0;
     text-align: center;
 }
+
+/* The toolbar outranks the editing overlay (z-index 11 against 1), so it
+   would float over the input and stay clickable. Hidden rather than removed:
+   the header height is content driven, so taking the toolbar out of the flow
+   would make the row jump on every edit. */
+.hcg-header-cell.hcg-edited-cell .hcg-header-cell-icons {
+    visibility: hidden;
+}
+
+/* The frame comes from `.hcg-cell-editing-container`, shared with cell
+   editing. The input only has to sit inside it without any chrome of its
+   own. The body cell rules are scoped to `tbody`, hence the repeat. */
+.hcg-table thead :where(.hcg-header-cell).hcg-edited-cell .hcg-input,
+.hcg-table thead :where(.hcg-header-cell).hcg-edited-cell .hcg-input:focus-visible {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    border-width: 0;
+    outline: none;
+
+    /* The themed input brings its own rounded focus ring, which would sit
+       inside the container's one. The radius goes with it: the input clips
+       its content, so it would round the text selection against the square
+       ring around it. */
+    box-shadow: none;
+    border-radius: unset;
+    padding: 0;
+    background-color: transparent;
+    font: inherit;
+    color: inherit;
+}
+
+/* A column id that is already taken. The input stays open for a correction,
+   so it has to say so without a message that the header has no room for. */
+.hcg-table thead .hcg-cell-editing-container.hcg-edited-cell-error {
+    box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color);
+    background-color: var(--ig-negative-background);
+}
