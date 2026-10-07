@@ -10,6 +10,7 @@ import * as Highcharts from 'highcharts';
 import "highcharts/modules/exporting";
 
 test_buttonTheme();
+test_exportingClass();
 
 /**
  * Tests the documented `style` and `states` members of the button theme, both
@@ -68,4 +69,22 @@ function test_buttonTheme() {
             data: [1, 2, 3]
         }]
     });
+}
+
+/**
+ * Tests that the `Exporting` class members are declared on `chart.exporting`.
+ * #25384
+ */
+function test_exportingClass() {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'line',
+            data: [1, 2, 3]
+        }]
+    });
+
+    chart.exporting.exportChart({ type: 'image/png' }, {});
+    chart.exporting.print();
+
+    const filename: string = chart.exporting.getFilename();
 }
