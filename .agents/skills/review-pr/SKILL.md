@@ -47,7 +47,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - If not automatable, require a manual test plan.
 
 7. For PRs from outside the team, check the rules in `CONTRIBUTING.md`. Needs a PR number and `gh`; without them, skip this step.
-- Team or external: `gh api repos/highcharts/highcharts/pulls/<number> --jq .author_association`. `OWNER`, `MEMBER` and `COLLABORATOR` are the team; skip this step for them. If unclear, ask.
+- Team or external: `gh api repos/highcharts/highcharts/pulls/<number> --jq .author_association`. `OWNER`, `MEMBER` and `COLLABORATOR` are the team; skip this step for them and for bots the team uses, such as `dependabot[bot]`. If unclear, ask.
 - Linked issue: `closingIssuesReferences` or the description references an issue, and `gh issue view <issue>` shows a demo link (jsFiddle, CodePen or similar). Don't run the demo. The impact section is optional.
 - One problem: flag changes unrelated to the linked issue.
 - No duplicates: `gh pr list --state open --search "<issue number>"`; flag other open PRs for the same issue. Don't guess duplicates without a shared issue.
