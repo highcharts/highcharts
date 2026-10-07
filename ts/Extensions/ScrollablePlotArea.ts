@@ -199,7 +199,8 @@ export class ScrollablePlotArea {
         '.highcharts-reset-zoom',
         '.highcharts-scrollbar',
         '.highcharts-subtitle',
-        '.highcharts-title'
+        '.highcharts-title',
+        '.highcharts-tooltip'
     ];
 
     public static compose(
