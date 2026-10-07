@@ -50,12 +50,12 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 
 ## Security review
 
-When changes affect untrusted input, HTML/URL filtering, file paths or network requests, auth/credentials, dependencies or install hooks, CI permissions or publishing, suggest a native security review and briefly explain the relevant risk:
+When changes affect untrusted input, HTML/URL filtering, file paths or network requests, auth/credentials, dependencies or install hooks, CI permissions or publishing, suggest a native security review to the user and briefly explain the relevant risk:
 
 - In Codex, suggest the installed Codex Security plugin's `security-diff-scan` skill for the PR, commit, branch diff or working-tree patch.
 - In Claude Code, suggest the installed [Claude Security plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/claude-security/README.md): `/claude-security`, then **Scan changes**.
 
-Use the plugin available in the current environment and verify its supported invocation, scope and baseline from its installed instructions. Keep the recommendation proportionate to the current diff or relevant paths; it is not required for every edit. Do not auto-install plugins or start scans, including broad repository scans. If unavailable, say so, continue normal review, and suggest setup only when relevant.
+Recommend an available plugin to the user with a suggested scope limited to the current diff or relevant paths. Keep the recommendation proportionate; it is not required for every edit. Obtain explicit user approval before invoking a plugin or starting any scan. Only after approval, verify its supported invocation, scope and baseline from its installed instructions and run within the approved scope. Do not auto-install plugins. If unavailable, tell the user, continue normal review, and suggest setup only when relevant.
 
 Keep source within approved access and data-handling boundaries; do not upload it elsewhere or expose secrets. Plugin review complements tests, existing SAST and human review. Validate findings against `SECURITY.md` and reachable code before treating them as vulnerabilities. Applying fixes or publishing findings needs authorization; the recommendation grants neither.
 
