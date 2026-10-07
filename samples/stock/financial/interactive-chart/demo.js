@@ -33,7 +33,7 @@ const calculateChange = (series, lastPoint, range) => {
         true
     );
 
-    const currVal = series.dataTable.getRow(index, ['y'])[0];
+    const currVal = series.dataTable.getColumn('y')[index];
     const increase = (100 * (lastVal - currVal) / currVal).toFixed(2);
     return increase;
 };
