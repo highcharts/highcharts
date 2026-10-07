@@ -14,9 +14,10 @@ repository, as well as writing good issue reports.
 3. [Contributing Code](#contributing-code)
     1. [Licensing and Legal](#licensing-and-legal)
     2. [Review and Acceptance Policy](#review-and-acceptance-policy)
-    3. [Style Guide](#style-guide)
-    4. [Pull Requests](#pull-requests)
-    5. [Writing content for the changelog](#writing-content-for-the-changelog)
+    3. [Use of AI Tools](#use-of-ai-tools)
+    4. [Style Guide](#style-guide)
+    5. [Pull Requests](#pull-requests)
+    6. [Writing content for the changelog](#writing-content-for-the-changelog)
 
 ## Reporting Bugs
 
@@ -76,6 +77,8 @@ Your issue should:
 * if it's not reproducible in a minimal demo, explain what actions where done to
 trigger the bug.
 * include the tested Highcharts and browser version(s).
+* if you can, say how the bug affects you, for example whether it blocks a
+release or is only cosmetic, and describe any workaround you found.
 
 ## Suggesting Features and Enhancements
 
@@ -126,12 +129,37 @@ We welcome and appreciate contributions from the community. However, please be a
 - do not follow the guidelines outlined in this document,
 - do not meet the quality standards of the existing codebase,
 - introduce changes that are unnecessarily broad, unfocused, or not aligned with the product direction,
+- add more code to the core or to edge-case fixes than the change needs (see [Keep the code lean](ts/README.md#keep-the-code-lean)),
 - show insufficient understanding of the code being modified, or
 - would require more maintainer effort to review, correct, and iterate on than the contribution warrants.
 
 We strongly encourage contributors to open an issue for discussion before investing significant time in a pull request, especially for non-trivial changes. This helps ensure your effort is directed toward something the team is likely to accept, and gives us the opportunity to provide early guidance.
 
+Please also note the following:
+
+- **CI and review:** every pull request from outside the team must pass both the automated CI checks and a review by a maintainer. Passing CI is required, but it doesn't mean the pull request will be accepted. We don't review pull requests while their CI checks fail.
+- **Open pull requests:** to keep reviews manageable, please have no more than three pull requests open at the same time, drafts included. We may close pull requests above this limit without review.
+- **First pull request:** a maintainer may adjust the change and merge it in their own commit. In that case, you are credited as a co-author with a `Co-authored-by` trailer, so the contribution still shows up on your GitHub profile.
+
 This policy is in no way meant to discourage contributions. By setting clear expectations upfront, we hope to make the process more productive and respectful of everyone's time, both yours and ours.
+
+### Use of AI Tools
+
+If you contribute from outside the Highcharts team, you may use AI tools to
+write code, tests or descriptions, but you must say so. Add a line to the pull
+request description, below the first paragraph, in this format:
+
+```
+AI assistance: none | partial | substantial (<name of the tool>)
+```
+
+Use `partial` when the tool helped with parts of the change and `substantial`
+when it wrote most of it. We also recommend a trailer in the commit message,
+such as `Co-authored-by: <tool> <email>` or `Assisted-by: <tool>`. Some tools
+add this automatically.
+
+You are responsible for every line you submit, whoever or whatever wrote it.
+Be ready to explain any part of the change during review.
 
 ### Style Guide
 
@@ -175,6 +203,13 @@ Your pull request should:
 on the master branch on a fork) as the title.
 * contain a link to an open issue - if there is one - in the description.
 * contain a description of what the pull request implements/fixes.
+* focus on a single problem. Don't split one fix across several pull requests,
+and check that no open pull request already addresses the same issue. We may
+close duplicates.
+* include a regression test for bug fixes. See [test/readme.md](test/readme.md)
+for how to write and run tests.
+* if you contribute from outside the Highcharts team, state whether AI tools
+were used. See [Use of AI Tools](#use-of-ai-tools).
 
 ### Writing content for the changelog
 
