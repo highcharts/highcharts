@@ -361,6 +361,116 @@ test.describe('Table editing column rename', () => {
         await expect(page.locator(LABEL)).toHaveText('Fruit');
     });
 
+    test('The header menu holds every column action', async ({ page }) => {
+        await renderGrid(page, {
+            data: { columns: { product: ['Apples'], stock: [100] } },
+            tableEditing: {
+                enabled: true,
+                columnIdEditing: { enabled: true }
+            }
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+
+        await expect(page.locator('.hcg-menu-item')).toHaveText([
+            'Rename column',
+            'Change column id',
+            'Add column before',
+            'Add column after',
+            'Delete column'
+        ]);
+        // Naming and structure are separate concerns in one menu.
+        await expect(page.locator('.hcg-menu-divider')).toHaveCount(1);
+    });
+
+    test('A menu taller than the grid scrolls instead of being cut off', async ({ page }) => {
+        await page.setContent(PAGE, { waitUntil: 'networkidle' });
+        await page.evaluate(async () => {
+            // Short enough that the five item menu cannot fit.
+            const container = document.getElementById('container');
+            container.style.height = '170px';
+            await (window as any).Grid.grid(container, {
+                data: { columns: { product: ['Apples'], stock: [100] } },
+                tableEditing: {
+                    enabled: true,
+                    columnIdEditing: { enabled: true }
+                }
+            }, true);
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+
+        const fit = await page.evaluate(() => {
+            const popup = document.querySelector('.hcg-popup');
+            const wrapper = popup.parentElement;
+            const p = popup.getBoundingClientRect();
+            const w = wrapper.getBoundingClientRect();
+            return {
+                insideTop: p.top >= w.top,
+                insideBottom: p.bottom <= w.bottom,
+                scrolls: popup.scrollHeight > popup.clientHeight
+            };
+        });
+
+        expect(fit).toEqual({
+            insideTop: true,
+            insideBottom: true,
+            scrolls: true
+        });
+
+        // The items past the fold still have to be reachable by keyboard.
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+
+        expect(await page.evaluate(() => {
+            const popup = document.querySelector('.hcg-popup');
+            const el = document.activeElement;
+            const p = popup.getBoundingClientRect();
+            const e = el.getBoundingClientRect();
+            return {
+                label: el.innerText.trim(),
+                visible: e.top >= p.top - 1 && e.bottom <= p.bottom + 1
+            };
+        })).toEqual({ label: 'Delete column', visible: true });
+    });
+
+    test('A column action from the header returns the focus to the header', async ({ page }) => {
+        await renderGrid(page, {
+            data: { columns: { product: ['Apples'], stock: [100] } }
+        });
+
+        await page.locator(HEADER).click({ button: 'right' });
+        await page.locator(
+            '.hcg-menu-item:has-text("Add column after")'
+        ).click();
+        await expect(page.locator('#container thead th')).toHaveCount(3);
+
+        // Invoked from the header, so the focus has no business jumping into
+        // a body cell the user never pointed at.
+        expect(await focused(page)).toBe('th[column3@-]');
+    });
+
+    test('The cell menu keeps the column actions, for a hidden header', async ({ page }) => {
+        await renderGrid(page, {
+            data: { columns: { product: ['Apples'], stock: [100] } },
+            rendering: { header: { enabled: false } }
+        });
+
+        await expect(page.locator('#container thead th')).toHaveCount(0);
+
+        await page.locator('#container tbody td').first()
+            .click({ button: 'right' });
+        await page.locator('.hcg-menu-item', { hasText: 'Columns' }).first()
+            .click();
+        await page.locator(
+            '.hcg-menu-item:has-text("Add column after")'
+        ).click();
+
+        expect(await dataKeys(page)).toHaveLength(3);
+    });
+
     test('Opening the menu leaves the sorting alone', async ({ page }) => {
         await renderGrid(page, ONE_COLUMN);
         await page.locator(HEADER).click({ button: 'right' });

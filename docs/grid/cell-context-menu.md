@@ -151,17 +151,30 @@ Two things are worth knowing when building a table from scratch:
 - A new column is named after its id, `column1`, `column2` and so on. See
   renaming below for how the user gives it a real name.
 
-## Renaming a column and changing its id
+## The header context menu
 
-Right clicking a column header opens its own context menu. It holds two
-separate actions, because a column has two names: the one it shows and the one
-it has in the data.
+Right clicking a column header opens its own context menu, holding everything
+that applies to that column: *Rename column* and *Change column id*, then the
+same *Add column before*, *Add column after* and *Delete column* the cell menu
+offers under its *Columns* group.
 
-Either action turns the header into a text input: `Enter` saves and `Escape`
+Those three stay in the cell menu as well. The header can be turned off with
+[`rendering.header.enabled`](https://api.highcharts.com/grid/rendering.header.enabled),
+and the cell menu is then the only way left to add or delete a column.
+
+A column action invoked from the header leaves the focus on the header of the
+column it produced, rather than on a body cell that was never pointed at.
+
+### Renaming a column and changing its id
+
+The menu holds two separate naming actions, because a column has two names:
+the one it shows and the one it has in the data.
+
+Either turns the header into a text input: `Enter` saves and `Escape`
 discards. `F2` on a focused header opens the one that is available, preferring
 *Rename column*.
 
-### Rename column
+#### Rename column
 
 Sets
 [`columns[].header.format`](https://api.highcharts.com/grid/columns.header.format),
@@ -185,7 +198,7 @@ formatter would overwrite whatever is typed.
 Note that CSV and JSON exports are keyed by column id, so a renamed column
 still exports under its id.
 
-### Change column id
+#### Change column id
 
 Renames the column in the data, which is usually what a table built by its end
 user wants. It is off by default:

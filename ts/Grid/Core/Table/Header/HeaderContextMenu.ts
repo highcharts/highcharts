@@ -96,6 +96,11 @@ export interface HeaderContextMenuActionDefinition {
      * Runs the action.
      */
     onClick: (context: HeaderContextMenuContext) => void;
+
+    /**
+     * Whether to draw a divider above the action, when anything precedes it.
+     */
+    startsGroup?: boolean;
 }
 
 /**
@@ -117,6 +122,7 @@ interface ResolvedHeaderContextMenuItem {
     icon: GridIconName;
     label: string;
     onClick: () => void;
+    startsGroup: boolean;
 }
 
 /* *
@@ -187,7 +193,10 @@ export function resolveHeaderContextMenuItems(
             disabled: !!definition.isDisabled?.(context),
             icon: definition.icon,
             label: definition.getLabel(context),
-            onClick: (): void => definition.onClick(context)
+            onClick: (): void => definition.onClick(context),
+            // Only a group that something precedes needs the divider, so a
+            // menu whose earlier actions are all hidden has none.
+            startsGroup: !!definition.startsGroup && items.length > 0
         });
     }
 
@@ -293,6 +302,10 @@ class HeaderContextMenu extends ContextMenu {
 
     protected override renderContent(): void {
         for (const item of this.items) {
+            if (item.startsGroup) {
+                this.addDivider();
+            }
+
             const button = new ContextMenuButton({
                 label: item.label,
                 icon: item.icon,

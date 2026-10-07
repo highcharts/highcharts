@@ -39,6 +39,7 @@ import {
 } from '../../Core/Table/Header/HeaderContextMenu.js';
 import TableEditingController, {
     emptyStateButtonClassName,
+    type ColumnEditingContext,
     type TableEditingOptions
 } from './TableEditingController.js';
 import {
@@ -228,6 +229,42 @@ export function compose(
                 ?.getColumnIdBlocker(context.column) !== void 0,
         onClick: (context): void => {
             context.grid.tableEditing?.startRenamingColumn(context.cell, 'id');
+        }
+    });
+
+    // The same structural actions the cell menu offers, so that a column can
+    // be worked on from the header it belongs to. They stay in the cell menu
+    // as well, which is the only route left when the header is turned off.
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addColumnBefore || '',
+        icon: 'addColumnLeft',
+        isVisible: isColumnActionVisible,
+        startsGroup: true,
+        onClick: (context): void => {
+            void context.grid.tableEditing?.addColumnBefore(context);
+        }
+    });
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.addColumnAfter || '',
+        icon: 'addColumnRight',
+        isVisible: isColumnActionVisible,
+        onClick: (context): void => {
+            void context.grid.tableEditing?.addColumnAfter(context);
+        }
+    });
+
+    registerHeaderContextMenuAction({
+        getLabel: (context): string =>
+            context.grid.options?.lang?.tableEditing?.deleteColumn || '',
+        icon: 'trash',
+        isVisible: isColumnActionVisible,
+        isDisabled: (context): boolean =>
+            !context.grid.tableEditing?.canDeleteColumn(context),
+        onClick: (context): void => {
+            void context.grid.tableEditing?.deleteColumn(context);
         }
     });
 }
@@ -429,7 +466,7 @@ function isRowActionVisible(context: CellContextMenuContext): boolean {
  * @param context
  * Context menu runtime context.
  */
-function isColumnActionVisible(context: CellContextMenuContext): boolean {
+function isColumnActionVisible(context: ColumnEditingContext): boolean {
     return context.grid.tableEditing?.canEditColumns(context) === true;
 }
 

@@ -23,9 +23,6 @@ import type Column from '../../Core/Table/Column';
 import type DataTable from '../../../Data/DataTable';
 import type HeaderCell from '../../Core/Table/Header/HeaderCell';
 import type {
-    CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
-import type {
     Column as DataTableColumn,
     RowObject as DataTableRowObject
 } from '../../../Data/DataTable';
@@ -79,6 +76,35 @@ interface DataProviderWithRowIndexMapping extends DataTableProvider {
  * What an open header input writes when submitted.
  */
 export type RenamingTarget = ('name'|'id');
+
+/**
+ * What a structural edit needs to know about where it was invoked. Kept to
+ * the fields both context menus carry, so the cell menu and the header menu
+ * can drive the same actions.
+ */
+export interface ColumnEditingContext {
+
+    /**
+     * Grid column id the action applies to.
+     */
+    columnId: string;
+
+    /**
+     * The Grid instance.
+     */
+    grid: Grid;
+
+    /**
+     * Row the action was invoked from. Absent in the header, where the edit
+     * returns the focus to the header instead of a body cell.
+     */
+    rowId?: RowId;
+
+    /**
+     * Source column id the Grid column reads its data from.
+     */
+    sourceColumnId?: string;
+}
 
 /**
  * Options for structural table editing.
@@ -207,7 +233,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canEditRows(context: CellContextMenuContext): boolean {
+    public canEditRows(context: ColumnEditingContext): boolean {
         return (
             this.isEnabled() &&
             context.rowId !== void 0 &&
@@ -221,7 +247,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canEditColumns(context: CellContextMenuContext): boolean {
+    public canEditColumns(context: ColumnEditingContext): boolean {
         return (
             this.isEnabled() &&
             !!context.sourceColumnId &&
@@ -237,7 +263,7 @@ class TableEditingController {
      * @param context
      * Context menu runtime context.
      */
-    public canDeleteColumn(context: CellContextMenuContext): boolean {
+    public canDeleteColumn(context: ColumnEditingContext): boolean {
         const table = this.getDataTable();
         const sourceColumnId = context.sourceColumnId;
 
@@ -307,7 +333,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addRowAbove(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addRow(context, 0);
     }
@@ -319,7 +345,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addRowBelow(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addRow(context, 1);
     }
@@ -331,7 +357,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async deleteRow(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         const table = this.getDataTable();
         const rowIndexes = await this.getRowIndexes(context.rowId);
@@ -354,7 +380,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addColumnBefore(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addColumn(context, 0);
     }
@@ -366,7 +392,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async addColumnAfter(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         await this.addColumn(context, 1);
     }
@@ -378,7 +404,7 @@ class TableEditingController {
      * Context menu runtime context.
      */
     public async deleteColumn(
-        context: CellContextMenuContext
+        context: ColumnEditingContext
     ): Promise<void> {
         const table = this.getDataTable();
         const sourceColumnId = context.sourceColumnId;
@@ -397,7 +423,8 @@ class TableEditingController {
         // The column that took the deleted one's place, or its predecessor.
         this.focusResult(
             rowIndexes?.local || 0,
-            columnIds[deletedIndex + 1] || columnIds[deletedIndex - 1]
+            columnIds[deletedIndex + 1] || columnIds[deletedIndex - 1],
+            context.rowId === void 0
         );
     }
 
@@ -819,7 +846,7 @@ class TableEditingController {
     }
 
     private async addRow(
-        context: CellContextMenuContext,
+        context: ColumnEditingContext,
         offset: 0 | 1
     ): Promise<void> {
         const table = this.getDataTable();
@@ -852,7 +879,7 @@ class TableEditingController {
     }
 
     private async addColumn(
-        context: CellContextMenuContext,
+        context: ColumnEditingContext,
         offset: 0 | 1
     ): Promise<void> {
         const table = this.getDataTable();
@@ -890,7 +917,11 @@ class TableEditingController {
         table.deleteColumns(void 0, { fromGrid: true });
         table.setColumns(nextColumns, void 0, { fromGrid: true });
         await this.updateColumnsFromTable(table);
-        this.focusResult(rowIndexes?.local || 0, nextColumnId);
+        this.focusResult(
+            rowIndexes?.local || 0,
+            nextColumnId,
+            context.rowId === void 0
+        );
     }
 
     private getDataTable(): DataTable | undefined {
@@ -947,12 +978,29 @@ class TableEditingController {
      *
      * @param columnId
      * Column to focus, or the first one when it no longer exists.
+     *
+     * @param inHeader
+     * Whether the edit came from the header, which is then where the focus
+     * belongs rather than in a body cell the user never pointed at.
      */
-    private focusResult(rowIndex: number | undefined, columnId?: string): void {
+    private focusResult(
+        rowIndex: number | undefined,
+        columnId?: string,
+        inHeader?: boolean
+    ): void {
         const viewport = this.grid.viewport;
 
         if (!viewport) {
             return;
+        }
+
+        if (inHeader && columnId) {
+            const headerCell = viewport.getColumn(columnId)?.header;
+
+            if (headerCell) {
+                headerCell.htmlElement.focus();
+                return;
+            }
         }
 
         const lastRowIndex = viewport.rowsVirtualizer.rowCount - 1;
