@@ -473,9 +473,7 @@ async function createDashboard() {
     }
 }
 
-// Creates an element holding plain text. Names and descriptions arrive in
-// MQTT messages, so they are never parsed as markup.
-function textEl(tag, text, className) {
+function createTextEl(tag, text, className) {
     const el = document.createElement(tag);
     el.textContent = text ?? '';
     if (className) {
@@ -537,16 +535,18 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
     }
 
     function getHeaderFields(fields) {
-        return getInfoRecord(null, fields).map(col => textEl('th', col.name));
+        return getInfoRecord(null, fields)
+            .map(col => createTextEl('th', col.name));
     }
 
     function getUnitFields(fields) {
-        return getInfoRecord(null, fields).map(col => textEl('th', col.unit));
+        return getInfoRecord(null, fields)
+            .map(col => createTextEl('th', col.unit));
     }
 
     function getDataFields(item, fields) {
         return getInfoRecord(item, fields).map(
-            col => textEl('td', col.value.toFixed(col.precision))
+            col => createTextEl('td', col.value.toFixed(col.precision))
         );
     }
 
@@ -564,16 +564,16 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         const nameRow = document.createElement('tr');
         const unitRow = document.createElement('tr');
 
-        nameRow.append(textEl('th', 'Name'), ...getHeaderFields(fields));
+        nameRow.append(createTextEl('th', 'Name'), ...getHeaderFields(fields));
         unitRow.className = 'unit';
-        unitRow.append(textEl('th', ''), ...getUnitFields(fields));
+        unitRow.append(createTextEl('th', ''), ...getUnitFields(fields));
         head.append(nameRow, unitRow);
 
         // Populate fields
         data.forEach(item => {
             const row = document.createElement('tr');
             row.append(
-                textEl('td', item.name.replace('_', ' ')),
+                createTextEl('td', item.name.replace('_', ' ')),
                 ...getDataFields(item, fields)
             );
             head.appendChild(row);
@@ -672,14 +672,14 @@ async function dashboardUpdate(mqttData, connId, pktCount) {
         // Description of power plant (if available)
         if (data.description !== null) {
             container.appendChild(
-                textEl('span', data.description, 'pw-descr')
+                createTextEl('span', data.description, 'pw-descr')
             );
         }
 
         // Location info
         if (data.location) {
             const loc = data.location;
-            container.appendChild(textEl(
+            container.appendChild(createTextEl(
                 'h3', `${loc.lon} (lon.), ${loc.lat} (lat.)`
             ));
         }
@@ -854,7 +854,7 @@ class ControlBar {
     updatePowPlantDropdown(powPlantList) {
         const items = [];
         const addItem = name => {
-            const item = textEl('a', name, 'dropdown-select');
+            const item = createTextEl('a', name, 'dropdown-select');
             item.href = '#';
             items.push(item);
         };
