@@ -541,7 +541,7 @@ export default DataGroupingComposition;
  * ]]
  * ```
  *
- * @type      {Array<Array<"day"|"hour"|"millisecond"|"minute"|"month"|"second"|"week"|"year",(Array<number>|null)>>}
+ * @type      {Array<Array<string,(Array<number>|null)>>}
  * @apioption plotOptions.series.dataGrouping.units
  */
 

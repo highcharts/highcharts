@@ -370,7 +370,7 @@ export interface DataGroupingOptions {
      * ]]
      * ```
      *
-     * @type      {Array<Array<"day"|"hour"|"millisecond"|"minute"|"month"|"second"|"week"|"year",(Array<number>|null)>>}
+     * @type      {Array<Array<string,(Array<number>|null)>>}
      * @apioption plotOptions.series.dataGrouping.units
      */
     units?: Array<[Time.TimeUnit, (Array<number>|null)]>;
