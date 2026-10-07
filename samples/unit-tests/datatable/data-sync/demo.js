@@ -127,3 +127,105 @@ QUnit.test('Chart.update with new dataTable columns (#25444)', async assert => {
         'The series should follow the new data table, not the old one'
     );
 });
+
+QUnit.test('Chart.update should clean up replaced data tables', assert => {
+    const chart = Highcharts.chart('container', {
+            dataTable: {
+                columns: {
+                    y: [1, 2]
+                }
+            },
+            series: [{}]
+        }),
+        series = chart.series[0],
+        initialCallbackCount = series.eventsToUnbind.length;
+
+    for (let i = 0; i < 5; ++i) {
+        const oldTable = chart.dataTable[0];
+
+        chart.update({
+            dataTable: {
+                columns: {
+                    y: [i + 2, i + 3]
+                }
+            }
+        });
+
+        assert.notStrictEqual(
+            chart.dataTable[0],
+            oldTable,
+            'Each update should replace the chart-level data table'
+        );
+    }
+
+    // Old addEvent cleanup closures retain their table even after unbinding.
+    // Check their removal directly without relying on garbage collection.
+    assert.strictEqual(
+        series.eventsToUnbind.length,
+        initialCallbackCount,
+        'Replacing data tables should not accumulate cleanup callbacks'
+    );
+    assert.deepEqual(
+        series.points.map(point => point.y),
+        [6, 7],
+        'The series should use the last replacement table'
+    );
+    chart.destroy();
+});
+
+QUnit.test('Chart.update should retain a DataTable instance', async assert => {
+    const chart = Highcharts.chart('container', {
+            dataTable: {
+                columns: {
+                    y: [1, 2]
+                }
+            },
+            series: [{}]
+        }),
+        suppliedTable = new Highcharts.DataTable({
+            columns: {
+                y: [3, 4]
+            }
+        }),
+        delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    chart.update({ dataTable: suppliedTable });
+
+    assert.strictEqual(
+        chart.dataTable[0],
+        suppliedTable,
+        'The chart should retain the supplied DataTable instance'
+    );
+    assert.strictEqual(
+        typeof chart.dataTable[0].setRow,
+        'function',
+        'The resolved table should retain setRow'
+    );
+    assert.strictEqual(
+        typeof chart.dataTable[0].setColumn,
+        'function',
+        'The resolved table should retain setColumn'
+    );
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.y),
+        [3, 4],
+        'The series should show the supplied table columns'
+    );
+
+    suppliedTable.setRow({ y: 9 }, 0);
+    await delay(1);
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.y),
+        [9, 4],
+        'setRow on the supplied table should update the series'
+    );
+
+    suppliedTable.setColumn('y', [7, 8]);
+    await delay(1);
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.y),
+        [7, 8],
+        'setColumn on the supplied table should update the series'
+    );
+    chart.destroy();
+});
