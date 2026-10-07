@@ -148,7 +148,8 @@ export interface CSSObject {
      */
     fontFamily?: string;
     /**
-     * Font size.
+     * Font size. Accepts a pixel number or a CSS length expression, e.g.
+     * `'1em'` or `'2vw'`.
      */
     fontSize?: (number|CSSLength);
     /**
@@ -180,7 +181,8 @@ export interface CSSObject {
      */
     lineHeight?: string|0;
     /**
-     * Line width (not a standard CSS property, used internally).
+     * Line width (not a standard CSS property, used internally). Accepts a
+     * pixel number or a CSS length expression, e.g. `'0.1em'` or `'1vw'`.
      */
     lineWidth?: (number|CSSLength);
     /**
@@ -240,7 +242,8 @@ export interface CSSObject {
      */
     outline?: string;
     /**
-     * Padding.
+     * Padding. Accepts a pixel number or a CSS length expression, e.g.
+     * `'1em'` or `'1vw'`.
      */
     padding?: (number|CSSLength);
     /**
@@ -268,7 +271,8 @@ export interface CSSObject {
      */
     stroke?: ColorType;
     /**
-     * Stroke width.
+     * Stroke width. Accepts a pixel number or a CSS length expression, e.g.
+     * `'0.1em'` or `'1vw'`.
      */
     'stroke-width'?: (number|CSSLength);
     /**

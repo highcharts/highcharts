@@ -2762,7 +2762,10 @@ class Chart {
             width: chartWidth - mgn - chartBorderWidth % 2,
             height: chartHeight - mgn - chartBorderWidth % 2,
             r: defined(borderRadius) ?
-                chart.relativeLength(borderRadius, 0) :
+                chart.relativeLength(
+                    borderRadius,
+                    Math.min(chartWidth, chartHeight)
+                ) :
                 void 0
         });
 

@@ -434,8 +434,9 @@ export interface ChartOptions {
 
     /**
      * The corner radius of the outer chart border. A number denotes
-     * pixels. Also accepts a CSS length expression, e.g. `'1em'` or
-     * `'calc(var(--radius) * 2)'`.
+     * pixels. Also accepts a CSS length expression, e.g. a percentage of
+     * the smaller of the chart's width and height like `'10%'`, or
+     * `'1em'` or `'calc(var(--radius) * 2)'`.
      *
      * @sample {highcharts} highcharts/chart/borderradius/
      *         20px radius
