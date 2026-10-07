@@ -49,7 +49,7 @@ Read `SECURITY.md` in the repository root first. It holds the current policy and
 - No secrets, tokens, license keys or private URLs in code, tests or samples. No new third-party hosts.
 - No new dependencies. No copied code, except MIT, BSD, Apache 2.0 or MPL code with a comment naming the license and author.
 - Flag security-sensitive changes in the report, so that someone with security expertise reviews them.
-- For security-relevant changes, suggest a native plugin review to the user using [code-review's security guidance](../code-review/SKILL.md#security-review).
+- Follow [code-review's security guidance](../code-review/SKILL.md#security-review) when a plausible security concern needs further analysis of reachability, impact or scope; report sufficiently established issues directly.
 
 ## Iterate
 

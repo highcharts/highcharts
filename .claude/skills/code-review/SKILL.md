@@ -50,12 +50,16 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 
 ## Security review
 
-When changes affect untrusted input, HTML/URL filtering, file paths or network requests, auth/credentials, dependencies or install hooks, CI permissions or publishing, suggest a native security review to the user and briefly explain the relevant risk:
+During normal security review, pay attention to changes affecting untrusted input, HTML/URL filtering, file paths or network requests, auth/credentials, dependencies or install hooks, CI permissions and publishing.
+
+Suggest a security plugin review to the user when normal review identifies a plausible security concern but cannot confidently establish its reachability, impact or scope. Explain the concern, what remains unresolved and what further analysis would help resolve it. If normal review sufficiently establishes the issue and its scope, report it directly without routinely suggesting a plugin. A confirmed issue may still need deeper analysis of its reachability, impact or scope.
+
+For such a suggestion:
 
 - In Codex, if the optional [Codex Security plugin](https://openai.com/daybreak/codex-security-plugin/) is installed and exposes `security-diff-scan`, suggest that skill for the PR, commit, branch diff or working-tree patch. Do not assume this skill is built into Codex. If unavailable, surface this official setup link to the user when relevant and continue normal review.
 - In Claude Code, if the optional [Claude Security plugin](https://code.claude.com/docs/en/claude-security) is installed and exposes `/claude-security`, suggest that command, then **Scan changes**, for a PR, commit or branch diff. Do not assume this plugin or command is built into Claude Code. If unavailable, surface this official setup link to the user when relevant and continue normal review.
 
-Recommend an available plugin to the user with a suggested scope limited to the current diff or relevant paths. Keep the recommendation proportionate; it is not required for every edit. Obtain explicit user approval before invoking a plugin or starting any scan. Only after approval, verify its supported invocation, scope and baseline from its installed instructions and run within the approved scope. Do not auto-install plugins. If unavailable, tell the user, continue normal review, and suggest setup only when relevant.
+When making this suggestion, recommend an available plugin to the user with a scope limited to the current diff or relevant paths that could resolve the uncertainty. Keep the recommendation proportionate. Obtain explicit user approval before invoking a plugin or starting any scan. Only after approval, verify its supported invocation, scope and baseline from its installed instructions and run within the approved scope. Do not auto-install plugins. If unavailable, tell the user, continue normal review, and suggest setup only when relevant.
 
 Keep source within approved access and data-handling boundaries; do not upload it elsewhere or expose secrets. Plugin review complements tests, existing SAST and human review. Validate findings against `SECURITY.md` and reachable code before treating them as vulnerabilities. Applying fixes or publishing findings needs authorization; the recommendation grants neither.
 
