@@ -427,3 +427,31 @@ QUnit.test(
         });
     }
 );
+QUnit.test('Panning radial y-axis (#21809)', function (assert) {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                panning: {
+                    enabled: true,
+                    type: 'xy'
+                },
+                polar: true
+            },
+            yAxis: {
+                max: 6
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            }]
+        }),
+        yAxis = chart.yAxis[0],
+        initialMax = yAxis.max,
+        x = chart.plotLeft + chart.pane[0].center[0] + 20,
+        y = chart.plotTop + chart.pane[0].center[1] + 20;
+
+    new TestController(chart).pan([x, y], [x + 40, y + 40]);
+
+    assert.ok(
+        yAxis.max > initialMax,
+        'Dragging below the pane center pans the radial y-axis'
+    );
+});

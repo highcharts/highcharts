@@ -4253,7 +4253,7 @@ class Chart {
                 trigger,
                 allowResetButton = true
             } = params,
-            { time } = this;
+            { mouseDownX = 0, mouseDownY = 0, time } = this;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -4293,8 +4293,13 @@ class Chart {
                 minPx = move;
 
             // Zooming in multiple panes, zoom only in the pane that receives
-            // the input
-            if (!reset && (fromCenter < 0 || fromCenter > axis.len)) {
+            // the input. Panning has no `from` box, use the mouse down position
+            // instead (#21809).
+            const inputPos = trigger === 'pan' && !axis.isRadial ?
+                (horiz ? mouseDownX : mouseDownY) - axis.pos :
+                fromCenter;
+
+            if (!reset && (inputPos < 0 || inputPos > len)) {
                 continue;
             }
 

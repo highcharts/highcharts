@@ -927,3 +927,66 @@ QUnit.test('The chart.events.pan event (#10833)', function (assert) {
         'Calling preventDefault should leave the extremes unchanged'
     );
 });
+
+QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
+    const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        chart = Highcharts.chart('container', {
+            chart: {
+                panning: {
+                    enabled: true,
+                    type: 'xy'
+                }
+            },
+            yAxis: [{
+                height: '50%',
+                max: 6
+            }, {
+                top: '50%',
+                height: '50%',
+                max: 6
+            }],
+            series: [{
+                data
+            }, {
+                data,
+                yAxis: 1
+            }]
+        }),
+        controller = new TestController(chart),
+        [top, bottom] = chart.yAxis,
+        x = chart.plotLeft + chart.plotWidth / 2,
+        initialMax = top.max,
+        panIn = axis => {
+            const y = axis.pos + axis.len / 2;
+            controller.pan([x, y], [x, y + 50]);
+        };
+
+    panIn(bottom);
+
+    assert.deepEqual(
+        [top.max, bottom.max > initialMax],
+        [initialMax, true],
+        'Dragging the bottom pane pans only the bottom y-axis'
+    );
+
+    const bottomMax = bottom.max;
+
+    panIn(top);
+
+    assert.deepEqual(
+        [top.max > initialMax, bottom.max],
+        [true, bottomMax],
+        'Dragging the top pane pans only the top y-axis'
+    );
+
+    const topMax = top.max;
+
+    bottom.update({ panningEnabled: false });
+    panIn(bottom);
+
+    assert.deepEqual(
+        [top.max, bottom.max],
+        [topMax, bottomMax],
+        'Updating panningEnabled to false disables panning of the pane'
+    );
+});
