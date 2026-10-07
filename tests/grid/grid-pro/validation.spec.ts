@@ -61,6 +61,9 @@ test.describe('Grid Pro - validation', () => {
         await expect(notification).toBeVisible();
         await expect(notification).toContainText('empty'); // First rule
         await expect(notification).toContainText('The value must contain "URL"'); // Custom rule
+
+        // Two messages, so one separator between them
+        await expect(notification.locator('br')).toHaveCount(1);
     });
 
     test('Lang support', async ({ page }) => {
