@@ -137,7 +137,7 @@ We strongly encourage contributors to open an issue for discussion before invest
 
 Please also note the following:
 
-- **CI and review:** every pull request from outside the team must pass both the automated CI checks and a review by a maintainer. Passing CI is required, but it doesn't mean the pull request will be accepted. We don't review pull requests while their CI checks fail.
+- **CI and review:** every pull request from outside the team needs passing CI checks and a review by a maintainer. Passing CI doesn't mean the pull request will be accepted. We don't review a pull request while its CI checks fail because of the change. Failures unrelated to the change, such as some visual comparison checks, don't block the review.
 - **Open pull requests:** to keep reviews manageable, please have no more than three pull requests open at the same time, drafts included. We may close pull requests above this limit without review.
 - **First pull request:** a maintainer may adjust the change and merge it in their own commit. In that case, you are credited as a co-author with a `Co-authored-by` trailer, so the contribution still shows up on your GitHub profile.
 
