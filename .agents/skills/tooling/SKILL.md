@@ -21,6 +21,7 @@ Use this skill for changes in `tools/`, build scripts, test runners, or reposito
 - Default scripts to non-destructive behavior.
 - Require explicit confirmation flags for destructive replacements.
 - Support non-interactive CI mode.
+- If changes affect file paths, network requests, credentials, dependencies/install hooks, CI permissions or publishing, follow [review-pr's security guidance](../review-pr/SKILL.md#security-review) to suggest a native plugin review.
 
 4. Verify tooling changes:
 - Add or update usage docs/help output (`--help`) for new scripts.

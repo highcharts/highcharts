@@ -44,6 +44,21 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - Prefer adding to existing test files.
 - If not automatable, require a manual test plan.
 
+7. Verify security:
+- Read `SECURITY.md`; for product code, use the [development security checklist](../hc-development/review.md#security).
+- For security-relevant changes, follow [Security review](#security-review).
+
+## Security review
+
+When changes affect untrusted input, HTML/URL filtering, file paths or network requests, auth/credentials, dependencies or install hooks, CI permissions or publishing, suggest a native security review and briefly explain the relevant risk:
+
+- In Codex, suggest the installed Codex Security plugin's `security-diff-scan` skill for the PR, commit, branch diff or working-tree patch.
+- In Claude Code, suggest the installed [Claude Security plugin](https://github.com/anthropics/claude-plugins-official/blob/main/plugins/claude-security/README.md): `/claude-security`, then **Scan changes**.
+
+Use the plugin available in the current environment and verify its supported invocation, scope and baseline from its installed instructions. Keep the recommendation proportionate to the current diff or relevant paths; it is not required for every edit. Do not auto-install plugins or start scans, including broad repository scans. If unavailable, say so, continue normal review, and suggest setup only when relevant.
+
+Keep source within approved access and data-handling boundaries; do not upload it elsewhere or expose secrets. Plugin review complements tests, existing SAST and human review. Validate findings against `SECURITY.md` and reachable code before treating them as vulnerabilities. Applying fixes or publishing findings needs authorization; the recommendation grants neither.
+
 ## Output format
 
 For each finding:
