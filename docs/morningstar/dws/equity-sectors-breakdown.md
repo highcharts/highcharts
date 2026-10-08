@@ -1,3 +1,10 @@
+---
+description: >-
+  Read portfolio equity exposure at super-sector, sector, and industry levels
+  from the InvestmentsConnector, then choose long, short, net, or rescaled
+  percentage columns to build a chart.
+---
+
 # Equity Sectors Breakdown
 
 The **Equity Sectors Breakdown** view provides the equity portion of

@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Data"
+description: >-
+  See how column arrays form rows, read row values and IDs through the data
+  provider, update cells with stable row IDs, and access a local DataTable for
+  batch changes.
 ---
 
 # Row data

@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Internationalization"
+description: >-
+  Translate Grid interface and accessibility text with lang, set a page-wide
+  locale, and control date, time, number, and filter-operator labels using
+  locale-aware formatting options in templates and callbacks.
 ---
 
 # Internationalization (i18n) in Highcharts Grid

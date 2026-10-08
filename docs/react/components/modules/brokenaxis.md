@@ -1,3 +1,10 @@
+---
+description: >-
+  Add the broken-axis module with its React component, configure axis breaks
+  and series gaps through chart options, and see an example that omits an
+  interval on the x-axis.
+---
+
 # BrokenAxis
 
 You can add the broken-axis module to your chart using the `BrokenAxis` component:

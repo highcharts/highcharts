@@ -1,3 +1,11 @@
+---
+description: >-
+  Choose the Morningstar connector bundle for enterprise components or Direct
+  Web Services, configure credentials, and connect the integration to
+  Highcharts or Dashboards; the examples also show region selection and
+  pre-fetched JSON.
+---
+
 # Morningstar Connectors
 
 With the **Highcharts Connectors** for the **Morningstar Direct Web Services**

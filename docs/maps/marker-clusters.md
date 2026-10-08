@@ -1,3 +1,10 @@
+---
+description: >-
+  Group dense mappoint or scatter data into labeled clusters that expand
+  into individual markers as users zoom. The article shows the required
+  module, enabling the feature, and links to its API.
+---
+
 Marker clusters
 ===============
 

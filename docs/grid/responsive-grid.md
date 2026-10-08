@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Responsive grid"
+description: >-
+  Apply option overrides when the Grid container matches width, height, or
+  callback conditions, combine rules in order, and adapt headers or pagination
+  for smaller layouts.
 ---
 
 # Responsive grid
