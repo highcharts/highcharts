@@ -412,6 +412,13 @@ class Axis {
      */
     public len!: number;
 
+    /**
+     * Ratio of this axis's pixel length to its linked parent's. Defaults
+     * to `1` if there is no linked parent.
+     * @internal
+     */
+    public lenRatio!: number;
+
     /** @internal */
     public linkedParent?: Axis;
 
@@ -1184,8 +1191,7 @@ class Axis {
             axisOld = axis.old,
             axisLen = axis.len,
             localMin = (old && axisOld ? axisOld.min : axis.min),
-            // Scale for a linked axis with its own pixel length
-            lenRatio = (this.len && axisLen) ? this.len / axisLen : 1;
+            lenRatio = this.lenRatio;
 
         if (!isNumber(localMin)) {
             return NaN;
@@ -1243,10 +1249,11 @@ class Axis {
                 (sign * minPixelPadding) +
                 (isNumber(pointPlacement) ? localA * pointPlacement : 0);
 
+            returnValue *= lenRatio;
+
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
             }
-            returnValue *= lenRatio;
 
             if (Math.abs(returnValue) < 1e-9) {
                 returnValue = 0;
@@ -1975,6 +1982,11 @@ class Axis {
         // Translation addend
         axis.transB = axis.horiz ? axis.left : axis.bottom;
         axis.minPixelPadding = transA * minPointOffset;
+
+        // Scale for a linked axis with its own pixel length
+        axis.lenRatio = (axis.len && linkedParent?.len) ?
+            axis.len / linkedParent.len :
+            1;
 
         fireEvent(this, 'afterSetAxisTranslation');
     }

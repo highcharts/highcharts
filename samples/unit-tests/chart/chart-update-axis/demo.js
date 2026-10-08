@@ -81,12 +81,9 @@ QUnit.test('Test updating axis by id', function (assert) {
     assert.strictEqual(chart.xAxis[1].categories[0], 'Uno', 'Updated category');
 });
 
-QUnit.test('Updating a linked axis id (#24658)', function (assert) {
+QUnit.test('Updating a linked axis', function (assert) {
     const options = id => ({
-        xAxis: [
-            { id, max: 10, width: '60%' },
-            { id: 'linked', linkedTo: 0, left: '65%', width: '30%' }
-        ],
+        xAxis: [{ id, max: 10 }, { id: 'linked', linkedTo: 0 }],
         series: [
             { data: [1, 2, 3], xAxis: id },
             { data: [3, 2, 1], xAxis: 'linked' }
@@ -101,12 +98,12 @@ QUnit.test('Updating a linked axis id (#24658)', function (assert) {
     assert.strictEqual(
         linked.linkedParent === linked,
         false,
-        'Linked axis is not its own parent'
+        'Linked axis is not its own parent (#24658)'
     );
     assert.strictEqual(
         chart.series[1].points.length,
         3,
-        'Linked series stays visible'
+        'Linked series stays visible (#24658)'
     );
 
     // Linking by id resolves the master and inherits its extremes
@@ -114,13 +111,20 @@ QUnit.test('Updating a linked axis id (#24658)', function (assert) {
     assert.strictEqual(
         linked.linkedParent?.options.id,
         'renamed',
-        'linkedTo resolves the master axis by id'
+        'linkedTo resolves the master axis by id (#24658)'
     );
     assert.strictEqual(
         linked.max,
         10,
-        'Linked axis inherits the master extremes'
+        'Linked axis inherits the master extremes (#24658)'
     );
+
+    chart.update({
+        xAxis: [
+            { id: 'renamed', width: '60%' },
+            { id: 'linked', left: '65%', width: '30%' }
+        ]
+    });
 
     const master = chart.get('renamed'),
         value = (master.min + master.max) / 2;
