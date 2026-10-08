@@ -2100,7 +2100,7 @@ namespace AxisDefaults {
             align: 'middle',
 
             /**
-             * Deprecated. Set the `text` to `undefined` to disable the title.
+             * Deprecated. Set the `text` to `null` to disable the title.
              *
              * @deprecated 3.0.0
              * @type      {boolean}
@@ -3081,7 +3081,7 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`. The default value is overridden by
+             * `text` option to `null`. The default value is overridden by
              * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
