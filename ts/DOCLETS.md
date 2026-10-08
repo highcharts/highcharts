@@ -39,9 +39,11 @@ The custom implementations have the following requirements:
    to the option itself, not to its type. Currently applied to `id`, `index`,
    `name`, `type`, `className`, `color`, `events`, and `data`.
 
-10. `@default` and `@sample` tags support product-specific values. The first
-   word following the tag has to be the product key in curly brackets. Multiple
-   products can be separated by `|`. E.g. `@default {highcharts|highstock} 0`,
+10. `@default`, `@requires` and `@sample` tags support product-specific values.
+   The first word following the tag has to be the product key in curly brackets. 
+   Multiple products can be separated by `|`. E.g.
+   `@default {highcharts|highstock} 0`,
+   `@requires {highcharts} modules/heatmap`,
    `@sample {highcharts|highstock} demo/chart/polar`.
 
 
