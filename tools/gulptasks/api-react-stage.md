@@ -42,6 +42,12 @@ navigation links and their React destinations are both published. A legacy-only
 React publication completes before legacy uploads begin, so a failed React
 publication does not publish navigation links to missing pages.
 
+To publish the complete React artifact without changing or uploading legacy
+API navigation, use `--react-only`. This mode ignores `--docs` and `--sync`,
+stages React files without editing the product `api.js` files, and publishes all
+React inventory files, including shells. Do not combine it with
+`--react-shells-only`, which is reserved for shell rollback.
+
 Run the normal API upload with `--dryrun` to exercise both legacy uploads and
 React publication without contacting S3:
 
@@ -49,6 +55,18 @@ React publication without contacting S3:
 npx gulp api-upload \
   --bucket your-confirmed-api-bucket \
   --dryrun \
+  --react-artifact /path/to/react-static-artifact \
+  --expected-react-version 5.0.1 \
+  --expected-highcharts-version 13.1.1
+```
+
+For a React-only dry run that leaves legacy navigation untouched, run:
+
+```sh
+npx gulp api-upload \
+  --bucket your-confirmed-api-bucket \
+  --dryrun \
+  --react-only \
   --react-artifact /path/to/react-static-artifact \
   --expected-react-version 5.0.1 \
   --expected-highcharts-version 13.1.1

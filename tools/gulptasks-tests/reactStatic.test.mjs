@@ -303,6 +303,18 @@ describe('static React artifact consumer', async () => {
         assert.equal(await readFile(immutablePath, 'utf8'), 'a prior release has different bytes');
     });
 
+    await it('leaves legacy navigation untouched when disabled during staging', async () => {
+        const fixture = await makeFixture();
+        const script = Path.join(fixture.stagingDirectory, 'highcharts', 'api.js');
+        await mkdir(Path.dirname(script), { recursive: true });
+        await writeFile(script, 'legacy navigation');
+        const artifact = await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+        await ReactStatic.stageArtifact(artifact, fixture.stagingDirectory, { addNavigation: false });
+        assert.equal(await readFile(script, 'utf8'), 'legacy navigation');
+        assert.deepEqual(await readFile(Path.join(fixture.stagingDirectory, 'highcharts/react/index.html')),
+            fixture.contents.get('highcharts/react/index.html'));
+    });
+
     await it('adds product-specific React links through the legacy navigation script', async () => {
         const fixture = await makeFixture();
         const originalScript = 'window.legacyLoaded = true;\n';

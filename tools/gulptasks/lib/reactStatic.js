@@ -296,9 +296,10 @@ async function addReactNavigation(root) {
  * Stage inventory files and extend legacy navigation, retaining old releases.
  * @param {object} artifact Verified artifact.
  * @param {string} directory Staging directory.
+ * @param {object} options Optional legacy navigation settings.
  * @return {Promise<object>} Artifact with its staged root.
  */
-async function stageArtifact(artifact, directory) {
+async function stageArtifact(artifact, directory, options = {}) {
     await FS.mkdir(directory, { recursive: true });
     if ((await FS.lstat(directory)).isSymbolicLink()) {
         fail('staging directory cannot be a symlink');
@@ -319,7 +320,9 @@ async function stageArtifact(artifact, directory) {
         }
         await FS.writeFile(destination, content);
     });
-    await addReactNavigation(root);
+    if (options.addNavigation !== false) {
+        await addReactNavigation(root);
+    }
     return { ...artifact, root };
 }
 

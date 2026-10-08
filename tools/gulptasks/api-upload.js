@@ -39,6 +39,7 @@ const HELP_MESSAGE = [
     '--region  AWS region of S3 bucket. (optional)',
     '--react-artifact  Validated React static artifact directory. (optional)',
     '--react-report  Publication report path. (optional)',
+    '--react-only  Publish all React files and skip legacy upload/navigation.',
     '--react-shells-only  Publish only React shells and skip legacy upload/sync.',
     '--speak   Says if task failed or succeeded. (optional)',
     '--sync    Synchronize the S3 bucket; deletes remote files that are not',
@@ -201,6 +202,7 @@ function getReactArtifactInput(args, options = {}) {
         expectedHighchartsVersion,
         expectedReactVersion,
         reactArtifact,
+        reactOnly,
         reactReport,
         reactShellsOnly
     } = args;
@@ -210,6 +212,7 @@ function getReactArtifactInput(args, options = {}) {
             expectedHighchartsVersion !== void 0 ||
             expectedReactVersion !== void 0 ||
             reactReport !== void 0 ||
+            reactOnly !== void 0 ||
             reactShellsOnly !== void 0
         ) {
             throw new Error(
@@ -244,11 +247,16 @@ function getReactArtifactInput(args, options = {}) {
         throw new Error('--react-shells-only is not supported by this task.');
     }
 
+    if (reactOnly && reactShellsOnly) {
+        throw new Error('--react-only cannot be combined with --react-shells-only.');
+    }
+
     return {
         directory: path.resolve(reactArtifact.trim()),
         expectedHighchartsVersion: expectedHighchartsVersion.trim(),
         expectedReactVersion: expectedReactVersion.trim(),
         reportPath: reactReport ? path.resolve(reactReport.trim()) : void 0,
+        reactOnly: !!reactOnly,
         shellsOnly: !!reactShellsOnly
     };
 }
@@ -297,7 +305,7 @@ async function runApiUpload(args, dependencies = {}) {
     });
     let normalizedDocs;
 
-    if (!reactArtifactInput?.shellsOnly && args.docs !== void 0) {
+    if (!reactArtifactInput?.shellsOnly && !reactArtifactInput?.reactOnly && args.docs !== void 0) {
         normalizedDocs = normalizeDocs(
             args.docs,
             reactStatic.isReactOwnedKey
@@ -324,7 +332,8 @@ async function runApiUpload(args, dependencies = {}) {
         );
         stagedReactArtifact = await reactStatic.stageArtifact(
             verifiedArtifact,
-            sourceRoot
+            sourceRoot,
+            { addNavigation: !reactArtifactInput.reactOnly }
         );
     }
 
@@ -337,7 +346,7 @@ async function runApiUpload(args, dependencies = {}) {
 
     let sourceItems;
 
-    if (reactArtifactInput?.shellsOnly) {
+    if (reactArtifactInput?.shellsOnly || reactArtifactInput?.reactOnly) {
         sourceItems = [];
     } else if (normalizedDocs) {
         sourceItems = [];

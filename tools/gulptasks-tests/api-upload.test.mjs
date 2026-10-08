@@ -49,8 +49,8 @@ function createDependencies(sourceRoot, calls, options = {}) {
                 }
                 return { root: directory, manifest: {}, records: [] };
             },
-            async stageArtifact(artifact, targetRoot) {
-                calls.push(['stage', artifact, targetRoot]);
+            async stageArtifact(artifact, targetRoot, stageOptions) {
+                calls.push(['stage', artifact, targetRoot, stageOptions]);
                 return { ...artifact, root: targetRoot };
             },
             async preparePublicationReport(artifact, reportPath) {
@@ -128,6 +128,46 @@ describe('api-upload task integration', () => {
             }, { allowShellsOnly: true }),
             /requires --expected-react-version and --expected-highcharts-version/u
         );
+    });
+
+    it('requires a React artifact for react-only and rejects conflicting modes', async () => {
+        const sourceRoot = await createSourceRoot();
+        const calls = [];
+        const dependencies = createDependencies(sourceRoot, calls);
+
+        try {
+            await assert.rejects(
+                runApiUpload(
+                    {
+                        bucket: 'test-bucket',
+                        dryrun: true,
+                        reactOnly: true
+                    },
+                    dependencies
+                ),
+                /React artifact options require --react-artifact/u
+            );
+
+            await assert.rejects(
+                runApiUpload(
+                    {
+                        bucket: 'test-bucket',
+                        dryrun: true,
+                        expectedHighchartsVersion: '13.1.1',
+                        expectedReactVersion: '5.0.1',
+                        reactArtifact: '/tmp/react-static',
+                        reactOnly: true,
+                        reactShellsOnly: true
+                    },
+                    dependencies
+                ),
+                /cannot be combined/u
+            );
+
+            assert.deepEqual(calls, []);
+        } finally {
+            await rm(sourceRoot, { recursive: true, force: true });
+        }
     });
 
     it('rejects direct React docs selections before verification or S3', async () => {
@@ -250,6 +290,51 @@ describe('api-upload task integration', () => {
                 shellsOnly: false,
                 reportPath: resolve('tmp/react-report.json')
             });
+        } finally {
+            await rm(sourceRoot, { recursive: true, force: true });
+        }
+    });
+
+    it('publishes only React files without changing navigation or running legacy upload/sync', async () => {
+        const sourceRoot = await createSourceRoot();
+        const calls = [];
+
+        try {
+            await runApiUpload(
+                {
+                    bucket: 'test-bucket',
+                    docs: 'highcharts/react',
+                    dryrun: true,
+                    expectedHighchartsVersion: '13.1.1',
+                    expectedReactVersion: '5.0.1',
+                    reactArtifact: '/tmp/react-static',
+                    reactOnly: true,
+                    sync: true
+                },
+                createDependencies(sourceRoot, calls)
+            );
+
+            const kinds = calls.map(call => (
+                Array.isArray(call) ? call[0] : call
+            ));
+            const stageCall = calls.find(call => call[0] === 'stage');
+            const publishCall = calls.find(call => call[0] === 'publish');
+
+            assert.ok(stageCall, 'React artifact should be staged');
+            assert.ok(publishCall, 'React artifact should be published');
+            assert.ok(kinds.indexOf('verify') < kinds.indexOf('stage'));
+            assert.ok(kinds.indexOf('stage') < kinds.indexOf('session'));
+            assert.ok(kinds.indexOf('session') < kinds.indexOf('publish'));
+            assert.deepEqual(stageCall[3], { addNavigation: false });
+            assert.deepEqual(publishCall[3], {
+                shellsOnly: false,
+                reportPath: void 0
+            });
+            assert.equal(calls.some(call => (
+                Array.isArray(call) &&
+                ['file', 'upload', 'sync'].includes(call[0])
+            )), false);
+            assert.ok(calls.includes('destroy'));
         } finally {
             await rm(sourceRoot, { recursive: true, force: true });
         }
