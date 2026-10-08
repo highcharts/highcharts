@@ -27,88 +27,56 @@ const electionYears = ['2020', '2016', '2012', '2008'];
 // Election data loaded from CSV and converted to JSON
 let electionData;
 
-// Class name marking the party that won the column pair the cell belongs to.
-// Electoral and popular votes are compared separately, so a state can come
-// out blue on one pair and red on the other.
-function winnerClassName(party, own, rival) {
-    return '{#if (gt row.data.' + own + ' row.data.' + rival + ')}' +
-        party + '{/if}';
-}
-
-// Columns the map and the result panel read, not shown in the grid
-const hiddenColumnIds = [
-    'demPercent',
-    'repPercent',
-    'postal-code',
-    'demVoteSummary',
-    'repVoteSummary'
-];
-
-// The grid columns. Passed whole on every update, because updating
-// `columns` replaces the array rather than merging into it.
+// Passed whole on every update, because updating `columns` replaces the array
+// rather than merging into it. The `democrat`/`republican` classes mark the
+// party leading the column pair - electors and popular votes are compared
+// separately.
 function getGridColumns(candDem, candRep) {
     return [{
         id: 'state',
-        header: {
-            format: 'State'
-        }
+        header: { format: 'State' }
     }, {
         id: 'demColVotes',
-        header: {
-            format: candDem ? candDem + ' (Democrat)' : 'Dem. electors'
-        },
-        cells: {
-            className: winnerClassName(
-                'democrat', 'demColVotes', 'repColVotes'
-            )
-        }
+        header: { format: candDem ? candDem + ' (Democrat)' : 'Dem. electors' },
+        cells: { className: '{#if (gt row.data.demColVotes row.data.repColVotes)}democrat{/if}' }
     }, {
         id: 'repColVotes',
-        header: {
-            format: candRep ? candRep + ' (Republican)' : 'Rep. electors'
-        },
-        cells: {
-            className: winnerClassName(
-                'republican', 'repColVotes', 'demColVotes'
-            )
-        }
+        header: { format: candRep ? candRep + ' (Republican)' : 'Rep. electors' },
+        cells: { className: '{#if (gt row.data.repColVotes row.data.demColVotes)}republican{/if}' }
     }, {
         id: 'demVotes',
-        header: {
-            format: 'Dem. votes'
-        },
+        header: { format: 'Dem. votes' },
         cells: {
-            className: winnerClassName('democrat', 'demVotes', 'repVotes'),
+            className: '{#if (gt row.data.demVotes row.data.repVotes)}democrat{/if}',
             formatter: formatVotesCell
         }
     }, {
         id: 'repVotes',
-        header: {
-            format: 'Rep. votes'
-        },
+        header: { format: 'Rep. votes' },
         cells: {
-            className: winnerClassName('republican', 'repVotes', 'demVotes'),
+            className: '{#if (gt row.data.repVotes row.data.demVotes)}republican{/if}',
             formatter: formatVotesCell
         }
     }, {
         id: 'totalVotes',
-        header: {
-            format: 'Total votes'
-        },
+        header: { format: 'Total votes' },
         cells: {
             formatter: function () {
                 return Number(this.value).toLocaleString('en-US');
             }
         }
         // Columns backing the map and the result panel, not shown in the grid
-    }, ...hiddenColumnIds.map(id => ({ id, enabled: false }))];
+    }, ...[
+        'demPercent', 'repPercent', 'postal-code', 'demVoteSummary',
+        'repVoteSummary'
+    ].map(id => ({ id, enabled: false }))];
 }
 
-// Renders a vote count with its share of the row total. Works for a state
-// row and for the aggregated national row alike.
+// Vote count with its share of the row total, for a state row and for the
+// aggregated national one alike
 function formatVotesCell() {
-    const votes = Number(this.value);
-    const total = Number(this.row.data.totalVotes);
+    const votes = Number(this.value),
+        total = Number(this.row.data.totalVotes);
 
     return votes.toLocaleString('en-US') +
         (total ? ' (' + (votes / total * 100).toFixed(1) + '%)' : '');
@@ -422,8 +390,6 @@ async function setupDashboard() {
                 text: 'Updating...' // Populated later
             },
             gridOptions: {
-                // The national totals are aggregated by the grid and stuck
-                // above the states instead of sitting in the data.
                 summaryRows: {
                     id: 'national',
                     position: 'top',
@@ -674,22 +640,15 @@ async function setupDashboard() {
         const connectors = [];
 
         electionYears.forEach(function (year) {
-            const data = electionData[year].data;
+            const json = { type: 'JSON', firstRowAsNames: true },
+                data = electionData[year].data;
 
-            connectors.push({
-                id: 'votes' + year,
-                type: 'JSON',
-                firstRowAsNames: true,
-                data: data
-            }, {
-                // The grid renders the national totals as a pinned summary
-                // row, so its own connector leaves out the national row
-                // (index 1) that the other components read.
-                id: 'grid' + year,
-                type: 'JSON',
-                firstRowAsNames: true,
-                data: [data[0], ...data.slice(2)]
-            });
+            connectors.push(
+                { id: 'votes' + year, ...json, data },
+                // Same data without the national row (index 1), which the
+                // grid renders as a summary row instead
+                { id: 'grid' + year, ...json, data: [data[0], ...data.slice(2)] }
+            );
         });
         return connectors;
     }
@@ -797,7 +756,7 @@ async function updateResultComponent(electionTable, year) {
     document.querySelector('div#dem-cand img').src = imgDemUrl;
     document.querySelector('div#rep-cand img').src = imgRepUrl;
 
-    // Election information.
+    // Election information
     let el = document.getElementById('info-dem1');
     el.textContent = `${candDem}: ${demColVotes}`;
     el = document.getElementById('info-dem2');
@@ -830,8 +789,7 @@ function updateControlComponent(year) {
     // Update title with year
     title.textContent = year + ' ' + commonTitle;
 
-    // Brief text about the election. The markup is already parsed, so it is
-    // cloned rather than round-tripped through innerHTML.
+    // Brief text about the election
     const brief = el.querySelector('descr').cloneNode(true);
     const link = document.createElement('a');
 
