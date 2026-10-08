@@ -64,6 +64,8 @@ import {
 declare module './Chart/ChartBase'{
     interface ChartBase {
         cancelClick?: boolean;
+        dragStartX?: number;
+        dragStartY?: number;
         hoverPoint?: Point;
         hoverPoints?: Array<Point>;
         hoverSeries?: Series;
@@ -550,8 +552,8 @@ class Pointer {
         // Record the start position
         chart.mouseIsDown = e.type;
         chart.cancelClick = false;
-        chart.mouseDownX = e.chartX;
-        chart.mouseDownY = e.chartY;
+        chart.mouseDownX = chart.dragStartX = e.chartX;
+        chart.mouseDownY = chart.dragStartY = e.chartY;
     }
 
     /**

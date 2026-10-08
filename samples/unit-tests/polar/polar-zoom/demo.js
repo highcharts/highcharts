@@ -427,6 +427,7 @@ QUnit.test(
         });
     }
 );
+
 QUnit.test('Panning radial y-axis (#21809)', function (assert) {
     const chart = Highcharts.chart('container', {
             chart: {

@@ -981,12 +981,43 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
 
     const topMax = top.max;
 
+    controller.pan([x, top.pos + top.len - 10], [x, bottom.pos + 40]);
+
+    assert.deepEqual(
+        [top.max > topMax, bottom.max],
+        [true, bottomMax],
+        'Dragging into another pane keeps panning the initial pane'
+    );
+
+    let extremes = [top.max, bottom.max];
+
     bottom.update({ panningEnabled: false });
     panIn(bottom);
 
     assert.deepEqual(
         [top.max, bottom.max],
-        [topMax, bottomMax],
+        extremes,
         'Updating panningEnabled to false disables panning of the pane'
     );
+
+    top.update({ height: '40%' }, false);
+    top.setExtremes(2, 6, false);
+    bottom.update({ top: '60%', height: '40%' });
+
+    const y = top.pos + top.len - 30;
+
+    extremes = [top.min, top.max];
+
+    controller.setPosition(x, y);
+    controller.mouseDown();
+    controller.moveTo(x, y + 50);
+    controller.moveTo(x, y);
+
+    assert.deepEqual(
+        [top.min, top.max].map(Math.round),
+        extremes,
+        'Dragging into the gap between panes and back restores the extremes'
+    );
+
+    controller.mouseUp();
 });
