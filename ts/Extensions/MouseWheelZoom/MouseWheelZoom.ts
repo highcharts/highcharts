@@ -29,6 +29,7 @@ import NBU from '../Annotations/NavigationBindingsUtilities.js';
 import {
     addEvent,
     defined,
+    fireEvent,
     internalClearTimeout,
     isObject,
     merge
@@ -49,6 +50,14 @@ const composedClasses: Array<(Function|GlobalsBase)> = [],
     };
 
 let wheelTimer: number;
+// Accumulated sub-point pixel movement for ordinal wheel panning, so that
+// fractional point movements add up across notches instead of being lost to
+// rounding. Reset when the wheel gesture ends or reverses direction.
+let wheelPanRemainder = 0;
+type TransformGeometry = Pick<
+    NonNullable<Parameters<Chart['transform']>[0]>,
+    'from'|'to'
+>;
 
 /* *
  *
@@ -68,6 +77,67 @@ const optionsToObject = (
     return merge(defaultOptions, options);
 };
 
+/** @internal */
+const getAxes = function (
+    chart: Chart,
+    xAxis: Array<Axis>,
+    yAxis: Array<Axis>,
+    options: MouseWheelZoomOptions
+): Array<Axis> {
+    const type = (options.type ?? chart.zooming.type ?? '');
+
+    if (type === 'x') {
+        return xAxis;
+    }
+
+    if (type === 'y') {
+        return yAxis;
+    }
+
+    if (type === 'xy') {
+        return chart.axes;
+    }
+
+    return [];
+};
+
+/** @internal */
+const scheduleDrop = function (chart: Chart): void {
+    if (defined(wheelTimer)) {
+        internalClearTimeout(wheelTimer);
+    }
+
+    // Some time after the last mousewheel event, run drop. In case any of
+    // the affected axes had `startOnTick` or `endOnTick`, they will be
+    // re-adjusted now.
+    wheelTimer = setTimeout((): void => {
+        // End of the gesture, start accumulating from scratch next time.
+        wheelPanRemainder = 0;
+        chart.pointer?.drop();
+    }, 400);
+};
+
+/** @internal */
+const transformBy = function (
+    chart: Chart,
+    xAxis: Array<Axis>,
+    yAxis: Array<Axis>,
+    options: MouseWheelZoomOptions,
+    geometry: TransformGeometry
+): boolean {
+    const hasTransformed = chart.transform({
+        axes: getAxes(chart, xAxis, yAxis, options),
+        ...geometry,
+        trigger: 'mousewheel',
+        allowResetButton: options.showResetButton
+    });
+
+    if (hasTransformed) {
+        scheduleDrop(chart);
+    }
+
+    return hasTransformed;
+};
 
 /** @internal */
 const zoomBy = function (
@@ -79,19 +149,7 @@ const zoomBy = function (
     mouseY: number,
     options: MouseWheelZoomOptions
 ): boolean {
-    const type = (options.type ?? chart.zooming.type ?? '');
-
-    let axes: Array<Axis> = [];
-    if (type === 'x') {
-        axes = xAxis;
-    } else if (type === 'y') {
-        axes = yAxis;
-    } else if (type === 'xy') {
-        axes = chart.axes;
-    }
-
-    const hasZoomed = chart.transform({
-        axes,
+    return transformBy(chart, xAxis, yAxis, options, {
         // Create imaginary reference and target rectangles around the mouse
         // point that scales up or down with `howMuch`;
         to: {
@@ -107,30 +165,113 @@ const zoomBy = function (
             y: mouseY - 5 * howMuch,
             width: 10 * howMuch,
             height: 10 * howMuch
-        },
-        trigger: 'mousewheel',
-        allowResetButton: options.showResetButton
-    });
-
-    if (hasZoomed) {
-        if (defined(wheelTimer)) {
-            internalClearTimeout(wheelTimer);
         }
+    });
+};
 
-        // Some time after the last mousewheel event, run drop. In case any of
-        // the affected axes had `startOnTick` or `endOnTick`, they will be
-        // re-adjusted now.
-        wheelTimer = setTimeout((): void => {
-            chart.pointer?.drop();
-        }, 400);
+
+/** @internal */
+const panBy = function (
+    chart: Chart,
+    howMuch: number,
+    xAxis: Array<Axis>,
+    yAxis: Array<Axis>,
+    options: MouseWheelZoomOptions
+): boolean {
+    const axes = getAxes(chart, xAxis, yAxis, options),
+        type = (options.type ?? chart.zooming.type ?? '');
+
+    // Nothing to pan (e.g. no zooming type set).
+    if (!axes.length || !type) {
+        return false;
     }
 
-    return hasZoomed;
+    const chartOptions = chart.options.chart,
+        prevPanning = chartOptions.panning,
+        ordinalAxis = chart.xAxis[0] as Axis & {
+            ordinal?: {
+                slope?: number;
+                overscrollPointsRange?: number;
+            };
+        };
+
+    // To keep the on-screen pan speed constant at different zoom levels,
+    // accumulate the pixel movement and pan only when it adds up to
+    // a whole point. Keep any leftover pixels for the next notch.
+    let panX = howMuch;
+    if (type !== 'y' && ordinalAxis?.isOrdinal && ordinalAxis.ordinal) {
+        const closestPointRange = ordinalAxis.closestPointRange ||
+                ordinalAxis.ordinal.overscrollPointsRange,
+            pointPixelWidth = ordinalAxis.translationSlope *
+                (ordinalAxis.ordinal.slope || (closestPointRange as number));
+        if (pointPixelWidth) {
+            // Restart the accumulation when the scroll direction reverses.
+            if (howMuch * wheelPanRemainder < 0) {
+                wheelPanRemainder = 0;
+            }
+
+            wheelPanRemainder += howMuch;
+
+            // Whole points accumulated so far, truncated towards zero.
+            const ratio = wheelPanRemainder / pointPixelWidth,
+                units = ratio < 0 ? Math.ceil(ratio) : Math.floor(ratio);
+
+            // Keep the sub-point pixel remainder for the next notch.
+            wheelPanRemainder -= units * pointPixelWidth;
+            panX = units * pointPixelWidth;
+        }
+    }
+
+    const panEvent: AnyRecord = {
+        originalEvent: { chartX: panX, chartY: howMuch },
+        mouseWheel: true
+    };
+
+    chart.mouseDownX = 0;
+    chart.mouseDownY = 0;
+
+    chartOptions.panning = {
+        enabled: prevPanning?.enabled ?? true,
+        type
+    };
+
+    let hasPanned = false;
+
+    // Fire the `pan` event so that registered pan handlers (such as the
+    // ordinal axis) get a chance to handle it. For regular axes, the default
+    // function below performs the transform.
+    fireEvent(chart, 'pan', panEvent, (): void => {
+        hasPanned = chart.transform({
+            axes,
+            to: {
+                x: howMuch,
+                y: howMuch
+            },
+            trigger: 'mousewheel',
+            allowResetButton: options.showResetButton
+        });
+    });
+
+    chartOptions.panning = prevPanning;
+
+    // An axis pan handler that intercepts the pan (e.g. the ordinal axis)
+    // prevents the default and performs the pan itself, so treat a prevented
+    // default as a successful pan.
+    if (panEvent.defaultPrevented) {
+        hasPanned = true;
+    }
+
+    if (hasPanned) {
+        scheduleDrop(chart);
+    }
+
+    return hasPanned;
 };
 
 /** @internal */
 function onAfterGetContainer(this: Chart): void {
-    const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
+    const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel),
+        panKey = this.options.chart.panKey;
 
     if (wheelZoomOptions.enabled) {
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
@@ -157,22 +298,40 @@ function onAfterGetContainer(this: Chart): void {
                         pointer.getCoordinates(e).yAxis
                     );
 
-                const hasZoomed = zoomBy(
-                    this,
-                    Math.pow(
-                        wheelSensitivity,
-                        delta
-                    ),
-                    xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
-                    yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
-                    e.chartX,
-                    e.chartY,
-                    wheelZoomOptions
-                );
+                const panKeyPressed = panKey && e[`${panKey}Key`];
+                if (panKeyPressed) {
+                    // Pan
+                    const hasPanned = panBy(
+                        this,
+                        delta * 15 * wheelSensitivity,
+                        xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
+                        yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
+                        wheelZoomOptions
+                    );
 
-                // Prevent page scroll
-                if (hasZoomed) {
-                    e.preventDefault?.();
+                    // Prevent page scroll
+                    if (hasPanned) {
+                        e.preventDefault?.();
+                    }
+                } else {
+
+                    const hasZoomed = zoomBy(
+                        this,
+                        Math.pow(
+                            wheelSensitivity,
+                            delta
+                        ),
+                        xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
+                        yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
+                        e.chartX,
+                        e.chartY,
+                        wheelZoomOptions
+                    );
+
+                    // Prevent page scroll
+                    if (hasZoomed) {
+                        e.preventDefault?.();
+                    }
                 }
             }
 
