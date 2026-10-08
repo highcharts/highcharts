@@ -198,8 +198,19 @@ QUnit.test('Ordinal axis and lazy loading', function (assert) {
             'Tick ' + tick.label.textStr + ' rendered (#10290)'
         );
     });
-});
 
+    // Unrelated chart update should not trigger an axis render
+    let renderCount = 0;
+    Highcharts.addEvent(chart.xAxis[0], 'afterRender', () => {
+        renderCount++;
+    });
+    chart.update({
+        navigator: {
+            maskFill: '#00ff0011'
+        }
+    });
+    assert.strictEqual(renderCount, 0, 'Axis should not have rendered.');
+});
 
 QUnit.test(
     'Panning ordinal axis on mobile devices- lin2val calculation, ' +

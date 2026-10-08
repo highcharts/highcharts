@@ -236,9 +236,14 @@ QUnit.test('series.centerInCategory', function (assert) {
         'columnpyramid.'
     );
 
-    chart.update({
+    chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
+        },
+        plotOptions: {
+            series: {
+                centerInCategory: true
+            }
         },
         series: [{
             data: [
@@ -252,7 +257,7 @@ QUnit.test('series.centerInCategory', function (assert) {
                 [1, 2]
             ]
         }]
-    }, true, true);
+    });
 
     point = chart.series[0].points[0];
     tickX = chart.xAxis[0].ticks[0].mark.element.getBBox().x;
@@ -293,7 +298,6 @@ QUnit.test('series.centerInCategory', function (assert) {
     );
 
 
-    chart.xAxis[1].remove();
     chart.addAxis({
         opposite: true
     }, false);

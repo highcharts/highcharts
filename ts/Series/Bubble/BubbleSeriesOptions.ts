@@ -44,7 +44,7 @@ import type { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOption
  *
  * @excluding cluster
  *
- * @excluding dataParser, dataURL, legendSymbolColor, stack
+ * @excluding legendSymbolColor, stack
  *
  * @product highcharts highstock
  *
