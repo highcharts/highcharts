@@ -42,8 +42,10 @@ Highcharts.chart('container', {
         tickInterval: 1,
         labels: {
             align: 'right',
+            useHTML: true,
             allowOverlap: true,
             step: 1,
+            x: -8,
             y: 3,
             style: {
                 fontSize: '13px'
