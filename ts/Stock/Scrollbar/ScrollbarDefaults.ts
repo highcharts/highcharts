@@ -56,6 +56,8 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @sample stock/scrollbar/style/
      *         Non-default height
+     * @sample stock/scrollbar/height-css-length/
+     *         Scrollbar height as a CSS length
      *
      * @type    {number|Highcharts.CSSLength}
      */

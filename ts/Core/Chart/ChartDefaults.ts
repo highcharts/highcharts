@@ -372,6 +372,8 @@ const ChartDefaults: ChartOptions = {
      *         Zero margins
      * @sample {highcharts} highcharts/chart/margin-css-variables/
      *         Margins from CSS variables
+     * @sample highcharts/chart/margin-css-length/
+     *         Margins as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength|Array<(number|Highcharts.CSSLength)>}
      * @apioption chart.margin
@@ -389,6 +391,8 @@ const ChartDefaults: ChartOptions = {
      *         100px bottom margin
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
+     * @sample highcharts/chart/margin-css-length/
+     *         Margins as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @since     2.0
@@ -409,6 +413,8 @@ const ChartDefaults: ChartOptions = {
      *         150px left margin
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
+     * @sample highcharts/chart/margin-css-length/
+     *         Margins as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @since     2.0
@@ -429,6 +435,8 @@ const ChartDefaults: ChartOptions = {
      *         100px right margin
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
+     * @sample highcharts/chart/margin-css-length/
+     *         Margins as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @since     2.0
@@ -446,6 +454,8 @@ const ChartDefaults: ChartOptions = {
      *         100px top margin
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
+     * @sample highcharts/chart/margin-css-length/
+     *         Margins as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @since     2.0
@@ -608,7 +618,10 @@ const ChartDefaults: ChartOptions = {
      *         10px radius
      * @sample {highmaps} maps/chart/border/
      *         Border options
+     * @sample highcharts/chart/borderradius-css-length/
+     *         Border radius as a CSS length
      *
+     * @type {number|Highcharts.CSSLength}
      */
     borderRadius: 0,
 
@@ -687,8 +700,11 @@ const ChartDefaults: ChartOptions = {
      * respectively. Use the options spacingTop, spacingRight, spacingBottom
      * and spacingLeft options for shorthand setting of one option.
      *
+     * @sample highcharts/chart/spacing-css-length/
+     *         Spacing as CSS lengths
+     *
      * @see     [chart.margin](#chart.margin)
-     * @type    {Array<number>}
+     * @type    {Array<(number|Highcharts.CSSLength)>}
      * @default [10, 10, 15, 10]
      * @since   3.0.6
      */
@@ -970,6 +986,8 @@ const ChartDefaults: ChartOptions = {
      *         Spacing bottom set to 100
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
+     * @sample highcharts/chart/spacing-css-length/
+     *         Spacing as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @default   15
@@ -989,6 +1007,8 @@ const ChartDefaults: ChartOptions = {
      *         Spacing left set to 100
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
+     * @sample highcharts/chart/spacing-css-length/
+     *         Spacing as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @default   10
@@ -1010,6 +1030,8 @@ const ChartDefaults: ChartOptions = {
      *         Spacing set to 100
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
+     * @sample highcharts/chart/spacing-css-length/
+     *         Spacing as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @default   10
@@ -1032,6 +1054,8 @@ const ChartDefaults: ChartOptions = {
      *         A top spacing of 100
      * @sample {highmaps} maps/chart/spacing/
      *         Spacing 100 all around
+     * @sample highcharts/chart/spacing-css-length/
+     *         Spacing as CSS lengths
      *
      * @type      {number|Highcharts.CSSLength}
      * @default   10
@@ -1303,6 +1327,8 @@ const ChartDefaults: ChartOptions = {
      *         800px wide
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
+     * @sample highcharts/chart/width-css-length/
+     *         Width as a CSS length
      *
      * @type {null|number|Highcharts.CSSLength}
      */
@@ -1330,6 +1356,8 @@ const ChartDefaults: ChartOptions = {
      *         Highcharts with percentage height
      * @sample highcharts/chart/height-inherited/
      *         Chart with inherited height
+     * @sample highcharts/chart/height-css-length/
+     *         Height as a CSS length
      *
      * @type {null|number|Highcharts.CSSLength}
      */

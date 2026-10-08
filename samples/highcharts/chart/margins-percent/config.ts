@@ -8,9 +8,11 @@ export default {
         value: '400'
     }, {
         path: 'chart.marginLeft',
+        type: 'text',
         value: '20%'
     }, {
         path: 'chart.marginRight',
+        type: 'text',
         value: '20%'
     }],
 

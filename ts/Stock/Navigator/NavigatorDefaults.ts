@@ -98,6 +98,8 @@ const NavigatorDefaults: NavigatorOptions = {
      *
      * @sample {highstock} stock/navigator/height/
      *         A higher navigator
+     * @sample stock/navigator/height-css-length/
+     *         Navigator height as a CSS length
      *
      * @type {number|Highcharts.CSSLength}
      */

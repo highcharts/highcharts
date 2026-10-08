@@ -204,6 +204,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * length expression, e.g. `20`, `'2em'`, or `'calc(var(--gap) * 2)'`.
      * By default, height is autocalculated according to the flag's title.
      *
+     * @sample stock/plotoptions/flags-height-css-length/
+     *         Flag height as a CSS length
+     *
      * @type      {number|Highcharts.CSSLength}
      * @product   highstock
      * @apioption plotOptions.flags.height

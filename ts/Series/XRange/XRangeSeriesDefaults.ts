@@ -107,6 +107,16 @@ const XRangeSeriesDefaults: XRangeSeriesOptions = {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
     },
 
+    /**
+     * The border radius of the point. A number denotes pixels, a percentage
+     * string denotes a percentage of the point height. Also accepts a CSS
+     * length expression, e.g. `'1em'` or `'calc(var(--radius) * 2)'`.
+     *
+     * @sample highcharts/plotoptions/xrange-borderradius-css-length/
+     *         Border radius as a CSS length
+     *
+     * @type {number|Highcharts.CSSLength}
+     */
     borderRadius: 3,
 
     pointRange: 0

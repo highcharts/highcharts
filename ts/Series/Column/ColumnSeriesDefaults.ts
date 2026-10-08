@@ -154,6 +154,8 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
      *         Limited to 50
      * @sample {highstock} highcharts/plotoptions/column-maxpointwidth-20/
      *         Limited to 50
+     * @sample highcharts/plotoptions/column-maxpointwidth-css-length/
+     *         Max point width as a CSS length
      *
      * @type      {number|Highcharts.CSSLength}
      * @since     4.1.8
@@ -191,6 +193,8 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/column-pointwidth-20/
      *         20px wide columns regardless of chart width or the amount of
      *         data points
+     * @sample highcharts/plotoptions/column-pointwidth-css-length/
+     *         Point width as a CSS length
      *
      * @type      {number|Highcharts.CSSLength}
      * @since     1.2.5
@@ -203,6 +207,9 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
      * length expression, e.g. `20`, `'2em'`, or a percentage of the
      * series' own point width, like `'50%'`. Overrides pointWidth on the
      * series.
+     *
+     * @sample highcharts/plotoptions/column-pointwidth-css-length/
+     *         Point width as a CSS length
      *
      * @see [series.pointWidth](#plotOptions.column.pointWidth)
      *
@@ -532,6 +539,9 @@ const ColumnSeriesDefaults: ColumnSeriesOptions = {
  * length expression, e.g. `20`, `'2em'`, or a percentage of the series'
  * own point width, like `'50%'`. Overrides pointWidth on the series. The
  * width effects the dimension that is not based on the point value.
+ *
+ * @sample highcharts/plotoptions/column-pointwidth-css-length/
+ *         Point width as a CSS length
  *
  * @see [series.pointWidth](#plotOptions.column.pointWidth)
  *
