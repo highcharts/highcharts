@@ -39,8 +39,15 @@ npx gulp api-react-stage \
 Use `--react-artifact` for publication as well as staging, so the legacy
 navigation links and their React destinations are both published. A legacy-only
 `api-upload` skips React files, even when they are already staged locally.
+It also removes the staged React navigation addition from uploaded legacy
+scripts when no artifact is supplied. Publish with the artifact to include
+those links after React publication succeeds.
 React publication completes before legacy uploads begin, so a failed React
 publication does not publish navigation links to missing pages.
+Combined `--sync` publication requires generated legacy `api.js` and
+`index.html` files for each selected product before React staging begins.
+React-only staging output is not a complete legacy build; use `--react-only`
+to publish that output safely.
 
 To publish the complete React artifact without changing or uploading legacy
 API navigation, use `--react-only`. This mode ignores `--docs` and `--sync`,
@@ -74,7 +81,10 @@ npx gulp api-upload \
 
 The legacy dry-run writes object files under `tmp/s3/<bucket>/` and `DELETE`
 markers under `tmp/s3-delete-markers/<bucket>/`. Deletions remove the mirrored
-payload, and uploading the key again clears its marker. Sync deletion markers
+payload, and uploading the key again clears its marker. Mirror and marker
+operations reject symlinked paths to keep dry runs inside their trees.
+Deletion marker parents support dotted bucket names and key directories.
+Sync deletion markers
 cover legacy paths only;
 React-owned product paths, `react-assets/`, `react-data/`, and root artifact metadata are
 excluded from legacy synchronization. The React publication report defaults

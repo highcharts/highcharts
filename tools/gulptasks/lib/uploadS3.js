@@ -117,6 +117,52 @@ function getDryRunDeleteMarkerPath(path, session) {
 
 
 /**
+ * Rejects paths outside a dry-run tree or paths that traverse symlinks.
+ *
+ * @param {string} path
+ * Path to validate.
+ *
+ * @param {string} rootPath
+ * Root of the dry-run tree.
+ */
+function assertNoDryRunSymlinkAncestors(path, rootPath) {
+    const resolvedRootPath = NativePath.resolve(rootPath);
+    const resolvedPath = NativePath.resolve(path);
+    const relativePath = NativePath.relative(resolvedRootPath, resolvedPath);
+
+    if (
+        relativePath === '..' ||
+        relativePath.startsWith(`..${NativePath.sep}`) ||
+        NativePath.isAbsolute(relativePath)
+    ) {
+        throw new Error(`Dry-run path escapes its root: "${path}".`);
+    }
+
+    let currentPath = resolvedRootPath;
+
+    for (const part of ['', ...relativePath.split(NativePath.sep)]) {
+        if (part) {
+            currentPath = NativePath.join(currentPath, part);
+        }
+
+        try {
+            if (FS.lstatSync(currentPath).isSymbolicLink()) {
+                throw new Error(
+                    `Dry-run path cannot traverse a symbolic link: "${currentPath}".`
+                );
+            }
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                break;
+            }
+
+            throw error;
+        }
+    }
+}
+
+
+/**
  * Deletes an S3 object from the active bucket.
  *
  * @param {string} path
@@ -133,8 +179,6 @@ async function deleteS3Object(
     session
 ) {
     if (session.dryrun) {
-        const fsLib = require('../../libs/fs');
-
         const objectPath = Path.join(
             'tmp',
             's3',
@@ -142,8 +186,28 @@ async function deleteS3Object(
             path
         );
         const deleteMarkerPath = getDryRunDeleteMarkerPath(path, session);
+        const tempRoot = NativePath.resolve('tmp');
+        const mirrorBucketPath = NativePath.resolve(
+            'tmp',
+            's3',
+            session.bucket
+        );
+        const markerBucketPath = NativePath.resolve(
+            'tmp',
+            's3-delete-markers',
+            session.bucket
+        );
 
-        fsLib.makePath(Path.dirname(deleteMarkerPath));
+        assertNoDryRunSymlinkAncestors(mirrorBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(objectPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
+        await FS.promises.mkdir(
+            NativePath.dirname(deleteMarkerPath),
+            { recursive: true }
+        );
+        assertNoDryRunSymlinkAncestors(objectPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
 
         await FS.promises.rm(objectPath, { force: true });
         await FS.promises.writeFile(deleteMarkerPath, '', 'utf-8');
@@ -302,8 +366,13 @@ function getDryRunS3LastModified(
     session
 ) {
     const bucketPath = NativePath.resolve('tmp', 's3', session.bucket);
+    const tempRoot = NativePath.resolve('tmp');
+    const mirrorRoot = NativePath.resolve('tmp', 's3');
     const files = {};
     let scanPath = bucketPath;
+
+    assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+    assertNoDryRunSymlinkAncestors(bucketPath, mirrorRoot);
 
     if (pathPrefix.startsWith('/')) {
         return files;
@@ -326,7 +395,11 @@ function getDryRunS3LastModified(
         return files;
     }
 
+    assertNoDryRunSymlinkAncestors(scanPath, bucketPath);
+
     function visitDirectory(directoryPath) {
+        assertNoDryRunSymlinkAncestors(directoryPath, bucketPath);
+
         if (!FS.existsSync(directoryPath)) {
             return;
         }
@@ -417,8 +490,16 @@ async function putS3Object(
         const fsLib = require('../../libs/fs');
 
         path = Path.join('tmp', 's3', session.bucket, path);
+        const tempRoot = NativePath.resolve('tmp');
+        const mirrorRoot = NativePath.resolve('tmp', 's3');
+        const bucketPath = NativePath.resolve(mirrorRoot, session.bucket);
+
+        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+        assertNoDryRunSymlinkAncestors(bucketPath, mirrorRoot);
+        assertNoDryRunSymlinkAncestors(path, bucketPath);
 
         fsLib.makePath(Path.dirname(path));
+        assertNoDryRunSymlinkAncestors(path, bucketPath);
 
         await FS.writeFile(
             path,
@@ -765,12 +846,28 @@ async function uploadFile(
     if (session.dryrun) {
         const s3Key = targetPath;
         targetPath = Path.join('tmp', 's3', session.bucket, targetPath);
+        const deleteMarkerPath = getDryRunDeleteMarkerPath(s3Key, session);
+        const tempRoot = NativePath.resolve('tmp');
+        const mirrorRoot = NativePath.resolve('tmp', 's3');
+        const mirrorBucketPath = NativePath.resolve(mirrorRoot, session.bucket);
+        const markerBucketPath = NativePath.resolve(
+            'tmp',
+            's3-delete-markers',
+            session.bucket
+        );
 
+        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+        assertNoDryRunSymlinkAncestors(mirrorBucketPath, mirrorRoot);
+        assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
         FS.mkdirSync(Path.dirname(targetPath), { recursive: true });
+        assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
 
         FS.writeFileSync(targetPath, fileContent, { encoding: 'binary' });
         await FS.promises.rm(
-            getDryRunDeleteMarkerPath(s3Key, session),
+            deleteMarkerPath,
             { force: true }
         );
 

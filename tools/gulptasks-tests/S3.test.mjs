@@ -6,6 +6,7 @@ import {
     readFileSync,
     rmSync,
     statSync,
+    symlinkSync,
     utimesSync,
     writeFileSync
 } from 'node:fs';
@@ -18,9 +19,8 @@ import S3 from '../gulptasks/lib/uploadS3.js';
 
 const testFixtures = [];
 
-function makeFixture() {
+function makeFixture(bucket = `gulptasks-s3-test-${randomUUID()}`) {
     const directory = mkdtempSync(Path.join(tmpdir(), 'highcharts-s3-'));
-    const bucket = `gulptasks-s3-test-${randomUUID()}`;
     const bucketPath = Path.join(process.cwd(), 'tmp', 's3', bucket);
     const deleteMarkersPath = Path.join(
         process.cwd(),
@@ -453,6 +453,37 @@ describe('S3 utils', async () => {
 
             assert.deepEqual(deleteCalls, []);
         });
+
+        await it('rejects a symlinked dry-run prefix before deleting outside objects', async () => {
+            const fixture = makeFixture();
+            const outsideDirectory = Path.join(fixture.directory, 'outside');
+            const outsideObjectPath = writeDryRunObject(
+                outsideDirectory,
+                'stale.txt',
+                'keep outside object'
+            );
+
+            mkdirSync(fixture.bucketPath, { recursive: true });
+            symlinkSync(
+                outsideDirectory,
+                Path.join(fixture.bucketPath, 'docs'),
+                'dir'
+            );
+
+            await assert.rejects(
+                S3.synchronizeDirectory(
+                    fixture.sourcePath,
+                    'docs',
+                    fixture.session
+                ),
+                /symbolic link/u
+            );
+
+            assert.equal(
+                readFileSync(outsideObjectPath, 'utf8'),
+                'keep outside object'
+            );
+        });
     }
 
     await it('applies the key filter to uploadDirectory', async () => {
@@ -491,6 +522,31 @@ describe('S3 utils', async () => {
             statSync(
                 Path.join(fixture.deleteMarkersPath, 'docs/DELETE delete.txt')
             ).isFile(),
+            true
+        );
+    });
+
+    await it('creates deletion markers for dotted buckets and key directories', async () => {
+        const fixture = makeFixture(`gulptasks-s3-test.${randomUUID()}`);
+        const rootObject = writeDryRunObject(fixture.bucketPath, 'root.txt', 'stale root');
+        await S3.deleteS3Object('root.txt', fixture.session);
+        assert.equal(existsSync(rootObject), false);
+        assert.equal(statSync(Path.join(fixture.deleteMarkersPath, 'DELETE root.txt')).isFile(), true);
+        const key = 'release.1/docs.v2/delete.txt';
+        const objectPath = writeDryRunObject(
+            fixture.bucketPath,
+            key,
+            'stale object'
+        );
+
+        await S3.deleteS3Object(key, fixture.session);
+
+        assert.equal(existsSync(objectPath), false);
+        assert.equal(
+            statSync(Path.join(
+                fixture.deleteMarkersPath,
+                'release.1/docs.v2/DELETE delete.txt'
+            )).isFile(),
             true
         );
     });

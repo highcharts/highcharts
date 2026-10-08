@@ -84,6 +84,69 @@ function createDependencies(sourceRoot, calls, options = {}) {
 }
 
 describe('api-upload task integration', () => {
+    it('rejects combined sync with absent or React-only legacy output before staging or S3', async () => {
+        const sourceRoot = await createSourceRoot();
+        const calls = [];
+        const args = {
+            bucket: 'test-bucket', sync: true, reactArtifact: '/tmp/react-static',
+            expectedHighchartsVersion: '13.1.1', expectedReactVersion: '5.0.1'
+        };
+        try {
+            await assert.rejects(runApiUpload(args, createDependencies(sourceRoot, calls)), /Legacy API build missing/u);
+            assert.deepEqual(calls, []);
+            await rm(sourceRoot, { recursive: true, force: true });
+            await assert.rejects(runApiUpload(args, createDependencies(sourceRoot, calls)), /Source directory/u);
+            assert.deepEqual(calls, []);
+        } finally {
+            await rm(sourceRoot, { recursive: true, force: true });
+        }
+    });
+
+    it('allows combined sync with generated legacy output and retains navigation after publication', async () => {
+        const sourceRoot = await createSourceRoot();
+        const calls = [];
+        try {
+            await writeFile(join(sourceRoot, 'highcharts/api.js'), 'legacy');
+            await writeFile(join(sourceRoot, 'highcharts/index.html'), 'legacy');
+            const dependencies = createDependencies(sourceRoot, calls);
+            const stage = dependencies.reactStatic.stageArtifact;
+            dependencies.reactStatic.stageArtifact = async (...args) => {
+                for (const product of ['highstock', 'highmaps', 'gantt']) {
+                    await mkdir(join(sourceRoot, product, 'react'), { recursive: true });
+                }
+                return stage(...args);
+            };
+            await runApiUpload({
+                bucket: 'test-bucket', sync: true,
+                reactArtifact: '/tmp/react-static',
+                expectedHighchartsVersion: '13.1.1', expectedReactVersion: '5.0.1'
+            }, dependencies);
+            assert.equal(calls.filter(call => call[0] === 'sync').length, 1);
+            assert.equal(calls.find(call => call[0] === 'sync')[2], 'highcharts');
+            const filter = calls.find(call => call[0] === 'sync')[4];
+            const staged = Buffer.from('legacy\n/* React API navigation */\nlink');
+            assert.deepEqual(filter(join(sourceRoot, 'highcharts/api.js'), staged), staged);
+            assert.ok(calls.findIndex(call => call[0] === 'publish') < calls.findIndex(call => call[0] === 'sync'));
+        } finally {
+            await rm(sourceRoot, { recursive: true, force: true });
+        }
+    });
+
+    it('strips staged React navigation from legacy-only uploads', async () => {
+        const sourceRoot = await createSourceRoot();
+        const calls = [];
+        try {
+            await runApiUpload({ bucket: 'test-bucket', docs: 'highcharts' }, createDependencies(sourceRoot, calls));
+            const filter = calls.find(call => call[0] === 'upload')[4];
+            const original = Buffer.from('window.legacy = true;\n');
+            const staged = Buffer.concat([original, Buffer.from('\n/* React API navigation */\n(function () {})();\n')]);
+            assert.deepEqual(filter(join(sourceRoot, 'highcharts/api.js'), staged), original);
+            assert.deepEqual(filter(join(sourceRoot, 'highcharts/api.js'), original), original);
+        } finally {
+            await rm(sourceRoot, { recursive: true, force: true });
+        }
+    });
+
     it('normalizes Windows selections and rejects traversal or owned paths', () => {
         assert.deepEqual(
             normalizeDocs('highcharts\\api', isReactOwnedKey),

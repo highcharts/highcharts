@@ -315,8 +315,26 @@ async function runApiUpload(args, dependencies = {}) {
     const sourceRootExists = fs.existsSync(sourceRoot) &&
         fs.lstatSync(sourceRoot).isDirectory();
 
-    if (!reactArtifactInput && !sourceRootExists) {
+    const skipLegacy = reactArtifactInput?.reactOnly || reactArtifactInput?.shellsOnly;
+    if (!skipLegacy && !sourceRootExists) {
         throw new Error(`Source directory "${sourceRoot}" not found.`);
+    }
+    const sourceItems = skipLegacy ? [] : normalizedDocs ?
+        normalizedDocs.map(doc => path.join(sourceRoot, ...doc.split('/'))) :
+        fsLib.getDirectoryPaths(sourceRoot);
+
+    if (sync && reactArtifactInput && !skipLegacy) {
+        const products = ['highcharts', 'highstock', 'highmaps', 'gantt'];
+        const selectedProducts = products.filter(product => sourceItems.some(item =>
+            path.relative(sourceRoot, item).split(path.sep)[0] === product));
+        for (const product of selectedProducts) {
+            for (const name of ['api.js', 'index.html']) {
+                const legacyFile = path.join(sourceRoot, product, name);
+                if (!fs.existsSync(legacyFile) || !fs.lstatSync(legacyFile).isFile()) {
+                    throw new Error(`Legacy API build missing ${legacyFile}; generate legacy docs or use --react-only.`);
+                }
+            }
+        }
     }
 
     let stagedReactArtifact;
@@ -344,19 +362,6 @@ async function runApiUpload(args, dependencies = {}) {
         throw new Error(`Source directory "${sourceRoot}" not found.`);
     }
 
-    let sourceItems;
-
-    if (reactArtifactInput?.shellsOnly || reactArtifactInput?.reactOnly) {
-        sourceItems = [];
-    } else if (normalizedDocs) {
-        sourceItems = [];
-        for (const doc of normalizedDocs) {
-            sourceItems.push(path.join(sourceRoot, ...doc.split('/')));
-        }
-    } else {
-        sourceItems = fsLib.getDirectoryPaths(sourceRoot);
-    }
-
     for (const sourceItem of sourceItems) {
         if (!fs.existsSync(sourceItem)) {
             throw new Error(`Source path "${sourceItem}" not found.`);
@@ -379,6 +384,15 @@ async function runApiUpload(args, dependencies = {}) {
     const includeKey = key => !reactStatic.isReactOwnedKey(
         String(key).replace(/\\/gu, '/')
     );
+    const filterLegacyContent = (file, content) => {
+        if (!stagedReactArtifact && path.basename(file) === 'api.js') {
+            const marker = content.indexOf('\n/* React API navigation */\n');
+            if (marker >= 0) {
+                content = content.subarray(0, marker);
+            }
+        }
+        return updateFileContent(file, content);
+    };
 
     try {
         if (stagedReactArtifact) {
@@ -407,7 +421,7 @@ async function runApiUpload(args, dependencies = {}) {
                     sourceItem,
                     targetKey,
                     session,
-                    updateFileContent
+                    filterLegacyContent
                 );
             } else if (
                 sync &&
@@ -417,7 +431,7 @@ async function runApiUpload(args, dependencies = {}) {
                     sourceItem,
                     targetKey,
                     session,
-                    updateFileContent,
+                    filterLegacyContent,
                     includeKey
                 );
             } else {
@@ -425,7 +439,7 @@ async function runApiUpload(args, dependencies = {}) {
                     sourceItem,
                     targetKey,
                     session,
-                    updateFileContent,
+                    filterLegacyContent,
                     includeKey
                 );
             }
