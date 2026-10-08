@@ -417,23 +417,15 @@ QUnit.test(
     'addPoint/removePoint vs setData on linked SMA (#22081)',
     function (assert) {
         const pointStart = 1000,
-            pointInterval = 1,
             period = 5,
             chart = Highcharts.stockChart('container', {
-                xAxis: {
-                    minRange: 1
-                },
                 series: [{
                     id: 'main',
                     pointStart: pointStart,
-                    pointInterval: pointInterval,
                     data: [
                         10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
                         20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-                    ],
-                    dataGrouping: {
-                        enabled: false
-                    }
+                    ]
                 }, {
                     type: 'sma',
                     id: 'sma',
@@ -456,19 +448,20 @@ QUnit.test(
             assert.strictEqual(
                 sma.points.length,
                 expectedLength,
-                label + ': SMA point count matches main series'
+                label + ': SMA point count should match main series'
             );
             assert.strictEqual(
                 sma.points.length,
                 modifiedRows,
-                label + ': points length matches getModified() row count'
+                label +
+                    ': points length should match getModified() row count'
             );
             assert.deepEqual(
                 sma.points.map(function (point) {
                     return point.y;
                 }),
                 sma.getColumn('y', true),
-                label + ': rendered points match y column data'
+                label + ': rendered points should match y column data'
             );
         }
 
