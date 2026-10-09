@@ -1,3 +1,10 @@
+---
+description: >-
+  Attach event handlers through chart options, instances, or classes, and
+  respond to loading, rendering, selections, and clicks. Learn how callback
+  context works and how to update charts after asynchronous data loading.
+---
+
 # Understanding Common Highcharts Events
 
 Highcharts provides a flexible event system that allows you to add interactivity and custom behavior to charts and their elements. This guide highlights the most common and useful events in Highcharts and explains how to work with them effectively.

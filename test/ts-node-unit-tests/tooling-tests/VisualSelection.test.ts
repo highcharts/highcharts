@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { basename, dirname, join } from 'node:path';
 import { runInNewContext } from 'node:vm';
-import { load } from 'js-yaml';
+import { JSON_SCHEMA, load } from 'js-yaml';
 import { selectVisualSamples } from '../../../tests/visual/visual-samples.ts';
 import { getSample } from '../../../tests/utils.ts';
 
@@ -122,7 +122,9 @@ test('discovery excludes module-only samples that Karma does not load', () => {
 
 test('CI selects only samples eligible in both revisions', () => {
     const workflow = load(readFileSync(join(__dirname,
-        '../../../.github/workflows/visual-compare-playwright.yml'), 'utf8')) as {
+        '../../../.github/workflows/visual-compare-playwright.yml'), 'utf8'), {
+        schema: JSON_SCHEMA
+    }) as {
         jobs: { visual_playwright_compare: {
             steps: { name?: string; run?: string }[];
         } };

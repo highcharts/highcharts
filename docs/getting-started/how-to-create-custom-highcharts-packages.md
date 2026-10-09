@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a custom Highcharts package by selecting ES modules in a master file.
+  Build JavaScript bundles and optional declarations, then load the resulting
+  package in a web page.
+---
+
 Creating custom Highcharts packages
 ===================================
 

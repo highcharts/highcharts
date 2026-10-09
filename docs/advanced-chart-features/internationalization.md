@@ -1,3 +1,10 @@
+---
+description: >-
+  Translate chart text, format dates and numbers for a locale, and adapt axes
+  for right-to-left languages. Learn how to load provided language modules or
+  generate a custom translation module.
+---
+
 Internationalization
 ====================
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Migrate away from the export server's deprecated async option. Learn how
+  browser requests can render returned image data, review the Node.js module
+  approach, and follow a PHP export example.
+---
+
 Deprecated the export server async option
 ------------------------------------------
 

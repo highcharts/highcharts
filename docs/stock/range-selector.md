@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure preset date-range buttons and manual date inputs, position or
+  float the selector, adapt buttons for narrow layouts, control data grouping,
+  preserve grouping, or handle custom button clicks.
+---
+
 Range selector
 ================
 

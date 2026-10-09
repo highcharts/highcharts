@@ -1,3 +1,10 @@
+---
+description: >-
+  Let listeners pause and explore audio charts with adjacent-point playback,
+  series navigation, event filters, and scrubbing. The examples show how
+  playback can focus on selected points and follow user-controlled movement.
+---
+
 Navigation for Audio Charts
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a KPI with a value, title, optional Highcharts chart, and
+  connector-backed data, then format its display and control which chart point
+  supplies the synchronized value.
+---
+
 # KPI Component
 
 The KPI component allows you to visualize *key performance indicators*.
