@@ -8,7 +8,7 @@
  */
 module.exports = {
     'Highcharts Overview': {
-        categories: ['Basics'],
+        categories: ['Basics', 'Inspiration'],
         filter: { tags: ['Highcharts overview'] },
         path: '/'
     },

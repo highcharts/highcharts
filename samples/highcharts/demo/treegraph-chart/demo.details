@@ -5,7 +5,10 @@ authors:
 js_wrap: b
 use_png_thumbnail: true
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Inspiration:
+      priority: 8
   - Trees and networks
 ...
