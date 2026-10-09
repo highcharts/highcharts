@@ -261,3 +261,39 @@ QUnit.test(
         host.remove();
     }
 );
+
+QUnit.test(
+    'onViewDataTableClick arrow function receives chart and ctx (#25343)',
+    function (assert) {
+        let args;
+
+        const chart = Highcharts.chart('container', {
+                accessibility: {
+                    screenReaderSection: {
+                        onViewDataTableClick: (...rest) => {
+                            args = rest;
+                        }
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            button = chart.accessibility.components.infoRegions
+                .viewDataTableButton;
+
+        button.click();
+
+        assert.strictEqual(
+            args[1],
+            chart,
+            'The chart should be passed as the second argument'
+        );
+
+        assert.strictEqual(
+            args[2],
+            button,
+            'The button should be passed as ctx'
+        );
+    }
+);

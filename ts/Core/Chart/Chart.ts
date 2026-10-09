@@ -949,9 +949,22 @@ class Chart {
              * @name Highcharts.Chart#numberFormatter
              * @type {Highcharts.NumberFormatterCallbackFunction}
              */
-            this.numberFormatter = (
+            const numberFormatter: NumberFormatterCallbackFunction = (
                 optionsChart.numberFormatter || numberFormat
-            ).bind(this);
+            );
+            this.numberFormatter = (
+                number,
+                decimals,
+                decimalPoint,
+                thousandsSep
+            ): string => numberFormatter.call(
+                this,
+                number,
+                decimals,
+                decimalPoint,
+                thousandsSep,
+                this
+            );
 
             /**
              * Whether the chart is in styled mode, meaning all presentational

@@ -944,8 +944,7 @@ class Axis {
         this: AxisLabelFormatterContextObject
     ): string {
         const axis = this.axis,
-            chart = this.chart,
-            { numberFormatter } = chart,
+            { numberFormatter } = this.chart,
             value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
             categories = axis.categories,
@@ -991,9 +990,8 @@ class Axis {
                     numericSymbols[i] !== null &&
                     value !== 0
                 ) { // #5480
-                    ret = numberFormatter(
-                        value / multi, -1, void 0, void 0, chart
-                    ) + numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
                 }
             }
         }
@@ -1003,8 +1001,7 @@ class Axis {
             -1,
             void 0,
             // Add thousands separators when 10 000 or more
-            Math.abs(value) < 10000 ? '' : void 0,
-            chart
+            Math.abs(value) < 10000 ? '' : void 0
         );
 
         return ret;
@@ -5104,7 +5101,7 @@ export default Axis;
  * @param {number} max
  * Current maximum value.
  *
- * @param {Highcharts.Axis} [ctx]
+ * @param {Highcharts.Axis} ctx
  * Since v12.6.0, the axis context passed as an extra argument for arrow
  * functions.
  *

@@ -769,11 +769,18 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 'aria-expanded': !!getElement(tableId, chart.renderTo)
             });
 
-            el.onclick = chart.options.accessibility
-                .screenReaderSection.onViewDataTableClick ||
-                function (): void {
+            el.onclick = function (e): void {
+                const onViewDataTableClick = chart.options.accessibility
+                    .screenReaderSection.onViewDataTableClick;
+
+                if (onViewDataTableClick) {
+                    onViewDataTableClick.call(
+                        this, e, chart as Accessibility.ChartComposition, this
+                    );
+                } else {
                     chart.exporting?.viewData();
-                };
+                }
+            };
         }
     }
 

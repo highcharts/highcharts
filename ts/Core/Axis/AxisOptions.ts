@@ -2007,7 +2007,7 @@ export interface AxisTickPositionerCallback {
         this: Axis,
         min: number,
         max: number,
-        ctx?: Axis
+        ctx: Axis
     ): (TickPositionsArray|undefined);
 }
 
