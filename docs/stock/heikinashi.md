@@ -1,3 +1,10 @@
+---
+description: >-
+  Understand how Heikin Ashi modifies open, high, low, and close values with
+  formulas, and how the series calculates its values from grouped points when
+  data grouping is enabled.
+---
+
 Heikin Ashi chart
 ================
 

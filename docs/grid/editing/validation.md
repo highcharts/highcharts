@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Configure edit-mode validation with built-in data-type checks, reusable
+  named rules, or per-column callbacks; distinguish parsed and raw input
+  values, localize notifications, and respond after edits.
 ---
 
 # Input validation

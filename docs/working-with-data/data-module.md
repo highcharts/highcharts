@@ -1,3 +1,10 @@
+---
+description: >-
+  Load chart data from CSV, HTML tables, or Google Spreadsheets using Data
+  module options. Learn how rows and columns map to series and how polling
+  keeps external data updated.
+---
+
 Data module
 ===
 

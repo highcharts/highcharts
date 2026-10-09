@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable a data table alongside your chart using the exporting and export-data
+  modules. Learn how users access the table and why the Accessibility module
+  is still recommended.
+---
+
 Tables
 ===
 
