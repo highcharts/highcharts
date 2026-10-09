@@ -112,3 +112,138 @@ QUnit.test('#14637: Line series pointPlacement="between"', assert => {
         'Points should be placed between ticks'
     );
 });
+
+QUnit.test('#25477: pointPlacement between gridlines', assert => {
+    const data = [1, 4, 3, 5, 2];
+    const baseAxis = {
+        gridLineWidth: 1,
+        max: 4,
+        min: 0,
+        tickInterval: 1
+    };
+    const values = [0, 2, 4];
+
+    function placeChart(type, pointPlacement, xAxis) {
+        const series = {
+            data,
+            type
+        };
+
+        if (pointPlacement) {
+            series.pointPlacement = pointPlacement;
+        }
+
+        return Highcharts.chart('container', {
+            chart: {
+                marginLeft: 50,
+                marginRight: 50,
+                width: 600
+            },
+            series: [series],
+            xAxis
+        });
+    }
+
+    function tickPixels(axisChart) {
+        const axis = axisChart.xAxis[0];
+
+        return values.map(value => axis.toPixels(value, true));
+    }
+
+    const between = placeChart('column', 'between', baseAxis);
+    const betweenPixels = tickPixels(between);
+    const betweenPlotX = between.series[0].points[0].plotX;
+    const shift = between.xAxis[0].transA *
+        between.xAxis[0].pointRange / 2;
+    const on = placeChart('column', 'on', baseAxis);
+
+    betweenPixels.forEach((pixel, i) => {
+        assert.close(
+            pixel,
+            on.xAxis[0].toPixels(values[i], true),
+            1,
+            'On and between share tick pixels'
+        );
+    });
+    assert.close(
+        betweenPlotX - on.series[0].points[0].plotX,
+        shift,
+        1,
+        'Between sits half a point range to the right'
+    );
+
+    const line = placeChart('line', void 0, baseAxis);
+    const linePixels = tickPixels(line);
+
+    betweenPixels.forEach((pixel, i) => {
+        assert.close(
+            pixel,
+            linePixels[i],
+            1,
+            'Line and between share tick pixels'
+        );
+    });
+
+    const reversedAxis = Highcharts.merge(baseAxis, {
+        reversed: true
+    });
+    const betweenReversed = placeChart(
+        'column',
+        'between',
+        reversedAxis
+    );
+    const betweenReversedPixels = tickPixels(betweenReversed);
+    const betweenReversedPlotX =
+        betweenReversed.series[0].points[0].plotX;
+    const onReversed = placeChart('column', 'on', reversedAxis);
+
+    betweenReversedPixels.forEach((pixel, i) => {
+        assert.close(
+            pixel,
+            onReversed.xAxis[0].toPixels(values[i], true),
+            1,
+            'Reversed charts share tick pixels'
+        );
+    });
+    assert.close(
+        betweenReversedPlotX - onReversed.series[0].points[0].plotX,
+        -onReversed.xAxis[0].transA *
+            onReversed.xAxis[0].pointRange / 2,
+        1,
+        'Reversed between shifts the other way'
+    );
+
+    const auto = Highcharts.chart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data,
+            pointPlacement: 'between',
+            type: 'column'
+        }]
+    });
+    const lastPoint = auto.series[0].points[data.length - 1];
+
+    assert.ok(
+        lastPoint.plotX >= 0 &&
+            lastPoint.plotX <= auto.xAxis[0].len,
+        'Last point stays inside the plot'
+    );
+
+    const onlyMax = placeChart('column', 'between', {
+        max: 4,
+        tickInterval: 1
+    });
+    const paddedTransA = onlyMax.xAxis[0].transA;
+    const both = placeChart('column', 'between', {
+        max: onlyMax.xAxis[0].max,
+        min: onlyMax.xAxis[0].min,
+        tickInterval: 1
+    });
+
+    assert.ok(
+        paddedTransA < both.xAxis[0].transA,
+        'A single extreme keeps point range padding'
+    );
+});
