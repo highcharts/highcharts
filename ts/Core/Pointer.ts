@@ -42,6 +42,7 @@ import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import {
     addEvent,
     attr,
+    correctFloat,
     css,
     defined,
     extend,
@@ -585,17 +586,53 @@ class Pointer {
         // block it. After the touch has ended, we undo this and render again.
         let redraw: true|undefined;
         for (const axis of chart.axes) {
+            const { startOnTick, endOnTick } = axis.options;
+
             if (axis.isPanning) {
                 axis.isPanning = false;
-                if (
-                    axis.options.startOnTick ||
-                    axis.options.endOnTick ||
-                    axis.series.some((s): boolean|undefined => s.boosted)
+
+                const {
+                    logarithmic: log,
+                    min,
+                    max,
+                    paddedTicks: ticks = []
+                } = axis;
+
+                let { userMin: newMin, userMax: newMax } = axis;
+
+                if (startOnTick || endOnTick) {
+                    if (ticks.length && isNumber(min) && isNumber(max)) {
+                        const toVal = (val: number): number => (
+                                log ? log.lin2log(val) : val
+                            ),
+                            snap = (val: number): number => ticks.reduce(
+                                (a, b): number => (
+                                    Math.abs(b - val) < Math.abs(a - val) ?
+                                        b :
+                                        a
+                                )
+                            );
+
+                        newMin = toVal(
+                            startOnTick ?
+                                snap(min) :
+                                correctFloat(min + snap(max) - max)
+                        );
+                        newMax = toVal(
+                            endOnTick ?
+                                snap(max) :
+                                correctFloat(max + snap(min) - min)
+                        );
+                    }
+                } else if (
+                    !axis.series.some((s): boolean|undefined => s.boosted)
                 ) {
-                    axis.forceRedraw = true;
-                    axis.setExtremes(axis.userMin, axis.userMax, false);
-                    redraw = true;
+                    continue;
                 }
+
+                axis.forceRedraw = true;
+                axis.setExtremes(newMin, newMax, false);
+                redraw = true;
             }
         }
 
