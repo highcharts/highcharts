@@ -966,7 +966,7 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
     assert.deepEqual(
         [top.max, bottom.max > initialMax],
         [initialMax, true],
-        'Dragging the bottom pane pans only the bottom y-axis'
+        'Dragging the bottom pane should pan only the bottom y-axis'
     );
 
     const bottomMax = bottom.max;
@@ -976,7 +976,7 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
     assert.deepEqual(
         [top.max > initialMax, bottom.max],
         [true, bottomMax],
-        'Dragging the top pane pans only the top y-axis'
+        'Dragging the top pane should pan only the top y-axis'
     );
 
     const topMax = top.max;
@@ -986,7 +986,7 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
     assert.deepEqual(
         [top.max > topMax, bottom.max],
         [true, bottomMax],
-        'Dragging into another pane keeps panning the initial pane'
+        'Dragging into another pane should keep panning the initial pane'
     );
 
     let extremes = [top.max, bottom.max];
@@ -997,7 +997,7 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
     assert.deepEqual(
         [top.max, bottom.max],
         extremes,
-        'Updating panningEnabled to false disables panning of the pane'
+        'Updating panningEnabled to false should disable panning of the pane'
     );
 
     top.update({ height: '40%' }, false);
@@ -1016,7 +1016,7 @@ QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
     assert.deepEqual(
         [top.min, top.max].map(Math.round),
         extremes,
-        'Dragging into the gap between panes and back restores the extremes'
+        'Dragging into the pane gap and back should restore the extremes'
     );
 
     controller.mouseUp();

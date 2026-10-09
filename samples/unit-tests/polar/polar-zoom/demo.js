@@ -453,6 +453,6 @@ QUnit.test('Panning radial y-axis (#21809)', function (assert) {
 
     assert.ok(
         yAxis.max > initialMax,
-        'Dragging below the pane center pans the radial y-axis'
+        'Dragging below the pane center should pan the radial y-axis'
     );
 });
