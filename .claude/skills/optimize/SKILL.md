@@ -13,6 +13,7 @@ Use this skill when code is slow, memory-heavy, or larger than necessary.
 2. Apply minimal fixes with unchanged behavior/API.
 3. Add or update regression tests.
 4. Validate with relevant tests.
+5. Review changes to security boundaries, such as input/HTML filtering or network access. Follow [code-review's security guidance](../code-review/SKILL.md#security-review) for a plugin suggestion only when a plausible concern's reachability, impact or scope needs further analysis.
 
 ## Focus areas
 
