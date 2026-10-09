@@ -39,11 +39,9 @@ The custom implementations have the following requirements:
    to the option itself, not to its type. Currently applied to `id`, `index`,
    `name`, `type`, `className`, `color`, `events`, and `data`.
 
-10. `@default`, `@requires` and `@sample` tags support product-specific values.
-   The first word following the tag has to be the product key in curly brackets. 
-   Multiple products can be separated by `|`. E.g.
-   `@default {highcharts|highstock} 0`,
-   `@requires {highcharts} modules/heatmap`,
+10. `@default` and `@sample` tags support product-specific values. The first
+   word following the tag has to be the product key in curly brackets. Multiple
+   products can be separated by `|`. E.g. `@default {highcharts|highstock} 0`,
    `@sample {highcharts|highstock} demo/chart/polar`.
 
 
@@ -55,6 +53,9 @@ When documenting a TS type, interface, or class some additional rules apply:
 - All internal types and doclets must be tagged with `@internal`.
 
 - Do not use `@type` in the doclet - the type is already set in code.
+
+- `@requires` supports product-specific values like `@default` and `@sample`,
+  e.g. `@requires {highcharts} modules/heatmap`.
 
 - Doclet placed on an interface or class should be about the interface or class
   itself, not the related API option that is using it.
