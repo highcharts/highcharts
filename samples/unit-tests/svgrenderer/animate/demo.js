@@ -236,6 +236,190 @@ QUnit.test('Path animation', function (assert) {
     }
 });
 
+QUnit.test(
+    'initPath fixed vs moving right edge (#10696, #25280)',
+    function (assert) {
+        const fromD = [
+            ['M', 400, 120],
+            ['L', 700, 120]
+        ];
+        const toD = [
+            ['M', 200, 120],
+            ['L', 700, 120]
+        ];
+
+        // Right edge fixed: last x in startX matches last x in endX (#10696).
+        const fixedRight = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [1800, 3600],
+                endX: [2349, 3600],
+                isArea: false
+            },
+            fromD,
+            toD
+        );
+
+        assert.strictEqual(
+            fixedRight[0].length,
+            fixedRight[1].length,
+            'Fixed right edge should pad paths to equal length.'
+        );
+        assert.ok(
+            fixedRight[0].length > 0,
+            'Start path should not be empty when right edge is fixed.'
+        );
+
+        // Right edge moving: endX middle equals startX last, new last differs.
+        // middle-align pads (#25280).
+        const movingRight = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [100, 200, 3600],
+                endX: [2349, 3600, 4000],
+                isArea: false
+            },
+            [
+                ['M', 100, 120],
+                ['L', 400, 120],
+                ['L', 700, 120]
+            ],
+            [
+                ['M', 200, 120],
+                ['L', 500, 120],
+                ['L', 800, 120]
+            ]
+        );
+
+        assert.strictEqual(
+            movingRight[0].length,
+            movingRight[1].length,
+            'Moving right edge should pad via middle-align.'
+        );
+        assert.strictEqual(
+            movingRight[0].length,
+            4,
+            'Middle-align should use shift = 1 (3 segments + 1 pad).'
+        );
+
+        // Same window length: first and last x differ, shared middle x values
+        // (live regroup / overscroll). Must hit middle-align, not empty start.
+        const sameLength = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [100, 200, 300, 400, 500],
+                endX: [150, 200, 300, 400, 550],
+                isArea: false
+            },
+            [
+                ['M', 0, 120],
+                ['L', 10, 120],
+                ['L', 20, 120],
+                ['L', 30, 120],
+                ['L', 40, 120]
+            ],
+            [
+                ['M', 5, 120],
+                ['L', 15, 120],
+                ['L', 25, 120],
+                ['L', 35, 120],
+                ['L', 45, 120]
+            ]
+        );
+
+        assert.strictEqual(
+            sameLength[0].length,
+            sameLength[1].length,
+            'Same-length window with changed first/last should still animate'
+        );
+        assert.strictEqual(
+            sameLength[0].length,
+            5,
+            'Same-length middle-align keeps path length when shift = 0'
+        );
+
+        // Window grows (11 -> 12): first two x differ, new last point arrives,
+        // overlapping middle x values remain.
+        // Must pad via middle-align (#25280).
+        const growWindow = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [
+                    10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110
+                ],
+                endX: [
+                    15, 25, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120
+                ],
+                isArea: false
+            },
+            [
+                ['M', 0, 120],
+                ['L', 10, 120],
+                ['L', 20, 120],
+                ['L', 30, 120],
+                ['L', 40, 120],
+                ['L', 50, 120],
+                ['L', 60, 120],
+                ['L', 70, 120],
+                ['L', 80, 120],
+                ['L', 90, 120],
+                ['L', 100, 120]
+            ],
+            [
+                ['M', 5, 120],
+                ['L', 15, 120],
+                ['L', 25, 120],
+                ['L', 35, 120],
+                ['L', 45, 120],
+                ['L', 55, 120],
+                ['L', 65, 120],
+                ['L', 75, 120],
+                ['L', 85, 120],
+                ['L', 95, 120],
+                ['L', 105, 120],
+                ['L', 115, 120]
+            ]
+        );
+
+        assert.strictEqual(
+            growWindow[0].length,
+            growWindow[1].length,
+            'Growing window with changed leading x values should pad via ' +
+            'middle-align.'
+        );
+        assert.strictEqual(
+            growWindow[0].length,
+            12,
+            '11 -> 12 middle-align should pad start to end length.'
+        );
+
+        // Shared middle x, both edges differ, match left of end mid (#25280).
+        const slidePath = [
+            ['M', 0, 120],
+            ['L', 10, 120],
+            ['L', 20, 120],
+            ['L', 30, 120],
+            ['L', 40, 120]
+        ];
+        const slideDiffNeg = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [200, 300, 400, 500, 600],
+                endX: [50, 150, 300, 550, 650],
+                isArea: false
+            },
+            slidePath.map(seg => seg.slice()),
+            slidePath.map(seg => seg.slice())
+        );
+
+        assert.strictEqual(
+            slideDiffNeg[0].length,
+            6,
+            'Middle-align with diff < 0 should use shift = 1 (reverse pad).'
+        );
+    }
+);
+
 QUnit.test('Symbol animation', function (assert) {
     // Hijack animation
     var clock = TestUtilities.lolexInstall();
