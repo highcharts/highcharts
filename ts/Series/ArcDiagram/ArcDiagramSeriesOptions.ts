@@ -25,7 +25,10 @@ import type {
     SankeySeriesOptions
 } from '../Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointMarkerOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -125,10 +128,21 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      *     }]
      *  ```
      *
+     *  When you provide the data as tuples, the keys option has to be set as
+     *  well.
+     *
+     *  ```js
+     *     keys: ['from', 'to', 'weight'],
+     *     data: [
+     *         ['Category1', 'Category2', 2],
+     *         ['Category1', 'Category3', 5]
+     *     ]
+     *  ```
+     *
      * @basic
      * @product highcharts
      */
-    data?: Array<ArcDiagramPointOptions>;
+    data?: Array<(ArcDiagramPointOptions|PointShortOptions)>;
 
     /**
      * Options for the data labels appearing on top of the nodes and links.

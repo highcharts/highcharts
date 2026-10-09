@@ -5643,8 +5643,28 @@ export default Series;
  *     }]
  * });
  *
- * @interface Highcharts.DataMappingOptionsObject
+ * @typedef {Record<string, string|Highcharts.DataMappingItemObject>} Highcharts.DataMappingOptionsObject
  * @since 13.0.0
+ */
+
+/**
+ * The data table and column to read a point property from in
+ * [dataMapping](#plotOptions.series.dataMapping).
+ *
+ * @interface Highcharts.DataMappingItemObject
+ * @since 13.0.0
+ *//**
+ * The column from which to read the value for this data point property. This
+ * can be either a column id (string) or a column index (number) in the data
+ * table. Defaults to the column with the same id as the point property.
+ * @name Highcharts.DataMappingItemObject#column
+ * @type {number|string|undefined}
+ *//**
+ * The data table from which to read the value for this data point property.
+ * This can be either a data table id (string) or a data table index (number).
+ * Defaults to the first data table.
+ * @name Highcharts.DataMappingItemObject#dataTable
+ * @type {number|string|undefined}
  */
 
 /**
