@@ -722,6 +722,8 @@ class Pointer {
 
             if (// Check that we actually found a point on the series.
                 isObject(point, true) && point.series &&
+                // Skip points that are condemned for removal (#25063)
+                !point.condemned &&
                 // Use the new point if it is closer.
                 (!isObject(closest, true) ||
                 (sort(closest as any, point as any) > 0))
@@ -875,6 +877,10 @@ class Pointer {
         shared?: boolean,
         e?: PointerEvent
     ): Pointer.HoverDataObject {
+        if (!existingHoverPoint?.series || existingHoverPoint.condemned) {
+            existingHoverPoint = void 0;
+        }
+
         const hoverPoints = [] as Array<Point>,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             filter = function (s: Series): boolean {
@@ -931,7 +937,8 @@ class Pointer {
                     const nullInteraction = s.options?.nullInteraction;
                     let point = find(s.points, function (p: Point): boolean {
                         return (
-                            p.x === hoverPoint.x && (
+                            p.x === hoverPoint.x &&
+                            !p.condemned && ( // #25063
                                 !p.isNull ||
                                 !!nullInteraction
                             )
@@ -1793,8 +1800,9 @@ class Pointer {
                 chart.hoverPoint.firePointEvent('mouseOut');
             }
 
-            // Hover point may have been destroyed in the event handlers (#7127)
-            if (!hoverPoint.series) {
+            // Hover point may have been destroyed (#7127) or condemned (#25063)
+            // in the event handlers.
+            if (!hoverPoint.series || hoverPoint.condemned) {
                 return;
             }
 
