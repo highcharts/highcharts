@@ -63,7 +63,7 @@ export default function ChartComponent() {
 
 The `options` prop is available on the chart components (`Chart`, `StockChart`, `MapsChart`, `GanttChart`) and series components only. Axis components and other chart-element components expose every option as a direct prop, with no `options` fallback.
 
-The `title`, `subtitle`, `caption`, and `credits` props set text content only. Each maps to the `.text` property of its corresponding option. To configure other properties such as alignment or style, use the dedicated `Title`, `Subtitle`, and `Credits` components.
+The `title`, `subtitle`, `caption`, and `credits` props set text content only. Each maps to the `.text` property of its corresponding option. To configure other properties such as alignment or style, use the dedicated `Title`, `Subtitle`, and `Credits` components. There is no `Caption` component, so any other caption property goes in [`options.caption`](https://api.highcharts.com/highcharts/caption).
 
 The `height` and `width` props size the chart's inner `.highcharts-container` element. To size the outer `<div>` wrapper, use `containerProps.style`. Both can be set independently.
 
@@ -76,7 +76,7 @@ When the same option is set in more than one place, this merge order determines 
 3. Direct props
 4. Options from children
 
-Children win over direct props, which win over `options`. This rule applies to all chart components.
+Children win over direct props, which win over `options`. This applies to `Chart`, `StockChart`, `MapsChart`, and `GanttChart`.
 
 ## Highcharts Stock
 

@@ -20,7 +20,7 @@ export default function MyChartComponent() {
 
 ## Global setup runs at module level
 
-The chart is constructed during the first render, so anything that has to be in place beforehand belongs at module level, as in the example above. This covers `setOptions` and any plugin or series-type registration. Code inside `useEffect` runs after the chart already exists, so setup placed there does not reach the first render.
+`Chart` constructs the chart in an effect, and a component's own effects run after those of its children. So `setOptions` or a plugin registration placed in your own `useEffect` runs after the chart already exists and misses it. Module-level code runs at import time, before any of that, which is why global setup belongs there, as in the example above.
 
 Registering against a Highcharts class rather than a chart instance is the usual shape of a plugin, and it applies to every chart:
 

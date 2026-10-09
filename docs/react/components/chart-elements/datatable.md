@@ -3,7 +3,7 @@
 You can supply chart data in a tabular, column-oriented format using the `DataTable` component. Instead of passing data directly to each series, you store it in a shared table and map columns to series properties with [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping):
 
 ```tsx
-import { Chart, DataTable, PlotOptions } from "@highcharts/react";
+import { Chart, DataTable } from "@highcharts/react";
 import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function DataTableChart() {
@@ -15,8 +15,10 @@ export default function DataTableChart() {
           Revenue: [12, 18, 24, 30],
         }}
       />
-      <PlotOptions series={{ dataMapping: { x: "Year" } }} />
-      <LineSeries name="Revenue" dataMapping={{ y: "Revenue" }} />
+      <LineSeries
+        name="Revenue"
+        options={{ dataMapping: { x: "Year", y: "Revenue" } }}
+      />
     </Chart>
   );
 }
@@ -34,10 +36,15 @@ The chart-level [`dataTable`](https://api.highcharts.com/highcharts/dataTable) o
 <Chart>
   <DataTable id="sales" columns={{ Year: [2020, 2021], Revenue: [12, 18] }} />
   <DataTable id="costs" columns={{ Cost: [8, 11] }} />
-  <LineSeries name="Revenue" dataMapping={{ x: "Year", y: "Revenue" }} />
+  <LineSeries
+    name="Revenue"
+    options={{ dataMapping: { x: "Year", y: "Revenue" } }}
+  />
   <LineSeries
     name="Cost"
-    dataMapping={{ x: "Year", y: { column: "Cost", dataTable: "costs" } }}
+    options={{
+      dataMapping: { x: "Year", y: { column: "Cost", dataTable: "costs" } },
+    }}
   />
 </Chart>
 ```

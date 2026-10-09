@@ -26,7 +26,9 @@ When using JSX elements as children, write the markup as elements rather than pu
 
 ```tsx
 <Tooltip>
-  <span><b>{"{series.name}"}</b></span>
+  <b>{"{series.name}"}</b>
+  {": "}
+  <span>{"{point.y}"}</span>
 </Tooltip>
 ```
 

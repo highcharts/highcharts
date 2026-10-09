@@ -10,10 +10,11 @@ and esbuild can tree shake unused code.
 Import just the components you use in JSX:
 
 ```jsx
-import { Chart, LineSeries, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 ```
 
-Eight Highcharts modules have dedicated components: `Accessibility`, `Boost`, `BrokenAxis`, `Data`, `DraggablePoints`, `Drilldown`, `Exporting`, and `StockTools`. Import only the ones you use:
+Nine Highcharts modules have dedicated components: `Accessibility`, `Boost`, `BrokenAxis`, `Data`, `DraggablePoints`, `Drilldown`, `Exporting`, `SeriesLabel`, and `StockTools`. Import only the ones you use:
 
 ```jsx
 import { Accessibility } from "@highcharts/react/modules/Accessibility";
@@ -22,7 +23,7 @@ import { Exporting } from "@highcharts/react/modules/Exporting";
 
 Each component bundles the Highcharts module it needs, so no additional bare import is required alongside it.
 
-Bundling follows components, so an option that needs a module has nothing to pull it in and you import it yourself. Setting [`chart.polar`](https://api.highcharts.com/highcharts/chart.polar) needs `highcharts-more`, which the Cartesian series components do not bundle:
+Bundling follows components, so an option that needs a module has nothing to pull it in and you import it yourself. Series types are the exception: when a series `type` or `chart.type` names a type whose module is not loaded, `Chart` loads that module on demand. Setting [`chart.polar`](https://api.highcharts.com/highcharts/chart.polar) needs `highcharts-more`, which core Cartesian series components such as `LineSeries` and `ColumnSeries` do not bundle:
 
 ```tsx
 import "highcharts/es-modules/masters/highcharts-more.src.js";
@@ -33,8 +34,9 @@ Other options behave the same way, including `chart.options3d`, `annotations`, a
 For modules and themes without a dedicated component, use the `/es-modules/masters` path:
 
 ```tsx
-import "highcharts/es-modules/masters/modules/venn.src.js";
-import "highcharts/es-modules/masters/modules/series-label.src.js";
+import "highcharts/es-modules/masters/modules/annotations.src.js";
+import "highcharts/es-modules/masters/modules/pattern-fill.src.js";
+import "highcharts/es-modules/masters/themes/dark-unica.src.js";
 ```
 
 Place bare module imports after your `@highcharts/react` imports. Module files run setup code at evaluation time, and ES modules evaluate in source order, so importing them first can run that setup before Highcharts is ready.
@@ -42,7 +44,7 @@ Place bare module imports after your `@highcharts/react` imports. Module files r
 ```tsx
 import { Chart } from "@highcharts/react";
 import { Exporting } from "@highcharts/react/modules/Exporting";
-import "highcharts/es-modules/masters/modules/series-label.src.js";
+import "highcharts/es-modules/masters/modules/annotations.src.js";
 ```
 
 ## Keep Highcharts lean with core + modules
