@@ -38,7 +38,7 @@ import { isNumber, isObject, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
+ * @internal
  * @function calculateLevelSizes
  *
  * @param {Object} levelOptions
@@ -130,7 +130,7 @@ function calculateLevelSizes(
 }
 
 /**
- * @private
+ * @internal
  */
 function getLevelFromAndTo(
     { level, height }: SunburstNode
@@ -143,7 +143,7 @@ function getLevelFromAndTo(
 
 /**
  * TODO introduce step, which should default to 1.
- * @private
+ * @internal
  */
 function range(from: unknown, to: unknown): Array<number> {
     const result: Array<number> = [];
@@ -163,6 +163,7 @@ function range(from: unknown, to: unknown): Array<number> {
  *
  * */
 
+/** @internal */
 const SunburstUtilities = {
     calculateLevelSizes,
     getLevelFromAndTo,
@@ -170,4 +171,5 @@ const SunburstUtilities = {
     recursive: TreemapSeries.prototype.utils.recursive
 };
 
+/** @internal */
 export default SunburstUtilities;

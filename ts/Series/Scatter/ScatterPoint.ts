@@ -16,17 +16,20 @@
  *
  * */
 
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type LinePoint from '../Line/LinePoint';
+import type ScatterPointOptions from './ScatterPointOptions';
+import type ScatterSeries from './ScatterSeries';
 
 /* *
  *
- *  Declarations
+ *  Class
  *
  * */
 
-export interface SplineSeriesOptions extends LineSeriesOptions {
-    states?: SeriesStatesOptions<SplineSeriesOptions>;
+declare class ScatterPoint extends LinePoint {
+    public options: ScatterPointOptions;
+    /** @internal */
+    public series: ScatterSeries;
 }
 
 /* *
@@ -35,4 +38,4 @@ export interface SplineSeriesOptions extends LineSeriesOptions {
  *
  * */
 
-export default SplineSeriesOptions;
+export default ScatterPoint;
