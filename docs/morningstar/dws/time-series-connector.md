@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure the DWS TimeSeriesConnector with security identifiers, category,
+  data point, and date bounds; request up to 25 securities at once; then pair
+  Date with the returned value columns in a Stock chart.
+---
+
 # Time Series Connector
 
 The `HighchartsConnectors.MorningstarDWS.TimeSeriesConnector` is a connector

@@ -61,6 +61,7 @@ class MapPointSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: MapPointSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         MapPointSeriesDefaults
@@ -71,6 +72,7 @@ class MapPointSeries extends ScatterSeries {
      *  Properties
      *
      * */
+    /** @internal */
     public chart!: MapChart;
 
     public data!: Array<MapPointPoint>;
@@ -88,6 +90,7 @@ class MapPointSeries extends ScatterSeries {
      * */
 
 
+    /** @internal */
     public drawDataLabels(): void {
         super.drawDataLabels();
 
@@ -127,6 +130,7 @@ class MapPointSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public translate(): void {
         const mapView = this.chart.mapView;
 
@@ -216,9 +220,13 @@ class MapPointSeries extends ScatterSeries {
  * The mapmarker symbol
  */
 const mapmarker = (
+    /** @internal */
     x: number,
+    /** @internal */
     y: number,
+    /** @internal */
     w: number,
+    /** @internal */
     h: number,
     options?: SymbolOptions
 ): SVGPath => {
@@ -271,7 +279,9 @@ SVGRenderer.prototype.symbols.mapmarker = mapmarker;
  * */
 
 interface MapPointSeries {
+    /** @internal */
     bounds: MapBounds | undefined;
+    /** @internal */
     pointClass: typeof MapPointPoint;
 }
 extend(MapPointSeries.prototype, {

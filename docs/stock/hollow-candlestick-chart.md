@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how body transparency distinguishes bullish and bearish candles, how
+  colors reflect changes from the previous closing price, and how data
+  grouping affects the coloring of hollow candlesticks.
+---
+
 Hollow Candlestick chart
 ================
 

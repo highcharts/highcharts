@@ -37,7 +37,6 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The TEMA series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.tema
  *
@@ -69,6 +68,7 @@ class TEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/tema
      * @optionparent plotOptions.tema
+     * @internal
      */
     public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions);
 
@@ -78,6 +78,7 @@ class TEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public EMApercent!: number;
     public data!: Array<TEMAPoint>;
     public options!: TEMAOptions;
@@ -89,6 +90,7 @@ class TEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -108,6 +110,7 @@ class TEMAIndicator extends EMAIndicator {
         );
     }
 
+    /** @internal */
     public getTemaPoint(
         xVal: Array<number>,
         tripledPeriod: number,
@@ -125,6 +128,7 @@ class TEMAIndicator extends EMAIndicator {
         return TEMAPoint;
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: TEMAParamsOptions
@@ -268,7 +272,6 @@ class TEMAIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
@@ -279,7 +282,6 @@ interface TEMAIndicator {
  *
  * */
 
-/** @internal */
 namespace TEMAIndicator {
 
     /* *
@@ -303,7 +305,6 @@ namespace TEMAIndicator {
  *
  * */
 
-/** @internal */
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
@@ -314,7 +315,6 @@ interface TEMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
@@ -329,7 +329,6 @@ SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
  *
  * */
 
-/** @internal */
 export default TEMAIndicator;
 
 /* *
