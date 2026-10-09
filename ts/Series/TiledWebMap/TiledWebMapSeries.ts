@@ -68,7 +68,7 @@ interface TilesItem {
  *
  * */
 
-/** @private */
+/** @internal */
 function onRecommendMapView(
     this: MapView,
     e: {
@@ -128,7 +128,6 @@ function onRecommendMapView(
 /**
  * The series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.tiledwebmap
  *
@@ -194,7 +193,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert map coordinates in longitude/latitude to tile
-     * @private
+     * @internal
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject}
@@ -222,7 +221,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert tile to map coordinates in longitude/latitude
-     * @private
+     * @internal
      * @return {Highcharts.MapLonLatObject}
      *         The map coordinates
      */
