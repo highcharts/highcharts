@@ -1,3 +1,11 @@
+---
+description: >-
+  Bundle licensed Highcharts files as Flutter assets, declare the asset
+  directory in your project configuration, load JavaScript modules with
+  HighchartsHelpers, and display a loading indicator until the chart assets
+  are ready.
+---
+
 # Bundle Highcharts into a Flutter app
 
 There are many good reasons to bundle Highcharts into a Flutter app instead of loading it from a content delivery network.

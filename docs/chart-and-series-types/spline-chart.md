@@ -1,3 +1,10 @@
+---
+description: >-
+  Connect data points with a curved line and reuse the line-series options,
+  except for the step feature. The article includes an example and links to
+  the spline API reference.
+---
+
 Spline chart
 ============
 

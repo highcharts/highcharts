@@ -1,6 +1,10 @@
 ---
 sidebar_label: "Pinning"
 tags: ["grid-pro"]
+description: >-
+  Keep selected Grid Pro rows in top or bottom sections, configure or compute
+  pin state, update rows through the runtime API, handle events, and
+  understand sorting and filtering behavior.
 ---
 
 # Row pinning

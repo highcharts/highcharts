@@ -26,6 +26,10 @@ export default defineConfig({
             testMatch: 'setup-highcharts.mts',
         },
         {
+            name: 'setup-visual',
+            testMatch: 'setup-visual.mts',
+        },
+        {
             name: 'highcharts',
             testDir: './tests/highcharts',
             use: { ...devices['Desktop Chrome'] },
@@ -82,7 +86,7 @@ export default defineConfig({
                     ]
                 }
             },
-            dependencies: ['setup-highcharts'],
+            dependencies: ['setup-visual'],
         },
         {
             name: 'qunit-firefox',

@@ -1,3 +1,10 @@
+---
+description: >-
+  Set Gantt task start and end dates, mark critical milestones with milestone,
+  and display task completion by configuring the completed amount and fill or
+  a completion fraction.
+---
+
 Gantt task configuration
 ===
 

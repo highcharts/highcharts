@@ -54,7 +54,6 @@ function populateAverage(
 /**
  * The Momentum series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.momentum
  *
@@ -80,6 +79,7 @@ class MomentumIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
+     * @internal
      */
     public static defaultOptions: MomentumOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -103,6 +103,7 @@ class MomentumIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MomentumOptions
@@ -156,7 +157,6 @@ class MomentumIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface MomentumIndicator {
     pointClass: typeof MomentumPoint;
     nameBase: string;
@@ -171,7 +171,6 @@ extend(MomentumIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
@@ -186,7 +185,6 @@ SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
  *
  * */
 
-/** @internal */
 export default MomentumIndicator;
 
 /* *

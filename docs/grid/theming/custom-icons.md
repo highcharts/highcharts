@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Custom icons"
+description: >-
+  Replace built-in Grid SVG icons through rendering.icons using raw SVG
+  strings or definition objects; review supported icon names, path fields, and
+  controls affected by overrides.
 ---
 
 # Replace built-in icons via API
