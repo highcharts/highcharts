@@ -16,6 +16,9 @@ on:
       - 'tests/globals.d.ts'
       - 'tests/qunit/utils/browser-log-note-reporter.ts'
       - 'tests/setup-highcharts.mts'
+      - 'tests/setup-dashboards.mts'
+      - 'tests/setup-build-utils.mts'
+      - 'tests/setup-visual.mts'
       - 'tests/tsconfig.json'
       - 'tests/utils.ts'
       - 'tests/visual/**'
@@ -77,6 +80,9 @@ jobs:
             tests/globals.d.ts \
             tests/qunit/utils/browser-log-note-reporter.ts \
             tests/setup-highcharts.mts \
+            tests/setup-dashboards.mts \
+            tests/setup-build-utils.mts \
+            tests/setup-visual.mts \
             tests/package.json \
             tests/package-lock.json \
             tests/tsconfig.json \
