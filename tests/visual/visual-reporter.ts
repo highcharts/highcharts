@@ -5,9 +5,11 @@ import { appendFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
     appendError,
+    readReferenceFailures,
     resetVisualRun,
     validateVisualRun,
-    writeCandidateCompletion
+    writeCandidateCompletion,
+    writeReferenceFailures
 } from './visual-results.ts';
 
 export default class VisualReporter implements Reporter {
@@ -69,19 +71,36 @@ export default class VisualReporter implements Reporter {
             const failedSamples = this.tests.filter(test =>
                 test.results.at(-1)?.status !== 'passed'
             );
+            const referenceFailures = this.referenceMode ? [] :
+                readReferenceFailures(this.root);
+            const skippedSamples = failedSamples.filter(test =>
+                test.results.at(-1)?.status === 'skipped' &&
+                referenceFailures.some(failure => failure.sample === test.title)
+            );
             if (
                 !['passed', 'failed'].includes(result.status) ||
-                failedSamples.some(test =>
-                    !['failed', 'timedOut'].includes(
-                        test.results.at(-1)?.status || ''
-                    ) || !test.annotations.some(annotation =>
-                        annotation.type === 'visual-sample-error'
-                    )
-                )
+                failedSamples.some(test => {
+                    const status = test.results.at(-1)?.status;
+                    return status === 'skipped' ?
+                        !skippedSamples.includes(test) :
+                        !['failed', 'timedOut'].includes(status || '') ||
+                        !test.annotations.some(annotation =>
+                            annotation.type === 'visual-sample-error'
+                        );
+                })
             ) {
                 throw new Error('Visual run did not finish every sample.');
             }
-            if (failedSamples.length) {
+            if (this.referenceMode) {
+                // This file certifies that only classified sample errors
+                // occurred, never an interrupted or incomplete reference run.
+                writeReferenceFailures(this.root, failedSamples.map(test => ({
+                    sample: test.title,
+                    error: test.results.at(-1)?.errors[0]?.message ||
+                        'Reference render failed.'
+                })));
+            }
+            if (failedSamples.some(test => !skippedSamples.includes(test))) {
                 // Sample errors are already logged by the spec. The run
                 // completed, but still fails and must not be published.
                 if (!this.referenceMode) {
@@ -89,7 +108,13 @@ export default class VisualReporter implements Reporter {
                 }
                 return { status: 'failed' };
             }
-            validateVisualRun(this.root, ids, this.referenceMode);
+            validateVisualRun(
+                this.root,
+                ids.filter(id => !skippedSamples.some(
+                    test => test.title === id
+                )),
+                this.referenceMode
+            );
 
             if (process.env.GITHUB_STEP_SUMMARY) {
                 const results = this.referenceMode ? {} : JSON.parse(

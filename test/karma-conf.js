@@ -192,6 +192,15 @@ const browserStackBrowsers = require('./karma-bs.json');
 
 module.exports = function (config) {
     const argv = require('yargs').argv;
+    const referenceFailuresPath = path.join(
+        __dirname, 'visual-reference-failures.json'
+    );
+    const referenceFailures = new Map(
+        argv.visualcompare && fs.existsSync(referenceFailuresPath) ?
+            JSON.parse(fs.readFileSync(referenceFailuresPath, 'utf8'))
+                .map(({ sample, error }) => [sample, error]) :
+            []
+    );
     const Babel = require("@babel/core");
     require('../tools/create-json-sources.js')();
 
@@ -412,6 +421,24 @@ module.exports = function (config) {
                         '$1/$2'
                     );
 
+                    if (argv.visualcompare && !path.includes('unit-tests')) {
+                        let skipReason;
+                        if (referenceFailures.has(path)) {
+                            skipReason = 'Reference run failed: ' +
+                                referenceFailures.get(path);
+                        } else if (!argv.remotelocation && !fs.existsSync(
+                            `./samples/${path}/reference.svg`
+                        )) {
+                            skipReason = 'Missing reference.svg';
+                        }
+                        if (skipReason) {
+                            console.warn(`Not compared: ${path} - ${skipReason}`);
+                            file.path = file.originalPath + '.preprocessed.js';
+                            done(`QUnit.skip(${JSON.stringify(path)});`);
+                            return;
+                        }
+                    }
+
                     // es6 transpiling
                     // browserDetect(req.headers['user-agent']); not working
                     if (needsTranspiling) {
@@ -513,18 +540,6 @@ module.exports = function (config) {
                         `;
 
                     } else if (argv.visualcompare) {
-                        if (!argv.remotelocation && !fs.existsSync(
-                            `./samples/${path}/reference.svg`
-                        )) {
-                            console.log(
-                                'Reference file doesn\'t exist: '.yellow +
-                                ` ./samples/${path}/reference.svg`
-                            );
-                            file.path = file.originalPath + '.preprocessed.js';
-                            // QUnit will explode when all tests within a module are skipped. Omitting test instead.
-                            done(`console.log('Not adding test ${path} due to non-existing reference.svg file.');`);
-                            return;
-                        }
                         assertion = `
                         compareToReference(chart, '${path}')
                             .then(actual => {

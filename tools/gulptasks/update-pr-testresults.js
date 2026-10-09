@@ -144,6 +144,25 @@ function createPRCommentBody(
     const changedSamplesTemplate = createTemplateForChangedSamples(changedFilesProvider);
     commentTemplate += `\n\n${changedSamplesTemplate}`;
 
+    const referenceFailures = readTestResultsFile('test/visual-reference-failures.json');
+    if (Array.isArray(referenceFailures) && referenceFailures.length > 0) {
+        const failures = referenceFailures
+            .filter(failure => failure && typeof failure.sample === 'string' &&
+                typeof failure.error === 'string')
+            .map(({ sample, error }) => {
+                const oneLineError = error.trim().replace(/\s+/gu, ' ')
+                    .replace(/([\\`])/gu, '\\$1').slice(0, 200);
+                return `- \`${sample}\`: ${oneLineError}`;
+            });
+        if (failures.length > 0) {
+            commentTemplate += '\n\nReference failures (not compared)\n' +
+                'These samples were not compared because the master reference failed.\n' +
+                failures.join('\n');
+        }
+    } else if (referenceFailures !== false && !Array.isArray(referenceFailures)) {
+        logLib.warn('Invalid visual reference failures file: expected a JSON array.');
+    }
+
     return commentTemplate;
 }
 

@@ -1,10 +1,12 @@
 import {
     appendError,
     readReference,
+    readReferenceFailures,
     recordCandidateResult,
     resetVisualRun,
     writeCandidateCompletion,
     writeReference,
+    writeReferenceFailures,
     validateVisualRun
 } from './visual-results.ts';
 import { test, expect } from '@playwright/test';
@@ -74,6 +76,55 @@ test('reference writes canonical SVG without completion', () => {
         expect(readReference(root, samplePath)).toBe(referenceSVG);
         expect(readFileSync(referencePath(root), 'utf8')).toBe(referenceSVG);
         expect(existsSync(completionPath(root))).toBe(false);
+    });
+});
+
+test('reference failures default to empty and round-trip sorted first-line errors', () => {
+    withTemporaryRoot(root => {
+        expect(readReferenceFailures(root)).toEqual([]);
+
+        writeReferenceFailures(root, [
+            { sample: secondSamplePath, error: 'Line failed\nStack trace' },
+            { sample: samplePath, error: 'Area failed\r\nStack trace' }
+        ]);
+
+        expect(readReferenceFailures(root)).toEqual([
+            { sample: samplePath, error: 'Area failed' },
+            { sample: secondSamplePath, error: 'Line failed' }
+        ]);
+        expect(() => readReference(root, secondSamplePath)).toThrow(
+            `Missing visual reference for ${secondSamplePath}`
+        );
+    });
+});
+
+test('reference failures reject malformed records', () => {
+    withTemporaryRoot(root => {
+        mkdirSync(join(root, 'test'), { recursive: true });
+        const failurePath = join(root, 'test', 'visual-reference-failures.json');
+        for (const contents of [
+            '{', '{}', '[null]', '[{"sample":"","error":"failed"}]',
+            '[{"sample":"highcharts/demo/line-basic","error":7}]'
+        ]) {
+            writeFileSync(failurePath, contents);
+            expect(() => readReferenceFailures(root)).toThrow();
+        }
+    });
+});
+
+test('only reference reset clears previous reference failures', () => {
+    withTemporaryRoot(root => {
+        const failures = [{ sample: samplePath, error: 'Reference failed' }];
+        writeReferenceFailures(root, failures);
+
+        resetVisualRun(root, [samplePath]);
+        expect(readReferenceFailures(root)).toEqual(failures);
+
+        resetVisualRun(root, [samplePath], true);
+        expect(readReferenceFailures(root)).toEqual([]);
+
+        writeReferenceFailures(root, []);
+        expect(readReferenceFailures(root)).toEqual([]);
     });
 });
 

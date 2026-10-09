@@ -13,6 +13,7 @@ import { GIFEncoder, applyPalette, quantize } from 'gifenc';
 import {
     appendError,
     readReference,
+    readReferenceFailures,
     recordCandidateResult,
     writeReference
 } from './visual-results.ts';
@@ -74,6 +75,7 @@ function throwRuntimeError(
 
 const root = process.cwd();
 const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
+const referenceFailures = referenceMode ? [] : readReferenceFailures(root);
 const runtimeErrorMode = process.env.VISUAL_TEST_RUNTIME_ERROR;
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
@@ -217,6 +219,13 @@ test.describe('Visual tests', () => {
         // The visual reporter validates outcomes across all samples.
         // eslint-disable-next-line playwright/expect-expect
         test(`${visualSamplePath}`, async () => {
+            const referenceFailure = referenceFailures.find(failure =>
+                failure.sample === visualSamplePath
+            );
+            // A failed baseline cannot be compared in candidate mode.
+            // eslint-disable-next-line playwright/no-skipped-test
+            test.skip(!!referenceFailure, `reference failed: ${referenceFailure?.error}`);
+
             const sample = getSample(
                 dirname(samplePath), true, basename(samplePath)
             );
