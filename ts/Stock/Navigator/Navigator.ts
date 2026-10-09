@@ -184,7 +184,6 @@ class Navigator {
     public stickToMax?: boolean;
     public stickToMin?: boolean;
     public top!: number;
-    public unbindRedraw?: Function;
     public xAxis!: NavigatorAxisComposition;
     public yAxis!: NavigatorAxisComposition;
     public zoomedMax!: number;
@@ -592,19 +591,6 @@ class Navigator {
 
         if (this.navigatorEnabled) {
             this.isDirty = true;
-
-            if (options.adaptToUpdatedData === false) {
-                this.baseSeries.forEach((series): void => {
-                    removeEvent(series, 'updatedData', this.updatedDataHandler);
-                }, this);
-            }
-            if (options.adaptToUpdatedData) {
-                this.baseSeries.forEach((series): void => {
-                    series.eventsToUnbind.push(
-                        addEvent(series, 'updatedData', this.updatedDataHandler)
-                    );
-                }, this);
-            }
 
             // Update navigator series
             if (options.series || options.baseSeries) {
@@ -1275,12 +1261,6 @@ class Navigator {
         const baseSeries = this.baseSeries || [];
 
         if (this.navigatorEnabled && baseSeries[0]) {
-            if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                baseSeries.forEach(function (this: Navigator, series): void {
-                    removeEvent(series, 'updatedData', this.updatedDataHandler);
-                }, this);
-            }
-
             // We only listen for extremes-events on the first baseSeries
             if (baseSeries[0].xAxis) {
                 removeEvent(
@@ -1410,21 +1390,6 @@ class Navigator {
                 navigatorOptions.series?.dataTable
             ) {
                 navigator.updateNavigatorSeries(false);
-
-            // If not, set up an event to listen for added series
-            } else if (chart.series.length === 0) {
-
-                navigator.unbindRedraw = addEvent(
-                    chart,
-                    'beforeRedraw',
-                    function (): void {
-                        // We've got one, now add it as base
-                        if (chart.series.length > 0 && !navigator.series) {
-                            navigator.setBaseSeries();
-                            navigator.unbindRedraw?.(); // Reset
-                        }
-                    }
-                );
             }
 
             navigator.reversedExtremes = (
@@ -1675,15 +1640,9 @@ class Navigator {
 
                     if (base && baseSeries.indexOf(base) < 0) { // Not in array
                         // If there is still a base series connected to this
-                        // series, remove event handler and reference.
-                        if (base) {
-                            removeEvent(
-                                base,
-                                'updatedData',
-                                navigator.updatedDataHandler
-                            );
-                            delete base.navigatorSeries;
-                        }
+                        // series, remove reference.
+                        delete base.navigatorSeries;
+
                         // Kill the nav series. It may already have been
                         // destroyed (#8715).
                         if (navSeries.chart) {
@@ -1779,6 +1738,12 @@ class Navigator {
                     fireEvent(base.navigatorSeries, 'afterUpdate');
 
                     base.navigatorSeries.baseSeries = base; // Store ref
+
+                    if (navigatorSeriesData || navigatorSeriesDataTable) {
+                        base.navigatorSeries.baseSeriesDataVersionTag =
+                            base.dataTable.getVersionTag();
+                    }
+
                     navigatorSeries.push(base.navigatorSeries);
                 }
             });
@@ -1880,16 +1845,6 @@ class Navigator {
                     this.navigatorSeries.setVisible(false, false);
                 }
             }));
-
-            // Respond to updated data in the base series, unless explicitly
-            // not adapting to data changes.
-            if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                if (base.xAxis) {
-                    base.eventsToUnbind.push(
-                        addEvent(base, 'updatedData', this.updatedDataHandler)
-                    );
-                }
-            }
 
             // Handle series removal
             base.eventsToUnbind.push(addEvent(
@@ -2036,43 +1991,56 @@ class Navigator {
     }
 
     /**
-     * Handler for updated data on the base series. When data is modified, the
-     * navigator series must reflect it. This is called from the Chart.redraw
-     * function before axis and series extremes are computed.
+     * Update navigator series data from baseSeries data. When data is
+     * modified, the navigator series must reflect it. This should be called
+     * before axis and series extremes are computed.
      *
      * @internal
-     * @function Highcharts.Navigator#updateDataHandler
+     * @function Highcharts.Navigator#updateNavigatorSeriesData
      */
-    public updatedDataHandler(this: Series): void {
-        const navigator = this.chart.navigator as Navigator,
-            baseSeries = this,
-            navigatorSeries = this.navigatorSeries,
-            shouldStickToMax = navigator.reversedExtremes ?
-                Math.round(navigator.zoomedMin) === 0 :
-                Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
+    public updateNavigatorSeriesData(): void {
+        const navigator = this,
+            chart = navigator.chart;
 
-        // If the scrollbar is scrolled all the way to the right, keep right as
-        // new data comes in, unless user set navigator.stickToMax to false.
-        navigator.stickToMax = (
-            this.chart.options.navigator &&
-            this.chart.options.navigator.stickToMax
-        ) ?? shouldStickToMax;
+        navigator.baseSeries?.forEach((baseSeries): void => {
+            if (baseSeries.isDirtyData) {
+                // If the scrollbar is scrolled all the way to the right, keep
+                // right as new data comes in, unless user set
+                // navigator.stickToMax to false.
+                navigator.stickToMax = (
+                    chart.options.navigator &&
+                    chart.options.navigator.stickToMax
+                ) ?? navigator.shouldStickToMax();
+                navigator.stickToMin = navigator.shouldStickToMin(baseSeries);
+            }
 
-        navigator.stickToMin = navigator.shouldStickToMin(
-            baseSeries,
-            navigator
-        );
+            const navSeries = baseSeries.navigatorSeries as Series,
+                baseSeriesOptions = baseSeries.options,
+                navSeriesOptions = navSeries?.options;
 
-        // Set the navigator series data to the new data of the base series
-        if (navigatorSeries && !navigator.hasNavigatorData) {
-            navigatorSeries.options.pointStart = baseSeries.getColumn('x')[0];
-            navigatorSeries.setData(
-                baseSeries.options.data || baseSeries.options.dataTable,
-                false,
-                void 0,
-                false
-            ); // #5414
-        }
+            if (
+                navSeries &&
+                !navigator.hasNavigatorData &&
+                (
+                    baseSeries.isDirtyData ||
+                    !baseSeries.hasRendered &&
+                    navSeries.baseSeriesDataVersionTag !==
+                        baseSeries.dataTable.getVersionTag()
+                )
+            ) {
+                navSeriesOptions.pointStart = baseSeries.getColumn('x')[0];
+
+                navSeries.setData(
+                    baseSeriesOptions.data || baseSeriesOptions.dataTable,
+                    false,
+                    void 0,
+                    false
+                ); // #5414
+
+                navSeries.baseSeriesDataVersionTag =
+                    baseSeries.dataTable.getVersionTag();
+            }
+        });
     }
 
     /**
@@ -2081,11 +2049,9 @@ class Navigator {
      * @internal
      * @function Highcharts.Navigator#shouldStickToMin
      */
-    public shouldStickToMin(
-        baseSeries: Series,
-        navigator: Navigator
-    ): boolean|undefined {
-        const xDataMin = navigator.getBaseSeriesMin(
+    public shouldStickToMin(baseSeries: Series): boolean|undefined {
+        const navigator = this,
+            xDataMin = navigator.getBaseSeriesMin(
                 baseSeries.getColumn('x')[0]
             ),
             xAxis = baseSeries.xAxis,
@@ -2113,6 +2079,20 @@ class Navigator {
     }
 
     /**
+     * Detect if the zoomed area should stick to the maximum.
+     *
+     * @internal
+     * @function Highcharts.Navigator#shouldStickToMax
+     */
+    public shouldStickToMax(): boolean {
+        const navigator = this;
+
+        return navigator.reversedExtremes ?
+            Math.round(navigator.zoomedMin) === 0 :
+            Math.round(navigator.zoomedMax) >= Math.round(navigator.size);
+    }
+
+    /**
      * Add chart events, like redrawing navigator, when chart requires that.
      *
      * @internal
@@ -2124,7 +2104,29 @@ class Navigator {
         }
 
         this.eventsToUnbind.push(
-            // Move the scrollbar after redraw, like after data updata even if
+            addEvent(
+                this.chart,
+                'beforeRedraw',
+                function (): void {
+                    const chart = this,
+                        navigator = chart.navigator as Navigator;
+
+                    if (!navigator.navigatorEnabled) {
+                        return;
+                    }
+
+                    const { navigatorOptions } = navigator;
+
+                    if (chart.series.length > 0 && !navigator.series) {
+                        navigator.setBaseSeries();
+                    }
+
+                    if (navigatorOptions.adaptToUpdatedData !== false) {
+                        navigator.updateNavigatorSeriesData();
+                    }
+                }
+            ),
+            // Move the scrollbar after redraw, like after data update even if
             // axes don't redraw
             addEvent(
                 this.chart,
