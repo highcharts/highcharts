@@ -52,6 +52,32 @@ test.describe('Cell Context Menu', () => {
                 await expect(popup).toBeHidden();
             });
 
+            test('The source cell stays marked while the menu is open', async ({ page }) => {
+                const marked = page.locator('.hcg-context-menu-cell');
+                const firstCell = page.locator(
+                    'tbody tr[data-row-index="0"] td[data-column-id="product"]'
+                );
+                const secondCell = page.locator(
+                    'tbody tr[data-row-index="1"] td[data-column-id="product"]'
+                );
+
+                // The menu takes the focus, so the cell cannot rely on :focus
+                // to show which one the actions apply to.
+                await secondCell.click({ button: 'right' });
+                await expect(page.locator('.hcg-popup')).toBeVisible();
+                await expect(marked).toHaveCount(1);
+                await expect(secondCell).toHaveClass(/hcg-context-menu-cell/);
+
+                // Opening on another cell moves the mark instead of adding one.
+                await firstCell.click({ button: 'right' });
+                await expect(marked).toHaveCount(1);
+                await expect(firstCell).toHaveClass(/hcg-context-menu-cell/);
+
+                await page.keyboard.press('Escape');
+                await expect(page.locator('.hcg-popup')).toBeHidden();
+                await expect(marked).toHaveCount(0);
+            });
+
         });
     }
 
