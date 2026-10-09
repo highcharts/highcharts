@@ -330,8 +330,9 @@ module.exports = function (config) {
             },
         ],
 
-        // These ones fail
-        exclude: excludedSamples,
+        // These demos need Dashboards, the Morningstar connector and network data;
+        // Playwright covers them with offline fixtures.
+        exclude: [...excludedSamples, 'samples/stock/financial/**'],
         reporters: ['progress'],
         port: 9876,  // karma web server port
         colors: true,
