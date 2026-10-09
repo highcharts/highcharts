@@ -3925,6 +3925,7 @@ class Chart {
             // plotOptions
             } else if (
                 key !== 'colors' &&
+                key !== 'dataTable' &&
                 chart.collectionsWithUpdate.indexOf(key) === -1
             ) {
                 merge(true, (chart.options as any)[key], (options as any)[key]);
@@ -4040,6 +4041,24 @@ class Chart {
                 // Avoid removed navigator series
                 if (series.chart) {
                     series.update({}, false);
+                }
+            });
+        }
+
+        // The chart-level data tables are resolved on init, so resolve them
+        // again and reload the series that read from them (#25444)
+        if (options.dataTable) {
+            chart.options.dataTable = chart.userOptions.dataTable;
+            chart.dataTable = chart.getDataTable(chart.options);
+            chart.series.forEach((series): void => {
+                const seriesOptions = series.options;
+                if (
+                    !seriesOptions.data &&
+                    !seriesOptions.dataTable &&
+                    !series.hasDerivedData
+                ) {
+                    series.unbindDataTableEvents?.();
+                    series.setData(void 0, false);
                 }
             });
         }
