@@ -12,6 +12,28 @@ const path = require('path');
  * */
 
 const TEST_FOLDER = path.join('test', 'typescript-dts');
+const FOLDER_NAMES_WHITELIST = [
+    'classes',
+    'dashboards',
+    'es-modules',
+    'grid',
+    'highcharts',
+    'highcharts-3d',
+    'highcharts-gantt',
+    'highcharts-more',
+    'highmaps',
+    'highstock',
+    'indicators',
+    'modules',
+    'samples',
+    'themes'
+];
+
+function isAllowedTestFolder(folder) {
+    const name = path.basename(folder);
+    return FOLDER_NAMES_WHITELIST.includes(name) &&
+        path.resolve(folder) === path.resolve(TEST_FOLDER, name);
+}
 
 /* *
  *
@@ -30,8 +52,8 @@ const TEST_FOLDER = path.join('test', 'typescript-dts');
  */
 function lintDTS(argv) {
     const fsLib = require('../libs/fs');
-    const processLib = require('../libs/process');
     const logLib = require('../libs/log');
+    const childProcess = require('node:child_process');
     const product = argv.product || 'Highcharts';
 
     return new Promise((resolve, reject) => {
@@ -39,6 +61,23 @@ function lintDTS(argv) {
         logLib.message(`Linting TypeScript declarations (.d.ts) for ${product} ...`);
 
         let directories = fsLib.getDirectoryPaths(TEST_FOLDER, false);
+
+        // Check if all directories are in the whitelist
+        const disallowedDirectories = directories.filter(
+            folder => !isAllowedTestFolder(folder)
+        );
+
+        if (disallowedDirectories.length > 0) {
+            logLib.failure(
+                'Some directories are not in the whitelist:',
+                disallowedDirectories.join(', ')
+            );
+            reject(new Error(
+                'Some directories are not in the whitelist: ' +
+                disallowedDirectories.join(', ')
+            ));
+            return;
+        }
 
         if (product === 'Highcharts') {
             directories = directories.filter(folder => !(
@@ -55,7 +94,16 @@ function lintDTS(argv) {
 
         directories.forEach(folder => {
             promiseChain = promiseChain.then(
-                () => processLib.exec('npx tsc -p ' + folder)
+                () => {
+                    const result = childProcess.spawnSync('npx', ['tsc', '-p', folder], {
+                        stdio: 'inherit',
+                        shell: path.sep === path.win32.sep
+                    });
+
+                    if (result.error || result.status !== 0) {
+                        throw result.error || new Error(`tsc failed for ${folder}`);
+                    }
+                }
             );
         });
 
@@ -79,5 +127,8 @@ lintDTS.flags = {
 gulp.task('lint-dts', () => lintDTS(require('yargs').argv));
 
 module.exports = {
-    lintDTS
+    lintDTS,
+    isAllowedTestFolder,
+    FOLDER_NAMES_WHITELIST,
+    TEST_FOLDER
 };
