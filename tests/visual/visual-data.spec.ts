@@ -7,9 +7,7 @@ import { captureVisualSVG } from './visual-capture';
 const sources = JSON.parse(readFileSync(
     join(__dirname, 'data/index.json'), 'utf8'
 )) as { url: string; filename: string; postData?: unknown }[];
-const portfolio = sources.find(source =>
-    source.filename === 'correlation-matrix.json'
-);
+const portfolios = sources.filter(source => source.postData);
 
 async function prepareDataSample(page: Page): Promise<void> {
     await page.context().setOffline(true);
@@ -197,12 +195,13 @@ test('capture waits for the deferred earth statistics dataset', async ({ page })
     expect(svg.includes('-40°C')).toBe(true);
 });
 
-test('visual portfolio fixture requires the recorded method and body', async ({ page }) => {
+test('visual POST fixtures require the recorded method and body', async ({ page }) => {
     await page.context().setOffline(true);
     await setupRoutes(page);
     await page.goto('http://localhost/shim.html');
 
-    const results = await page.evaluate(async source => {
+    const results = await page.evaluate(async sources => {
+        const source = sources[0];
         const request = async (method: string, postData?: unknown) => {
             try {
                 const response = await fetch(source.url, {
@@ -216,12 +215,22 @@ test('visual portfolio fixture requires the recorded method and body', async ({ 
                 return 'rejected';
             }
         };
+        const matches = [];
+        for (const source of sources) {
+            matches.push(await fetch(source.url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(source.postData)
+            }).then(response => response.status).catch(() => 'rejected'));
+        }
         return [
-            await request('POST', source.postData),
+            ...matches,
             await request('POST', { portfolios: [] }),
             await request('GET')
         ];
-    }, portfolio);
+    }, portfolios);
 
-    expect(results).toEqual([200, 'rejected', 'rejected']);
+    expect(results).toEqual([
+        ...portfolios.map(() => 200), 'rejected', 'rejected'
+    ]);
 });

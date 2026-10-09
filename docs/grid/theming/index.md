@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Build Grid themes with CSS custom properties, inheritance, and reusable
+  classes; apply a theme through the API, decide when to extend the default
+  theme, and handle dark-mode colors.
 ---
 
 # Theming overview

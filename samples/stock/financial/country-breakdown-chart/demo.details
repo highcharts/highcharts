@@ -1,0 +1,7 @@
+---
+name: Country Breakdown Chart
+description: Compares country equity exposure between two securities as a grouped column chart.
+tags:
+  - Morningstar
+js_wrap: b
+...

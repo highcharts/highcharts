@@ -1,3 +1,10 @@
+---
+description: >-
+  Explore Stock-specific features including financial series, the navigator,
+  scrollbar, range selector, crosshair, and data grouping, with examples of
+  updating each feature through chart, axis, or series methods.
+---
+
 Understanding Highcharts Stock
 ===
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare two values with paired markers and a connector, using examples for
+  changes over time or differences between groups. Learn which modules to
+  load and how to style each marker and connector.
+---
+
 Dumbbell chart
 ===
 

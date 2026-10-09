@@ -1,3 +1,10 @@
+---
+description: >-
+  Load a tiled-web-map series as a basemap from a supported provider or
+  custom URL, then position it through the map view. The article covers
+  provider settings, layer order, CSS filters, and export behavior.
+---
+
 TiledWebMap
 ==========
 
