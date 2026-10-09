@@ -36,9 +36,9 @@ QUnit.test(
             );
 
             assert.strictEqual(
-                series.condemnedPoints[0].graphic,
-                undefined,
-                'Do not add graphic during render to already destroyed point'
+                series.condemnedPoints.length,
+                0,
+                'Destroyed point should be removed from condemned points'
             );
 
             done();
