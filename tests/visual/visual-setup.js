@@ -63,10 +63,23 @@
                     const context = this;
                     const request = { abort() {} };
                     requests.add(request);
+                    function finish() {
+                        originalSetTimeout.call(window, function () {
+                            requests.delete(request);
+                        }, 0);
+                    }
+                    const timeout = originalSetTimeout.call(
+                        window, finish, 5000
+                    );
+                    function finishBody() {
+                        originalClearTimeout.call(window, timeout);
+                        finish();
+                    }
                     let promise;
                     try {
                         promise = fetch.apply(context, args);
                     } catch (error) {
+                        originalClearTimeout.call(window, timeout);
                         requests.delete(request);
                         throw error;
                     }
@@ -77,19 +90,7 @@
                             // A missing or already-consumed body needs no wait.
                             return Promise.resolve(error);
                         }
-                    }, function () {
-                        originalSetTimeout.call(window, function () {
-                            requests.delete(request);
-                        }, 0);
-                    }).then(function () {
-                        originalSetTimeout.call(window, function () {
-                            requests.delete(request);
-                        }, 0);
-                    }, function () {
-                        originalSetTimeout.call(window, function () {
-                            requests.delete(request);
-                        }, 0);
-                    });
+                    }).then(finishBody, finishBody);
                     return promise;
                 };
             }

@@ -208,11 +208,15 @@ test('cleanup restores fetch and ignores a late response', async ({ page }) => {
     await prepareDataSample(page);
     let release: () => void;
     const responseGate = new Promise<void>(resolve => { release = resolve; });
+    let requestStarted: () => void;
+    const started = new Promise<void>(resolve => { requestStarted = resolve; });
     await page.route('http://localhost/x.json', async route => {
+        requestStarted();
         await responseGate;
         await route.fulfill({ contentType: 'application/json', body: '{"ok":true}' });
     });
     const fetching = page.evaluate(() => fetch('http://localhost/x.json'));
+    await started;
     await expect.poll(() => page.evaluate(() =>
         window.HCVisualSetup.hasPendingRequests()
     )).toBe(true);
