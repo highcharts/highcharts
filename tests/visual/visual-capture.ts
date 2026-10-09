@@ -60,7 +60,6 @@ export async function captureVisualSVG(
                     );
             }
             const chart = getChart();
-<<<<<<< HEAD
             return !window.HCVisualSetup?.hasPendingRequests?.() &&
                 !window.HCVisualSetup?.hasPendingRenders?.() &&
                 (chart ? chart.hasLoaded :
