@@ -139,6 +139,7 @@ module.exports = {
                     'grid/rows/tree-view',
                     'grid/rows/grouping',
                     'grid/rows/pinning',
+                    'grid/rows/selection',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'

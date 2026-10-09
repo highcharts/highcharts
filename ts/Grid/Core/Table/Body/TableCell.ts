@@ -440,9 +440,10 @@ class TableCell extends Cell {
         });
     }
 
-    public override onClick(): void {
+    public override onClick(e?: MouseEvent|KeyboardEvent): void {
         fireEvent(this, 'click', {
-            target: this
+            target: this,
+            originalEvent: e
         });
     }
 
