@@ -591,6 +591,15 @@ export function extend<T>(a: (T|undefined), b: Partial<T>): T {
         a = {} as T;
     }
     for (n in b) { // eslint-disable-line guard-for-in
+
+        // Prototype pollution (#14883). Keys like `__proto__` may arrive as
+        // own, enumerable properties through `JSON.parse`, in which case
+        // assigning them would mutate the prototype of the target instead of
+        // adding a property.
+        if (n === '__proto__' || n === 'constructor') {
+            continue;
+        }
+
         (a as any)[n] = (b as any)[n];
     }
     return a;

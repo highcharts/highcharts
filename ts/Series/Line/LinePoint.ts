@@ -45,9 +45,9 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
-/** @internal */
 declare class LinePoint extends Point {
     options: LinePointOptions;
+    /** @internal */
     series: LineSeries;
 }
 
@@ -57,5 +57,4 @@ declare class LinePoint extends Point {
  *
  * */
 
-/** @internal */
 export default LinePoint;

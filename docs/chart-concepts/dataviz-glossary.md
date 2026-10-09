@@ -1,3 +1,10 @@
+---
+description: >-
+  Look up definitions of Cartesian coordinates, choropleth maps, mosaic plots,
+  and tree data structures, with examples that connect each concept to
+  relevant Highcharts chart types and documentation.
+---
+
 # Dataviz Glossary
 
 The Dataviz Glossary provides concise definitions of key terms and concepts

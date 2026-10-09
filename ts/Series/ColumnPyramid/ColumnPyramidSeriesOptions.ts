@@ -53,13 +53,10 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @product highcharts highstock
  *
- * @excluding boostThreshold, borderRadius, crisp, depth, edgeColor,
- *            edgeWidth, groupZPadding, negativeColor, softThreshold,
- *            threshold, zoneAxis, zones, boostBlending
- *
- * @excluding connectEnds, connectNulls, dashStyle, dataParser, dataURL,
- *            gapSize, gapUnit, linecap, lineWidth, marker, step,
- *            boostThreshold, boostBlending
+ * @excluding borderRadius, boostBlending, boostThreshold, connectEnds,
+ *            connectNulls, crisp, dashStyle, depth, edgeColor, edgeWidth,
+ *            gapSize, gapUnit, groupZPadding, linecap, lineWidth, marker,
+ *            negativeColor, softThreshold, step, threshold, zoneAxis, zones
  *
  * @requires highcharts-more
  */

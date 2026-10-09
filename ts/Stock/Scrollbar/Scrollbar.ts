@@ -355,7 +355,7 @@ class Scrollbar {
      * @internal
      * @function Highcharts.Scrollbar#destroy
      */
-    public destroy(): void {
+    public destroy(): undefined {
 
         const scroller: AnyRecord = this,
             navigator = scroller.chart.scroller;

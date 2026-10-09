@@ -47,7 +47,7 @@ import type { PointShortOptions } from '../../Core/Series/PointOptions';
  *
  * @requires modules/heikinashi
  *
- * @excluding dataParser, dataURL, marker
+ * @excluding marker
  */
 export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 

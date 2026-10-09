@@ -7,6 +7,64 @@
         }
 
         var Highcharts = window.Highcharts;
+        var originalSetTimeout = window.setTimeout;
+        var originalClearTimeout = window.clearTimeout;
+        var originalRequestFrame = window.requestAnimationFrame;
+        var originalCancelFrame = window.cancelAnimationFrame;
+        var timeouts = [];
+        var frames = [];
+        var originalSend = window.XMLHttpRequest.prototype.send;
+        var pendingRequests = new Set();
+
+        function trackTimers() {
+            window.setTimeout = function (...args) {
+                const id = originalSetTimeout.apply(window, args);
+                timeouts.push(id);
+                return id;
+            };
+            window.requestAnimationFrame = function (...args) {
+                const id = originalRequestFrame.apply(window, args);
+                frames.push(id);
+                return id;
+            };
+        }
+
+        function cleanupTimers() {
+            window.setTimeout = originalSetTimeout;
+            window.requestAnimationFrame = originalRequestFrame;
+            timeouts.forEach(id => originalClearTimeout.call(window, id));
+            frames.forEach(id => originalCancelFrame.call(window, id));
+            timeouts.length = frames.length = 0;
+        }
+
+        function trackDataRequests() {
+            const requests = pendingRequests = new Set();
+            window.XMLHttpRequest.prototype.send = function (...args) {
+                const xhr = this;
+                requests.add(xhr);
+                function finish() {
+                    requests.delete(xhr);
+                }
+                // Data's readystatechange callback updates the chart before
+                // loadend. A chart can be loaded while its CSV is still pending.
+                xhr.addEventListener('loadend', finish, { once: true });
+                try {
+                    return originalSend.apply(xhr, args);
+                } catch (error) {
+                    xhr.removeEventListener('loadend', finish);
+                    finish();
+                    throw error;
+                }
+            };
+        }
+
+        function cleanupDataRequests() {
+            window.XMLHttpRequest.prototype.send = originalSend;
+            const requests = pendingRequests;
+            pendingRequests = new Set();
+            requests.forEach(xhr => xhr.abort());
+            requests.clear();
+        }
 
         function deepClone(obj, seen) {
             if (obj === null || typeof obj !== 'object') {
@@ -74,7 +132,7 @@
                 JSON.stringify(Highcharts.defaultOptions);
         }
 
-        var cleanupMode = 'fast';
+        var cleanupMode = 'strict';
         var protoSnapshots = null;
 
         function createPrototypeSnapshot() {
@@ -213,6 +271,14 @@
                 containerStyle.zIndex = '';
             }
 
+            var boards = (window.Dashboards && window.Dashboards.boards) || [];
+            for (const board of boards) {
+                if (board) {
+                    board.destroy();
+                }
+            }
+            boards.length = 0;
+
             var charts = Highcharts.charts;
 
             for (var i = 0; i < charts.length; i++) {
@@ -319,57 +385,6 @@
             }
         };
 
-        Highcharts.prepareShot = function (chart) {
-            if (!chart || !chart.series || !chart.series[0]) {
-                return;
-            }
-
-            var points = chart.series[0].nodes ||
-                chart.series[0].points || [];
-            var i = points.length;
-
-            while (i--) {
-                var point = points[i];
-                if (
-                    point &&
-                    point.visible &&
-                    !point.isNull &&
-                    !(
-                        point.shapeArgs &&
-                        point.shapeArgs.d &&
-                        point.shapeArgs.d.length === 0
-                    ) &&
-                    point.series.options.enableMouseTracking !== false &&
-                    typeof point.onMouseOver === 'function'
-                ) {
-                    point.onMouseOver();
-                    break;
-                }
-            }
-
-            var foreignObjects = chart.container.querySelectorAll('foreignObject br');
-            Array.prototype.forEach.call(foreignObjects, function (br) {
-                var div = document.createElement('div');
-                br.parentNode.replaceChild(div, br);
-            });
-
-            var images = chart.container.querySelectorAll('foreignObject img');
-            Array.prototype.forEach.call(images, function (img) {
-                var div = document.createElement('div');
-                div.style.width = '16px';
-                div.style.height = '16px';
-                div.style.position = 'inline-block';
-                div.style.backgroundColor = '#ddd';
-                img.parentNode.replaceChild(div, img);
-            });
-
-            const description = document.querySelector('.highcharts-description');
-            if (description) {
-                description.style.display = 'none';
-            }
-
-        };
-
         var randomValues = [
             0.14102989272214472, 0.0351817375048995, 0.10094573209062219,
             0.35990892769768834, 0.7690574480220675, 0.16634021210484207,
@@ -442,6 +457,8 @@
 
         window.HCVisualSetup = {
             beforeSample() {
+                trackTimers();
+                trackDataRequests();
                 Math.randomCursor = 0;
                 ignoreNextSetOptions++;
                 if (cleanupMode === 'strict') {
@@ -449,16 +466,21 @@
                 }
             },
             afterSample() {
+                cleanupDataRequests();
                 restoreWrappedFunctions();
                 restoreAddedEvents();
                 if (cleanupMode === 'strict') {
                     restorePrototypes();
                 }
                 cleanupCharts();
+                cleanupTimers();
                 resetDefaultOptionsIfNeeded();
                 markOptionsClean();
             },
             markOptionsClean,
+            hasPendingRequests() {
+                return pendingRequests.size > 0;
+            },
             configure,
             deepClone,
             mode: cleanupMode,

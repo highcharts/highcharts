@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the 3D module and configure chart rotation, depth, perspective, and
+  frames. Learn how column, pie, scatter, and area series use these settings
+  to display data in three dimensions.
+---
+
 Getting started with Highcharts 3D support
 ===
 

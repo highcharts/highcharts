@@ -270,7 +270,7 @@ async function generateDeprecatedOptions() {
     }
 
     await processLib.exec(
-        'npx ts-node tools/api-docs/grid-deprecated-options.ts ' +
+        'node --import tsx tools/api-docs/grid-deprecated-options.ts ' +
         `--source "${GRID_SOURCE_PATH}"`
     );
 

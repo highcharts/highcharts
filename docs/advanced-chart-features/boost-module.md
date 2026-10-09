@@ -1,3 +1,10 @@
+---
+description: >-
+  Set up WebGL rendering for large datasets with the Boost module. Learn how
+  to configure data and activation thresholds, understand feature limitations,
+  and measure rendering performance with built-in timing probes.
+---
+
 Boost module
 ============
 

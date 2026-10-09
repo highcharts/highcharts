@@ -129,6 +129,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HeikinAshiSeriesOptions = merge(
         CandlestickSeries.defaultOptions,
         HeikinAshiSeriesDefaults
@@ -140,6 +141,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series,
         AxisClass: typeof Axis
@@ -171,14 +173,17 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public data!: Array<HeikinAshiPoint>;
 
+    /** @internal */
     public heikinashiData: Array<Array<number>> = [];
 
     public options!: HeikinAshiSeriesOptions;
 
     public points!: Array<HeikinAshiPoint>;
 
+    /** @internal */
     public yData!: Array<Array<number>>;
 
+    /** @internal */
     public processedYData!: Array<Array<(number|null)>>;
 
     /* *

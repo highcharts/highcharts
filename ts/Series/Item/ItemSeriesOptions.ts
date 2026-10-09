@@ -75,7 +75,7 @@ interface ItemSeriesEventsOptions extends SeriesEventsOptions {
  * @excluding borderColor, borderWidth, depth, linecap, shadow,
  *            slicedOffset
  *
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostThreshold, boostBlending
  *
  * @requires modules/item-series
@@ -218,9 +218,7 @@ export interface ItemSeriesOptions extends PieSeriesOptions {
     boostBlending?: undefined;
     boostThreshold?: undefined;
     borderWidth?: undefined;
-    dataParser?: undefined;
     dataSorting?: undefined;
-    dataURL?: undefined;
     depth?: undefined;
     linecap?: undefined;
     shadow?: undefined;

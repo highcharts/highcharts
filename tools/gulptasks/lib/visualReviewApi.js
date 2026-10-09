@@ -30,8 +30,8 @@ const ARTIFACTS = {
 };
 
 class VisualReviewApiError extends Error {
-    constructor(message, status) {
-        super(message);
+    constructor(message, status, cause) {
+        super(message, { cause });
         this.name = 'VisualReviewApiError';
         this.status = status;
     }
@@ -104,14 +104,14 @@ function readSampleArtifacts(sample, sampleRoot) {
     return artifacts;
 }
 
-function buildArtifactBatches(samples) {
-    const batches = [];
+function buildArtifactUploads(samples) {
+    const uploads = [];
     let artifacts = [];
     let batchBytes = 0;
 
     function flushBatch() {
         if (artifacts.length > 0) {
-            batches.push(artifacts);
+            uploads.push({ artifacts });
             artifacts = [];
             batchBytes = 0;
         }
@@ -121,9 +121,15 @@ function buildArtifactBatches(samples) {
         for (const role of Object.keys(ARTIFACTS)) {
             const bytes = sample.artifacts[role];
             if (bytes.length > MAX_BATCH_BYTES) {
-                throw new VisualReviewApiError(
-                    `${role} artifact for ${sample.name} exceeds the batch size limit`
-                );
+                flushBatch();
+                uploads.push({
+                    artifact: {
+                        bytes,
+                        role,
+                        sampleName: sample.name
+                    }
+                });
+                continue;
             }
             if (
                 artifacts.length >= MAX_BATCH_ARTIFACTS ||
@@ -142,7 +148,7 @@ function buildArtifactBatches(samples) {
     }
     flushBatch();
 
-    return batches;
+    return uploads;
 }
 
 function getSubjectKind(options) {
@@ -235,7 +241,7 @@ async function responseMessage(response) {
 
 async function request(url, options, dependencies = {}, requestState = {
     lastRequestAt: 0
-}) {
+}, readResponse = null) {
     const fetchImpl = dependencies.fetchImpl || fetch;
     const sleep = dependencies.sleep || defaultSleep;
 
@@ -244,18 +250,21 @@ async function request(url, options, dependencies = {}, requestState = {
         try {
             await waitForRequestSlot(dependencies, requestState);
             response = await fetchImpl(url, options);
+            if (response.ok) {
+                // Read archive bodies within the same retry budget as headers.
+                return readResponse ? await readResponse(response) : response;
+            }
         } catch (error) {
             if (attempt === MAX_ATTEMPTS - 1) {
                 throw new VisualReviewApiError(
-                    `Visual review request failed: ${error.message}`
+                    `Visual review request failed: ${error.message}` +
+                    (error.cause ? ` (${error.cause.code || 'cause'}: ${error.cause.message})` : ''),
+                    error.status,
+                    error
                 );
             }
             await sleep(2 ** attempt * 1000);
             continue;
-        }
-
-        if (response.ok) {
-            return response;
         }
 
         if (RETRYABLE_STATUS_CODES.has(response.status) && attempt < MAX_ATTEMPTS - 1) {
@@ -270,6 +279,66 @@ async function request(url, options, dependencies = {}, requestState = {
     }
 
     throw new VisualReviewApiError('Visual review request exhausted its retry attempts');
+}
+
+async function downloadLatestNightlyArchive(options = {}) {
+    const baseUrl = normalizeApiUrl(options.apiUrl);
+    const dependencies = options.dependencies || {};
+    const requestState = { lastRequestAt: 0 };
+    const response = await request(
+        `${baseUrl}/api/reviews/nightly/latest`,
+        {
+            headers: {
+                accept: 'application/json'
+            }
+        },
+        dependencies,
+        requestState
+    );
+    let submissions;
+    try {
+        submissions = await response.json();
+    } catch (error) {
+        throw new VisualReviewApiError(
+            `Invalid latest nightly submissions response: ${error.message}`
+        );
+    }
+    if (!Array.isArray(submissions)) {
+        throw new VisualReviewApiError(
+            'Invalid latest nightly submissions response: expected an array'
+        );
+    }
+    if (submissions.length === 0) {
+        return null;
+    }
+
+    const apiKey = options.apiKey || process.env.VISUAL_REVIEW_API_KEY;
+    if (!apiKey) {
+        throw new VisualReviewApiError(
+            'Missing VISUAL_REVIEW_API_KEY for nightly reference download'
+        );
+    }
+    const submission = submissions[0];
+    const runId = positiveInteger(submission?.runId, 'nightly runId');
+    const runAttempt = positiveInteger(
+        submission?.runAttempt,
+        'nightly runAttempt'
+    );
+    const archiveBytes = await request(
+        `${baseUrl}/api/ingestion/nightly/submissions/${runId}/` +
+        `attempts/${runAttempt}/artifacts.zip`,
+        {
+            headers: {
+                accept: 'application/zip',
+                authorization: `Bearer ${apiKey}`
+            }
+        },
+        dependencies,
+        requestState,
+        archiveResponse => archiveResponse.arrayBuffer()
+    );
+
+    return Buffer.from(archiveBytes);
 }
 
 /**
@@ -309,7 +378,7 @@ async function submitVisualReview(options) {
         0;
     let uploadedArtifacts = 0;
     const requestState = { lastRequestAt: 0 };
-    const artifactBatches = buildArtifactBatches(samples);
+    const artifactUploads = buildArtifactUploads(samples);
 
     await request(submissionUrl, {
         method: 'PUT',
@@ -320,22 +389,32 @@ async function submitVisualReview(options) {
         body: JSON.stringify(manifest)
     }, dependencies, requestState);
 
-    for (const artifacts of artifactBatches) {
-        await request(`${submissionUrl}/artifacts`, {
+    for (const upload of artifactUploads) {
+        const artifact = upload.artifact;
+        const artifacts = upload.artifacts || [artifact];
+        const url = artifact ?
+            `${submissionUrl}/artifacts/${artifact.role}` +
+                `?sampleName=${encodeURIComponent(artifact.sampleName)}` :
+            `${submissionUrl}/artifacts`;
+        await request(url, {
             method: 'PUT',
             headers: {
                 ...headers,
-                'content-type': 'application/json'
+                'content-type': artifact ?
+                    ARTIFACTS[artifact.role].contentType :
+                    'application/json'
             },
-            body: JSON.stringify({ artifacts })
+            body: artifact ?
+                artifact.bytes :
+                JSON.stringify({ artifacts })
         }, dependencies, requestState);
         if (onProgress) {
-            for (const artifact of artifacts) {
+            for (const uploadedArtifact of artifacts) {
                 onProgress({
                     completed: ++uploadedArtifacts,
                     total: totalArtifacts,
-                    sampleName: artifact.sampleName,
-                    role: artifact.role
+                    sampleName: uploadedArtifact.sampleName,
+                    role: uploadedArtifact.role
                 });
             }
         }
@@ -367,6 +446,7 @@ async function submitNightlyVisualReview(options) {
 
 module.exports = {
     buildSubmissionManifest,
+    downloadLatestNightlyArchive,
     normalizeApiUrl,
     submitNightlyVisualReview,
     submitPullRequestVisualReview,

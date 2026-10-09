@@ -1,3 +1,11 @@
+---
+description: >-
+  Migrate from highcharts-react-official v3 to @highcharts/react by replacing
+  dependencies and imports, translating options into components, and adapting
+  refs, modules, chart types, and client rendering with examples for common
+  chart scenarios.
+---
+
 # v4 Migration Guide
 
 _A guide for migrating from `highcharts-react-official` v3.x to `@highcharts/react`_
