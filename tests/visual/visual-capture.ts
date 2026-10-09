@@ -60,8 +60,10 @@ export async function captureVisualSVG(
                     );
             }
             const chart = getChart();
-            return chart ? chart.hasLoaded :
-                document.getElementsByTagName('svg').length;
+            return !window.HCVisualSetup?.hasPendingRequests?.() &&
+                !window.HCVisualSetup?.hasPendingRenders?.() &&
+                (chart ? chart.hasLoaded :
+                    document.getElementsByTagName('svg').length);
         };
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             if (isReady()) {
@@ -84,6 +86,11 @@ export async function captureVisualSVG(
                 return svg;
             }
             await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
+        if (window.HCVisualSetup?.hasPendingRenders?.()) {
+            throw new Error(
+                `Boost rendering failed to finish within ${maxAttempts * retryDelay}ms.`
+            );
         }
         throw new Error(
             `Chart or data failed to load within ${maxAttempts * retryDelay}ms.`

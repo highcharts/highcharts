@@ -20,6 +20,7 @@ declare global {
             beforeSample?(): void;
             afterSample?(): void;
             hasPendingRequests?(): boolean;
+            hasPendingRenders?(): boolean;
             markOptionsClean?(): void;
             configure?(options: { mode?: string }): string;
             deepClone?<T>(obj: T, seen?: WeakMap<any, any>): T;

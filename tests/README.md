@@ -9,6 +9,7 @@ This directory contains the Playwright test suite for Highcharts products.
 - [Running Tests](#running-tests)
 - [Viewing Results](#viewing-results)
 - [Writing Tests](#writing-tests)
+  - [Choosing a Test Project](#choosing-a-test-project)
   - [Using createChart](#using-createchart)
   - [Testing with Modules](#testing-with-modules)
   - [Testing Stock Charts](#testing-stock-charts)
@@ -117,6 +118,9 @@ Available projects include browser variants:
 - `qunit`, `qunit-firefox`
 - `visual`, `internal`
 
+See [Choosing a Test Project](#choosing-a-test-project) for test placement and
+commands for the internal harness tests.
+
 ### By File
 
 ```sh
@@ -144,6 +148,41 @@ npx playwright show-report
 ```
 
 ## Writing Tests
+
+### Choosing a Test Project
+
+Choose the project by the behavior being tested:
+
+| Behavior | Location / project |
+|---|---|
+| Highcharts, Dashboards or Grid product behavior | The corresponding product directory and project |
+| Fixtures, test utilities or the visual capture harness | `tests/internal/`, project `internal` |
+| Sample SVG generation and comparison with references | `tests/visual/`, project `visual` |
+
+For example, [visual-boost.spec.ts](internal/visual-boost.spec.ts) verifies that
+capture waits for boost drawing, handles overlapping draws and times out when
+drawing stalls. It belongs to `internal` because it checks the test harness's
+behavior. The sample comparison runner remains in
+[visual.spec.ts](visual/visual.spec.ts).
+
+Run these commands from the repository root:
+
+```sh
+# All internal tests, including their product build dependencies
+npm run test:pw:internal
+
+# Only the boost capture harness regressions (build dependencies run by default)
+npx playwright test tests/internal/visual-boost.spec.ts --project=internal
+```
+
+Use `--no-deps` on the focused command only when the required product output is
+already built and current.
+
+**CI coverage:** Current workflows do not run the `internal` project. The
+[Test tooling workflow](../.github/workflows/test-tooling.yml) is triggered by
+changes under `tests/internal/`, but runs Node tests only. The visual comparison
+workflow runs `visual` and does not execute the internal harness tests. Run the
+internal tests explicitly when changing fixtures, utilities or capture setup.
 
 ### Using createChart
 
@@ -804,10 +843,13 @@ and cancels sample timeouts and animation frames. The sample date stays fixed
 while native timers continue to run.
 
 SVG capture waits for the selected chart's load handler and the sample's initial
-XHR data requests to finish. Image markers can delay the load handler, and charts
-can emit their load event before CSV data arrives, so both checks are needed.
-Pending requests share the chart's 10-second readiness timeout and are aborted
-during sample cleanup. Once ready, capture
+XHR data requests and boost draws to finish. Image markers can delay the load
+handler, and charts can emit their load event before CSV data arrives or boost
+drawing finishes.
+Pending requests and boost draws share the chart's 10-second readiness timeout.
+Boost tracking starts before sample execution and ends at `renderedCanvas`,
+including synchronous draws and overlapping redraws. Sample cleanup aborts
+requests and clears render tracking. Once ready, capture
 yields to queued zero-delay sample updates and checks readiness again. Empty
 datasets remain valid.
 
