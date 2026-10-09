@@ -374,6 +374,39 @@ QUnit.test(
     }
 );
 
+QUnit.test(
+    'Data module - table cells should be read as text (#25454).',
+    function (assert) {
+        const table = document.createElement('table');
+        document.body.appendChild(table);
+        table.id = 'entityTable';
+        table.innerHTML = `
+        <tr><th></th><th>&lt; 0.5 m/s</th></tr>
+        <tr><th>R&amp;D</th><td>1</td></tr>
+        <tr><th>Sales</th><td>2</td></tr>`;
+
+        const chart = Highcharts.chart('container', {
+            data: {
+                table: 'entityTable'
+            }
+        });
+
+        assert.strictEqual(
+            chart.series[0].name,
+            '< 0.5 m/s',
+            'HTML entities in a header cell should be decoded in series name.'
+        );
+
+        assert.strictEqual(
+            chart.series[0].points[0].name,
+            'R&D',
+            'HTML entities in a body cell should be decoded in point name.'
+        );
+
+        document.body.removeChild(table);
+    }
+);
+
 
 QUnit.test('Updating with firstRowAsNames', function (assert) {
     const chart = Highcharts.chart('container', {
