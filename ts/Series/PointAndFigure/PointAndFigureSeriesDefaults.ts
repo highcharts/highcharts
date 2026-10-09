@@ -45,8 +45,27 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
  */
 
 const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
+
+    /**
+     * Price increment that determines if a new point should be added to the
+     * column.
+     *
+     * @type    {string|number}
+     * @since   12.0.0
+     * @product highstock
+     */
     boxSize: '1%',
+
+    /**
+     * Threshold that should be met to create a new column in opposite
+     * direction.
+     *
+     * @type    {number}
+     * @since   12.0.0
+     * @product highstock
+     */
     reversalAmount: 3,
+
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
           '<b> {series.name}</b><br/>' +
@@ -60,17 +79,33 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
     dataGrouping: {
         enabled: false
     },
+
+    /**
+     * Marker options for the up direction column, inherited from
+     * `series.marker` options.
+     *
+     * @extends plotOptions.series.marker
+     * @product highstock
+     */
     markerUp: {
         symbol: 'cross',
         lineColor: '#00FF00',
         lineWidth: 2
     },
+
+    /**
+     * Marker options for the down direction column.
+     *
+     * @extends plotOptions.series.marker
+     * @product highstock
+     */
     marker: {
         symbol: 'circle',
         fillColor: 'transparent',
         lineColor: '#FF0000',
         lineWidth: 2
     },
+
     legendSymbol: 'lineMarker'
 };
 
@@ -123,35 +158,6 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  * @extends   series.scatter.data
  * @product   highstock
  * @apioption series.pointandfigure.data
- */
-
-/**
- * Price increment that determines if a new point should be added to the column.
- *
- *
- * @type      {string|number}
- * @since 12.0.0
- * @product   highstock
- * @apioption plotOptions.pointandfigure.boxSize
- */
-
-/**
- * Threshold that should be met to create a new column in opposite direction.
- *
- *
- * @type      {number}
- * @since 12.0.0
- * @product   highstock
- * @apioption plotOptions.pointandfigure.reversalAmount
- */
-
-/**
- * Marker options for the up direction column, inherited from `series.marker`
- * options.
- *
- * @extends   plotOptions.series.marker
- * @product   highstock
- * @apioption plotOptions.pointandfigure.markerUp
  */
 
 ''; // Keeps doclets above detached
