@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose between format strings and formatter callbacks for chart text. Learn
+  about HTML rendering, filtering, JSON compatibility, and export limitations
+  when customizing labels, tooltips, and other text elements.
+---
+
 Labels and string formatting
 ============================
 

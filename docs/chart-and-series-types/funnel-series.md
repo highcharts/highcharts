@@ -1,3 +1,10 @@
+---
+description: >-
+  Represent stages that narrow as values decrease, load the funnel module,
+  and adjust the overall dimensions or neck size. The article includes a
+  demo and links to the complete series options.
+---
+
 Funnel series
 =============
 

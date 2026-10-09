@@ -1,3 +1,10 @@
+---
+description: >-
+  Combine series types by setting type on each series; the example overlays
+  a spline average line on several column series in a single chart using
+  separate data arrays.
+---
+
 Combining chart types
 =====================
 

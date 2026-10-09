@@ -7,9 +7,36 @@
         }
 
         var Highcharts = window.Highcharts;
+        var originalSetTimeout = window.setTimeout;
+        var originalClearTimeout = window.clearTimeout;
+        var originalRequestFrame = window.requestAnimationFrame;
+        var originalCancelFrame = window.cancelAnimationFrame;
+        var timeouts = [];
+        var frames = [];
         var originalSend = window.XMLHttpRequest.prototype.send;
         var pendingRequests = new Set();
         var pendingRenders = new Map();
+
+        function trackTimers() {
+            window.setTimeout = function (...args) {
+                const id = originalSetTimeout.apply(window, args);
+                timeouts.push(id);
+                return id;
+            };
+            window.requestAnimationFrame = function (...args) {
+                const id = originalRequestFrame.apply(window, args);
+                frames.push(id);
+                return id;
+            };
+        }
+
+        function cleanupTimers() {
+            window.setTimeout = originalSetTimeout;
+            window.requestAnimationFrame = originalRequestFrame;
+            timeouts.forEach(id => originalClearTimeout.call(window, id));
+            frames.forEach(id => originalCancelFrame.call(window, id));
+            timeouts.length = frames.length = 0;
+        }
 
         function trackDataRequests() {
             const requests = pendingRequests = new Set();
@@ -292,6 +319,14 @@
                 containerStyle.zIndex = '';
             }
 
+            var boards = (window.Dashboards && window.Dashboards.boards) || [];
+            for (const board of boards) {
+                if (board) {
+                    board.destroy();
+                }
+            }
+            boards.length = 0;
+
             var charts = Highcharts.charts;
 
             for (var i = 0; i < charts.length; i++) {
@@ -470,6 +505,7 @@
 
         window.HCVisualSetup = {
             beforeSample() {
+                trackTimers();
                 trackDataRequests();
                 Math.randomCursor = 0;
                 ignoreNextSetOptions++;
@@ -487,6 +523,7 @@
                     restorePrototypes();
                 }
                 cleanupCharts();
+                cleanupTimers();
                 resetDefaultOptionsIfNeeded();
                 markOptionsClean();
             },
