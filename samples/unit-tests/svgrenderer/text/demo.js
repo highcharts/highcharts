@@ -566,6 +566,68 @@ QUnit.test('lineClamp', function (assert) {
     }
 });
 
+QUnit.test('lineClamp with textOverflow ellipsis (#24724)', function (assert) {
+    const ren = new Highcharts.Renderer(
+            document.getElementById('container'),
+            600,
+            400
+        ),
+        str = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
+            'Nullam in dui mauris.';
+
+    /**
+     * Render the string with and without `useHTML` for a given line clamp, and
+     * return the rendered heights. Note that `getBBox` can't be used here,
+     * because the SVG and HTML texts share the same bounding box cache key.
+     * @param {number} lineClamp The line clamp to apply
+     * @return {Array<number>} The SVG and the HTML height
+     */
+    function heights(lineClamp) {
+        return [false, true].map(
+            useHTML => ren
+                .text(str, 30, 30, useHTML)
+                .css({
+                    width: '200px',
+                    textOverflow: 'ellipsis',
+                    lineClamp
+                })
+                .add()
+                .element
+                .getBoundingClientRect()
+                .height
+        );
+    }
+
+    try {
+        const [svg1, html1] = heights(1),
+            [svg2, html2] = heights(2);
+
+        assert.close(
+            html1,
+            svg1,
+            2.5,
+            'With `lineClamp: 1`, the HTML text should stay on one line like ' +
+            'the SVG text'
+        );
+
+        assert.ok(
+            html2 > html1,
+            'With `lineClamp: 2`, the HTML text should wrap instead of ' +
+            'staying on one line'
+        );
+
+        assert.close(
+            html2,
+            svg2,
+            2.5,
+            'With `lineClamp: 2`, the HTML text should be clamped to the ' +
+            'same height as the SVG text'
+        );
+    } finally {
+        ren.destroy();
+    }
+});
+
 QUnit.test('BBox for mulitiple lines', function (assert) {
     var renderer;
 

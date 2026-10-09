@@ -30,8 +30,8 @@ const ARTIFACTS = {
 };
 
 class VisualReviewApiError extends Error {
-    constructor(message, status) {
-        super(message);
+    constructor(message, status, cause) {
+        super(message, { cause });
         this.name = 'VisualReviewApiError';
         this.status = status;
     }
@@ -241,7 +241,7 @@ async function responseMessage(response) {
 
 async function request(url, options, dependencies = {}, requestState = {
     lastRequestAt: 0
-}) {
+}, readResponse = null) {
     const fetchImpl = dependencies.fetchImpl || fetch;
     const sleep = dependencies.sleep || defaultSleep;
 
@@ -250,18 +250,21 @@ async function request(url, options, dependencies = {}, requestState = {
         try {
             await waitForRequestSlot(dependencies, requestState);
             response = await fetchImpl(url, options);
+            if (response.ok) {
+                // Read archive bodies within the same retry budget as headers.
+                return readResponse ? await readResponse(response) : response;
+            }
         } catch (error) {
             if (attempt === MAX_ATTEMPTS - 1) {
                 throw new VisualReviewApiError(
-                    `Visual review request failed: ${error.message}`
+                    `Visual review request failed: ${error.message}` +
+                    (error.cause ? ` (${error.cause.code || 'cause'}: ${error.cause.message})` : ''),
+                    error.status,
+                    error
                 );
             }
             await sleep(2 ** attempt * 1000);
             continue;
-        }
-
-        if (response.ok) {
-            return response;
         }
 
         if (RETRYABLE_STATUS_CODES.has(response.status) && attempt < MAX_ATTEMPTS - 1) {
@@ -276,6 +279,66 @@ async function request(url, options, dependencies = {}, requestState = {
     }
 
     throw new VisualReviewApiError('Visual review request exhausted its retry attempts');
+}
+
+async function downloadLatestNightlyArchive(options = {}) {
+    const baseUrl = normalizeApiUrl(options.apiUrl);
+    const dependencies = options.dependencies || {};
+    const requestState = { lastRequestAt: 0 };
+    const response = await request(
+        `${baseUrl}/api/reviews/nightly/latest`,
+        {
+            headers: {
+                accept: 'application/json'
+            }
+        },
+        dependencies,
+        requestState
+    );
+    let submissions;
+    try {
+        submissions = await response.json();
+    } catch (error) {
+        throw new VisualReviewApiError(
+            `Invalid latest nightly submissions response: ${error.message}`
+        );
+    }
+    if (!Array.isArray(submissions)) {
+        throw new VisualReviewApiError(
+            'Invalid latest nightly submissions response: expected an array'
+        );
+    }
+    if (submissions.length === 0) {
+        return null;
+    }
+
+    const apiKey = options.apiKey || process.env.VISUAL_REVIEW_API_KEY;
+    if (!apiKey) {
+        throw new VisualReviewApiError(
+            'Missing VISUAL_REVIEW_API_KEY for nightly reference download'
+        );
+    }
+    const submission = submissions[0];
+    const runId = positiveInteger(submission?.runId, 'nightly runId');
+    const runAttempt = positiveInteger(
+        submission?.runAttempt,
+        'nightly runAttempt'
+    );
+    const archiveBytes = await request(
+        `${baseUrl}/api/ingestion/nightly/submissions/${runId}/` +
+        `attempts/${runAttempt}/artifacts.zip`,
+        {
+            headers: {
+                accept: 'application/zip',
+                authorization: `Bearer ${apiKey}`
+            }
+        },
+        dependencies,
+        requestState,
+        archiveResponse => archiveResponse.arrayBuffer()
+    );
+
+    return Buffer.from(archiveBytes);
 }
 
 /**
@@ -383,6 +446,7 @@ async function submitNightlyVisualReview(options) {
 
 module.exports = {
     buildSubmissionManifest,
+    downloadLatestNightlyArchive,
     normalizeApiUrl,
     submitNightlyVisualReview,
     submitPullRequestVisualReview,

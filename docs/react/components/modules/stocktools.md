@@ -1,3 +1,10 @@
+---
+description: >-
+  Add stock chart tools with the StockTools component, configure it through
+  stockTools API props, and pair it with a stock chart and series such as
+  candlesticks.
+---
+
 # StockTools
 
 You can add the stock tools to your stock chart using the `StockTools` component:

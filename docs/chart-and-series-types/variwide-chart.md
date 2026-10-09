@@ -1,3 +1,10 @@
+---
+description: >-
+  Add a third data dimension to columns by setting y for height and z for
+  width. The article compares the series with Marimekko charts and includes
+  a basic example and API link.
+---
+
 Variwide chart
 ===
 

@@ -308,6 +308,33 @@ QUnit.test('Series.update', function (assert) {
         chart.series[0].options.animation, false, 'Series ' +
         'animation on update should always be false even if set from options'
     );
+
+    // Type registered after chart creation (#24254)
+    const lateColumnType = 'latecolumn';
+    assert.notOk(
+        chart.options.plotOptions[lateColumnType],
+        'Chart should not have plotOptions for a type registered later (#24254)'
+    );
+
+    Highcharts.seriesType(lateColumnType, 'column', {
+        customProp: 'from-defaults'
+    });
+
+    chart.series[0].update({ type: lateColumnType });
+
+    assert.strictEqual(
+        chart.series[0].type,
+        lateColumnType,
+        'Series should update without throwing (#24254)'
+    );
+    assert.strictEqual(
+        chart.series[0].options.customProp,
+        'from-defaults',
+        'Should use default plotOptions for the new type (#24254)'
+    );
+
+    delete Highcharts.seriesTypes[lateColumnType];
+    delete Highcharts.getOptions().plotOptions[lateColumnType];
 });
 
 QUnit.test('Series.update and mouse interaction', function (assert) {

@@ -1,3 +1,9 @@
+---
+description: >-
+  Learn how a chart legend identifies each series by its name and symbol, and
+  how readers can use the legend to enable or disable individual series.
+---
+
 Legend
 ======
 

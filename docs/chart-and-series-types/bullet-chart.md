@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a bullet series that compares a measured value with a target against
+  qualitative plot-band ranges. The example covers module loading and how
+  target appearance can be customized globally or per point.
+---
+
 Bullet chart
 ===
 

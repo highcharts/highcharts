@@ -20,7 +20,6 @@
 
 import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
-import type Series from '../Core/Series/Series';
 
 import {
     addEvent,
@@ -155,18 +154,20 @@ function chartAdjustHeight(
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                axis.series.forEach(function (series: Series): void {
-                    const clipRect = series.sharedClipKey &&
-                        chart.sharedClips[series.sharedClipKey];
+                if (!chart.initiatedScale) {
+                    axis.series.forEach((series): void => {
+                        const clipRect = series.sharedClipKey &&
+                            chart.sharedClips[series.sharedClipKey];
 
-                    if (clipRect) {
-                        clipRect.attr(chart.inverted ? {
-                            width: chart.plotHeight
-                        } : {
-                            height: chart.plotHeight
-                        });
-                    }
-                });
+                        if (clipRect) {
+                            clipRect.attr(chart.inverted ? {
+                                width: chart.plotHeight
+                            } : {
+                                height: chart.plotHeight
+                            });
+                        }
+                    });
+                }
             }
         }
         this.initiatedScale = true;

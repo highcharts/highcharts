@@ -1,3 +1,10 @@
+---
+description: >-
+  Group scatter or map markers into clusters and configure their appearance.
+  Compare the built-in layout algorithms, set clustering thresholds, or supply
+  a custom algorithm that returns grouped point data.
+---
+
 Marker clusters
 ===
 
