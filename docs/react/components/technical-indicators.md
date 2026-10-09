@@ -18,7 +18,7 @@ import { EMASeries } from "@highcharts/react/indicators/EMA";
 import { RSISeries } from "@highcharts/react/indicators/RSI";
 import { MACDSeries } from "@highcharts/react/indicators/MACD";
 
-// Fetch stock data`
+// Fetch stock data
 const stockData = await fetch(
   "https://demo-live-data.highcharts.com/aapl-ohlc.json",
 ).then((res) => (res.ok ? res.json() : null));
