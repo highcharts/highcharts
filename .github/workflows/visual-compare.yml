@@ -158,10 +158,31 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-highcharts
+        continue-on-error: true
+        run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-maps
+        continue-on-error: true
+        run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-stock
+        continue-on-error: true
+        run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-gantt
+        continue-on-error: true
+        run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+
+      - name: Collect reference failures
+        env:
+          REFERENCE_OUTCOME: ${{ steps.reference-highcharts.outcome }} ${{ steps.reference-maps.outcome }} ${{ steps.reference-stock.outcome }} ${{ steps.reference-gantt.outcome }}
+        run: |
+          args=()
+          if [[ "$REFERENCE_OUTCOME" == *failure* ]]; then
+            args+=(--reference-failed)
+          fi
+          node .github/scripts/collectReferenceFailures.js "${args[@]}"
+          if [ -f test/visual-test-errors.log ]; then
+            mv test/visual-test-errors.log test/visual-reference-errors.log
+          fi
 
       - name: Checkout current branch
         uses: actions/checkout@v6
@@ -261,6 +282,8 @@ jobs:
             samples/**/diff.gif
             test/visual-test-results.json
             test/visual-test-errors.log
+            test/visual-reference-failures.json
+            test/visual-reference-errors.log
             tmp/pr-visual-test-comment.json
 
       - name: Fail on visual test execution errors

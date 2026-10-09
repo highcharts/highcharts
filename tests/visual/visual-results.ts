@@ -10,6 +10,11 @@ import { dirname, join } from 'node:path';
 
 type VisualResults = Record<string, number>;
 
+export type VisualReferenceFailure = {
+    sample: string;
+    error: string;
+};
+
 function sampleFile(
     root: string,
     samplePath: string,
@@ -77,6 +82,44 @@ function requireSamplePaths(samplePaths: string[]): string[] {
 
 function sharedFile(root: string, filename: string): string {
     return join(root, 'test', filename);
+}
+
+export function readReferenceFailures(root: string): VisualReferenceFailure[] {
+    const failurePath = sharedFile(root, 'visual-reference-failures.json');
+    if (!existsSync(failurePath)) {
+        return [];
+    }
+
+    const failures: unknown = JSON.parse(readFileSync(failurePath, 'utf8'));
+    if (
+        !Array.isArray(failures) ||
+        failures.some((failure: unknown) =>
+            !failure || typeof failure !== 'object' ||
+            !('sample' in failure) || typeof failure.sample !== 'string' ||
+            !failure.sample.trim() || !('error' in failure) ||
+            typeof failure.error !== 'string'
+        )
+    ) {
+        throw new Error('Visual reference failures must be an array of sample/error objects.');
+    }
+
+    return failures as VisualReferenceFailure[];
+}
+
+export function writeReferenceFailures(
+    root: string,
+    failures: VisualReferenceFailure[]
+): void {
+    const failurePath = sharedFile(root, 'visual-reference-failures.json');
+    ensureParent(failurePath);
+    writeFileSync(failurePath, JSON.stringify(
+        failures.map(({ sample, error }) => ({
+            sample,
+            error: error.split(/\r?\n/)[0]
+        })).sort((a, b) => a.sample.localeCompare(b.sample)),
+        null,
+        ' '
+    ));
 }
 
 export function writeReference(
@@ -147,6 +190,10 @@ export function resetVisualRun(
     rmSync(sharedFile(root, 'visual-test-results.json'), { force: true });
     rmSync(sharedFile(root, 'visual-test-errors.log'), { force: true });
     rmSync(sharedFile(root, 'visual-test-complete'), { force: true });
+
+    if (referenceMode) {
+        rmSync(sharedFile(root, 'visual-reference-failures.json'), { force: true });
+    }
 
     for (const samplePath of selectedSamples) {
         rmSync(sampleFile(root, samplePath, 'candidate.svg'), { force: true });

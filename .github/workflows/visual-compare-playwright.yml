@@ -176,7 +176,8 @@ jobs:
 
           for file in \
             test/visual-test-results.json \
-            test/visual-test-errors.log; do
+            test/visual-test-errors.log \
+            test/visual-reference-failures.json; do
             if [ -f "$file" ]; then
               target="$RUNNER_TEMP/visual-reference/$file"
               mkdir -p "$(dirname "$target")"
@@ -204,6 +205,11 @@ jobs:
             mkdir -p samples
             cp -R "$RUNNER_TEMP/visual-reference/samples/." samples
           fi
+          if [ -f "$RUNNER_TEMP/visual-reference/test/visual-reference-failures.json" ]; then
+            mkdir -p test
+            cp "$RUNNER_TEMP/visual-reference/test/visual-reference-failures.json" \
+              test/visual-reference-failures.json
+          fi
 
       - name: Install candidate toolchain
         run: npm ci
@@ -222,11 +228,63 @@ jobs:
           CANDIDATE_OUTCOME: ${{ steps.candidate.outcome }}
         run: |
           failures=0
-
-          if [ "$REFERENCE_OUTCOME" != "success" ]; then
-            echo "::error::Reference step outcome: $REFERENCE_OUTCOME"
-            failures=1
-          fi
+          node <<'NODE' || failures=1
+          const fs = require('node:fs');
+          // The reference reporter writes this only after completion checks.
+          const failurePath = `${process.env.RUNNER_TEMP}/visual-reference/test/visual-reference-failures.json`;
+          const errorPath = `${process.env.RUNNER_TEMP}/visual-reference/test/visual-test-errors.log`;
+          const outcome = process.env.REFERENCE_OUTCOME;
+          let listed = [];
+          if (fs.existsSync(failurePath)) {
+            try {
+              listed = JSON.parse(fs.readFileSync(failurePath, 'utf8'));
+              if (!Array.isArray(listed) || listed.some(item =>
+                !item || typeof item.sample !== 'string' || !item.sample ||
+                typeof item.error !== 'string' || !item.error
+              )) throw new Error('expected an array of { sample, error } entries');
+            } catch (error) {
+              console.log(`::error::Invalid reference failures file: ${error.message}`);
+              process.exit(1);
+            }
+          }
+          const log = fs.existsSync(errorPath) ? fs.readFileSync(errorPath, 'utf8') : '';
+          const entries = [];
+          let entry = '';
+          for (const line of log.split(/\r?\n/)) {
+            if (!line) continue;
+            if (line.startsWith('Visual test failed for ')) {
+              if (entry) entries.push(entry);
+              entry = line;
+            } else {
+              entry = entry ? `${entry}\n${line}` : line;
+            }
+          }
+          if (entry) entries.push(entry);
+          const unlisted = entries.filter(line => {
+            const match = line.match(/^Visual test failed for (.+?): /);
+            return !match || !listed.some(item => item.sample === match[1]);
+          });
+          const missingLogEntries = listed.filter(item =>
+            !entries.some(line => line.startsWith(`Visual test failed for ${item.sample}: `))
+          );
+          if (unlisted.length) {
+            console.log(`::error::Reference run has unlisted or incomplete-run errors: ${unlisted.join('; ')}`);
+            process.exitCode = 1;
+          }
+          if (missingLogEntries.length) {
+            console.log(`::error::Listed reference failures are missing log entries: ${missingLogEntries.map(item => item.sample).join(', ')}`);
+            process.exitCode = 1;
+          }
+          if (outcome !== 'success' && !(outcome === 'failure' && listed.length > 0)) {
+            console.log(`::error::Reference step outcome ${outcome} is not explained by listed sample failures.`);
+            process.exitCode = 1;
+          }
+          if (outcome === 'success' && listed.length) {
+            console.log('::error::Reference run succeeded but reported sample failures.');
+            process.exitCode = 1;
+          }
+          for (const item of listed) console.log(`::warning::Reference sample not compared: ${item.sample}: ${item.error}`);
+          NODE
           if [ "$CANDIDATE_OUTCOME" != "success" ]; then
             echo "::error::Candidate step outcome: $CANDIDATE_OUTCOME"
             failures=1
@@ -281,6 +339,7 @@ jobs:
           path: |
             ${{ runner.temp }}/visual-samples.json
             ${{ runner.temp }}/visual-reference
+            test/visual-reference-failures.json
             samples/**/reference.svg
             samples/**/candidate.svg
             samples/**/diff.gif

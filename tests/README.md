@@ -851,6 +851,8 @@ as a substring, while optional manifest entries are exact sample IDs.
 | `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
 | `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
 | `test/visual-test-errors.log` | Any sample or terminal error during the run |
+| `test/visual-reference-failures.json` | Samples whose master reference render failed; absent when none |
+| `test/visual-reference-errors.log` | Karma reference-run errors, kept separate from candidate errors |
 | `test/visual-test-complete` | Candidate mode, after every selected sample finishes, including completed sample errors |
 
 ### Failure semantics
@@ -861,18 +863,23 @@ are failures:
 
 - The sample script throws or the chart does not load within the timeout
 - The browser context or Playwright process terminates unexpectedly
-- `reference.svg` is absent when candidate mode is run
-- `test/visual-test-errors.log` is non-empty after the run
+- `reference.svg` is absent when candidate mode is run, except for samples listed
+  in `test/visual-reference-failures.json`, which are not compared
+- Candidate execution errors, unlisted reference errors, and terminal reference
+  failures fail CI. Listed reference failures do not fail the run by themselves
+- `test/visual-test-errors.log` is non-empty after the candidate run
 - expected results are missing, the selected sample set is invalid, or an
   explicitly requested manifest ID is excluded by Karma
 - `test/visual-test-complete` is absent after the run (indicates the full
-  candidate run did not finish normally)
+candidate run did not finish normally)
 
 A completed sample execution error fails CI and remains in the error log, but
 does not prevent the completion signal when all selected samples finish.
 Interrupted runs, unexecuted samples, and fixture or browser failures omit the
 signal. Completion alone is not permission to publish: the workflow also
-requires successful reference and candidate outcomes and an empty error log.
+requires successful candidate outcomes, no unlisted reference errors, and no
+terminal reference failure. Candidate errors must be empty; listed reference
+failures are reported as not compared.
 
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.

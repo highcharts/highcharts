@@ -134,6 +134,108 @@ test('stalled data times out and cleanup permits a valid empty chart', async ({ 
     expect(await captureVisualSVG(page)).toContain('No data to display');
 });
 
+test('fetch requests stay pending until the response body is consumed', async ({ page }) => {
+    await prepareDataSample(page);
+    let release: () => void;
+    const responseGate = new Promise<void>(resolve => { release = resolve; });
+    await page.route('http://localhost/x.json', async route => {
+        await responseGate;
+        await route.fulfill({ contentType: 'application/json', body: '{"ok":true}' });
+    });
+    const fetching = page.evaluate(async () => {
+        const response = await fetch('http://localhost/x.json');
+        return response.json();
+    });
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(true);
+    release();
+    await expect(fetching).resolves.toEqual({ ok: true });
+    await expect.poll(() => page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(false);
+});
+
+test('rejected fetch requests are removed from pending requests', async ({ page }) => {
+    await prepareDataSample(page);
+    await page.route('http://localhost/x.json', route => route.abort());
+    const rejected = page.evaluate(() => fetch('http://localhost/x.json'));
+    await expect(rejected).rejects.toThrow();
+    await expect.poll(() => page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(false);
+});
+
+test('sequential fetches remain pending between responses', async ({ page }) => {
+    await prepareDataSample(page);
+    let releaseSecond: () => void;
+    const secondGate = new Promise<void>(resolve => {
+        releaseSecond = resolve;
+    });
+    let secondStarted: () => void;
+    const secondRequest = new Promise<void>(resolve => {
+        secondStarted = resolve;
+    });
+    await page.route('http://localhost/first.json', route => route.fulfill({
+        contentType: 'application/json', body: '{"ok":true}'
+    }));
+    await page.route('http://localhost/second.json', async route => {
+        secondStarted();
+        await secondGate;
+        await route.fulfill({ contentType: 'application/json', body: '{"ok":true}' });
+    });
+    const fetching = page.evaluate(async () => {
+        let pendingAtFirstCompletion = false;
+        await fetch('http://localhost/first.json').then(() => {
+            pendingAtFirstCompletion =
+                window.HCVisualSetup.hasPendingRequests();
+            return fetch('http://localhost/second.json');
+        }).then(response => response.json());
+        return pendingAtFirstCompletion;
+    });
+    await secondRequest;
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(true);
+    releaseSecond();
+    await expect(fetching).resolves.toBe(true);
+    await expect.poll(() => page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(false);
+});
+
+test('cleanup restores fetch and ignores a late response', async ({ page }) => {
+    await prepareDataSample(page);
+    let release: () => void;
+    const responseGate = new Promise<void>(resolve => { release = resolve; });
+    let requestStarted: () => void;
+    const started = new Promise<void>(resolve => { requestStarted = resolve; });
+    await page.route('http://localhost/x.json', async route => {
+        requestStarted();
+        await responseGate;
+        await route.fulfill({ contentType: 'application/json', body: '{"ok":true}' });
+    });
+    const fetching = page.evaluate(() => fetch('http://localhost/x.json'));
+    await started;
+    await expect.poll(() => page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(true);
+    await page.evaluate(() => window.HCVisualSetup.afterSample());
+    expect(await page.evaluate(() => window.fetch.toString())).toContain('[native code]');
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(false);
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    release();
+    await expect(fetching).resolves.toBeTruthy();
+    await page.evaluate(() => window.HCVisualSetup.beforeSample());
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(false);
+    expect(errors).toEqual([]);
+});
+
 test('capture keeps the main map when its locator loads later', async ({ page }) => {
     await prepareDataSample(page);
     await page.addScriptTag({ path: 'code/modules/map.src.js' });
@@ -151,10 +253,13 @@ test('capture keeps the main map when its locator loads later', async ({ page })
     try {
         await page.addScriptTag({ path: 'samples/maps/demo/locator-map/demo.js' });
         await expect(page.locator('#container .highcharts-container')).toHaveCount(1);
-        const mainSVG = await captureVisualSVG(page);
+        const capturing = captureVisualSVG(page);
+        // Let capture reach its readiness check before releasing the locator.
+        await new Promise(resolve => setTimeout(resolve, 100));
+        release();
+        const mainSVG = await capturing;
         expect(mainSVG).toContain('Highcharts Map with Locator');
 
-        release();
         await expect(page.locator('#container .highcharts-container')).toHaveCount(2);
         expect(await captureVisualSVG(page)).toBe(mainSVG);
     } finally {

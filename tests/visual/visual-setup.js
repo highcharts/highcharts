@@ -14,6 +14,7 @@
         var timeouts = [];
         var frames = [];
         var originalSend = window.XMLHttpRequest.prototype.send;
+        var originalFetch = window.fetch;
         var pendingRequests = new Set();
 
         function trackTimers() {
@@ -56,10 +57,50 @@
                     throw error;
                 }
             };
+            if (typeof originalFetch === 'function') {
+                window.fetch = function (...args) {
+                    const fetch = originalFetch;
+                    const context = this;
+                    const request = { abort() {} };
+                    requests.add(request);
+                    function finish() {
+                        originalSetTimeout.call(window, function () {
+                            requests.delete(request);
+                        }, 0);
+                    }
+                    const timeout = originalSetTimeout.call(
+                        window, finish, 5000
+                    );
+                    function finishBody() {
+                        originalClearTimeout.call(window, timeout);
+                        finish();
+                    }
+                    let promise;
+                    try {
+                        promise = fetch.apply(context, args);
+                    } catch (error) {
+                        originalClearTimeout.call(window, timeout);
+                        requests.delete(request);
+                        throw error;
+                    }
+                    promise.then(function (response) {
+                        try {
+                            return response.clone().arrayBuffer();
+                        } catch (error) {
+                            // A missing or already-consumed body needs no wait.
+                            return Promise.resolve(error);
+                        }
+                    }).then(finishBody, finishBody);
+                    return promise;
+                };
+            }
         }
 
         function cleanupDataRequests() {
             window.XMLHttpRequest.prototype.send = originalSend;
+            if (typeof originalFetch === 'function') {
+                window.fetch = originalFetch;
+            }
             const requests = pendingRequests;
             pendingRequests = new Set();
             requests.forEach(xhr => xhr.abort());
