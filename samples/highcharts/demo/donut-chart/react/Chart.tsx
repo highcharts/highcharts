@@ -1,4 +1,3 @@
-import type Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
 import {
     Chart,
     Title,
@@ -70,30 +69,28 @@ export default function DonutChart() {
             <Tooltip pointFormat="{series.name}: <b>{point.percentage:.0f}%</b>" />
             <Legend enabled={false} />
             <PlotOptions
-                series={
-                    {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        borderRadius: 8,
-                        dataLabels: [
-                            {
-                                enabled: true,
-                                distance: 20,
-                                format: '{point.name}'
-                            },
-                            {
-                                enabled: true,
-                                backgroundColor: 'contrast',
-                                distance: -18,
-                                format: '{point.percentage:.0f}%',
-                                style: {
-                                    fontSize: '0.9em'
-                                }
+                pie={{
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    borderRadius: 8,
+                    dataLabels: [
+                        {
+                            enabled: true,
+                            distance: 20,
+                            format: '{point.name}'
+                        },
+                        {
+                            enabled: true,
+                            backgroundColor: 'contrast',
+                            distance: -18,
+                            format: '{point.percentage:.0f}%',
+                            style: {
+                                fontSize: '0.9em'
                             }
-                        ],
-                        showInLegend: true
-                    } as unknown as Highcharts.PlotSeriesOptions
-                }
+                        }
+                    ],
+                    showInLegend: true
+                }}
             />
             <Exporting />
             <Accessibility point={{ valueSuffix: '%' }} />
