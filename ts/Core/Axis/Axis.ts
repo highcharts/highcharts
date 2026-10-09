@@ -389,6 +389,13 @@ class Axis {
      */
     public len!: number;
 
+    /**
+     * Ratio of this axis's pixel length to its linked parent's. Defaults
+     * to `1` if there is no linked parent.
+     * @internal
+     */
+    public lenRatio!: number;
+
     /** @internal */
     public linkedParent?: Axis;
 
@@ -1158,7 +1165,10 @@ class Axis {
         pointPlacement?: number
     ): number {
         const axis = (this.linkedParent || this), // #1417
-            localMin = (old && axis.old ? axis.old.min : axis.min);
+            axisOld = axis.old,
+            axisLen = axis.len,
+            localMin = (old && axisOld ? axisOld.min : axis.min),
+            lenRatio = this.lenRatio;
 
         if (!isNumber(localMin)) {
             return NaN;
@@ -1173,7 +1183,7 @@ class Axis {
 
         let sign = 1,
             cvsOffset = 0,
-            localA = old && axis.old ? axis.old.transA : axis.transA,
+            localA = old && axisOld ? axisOld.transA : axis.transA,
             returnValue = 0;
 
         if (!localA) {
@@ -1184,19 +1194,19 @@ class Axis {
         // in SVG.
         if (cvsCoord) {
             sign *= -1; // Canvas coordinates inverts the value
-            cvsOffset = axis.len;
+            cvsOffset = axisLen;
         }
 
         // Handle reversed axis
         if (axis.reversed) {
             sign *= -1;
-            cvsOffset -= sign * (axis.sector || axis.len);
+            cvsOffset -= sign * (axis.sector || axisLen);
         }
 
         // From pixels to value
         if (backwards) { // Reverse translation
 
-            val = val * sign + cvsOffset;
+            val = val / lenRatio * sign + cvsOffset;
             val -= minPixelPadding;
             // From chart pixel to value:
             returnValue = val / localA + localMin;
@@ -1215,6 +1225,8 @@ class Axis {
                 cvsOffset +
                 (sign * minPixelPadding) +
                 (isNumber(pointPlacement) ? localA * pointPlacement : 0);
+
+            returnValue *= lenRatio;
 
             if (!axis.isRadial) {
                 returnValue = correctFloat(returnValue);
@@ -1943,6 +1955,11 @@ class Axis {
         // Translation addend
         axis.transB = axis.horiz ? axis.left : axis.bottom;
         axis.minPixelPadding = transA * minPointOffset;
+
+        // Scale for a linked axis with its own pixel length
+        axis.lenRatio = (axis.len && linkedParent?.len) ?
+            axis.len / linkedParent.len :
+            1;
 
         fireEvent(this, 'afterSetAxisTranslation');
     }
