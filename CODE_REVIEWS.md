@@ -74,7 +74,8 @@ These benefits are not obtained unless code reviews are done with at least a min
     5. Does this code belong to this module?
     6. DRY/SRY
     7. YAGNI
-    8. How much file size does this code produce? Less is better.
+    8. How much file size does this code produce? Less is better. See
+    [Keep the code lean](ts/README.md#keep-the-code-lean).
   * Performance matters. Looping through data points can take a long time, for example.
   * Check every line for obvious issues like:
     1. Unnecessary imports
