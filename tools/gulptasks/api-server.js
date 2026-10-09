@@ -32,9 +32,23 @@ const MIMES = {
     xml: 'application/xml'
 };
 
-const PATH_ESCAPE = /\.\.?\/|\/\.|\/\//u;
-
 const PORT = 9005;
+
+/** Folders in the docs root that get a trailing-slash redirect */
+const PRODUCTS = [
+    'highcharts',
+    'highstock',
+    'highmaps',
+    'gantt',
+    'dashboards',
+    'grid'
+];
+
+/** Root redirect per `--product` */
+const PRODUCT_ROUTES = {
+    Dashboards: '/dashboards/',
+    Grid: '/grid/'
+};
 
 const SOURCE_PATH = Path.join(__dirname, '..', '..', 'build', 'api');
 
@@ -100,25 +114,6 @@ function response404(response, p) {
     response.end('Ooops, the requested file is 404', 'utf-8');
 }
 
-/**
- * Removes path elements that could result in a folder escape.
- *
- * @param {string} path
- * Path to sanitize.
- *
- * @returns {string}
- * Sanitized path.
- */
-function sanitizePath(path) {
-    path = (new URL(path, 'http://localhost')).pathname;
-
-    while (PATH_ESCAPE.test(path)) {
-        path = path.replace(PATH_ESCAPE, '');
-    }
-
-    return path;
-}
-
 /* *
  *
  *  Tasks
@@ -128,55 +123,29 @@ function sanitizePath(path) {
 /**
  * Start a server serving up the API documentation
  *
+ * @param {string} mainRoute
+ * Route to redirect the docs root to.
+ *
  * @return {Promise<void>}
  * Promise to keep
  */
-async function apiServer() {
+async function apiServer(mainRoute) {
 
     const log = require('../libs/log');
-    const argv = require('yargs').argv;
-
-    let mainRoute;
-    switch (argv.product) {
-        case 'Grid':
-            mainRoute = '/grid/';
-            break;
-        default:
-            mainRoute = '/highcharts/';
-    }
+    const { sanitizePath } = require('../libs/fs');
 
     HTTP
         .createServer((request, response) => {
 
             let path = sanitizePath(request.url);
 
-            if (path === '/' || path === '') {
+            if (path === '/') {
                 response302(response, mainRoute);
                 return;
             }
 
-            if (path === '/highcharts') {
-                response302(response, '/highcharts/');
-                return;
-            }
-            if (path === '/highstock') {
-                response302(response, '/highstock/');
-                return;
-            }
-            if (path === '/highmaps') {
-                response302(response, '/highmaps/');
-                return;
-            }
-            if (path === '/gantt') {
-                response302(response, '/gantt/');
-                return;
-            }
-            if (path === '/dashboards') {
-                response302(response, '/dashboards/');
-                return;
-            }
-            if (path === '/grid') {
-                response302(response, '/grid/');
+            if (PRODUCTS.includes(path.substring(1))) {
+                response302(response, path + '/');
                 return;
             }
             if (request.method !== 'GET') {
@@ -214,11 +183,16 @@ async function apiServer() {
                     }
                 );
         })
-        .listen(PORT);
+        .listen(PORT, '127.0.0.1');
 
     log.warn(
         'API documentation server running on http://localhost:' + PORT
     );
 }
 
-Gulp.task('api-server', apiServer);
+// Wrapped, so that Gulp does not pass its callback in as the main route
+Gulp.task('api-server', () => apiServer(
+    PRODUCT_ROUTES[require('yargs').argv.product] || '/highcharts/'
+));
+Gulp.task('dashboards/api-server', () => apiServer('/dashboards/'));
+Gulp.task('jsdoc-server', () => apiServer('/highcharts/'));
