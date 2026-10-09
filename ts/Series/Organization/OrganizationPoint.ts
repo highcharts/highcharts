@@ -39,7 +39,7 @@ import { defined, find } from '../../Shared/Utilities.js';
 
 /**
  * Get columns offset including all sibling and cousins etc.
- * @private
+ * @internal
  */
 function getOffset(node: SankeyPoint): number {
     let offset = node.linksFrom.length;
@@ -122,7 +122,7 @@ class OrganizationPoint extends SankeyPointClass {
 
     /**
      * All nodes in an org chart are equal width.
-     * @private
+     * @internal
      */
     public getSum(): number {
         return 1;
@@ -130,7 +130,7 @@ class OrganizationPoint extends SankeyPointClass {
 
     /**
      * Set node.column for hanging layout
-     * @private
+     * @internal
      */
     public setNodeColumn(): void {
         super.setNodeColumn();

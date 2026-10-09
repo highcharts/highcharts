@@ -25,6 +25,12 @@ import type BubblePointOptions from '../Bubble/BubblePointOptions';
  * */
 
 export interface MapBubblePointOptions extends BubblePointOptions {
+
+    /**
+     * The value of the point, resulting in a relative area of the bubble.
+     *
+     * @product highmaps
+     */
     z?: (number|null);
 }
 
