@@ -1,3 +1,10 @@
+---
+description: >-
+  Read open, high, low, and close values from candlestick bodies and wicks,
+  then configure separate body and line colors for rising and falling candles
+  with the candlestick plot options.
+---
+
 Candlestick chart
 ================
 

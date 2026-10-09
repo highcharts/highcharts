@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Filtering"
+description: >-
+  Enable popup or inline column filters, select operators by data type, set
+  initial rules, limit available choices, combine filters across columns, and
+  control filtering through the API.
 ---
 
 # Column filtering

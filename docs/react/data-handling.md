@@ -1,3 +1,10 @@
+---
+description: >-
+  Manage changing chart data and configuration in React state, update charts
+  through props, add or remove series from state, and connect chart components
+  to external stores such as Redux.
+---
+
 # Data handling
 
 ## Store chart data

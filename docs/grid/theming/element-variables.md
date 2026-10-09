@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Element variables"
+description: >-
+  Customize inputs, buttons, icons, and focus rings with global and
+  section-specific CSS variables; understand fallback behavior and inherit
+  typography, color, and border settings from Grid sections.
 ---
 
 # Element variables

@@ -1,3 +1,10 @@
+---
+description: >-
+  Read open, high, low, and close prices in an OHLC chart: a vertical line
+  shows the period's range, while left and right tick marks indicate opening
+  and closing values.
+---
+
 OHLC chart
 ================
 

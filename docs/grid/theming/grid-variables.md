@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Grid variables"
+description: >-
+  Set global and section-specific CSS variables for Grid typography, colors,
+  borders, padding, links, hover states, and synchronized highlights; use
+  fallback chains and tune summary separators.
 ---
 
 # Grid variables
