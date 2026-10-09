@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn when to consider hosting an export server, how to install the Node
+  package, and how chart configurations or SVGs are rendered into images using
+  Puppeteer, with links to detailed setup documentation.
+---
+
 Setting up your own export server
 =================================
 

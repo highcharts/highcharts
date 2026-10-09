@@ -1,3 +1,10 @@
+---
+description: >-
+  Build dashboard layouts from rows and cells, add nested layouts, and use the
+  flex layout engine with CSS media or container queries; disable the GUI when
+  supplying your own HTML structure.
+---
+
 # Layout
 
 ## Overview

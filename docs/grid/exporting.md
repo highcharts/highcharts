@@ -1,6 +1,10 @@
 ---
 tags: ["grid-pro"]
 sidebar_label: "Exporting data"
+description: >-
+  Use the Grid Pro exporting API to download grid data as CSV or JSON, or
+  retrieve either format as a string for application code, with examples and
+  API reference.
 ---
 # Exporting data from Highcharts Grid
 

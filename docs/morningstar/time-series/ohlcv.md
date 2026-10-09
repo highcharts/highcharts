@@ -1,3 +1,10 @@
+---
+description: >-
+  Load open, high, low, close, and volume time-series values for a single
+  security by setting the OHLCV series type, then use the returned data in a
+  Highcharts Stock OHLC chart.
+---
+
 # OHLCV
 
 This type yields OHLCV time series data for a single or multiple securities.

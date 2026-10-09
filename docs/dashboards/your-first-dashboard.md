@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a two-cell dashboard by loading Highcharts and Dashboards, importing
+  the layout module and stylesheet, then assigning an HTML component and chart
+  to cells in the board configuration.
+---
+
 # Your first dashboard
 
 This document explains how to add a basic **Highcharts** dashboard to your webpage.

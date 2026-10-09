@@ -1,3 +1,10 @@
+---
+description: >-
+  Add points with latitude and longitude properties or GeoJSON geometry, and
+  define lines as LineString or MultiLineString features. The article
+  explains geodesic rendering and legacy coordinate behavior.
+---
+
 Adding points and lines
 ===
 

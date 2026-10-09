@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Locate Grid Pro event options for grid lifecycle, columns, cells, headers,
+  pagination, and row pinning; review event names, callback context,
+  cancellation, and configuration examples for common interactions.
 ---
 
 # Events

@@ -1,3 +1,10 @@
+---
+description: >-
+  Plot data points connected by straight segments, explore the series
+  options, and use step interpolation to hold values between points. The
+  article includes a sample and the setting that enables steps.
+---
+
 Line chart
 ==========
 
