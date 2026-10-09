@@ -118,10 +118,12 @@ Dashboards.board('container', {
 
 ## Relevant demos
 
-You will find examples of how to use the time series connector in our demos.
+You will find examples of how to use the `TimeSeriesConnector` in our demos.
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve `Dividend` time series.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
+- [Highcharts Stock + Morningstar OHLCV Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/magnum-ice-cream/)
+- [Highcharts Dashboards + Morningstar AAL Intraday Ticks](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/american-airlines-group/)
+- [Highcharts Dashboards + Morningstar Swedish Healthcare Instruments](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/swedish-healthcare-instruments/)
 
 ## Morningstar API Reference
 

@@ -179,6 +179,16 @@ await americasXRayConnector.load();
 const data = americasXRayConnector.dataTables.EquityStyle;
 ```
 
+## Relevant demos
+
+You will find examples of how to use `XRayConnector` and `XRayUSConnector` in
+our demos.
+
+- [Highcharts Core + Morningstar Portfolio Proposal](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/portfolio-proposal/)
+- [Highcharts Core + Morningstar Risk Return Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/risk-return-chart/)
+- [Highcharts Core + Morningstar Correlation Matrix X-Ray US](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/correlation-matrix-xrayus/)
+- [Highcharts Core + Morningstar X-Ray US Trailing Returns](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/xray-us-trailing-returns/)
+
 ## Morningstar API Reference
 
 For more details, see [Morningstar's APAC/EMEA X-Ray API].

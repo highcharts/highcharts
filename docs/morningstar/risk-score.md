@@ -88,14 +88,6 @@ new Grid.grid('container', {
 });
 ```
 
-## Relevant demos
-
-You will find examples of how to use `RiskScoreConnector` in our demos.
-
-- **Highcharts Dashboards Grid + Morningstar Risk Score**: Shows how to use
-`RiskScoreConnector` in dashboards to retrieve `RiskScore` for a single
-portfolio.
-
 ## Morningstar API Reference
 
 For more details, see [Morningstar’s Portfolio Risk Score API].
