@@ -14,6 +14,7 @@
 const AWS = require('@aws-sdk/client-s3');
 const { fromIni } = require('@aws-sdk/credential-providers');
 const FS = require('node:fs');
+const NativePath = require('node:path');
 const Path = require('node:path/posix');
 
 /* *
@@ -93,6 +94,75 @@ function delay(milliseconds) {
 
 
 /**
+ * Gets the local path for dry-run deletion evidence.
+ *
+ * @param {string} path
+ * S3 key of the deleted object.
+ *
+ * @param {S3Session} session
+ * Session whose marker path should be returned.
+ *
+ * @return {string}
+ * Path of the dry-run deletion marker.
+ */
+function getDryRunDeleteMarkerPath(path, session) {
+    return Path.join(
+        'tmp',
+        's3-delete-markers',
+        session.bucket,
+        Path.dirname(path),
+        `DELETE ${Path.basename(path)}`
+    );
+}
+
+
+/**
+ * Rejects paths outside a dry-run tree or paths that traverse symlinks.
+ *
+ * @param {string} path
+ * Path to validate.
+ *
+ * @param {string} rootPath
+ * Root of the dry-run tree.
+ */
+function assertNoDryRunSymlinkAncestors(path, rootPath) {
+    const resolvedRootPath = NativePath.resolve(rootPath);
+    const resolvedPath = NativePath.resolve(path);
+    const relativePath = NativePath.relative(resolvedRootPath, resolvedPath);
+
+    if (
+        relativePath === '..' ||
+        relativePath.startsWith(`..${NativePath.sep}`) ||
+        NativePath.isAbsolute(relativePath)
+    ) {
+        throw new Error(`Dry-run path escapes its root: "${path}".`);
+    }
+
+    let currentPath = resolvedRootPath;
+
+    for (const part of ['', ...relativePath.split(NativePath.sep)]) {
+        if (part) {
+            currentPath = NativePath.join(currentPath, part);
+        }
+
+        try {
+            if (FS.lstatSync(currentPath).isSymbolicLink()) {
+                throw new Error(
+                    `Dry-run path cannot traverse a symbolic link: "${currentPath}".`
+                );
+            }
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                break;
+            }
+
+            throw error;
+        }
+    }
+}
+
+
+/**
  * Deletes an S3 object from the active bucket.
  *
  * @param {string} path
@@ -109,19 +179,38 @@ async function deleteS3Object(
     session
 ) {
     if (session.dryrun) {
-        const fsLib = require('../../libs/fs');
-
-        path = Path.join(
+        const objectPath = Path.join(
             'tmp',
             's3',
             session.bucket,
-            Path.dirname(path),
-            `DELETE ${Path.basename(path)}`
+            path
+        );
+        const deleteMarkerPath = getDryRunDeleteMarkerPath(path, session);
+        const tempRoot = NativePath.resolve('tmp');
+        const mirrorBucketPath = NativePath.resolve(
+            'tmp',
+            's3',
+            session.bucket
+        );
+        const markerBucketPath = NativePath.resolve(
+            'tmp',
+            's3-delete-markers',
+            session.bucket
         );
 
-        fsLib.makePath(Path.dirname(path));
+        assertNoDryRunSymlinkAncestors(mirrorBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(objectPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
+        await FS.promises.mkdir(
+            NativePath.dirname(deleteMarkerPath),
+            { recursive: true }
+        );
+        assertNoDryRunSymlinkAncestors(objectPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
 
-        await FS.writeFile(path, '', 'utf-8');
+        await FS.promises.rm(objectPath, { force: true });
+        await FS.promises.writeFile(deleteMarkerPath, '', 'utf-8');
     } else {
         await session.region.deleteObject({
             Bucket: session.bucket,
@@ -207,35 +296,169 @@ async function getS3LastModified(
     pathPrefix,
     session = defaultSession
 ) {
+    if (session.dryrun) {
+        return getDryRunS3LastModified(pathPrefix, session);
+    }
+
     const bucket = session.bucket;
     const region = session.region;
     const files = {};
 
-    var continueToken;
-    var response;
+    let continueToken;
+    let isTruncated = true;
+    const seenTokens = new Set();
 
-    do {
-        response = await region.listObjectsV2({
+    while (isTruncated) {
+        const params = {
             Bucket: bucket,
-            ContinuationToken: continueToken,
             Prefix: pathPrefix
-        });
+        };
+
+        if (continueToken) {
+            params.ContinuationToken = continueToken;
+        }
+
+        const response = await region.listObjectsV2(params);
 
         if (response.Contents) {
             for (const item of response.Contents) {
                 if (item.Key.startsWith(pathPrefix)) {
                     files[item.Key] = item.LastModified;
-                } else { // abort after items with key prefix
-                    delete response.NextContinuationToken;
                 }
             }
         }
 
-        continueToken = response.ContinuationToken;
+        isTruncated = Boolean(response.IsTruncated);
+
+        if (isTruncated) {
+            const nextToken = response.NextContinuationToken;
+
+            if (!nextToken || seenTokens.has(nextToken)) {
+                throw new Error(
+                    `Incomplete S3 listing for "${pathPrefix}": ` +
+                    `${nextToken ? 'repeated' : 'missing'} continuation token.`
+                );
+            }
+
+            seenTokens.add(nextToken);
+            continueToken = nextToken;
+        }
     }
-    while (response.IsTruncated);
 
     return files;
+}
+
+
+/**
+ * Gets last modification dates from the local S3 dry-run mirror.
+ *
+ * @param {string} pathPrefix
+ * S3 key prefix to list.
+ *
+ * @param {S3Session} session
+ * Session whose local bucket mirror should be read.
+ *
+ * @return {Record<string,Date>}
+ * Matching object keys and their modification dates.
+ */
+function getDryRunS3LastModified(
+    pathPrefix,
+    session
+) {
+    const bucketPath = NativePath.resolve('tmp', 's3', session.bucket);
+    const tempRoot = NativePath.resolve('tmp');
+    const mirrorRoot = NativePath.resolve('tmp', 's3');
+    const files = {};
+    let scanPath = bucketPath;
+
+    assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+    assertNoDryRunSymlinkAncestors(bucketPath, mirrorRoot);
+
+    if (pathPrefix.startsWith('/')) {
+        return files;
+    }
+
+    if (pathPrefix.endsWith('/')) {
+        scanPath = NativePath.resolve(
+            bucketPath,
+            ...pathPrefix.split('/').filter(Boolean)
+        );
+    }
+
+    const relativeScanPath = NativePath.relative(bucketPath, scanPath);
+
+    if (
+        relativeScanPath === '..' ||
+        relativeScanPath.startsWith(`..${NativePath.sep}`) ||
+        NativePath.isAbsolute(relativeScanPath)
+    ) {
+        return files;
+    }
+
+    assertNoDryRunSymlinkAncestors(scanPath, bucketPath);
+
+    function visitDirectory(directoryPath) {
+        assertNoDryRunSymlinkAncestors(directoryPath, bucketPath);
+
+        if (!FS.existsSync(directoryPath)) {
+            return;
+        }
+
+        for (const entry of FS.readdirSync(directoryPath, {
+            withFileTypes: true
+        })) {
+            const entryPath = NativePath.join(directoryPath, entry.name);
+
+            if (entry.isDirectory()) {
+                visitDirectory(entryPath);
+            } else if (entry.isFile()) {
+                const key = NativePath.relative(bucketPath, entryPath)
+                    .split(NativePath.sep)
+                    .join('/');
+
+                if (key.startsWith(pathPrefix)) {
+                    files[key] = FS.statSync(entryPath).mtime;
+                }
+            }
+        }
+    }
+
+    visitDirectory(scanPath);
+
+    return files;
+}
+
+
+/**
+ * Adds a trailing slash to a directory prefix, unless it represents the
+ * bucket root.
+ *
+ * @param {string} prefix
+ * S3 directory prefix.
+ *
+ * @return {string}
+ * Normalized directory prefix.
+ */
+function normalizeDirectoryPrefix(prefix) {
+    const normalizedPrefix = (prefix || '').replace(/\/+$/u, '');
+
+    return normalizedPrefix ? `${normalizedPrefix}/` : '';
+}
+
+
+/**
+ * Normalizes a native filesystem path for use with POSIX path operations.
+ *
+ * @param {string} sourcePath
+ * Native source directory path.
+ *
+ * @return {string}
+ * Source directory path with forward slashes.
+ */
+function normalizeSourcePath(sourcePath) {
+    return NativePath.sep === '\\' ?
+        sourcePath.replace(/\\/gu, '/') :
+        sourcePath;
 }
 
 
@@ -267,8 +490,16 @@ async function putS3Object(
         const fsLib = require('../../libs/fs');
 
         path = Path.join('tmp', 's3', session.bucket, path);
+        const tempRoot = NativePath.resolve('tmp');
+        const mirrorRoot = NativePath.resolve('tmp', 's3');
+        const bucketPath = NativePath.resolve(mirrorRoot, session.bucket);
+
+        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+        assertNoDryRunSymlinkAncestors(bucketPath, mirrorRoot);
+        assertNoDryRunSymlinkAncestors(path, bucketPath);
 
         fsLib.makePath(Path.dirname(path));
+        assertNoDryRunSymlinkAncestors(path, bucketPath);
 
         await FS.writeFile(
             path,
@@ -356,6 +587,9 @@ async function startS3Session(
  * @param {Function} [filterCallback]
  * Callback to filter file content.
  *
+ * @param {Function} [includeKey]
+ * Return true for S3 keys that may be deleted or uploaded.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -363,11 +597,18 @@ async function synchronizeDirectory(
     sourcePath,
     targetPathPrefix,
     session = defaultSession,
-    filterCallback = void 0
+    filterCallback = void 0,
+    includeKey = void 0
 ) {
     const fsLib = require('../../libs/fs');
     const glob = require('glob');
     const log = require('../../libs/log');
+    const shouldIncludeKey = typeof includeKey === 'function' ?
+        includeKey :
+        () => true;
+
+    sourcePath = normalizeSourcePath(sourcePath);
+    targetPathPrefix = normalizeDirectoryPrefix(targetPathPrefix);
 
     log.warn(`Start synchronization of "${sourcePath}"...`);
 
@@ -375,7 +616,10 @@ async function synchronizeDirectory(
         targetPathPrefix,
         session
     );
-    const fileKeys = Object.keys(fileModificationTimes);
+    const fileKeys = Object.keys(fileModificationTimes).filter(
+        shouldIncludeKey
+    );
+    const fileKeySet = new Set(fileKeys);
     const versionPattern = /\d+\//u;
 
     let didSomeWork = false;
@@ -417,23 +661,33 @@ async function synchronizeDirectory(
 
     const toDoFiles = glob
         .sync(Path.join(sourcePath, '**/*'))
-        .filter(path => (
-            !fsLib.isDotEntry(path) &&
-            fsLib.isFile(path) &&
-            !fileKeys.includes(Path.relative(sourcePath, path))
-        ));
+        .map(normalizeSourcePath)
+        .filter(path => {
+            if (fsLib.isDotEntry(path) || !fsLib.isFile(path)) {
+                return false;
+            }
+
+            const key = Path.join(
+                targetPathPrefix,
+                Path.relative(sourcePath, path)
+            );
+
+            return !fileKeySet.has(key) && shouldIncludeKey(key);
+        });
 
     for (const toDoFileChunk of getChunks(toDoFiles)) {
         const chunkPromises = [];
 
         for (const filePath of toDoFileChunk) {
+            const targetPath = Path.join(
+                targetPathPrefix,
+                Path.relative(sourcePath, filePath)
+            );
+
             chunkPromises.push(
                 uploadFile(
                     filePath,
-                    Path.join(
-                        targetPathPrefix,
-                        Path.relative(sourcePath, filePath)
-                    ),
+                    targetPath,
                     session,
                     filterCallback
                 )
@@ -491,6 +745,9 @@ function toS3Path(fromPath, removeFromDestPath, prefix) {
  * @param {Function} [filterCallback]
  * Callback to filter file content.
  *
+ * @param {Function} [includeKey]
+ * Return true for S3 keys that may be uploaded.
+ *
  * @return {Promise}
  * Promise to keep.
  */
@@ -498,16 +755,23 @@ async function uploadDirectory(
     sourcePath,
     targetPathPrefix,
     session = defaultSession,
-    filterCallback = void 0
+    filterCallback = void 0,
+    includeKey = void 0
 ) {
     const fsLib = require('../../libs/fs');
     const glob = require('glob');
     const log = require('../../libs/log');
+    const shouldIncludeKey = typeof includeKey === 'function' ?
+        includeKey :
+        () => true;
+
+    sourcePath = normalizeSourcePath(sourcePath);
 
     log.warn(`Start upload of "${sourcePath}"...`);
 
     const files = glob
         .sync(Path.join(sourcePath, '**/*'))
+        .map(normalizeSourcePath)
         .filter(path => (
             Path.basename(path).indexOf('.') !== 0 &&
             fsLib.isFile(path)
@@ -519,12 +783,18 @@ async function uploadDirectory(
         const chunkPromises = [];
 
         for (const filePath of fileChunk) {
+            const targetPath = Path.join(
+                targetPathPrefix,
+                Path.relative(sourcePath, filePath)
+            );
+
+            if (!shouldIncludeKey(targetPath)) {
+                continue;
+            }
+
             chunkPromises.push(uploadFile(
                 filePath,
-                Path.join(
-                    targetPathPrefix,
-                    Path.relative(sourcePath, filePath)
-                ),
+                targetPath,
                 session,
                 filterCallback
             ));
@@ -574,11 +844,32 @@ async function uploadFile(
     }
 
     if (session.dryrun) {
+        const s3Key = targetPath;
         targetPath = Path.join('tmp', 's3', session.bucket, targetPath);
+        const deleteMarkerPath = getDryRunDeleteMarkerPath(s3Key, session);
+        const tempRoot = NativePath.resolve('tmp');
+        const mirrorRoot = NativePath.resolve('tmp', 's3');
+        const mirrorBucketPath = NativePath.resolve(mirrorRoot, session.bucket);
+        const markerBucketPath = NativePath.resolve(
+            'tmp',
+            's3-delete-markers',
+            session.bucket
+        );
 
+        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+        assertNoDryRunSymlinkAncestors(mirrorBucketPath, mirrorRoot);
+        assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
         FS.mkdirSync(Path.dirname(targetPath), { recursive: true });
+        assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
+        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
 
         FS.writeFileSync(targetPath, fileContent, { encoding: 'binary' });
+        await FS.promises.rm(
+            deleteMarkerPath,
+            { force: true }
+        );
 
         log.message(targetPath, 'would be uploaded');
     } else {

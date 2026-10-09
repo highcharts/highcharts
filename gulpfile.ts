@@ -24,6 +24,7 @@ Gulp.registry(new GulpForwardReference());
 }([
     'api',
     'api-docs',
+    'api-react-stage',
     'api-server',
     'api-tree',
     'api-upload',

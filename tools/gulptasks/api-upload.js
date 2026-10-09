@@ -30,14 +30,20 @@ const HELP_MESSAGE = [
     '--bucket  S3 bucket to upload to.',
     '--docs    Subfolders of "build/api" to upload. (optional)',
     '--dryrun  Test run with "tmp/s3" instead of uploading. (optional)',
+    '--expected-highcharts-version  Required with --react-artifact.',
+    '--expected-react-version      Required with --react-artifact.',
     '--helpme  This help.',
     '--profile AWS profile to load from AWS credentials file. If no profile',
     '          is provided the default profile or standard AWS environment',
     '          variables for credentials will be used. (optional)',
     '--region  AWS region of S3 bucket. (optional)',
+    '--react-artifact  Validated React static artifact directory. (optional)',
+    '--react-report  Publication report path. (optional)',
+    '--react-only  Publish all React files and skip legacy upload/navigation.',
+    '--react-shells-only  Publish only React shells and skip legacy upload/sync.',
     '--speak   Says if task failed or succeeded. (optional)',
     '--sync    Synchronize the S3 bucket; deletes remote files that are not',
-    '          found in the local folder. (optional)'
+    '          found in the local folder, except React-owned paths. (optional)'
 ].join('\n');
 
 const HTML_HEAD_STATIC = [
@@ -63,29 +69,7 @@ const HTML_HEAD_STATIC = [
     ].join('\n        ')
 ].join('\n');
 
-const MIME_TYPE = {
-    '.css': 'text/css',
-    '.eot': 'application/vnd.ms-fontobject',
-    '.gif': 'image/gif',
-    '.htm': 'text/html',
-    '.html': 'text/html',
-    '.php': 'text/plain',
-    '.ico': 'image/x-icon',
-    '.jpeg': 'image/jpeg',
-    '.jpg': 'image/jpeg',
-    '.js': 'text/javascript',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.svg': 'image/svg+xml',
-    '.ttf': 'application/font-sfnt',
-    '.woff': 'application/font-woff',
-    '.woff2': 'application/font-woff',
-    '.zip': 'application/zip'
-};
-
 const SOURCE_ROOT = 'build/api';
-
-const TEST_ROOT = 'build/api-test';
 
 
 /* *
@@ -114,14 +98,14 @@ function updateFileContent(filePath, fileContent) {
         case '.htm':
         case '.html':
             if (
-                !/^(?:(?:foot|head)(?:er)?|index)|-frame\.html?/.test(basename) &&
+                !/^(?:(?:foot|head)(?:er)?|index)|-frame\.html?/u.test(basename) &&
                 !fileContent.includes('<frame') &&
                 !fileContent.includes('<iframe')
             ) {
                 fileContent = Buffer.from(
                     fileContent
                         .toString()
-                        .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
+                        .replace(/^(.*<\/head>.*)$/mu, HTML_HEAD_STATIC + '\n$1')
                 );
             }
             break;
@@ -146,42 +130,250 @@ function updateFileContent(filePath, fileContent) {
  * Promise to keep.
  */
 async function apiUpload() {
-    const uploadS3 = require('./lib/uploadS3');
+    return runApiUpload(require('yargs').argv);
+}
+
+
+/**
+ * Parses and validates a relative --docs selection.
+ *
+ * @param {string} docs
+ * Comma-separated paths relative to build/api.
+ *
+ * @param {Function} isReactOwnedKey
+ * React path ownership predicate.
+ *
+ * @return {Array<string>}
+ * Normalized relative paths.
+ */
+function normalizeDocs(docs, isReactOwnedKey) {
+    if (typeof docs !== 'string') {
+        throw new Error('--docs must be a comma-separated relative path list.');
+    }
+
+    return docs.split(',').map(item => {
+        const input = item.trim().replace(/\\/gu, '/');
+
+        if (
+            !input ||
+            input.startsWith('/') ||
+            /^[A-Za-z]:/u.test(input) ||
+            input.split('/').includes('..')
+        ) {
+            throw new Error(`Invalid --docs path "${item}".`);
+        }
+
+        const normalized = path.posix.normalize(input);
+
+        if (
+            normalized === '.' ||
+            normalized === '..' ||
+            normalized.startsWith('../')
+        ) {
+            throw new Error(`Invalid --docs path "${item}".`);
+        }
+
+        if (isReactOwnedKey(normalized)) {
+            throw new Error(
+                `--docs cannot select React-owned path "${normalized}"; ` +
+                'use --react-artifact instead.'
+            );
+        }
+
+        return normalized;
+    });
+}
+
+
+/**
+ * Builds and validates the artifact input flags shared by API tasks.
+ *
+ * @param {object} args
+ * Parsed yargs arguments.
+ *
+ * @param {object} options
+ * Task-specific options.
+ *
+ * @return {object|undefined}
+ * Validated artifact input flags.
+ */
+function getReactArtifactInput(args, options = {}) {
+    const {
+        expectedHighchartsVersion,
+        expectedReactVersion,
+        reactArtifact,
+        reactOnly,
+        reactReport,
+        reactShellsOnly
+    } = args;
+
+    if (reactArtifact === void 0) {
+        if (
+            expectedHighchartsVersion !== void 0 ||
+            expectedReactVersion !== void 0 ||
+            reactReport !== void 0 ||
+            reactOnly !== void 0 ||
+            reactShellsOnly !== void 0
+        ) {
+            throw new Error(
+                'React artifact options require --react-artifact.'
+            );
+        }
+        return void 0;
+    }
+
+    if (
+        typeof reactArtifact !== 'string' ||
+        !reactArtifact.trim() ||
+        typeof expectedReactVersion !== 'string' ||
+        !expectedReactVersion.trim() ||
+        typeof expectedHighchartsVersion !== 'string' ||
+        !expectedHighchartsVersion.trim()
+    ) {
+        throw new Error(
+            '--react-artifact requires --expected-react-version and ' +
+            '--expected-highcharts-version.'
+        );
+    }
+
+    if (
+        reactReport !== void 0 &&
+        (typeof reactReport !== 'string' || !reactReport.trim())
+    ) {
+        throw new Error('--react-report must be a file path.');
+    }
+
+    if (reactShellsOnly && !options.allowShellsOnly) {
+        throw new Error('--react-shells-only is not supported by this task.');
+    }
+
+    if (reactOnly && reactShellsOnly) {
+        throw new Error('--react-only cannot be combined with --react-shells-only.');
+    }
+
+    return {
+        directory: path.resolve(reactArtifact.trim()),
+        expectedHighchartsVersion: expectedHighchartsVersion.trim(),
+        expectedReactVersion: expectedReactVersion.trim(),
+        reportPath: reactReport ? path.resolve(reactReport.trim()) : void 0,
+        reactOnly: !!reactOnly,
+        shellsOnly: !!reactShellsOnly
+    };
+}
+
+
+/**
+ * Uploads API documentation, with an optional validated React artifact.
+ *
+ * @param {object} args
+ * Parsed yargs arguments.
+ *
+ * @param {object} dependencies
+ * Injectable dependencies for task tests.
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function runApiUpload(args, dependencies = {}) {
+    const uploadS3 = dependencies.uploadS3 || require('./lib/uploadS3');
     const fsLib = require('../libs/fs');
     const log = require('../libs/log');
+    const sourceRoot = dependencies.sourceRoot || SOURCE_ROOT;
+    const reactStatic = dependencies.reactStatic || require('./lib/reactStatic');
     const {
         bucket,
-        docs,
         dryrun,
         helpme,
         profile,
         region,
         speak,
         sync
-    } = require('yargs').argv;
+    } = args;
 
     if (helpme) {
         // eslint-disable-next-line no-console
         console.log(HELP_MESSAGE);
-        return Promise.resolve();
+        return;
     }
 
     if (!bucket && !dryrun) {
         throw new Error('No --bucket specified.');
     }
 
-    if (
-        !fs.existsSync(SOURCE_ROOT) ||
-        !fs.lstatSync(SOURCE_ROOT).isDirectory()
-    ) {
-        throw new Error(`Source directory "${SOURCE_ROOT}" not found.`);
+    const reactArtifactInput = getReactArtifactInput(args, {
+        allowShellsOnly: true
+    });
+    let normalizedDocs;
+
+    if (!reactArtifactInput?.shellsOnly && !reactArtifactInput?.reactOnly && args.docs !== void 0) {
+        normalizedDocs = normalizeDocs(
+            args.docs,
+            reactStatic.isReactOwnedKey
+        );
     }
 
-    const sourceItems = (
-        typeof docs === 'string' ?
-            docs.split(',').map(folder => path.join(SOURCE_ROOT, folder)) :
-            fsLib.getDirectoryPaths(SOURCE_ROOT)
-    );
+    const sourceRootExists = fs.existsSync(sourceRoot) &&
+        fs.lstatSync(sourceRoot).isDirectory();
+
+    const skipLegacy = reactArtifactInput?.reactOnly || reactArtifactInput?.shellsOnly;
+    if (!skipLegacy && !sourceRootExists) {
+        throw new Error(`Source directory "${sourceRoot}" not found.`);
+    }
+    const sourceItems = skipLegacy ? [] : normalizedDocs ?
+        normalizedDocs.map(doc => path.join(sourceRoot, ...doc.split('/'))) :
+        fsLib.getDirectoryPaths(sourceRoot);
+
+    if (sync && reactArtifactInput && !skipLegacy) {
+        const products = ['highcharts', 'highstock', 'highmaps', 'gantt'];
+        const selectedProducts = products.filter(product => sourceItems.some(item =>
+            path.relative(sourceRoot, item).split(path.sep)[0] === product));
+        for (const product of selectedProducts) {
+            for (const name of ['api.js', 'index.html']) {
+                const legacyFile = path.join(sourceRoot, product, name);
+                if (!fs.existsSync(legacyFile) || !fs.lstatSync(legacyFile).isFile()) {
+                    throw new Error(`Legacy API build missing ${legacyFile}; generate legacy docs or use --react-only.`);
+                }
+            }
+        }
+    }
+
+    let stagedReactArtifact;
+
+    if (reactArtifactInput) {
+        const verifiedArtifact = await reactStatic.verifyArtifact(
+            reactArtifactInput.directory,
+            {
+                expectedHighchartsVersion:
+                    reactArtifactInput.expectedHighchartsVersion,
+                expectedReactVersion: reactArtifactInput.expectedReactVersion
+            }
+        );
+        stagedReactArtifact = await reactStatic.stageArtifact(
+            verifiedArtifact,
+            sourceRoot,
+            { addNavigation: !reactArtifactInput.reactOnly }
+        );
+    }
+
+    if (
+        !fs.existsSync(sourceRoot) ||
+        !fs.lstatSync(sourceRoot).isDirectory()
+    ) {
+        throw new Error(`Source directory "${sourceRoot}" not found.`);
+    }
+
+    for (const sourceItem of sourceItems) {
+        if (!fs.existsSync(sourceItem)) {
+            throw new Error(`Source path "${sourceItem}" not found.`);
+        }
+    }
+
+    if (stagedReactArtifact) {
+        await reactStatic.preparePublicationReport(
+            stagedReactArtifact,
+            reactArtifactInput.reportPath
+        );
+    }
 
     const session = await uploadS3.startS3Session(
         bucket,
@@ -189,15 +381,47 @@ async function apiUpload() {
         region,
         dryrun
     );
+    const includeKey = key => !reactStatic.isReactOwnedKey(
+        String(key).replace(/\\/gu, '/')
+    );
+    const filterLegacyContent = (file, content) => {
+        if (!stagedReactArtifact && path.basename(file) === 'api.js') {
+            const marker = content.indexOf('\n/* React API navigation */\n');
+            if (marker >= 0) {
+                content = content.subarray(0, marker);
+            }
+        }
+        return updateFileContent(file, content);
+    };
 
     try {
+        if (stagedReactArtifact) {
+            await reactStatic.publishArtifact(
+                stagedReactArtifact,
+                session,
+                {
+                    shellsOnly: reactArtifactInput.shellsOnly,
+                    reportPath: reactArtifactInput.reportPath
+                }
+            );
+        }
+
         for (const sourceItem of sourceItems) {
+            const targetKey = path.relative(
+                sourceRoot,
+                sourceItem
+            ).replace(/\\/gu, '/');
+
+            if (!includeKey(targetKey)) {
+                continue;
+            }
+
             if (fsLib.isFile(sourceItem)) {
                 await uploadS3.uploadFile(
                     sourceItem,
-                    path.relative(SOURCE_ROOT, sourceItem),
+                    targetKey,
                     session,
-                    updateFileContent
+                    filterLegacyContent
                 );
             } else if (
                 sync &&
@@ -205,16 +429,18 @@ async function apiUpload() {
             ) {
                 await uploadS3.synchronizeDirectory(
                     sourceItem,
-                    path.relative(SOURCE_ROOT, sourceItem),
+                    targetKey,
                     session,
-                    updateFileContent
+                    filterLegacyContent,
+                    includeKey
                 );
             } else {
                 await uploadS3.uploadDirectory(
                     sourceItem,
-                    path.relative(SOURCE_ROOT, sourceItem),
+                    targetKey,
                     session,
-                    updateFileContent
+                    filterLegacyContent,
+                    includeKey
                 );
             }
         }
@@ -232,11 +458,11 @@ async function apiUpload() {
             log.say(`${sync ? 'Synchronization' : 'Upload'} failed!`);
         }
 
+        throw error;
+
     } finally {
         session.region.destroy();
     }
-
-    return void 0;
 }
 
 
@@ -248,3 +474,9 @@ async function apiUpload() {
 
 
 gulp.task('api-upload', apiUpload);
+
+module.exports = {
+    getReactArtifactInput,
+    normalizeDocs,
+    runApiUpload
+};

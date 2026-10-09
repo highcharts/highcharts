@@ -28,6 +28,9 @@ npx gulp api-docs [OPTIONS]
 OPTIONS:
   --info           This information.
   --debug          Includes source code of the related node.
+  --expected-highcharts-version  Required with --react-artifact.
+  --expected-react-version      Required with --react-artifact.
+  --react-artifact  Validated React static artifact directory to stage.
   --source [PATH]  Only loads source files from the given path. (recursive)
 `;
 
@@ -54,12 +57,49 @@ const TARGET_DIRECTORY = 'build/api/';
 async function apiDocs() {
     const ProcessLib = require('../libs/process');
     const Yargs = require('yargs');
+    const path = require('node:path');
 
     const args = Yargs.argv;
 
     if (args.info) {
         process.stdout.write(INFO);
         return;
+    }
+
+    let verifiedReactArtifact;
+
+    if (args.reactArtifact !== void 0) {
+        if (
+            typeof args.reactArtifact !== 'string' ||
+            !args.reactArtifact.trim() ||
+            typeof args.expectedReactVersion !== 'string' ||
+            !args.expectedReactVersion.trim() ||
+            typeof args.expectedHighchartsVersion !== 'string' ||
+            !args.expectedHighchartsVersion.trim()
+        ) {
+            throw new Error(
+                '--react-artifact requires --expected-react-version and ' +
+                '--expected-highcharts-version.'
+            );
+        }
+
+        const reactStatic = require('./lib/reactStatic');
+
+        verifiedReactArtifact = await reactStatic.verifyArtifact(
+            path.resolve(args.reactArtifact.trim()),
+            {
+                expectedHighchartsVersion:
+                    args.expectedHighchartsVersion.trim(),
+                expectedReactVersion: args.expectedReactVersion.trim()
+            }
+        );
+    } else if (
+        args.expectedHighchartsVersion !== void 0 ||
+        args.expectedReactVersion !== void 0
+    ) {
+        throw new Error(
+            'Expected React version flags require --react-artifact.'
+        );
     }
 
     const source = (args.source || 'ts');
@@ -76,6 +116,14 @@ async function apiDocs() {
 
     await createApiDocumentation();
 
+    if (verifiedReactArtifact) {
+        const reactStatic = require('./lib/reactStatic');
+
+        await reactStatic.stageArtifact(
+            verifiedReactArtifact,
+            path.resolve(TARGET_DIRECTORY)
+        );
+    }
 }
 
 
