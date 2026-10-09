@@ -54,6 +54,9 @@ When documenting a TS type, interface, or class some additional rules apply:
 
 - Do not use `@type` in the doclet - the type is already set in code.
 
+- `@requires` supports product-specific values like `@default` and `@sample`,
+  e.g. `@requires {highcharts} modules/heatmap`.
+
 - Doclet placed on an interface or class should be about the interface or class
   itself, not the related API option that is using it.
 
