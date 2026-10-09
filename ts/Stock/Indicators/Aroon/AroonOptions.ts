@@ -42,8 +42,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/aroon
+ * @requires     indicators/indicators
+ * @requires     indicators/aroon
  * @interface Highcharts.AroonOptions
  */
 export interface AroonOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {

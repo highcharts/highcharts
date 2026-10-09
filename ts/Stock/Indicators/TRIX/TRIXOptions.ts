@@ -39,9 +39,9 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/tema
- * @requires     stock/indicators/trix
+ * @requires     indicators/indicators
+ * @requires     indicators/tema
+ * @requires     indicators/trix
  * @interface Highcharts.TRIXOptions
  */
 export interface TRIXOptions extends SMAOptions {

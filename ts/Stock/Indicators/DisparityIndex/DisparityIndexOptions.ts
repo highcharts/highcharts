@@ -39,8 +39,8 @@ import type {
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/disparity-index
+ * @requires     indicators/indicators
+ * @requires     indicators/disparity-index
  * @interface Highcharts.DisparityIndexOptions
  */
 export interface DisparityIndexOptions extends SMAOptions {
