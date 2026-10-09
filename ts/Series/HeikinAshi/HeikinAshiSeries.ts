@@ -115,11 +115,8 @@ function onHeikinAshiSeriesUpdatedData(
 /**
  * The Heikin Ashi series.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.heikinashi
- *
- * @augments Highcharts.Series
  */
 class HeikinAshiSeries extends CandlestickSeries {
 
@@ -220,9 +217,7 @@ class HeikinAshiSeries extends CandlestickSeries {
         series.heikinashiData = heikinashiData;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments as any);
 
@@ -289,7 +284,6 @@ HeikinAshiSeries.prototype.pointClass = HeikinAshiPoint;
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         heikinashi: typeof HeikinAshiSeries;
@@ -303,5 +297,4 @@ SeriesRegistry.registerSeriesType('heikinashi', HeikinAshiSeries);
  *
  * */
 
-/** @internal */
 export default HeikinAshiSeries;

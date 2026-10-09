@@ -41,7 +41,6 @@ const {
  *
  * */
 
-/** @internal */
 class HeikinAshiPoint extends CandlestickPoint {
 }
 
@@ -51,7 +50,6 @@ class HeikinAshiPoint extends CandlestickPoint {
  *
  * */
 
-/** @internal */
 interface HeikinAshiPoint {
     series: HeikinAshiSeries;
 }
@@ -72,5 +70,4 @@ namespace HeikinAshiPoint {
  *
  * */
 
-/** @internal */
 export default HeikinAshiPoint;

@@ -33,7 +33,6 @@ const {
  *
  * */
 
-/** @internal */
 class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
 
     /* *
@@ -42,7 +41,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
-    /** @internal */
     public series!: HollowCandlestickSeries;
 
     /* *
@@ -50,7 +48,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *  Functions
      *
      * */
-
 
     /**
      * Update class name if needed.
@@ -73,15 +70,8 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
 
 /* *
  *
- *  Class Namespace
- *
- * */
-
-/* *
- *
  *  Default Export
  *
  * */
 
-/** @internal */
 export default HollowCandlestickPoint;

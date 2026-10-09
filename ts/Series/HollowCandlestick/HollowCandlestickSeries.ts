@@ -33,17 +33,18 @@ const {
     }
 } = SeriesRegistry;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /** @internal */
 interface HollowcandleInfo {
     isBullish: boolean;
     trendDirection: 'down'|'up';
 }
 
-/* *
- *
- *  Declarations
- *
- * */
 type OHLCObject = {
     open: number | null | undefined;
     high: number | null | undefined;
@@ -60,11 +61,8 @@ type OHLCObject = {
 /**
  * The hollowcandlestick series.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.hollowcandlestick
- *
- * @augments Highcharts.seriesTypes.candlestick
  */
 class HollowCandlestickSeries extends CandlestickSeries {
 
@@ -248,10 +246,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
             series.options.color || 'var(--highcharts-negative-color)';
     }
 
-    /**
-     * @internal
-     * @function Highcharts.seriesTypes.hollowcandlestick#init
-     */
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -262,13 +257,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Check if the candle is bearish or bullish. For bullish one, return true.
      * For bearish, return string depending on the previous point.
      *
-     * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
-     *
      * @param {Object} dataPoint
      * Current point which we calculate.
      *
      * @param {Object} previousDataPoint
      * Previous point.
+     *
+     * @internal
      */
     public isBullish(
         dataPoint: OHLCObject,
@@ -288,7 +283,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * The legend's bullish candle is hollow, and colored by trend (#24567).
      *
      * @internal
-     * @function Highcharts.seriesTypes.hollowcandlestick#legendSymbolAttribs
      */
     public legendSymbolAttribs(): SVGAttributes {
         return {
@@ -304,15 +298,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
     /**
      * Add color and fill attribute for each point.
      *
-     * @internal
-     *
-     * @function Highcharts.seriesTypes.hollowcandlestick#pointAttribs
-     *
      * @param {HollowCandlestickPoint} point
      * Point to which we are adding attributes.
      *
      * @param {StatesOptionsKey} state
      * Current point state.
+     *
+     * @internal
      */
     public pointAttribs(
         point?: HollowCandlestickPoint,
@@ -378,7 +370,6 @@ HollowCandlestickSeries.prototype.pointClass = HollowCandlestickPoint;
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         hollowcandlestick: typeof HollowCandlestickSeries;
@@ -393,7 +384,6 @@ SeriesRegistry.registerSeriesType('hollowcandlestick', HollowCandlestickSeries);
  *
  * */
 
-/** @internal */
 export default HollowCandlestickSeries;
 
 /* *

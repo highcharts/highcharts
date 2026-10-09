@@ -47,11 +47,8 @@ const { defaultOptions } = D;
 /**
  * The hlc series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.hlc
- *
- * @augments Highcharts.Series
  */
 class HLCSeries extends ColumnSeries {
 
@@ -100,9 +97,16 @@ class HLCSeries extends ColumnSeries {
     /**
      * Extend the path if close is not between high and low.
      *
-     * @param {SVGPath} path the path array of the point
+     * @param {SVGPath} path
+     * the path array of the point
+     *
      * @param {number} halfStrokeWidth
-     * @param {number} value value of the point to which the stem should be extended
+     * half of the stroke width
+     *
+     * @param {number} value
+     * value of the point to which the stem should be extended
+     *
+     * @internal
      */
     protected extendStem(
         path: SVGPath,
@@ -262,9 +266,7 @@ class HLCSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface HLCSeries {
-    /** @internal */
     pointClass: typeof HLCPoint;
 }
 extend(HLCSeries.prototype, {
@@ -283,13 +285,9 @@ extend(HLCSeries.prototype, {
 
 // Extend default lang options with OHLC terms
 const HLCDefaultLangOptions = {
-    /** @internal */
     stockOpen: 'Open',
-    /** @internal */
     stockHigh: 'High',
-    /** @internal */
     stockLow: 'Low',
-    /** @internal */
     stockClose: 'Close'
 };
 
@@ -298,20 +296,13 @@ extend(
     HLCDefaultLangOptions
 );
 
-/* *
- *
- *  Registry
- *
- * */
-
-
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface LangOptions {
         /**
          * The tooltip label for a point's opening value, used in the
          * default `pointFormat` of the `ohlc` series.
          *
-         * @default Open
+         * @default 'Open'
          * @product highstock
          */
         stockOpen?: string;
@@ -319,7 +310,7 @@ declare module '../../Core/Options'{
          * The tooltip label for a point's highest value, used in the
          * default `pointFormat` of the `hlc` and `ohlc` series.
          *
-         * @default High
+         * @default 'High'
          * @product highstock
          */
         stockHigh?: string;
@@ -327,7 +318,7 @@ declare module '../../Core/Options'{
          * The tooltip label for a point's lowest value, used in the
          * default `pointFormat` of the `hlc` and `ohlc` series.
          *
-         * @default Low
+         * @default 'Low'
          * @product highstock
          */
         stockLow?: string;
@@ -335,20 +326,24 @@ declare module '../../Core/Options'{
          * The tooltip label for a point's closing value, used in the
          * default `pointFormat` of the `hlc` and `ohlc` series.
          *
-         * @default Close
+         * @default 'Close'
          * @product highstock
          */
         stockClose?: string;
     }
 }
 
-/** @internal */
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         hlc: typeof HLCSeries;
     }
 }
-
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *
@@ -357,5 +352,4 @@ SeriesRegistry.registerSeriesType('hlc', HLCSeries);
  *
  * */
 
-/** @internal */
 export default HLCSeries;
