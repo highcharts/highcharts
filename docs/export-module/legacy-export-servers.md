@@ -1,3 +1,11 @@
+---
+description: >-
+  Consult historical setup and usage instructions for the unmaintained
+  PhantomJS, Java, and PHP export servers, including command-line conversion,
+  server configuration, troubleshooting, and links to the replacement Node
+  export server.
+---
+
 These methods are deprecated, please use our new ones, which can be found [here](https://highcharts.com/docs/export-module/setting-up-the-server).
 
 Deprecated export servers

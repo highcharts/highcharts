@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure a reversed 3D funnel without a neck, enable 3D rendering, and
+  set segment sizes from point values. The article lists required modules
+  and chart-level or series-level type settings.
+---
+
 3D pyramid
 ===
 

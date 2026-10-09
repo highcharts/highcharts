@@ -1,3 +1,10 @@
+---
+description: >-
+  Use spreadsheet-style cell and range references, operators, and built-in
+  functions to calculate DataTable values with MathModifier, define calculated
+  columns, process pre-filled formulas, or register custom functions.
+---
+
 # MathModifier module
 
 The `MathModifier` provides different functions to run pre-defined formulas on a

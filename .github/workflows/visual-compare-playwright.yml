@@ -16,11 +16,16 @@ on:
       - 'tests/globals.d.ts'
       - 'tests/qunit/utils/browser-log-note-reporter.ts'
       - 'tests/setup-highcharts.mts'
+      - 'tests/setup-dashboards.mts'
+      - 'tests/setup-build-utils.mts'
+      - 'tests/setup-visual.mts'
       - 'tests/tsconfig.json'
       - 'tests/utils.ts'
       - 'tests/visual/**'
+      - '.gulp.js'
       - 'package.json'
       - 'package-lock.json'
+      - 'tsconfig.json'
       - 'tests/package.json'
       - 'tests/package-lock.json'
       - 'tools/docs-preview/package.json'
@@ -63,8 +68,10 @@ jobs:
       - name: Preserve candidate visual harness
         run: |
           tar -czf "$RUNNER_TEMP/visual-harness.tar.gz" \
+            .gulp.js \
             package.json \
             package-lock.json \
+            tsconfig.json \
             playwright.config.ts \
             test/karma-files.json \
             test/visual-comparator.js \
@@ -73,6 +80,9 @@ jobs:
             tests/globals.d.ts \
             tests/qunit/utils/browser-log-note-reporter.ts \
             tests/setup-highcharts.mts \
+            tests/setup-dashboards.mts \
+            tests/setup-build-utils.mts \
+            tests/setup-visual.mts \
             tests/package.json \
             tests/package-lock.json \
             tests/tsconfig.json \
