@@ -78,11 +78,7 @@ class FilterCell extends HeaderCell {
         this.htmlElement.setAttribute('data-column-id', column.id);
 
         // Add user column classname
-        if (column.options.className) {
-            this.htmlElement.classList.add(
-                ...column.options.className.split(/\s+/g)
-            );
-        }
+        column.applyClassNames(this.htmlElement);
 
         this.setCustomClassName(column.options.header?.className);
 

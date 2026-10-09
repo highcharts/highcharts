@@ -82,7 +82,7 @@ const ColumnRangeSeriesDefaults: DeepPartial<ColumnRangeSeriesOptions> = {
  * [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.columnrange
- * @excluding dataParser, dataURL, stack, stacking
+ * @excluding stack, stacking
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.columnrange

@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare native scrolling for a narrow plot area with axis scrollbars
+  supplied by Highcharts Stock. Learn how each approach works and find
+  examples for bar charts, heatmaps, and stock charts.
+---
+
 Scrollbars
 ===
 

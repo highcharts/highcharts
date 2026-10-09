@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare each visible point with the first value in the displayed range using
+  percentage or absolute differences, and enable or disable comparison for a
+  series or all series on an axis.
+---
+
 Compare
 ================
 

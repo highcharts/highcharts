@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Virtualization"
+description: >-
+  Reduce rendering work for wide grids by rendering visible columns and a
+  buffer, tune the threshold and overscan, combine row and column
+  virtualization, and understand DOM-search and sizing constraints.
 ---
 
 # Column virtualization

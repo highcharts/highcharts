@@ -720,7 +720,7 @@
             // sorted by center X position.
                 filter(map(geojson.features, function (area) {
                     const metrics = getFeatureMetrics(
-                        area, H.pick(useLabelCenter, true)
+                        area, useLabelCenter ?? true
                     );
                     return metrics && extend({
                         center: {

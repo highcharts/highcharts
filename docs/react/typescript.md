@@ -1,3 +1,10 @@
+---
+description: >-
+  Type the Chart options prop with exported ChartOptions, use
+  HighchartsReactRefObject for chart refs, and see links to the chart
+  component and Highcharts declarations for common integration patterns.
+---
+
 # TypeScript
 
 Highcharts React exports TypeScript helpers for common chart patterns. This page documents the recommended types to use with `@highcharts/react`.

@@ -15,7 +15,48 @@ body {
 }
 
 #container {
-    height: 400px;
+    height: 500px;
+}
+
+/* Custom CSS for the tooltip */
+.highcharts-tooltip {
+    caption {
+        font-size: 0.9em;
+        font-weight: 500;
+        padding: 0.5em 0;
+        border-bottom: 1px solid var(--highcharts-neutral-color-10);
+        text-align: left;
+    }
+
+    th {
+        font-weight: normal;
+        padding: 0.15em 0;
+        color: var(--highcharts-neutral-color-60);
+    }
+
+    td {
+        font-weight: 500;
+        padding: 0.15em 0 0.15em 2em;
+        text-align: right;
+    }
+
+    tr:first-child td,
+    tr:first-child th {
+        padding-top: 0.75em;
+    }
+
+    tr:last-child td,
+    tr:last-child th {
+        padding-bottom: 0.25em;
+    }
+
+    tr.standard-deviation-row th {
+        padding-left: 23px;
+    }
+
+    tr.standard-deviation-row td {
+        font-weight: normal;
+    }
 }
 
 .highcharts-figure,
@@ -49,6 +90,8 @@ body {
 .highcharts-data-table td,
 .highcharts-data-table th,
 .highcharts-data-table caption {
+    border: 1px solid var(--highcharts-neutral-color-20, #ccc);
+    font-size: 0.9em;
     padding: 0.5em;
 }
 

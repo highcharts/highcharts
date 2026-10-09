@@ -25,7 +25,6 @@ import type {
 } from './BreadcrumbsOptions';
 import type Chart from '../../Core/Chart/Chart.js';
 import type Options from '../../Core/Options';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import BreadcrumbsDefaults from './BreadcrumbsDefaults.js';
@@ -41,7 +40,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     pushUnique
 } from '../../Shared/Utilities.js';
 
@@ -331,15 +329,12 @@ class Breadcrumbs {
             chart = breadcrumbs.chart,
             breadcrumbsOptions = breadcrumbs.options,
             lang = chart.options.lang,
-            textFormat = pick(
-                breadcrumbsOptions.format,
+            textFormat = breadcrumbsOptions.format ?? (
                 breadcrumbsOptions.showFullPath ?
-                    '{level.name}' : '← {level.name}'
+                    '{level.name}' :
+                    '← {level.name}'
             ),
-            defaultText = lang && pick(
-                lang.drillUpText,
-                lang.mainBreadcrumb
-            );
+            defaultText = lang && (lang.drillUpText ?? lang.mainBreadcrumb);
         let returnText = breadcrumbsOptions.formatter &&
             breadcrumbsOptions.formatter(breadcrumb) ||
                 format(
@@ -509,7 +504,7 @@ class Breadcrumbs {
                 newPositions.x += positionOptions.width;
             }
 
-            newPositions.y = pick(newPositions.y, this.yOffset, 0);
+            newPositions.y = (newPositions.y ?? this.yOffset ?? 0);
 
             breadcrumbs.group.align(
                 newPositions,
@@ -540,7 +535,14 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = this.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            buttonTheme = merge(breadcrumbsOptions.buttonTheme);
+            // The `style` option is CSS for the button text, so it belongs in
+            // the theme's `style` rather than being applied afterwards. A
+            // later `setState` re-applies the normal state style, which would
+            // otherwise wipe it (#25357).
+            buttonTheme = merge(
+                breadcrumbsOptions.buttonTheme,
+                chart.styledMode ? void 0 : { style: breadcrumbsOptions.style }
+            );
 
         const button: SVGElement = chart.renderer
             .button(
@@ -582,9 +584,6 @@ class Breadcrumbs {
             .addClass('highcharts-breadcrumbs-button')
             .add(breadcrumbs.group);
 
-        if (!chart.styledMode) {
-            button.attr(breadcrumbsOptions.style as SVGAttributes);
-        }
         return button;
     }
 

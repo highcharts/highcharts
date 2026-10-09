@@ -1,3 +1,10 @@
+---
+description: >-
+  Add chart subtitle text with the Subtitle component, pass subtitle API
+  options as props, and supply the displayed text as child content inside the
+  chart.
+---
+
 # Subtitle
 
 You can add a [subtitle](https://www.highcharts.com/docs/chart-concepts/title-and-subtitle) to your chart using the `Subtitle` component:

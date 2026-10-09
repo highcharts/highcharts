@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Sorting"
+description: >-
+  Configure initial and interactive sorting for individual columns, customize
+  comparisons and click order, sort by multiple columns, use the grid API to
+  set order, and handle local or remote data.
 ---
 
 # Column sorting

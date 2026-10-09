@@ -29,6 +29,7 @@ import type PictorialSeriesOptions from './PictorialSeriesOptions';
 import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
+import PictorialSeriesDefaults from './PictorialSeriesDefaults.js';
 import PictorialUtilities from './PictorialUtilities.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -40,8 +41,7 @@ import {
     addEvent,
     defined,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -100,7 +100,7 @@ declare module '../../Core/Axis/AxisOptions' {
 /**
  * The pictorial series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pictorial
  *
@@ -114,29 +114,10 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: PictorialSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        /**
-         * A pictorial chart uses vector images to represents the data.
-         * The shape of the data point is taken from the path parameter.
-         *
-         * @sample       {highcharts} highcharts/demo/pictorial/
-         *               Pictorial chart
-         *
-         * @extends      plotOptions.column
-         * @since 11.0.0
-         * @product      highcharts
-         * @excluding    allAreas, borderRadius,
-         *               centerInCategory, colorAxis, colorKey, connectEnds,
-         *               connectNulls, crisp, compare, compareBase, dataSorting,
-         *               dashStyle, dataAsColumns, linecap, lineWidth, shadow,
-         *               onPoint
-         * @requires     modules/pictorial
-         * @optionparent plotOptions.pictorial
-         */
-        {
-            borderWidth: 0
-        } as PictorialSeriesOptions
+        PictorialSeriesDefaults
     );
 
     /* *
@@ -145,6 +126,7 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public paths!: Array<PictorialPathOptions>;
 
     public data!: Array<PictorialPoint>;
@@ -212,9 +194,12 @@ class PictorialSeries extends ColumnSeries {
         }
     }
 
+    /** @internal */
     public animateDrilldown(): void {}
+    /** @internal */
     public animateDrillupFrom(): void {}
 
+    /** @internal */
     public pointAttribs(
         point?: PictorialPoint
     ): SVGAttributes {
@@ -374,9 +359,9 @@ function renderStackShadow(
             series.getColumnMetrics().width,
             { height, y } = getStackMetrics(series.yAxis, shape),
             shadowOptions = options.stackShadow,
-            strokeWidth = pick(
-                shadowOptions && shadowOptions.borderWidth,
-                series.options.borderWidth,
+            strokeWidth = (
+                (shadowOptions && shadowOptions.borderWidth) ??
+                series.options.borderWidth ??
                 1
             );
 
@@ -571,6 +556,7 @@ addEvent(Chart, 'afterDrillUp', function (): void {
  *
  * */
 
+/** @internal */
 interface PictorialSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -613,9 +599,9 @@ export default PictorialSeries;
  * @extends   series,plotOptions.pictorial
  * @since 11.0.0
  * @product   highcharts
- * @excluding dataParser, borderRadius, boostBlending, boostThreshold,
+ * @excluding borderRadius, boostBlending, boostThreshold,
  *            borderColor, borderWidth, centerInCategory, connectEnds,
- *            connectNulls, crisp, colorKey, dataURL, dataAsColumns, depth,
+ *            connectNulls, crisp, colorKey, dataAsColumns, depth,
  *            dragDrop, edgeColor, edgeWidth, linecap, lineWidth,  marker,
  *            dataSorting, dashStyle, onPoint, relativeXValue, shadow, zoneAxis,
  *            zones

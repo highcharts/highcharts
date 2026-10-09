@@ -43,8 +43,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @since 2.3.0
  *
- * @excluding dataParser, dataURL, softThreshold, stack,
- *            stacking, threshold
+ * @excluding softThreshold, stack, stacking, threshold
  *
  * @product highcharts highstock
  *

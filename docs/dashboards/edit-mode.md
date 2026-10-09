@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable Dashboards edit mode, add and configure components through its
+  sidebar, customize editable options and context-menu actions, listen for
+  component and layout events, and style the editing controls.
+---
+
 # Edit mode
 
 Edit mode is a mode in which the user can change the appearance of the dashboard through the User Interface (UI).  

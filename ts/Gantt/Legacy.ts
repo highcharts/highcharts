@@ -21,7 +21,7 @@
 import type Chart from '../Core/Chart/Chart';
 import { error } from '../Core/Utilities.js';
 
-import { merge, pick } from '../Shared/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -97,7 +97,7 @@ function distance(
     bbMargin?: number
 ): number {
     // Count the distance even if we are slightly off
-    const margin = pick(bbMargin, 10),
+    const margin = (bbMargin ?? 10),
         yOverlap = a.yMax + margin > b.yMin - margin &&
                     a.yMin - margin < b.yMax + margin,
         xOverlap = a.xMax + margin > b.xMin - margin &&

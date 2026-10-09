@@ -1,3 +1,10 @@
+---
+description: >-
+  Create Core, Stock, Maps, or Gantt charts with the corresponding root
+  component, place series and elements inside it, and configure selected chart
+  props, options, refs, and container attributes.
+---
+
 # Chart
 
 Highcharts React provides dedicated chart components. Each serves as the root of your chart, containing series and other chart elements.

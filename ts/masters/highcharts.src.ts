@@ -10,6 +10,8 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
+import type { LangOptionsCore } from '../Shared/LangOptionsCore';
+import type TimeBase from '../Shared/TimeBase';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import {
@@ -139,7 +141,16 @@ G.SVGElement = SVGElement;
 G.SVGRenderer = SVGRenderer;
 G.Templating = Templating;
 G.Tick = Tick;
-G.Time = Time;
+G.Time = class extends Time {
+    public constructor(options?: TimeBase.TimeOptions, lang?: LangOptionsCore) {
+        const defaultOptions = Defaults.getOptions();
+
+        super(
+            options ?? defaultOptions.time,
+            lang ?? defaultOptions.lang
+        );
+    }
+};
 G.Tooltip = Tooltip;
 
 // Utilities
