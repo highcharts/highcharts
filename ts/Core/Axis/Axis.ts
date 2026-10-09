@@ -2238,8 +2238,8 @@ class Axis {
         // Empty series must not affect ticks (#23555).
         const minTickInterval = options.minTickInterval ?? (
             dateTime &&
-            !axis.series.some((s): boolean => !s.sorted && s.hasData()) ?
-                axis.closestPointRange : 0
+            !axis.series.some((s): boolean => !s.sorted && s.hasData()) &&
+            axis.closestPointRange
         );
         if (
             !tickIntervalOption &&
