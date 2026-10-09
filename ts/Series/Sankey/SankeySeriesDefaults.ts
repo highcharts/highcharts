@@ -381,9 +381,10 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
     tooltip: {
         /**
          * A callback for defining the format for _nodes_ in the chart's
-         * tooltip, as opposed to links.
+         * tooltip, as opposed to links. The callback receives the `nodeFormat`
+         * string as the first argument and `ctx` as the second.
          *
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.SankeyNodeObject>}
+         * @type      {Highcharts.TooltipPointFormatterCallbackFunction}
          * @since     6.0.2
          * @apioption plotOptions.sankey.tooltip.nodeFormatter
          */

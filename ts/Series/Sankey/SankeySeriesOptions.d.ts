@@ -37,7 +37,7 @@ import type {
     SeriesStateInactiveOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type Templating from '../../Core/Templating';
+import type Tooltip from '../../Core/Tooltip';
 import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import { StateGenericOptions } from '../../Core/Series/StatesOptions';
@@ -592,7 +592,7 @@ export interface SankeySeriesStatesInactiveOptions
 
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     nodeFormat?: string;
-    nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
+    nodeFormatter?: Tooltip.PointFormatterCallbackFunction<SankeyPoint>;
 }
 
 /* *
