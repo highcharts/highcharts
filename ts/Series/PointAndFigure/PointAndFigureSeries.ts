@@ -20,6 +20,8 @@
 import DataTableCore from '../../Data/DataTableCore.js';
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import CrossSymbol from '../CrossSymbol.js';
 
@@ -38,12 +40,6 @@ import {
     relativeLength
 } from '../../Shared/Utilities.js';
 const { composed } = H;
-const {
-    scatter: ScatterSeries,
-    column: {
-        prototype: columnProto
-    }
-} = SeriesRegistry.seriesTypes;
 
 
 /* *
@@ -346,7 +342,7 @@ interface PointAndFigureSeries {
     /** @internal */
     pnfDataGroups: Array<PointAndFigureGroup>;
     /** @internal */
-    getColumnMetrics: typeof columnProto.getColumnMetrics;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
     /** @internal */
     markerWidth: number;
     /** @internal */
@@ -358,7 +354,7 @@ interface PointAndFigureSeries {
 extend(PointAndFigureSeries.prototype, {
     takeOrdinalPosition: true,
     pnfDataGroups: [],
-    getColumnMetrics: columnProto.getColumnMetrics,
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
     pointClass: PointAndFigurePoint,
     sorted: true
 });

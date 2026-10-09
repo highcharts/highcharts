@@ -31,7 +31,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { TypedArray } from '../../Shared/Types';
@@ -41,12 +40,7 @@ import DataGroupingDefaults from './DataGroupingDefaults.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import DateTimeAxis from '../../Core/Axis/DateTimeAxis.js';
 import D from '../../Core/Defaults.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: {
-        prototype: seriesProto
-    }
-} = SeriesRegistry;
+import Series from '../../Core/Series/Series.js';
 import {
     addEvent,
     defined,
@@ -226,7 +220,7 @@ export interface DataGroupingResultObject {
  *
  * */
 
-const baseGeneratePoints = seriesProto.generatePoints;
+const baseGeneratePoints = Series.prototype.generatePoints;
 
 /* *
  *
@@ -479,7 +473,7 @@ function applyGrouping(
                 processedXData,
                 series.closestPointRange
             ),
-            groupedData = seriesProto.groupData.apply(
+            groupedData = Series.prototype.groupData.apply(
                 series,
                 [
                     table,

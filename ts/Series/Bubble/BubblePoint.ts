@@ -21,18 +21,18 @@
 import type BubblePointOptions from './BubblePointOptions';
 import type BubbleSeries from './BubbleSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import Point from '../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { extend } from '../../Shared/Utilities.js';
-const {
-    seriesTypes: {
-        scatter: {
-            prototype: {
-                pointClass: ScatterPoint
-            }
-        }
-    }
-} = SeriesRegistry;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ScatterPoint = ScatterSeries.prototype.pointClass;
 
 /* *
  *

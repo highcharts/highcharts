@@ -25,11 +25,8 @@ import type SankeySeries from './SankeySeries';
 
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import { defined } from '../../Shared/Utilities.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 
 /* *
  *

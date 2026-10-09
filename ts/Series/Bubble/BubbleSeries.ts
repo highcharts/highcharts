@@ -27,6 +27,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase';
 import type PointerEvent from '../../Core/PointerEvent';
+
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
 import H from '../../Core/Globals.js';
@@ -34,14 +35,10 @@ const {
     composed,
     noop
 } = H;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    series: Series,
-    seriesTypes: {
-        column: { prototype: columnProto },
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import {
     addEvent,
     arrayMax,
@@ -954,7 +951,7 @@ class BubbleSeries extends ScatterSeries {
 
 interface BubbleSeries {
     /** @internal */
-    alignDataLabel: typeof columnProto.alignDataLabel;
+    alignDataLabel: typeof ColumnSeries.prototype.alignDataLabel;
     bubblePadding: boolean;
     isBubble: true;
     pointClass: typeof BubblePoint;
@@ -962,7 +959,7 @@ interface BubbleSeries {
 }
 
 extend(BubbleSeries.prototype, {
-    alignDataLabel: columnProto.alignDataLabel,
+    alignDataLabel: ColumnSeries.prototype.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
     isBubble: true,

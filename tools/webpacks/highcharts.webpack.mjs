@@ -28,6 +28,7 @@ const __dirname = import.meta.dirname;
 
 const sourceFolder = Path.join('code', 'es-modules');
 const mastersFolder = Path.join(sourceFolder, 'masters');
+const mastersFolderPosix = FSLib.path([process.cwd(), mastersFolder], true);
 
 const esmTargetFolder = Path.join('code', 'esm');
 const umdTargetFolder = Path.join('code');
@@ -217,7 +218,7 @@ const esmWebpacks = umdWebpacks.map(umdWebpack => {
                 const contextPath =
                     FSLib.path([info.context, info.request], true);
 
-                if (contextPath.includes(mastersFolder)) {
+                if (contextPath.startsWith(mastersFolderPosix)) {
                     return makeExternals(
                         info,
                         masterName,

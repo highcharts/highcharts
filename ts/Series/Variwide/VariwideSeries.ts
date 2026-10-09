@@ -25,10 +25,8 @@ import type { TypedArray } from '../../Shared/Types';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
 
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';

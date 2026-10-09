@@ -38,10 +38,8 @@ const {
 } = H;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
 import {

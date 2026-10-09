@@ -31,11 +31,8 @@ import type { TilemapShapeValue } from './TilemapSeriesOptions';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    heatmap: HeatmapSeries,
-    scatter: ScatterSeries
-} = SeriesRegistry.seriesTypes;
+import HeatmapSeries from '../Heatmap/HeatmapSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
 import { clamp } from '../../Shared/Utilities.js';
 
 /* *

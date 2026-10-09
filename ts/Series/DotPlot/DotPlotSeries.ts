@@ -34,10 +34,8 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import DotPlotSeriesDefaults from './DotPlotSeriesDefaults.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    column: ColumnSeries
-} = SeriesRegistry.seriesTypes;
 import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *

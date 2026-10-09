@@ -19,13 +19,17 @@ bundles (modules like `exporting.js`, `data.js`, etc.). It works at the
 
 ### How `externals.json` works
 
-Each entry has three fields:
+Each entry has three fields, plus an optional `esmExcluded`:
 
 - **`files`**: Module paths (relative to `code/es-modules/`, no extension) to
   externalize.
 - **`included`**: Bundle names where the file should be **bundled** (included),
   NOT externalized. If a bundle is absent from this list, the module IS
   externalized for that bundle.
+- **`esmExcluded`** (optional): Bundles from `included` that import the file
+  in ESM from the first bundle in `included`, instead of bundling it. Use it
+  when that bundle's master already imports the first one, e.g. `modules/gantt`
+  imports `modules/xrange`.
 - **`namespacePath`**: How to resolve the external on the global object.
   - `""` (empty) → root namespace (e.g., `Highcharts` or `Dashboards`).
   - `".{name}"` → `Namespace.FileName` (e.g., `Highcharts.Chart`).
