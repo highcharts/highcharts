@@ -129,6 +129,8 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      *         Example of minPointSize and maxPointSize
      *
      * @since 6.0.0
+     *
+     * @default '100%'
      */
     maxPointSize?: (number|string);
 
@@ -143,6 +145,8 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      *         minPointSize set to 100
      *
      * @since 6.0.0
+     *
+     * @default '10%'
      */
     minPointSize?: (number|string);
 
@@ -156,6 +160,8 @@ export interface VariablePieSeriesOptions extends PieSeriesOptions {
      *         Difference between area and radius sizeBy
      *
      * @since 6.0.0
+     *
+     * @default 'area'
      */
     sizeBy?: VariablePieSizeByValue;
 
