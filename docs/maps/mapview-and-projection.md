@@ -1,3 +1,10 @@
+---
+description: >-
+  Set the map center and zoom, choose or supply a projection, and place
+  insets for non-contiguous regions. The article also describes coordinate
+  conversions and reading longitude and latitude from pointer events.
+---
+
 Map View and Projection
 ===
 

@@ -1,16 +1,19 @@
-Goal Analysis
-=======================
+---
+description: >-
+  Configure the Goal Analysis connector with savings, contributions, portfolio
+  asset-class weights, a target, and a time horizon to request probabilities
+  of meeting financial goals under market assumptions.
+---
 
-The Morningstar Goal Analysis service calculates the probabilities of an
+# Goal Analysis
+
+The Morningstar **Goal Analysis** service calculates the probabilities of an
 investor meeting their financial goals based on assumptions about markets and
 the assets in a portfolio.
 
+## How to use Goal Analysis Connector
 
-
-How to use Goal Analysis
-------------------------
-
-The Goal Analysis Connector provides an easy way to create an analysis to
+The `GoalAnalysisConnector` provides an easy way to create an analysis to
 specific scenarios. The options give control over insights displayed in charts
 and dashboards.
 
@@ -36,12 +39,9 @@ const goalAnalysisConnector = new HighchartsConnectors.Morningstar.GoalAnalysisC
 });
 ```
 
+## Morningstar API Reference
+
 For more details, see [Morningstar's Goal Analysis API].
 
-
-
 <!-- Links -->
-
-
-
-[Morningstar's Goal Analysis API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/portfolio-analysis-apacemea/goal-analysis
+[Morningstar's Goal Analysis API]: https://developer.morningstar.com/direct-web-services/documentation/enterprise-component-apis/goal-analysis/overview

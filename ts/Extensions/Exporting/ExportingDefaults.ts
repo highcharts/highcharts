@@ -271,19 +271,21 @@ const exporting: ExportingOptions = {
      */
 
     /**
-     * The pixel width of charts exported to PNG or JPG. As of Highcharts
-     * 3.0, the default pixel width is a function of the [chart.width](
-     * #chart.width) or [exporting.sourceWidth](#exporting.sourceWidth) and the
-     * [exporting.scale](#exporting.scale).
+     * The pixel width of charts exported to PNG or JPG. Deprecated and
+     * without effect, as the option is no longer forwarded to the export
+     * server. The same result is achieved with [exporting.sourceWidth](
+     * #exporting.sourceWidth) combined with [exporting.scale](
+     * #exporting.scale).
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
      * @sample {highstock} highcharts/exporting/width/
      *         Export to 200px wide images
      *
-     * @type      {number}
-     * @since     2.0
-     * @apioption exporting.width
+     * @deprecated next
+     * @type       {number}
+     * @since      2.0
+     * @apioption  exporting.width
      */
 
     /**
@@ -893,6 +895,43 @@ const navigation: NavigationOptions = {
              * Padding for the button.
              */
             padding: 5,
+
+            /**
+             * Tri-state button styles.
+             *
+             * @sample highcharts/navigation/buttonoptions-theme/
+             *         Theming the buttons
+             *
+             * @apioption navigation.buttonOptions.theme.states
+             */
+
+            /**
+             * SVG attributes for the disabled state of the button.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @apioption navigation.buttonOptions.theme.states.disabled
+             */
+
+            /**
+             * SVG attributes for the hovered state of the button.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @apioption navigation.buttonOptions.theme.states.hover
+             */
+
+            /**
+             * SVG attributes for the selected state of the button.
+             *
+             * @type      {Highcharts.SVGAttributes}
+             * @apioption navigation.buttonOptions.theme.states.select
+             */
+
+            /**
+             * CSS styling for the button's text or symbol.
+             *
+             * @type      {Highcharts.CSSObject}
+             * @apioption navigation.buttonOptions.theme.style
+             */
 
             /**
              * Default stroke for the buttons.

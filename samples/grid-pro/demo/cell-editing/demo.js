@@ -18,7 +18,18 @@ Grid.grid('container', {
             },
             events: {
                 afterEdit: function () {
-                    changelog.innerHTML += `<strong>${this.column.id}</strong> for <strong>${this.row.data.product}</strong> was updated to ${this.value} <br />`; // eslint-disable-line
+                    const line = document.createElement('div'),
+                        column = document.createElement('strong'),
+                        product = document.createElement('strong');
+
+                    column.textContent = this.column.id;
+                    product.textContent = this.row.data.product;
+                    line.append(
+                        column, ' for ', product,
+                        ' was updated to ' + this.value
+                    );
+
+                    changelog.appendChild(line);
                     changelog.scrollTop = changelog.scrollHeight;
                 }
             }
@@ -26,6 +37,9 @@ Grid.grid('container', {
     },
     columns: [{
         id: 'available',
+        header: {
+            format: 'Availability'
+        },
         dataType: 'boolean',
         cells: {
             format: '{#if value}✓{else}✗{/if}',
@@ -37,6 +51,9 @@ Grid.grid('container', {
         }
     }, {
         id: 'weight',
+        header: {
+            format: 'Weight'
+        },
         cells: {
             editMode: {
                 validationRules: ['notEmpty', 'number'],
@@ -47,6 +64,9 @@ Grid.grid('container', {
         }
     }, {
         id: 'product',
+        header: {
+            format: 'Product'
+        },
         cells: {
             editMode: {
                 enabled: false
@@ -54,6 +74,9 @@ Grid.grid('container', {
         }
     }, {
         id: 'country',
+        header: {
+            format: 'Source'
+        },
         dataType: 'string',
         cells: {
             formatter: function () {

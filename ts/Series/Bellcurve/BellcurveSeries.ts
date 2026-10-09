@@ -38,7 +38,6 @@ import { correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 /**
  * Bell curve class
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.bellcurve
  *
@@ -52,6 +51,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: BellcurveSeriesOptions = merge(
         AreaSplineSeries.defaultOptions,
         BellcurveSeriesDefaults
@@ -114,12 +114,14 @@ class BellcurveSeries extends AreaSplineSeries {
 
     public data!: Array<BellcurvePoint>;
 
+    /** @internal */
     public mean?: number;
 
     public options!: BellcurveSeriesOptions;
 
     public points!: Array<BellcurvePoint>;
 
+    /** @internal */
     public standardDeviation?: number;
 
     /* *
@@ -128,6 +130,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
+    /** @internal */
     public setData(
         data: number[]|undefined,
         redraw: boolean = true,
@@ -167,6 +170,7 @@ class BellcurveSeries extends AreaSplineSeries {
         );
     }
 
+    /** @internal */
     public derivedData(
         mean: number,
         standardDeviation: number
@@ -190,6 +194,7 @@ class BellcurveSeries extends AreaSplineSeries {
         return data;
     }
 
+    /** @internal */
     public setDerivedData(): void {
         const series = this;
 
@@ -203,12 +208,14 @@ class BellcurveSeries extends AreaSplineSeries {
         }
     }
 
+    /** @internal */
     public setMean(data: number[]): void {
         const mean = BellcurveSeries.mean(data || []);
 
         this.mean = isNumber(mean) ? correctFloat(mean) : void 0;
     }
 
+    /** @internal */
     public setStandardDeviation(data: number[]): void {
         const sd = BellcurveSeries.standardDeviation(
             data || [],
@@ -239,7 +246,6 @@ DerivedComposition.compose(BellcurveSeries);
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof BellcurveSeries;
@@ -253,5 +259,4 @@ SeriesRegistry.registerSeriesType('bellcurve', BellcurveSeries);
  *
  * */
 
-/** @internal */
 export default BellcurveSeries;

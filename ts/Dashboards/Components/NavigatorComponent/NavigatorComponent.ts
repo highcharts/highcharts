@@ -54,8 +54,7 @@ import {
     diffObjects,
     isNumber,
     isString,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 
 
@@ -176,10 +175,7 @@ class NavigatorComponent extends Component {
     /** @private */
     private adjustNavigator(): void {
         const chart = this.chart,
-            height = pick(
-                chart.chartHeight,
-                this.contentElement.clientHeight
-            ),
+            height = (chart.chartHeight ?? this.contentElement.clientHeight),
             width = this.contentElement.clientWidth,
             chartUpdates: DeepPartial<HighchartsOptions> = {};
 
@@ -329,6 +325,10 @@ class NavigatorComponent extends Component {
         timeouts.length = 0;
 
         timeouts.push(setTimeout((): void => {
+            if (!this.chart.container) {
+                return;
+            }
+
             this.adjustNavigator();
             this.chart.redraw();
         }, 33));
@@ -423,7 +423,7 @@ class NavigatorComponent extends Component {
         }
 
         uniqueXValues.sort((a, b): number => (
-            pick(a, NaN) < pick(b, NaN) ? -1 : a === b ? 0 : 1
+            (a ?? NaN) < (b ?? NaN) ? -1 : a === b ? 0 : 1
         ));
 
         let filteredValues: (number | string)[];
@@ -505,6 +505,15 @@ class NavigatorComponent extends Component {
         super.resize(width, height);
         this.redrawNavigator();
         return this;
+    }
+
+
+    /**
+     * Destroys the navigator component.
+     */
+    public override destroy(): void {
+        this.chart.destroy();
+        super.destroy();
     }
 
 

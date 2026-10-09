@@ -1,11 +1,24 @@
+---
+description: >-
+  Review the Screener connector's filtering capabilities and supported
+  data-point breadth, then follow links to configure investment screens or
+  find securities with characteristics similar to an existing investment.
+---
+
 # Screener
 
-Filter thousands of investments to quickly find those matching your criteria. Over a hundred data points can be used to fine-tune results for specific business requirements.
+Filter thousands of investments to quickly find those matching your criteria.
+Over a hundred data points can be used to fine-tune results for specific
+business requirements.
 
 ## Capabilities
 
-- [Investment Screener](https://www.highcharts.com/docs/morningstar/screeners/investment-screener)
-- [Investor Preferences](https://www.highcharts.com/docs/morningstar/screeners/investor-preferences)
-- [ESG Screener](https://www.highcharts.com/docs/morningstar/screeners/esg-screener)
-- [Regulatory Screener](https://www.highcharts.com/docs/morningstar/screeners/regulatory-screener)
-- [Find Similar](https://www.highcharts.com/docs/morningstar/screeners/find-similar-screener)
+* [Investment Screener](https://www.highcharts.com/docs/morningstar/screeners/investment-screener)
+* [Find Similar](https://www.highcharts.com/docs/morningstar/screeners/find-similar-screener)
+
+## Morningstar API Reference
+
+For more details, see [Morningstar's Screener API].
+
+<!-- Links -->
+[Morningstar's Screener API]: https://developer.morningstar.com/direct-web-services/documentation/enterprise-component-apis/screener/overview

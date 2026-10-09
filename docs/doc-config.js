@@ -6,6 +6,7 @@ module.exports = {
      * Refer to doc by relative path without extension, i.e.: 'maps/drilldown'
      */
     unlisted: [
+        'adr/0001-separate-visual-runner-from-comparison',
         'export-module/deprecated-async-option',
         'export-module/legacy-export-servers',
         'maps/latlon'
@@ -38,10 +39,10 @@ module.exports = {
         { from: 'datagrid/style-by-css', to: 'grid/theming/index' },
         { from: 'datagrid/accessibility', to: 'grid/accessibility' },
         { from: 'datagrid/datagrid-with-angular', to: 'grid/frameworks/angular' },
-        { from: 'datagrid/datagrid-with-react', to: 'grid/frameworks/react' },
+        { from: 'datagrid/datagrid-with-react', to: 'grid/frameworks/react/getting-started' },
         { from: 'datagrid/datagrid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/wrappers/grid-with-angular', to: 'grid/frameworks/angular' },
-        { from: 'grid/wrappers/grid-with-react', to: 'grid/frameworks/react' },
+        { from: 'grid/wrappers/grid-with-react', to: 'grid/frameworks/react/getting-started' },
         { from: 'grid/wrappers/grid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/cell-editing', to: 'grid/editing/index' },
         { from: 'grid/cell-renderers', to: 'grid/editing/renderers' },
@@ -53,7 +54,8 @@ module.exports = {
         { from: 'grid/conditional-theming', to: 'grid/theming/conditional' },
         { from: 'grid/theming-variables', to: 'grid/theming/grid-variables' },
         { from: 'grid/frameworks/grid-with-angular', to: 'grid/frameworks/angular' },
-        { from: 'grid/frameworks/grid-with-react', to: 'grid/frameworks/react' },
+        { from: 'grid/frameworks/grid-with-react', to: 'grid/frameworks/react/getting-started' },
+        { from: 'grid/frameworks/react', to: 'grid/frameworks/react/getting-started' },
         { from: 'grid/frameworks/grid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/frameworks/grid-with-nextjs', to: 'grid/frameworks/nextjs' },
         { from: 'grid/columns/configuration', to: 'grid/columns/index' },
@@ -76,6 +78,14 @@ module.exports = {
         { from: 'react/components/modules/broken-axis', to: 'react/components/modules/brokenaxis' },
         { from: 'react/components/modules/draggable-points', to: 'react/components/modules/draggablepoints' },
         { from: 'react/components/modules/stock-tools', to: 'react/components/modules/stocktools' },
+        // More focus on new Global API, higher level:
+        { from: 'morningstar/dws-connector', to: 'morningstar/dws/investments-details-connector' },
+        // Endpoint no longer supported, use generic Morningstar page instead:
+        { from: 'morningstar/regulatory-news-announcements', to: 'morningstar/morningstar' },
+        // Endpoint no longer supported, use generic Screener page instead:
+        { from: 'morningstar/screeners/esg-screener', to: 'morningstar/screeners/screener' },
+        { from: 'morningstar/screeners/investor-preferences', to: 'morningstar/screeners/screener' },
+        { from: 'morningstar/screeners/regulatory-screener', to: 'morningstar/screeners/screener' },
         // Special case for xmlns schema in Map Collection
         // # --> https://github.com/highcharts/doc-builder/issues/58
         { from: 'mc', to: 'maps/map-collection#map-properties' }

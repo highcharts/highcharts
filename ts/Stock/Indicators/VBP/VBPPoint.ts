@@ -31,10 +31,10 @@ import type VBPIndicator from './VBPIndicator';
  *
  * */
 
-/** @internal */
 class VBPPoint extends SMAPoint {
 
     // Required for destroying negative part of volume
+    /** @internal */
     public destroy(): void {
         // @todo: this.negativeGraphic doesn't seem to be used anywhere
         if (this.negativeGraphic) {
@@ -52,12 +52,19 @@ class VBPPoint extends SMAPoint {
 
 /** @internal */
 interface VBPPoint {
+    /** @internal */
     barX: number;
+    /** @internal */
     negativeGraphic: unknown;
+    /** @internal */
     pointWidth: number;
+    /** @internal */
     series: VBPIndicator;
+    /** @internal */
     volumeAll: number;
+    /** @internal */
     volumeNeg: number;
+    /** @internal */
     volumePos: number;
 }
 
@@ -67,5 +74,4 @@ interface VBPPoint {
  *
  * */
 
-/** @internal */
 export default VBPPoint;

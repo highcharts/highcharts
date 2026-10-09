@@ -38,7 +38,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Envelopes series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.priceenvelopes
  *
@@ -66,6 +65,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/price-envelopes
      * @optionparent plotOptions.priceenvelopes
+     * @internal
      */
     public static defaultOptions: PriceEnvelopesOptions = merge(SMAIndicator.defaultOptions, {
         marker: {
@@ -150,6 +150,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments);
 
@@ -168,6 +169,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PriceEnvelopesParamsOptions
@@ -267,7 +269,6 @@ MultipleLinesComposition.compose(PriceEnvelopesIndicator);
  *
  * */
 
-/** @internal */
 namespace PriceEnvelopesIndicator {
     export interface GappedExtensionObject {
         options?: GappedExtensionOptions;
@@ -283,7 +284,6 @@ namespace PriceEnvelopesIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof PriceEnvelopesIndicator;
@@ -298,7 +298,6 @@ SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
  *
  * */
 
-/** @internal */
 export default PriceEnvelopesIndicator;
 
 /* *
@@ -313,7 +312,6 @@ export default PriceEnvelopesIndicator;
  *
  * @extends   series,plotOptions.priceenvelopes
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/price-envelopes

@@ -9,13 +9,13 @@ const grid = Grid.grid('container', {
     gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
-            product: [
+            Product: [
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes',
                 'Strawberries', 'Blueberries'
             ],
-            weight: [100, 40, 0.5, 200, 150, 100, 50, 30],
-            price: [1.5, 2.53, 5, 4.5, 3.5, 2.5, 6, 4.2],
-            metaData: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+            Weight: [100, 40, 0.5, 200, 150, 100, 50, 30],
+            Price: [1.5, 2.53, 5, 4.5, 3.5, 2.5, 6, 4.2],
+            'Meta Data': ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
         }
     },
     columnDefaults: {
@@ -31,11 +31,11 @@ const grid = Grid.grid('container', {
 });
 
 csvExport.addEventListener('click', () => {
-    result.innerHTML = grid.exporting.getCSV(modifiedDataToggle.checked);
+    result.value = grid.exporting.getCSV(modifiedDataToggle.checked);
 });
 
 jsonBtn.addEventListener('click', () => {
-    result.innerHTML = grid.exporting.getJSON(modifiedDataToggle.checked);
+    result.value = grid.exporting.getJSON(modifiedDataToggle.checked);
 });
 
 csvDownload.addEventListener('click', () => {

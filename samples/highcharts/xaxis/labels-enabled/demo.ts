@@ -3,12 +3,17 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Demo of <em>xAxis.labels.enabled</em>'
+        text: 'Demo of axis <em>labels.enabled</em> options'
     },
     xAxis: {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         labels: {
             enabled: false
+        }
+    },
+    yAxis: {
+        labels: {
+            enabled: true
         }
     },
     series: [{

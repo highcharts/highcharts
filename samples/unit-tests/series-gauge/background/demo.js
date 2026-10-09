@@ -23,7 +23,7 @@ QUnit.test('Gauge background(#3318)', function (assert) {
     });
 
     assert.strictEqual(
-        $('#container').highcharts().xAxis[0].plotLinesAndBands.length,
+        $('#container').highcharts().xAxis[0].plotBands.length,
         0,
         'No plot bands exist'
     );

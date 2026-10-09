@@ -122,19 +122,24 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
     reversed: false,
 
     /**
-     * To avoid adapting the data label size in Pie.drawDataLabels.
-     * @ignore-option
+     * @declare Highcharts.SeriesFunnelDataLabelsOptionsObject
+     * @extends plotOptions.pie.dataLabels
      */
-    size: true as any,
-
     dataLabels: {
+
+        /**
+         * Whether to render the data label inside the funnel item instead of
+         * outside, connected by a connector line.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @apioption plotOptions.funnel.dataLabels.inside
+         */
+
         connectorWidth: 1,
         verticalAlign: 'middle'
     },
 
-    /**
-     * Options for the series states.
-     */
     states: {
 
         /**
@@ -174,7 +179,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.funnel
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting,
+ * @excluding stack, xAxis, yAxis, dataSorting,
  *            boostBlending, boostThreshold
  * @product   highcharts
  * @requires  modules/funnel
@@ -226,6 +231,13 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * @excluding sliced
  * @product   highcharts
  * @apioption series.funnel.data
+ */
+
+/**
+ * Options for a selected funnel item.
+ *
+ * @excluding halo, marker, lineWidth, lineWidthPlus
+ * @apioption series.funnel.states.select
  */
 
 ''; // Keeps doclets above separate

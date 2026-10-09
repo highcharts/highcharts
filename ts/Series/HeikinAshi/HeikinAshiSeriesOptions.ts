@@ -109,7 +109,6 @@ export interface HeikinAshiSeriesOptions extends CandlestickSeriesOptions {
 
     dataGrouping?: HeikinAshiSeriesDataGroupingOptions;
 
-
 }
 
 interface HeikinAshiSeriesDataGroupingOptions extends DataGroupingOptions {

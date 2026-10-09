@@ -41,6 +41,7 @@ import { merge } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 class SVGElement3DFunnel extends SVGElement3D {
 
     /* *
@@ -325,4 +326,5 @@ class SVGElement3DFunnel extends SVGElement3D {
  *
  * */
 
+/** @internal */
 export default SVGElement3DFunnel;

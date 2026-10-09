@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure the Stock navigator's overview series, axes, handles, mask, and
+  placement, choose which data series appear in it, and use its controls to
+  pan or zoom the main chart.
+---
+
 Navigator
 ================
 

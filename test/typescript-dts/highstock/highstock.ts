@@ -8,9 +8,32 @@
 
 import * as Highcharts from 'highcharts/highstock';
 
+test_navigatorSeries();
 test_seriesLine();
 test_seriesCandleStick();
 test_theme();
+
+/**
+ * Tests the documented `navigator.series.fillColor` option. The default
+ * navigator series is an areaspline, so it honours a fill color. #24856
+ */
+function test_navigatorSeries() {
+    // Annotated, because `navigator.series` also accepts SeriesOptionsType,
+    // which would hide a missing member on NavigatorSeriesOptions.
+    const navigatorSeries: Highcharts.NavigatorSeriesOptions = {
+        color: '#4572a7',
+        fillColor: 'rgba(69, 114, 167, 0.3)'
+    };
+    Highcharts.stockChart('container', {
+        navigator: {
+            series: navigatorSeries
+        },
+        series: [{
+            type: 'line',
+            data: [1, 2, 3]
+        }]
+    });
+}
 
 /**
  * Tests Highcharts.seriesTypes.line in a simple use case.

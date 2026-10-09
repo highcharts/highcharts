@@ -3,6 +3,13 @@ QUnit.test('Scatter series general tests.', function (assert) {
             chart: {
                 type: 'scatter'
             },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        symbol: 'circle'
+                    }
+                }
+            },
             series: [
                 {
                     lineWidth: 1,
@@ -74,5 +81,18 @@ QUnit.test('Scatter series general tests.', function (assert) {
         undefined, // Or check for falsy if preferred
         'Default series (Column) should NOT have' +
         'the allowOutsidePlotInteraction flag (#24096).'
+    );
+
+    // --- Added tests for #24057 ---
+    const graphic = series.points[0].graphic;
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    assert.ok(
+        graphic === series.points[0].graphic,
+        'Scatter point graphic should survive update (#24057).'
     );
 });

@@ -32,7 +32,6 @@ import {
     getAlignFactor,
     isNumber,
     merge,
-    pick,
     removeEvent
 } from '../../../Shared/Utilities.js';
 
@@ -335,7 +334,7 @@ class SVGLabel extends SVGElement {
                 translateY = 0,
                 width = 0
             } = this,
-            paddingLeft = pick(this.paddingLeft, padding),
+            paddingLeft = (this.paddingLeft ?? padding),
             rotation = rot ?? (this.rotation || 0);
 
         let bBox: BBoxObject = {
@@ -401,7 +400,7 @@ class SVGLabel extends SVGElement {
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: pick(this.textStr, ''),
+            text: (this.textStr ?? ''),
             x: this.x || 0,
             y: this.y || 0
         });
@@ -619,8 +618,8 @@ class SVGLabel extends SVGElement {
     /** @internal */
     public getPaddedWidth(): number {
         const padding = this.padding;
-        const paddingLeft = pick(this.paddingLeft, padding);
-        const paddingRight = pick(this.paddingRight, padding);
+        const paddingLeft = (this.paddingLeft ?? padding);
+        const paddingRight = (this.paddingRight ?? padding);
         return (
             (this.widthSetting || this.bBox.width || 0) +
             paddingLeft +

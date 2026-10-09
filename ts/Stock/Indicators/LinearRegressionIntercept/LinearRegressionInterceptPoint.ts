@@ -24,8 +24,8 @@ import type LinearRegressionPoint from
  *
  * */
 
-/** @internal */
 declare class LinearRegressionInterceptPoint extends LinearRegressionPoint {
+    /** @internal */
     public series: LinearRegressionInterceptIndicator;
 }
 
@@ -35,5 +35,4 @@ declare class LinearRegressionInterceptPoint extends LinearRegressionPoint {
  *
  * */
 
-/** @internal */
 export default LinearRegressionInterceptPoint;

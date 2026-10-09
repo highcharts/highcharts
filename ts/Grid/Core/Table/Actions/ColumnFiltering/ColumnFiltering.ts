@@ -43,8 +43,7 @@ import {
 } from './FilteringTypes.js';
 import {
     defined,
-    fireEvent,
-    pick
+    fireEvent
 } from '../../../../../Shared/Utilities.js';
 
 /* *
@@ -667,11 +666,10 @@ class ColumnFiltering {
             .isFilterOperatorSelectHidden(column.id);
 
         if (!hideOperatorSelect) {
-            input.placeholder = pick(
-                column.viewport.grid.options?.lang?.filterValuePlaceholder,
-                defaultOptions.lang?.filterValuePlaceholder,
-                ''
-            );
+            input.placeholder =
+                column.viewport.grid.options?.lang?.filterValuePlaceholder ??
+                defaultOptions.lang?.filterValuePlaceholder ??
+                '';
             input.removeAttribute('aria-label');
             return;
         }
