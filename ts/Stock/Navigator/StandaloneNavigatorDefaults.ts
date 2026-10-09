@@ -29,10 +29,6 @@ import type { Options } from '../../Core/Options';
 
 /** @internal */
 const standaloneNavigatorDefaults: DeepPartial<Options> = {
-    chart: {
-        height: 70,
-        margin: [0, 5, 0, 5]
-    },
     exporting: {
         enabled: false
     },
@@ -40,7 +36,9 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
         enabled: false
     },
     navigator: {
-        enabled: false
+        enabled: true,
+        margin: 0,
+        top: 1
     },
     plotOptions: {
         series: {
@@ -55,7 +53,7 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
         }
     },
     scrollbar: {
-        enabled: false
+        enabled: true
     },
     title: {
         text: ''
@@ -74,9 +72,32 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+function getChartDefaults(inverted?: boolean): DeepPartial<Options> {
+    return {
+        chart: inverted ? {
+            width: 70,
+            height: void 0,
+            margin: [5, 0, 5, 0]
+        } : {
+            width: void 0,
+            height: 70,
+            margin: [0, 5, 0, 5]
+        }
+    };
+}
+
+/* *
+ *
  *  Default Export
  *
  * */
+
+/** @internal */
+export { getChartDefaults };
 
 /** @internal */
 export default standaloneNavigatorDefaults;
