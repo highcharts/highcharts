@@ -32,8 +32,7 @@ import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 import {
     addEvent,
     clamp,
-    isNumber,
-    relativeLength
+    isNumber
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -350,11 +349,11 @@ class AxisResizer {
 
                 top = axis.top;
 
-                const minLength = Math.round(relativeLength(
+                const minLength = Math.round(chart.relativeLength(
                         axisOptions.minLength || NaN,
                         plotHeight
                     )),
-                    maxLength = Math.round(relativeLength(
+                    maxLength = Math.round(chart.relativeLength(
                         axisOptions.maxLength || NaN,
                         plotHeight
                     ));

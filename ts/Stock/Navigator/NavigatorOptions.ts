@@ -19,6 +19,7 @@ import type {
     YAxisOptions
 } from '../../Core/Axis/AxisOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type { CSSLength } from '../../Core/Renderer/CSSObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type { Options } from '../../Core/Options';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
@@ -226,12 +227,16 @@ export interface BaseNavigatorOptions {
     handles?: NavigatorHandlesOptions;
 
     /**
-     * The height of the navigator.
+     * The height of the navigator, either in pixels or as a CSS length
+     * expression, e.g. a percentage of the chart's plot area height like
+     * `'10%'`.
      *
      * @sample {highstock} stock/navigator/height/
      *         A higher navigator
+     *
+     * @type {number|Highcharts.CSSLength}
      */
-    height?: number;
+    height?: (number|CSSLength);
 
     /**
      * The color of the line marking the currently zoomed area in the

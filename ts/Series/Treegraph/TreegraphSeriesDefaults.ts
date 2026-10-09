@@ -67,10 +67,22 @@ const TreegraphSeriesDefaults = {
      */
     reversed: false,
     /**
+     * @declare   Highcharts.TreegraphMarkerOptionsObject
      * @extends   plotOptions.series.marker
      * @excluding enabled, enabledThreshold
      */
     marker: {
+        /**
+         * The radius of the node. A number denotes pixels, a percentage
+         * string denotes a percentage of the smaller of the plot width and
+         * plot height. Also accepts a CSS length expression, e.g. `'1em'`
+         * or `'calc(var(--radius) * 2)'`.
+         *
+         * @sample highcharts/series-treegraph/marker-radius-css-length/
+         *         Marker radius as a CSS length
+         *
+         * @type {number|Highcharts.CSSLength}
+         */
         radius: 10,
         lineWidth: 0,
         symbol: 'circle',

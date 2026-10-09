@@ -1,0 +1,6 @@
+---
+ name: Highcharts demo
+ authors:
+   - Jedrzej Ruta
+ js_wrap: b
+...

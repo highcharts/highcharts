@@ -1,0 +1,11 @@
+:root {
+    --spacing-unit: 10px;
+    --gap: calc(var(--spacing-unit) * 2);
+}
+
+#container {
+    height: 400px;
+
+    /* Variable scoped to the chart container */
+    --chart-left-gap: 80px;
+}

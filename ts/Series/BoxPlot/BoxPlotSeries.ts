@@ -37,8 +37,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import {
     crisp,
     extend,
-    merge,
-    relativeLength
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -105,12 +104,15 @@ class BoxPlotSeries extends ColumnSeries {
         lowerWhiskerLength: number | string,
         point: BoxPlotPoint
     ): SVGPath {
-        const strokeWidth = point.whiskers.strokeWidth(),
+        const chart = this.chart,
+            strokeWidth = point.whiskers.strokeWidth(),
             getWhisker = (
                 xLen: number | string,
                 yPos: number
             ): SVGPath.Segment[] => {
-                const halfLen = relativeLength(xLen, 2 * halfWidth) / 2,
+                const halfLen = chart.relativeLength(
+                        xLen, 2 * halfWidth
+                    ) / 2,
                     crispedYPos = crisp(
                         yPos,
                         strokeWidth
@@ -342,7 +344,7 @@ class BoxPlotSeries extends ColumnSeries {
 
                     // Optionally round the corners of the box
                     const r = Math.min(
-                        relativeLength(
+                        chart.relativeLength(
                             borderRadiusObject(options.borderRadius).radius,
                             right - x
                         ),

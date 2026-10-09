@@ -92,10 +92,16 @@ const NavigatorDefaults: NavigatorOptions = {
      */
 
     /**
-     * The height of the navigator.
+     * The height of the navigator, either in pixels or as a CSS length
+     * expression, e.g. a percentage of the chart's plot area height like
+     * `'10%'`.
      *
      * @sample {highstock} stock/navigator/height/
      *         A higher navigator
+     * @sample stock/navigator/height-css-length/
+     *         Navigator height as a CSS length
+     *
+     * @type {number|Highcharts.CSSLength}
      */
     height: 40,
 

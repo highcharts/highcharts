@@ -63,7 +63,6 @@ import {
     isObject,
     merge,
     pushUnique,
-    relativeLength,
     splat,
     wrap
 } from '../Shared/Utilities.js';
@@ -1124,7 +1123,10 @@ function onAfterColumnTranslate(
                 const brOption = borderRadiusObject(
                         options.borderRadius
                     ),
-                    borderRadius = relativeLength(brOption.radius, r - innerR);
+                    borderRadius = chart.relativeLength(
+                        brOption.radius,
+                        r - innerR
+                    );
 
                 point.shapeArgs = {
                     x: center[0],

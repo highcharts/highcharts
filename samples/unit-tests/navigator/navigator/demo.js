@@ -568,6 +568,23 @@ QUnit.test('General Navigator tests', function (assert) {
         true,
         `Updating the chart with oneToOne should not throw an error in the
         navigator, #21584.`);
+
+    chart.renderTo.style.setProperty('--hc-navigator-height', '40px');
+    chart.update({
+        navigator: {
+            enabled: true,
+            height: 'var(--hc-navigator-height)'
+        }
+    });
+
+    assert.strictEqual(
+        chart.navigator.height,
+        40,
+        '#23989: navigator.height should resolve to pixels when set ' +
+        'via a CSS variable scoped to chart.container'
+    );
+
+    chart.renderTo.style.removeProperty('--hc-navigator-height');
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {

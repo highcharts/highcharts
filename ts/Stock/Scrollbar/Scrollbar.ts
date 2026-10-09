@@ -485,8 +485,10 @@ class Scrollbar {
         scroller.chart = chart;
 
         // Backward compatibility
-        scroller.size = scroller.options.size ??
-            scroller.options.height as any;
+        scroller.size = chart.relativeLength(
+            (scroller.options.size ?? scroller.options.height) || 0,
+            chart.plotHeight
+        );
 
         // Init
         if (options.enabled) {
@@ -596,12 +598,19 @@ class Scrollbar {
      */
     public position(x: number, y: number, width: number, height: number): void {
         const scroller = this,
+            chart = scroller.chart,
             options = scroller.options,
             { buttonsEnabled, margin = 0, vertical } = options,
             method = scroller.rendered ? 'animate' : 'attr';
 
         let xOffset = height,
             yOffset = 0;
+
+        // Re-resolve against the current plot height on every pass (#23989)
+        scroller.size = chart.relativeLength(
+            (options.size ?? options.height) || 0,
+            chart.plotHeight
+        );
 
         // Make the scrollbar visible when it is repositioned, #15763.
         scroller.group.show();

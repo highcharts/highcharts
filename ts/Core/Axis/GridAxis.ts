@@ -23,7 +23,6 @@ import type {
     AxisOptions
 } from './AxisOptions';
 import type { AxisTypeOptions } from './AxisType';
-import type ChartOptions from '../Chart/ChartOptions';
 import type ColorType from '../Color/ColorType';
 import type { DeepPartial } from '../../Shared/Types';
 import type Point from '../Series/Point';
@@ -92,13 +91,6 @@ declare module './AxisOptions' {
         grid?: GridAxisOptions;
         /** @internal */
         isInternal?: boolean;
-    }
-}
-
-/** @internal */
-declare module '../Chart/ChartBase'{
-    interface ChartBase {
-        marginRight: ChartOptions['marginRight'];
     }
 }
 

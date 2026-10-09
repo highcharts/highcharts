@@ -225,20 +225,27 @@ class FlagsSeries extends ColumnSeries {
                     graphic.isNew = true;
                 }
 
-                graphic.attr({
-                    align: centered ? 'center' : 'left',
-                    width: options.width,
-                    height: options.height,
-                    'text-align': options.textAlign,
-                    r: borderRadius
-                });
-
                 if (!chart.styledMode) {
                     graphic
                         .attr(series.pointAttribs(point))
                         .css(merge(options.style as any, point.style))
                         .shadow(options.shadow);
                 }
+
+                // Placed after the styles above so height can resolve
+                // against the flag's own font size
+                graphic.attr({
+                    align: centered ? 'center' : 'left',
+                    width: options.width,
+                    height: defined(options.height) ?
+                        chart.relativeLength(
+                            options.height,
+                            renderer.fontMetrics(graphic.text || graphic).h
+                        ) :
+                        options.height,
+                    'text-align': options.textAlign,
+                    r: borderRadius
+                });
 
                 if ((plotX as any) > 0) { // #3119
                     (plotX as any) -= graphic.strokeWidth() % 2; // #4285
