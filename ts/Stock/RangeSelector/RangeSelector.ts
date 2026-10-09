@@ -1176,7 +1176,8 @@ class RangeSelector {
             options =
                 chartOptions.rangeSelector as RangeSelectorOptions,
             inputEnabled = options.inputEnabled,
-            inputsZIndex = (chartOptions.chart.style?.zIndex ?? 0) + 1;
+            // Put inputs above `scrollablePlotArea` (#22630)
+            inputsZIndex = (chartOptions.chart.style?.zIndex ?? 0) + 3;
 
         if (options.enabled === false) {
             return;
