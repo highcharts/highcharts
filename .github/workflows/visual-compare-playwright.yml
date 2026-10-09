@@ -248,7 +248,18 @@ jobs:
             }
           }
           const log = fs.existsSync(errorPath) ? fs.readFileSync(errorPath, 'utf8') : '';
-          const entries = log.split(/\r?\n/).filter(Boolean);
+          const entries = [];
+          let entry = '';
+          for (const line of log.split(/\r?\n/)) {
+            if (!line) continue;
+            if (line.startsWith('Visual test failed for ')) {
+              if (entry) entries.push(entry);
+              entry = line;
+            } else {
+              entry = entry ? `${entry}\n${line}` : line;
+            }
+          }
+          if (entry) entries.push(entry);
           const unlisted = entries.filter(line => {
             const match = line.match(/^Visual test failed for (.+?): /);
             return !match || !listed.some(item => item.sample === match[1]);
