@@ -12,9 +12,10 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import MapView from '../../Maps/MapView.js';
 import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeries from '../../Series/TiledWebMap/TiledWebMapSeries.js';
 const G: AnyRecord = Highcharts;
 G.TilesProviderRegistry = G.TilesProviderRegistry || TilesProviderRegistry;
-TiledWebMapSeries.compose(G.MapView);
+TiledWebMapSeries.compose(MapView);
 export default Highcharts;

@@ -416,6 +416,15 @@
     },
     {
         "files": [
+            "Maps/MapView"
+        ],
+        "included": [
+            "modules/map"
+        ],
+        "namespacePath": ".MapView"
+    },
+    {
+        "files": [
             "Series/Map/MapSeries"
         ],
         "included": [
