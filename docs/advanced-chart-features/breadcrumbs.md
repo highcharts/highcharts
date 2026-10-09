@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure navigation back through drilldown or hierarchical chart levels,
+  choose whether to show the full path, and learn how to create breadcrumbs as
+  a standalone element using their API.
+---
+
 Breadcrumbs
 ============
 

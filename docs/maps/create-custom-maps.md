@@ -1,3 +1,10 @@
+---
+description: >-
+  Draw regions in Inkscape, add fills and identifiers, handle islands,
+  enclaves, and separators, then convert SVG into map data with Highcharts’
+  online converter. The article shows how to load that data into a chart.
+---
+
 Creating custom maps
 ===
 

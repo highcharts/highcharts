@@ -1,3 +1,10 @@
+---
+description: >-
+  Use the Find Similar endpoint to screen for investments comparable to a
+  selected security, configure filters, result fields, sorting, and
+  pagination, and connect external controls to backend requests.
+---
+
 # Find Similar Screener
 
 Using the Morningstar **Find Similar Screener** endpoint allows you to find

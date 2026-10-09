@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the Boost module with its React component, pass boost API options as
+  props, and use it in a chart with a large data series such as the
+  50,000-point example.
+---
+
 # Boost
 
 You can add the [boost module](https://www.highcharts.com/docs/advanced-chart-features/boost-module) to your chart using the `Boost` component:

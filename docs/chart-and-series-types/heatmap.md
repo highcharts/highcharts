@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a heat map from x, y, and value points, load the module when using
+  Highcharts Core, and use a color axis to map values. The article also
+  introduces interpolation and rendering examples.
+---
+
 Heatmap
 ===
 

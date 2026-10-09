@@ -146,7 +146,7 @@ function rotate3D(
  *
  * @requires highcharts-3d
  */
-function perspective(
+export function perspective(
     points: Array<Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean,
@@ -225,7 +225,7 @@ function perspective(
  *
  * @requires highcharts-3d
  */
-function perspective3D(
+export function perspective3D(
     coordinate: Position3DObject,
     origin: Position3DObject,
     distance: number
@@ -261,7 +261,7 @@ function perspective3D(
  *
  * @requires highcharts-3d
  */
-function pointCameraDistance(
+export function pointCameraDistance(
     coordinates: Record<string, number>,
     chart: Chart
 ): number {
@@ -306,7 +306,7 @@ function pointCameraDistance(
  *
  * @requires highcharts-3d
  */
-function shapeArea(vertexes: Array<PositionObject>): number {
+export function shapeArea(vertexes: Array<PositionObject>): number {
     let area = 0,
         i,
         j;
@@ -338,28 +338,10 @@ function shapeArea(vertexes: Array<PositionObject>): number {
  *
  * @requires highcharts-3d
  */
-function shapeArea3D(
+export function shapeArea3D(
     vertexes: Array<Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean
 ): number {
     return shapeArea(perspective(vertexes, chart, insidePlotArea));
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-/** @internal */
-const Math3D = {
-    perspective,
-    perspective3D,
-    pointCameraDistance,
-    shapeArea,
-    shapeArea3D
-};
-
-/** @internal */
-export default Math3D;

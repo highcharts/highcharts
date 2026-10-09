@@ -78,10 +78,10 @@ QUnit.test('Data sorting ', function (assert) {
         ['A', 4]
     ]);
 
-    assert.strictEqual(
-        series.points[0].name,
-        'A',
-        'Points should be correctly matched by name.'
+    assert.deepEqual(
+        series.points.map(point => [point.name, point.x]),
+        [['C', 1], ['A', 0]],
+        'Points should be correctly matched by name (#25312).'
     );
 
     chart.update(

@@ -31,11 +31,11 @@ const grid = Grid.grid('container', {
 });
 
 csvExport.addEventListener('click', () => {
-    result.innerHTML = grid.exporting.getCSV(modifiedDataToggle.checked);
+    result.value = grid.exporting.getCSV(modifiedDataToggle.checked);
 });
 
 jsonBtn.addEventListener('click', () => {
-    result.innerHTML = grid.exporting.getJSON(modifiedDataToggle.checked);
+    result.value = grid.exporting.getJSON(modifiedDataToggle.checked);
 });
 
 csvDownload.addEventListener('click', () => {
