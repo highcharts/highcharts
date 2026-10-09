@@ -1,4 +1,4 @@
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+@import url("https://code.highcharts.com/grid-lite/css/grid-lite.css");
 
 /* `color-scheme: light` simulates an embedding context (e.g. jsFiddle) that
    forces the consumer of the --highcharts-* variables to the light scheme.
