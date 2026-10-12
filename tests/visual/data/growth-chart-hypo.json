@@ -1,0 +1,5674 @@
+{
+  "Hypo": [
+    {
+      "PortfolioName": "TestPortfolio1",
+      "PerformanceDate": {
+        "EarliestCommonDate": "2015-03-02T00:00:00",
+        "EarliestAvailableDate": "1965-01-04T00:00:00",
+        "EarliestCommonExtendedDate": "2015-03-02T00:00:00",
+        "EarliestCommonExtended10YearDate": "2016-02-29T00:00:00",
+        "EarliestInceptionDate": "1965-01-04T00:00:00"
+      },
+      "InvestmentAssumption": {
+        "Security": [
+          {
+            "Sequence": 1,
+            "SecurityId": "0P000000GY",
+            "AnnualFee": 0,
+            "DeferredLoadPercent": "0-0",
+            "EndingMarketValue": 0,
+            "FrontLoad": 0,
+            "HoldingPeriodEndDate": "2026-04-30T00:00:00",
+            "HoldingPeriodStartDate": "2015-03-02T00:00:00",
+            "InitialInvestment": 1500,
+            "Liquidate": true,
+            "RebalancePercent": 0,
+            "ReinvestDistributionsCapGains": true,
+            "ReinvestDistributionsIncome": true,
+            "SubsequentInvestmentWithdrawalAmount": 0
+          },
+          {
+            "Sequence": 2,
+            "SecurityId": "FOUSA00DFS",
+            "AnnualFee": 0,
+            "DeferredLoadPercent": "0-0",
+            "EndingMarketValue": 0,
+            "FrontLoad": 5.25,
+            "HoldingPeriodEndDate": "2026-04-30T00:00:00",
+            "HoldingPeriodStartDate": "2015-03-02T00:00:00",
+            "InitialInvestment": 3500,
+            "Liquidate": true,
+            "RebalancePercent": 0,
+            "ReinvestDistributionsCapGains": true,
+            "ReinvestDistributionsIncome": true,
+            "SubsequentInvestmentWithdrawalAmount": 0
+          },
+          {
+            "Sequence": 3,
+            "SecurityId": "FOUSA00C3O",
+            "AnnualFee": 0,
+            "DeferredLoadPercent": "0-0",
+            "EndingMarketValue": 0,
+            "FrontLoad": 0,
+            "HoldingPeriodEndDate": "2026-04-30T00:00:00",
+            "HoldingPeriodStartDate": "2015-03-02T00:00:00",
+            "InitialInvestment": 2000,
+            "Liquidate": true,
+            "RebalancePercent": 0,
+            "ReinvestDistributionsCapGains": true,
+            "ReinvestDistributionsIncome": true,
+            "SubsequentInvestmentWithdrawalAmount": 0
+          },
+          {
+            "Sequence": 4,
+            "SecurityId": "F00000VCTT",
+            "AnnualFee": 0,
+            "DeferredLoadPercent": "0-0",
+            "EndingMarketValue": 0,
+            "FrontLoad": 0,
+            "HoldingPeriodEndDate": "2026-04-30T00:00:00",
+            "HoldingPeriodStartDate": "2015-03-02T00:00:00",
+            "InitialInvestment": 2000,
+            "Liquidate": true,
+            "RebalancePercent": 0,
+            "ReinvestDistributionsCapGains": true,
+            "ReinvestDistributionsIncome": true,
+            "SubsequentInvestmentWithdrawalAmount": 0
+          }
+        ]
+      },
+      "PortfolioSummary": {
+        "AsOfDate": "2026-04-30T00:00:00",
+        "PlanningAssumptions": {
+          "Currency": "USD",
+          "RebalanceFrequency": "None",
+          "IllustrationTrailingTimePeriod": "EarliestCommon",
+          "RebalanceThreshold": 0,
+          "AllocationUpdateFrequency": "None",
+          "FederalIncomeTaxRate": 0,
+          "CapitalGainTaxRate": 0,
+          "StateIncomeTaxRate": 0,
+          "PayTaxes": "OutOfPocket",
+          "PayFees": "OutOfPocket"
+        },
+        "PortfolioSummaryPerformance": {
+          "AverageAnnualizedReturn": -10.23,
+          "CumulativeReturn": -70.03,
+          "FinalMarketValue": 0,
+          "NetAmountInvested": 23619.89,
+          "BenchmarkCumulativeReturn": 313.55
+        },
+        "InvestmentDetails": {
+          "PortfolioDetails": [
+            {
+              "Sequence": 1,
+              "BeginningBalance": 0,
+              "StartDate": "2015-03-01T00:00:00",
+              "ChargesFees": 183.75,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8636.9,
+              "NewInvestment": 9000,
+              "TaxesDue": 0,
+              "TotalReinvest": 24.21,
+              "TotalReturnPercent": -4.03
+            },
+            {
+              "Sequence": 2,
+              "BeginningBalance": 8636.9,
+              "StartDate": "2015-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8822.13,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 2.14
+            },
+            {
+              "Sequence": 3,
+              "BeginningBalance": 8822.13,
+              "StartDate": "2015-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8869.95,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.04,
+              "TotalReturnPercent": 0.54
+            },
+            {
+              "Sequence": 4,
+              "BeginningBalance": 8869.95,
+              "StartDate": "2015-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8763.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.75,
+              "TotalReturnPercent": -1.2
+            },
+            {
+              "Sequence": 5,
+              "BeginningBalance": 8763.25,
+              "StartDate": "2015-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8676.24,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.59,
+              "TotalReturnPercent": -0.99
+            },
+            {
+              "Sequence": 6,
+              "BeginningBalance": 8676.24,
+              "StartDate": "2015-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8350.01,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.07,
+              "TotalReturnPercent": -3.76
+            },
+            {
+              "Sequence": 7,
+              "BeginningBalance": 8350.01,
+              "StartDate": "2015-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8163.05,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 5.66,
+              "TotalReturnPercent": -2.24
+            },
+            {
+              "Sequence": 8,
+              "BeginningBalance": 8163.05,
+              "StartDate": "2015-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8523.51,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 4.42
+            },
+            {
+              "Sequence": 9,
+              "BeginningBalance": 8523.51,
+              "StartDate": "2015-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8437.7,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.09,
+              "TotalReturnPercent": -1.01
+            },
+            {
+              "Sequence": 10,
+              "BeginningBalance": 8437.7,
+              "StartDate": "2015-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8259.39,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 340.07,
+              "TotalReturnPercent": -2.11
+            },
+            {
+              "Sequence": 11,
+              "BeginningBalance": 8259.39,
+              "StartDate": "2016-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 7906.84,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -4.27
+            },
+            {
+              "Sequence": 12,
+              "BeginningBalance": 7906.84,
+              "StartDate": "2016-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 7858.13,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.12,
+              "TotalReturnPercent": -51.21
+            },
+            {
+              "Sequence": 13,
+              "BeginningBalance": 7858.13,
+              "StartDate": "2016-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8371.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 46.11,
+              "TotalReturnPercent": 6.53
+            },
+            {
+              "Sequence": 14,
+              "BeginningBalance": 8371.25,
+              "StartDate": "2016-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8284.58,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -1.04
+            },
+            {
+              "Sequence": 15,
+              "BeginningBalance": 8284.58,
+              "StartDate": "2016-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8316.59,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.75,
+              "TotalReturnPercent": 0.39
+            },
+            {
+              "Sequence": 16,
+              "BeginningBalance": 8316.59,
+              "StartDate": "2016-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8197.73,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.14,
+              "TotalReturnPercent": -1.43
+            },
+            {
+              "Sequence": 17,
+              "BeginningBalance": 8197.73,
+              "StartDate": "2016-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8483.34,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 3.48
+            },
+            {
+              "Sequence": 18,
+              "BeginningBalance": 8483.34,
+              "StartDate": "2016-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8560.63,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.79,
+              "TotalReturnPercent": 0.91
+            },
+            {
+              "Sequence": 19,
+              "BeginningBalance": 8560.63,
+              "StartDate": "2016-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8685.81,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 5.97,
+              "TotalReturnPercent": 1.46
+            },
+            {
+              "Sequence": 20,
+              "BeginningBalance": 8685.81,
+              "StartDate": "2016-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8547.49,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -1.59
+            },
+            {
+              "Sequence": 21,
+              "BeginningBalance": 8547.49,
+              "StartDate": "2016-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8676.02,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.82,
+              "TotalReturnPercent": 1.5
+            },
+            {
+              "Sequence": 22,
+              "BeginningBalance": 8676.02,
+              "StartDate": "2016-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 8826.95,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 142.44,
+              "TotalReturnPercent": 1.74
+            },
+            {
+              "Sequence": 23,
+              "BeginningBalance": 8826.95,
+              "StartDate": "2017-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9072.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 2.78
+            },
+            {
+              "Sequence": 24,
+              "BeginningBalance": 9072.25,
+              "StartDate": "2017-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9349.74,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 6.86,
+              "TotalReturnPercent": -41.03
+            },
+            {
+              "Sequence": 25,
+              "BeginningBalance": 9349.74,
+              "StartDate": "2017-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9463.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 43.16,
+              "TotalReturnPercent": 1.21
+            },
+            {
+              "Sequence": 26,
+              "BeginningBalance": 9463.25,
+              "StartDate": "2017-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9535.42,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 0.76
+            },
+            {
+              "Sequence": 27,
+              "BeginningBalance": 9535.42,
+              "StartDate": "2017-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9748.48,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.61,
+              "TotalReturnPercent": 2.23
+            },
+            {
+              "Sequence": 28,
+              "BeginningBalance": 9748.48,
+              "StartDate": "2017-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9734.32,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.59,
+              "TotalReturnPercent": -0.15
+            },
+            {
+              "Sequence": 29,
+              "BeginningBalance": 9734.32,
+              "StartDate": "2017-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9994.43,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 2.67
+            },
+            {
+              "Sequence": 30,
+              "BeginningBalance": 9994.43,
+              "StartDate": "2017-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10212.59,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.64,
+              "TotalReturnPercent": 2.18
+            },
+            {
+              "Sequence": 31,
+              "BeginningBalance": 10212.59,
+              "StartDate": "2017-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10157.28,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 16.88,
+              "TotalReturnPercent": -0.54
+            },
+            {
+              "Sequence": 32,
+              "BeginningBalance": 10157.28,
+              "StartDate": "2017-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10334.98,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 1.75
+            },
+            {
+              "Sequence": 33,
+              "BeginningBalance": 10334.98,
+              "StartDate": "2017-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10493.18,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.68,
+              "TotalReturnPercent": 1.53
+            },
+            {
+              "Sequence": 34,
+              "BeginningBalance": 10493.18,
+              "StartDate": "2017-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10580.41,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 270,
+              "TotalReturnPercent": 0.83
+            },
+            {
+              "Sequence": 35,
+              "BeginningBalance": 10580.41,
+              "StartDate": "2018-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10932.34,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 3.33
+            },
+            {
+              "Sequence": 36,
+              "BeginningBalance": 10932.34,
+              "StartDate": "2018-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10732.12,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.7,
+              "TotalReturnPercent": -38.42
+            },
+            {
+              "Sequence": 37,
+              "BeginningBalance": 10732.12,
+              "StartDate": "2018-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10463.94,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 39.38,
+              "TotalReturnPercent": -2.5
+            },
+            {
+              "Sequence": 38,
+              "BeginningBalance": 10463.94,
+              "StartDate": "2018-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10349.71,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -1.09
+            },
+            {
+              "Sequence": 39,
+              "BeginningBalance": 10349.71,
+              "StartDate": "2018-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10616.47,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 8.96,
+              "TotalReturnPercent": 2.58
+            },
+            {
+              "Sequence": 40,
+              "BeginningBalance": 10616.47,
+              "StartDate": "2018-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10588.13,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.32,
+              "TotalReturnPercent": -0.27
+            },
+            {
+              "Sequence": 41,
+              "BeginningBalance": 10588.13,
+              "StartDate": "2018-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10878.17,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.21,
+              "TotalReturnPercent": 2.74
+            },
+            {
+              "Sequence": 42,
+              "BeginningBalance": 10878.17,
+              "StartDate": "2018-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11326.61,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9,
+              "TotalReturnPercent": 4.12
+            },
+            {
+              "Sequence": 43,
+              "BeginningBalance": 11326.61,
+              "StartDate": "2018-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11339.52,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 8.81,
+              "TotalReturnPercent": 0.11
+            },
+            {
+              "Sequence": 44,
+              "BeginningBalance": 11339.52,
+              "StartDate": "2018-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10856.34,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -4.26
+            },
+            {
+              "Sequence": 45,
+              "BeginningBalance": 10856.34,
+              "StartDate": "2018-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10492.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.03,
+              "TotalReturnPercent": -3.35
+            },
+            {
+              "Sequence": 46,
+              "BeginningBalance": 10492.25,
+              "StartDate": "2018-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 9831.11,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 327.29,
+              "TotalReturnPercent": -6.3
+            },
+            {
+              "Sequence": 47,
+              "BeginningBalance": 9831.11,
+              "StartDate": "2019-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10293.49,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 4.7
+            },
+            {
+              "Sequence": 48,
+              "BeginningBalance": 10293.49,
+              "StartDate": "2019-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10444.8,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.06,
+              "TotalReturnPercent": -37.39
+            },
+            {
+              "Sequence": 49,
+              "BeginningBalance": 10444.8,
+              "StartDate": "2019-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10685.98,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 103.64,
+              "TotalReturnPercent": 2.31
+            },
+            {
+              "Sequence": 50,
+              "BeginningBalance": 10685.98,
+              "StartDate": "2019-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10968.68,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 2.65
+            },
+            {
+              "Sequence": 51,
+              "BeginningBalance": 10968.68,
+              "StartDate": "2019-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10339.83,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.6,
+              "TotalReturnPercent": -5.73
+            },
+            {
+              "Sequence": 52,
+              "BeginningBalance": 10339.83,
+              "StartDate": "2019-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10985.81,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 16.95,
+              "TotalReturnPercent": 6.25
+            },
+            {
+              "Sequence": 53,
+              "BeginningBalance": 10985.81,
+              "StartDate": "2019-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11165.78,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 63.11,
+              "TotalReturnPercent": 1.64
+            },
+            {
+              "Sequence": 54,
+              "BeginningBalance": 11165.78,
+              "StartDate": "2019-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10945.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.63,
+              "TotalReturnPercent": -1.98
+            },
+            {
+              "Sequence": 55,
+              "BeginningBalance": 10945.25,
+              "StartDate": "2019-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11246.35,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.79,
+              "TotalReturnPercent": 2.75
+            },
+            {
+              "Sequence": 56,
+              "BeginningBalance": 11246.35,
+              "StartDate": "2019-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11732.9,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 4.33
+            },
+            {
+              "Sequence": 57,
+              "BeginningBalance": 11732.9,
+              "StartDate": "2019-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 12153.33,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.67,
+              "TotalReturnPercent": 3.58
+            },
+            {
+              "Sequence": 58,
+              "BeginningBalance": 12153.33,
+              "StartDate": "2019-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 12722.45,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 324.94,
+              "TotalReturnPercent": 4.68
+            },
+            {
+              "Sequence": 59,
+              "BeginningBalance": 12722.45,
+              "StartDate": "2020-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 12779.38,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 0.45
+            },
+            {
+              "Sequence": 60,
+              "BeginningBalance": 12779.38,
+              "StartDate": "2020-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11894.4,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.7,
+              "TotalReturnPercent": -38.23
+            },
+            {
+              "Sequence": 61,
+              "BeginningBalance": 11894.4,
+              "StartDate": "2020-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 10682.52,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 45.48,
+              "TotalReturnPercent": -10.19
+            },
+            {
+              "Sequence": 62,
+              "BeginningBalance": 10682.52,
+              "StartDate": "2020-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 11818.78,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 10.64
+            },
+            {
+              "Sequence": 63,
+              "BeginningBalance": 11818.78,
+              "StartDate": "2020-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 12436.16,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 10.36,
+              "TotalReturnPercent": 5.22
+            },
+            {
+              "Sequence": 64,
+              "BeginningBalance": 12436.16,
+              "StartDate": "2020-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 13198.76,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.07,
+              "TotalReturnPercent": 6.13
+            },
+            {
+              "Sequence": 65,
+              "BeginningBalance": 13198.76,
+              "StartDate": "2020-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 14370.39,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 123.67,
+              "TotalReturnPercent": 8.88
+            },
+            {
+              "Sequence": 66,
+              "BeginningBalance": 14370.39,
+              "StartDate": "2020-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 15875.76,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 10.38,
+              "TotalReturnPercent": 10.48
+            },
+            {
+              "Sequence": 67,
+              "BeginningBalance": 15875.76,
+              "StartDate": "2020-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 14977.14,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 17.12,
+              "TotalReturnPercent": -5.66
+            },
+            {
+              "Sequence": 68,
+              "BeginningBalance": 14977.14,
+              "StartDate": "2020-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 14498.26,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -3.2
+            },
+            {
+              "Sequence": 69,
+              "BeginningBalance": 14498.26,
+              "StartDate": "2020-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 16027.86,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 10.4,
+              "TotalReturnPercent": 10.55
+            },
+            {
+              "Sequence": 70,
+              "BeginningBalance": 16027.86,
+              "StartDate": "2020-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17127.1,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 355.7,
+              "TotalReturnPercent": 6.86
+            },
+            {
+              "Sequence": 71,
+              "BeginningBalance": 17127.1,
+              "StartDate": "2021-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17041.21,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -0.5
+            },
+            {
+              "Sequence": 72,
+              "BeginningBalance": 17041.21,
+              "StartDate": "2021-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 16861.26,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 10.42,
+              "TotalReturnPercent": -24.53
+            },
+            {
+              "Sequence": 73,
+              "BeginningBalance": 16861.26,
+              "StartDate": "2021-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17092.85,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 41.2,
+              "TotalReturnPercent": 1.37
+            },
+            {
+              "Sequence": 74,
+              "BeginningBalance": 17092.85,
+              "StartDate": "2021-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18018.31,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 5.41
+            },
+            {
+              "Sequence": 75,
+              "BeginningBalance": 18018.31,
+              "StartDate": "2021-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17926.15,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.2,
+              "TotalReturnPercent": -0.51
+            },
+            {
+              "Sequence": 76,
+              "BeginningBalance": 17926.15,
+              "StartDate": "2021-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18479.28,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.37,
+              "TotalReturnPercent": 3.09
+            },
+            {
+              "Sequence": 77,
+              "BeginningBalance": 18479.28,
+              "StartDate": "2021-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18894.67,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 267.89,
+              "TotalReturnPercent": 2.25
+            },
+            {
+              "Sequence": 78,
+              "BeginningBalance": 18894.67,
+              "StartDate": "2021-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19384.16,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.22,
+              "TotalReturnPercent": 2.59
+            },
+            {
+              "Sequence": 79,
+              "BeginningBalance": 19384.16,
+              "StartDate": "2021-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18500.12,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 7.98,
+              "TotalReturnPercent": -4.56
+            },
+            {
+              "Sequence": 80,
+              "BeginningBalance": 18500.12,
+              "StartDate": "2021-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19286.36,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 4.25
+            },
+            {
+              "Sequence": 81,
+              "BeginningBalance": 19286.36,
+              "StartDate": "2021-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19671.87,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.23,
+              "TotalReturnPercent": 2
+            },
+            {
+              "Sequence": 82,
+              "BeginningBalance": 19671.87,
+              "StartDate": "2021-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20647.2,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 298.14,
+              "TotalReturnPercent": 4.96
+            },
+            {
+              "Sequence": 83,
+              "BeginningBalance": 20647.2,
+              "StartDate": "2022-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20286.23,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -1.75
+            },
+            {
+              "Sequence": 84,
+              "BeginningBalance": 20286.23,
+              "StartDate": "2022-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19576.36,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.25,
+              "TotalReturnPercent": -23.22
+            },
+            {
+              "Sequence": 85,
+              "BeginningBalance": 19576.36,
+              "StartDate": "2022-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20085.33,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 40.64,
+              "TotalReturnPercent": 2.6
+            },
+            {
+              "Sequence": 86,
+              "BeginningBalance": 20085.33,
+              "StartDate": "2022-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18511.57,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -7.84
+            },
+            {
+              "Sequence": 87,
+              "BeginningBalance": 18511.57,
+              "StartDate": "2022-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18281.94,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.78,
+              "TotalReturnPercent": -1.24
+            },
+            {
+              "Sequence": 88,
+              "BeginningBalance": 18281.94,
+              "StartDate": "2022-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 16875.84,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 17.15,
+              "TotalReturnPercent": -7.69
+            },
+            {
+              "Sequence": 89,
+              "BeginningBalance": 16875.84,
+              "StartDate": "2022-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18626.59,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 245.65,
+              "TotalReturnPercent": 10.37
+            },
+            {
+              "Sequence": 90,
+              "BeginningBalance": 18626.59,
+              "StartDate": "2022-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18046.2,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.79,
+              "TotalReturnPercent": -3.12
+            },
+            {
+              "Sequence": 91,
+              "BeginningBalance": 18046.2,
+              "StartDate": "2022-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 16305.11,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.65,
+              "TotalReturnPercent": -9.65
+            },
+            {
+              "Sequence": 92,
+              "BeginningBalance": 16305.11,
+              "StartDate": "2022-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17640.33,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 8.19
+            },
+            {
+              "Sequence": 93,
+              "BeginningBalance": 17640.33,
+              "StartDate": "2022-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17949.71,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.81,
+              "TotalReturnPercent": 1.75
+            },
+            {
+              "Sequence": 94,
+              "BeginningBalance": 17949.71,
+              "StartDate": "2022-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 16728.08,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 145.64,
+              "TotalReturnPercent": -6.81
+            },
+            {
+              "Sequence": 95,
+              "BeginningBalance": 16728.08,
+              "StartDate": "2023-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17989,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 7.54
+            },
+            {
+              "Sequence": 96,
+              "BeginningBalance": 17989,
+              "StartDate": "2023-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 17843.06,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 11.83,
+              "TotalReturnPercent": -23.05
+            },
+            {
+              "Sequence": 97,
+              "BeginningBalance": 17843.06,
+              "StartDate": "2023-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18795.52,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 45.74,
+              "TotalReturnPercent": 5.34
+            },
+            {
+              "Sequence": 98,
+              "BeginningBalance": 18795.52,
+              "StartDate": "2023-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19157.42,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 1.93
+            },
+            {
+              "Sequence": 99,
+              "BeginningBalance": 19157.42,
+              "StartDate": "2023-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19312.88,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.36,
+              "TotalReturnPercent": 0.81
+            },
+            {
+              "Sequence": 100,
+              "BeginningBalance": 19312.88,
+              "StartDate": "2023-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20608.29,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 21.03,
+              "TotalReturnPercent": 6.71
+            },
+            {
+              "Sequence": 101,
+              "BeginningBalance": 20608.29,
+              "StartDate": "2023-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 21098.46,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 9.47,
+              "TotalReturnPercent": 2.38
+            },
+            {
+              "Sequence": 102,
+              "BeginningBalance": 21098.46,
+              "StartDate": "2023-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20386.37,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.38,
+              "TotalReturnPercent": -3.38
+            },
+            {
+              "Sequence": 103,
+              "BeginningBalance": 20386.37,
+              "StartDate": "2023-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 19252.19,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 14.56,
+              "TotalReturnPercent": -5.56
+            },
+            {
+              "Sequence": 104,
+              "BeginningBalance": 19252.19,
+              "StartDate": "2023-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 18978.17,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -1.42
+            },
+            {
+              "Sequence": 105,
+              "BeginningBalance": 18978.17,
+              "StartDate": "2023-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20722.14,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.4,
+              "TotalReturnPercent": 9.19
+            },
+            {
+              "Sequence": 106,
+              "BeginningBalance": 20722.14,
+              "StartDate": "2023-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 21428.72,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 141.84,
+              "TotalReturnPercent": 3.41
+            },
+            {
+              "Sequence": 107,
+              "BeginningBalance": 21428.72,
+              "StartDate": "2024-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20965.96,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -2.16
+            },
+            {
+              "Sequence": 108,
+              "BeginningBalance": 20965.96,
+              "StartDate": "2024-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 21048.94,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.41,
+              "TotalReturnPercent": -18.68
+            },
+            {
+              "Sequence": 109,
+              "BeginningBalance": 21048.94,
+              "StartDate": "2024-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20926.74,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 121.68,
+              "TotalReturnPercent": -0.58
+            },
+            {
+              "Sequence": 110,
+              "BeginningBalance": 20926.74,
+              "StartDate": "2024-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 20453.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -2.26
+            },
+            {
+              "Sequence": 111,
+              "BeginningBalance": 20453.25,
+              "StartDate": "2024-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 22030.85,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.95,
+              "TotalReturnPercent": 7.71
+            },
+            {
+              "Sequence": 112,
+              "BeginningBalance": 22030.85,
+              "StartDate": "2024-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 23058.77,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 24.68,
+              "TotalReturnPercent": 4.67
+            },
+            {
+              "Sequence": 113,
+              "BeginningBalance": 23058.77,
+              "StartDate": "2024-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 23940.97,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 175.23,
+              "TotalReturnPercent": 3.83
+            },
+            {
+              "Sequence": 114,
+              "BeginningBalance": 23940.97,
+              "StartDate": "2024-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 24624.04,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.97,
+              "TotalReturnPercent": 2.85
+            },
+            {
+              "Sequence": 115,
+              "BeginningBalance": 24624.04,
+              "StartDate": "2024-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 24990.05,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 19.26,
+              "TotalReturnPercent": 1.49
+            },
+            {
+              "Sequence": 116,
+              "BeginningBalance": 24990.05,
+              "StartDate": "2024-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 24364.11,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -2.5
+            },
+            {
+              "Sequence": 117,
+              "BeginningBalance": 24364.11,
+              "StartDate": "2024-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 25409.89,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.98,
+              "TotalReturnPercent": 4.29
+            },
+            {
+              "Sequence": 118,
+              "BeginningBalance": 25409.89,
+              "StartDate": "2024-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 25545.72,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 466.13,
+              "TotalReturnPercent": 0.53
+            },
+            {
+              "Sequence": 119,
+              "BeginningBalance": 25545.72,
+              "StartDate": "2025-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 25300.51,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -0.96
+            },
+            {
+              "Sequence": 120,
+              "BeginningBalance": 25300.51,
+              "StartDate": "2025-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 25709.17,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 12.99,
+              "TotalReturnPercent": -14.19
+            },
+            {
+              "Sequence": 121,
+              "BeginningBalance": 25709.17,
+              "StartDate": "2025-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 24456.54,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 89.22,
+              "TotalReturnPercent": -4.87
+            },
+            {
+              "Sequence": 122,
+              "BeginningBalance": 24456.54,
+              "StartDate": "2025-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 23978.78,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -1.95
+            },
+            {
+              "Sequence": 123,
+              "BeginningBalance": 23978.78,
+              "StartDate": "2025-05-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 23832.39,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.53,
+              "TotalReturnPercent": -0.61
+            },
+            {
+              "Sequence": 124,
+              "BeginningBalance": 23832.39,
+              "StartDate": "2025-06-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 24530.44,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 27.7,
+              "TotalReturnPercent": 2.93
+            },
+            {
+              "Sequence": 125,
+              "BeginningBalance": 24530.44,
+              "StartDate": "2025-07-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 24496.51,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 278.16,
+              "TotalReturnPercent": -0.14
+            },
+            {
+              "Sequence": 126,
+              "BeginningBalance": 24496.51,
+              "StartDate": "2025-08-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 26247.26,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.55,
+              "TotalReturnPercent": 7.15
+            },
+            {
+              "Sequence": 127,
+              "BeginningBalance": 26247.26,
+              "StartDate": "2025-09-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 27608.95,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 20.1,
+              "TotalReturnPercent": 5.19
+            },
+            {
+              "Sequence": 128,
+              "BeginningBalance": 27608.95,
+              "StartDate": "2025-10-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 28456.56,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 3.07
+            },
+            {
+              "Sequence": 129,
+              "BeginningBalance": 28456.56,
+              "StartDate": "2025-11-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 29027.88,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.56,
+              "TotalReturnPercent": 2.01
+            },
+            {
+              "Sequence": 130,
+              "BeginningBalance": 29027.88,
+              "StartDate": "2025-12-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 28918.2,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 699.72,
+              "TotalReturnPercent": -0.38
+            },
+            {
+              "Sequence": 131,
+              "BeginningBalance": 28918.2,
+              "StartDate": "2026-01-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 28641.81,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": -0.96
+            },
+            {
+              "Sequence": 132,
+              "BeginningBalance": 28641.81,
+              "StartDate": "2026-02-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 29107.88,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 13.57,
+              "TotalReturnPercent": -12.34
+            },
+            {
+              "Sequence": 133,
+              "BeginningBalance": 29107.88,
+              "StartDate": "2026-03-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 0,
+              "MarketValue": 27657.25,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 81,
+              "TotalReturnPercent": -4.98
+            },
+            {
+              "Sequence": 134,
+              "BeginningBalance": 27657.25,
+              "StartDate": "2026-04-01T00:00:00",
+              "ChargesFees": 0,
+              "DistributionWithdrawal": 29380.11,
+              "MarketValue": 0,
+              "NewInvestment": 0,
+              "TaxesDue": 0,
+              "TotalReinvest": 0,
+              "TotalReturnPercent": 6.23
+            }
+          ],
+          "PortfolioTotalDistributionAndWithdrawal": 29380.11,
+          "PortfolioTotalNewInvestment": 9000
+        },
+        "PortfolioSummaryChart": {
+          "Frequency": "Monthly",
+          "Portfolio": {
+            "StartDate": "2015-03-02T00:00:00",
+            "Data": [
+              {
+                "Id": "1",
+                "Value": 10000
+              },
+              {
+                "Id": "2",
+                "Value": 8636.9
+              },
+              {
+                "Id": "3",
+                "Value": 8822.13
+              },
+              {
+                "Id": "4",
+                "Value": 8869.95
+              },
+              {
+                "Id": "5",
+                "Value": 8763.25
+              },
+              {
+                "Id": "6",
+                "Value": 8676.24
+              },
+              {
+                "Id": "7",
+                "Value": 8350.01
+              },
+              {
+                "Id": "8",
+                "Value": 8163.05
+              },
+              {
+                "Id": "9",
+                "Value": 8523.51
+              },
+              {
+                "Id": "10",
+                "Value": 8437.7
+              },
+              {
+                "Id": "11",
+                "Value": 8259.39
+              },
+              {
+                "Id": "12",
+                "Value": 7906.84
+              },
+              {
+                "Id": "13",
+                "Value": 7858.13
+              },
+              {
+                "Id": "14",
+                "Value": 8371.25
+              },
+              {
+                "Id": "15",
+                "Value": 8284.58
+              },
+              {
+                "Id": "16",
+                "Value": 8316.59
+              },
+              {
+                "Id": "17",
+                "Value": 8197.73
+              },
+              {
+                "Id": "18",
+                "Value": 8483.34
+              },
+              {
+                "Id": "19",
+                "Value": 8560.63
+              },
+              {
+                "Id": "20",
+                "Value": 8685.81
+              },
+              {
+                "Id": "21",
+                "Value": 8547.49
+              },
+              {
+                "Id": "22",
+                "Value": 8676.02
+              },
+              {
+                "Id": "23",
+                "Value": 8826.95
+              },
+              {
+                "Id": "24",
+                "Value": 9072.25
+              },
+              {
+                "Id": "25",
+                "Value": 9349.74
+              },
+              {
+                "Id": "26",
+                "Value": 9463.25
+              },
+              {
+                "Id": "27",
+                "Value": 9535.42
+              },
+              {
+                "Id": "28",
+                "Value": 9748.48
+              },
+              {
+                "Id": "29",
+                "Value": 9734.32
+              },
+              {
+                "Id": "30",
+                "Value": 9994.43
+              },
+              {
+                "Id": "31",
+                "Value": 10212.59
+              },
+              {
+                "Id": "32",
+                "Value": 10157.28
+              },
+              {
+                "Id": "33",
+                "Value": 10334.98
+              },
+              {
+                "Id": "34",
+                "Value": 10493.18
+              },
+              {
+                "Id": "35",
+                "Value": 10580.41
+              },
+              {
+                "Id": "36",
+                "Value": 10932.34
+              },
+              {
+                "Id": "37",
+                "Value": 10732.12
+              },
+              {
+                "Id": "38",
+                "Value": 10463.94
+              },
+              {
+                "Id": "39",
+                "Value": 10349.71
+              },
+              {
+                "Id": "40",
+                "Value": 10616.47
+              },
+              {
+                "Id": "41",
+                "Value": 10588.13
+              },
+              {
+                "Id": "42",
+                "Value": 10878.17
+              },
+              {
+                "Id": "43",
+                "Value": 11326.61
+              },
+              {
+                "Id": "44",
+                "Value": 11339.52
+              },
+              {
+                "Id": "45",
+                "Value": 10856.34
+              },
+              {
+                "Id": "46",
+                "Value": 10492.25
+              },
+              {
+                "Id": "47",
+                "Value": 9831.11
+              },
+              {
+                "Id": "48",
+                "Value": 10293.49
+              },
+              {
+                "Id": "49",
+                "Value": 10444.8
+              },
+              {
+                "Id": "50",
+                "Value": 10685.98
+              },
+              {
+                "Id": "51",
+                "Value": 10968.68
+              },
+              {
+                "Id": "52",
+                "Value": 10339.83
+              },
+              {
+                "Id": "53",
+                "Value": 10985.81
+              },
+              {
+                "Id": "54",
+                "Value": 11165.78
+              },
+              {
+                "Id": "55",
+                "Value": 10945.25
+              },
+              {
+                "Id": "56",
+                "Value": 11246.35
+              },
+              {
+                "Id": "57",
+                "Value": 11732.9
+              },
+              {
+                "Id": "58",
+                "Value": 12153.33
+              },
+              {
+                "Id": "59",
+                "Value": 12722.45
+              },
+              {
+                "Id": "60",
+                "Value": 12779.38
+              },
+              {
+                "Id": "61",
+                "Value": 11894.4
+              },
+              {
+                "Id": "62",
+                "Value": 10682.52
+              },
+              {
+                "Id": "63",
+                "Value": 11818.78
+              },
+              {
+                "Id": "64",
+                "Value": 12436.16
+              },
+              {
+                "Id": "65",
+                "Value": 13198.76
+              },
+              {
+                "Id": "66",
+                "Value": 14370.39
+              },
+              {
+                "Id": "67",
+                "Value": 15875.76
+              },
+              {
+                "Id": "68",
+                "Value": 14977.14
+              },
+              {
+                "Id": "69",
+                "Value": 14498.26
+              },
+              {
+                "Id": "70",
+                "Value": 16027.86
+              },
+              {
+                "Id": "71",
+                "Value": 17127.1
+              },
+              {
+                "Id": "72",
+                "Value": 17041.21
+              },
+              {
+                "Id": "73",
+                "Value": 16861.26
+              },
+              {
+                "Id": "74",
+                "Value": 17092.85
+              },
+              {
+                "Id": "75",
+                "Value": 18018.31
+              },
+              {
+                "Id": "76",
+                "Value": 17926.15
+              },
+              {
+                "Id": "77",
+                "Value": 18479.28
+              },
+              {
+                "Id": "78",
+                "Value": 18894.67
+              },
+              {
+                "Id": "79",
+                "Value": 19384.16
+              },
+              {
+                "Id": "80",
+                "Value": 18500.12
+              },
+              {
+                "Id": "81",
+                "Value": 19286.36
+              },
+              {
+                "Id": "82",
+                "Value": 19671.87
+              },
+              {
+                "Id": "83",
+                "Value": 20647.2
+              },
+              {
+                "Id": "84",
+                "Value": 20286.23
+              },
+              {
+                "Id": "85",
+                "Value": 19576.36
+              },
+              {
+                "Id": "86",
+                "Value": 20085.33
+              },
+              {
+                "Id": "87",
+                "Value": 18511.57
+              },
+              {
+                "Id": "88",
+                "Value": 18281.94
+              },
+              {
+                "Id": "89",
+                "Value": 16875.84
+              },
+              {
+                "Id": "90",
+                "Value": 18626.59
+              },
+              {
+                "Id": "91",
+                "Value": 18046.2
+              },
+              {
+                "Id": "92",
+                "Value": 16305.11
+              },
+              {
+                "Id": "93",
+                "Value": 17640.33
+              },
+              {
+                "Id": "94",
+                "Value": 17949.71
+              },
+              {
+                "Id": "95",
+                "Value": 16728.08
+              },
+              {
+                "Id": "96",
+                "Value": 17989
+              },
+              {
+                "Id": "97",
+                "Value": 17843.06
+              },
+              {
+                "Id": "98",
+                "Value": 18795.52
+              },
+              {
+                "Id": "99",
+                "Value": 19157.42
+              },
+              {
+                "Id": "100",
+                "Value": 19312.88
+              },
+              {
+                "Id": "101",
+                "Value": 20608.29
+              },
+              {
+                "Id": "102",
+                "Value": 21098.46
+              },
+              {
+                "Id": "103",
+                "Value": 20386.37
+              },
+              {
+                "Id": "104",
+                "Value": 19252.19
+              },
+              {
+                "Id": "105",
+                "Value": 18978.17
+              },
+              {
+                "Id": "106",
+                "Value": 20722.14
+              },
+              {
+                "Id": "107",
+                "Value": 21428.72
+              },
+              {
+                "Id": "108",
+                "Value": 20965.96
+              },
+              {
+                "Id": "109",
+                "Value": 21048.94
+              },
+              {
+                "Id": "110",
+                "Value": 20926.74
+              },
+              {
+                "Id": "111",
+                "Value": 20453.25
+              },
+              {
+                "Id": "112",
+                "Value": 22030.85
+              },
+              {
+                "Id": "113",
+                "Value": 23058.77
+              },
+              {
+                "Id": "114",
+                "Value": 23940.97
+              },
+              {
+                "Id": "115",
+                "Value": 24624.04
+              },
+              {
+                "Id": "116",
+                "Value": 24990.05
+              },
+              {
+                "Id": "117",
+                "Value": 24364.11
+              },
+              {
+                "Id": "118",
+                "Value": 25409.89
+              },
+              {
+                "Id": "119",
+                "Value": 25545.72
+              },
+              {
+                "Id": "120",
+                "Value": 25300.51
+              },
+              {
+                "Id": "121",
+                "Value": 25709.17
+              },
+              {
+                "Id": "122",
+                "Value": 24456.54
+              },
+              {
+                "Id": "123",
+                "Value": 23978.78
+              },
+              {
+                "Id": "124",
+                "Value": 23832.39
+              },
+              {
+                "Id": "125",
+                "Value": 24530.44
+              },
+              {
+                "Id": "126",
+                "Value": 24496.51
+              },
+              {
+                "Id": "127",
+                "Value": 26247.26
+              },
+              {
+                "Id": "128",
+                "Value": 27608.95
+              },
+              {
+                "Id": "129",
+                "Value": 28456.56
+              },
+              {
+                "Id": "130",
+                "Value": 29027.88
+              },
+              {
+                "Id": "131",
+                "Value": 28918.2
+              },
+              {
+                "Id": "132",
+                "Value": 28641.81
+              },
+              {
+                "Id": "133",
+                "Value": 29107.88
+              },
+              {
+                "Id": "134",
+                "Value": 27657.25
+              },
+              {
+                "Id": "135",
+                "Value": 0
+              }
+            ]
+          },
+          "Benchmark": {
+            "StartDate": "2015-03-02T00:00:00",
+            "Data": [
+              {
+                "Id": "1",
+                "Value": 10000
+              },
+              {
+                "Id": "2",
+                "Value": 8803.23
+              },
+              {
+                "Id": "3",
+                "Value": 8887.69
+              },
+              {
+                "Id": "4",
+                "Value": 9001.97
+              },
+              {
+                "Id": "5",
+                "Value": 8827.71
+              },
+              {
+                "Id": "6",
+                "Value": 9012.67
+              },
+              {
+                "Id": "7",
+                "Value": 8468.9
+              },
+              {
+                "Id": "8",
+                "Value": 8259.35
+              },
+              {
+                "Id": "9",
+                "Value": 8956.06
+              },
+              {
+                "Id": "10",
+                "Value": 8982.69
+              },
+              {
+                "Id": "11",
+                "Value": 8841.02
+              },
+              {
+                "Id": "12",
+                "Value": 8402.29
+              },
+              {
+                "Id": "13",
+                "Value": 8390.95
+              },
+              {
+                "Id": "14",
+                "Value": 8960.18
+              },
+              {
+                "Id": "15",
+                "Value": 8994.92
+              },
+              {
+                "Id": "16",
+                "Value": 9156.45
+              },
+              {
+                "Id": "17",
+                "Value": 9180.17
+              },
+              {
+                "Id": "18",
+                "Value": 9518.63
+              },
+              {
+                "Id": "19",
+                "Value": 9532
+              },
+              {
+                "Id": "20",
+                "Value": 9533.8
+              },
+              {
+                "Id": "21",
+                "Value": 9359.89
+              },
+              {
+                "Id": "22",
+                "Value": 9706.53
+              },
+              {
+                "Id": "23",
+                "Value": 9898.4
+              },
+              {
+                "Id": "24",
+                "Value": 10086.13
+              },
+              {
+                "Id": "25",
+                "Value": 10486.61
+              },
+              {
+                "Id": "26",
+                "Value": 10498.84
+              },
+              {
+                "Id": "27",
+                "Value": 10606.67
+              },
+              {
+                "Id": "28",
+                "Value": 10755.93
+              },
+              {
+                "Id": "29",
+                "Value": 10823.07
+              },
+              {
+                "Id": "30",
+                "Value": 11045.62
+              },
+              {
+                "Id": "31",
+                "Value": 11079.43
+              },
+              {
+                "Id": "32",
+                "Value": 11307.98
+              },
+              {
+                "Id": "33",
+                "Value": 11571.85
+              },
+              {
+                "Id": "34",
+                "Value": 11926.76
+              },
+              {
+                "Id": "35",
+                "Value": 12059.37
+              },
+              {
+                "Id": "36",
+                "Value": 12749.82
+              },
+              {
+                "Id": "37",
+                "Value": 12279.9
+              },
+              {
+                "Id": "38",
+                "Value": 11967.82
+              },
+              {
+                "Id": "39",
+                "Value": 12013.74
+              },
+              {
+                "Id": "40",
+                "Value": 12303.06
+              },
+              {
+                "Id": "41",
+                "Value": 12378.78
+              },
+              {
+                "Id": "42",
+                "Value": 12839.44
+              },
+              {
+                "Id": "43",
+                "Value": 13257.82
+              },
+              {
+                "Id": "44",
+                "Value": 13333.28
+              },
+              {
+                "Id": "45",
+                "Value": 12421.95
+              },
+              {
+                "Id": "46",
+                "Value": 12675.09
+              },
+              {
+                "Id": "47",
+                "Value": 11530.65
+              },
+              {
+                "Id": "48",
+                "Value": 12454.66
+              },
+              {
+                "Id": "49",
+                "Value": 12854.56
+              },
+              {
+                "Id": "50",
+                "Value": 13104.35
+              },
+              {
+                "Id": "51",
+                "Value": 13634.94
+              },
+              {
+                "Id": "52",
+                "Value": 12768.46
+              },
+              {
+                "Id": "53",
+                "Value": 13668.34
+              },
+              {
+                "Id": "54",
+                "Value": 13864.78
+              },
+              {
+                "Id": "55",
+                "Value": 13645.16
+              },
+              {
+                "Id": "56",
+                "Value": 13900.46
+              },
+              {
+                "Id": "57",
+                "Value": 14201.54
+              },
+              {
+                "Id": "58",
+                "Value": 14717.04
+              },
+              {
+                "Id": "59",
+                "Value": 15161.23
+              },
+              {
+                "Id": "60",
+                "Value": 15155.29
+              },
+              {
+                "Id": "61",
+                "Value": 13907.72
+              },
+              {
+                "Id": "62",
+                "Value": 12189.94
+              },
+              {
+                "Id": "63",
+                "Value": 13752.61
+              },
+              {
+                "Id": "64",
+                "Value": 14407.62
+              },
+              {
+                "Id": "65",
+                "Value": 14694.15
+              },
+              {
+                "Id": "66",
+                "Value": 15522.68
+              },
+              {
+                "Id": "67",
+                "Value": 16638.46
+              },
+              {
+                "Id": "68",
+                "Value": 16006.25
+              },
+              {
+                "Id": "69",
+                "Value": 15580.58
+              },
+              {
+                "Id": "70",
+                "Value": 17286.1
+              },
+              {
+                "Id": "71",
+                "Value": 17950.71
+              },
+              {
+                "Id": "72",
+                "Value": 17769.49
+              },
+              {
+                "Id": "73",
+                "Value": 18259.48
+              },
+              {
+                "Id": "74",
+                "Value": 19059.17
+              },
+              {
+                "Id": "75",
+                "Value": 20076.33
+              },
+              {
+                "Id": "76",
+                "Value": 20216.55
+              },
+              {
+                "Id": "77",
+                "Value": 20688.5
+              },
+              {
+                "Id": "78",
+                "Value": 21179.96
+              },
+              {
+                "Id": "79",
+                "Value": 21823.95
+              },
+              {
+                "Id": "80",
+                "Value": 20808.92
+              },
+              {
+                "Id": "81",
+                "Value": 22266.83
+              },
+              {
+                "Id": "82",
+                "Value": 22112.54
+              },
+              {
+                "Id": "83",
+                "Value": 23103.54
+              },
+              {
+                "Id": "84",
+                "Value": 21908
+              },
+              {
+                "Id": "85",
+                "Value": 21252.04
+              },
+              {
+                "Id": "86",
+                "Value": 22041.12
+              },
+              {
+                "Id": "87",
+                "Value": 20119.1
+              },
+              {
+                "Id": "88",
+                "Value": 20156.01
+              },
+              {
+                "Id": "89",
+                "Value": 18492.25
+              },
+              {
+                "Id": "90",
+                "Value": 20197.32
+              },
+              {
+                "Id": "91",
+                "Value": 19373.64
+              },
+              {
+                "Id": "92",
+                "Value": 17589.35
+              },
+              {
+                "Id": "93",
+                "Value": 19013.41
+              },
+              {
+                "Id": "94",
+                "Value": 20075.96
+              },
+              {
+                "Id": "95",
+                "Value": 18919.29
+              },
+              {
+                "Id": "96",
+                "Value": 20108.06
+              },
+              {
+                "Id": "97",
+                "Value": 19617.45
+              },
+              {
+                "Id": "98",
+                "Value": 20337.69
+              },
+              {
+                "Id": "99",
+                "Value": 20655.13
+              },
+              {
+                "Id": "100",
+                "Value": 20744.91
+              },
+              {
+                "Id": "101",
+                "Value": 22115.63
+              },
+              {
+                "Id": "102",
+                "Value": 22826.1
+              },
+              {
+                "Id": "103",
+                "Value": 22462.67
+              },
+              {
+                "Id": "104",
+                "Value": 21391.7
+              },
+              {
+                "Id": "105",
+                "Value": 20941.9
+              },
+              {
+                "Id": "106",
+                "Value": 22854.43
+              },
+              {
+                "Id": "107",
+                "Value": 23892.72
+              },
+              {
+                "Id": "108",
+                "Value": 24294.22
+              },
+              {
+                "Id": "109",
+                "Value": 25591.43
+              },
+              {
+                "Id": "110",
+                "Value": 26414.82
+              },
+              {
+                "Id": "111",
+                "Value": 25335.92
+              },
+              {
+                "Id": "112",
+                "Value": 26592.19
+              },
+              {
+                "Id": "113",
+                "Value": 27546.38
+              },
+              {
+                "Id": "114",
+                "Value": 27881.68
+              },
+              {
+                "Id": "115",
+                "Value": 28558
+              },
+              {
+                "Id": "116",
+                "Value": 29167.91
+              },
+              {
+                "Id": "117",
+                "Value": 28903.4
+              },
+              {
+                "Id": "118",
+                "Value": 30600.07
+              },
+              {
+                "Id": "119",
+                "Value": 29870.62
+              },
+              {
+                "Id": "120",
+                "Value": 30702.43
+              },
+              {
+                "Id": "121",
+                "Value": 30301.83
+              },
+              {
+                "Id": "122",
+                "Value": 28594.49
+              },
+              {
+                "Id": "123",
+                "Value": 28400.59
+              },
+              {
+                "Id": "124",
+                "Value": 30188.26
+              },
+              {
+                "Id": "125",
+                "Value": 31723.41
+              },
+              {
+                "Id": "126",
+                "Value": 32435.38
+              },
+              {
+                "Id": "127",
+                "Value": 33092.9
+              },
+              {
+                "Id": "128",
+                "Value": 34300.79
+              },
+              {
+                "Id": "129",
+                "Value": 35103.89
+              },
+              {
+                "Id": "130",
+                "Value": 35189.93
+              },
+              {
+                "Id": "131",
+                "Value": 35211.48
+              },
+              {
+                "Id": "132",
+                "Value": 35722.05
+              },
+              {
+                "Id": "133",
+                "Value": 35450.57
+              },
+              {
+                "Id": "134",
+                "Value": 33685.3
+              },
+              {
+                "Id": "135",
+                "Value": 0
+              }
+            ]
+          },
+          "NetAmountInvested": [
+            {
+              "Id": "1",
+              "Value": 10000
+            },
+            {
+              "Id": "2",
+              "Value": 9000
+            },
+            {
+              "Id": "3",
+              "Value": 9000
+            },
+            {
+              "Id": "4",
+              "Value": 9000
+            },
+            {
+              "Id": "5",
+              "Value": 9000
+            },
+            {
+              "Id": "6",
+              "Value": 9000
+            },
+            {
+              "Id": "7",
+              "Value": 9000
+            },
+            {
+              "Id": "8",
+              "Value": 9000
+            },
+            {
+              "Id": "9",
+              "Value": 9000
+            },
+            {
+              "Id": "10",
+              "Value": 9000
+            },
+            {
+              "Id": "11",
+              "Value": 9000
+            },
+            {
+              "Id": "12",
+              "Value": 9000
+            },
+            {
+              "Id": "13",
+              "Value": 13000
+            },
+            {
+              "Id": "14",
+              "Value": 13000
+            },
+            {
+              "Id": "15",
+              "Value": 13000
+            },
+            {
+              "Id": "16",
+              "Value": 13000
+            },
+            {
+              "Id": "17",
+              "Value": 13000
+            },
+            {
+              "Id": "18",
+              "Value": 13000
+            },
+            {
+              "Id": "19",
+              "Value": 13000
+            },
+            {
+              "Id": "20",
+              "Value": 13000
+            },
+            {
+              "Id": "21",
+              "Value": 13000
+            },
+            {
+              "Id": "22",
+              "Value": 13000
+            },
+            {
+              "Id": "23",
+              "Value": 13000
+            },
+            {
+              "Id": "24",
+              "Value": 13000
+            },
+            {
+              "Id": "25",
+              "Value": 17000
+            },
+            {
+              "Id": "26",
+              "Value": 17000
+            },
+            {
+              "Id": "27",
+              "Value": 17000
+            },
+            {
+              "Id": "28",
+              "Value": 17000
+            },
+            {
+              "Id": "29",
+              "Value": 17000
+            },
+            {
+              "Id": "30",
+              "Value": 17000
+            },
+            {
+              "Id": "31",
+              "Value": 17000
+            },
+            {
+              "Id": "32",
+              "Value": 17000
+            },
+            {
+              "Id": "33",
+              "Value": 17000
+            },
+            {
+              "Id": "34",
+              "Value": 17000
+            },
+            {
+              "Id": "35",
+              "Value": 17000
+            },
+            {
+              "Id": "36",
+              "Value": 17000
+            },
+            {
+              "Id": "37",
+              "Value": 21000
+            },
+            {
+              "Id": "38",
+              "Value": 21000
+            },
+            {
+              "Id": "39",
+              "Value": 21000
+            },
+            {
+              "Id": "40",
+              "Value": 21000
+            },
+            {
+              "Id": "41",
+              "Value": 21000
+            },
+            {
+              "Id": "42",
+              "Value": 21000
+            },
+            {
+              "Id": "43",
+              "Value": 21000
+            },
+            {
+              "Id": "44",
+              "Value": 21000
+            },
+            {
+              "Id": "45",
+              "Value": 21000
+            },
+            {
+              "Id": "46",
+              "Value": 21000
+            },
+            {
+              "Id": "47",
+              "Value": 21000
+            },
+            {
+              "Id": "48",
+              "Value": 21000
+            },
+            {
+              "Id": "49",
+              "Value": 25000
+            },
+            {
+              "Id": "50",
+              "Value": 25000
+            },
+            {
+              "Id": "51",
+              "Value": 25000
+            },
+            {
+              "Id": "52",
+              "Value": 25000
+            },
+            {
+              "Id": "53",
+              "Value": 25000
+            },
+            {
+              "Id": "54",
+              "Value": 25000
+            },
+            {
+              "Id": "55",
+              "Value": 25000
+            },
+            {
+              "Id": "56",
+              "Value": 25000
+            },
+            {
+              "Id": "57",
+              "Value": 25000
+            },
+            {
+              "Id": "58",
+              "Value": 25000
+            },
+            {
+              "Id": "59",
+              "Value": 25000
+            },
+            {
+              "Id": "60",
+              "Value": 25000
+            },
+            {
+              "Id": "61",
+              "Value": 29000
+            },
+            {
+              "Id": "62",
+              "Value": 29000
+            },
+            {
+              "Id": "63",
+              "Value": 29000
+            },
+            {
+              "Id": "64",
+              "Value": 29000
+            },
+            {
+              "Id": "65",
+              "Value": 29000
+            },
+            {
+              "Id": "66",
+              "Value": 29000
+            },
+            {
+              "Id": "67",
+              "Value": 29000
+            },
+            {
+              "Id": "68",
+              "Value": 29000
+            },
+            {
+              "Id": "69",
+              "Value": 29000
+            },
+            {
+              "Id": "70",
+              "Value": 29000
+            },
+            {
+              "Id": "71",
+              "Value": 29000
+            },
+            {
+              "Id": "72",
+              "Value": 29000
+            },
+            {
+              "Id": "73",
+              "Value": 33000
+            },
+            {
+              "Id": "74",
+              "Value": 33000
+            },
+            {
+              "Id": "75",
+              "Value": 33000
+            },
+            {
+              "Id": "76",
+              "Value": 33000
+            },
+            {
+              "Id": "77",
+              "Value": 33000
+            },
+            {
+              "Id": "78",
+              "Value": 33000
+            },
+            {
+              "Id": "79",
+              "Value": 33000
+            },
+            {
+              "Id": "80",
+              "Value": 33000
+            },
+            {
+              "Id": "81",
+              "Value": 33000
+            },
+            {
+              "Id": "82",
+              "Value": 33000
+            },
+            {
+              "Id": "83",
+              "Value": 33000
+            },
+            {
+              "Id": "84",
+              "Value": 33000
+            },
+            {
+              "Id": "85",
+              "Value": 37000
+            },
+            {
+              "Id": "86",
+              "Value": 37000
+            },
+            {
+              "Id": "87",
+              "Value": 37000
+            },
+            {
+              "Id": "88",
+              "Value": 37000
+            },
+            {
+              "Id": "89",
+              "Value": 37000
+            },
+            {
+              "Id": "90",
+              "Value": 37000
+            },
+            {
+              "Id": "91",
+              "Value": 37000
+            },
+            {
+              "Id": "92",
+              "Value": 37000
+            },
+            {
+              "Id": "93",
+              "Value": 37000
+            },
+            {
+              "Id": "94",
+              "Value": 37000
+            },
+            {
+              "Id": "95",
+              "Value": 37000
+            },
+            {
+              "Id": "96",
+              "Value": 37000
+            },
+            {
+              "Id": "97",
+              "Value": 41000
+            },
+            {
+              "Id": "98",
+              "Value": 41000
+            },
+            {
+              "Id": "99",
+              "Value": 41000
+            },
+            {
+              "Id": "100",
+              "Value": 41000
+            },
+            {
+              "Id": "101",
+              "Value": 41000
+            },
+            {
+              "Id": "102",
+              "Value": 41000
+            },
+            {
+              "Id": "103",
+              "Value": 41000
+            },
+            {
+              "Id": "104",
+              "Value": 41000
+            },
+            {
+              "Id": "105",
+              "Value": 41000
+            },
+            {
+              "Id": "106",
+              "Value": 41000
+            },
+            {
+              "Id": "107",
+              "Value": 41000
+            },
+            {
+              "Id": "108",
+              "Value": 41000
+            },
+            {
+              "Id": "109",
+              "Value": 45000
+            },
+            {
+              "Id": "110",
+              "Value": 45000
+            },
+            {
+              "Id": "111",
+              "Value": 45000
+            },
+            {
+              "Id": "112",
+              "Value": 45000
+            },
+            {
+              "Id": "113",
+              "Value": 45000
+            },
+            {
+              "Id": "114",
+              "Value": 45000
+            },
+            {
+              "Id": "115",
+              "Value": 45000
+            },
+            {
+              "Id": "116",
+              "Value": 45000
+            },
+            {
+              "Id": "117",
+              "Value": 45000
+            },
+            {
+              "Id": "118",
+              "Value": 45000
+            },
+            {
+              "Id": "119",
+              "Value": 45000
+            },
+            {
+              "Id": "120",
+              "Value": 45000
+            },
+            {
+              "Id": "121",
+              "Value": 49000
+            },
+            {
+              "Id": "122",
+              "Value": 49000
+            },
+            {
+              "Id": "123",
+              "Value": 49000
+            },
+            {
+              "Id": "124",
+              "Value": 49000
+            },
+            {
+              "Id": "125",
+              "Value": 49000
+            },
+            {
+              "Id": "126",
+              "Value": 49000
+            },
+            {
+              "Id": "127",
+              "Value": 49000
+            },
+            {
+              "Id": "128",
+              "Value": 49000
+            },
+            {
+              "Id": "129",
+              "Value": 49000
+            },
+            {
+              "Id": "130",
+              "Value": 49000
+            },
+            {
+              "Id": "131",
+              "Value": 49000
+            },
+            {
+              "Id": "132",
+              "Value": 49000
+            },
+            {
+              "Id": "133",
+              "Value": 53000
+            },
+            {
+              "Id": "134",
+              "Value": 53000
+            },
+            {
+              "Id": "135",
+              "Value": 23619.89
+            }
+          ]
+        }
+      },
+      "SecuritySummary": {
+        "Security": [
+          {
+            "SecurityId": "0P000000GY",
+            "StartDate": "2015-03-02T00:00:00",
+            "EndDate": "2026-04-30T00:00:00",
+            "InitialInvestment": 1500,
+            "SubsequentInvestmentWithdrawalAmount": 0,
+            "ReinvestDistributionsIncome": true,
+            "ReinvestDistributionsCapGains": true,
+            "Liquidate": true,
+            "RebalanceFrequency": "Monthly",
+            "FrontLoad": 0,
+            "AnnualFee": 0,
+            "DeferredLoadAmount": "0-0",
+            "EndMarketValue": 0,
+            "HistoricalMonthEndPerformance": [
+              {
+                "Id": "1",
+                "Value": 1445.85
+              },
+              {
+                "Id": "2",
+                "Value": 1454.22
+              },
+              {
+                "Id": "3",
+                "Value": 1520.11
+              },
+              {
+                "Id": "4",
+                "Value": 1463.47
+              },
+              {
+                "Id": "5",
+                "Value": 1415.33
+              },
+              {
+                "Id": "6",
+                "Value": 1321.63
+              },
+              {
+                "Id": "7",
+                "Value": 1292.8
+              },
+              {
+                "Id": "8",
+                "Value": 1400.63
+              },
+              {
+                "Id": "9",
+                "Value": 1392.53
+              },
+              {
+                "Id": "10",
+                "Value": 1239.03
+              },
+              {
+                "Id": "11",
+                "Value": 1145.8
+              },
+              {
+                "Id": "12",
+                "Value": 1144.28
+              },
+              {
+                "Id": "13",
+                "Value": 1289.84
+              },
+              {
+                "Id": "14",
+                "Value": 1109.37
+              },
+              {
+                "Id": "15",
+                "Value": 1189.02
+              },
+              {
+                "Id": "16",
+                "Value": 1138.3
+              },
+              {
+                "Id": "17",
+                "Value": 1240.81
+              },
+              {
+                "Id": "18",
+                "Value": 1270.12
+              },
+              {
+                "Id": "19",
+                "Value": 1353.32
+              },
+              {
+                "Id": "20",
+                "Value": 1359.18
+              },
+              {
+                "Id": "21",
+                "Value": 1329.9
+              },
+              {
+                "Id": "22",
+                "Value": 1393.67
+              },
+              {
+                "Id": "23",
+                "Value": 1460.22
+              },
+              {
+                "Id": "24",
+                "Value": 1655.51
+              },
+              {
+                "Id": "25",
+                "Value": 1736.11
+              },
+              {
+                "Id": "26",
+                "Value": 1735.99
+              },
+              {
+                "Id": "27",
+                "Value": 1853.64
+              },
+              {
+                "Id": "28",
+                "Value": 1747.59
+              },
+              {
+                "Id": "29",
+                "Value": 1804.74
+              },
+              {
+                "Id": "30",
+                "Value": 1998.1
+              },
+              {
+                "Id": "31",
+                "Value": 1877.73
+              },
+              {
+                "Id": "32",
+                "Value": 2059.51
+              },
+              {
+                "Id": "33",
+                "Value": 2101.3
+              },
+              {
+                "Id": "34",
+                "Value": 2069.26
+              },
+              {
+                "Id": "35",
+                "Value": 2047.25
+              },
+              {
+                "Id": "36",
+                "Value": 2186.73
+              },
+              {
+                "Id": "37",
+                "Value": 2059.79
+              },
+              {
+                "Id": "38",
+                "Value": 2028.86
+              },
+              {
+                "Id": "39",
+                "Value": 2303.04
+              },
+              {
+                "Id": "40",
+                "Value": 2281.35
+              },
+              {
+                "Id": "41",
+                "Value": 2345.19
+              },
+              {
+                "Id": "42",
+                "Value": 2815.24
+              },
+              {
+                "Id": "43",
+                "Value": 2791.87
+              },
+              {
+                "Id": "44",
+                "Value": 2706.78
+              },
+              {
+                "Id": "45",
+                "Value": 2216.34
+              },
+              {
+                "Id": "46",
+                "Value": 1957.7
+              },
+              {
+                "Id": "47",
+                "Value": 2065.67
+              },
+              {
+                "Id": "48",
+                "Value": 2158.16
+              },
+              {
+                "Id": "49",
+                "Value": 2367.55
+              },
+              {
+                "Id": "50",
+                "Value": 2501.17
+              },
+              {
+                "Id": "51",
+                "Value": 2190.61
+              },
+              {
+                "Id": "52",
+                "Value": 2476.53
+              },
+              {
+                "Id": "53",
+                "Value": 2665.72
+              },
+              {
+                "Id": "54",
+                "Value": 2621.92
+              },
+              {
+                "Id": "55",
+                "Value": 2813.22
+              },
+              {
+                "Id": "56",
+                "Value": 3124.6
+              },
+              {
+                "Id": "57",
+                "Value": 3366.81
+              },
+              {
+                "Id": "58",
+                "Value": 3699.4
+              },
+              {
+                "Id": "59",
+                "Value": 3899.2
+              },
+              {
+                "Id": "60",
+                "Value": 3452.07
+              },
+              {
+                "Id": "61",
+                "Value": 3211.25
+              },
+              {
+                "Id": "62",
+                "Value": 3710.19
+              },
+              {
+                "Id": "63",
+                "Value": 4025.66
+              },
+              {
+                "Id": "64",
+                "Value": 4618.98
+              },
+              {
+                "Id": "65",
+                "Value": 5381.72
+              },
+              {
+                "Id": "66",
+                "Value": 6547.51
+              },
+              {
+                "Id": "67",
+                "Value": 5876.22
+              },
+              {
+                "Id": "68",
+                "Value": 5523.58
+              },
+              {
+                "Id": "69",
+                "Value": 6051.05
+              },
+              {
+                "Id": "70",
+                "Value": 6744.34
+              },
+              {
+                "Id": "71",
+                "Value": 6707.24
+              },
+              {
+                "Id": "72",
+                "Value": 6172.62
+              },
+              {
+                "Id": "73",
+                "Value": 6217.92
+              },
+              {
+                "Id": "74",
+                "Value": 6691.84
+              },
+              {
+                "Id": "75",
+                "Value": 6353.87
+              },
+              {
+                "Id": "76",
+                "Value": 6983.59
+              },
+              {
+                "Id": "77",
+                "Value": 7437.4
+              },
+              {
+                "Id": "78",
+                "Value": 7753.47
+              },
+              {
+                "Id": "79",
+                "Value": 7225.95
+              },
+              {
+                "Id": "80",
+                "Value": 7649.8
+              },
+              {
+                "Id": "81",
+                "Value": 8453.61
+              },
+              {
+                "Id": "82",
+                "Value": 9081.11
+              },
+              {
+                "Id": "83",
+                "Value": 8938.43
+              },
+              {
+                "Id": "84",
+                "Value": 8455.18
+              },
+              {
+                "Id": "85",
+                "Value": 8941.13
+              },
+              {
+                "Id": "86",
+                "Value": 8072.67
+              },
+              {
+                "Id": "87",
+                "Value": 7632.69
+              },
+              {
+                "Id": "88",
+                "Value": 7011.16
+              },
+              {
+                "Id": "89",
+                "Value": 8333.71
+              },
+              {
+                "Id": "90",
+                "Value": 8073.64
+              },
+              {
+                "Id": "91",
+                "Value": 7096.92
+              },
+              {
+                "Id": "92",
+                "Value": 7874.39
+              },
+              {
+                "Id": "93",
+                "Value": 7614.35
+              },
+              {
+                "Id": "94",
+                "Value": 6683.32
+              },
+              {
+                "Id": "95",
+                "Value": 7421.97
+              },
+              {
+                "Id": "96",
+                "Value": 7594
+              },
+              {
+                "Id": "97",
+                "Value": 8495.02
+              },
+              {
+                "Id": "98",
+                "Value": 8741.27
+              },
+              {
+                "Id": "99",
+                "Value": 9143.95
+              },
+              {
+                "Id": "100",
+                "Value": 10006.5
+              },
+              {
+                "Id": "101",
+                "Value": 10134.43
+              },
+              {
+                "Id": "102",
+                "Value": 9704.89
+              },
+              {
+                "Id": "103",
+                "Value": 8844.28
+              },
+              {
+                "Id": "104",
+                "Value": 8821.55
+              },
+              {
+                "Id": "105",
+                "Value": 9824.98
+              },
+              {
+                "Id": "106",
+                "Value": 9958.42
+              },
+              {
+                "Id": "107",
+                "Value": 9537.91
+              },
+              {
+                "Id": "108",
+                "Value": 9361
+              },
+              {
+                "Id": "109",
+                "Value": 8880.9
+              },
+              {
+                "Id": "110",
+                "Value": 8821.35
+              },
+              {
+                "Id": "111",
+                "Value": 9970.18
+              },
+              {
+                "Id": "112",
+                "Value": 10922.85
+              },
+              {
+                "Id": "113",
+                "Value": 11517.17
+              },
+              {
+                "Id": "114",
+                "Value": 11889.7
+              },
+              {
+                "Id": "115",
+                "Value": 12097.38
+              },
+              {
+                "Id": "116",
+                "Value": 11729.26
+              },
+              {
+                "Id": "117",
+                "Value": 12335.76
+              },
+              {
+                "Id": "118",
+                "Value": 13016.15
+              },
+              {
+                "Id": "119",
+                "Value": 12266.63
+              },
+              {
+                "Id": "120",
+                "Value": 12583.99
+              },
+              {
+                "Id": "121",
+                "Value": 11558.39
+              },
+              {
+                "Id": "122",
+                "Value": 11057.3
+              },
+              {
+                "Id": "123",
+                "Value": 10463.99
+              },
+              {
+                "Id": "124",
+                "Value": 10689.05
+              },
+              {
+                "Id": "125",
+                "Value": 10814.09
+              },
+              {
+                "Id": "126",
+                "Value": 12107.99
+              },
+              {
+                "Id": "127",
+                "Value": 13281.03
+              },
+              {
+                "Id": "128",
+                "Value": 14102
+              },
+              {
+                "Id": "129",
+                "Value": 14558.34
+              },
+              {
+                "Id": "130",
+                "Value": 14193.4
+              },
+              {
+                "Id": "131",
+                "Value": 13547.06
+              },
+              {
+                "Id": "132",
+                "Value": 13805.5
+              },
+              {
+                "Id": "133",
+                "Value": 13262.54
+              },
+              {
+                "Id": "134",
+                "Value": 0
+              }
+            ]
+          },
+          {
+            "SecurityId": "FOUSA00DFS",
+            "StartDate": "2015-03-02T00:00:00",
+            "EndDate": "2026-04-30T00:00:00",
+            "InitialInvestment": 3500,
+            "SubsequentInvestmentWithdrawalAmount": 0,
+            "ReinvestDistributionsIncome": true,
+            "ReinvestDistributionsCapGains": true,
+            "Liquidate": true,
+            "RebalanceFrequency": "Monthly",
+            "FrontLoad": 5.25,
+            "AnnualFee": 0,
+            "DeferredLoadAmount": "0-0",
+            "EndMarketValue": 0,
+            "HistoricalMonthEndPerformance": [
+              {
+                "Id": "1",
+                "Value": 3293.54
+              },
+              {
+                "Id": "2",
+                "Value": 3355.19
+              },
+              {
+                "Id": "3",
+                "Value": 3363.3
+              },
+              {
+                "Id": "4",
+                "Value": 3300.03
+              },
+              {
+                "Id": "5",
+                "Value": 3295.62
+              },
+              {
+                "Id": "6",
+                "Value": 3178.33
+              },
+              {
+                "Id": "7",
+                "Value": 3085.47
+              },
+              {
+                "Id": "8",
+                "Value": 3220.68
+              },
+              {
+                "Id": "9",
+                "Value": 3204.39
+              },
+              {
+                "Id": "10",
+                "Value": 3173.86
+              },
+              {
+                "Id": "11",
+                "Value": 3065.34
+              },
+              {
+                "Id": "12",
+                "Value": 3029.76
+              },
+              {
+                "Id": "13",
+                "Value": 3156.07
+              },
+              {
+                "Id": "14",
+                "Value": 3191.65
+              },
+              {
+                "Id": "15",
+                "Value": 3175.64
+              },
+              {
+                "Id": "16",
+                "Value": 3177.42
+              },
+              {
+                "Id": "17",
+                "Value": 3268.15
+              },
+              {
+                "Id": "18",
+                "Value": 3282.39
+              },
+              {
+                "Id": "19",
+                "Value": 3296.62
+              },
+              {
+                "Id": "20",
+                "Value": 3253.92
+              },
+              {
+                "Id": "21",
+                "Value": 3261.04
+              },
+              {
+                "Id": "22",
+                "Value": 3292.77
+              },
+              {
+                "Id": "23",
+                "Value": 3350.72
+              },
+              {
+                "Id": "24",
+                "Value": 3410.49
+              },
+              {
+                "Id": "25",
+                "Value": 3437.66
+              },
+              {
+                "Id": "26",
+                "Value": 3481.13
+              },
+              {
+                "Id": "27",
+                "Value": 3533.66
+              },
+              {
+                "Id": "28",
+                "Value": 3540.9
+              },
+              {
+                "Id": "29",
+                "Value": 3611.54
+              },
+              {
+                "Id": "30",
+                "Value": 3624.22
+              },
+              {
+                "Id": "31",
+                "Value": 3644.14
+              },
+              {
+                "Id": "32",
+                "Value": 3671.31
+              },
+              {
+                "Id": "33",
+                "Value": 3709.35
+              },
+              {
+                "Id": "34",
+                "Value": 3731.36
+              },
+              {
+                "Id": "35",
+                "Value": 3865.84
+              },
+              {
+                "Id": "36",
+                "Value": 3744.62
+              },
+              {
+                "Id": "37",
+                "Value": 3714.31
+              },
+              {
+                "Id": "38",
+                "Value": 3695.37
+              },
+              {
+                "Id": "39",
+                "Value": 3691.58
+              },
+              {
+                "Id": "40",
+                "Value": 3668.85
+              },
+              {
+                "Id": "41",
+                "Value": 3737.07
+              },
+              {
+                "Id": "42",
+                "Value": 3738.97
+              },
+              {
+                "Id": "43",
+                "Value": 3723.76
+              },
+              {
+                "Id": "44",
+                "Value": 3548.88
+              },
+              {
+                "Id": "45",
+                "Value": 3594.5
+              },
+              {
+                "Id": "46",
+                "Value": 3446.79
+              },
+              {
+                "Id": "47",
+                "Value": 3622.12
+              },
+              {
+                "Id": "48",
+                "Value": 3663.96
+              },
+              {
+                "Id": "49",
+                "Value": 3701.82
+              },
+              {
+                "Id": "50",
+                "Value": 3759.59
+              },
+              {
+                "Id": "51",
+                "Value": 3655.99
+              },
+              {
+                "Id": "52",
+                "Value": 3805.42
+              },
+              {
+                "Id": "53",
+                "Value": 3790.19
+              },
+              {
+                "Id": "54",
+                "Value": 3790.19
+              },
+              {
+                "Id": "55",
+                "Value": 3816.52
+              },
+              {
+                "Id": "56",
+                "Value": 3895.53
+              },
+              {
+                "Id": "57",
+                "Value": 3946.17
+              },
+              {
+                "Id": "58",
+                "Value": 4040.05
+              },
+              {
+                "Id": "59",
+                "Value": 4044.26
+              },
+              {
+                "Id": "60",
+                "Value": 3882.32
+              },
+              {
+                "Id": "61",
+                "Value": 3537.41
+              },
+              {
+                "Id": "62",
+                "Value": 3825.54
+              },
+              {
+                "Id": "63",
+                "Value": 3972.75
+              },
+              {
+                "Id": "64",
+                "Value": 4054.77
+              },
+              {
+                "Id": "65",
+                "Value": 4264.94
+              },
+              {
+                "Id": "66",
+                "Value": 4429.64
+              },
+              {
+                "Id": "67",
+                "Value": 4362.46
+              },
+              {
+                "Id": "68",
+                "Value": 4280.11
+              },
+              {
+                "Id": "69",
+                "Value": 4694.03
+              },
+              {
+                "Id": "70",
+                "Value": 4879.94
+              },
+              {
+                "Id": "71",
+                "Value": 4864.08
+              },
+              {
+                "Id": "72",
+                "Value": 4923.01
+              },
+              {
+                "Id": "73",
+                "Value": 4961.54
+              },
+              {
+                "Id": "74",
+                "Value": 5136.06
+              },
+              {
+                "Id": "75",
+                "Value": 5201.8
+              },
+              {
+                "Id": "76",
+                "Value": 5197.26
+              },
+              {
+                "Id": "77",
+                "Value": 5191.51
+              },
+              {
+                "Id": "78",
+                "Value": 5246.49
+              },
+              {
+                "Id": "79",
+                "Value": 5074.39
+              },
+              {
+                "Id": "80",
+                "Value": 5220.19
+              },
+              {
+                "Id": "81",
+                "Value": 5081.56
+              },
+              {
+                "Id": "82",
+                "Value": 5194.67
+              },
+              {
+                "Id": "83",
+                "Value": 4987.38
+              },
+              {
+                "Id": "84",
+                "Value": 4877.49
+              },
+              {
+                "Id": "85",
+                "Value": 4842.53
+              },
+              {
+                "Id": "86",
+                "Value": 4580.3
+              },
+              {
+                "Id": "87",
+                "Value": 4622.75
+              },
+              {
+                "Id": "88",
+                "Value": 4345.54
+              },
+              {
+                "Id": "89",
+                "Value": 4546.61
+              },
+              {
+                "Id": "90",
+                "Value": 4411.48
+              },
+              {
+                "Id": "91",
+                "Value": 4109.43
+              },
+              {
+                "Id": "92",
+                "Value": 4241.91
+              },
+              {
+                "Id": "93",
+                "Value": 4483.02
+              },
+              {
+                "Id": "94",
+                "Value": 4361.14
+              },
+              {
+                "Id": "95",
+                "Value": 4589
+              },
+              {
+                "Id": "96",
+                "Value": 4424.73
+              },
+              {
+                "Id": "97",
+                "Value": 4525.41
+              },
+              {
+                "Id": "98",
+                "Value": 4562.5
+              },
+              {
+                "Id": "99",
+                "Value": 4512.16
+              },
+              {
+                "Id": "100",
+                "Value": 4657.89
+              },
+              {
+                "Id": "101",
+                "Value": 4746.88
+              },
+              {
+                "Id": "102",
+                "Value": 4632.72
+              },
+              {
+                "Id": "103",
+                "Value": 4460.16
+              },
+              {
+                "Id": "104",
+                "Value": 4393.78
+              },
+              {
+                "Id": "105",
+                "Value": 4691.13
+              },
+              {
+                "Id": "106",
+                "Value": 4899.51
+              },
+              {
+                "Id": "107",
+                "Value": 4894.15
+              },
+              {
+                "Id": "108",
+                "Value": 5033.52
+              },
+              {
+                "Id": "109",
+                "Value": 5156.81
+              },
+              {
+                "Id": "110",
+                "Value": 4963.84
+              },
+              {
+                "Id": "111",
+                "Value": 5138.05
+              },
+              {
+                "Id": "112",
+                "Value": 5199.7
+              },
+              {
+                "Id": "113",
+                "Value": 5256.9
+              },
+              {
+                "Id": "114",
+                "Value": 5365.04
+              },
+              {
+                "Id": "115",
+                "Value": 5456.53
+              },
+              {
+                "Id": "116",
+                "Value": 5315.13
+              },
+              {
+                "Id": "117",
+                "Value": 5481.49
+              },
+              {
+                "Id": "118",
+                "Value": 5340.61
+              },
+              {
+                "Id": "119",
+                "Value": 5487.6
+              },
+              {
+                "Id": "120",
+                "Value": 5478.96
+              },
+              {
+                "Id": "121",
+                "Value": 5334.85
+              },
+              {
+                "Id": "122",
+                "Value": 5464.55
+              },
+              {
+                "Id": "123",
+                "Value": 5683.59
+              },
+              {
+                "Id": "124",
+                "Value": 5914.16
+              },
+              {
+                "Id": "125",
+                "Value": 5876.88
+              },
+              {
+                "Id": "126",
+                "Value": 6019.04
+              },
+              {
+                "Id": "127",
+                "Value": 6179.35
+              },
+              {
+                "Id": "128",
+                "Value": 6257.99
+              },
+              {
+                "Id": "129",
+                "Value": 6285.21
+              },
+              {
+                "Id": "130",
+                "Value": 6375.39
+              },
+              {
+                "Id": "131",
+                "Value": 6552.14
+              },
+              {
+                "Id": "132",
+                "Value": 6637.35
+              },
+              {
+                "Id": "133",
+                "Value": 6227.05
+              },
+              {
+                "Id": "134",
+                "Value": 0
+              }
+            ]
+          },
+          {
+            "SecurityId": "FOUSA00C3O",
+            "StartDate": "2015-03-02T00:00:00",
+            "EndDate": "2026-04-30T00:00:00",
+            "InitialInvestment": 2000,
+            "SubsequentInvestmentWithdrawalAmount": 0,
+            "ReinvestDistributionsIncome": true,
+            "ReinvestDistributionsCapGains": true,
+            "Liquidate": true,
+            "RebalanceFrequency": "Monthly",
+            "FrontLoad": 0,
+            "AnnualFee": 0,
+            "DeferredLoadAmount": "0-0",
+            "EndMarketValue": 0,
+            "HistoricalMonthEndPerformance": [
+              {
+                "Id": "1",
+                "Value": 1952.69
+              },
+              {
+                "Id": "2",
+                "Value": 2005.23
+              },
+              {
+                "Id": "3",
+                "Value": 2032.09
+              },
+              {
+                "Id": "4",
+                "Value": 2002.66
+              },
+              {
+                "Id": "5",
+                "Value": 2025.3
+              },
+              {
+                "Id": "6",
+                "Value": 1884.49
+              },
+              {
+                "Id": "7",
+                "Value": 1805.56
+              },
+              {
+                "Id": "8",
+                "Value": 1948.49
+              },
+              {
+                "Id": "9",
+                "Value": 1938.93
+              },
+              {
+                "Id": "10",
+                "Value": 1887.62
+              },
+              {
+                "Id": "11",
+                "Value": 1758.09
+              },
+              {
+                "Id": "12",
+                "Value": 1746.03
+              },
+              {
+                "Id": "13",
+                "Value": 1868.95
+              },
+              {
+                "Id": "14",
+                "Value": 1908.55
+              },
+              {
+                "Id": "15",
+                "Value": 1952.2
+              },
+              {
+                "Id": "16",
+                "Value": 1900.75
+              },
+              {
+                "Id": "17",
+                "Value": 2002.47
+              },
+              {
+                "Id": "18",
+                "Value": 2043.55
+              },
+              {
+                "Id": "19",
+                "Value": 2067.82
+              },
+              {
+                "Id": "20",
+                "Value": 2062.44
+              },
+              {
+                "Id": "21",
+                "Value": 2260.85
+              },
+              {
+                "Id": "22",
+                "Value": 2289.34
+              },
+              {
+                "Id": "23",
+                "Value": 2341.51
+              },
+              {
+                "Id": "24",
+                "Value": 2411.69
+              },
+              {
+                "Id": "25",
+                "Value": 2403.04
+              },
+              {
+                "Id": "26",
+                "Value": 2412.78
+              },
+              {
+                "Id": "27",
+                "Value": 2410.75
+              },
+              {
+                "Id": "28",
+                "Value": 2445.22
+              },
+              {
+                "Id": "29",
+                "Value": 2489.38
+              },
+              {
+                "Id": "30",
+                "Value": 2463.13
+              },
+              {
+                "Id": "31",
+                "Value": 2561.63
+              },
+              {
+                "Id": "32",
+                "Value": 2577.6
+              },
+              {
+                "Id": "33",
+                "Value": 2644.54
+              },
+              {
+                "Id": "34",
+                "Value": 2708.92
+              },
+              {
+                "Id": "35",
+                "Value": 2863.25
+              },
+              {
+                "Id": "36",
+                "Value": 2751.77
+              },
+              {
+                "Id": "37",
+                "Value": 2661.59
+              },
+              {
+                "Id": "38",
+                "Value": 2680.62
+              },
+              {
+                "Id": "39",
+                "Value": 2695.08
+              },
+              {
+                "Id": "40",
+                "Value": 2735.03
+              },
+              {
+                "Id": "41",
+                "Value": 2860.61
+              },
+              {
+                "Id": "42",
+                "Value": 2907.76
+              },
+              {
+                "Id": "43",
+                "Value": 2912.47
+              },
+              {
+                "Id": "44",
+                "Value": 2741.91
+              },
+              {
+                "Id": "45",
+                "Value": 2818.43
+              },
+              {
+                "Id": "46",
+                "Value": 2517.27
+              },
+              {
+                "Id": "47",
+                "Value": 2731.55
+              },
+              {
+                "Id": "48",
+                "Value": 2782.25
+              },
+              {
+                "Id": "49",
+                "Value": 2776.26
+              },
+              {
+                "Id": "50",
+                "Value": 2907
+              },
+              {
+                "Id": "51",
+                "Value": 2691.99
+              },
+              {
+                "Id": "52",
+                "Value": 2848.34
+              },
+              {
+                "Id": "53",
+                "Value": 2908.77
+              },
+              {
+                "Id": "54",
+                "Value": 2762.77
+              },
+              {
+                "Id": "55",
+                "Value": 2854.2
+              },
+              {
+                "Id": "56",
+                "Value": 2921.19
+              },
+              {
+                "Id": "57",
+                "Value": 3038.93
+              },
+              {
+                "Id": "58",
+                "Value": 3142.21
+              },
+              {
+                "Id": "59",
+                "Value": 3039.88
+              },
+              {
+                "Id": "60",
+                "Value": 2770.21
+              },
+              {
+                "Id": "61",
+                "Value": 2225.88
+              },
+              {
+                "Id": "62",
+                "Value": 2539.7
+              },
+              {
+                "Id": "63",
+                "Value": 2623.07
+              },
+              {
+                "Id": "64",
+                "Value": 2671.57
+              },
+              {
+                "Id": "65",
+                "Value": 2739.56
+              },
+              {
+                "Id": "66",
+                "Value": 2878.38
+              },
+              {
+                "Id": "67",
+                "Value": 2785.89
+              },
+              {
+                "Id": "68",
+                "Value": 2732.54
+              },
+              {
+                "Id": "69",
+                "Value": 3232.89
+              },
+              {
+                "Id": "70",
+                "Value": 3367.14
+              },
+              {
+                "Id": "71",
+                "Value": 3359.62
+              },
+              {
+                "Id": "72",
+                "Value": 3679.63
+              },
+              {
+                "Id": "73",
+                "Value": 3901.04
+              },
+              {
+                "Id": "74",
+                "Value": 4114.5
+              },
+              {
+                "Id": "75",
+                "Value": 4254.12
+              },
+              {
+                "Id": "76",
+                "Value": 4245.53
+              },
+              {
+                "Id": "77",
+                "Value": 4218.05
+              },
+              {
+                "Id": "78",
+                "Value": 4344.77
+              },
+              {
+                "Id": "79",
+                "Value": 4190.2
+              },
+              {
+                "Id": "80",
+                "Value": 4377.86
+              },
+              {
+                "Id": "81",
+                "Value": 4203.86
+              },
+              {
+                "Id": "82",
+                "Value": 4435.46
+              },
+              {
+                "Id": "83",
+                "Value": 4490.61
+              },
+              {
+                "Id": "84",
+                "Value": 4412.83
+              },
+              {
+                "Id": "85",
+                "Value": 4480.41
+              },
+              {
+                "Id": "86",
+                "Value": 4143.73
+              },
+              {
+                "Id": "87",
+                "Value": 4326.58
+              },
+              {
+                "Id": "88",
+                "Value": 3923.94
+              },
+              {
+                "Id": "89",
+                "Value": 4126.98
+              },
+              {
+                "Id": "90",
+                "Value": 4024.74
+              },
+              {
+                "Id": "91",
+                "Value": 3641.75
+              },
+              {
+                "Id": "92",
+                "Value": 4058.08
+              },
+              {
+                "Id": "93",
+                "Value": 4313.7
+              },
+              {
+                "Id": "94",
+                "Value": 4115
+              },
+              {
+                "Id": "95",
+                "Value": 4387.59
+              },
+              {
+                "Id": "96",
+                "Value": 4244.53
+              },
+              {
+                "Id": "97",
+                "Value": 4176.52
+              },
+              {
+                "Id": "98",
+                "Value": 4224.37
+              },
+              {
+                "Id": "99",
+                "Value": 4124.41
+              },
+              {
+                "Id": "100",
+                "Value": 4409.37
+              },
+              {
+                "Id": "101",
+                "Value": 4626.89
+              },
+              {
+                "Id": "102",
+                "Value": 4518.31
+              },
+              {
+                "Id": "103",
+                "Value": 4402.1
+              },
+              {
+                "Id": "104",
+                "Value": 4248.81
+              },
+              {
+                "Id": "105",
+                "Value": 4566.84
+              },
+              {
+                "Id": "106",
+                "Value": 4834.47
+              },
+              {
+                "Id": "107",
+                "Value": 4839.84
+              },
+              {
+                "Id": "108",
+                "Value": 4970.24
+              },
+              {
+                "Id": "109",
+                "Value": 5245.44
+              },
+              {
+                "Id": "110",
+                "Value": 5067.98
+              },
+              {
+                "Id": "111",
+                "Value": 5239.32
+              },
+              {
+                "Id": "112",
+                "Value": 5246.09
+              },
+              {
+                "Id": "113",
+                "Value": 5476.9
+              },
+              {
+                "Id": "114",
+                "Value": 5585.76
+              },
+              {
+                "Id": "115",
+                "Value": 5621.86
+              },
+              {
+                "Id": "116",
+                "Value": 5607.1
+              },
+              {
+                "Id": "117",
+                "Value": 5902.67
+              },
+              {
+                "Id": "118",
+                "Value": 5535.8
+              },
+              {
+                "Id": "119",
+                "Value": 5876.3
+              },
+              {
+                "Id": "120",
+                "Value": 5924.11
+              },
+              {
+                "Id": "121",
+                "Value": 5731.53
+              },
+              {
+                "Id": "122",
+                "Value": 5532.58
+              },
+              {
+                "Id": "123",
+                "Value": 5743.53
+              },
+              {
+                "Id": "124",
+                "Value": 5950.77
+              },
+              {
+                "Id": "125",
+                "Value": 5881.82
+              },
+              {
+                "Id": "126",
+                "Value": 6123.86
+              },
+              {
+                "Id": "127",
+                "Value": 6138.08
+              },
+              {
+                "Id": "128",
+                "Value": 6100.18
+              },
+              {
+                "Id": "129",
+                "Value": 6177.75
+              },
+              {
+                "Id": "130",
+                "Value": 6291.63
+              },
+              {
+                "Id": "131",
+                "Value": 6386.44
+              },
+              {
+                "Id": "132",
+                "Value": 6534.34
+              },
+              {
+                "Id": "133",
+                "Value": 6186.65
+              },
+              {
+                "Id": "134",
+                "Value": 0
+              }
+            ]
+          },
+          {
+            "SecurityId": "F00000VCTT",
+            "StartDate": "2015-03-02T00:00:00",
+            "EndDate": "2026-04-30T00:00:00",
+            "InitialInvestment": 2000,
+            "SubsequentInvestmentWithdrawalAmount": 0,
+            "ReinvestDistributionsIncome": true,
+            "ReinvestDistributionsCapGains": true,
+            "Liquidate": true,
+            "RebalanceFrequency": "Monthly",
+            "FrontLoad": 0,
+            "AnnualFee": 0,
+            "DeferredLoadAmount": "0-0",
+            "EndMarketValue": 0,
+            "HistoricalMonthEndPerformance": [
+              {
+                "Id": "1",
+                "Value": 1944.83
+              },
+              {
+                "Id": "2",
+                "Value": 2007.5
+              },
+              {
+                "Id": "3",
+                "Value": 1954.44
+              },
+              {
+                "Id": "4",
+                "Value": 1997.1
+              },
+              {
+                "Id": "5",
+                "Value": 1939.98
+              },
+              {
+                "Id": "6",
+                "Value": 1965.56
+              },
+              {
+                "Id": "7",
+                "Value": 1979.22
+              },
+              {
+                "Id": "8",
+                "Value": 1953.7
+              },
+              {
+                "Id": "9",
+                "Value": 1901.85
+              },
+              {
+                "Id": "10",
+                "Value": 1958.88
+              },
+              {
+                "Id": "11",
+                "Value": 1937.61
+              },
+              {
+                "Id": "12",
+                "Value": 1938.07
+              },
+              {
+                "Id": "13",
+                "Value": 2056.39
+              },
+              {
+                "Id": "14",
+                "Value": 2075.01
+              },
+              {
+                "Id": "15",
+                "Value": 1999.74
+              },
+              {
+                "Id": "16",
+                "Value": 1981.27
+              },
+              {
+                "Id": "17",
+                "Value": 1971.9
+              },
+              {
+                "Id": "18",
+                "Value": 1964.58
+              },
+              {
+                "Id": "19",
+                "Value": 1968.05
+              },
+              {
+                "Id": "20",
+                "Value": 1871.95
+              },
+              {
+                "Id": "21",
+                "Value": 1824.24
+              },
+              {
+                "Id": "22",
+                "Value": 1851.17
+              },
+              {
+                "Id": "23",
+                "Value": 1919.79
+              },
+              {
+                "Id": "24",
+                "Value": 1872.04
+              },
+              {
+                "Id": "25",
+                "Value": 1886.43
+              },
+              {
+                "Id": "26",
+                "Value": 1905.52
+              },
+              {
+                "Id": "27",
+                "Value": 1950.43
+              },
+              {
+                "Id": "28",
+                "Value": 2000.62
+              },
+              {
+                "Id": "29",
+                "Value": 2088.77
+              },
+              {
+                "Id": "30",
+                "Value": 2127.14
+              },
+              {
+                "Id": "31",
+                "Value": 2073.78
+              },
+              {
+                "Id": "32",
+                "Value": 2026.56
+              },
+              {
+                "Id": "33",
+                "Value": 2038
+              },
+              {
+                "Id": "34",
+                "Value": 2070.87
+              },
+              {
+                "Id": "35",
+                "Value": 2156
+              },
+              {
+                "Id": "36",
+                "Value": 2048.99
+              },
+              {
+                "Id": "37",
+                "Value": 2028.24
+              },
+              {
+                "Id": "38",
+                "Value": 1944.86
+              },
+              {
+                "Id": "39",
+                "Value": 1926.77
+              },
+              {
+                "Id": "40",
+                "Value": 1902.9
+              },
+              {
+                "Id": "41",
+                "Value": 1935.31
+              },
+              {
+                "Id": "42",
+                "Value": 1864.63
+              },
+              {
+                "Id": "43",
+                "Value": 1911.42
+              },
+              {
+                "Id": "44",
+                "Value": 1858.76
+              },
+              {
+                "Id": "45",
+                "Value": 1862.98
+              },
+              {
+                "Id": "46",
+                "Value": 1909.34
+              },
+              {
+                "Id": "47",
+                "Value": 1874.14
+              },
+              {
+                "Id": "48",
+                "Value": 1840.43
+              },
+              {
+                "Id": "49",
+                "Value": 1840.34
+              },
+              {
+                "Id": "50",
+                "Value": 1800.91
+              },
+              {
+                "Id": "51",
+                "Value": 1801.24
+              },
+              {
+                "Id": "52",
+                "Value": 1855.52
+              },
+              {
+                "Id": "53",
+                "Value": 1801.1
+              },
+              {
+                "Id": "54",
+                "Value": 1770.37
+              },
+              {
+                "Id": "55",
+                "Value": 1762.41
+              },
+              {
+                "Id": "56",
+                "Value": 1791.58
+              },
+              {
+                "Id": "57",
+                "Value": 1801.43
+              },
+              {
+                "Id": "58",
+                "Value": 1840.78
+              },
+              {
+                "Id": "59",
+                "Value": 1796.04
+              },
+              {
+                "Id": "60",
+                "Value": 1789.81
+              },
+              {
+                "Id": "61",
+                "Value": 1707.98
+              },
+              {
+                "Id": "62",
+                "Value": 1743.35
+              },
+              {
+                "Id": "63",
+                "Value": 1814.68
+              },
+              {
+                "Id": "64",
+                "Value": 1853.43
+              },
+              {
+                "Id": "65",
+                "Value": 1984.17
+              },
+              {
+                "Id": "66",
+                "Value": 2020.23
+              },
+              {
+                "Id": "67",
+                "Value": 1952.57
+              },
+              {
+                "Id": "68",
+                "Value": 1962.03
+              },
+              {
+                "Id": "69",
+                "Value": 2049.88
+              },
+              {
+                "Id": "70",
+                "Value": 2135.67
+              },
+              {
+                "Id": "71",
+                "Value": 2110.28
+              },
+              {
+                "Id": "72",
+                "Value": 2086.01
+              },
+              {
+                "Id": "73",
+                "Value": 2012.35
+              },
+              {
+                "Id": "74",
+                "Value": 2075.9
+              },
+              {
+                "Id": "75",
+                "Value": 2116.37
+              },
+              {
+                "Id": "76",
+                "Value": 2052.9
+              },
+              {
+                "Id": "77",
+                "Value": 2047.7
+              },
+              {
+                "Id": "78",
+                "Value": 2039.43
+              },
+              {
+                "Id": "79",
+                "Value": 2009.58
+              },
+              {
+                "Id": "80",
+                "Value": 2038.5
+              },
+              {
+                "Id": "81",
+                "Value": 1932.83
+              },
+              {
+                "Id": "82",
+                "Value": 1935.97
+              },
+              {
+                "Id": "83",
+                "Value": 1869.81
+              },
+              {
+                "Id": "84",
+                "Value": 1830.86
+              },
+              {
+                "Id": "85",
+                "Value": 1821.25
+              },
+              {
+                "Id": "86",
+                "Value": 1714.86
+              },
+              {
+                "Id": "87",
+                "Value": 1699.91
+              },
+              {
+                "Id": "88",
+                "Value": 1595.2
+              },
+              {
+                "Id": "89",
+                "Value": 1619.3
+              },
+              {
+                "Id": "90",
+                "Value": 1536.33
+              },
+              {
+                "Id": "91",
+                "Value": 1457.01
+              },
+              {
+                "Id": "92",
+                "Value": 1465.95
+              },
+              {
+                "Id": "93",
+                "Value": 1538.65
+              },
+              {
+                "Id": "94",
+                "Value": 1568.62
+              },
+              {
+                "Id": "95",
+                "Value": 1590.44
+              },
+              {
+                "Id": "96",
+                "Value": 1579.8
+              },
+              {
+                "Id": "97",
+                "Value": 1598.57
+              },
+              {
+                "Id": "98",
+                "Value": 1629.27
+              },
+              {
+                "Id": "99",
+                "Value": 1532.36
+              },
+              {
+                "Id": "100",
+                "Value": 1534.54
+              },
+              {
+                "Id": "101",
+                "Value": 1590.26
+              },
+              {
+                "Id": "102",
+                "Value": 1530.44
+              },
+              {
+                "Id": "103",
+                "Value": 1545.66
+              },
+              {
+                "Id": "104",
+                "Value": 1514.03
+              },
+              {
+                "Id": "105",
+                "Value": 1639.2
+              },
+              {
+                "Id": "106",
+                "Value": 1736.32
+              },
+              {
+                "Id": "107",
+                "Value": 1694.07
+              },
+              {
+                "Id": "108",
+                "Value": 1684.18
+              },
+              {
+                "Id": "109",
+                "Value": 1643.58
+              },
+              {
+                "Id": "110",
+                "Value": 1600.09
+              },
+              {
+                "Id": "111",
+                "Value": 1683.3
+              },
+              {
+                "Id": "112",
+                "Value": 1690.13
+              },
+              {
+                "Id": "113",
+                "Value": 1689.99
+              },
+              {
+                "Id": "114",
+                "Value": 1783.55
+              },
+              {
+                "Id": "115",
+                "Value": 1814.28
+              },
+              {
+                "Id": "116",
+                "Value": 1712.62
+              },
+              {
+                "Id": "117",
+                "Value": 1689.97
+              },
+              {
+                "Id": "118",
+                "Value": 1653.16
+              },
+              {
+                "Id": "119",
+                "Value": 1669.97
+              },
+              {
+                "Id": "120",
+                "Value": 1722.12
+              },
+              {
+                "Id": "121",
+                "Value": 1831.77
+              },
+              {
+                "Id": "122",
+                "Value": 1924.36
+              },
+              {
+                "Id": "123",
+                "Value": 1941.28
+              },
+              {
+                "Id": "124",
+                "Value": 1976.45
+              },
+              {
+                "Id": "125",
+                "Value": 1923.71
+              },
+              {
+                "Id": "126",
+                "Value": 1996.37
+              },
+              {
+                "Id": "127",
+                "Value": 2010.49
+              },
+              {
+                "Id": "128",
+                "Value": 1996.39
+              },
+              {
+                "Id": "129",
+                "Value": 2006.58
+              },
+              {
+                "Id": "130",
+                "Value": 2057.78
+              },
+              {
+                "Id": "131",
+                "Value": 2156.18
+              },
+              {
+                "Id": "132",
+                "Value": 2130.69
+              },
+              {
+                "Id": "133",
+                "Value": 1981
+              },
+              {
+                "Id": "134",
+                "Value": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "SecurityReference": [
+    {
+      "SecurityId": "F00000VCTT",
+      "ISIN": "SE0006763967",
+      "Name": "Storebrand Grön Obligation A SEK H",
+      "PerformanceId": "0P00015E1M",
+      "BaseCurrency": "SEK",
+      "Type": "FO",
+      "InceptionDate": "2015-03-02T00:00:00",
+      "SecurityReferenceTypes": [
+        "PortfolioHolding"
+      ]
+    },
+    {
+      "SecurityId": "0P000000GY",
+      "CUSIP": "037833100",
+      "ISIN": "US0378331005",
+      "Name": "Apple Inc",
+      "TradingSymbol": "AAPL",
+      "PerformanceId": "0P000000GY",
+      "BaseCurrency": "USD",
+      "Type": "ST",
+      "InceptionDate": "1980-12-12T00:00:00",
+      "SecurityReferenceTypes": [
+        "PortfolioHolding"
+      ]
+    },
+    {
+      "SecurityId": "FOUSA00DFS",
+      "CUSIP": "09251T103",
+      "ISIN": "US09251T1034",
+      "Name": "BlackRock Global Allocation Inv A",
+      "TradingSymbol": "MDLOX",
+      "PerformanceId": "0P00002QN3",
+      "BaseCurrency": "USD",
+      "Type": "FO",
+      "InceptionDate": "1994-10-21T00:00:00",
+      "SecurityReferenceTypes": [
+        "PortfolioHolding"
+      ]
+    },
+    {
+      "SecurityId": "FOUSA00C3O",
+      "CUSIP": "256219106",
+      "ISIN": "US2562191062",
+      "Name": "Dodge & Cox Stock I",
+      "TradingSymbol": "DODGX",
+      "PerformanceId": "0P00002PB8",
+      "BaseCurrency": "USD",
+      "Type": "FO",
+      "InceptionDate": "1965-01-04T00:00:00",
+      "SecurityReferenceTypes": [
+        "PortfolioHolding"
+      ]
+    },
+    {
+      "SecurityId": "XIUSA000OC",
+      "Name": "USTREAS T-Bill Auction Ave 3 Mon",
+      "BaseCurrency": "USD",
+      "Type": "XI",
+      "InceptionDate": "1941-02-28T00:00:00",
+      "SecurityReferenceTypes": [
+        "BenchmarkHolding"
+      ]
+    },
+    {
+      "SecurityId": "XIUSA04G92",
+      "Name": "S&P 500 TR USD",
+      "TradingSymbol": "SPXT",
+      "BaseCurrency": "USD",
+      "Type": "XI",
+      "InceptionDate": "1970-01-30T00:00:00",
+      "SecurityReferenceTypes": [
+        "BenchmarkHolding"
+      ]
+    },
+    {
+      "SecurityId": "XIUSA000PK",
+      "Name": "MSCI EAFE NR USD",
+      "BaseCurrency": "USD",
+      "Type": "XI",
+      "InceptionDate": "1986-03-31T00:00:00",
+      "SecurityReferenceTypes": [
+        "BenchmarkHolding"
+      ]
+    },
+    {
+      "SecurityId": "XIUSA000MC",
+      "Name": "Bloomberg US Agg Bond TR USD",
+      "BaseCurrency": "USD",
+      "Type": "XI",
+      "InceptionDate": "1986-01-03T00:00:00",
+      "SecurityReferenceTypes": [
+        "BenchmarkHolding"
+      ]
+    },
+    {
+      "SecurityId": "0P00002NW8",
+      "SecurityReferenceTypes": [
+        "PortfolioHolding",
+        "InvalidSecurity"
+      ],
+      "Weight": 10
+    }
+  ]
+}

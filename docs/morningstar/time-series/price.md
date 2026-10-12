@@ -1,3 +1,10 @@
+---
+description: >-
+  Fetch price time-series data under the account's market-data entitlement by
+  setting the Price series type on TimeSeriesConnector; when requesting
+  several securities, the first one determines the start date.
+---
+
 # Price
 
 Get price time series data for single or multiple securities.

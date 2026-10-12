@@ -1,3 +1,10 @@
+---
+description: >-
+  Review the public export server's license requirement, request headers, fair
+  usage rules, and privacy practices. Learn how the policy describes logging,
+  temporary PDF storage, and options for hosting your own server.
+---
+
 # Export server Terms of Use 
 These terms are about the export server running at [https://export.highcharts.com](https://export.highcharts.com). This server is used to export charts to images or PDF files. Note that a valid Highcharts License is required to do exports.
 

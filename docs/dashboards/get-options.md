@@ -1,3 +1,10 @@
+---
+description: >-
+  Export a dashboard's current options with getOptions(), save the JSON in
+  localStorage, and recreate a board from the saved configuration; function
+  and event values are not serialized.
+---
+
 # Export Dashboards to JSON
 
 **Dashboards** allows you to convert the current state of the dashboard's options into

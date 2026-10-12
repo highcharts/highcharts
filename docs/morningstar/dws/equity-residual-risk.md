@@ -1,3 +1,10 @@
+---
+description: >-
+  Load daily or monthly Alpha, Beta, and R-squared values for a security with
+  the InvestmentsConnector, including their non-dividend variants, and use
+  table columns to create a chart of the results.
+---
+
 # Equity Residual Risk and Return Sensitivity
 
 The **Equity Residual Risk and Return Sensitivity** view reports a stock's
