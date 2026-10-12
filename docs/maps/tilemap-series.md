@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose circle, diamond, hexagon, or square tiles to represent map areas,
+  then provide x, y, and value data for the color axis. The article covers
+  grid offsets, inversion, and point spacing.
+---
+
 Tilemaps
 ===
 

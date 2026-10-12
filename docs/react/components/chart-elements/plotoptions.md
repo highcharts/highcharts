@@ -1,3 +1,10 @@
+---
+description: >-
+  Set defaults that affect multiple series with PlotOptions, using the generic
+  series options or keys for specific series types such as line and column
+  within a chart.
+---
+
 # PlotOptions
 
 You can set default options that affect multiple series by using the `PlotOptions` component:
