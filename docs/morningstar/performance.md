@@ -1,3 +1,10 @@
+---
+description: >-
+  Define portfolios and benchmarks in the PerformanceConnector, choose request
+  settings, and retrieve calendar-year returns, trailing returns, risk
+  statistics, correlation matrices, or MPT statistics for charting.
+---
+
 # Performance
 
 The Morningstar **Performance** feature calculates how a portfolio performed

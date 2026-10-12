@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve growth time-series data for one or more securities and prepare it
+  for charting by setting the Growth series type on TimeSeriesConnector;
+  multi-security requests use the first security's start date.
+---
+
 # Growth
 
 This type yields growth time series data for single or multiple securities.

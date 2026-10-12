@@ -1,3 +1,10 @@
+---
+description: >-
+  Add labels and shapes to charts with the Annotations module. Learn how to
+  position them using pixel or axis coordinates, share options, and define
+  markers for annotation paths.
+---
+
 Annotations module
 ===
 

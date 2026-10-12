@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Represent local rows as an expandable hierarchy using parent IDs or paths,
+  configure the tree column and expansion state, aggregate parents, handle
+  toggle events, and combine with querying.
 ---
 
 # Tree view

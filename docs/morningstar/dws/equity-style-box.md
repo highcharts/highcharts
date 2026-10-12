@@ -1,3 +1,10 @@
+---
+description: >-
+  Load Morningstar's current equity style and size grid plus its historical
+  time series, set optional date bounds on the converter, and use the returned
+  table rows to render a heatmap.
+---
+
 # Equity Style Box
 
 The **Equity Style Box** view returns Morningstar's proprietary Style Box along

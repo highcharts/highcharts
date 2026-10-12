@@ -77,8 +77,6 @@ const MIMES = {
     xml: 'application/xml'
 };
 
-const PATH_ESCAPE = /\.\.?\/|\/\.|\/\//u;
-
 const PORT = 9005;
 
 const PRODUCT_META: Record<string, Record<string, string>> = [
@@ -399,26 +397,6 @@ function response404(response, p) {
     response.end('Ooops, the requested file is 404', 'utf-8');
 }
 
-/**
- * Removes path elements that could result in a folder escape.
- *
- * @param path
- * Path to sanitize.
- *
- * @returns
- * Sanitized path.
- */
-function sanitizePath(path: string): string {
-
-    path = (new URL(path, 'http://localhost')).pathname;
-
-    while (PATH_ESCAPE.test(path)) {
-        path = path.replace(PATH_ESCAPE, '');
-    }
-
-    return path;
-}
-
 /* *
  *
  *  Tasks
@@ -438,7 +416,7 @@ async function main() {
 
     HTTP
         .createServer(async (request, response) => {
-            let path = sanitizePath(request.url);
+            let path = FSLib.sanitizePath(request.url);
 
             if (path === '/' || path === '') {
                 response302(response, `/${Object.keys(PRODUCT_META)[0]}/`);
@@ -508,7 +486,7 @@ async function main() {
                 }
             }
         })
-        .listen(PORT);
+        .listen(PORT, '127.0.0.1');
 
     log.warn(
         'API documentation server running on ',

@@ -1,3 +1,10 @@
+---
+description: >-
+  Explore ways to distinguish chart data using monochrome palettes, contrast
+  themes, dash styles, and pattern fills. Learn why color alone is
+  insufficient and when added patterns can reduce readability.
+---
+
 Patterns and contrast
 ===
 

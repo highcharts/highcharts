@@ -1,3 +1,10 @@
+---
+description: >-
+  Customize chart tooltips with the Tooltip component, pass tooltip API
+  options as props, supply the format as child content, and map structured
+  child elements with data-hc-option.
+---
+
 # Tooltip
 
 You can customize the [chart tooltip](https://www.highcharts.com/docs/chart-concepts/tooltip) using the `Tooltip` component:

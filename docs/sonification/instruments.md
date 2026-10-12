@@ -1,3 +1,11 @@
+---
+description: >-
+  Choose among synthesized instrument presets for sustained, plucked,
+  percussion, and effect sounds, or define custom presets with a SynthPatch.
+  The article also shows using synthesizer classes directly to create
+  sounds.
+---
+
 Instruments
 ===
 

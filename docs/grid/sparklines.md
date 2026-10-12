@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Render small Highcharts charts inside Grid Pro cells, register Highcharts
+  when needed, customize sparkline types through chart options, and review the
+  defaults and performance considerations.
 ---
 
 # Sparklines
