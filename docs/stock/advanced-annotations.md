@@ -1,3 +1,11 @@
+---
+description: >-
+  Load the advanced annotations module, combine shapes and labels into chart
+  annotations, configure type-specific appearance and draggable control
+  points, and explore examples including Fibonacci, tunnels, pitchforks, and
+  time cycles.
+---
+
 Advanced Annotations module
 ===========================
 

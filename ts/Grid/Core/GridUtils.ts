@@ -15,6 +15,7 @@
  * */
 
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { AnyRecord } from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';
@@ -74,6 +75,35 @@ export interface MakeHTMLElementParameters {
  * A style object or callback returning one.
  */
 export type StyleValue<T> = CSSObject | ((this: T, target: T) => CSSObject);
+
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Form control attributes allowed on top of `AST.allowedAttributes`, which
+ * covers none of them - filtering through AST alone would drop every
+ * documented option. Anything in neither list is dropped, so untrusted user
+ * options cannot add inline event handlers. The ones listed are safe verbatim:
+ * none carries a URL, and values are set through `setAttribute`, never
+ * `innerHTML`. Worst case is a slow `pattern` regex.
+ */
+const allowedInputAttributes: string[] = [
+    'autofocus',
+    'checked',
+    'max',
+    'maxlength',
+    'min',
+    'minlength',
+    'multiple',
+    'pattern',
+    'placeholder',
+    'size',
+    'step'
+];
 
 
 /* *
@@ -213,6 +243,43 @@ export function setHTMLContent(
         formattedNodes.addToDOM(element);
     } else {
         element.innerText = content;
+    }
+}
+
+/**
+ * Applies attributes coming from the user options to an element, skipping the
+ * ones that are not allowed.
+ *
+ * @param element
+ * The element to apply the attributes to.
+ *
+ * @param attributes
+ * The attributes declared in the options.
+ */
+export function setUserAttributes(
+    element: HTMLElement,
+    attributes?: object
+): void {
+    if (!attributes) {
+        return;
+    }
+
+    const rest: AnyRecord = {};
+
+    for (const [key, value] of Object.entries(attributes)) {
+        // Attribute names are case-insensitive in HTML
+        if (allowedInputAttributes.indexOf(key.toLowerCase()) > -1) {
+            element.setAttribute(key, '' + value);
+        } else {
+            rest[key] = value;
+        }
+    }
+
+    // The remaining attributes are left to the core sanitizer, which
+    // reports the rejected ones and escapes the values it keeps.
+    const filtered = AST.filterUserAttributes(rest) as AnyRecord;
+    for (const key of Object.keys(filtered)) {
+        element.setAttribute(key, '' + filtered[key]);
     }
 }
 
@@ -547,6 +614,7 @@ export default {
     isHTML,
     sanitizeText,
     setHTMLContent,
+    setUserAttributes,
     createOptionsProxy,
     formatText,
     joinClassNames,

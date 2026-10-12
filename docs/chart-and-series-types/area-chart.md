@@ -1,3 +1,10 @@
+---
+description: >-
+  Learn how an area series fills the space between its line and the
+  threshold, which defaults to zero, and where to find its plot options and
+  a working chart example.
+---
+
 Area chart
 ==========
 

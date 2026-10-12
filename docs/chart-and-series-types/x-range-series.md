@@ -1,3 +1,10 @@
+---
+description: >-
+  Represent start and end positions along the x-axis, commonly as dates,
+  with the y value selecting a row. The article covers partial completion
+  and combining these ranges with other cartesian series.
+---
+
 X-range series
 ===
 
