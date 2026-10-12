@@ -26,6 +26,7 @@ const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import { isNumber, merge } from '../../../Shared/Utilities.js';
+import { interpolateAxisValue } from '../AnnotationUtilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.pitchfork = merge(
@@ -128,11 +129,15 @@ class Pitchfork extends InfinityLine {
                 isNumber(midPointOptions.x) &&
                 isNumber(midPointOptions.y)
             ) {
+                const yAxis = annotation.points[0].series.yAxis;
+
                 return {
                     x: (point.x + midPointOptions.x) / 2,
-                    y: (point.y + midPointOptions.y) / 2,
+                    y: interpolateAxisValue(
+                        point.y, midPointOptions.y, 0.5, yAxis
+                    ),
                     xAxis: midPointOptions.xAxis,
-                    yAxis: midPointOptions.yAxis
+                    yAxis
                 };
             }
 
@@ -181,13 +186,14 @@ class Pitchfork extends InfinityLine {
      * */
 
     public midPointOptions(): MockPointOptions {
-        const points = this.points;
+        const points = this.points,
+            yAxis = points[0].series.yAxis;
 
         return {
             x: ((points[1].x as any) + (points[2].x as any)) / 2,
-            y: ((points[1].y as any) + (points[2].y as any)) / 2,
+            y: interpolateAxisValue(points[1].y, points[2].y, 0.5, yAxis),
             xAxis: points[0].series.xAxis,
-            yAxis: points[0].series.yAxis
+            yAxis
         };
     }
 

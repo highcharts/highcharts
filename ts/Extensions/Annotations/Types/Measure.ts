@@ -37,6 +37,7 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
+import { interpolateAxisValue } from '../AnnotationUtilities.js';
 import NBU from '../NavigationBindingsUtilities.js';
 const { getAxisFromOptions } = NBU;
 import {
@@ -264,7 +265,12 @@ if (defaultOptions.annotations?.types) {
                     x, y;
 
                 if (selectType === 'x') {
-                    targetY = (ext.yAxisMax + ext.yAxisMin) / 2;
+                    targetY = interpolateAxisValue(
+                        ext.yAxisMin,
+                        ext.yAxisMax,
+                        0.5,
+                        yAxis
+                    );
 
                     // First control point
                     if (cpIndex === 0) {
@@ -273,8 +279,12 @@ if (defaultOptions.annotations?.types) {
                 }
 
                 if (selectType === 'y') {
-                    targetX = ext.xAxisMin +
-                        ((ext.xAxisMax - ext.xAxisMin) / 2);
+                    targetX = interpolateAxisValue(
+                        ext.xAxisMin,
+                        ext.xAxisMax,
+                        0.5,
+                        xAxis
+                    );
 
                     // First control point
                     if (cpIndex === 0) {
