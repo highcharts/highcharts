@@ -2210,11 +2210,7 @@ class Navigator {
             erase(this.chart.axes, this.yAxis);
         }
         // Destroy series
-        (this.series || []).forEach((s): void => {
-            if (s.destroy) {
-                s.destroy();
-            }
-        });
+        destroyObjectProperties(this.series || []);
 
         // Destroy properties
         [

@@ -57,6 +57,8 @@ const { getFakeMouseEvent } = HU;
  * @requires modules/accessibility
  * @class
  * @name Highcharts.AccessibilityComponent
+ *
+ * @internal
  */
 class AccessibilityComponent {
 
@@ -212,4 +214,5 @@ class AccessibilityComponent {
  *
  * */
 
+/** @internal */
 export default AccessibilityComponent;

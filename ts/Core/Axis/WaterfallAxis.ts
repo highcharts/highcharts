@@ -233,7 +233,6 @@ namespace WaterfallAxis {
                 stackTotalGroup = yAxis.stacking?.stackTotalGroup,
                 dummyStackItem = new StackItem(
                     yAxis,
-                    yAxis.options.stackLabels || {},
                     false,
                     0,
                     void 0

@@ -16,3 +16,8 @@ body {
     height: 400px;
     min-width: 600px;
 }
+
+#report {
+    font-family: monospace;
+    margin: 10px;
+}

@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare cylindrical and standard 3D columns, load the required modules,
+  enable 3D, and configure a cylinder series. The article also explains how
+  point width and depth affect the circular base.
+---
+
 3D cylinder
 ===
 

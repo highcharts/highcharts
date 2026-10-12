@@ -1,3 +1,10 @@
+---
+description: >-
+  Choose a Morningstar time-series type and securities, set dates or currency,
+  and load performance data for charts or Dashboards; the overview links to
+  return, price, growth, rating, dividend, and OHLCV guides.
+---
+
 # Time Series
 
 Time Series gives data on performance for securities. This data can for

@@ -72,24 +72,33 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
+    /** @internal */
     public description?: string;
 
+    /** @internal */
     public fromNode!: OrganizationPoint;
 
+    /** @internal */
     public image?: OrganizationSeriesNodeOptions['image'];
 
+    /** @internal */
     public linksFrom!: Array<OrganizationPoint>;
 
+    /** @internal */
     public linksTo!: Array<OrganizationPoint>;
 
+    /** @internal */
     public nodeHeight?: number;
 
     public options!: OrganizationPointOptions;
 
+    /** @internal */
     public series!: OrganizationSeries;
 
+    /** @internal */
     public title?: string;
 
+    /** @internal */
     public toNode!: OrganizationPoint;
 
     /* *

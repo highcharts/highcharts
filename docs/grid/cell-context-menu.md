@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure cell context menus for mouse, touch, and keyboard use, define
+  clickable items and nested submenus, add Grid Pro row pinning actions, and
+  localize built-in labels.
+---
+
 # Cell context menu
 
 Highcharts Grid supports context menus for table body cells. When enabled, Grid

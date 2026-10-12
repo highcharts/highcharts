@@ -37,6 +37,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 5. Verify docs/doclets/types:
 - New/changed options and public types should have doclets and type coverage.
 - Flag undocumented behavior changes.
+- For doclet wording and style, apply the `api-ref-tone` skill.
 
 6. Verify tests:
 - Require unit/regression tests.

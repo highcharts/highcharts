@@ -1,3 +1,10 @@
+---
+description: >-
+  Load Highcharts Stock as a standalone library or module, create a basic
+  chart with stockChart and series data, and pass an optional callback to
+  access the chart after it loads.
+---
+
 Getting started with Highcharts Stock
 ===
 

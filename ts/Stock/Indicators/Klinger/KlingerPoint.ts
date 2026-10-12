@@ -22,9 +22,10 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class KlingerPoint extends SMAPoint {
+    /** @internal */
     public series: KlingerIndicator;
+    /** @internal */
     public signal?: number;
 }
 
@@ -34,5 +35,4 @@ declare class KlingerPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default KlingerPoint;

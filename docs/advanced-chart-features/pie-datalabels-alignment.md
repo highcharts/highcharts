@@ -1,3 +1,10 @@
+---
+description: >-
+  Control the alignment of pie chart data labels and their connectors. Compare
+  built-in connector shapes, adjust bend positions, and define a custom
+  callback that returns an SVG connector path.
+---
+
 Pie dataLabels alignment
 ===
 
