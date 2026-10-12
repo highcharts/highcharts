@@ -20,10 +20,8 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
 import type CMOPoint from './CMOPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *

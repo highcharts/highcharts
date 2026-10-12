@@ -19,8 +19,8 @@ import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
 import type { TRIXOptions } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
 
+import TEMAIndicator from '../TEMA/TEMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { tema: TEMAIndicator } = SeriesRegistry.seriesTypes;
 import { correctFloat, merge } from '../../../Shared/Utilities.js';
 
 /* *

@@ -26,10 +26,8 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import HeikinAshiPoint from './HeikinAshiPoint.js';
 import HeikinAshiSeriesDefaults from './HeikinAshiSeriesDefaults.js';
+import CandlestickSeries from '../Candlestick/CandlestickSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    candlestick: CandlestickSeries
-} = SeriesRegistry.seriesTypes;
 import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *

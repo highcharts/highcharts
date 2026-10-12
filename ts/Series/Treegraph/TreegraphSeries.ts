@@ -26,17 +26,10 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
+import ColumnSeries from '../Column/ColumnSeries.js';
+import Series from '../../Core/Series/Series.js';
+import TreemapSeries from '../Treemap/TreemapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
-const {
-    series: {
-        prototype: seriesProto
-    },
-    seriesTypes: {
-        treemap: TreemapSeries,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
 import TreegraphNode from './TreegraphNode.js';
@@ -367,7 +360,7 @@ class TreegraphSeries extends TreemapSeries {
             rootNode;
 
         // Call prototype function
-        seriesProto.translate.call(series);
+        Series.prototype.translate.call(series);
 
         const tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
@@ -552,7 +545,7 @@ class TreegraphSeries extends TreemapSeries {
 
         }
 
-        seriesProto.drawDataLabels.call(this, points);
+        Series.prototype.drawDataLabels.call(this, points);
     }
 
     /**
@@ -596,7 +589,7 @@ class TreegraphSeries extends TreemapSeries {
             this.drawNodeLabels(this.points);
 
             // Render link labels.
-            seriesProto.drawDataLabels.call(this, this.links);
+            Series.prototype.drawDataLabels.call(this, this.links);
         }
     }
 
@@ -610,7 +603,7 @@ class TreegraphSeries extends TreemapSeries {
             this.links.length = 0;
         }
 
-        return seriesProto.destroy.apply(this, arguments);
+        return Series.prototype.destroy.apply(this, arguments);
     }
 
     /**
@@ -648,7 +641,7 @@ class TreegraphSeries extends TreemapSeries {
                 levelOptions.link?.lineWidth ??
                 series.options.link?.lineWidth
             ),
-            attribs = seriesProto.pointAttribs.call(series, point, state);
+            attribs = Series.prototype.pointAttribs.call(series, point, state);
 
         if (point) {
             if (point.isLink) {

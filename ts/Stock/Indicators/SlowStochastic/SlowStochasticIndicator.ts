@@ -23,11 +23,9 @@ import type {
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
 
+import SMAIndicator from '../SMA/SMAIndicator.js';
+import StochasticIndicator from '../Stochastic/StochasticIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    sma: SMAIndicator,
-    stochastic: StochasticIndicator
-} = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *

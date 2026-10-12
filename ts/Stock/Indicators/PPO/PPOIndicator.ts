@@ -23,10 +23,8 @@ import type {
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
 
+import EMAIndicator from '../EMA/EMAIndicator.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    ema: EMAIndicator
-} = SeriesRegistry.seriesTypes;
 import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 import { error } from '../../../Core/Utilities.js';
 
