@@ -322,12 +322,11 @@ jobs:
             const { title, body } = JSON.parse(readFileSync(
               'tmp/pr-visual-test-comment.json', 'utf8'
             ));
-            const results = JSON.parse(readFileSync('test/visual-test-results.json', 'utf8'));
             await createOrUpdateComment(
               github,
               context,
               title.replace('Visual test results', 'Playwright visual test results'),
-              `\nCompared **${Object.keys(results).length} samples**.\n\n${body}`
+              body
             );
 
       - name: Upload Playwright visual evidence

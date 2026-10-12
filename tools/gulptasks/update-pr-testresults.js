@@ -140,6 +140,7 @@ function createPRCommentBody(
             comparedCount ? 'Partial comparison' : 'No comparable samples'
         }`;
     }
+    commentTemplate += `\n\nCompared **${comparedCount}** samples.`;
     if (diffingSamples.length > 0) {
         commentTemplate += '\n' +
             `Found **${diffingSamples.length}** diffing sample(s). ${createMarkdownLink(
@@ -164,8 +165,7 @@ function createPRCommentBody(
                     .replace(/([\\`])/gu, '\\$1').slice(0, 200);
                 return `- \`${sample}\`: ${oneLineError}`;
             });
-        commentTemplate += `\n\nCompared **${comparedCount}** samples. ` +
-            `**${failures.length}** candidates rendered without a reference.\n\n` +
+        commentTemplate += `\n\n**${failures.length}** candidates rendered without a reference.\n\n` +
             'Reference failures (not compared)\n' +
             'Candidate renderings are in the GitHub Actions artifacts.\n' +
             failureList.join('\n');

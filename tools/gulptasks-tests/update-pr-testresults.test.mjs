@@ -228,6 +228,7 @@ for (const compared of [0, 1]) {
         assert.match(title, compared ? /Partial comparison/ : /No comparable samples/);
         assert.doesNotMatch(title, /No difference found/);
         assert.match(body, new RegExp(`Compared \\*\\*${compared}\\*\\* samples`));
+        assert.equal([...body.matchAll(/Compared /gu)].length, 1);
         assert.match(body, /\*\*1\*\* candidates rendered without a reference/);
         assert.match(body, /stock\/financial\/interactive-chart/);
         assert.match(body, /getRow is not a function/);
@@ -364,6 +365,8 @@ test('reports Karma artifacts without credentials or API requests', async () => 
         });
         const payload = JSON.parse(comment);
         assert.equal(requests.length, 0);
+        assert.match(payload.body, /Compared \*\*1\*\* samples/u);
+        assert.equal([...payload.body.matchAll(/Compared /gu)].length, 1);
         assert.match(payload.body, /Production Visual Review contains Playwright results/u);
         const linkDestinations = Array.from(
             payload.body.matchAll(/\[[^\]]*\]\(([^)]+)\)/gu),
