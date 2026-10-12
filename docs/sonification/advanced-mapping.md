@@ -1,3 +1,11 @@
+---
+description: >-
+  Map audio parameters through functions, linear or logarithmic scales,
+  inverted polarity, and selected data ranges. The article also covers note
+  names, scales, multiple pitches per point, and mapping playback time to
+  data.
+---
+
 Advanced Mapping
 ===
 

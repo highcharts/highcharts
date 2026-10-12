@@ -11,7 +11,11 @@ on:
       - 'package-lock.json'
       - 'tsconfig.json'
       - 'test/ts-node-unit-tests/**'
+      - 'test/visual-test-samples.js'
+      - 'tests/visual/**'
+      - 'tests/utils.ts'
       - 'tools/**/*'
+      - '.github/workflows/visual-compare-playwright.yml'
       - '.github/workflows/test-tooling.yml'
       - 'tests/internal/*'
   workflow_dispatch:
@@ -43,7 +47,5 @@ jobs:
       - name: Run test
         run: node --test "./tools/gulptasks-tests/*.mjs"
 
-      - name: Run benchmark regression tests
-        run: >-
-          node --import tsx --test
-          test/ts-node-unit-tests/tests/BenchmarkWorker.test.ts
+      - name: Run Node tooling tests
+        run: npm run test-node:tooling

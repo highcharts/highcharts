@@ -1,3 +1,10 @@
+---
+description: >-
+  Represent a hierarchy as nested circular levels, with each point linked to
+  a parent in a tree-shaped data set. Configure options by level and enable
+  traversal with breadcrumbs for navigation.
+---
+
 Sunburst
 ===
 

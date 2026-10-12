@@ -1,3 +1,10 @@
+---
+description: >-
+  Create Venn or Euler diagrams by defining sets and intersection areas with
+  sets, value, and optional names. The examples explain how intersections
+  control overlaps and how the two diagram types differ.
+---
+
 Venn series
 ===
 
