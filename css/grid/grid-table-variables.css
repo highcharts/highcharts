@@ -28,6 +28,9 @@
         border: var(--ig-table-border);
         background: var(--hcg-background);
         border-radius: var(--hcg-border-radius);
+
+        /* Corner cells sit inside the border, so a smaller radius stays on the table curve. */
+        --ig-inner-radius: max(0px, calc(var(--hcg-border-radius, 0px) - var(--hcg-border-width, 0px)));
     }
 
     .hcg-table thead th {
@@ -91,11 +94,11 @@
     }
 
     .hcg-table thead tr:first-of-type th:first-child {
-        border-top-left-radius: var(--hcg-border-radius);
+        border-top-left-radius: var(--ig-inner-radius);
     }
 
     .hcg-table thead tr:first-of-type th:last-child {
-        border-top-right-radius: var(--hcg-border-radius);
+        border-top-right-radius: var(--ig-inner-radius);
     }
 
     .hcg-table thead th:focus-visible {
@@ -130,16 +133,16 @@
 
     /* <tbody> */
     .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):first-child {
-        border-bottom-left-radius: var(--hcg-border-radius);
+        border-bottom-left-radius: var(--ig-inner-radius);
     }
 
     .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):last-child {
-        border-bottom-right-radius: var(--hcg-border-radius);
+        border-bottom-right-radius: var(--ig-inner-radius);
     }
 
     .hcg-table > tbody:last-of-type {
-        border-bottom-left-radius: var(--hcg-border-radius);
-        border-bottom-right-radius: var(--hcg-border-radius);
+        border-bottom-left-radius: var(--ig-inner-radius);
+        border-bottom-right-radius: var(--ig-inner-radius);
     }
 
     .hcg-table tbody tr {
