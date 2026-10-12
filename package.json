@@ -44,7 +44,7 @@
     "test:pw": "playwright test --project=setup-highcharts --project=highcharts",
     "test:pw:all": "playwright test",
     "test:pw:qunit": "playwright test --project=setup-highcharts --project=qunit --project=qunit-firefox",
-    "test:pw:visual": "playwright test --project=setup-highcharts --project=visual",
+    "test:pw:visual": "playwright test --project=setup-visual --project=visual",
     "test:pw:dashboards": "playwright test --project=setup-dashboards --project=dashboards",
     "test:pw:dashboards:all": "playwright test --project=setup-dashboards --project=dashboards --project=dashboards-firefox --project=dashboards-webkit",
     "test:pw:internal": "playwright test --project=setup-highcharts --project=setup-dashboards --project=internal",
