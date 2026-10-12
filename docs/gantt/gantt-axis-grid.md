@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure Gantt axis grids to display date intervals and task details,
+  control horizontal tick intervals and labels, and map task rows to vertical
+  table cells with point.y values.
+---
+
 Gantt axis grid
 ===
 

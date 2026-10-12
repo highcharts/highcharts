@@ -1,3 +1,10 @@
+---
+description: >-
+  Keep charts updated from a server using Data module polling or custom API
+  calls. Follow a fetch-based example that requests data repeatedly, adds
+  points, and removes older points from view.
+---
+
 Live data
 =========
 

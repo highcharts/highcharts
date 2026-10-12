@@ -1,3 +1,10 @@
+---
+description: >-
+  Attach an error-bar series to a parent series with linkedTo, then provide
+  low and high values for each observation. The guide also covers styling
+  the stem and whiskers independently.
+---
+
 Error bar series
 ================
 
