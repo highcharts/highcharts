@@ -316,3 +316,60 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test('Remove pie slice with exit animation (#25504)', assert => {
+    let clock;
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: {
+                        duration: 100
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    animation: false,
+                    data: [
+                        { id: 'a', y: 1 },
+                        { id: 'b', y: 3 },
+                        { id: 'c', y: 6 }
+                    ]
+                }]
+            }),
+            point = chart.series[0].points[2];
+
+        chart.series[0].setData([
+            { id: 'a', y: 1 },
+            { id: 'b', y: 3 }
+        ]);
+
+        setTimeout(() => {
+            assert.close(
+                point.graphic.opacity,
+                0.5,
+                0.3,
+                'The removed slice should be semi-opaque mid exit'
+            );
+
+            assert.close(
+                point.dataLabel.opacity,
+                0.5,
+                0.3,
+                'The removed data label should be semi-opaque mid exit'
+            );
+
+            assert.close(
+                point.dataLabel.connector.opacity,
+                0.5,
+                0.3,
+                'The removed connector should be semi-opaque mid exit'
+            );
+        }, 50);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});

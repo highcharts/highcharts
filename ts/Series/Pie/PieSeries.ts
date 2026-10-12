@@ -378,6 +378,13 @@ class PieSeries extends Series {
             }
         });
 
+        series.condemnedPoints.forEach((point): void => {
+            point.graphic?.animate({ opacity: 0 });
+            point.dataLabels?.forEach((dataLabel): void => {
+                dataLabel.animate({ opacity: 0 });
+                dataLabel.connector?.animate({ opacity: 0 });
+            });
+        });
     }
 
     /**
