@@ -28,12 +28,12 @@ const calculateChange = (series, lastPoint, range) => {
     const lastVal = lastPoint.y;
     const lastPos = lastPoint.x;
     const index = findPoint(
-        series.dataTable.getColumn('x'),
+        series.getColumn('x'),
         lastPos - range,
         true
     );
 
-    const currVal = series.dataTable.getColumn('y')[index];
+    const currVal = series.getColumn('y')[index];
     const increase = (100 * (lastVal - currVal) / currVal).toFixed(2);
     return increase;
 };
