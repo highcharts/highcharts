@@ -1,8 +1,9 @@
 ---
 description: >-
-  Use ESM imports for only the chart components, series, and modules you
-  render; keep product bundles out unless needed, configure production
-  bundling correctly, and inspect the result with an analyzer.
+  Use ESM imports for only the chart components, series, and modules you render,
+  import other modules after Highcharts React, load a stylesheet for styled
+  mode, configure production bundling correctly, and inspect the result with an
+  analyzer.
 ---
 
 # Bundling and tree shaking
@@ -21,16 +22,14 @@ import { Chart, Title } from "@highcharts/react";
 import { LineSeries } from "@highcharts/react/series/Line";
 ```
 
-Nine Highcharts modules have dedicated components: `Accessibility`, `Boost`, `BrokenAxis`, `Data`, `DraggablePoints`, `Drilldown`, `Exporting`, `SeriesLabel`, and `StockTools`. Import only the ones you use:
+These Highcharts modules have dedicated components: `Accessibility`, `Boost`, `BrokenAxis`, `Data`, `DraggablePoints`, `Drilldown`, `Exporting`, `SeriesLabel`, and `StockTools`. Import only the ones you use:
 
 ```jsx
 import { Accessibility } from "@highcharts/react/modules/Accessibility";
 import { Exporting } from "@highcharts/react/modules/Exporting";
 ```
 
-Each component bundles the Highcharts module it needs, so no additional bare import is required alongside it.
-
-Bundling follows components, so an option that needs a module has nothing to pull it in and you import it yourself. Series types are the exception: when a series `type` or `chart.type` names a type whose module is not loaded, `Chart` loads that module on demand. Setting [`chart.polar`](https://api.highcharts.com/highcharts/chart.polar) needs `highcharts-more`, which core Cartesian series components such as `LineSeries` and `ColumnSeries` do not bundle:
+Setting an option does not load the module it needs. Unless a component you render already imports that module, import it yourself. For example, [`chart.polar`](https://api.highcharts.com/highcharts/chart.polar) needs `highcharts-more`:
 
 ```tsx
 import "highcharts/es-modules/masters/highcharts-more.src.js";
@@ -46,7 +45,7 @@ import "highcharts/es-modules/masters/modules/pattern-fill.src.js";
 import "highcharts/es-modules/masters/themes/dark-unica.src.js";
 ```
 
-Place bare module imports after your `@highcharts/react` imports. Module files run setup code at evaluation time, and ES modules evaluate in source order, so importing them first can run that setup before Highcharts is ready.
+Place module imports after your `@highcharts/react` imports. A module runs its setup code when it is imported, and ES modules are evaluated in source order, so a module such as `annotations` or `pattern-fill` imported before `@highcharts/react` throws an error.
 
 ```tsx
 import { Chart } from "@highcharts/react";
@@ -64,36 +63,31 @@ import { Chart, Series, Highcharts } from "@highcharts/react";
 import { Exporting } from "@highcharts/react/modules/Exporting";
 ```
 
-You can define chart data either with the generic `Series` component or with a
-specific series component (for example `VennSeries`). If you use specific
-series components that require extra Highcharts modules, import only the ones
-you need to keep the bundle lean:
+You can define chart data either with the generic `Series` component or with a specific series component (for example `VennSeries`). Import only the specific series components you render:
 
 ```jsx
 import { VennSeries } from "@highcharts/react/series/Venn";
 ```
 
+For the modules that series types need and how each component loads them, see [Series types](https://www.highcharts.com/docs/react/components/series-types).
+
 ## Styled mode
 
-In styled mode Highcharts omits presentational SVG attributes and takes styling from CSS instead, so the Highcharts stylesheet has to be imported alongside enabling the mode:
+To use styled mode, set the `styledMode` prop and import a stylesheet, such as the default `highcharts/css/highcharts.css`. See [Style by CSS](https://www.highcharts.com/docs/chart-design-and-style/style-by-css) for the class names it styles.
 
 ```tsx
 import { Chart } from "@highcharts/react";
 import { LineSeries } from "@highcharts/react/series/Line";
 import "highcharts/css/highcharts.css";
 
-function StyledChart() {
+export default function StyledChart() {
   return (
     <Chart styledMode>
-      <LineSeries data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1]} />
     </Chart>
   );
 }
 ```
-
-The stylesheet is not scoped to styled mode. It sets properties such as `fill-opacity` and `stroke-width` on Highcharts class names, and CSS wins over the SVG presentation attributes that options produce, so it restyles every chart on the page once loaded. A chart that is not in styled mode loses any option that sets one of those properties: a `fillOpacity` of `0.3` renders at the stylesheet's `0.75`, and an x-axis `gridLineWidth` of `1` disappears.
-
-Where you import it does not change this. A stylesheet's rules apply document-wide once loaded, so the import location affects only when it loads, not what it affects. If every chart in your app uses styled mode, load it wherever suits your build.
 
 ## Bundler configuration matters
 
