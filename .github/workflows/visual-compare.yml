@@ -131,9 +131,31 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout candidate harness
+        uses: actions/checkout@v6
         with:
-          ref: master
+          fetch-depth: 0
+
+      - name: Preserve candidate harness and pin revisions
+        id: revisions
+        run: |
+          {
+            echo "candidate_sha=$(git rev-parse HEAD)"
+            echo "reference_sha=$(git rev-parse origin/master)"
+          } >> "$GITHUB_OUTPUT"
+          git archive HEAD \
+            .gulp.js gulpfile.ts package.json package-lock.json tsconfig.json \
+            test tools .github/scripts \
+            tests/package.json tests/package-lock.json \
+            > "$RUNNER_TEMP/karma-harness.tar"
+
+      - name: Checkout pinned master reference
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.revisions.outputs.reference_sha }}
+
+      - name: Restore candidate harness
+        run: tar -xf "$RUNNER_TEMP/karma-harness.tar" -C "$GITHUB_WORKSPACE"
 
       - name: Use Firefox 153.0.4
         id: reference-firefox
@@ -155,17 +177,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore reference package metadata
+        env:
+          REFERENCE_SHA: ${{ steps.revisions.outputs.reference_sha }}
+        run: |
+          git restore --source "$REFERENCE_SHA" -- \
+            package.json package-lock.json \
+            tests/package.json tests/package-lock.json \
+            tools/docs-preview/package.json
+
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-highcharts
+        run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-maps
+        run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-stock
+        run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-gantt
+        run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
         uses: actions/checkout@v6
         with:
+          ref: ${{ steps.revisions.outputs.candidate_sha }}
           clean: false
           fetch-depth: 0
 
@@ -202,6 +238,7 @@ jobs:
         run: node .github/scripts/runVisualCompare.js "Maps" "maps/*/*"
 
       - name: Compare Gantt visual tests
+        id: candidate-gantt
         run: node .github/scripts/runVisualCompare.js "Gantt" "gantt/*/*"
 
       - name: Generate visual test report
@@ -210,7 +247,7 @@ jobs:
           --pr ${{github.event.pull_request.number}} \
           --artifacts-url "$ARTIFACTS_URL" \
           --fail-silently
-        if: ${{ always() }}
+        if: ${{ always() && steps.candidate-gantt.outcome == 'success' }}
         env:
           ARTIFACTS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts
 
