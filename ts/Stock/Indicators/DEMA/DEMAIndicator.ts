@@ -39,7 +39,6 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The DEMA series Type
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dema
  *
@@ -71,6 +70,7 @@ class DEMAIndicator extends EMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/dema
      * @optionparent plotOptions.dema
+     * @internal
      */
     public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions);
 
@@ -80,6 +80,7 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public EMApercent!: number;
     public data!: Array<DEMAPoint>;
     public options!: DEMAOptions;
@@ -91,6 +92,7 @@ class DEMAIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getEMA(
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
@@ -111,6 +113,7 @@ class DEMAIndicator extends EMAIndicator {
         );
     }
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DEMAParamsOptions
@@ -215,7 +218,6 @@ class DEMAIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
@@ -226,7 +228,6 @@ interface DEMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
@@ -240,7 +241,6 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  *
  * */
 
-/** @internal */
 export default DEMAIndicator;
 
 /* *

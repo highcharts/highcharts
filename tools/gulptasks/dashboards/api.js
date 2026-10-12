@@ -14,7 +14,7 @@ const gulp = require('gulp');
 
 
 require('./api-docs.js');
-require('./api-server.js');
+require('../api-server.js');
 
 
 gulp.task('dashboards/api', gulp.series(

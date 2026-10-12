@@ -1,3 +1,10 @@
+---
+description: >-
+  Plot unconnected points without requiring sorted data, then add a
+  connecting line, jitter overlapping one-dimensional values, or cluster
+  points. The article also points to the separate 3D scatter series.
+---
+
 Scatter chart
 =============
 

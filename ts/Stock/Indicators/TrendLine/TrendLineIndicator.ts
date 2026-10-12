@@ -37,7 +37,6 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Trend line series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.trendline
  *
@@ -65,6 +64,7 @@ class TrendLineIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/trendline
      * @optionparent plotOptions.trendline
+     * @internal
      */
     public static defaultOptions: TrendLineOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -92,6 +92,7 @@ class TrendLineIndicator extends SMAIndicator {
     public data!: Array<TrendLinePoint>;
     public options!: TrendLineOptions;
     public points!: Array<TrendLinePoint>;
+    /** @internal */
     public updateAllPoints?: boolean = true;
 
     /* *
@@ -100,6 +101,7 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: TrendLineParamsOptions
@@ -169,7 +171,6 @@ class TrendLineIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface TrendLineIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -187,7 +188,6 @@ extend(TrendLineIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof TrendLineIndicator;
@@ -202,7 +202,6 @@ SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
  *
  * */
 
-/** @internal */
 export default TrendLineIndicator;
 
 /* *

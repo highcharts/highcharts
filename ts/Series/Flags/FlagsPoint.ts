@@ -38,7 +38,6 @@ const {
  *
  * */
 
-/** @internal */
 class FlagsPoint extends ColumnPoint {
 
     /* *
@@ -47,26 +46,36 @@ class FlagsPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public _y?: number;
 
+    /** @internal */
     public anchorX?: number;
 
     public options!: FlagsPointOptions;
 
+    /** @internal */
     public series!: FlagsSeries;
 
+    /** @internal */
     public fillColor?: ColorType;
 
+    /** @internal */
     public lineWidth?: number;
 
+    /** @internal */
     public raised?: boolean;
 
+    /** @internal */
     public stackIndex?: number;
 
+    /** @internal */
     public style?: CSSObject;
 
+    /** @internal */
     public ttBelow?: boolean = false;
 
+    /** @internal */
     public unbindMouseOver?: Function;
 
     /* *
@@ -101,5 +110,4 @@ class FlagsPoint extends ColumnPoint {
  *
  * */
 
-/** @internal */
 export default FlagsPoint;

@@ -39,7 +39,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The AD series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.ad
  *
@@ -66,6 +65,7 @@ class ADIndicator extends SMAIndicator {
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/accumulation-distribution
      * @optionparent plotOptions.ad
+     * @internal
      */
     public static defaultOptions: ADOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -90,6 +90,7 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     protected static populateAverage(
         xVal: Array<number>,
         yVal: Array<Array<number>>,
@@ -126,6 +127,7 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ADParamsOptions
@@ -197,7 +199,6 @@ class ADIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface ADIndicator {
     pointClass: typeof ADPoint;
     nameComponents: Array<string>;
@@ -214,7 +215,6 @@ extend(ADIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ad: typeof ADIndicator;
@@ -228,7 +228,6 @@ SeriesRegistry.registerSeriesType('ad', ADIndicator);
  *
  * */
 
-/** @internal */
 export default ADIndicator;
 
 /* *
