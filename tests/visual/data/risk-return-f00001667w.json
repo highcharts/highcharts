@@ -1,0 +1,87 @@
+{
+  "status": {
+    "detailedStatusMessage": "",
+    "statusCode": 200,
+    "statusDescription": ""
+  },
+  "trailingPerformance": [
+    {
+      "type": "MonthEnd",
+      "returnType": "TotalReturn",
+      "currencyId": "EUR",
+      "endDate": "2026-04-30",
+      "returns": [
+        {
+          "timePeriod": "M1",
+          "value": 13.02559
+        },
+        {
+          "timePeriod": "M2",
+          "value": 9.57093
+        },
+        {
+          "timePeriod": "M3",
+          "value": 6.61031
+        },
+        {
+          "timePeriod": "M6",
+          "value": 1.13031
+        },
+        {
+          "timePeriod": "M12",
+          "value": 29.28156
+        },
+        {
+          "timePeriod": "M36",
+          "value": 23.48479
+        },
+        {
+          "timePeriod": "M60",
+          "value": 13.44222
+        }
+      ]
+    }
+  ],
+  "riskStatistics": {
+    "type": "MonthEnd",
+    "currencyId": "EUR",
+    "endDate": "2026-04-30",
+    "standardDeviation": [
+      {
+        "value": 0,
+        "timePeriod": "M1",
+        "frequency": "M"
+      },
+      {
+        "value": 0,
+        "timePeriod": "M2",
+        "frequency": "M"
+      },
+      {
+        "value": 0,
+        "timePeriod": "M3",
+        "frequency": "M"
+      },
+      {
+        "value": 21.80682,
+        "timePeriod": "M6",
+        "frequency": "M"
+      },
+      {
+        "value": 19.00053,
+        "timePeriod": "M12",
+        "frequency": "M"
+      },
+      {
+        "value": 17.50497,
+        "timePeriod": "M36",
+        "frequency": "M"
+      },
+      {
+        "value": 19.724,
+        "timePeriod": "M60",
+        "frequency": "M"
+      }
+    ]
+  }
+}
