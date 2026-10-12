@@ -1,3 +1,10 @@
+---
+description: >-
+  Draw and animate SVG shapes and text, either independently or on a chart.
+  Use render events and chart coordinates to keep custom graphics positioned
+  correctly when the chart changes size.
+---
+
 How to use the SVG Renderer
 ===
 

@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Introduction"
+description: >-
+  Create a first Grid Lite table from column data, load the required
+  JavaScript and CSS, attach it to a page container, and continue to the
+  installation or configuration guides.
 ---
 
 # Introduction to Highcharts Grid

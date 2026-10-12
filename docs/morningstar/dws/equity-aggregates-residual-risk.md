@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure the InvestmentsConnector to retrieve aggregate Alpha and Beta
+  statistics, non-dividend variants, and company counts grouped by industry
+  classification, then read selected values from its data table for charting.
+---
+
 # Equity Aggregates Residual Risk and Return Sensitivity
 
 The **Equity Aggregates Residual Risk and Return Sensitivity** view supplies a
