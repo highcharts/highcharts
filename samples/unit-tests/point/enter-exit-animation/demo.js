@@ -330,7 +330,6 @@ QUnit.test('Remove pie slice with exit animation (#25504)', assert => {
                 },
                 series: [{
                     type: 'pie',
-                    animation: false,
                     data: [
                         { id: 'a', y: 1 },
                         { id: 'b', y: 3 },
