@@ -40,8 +40,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/tema
+ * @requires     indicators/indicators
+ * @requires     indicators/tema
  * @interface Highcharts.TEMAOptions
  */
 export interface TEMAOptions extends EMAOptions {

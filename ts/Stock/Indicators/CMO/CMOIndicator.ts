@@ -59,8 +59,8 @@ class CMOIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since 9.1.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmo
+     * @requires     indicators/indicators
+     * @requires     indicators/cmo
      * @optionparent plotOptions.cmo
      * @internal
      */
@@ -230,8 +230,8 @@ export default CMOIndicator;
  * @extends   series,plotOptions.cmo
  * @since 9.1.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cmo
+ * @requires  indicators/indicators
+ * @requires  indicators/cmo
  * @apioption series.cmo
  */
 
