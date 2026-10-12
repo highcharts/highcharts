@@ -136,7 +136,6 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
             '{ucfirst point.key}</span><br/>{/ne}',
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
             '{series.name}:<br/>' +
-            '\u00A0\u00A0' +
             'x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
     }
 
