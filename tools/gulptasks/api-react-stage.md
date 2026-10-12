@@ -94,6 +94,11 @@ report destination can be written before any legacy or React upload. If both
 publication and report writing fail, the upload error retains the report error
 as `reportError`.
 
+Progress is printed when each React phase starts and finishes, and every five
+seconds while it runs, including completed/total files, uploaded/reused counts,
+and elapsed time. Shell rollback labels the immutable phase as verification.
+The final message includes the publication report path.
+
 React files are uploaded as their inventoried bytes with the artifact's content
 type and cache policy. Immutable keys use conditional writes; an existing key
 is reused only when a remote HEAD check matches its size, SHA-256 metadata,

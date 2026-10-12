@@ -340,6 +340,7 @@ async function runApiUpload(args, dependencies = {}) {
     let stagedReactArtifact;
 
     if (reactArtifactInput) {
+        log.message('Verifying React artifact...');
         const verifiedArtifact = await reactStatic.verifyArtifact(
             reactArtifactInput.directory,
             {
@@ -348,11 +349,13 @@ async function runApiUpload(args, dependencies = {}) {
                 expectedReactVersion: reactArtifactInput.expectedReactVersion
             }
         );
+        log.message('Staging React files...');
         stagedReactArtifact = await reactStatic.stageArtifact(
             verifiedArtifact,
             sourceRoot,
             { addNavigation: !reactArtifactInput.reactOnly }
         );
+        log.message('React artifact staged.');
     }
 
     if (

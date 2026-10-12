@@ -410,6 +410,7 @@ async function preparePublicationReport(artifact, destination) {
  */
 async function publishArtifact(artifact, session, options = {}) {
     const S3 = require('./uploadS3');
+    const log = options.log || require('../../libs/log');
     const reportPath = await preparePublicationReport(artifact, options.reportPath);
     const reportDirectory = Path.dirname(reportPath);
     const started = Date.now();
@@ -434,54 +435,71 @@ async function publishArtifact(artifact, session, options = {}) {
         phases: [],
         objects: artifact.records
     };
+    function showProgress(phase, action) {
+        log.message(
+            `${session.dryrun ? 'Dry-run: ' : ''}${action} React ${phase.kind}: ` +
+            `${phase.completed}/${phase.files} files; ` +
+            `${report.completedUploads} uploaded, ${report.reusedObjects} reused; ` +
+            `${Math.round((Date.now() - started) / 1000)}s elapsed.`
+        );
+    }
     try {
         // Preflight staged bytes too, before the first object is sent.
+        log.message(`React publication: checking ${artifact.records.length} staged files.`);
         await inBatches(artifact.records, record => readRecord(artifact.root, record));
         for (const [kind, records] of [['immutable', immutable], ['shells', shells]]) {
             const phase = { kind, files: records.length, completed: 0 };
             report.phases.push(phase);
-            await inBatches(records, async record => {
-                const content = await readRecord(artifact.root, record);
-                if (session.dryrun) {
-                    const destination = await dryrunPath(session, record);
-                    if (kind === 'immutable') {
-                        const existing = await FS.readFile(destination).catch(error => {
-                            if (error.code !== 'ENOENT') {
+            const action = options.shellsOnly && kind === 'immutable' ? 'Verifying' : 'Uploading';
+            showProgress(phase, action);
+            const progressTimer = setInterval(() => showProgress(phase, action), 5000);
+            try {
+                await inBatches(records, async record => {
+                    const content = await readRecord(artifact.root, record);
+                    if (session.dryrun) {
+                        const destination = await dryrunPath(session, record);
+                        if (kind === 'immutable') {
+                            const existing = await FS.readFile(destination).catch(error => {
+                                if (error.code !== 'ENOENT') {
+                                    throw error;
+                                }
+                            });
+                            if ((options.shellsOnly && !existing) || (existing && sha256(existing) !== record.sha256)) {
+                                throw new Error(`Immutable dry-run key missing or conflicting: ${record.path}`);
+                            }
+                        }
+                        if (!(options.shellsOnly && kind === 'immutable')) {
+                            await FS.writeFile(destination, content);
+                            report.completedUploads++;
+                        }
+                    } else if (options.shellsOnly && kind === 'immutable') {
+                        await verifyRemote(session, record, artifact.manifest.inventory.sha256);
+                    } else {
+                        try {
+                            await S3.putS3Object(record.path, content, {
+                                ContentType: record.contentType,
+                                CacheControl: record.cacheControl,
+                                Metadata: {
+                                    sha256: record.sha256,
+                                    inventorysha256: artifact.manifest.inventory.sha256
+                                },
+                                ...(kind === 'immutable' ? { IfNoneMatch: '*' } : {})
+                            }, session);
+                            report.completedUploads++;
+                        } catch (error) {
+                            if (kind !== 'immutable' || error.$metadata?.httpStatusCode !== 412) {
                                 throw error;
                             }
-                        });
-                        if ((options.shellsOnly && !existing) || (existing && sha256(existing) !== record.sha256)) {
-                            throw new Error(`Immutable dry-run key missing or conflicting: ${record.path}`);
+                            await verifyRemote(session, record, artifact.manifest.inventory.sha256);
+                            report.reusedObjects++;
                         }
                     }
-                    if (!(options.shellsOnly && kind === 'immutable')) {
-                        await FS.writeFile(destination, content);
-                        report.completedUploads++;
-                    }
-                } else if (options.shellsOnly && kind === 'immutable') {
-                    await verifyRemote(session, record, artifact.manifest.inventory.sha256);
-                } else {
-                    try {
-                        await S3.putS3Object(record.path, content, {
-                            ContentType: record.contentType,
-                            CacheControl: record.cacheControl,
-                            Metadata: {
-                                sha256: record.sha256,
-                                inventorysha256: artifact.manifest.inventory.sha256
-                            },
-                            ...(kind === 'immutable' ? { IfNoneMatch: '*' } : {})
-                        }, session);
-                        report.completedUploads++;
-                    } catch (error) {
-                        if (kind !== 'immutable' || error.$metadata?.httpStatusCode !== 412) {
-                            throw error;
-                        }
-                        await verifyRemote(session, record, artifact.manifest.inventory.sha256);
-                        report.reusedObjects++;
-                    }
-                }
-                phase.completed++;
-            });
+                    phase.completed++;
+                });
+            } finally {
+                clearInterval(progressTimer);
+                showProgress(phase, action);
+            }
         }
         report.complete = true;
     } catch (error) {
@@ -501,6 +519,7 @@ async function publishArtifact(artifact, session, options = {}) {
     if (publicationError) {
         throw publicationError;
     }
+    log.message(`React publication complete. Report: ${reportPath}`);
     return report;
 }
 

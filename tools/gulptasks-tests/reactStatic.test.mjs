@@ -396,6 +396,26 @@ describe('static React artifact consumer', async () => {
         }
     });
 
+    await it('reports phase starts and successful file counts during publication', async () => {
+        const fixture = await makeFixture();
+        const artifact = await stage(fixture);
+        const messages = [];
+        const session = remoteSession(fixture.bucket, {
+            putObject() {
+                assert.ok(messages.some(message => message.includes('Uploading React immutable: 0/')));
+            }
+        });
+        await ReactStatic.publishArtifact(artifact, session, {
+            reportPath: fixture.reportPath,
+            log: { message(text) { messages.push(text); } }
+        });
+        const immutableCount = fixture.records.length - PRODUCTS.length;
+        assert.ok(messages.some(message => message.includes(`immutable: ${immutableCount}/${immutableCount} files`)));
+        assert.ok(messages.some(message => message.includes('shells: 0/4 files')));
+        assert.ok(messages.some(message => message.includes(`shells: 4/4 files; ${fixture.records.length} uploaded, 0 reused`)));
+        assert.ok(messages.at(-1).includes('React publication complete. Report:'));
+    });
+
     await it('publishes raw bytes with inventory metadata and uploads shells after immutable files', async () => {
         const fixture = await makeFixture();
         const artifact = await stage(fixture);
