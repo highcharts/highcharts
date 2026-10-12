@@ -86,8 +86,8 @@ class MACDIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/macd
+     * @requires     indicators/indicators
+     * @requires     indicators/macd
      * @optionparent plotOptions.macd
      * @internal
      */
@@ -586,8 +586,8 @@ export default MACDIndicator;
  * @extends   series,plotOptions.macd
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/macd
+ * @requires  indicators/indicators
+ * @requires  indicators/macd
  * @apioption series.macd
  */
 
