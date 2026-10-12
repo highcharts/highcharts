@@ -58,7 +58,7 @@ export type VectorRotationOriginValue = ('start'|'center'|'end');
  *            dataGrouping, linecap, shadow, stacking, step, jitter,
  *            boostBlending
  *
- * @excluding dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding boostThreshold, boostBlending
  *
  * @product highcharts highstock
  *

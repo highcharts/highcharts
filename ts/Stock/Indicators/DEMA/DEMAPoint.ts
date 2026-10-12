@@ -22,8 +22,8 @@ import type EMAPoint from '../EMA/EMAPoint';
  *
  * */
 
-/** @internal */
 declare class DEMAPoint extends EMAPoint {
+    /** @internal */
     public series: DEMAIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class DEMAPoint extends EMAPoint {
  *
  * */
 
-/** @internal */
 export default DEMAPoint;

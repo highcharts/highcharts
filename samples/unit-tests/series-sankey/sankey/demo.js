@@ -561,10 +561,8 @@ QUnit.test('Sankey and inactive state', function (assert) {
 QUnit.test('Sankey and circular data', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
-            width: 489
-        },
-        title: {
-            text: 'Highcharts Sankey Diagram'
+            width: 489,
+            height: 400
         },
         series: [
             {
@@ -589,26 +587,326 @@ QUnit.test('Sankey and circular data', function (assert) {
         ['b', 'c', 5]
     ]);
 
-    const numberOfCurves = chart.series[0].points[3].graphic
-        .attr('d')
-        .split(' ')
-        .filter(item => item === 'C').length;
+    assert.notOk(
+        chart.series[0].points[3].isCircular,
+        'Forward links should not be marked circular (#24079)'
+    );
     assert.strictEqual(
-        numberOfCurves,
+        chart.series[0].points[3].graphic
+            .attr('d')
+            .split(' ')
+            .filter(item => item === 'C').length,
         2,
         'The link should be a straight forward link (#24079)'
     );
 
-    chart.series[0].setData([
-        ['a', 'a', 1]
-    ]);
-    chart.series[0].redraw();
+    const series = chart.series[0];
+    series.setData([['a', 'a', 1], ['a', 'b', 2]]);
+    const selfLink = series.points[0];
 
-    const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    assert.strictEqual(
+        selfLink.isCircular, true,
+        'A self link should be marked circular, which is what keeps its node ' +
+        'from becoming its own predecessor and drifting a column on every ' +
+        'redraw (#8218, #16080)'
+    );
+    assert.strictEqual(
+        selfLink.wrapLane, undefined,
+        'A self link should lap its own node instead of taking a wrap lane ' +
+        '(#8218)'
+    );
     assert.deepEqual(
-        [shapeArgs.x, shapeArgs.y],
+        [series.nodes[0].level, series.nodes[1].level], [0, 1],
+        'Self links should not block root detection and levels (#8218)'
+    );
+
+    series.setData([['a', 'b', 5]]);
+    series.setData([['a', 'a', 5]]);
+
+    assert.ok(
+        series.points[0].shapeArgs.d.length > 0,
+        'A link updated into a self-link should render as a loop (#8218)'
+    );
+
+    series.setData([['a', 'b', 1], ['b', 'c', 1]]);
+    assert.strictEqual(
+        series.firstColCircShift, 0,
+        'Circular spacing should reset for acyclic data (#8218)'
+    );
+
+    series.setData([['a', 'b', 3], ['b', 'a', 1]]);
+    assert.deepEqual(
+        [series.points[0].isCircular, series.points[1].isCircular],
+        [false, true],
+        'Only the return (back) edge should be marked circular'
+    );
+    assert.strictEqual(
+        typeof series.points[1].wrapLane, 'number',
+        'A back edge should trigger the circular layout'
+    );
+
+    const backEdge = series.points[1];
+    assert.ok(
+        backEdge.graphic.element.isPointInFill(new DOMPoint(
+            backEdge.dlBox.x,
+            backEdge.dlBox.y + backEdge.dlBox.height / 2
+        )),
+        'A back edge should anchor its label on the band it draws (#8218)'
+    );
+
+    series.setData([
+        ['a', 'b', 20], ['b', 'c', 15], ['b', 'a', 5],
+        ['c', 'd', 5], ['c', 'b', 5], ['d', 'a', 1], ['d', 'b', 1]
+    ]);
+    const backEdges = series.points.filter(
+        point => point.isCircular && point.fromNode !== point.toNode
+    );
+    const lanes = backEdges.map(point => [
+            Math.min(point.dlBox.y, point.dlBox.y + point.dlBox.height),
+            Math.max(point.dlBox.y, point.dlBox.y + point.dlBox.height)
+        ].map(value => Math.round(value))),
+        sharedLanes = [];
+
+    lanes.forEach((lane, i) => {
+        lanes.slice(i + 1).forEach(other => {
+            if (Math.min(lane[1], other[1]) - Math.max(lane[0], other[0]) > 0) {
+                sharedLanes.push([lane, other]);
+            }
+        });
+    });
+    assert.deepEqual(
+        sharedLanes,
+        [],
+        'Back edges should not share a wrap lane (#8218)'
+    );
+
+    assert.deepEqual(
+        series.nodes
+            .find(node => node.id === 'b').linksFrom
+            .map(link => link.toNode.id),
+        ['a', 'c'],
+        'A link bound for a lane should attach on the lane side of the node, ' +
+        'so its band does not cross the one it sits on (#8218)'
+    );
+
+    series.setData([['a', 'a', 5], ['a', 'b', 5], ['b', 'a', 5]]);
+    const aNode = series.nodes.find(node => node.id === 'a'),
+        linkIds = links => links.map(
+            link => link.toNode.id + (link.isCircular ? '*' : '')
+        );
+
+    assert.deepEqual(
+        linkIds(aNode.linksFrom),
+        ['a*', 'b'],
+        'A self-link should sort first in a node band (#8218)'
+    );
+    assert.strictEqual(
+        aNode.linksTo[0].fromNode.id,
+        'a',
+        'A self-link should sort first on both sides of its node (#8218)'
+    );
+
+    series.update({
+        data: [['A', 'B', 1], ['C', 'D', 9], ['E', 'F', 9]],
+        nodes: [
+            { id: 'A', column: 2 }, { id: 'B', column: 1 },
+            { id: 'C', column: 0 }, { id: 'D', column: 1 },
+            { id: 'E', column: 0 }, { id: 'F', column: 2 }
+        ]
+    });
+    assert.notOk(
+        chart.series[0].points[0].isCircular,
+        'Explicit-column backward data should not be marked circular (#8218)'
+    );
+
+    assert.strictEqual(
+        typeof series.points[0].wrapLane,
+        'number',
+        'A backward link outside a cycle should get a wrap lane (#8218)'
+    );
+
+    const bandExtent = point => {
+        const flowAxis = [],
+            columnAxis = [];
+
+        for (const segment of point.shapeArgs.d) {
+            if (segment[0] === 'A') {
+                columnAxis.push(segment[6]);
+                flowAxis.push(segment[7]);
+            } else if (segment[0] !== 'Z') {
+                columnAxis.push(segment[1]);
+                flowAxis.push(segment[2]);
+            }
+        }
+
+        return {
+            flowSpan: Math.max(...flowAxis) - Math.min(...flowAxis),
+            columnMin: Math.min(...columnAxis),
+            columnMax: Math.max(...columnAxis)
+        };
+    };
+
+    chart.update({ chart: { inverted: true } });
+    series.update({
+        data: [['a', 'b', 20], ['b', 'c', 15], ['b', 'a', 5]],
+        nodes: []
+    });
+
+    assert.ok(
+        bandExtent(series.points.find(point => point.isCircular)).flowSpan <
+            chart.plotSizeY / 2,
+        'An inverted back edge should reach its lane without crossing the ' +
+        'flow axis (#8218)'
+    );
+
+    chart.update({ chart: { inverted: false, width: 400 } });
+    series.update({
+        curveFactor: 1.6,
+        nodeWidth: 60,
+        data: [['a', 'b', 5], ['b', 'a', 5]]
+    });
+
+    const capped = bandExtent(series.points.find(point => point.isCircular));
+
+    assert.deepEqual(
+        [
+            Math.round(Math.min(0, capped.columnMin)),
+            Math.round(Math.max(0, capped.columnMax - chart.plotSizeX))
+        ],
         [0, 0],
-        '#16080: Node should still be in top left corner after redraw'
+        'A column axis too narrow for the reservation past the edge columns ' +
+        'should cap the turn and keep the band inside the plot (#8218)'
+    );
+
+    chart.update({ chart: { width: 600, height: 400 } });
+
+    const laneBand = point => [
+            point.dlBox.y, point.dlBox.y + point.dlBox.height
+        ],
+        nodeBands = () => series.nodes.map(node => [
+            node.shapeArgs.y, node.shapeArgs.y + node.shapeArgs.height
+        ]),
+        overlaps = (a, b) => Math.min(a[1], b[1]) - Math.max(a[0], b[0]) > 1;
+
+    ['top', 'bottom'].forEach(nodeAlignment => {
+        series.update({
+            nodeAlignment,
+            curveFactor: 0.33,
+            nodeWidth: 20,
+            data: [['a', 'b', 5], ['b', 'a', 3]]
+        });
+
+        const lane = laneBand(series.points[1]);
+
+        assert.deepEqual(
+            nodeBands().filter(band => overlaps(band, lane)),
+            [],
+            'A wrap lane should clear the node bands with nodeAlignment ' +
+            nodeAlignment + ' (#8218)'
+        );
+    });
+
+    [100, '40%'].forEach(nodeWidth => {
+        series.update({
+            nodeAlignment: 'center',
+            nodeWidth,
+            data: [['a', 'a', 5], ['a', 'b', 5]]
+        });
+
+        assert.deepEqual(
+            series.nodes.filter(node => (
+                node.shapeArgs.y < -2 ||
+                node.shapeArgs.y + node.shapeArgs.height > chart.plotSizeY + 2
+            )).map(node => node.id),
+            [],
+            'A self-link lap should come off its column rather than push a ' +
+            'node out of the plot, give or take a rounded subpixel, with ' +
+            'nodeWidth ' + nodeWidth + ' (#8218)'
+        );
+        assert.ok(
+            series.translationFactor > 0,
+            'A self-link lap should leave its column a scale to draw on ' +
+            'with nodeWidth ' + nodeWidth + ' (#8218)'
+        );
+    });
+
+    series.update({
+        nodeWidth: 40,
+        data: [
+            ['a', 'b', 5], ['b', 'c', 5], ['c', 'c', 5],
+            ['c', 'd', 5], ['d', 'e', 5]
+        ]
+    });
+
+    const loop = bandExtent(
+        series.points.find(point => point.fromNode === point.toNode)
+    );
+
+    assert.deepEqual(
+        series.nodes.filter(node => (
+            node.id !== 'c' &&
+            loop.columnMax > node.shapeArgs.x &&
+            loop.columnMin < node.shapeArgs.x + node.shapeArgs.width
+        )).map(node => node.id),
+        [],
+        'A self-loop should not reach into the neighbouring columns (#8218)'
+    );
+
+    chart.update({ chart: { inverted: true, width: 860, height: 420 } });
+    series.update({
+        nodeWidth: 100,
+        data: [['a', 'a', 5], ['a', 'b', 5]]
+    });
+
+    const hole = () => 2 * Math.min(
+        ...series.points
+            .find(point => point.fromNode === point.toNode)
+            .shapeArgs.d
+            .filter(segment => segment[0] === 'A')
+            .map(segment => segment[1])
+    );
+
+    assert.ok(
+        hole() >= series.nodeWidth,
+        'An inverted chart takes its flow axis from the chart width, and a ' +
+        'wide one should not thicken the bands until the loop closes over ' +
+        'its own hole (#8218)'
+    );
+
+    chart.update({ chart: { inverted: false, width: 320, height: 400 } });
+    series.update({
+        nodeWidth: 20,
+        data: [
+            ['a', 'b', 5], ['b', 'c', 10], ['b', 'a', 5],
+            ['c', 'd', 5], ['c', 'b', 5], ['d', 'd', 5]
+        ]
+    });
+
+    assert.ok(
+        hole() >= series.nodeWidth,
+        'A self-loop should keep its hole at 320px, where the turns of the ' +
+        'wrapping bands come off the same column axis (#8218)'
+    );
+
+    chart.update({ chart: { height: 80 } });
+    series.update({ data: [['a', 'a', 5], ['a', 'b', 5]] });
+
+    assert.ok(
+        series.flowHeight >= 0 && series.translationFactor >= 0,
+        'The circular reserve should not claim a short flow axis whole and ' +
+        'invert the extent and the scale (#8218)'
+    );
+
+    chart.update({ chart: { height: 400 } });
+    series.update({
+        data: [['a', 'b', 5], ['b', 'a', 3], { id: 'orphan', weight: 1 }]
+    });
+
+    assert.strictEqual(
+        series.points.filter(point => point.isCircular).length,
+        1,
+        'A link missing an end should not read as a self-link and break the ' +
+        'circular layout (#8218)'
     );
 });
 

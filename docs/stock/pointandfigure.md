@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure Point and Figure data from x and close values, adjust boxSize and
+  reversalAmount to control plotted price changes, and understand how X and O
+  columns represent directional moves.
+---
+
 Point and Figure chart
 ================
 

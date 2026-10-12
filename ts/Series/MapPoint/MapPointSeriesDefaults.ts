@@ -85,7 +85,6 @@ export default MapPointSeriesDefaults;
  *
  *
  * @extends   series,plotOptions.mappoint
- * @excluding dataParser, dataURL
  * @product   highmaps
  * @apioption series.mappoint
  */

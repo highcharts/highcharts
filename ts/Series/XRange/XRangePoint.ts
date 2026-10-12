@@ -107,7 +107,9 @@ class XRangePoint extends ColumnPoint {
      * */
 
     public options!: XRangePointOptions;
+    /** @internal */
     public series!: XRangeSeries;
+    /** @internal */
     public dlBox?: BBoxObjectWithCenter;
 
     /* *

@@ -80,15 +80,15 @@ interface FakeAxis { ...props... }
 Interface without the tags.
 ```ts
 interface FakeAxis extends Axis {
-   ...props...
+    ...props...
 
-   /* *
-    *
-    *  Excluded
-    *
-    * */
+    /* *
+     *
+     *  Excluded
+     *
+     * */
 
-   linkedTo?: undefined;
-   maxZoom?: undefined;
+    linkedTo?: undefined;
+    maxZoom?: undefined;
 }
 ```

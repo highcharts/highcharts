@@ -1,3 +1,10 @@
+---
+description: >-
+  Draw routes or flows between map locations by combining a base map,
+  mappoint nodes, and a flowmap series. The examples show links by point ID
+  or longitude and latitude coordinates.
+---
+
 Flow map
 ===============
 

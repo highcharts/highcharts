@@ -2,6 +2,11 @@ Highcharts.chart('container', {
     title: {
         text: 'Demo of <em>xAxis.plotLines.zIndex</em>'
     },
+    subtitle: {
+        text: `<em>zIndex: 0</em> → behind the grid lines<br>
+            <em>zIndex: 4</em> → in front of the line graph<br>
+            <em>zIndex: 9</em> → in front of the tooltip`
+    },
     xAxis: {
         plotLines: [{
             color: '#44ee44',

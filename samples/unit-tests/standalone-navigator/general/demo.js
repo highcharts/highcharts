@@ -150,7 +150,7 @@ QUnit.test(
         });
 
         const navigator = Highcharts.navigator('nav-ypan', {
-            chart: {
+            chartOptions: {
                 chart: {
                     inverted: true,
                     height: 400,

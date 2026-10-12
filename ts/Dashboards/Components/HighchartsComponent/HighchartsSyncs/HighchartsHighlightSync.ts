@@ -426,7 +426,8 @@ const syncPair: SyncPair = {
             }
 
             for (let i = 0, iEnd = connectorHandlers.length; i < iEnd; ++i) {
-                const table = connectorHandlers[i]?.connector?.getTable();
+                const connectorId = connectorHandlers[i]?.options.id;
+                const table = this.getDataTable(connectorId);
                 if (!table) {
                     continue;
                 }
