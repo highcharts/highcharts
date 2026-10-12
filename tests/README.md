@@ -799,9 +799,11 @@ responses.
 Dashboard capture waits for pending XHR requests and for every chart and Grid
 component to finish its initial render. It embeds a screenshot of the complete
 dashboard in the SVG artifact, covering HTML grids as well as charts. Sample
-cleanup destroys the dashboard and its components before restoring chart state,
-and cancels sample timeouts and animation frames. The sample date stays fixed
-while native timers continue to run.
+cleanup removes sample scripts and styles, including styled-mode CSS, destroys
+the dashboard and its components before restoring chart state, and cancels
+sample timeouts and animation frames. This prevents earlier styles from
+affecting later renders on a reused page. The sample date stays fixed while
+native timers continue to run.
 
 SVG capture waits for the selected chart's load handler and the sample's initial
 XHR and fetch requests to finish downloading. Image markers can delay the load

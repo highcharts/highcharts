@@ -502,6 +502,11 @@
                 }
             },
             afterSample() {
+                // Styled sample IDs are also used to embed CSS in SVGs.
+                document.querySelectorAll(
+                    '#visual-test-script, #visual-test-styles, ' +
+                    '[id="highcharts.css"], [id="demo.css"], #test-hc-styles'
+                ).forEach(element => element.remove());
                 cleanupDataRequests();
                 restoreWrappedFunctions();
                 restoreAddedEvents();

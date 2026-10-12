@@ -190,13 +190,6 @@ test.describe('Visual tests', () => {
         if (!page) {
             return;
         }
-        await page.evaluate(() => {
-            const elementsToRemove = document.querySelectorAll(
-                '#visual-test-script, #visual-test-styles'
-            );
-            elementsToRemove.forEach((el) => el.remove());
-        });
-
         await page.evaluate(() => window.HCVisualSetup?.afterSample());
     });
 
