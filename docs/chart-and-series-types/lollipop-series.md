@@ -1,3 +1,10 @@
+---
+description: >-
+  Show category values with a dot joined to a baseline by a line, and learn
+  where the dot’s value is measured. The article covers module setup,
+  inversion for vertical layouts, and marker and connector styling.
+---
+
 Lollipop chart
 ===
 

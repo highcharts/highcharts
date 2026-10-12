@@ -1,3 +1,10 @@
+---
+description: >-
+  Understand your responsibility for the accessibility of charts created with
+  Highcharts, how the Accessibility module helps, and why testing your design
+  with assistive technology is recommended.
+---
+
 Accessibility compliance
 ===
 

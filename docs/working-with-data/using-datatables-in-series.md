@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a DataTable, map its columns to chart point properties, and share it
+  across series. Learn how table updates propagate, how sorting fits in, and
+  when direct series arrays are sufficient.
+---
+
 # Using DataTables with Series
 
 The [`dataTable`](https://api.highcharts.com/highcharts/dataTable) and [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping) options provide a structured approach to

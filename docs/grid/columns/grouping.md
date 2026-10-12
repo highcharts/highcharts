@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Grouping"
+description: >-
+  Build nested column headers with header[], assign labels and styles to
+  groups or leaves, control column order and inclusion, and combine grouped
+  structure with per-column header options.
 ---
 
 # Column grouping

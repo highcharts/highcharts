@@ -64,6 +64,7 @@ declare module '../Core/Series/PointBase' {
 
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         dataModify?: DataModifyComposition.Additions;
         setCompare(compare?: 'percent'|'value'|null, redraw?: boolean): void;
         setCumulative(cumulative?: boolean|null, redraw?: boolean): void;
@@ -72,11 +73,95 @@ declare module '../Core/Series/SeriesBase' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+
+        /**
+         * Compare the values of the series against the first non-null,
+         * non-zero value in the visible range. The y axis will show percentage
+         * or absolute change depending on whether `compare` is set to
+         * `"percent"` or `"value"`. When this is applied to multiple series,
+         * it allows comparing the development of the series against each
+         * other. Adds a `change` field to every point object. If a `compare`
+         * value is not set on a linked series, it will be inherited from the
+         * parent series.
+         *
+         * @see [compareBase](#plotOptions.series.compareBase)
+         *
+         * @sample {highstock} stock/plotoptions/series-compare-percent/
+         *         Percent
+         *
+         * @since 1.0.1
+         *
+         * @product highstock
+         *
+         * @validvalue ["percent", "value"]
+         */
         compare?: 'percent'|'value'|null;
+
+        /**
+         * When [compare](#plotOptions.series.compare) is `percent`, this
+         * option dictates whether to use 0 or 100 as the base of comparison.
+         *
+         * @sample {highstock} stock/plotoptions/series-comparebase/
+         *         Compare base is 100
+         *
+         * @default 0
+         *
+         * @since 5.0.6
+         *
+         * @product highstock
+         *
+         * @validvalue [0, 100]
+         */
         compareBase?: (0|100);
+
+        /**
+         * Defines if comparison should start from the first point within the
+         * visible range or should start from the last point **before** the
+         * range.
+         *
+         * @sample {highstock} stock/plotoptions/series-comparestart/
+         *         Calculate compare within visible range
+         *
+         * @default false
+         *
+         * @since 6.0.0
+         *
+         * @product highstock
+         */
         compareStart?: boolean;
+
+        /**
+         * Cumulative Sum feature replaces points' values with the following
+         * formula: `sum of all previous points' values + current point's
+         * value`. Works only for points in a visible range.
+         *
+         * @sample {highstock} stock/plotoptions/series-cumulative-sum/
+         *         Cumulative Sum
+         *
+         * @default false
+         *
+         * @since 9.3.0
+         *
+         * @product highstock
+         */
         cumulative?: boolean;
+
+        /**
+         * Defines if cumulation should start from the first point within the
+         * visible range or should start from the last point **before** the
+         * range.
+         *
+         * @sample {highstock} stock/plotoptions/series-cumulativestart/
+         *         Cumulative Start
+         *
+         * @default false
+         *
+         * @since 11.4.2
+         *
+         * @product highstock
+         */
         cumulativeStart?: boolean;
+
     }
 }
 
@@ -86,6 +171,7 @@ declare module '../Core/Series/SeriesOptions' {
  *
  * */
 
+/** @internal */
 namespace DataModifyComposition {
 
     /* *
@@ -118,6 +204,7 @@ namespace DataModifyComposition {
     }
 
     export declare class SeriesComposition extends Series {
+        /** @internal */
         dataModify: Additions;
         setCompare(
             this: Series,
@@ -141,7 +228,7 @@ namespace DataModifyComposition {
      * Extends the series, axis and point classes with
      * compare and cumulative support.
      *
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T,
@@ -179,7 +266,7 @@ namespace DataModifyComposition {
     /**
      * Shared code for the axis.setCompare() and the axis.setCumulative()
      * methods. Inits the 'compare' or the 'cumulative' mode.
-     * @private
+     * @internal
      */
     function setModifier(
         this: Axis,
@@ -292,7 +379,7 @@ namespace DataModifyComposition {
 
     /**
      * Adjust the extremes (compare and cumulative modify the data).
-     * @private
+     * @internal
      */
     function afterGetExtremes(this: Series, e: AnyRecord|Event): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes,
@@ -523,7 +610,7 @@ namespace DataModifyComposition {
      * */
 
     /**
-     * @private
+     * @internal
      */
     export class Additions {
 
@@ -534,7 +621,7 @@ namespace DataModifyComposition {
          * */
 
         /**
-         * @private
+         * @internal
          */
         public constructor(series: SeriesComposition) {
             this.series = series;
@@ -562,7 +649,7 @@ namespace DataModifyComposition {
         * */
 
         /**
-         * @private
+         * @internal
          */
         public modifyValue(): number {
             return 0;
@@ -701,6 +788,7 @@ namespace DataModifyComposition {
  *
  * */
 
+/** @internal */
 export default DataModifyComposition;
 
 /* *

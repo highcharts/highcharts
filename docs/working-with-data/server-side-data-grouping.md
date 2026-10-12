@@ -1,3 +1,10 @@
+---
+description: >-
+  Understand the tradeoffs of grouping data in Node before sending it to a
+  chart. Learn how time ticks define grouping positions and how approximation
+  methods combine values within each group.
+---
+
 Server-side data grouping
 ===
 
