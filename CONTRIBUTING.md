@@ -44,7 +44,7 @@ If you find a closed issue describing your problem, please open a new issue and
 link to the closed one in your issue description (use `#<ticket number>`, e.g.
 `#12345`).
 
-Please also follow the directions in our [ticket submission template](https://github.com/highcharts/highcharts/blob/master/ISSUE_TEMPLATE.md).
+When you report a new bug, please follow the [bug report template](https://github.com/highcharts/highcharts/issues/new/choose).
 
 ### Test a fix
 
