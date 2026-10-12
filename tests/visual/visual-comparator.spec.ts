@@ -18,22 +18,27 @@ test.beforeEach(async ({ page }) => {
     await page.addScriptTag({ path: 'test/visual-comparator.js' });
 });
 
-test('visual cleanup restores direct prototype mutations between samples', async ({ page }) => {
+test('visual cleanup restores prototypes and cancels sample timers', async ({ page }) => {
     await page.setContent('<div data-test-container></div>');
     await page.addScriptTag({ path: 'code/highcharts.src.js' });
     await page.addScriptTag({ path: 'code/highcharts-more.src.js' });
     await page.addScriptTag({ path: 'tests/visual/visual-setup.js' });
 
-    const restored = await page.evaluate(() => {
+    const restored = await page.evaluate(async () => {
         const prototype = window.Highcharts.SVGRenderer.prototype;
         const original = prototype.html;
+        let callbacks = 0;
         window.HCVisualSetup.beforeSample();
         prototype.html = function () { throw new Error('Sample override'); };
+        setTimeout(() => callbacks++, 0);
+        requestAnimationFrame(() => callbacks++);
         window.HCVisualSetup.afterSample();
-        return prototype.html === original;
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => setTimeout(resolve, 0));
+        return { prototypeRestored: prototype.html === original, callbacks };
     });
 
-    expect(restored).toBe(true);
+    expect(restored).toEqual({ prototypeRestored: true, callbacks: 0 });
 });
 
 test('Visual comparator: identical SVGs have no numeric difference', async ({
