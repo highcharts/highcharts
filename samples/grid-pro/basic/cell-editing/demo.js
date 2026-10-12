@@ -61,9 +61,7 @@ Grid.grid('container', {
                 validationRules: ['notEmpty', {
                     validate: 'number',
                     notification: function ({ rawValue }) {
-                        return `New value <strong>${
-                            rawValue
-                        }</strong> should be number`;
+                        return `New value "${rawValue}" should be number`;
                     }
                 }]
             }
