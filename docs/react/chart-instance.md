@@ -1,8 +1,8 @@
 ---
 description: >-
-  Use the ref prop on Chart to obtain a reference to the underlying chart
-  instance and its container element, then access those values from a React
-  effect when needed.
+  Use the ref prop on Chart to reach the underlying chart instance and its
+  container, learn when a re-render updates the chart, and subscribe to chart
+  events on the instance with addEvent from a React effect.
 ---
 
 # Chart instance
@@ -15,7 +15,7 @@ chart container element.
 import { useEffect, useRef } from "react";
 import { Chart, type HighchartsReactRefObject } from "@highcharts/react";
 
-function RefExample() {
+export default function RefExample() {
   const chartRef = useRef<HighchartsReactRefObject>(null);
 
   useEffect(() => {
@@ -33,29 +33,17 @@ function RefExample() {
 
 ## Updates on re-render
 
-Highcharts React creates the chart once and then applies your options to that same instance with `chart.update()` on every later render. The chart is not torn down and rebuilt, which is what lets you drive it from React state. This is the library updating itself from the props you pass, which is not the same as calling chart methods yourself: see [Update chart data](https://www.highcharts.com/docs/react/data-handling#update-chart-data) for why reaching for the instance to change what the chart shows is discouraged.
+Highcharts React creates the chart once and then updates that same instance with `chart.update()` instead of rebuilding it. A chart with children is updated every time its component renders, including when a parent component re-renders for reasons unrelated to the chart, because React creates the children anew on each render. A chart configured only through props is updated when one of its props changes, and an `options` object created during render, such as an inline object literal, counts as a change on every render.
 
-One consequence is worth knowing: a parent component that re-renders for reasons unrelated to the chart still triggers a chart update. If that happens often, wrap the chart component in [`React.memo`](https://react.dev/reference/react/memo) so those renders stop at the component boundary.
+To change what the chart shows, change its props from React state, as described in [Update chart data](https://www.highcharts.com/docs/react/data-handling#update-chart-data).
 
-```tsx
-import { memo } from "react";
-import { Chart } from "@highcharts/react";
-import { LineSeries } from "@highcharts/react/series/Line";
+Changes made through the chart instance are overwritten the next time the chart updates from its props. Data set with `setData`, for example, is replaced by the data in your props.
 
-const PriceChart = memo(function PriceChart() {
-  return (
-    <Chart>
-      <LineSeries data={[3, 4, 1, 5, 2]} />
-    </Chart>
-  );
-});
-```
+## Subscribing to events on the instance
 
-## Chart events
+Chart-level event handlers usually go in `chart.events` through the `options` prop. See [Common events](https://www.highcharts.com/docs/chart-concepts/common-events#ways-to-attach-events-in-highcharts) for the ways to attach them.
 
-A chart emits events such as `redraw`, `load`, and `selection`. With a ref to the chart instance, you can subscribe to any of them using `Highcharts.addEvent`.
-
-Attach the handler in `useEffect` and remove it from the cleanup function, using the remover that `addEvent` returns:
+To subscribe on the chart instance instead, use `Highcharts.addEvent` with the instance from the ref. Attach the handler in `useEffect` and remove it in the cleanup function, using the remover that `addEvent` returns. Events that fire while the chart is created, such as `load`, have already fired when the effect runs.
 
 ```tsx
 import { useEffect, useRef } from "react";
@@ -64,8 +52,9 @@ import {
   Highcharts,
   type HighchartsReactRefObject
 } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
-function EventExample() {
+export default function EventExample() {
   const chartRef = useRef<HighchartsReactRefObject>(null);
 
   useEffect(() => {
@@ -78,7 +67,7 @@ function EventExample() {
     const removeEvent = Highcharts.addEvent(
       chart,
       "redraw",
-      function (this: Highcharts.Chart) {
+      function () {
         // `this` is the chart that fired the event.
       }
     );
@@ -86,8 +75,10 @@ function EventExample() {
     return () => removeEvent();
   }, []);
 
-  return <Chart ref={chartRef} />;
+  return (
+    <Chart ref={chartRef}>
+      <LineSeries data={[3, 4, 1]} />
+    </Chart>
+  );
 }
 ```
-
-A callback that reads `this` has to be a regular function. An arrow function captures `this` from the surrounding scope instead of receiving the object that fired the event. In TypeScript, give the callback an explicit `this` parameter so its type is known, as above.
