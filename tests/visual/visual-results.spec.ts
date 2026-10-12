@@ -7,6 +7,7 @@ import {
     writeCandidateCompletion,
     writeReference,
     writeReferenceFailures,
+    writeUncomparedCandidate,
     validateVisualRun
 } from './visual-results.ts';
 import { test, expect } from '@playwright/test';
@@ -148,6 +149,50 @@ test('zero candidate result records zero and removes stale artifacts', () => {
     });
 });
 
+test('failed references still require rendered candidates and no pixel result', () => {
+    withTemporaryRoot(root => {
+        resetVisualRun(root, [samplePath, secondSamplePath]);
+        writeReference(root, samplePath, referenceSVG);
+        recordCandidateResult(root, samplePath, 0);
+        writeReferenceFailures(root, [{
+            sample: secondSamplePath, error: 'Reference failed'
+        }]);
+        const validate = () => validateVisualRun(
+            root, [samplePath, secondSamplePath]
+        );
+        expect(validate).toThrow('Missing rendered candidate');
+        writeUncomparedCandidate(root, secondSamplePath, candidateSVG);
+        expect(validate).not.toThrow();
+        expect(JSON.parse(readFileSync(resultsPath(root), 'utf8'))).toEqual({
+            [samplePath]: 0
+        });
+        writeReference(root, secondSamplePath, referenceSVG);
+        recordCandidateResult(root, secondSamplePath, 0);
+        expect(validate).toThrow();
+    });
+});
+
+test('all failed references require fresh candidate artifacts', () => {
+    withTemporaryRoot(root => {
+        writeReferenceFailures(root, [{ sample: samplePath, error: 'Failed' }]);
+        writeUncomparedCandidate(root, samplePath, 'stale');
+        resetVisualRun(root, [samplePath]);
+        expect(() => validateVisualRun(root, [samplePath])).toThrow();
+        writeUncomparedCandidate(root, samplePath, candidateSVG);
+        expect(() => validateVisualRun(root, [samplePath])).not.toThrow();
+        expect(JSON.parse(readFileSync(resultsPath(root), 'utf8'))).toEqual({});
+        for (const failures of [
+            [{ sample: secondSamplePath, error: 'Not selected' }],
+            Array.from({ length: 2 }, () => ({ sample: samplePath, error: 'Duplicate' }))
+        ]) {
+            writeReferenceFailures(root, failures);
+            expect(() => validateVisualRun(root, [samplePath])).toThrow(
+                'Reference failures must be unique selected sample IDs.'
+            );
+        }
+    });
+});
+
 test('positive candidate result writes artifacts without an error', () => {
     withTemporaryRoot(root => {
         writeReference(root, samplePath, referenceSVG);
@@ -226,7 +271,7 @@ test('resets shared outputs and selected stale candidate artifacts', () => {
 
         resetVisualRun(root, [samplePath]);
 
-        expect(existsSync(resultsPath(root))).toBe(false);
+        expect(JSON.parse(readFileSync(resultsPath(root), 'utf8'))).toEqual({});
         expect(existsSync(errorsPath(root))).toBe(false);
         expect(existsSync(completionPath(root))).toBe(false);
         expect(existsSync(candidatePath(root))).toBe(false);

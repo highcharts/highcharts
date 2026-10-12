@@ -327,7 +327,7 @@ jobs:
               github,
               context,
               title.replace('Visual test results', 'Playwright visual test results'),
-              `\nCovers **${Object.keys(results).length} samples**.\n\n${body}`
+              `\nCompared **${Object.keys(results).length} samples**.\n\n${body}`
             );
 
       - name: Upload Playwright visual evidence

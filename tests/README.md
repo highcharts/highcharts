@@ -761,8 +761,8 @@ NO_REWRITES=1 npx playwright test
 
 ## Playwright Visual Comparisons
 
-> **Note:** Playwright and Karma run the same eligible sample set in different
-> browsers. Successful Playwright runs for same-repository
+> **Note:** Playwright and Karma share sample exclusions, but financial samples
+> run only in Playwright. Successful Playwright runs for same-repository
 > PRs publish to production Visual Review and can replace the current Karma
 > review for that PR with results for the selected manifest only.
 
@@ -773,7 +773,7 @@ Gantt samples by default. It uses Karma's exclusion list in
 `test/visual-test-samples.js` and the `skipTest` and `requiresManualTesting`
 sample metadata. Add exceptions to that shared exclusion list. CI compares
 the samples present and eligible on both the candidate and pinned master
-revisions, matching Karma's handling of samples without master references.
+revisions.
 The selected IDs are saved in the workflow artifacts as `visual-samples.json`.
 A sample introduced in a PR has no master reference and joins comparisons once
 it is present on master. `VISUAL_TEST_PATH` remains a substring filter for
@@ -804,8 +804,9 @@ and cancels sample timeouts and animation frames. The sample date stays fixed
 while native timers continue to run.
 
 SVG capture waits for the selected chart's load handler and the sample's initial
-XHR data requests to finish. Image markers can delay the load handler, and charts
-can emit their load event before CSV data arrives, so both checks are needed.
+XHR and fetch requests to finish downloading. Image markers can delay the load
+handler, and charts can emit their load event before CSV data arrives, so both
+checks are needed.
 Pending requests share the chart's 10-second readiness timeout and are aborted
 during sample cleanup. Once ready, capture
 yields to queued zero-delay sample updates and checks readiness again. Empty
@@ -847,12 +848,11 @@ as a substring, while optional manifest entries are exact sample IDs.
 | File | Written when |
 |------|-------------|
 | `samples/<path>/reference.svg` | Reference mode only |
-| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 |
+| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 or a listed reference failure |
 | `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
-| `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
+| `test/visual-test-results.json` | Candidate mode, always (pixel counts for comparable samples only) |
 | `test/visual-test-errors.log` | Any sample or terminal error during the run |
-| `test/visual-reference-failures.json` | Samples whose master reference render failed; absent when none |
-| `test/visual-reference-errors.log` | Karma reference-run errors, kept separate from candidate errors |
+| `test/visual-reference-failures.json` | Completed Playwright reference runs; `[]` when no sample failed |
 | `test/visual-test-complete` | Candidate mode, after every selected sample finishes, including completed sample errors |
 
 ### Failure semantics
@@ -864,7 +864,8 @@ are failures:
 - The sample script throws or the chart does not load within the timeout
 - The browser context or Playwright process terminates unexpectedly
 - `reference.svg` is absent when candidate mode is run, except for samples listed
-  in `test/visual-reference-failures.json`, which are not compared
+  in `test/visual-reference-failures.json`, which must still render successfully
+  and produce a fresh `candidate.svg` but have no pixel comparison
 - Candidate execution errors, unlisted reference errors, and terminal reference
   failures fail CI. Listed reference failures do not fail the run by themselves
 - `test/visual-test-errors.log` is non-empty after the candidate run
@@ -881,6 +882,17 @@ requires successful candidate outcomes, no unlisted reference errors, and no
 terminal reference failure. Candidate errors must be empty; listed reference
 failures are reported as not compared.
 
+Every selected candidate must execute, including samples whose reference failed.
+The comparison results and rendered candidates must account for the full selected
+sample set. A skipped candidate is an incomplete run. PR comments distinguish a
+partial comparison or no comparable samples from a complete comparison.
+
+Karma remains strict: reference failures stop its workflow. Both revisions run
+the candidate's pinned harness and exclusion rules. New samples without a master
+reference retain Karma's existing omission from comparison. Financial samples
+use Playwright's existing offline fixtures; samples marked for manual testing
+remain excluded.
+
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.
 Locally these markers are informational.
@@ -892,7 +904,7 @@ publish the complete result JSON and SVG/GIF artifacts for differing samples to
 `https://vrevs.highsoft.com`. Playwright is the sole production publisher. Karma
 continues comparing samples and links to its GitHub Actions artifacts using
 `gulp update-pr-testresults --artifacts-url URL`, which skips API submission.
-The Playwright PR comment identifies the number of selected samples. Manual
+The Playwright PR comment identifies the number of compared samples. Manual
 workflow runs and fork PRs only upload GitHub Actions diagnostics.
 
 Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with

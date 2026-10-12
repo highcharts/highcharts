@@ -73,17 +73,11 @@ export default class VisualReporter implements Reporter {
             );
             const referenceFailures = this.referenceMode ? [] :
                 readReferenceFailures(this.root);
-            const skippedSamples = failedSamples.filter(test =>
-                test.results.at(-1)?.status === 'skipped' &&
-                referenceFailures.some(failure => failure.sample === test.title)
-            );
             if (
                 !['passed', 'failed'].includes(result.status) ||
                 failedSamples.some(test => {
                     const status = test.results.at(-1)?.status;
-                    return status === 'skipped' ?
-                        !skippedSamples.includes(test) :
-                        !['failed', 'timedOut'].includes(status || '') ||
+                    return !['failed', 'timedOut'].includes(status || '') ||
                         !test.annotations.some(annotation =>
                             annotation.type === 'visual-sample-error'
                         );
@@ -100,7 +94,7 @@ export default class VisualReporter implements Reporter {
                         'Reference render failed.'
                 })));
             }
-            if (failedSamples.some(test => !skippedSamples.includes(test))) {
+            if (failedSamples.length) {
                 // Sample errors are already logged by the spec. The run
                 // completed, but still fails and must not be published.
                 if (!this.referenceMode) {
@@ -110,9 +104,7 @@ export default class VisualReporter implements Reporter {
             }
             validateVisualRun(
                 this.root,
-                ids.filter(id => !skippedSamples.some(
-                    test => test.title === id
-                )),
+                ids,
                 this.referenceMode
             );
 
@@ -127,9 +119,15 @@ export default class VisualReporter implements Reporter {
                     '',
                     '| Sample | Numeric visual difference |',
                     '| --- | --- |',
-                    ...ids.map(id =>
-                        `| ${id} | ${this.referenceMode ? 'reference rendered' : results[id]} |`
-                    ),
+                    ...ids.map(id => {
+                        const outcome = this.referenceMode ?
+                            'reference rendered' :
+                            referenceFailures.some(failure =>
+                                failure.sample === id
+                            ) ?
+                                'candidate rendered; reference failed' : results[id];
+                        return `| ${id} | ${outcome} |`;
+                    }),
                     ''
                 ].join('\n'));
             }

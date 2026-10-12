@@ -15,7 +15,8 @@ import {
     readReference,
     readReferenceFailures,
     recordCandidateResult,
-    writeReference
+    writeReference,
+    writeUncomparedCandidate
 } from './visual-results.ts';
 import { selectVisualSamples } from './visual-samples.ts';
 import { captureVisualSVG } from './visual-capture.ts';
@@ -222,10 +223,6 @@ test.describe('Visual tests', () => {
             const referenceFailure = referenceFailures.find(failure =>
                 failure.sample === visualSamplePath
             );
-            // A failed baseline cannot be compared in candidate mode.
-            // eslint-disable-next-line playwright/no-skipped-test
-            test.skip(!!referenceFailure, `reference failed: ${referenceFailure?.error}`);
-
             const sample = getSample(
                 dirname(samplePath), true, basename(samplePath)
             );
@@ -249,7 +246,7 @@ test.describe('Visual tests', () => {
                     dashboardPage ??= await createVisualPage(true);
                     page = dashboardPage;
                 } else {
-                    page = chartPage;
+                    page = chartPage ??= await createVisualPage(false);
                 }
                 if (!page) {
                     throw new Error('Page not initialized');
@@ -372,13 +369,19 @@ test.describe('Visual tests', () => {
 
                 const candidateSVG = await captureVisualSVG(page);
 
-                if (referenceMode) {
+                if (referenceMode || referenceFailure) {
                     const runtimeError = pageError ?? await page.evaluate(() =>
                         (window as VisualWindow)
                             .visualTestUnhandledRejection
                     );
                     throwRuntimeError(runtimeError);
-                    writeReference(root, visualSamplePath, candidateSVG);
+                    if (referenceMode) {
+                        writeReference(root, visualSamplePath, candidateSVG);
+                    } else {
+                        writeUncomparedCandidate(
+                            root, visualSamplePath, candidateSVG
+                        );
+                    }
                 } else {
                     const referenceSVG = readReference(root, visualSamplePath);
                     const comparison = await compareVisualSVGs(
@@ -456,6 +459,16 @@ test.describe('Visual tests', () => {
                     );
                 }
                 if (sampleFailed && page) {
+                    await page.evaluate(() =>
+                        window.HCVisualSetup.afterSample()
+                    );
+                    await page.close();
+                    if (page === chartPage) {
+                        chartPage = undefined;
+                    } else {
+                        dashboardPage = undefined;
+                    }
+                    page = undefined;
                     // Successful cleanup distinguishes a sample error from
                     // a browser or environment failure that prevents cleanup.
                     test.info().annotations.push({

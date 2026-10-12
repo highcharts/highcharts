@@ -11,7 +11,7 @@ import type {
 import VisualReporter from '../../../tests/visual/visual-reporter.ts';
 import {
     appendError, recordCandidateResult, writeReference,
-    writeReferenceFailures
+    writeReferenceFailures, writeUncomparedCandidate
 } from '../../../tests/visual/visual-results.ts';
 
 const ids = ['highcharts/demo/area-missing', 'highcharts/demo/line-labels'];
@@ -107,14 +107,38 @@ test('skipped sample fails even with a complete results file', () => {
     });
 });
 
-test('listed skipped reference failure is accepted as an incomplete result', () => {
+test('listed reference failure still requires candidate execution', () => {
     withReporter((root, reporter, cases) => {
         reporter.onTestBegin(cases[0]);
         recordCandidateResult(root, ids[0], 0);
         writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
         cases[1].results[0].status = 'skipped';
+        deepStrictEqual(reporter.onEnd(passed), { status: 'failed' });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
+    });
+});
+
+test('rendered candidate without a reference completes without a pixel result', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
+        writeUncomparedCandidate(root, ids[1], '<svg>candidate</svg>');
         strictEqual(reporter.onEnd(passed), undefined);
         strictEqual(existsSync(join(root, 'test/visual-test-complete')), true);
+        deepStrictEqual(JSON.parse(readFileSync(
+            join(root, 'test/visual-test-results.json'), 'utf8'
+        )), { [ids[0]]: 0 });
+    });
+});
+
+test('passing candidate without its render artifact is incomplete', () => {
+    withReporter((root, reporter, cases) => {
+        reporter.onTestBegin(cases[0]);
+        recordCandidateResult(root, ids[0], 0);
+        writeReferenceFailures(root, [{ sample: ids[1], error: 'Reference failed.' }]);
+        deepStrictEqual(reporter.onEnd(passed), { status: 'failed' });
+        strictEqual(existsSync(join(root, 'test/visual-test-complete')), false);
     });
 });
 
@@ -231,7 +255,9 @@ test('a run where every sample fails still completes without numeric results', (
             status: 'failed'
         });
         strictEqual(existsSync(join(root, 'test/visual-test-complete')), true);
-        strictEqual(existsSync(join(root, 'test/visual-test-results.json')), false);
+        deepStrictEqual(JSON.parse(readFileSync(
+            join(root, 'test/visual-test-results.json'), 'utf8'
+        )), {});
     });
 });
 

@@ -58,28 +58,23 @@
                 }
             };
             if (typeof originalFetch === 'function') {
-                window.fetch = function (...args) {
-                    const fetch = originalFetch;
-                    const context = this;
-                    const request = { abort() {} };
+                window.fetch = function (input, init) {
+                    const request = new window.AbortController();
+                    const source = new window.Request(input, init);
                     requests.add(request);
                     function finish() {
                         originalSetTimeout.call(window, function () {
                             requests.delete(request);
                         }, 0);
                     }
-                    const timeout = originalSetTimeout.call(
-                        window, finish, 5000
-                    );
-                    function finishBody() {
-                        originalClearTimeout.call(window, timeout);
-                        finish();
-                    }
                     let promise;
                     try {
-                        promise = fetch.apply(context, args);
+                        promise = originalFetch.call(this, source, {
+                            signal: window.AbortSignal.any([
+                                source.signal, request.signal
+                            ])
+                        });
                     } catch (error) {
-                        originalClearTimeout.call(window, timeout);
                         requests.delete(request);
                         throw error;
                     }
@@ -90,7 +85,7 @@
                             // A missing or already-consumed body needs no wait.
                             return Promise.resolve(error);
                         }
-                    }).then(finishBody, finishBody);
+                    }).then(finish, finish);
                     return promise;
                 };
             }

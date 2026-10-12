@@ -123,12 +123,25 @@ function createTemplateForChangedSamples(changedFilesProvider = getFilesChanged)
 function createPRCommentBody(
     diffingSamples,
     prNumber,
-    changedFilesProvider = getFilesChanged
+    changedFilesProvider,
+    comparedCount
 ) {
     const reviewUrl = `${normalizeApiUrl(getVisualReviewApiUrl())}/pr/${prNumber}/review`;
+    const referenceFailures = readTestResultsFile('test/visual-reference-failures.json');
+    const failures = Array.isArray(referenceFailures) ? referenceFailures
+        .filter(failure => failure && typeof failure.sample === 'string' &&
+            typeof failure.error === 'string') : [];
     let commentTemplate = `${DEFAULT_COMMENT_TITLE} - No difference found`;
     if (diffingSamples.length > 0) {
-        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found`;
+    }
+    if (failures.length) {
+        commentTemplate = `${DEFAULT_COMMENT_TITLE} - ${
+            comparedCount ? 'Partial comparison' : 'No comparable samples'
+        }`;
+    }
+    if (diffingSamples.length > 0) {
+        commentTemplate += '\n' +
             `Found **${diffingSamples.length}** diffing sample(s). ${createMarkdownLink(
                 argv.artifactsUrl || reviewUrl,
                 argv.artifactsUrl ?
@@ -144,21 +157,18 @@ function createPRCommentBody(
     const changedSamplesTemplate = createTemplateForChangedSamples(changedFilesProvider);
     commentTemplate += `\n\n${changedSamplesTemplate}`;
 
-    const referenceFailures = readTestResultsFile('test/visual-reference-failures.json');
-    if (Array.isArray(referenceFailures) && referenceFailures.length > 0) {
-        const failures = referenceFailures
-            .filter(failure => failure && typeof failure.sample === 'string' &&
-                typeof failure.error === 'string')
+    if (failures.length > 0) {
+        const failureList = failures
             .map(({ sample, error }) => {
                 const oneLineError = error.trim().replace(/\s+/gu, ' ')
                     .replace(/([\\`])/gu, '\\$1').slice(0, 200);
                 return `- \`${sample}\`: ${oneLineError}`;
             });
-        if (failures.length > 0) {
-            commentTemplate += '\n\nReference failures (not compared)\n' +
-                'These samples were not compared because the master reference failed.\n' +
-                failures.join('\n');
-        }
+        commentTemplate += `\n\nCompared **${comparedCount}** samples. ` +
+            `**${failures.length}** candidates rendered without a reference.\n\n` +
+            'Reference failures (not compared)\n' +
+            'Candidate renderings are in the GitHub Actions artifacts.\n' +
+            failureList.join('\n');
     } else if (referenceFailures !== false && !Array.isArray(referenceFailures)) {
         logLib.warn('Invalid visual reference failures file: expected a JSON array.');
     }
@@ -279,7 +289,8 @@ async function commentOnPR({ changedFilesProvider = getFilesChanged } = {}) {
         return writeCommentFile(createPRCommentBody(
             diffingSamples,
             prNumber,
-            changedFilesProvider
+            changedFilesProvider,
+            Object.values(testResults).filter(value => typeof value === 'number').length
         ));
     } catch (err) {
         if (!argv.failSilently) {

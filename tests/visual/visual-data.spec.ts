@@ -2,7 +2,9 @@ import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setupRoutes } from '../fixtures';
+import { getSample } from '../utils';
 import { captureVisualSVG } from './visual-capture';
+import { setVisualTime } from './visual-clock';
 
 const sources = JSON.parse(readFileSync(
     join(__dirname, 'data/index.json'), 'utf8'
@@ -32,6 +34,39 @@ async function prepareDataSample(page: Page): Promise<void> {
         });
     });
 }
+
+test('interactive financial chart renders its data and range changes without a reference', async ({ page }) => {
+    await setVisualTime(page);
+    await prepareDataSample(page);
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    const sample = getSample('samples/stock/financial/interactive-chart');
+    await page.locator('[data-test-container]').evaluate((container, html) => {
+        container.innerHTML = html;
+    }, sample.html);
+    await page.addStyleTag({ content: sample.css });
+    for (const path of [
+        'code/modules/stock.src.js',
+        'code/modules/price-indicator.src.js',
+        'code/modules/accessibility.src.js',
+        'node_modules/@highcharts/connectors-morningstar/' +
+            'connectors-morningstar.js',
+        'samples/stock/financial/interactive-chart/demo.js'
+    ]) {
+        await page.addScriptTag({ path });
+    }
+
+    const percentage = /^[+-]\d+\.\d{2}%$/;
+    await expect(page.locator('#range-selector .change')).toHaveText(
+        Array.from({ length: 6 }, () => percentage)
+    );
+    await expect(page.locator('.title-indicator')).toHaveText(percentage);
+    expect(await captureVisualSVG(page)).toContain('FSPGX:');
+    await page.getByRole('button', { name: /^All/ }).click();
+    await expect(page.locator('#all')).toHaveClass('selected');
+    await expect(page.locator('.title-indicator')).toHaveText(percentage);
+    expect(errors).toEqual([]);
+});
 
 test('capture waits for delayed CSV data after the empty chart loads', async ({ page }) => {
     await prepareDataSample(page);
@@ -134,7 +169,7 @@ test('stalled data times out and cleanup permits a valid empty chart', async ({ 
     expect(await captureVisualSVG(page)).toContain('No data to display');
 });
 
-test('fetch requests stay pending until the response body is consumed', async ({ page }) => {
+test('fetch requests stay pending until the response body is downloaded', async ({ page }) => {
     await prepareDataSample(page);
     let release: () => void;
     const responseGate = new Promise<void>(resolve => { release = resolve; });
@@ -204,7 +239,49 @@ test('sequential fetches remain pending between responses', async ({ page }) => 
     )).toBe(false);
 });
 
-test('cleanup restores fetch and ignores a late response', async ({ page }) => {
+test('stalled fetch remains pending until capture times out', async ({ page }) => {
+    await page.clock.install();
+    await prepareDataSample(page);
+    await page.route('http://localhost/pending.json', () => {});
+    const started = page.waitForRequest('http://localhost/pending.json');
+    await page.evaluate(() => {
+        window.Highcharts.chart('container', { series: [] });
+        void fetch('http://localhost/pending.json').catch(() => {});
+    });
+    await started;
+    await page.clock.runFor(5001);
+    expect(await page.evaluate(() =>
+        window.HCVisualSetup.hasPendingRequests()
+    )).toBe(true);
+    const capturing = expect(captureVisualSVG(page, 3, 10)).rejects.toThrow(
+        'Chart or data failed to load within 30ms.'
+    );
+    await page.evaluate(() => undefined);
+    await page.clock.runFor(31);
+    await capturing;
+    await page.evaluate(() => window.HCVisualSetup.afterSample());
+});
+
+for (const requestInput of [false, true]) {
+    test(`fetch preserves caller cancellation with Request input ${requestInput}`, async ({ page }) => {
+        await prepareDataSample(page);
+        await page.route('http://localhost/pending.json', () => {});
+        expect(await page.evaluate(async requestInput => {
+            const controller = new AbortController();
+            const url = 'http://localhost/pending.json';
+            const options = { signal: controller.signal };
+            const pending = requestInput ?
+                fetch(new Request(url, options)) : fetch(url, options);
+            controller.abort('caller cancelled');
+            return pending.catch(reason => reason);
+        }, requestInput)).toBe('caller cancelled');
+        await expect.poll(() => page.evaluate(() =>
+            window.HCVisualSetup.hasPendingRequests()
+        )).toBe(false);
+    });
+}
+
+test('cleanup cancels fetch before its response can change the next sample', async ({ page }) => {
     await prepareDataSample(page);
     let release: () => void;
     const responseGate = new Promise<void>(resolve => { release = resolve; });
@@ -215,7 +292,12 @@ test('cleanup restores fetch and ignores a late response', async ({ page }) => {
         await responseGate;
         await route.fulfill({ contentType: 'application/json', body: '{"ok":true}' });
     });
-    const fetching = page.evaluate(() => fetch('http://localhost/x.json'));
+    const fetching = page.evaluate(() => fetch('http://localhost/x.json')
+        .then(() => {
+            window.Highcharts.charts.at(-1).setTitle({ text: 'Late response' });
+            return 'completed';
+        })
+        .catch(error => error.name));
     await started;
     await expect.poll(() => page.evaluate(() =>
         window.HCVisualSetup.hasPendingRequests()
@@ -227,12 +309,18 @@ test('cleanup restores fetch and ignores a late response', async ({ page }) => {
     )).toBe(false);
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
+    await expect(fetching).resolves.toBe('AbortError');
+    await page.evaluate(() => {
+        window.HCVisualSetup.beforeSample();
+        window.Highcharts.chart('container', {
+            title: { text: 'Next sample' }, series: []
+        });
+    });
     release();
-    await expect(fetching).resolves.toBeTruthy();
-    await page.evaluate(() => window.HCVisualSetup.beforeSample());
     expect(await page.evaluate(() =>
         window.HCVisualSetup.hasPendingRequests()
     )).toBe(false);
+    expect(await captureVisualSVG(page)).toContain('Next sample');
     expect(errors).toEqual([]);
 });
 
