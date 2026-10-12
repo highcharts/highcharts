@@ -50,7 +50,6 @@ const
     ],
     teamSeries = Array(3).fill({
         type: 'bubble',
-        shadow: true,
         maxSize: '4%',
         minSize: '1%',
         clip: false,

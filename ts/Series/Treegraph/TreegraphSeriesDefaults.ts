@@ -145,6 +145,12 @@ const TreegraphSeriesDefaults = {
      * @apioption plotOptions.treegraph.levels.dataLabels
      */
     /**
+     * Set marker options for nodes at the level.
+     *
+     * @extends   plotOptions.treegraph.marker
+     * @apioption plotOptions.treegraph.levels.marker
+     */
+    /**
      * Options applied to collapse Button. The collapse button is the
      * small button which indicates, that the node is collapsable.
      */
