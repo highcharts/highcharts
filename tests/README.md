@@ -546,7 +546,8 @@ The following URL patterns are automatically rewritten:
 | `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
 | `**/font-awesome/**` | Empty stylesheet | Font Awesome |
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
-| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles |
+| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles, including jsDelivr's `css/` URLs |
+| `/grid-lite/**`, `/grid-pro/**`, `/samples/grid-lite/**`, `/samples/grid-pro/**` | `samples/grid-lite/`, `samples/grid-pro/` | Grid samples; npm asset paths use the library rewrites above |
 | `**/{samples/graphics}/**` | `samples/graphics/` | Sample graphics |
 | `**/testimage.png` | `test/testimage.png` | Test image |
 | `**/shim.html` | Empty HTML page | Shim page |
@@ -785,10 +786,22 @@ indicators, map projections and color axes, and Gantt progress, hierarchy, and
 grid columns.
 Discovery includes `demo.js` and TypeScript sources compiled by Karma's `--ts`
 mode. Module-only `demo.mjs` samples are not loaded by Karma and are excluded.
-The visual runner preloads the Morningstar connector, as Karma does. Its five
+The visual setup builds Highcharts, Dashboards and Grid in sequence. The runner
+preloads both Morningstar connector bundles. Dashboard samples use a separate
+page with Dashboards and Grid assets so their connector data layer cannot affect
+standalone charts.
 API-backed samples use recorded responses in `tests/visual/data`; these routes
-are limited to the visual project and retain offline execution. See the
-[fixture provenance](visual/data/README.md) before refreshing those responses.
+are limited to the visual project and retain offline execution. Requests match
+the recorded URL, method and POST body, including portfolios sharing an endpoint.
+See the [fixture provenance](visual/data/README.md) before refreshing those
+responses.
+
+Dashboard capture waits for pending XHR requests and for every chart and Grid
+component to finish its initial render. It embeds a screenshot of the complete
+dashboard in the SVG artifact, covering HTML grids as well as charts. Sample
+cleanup destroys the dashboard and its components before restoring chart state,
+and cancels sample timeouts and animation frames. The sample date stays fixed
+while native timers continue to run.
 
 SVG capture waits for the selected chart's load handler and the sample's initial
 XHR data requests to finish. Image markers can delay the load handler, and charts

@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve investment details for specified securities by configuring
+  identifiers, view IDs, and converters, then chart returned data-table
+  columns or pass complete rows and map fields with series.keys.
+---
+
 # Security Details
 
 This type retrieves investment data for a specified set of securities and is

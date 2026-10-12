@@ -35,12 +35,14 @@ import { addEvent, fireEvent, pushUnique } from '../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../Core/Chart/ChartBase' {
     interface ChartBase {
         graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         dispX?: number;
@@ -55,6 +57,7 @@ declare module '../Core/Series/PointBase' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase {
         forces?: Array<string>;
@@ -70,6 +73,7 @@ export interface GraphIntegrationObject {
     repulsiveForceFunction: Function;
 }
 
+/** @internal */
 export type GraphLayoutType = RFLayout;
 
 /* *
@@ -89,7 +93,7 @@ const layouts: Record<string, typeof RFLayout> = {};
  * */
 
 /**
- * @private
+ * @internal
  */
 function compose(
     ChartClass: typeof Chart
@@ -106,7 +110,7 @@ function compose(
 
 /**
  * Re-enable simulation after print.
- * @private
+ * @internal
  */
 function onChartAfterPrint(
     this: Chart
@@ -122,7 +126,7 @@ function onChartAfterPrint(
 
 /**
  * Disable simulation before print if enabled.
- * @private
+ * @internal
  */
 function onChartBeforePrint(
     this: Chart
@@ -137,7 +141,7 @@ function onChartBeforePrint(
 
 /**
  * Clear previous layouts.
- * @private
+ * @internal
  */
 function onChartPredraw(
     this: Chart
@@ -150,7 +154,7 @@ function onChartPredraw(
 }
 
 /**
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart
@@ -210,6 +214,7 @@ function onChartRender(
  *
  * */
 
+/** @internal */
 const GraphLayoutComposition = {
     compose,
     integrations,

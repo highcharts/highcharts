@@ -1,3 +1,10 @@
+---
+description: >-
+  Link chart points to hidden series so users can explore data through
+  multiple levels. Learn how to define drilldown series in the configuration
+  or load them dynamically after a click.
+---
+
 Drill down
 ==========
 

@@ -1,3 +1,10 @@
+---
+description: >-
+  Add instrument or speech tracks that play in the background independently
+  of a data series, either globally or per series. Configure fixed time
+  intervals or trigger tracks at intervals in a selected data property.
+---
+
 Context Cues
 ===
 

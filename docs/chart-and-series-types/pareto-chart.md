@@ -1,3 +1,11 @@
+---
+description: >-
+  Pair a descending column series with a Pareto line derived from its
+  values, and place percentages on a second y-axis. The examples configure
+  the base series and percentage axis, then explain how cumulative values
+  are generated.
+---
+
 Pareto chart
 ===
 
