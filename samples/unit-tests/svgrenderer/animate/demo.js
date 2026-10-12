@@ -417,6 +417,41 @@ QUnit.test(
             6,
             'Middle-align with diff < 0 should use shift = 1 (reverse pad).'
         );
+
+        // Shared middle x, both edges differ, end longer (#25280).
+        const midDeltaFromD = [
+            ['M', 0, 120],
+            ['L', 10, 120],
+            ['L', 20, 120],
+            ['L', 30, 120],
+            ['L', 40, 120]
+        ];
+        const midDeltaToD = [
+            ['M', 0, 120],
+            ['L', 10, 120],
+            ['L', 20, 120],
+            ['L', 30, 120],
+            ['L', 40, 120],
+            ['L', 50, 120],
+            ['L', 60, 120],
+            ['L', 70, 120]
+        ];
+        const midWithLengthDelta = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [200, 300, 400, 500, 600],
+                endX: [50, 150, 250, 300, 400, 500, 600, 700],
+                isArea: false
+            },
+            midDeltaFromD,
+            midDeltaToD
+        );
+
+        assert.strictEqual(
+            midWithLengthDelta[0].length,
+            8,
+            'Middle-align should subtract xLengthDelta (not over-pad to 10)'
+        );
     }
 );
 
