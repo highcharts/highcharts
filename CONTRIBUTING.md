@@ -161,6 +161,9 @@ add this automatically.
 You are responsible for every line you submit, whoever or whatever wrote it.
 Be ready to explain any part of the change during review.
 
+Team members are encouraged, but not required, to disclose AI use in the same
+way.
+
 ### Style Guide
 
 **Commit Messages**
