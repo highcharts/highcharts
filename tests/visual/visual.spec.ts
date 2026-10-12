@@ -18,6 +18,7 @@ import {
 } from './visual-results.ts';
 import { selectVisualSamples } from './visual-samples.ts';
 import { captureVisualSVG } from './visual-capture.ts';
+import { setVisualTime } from './visual-clock.ts';
 import {
     compareVisualSVGs,
     type VisualComparator
@@ -71,7 +72,6 @@ function throwRuntimeError(
     }
 }
 
-const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
 const root = process.cwd();
 const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
 const runtimeErrorMode = process.env.VISUAL_TEST_RUNTIME_ERROR;
@@ -116,6 +116,8 @@ test.describe('Visual tests', () => {
 
     let page: Page | undefined;
     let context: BrowserContext | undefined;
+    let chartPage: Page | undefined;
+    let dashboardPage: Page | undefined;
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once('SIGINT', async () => {
@@ -129,17 +131,11 @@ test.describe('Visual tests', () => {
         process.exit(130);
     });
 
-    test.beforeAll(async ({ browser }) => {
-        context ??= await browser.newContext({
-            viewport: { width: 800, height: 600 },
-            colorScheme: 'light'
-        });
-
-        await context.setOffline(true);
-
-        await context.clock.install({ time: FIXED_CLOCK_TIME });
-        page = await context.newPage();
-        await context.clock.setFixedTime(FIXED_CLOCK_TIME);
+    // Connectors use the data layer present at load time. Keep Dashboard
+    // connectors separate from the standalone connectors used by chart demos.
+    async function createVisualPage(dashboardAssets: boolean): Promise<Page> {
+        const page = await context.newPage();
+        await setVisualTime(page);
 
         await setupRoutes(page);
 
@@ -147,8 +143,16 @@ test.describe('Visual tests', () => {
 
         const scripts = [
             ...(await getKarmaScripts()),
+            ...(dashboardAssets ? [
+                join('code', 'grid', 'grid-pro.src.js'),
+                join('code', 'dashboards', 'dashboards.src.js'),
+                join('code', 'dashboards', 'modules', 'layout.src.js'),
+                join('code', 'dashboards', 'modules', 'math-modifier.src.js')
+            ] : []),
             join('node_modules', '@highcharts', 'connectors-morningstar',
                 'connectors-morningstar.js'),
+            join('node_modules', '@highcharts', 'connectors-morningstar',
+                'connectors-morningstar-dws.js'),
             join('tmp', 'json-sources.js'),
             join('test', 'visual-comparator.js'),
             join('tests', 'visual', 'visual-setup.js')
@@ -167,6 +171,16 @@ test.describe('Visual tests', () => {
         await page.evaluate(() => {
             window.HCVisualSetup?.markOptionsClean();
         });
+        return page;
+    }
+
+    test.beforeAll(async ({ browser }) => {
+        context ??= await browser.newContext({
+            viewport: { width: 800, height: 600 },
+            colorScheme: 'light'
+        });
+        await context.setOffline(true);
+        chartPage = page = await createVisualPage(false);
     });
 
     test.afterEach(async () => {
@@ -203,10 +217,6 @@ test.describe('Visual tests', () => {
         // The visual reporter validates outcomes across all samples.
         // eslint-disable-next-line playwright/expect-expect
         test(`${visualSamplePath}`, async () => {
-            if (context) {
-                await context.clock.setFixedTime(FIXED_CLOCK_TIME);
-            }
-
             const sample = getSample(
                 dirname(samplePath), true, basename(samplePath)
             );
@@ -226,6 +236,12 @@ test.describe('Visual tests', () => {
                 }
             };
             try {
+                if (sample.html?.includes('/dashboards/')) {
+                    dashboardPage ??= await createVisualPage(true);
+                    page = dashboardPage;
+                } else {
+                    page = chartPage;
+                }
                 if (!page) {
                     throw new Error('Page not initialized');
                 }
