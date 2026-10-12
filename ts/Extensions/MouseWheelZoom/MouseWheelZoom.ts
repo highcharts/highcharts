@@ -25,6 +25,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
+import H from '../../Core/Globals.js';
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
 import {
     addEvent,
@@ -35,6 +36,14 @@ import {
     merge
 } from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
+const isApple = /Mac|iPhone|iPad|iPod/.test(H.userAgent);
+
+/** @internal */
+declare module '../../Core/PointerEvent' {
+    interface PointerEvent {
+        deltaX?: number;
+    }
+}
 
 /* *
  *
@@ -289,8 +298,14 @@ function onAfterGetContainer(this: Chart): void {
                 e.chartY - this.plotTop
             ) && allowZoom) {
 
-                const wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
-                    delta = e.detail || ((e.deltaY || 0) / 120),
+                const panKeyPressed = panKey && e[`${panKey}Key`],
+                    // On Apple platforms, holding shift natively moves the
+                    // wheel delta from deltaY to deltaX, so swap it back.
+                    deltaY = panKeyPressed && panKey === 'shift' && isApple ?
+                        e.deltaY || e.deltaX :
+                        e.deltaY,
+                    wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
+                    delta = e.detail || ((deltaY || 0) / 120),
                     xAxisCoords = getAssignedAxis(
                         pointer.getCoordinates(e).xAxis
                     ),
@@ -298,7 +313,6 @@ function onAfterGetContainer(this: Chart): void {
                         pointer.getCoordinates(e).yAxis
                     );
 
-                const panKeyPressed = panKey && e[`${panKey}Key`];
                 if (panKeyPressed) {
                     // Pan
                     const hasPanned = panBy(
