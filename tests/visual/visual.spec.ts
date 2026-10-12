@@ -13,8 +13,10 @@ import { GIFEncoder, applyPalette, quantize } from 'gifenc';
 import {
     appendError,
     readReference,
+    readReferenceFailures,
     recordCandidateResult,
-    writeReference
+    writeReference,
+    writeUncomparedCandidate
 } from './visual-results.ts';
 import { selectVisualSamples } from './visual-samples.ts';
 import { captureVisualSVG } from './visual-capture.ts';
@@ -74,6 +76,7 @@ function throwRuntimeError(
 
 const root = process.cwd();
 const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
+const referenceFailures = referenceMode ? [] : readReferenceFailures(root);
 const runtimeErrorMode = process.env.VISUAL_TEST_RUNTIME_ERROR;
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
@@ -187,13 +190,6 @@ test.describe('Visual tests', () => {
         if (!page) {
             return;
         }
-        await page.evaluate(() => {
-            const elementsToRemove = document.querySelectorAll(
-                '#visual-test-script, #visual-test-styles'
-            );
-            elementsToRemove.forEach((el) => el.remove());
-        });
-
         await page.evaluate(() => window.HCVisualSetup?.afterSample());
     });
 
@@ -217,6 +213,9 @@ test.describe('Visual tests', () => {
         // The visual reporter validates outcomes across all samples.
         // eslint-disable-next-line playwright/expect-expect
         test(`${visualSamplePath}`, async () => {
+            const referenceFailure = referenceFailures.find(failure =>
+                failure.sample === visualSamplePath
+            );
             const sample = getSample(
                 dirname(samplePath), true, basename(samplePath)
             );
@@ -240,7 +239,7 @@ test.describe('Visual tests', () => {
                     dashboardPage ??= await createVisualPage(true);
                     page = dashboardPage;
                 } else {
-                    page = chartPage;
+                    page = chartPage ??= await createVisualPage(false);
                 }
                 if (!page) {
                     throw new Error('Page not initialized');
@@ -363,13 +362,19 @@ test.describe('Visual tests', () => {
 
                 const candidateSVG = await captureVisualSVG(page);
 
-                if (referenceMode) {
+                if (referenceMode || referenceFailure) {
                     const runtimeError = pageError ?? await page.evaluate(() =>
                         (window as VisualWindow)
                             .visualTestUnhandledRejection
                     );
                     throwRuntimeError(runtimeError);
-                    writeReference(root, visualSamplePath, candidateSVG);
+                    if (referenceMode) {
+                        writeReference(root, visualSamplePath, candidateSVG);
+                    } else {
+                        writeUncomparedCandidate(
+                            root, visualSamplePath, candidateSVG
+                        );
+                    }
                 } else {
                     const referenceSVG = readReference(root, visualSamplePath);
                     const comparison = await compareVisualSVGs(
@@ -447,6 +452,16 @@ test.describe('Visual tests', () => {
                     );
                 }
                 if (sampleFailed && page) {
+                    await page.evaluate(() =>
+                        window.HCVisualSetup.afterSample()
+                    );
+                    await page.close();
+                    if (page === chartPage) {
+                        chartPage = undefined;
+                    } else {
+                        dashboardPage = undefined;
+                    }
+                    page = undefined;
                     // Successful cleanup distinguishes a sample error from
                     // a browser or environment failure that prevents cleanup.
                     test.info().annotations.push({
