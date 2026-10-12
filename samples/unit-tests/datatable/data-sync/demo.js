@@ -91,7 +91,6 @@ QUnit.test('Sync between data table and series', async assert => {
     // #25283
     const seriesTable = new Highcharts.DataTable({
         columns: {
-            x: [1, 2, 3],
             y: [5, 6, 7]
         }
     });
