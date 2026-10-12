@@ -35,10 +35,6 @@ const ohlcvConnector = new HighchartsConnectors.Morningstar.TimeSeriesConnector(
 });
 ```
 
-## Relevant demos
-
-- [Highcharts Stock + Morningstar OHLCV Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/magnum-ice-cream/)
-
 ## Morningstar API Reference
 
 For more details, see [Morningstar’s Time Series API].
