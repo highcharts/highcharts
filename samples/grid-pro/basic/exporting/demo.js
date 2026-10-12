@@ -23,11 +23,11 @@ const grid = Grid.grid('container', {
 });
 
 csvExport.addEventListener('click', () => {
-    result.innerHTML =  grid.exporting.getCSV();
+    result.value = grid.exporting.getCSV();
 });
 
 jsonBtn.addEventListener('click', () => {
-    result.innerHTML = grid.exporting.getJSON();
+    result.value = grid.exporting.getJSON();
 });
 
 csvDownload.addEventListener('click', () => {
