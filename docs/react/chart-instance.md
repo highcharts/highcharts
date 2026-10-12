@@ -1,3 +1,10 @@
+---
+description: >-
+  Use the ref prop on Chart to obtain a reference to the underlying chart
+  instance and its container element, then access those values from a React
+  effect when needed.
+---
+
 # Chart instance
 
 If you need to access the specific chart instance, you can use the `ref` prop.

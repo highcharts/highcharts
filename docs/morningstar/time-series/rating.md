@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve monthly Morningstar star-rating history, which measures
+  risk-adjusted fund performance within its category on a one-to-five scale,
+  by setting the Rating series type on TimeSeriesConnector.
+---
+
 # Rating
 
 This type yields Morningstar Rating time series data for single or multiple

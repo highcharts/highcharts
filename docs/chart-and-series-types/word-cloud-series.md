@@ -1,3 +1,10 @@
+---
+description: >-
+  Provide each word as a name and weight, then customize spiral placement,
+  initial positioning, and font sizing with your own functions. The article
+  also describes collision behavior and export differences.
+---
+
 Word cloud
 ===
 

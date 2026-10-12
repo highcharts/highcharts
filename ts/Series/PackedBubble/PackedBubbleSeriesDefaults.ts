@@ -371,8 +371,8 @@ export default PackedBubbleSeriesDefaults;
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
- *            boostThreshold, boostBlending
+ * @excluding cropThreshold, dataSorting, dragDrop, stack, boostThreshold,
+ *            boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble

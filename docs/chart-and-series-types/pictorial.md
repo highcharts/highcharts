@@ -1,3 +1,10 @@
+---
+description: >-
+  Create pictorial columns from SVG paths, load the pictorial module, and
+  use stacking to compose data series into a shared shape. The article also
+  covers stack shadows and sizing repeated images.
+---
+
 Pictorial series
 ===============
 

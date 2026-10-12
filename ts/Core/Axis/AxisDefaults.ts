@@ -1041,15 +1041,16 @@ namespace AxisDefaults {
             /**
              * The label's pixel distance from the perimeter of the plot area.
              * On cartesian charts, this is overridden if the `labels.y` setting
-             * is set.
+             * is set. Defaults to 15 unless the labels are aligned inside the
+             * plot area, in which case it defaults to 0.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
              *
              * @type      {number}
              * @product   highcharts gantt
+             * @apioption xAxis.labels.distance
              */
-            distance: 15,
 
             /**
              * Enable or disable the axis labels.
@@ -1784,6 +1785,16 @@ namespace AxisDefaults {
          * @since     4.2.6
          * @product   highstock
          * @apioption xAxis.scrollbar
+         */
+
+        /**
+         * Enable or disable the scrollbar on the X axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
+         *
+         * @default   false
+         * @product   highstock
+         * @apioption xAxis.scrollbar.enabled
          */
 
         /**
@@ -2924,14 +2935,14 @@ namespace AxisDefaults {
          */
 
         /**
-         * Enable the scrollbar on the Y axis.
+         * Enable or disable the scrollbar on the Y axis.
+         *
+         * @see [scrollbar.enabled](#scrollbar.enabled)
          *
          * @sample {highstock} stock/yaxis/scrollbar/
          *         Enabled on Y axis
          *
-         * @type      {boolean}
          * @default   false
-         * @since     4.2.6
          * @product   highstock
          * @apioption yAxis.scrollbar.enabled
          */

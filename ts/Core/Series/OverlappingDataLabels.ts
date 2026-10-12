@@ -25,6 +25,7 @@ import type BBoxObject from '../Renderer/BBoxObject';
 import type Point from '../Series/Point';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
+import { stop } from '../Animation/AnimationUtilities.js';
 import Chart from '../Chart/Chart.js';
 import GeometryUtilities from '../Geometry/GeometryUtilities.js';
 const { pointInPolygon } = GeometryUtilities;
@@ -252,44 +253,47 @@ export function composeOverlappingDataLabels(
  * Whether label is affected
  */
 function hideOrShow(label: SVGElement, chart: Chart): boolean {
-    let complete: (Function|undefined),
-        newOpacity: number,
-        isLabelAffected = false;
+    let isLabelAffected = false;
 
     if (label) {
-        newOpacity = label.newOpacity;
+        const newOpacity = label.newOpacity,
+            isDataLabel = label.hasClass('highcharts-data-label');
+
+        // For tick labels, we need to stop running animations otherwise they
+        // may continue to run after we set the new opacity
+        if (!isDataLabel) {
+            stop(label, 'opacity');
+        }
 
         if (label.oldOpacity !== newOpacity) {
 
             // Toggle data labels
-            if (label.hasClass('highcharts-data-label')) {
+            if (isDataLabel) {
 
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
                 label[
                     newOpacity ? 'removeClass' : 'addClass'
                 ]('highcharts-data-label-hidden');
-                complete = function (): void {
-                    if (!chart.styledMode) {
-                        label.css({
-                            pointerEvents: newOpacity ? 'auto' : 'none'
-                        });
-                    }
-                };
-
                 isLabelAffected = true;
 
                 // Animate or set the opacity
                 label[label.isOld || label.placed ? 'animate' : 'attr'](
                     { opacity: newOpacity },
                     void 0,
-                    complete
+                    (): void => {
+                        if (!chart.styledMode) {
+                            label.css({
+                                pointerEvents: newOpacity ? 'auto' : 'none'
+                            });
+                        }
+                    }
                 );
                 fireEvent(chart, 'afterHideOverlappingLabel');
 
-            // Toggle other labels, tick labels
+            // Toggle other labels - tick labels, stack labels
             } else {
-                label.attr({
+                label[label.placed ? 'animate' : 'attr']({
                     opacity: newOpacity
                 });
             }
@@ -310,7 +314,21 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
 function onChartRender(
     this: Chart
 ): void {
-    const chart = this;
+    const chart = this,
+        // Helper function for data labels and stack labels when dynamicly
+        // toggling the allowOverlap option
+        toggle = (label: SVGElement, allowOverlap?: boolean): void => {
+            // Allow overlap, reset opacity and show
+            if (allowOverlap) {
+                label.oldOpacity = label.opacity;
+                label.newOpacity = 1;
+                hideOrShow(label, chart);
+
+            // Do not allow overlap
+            } else {
+                labels.push(label);
+            }
+        };
 
     let labels: Array<SVGElement|undefined> = [];
 
@@ -319,22 +337,21 @@ function onChartRender(
         labels = labels.concat(collector());
     }
 
-    for (const yAxis of (chart.yAxis || [])) {
-        if (
-            yAxis.stacking &&
-            yAxis.options.stackLabels &&
-            !yAxis.options.stackLabels.allowOverlap
-        ) {
-            objectEach(yAxis.stacking.stacks, (stack): void => {
-                objectEach(stack, (stackItem): void => {
-                    if (stackItem.label) {
-                        labels.push(stackItem.label);
-                    }
-                });
+    // Stack labels
+    for (const { options, stacking } of (chart.yAxis || [])) {
+        objectEach(stacking?.stacks, (stack): void => {
+            objectEach(stack, ({ label }): void => {
+                if (label) {
+                    toggle(
+                        label,
+                        options.stackLabels?.allowOverlap
+                    );
+                }
             });
-        }
+        });
     }
 
+    // Series data labels
     for (const series of (chart.series || [])) {
         if (series.visible && series.hasDataLabels?.()) { // #3866
             const push = (points: Point[]): void => {
@@ -365,7 +382,7 @@ function onChartRender(
                             }
                             */
                             // Allow overlap if the option is explicitly true
-                            if (
+                            toggle(label, (
                                 // #13449
                                 options.allowOverlap ??
 
@@ -375,15 +392,7 @@ function onChartRender(
                                     series.is('pie') &&
                                     Number(options.distance) > 0
                                 )
-                            ) {
-                                label.oldOpacity = label.opacity;
-                                label.newOpacity = 1;
-                                hideOrShow(label, chart);
-
-                            // Do not allow overlap
-                            } else {
-                                labels.push(label);
-                            }
+                            ));
                         });
                     }
                 }

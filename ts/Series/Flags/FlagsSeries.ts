@@ -55,6 +55,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         allowDG?: boolean;
@@ -67,6 +68,7 @@ declare module '../../Core/Series/StatesOptions' {
     }
 }
 
+/** @internal */
 interface DistributedBoxObject extends R.BoxObject {
     anchorX?: number;
     plotX?: number;
@@ -81,7 +83,6 @@ interface DistributedBoxObject extends R.BoxObject {
 /**
  * The Flags series.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.flags
  *
@@ -95,8 +96,10 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = FlagsSymbols.compose;
 
+    /** @internal */
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         FlagsSeriesDefaults
@@ -110,6 +113,7 @@ class FlagsSeries extends ColumnSeries {
 
     public data!: Array<FlagsPoint>;
 
+    /** @internal */
     public onSeries?: typeof Series.prototype;
 
     public options!: FlagsSeriesOptions;
@@ -124,7 +128,7 @@ class FlagsSeries extends ColumnSeries {
 
     /**
      * Disable animation, but keep clipping (#8546).
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (init) {
@@ -134,7 +138,7 @@ class FlagsSeries extends ColumnSeries {
 
     /**
      * Draw the markers.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -344,7 +348,7 @@ class FlagsSeries extends ColumnSeries {
     /**
      * Extend the column trackers with listeners to expand and contract
      * stacks.
-     * @private
+     * @internal
      */
     public drawTracker(): void {
         const series = this,
@@ -402,7 +406,7 @@ class FlagsSeries extends ColumnSeries {
 
     /**
      * Get presentational attributes
-     * @private
+     * @internal
      */
     public pointAttribs(
         point: FlagsPoint,
@@ -429,7 +433,7 @@ class FlagsSeries extends ColumnSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public setClip(): void {
         Series.prototype.setClip.apply(this, arguments as any);
@@ -450,6 +454,7 @@ class FlagsSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface FlagsSeries extends OnSeriesComposition.SeriesComposition {
     allowDG: boolean;
     group: typeof ColumnSeries.prototype.group;
@@ -472,7 +477,7 @@ extend(FlagsSeries.prototype, {
     buildKDTree: noop,
     /**
      * Inherit the initialization from base Series.
-     * @private
+     * @internal
      */
     init: Series.prototype.init
 });
@@ -483,6 +488,7 @@ extend(FlagsSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypesDictionary {
         flags: typeof FlagsSeries;
