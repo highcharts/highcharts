@@ -1,8 +1,8 @@
 ---
 description: >-
-  Configure y-axis options with the YAxis component, including plot bands,
-  pass axis API settings as props, and supply axis title text as child content
-  within a chart.
+  Configure y-axis options such as plot bands with the YAxis component, pass
+  axis API settings as props, set the axis title through children or the title
+  prop, and add several y-axes that series select by index.
 ---
 
 # YAxis
@@ -29,9 +29,7 @@ The `YAxis` component accepts all [y-axis API options](https://api.highcharts.co
 
 Children set [`title.text`](https://api.highcharts.com/highcharts/yAxis.title.text), and the `title` prop carries the other [title options](https://api.highcharts.com/highcharts/yAxis.title), as in `<YAxis title={{ align: "high" }}>Y axis values</YAxis>`.
 
-A y-axis has a default title, [`Values`](https://api.highcharts.com/highcharts/yAxis.title.text), which can also be changed through the [`lang.yAxisTitle`](https://api.highcharts.com/highcharts/lang.yAxisTitle) option. To render no title at all, set the title text to `null`, as in `<YAxis title={{ text: null }} />`.
-
-A chart can have several y-axes. To add them, render one `YAxis` component per axis. They make up the [`yAxis`](https://api.highcharts.com/highcharts/yAxis) array in the order they are written, so the first `YAxis` is index `0`, the second is index `1`, and so on. A series selects an axis by that index:
+A chart can have several y-axes, one `YAxis` component per axis. A series selects an axis by its index, which follows the order the components are written in (see [Child order](https://www.highcharts.com/docs/react/component-children#child-order)):
 
 ```tsx
 import { Chart, YAxis } from "@highcharts/react";

@@ -1,8 +1,8 @@
 ---
 description: >-
-  Configure x-axis options with the XAxis component, including plot bands,
-  pass axis API settings as props, and supply axis title text as child content
-  within a chart.
+  Configure x-axis options such as plot bands with the XAxis component, pass
+  axis API settings as props, set the axis title through children or the title
+  prop, and add several x-axes that series select by index.
 ---
 
 # XAxis
@@ -29,9 +29,7 @@ The `XAxis` component accepts all [x-axis API options](https://api.highcharts.co
 
 Children set [`title.text`](https://api.highcharts.com/highcharts/xAxis.title.text), and the `title` prop carries the other [title options](https://api.highcharts.com/highcharts/xAxis.title), as in `<XAxis title={{ align: "high" }}>X axis values</XAxis>`.
 
-An x-axis has no title by default. To add one, set it through children, or through the `title` prop as `title={{ text: "X axis values" }}`.
-
-A chart can have several x-axes. To add them, render one `XAxis` component per axis. They make up the [`xAxis`](https://api.highcharts.com/highcharts/xAxis) array in the order they are written, so the first `XAxis` is index `0`, the second is index `1`, and so on. A series selects an axis by that index:
+A chart can have several x-axes, one `XAxis` component per axis. A series selects an axis by its index, which follows the order the components are written in (see [Child order](https://www.highcharts.com/docs/react/component-children#child-order)):
 
 ```tsx
 import { Chart, XAxis } from "@highcharts/react";
