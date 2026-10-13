@@ -125,6 +125,16 @@ describe('DataConverter', () => {
                 'Should handle decimal point set by a user.'
             );
         });
+
+        it('should convert dates to timestamps', () => {
+            const date = new Date('2020-01-09T12:34:56Z');
+
+            strictEqual(
+                DataConverterUtils.asNumber(date),
+                date.getTime(),
+                'A date should retain its complete numeric value.'
+            );
+        });
     });
 
     describe('asDate', () => {

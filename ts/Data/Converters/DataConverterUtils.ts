@@ -99,7 +99,7 @@ export function asNumber(
     }
 
     if (value instanceof Date) {
-        return value.getDate();
+        return value.getTime();
     }
     if (value) {
         return value.getRowCount();
