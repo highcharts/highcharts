@@ -560,7 +560,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type      {Highcharts.PlotSeriesOptions}
      * @since     5.0.0
-     * @product   highstock
+     * @product   highstock gantt
      * @apioption plotOptions.series.navigatorOptions
      */
 
@@ -843,7 +843,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type      {boolean}
      * @since     5.0.0
-     * @product   highstock
+     * @product   highstock gantt
      * @apioption plotOptions.series.showInNavigator
      */
 
