@@ -379,7 +379,7 @@ class PulseOscNode {
     private pulseWidth: number;
 
     constructor(context: AudioContext, options: PulseOscOptions) {
-        this.pulseWidth = Math.min(Math.max(0, options.pulseWidth || 0.5));
+        this.pulseWidth = Math.min(Math.max(0, options.pulseWidth ?? 0.5));
 
         const makeOsc = (): OscillatorNode => new OscillatorNode(context, {
             type: 'sawtooth',
