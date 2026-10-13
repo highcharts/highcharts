@@ -89,7 +89,7 @@ const G = {
     win: Globals.win
 };
 
-CreditsLiteComposition.compose(G.Grid, G.Table);
+CreditsLiteComposition.compose(G.Grid);
 ResponsiveComposition.compose(G.Grid);
 
 
