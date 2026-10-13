@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Chart,
     Highcharts,
@@ -15,7 +14,7 @@ import { getDataTableOptions } from './utils';
 
 const dataTable = new Highcharts.DataTable(getDataTableOptions(1000000));
 
-const ScatterBoostChart = React.memo(function ScatterBoostChart() {
+export default function ScatterBoostChart() {
     return (
         <Chart
             dataTable={dataTable}
@@ -64,6 +63,4 @@ const ScatterBoostChart = React.memo(function ScatterBoostChart() {
             />
         </Chart>
     );
-});
-
-export default ScatterBoostChart;
+}

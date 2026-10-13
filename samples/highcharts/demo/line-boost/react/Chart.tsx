@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Chart,
     Highcharts,
@@ -16,7 +15,7 @@ import { getDataTableOptions } from './utils';
 const n = 500000,
     dataTable = new Highcharts.DataTable(getDataTableOptions(n));
 
-const LineBoostChart = React.memo(function LineBoostChart() {
+export default function LineBoostChart() {
     return (
         <Chart
             dataTable={dataTable}
@@ -50,6 +49,4 @@ const LineBoostChart = React.memo(function LineBoostChart() {
             />
         </Chart>
     );
-});
-
-export default LineBoostChart;
+}
