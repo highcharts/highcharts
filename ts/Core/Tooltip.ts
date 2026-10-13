@@ -1338,12 +1338,6 @@ class Tooltip {
         const field = this.getPlayingField(0),
             scrollLeft = chart.scrollablePlotArea?.scrollingContainer
                 .scrollLeft || 0,
-            bounds = {
-                left: scrollLeft,
-                right: field.width + scrollLeft,
-                top: 0,
-                bottom: field.height
-            },
             tooltipLabel = tooltip.getLabel(),
             ren = this.renderer || chart.renderer,
             headerTop = chart.xAxis[0]?.opposite,
@@ -1351,12 +1345,17 @@ class Tooltip {
             chartPosition = pointer.getChartPosition(),
             chartTop = outside ? chartPosition.top : 0,
             chartLeft = outside ? chartPosition.left : 0,
-            hasFixedPosition = positioner || fixed;
+            hasFixedPosition = positioner || fixed,
+            boundsLeft = scrollLeft,
+            boundsRight = field.width + scrollLeft;
+
+        let boundsTop = 0,
+            boundsBottom = field.height;
 
         if (headerTop) {
-            bounds.top = chartTop + plotTop - headerDistance;
+            boundsTop = chartTop + plotTop - headerDistance;
         } else {
-            bounds.bottom = chartTop + plotTop + plotHeight + headerDistance;
+            boundsBottom = chartTop + plotTop + plotHeight + headerDistance;
         }
 
         // Uncomment this to visualize field for debugging
@@ -1373,9 +1372,9 @@ class Tooltip {
         // }
         // css(debugBox, {
         //     left: (outside ? 0 : chartPosition.left) + 'px',
-        //     top: (bounds.top + (outside ? 0 : chartPosition.top)) + 'px',
-        //     width: bounds.right + 'px',
-        //     height: (bounds.bottom - bounds.top) + 'px'
+        //     top: (boundsTop + (outside ? 0 : chartPosition.top)) + 'px',
+        //     width: boundsRight + 'px',
+        //     height: (boundsBottom - boundsTop) + 'px'
         // });
 
         /**
@@ -1418,8 +1417,8 @@ class Tooltip {
             // Limit values to bounds
             anchorX = clamp(
                 anchorX,
-                bounds.left - distance,
-                bounds.right + distance
+                boundsLeft - distance,
+                boundsRight + distance
             );
 
             return { anchorX, anchorY };
@@ -1441,11 +1440,11 @@ class Tooltip {
                 y;
 
             if (point.isHeader) {
-                y = headerTop ? -boxHeight : bounds.bottom;
+                y = headerTop ? -boxHeight : boundsBottom;
                 x = clamp(
                     anchor[0] - (boxWidth / 2),
-                    bounds.left,
-                    bounds.right - boxWidth
+                    boundsLeft,
+                    boundsRight - boxWidth
                 );
             } else if (fixed && point) {
                 const pos = tooltip.getFixedPosition(
@@ -1454,15 +1453,15 @@ class Tooltip {
                     point
                 );
                 x = pos.x + chartLeft;
-                y = pos.y - bounds.top + chartTop;
+                y = pos.y - boundsTop + chartTop;
 
             } else {
-                y = anchor[1] - bounds.top;
+                y = anchor[1] - boundsTop;
                 x = alignedLeft ?
                     anchor[0] - boxWidth - distance :
                     anchor[0] + distance;
                 x = clamp(
-                    x, alignedLeft ? x : bounds.left, bounds.right
+                    x, alignedLeft ? x : boundsLeft, boundsRight
                 );
             }
 
@@ -1615,9 +1614,9 @@ class Tooltip {
                         boxObject.pos = boxPosition.y;
                     }
 
-                    hasLeftOverflow ||= boxObject.x < bounds.left;
+                    hasLeftOverflow ||= boxObject.x < boundsLeft;
                     tooWide ||= boxWidth + distance >
-                        bounds.right - bounds.left;
+                        boundsRight - boundsLeft;
 
                     boxes.push(boxObject);
                 } else {
@@ -1648,7 +1647,7 @@ class Tooltip {
                     false
                 );
                 box.target = y;
-                box.x = tooWide ? bounds.left : x;
+                box.x = tooWide ? boundsLeft : x;
             }
         }
 
@@ -1659,7 +1658,7 @@ class Tooltip {
         distribute(
             // Headers not included in the algorithm
             boxes.slice(emptyHeader ? 0 : 1),
-            bounds.bottom - bounds.top
+            boundsBottom - boundsTop
         );
 
         for (const box of boxes) {
@@ -1672,7 +1671,7 @@ class Tooltip {
             const attributes: SVGAttributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
-                y: (pos || 0) + bounds.top + (fixed && position.y || 0),
+                y: (pos || 0) + boundsTop + (fixed && position.y || 0),
                 anchorX,
                 anchorY
             };
