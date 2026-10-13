@@ -2035,7 +2035,7 @@ export interface AxisTitleOptions {
     align: ('high'|'low'|'middle');
 
     /**
-     * Deprecated. Set the `text` to `undefined` to disable the title.
+     * Deprecated. Set the `text` to `null` to disable the title.
      *
      * @deprecated 3.0.0
      * @product highcharts
