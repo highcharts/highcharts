@@ -46,7 +46,15 @@ describe('InvertModifier', () => {
                 }
             }));
 
-            const modified = await modifier.modify(table.getModified().clone());
+            const inverted = table.getModified().clone();
+            const invertedColumns = inverted.getColumns();
+            const modified = await modifier.modify(inverted);
+
+            deepStrictEqual(
+                inverted.getColumns(),
+                invertedColumns,
+                'The already inverted source table should remain unchanged.'
+            );
 
             deepStrictEqual(
                 modified.getModified().getColumns(),
