@@ -75,6 +75,15 @@ describe('RangeModifier', () => {
             );
         });
 
+        it('should preserve an explicit zero end', async () => {
+            const table = new DataTable({ columns: { x: [1, 2, 3] } });
+            const modifier = new RangeModifier({ start: 0, end: 0 });
+
+            await modifier.modify(table);
+
+            strictEqual(table.getModified().getRowCount(), 0);
+        });
+
         it('should set row indexes correctly', async () => {
             const table = new DataTable({
                 columns: {
