@@ -121,6 +121,33 @@ describe('JSONConnector', () => {
                 'Should have correct Column Ids'
             );
         });
+
+        it('should preserve rows with missing nested values', async () => {
+            const connector = new JSONConnector({
+                columnIds: {
+                    id: ['id'],
+                    score: ['metrics', 'score']
+                },
+                data: [{
+                    id: 1,
+                    metrics: { score: 5 }
+                }, {
+                    id: 2
+                }] as any,
+                firstRowAsNames: false
+            });
+
+            await connector.load();
+
+            deepStrictEqual(
+                connector.getTable().getColumns(['id', 'score']),
+                {
+                    id: [1, 2],
+                    score: [5, void 0]
+                },
+                'A missing nested path should produce an empty cell.'
+            );
+        });
     });
 
     describe('with beforeParse', () => {
