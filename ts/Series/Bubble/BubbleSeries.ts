@@ -822,6 +822,11 @@ class BubbleSeries extends ScatterSeries {
                     width: 2 * radius,
                     height: 2 * radius
                 });
+
+                // Rank data labels by the bubble size. The point's `y` is a
+                // position, and the radius accounts for `sizeBy`,
+                // `zThreshold` and the size limits (#23585).
+                point.labelrank = point.options.labelrank ?? radius;
             }
 
             if (isNumber(radius) && radius >= minPxSize / 2) {
