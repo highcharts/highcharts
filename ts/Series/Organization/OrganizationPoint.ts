@@ -92,7 +92,6 @@ class OrganizationPoint extends SankeyPointClass {
 
     public options!: OrganizationPointOptions;
 
-    /** @internal */
     public series!: OrganizationSeries;
 
     /** @internal */
@@ -107,6 +106,7 @@ class OrganizationPoint extends SankeyPointClass {
      *
      * */
 
+    /** @internal */
     public constructor(
         series: OrganizationSeries,
         options: OrganizationPointOptions,

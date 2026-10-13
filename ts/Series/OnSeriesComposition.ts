@@ -348,4 +348,5 @@ namespace OnSeriesComposition {
  *
  * */
 
+/** @internal */
 export default OnSeriesComposition;

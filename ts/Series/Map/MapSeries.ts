@@ -129,6 +129,7 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         ScatterSeries.defaultOptions,
         MapSeriesDefaults

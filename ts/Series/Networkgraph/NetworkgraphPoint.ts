@@ -50,7 +50,7 @@ import {
  *
  * */
 
-class NetworkgraphPoint extends Point implements DragNodesPoint {
+class NetworkgraphPoint extends Point {
 
     /* *
      *

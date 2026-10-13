@@ -61,6 +61,7 @@ class MapBubbleSeries extends BubbleSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: MapBubbleSeriesOptions = merge(
         BubbleSeries.defaultOptions,
         MapBubbleSeriesDefaults

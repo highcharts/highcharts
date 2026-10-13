@@ -96,6 +96,7 @@ class NetworkgraphSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         Series.defaultOptions,
         NetworkgraphSeriesDefaults
@@ -518,6 +519,7 @@ class NetworkgraphSeries extends Series {
  *
  * */
 
+/** @internal */
 interface NetworkgraphSeries
     extends DragNodesSeries, NodesComposition.SeriesComposition{
     pointClass: typeof NetworkgraphPoint;

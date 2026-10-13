@@ -73,6 +73,7 @@ class LollipopSeries extends Series {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: LollipopSeriesOptions = merge(
         Series.defaultOptions,
         LollipopSeriesDefaults

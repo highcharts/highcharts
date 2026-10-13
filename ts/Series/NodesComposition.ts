@@ -479,4 +479,5 @@ namespace NodesComposition {
  *
  * */
 
+/** @internal */
 export default NodesComposition;
