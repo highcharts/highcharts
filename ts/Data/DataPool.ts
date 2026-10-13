@@ -93,8 +93,8 @@ class DataPool implements DataEventEmitter<Event> {
 
     public constructor(options?: DataPoolOptions) {
         this.options = merge(DataPool.defaultOptions, options);
-        this.connectors = {};
-        this.waiting = {};
+        this.connectors = Object.create(null);
+        this.waiting = Object.create(null);
     }
 
     /* *
