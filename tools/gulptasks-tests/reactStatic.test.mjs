@@ -77,6 +77,22 @@ after(async () => {
 });
 
 describe('static React artifact consumer', async () => {
+    await it('isolates mirrors and cleanup for fixtures with the same release', async () => {
+        const first = await makeFixture();
+        const second = await makeFixture();
+        assert.notEqual(first.bucket, second.bucket);
+        const key = 'highcharts/react/index.html';
+        const removed = Path.join(first.bucketDirectory, key);
+        const preserved = Path.join(second.bucketDirectory, key);
+        await mkdir(Path.dirname(removed), { recursive: true });
+        await writeFile(removed, 'first fixture');
+        await mkdir(Path.dirname(preserved), { recursive: true });
+        await writeFile(preserved, 'second fixture');
+        await first.cleanup();
+        await assert.rejects(readFile(removed), { code: 'ENOENT' });
+        assert.equal(await readFile(preserved, 'utf8'), 'second fixture');
+    });
+
     await it('recognizes only React-owned product and shared prefixes', () => {
         for (const product of PRODUCTS) {
             assert.equal(

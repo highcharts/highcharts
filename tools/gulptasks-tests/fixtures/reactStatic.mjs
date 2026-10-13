@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import Path from 'node:path';
@@ -148,7 +148,7 @@ export async function createReactStaticFixture({ release = 'test-r1' } = {}) {
     const artifactDirectory = Path.join(directory, 'artifact');
     const stagingDirectory = Path.join(directory, 'staged');
     const reportPath = Path.join(directory, 'publication-report.json');
-    const bucket = `react-static-test-${release.replace(/[^a-z0-9.-]/gu, '-')}`;
+    const bucket = `react-static-test-${randomUUID()}`;
     const bucketDirectory = Path.resolve('tmp/s3', bucket);
     const { records: initialRecords, contents } = makeRecords(release);
     let records = initialRecords;
@@ -213,6 +213,9 @@ export async function createReactStaticFixture({ release = 'test-r1' } = {}) {
         async cleanup() {
             await rm(directory, { recursive: true, force: true });
             await rm(bucketDirectory, { recursive: true, force: true });
+            await rm(Path.resolve('tmp/s3-delete-markers', bucket), {
+                recursive: true, force: true
+            });
         }
     };
 }
