@@ -526,6 +526,23 @@ describe('S3 utils', async () => {
         );
     });
 
+    await it('writes direct dry-run objects in dotted paths and clears deletion markers', async () => {
+        const fixture = makeFixture(`gulptasks-s3-test.${randomUUID()}`);
+        const content = 'Høycharts 😀';
+        const options = { ContentType: 'text/plain; charset=utf-8' };
+        for (const key of ['root.json', 'release.1/docs.v2/object.json']) {
+            await S3.deleteS3Object(key, fixture.session);
+            await S3.putS3Object(key, content, options, fixture.session);
+            assert.deepEqual(
+                JSON.parse(readFileSync(Path.join(fixture.bucketPath, key), 'utf8')),
+                { ...options, content }
+            );
+            assert.equal(existsSync(Path.join(
+                fixture.deleteMarkersPath, Path.dirname(key), `DELETE ${Path.basename(key)}`
+            )), false);
+        }
+    });
+
     await it('creates deletion markers for dotted buckets and key directories', async () => {
         const fixture = makeFixture(`gulptasks-s3-test.${randomUUID()}`);
         const rootObject = writeDryRunObject(fixture.bucketPath, 'root.txt', 'stale root');

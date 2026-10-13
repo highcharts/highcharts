@@ -487,24 +487,10 @@ async function putS3Object(
     session = defaultSession
 ) {
     if (session && session.dryrun) {
-        const fsLib = require('../../libs/fs');
-
-        path = Path.join('tmp', 's3', session.bucket, path);
-        const tempRoot = NativePath.resolve('tmp');
-        const mirrorRoot = NativePath.resolve('tmp', 's3');
-        const bucketPath = NativePath.resolve(mirrorRoot, session.bucket);
-
-        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
-        assertNoDryRunSymlinkAncestors(bucketPath, mirrorRoot);
-        assertNoDryRunSymlinkAncestors(path, bucketPath);
-
-        fsLib.makePath(Path.dirname(path));
-        assertNoDryRunSymlinkAncestors(path, bucketPath);
-
-        await FS.writeFile(
+        await writeDryRunObject(
             path,
-            JSON.stringify({ ...options, content }),
-            'utf-8'
+            Buffer.from(JSON.stringify({ ...options, content }), 'utf-8'),
+            session
         );
     } else {
         await session.region.putObject({
