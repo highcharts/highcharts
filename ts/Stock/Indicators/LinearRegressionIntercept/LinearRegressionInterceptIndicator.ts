@@ -40,7 +40,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Linear Regression Intercept series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionIntercept
  *
@@ -64,9 +63,10 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     indicators/indicators
+     * @requires     indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
+     * @internal
      */
     public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
@@ -88,6 +88,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      *
      * */
 
+    /** @internal */
     public getEndPointY(
         lineParameters: RegressionLineParametersObject
     ): number {
@@ -101,7 +102,6 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
  *
  * */
 
-/** @internal */
 interface LinearRegressionInterceptIndicator {
     pointClass: typeof LinearRegressionInterceptPoint;
     nameBase: string;
@@ -117,7 +117,6 @@ extend(LinearRegressionInterceptIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregressionintercept: typeof LinearRegressionInterceptIndicator;
@@ -142,7 +141,6 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
-/** @internal */
 export default LinearRegressionInterceptIndicator;
 
 /* *
@@ -159,9 +157,8 @@ export default LinearRegressionInterceptIndicator;
  * @extends   series,plotOptions.linearregressionintercept
  * @since     7.0.0
  * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  indicators/indicators
+ * @requires  indicators/regressions
  * @apioption series.linearregressionintercept
  */
 

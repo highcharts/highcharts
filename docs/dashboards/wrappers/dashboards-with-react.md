@@ -1,3 +1,10 @@
+---
+description: >-
+  Install Dashboards in React, register Highcharts and Grid plugins, and mount
+  a board with the built-in layout or custom JSX; the examples also show row
+  and cell helper components and cleanup.
+---
+
 # Highcharts Dashboards with React
 
 To create a dashboard with **React**, please follow the steps below:

@@ -1,3 +1,10 @@
+---
+description: >-
+  Reduce repeated X values in chart datasets using a start value and interval.
+  Learn how regularly spaced points differ from irregular data represented
+  with relativeXValue and see the resulting size comparisons.
+---
+
 Data compression
 ===
 

@@ -57,15 +57,22 @@ class TreegraphPoint extends TreemapPoint {
      *
      * */
 
+    /** @internal */
     public collapseButton?: SVGElement;
+    /** @internal */
     public collapseButtonOptions?: CollapseButtonOptions;
+    /** @internal */
     public collapsed?: boolean;
     public dataLabelOnHidden = true;
     public isLink = false;
+    /** @internal */
     public level?: number;
+    /** @internal */
     public linkToParent?: TreegraphLink;
+    /** @internal */
     public node!: TreegraphNode;
     public options!: TreegraphPointOptions;
+    /** @internal */
     public series!: TreegraphSeries;
 
     /* *
@@ -74,6 +81,7 @@ class TreegraphPoint extends TreemapPoint {
      *
      * */
 
+    /** @internal */
     public draw(): void {
         super.draw.apply(this, arguments);
         // Run animation of hiding/showing of the point.
@@ -86,6 +94,7 @@ class TreegraphPoint extends TreemapPoint {
         this.renderCollapseButton();
     }
 
+    /** @internal */
     public renderCollapseButton(): void {
         const point = this,
             series = point.series,
@@ -178,6 +187,7 @@ class TreegraphPoint extends TreemapPoint {
         }
     }
 
+    /** @internal */
     public toggleCollapse(state?: boolean): void {
         const series = this.series;
 
@@ -189,6 +199,7 @@ class TreegraphPoint extends TreemapPoint {
         series.redraw();
     }
 
+    /** @internal */
     public destroy(): void {
 
         if (this.collapseButton) {
@@ -205,6 +216,7 @@ class TreegraphPoint extends TreemapPoint {
         super.destroy.apply(this, arguments);
     }
 
+    /** @internal */
     public getCollapseBtnPosition(btnOptions: CollapseButtonOptions): {
         x: number;
         y: number;

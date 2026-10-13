@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Accessibility"
+description: >-
+  Configure how Highcharts Grid exposes table structure and interactions to
+  assistive technologies, set announcements and header descriptions, add
+  caption and screen reader context, and provide high contrast styling.
 ---
 
 # Accessibility (a11y) in Highcharts Grid

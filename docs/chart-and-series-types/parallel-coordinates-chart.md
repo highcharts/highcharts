@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare many dimensions by drawing each series across multiple y-axes.
+  Enable parallel coordinates, configure generated axes and their category
+  labels, and apply shared axis options with per-axis overrides.
+---
+
 Parallel coordinates
 ===
 

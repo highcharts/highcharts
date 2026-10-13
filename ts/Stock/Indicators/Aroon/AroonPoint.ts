@@ -21,9 +21,10 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class AroonPoint extends SMAPoint {
+    /** @internal */
     public aroonDown?: number;
+    /** @internal */
     public series: AroonIndicator;
 }
 
@@ -33,5 +34,4 @@ declare class AroonPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default AroonPoint;

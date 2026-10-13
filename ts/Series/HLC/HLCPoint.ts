@@ -46,22 +46,30 @@ class HLCPoint extends ColumnPoint {
      *
      * */
 
+    /** @internal */
     public close!: number;
 
+    /** @internal */
     public high!: number;
 
+    /** @internal */
     public low!: number;
 
     public options!: HLCPointOptions;
 
+    /** @internal */
     public plotClose!: number;
 
+    /** @internal */
     public plotHigh?: number;
 
+    /** @internal */
     public plotLow?: number;
 
+    /** @internal */
     public series!: HLCSeries;
 
+    /** @internal */
     public yBottom?: number;
 
     /**

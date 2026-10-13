@@ -1,3 +1,10 @@
+---
+description: >-
+  Use React components or JSX as option children, bind nested content to
+  specific Highcharts options with data-hc-option, customize HTML rendering,
+  and account for static parsing and unsupported state updates.
+---
+
 # Format options with components
 
 ## React components and JSX

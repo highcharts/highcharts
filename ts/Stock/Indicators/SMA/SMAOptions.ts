@@ -37,7 +37,7 @@ import type { SeriesTooltipOptions } from '../../../Core/TooltipOptions';
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking, useOhlcData
  * @product      highstock
- * @requires     stock/indicators/indicators
+ * @requires     indicators/indicators
  * @interface Highcharts.SMAOptions
  */
 export interface SMAOptions extends LineSeriesOptions {

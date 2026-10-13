@@ -68,6 +68,7 @@ class Pie3DSeries extends PieSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series
     ): void {

@@ -97,7 +97,7 @@ declare module '../../Core/Series/StatesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ * @excluding connectEnds, connectNulls, gapSize, gapUnit,
  *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock
@@ -445,15 +445,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
     threshold?: (number|null);
 
     tooltip?: ColumnSeriesTooltipOptions;
-
-    /* *
-     *
-     *  Excluded
-     *
-     * */
-
-    dataParser?: undefined;
-    dataURL?: undefined;
 }
 
 export interface ColumnSeriesTooltipOptions extends SeriesTooltipOptions {

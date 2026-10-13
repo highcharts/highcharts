@@ -244,6 +244,15 @@ class Point {
      */
     public key: string|number;
 
+    /**
+     * Decides which data label is kept when two of them overlap. The label
+     * with the highest rank wins. Series where the point value is not a
+     * measure of size set this explicitly.
+     *
+     * @internal
+     */
+    public labelrank?: number;
+
     /** @internal */
     public marker?: PointMarkerOptions;
 
@@ -1159,7 +1168,8 @@ class Point {
     /**
      * Set a value in an object, on the property defined by key. The key
      * supports nested properties using dot notation. The function modifies the
-     * input object and does not make a copy.
+     * input object and does not make a copy. Paths containing `__proto__` or
+     * `constructor` are ignored.
      *
      * @function Highcharts.Point#setNestedProperty<T>
      *
@@ -1200,7 +1210,10 @@ class Point {
             result[key] = (
                 isLastKey ?
                     value :
-                    isObject(result[key], true) ?
+                    // Inherited objects are shared with everything else on
+                    // that prototype, so start a fresh one instead
+                    isObject(result[key], true) &&
+                    Object.hasOwnProperty.call(result, key) ?
                         result[key] :
                         {}
             );

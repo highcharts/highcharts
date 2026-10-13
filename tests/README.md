@@ -546,7 +546,8 @@ The following URL patterns are automatically rewritten:
 | `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
 | `**/font-awesome/**` | Empty stylesheet | Font Awesome |
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
-| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles |
+| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles, including jsDelivr's `css/` URLs |
+| `/grid-lite/**`, `/grid-pro/**`, `/samples/grid-lite/**`, `/samples/grid-pro/**` | `samples/grid-lite/`, `samples/grid-pro/` | Grid samples; npm asset paths use the library rewrites above |
 | `**/{samples/graphics}/**` | `samples/graphics/` | Sample graphics |
 | `**/testimage.png` | `test/testimage.png` | Test image |
 | `**/shim.html` | Empty HTML page | Shim page |
@@ -751,8 +752,8 @@ QUNIT_TEST_PATH=unit-tests/rangeselector/update npx playwright test --project=qu
 # Run single visual test
 VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
 
-# Run the full visual manifest
-VISUAL_TEST_MANIFEST=tests/visual/samples.json npx playwright test --project=visual
+# Run all eligible visual samples
+npx playwright test --project=visual
 
 # Test against live CDN
 NO_REWRITES=1 npx playwright test
@@ -760,41 +761,58 @@ NO_REWRITES=1 npx playwright test
 
 ## Playwright Visual Comparisons
 
-> **Note:** Playwright and Karma run the same eligible sample set in different
-> browsers. Successful Playwright runs for same-repository
+> **Note:** Playwright and Karma share sample exclusions, but financial samples
+> run only in Playwright. Successful Playwright runs for same-repository
 > PRs publish to production Visual Review and can replace the current Karma
 > review for that PR with results for the selected manifest only.
 
 The `visual` Playwright project (`tests/visual/visual.spec.ts`) renders samples to
 SVG, compares them against references, and records a pixel-difference count. It
-runs on Chromium only. Sample discovery uses the shared Karma visual exclusions.
-The CI workflow starts with the IDs in `tests/visual/samples.json`. A selection
-test checks that this manifest contains every eligible candidate sample. CI
-compares the subset present and eligible on both revisions, matching Karma's
-handling of samples without master references. The selected IDs are saved in
-the workflow artifacts as `visual-samples.json`. An entry excluded
-by Karma is rejected; it cannot be used to run an ignored sample. `VISUAL_TEST_PATH` remains
-a substring filter for focused local runs and cannot be combined with a
-manifest.
+runs on Chromium only. Discovery includes eligible Highcharts, Stock, Maps, and
+Gantt samples by default. It uses Karma's exclusion list in
+`test/visual-test-samples.js` and the `skipTest` and `requiresManualTesting`
+sample metadata. Add exceptions to that shared exclusion list. CI compares
+the samples present and eligible on both the candidate and pinned master
+revisions.
+The selected IDs are saved in the workflow artifacts as `visual-samples.json`.
+A sample introduced in a PR has no master reference and joins comparisons once
+it is present on master. `VISUAL_TEST_PATH` remains a substring filter for
+focused local runs. `VISUAL_TEST_MANIFEST` selects exact IDs when a fixed set is
+needed and cannot be combined with a path filter.
 
-The manifest currently covers 2,034 samples across Highcharts, Stock, Maps, and
-Gantt, including both demos and focused API-option samples. It includes
-multi-chart rendering, polar and range series, network diagrams, stock
-navigation and indicators, map projections and color axes, and Gantt progress,
-hierarchy, and grid columns. New entries must pass reference
-generation and comparison with the existing offline routes and Karma exclusions.
+Discovery covers demos and focused API-option samples, including multi-chart
+rendering, polar and range series, network diagrams, stock navigation and
+indicators, map projections and color axes, and Gantt progress, hierarchy, and
+grid columns.
 Discovery includes `demo.js` and TypeScript sources compiled by Karma's `--ts`
 mode. Module-only `demo.mjs` samples are not loaded by Karma and are excluded.
-The visual runner preloads the Morningstar connector, as Karma does. Its five
+The visual setup builds Highcharts, Dashboards and Grid in sequence. The runner
+preloads both Morningstar connector bundles. Dashboard samples use a separate
+page with Dashboards and Grid assets so their connector data layer cannot affect
+standalone charts.
 API-backed samples use recorded responses in `tests/visual/data`; these routes
-are limited to the visual project and retain offline execution. See the
-[fixture provenance](visual/data/README.md) before refreshing those responses.
+are limited to the visual project and retain offline execution. Requests match
+the recorded URL, method and POST body, including portfolios sharing an endpoint.
+See the [fixture provenance](visual/data/README.md) before refreshing those
+responses.
 
-SVG capture waits for the sample's initial XHR data requests to finish. Charts
-can emit their load event before CSV data arrives, so chart existence or
-`hasLoaded` alone is insufficient. Pending requests share the chart's 10-second
-readiness timeout and are aborted during sample cleanup. No fixed settling delay
-is added to samples without requests, and empty datasets remain valid.
+Dashboard capture waits for pending XHR requests and for every chart and Grid
+component to finish its initial render. It embeds a screenshot of the complete
+dashboard in the SVG artifact, covering HTML grids as well as charts. Sample
+cleanup removes sample scripts and styles, including styled-mode CSS, destroys
+the dashboard and its components before restoring chart state, and cancels
+sample timeouts and animation frames. This prevents earlier styles from
+affecting later renders on a reused page. The sample date stays fixed while
+native timers continue to run.
+
+SVG capture waits for the selected chart's load handler and the sample's initial
+XHR and fetch requests to finish downloading. Image markers can delay the load
+handler, and charts can emit their load event before CSV data arrives, so both
+checks are needed.
+Pending requests share the chart's 10-second readiness timeout and are aborted
+during sample cleanup. Once ready, capture
+yields to queued zero-delay sample updates and checks readiness again. Empty
+datasets remain valid.
 
 Capture prefers the chart rendered into `#container`, so asynchronously created
 inset charts do not change which SVG is compared. Samples using other container
@@ -803,12 +821,11 @@ first SVG.
 
 ### Workflow
 
-Run the two commands in order for the same manifest or sample:
+Run the two commands in order for the same checkout or selected sample:
 
 **1. Generate the references** (write once, or to refresh):
 
 ```sh
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 VISUAL_TEST_REFERENCE=1 \
 npx playwright test tests/visual/visual.spec.ts --project=visual
 ```
@@ -821,23 +838,23 @@ the existing files, so only run this intentionally.
 **2. Run the candidate comparison**:
 
 ```sh
-VISUAL_TEST_MANIFEST=tests/visual/samples.json \
 npx playwright test tests/visual/visual.spec.ts --project=visual
 ```
 
 For a focused local run, generate and compare one sample with
 `VISUAL_TEST_PATH=samples/highcharts/demo/area-missing`. The path value is matched
-as a substring, while manifest entries are exact sample IDs.
+as a substring, while optional manifest entries are exact sample IDs.
 
 ### Outputs
 
 | File | Written when |
 |------|-------------|
 | `samples/<path>/reference.svg` | Reference mode only |
-| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 |
+| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 or a listed reference failure |
 | `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
-| `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
+| `test/visual-test-results.json` | Candidate mode, always (pixel counts for comparable samples only) |
 | `test/visual-test-errors.log` | Any sample or terminal error during the run |
+| `test/visual-reference-failures.json` | Completed Playwright reference runs; `[]` when no sample failed |
 | `test/visual-test-complete` | Candidate mode, after every selected sample finishes, including completed sample errors |
 
 ### Failure semantics
@@ -848,18 +865,35 @@ are failures:
 
 - The sample script throws or the chart does not load within the timeout
 - The browser context or Playwright process terminates unexpectedly
-- `reference.svg` is absent when candidate mode is run
-- `test/visual-test-errors.log` is non-empty after the run
+- `reference.svg` is absent when candidate mode is run, except for samples listed
+  in `test/visual-reference-failures.json`, which must still render successfully
+  and produce a fresh `candidate.svg` but have no pixel comparison
+- Candidate execution errors, unlisted reference errors, and terminal reference
+  failures fail CI. Listed reference failures do not fail the run by themselves
+- `test/visual-test-errors.log` is non-empty after the candidate run
 - expected results are missing, the selected sample set is invalid, or an
   explicitly requested manifest ID is excluded by Karma
 - `test/visual-test-complete` is absent after the run (indicates the full
-  candidate run did not finish normally)
+candidate run did not finish normally)
 
 A completed sample execution error fails CI and remains in the error log, but
 does not prevent the completion signal when all selected samples finish.
 Interrupted runs, unexecuted samples, and fixture or browser failures omit the
 signal. Completion alone is not permission to publish: the workflow also
-requires successful reference and candidate outcomes and an empty error log.
+requires successful candidate outcomes, no unlisted reference errors, and no
+terminal reference failure. Candidate errors must be empty; listed reference
+failures are reported as not compared.
+
+Every selected candidate must execute, including samples whose reference failed.
+The comparison results and rendered candidates must account for the full selected
+sample set. A skipped candidate is an incomplete run. PR comments distinguish a
+partial comparison or no comparable samples from a complete comparison.
+
+Karma remains strict: reference failures stop its workflow. Both revisions run
+the candidate's pinned harness and exclusion rules. New samples without a master
+reference retain Karma's existing omission from comparison. Financial samples
+use Playwright's existing offline fixtures; samples marked for manual testing
+remain excluded.
 
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.
@@ -872,7 +906,7 @@ publish the complete result JSON and SVG/GIF artifacts for differing samples to
 `https://vrevs.highsoft.com`. Playwright is the sole production publisher. Karma
 continues comparing samples and links to its GitHub Actions artifacts using
 `gulp update-pr-testresults --artifacts-url URL`, which skips API submission.
-The Playwright PR comment identifies the number of selected samples. Manual
+The Playwright PR comment identifies the number of compared samples. Manual
 workflow runs and fork PRs only upload GitHub Actions diagnostics.
 
 Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with
