@@ -92,13 +92,18 @@ function lintDTS(argv) {
 
         let promiseChain = Promise.resolve();
 
+        // Run tsc via Node directly (no shell / npx) to avoid Windows
+        // DEP0190 when spawnSync is used with shell: true + args.
+        const tsc = require.resolve('typescript/bin/tsc');
+
         directories.forEach(folder => {
             promiseChain = promiseChain.then(
                 () => {
-                    const result = childProcess.spawnSync('npx', ['tsc', '-p', folder], {
-                        stdio: 'inherit',
-                        shell: path.sep === path.win32.sep
-                    });
+                    const result = childProcess.spawnSync(
+                        process.execPath,
+                        [tsc, '-p', folder],
+                        { stdio: 'inherit' }
+                    );
 
                     if (result.error || result.status !== 0) {
                         throw result.error || new Error(`tsc failed for ${folder}`);
