@@ -76,8 +76,8 @@ class DMIIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dmi
+     * @requires     indicators/indicators
+     * @requires     indicators/dmi
      * @optionparent plotOptions.dmi
      * @internal
      */
@@ -416,8 +416,8 @@ export default DMIIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dmi
+ * @requires  indicators/indicators
+ * @requires  indicators/dmi
  * @apioption series.dmi
  */
 
