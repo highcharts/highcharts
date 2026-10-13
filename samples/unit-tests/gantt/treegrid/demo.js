@@ -125,6 +125,47 @@ QUnit.test('Indentation', function (assert) {
     );
 });
 
+QUnit.test('Built-in-named parent IDs', function (assert) {
+    const chart = Highcharts.chart('container', {
+            yAxis: {
+                type: 'treegrid'
+            },
+            series: [{
+                type: 'scatter',
+                data: [{
+                    id: 'toString',
+                    name: 'Parent 1',
+                    x: 1
+                }, {
+                    id: 'child-1',
+                    name: 'Child 1',
+                    parent: 'toString',
+                    x: 2
+                }, {
+                    id: '__proto__',
+                    name: 'Parent 2',
+                    x: 3
+                }, {
+                    id: 'child-2',
+                    name: 'Child 2',
+                    parent: '__proto__',
+                    x: 4
+                }]
+            }]
+        }),
+        tree = chart.yAxis[0].treeGrid.tree,
+        parents = tree.children;
+
+    assert.deepEqual(
+        parents.map(parent => [parent.id, parent.children[0].id]),
+        [
+            ['toString', 'child-1'],
+            ['__proto__', 'child-2']
+        ],
+        'Both built-in-named parents should keep their children'
+    );
+});
+
 QUnit.test('Tree.getNode', function (assert) {
     var getNode = Highcharts.Axis.prototype.utils.getNode,
         mapOfIdToChildren = {
