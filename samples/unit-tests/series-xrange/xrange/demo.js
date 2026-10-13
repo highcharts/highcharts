@@ -299,6 +299,32 @@ QUnit.test('X-Range', function (assert) {
     );
 });
 
+QUnit.test('A zero animation limit disables point updates', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        plotOptions: {
+            xrange: {
+                animationLimit: 0
+            }
+        },
+        series: [{
+            data: [{
+                x: 0,
+                x2: 1,
+                y: 0
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].getAnimationVerb(),
+        'attr',
+        'The X-range point should update without animation'
+    );
+});
+
 QUnit.test('Partial fill reversed', assert => {
     const chart = Highcharts.chart('container', {
         chart: {

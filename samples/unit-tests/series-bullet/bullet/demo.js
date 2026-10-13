@@ -34,3 +34,32 @@ QUnit.test('Bullet', function (assert) {
     chart.series[0].removePoint(0);
     assert.deepEqual(chart.series[0].points.length, 7, 'removePoint');
 });
+
+QUnit.test('A zero animation limit disables target updates', assert => {
+    const chart = Highcharts.chart('container', {
+            chart: {
+                animation: false,
+                type: 'bullet'
+            },
+            plotOptions: {
+                bullet: {
+                    animationLimit: 0
+                }
+            },
+            series: [{
+                data: [[5, 10]]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        targetGraphic = point.targetGraphic,
+        originalAnimate = targetGraphic.animate;
+    let animated = false;
+
+    targetGraphic.animate = function () {
+        animated = true;
+        return originalAnimate.apply(this, arguments);
+    };
+    point.update({ target: 12 });
+
+    assert.notOk(animated, 'The bullet target should update without animation');
+});
