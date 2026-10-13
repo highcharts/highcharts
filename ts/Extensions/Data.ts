@@ -2658,6 +2658,20 @@ addEvent(
     { order: 0 }
 );
 
+// Stop live-data polling when the owning chart is destroyed.
+addEvent(
+    Chart,
+    'destroy',
+    function (): void {
+        const data = this.data;
+
+        if (data?.liveDataTimeout !== void 0) {
+            internalClearTimeout(data.liveDataTimeout);
+            data.liveDataTimeout = void 0;
+        }
+    }
+);
+
 // Extend Chart.init so that the Chart constructor accepts a new configuration
 // option group, data.
 addEvent(
