@@ -1,8 +1,9 @@
 ---
 description: >-
   Create Core, Stock, Maps, or Gantt charts with the corresponding root
-  component, place series and elements inside it, and configure selected chart
-  props, options, refs, and container attributes.
+  component, configure selected chart props, options, refs, and container
+  attributes, see which value wins when an option is set twice, and pass Stock
+  range selector, navigator, and scrollbar options.
 ---
 
 # Chart
@@ -68,22 +69,21 @@ export default function ChartComponent() {
 
 > **Note:** These props cover only selected chart options. Configure all other options through the `options` prop.
 
-The `options` prop is available on the chart components (`Chart`, `StockChart`, `MapsChart`, `GanttChart`) and series components only. Axis components and other chart-element components expose every option as a direct prop, with no `options` fallback.
+The `options` prop is available on the chart components (`Chart`, `StockChart`, `MapsChart`, `GanttChart`), series components, and technical indicator components. Option components such as `Title` and `XAxis` do not have it.
 
-The `title`, `subtitle`, `caption`, and `credits` props set text content only. Each maps to the `.text` property of its corresponding option. To configure other properties such as alignment or style, use the dedicated `Title`, `Subtitle`, and `Credits` components. There is no `Caption` component, so any other caption property goes in [`options.caption`](https://api.highcharts.com/highcharts/caption).
+To set other title, subtitle, or credits properties, use the `Title`, `Subtitle`, and `Credits` components. There is no `Caption` component; set other caption properties in [`options.caption`](https://api.highcharts.com/highcharts/caption).
 
-The `height` and `width` props size the chart's inner `.highcharts-container` element. To size the outer `<div>` wrapper, use `containerProps.style`. Both can be set independently.
+Instead of the `height` and `width` props, you can size the chart by styling its container `<div>` through `containerProps.style`. See [Design and style](https://www.highcharts.com/docs/chart-design-and-style/design-and-style#chart).
 
 ### Option precedence
 
 When the same option is set in more than one place, this merge order determines which value wins, from lowest to highest priority:
 
-1. Component defaults
-2. `options` prop
-3. Direct props
-4. Options from children
+1. `options` prop
+2. Direct props
+3. Options from children
 
-Children win over direct props, which win over `options`. This applies to `Chart`, `StockChart`, `MapsChart`, and `GanttChart`.
+This applies to `Chart`, `StockChart`, `MapsChart`, and `GanttChart`.
 
 ## Highcharts Stock
 
@@ -113,15 +113,29 @@ export default function StockChartComponent() {
 Options for the range selector, navigator, and scrollbar have no dedicated components or direct props. Pass them through the `options` prop:
 
 ```tsx
-<StockChart
-  options={{
-    rangeSelector: { selected: 1 },
-    navigator: { enabled: false },
-    scrollbar: { enabled: false },
-  }}
->
-  ...
-</StockChart>
+import { StockChart } from "@highcharts/react/Stock";
+import { LineSeries } from "@highcharts/react/series/Line";
+
+export default function StockOptionsChart() {
+  return (
+    <StockChart
+      options={{
+        rangeSelector: { inputEnabled: false },
+        navigator: { enabled: false },
+        scrollbar: { enabled: false },
+      }}
+    >
+      <LineSeries
+        data={[
+          [1609459200000, 100],
+          [1609545600000, 105],
+          [1609632000000, 110],
+          // More data...
+        ]}
+      />
+    </StockChart>
+  );
+}
 ```
 
 You can also use **technical indicators** with your Stock charts. See the [Technical indicators](https://www.highcharts.com/docs/react/components/technical-indicators) documentation.
@@ -194,23 +208,4 @@ export default function GanttChartComponent() {
 
 **Note:** Shares the exact same [props](#props) as the `Chart` component.
 
-## Series-type charts
-
-Each series module also exports a chart component as its default export, with [`chart.type`](https://api.highcharts.com/highcharts/chart.type) set to that series type. `Column` from `@highcharts/react/series/Column` is a chart already configured as a column chart:
-
-```tsx
-import Column from "@highcharts/react/series/Column";
-import { Series } from "@highcharts/react";
-
-export default function ColumnChart() {
-  return (
-    <Column>
-      <Series data={[1, 2, 3]} />
-    </Column>
-  );
-}
-```
-
-For series types that belong to a single product, the component also uses that product's chart constructor, so `<Candlestick />` is a stock chart, `<Map />` a map chart, and `<Gantt />` a gantt chart.
-
-Each dedicated series component has a matching series-type chart component with the `Series` suffix removed: `LineSeries` and `Line`, `ColumnSeries` and `Column`, etc. See the [available dedicated series components](https://www.highcharts.com/docs/react/components/series-types#available-dedicated-series-components) table, or the [Series types](https://www.highcharts.com/docs/react/components/series-types) documentation for series components in general.
+To learn more about series components, see the [Series types](https://www.highcharts.com/docs/react/components/series-types#other-chart-types) documentation.
