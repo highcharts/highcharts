@@ -114,31 +114,34 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
      */
     lineWidth?: number;
 
-    states?: SeriesStatesOptions<MapLineSeriesOptions>;
+    states?: MapLineSeriesStatesOptions;
 
 }
 
-/**
- * @type {number}
- *
- * @product highmaps
- *
- * @excluding borderWidth
- *
- * @apioption plotOptions.mapline.states.hover
- */
+type MapLineStatesOptionsAlias = SeriesStatesOptions<MapLineSeriesOptions>;
 
-/**
- * Pixel width of the mapline line.
- *
- * @type {number}
- *
- * @since 10.2.0
- *
- * @product highmaps
- *
- * @apioption plotOptions.mapline.states.hover.lineWidth
- */
+export interface MapLineSeriesStatesOptions
+    extends MapLineStatesOptionsAlias {
+
+    /**
+     * Options for the hovered series.
+     *
+     * @excluding borderWidth
+     *
+     * @product highmaps
+     */
+    hover?: MapLineStatesOptionsAlias['hover'] & {
+
+        /**
+         * Pixel width of the mapline line.
+         *
+         * @since 10.2.0
+         *
+         * @product highmaps
+         */
+        lineWidth?: number;
+    };
+}
 
 /* *
  *
