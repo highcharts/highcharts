@@ -86,14 +86,21 @@ const syncPair: SyncPair = {
 
         let delay: number;
 
-        return addEvent(
+        const unbind = addEvent(
             component.chart.xAxis[0],
             'afterSetExtremes',
             function (extremes: AxisExtremesObject): void {
                 clearTimeout(delay);
-                delay = setTimeout(afterSetExtremes, 50, this, extremes);
+                delay = setTimeout((): void => {
+                    afterSetExtremes(extremes);
+                }, 50);
             }
         );
+
+        return (): void => {
+            clearTimeout(delay);
+            unbind();
+        };
     },
     handler: function (this: Component): (() => void) | void {
         if (this.type !== 'Navigator') {
