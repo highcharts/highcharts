@@ -43,6 +43,8 @@ export interface LollipopSeriesOptions extends ScatterSeriesOptions {
      *
      * @since 8.0.0
      *
+     * @default 1
+     *
      * @product highcharts highstock
      */
     connectorWidth?: number;
@@ -54,6 +56,25 @@ export interface LollipopSeriesOptions extends ScatterSeriesOptions {
      * @product highcharts highstock
      */
     groupPadding?: number;
+
+    /**
+     * Whether to group non-stacked lollipop points or to let them render
+     * independent of each other. Non-grouped lollipop points will be laid
+     * out individually and overlap each other.
+     *
+     * @sample highcharts/series-lollipop/enabled-grouping/
+     *         Multiple lollipop series with grouping
+     *
+     * @sample highcharts/series-lollipop/disabled-grouping/
+     *         Multiple lollipop series with disabled grouping
+     *
+     * @default true
+     *
+     * @since 8.0.0
+     *
+     * @product highcharts highstock
+     */
+    grouping?: boolean;
     /**
      * Color of the start markers in a dumbbell graph. This option takes
      * priority over the series color. To avoid this, set `lowColor` to
@@ -61,9 +82,10 @@ export interface LollipopSeriesOptions extends ScatterSeriesOptions {
      *
      * @since 8.0.0
      *
+     * @deprecated 11.0.0
+     *
      * @product highcharts highstock
      */
-    /** @deprecated */
     lowColor?: ColorType;
     /**
      * Padding between each column or bar, in x axis units.
