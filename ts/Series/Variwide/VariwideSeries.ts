@@ -62,6 +62,7 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = VariwideComposition.compose;
 
     /** @internal */

@@ -192,7 +192,14 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      */
     lineWidth?: number;
 
-    states?: SeriesStatesOptions<WaterfallSeriesOptions>;
+    /**
+     * Options for the data labels appearing on top of the columns.
+     *
+     * @default { inside: true }
+     */
+    dataLabels?: ColumnSeriesOptions['dataLabels'];
+
+    states?: WaterfallSeriesStatesOptions;
 
     /**
      * The color used specifically for positive point columns. When not
@@ -209,6 +216,26 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      */
     upColor?: ColorType;
 
+}
+
+
+type WaterfallStatesOptionsAlias = SeriesStatesOptions<WaterfallSeriesOptions>;
+
+export interface WaterfallSeriesStatesOptions
+    extends WaterfallStatesOptionsAlias {
+
+    /**
+     * Options for the hovered series.
+     */
+    hover?: WaterfallStatesOptionsAlias['hover'] & {
+
+        /**
+         * The additional line width for the graph of a hovered series.
+         *
+         * @default 0
+         */
+        lineWidthPlus?: number;
+    };
 }
 
 /* *
