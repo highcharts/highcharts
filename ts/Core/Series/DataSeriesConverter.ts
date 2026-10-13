@@ -246,7 +246,7 @@ class DataSeriesConverter {
                     columns = {};
                     needsArrayMap = pointArrayMapLength > 1;
 
-                    if (typeof elem === 'number') {
+                    if (typeof elem === 'number' || elem === null) {
                         columns[y] = elem;
                         columns.x = j;
                     } else if (elem instanceof Array) {
@@ -290,17 +290,19 @@ class DataSeriesConverter {
                             columns[y] = elem.y;
                         }
 
-                        columns.x = elem.x || j;
+                        columns.x = defined(elem.x) ? elem.x : j;
                     }
 
                     id = '' + columns.x;
                     rowIndex = table.getRowIndexBy('id', id);
 
-                    if (!rowIndex) {
+                    if (!defined(rowIndex)) {
                         columns.id = id;
                         table.setRows([columns], void 0, void 0, eventDetail);
-                    } else if (columns[y]) {
-                        table.setCell(y, rowIndex, columns[y], eventDetail);
+                    } else {
+                        table.setRows(
+                            [columns], rowIndex, void 0, eventDetail
+                        );
                     }
                 }
             }
