@@ -84,6 +84,49 @@ describe('CSVConnector', () => {
             );
         });
 
+        it('should parse quoted delimiters and escaped quotes in headers', async () => {
+            const connector = new CSVConnector({
+                csv: '"Last, First","He said ""hi"""\nDoe,1'
+            });
+
+            await connector.load();
+
+            deepStrictEqual(
+                connector.getTable().getColumnIds(),
+                ['Last, First', 'He said "hi"'],
+                'Quoted header contents should remain in their own columns.'
+            );
+        });
+
+        it('should strip surrounding single quotes from headers', async () => {
+            const connector = new CSVConnector({
+                csv: "'Name','Value'\nA,1"
+            });
+
+            await connector.load();
+
+            deepStrictEqual(
+                connector.getTable().getColumnIds(),
+                ['Name', 'Value'],
+                'Single-quoted headers should retain their existing format.'
+            );
+        });
+
+        it('should read headers from the configured start row', async () => {
+            const connector = new CSVConnector({
+                csv: 'metadata\nignored\nName,Value\nA,1',
+                startRow: 2
+            });
+
+            await connector.load();
+
+            deepStrictEqual(
+                connector.getTable().getColumnIds(),
+                ['Name', 'Value'],
+                'The selected range should supply its own header row.'
+            );
+        });
+
         it('should handle decimalpoint option', async () => {
             const csvWithDecimal = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
 
