@@ -237,8 +237,7 @@ class GoogleSheetsConnector extends DataConnector {
 
                 // Polling
                 if (enablePolling) {
-                    setTimeout(
-                        (): Promise<this> => connector.load(),
+                    connector.startPolling(
                         Math.max(dataRefreshRate || 0, 1) * 1000
                     );
                 }

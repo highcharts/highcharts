@@ -3,8 +3,8 @@ import { ok, deepStrictEqual, strictEqual } from 'node:assert';
 
 import DataConnector from '../../../../../ts/Data/Connectors/DataConnector';
 import CSVConnector from '../../../../../ts/Data/Connectors/CSVConnector';
+import GoogleSheetsConnector from '../../../../../ts/Data/Connectors/GoogleSheetsConnector';
 // Import these to register them with DataConnector.types
-import '../../../../../ts/Data/Connectors/GoogleSheetsConnector';
 import '../../../../../ts/Data/Connectors/HTMLTableConnector';
 import '../../../../../ts/Data/Connectors/JSONConnector';
 
@@ -141,5 +141,35 @@ describe('DataConnector', () => {
                 );
             });
         }
+    });
+
+    describe('polling', () => {
+        it('should track Google Sheets refreshes', async (t) => {
+            t.mock.method(globalThis, 'fetch', async () => ({
+                json: async () => ({
+                    values: [['Name', 'A']]
+                })
+            } as Response));
+
+            const connector = new GoogleSheetsConnector({
+                    googleAPIKey: 'key',
+                    googleSpreadsheetKey: 'sheet',
+                    enablePolling: true,
+                    dataRefreshRate: 1
+                });
+            let refreshTime;
+
+            connector.startPolling = (time): void => {
+                refreshTime = time;
+            };
+
+            await connector.load();
+
+            strictEqual(
+                refreshTime,
+                1000,
+                'Google Sheets should use the cancellable polling path.'
+            );
+        });
     });
 });
