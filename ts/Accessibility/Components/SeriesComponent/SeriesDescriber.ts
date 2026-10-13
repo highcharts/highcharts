@@ -299,9 +299,9 @@ function pointNumberToString(
     if (isNumber(value)) {
         return numberFormat(
             value,
-            seriesA11yPointOptions.valueDecimals ||
-                a11yPointOptions.valueDecimals ||
-                tooltipOptions.valueDecimals ||
+            seriesA11yPointOptions.valueDecimals ??
+                a11yPointOptions.valueDecimals ??
+                tooltipOptions.valueDecimals ??
                 -1,
             lang.decimalPoint,
             (lang.accessibility as any).thousandsSep || lang.thousandsSep
