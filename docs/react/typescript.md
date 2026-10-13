@@ -1,8 +1,9 @@
 ---
 description: >-
-  Type the Chart options prop with exported ChartOptions, use
-  HighchartsReactRefObject for chart refs, and see links to the chart
-  component and Highcharts declarations for common integration patterns.
+  Type the Chart options prop with ChartOptions, chart refs with
+  HighchartsReactRefObject, and series with SeriesType, SeriesOptions, and
+  SeriesProps, including wrapper components, with links to the chart component
+  and Highcharts declarations.
 ---
 
 # TypeScript
@@ -74,31 +75,39 @@ export default function App() {
   const [seriesType, setSeriesType] = useState<SeriesType>("line");
 
   return (
-    <Chart>
-      <Series type={seriesType} data={[1, 2, 3]} />
-    </Chart>
+    <>
+      <button
+        onClick={() =>
+          setSeriesType(seriesType === "line" ? "column" : "line")
+        }
+      >
+        Toggle series type
+      </button>
+      <Chart>
+        <Series type={seriesType} data={[1, 2, 3]} />
+      </Chart>
+    </>
   );
 }
 ```
 
 ### `SeriesOptions`
 
-`SeriesOptions<K>` resolves to the options object for a specific series type, with the `type` key omitted. Use it to type a series configuration object that you pass to a series component's `options` prop:
+`SeriesOptions<K>` resolves to the options object for a specific series type, with the `type` key omitted. Use it to type a series configuration object that you pass to the `options` prop of a `Series` component with the same `type`:
 
 ```tsx
-import { Chart, type SeriesOptions } from "@highcharts/react";
-import { LineSeries } from "@highcharts/react/series/Line";
+import { Chart, Series, type SeriesOptions } from "@highcharts/react";
 
 const seriesOptions: SeriesOptions<"line"> = {
   name: "Revenue",
   data: [1, 2, 3],
-  color: "#058DC7",
+  dashStyle: "Dash"
 };
 
 export default function App() {
   return (
     <Chart>
-      <LineSeries options={seriesOptions} />
+      <Series type="line" options={seriesOptions} />
     </Chart>
   );
 }
@@ -120,7 +129,7 @@ function BrandedColumn({ options, ...rest }: SeriesProps<"column">) {
         borderColor: "#4c11b5",
         borderRadius: 10,
         borderWidth: 2,
-        ...options,
+        ...options
       }}
       {...rest}
     />
