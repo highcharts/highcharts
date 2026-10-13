@@ -223,7 +223,9 @@ class Annotation extends EventEmitter implements ControlTarget {
         };
 
     /** @internal */
-    public static readonly types = {} as AnnotationTypeRegistry;
+    public static readonly types = Object.create(
+        null
+    ) as AnnotationTypeRegistry;
 
     /* *
      *
