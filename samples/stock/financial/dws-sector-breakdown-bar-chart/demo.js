@@ -26,11 +26,11 @@ async function renderChart() {
     await connector.load();
 
     // Get data table
-    const table = connector.getTable('EqSectors'),
-        data = table.getRows(0, table.getRowCount(), ['Type', 'PercLong']);
+    const table = connector.getTable('EqSectors');
 
     // Create chart
     Highcharts.chart('container', {
+        dataTable: table,
         chart: {
             type: 'column'
         },
@@ -44,19 +44,20 @@ async function renderChart() {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data,
+            type: 'category',
             labels: {
-                format: '{translateSectors value.0}'
+                format: '{translateSectors value}'
             }
         }, {
             grid: {
                 enabled: true,
                 borderColor: '#E1E1E1'
             },
-            categories: data,
+            type: 'category',
+            categories: table.getRows(void 0, void 0, ['PercLong']),
             labels: {
                 format:
-                    '{#if (eq value.1 undefined)}N/A{else}{value.1:.2f}%{/if}',
+                    '{#if (eq value.0 undefined)}N/A{else}{value.0:.2f}%{/if}',
                 align: 'right',
                 x: -5
             },
@@ -92,7 +93,10 @@ async function renderChart() {
         series: [{
             name: 'Capital Group Global Equity Fund (LUX) B',
             color: '#274FE0',
-            data
+            dataMapping: {
+                name: 'Type',
+                y: 'PercLong'
+            }
         }],
         responsive: {
             rules: [{

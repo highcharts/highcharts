@@ -23,12 +23,7 @@ async function renderChart() {
 
     // Get daily data table
     const riskDailyTable = connector.getTable('RiskDaily'),
-        dailyCategories = riskDailyTable.getRows(
-            void 0,
-            void 0,
-            ['Type']
-        )
-            .flat()
+        dailyCategories = riskDailyTable.getColumn('Type')
             .map(item => item.replace(/(\d+)([A-Za-z]+)/u, '$1 $2'));
 
     // Set global options
@@ -65,6 +60,7 @@ async function renderChart() {
 
     // Create chart
     Highcharts.chart('container-daily-alpha', {
+        dataTable: riskDailyTable,
         title: {
             text: 'Daily Values - Alpha'
         },
@@ -84,23 +80,20 @@ async function renderChart() {
         },
         series: [{
             name: 'Alpha',
-            data: riskDailyTable.getRows(
-                void 0,
-                void 0,
-                ['Alpha']
-            )
+            dataMapping: {
+                y: 'Alpha'
+            }
         }, {
             name: 'Non Dividend Alpha',
-            data: riskDailyTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendAlpha']
-            )
+            dataMapping: {
+                y: 'NonDividendAlpha'
+            }
         }]
     });
 
     // Create chart
     Highcharts.chart('container-daily-beta', {
+        dataTable: riskDailyTable,
         title: {
             text: 'Daily Values - Beta'
         },
@@ -129,23 +122,20 @@ async function renderChart() {
         }],
         series: [{
             name: 'Beta',
-            data: riskDailyTable.getRows(
-                void 0,
-                void 0,
-                ['Beta']
-            )
+            dataMapping: {
+                y: 'Beta'
+            }
         }, {
             name: 'Non Dividend Beta',
-            data: riskDailyTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendBeta']
-            )
+            dataMapping: {
+                y: 'NonDividendBeta'
+            }
         }]
     });
 
     // Create chart
     Highcharts.chart('container-daily-rsquare', {
+        dataTable: riskDailyTable,
         title: {
             text: 'Daily Values - R-Square'
         },
@@ -165,33 +155,25 @@ async function renderChart() {
         },
         series: [{
             name: 'R-Square',
-            data: riskDailyTable.getRows(
-                void 0,
-                void 0,
-                ['RSquare']
-            )
+            dataMapping: {
+                y: 'RSquare'
+            }
         }, {
             name: 'Non Dividend R-Square',
-            data: riskDailyTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendRSquare']
-            )
+            dataMapping: {
+                y: 'NonDividendRSquare'
+            }
         }]
     });
 
     // Get monthly data table
     const riskMonthlyTable = connector.getTable('RiskMonthly'),
-        monthlyCategories = riskMonthlyTable.getRows(
-            void 0,
-            void 0,
-            ['Type']
-        )
-            .flat()
+        monthlyCategories = riskMonthlyTable.getColumn('Type')
             .map(item => item.replace(/(\d+)([A-Za-z]+)/u, '$1 $2'));
 
     // Create chart
     Highcharts.chart('container-monthly-alpha', {
+        dataTable: riskMonthlyTable,
         title: {
             text: 'Monthly Values - Alpha'
         },
@@ -211,23 +193,20 @@ async function renderChart() {
         },
         series: [{
             name: 'Alpha',
-            data: riskMonthlyTable.getRows(
-                void 0,
-                void 0,
-                ['Alpha']
-            )
+            dataMapping: {
+                y: 'Alpha'
+            }
         }, {
             name: 'Non Dividend Alpha',
-            data: riskMonthlyTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendAlpha']
-            )
+            dataMapping: {
+                y: 'NonDividendAlpha'
+            }
         }]
     });
 
     // Create chart
     Highcharts.chart('container-monthly-beta', {
+        dataTable: riskMonthlyTable,
         title: {
             text: 'Monthly Values - Beta'
         },
@@ -256,23 +235,20 @@ async function renderChart() {
         }],
         series: [{
             name: 'Beta',
-            data: riskMonthlyTable.getRows(
-                void 0,
-                void 0,
-                ['Beta']
-            )
+            dataMapping: {
+                y: 'Beta'
+            }
         }, {
             name: 'Non Dividend Beta',
-            data: riskMonthlyTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendBeta']
-            )
+            dataMapping: {
+                y: 'NonDividendBeta'
+            }
         }]
     });
 
     // Create chart
     Highcharts.chart('container-monthly-rsquare', {
+        dataTable: riskMonthlyTable,
         title: {
             text: 'Monthly Values - R-Square'
         },
@@ -292,18 +268,14 @@ async function renderChart() {
         },
         series: [{
             name: 'R-Square',
-            data: riskMonthlyTable.getRows(
-                void 0,
-                void 0,
-                ['RSquare']
-            )
+            dataMapping: {
+                y: 'RSquare'
+            }
         }, {
             name: 'Non Dividend R-Square',
-            data: riskMonthlyTable.getRows(
-                void 0,
-                void 0,
-                ['NonDividendRSquare']
-            )
+            dataMapping: {
+                y: 'NonDividendRSquare'
+            }
         }]
     });
 }
