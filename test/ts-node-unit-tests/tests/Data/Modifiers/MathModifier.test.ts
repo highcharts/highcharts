@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import { strictEqual, deepStrictEqual, ok } from 'node:assert';
 
 import DataTable from '../../../../../ts/Data/DataTable.js';
+import FormulaParser from '../../../../../ts/Data/Formula/FormulaParser.js';
 import MathModifier from '../../../../../ts/Data/Modifiers/MathModifier.js';
 // Import Formula to register all formula functions (SUM, AVERAGE, PRODUCT, etc.)
 import '../../../../../ts/Data/Formula/Formula.js';
@@ -126,6 +127,28 @@ describe('MathModifier', () => {
                 table.getModified().getColumn('ColumnE'),
                 [176040, 281000, 3842000, 63625, 161201],
                 'The advanced aggregate functions formula is properly calculated.'
+            );
+        });
+    });
+
+    describe('formula columns', () => {
+        it('should process each column once', async (t) => {
+            const parseFormula = t.mock.method(FormulaParser, 'parseFormula'),
+                table = new DataTable({
+                    columns: {
+                        A: [1],
+                        B: ['=A1+1']
+                    }
+                });
+
+            await table.setModifier(new MathModifier({
+                formulaColumns: ['B', 'B']
+            }));
+
+            strictEqual(
+                parseFormula.mock.callCount(),
+                1,
+                'A duplicate formula column should not be processed twice.'
             );
         });
     });
