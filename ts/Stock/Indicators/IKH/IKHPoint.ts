@@ -22,17 +22,26 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class IKHPoint extends SMAPoint {
+    /** @internal */
     public series: IKHIndicator;
+    /** @internal */
     public tenkanSen: number;
+    /** @internal */
     public kijunSen: number;
+    /** @internal */
     public chikouSpan: number;
+    /** @internal */
     public senkouSpanA: number;
+    /** @internal */
     public senkouSpanB: number;
+    /** @internal */
     public plotX: number;
+    /** @internal */
     public plotY: number;
+    /** @internal */
     public isNull: boolean;
+    /** @internal */
     public intersectPoint?: boolean;
 }
 
@@ -43,5 +52,4 @@ declare class IKHPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default IKHPoint;

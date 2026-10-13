@@ -188,6 +188,7 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     static defaultOptions: TreemapSeriesOptions = merge(
         ScatterSeries.defaultOptions,
         TreemapSeriesDefaults
@@ -199,6 +200,7 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series
     ): void {
@@ -215,40 +217,54 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public axisRatio!: number;
 
+    /** @internal */
     public colorValueData?: Array<number>;
 
+    /** @internal */
     public colorAxis?: ColorAxisComposition.SeriesComposition['colorAxis'];
 
     public data!: Array<TreemapPoint>;
 
+    /** @internal */
     public drillUpButton?: SVGElement;
 
+    /** @internal */
     public idPreviousRoot?: string;
 
+    /** @internal */
     public mapOptionsToLevel!: Record<string, TreemapSeriesLevelOptions>;
 
+    /** @internal */
     public nodeMap!: Record<string, TreemapNode>;
 
+    /** @internal */
     public nodeList!: TreemapNode[];
 
     public options!: TreemapSeriesOptions;
 
+    /** @internal */
     public parentList?: TreemapSeries.ListOfParentsObject;
 
     public points!: Array<TreemapPoint>;
 
+    /** @internal */
     private hadOutsideDataLabels?: boolean;
 
+    /** @internal */
     private hasOutsideDataLabels?: boolean;
 
+    /** @internal */
     public rootNode!: string;
 
     private simulation = 0;
 
+    /** @internal */
     public tree!: TreemapNode;
 
+    /** @internal */
     public level?: number;
 
     /* *
@@ -258,6 +274,7 @@ class TreemapSeries extends ScatterSeries {
      * */
 
 
+    /** @internal */
     public algorithmCalcPoints(
         directionChange: boolean,
         last: boolean,
@@ -327,6 +344,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public algorithmFill(
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
@@ -377,6 +395,7 @@ class TreemapSeries extends ScatterSeries {
         return childrenArea;
     }
 
+    /** @internal */
     public algorithmLowAspectRatio(
         directionChange: boolean,
         parent: TreemapNode.NodeValuesObject,
@@ -449,6 +468,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public applyTreeGrouping(): void {
         const series = this,
             parentList = series.parentList || {},
@@ -1081,6 +1101,7 @@ class TreemapSeries extends ScatterSeries {
         this.setRootNode(id, redraw);
     }
 
+    /** @internal */
     public drillUp(): void {
         const series = this,
             node = series.nodeMap[series.rootNode];
@@ -1094,6 +1115,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
         const { dataMin, dataMax } = super.getExtremes(this.colorValueData);
@@ -1175,6 +1197,7 @@ class TreemapSeries extends ScatterSeries {
         return series.buildTree('', -1, 0, series.parentList || {});
     }
 
+    /** @internal */
     public buildTree(
         id: string,
         index: number,
@@ -1244,6 +1267,7 @@ class TreemapSeries extends ScatterSeries {
         return !!this.dataTable.rowCount;
     }
 
+    /** @internal */
     public init(
         chart: Chart,
         options: DeepPartial<TreemapSeriesOptions>
@@ -1499,6 +1523,7 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public setPointValues(): void {
         const series = this;
         const { points, xAxis, yAxis } = series;
@@ -1669,6 +1694,7 @@ class TreemapSeries extends ScatterSeries {
         this.options.inactiveOtherPoints = false;
     }
 
+    /** @internal */
     public setTreeValues(tree: TreemapNode): TreemapNode {
         const series = this,
             options = series.options,
@@ -1737,6 +1763,7 @@ class TreemapSeries extends ScatterSeries {
         return tree;
     }
 
+    /** @internal */
     public sliceAndDice(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1744,6 +1771,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmFill(true, parent, children);
     }
 
+    /** @internal */
     public squarified(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1751,6 +1779,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmLowAspectRatio(true, parent, children);
     }
 
+    /** @internal */
     public strip(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1758,6 +1787,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmLowAspectRatio(false, parent, children);
     }
 
+    /** @internal */
     public stripes(
         parent: TreemapNode.NodeValuesObject,
         children: Array<TreemapNode>
@@ -1765,6 +1795,7 @@ class TreemapSeries extends ScatterSeries {
         return this.algorithmFill(false, parent, children);
     }
 
+    /** @internal */
     public translate(tree?: this['tree']): void {
         const series = this,
             options = series.options,
@@ -1904,17 +1935,29 @@ class TreemapSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
+    /** @internal */
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
+    /** @internal */
     colorKey: string;
+    /** @internal */
     directTouch: boolean;
+    /** @internal */
     getExtremesFromAll: boolean;
+    /** @internal */
     optionalAxis: string;
+    /** @internal */
     parallelArrays: Array<string>;
+    /** @internal */
     pointArrayMap: Array<string>;
+    /** @internal */
     pointClass: typeof TreemapPoint;
+    /** @internal */
     NodeClass: typeof TreemapNode;
+    /** @internal */
     trackerGroups: Array<string>;
+    /** @internal */
     utils: {
         recursive: typeof TreemapUtilities.recursive;
     };

@@ -54,6 +54,10 @@ function deepClone(value: any, excludedKeys?: string[]): any {
         const keys = Object.keys(value);
 
         for (const key of keys) {
+            if (key === '__proto__' || key === 'constructor') {
+                continue;
+            }
+
             if (excludedKeys && excludedKeys.includes(key)) {
                 clone[key] = value[key];
             } else {

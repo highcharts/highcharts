@@ -1,3 +1,10 @@
+---
+description: >-
+  Import the Highcharts export from @highcharts/react to set global chart
+  options or call global methods, and remember that those options affect every
+  chart using that instance.
+---
+
 # Highcharts instance
 
 If you need to set global Highcharts options or use global methods, access the `Highcharts` export:

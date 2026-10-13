@@ -34,7 +34,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * @extends series,plotOptions.pyramid
  *
- * @excluding boostThreshold, boostBlending, dataParser, dataSorting, dataURL,
+ * @excluding boostThreshold, boostBlending, dataSorting,
  *            legendSymbolColor, stack, xAxis, yAxis
  * @product highcharts
  *
@@ -114,7 +114,8 @@ export interface PyramidSeriesOptions extends FunnelSeriesOptions {
      */
     reversed?: boolean;
 
-    states?: SeriesStatesOptions<PyramidSeriesOptions>;
+    states?: FunnelSeriesOptions['states'] &
+        SeriesStatesOptions<PyramidSeriesOptions>;
 
 }
 

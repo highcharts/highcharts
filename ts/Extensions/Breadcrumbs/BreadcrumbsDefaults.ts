@@ -265,7 +265,7 @@ const options: BreadcrumbsOptions = {
      * `.highcharts-breadcrumbs-buttons .highcharts-button` rule with its
      * different states.
      *
-     * @type  {Highcharts.SVGAttributes}
+     * @type  {Highcharts.CSSObject}
      * @since 10.0.0
      */
     style: {},

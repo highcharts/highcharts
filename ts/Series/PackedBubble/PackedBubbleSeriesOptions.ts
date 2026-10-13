@@ -81,8 +81,8 @@ export interface PackedBubbleParentNodeOptions {
  *            yAxis, dataSorting, boostThreshold,
  *            boostBlending
  *
- * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
- *            boostThreshold, boostBlending
+ * @excluding cropThreshold, dataSorting, dragDrop, stack, boostThreshold,
+ *            boostBlending
  *
  * @product highcharts
  *

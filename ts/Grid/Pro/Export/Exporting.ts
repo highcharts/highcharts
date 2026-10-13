@@ -42,6 +42,34 @@ import { defined } from '../../../Shared/Utilities.js';
 
 /* *
  *
+ *  Functions
+ *
+ * */
+
+/**
+ * Writes a value as a quoted CSV field.
+ *
+ * Quotes inside the value are doubled, as a bare one ends the field and
+ * leaves the file unparsable. A value a spreadsheet would evaluate as a
+ * formula is prefixed with an apostrophe, unless it is a plain number, so
+ * that a negative value survives a round trip.
+ *
+ * @param value
+ * The value to write.
+ *
+ * @return
+ * The field, including the surrounding quotes.
+ */
+function csvEscape(value: string): string {
+    const neutralized = (
+        /^[=+\-@\t\r]/.test(value) && !Number.isFinite(Number(value))
+    ) ? `'${value}` : value;
+
+    return `"${neutralized.replace(/"/g, '""')}"`;
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -182,7 +210,7 @@ class Exporting {
         // Add the names as the first row if they should be exported
         if (exportNames) {
             csvRows.push(columnIds.map(
-                (columnId): string => `"${columnId}"`
+                (columnId): string => csvEscape(columnId)
             ).join(itemDelimiter));
         }
 
@@ -200,7 +228,7 @@ class Exporting {
                 case 'string':
                     return (val: DataTableCellType): string => (
                         defined(val) ?
-                            `"${val}"` :
+                            csvEscape(String(val)) :
                             ''
                     );
                 case 'boolean':

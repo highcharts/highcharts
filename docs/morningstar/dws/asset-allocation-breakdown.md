@@ -1,3 +1,11 @@
+---
+description: >-
+  Inspect the InvestmentsConnector tables for general, Canadian, and
+  underlying-instrument allocation, then use their columns to chart long,
+  short, net, or rescaled portfolio percentages across the documented asset
+  classes.
+---
+
 # Asset Allocation Breakdown
 
 The **Asset Allocation Breakdown** view provides the split of a portfolio's net

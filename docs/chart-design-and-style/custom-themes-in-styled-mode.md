@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a CSS theme by importing the default Highcharts stylesheet and
+  overriding color variables or element classes. Learn how neutral and
+  highlight colors work and account for light and dark modes.
+---
+
 Custom themes in styled mode
 ===
 

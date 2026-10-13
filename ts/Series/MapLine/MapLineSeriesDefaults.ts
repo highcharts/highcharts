@@ -80,7 +80,7 @@ export default MapLineSeriesDefaults;
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.mapline
- * @excluding dataParser, dataURL, dragDrop, marker
+ * @excluding dragDrop, marker
  * @product   highmaps
  * @apioption series.mapline
  */

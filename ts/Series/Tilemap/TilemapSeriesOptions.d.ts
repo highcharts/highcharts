@@ -67,13 +67,14 @@ import type TilemapPointOptions from './TilemapPointOptions';
  * @excluding jitter, joinBy, shadow, allAreas, mapData, marker, data,
  *            dataSorting, boostThreshold, boostBlending
  *
- * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
+ * @excluding allAreas, joinBy, mapData, marker,
  *            pointRange, shadow, stack, dataSorting, boostThreshold,
  *            boostBlending
  *
  * @product highcharts highmaps
  *
  * @requires modules/tilemap
+ * @requires {highcharts} modules/heatmap
  */
 export interface TilemapSeriesOptions extends HeatmapSeriesOptions {
 

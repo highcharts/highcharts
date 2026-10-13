@@ -618,7 +618,7 @@ const PieSeriesDefaults: PieSeriesOptions = {
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding cropThreshold, dataParser, dataURL, linkedTo, stack, xAxis, yAxis,
+ * @excluding cropThreshold, linkedTo, stack, xAxis, yAxis,
  *            dataSorting, step, boostThreshold, boostBlending
  * @product   highcharts highmaps
  * @apioption series.pie
