@@ -158,7 +158,7 @@ class ChainModifier extends DataModifier {
         this.chain.push(modifier);
 
         this.emit({
-            type: 'addModifier',
+            type: 'afterAddModifier',
             detail: eventDetail,
             modifier
         });
@@ -264,7 +264,7 @@ class ChainModifier extends DataModifier {
 
         const modifiers = (
             chain.options.reverse ?
-                chain.chain.reverse() :
+                chain.chain.slice().reverse() :
                 chain.chain.slice()
         );
 
@@ -314,7 +314,11 @@ class ChainModifier extends DataModifier {
             modifier
         });
 
-        modifiers.splice(modifiers.indexOf(modifier), 1);
+        for (let i = modifiers.length - 1; i >= 0; --i) {
+            if (modifiers[i] === modifier) {
+                modifiers.splice(i, 1);
+            }
+        }
 
         this.emit({
             type: 'afterRemoveModifier',
