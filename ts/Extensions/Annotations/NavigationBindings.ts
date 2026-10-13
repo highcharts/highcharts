@@ -56,6 +56,7 @@ import {
     isFunction,
     isNumber,
     isObject,
+    isSafeKey,
     merge,
     objectEach,
     pushUnique
@@ -889,7 +890,7 @@ class NavigationBindings {
 
                 path.forEach((name, index): void => {
 
-                    if (name !== '__proto__' && name !== 'constructor') {
+                    if (isSafeKey(name)) {
 
                         const nextName = (path[index + 1] ?? '');
 

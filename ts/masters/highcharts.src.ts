@@ -90,6 +90,7 @@ import {
     isFunction,
     isNumber,
     isObject,
+    isSafeKey,
     isString,
     internalClearTimeout,
     merge,
@@ -195,6 +196,7 @@ G.isDOMElement = isDOMElement;
 G.isFunction = isFunction;
 G.isNumber = isNumber;
 G.isObject = isObject;
+G.isSafeKey = isSafeKey;
 G.isString = isString;
 G.internalClearTimeout = internalClearTimeout;
 G.merge = merge;

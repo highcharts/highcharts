@@ -19,7 +19,7 @@ import type { AnyRecord } from '../../Shared/Types';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Globals from './Globals.js';
-import { defined, isObject } from '../../Shared/Utilities.js';
+import { defined, isObject, isSafeKey } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',
@@ -453,12 +453,8 @@ export function isDeepEqual(left: unknown, right: unknown): boolean {
         }
     }
 
-    const leftKeys = Object.keys(left).filter(function (key): boolean {
-        return key !== '__proto__' && key !== 'constructor';
-    });
-    const rightKeys = Object.keys(right).filter(function (key): boolean {
-        return key !== '__proto__' && key !== 'constructor';
-    });
+    const leftKeys = Object.keys(left).filter(isSafeKey);
+    const rightKeys = Object.keys(right).filter(isSafeKey);
 
     if (leftKeys.length !== rightKeys.length) {
         return false;
