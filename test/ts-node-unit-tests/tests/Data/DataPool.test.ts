@@ -1,5 +1,11 @@
 import { describe, it } from 'node:test';
-import { deepStrictEqual, strictEqual, notStrictEqual, ok } from 'node:assert';
+import {
+    deepStrictEqual,
+    strictEqual,
+    notStrictEqual,
+    ok,
+    rejects
+} from 'node:assert';
 
 import DataPool from '../../../../ts/Data/DataPool.js';
 // Import connectors to register them with DataConnector
@@ -132,6 +138,17 @@ describe('DataPool', () => {
     });
 
     describe('promises', () => {
+        it('should reject every request for an unknown connector', async () => {
+            const dataPool = new DataPool();
+            const first = dataPool.getConnector('missing');
+            const second = dataPool.getConnector('missing');
+
+            await Promise.all([
+                rejects(first, /Connector 'missing' not found/),
+                rejects(second, /Connector 'missing' not found/)
+            ]);
+        });
+
         it('should resolve second connector request after first one', async () => {
             // Using a simpler modifier chain (the old RangeModifier API with conditions
             // has been deprecated/removed)
