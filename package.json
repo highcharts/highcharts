@@ -136,7 +136,7 @@
     "lolex": "^6.0.0",
     "marked": "^4.2.12",
     "mini-css-extract-plugin": "2.10.0",
-    "moment": "2.30",
+    "moment": "2.31",
     "moment-timezone": "^0.5.45",
     "node-fetch": "^2.6.12",
     "plugin-error": "^2.0.1",
