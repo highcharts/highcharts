@@ -114,6 +114,52 @@ QUnit.test('getListOfParents', function (assert) {
     );
 });
 
+QUnit.test('Built-in-named parent IDs', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'treemap',
+            data: [{
+                id: 'toString'
+            }, {
+                id: 'child-1',
+                parent: 'toString',
+                value: 1
+            }, {
+                id: '__proto__'
+            }, {
+                id: 'child-2',
+                parent: '__proto__',
+                value: 1
+            }]
+        }]
+    });
+    const { nodeMap } = chart.series[0],
+        protoId = '__proto__';
+
+    assert.deepEqual(
+        [
+            nodeMap.toString.children[0].id,
+            nodeMap[protoId].children[0].id
+        ],
+        ['child-1', 'child-2'],
+        'Built-in object property names should work as parent IDs'
+    );
+
+    chart.series[0].update({
+        cluster: {
+            enabled: true,
+            minimumClusterSize: 1,
+            pixelWidth: 1000
+        }
+    });
+
+    assert.ok(
+        chart.series[0].nodeMap.toString &&
+            chart.series[0].nodeMap[protoId],
+        'Built-in-named parents should also work with grouping enabled'
+    );
+});
+
 QUnit.test('seriesTypes.treemap.pointClass.setState', function (assert) {
     var series = Highcharts.Series.types.treemap,
         setState = series.prototype.pointClass.prototype.setState,
