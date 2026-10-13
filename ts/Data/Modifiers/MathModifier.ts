@@ -219,14 +219,13 @@ class MathModifier extends DataModifier {
             ) {
                 try {
                     // Use cache while formula string is repetitive
-                    cacheFormula = (
-                        cacheString === cell ?
-                            cacheFormula :
-                            FormulaParser.parseFormula(
-                                cell.substring(1),
-                                alternativeSeparators
-                            )
-                    );
+                    if (cacheString !== cell) {
+                        cacheFormula = FormulaParser.parseFormula(
+                            cell.substring(1),
+                            alternativeSeparators
+                        );
+                        cacheString = cell;
+                    }
                     // Process parsed formula string
                     column[i] =
                         FormulaProcessor.processFormula(cacheFormula, table);
