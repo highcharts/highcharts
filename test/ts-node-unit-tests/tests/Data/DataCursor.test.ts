@@ -88,6 +88,35 @@ describe('DataCursor', () => {
             deepStrictEqual(test3Event?.cursors, [expectedCursor3], 'Lasting event should have cursors array with cursor.');
             strictEqual(test3Event?.table, table, 'Lasting event should have correct table.');
         });
+
+        it('should distinguish nested range column arrays', () => {
+            const cursor = new DataCursor(),
+                table = new DataTable();
+            let calls = 0;
+
+            cursor.addListener(table.id, 'hover', (): void => {
+                calls++;
+                if (calls === 1) {
+                    cursor.emitCursor(table, {
+                        type: 'range',
+                        columns: ['a', 'b'],
+                        firstRow: 0,
+                        lastRow: 1,
+                        state: 'hover'
+                    });
+                }
+            });
+
+            cursor.emitCursor(table, {
+                type: 'range',
+                columns: ['a,b'],
+                firstRow: 0,
+                lastRow: 1,
+                state: 'hover'
+            });
+
+            strictEqual(calls, 2, 'Both distinct cursors should be emitted.');
+        });
     });
 
     describe('isEqual', () => {
