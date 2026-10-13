@@ -115,7 +115,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
     /**
      * Tables managed by this DataConnector instance.
      */
-    public readonly dataTables: Record<string, DataTable> = {};
+    public readonly dataTables: Record<string, DataTable> = Object.create(null);
 
     /**
      * The options of the connector.
@@ -178,7 +178,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
                 this.dataTables[key ?? dataTableIndex] =
                     new DataTable(dataTable);
 
-                if (!key) {
+                if (typeof key === 'undefined') {
                     dataTableIndex++;
                 }
             }
@@ -208,7 +208,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
      * The data table instance.
      */
     public getTable(key?: string): DataTable {
-        if (key) {
+        if (typeof key !== 'undefined') {
             return this.dataTables[key];
         }
         return Object.values(this.dataTables)[0];
