@@ -3,6 +3,7 @@ import {
     mkdir,
     realpath,
     readFile,
+    readdir,
     rm,
     symlink,
     unlink,
@@ -733,6 +734,39 @@ describe('static React artifact consumer', async () => {
         );
         assert.ok(events.every(event => event.startsWith('head:')));
         assert.equal(events.some(event => event.startsWith('put:')), false);
+    });
+
+    await it('rejects symlinked dry-run ancestors without writing outside the mirror', async t => {
+        const fixture = await makeFixture();
+        const artifact = await stage(fixture);
+        const originalDirectory = process.cwd();
+        for (const ancestor of ['tmp', 'tmp/s3']) {
+            const workspace = Path.join(fixture.directory, ancestor.replace('/', '-'));
+            const outside = Path.join(workspace, 'outside');
+            await mkdir(outside, { recursive: true });
+            await writeFile(Path.join(outside, 'keep.txt'), 'untouched');
+            const link = Path.join(workspace, ancestor);
+            await mkdir(Path.dirname(link), { recursive: true });
+            try {
+                await symlink(outside, link, process.platform === 'win32' ? 'junction' : 'dir');
+            } catch (error) {
+                if (process.platform === 'win32' && ['EPERM', 'EACCES', 'ENOTSUP'].includes(error.code)) {
+                    t.skip('Creating symlinks is not permitted on this Windows host.');
+                    return;
+                }
+                throw error;
+            }
+            try {
+                process.chdir(workspace);
+                await assert.rejects(ReactStatic.publishArtifact(artifact, {
+                    bucket: fixture.bucket, dryrun: true
+                }, { reportPath: fixture.reportPath }), /symbolic link/u);
+                assert.deepEqual(await readdir(outside), ['keep.txt']);
+                assert.equal(await readFile(Path.join(outside, 'keep.txt'), 'utf8'), 'untouched');
+            } finally {
+                process.chdir(originalDirectory);
+            }
+        }
     });
 
     await it('keeps prior release assets for cached pages and supports a verified dry-run rollback', async () => {

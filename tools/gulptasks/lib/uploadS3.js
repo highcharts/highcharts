@@ -1013,6 +1013,7 @@ async function uploadFiles(params) {
 
 
 module.exports = {
+    assertNoDryRunSymlinkAncestors,
     deleteS3Object,
     getGitIgnoreMeProperties,
     getS3LastModified,

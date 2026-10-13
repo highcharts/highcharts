@@ -44,10 +44,12 @@ scripts when no artifact is supplied. Publish with the artifact to include
 those links after React publication succeeds.
 React publication completes before legacy uploads begin, so a failed React
 publication does not publish navigation links to missing pages.
-Combined `--sync` publication requires generated legacy `api.js` and
-`index.html` files for each selected product before React staging begins.
-React-only staging output is not a complete legacy build; use `--react-only`
-to publish that output safely.
+Legacy `--sync` requires generated legacy `api.js` and `index.html` files for
+each selected product before synchronization begins. This also prevents a
+later ordinary sync from treating a tree staged by `api-react-stage` or
+`--react-only` as a complete legacy build. React-only output should be published
+with `--react-only` and the artifact; generate legacy docs before running a
+legacy sync.
 
 To publish the complete React artifact without changing or uploading legacy
 API navigation, use `--react-only`. This mode ignores `--docs` and `--sync`,

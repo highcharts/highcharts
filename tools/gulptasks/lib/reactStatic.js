@@ -340,15 +340,19 @@ async function verifyRemote(session, record, inventoryHash) {
 }
 
 async function dryrunPath(session, record) {
+    const { assertNoDryRunSymlinkAncestors } = require('./uploadS3');
     // Bucket names are supplied by the API caller, never by the artifact.
     if (!/^[a-z0-9][a-z0-9.-]*$/u.test(session.bucket)) {
         throw new Error('Invalid dry-run bucket name');
     }
     const root = Path.resolve('tmp/s3', session.bucket);
+    const mirrorRoot = Path.resolve('tmp/s3');
+    const tempRoot = Path.resolve('tmp');
+    assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+    assertNoDryRunSymlinkAncestors(root, mirrorRoot);
     await FS.mkdir(root, { recursive: true });
-    if ((await FS.lstat(root)).isSymbolicLink()) {
-        throw new Error('Dry-run bucket directory cannot be a symlink');
-    }
+    assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+    assertNoDryRunSymlinkAncestors(root, mirrorRoot);
     return filePath(root, record.path, true);
 }
 

@@ -84,18 +84,48 @@ function createDependencies(sourceRoot, calls, options = {}) {
 }
 
 describe('api-upload task integration', () => {
-    it('rejects combined sync with absent or React-only legacy output before staging or S3', async () => {
+    it('rejects sync with absent or React-only legacy output before staging or S3', async () => {
         const sourceRoot = await createSourceRoot();
         const calls = [];
         const args = {
-            bucket: 'test-bucket', sync: true, reactArtifact: '/tmp/react-static',
-            expectedHighchartsVersion: '13.1.1', expectedReactVersion: '5.0.1'
+            bucket: 'test-bucket',
+            sync: true,
+            reactArtifact: '/tmp/react-static',
+            expectedHighchartsVersion: '13.1.1',
+            expectedReactVersion: '5.0.1'
         };
         try {
             await assert.rejects(runApiUpload(args, createDependencies(sourceRoot, calls)), /Legacy API build missing/u);
             assert.deepEqual(calls, []);
             await rm(sourceRoot, { recursive: true, force: true });
             await assert.rejects(runApiUpload(args, createDependencies(sourceRoot, calls)), /Source directory/u);
+            assert.deepEqual(calls, []);
+        } finally {
+            await rm(sourceRoot, { recursive: true, force: true });
+        }
+    });
+
+    it('rejects ordinary sync of a React-only staged tree before S3', async () => {
+        const sourceRoot = await createSourceRoot();
+        const calls = [];
+
+        try {
+            await mkdir(
+                join(sourceRoot, 'highcharts/react'),
+                { recursive: true }
+            );
+            await writeFile(
+                join(sourceRoot, 'highcharts/react/index.html'),
+                'React shell'
+            );
+
+            await assert.rejects(
+                runApiUpload(
+                    { bucket: 'test-bucket', sync: true },
+                    createDependencies(sourceRoot, calls)
+                ),
+                /Legacy API build missing .*highcharts[\\/]api\.js/u
+            );
             assert.deepEqual(calls, []);
         } finally {
             await rm(sourceRoot, { recursive: true, force: true });
@@ -117,9 +147,11 @@ describe('api-upload task integration', () => {
                 return stage(...args);
             };
             await runApiUpload({
-                bucket: 'test-bucket', sync: true,
+                bucket: 'test-bucket',
+                sync: true,
                 reactArtifact: '/tmp/react-static',
-                expectedHighchartsVersion: '13.1.1', expectedReactVersion: '5.0.1'
+                expectedHighchartsVersion: '13.1.1',
+                expectedReactVersion: '5.0.1'
             }, dependencies);
             assert.equal(calls.filter(call => call[0] === 'sync').length, 1);
             assert.equal(calls.find(call => call[0] === 'sync')[2], 'highcharts');
@@ -264,6 +296,8 @@ describe('api-upload task integration', () => {
         const calls = [];
 
         try {
+            await writeFile(join(sourceRoot, 'highcharts/api.js'), 'legacy');
+            await writeFile(join(sourceRoot, 'highcharts/index.html'), 'legacy');
             await runApiUpload(
                 {
                     bucket: 'test-bucket',

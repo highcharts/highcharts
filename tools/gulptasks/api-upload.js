@@ -323,15 +323,21 @@ async function runApiUpload(args, dependencies = {}) {
         normalizedDocs.map(doc => path.join(sourceRoot, ...doc.split('/'))) :
         fsLib.getDirectoryPaths(sourceRoot);
 
-    if (sync && reactArtifactInput && !skipLegacy) {
+    if (sync && !skipLegacy) {
         const products = ['highcharts', 'highstock', 'highmaps', 'gantt'];
         const selectedProducts = products.filter(product => sourceItems.some(item =>
             path.relative(sourceRoot, item).split(path.sep)[0] === product));
         for (const product of selectedProducts) {
             for (const name of ['api.js', 'index.html']) {
                 const legacyFile = path.join(sourceRoot, product, name);
-                if (!fs.existsSync(legacyFile) || !fs.lstatSync(legacyFile).isFile()) {
-                    throw new Error(`Legacy API build missing ${legacyFile}; generate legacy docs or use --react-only.`);
+                if (
+                    !fs.existsSync(legacyFile) ||
+                    !fs.lstatSync(legacyFile).isFile()
+                ) {
+                    throw new Error(
+                        `Legacy API build missing ${legacyFile}; ` +
+                        'generate legacy docs before --sync.'
+                    );
                 }
             }
         }
