@@ -70,6 +70,7 @@ async function runApiReactStage(args, dependencies = {}) {
 
     if (
         typeof args.reactArtifact !== 'string' ||
+        !args.reactArtifact.trim() ||
         typeof args.expectedReactVersion !== 'string' ||
         !args.expectedReactVersion.trim() ||
         typeof args.expectedHighchartsVersion !== 'string' ||
@@ -86,7 +87,7 @@ async function runApiReactStage(args, dependencies = {}) {
         dependencies.targetRoot || TARGET_DIRECTORY
     );
     const verifiedArtifact = await reactStatic.verifyArtifact(
-        path.resolve(args.reactArtifact),
+        path.resolve(args.reactArtifact.trim()),
         {
             expectedHighchartsVersion:
                 args.expectedHighchartsVersion.trim(),

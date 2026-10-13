@@ -808,6 +808,44 @@ async function uploadDirectory(
 
 
 /**
+ * Writes raw object bytes to the dry-run mirror and clears deletion evidence.
+ * @param {string} key Object key.
+ * @param {Buffer|string} content Object content.
+ * @param {S3Session} session Dry-run session.
+ * @return {Promise<string>} Written mirror path.
+ */
+async function writeDryRunObject(key, content, session) {
+    const targetPath = Path.join('tmp', 's3', session.bucket, key);
+    const deleteMarkerPath = getDryRunDeleteMarkerPath(key, session);
+    const tempRoot = NativePath.resolve('tmp');
+    const mirrorRoot = NativePath.resolve('tmp', 's3');
+    const mirrorBucketPath = NativePath.resolve(mirrorRoot, session.bucket);
+    const markerBucketPath = NativePath.resolve(
+        'tmp',
+        's3-delete-markers',
+        session.bucket
+    );
+
+    assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+    assertNoDryRunSymlinkAncestors(mirrorBucketPath, mirrorRoot);
+    assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
+    assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+    assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
+    FS.mkdirSync(Path.dirname(targetPath), { recursive: true });
+    assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
+    assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
+
+    await FS.promises.writeFile(targetPath, content, { encoding: 'binary' });
+    await FS.promises.rm(
+        deleteMarkerPath,
+        { force: true }
+    );
+
+    return targetPath;
+}
+
+
+/**
  * Uploads a file to the bucket.
  *
  * @param {string} sourcePath
@@ -844,32 +882,7 @@ async function uploadFile(
     }
 
     if (session.dryrun) {
-        const s3Key = targetPath;
-        targetPath = Path.join('tmp', 's3', session.bucket, targetPath);
-        const deleteMarkerPath = getDryRunDeleteMarkerPath(s3Key, session);
-        const tempRoot = NativePath.resolve('tmp');
-        const mirrorRoot = NativePath.resolve('tmp', 's3');
-        const mirrorBucketPath = NativePath.resolve(mirrorRoot, session.bucket);
-        const markerBucketPath = NativePath.resolve(
-            'tmp',
-            's3-delete-markers',
-            session.bucket
-        );
-
-        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
-        assertNoDryRunSymlinkAncestors(mirrorBucketPath, mirrorRoot);
-        assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
-        assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
-        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
-        FS.mkdirSync(Path.dirname(targetPath), { recursive: true });
-        assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
-        assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
-
-        FS.writeFileSync(targetPath, fileContent, { encoding: 'binary' });
-        await FS.promises.rm(
-            deleteMarkerPath,
-            { force: true }
-        );
+        targetPath = await writeDryRunObject(targetPath, fileContent, session);
 
         log.message(targetPath, 'would be uploaded');
     } else {
@@ -1025,5 +1038,6 @@ module.exports = {
     toS3Path,
     uploadDirectory,
     uploadFile,
-    uploadFiles
+    uploadFiles,
+    writeDryRunObject
 };

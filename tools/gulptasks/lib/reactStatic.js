@@ -473,7 +473,7 @@ async function publishArtifact(artifact, session, options = {}) {
                             }
                         }
                         if (!(options.shellsOnly && kind === 'immutable')) {
-                            await FS.writeFile(destination, content);
+                            await S3.writeDryRunObject(record.path, content, session);
                             report.completedUploads++;
                         }
                     } else if (options.shellsOnly && kind === 'immutable') {

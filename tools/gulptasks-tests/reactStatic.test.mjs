@@ -14,6 +14,7 @@ import Path from 'node:path';
 import { JSDOM } from 'jsdom';
 import Templates from '@highcharts/highcharts-documentation-generators/api-docs/lib/templates.js';
 import ReactStatic from '../gulptasks/lib/reactStatic.js';
+import S3 from '../gulptasks/lib/uploadS3.js';
 import {
     createReactStaticFixture,
     EXPECTED_VERSIONS,
@@ -734,6 +735,27 @@ describe('static React artifact consumer', async () => {
         );
         assert.ok(events.every(event => event.startsWith('head:')));
         assert.equal(events.some(event => event.startsWith('put:')), false);
+    });
+
+    await it('clears deletion markers for restored React shells and immutable files', async () => {
+        const fixture = await makeFixture();
+        const artifact = await stage(fixture);
+        const session = { bucket: fixture.bucket, dryrun: true };
+        const keys = ['highcharts/react/index.html', 'react-assets/test-r1/api.js'];
+        const markerRoot = Path.resolve('tmp/s3-delete-markers', fixture.bucket);
+        try {
+            for (const key of keys) {
+                await S3.deleteS3Object(key, session);
+            }
+            await ReactStatic.publishArtifact(artifact, session, { reportPath: fixture.reportPath });
+            for (const key of keys) {
+                const marker = Path.join(markerRoot, Path.dirname(key), `DELETE ${Path.basename(key)}`);
+                await assert.rejects(readFile(marker), { code: 'ENOENT' });
+                assert.deepEqual(await readFile(Path.join(fixture.bucketDirectory, key)), fixture.contents.get(key));
+            }
+        } finally {
+            await rm(markerRoot, { recursive: true, force: true });
+        }
     });
 
     await it('rejects symlinked dry-run ancestors without writing outside the mirror', async t => {

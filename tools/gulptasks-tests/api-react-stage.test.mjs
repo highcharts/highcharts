@@ -22,13 +22,41 @@ describe('api-react-stage task', () => {
         );
     });
 
+    it('rejects empty artifact paths before verification or staging', async () => {
+        for (const reactArtifact of ['', '   ']) {
+            const calls = [];
+
+            await assert.rejects(
+                runApiReactStage(
+                    {
+                        reactArtifact,
+                        expectedReactVersion: '5.0.1',
+                        expectedHighchartsVersion: '13.1.1'
+                    },
+                    {
+                        reactStatic: {
+                            async verifyArtifact() {
+                                calls.push('verify');
+                            },
+                            async stageArtifact() {
+                                calls.push('stage');
+                            }
+                        }
+                    }
+                ),
+                /requires --react-artifact/u
+            );
+            assert.deepEqual(calls, []);
+        }
+    });
+
     it('verifies versions before staging into build/api', async () => {
         const calls = [];
         const verifiedArtifact = { root: '/tmp/artifact', records: [] };
         const stagedArtifact = { root: '/tmp/staged', records: [] };
         const result = await runApiReactStage(
             {
-                reactArtifact: '/tmp/artifact',
+                reactArtifact: '  /tmp/artifact  ',
                 expectedReactVersion: ' 5.0.1 ',
                 expectedHighchartsVersion: ' 13.1.1 '
             },
