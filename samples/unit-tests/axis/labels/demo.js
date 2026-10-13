@@ -2545,5 +2545,15 @@ QUnit.test(
             true,
             'Arrow-function numberFormatter should use ctx when formatting.'
         );
+
+        formatterCtx = void 0;
+        chart.numberFormatter(1, 0);
+
+        assert.strictEqual(
+            formatterCtx,
+            chart,
+            'chart.numberFormatter should pass ctx when called without it ' +
+            '(#25343).'
+        );
     }
 );

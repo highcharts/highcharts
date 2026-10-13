@@ -1053,10 +1053,10 @@ const Options: DeepPartial<A11yOptions> = {
  * @param {global.MouseEvent} evt
  *        Mouse click event
  *
- * @param {Highcharts.Chart} [chart]
+ * @param {Highcharts.Chart} chart
  *        Chart context.
  *
- * @param {global.GlobalEventHandlers} [ctx]
+ * @param {global.GlobalEventHandlers} ctx
  *        Since v12.6.0, the global event handlers context passed as an extra
  *        argument for arrow functions.
  *
