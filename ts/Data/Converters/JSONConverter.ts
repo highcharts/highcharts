@@ -209,13 +209,14 @@ class JSONConverter extends DataConverter {
             if (!(Array.isArray(item))) {
                 return;
             }
+            const column = item.slice();
             if (Array.isArray(converter.headers)) {
                 if (firstRowAsNames) {
-                    converter.headers.push(`${item.shift()}`);
+                    converter.headers.push(`${column.shift()}`);
                 } else if (columnIds && Array.isArray(columnIds)) {
                     converter.headers.push(columnIds[i]);
                 }
-                columnsArray.push(item);
+                columnsArray.push(column);
             } else {
                 error(
                     'JSONConverter: Invalid `columnIds` option.',
