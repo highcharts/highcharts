@@ -146,7 +146,9 @@ class GoogleSheetsConverter extends DataConverter {
         // If beforeParse is defined, use it to modify the data
         const { beforeParse, json } = parseOptions;
         if (beforeParse && json) {
-            columnsArray = beforeParse(json.values);
+            columnsArray = beforeParse(json.values).map(
+                (column): DataTableBasicColumn => column.slice()
+            );
         }
 
         let column;
