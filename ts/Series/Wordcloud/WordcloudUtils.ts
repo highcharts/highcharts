@@ -1007,4 +1007,5 @@ const WordcloudUtils = {
     updateFieldBoundaries
 };
 
+/** @internal */
 export default WordcloudUtils;

@@ -958,4 +958,5 @@ const VennUtils = {
     sortByTotalOverlap
 };
 
+/** @internal */
 export default VennUtils;

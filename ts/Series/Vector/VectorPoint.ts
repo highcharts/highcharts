@@ -28,7 +28,6 @@ import type VectorSeries from './VectorSeries';
  *
  * */
 
-/** @internal */
 declare class VectorPoint extends ScatterPoint {
     public direction: VectorPointOptions['direction'];
     public length: VectorPointOptions['length'];
@@ -42,5 +41,4 @@ declare class VectorPoint extends ScatterPoint {
  *
  * */
 
-/** @internal */
 export default VectorPoint;
