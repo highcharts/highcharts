@@ -26,7 +26,7 @@ export default function ColumnChart() {
 }
 ```
 
-**Note:** Dedicated series components bundle any required modules automatically — no extra imports needed.
+**Note:** Dedicated series components import any module their series type needs, so no extra imports are needed. The exceptions are `FlagsSeries`, `HLCSeries`, `OHLCSeries`, `MapSeries`, `MapBubbleSeries`, `MapLineSeries`, and `MapPointSeries`. Use them in `StockChart` or `MapsChart`, or [import their module](#generic-series) when using `Chart`.
 
 ### Dedicated series options
 
@@ -35,28 +35,31 @@ Each dedicated series component accepts all options available for its correspond
 You can provide the most common options as direct props, and all of them via the `options` prop:
 
 ```tsx
-// Via direct props
-<LineSeries
-  data={[1, 2, 3]}
-  name="Line series"
-  color="red"
-/>
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
-// Via options prop
-<LineSeries
-  data={[1, 2, 3]}
-  options={{
-    name: "Line series",
-    color: "red"
-  }}
-/>
+export default function LineChart() {
+  return (
+    <Chart>
+      {/* Via direct props */}
+      <LineSeries data={[1, 2, 3]} name="Direct props" color="red" />
+      {/* Via the options prop */}
+      <LineSeries
+        data={[3, 2, 1]}
+        options={{
+          name: "Options prop",
+          color: "green",
+          dashStyle: "Dash",
+        }}
+      />
+    </Chart>
+  );
+}
 ```
 
 ### Props
 
-Both dedicated and generic series components accept these props. The generic
-`Series` component accepts one more, `type`, described under
-[Additional props](#additional-props).
+Both dedicated and generic series components accept these props. The generic `Series` component accepts one more, `type`, described under [Additional props](#additional-props).
 
 | Prop      | Type     | Default | Description                                                                                                                                      |
 | --------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -70,6 +73,8 @@ Both dedicated and generic series components accept these props. The generic
 | options   | `object` | -       | Configuration options for the series. Available options depend on `type` (see [series.line](https://api.highcharts.com/highcharts/series.line)). |
 
 ### Available dedicated series components
+
+The table below lists each dedicated series component with its series type and the product it belongs to. Each component is exported from `@highcharts/react/series/<Name>`, where `<Name>` is the component name without `Series`, as with `ColumnSeries` and `@highcharts/react/series/Column` in the example above.
 
 | Series type       | Component                     | Product                                             |
 | ----------------- | ----------------------------- | --------------------------------------------------- |
@@ -160,11 +165,10 @@ export default function ColumnChart() {
 }
 ```
 
-When using the `Series` component, some series types require you to import an additional module:
+Some series types need an additional Highcharts module. For most of them, `Chart` loads that module when the chart renders, so you do not import it yourself:
 
 ```tsx
 import { Chart, Series } from "@highcharts/react";
-import "highcharts/es-modules/masters/modules/venn.src.js";
 
 export default function VennChart() {
   return (
@@ -191,13 +195,15 @@ export default function VennChart() {
 }
 ```
 
+These series types are not loaded this way: `candlestick`, `ohlc`, `hlc`, and `flags` from Highcharts Stock, and `map`, `mapbubble`, `mapline`, and `mappoint` from Highcharts Maps. `StockChart` and `MapsChart` already include them, so no import is needed there. With `Chart`, import the module yourself, or the chart fails with [Highcharts error #17](https://www.highcharts.com/errors/17/).
+
 > **Note:** You should import additional modules using their ESM versions. See the [Bundling and tree shaking](https://www.highcharts.com/docs/react/bundling-and-tree-shaking) documentation.
 
 To determine which module is needed, refer to the **Requires** section under each [series](https://api.highcharts.com/highcharts/series).
 
 ### Additional props
 
-The generic `Series` component accepts the same [props](#props) as dedicated components, with the addition of `type`:
+The generic `Series` component also accepts `type`:
 
 | Prop | Type     | Default | Description                                                                                                |
 | ---- | -------- | ------- | ---------------------------------------------------------------------------------------------------------- |
@@ -216,6 +222,3 @@ Each chart type has its own generic series component:
 ### When to use generic series
 
 We recommend using [dedicated series](#dedicated-series) components in most cases to keep your code lean. Reserve the generic `Series` component for situations where dedicated components become impractical — for example, when [adding series dynamically](https://www.highcharts.com/docs/react/data-handling#add-series-dynamically).
-
-Dedicated series components support the same [props](#props) as `Series`, except for `type`.
-
