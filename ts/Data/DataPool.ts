@@ -365,9 +365,7 @@ class DataPool implements DataEventEmitter<Event> {
             }
         }
 
-        if (!existingConnector) {
-            connectorsOptions.push(options);
-        }
+        connectorsOptions.push(existingConnector?.options ?? options);
 
         this.emit({
             type: 'afterSetConnectorOptions',

@@ -169,6 +169,25 @@ describe('DataPool', () => {
     });
 
     describe('replacement', () => {
+        it('should retain options after updating a loaded connector', async () => {
+            const dataPool = new DataPool({
+                connectors: [{
+                    id: 'My Data',
+                    type: 'CSV',
+                    csv: 'a\n1'
+                }]
+            });
+
+            await dataPool.getConnector('My Data');
+            await dataPool.setConnectorOptions({
+                id: 'My Data',
+                type: 'CSV',
+                csv: 'a\n2'
+            }, true);
+
+            deepStrictEqual(dataPool.getConnectorIds(), ['My Data']);
+        });
+
         it('should track new vs loaded connectors', async () => {
             const dataPool = new DataPool({
                 connectors: [{
