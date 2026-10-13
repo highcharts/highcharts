@@ -1,8 +1,8 @@
 ---
 description: >-
-  Import the Highcharts export from @highcharts/react to set global chart
-  options or call global methods, and remember that those options affect every
-  chart using that instance.
+  Import the Highcharts export from @highcharts/react to set global options or
+  call global methods at module level, attach handlers that run for every chart,
+  and avoid a second instance from the highcharts package.
 ---
 
 # Highcharts instance
@@ -27,9 +27,9 @@ export default function MyChartComponent() {
 
 ## Global setup runs at module level
 
-`Chart` constructs the chart in an effect, and a component's own effects run after those of its children. So `setOptions` or a plugin registration placed in your own `useEffect` runs after the chart already exists and misses it. Module-level code runs at import time, before any of that, which is why global setup belongs there, as in the example above.
+`Chart` constructs the chart in an effect, and a component's own effects run after those of its children. So global setup placed in your own `useEffect`, such as `setOptions` or the event handler below, runs after the chart already exists and misses it. Module-level code runs at import time, before any of that, which is why global setup belongs there, as in the example above.
 
-Registering against a Highcharts class rather than a chart instance is the usual shape of a plugin, and it applies to every chart:
+To run code for every chart, attach a handler to the `Highcharts.Chart` class at module level. See [Extending Highcharts](https://www.highcharts.com/docs/extending-highcharts/extending-highcharts#initializing-an-extension-when-the-chart-initializes) for how class events work.
 
 ```jsx
 import { Highcharts } from "@highcharts/react";
@@ -41,12 +41,6 @@ Highcharts.addEvent(Highcharts.Chart, "load", function () {
 
 To subscribe to events on one specific chart instead, see [Chart instance](https://www.highcharts.com/docs/react/chart-instance).
 
-## Importing Highcharts directly
+## Use the exported instance
 
-The `Highcharts` export above is the same instance the components render with. If you would rather import Highcharts yourself, use the ES module path to get that same instance:
-
-```jsx
-import Highcharts from "highcharts/es-modules/masters/highcharts.src.js";
-```
-
-Importing from the package root resolves to a different build, giving you a second and separate instance. Series types you register and behavior you compose on one instance are not visible to the other, so a chart rendered by Highcharts React would not see them.
+The `Highcharts` export is the instance the components render with, so use it rather than `import Highcharts from "highcharts"`, which loads a second, separate instance: options you set on it, such as with `setOptions`, do not reach the charts that Highcharts React renders.
