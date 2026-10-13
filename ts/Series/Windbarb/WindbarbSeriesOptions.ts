@@ -144,6 +144,8 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * The line width of the wind barb symbols.
+     *
+     * @default 2
      */
     lineWidth?: number;
 
@@ -154,6 +156,8 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts|highstock} highcharts/plotoptions/windbarb-onseries
      *         Projected on area series
+     *
+     * @default null
      */
     onSeries?: (string|null);
 
@@ -163,6 +167,8 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * Pixel length of the stems.
+     *
+     * @default 20
      */
     vectorLength?: number;
 
@@ -172,6 +178,8 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      * [yOffset](#plotOptions.windbarb.yOffset) in non inverted charts.
      *
      * @since 6.1.0
+     *
+     * @default 0
      */
     xOffset?: number;
 
@@ -180,6 +188,8 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      * value makes sure the symbols don't overlap the X axis when `onSeries`
      * is `null`, and that they don't overlap the linked series when
      * `onSeries` is given.
+     *
+     * @default -20
      */
     yOffset?: number;
 

@@ -77,17 +77,51 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      * NB! This option is currently not decided to be published in the API.
      *
      * @internal
+     *
+     * @default true
      */
     allowExtendPlayingField?: boolean;
 
     /** @default { duration: 500 } */
     animation?: ColumnSeriesOptions['animation'];
 
+    /**
+     * The width of the border surrounding each word.
+     *
+     * @default 0
+     */
     borderWidth?: number;
 
+    /**
+     * Whether to clip the series to the plot area.
+     *
+     * @default false
+     */
     clip?: boolean;
 
+    /**
+     * Whether to give each point an individual color.
+     *
+     * @default true
+     */
     colorByPoint?: boolean;
+
+    /**
+     * Determines what data value should be used to calculate point color
+     * if `colorAxis` is used.
+     *
+     * @default 'weight'
+     */
+    colorKey?: string;
+
+    /**
+     * When the series contains less points than the crop threshold, all
+     * points are drawn, even if the points fall outside the visible plot
+     * area at the current zoom.
+     *
+     * @default Infinity
+     */
+    cropThreshold?: number;
 
     /**
      * An array of data points for the series. For the `wordcloud` series type,
@@ -134,12 +168,16 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      * The word with the largest weight will have a font size equal to this
      * value. The font size of a word is the ratio between its weight and the
      * largest occurring weight, multiplied with the value of maxFontSize.
+     *
+     * @default 25
      */
     maxFontSize?: number;
 
     /**
      * A threshold determining the minimum font size that can be applied to a
      * word.
+     *
+     * @default 1
      */
     minFontSize?: number;
 
@@ -152,6 +190,8 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-placement-strategies)
      *
      * @validvalue ["center", "random"]
+     *
+     * @default 'center'
      */
     placementStrategy?: string;
 
@@ -163,6 +203,12 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     rotation?: WordcloudSeriesRotationOptions;
 
+    /**
+     * Whether to display this particular series or series type in the
+     * legend.
+     *
+     * @default false
+     */
     showInLegend?: boolean;
 
     /**
@@ -173,6 +219,8 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      * [documentation](https://www.highcharts.com/docs/chart-and-series-types/word-cloud-series#custom-spiralling-algorithm)
      *
      * @validvalue ["archimedean", "rectangular", "square"]
+     *
+     * @default 'rectangular'
      */
     spiral?: string;
 

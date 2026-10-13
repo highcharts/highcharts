@@ -98,14 +98,19 @@ export interface XRangePointPartialFillOptions {
      */
     fill?: ColorType;
 
+    /** @internal */
     height?: number;
 
+    /** @internal */
     r?: number;
 
+    /** @internal */
     width?: number;
 
+    /** @internal */
     x?: number;
 
+    /** @internal */
     y?: (number|null);
 
 }

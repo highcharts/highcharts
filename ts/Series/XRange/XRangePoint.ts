@@ -199,6 +199,7 @@ class XRangePoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 interface XRangePoint {
     clipRectArgs?: RectangleObject;
     len?: number;

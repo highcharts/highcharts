@@ -129,6 +129,8 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
 
     /**
      * The line width for each vector arrow.
+     *
+     * @default 2
      */
     lineWidth?: number;
 
@@ -142,6 +144,8 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
      *         Rotate from start
      *
      * @validvalue ["start", "center", "end"]
+     *
+     * @default 'center'
      */
     rotationOrigin?: VectorRotationOriginValue;
 
@@ -152,6 +156,8 @@ export interface VectorSeriesOptions extends ScatterSeriesOptions {
     /**
      * Maximum length of the arrows in the vector plot. The individual arrow
      * length is computed between 0 and this value.
+     *
+     * @default 20
      */
     vectorLength?: number;
 

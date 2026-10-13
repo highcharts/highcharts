@@ -147,6 +147,8 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * @since 3.0
      *
      * @product highcharts
+     *
+     * @default 'var(--highcharts-neutral-color-80)'
      */
     borderColor?: ColorType;
 
@@ -162,6 +164,8 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * @since 3.0
      *
      * @product highcharts
+     *
+     * @default 'Dot'
      */
     dashStyle?: DashStyleValue;
 
@@ -174,6 +178,8 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * @since 3.0
      *
      * @product highcharts
+     *
+     * @default 'var(--highcharts-neutral-color-80)'
      */
     lineColor?: ColorType;
 
@@ -181,6 +187,8 @@ export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
      * The width of the line connecting waterfall columns.
      *
      * @product highcharts
+     *
+     * @default 1
      */
     lineWidth?: number;
 
