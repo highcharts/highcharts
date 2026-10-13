@@ -332,8 +332,8 @@ export function buildQueryRange(
         ':' +
         (alphabet[(endColumn ?? 25)] || 'Z') +
         (
-            endRow ?
-                Math.max(endRow, 0) :
+            endRow !== void 0 ?
+                Math.max(endRow, 0) + 1 :
                 'Z'
         )
     );
