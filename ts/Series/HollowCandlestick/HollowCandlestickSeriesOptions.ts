@@ -37,7 +37,7 @@ export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions
      * close is lower than the previous one.
      *
      * @sample stock/plotoptions/hollow-candlestick-color/
-     *     Custom colors
+     *         Custom colors
      * @sample {highstock} highcharts/css/hollow-candlestick/
      *         Colors in styled mode
      *
@@ -50,7 +50,7 @@ export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions
      * the current close is lower than the previous one.
      *
      * @sample stock/plotoptions/hollow-candlestick-color/
-     *     Custom colors
+     *         Custom colors
      * @sample {highstock} highcharts/css/hollow-candlestick/
      *         Colors in styled mode
      *
@@ -63,7 +63,7 @@ export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions
      * close is higher than the previous one.
      *
      * @sample stock/plotoptions/hollow-candlestick-color/
-     *     Custom colors
+     *         Custom colors
      * @sample {highstock} highcharts/css/hollow-candlestick/
      *         Colors in styled mode
      *
@@ -76,7 +76,7 @@ export interface HollowCandlestickSeriesOptions extends CandlestickSeriesOptions
      * the current close is higher than the previous one.
      *
      * @sample stock/plotoptions/hollow-candlestick-color/
-     *     Custom colors
+     *         Custom colors
      * @sample {highstock} highcharts/css/hollow-candlestick/
      *         Colors in styled mode
      *
