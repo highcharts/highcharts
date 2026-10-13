@@ -587,26 +587,15 @@ function destroyGraphics(
 ): void {
     const points = series.points;
 
-    if (points) {
-        let point: Point,
-            i: number;
-
-        for (i = 0; i < points.length; i = i + 1) {
-            point = points[i];
-            if (point && point.destroyElements) {
-                point.destroyElements(); // #7557
-            }
-        }
-    }
+    points?.forEach((point): void => {
+        point?.destroyElements?.(); // #7557
+    });
 
     (
         ['graph', 'area', 'tracker'] as
         Array<('graph'|'area'|'tracker')>
     ).forEach((prop): void => {
-        const seriesProp = series[prop];
-        if (seriesProp) {
-            series[prop] = seriesProp.destroy();
-        }
+        series[prop] = series[prop]?.destroy();
     });
 
     for (const zone of series.zones) {
@@ -1359,25 +1348,43 @@ function seriesRenderCanvas(this: Series): void {
 
     fireEvent(this, 'renderCanvas');
 
-    if (chartBoost && lineWidth > 1 && this.is('line')) {
-        chartBoost.lineWidthFilter?.remove();
-        chartBoost.lineWidthFilter = chart.renderer.definition({
-            tagName: 'filter',
-            children: [
-                {
-                    tagName: 'feMorphology',
-                    attributes: {
-                        operator: 'dilate',
-                        radius: 0.25 * lineWidth
-                    }
-                }
-            ],
-            attributes: { id: 'linewidth' }
-        });
+    if (chartBoost) {
+        const boostTarget = seriesBoost?.target || chartBoost.target,
+            // The dilate filter is applied to the whole render target, so
+            // it must stay off when that target is shared with a visible
+            // non-line series (chart-level boosting). Otherwise it would
+            // also dilate/blur their pixels, washing out the chart
+            // (#24728). A target shared only by line series keeps the
+            // filter, so a thin line must not clear it (#23666).
+            sharesTargetWithNonLine = !seriesBoost?.target &&
+                chart.series.some((otherSeries): boolean =>
+                    otherSeries.visible &&
+                    !!otherSeries.boosted &&
+                    otherSeries.type !== 'line'
+                );
 
-        (seriesBoost?.target || chartBoost.target)?.attr({
-            filter: 'url(#linewidth)'
-        });
+        if (sharesTargetWithNonLine) {
+            boostTarget?.attr({ filter: 'none' });
+        } else if (lineWidth > 1 && this.type === 'line') {
+            chartBoost.lineWidthFilter?.remove();
+            chartBoost.lineWidthFilter = chart.renderer.definition({
+                tagName: 'filter',
+                children: [
+                    {
+                        tagName: 'feMorphology',
+                        attributes: {
+                            operator: 'dilate',
+                            radius: 0.25 * lineWidth
+                        }
+                    }
+                ],
+                attributes: { id: 'linewidth' }
+            });
+
+            boostTarget?.attr({
+                filter: 'url(#linewidth)'
+            });
+        }
     }
 
     if (renderer) {

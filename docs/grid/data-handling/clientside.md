@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Client-side"
+description: >-
+  Learn how the local provider stores data in a DataTable and applies sorting,
+  filtering, and pagination in memory; configure column data, reuse a table,
+  and update rows.
 ---
 
 # Client-side data handling

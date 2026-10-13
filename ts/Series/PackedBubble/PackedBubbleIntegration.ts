@@ -33,7 +33,7 @@ import VerletIntegration from '../Networkgraph/VerletIntegration.js';
  * */
 
 /**
- * @private
+ * @internal
  */
 function barycenter(this: PackedBubbleLayout): void {
     const layout = this,
@@ -92,7 +92,7 @@ function barycenter(this: PackedBubbleLayout): void {
 }
 
 /**
- * @private
+ * @internal
  */
 function repulsive(
     this: PackedBubbleLayout,
@@ -119,7 +119,7 @@ function repulsive(
 }
 
 /**
- * @private
+ * @internal
  */
 function repulsiveForceFunction(
     d: number,

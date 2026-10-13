@@ -1,3 +1,10 @@
+---
+description: >-
+  Set a chart’s default series type, find the supported type lists for
+  Highcharts products, and combine chart types by assigning types to
+  individual series within one chart.
+---
+
 Chart types
 ===========
 

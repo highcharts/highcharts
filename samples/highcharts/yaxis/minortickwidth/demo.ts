@@ -9,6 +9,8 @@ Highcharts.chart('container', {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
     },
     yAxis: {
+        minorGridLineWidth: 0,
+        minorTickLength: 10,
         minorTicks: true,
         minorTickWidth: 3
     },

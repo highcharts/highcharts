@@ -1,3 +1,10 @@
+---
+description: >-
+  Stack series as flowing bands around a central axis, supplying y values
+  and optional x values for each series. The article also describes
+  positioning labels on the bands with the series-label module.
+---
+
 Stream graph
 ===
 

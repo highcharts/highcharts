@@ -185,11 +185,8 @@ declare module '../../Core/Series/SeriesOptions'{
 /**
  * Set a new option on a root prop, where the option is defined as an array of
  * suboptions.
- * @private
- * @param {Record<string, *>} root
- * @param {Array<string>} optionAsArray
- * @param {*} val
- * @return {void}
+ *
+ * @internal
  */
 function traverseSetOption<T>(
     root: Record<string, T>,
@@ -209,6 +206,8 @@ function traverseSetOption<T>(
 /**
  * If we have a clear root option node for old and new options and a mapping
  * between, we can use this generic function for the copy and warn logic.
+ *
+ * @internal
  */
 function deprecateFromOptionsMap(
     chart: Chart,
@@ -216,9 +215,7 @@ function deprecateFromOptionsMap(
     rootNewAsArray: Array<string>,
     mapToNewOptions: Record<string, Array<string>>
 ): void {
-    /**
-     * @private
-     */
+    /** @internal */
     function getChildProp(
         root: Options,
         propAsArray: Array<string>
@@ -257,9 +254,7 @@ function deprecateFromOptionsMap(
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function copyDeprecatedChartOptions(chart: Chart): void {
     const chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
@@ -278,9 +273,7 @@ function copyDeprecatedChartOptions(chart: Chart): void {
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function copyDeprecatedAxisOptions(chart: Chart): void {
     chart.axes.forEach(function (axis: Axis): void {
         const opts = axis.options;
@@ -294,9 +287,7 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
@@ -358,9 +349,7 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function copyDeprecatedTopLevelAccessibilityOptions(
     chart: Chart
 ): void {
@@ -395,9 +384,7 @@ function copyDeprecatedTopLevelAccessibilityOptions(
     );
 }
 
-/**
- * @private
- */
+/** @internal */
 function copyDeprecatedKeyboardNavigationOptions(
     chart: Chart
 ): void {
@@ -412,9 +399,7 @@ function copyDeprecatedKeyboardNavigationOptions(
     );
 }
 
-/**
- * @private
- */
+/** @internal */
 function copyDeprecatedLangOptions(chart: Chart): void {
     deprecateFromOptionsMap(
         chart,
@@ -445,7 +430,7 @@ function copyDeprecatedLangOptions(chart: Chart): void {
  * Copy options that are deprecated over to new options. Logs warnings to
  * console if deprecated options are used.
  *
- * @private
+ * @internal
  */
 function copyDeprecatedOptions(chart: Chart): void {
     copyDeprecatedChartOptions(chart);
@@ -464,4 +449,5 @@ function copyDeprecatedOptions(chart: Chart): void {
  *
  * */
 
+/** @internal */
 export default copyDeprecatedOptions;

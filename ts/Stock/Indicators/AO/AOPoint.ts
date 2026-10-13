@@ -22,8 +22,8 @@ import type SMAPoint from '../SMA/SMAPoint';
  *
  * */
 
-/** @internal */
 declare class AOPoint extends SMAPoint {
+    /** @internal */
     public series: AOIndicator;
 }
 
@@ -33,5 +33,4 @@ declare class AOPoint extends SMAPoint {
  *
  * */
 
-/** @internal */
 export default AOPoint;

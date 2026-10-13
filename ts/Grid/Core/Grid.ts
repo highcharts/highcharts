@@ -60,6 +60,7 @@ import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 import {
     diffObjects,
+    erase,
     extend,
     fireEvent,
     merge
@@ -1684,7 +1685,6 @@ export class Grid {
         fireEvent(this, 'beforeDestroy', { onlyDOM });
 
         this.isRendered = false;
-        const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
 
         this.dataProvider?.destroy();
         this.accessibility?.destroy();
@@ -1707,7 +1707,7 @@ export class Grid {
             delete this[key as keyof this];
         });
 
-        Grid.grids.splice(dgIndex, 1);
+        erase(Grid.grids, this);
     }
 
     /**

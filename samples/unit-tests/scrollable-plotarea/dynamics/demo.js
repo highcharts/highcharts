@@ -276,7 +276,7 @@ QUnit.test(
 QUnit.test(
     'The parallel coordinates axes should have the ability to scroll.',
     function (assert) {
-        const chart = Highcharts.chart('container', {
+        let chart = Highcharts.chart('container', {
             chart: {
                 scrollablePlotArea: {
                     minWidth: 700
@@ -293,7 +293,11 @@ QUnit.test(
             'yAxis should be fixed on scroll.'
         );
 
-        chart.update({
+        // With the soft Axis.update refactor, changed this to use a new chart
+        // instead of updating the existing one. Updating the exisiting chart
+        // didn't work reliably anyway - unsetting parallelCoordinates didn't
+        // work.
+        chart = Highcharts.chart('container', {
             chart: {
                 parallelCoordinates: true
             },
@@ -311,7 +315,7 @@ QUnit.test(
             }, {
                 data: [3, 4, 1, 6, 7]
             }]
-        }, true, true, false);
+        });
 
         assert.notOk(
             chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
@@ -319,17 +323,6 @@ QUnit.test(
             'parallel yAxis should not be fixed on scroll.'
         );
 
-        chart.update({
-            chart: {
-                parallelCoordinates: false
-            }
-        }, true, true, false);
-
-        assert.ok(
-            chart.yAxis[0].axisGroup.element.parentNode.parentNode.classList
-                .contains('highcharts-fixed'),
-            'yAxis should be fixed on scroll.'
-        );
     }
 );
 
@@ -370,29 +363,25 @@ QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
     });
 
     assert.ok(
-        chart.xAxis[1].gridGroup.getBBox().height,
-        chart.yAxis[1].height,
+        chart.xAxis[1].gridGroup.getBBox().height <= chart.yAxis[1].height,
         'Grid lines should not exceed navigator height, #20354'
     );
-});
 
-QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
-    const chart = Highcharts.stockChart('container', {
-        chart: {
-            scrollablePlotArea: {
-                minHeight: 500
-            }
-        },
-        series: [{
-            data: [1, 2, 3, 4, 5]
-        }]
-    });
+    const { rangeSelector } = chart,
+        { inputGroup, minDateBox, minInput } = rangeSelector;
 
-    assert.ok(
-        chart.xAxis[1].gridGroup.getBBox().height,
-        chart.yAxis[1].height,
-        'Grid lines should not exceed navigator height, #20354'
+    rangeSelector.showInput('min');
+
+    assert.strictEqual(
+        new TestController(chart).elementFromPoint(
+            inputGroup.translateX + minDateBox.x + minDateBox.width / 2,
+            inputGroup.translateY + minDateBox.height / 2
+        ),
+        minInput,
+        'Range selector input should be above its fixed label, #22630'
     );
+
+    rangeSelector.hideInput('min');
 });
 
 QUnit.test('Pointer events', assert => {

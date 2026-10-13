@@ -38,8 +38,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import Math3D from '../../Core/Math3D.js';
-const { perspective } = Math3D;
+import { perspective } from '../../Core/Math3D.js';
 import {
     addEvent,
     extend,

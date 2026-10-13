@@ -1,4 +1,4 @@
-// Data retrieved from https://www.vikjavev.no/ver/#2020-04-15,2020-04-16
+// Data retrieved from https://www.vikjavev.no/ver/#2024-02-29,2024-03-01
 
 Highcharts.chart('container', {
     chart: {
@@ -136,7 +136,7 @@ Highcharts.chart('container', {
                 enabled: false
             },
             pointInterval: 3600000, // one hour
-            pointStart: '2014-02-29'
+            pointStart: '2024-02-29'
         }
     },
     series: [{

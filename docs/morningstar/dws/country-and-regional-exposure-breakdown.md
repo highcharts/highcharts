@@ -1,3 +1,10 @@
+---
+description: >-
+  Retrieve equity, fixed-income, and revenue exposure by region or country
+  with the InvestmentsConnector, inspect the available data tables, and build
+  a chart from selected columns such as regional net exposure.
+---
+
 # Country and Regional Exposure Breakdown
 
 The **Country and Regional Exposure Breakdown** view provides a portfolio's

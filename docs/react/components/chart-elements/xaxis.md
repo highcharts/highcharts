@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure x-axis options with the XAxis component, including plot bands,
+  pass axis API settings as props, and supply axis title text as child content
+  within a chart.
+---
+
 # XAxis
 
 You can customize the [chart x-axis](https://www.highcharts.com/docs/chart-concepts/axes) using the `XAxis` component:

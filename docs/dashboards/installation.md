@@ -1,3 +1,10 @@
+---
+description: >-
+  Install Dashboards from NPM or load its scripts from the CDN or your own
+  domain, import the layout module when needed, and connect Highcharts or Grid
+  plugins for additional components.
+---
+
 # Installation
 
 ## Install via NPM
