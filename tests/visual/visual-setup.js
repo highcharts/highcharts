@@ -14,6 +14,7 @@
         var timeouts = [];
         var frames = [];
         var originalSend = window.XMLHttpRequest.prototype.send;
+        var originalFetch = window.fetch;
         var pendingRequests = new Set();
 
         function trackTimers() {
@@ -56,10 +57,45 @@
                     throw error;
                 }
             };
+            if (typeof originalFetch === 'function') {
+                window.fetch = function (input, init) {
+                    const request = new window.AbortController();
+                    const source = new window.Request(input, init);
+                    requests.add(request);
+                    function finish() {
+                        originalSetTimeout.call(window, function () {
+                            requests.delete(request);
+                        }, 0);
+                    }
+                    let promise;
+                    try {
+                        promise = originalFetch.call(this, source, {
+                            signal: window.AbortSignal.any([
+                                source.signal, request.signal
+                            ])
+                        });
+                    } catch (error) {
+                        requests.delete(request);
+                        throw error;
+                    }
+                    promise.then(function (response) {
+                        try {
+                            return response.clone().arrayBuffer();
+                        } catch (error) {
+                            // A missing or already-consumed body needs no wait.
+                            return Promise.resolve(error);
+                        }
+                    }).then(finish, finish);
+                    return promise;
+                };
+            }
         }
 
         function cleanupDataRequests() {
             window.XMLHttpRequest.prototype.send = originalSend;
+            if (typeof originalFetch === 'function') {
+                window.fetch = originalFetch;
+            }
             const requests = pendingRequests;
             pendingRequests = new Set();
             requests.forEach(xhr => xhr.abort());
@@ -466,6 +502,11 @@
                 }
             },
             afterSample() {
+                // Styled sample IDs are also used to embed CSS in SVGs.
+                document.querySelectorAll(
+                    '#visual-test-script, #visual-test-styles, ' +
+                    '[id="highcharts.css"], [id="demo.css"], #test-hc-styles'
+                ).forEach(element => element.remove());
                 cleanupDataRequests();
                 restoreWrappedFunctions();
                 restoreAddedEvents();
