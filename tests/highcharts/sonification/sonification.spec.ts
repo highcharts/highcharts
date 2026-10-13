@@ -189,3 +189,36 @@ test('Sonification: mapping functions', async ({ page }) => {
         );
     });
 });
+
+test('Sonification: destroy cancels scheduled updates', async ({ page }) => {
+    const chart = await createChart(page, {
+        sonification: {
+            updateInterval: 100
+        },
+        series: [{ data: [1, 2, 3] }]
+    }, {
+        chartConstructor: 'chart',
+        modules: ['modules/sonification.js']
+    });
+
+    const updateCount = await chart.evaluate(async (c: any) => {
+        const sonification = c.sonification,
+            update = sonification.update.bind(sonification);
+        let count = 0;
+
+        sonification.ready = (): boolean => true;
+        sonification.lastUpdate = Date.now();
+        sonification.update = (): void => {
+            ++count;
+            update();
+        };
+
+        sonification.update();
+        c.destroy();
+        await new Promise((resolve): number => setTimeout(resolve, 100));
+
+        return count;
+    });
+
+    expect(updateCount).toBe(1);
+});
