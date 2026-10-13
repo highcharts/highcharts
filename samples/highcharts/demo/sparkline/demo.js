@@ -77,7 +77,9 @@ Highcharts.SparkLine = function (a, b, c) {
                             radius: 2
                         }
                     }
-                },
+                }
+            },
+            area: {
                 fillOpacity: 0.25
             },
             column: {
