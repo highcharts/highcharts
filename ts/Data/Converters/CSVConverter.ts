@@ -379,6 +379,11 @@ class CSVConverter extends DataConverter {
 
                 while (i < columnStr.length) {
                     if (c === '"') {
+                        if (columnStr[i + 1] === '"') {
+                            token += '"';
+                            read(i += 2);
+                            continue;
+                        }
                         break;
                     }
 
