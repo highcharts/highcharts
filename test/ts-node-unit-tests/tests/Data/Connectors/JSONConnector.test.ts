@@ -121,6 +121,34 @@ describe('JSONConnector', () => {
                 'Should have correct Column Ids'
             );
         });
+
+        it('should align values by the first object row keys', async () => {
+            const connector = new JSONConnector({
+                firstRowAsNames: false,
+                data: [{
+                    a: 1,
+                    b: 2
+                }, {
+                    b: 3,
+                    a: 4
+                }, {
+                    a: 5
+                }]
+            });
+
+            await connector.load();
+
+            deepStrictEqual(
+                connector.getTable().getColumn('a'),
+                [1, 4, 5],
+                'Reordered keys should stay in the first row column order.'
+            );
+            deepStrictEqual(
+                connector.getTable().getColumn('b'),
+                [2, 3, void 0],
+                'Missing keys should leave an empty cell in their column.'
+            );
+        });
     });
 
     describe('with beforeParse', () => {
