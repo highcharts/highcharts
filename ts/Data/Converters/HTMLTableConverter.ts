@@ -192,7 +192,7 @@ class HTMLTableConverter extends DataConverter {
                         column = Array.from(column);
                     }
 
-                    const subhead = (column.shift() || '').toString();
+                    const subhead = (column.shift() ?? '').toString();
                     columns[columnId] = column;
 
                     subcategories.push(subhead);
@@ -231,7 +231,7 @@ class HTMLTableConverter extends DataConverter {
                         typeof cellValue === 'undefined'
                     )
                 ) {
-                    cellValue = (cellValue || '').toString();
+                    cellValue = (cellValue ?? '').toString();
                 }
 
                 rowArray[rowIndex][columnIndex] = this.getCellHTMLFromValue(
