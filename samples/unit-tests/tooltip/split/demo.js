@@ -514,10 +514,12 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
                 scrollablePlotArea: {
                     minWidth: 700,
                     scrollPositionX: 1
-                }
+                },
+                width: 400
             },
             tooltip: {
-                split: true
+                split: true,
+                outside: false
             },
             yAxis: {
                 min: 0,
