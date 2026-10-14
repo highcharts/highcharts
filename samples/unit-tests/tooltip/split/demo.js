@@ -546,6 +546,27 @@ QUnit.test('positioning', assert => {
         'The right pane\'s tooltip should stay in place, unaffected by ' +
             'the collisions in the unrelated crowded left pane'
     );
+
+    chart.update({
+        xAxis: [{ left: void 0, width: void 0 }],
+        yAxis: [{ top: void 0, height: void 0 }],
+        series: [
+            { data: [0, 10] },
+            { data: [0, 10], yAxis: 0 },
+            { data: [0, 10] }
+        ]
+    }, true, true);
+    const [s1, s2, s3] = chart.series;
+    chart.tooltip.refresh([s1.points[0], s2.points[0], s3.points[0]]);
+    // Equal targets are stacked in series order, so the last one is lowest.
+    const lowestBox = s3.tt;
+
+    assert.ok(
+        lowestBox.attr('y') + lowestBox.getBBox().height <=
+            chart.tooltip.tt.attr('y'),
+        'The series boxes should be pushed clear of the header, as they ' +
+            'share a pane with it'
+    );
 });
 
 QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {

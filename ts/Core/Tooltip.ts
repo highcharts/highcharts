@@ -1607,7 +1607,8 @@ class Tooltip {
                         // Bucket by pane (xAxis) as boxes are created, so
                         // renderSplit doesn't need a second pass over
                         // `boxes` just to group them before distribute().
-                        xAxis = point.series?.xAxis,
+                        // Header goes with the first point's pane.
+                        { xAxis } = isHeader ? points[0].series : point.series,
                         key = xAxis ? `${xAxis.pos}+${xAxis.len}` : '0',
                         group = paneGroups.get(key) || [];
 
@@ -1669,7 +1670,7 @@ class Tooltip {
             paneGroups.forEach((group): void => {
                 distribute(group, adjustedPlotHeight);
             });
-            // Restore target order on boxes` too, needed by boxExtremes below.
+            // Restore target order on boxes too, needed by boxExtremes below.
             stableSort(boxes, (a, b): number => a.target - b.target);
         }
         const boxExtremes = {
