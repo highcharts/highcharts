@@ -9,7 +9,10 @@ alt_text: >-
   layered around a column chart, visualizing their cumulative performance.
 new_until: 2024-01-31
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Inspiration:
+      priority: 7
   - Combinations
 ...

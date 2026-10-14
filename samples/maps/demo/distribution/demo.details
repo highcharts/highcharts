@@ -4,7 +4,10 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts Maps demo
 categories:
+  - Inspiration:
+      priority: 4
   - General
 ...

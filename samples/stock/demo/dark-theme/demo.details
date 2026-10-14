@@ -5,8 +5,11 @@ authors:
 js_wrap: b
 new_until: 2024-05-23
 tags:
+  - Highcharts overview
   - Highcharts Stock demo
 categories:
+  - Inspiration:
+      priority: 9
   - Designs:
       priority: 1
 ...
