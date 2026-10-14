@@ -30,18 +30,29 @@ test('visual cleanup restores prototypes and cancels sample timers', async ({ pa
     const restored = await page.evaluate(async () => {
         const prototype = window.Highcharts.SVGRenderer.prototype;
         const original = prototype.html;
+        const originalSeriesType = window.Highcharts.seriesType;
         let callbacks = 0;
         window.HCVisualSetup.beforeSample();
         prototype.html = function () { throw new Error('Sample override'); };
+        window.Highcharts.seriesType = function () {};
         setTimeout(() => callbacks++, 0);
         requestAnimationFrame(() => callbacks++);
         window.HCVisualSetup.afterSample();
         await new Promise(resolve => requestAnimationFrame(resolve));
         await new Promise(resolve => setTimeout(resolve, 0));
-        return { prototypeRestored: prototype.html === original, callbacks };
+        return {
+            prototypeRestored: prototype.html === original,
+            seriesTypeRestored:
+                window.Highcharts.seriesType === originalSeriesType,
+            callbacks
+        };
     });
 
-    expect(restored).toEqual({ prototypeRestored: true, callbacks: 0 });
+    expect(restored).toEqual({
+        prototypeRestored: true,
+        seriesTypeRestored: true,
+        callbacks: 0
+    });
 });
 
 test('styled sample cleanup preserves the next chart layout and SVG styles', async ({ page }) => {

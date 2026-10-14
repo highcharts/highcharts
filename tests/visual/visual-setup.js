@@ -7,6 +7,7 @@
         }
 
         var Highcharts = window.Highcharts;
+        var originalSeriesType = Highcharts.seriesType;
         var originalSetTimeout = window.setTimeout;
         var originalClearTimeout = window.clearTimeout;
         var originalRequestFrame = window.requestAnimationFrame;
@@ -518,6 +519,7 @@
                 if (cleanupMode === 'strict') {
                     restorePrototypes();
                 }
+                Highcharts.seriesType = originalSeriesType;
                 cleanupCharts();
                 cleanupTimers();
                 resetDefaultOptionsIfNeeded();
