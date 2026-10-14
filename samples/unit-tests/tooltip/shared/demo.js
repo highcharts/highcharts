@@ -422,7 +422,7 @@ QUnit.test(
                 chart.tooltip.bodyFormatter(points),
                 points.map(point =>
                     '<span style="color:' + point.color + '">●</span> ' +
-                    point.series.name + ':<br/>\u00A0\u00A0' +
+                    point.series.name + ':<br/>' +
                     testCase.expected
                 ),
                 `${testCase.type} should use the default point format`
