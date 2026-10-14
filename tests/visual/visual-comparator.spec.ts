@@ -144,6 +144,46 @@ test('first styled sample capture embeds the Highcharts CSS', async ({ page }) =
     );
 });
 
+test('packed-bubble cleanup restores a fresh layout for the next sample', async ({ page }) => {
+    await page.setContent('<div data-test-container><div id="container"></div></div>');
+    for (const path of [
+        'code/highcharts.src.js',
+        'code/highcharts-more.src.js',
+        'tests/visual/visual-setup.js'
+    ]) {
+        await page.addScriptTag({ path });
+    }
+    const layouts = await page.evaluate(() => {
+        function render() {
+            window.HCVisualSetup.beforeSample();
+            const chart = window.Highcharts.chart('container', {
+                chart: { animation: false },
+                plotOptions: {
+                    packedbubble: {
+                        animation: false,
+                        layoutAlgorithm: {
+                            enableSimulation: false,
+                            maxIterations: 10,
+                            splitSeries: true
+                        }
+                    }
+                },
+                series: [
+                    { type: 'packedbubble', data: [1, 2, 3] },
+                    { type: 'packedbubble', data: [4, 5, 6] }
+                ]
+            });
+            const positions = chart.series.map(series =>
+                series.points.map(point => [point.plotX, point.plotY])
+            );
+            window.HCVisualSetup.afterSample();
+            return positions;
+        }
+        return { fresh: render(), reused: render() };
+    });
+    expect(layouts.reused).toEqual(layouts.fresh);
+});
+
 test('Visual comparator: identical SVGs have no numeric difference', async ({
     page
 }) => {

@@ -331,6 +331,11 @@
 
             Highcharts.charts.length = 0;
 
+            // Packed-bubble layouts retain parent nodes on the shared prototype.
+            if (Highcharts.Chart.prototype.allParentNodes) {
+                Highcharts.Chart.prototype.allParentNodes.length = 0;
+            }
+
             var svgs = document.getElementsByTagName('svg');
             for (var j = svgs.length - 1; j >= 0; j--) {
                 var svg = svgs[j];
