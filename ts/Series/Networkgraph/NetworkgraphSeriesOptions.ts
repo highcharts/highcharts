@@ -82,10 +82,52 @@ export interface NetworkgraphDataLabelsFormatterCallbackFunction {
 export interface NetworkgraphDataLabelsOptions
     extends DataLabelOptions {
 
+    /**
+     * The
+     * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+     * specifying what to show for _node_ in the networkgraph. In v7.0
+     * defaults to `{key}`, since v7.1 defaults to `undefined` and
+     * `formatter` is used instead.
+     *
+     * @since 7.0.0
+     */
     format?: string;
+
+    /**
+     * Callback JavaScript function to format the data label for a node.
+     * Note that if a `format` is defined, the format takes precedence and
+     * the formatter is ignored.
+     *
+     * @since 7.0.0
+     */
     formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
+
+    /**
+     * The
+     * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+     * specifying what to show for _links_ in the networkgraph.
+     *
+     * @since 7.1.0
+     */
     linkFormat?: string;
+
+    /**
+     * Callback to format data labels for _links_ in the networkgraph. The
+     * `linkFormat` option takes precedence over the `linkFormatter`.
+     *
+     * @since 7.1.0
+     */
     linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
+
+    /**
+     * Options for a _link_ label text which should follow link connection.
+     * Border and background are disabled for a label that follows a path.
+     *
+     * **Note:** Only SVG-based renderer supports this option. Setting
+     * `useHTML` to true will disable this option.
+     *
+     * @since 7.1.0
+     */
     linkTextPath?: DataLabelOptions['textPath'];
 }
 
@@ -98,17 +140,15 @@ export interface NetworkgraphEventsOptions extends SeriesEventsOptions {
 
     /**
      * Fires after the simulation is ended and the layout is stable.
-     *
-     * @type {Highcharts.Function}
      */
     afterSimulation?: NetworkgraphAfterSimulationCallback;
 
 }
 
 /**
- * @product highcharts
+ * Shared base for link options of node-based series.
  *
- * @optionparent series.networkgraph.link
+ * @product highcharts
  */
 export interface SeriesLinkOptionsBase {
     /**
@@ -243,15 +283,22 @@ export interface NetworkgraphSeriesOptions
      */
     draggable?: boolean;
 
+    /**
+     * General event handlers for the series items.
+     */
     events?: NetworkgraphEventsOptions;
 
     /**
-     * @extends plotOptions.series.inactiveOtherPoints
+     * Whether to apply the inactive state to the other points when one point
+     * is hovered.
      *
      * @default true
      */
     inactiveOtherPoints?: boolean;
 
+    /**
+     * Options for the layout algorithm positioning the nodes.
+     */
     layoutAlgorithm?: ReingoldFruchtermanLayout.Options;
 
     /**
@@ -259,6 +306,9 @@ export interface NetworkgraphSeriesOptions
      */
     link?: NetworkgraphLinkOptions;
 
+    /**
+     * Options for the point markers of the nodes.
+     */
     marker?: PointMarkerOptions & {
         states?: PointMarkerOptions['states'] & {
             /**
@@ -295,19 +345,24 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
+    /**
+     * States for the networkgraph series.
+     */
     states?: NetworkgraphSeriesStatesOptions;
 
     /**
-     * The opposite state of a hover for a single point link. Applied
-     * to all links that are not coming from the hovered node.
+     * Whether to display this particular series or series type in the
+     * legend.
      *
-     * @declare Highcharts.SeriesStatesInactiveOptionsObject
-     *
-     * @apioption series.networkgraph.states.inactive
+     * @default false
      */
-
     showInLegend?: boolean;
 
+    /**
+     * Sticky tracking of mouse events.
+     *
+     * @default false
+     */
     stickyTracking?: boolean;
 
 }
@@ -315,6 +370,13 @@ export interface NetworkgraphSeriesOptions
 type SeriesStatesOptionsAlias = SeriesStatesOptions<NetworkgraphSeriesOptions>;
 export interface NetworkgraphSeriesStatesOptions extends
     SeriesStatesOptionsAlias {
+
+    /**
+     * The opposite state of a hover for a single point link. Applied
+     * to all links that are not coming from the hovered node.
+     *
+     * @declare Highcharts.SeriesStatesInactiveOptionsObject
+     */
     inactive?: SeriesStatesOptionsAlias['inactive'] & {
         /**
          * Deprecated. Use

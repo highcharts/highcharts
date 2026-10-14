@@ -43,8 +43,6 @@ import type {
  * @product highmaps
  *
  * @excluding borderColor, borderWidth, legendSymbolColor
- *
- * @type {number}
  */
 export interface MapPointSeriesOptions extends ScatterSeriesOptions {
 
@@ -96,8 +94,6 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
      *        }]
      *    ```
      *
-     * @type {Array<number|Array<number,(number|null)>|null|*>}
-     *
      * @extends series.map.data
      *
      * @excluding labelrank, middleX, middleY, path, value
@@ -106,12 +102,23 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
      */
     data?: Array<MapPointPointOptions>;
 
+    /**
+     * Options for the data labels appearing on top of the points.
+     */
     dataLabels?: (
         MapPointSeriesDataLabelsOptions|Array<MapPointSeriesDataLabelsOptions>
     );
 
+    /**
+     * What type of legend symbol to render for this series.
+     *
+     * @default 'lineMarker'
+     */
     legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
+    /**
+     * States for the map point series.
+     */
     states?: SeriesStatesOptions<MapPointSeriesOptions>;
 
     tooltip?: MapPointSeriesTooltipOptions;

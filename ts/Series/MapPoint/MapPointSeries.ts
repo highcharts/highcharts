@@ -47,7 +47,6 @@ import { extend, fireEvent, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.mappoint
  *
@@ -103,7 +102,7 @@ class MapPointSeries extends ScatterSeries {
      * Resolve `lon`, `lat` or `geometry` options and project the resulted
      * coordinates.
      *
-     * @private
+     * @internal
      */
     public projectPoint(
         pointOptions: MapPointPointOptions

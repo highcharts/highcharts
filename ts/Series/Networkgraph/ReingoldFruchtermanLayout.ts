@@ -49,7 +49,6 @@ import {
 /**
  * Reingold-Fruchterman algorithm from
  * "Graph Drawing by Force-directed Placement" paper.
- * @private
  */
 class ReingoldFruchtermanLayout {
 
@@ -445,7 +444,7 @@ class ReingoldFruchtermanLayout {
             /**
              * Return a repeatable, quasi-random number based on an integer
              * input. For the initial positions
-             * @private
+             * @internal
              */
             unrandom = (n: number): number => {
                 let rand = n * n / Math.PI;
@@ -649,7 +648,7 @@ class ReingoldFruchtermanLayout {
     /**
      * External box that nodes should fall. When hitting an edge, node
      * should stop or bounce.
-     * @private
+     * @internal
      */
     public applyLimitBox(
         node: Point,
@@ -702,7 +701,7 @@ class ReingoldFruchtermanLayout {
     /**
      * From "A comparison of simulated annealing cooling strategies" by
      * Nourani and Andresen work.
-     * @private
+     * @internal
      */
     public coolDown(
         temperature: number,

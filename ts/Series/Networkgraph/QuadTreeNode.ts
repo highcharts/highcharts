@@ -32,7 +32,6 @@ import type Point from '../../Core/Series/Point';
  * The QuadTree node class. Used in Networkgraph chart as a base for Barnes-Hut
  * approximation.
  *
- * @private
  * @class
  * @name Highcharts.QuadTreeNode
  *
@@ -47,6 +46,7 @@ class QuadTreeNode {
      *
      * */
 
+    /** @internal */
     public constructor(
         box: Record<string, number>
     ) {
@@ -78,12 +78,15 @@ class QuadTreeNode {
      *
      * @name Highcharts.QuadTreeNode#body
      * @type {boolean|Highcharts.Point}
+     * @internal
      */
     public body: (boolean|Point) = false;
 
 
+    /** @internal */
     public box: Record<string, number>;
 
+    /** @internal */
     public boxSize: number;
 
     /**
@@ -93,6 +96,7 @@ class QuadTreeNode {
      *
      * @name Highcharts.QuadTreeNode#isEmpty
      * @type {boolean}
+     * @internal
      */
     public isEmpty: boolean = false;
 
@@ -103,11 +107,14 @@ class QuadTreeNode {
      *
      * @name Highcharts.QuadTreeNode#isInternal
      * @type {boolean}
+     * @internal
      */
     public isInternal: boolean = false;
 
+    /** @internal */
     public isRoot?: boolean;
 
+    /** @internal */
     public mass?: number;
 
     /**
@@ -117,11 +124,14 @@ class QuadTreeNode {
      *
      * @name Highcharts.QuadTreeNode#nodes
      * @type {Array<Highcharts.QuadTreeNode>}
+     * @internal
      */
     public nodes: Array<QuadTreeNode> = [];
 
+    /** @internal */
     public plotX?: number;
 
+    /** @internal */
     public plotY?: number;
 
     /* *
@@ -146,6 +156,7 @@ class QuadTreeNode {
      * |           |               |     |     |
      * -------------               -------------
      * ```
+     * @internal
      */
     public divideBox(): void {
         const halfWidth = this.box.width / 2,
@@ -187,7 +198,7 @@ class QuadTreeNode {
     /**
      * Determine which of the quadrants should be used when placing node in
      * the QuadTree. Returned index is always in range `< 0 , 3 >`.
-     * @private
+     * @internal
      */
     public getBoxPosition(
         point: Point
@@ -226,6 +237,7 @@ class QuadTreeNode {
      *        Point/node to be inserted
      * @param {number} depth
      *        Max depth of the QuadTree
+     * @internal
      */
     public insert(
         point: Point,
@@ -287,6 +299,7 @@ class QuadTreeNode {
     /**
      * Each quad node requires it's mass and center position. That mass and
      * position is used to imitate real node in the layout by approximation.
+     * @internal
      */
     public updateMassAndCenter(): void {
         let mass = 0,
