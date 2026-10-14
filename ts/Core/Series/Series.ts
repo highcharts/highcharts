@@ -486,9 +486,6 @@ class Series {
     public halo?: SVGElement;
 
     /** @internal */
-    public hasBoundDataTableEvents?: boolean;
-
-    /** @internal */
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
 
     /** @internal */
@@ -619,6 +616,9 @@ class Series {
      * {@link Series#update}.
      */
     public type!: string;
+
+    /** @internal */
+    public unbindDataTableEvents?: Function;
 
     /**
      * Contains series options by the user without defaults.
@@ -2114,11 +2114,12 @@ class Series {
         dataTable: DataTableCore,
         columns: ColumnCollection
     ): void {
-        if (this.hasBoundDataTableEvents) {
+        if (this.unbindDataTableEvents) {
             return;
         }
 
         const { chart, eventsToUnbind } = this,
+            unbindFrom = eventsToUnbind.length,
             queueRedraw = (): void => {
                 clearTimeout(chart.redrawTimeout);
                 chart.redrawTimeout = setTimeout(
@@ -2186,7 +2187,11 @@ class Series {
             }
         ));
 
-        this.hasBoundDataTableEvents = true;
+        const unbinders = eventsToUnbind.slice(unbindFrom);
+        this.unbindDataTableEvents = (): void => {
+            unbinders.forEach((unbind): void => unbind());
+            delete this.unbindDataTableEvents;
+        };
     }
 
     /**

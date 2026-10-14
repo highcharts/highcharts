@@ -88,3 +88,42 @@ QUnit.test('Sync between data table and series', async assert => {
         'should be updated in the series'
     );
 });
+
+QUnit.test('Chart.update with new dataTable columns (#25444)', async assert => {
+    const chart = Highcharts.chart('container', {
+            dataTable: {
+                columns: {
+                    y: [10, 20, 30]
+                }
+            },
+            series: [{
+                type: 'column'
+            }]
+        }),
+        oldDataTable = chart.dataTable[0],
+        delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    chart.update({
+        dataTable: {
+            columns: {
+                y: [30, 20, 10]
+            }
+        }
+    });
+
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.y),
+        [30, 20, 10],
+        'The series should show the new dataTable columns'
+    );
+
+    chart.dataTable[0].setRow({ y: 40 });
+    oldDataTable.setRow({ y: 50 });
+
+    await delay(1);
+    assert.deepEqual(
+        chart.series[0].points.map(point => point.y),
+        [30, 20, 10, 40],
+        'The series should follow the new data table, not the old one'
+    );
+});
