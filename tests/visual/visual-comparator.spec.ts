@@ -1,3 +1,4 @@
+import { injectVisualSampleStyles } from './visual-styles.ts';
 import { test, expect } from '@playwright/test';
 import type { Chart } from '~code/highcharts.src.js';
 import { readFileSync } from 'node:fs';
@@ -111,6 +112,36 @@ test('styled sample cleanup preserves the next chart layout and SVG styles', asy
     expect(results.styledSVG).toContain('fill: green');
     expect(results.styledSVG).not.toContain('fill: red');
     expect(results.styledSVG).not.toContain('max-width: 600px');
+});
+
+test('first styled sample capture embeds the Highcharts CSS', async ({ page }) => {
+    await page.setContent('<div id="container"></div>');
+    await page.addScriptTag({ path: 'code/highcharts.src.js' });
+    await page.addScriptTag({ path: 'test/visual-comparator.js' });
+    await injectVisualSampleStyles(page, true);
+
+    await page.evaluate(() => {
+        window.Highcharts.chart('container', {
+            chart: { styledMode: true },
+            title: { text: 'First styled sample' },
+            series: [{ data: [1, 2, 3] }]
+        });
+    });
+    await page.waitForFunction(() => window.Highcharts.charts[0]?.hasLoaded);
+
+    const capture = await page.evaluate(() => {
+        const style = document.getElementById('highcharts.css');
+        const chart = window.Highcharts.charts[0];
+        return {
+            css: style?.innerText || '',
+            svg: window.VisualComparator?.getSVG(chart)
+        };
+    });
+
+    expect(capture.css.length).toBeGreaterThan(0);
+    expect(capture.svg?.replace(/\s/g, '')).toContain(
+        `<style>${capture.css.replace(/\s/g, '')}</style>`
+    );
 });
 
 test('Visual comparator: identical SVGs have no numeric difference', async ({
