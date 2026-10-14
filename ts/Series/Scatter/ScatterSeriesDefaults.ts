@@ -122,8 +122,8 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
      * `pointFormat`, `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`.
      *
      * By default, the header displays the point name, category or datetime
-     * value. A lone value on a linear x-axis is omitted. The body displays the
-     * series name and both the x and y values.
+     * value. The body displays the y value, and the point key in case it is
+     * numeric (x value - not name, category or datetime).
      *
      * @product highcharts highstock highmaps
      */
@@ -131,12 +131,10 @@ const ScatterSeriesDefaults: PlotOptionsOf<ScatterSeries> = {
         /**
          * @product highcharts highstock
          */
-        headerFormat: '{#ne point.key point.x}' +
-            '<span style="font-size: 0.8em">' +
-            '{ucfirst point.key}</span><br/>{/ne}',
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '{series.name}:<br/>' +
-            'x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
+            '{series.name}: ' +
+            '{#eq point.key point.x}[<b>{point.key}</b>, <b>{point.y}</b>]' +
+            '{else}<b>{point.y}</b>{/eq}<br/>'
     }
 
 };

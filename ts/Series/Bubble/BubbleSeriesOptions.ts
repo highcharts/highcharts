@@ -187,7 +187,7 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
 export interface BubbleSeriesTooltipOptions
     extends ScatterSeriesTooltipOptions {
     /**
-     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>\u00A0\u00A0x = <b>{point.x}</b>, y = <b>{point.y}</b>, Size: <b>{point.z}</b><br/>'
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: {#eq point.key point.x}[<b>{point.key}</b>, <b>{point.y}</b>]{else}<b>{point.y}</b>{/eq}, Size: <b>{point.z}</b><br/>'
      */
     pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }

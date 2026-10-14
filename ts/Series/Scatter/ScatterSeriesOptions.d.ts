@@ -246,8 +246,8 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      * `pointFormat`, `yDecimals`, `xDateFormat`, `yPrefix` and `ySuffix`.
      *
      * By default, the header displays the point name, category or datetime
-     * value. A lone value on a linear x-axis is omitted. The body displays the
-     * series name and both the x and y values.
+     * value. The body displays the y value, and the point key in case it is
+     * numeric (x value - not name, category or datetime).
      *
      * @product highcharts highstock highmaps
      */
@@ -256,12 +256,7 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
 
 export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {
     /**
-     * @default {highcharts|highstock} '{#ne point.key point.x}<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>{/ne}'
-     */
-    headerFormat?: SeriesTooltipOptions['headerFormat'];
-
-    /**
-     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> {series.name}:<br/>\u00A0\u00A0x = <b>{point.x}</b>, y = <b>{point.y}</b><br/>'
+     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> {series.name}: {#eq point.key point.x}[<b>{point.key}</b>, <b>{point.y}</b>]{else}<b>{point.y}</b>{/eq}<br/>'
      */
     pointFormat?: SeriesTooltipOptions['pointFormat'];
 }

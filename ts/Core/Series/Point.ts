@@ -247,6 +247,9 @@ class Point {
     /** @internal */
     public marker?: PointMarkerOptions;
 
+    /** @internal */
+    public numericKey?: boolean;
+
     /**
      * The name of the point. The name can be given as the first position of the
      * point configuration array, or as a `name` property in the configuration:
@@ -1231,6 +1234,8 @@ class Point {
                 valuePrefix = '',
                 valueSuffix = ''
             } = tooltipOptions;
+
+        pointFormat = chart.tooltip?.keyReplace(pointFormat, this) || pointFormat;
 
         // Replace default point style with class name
         if (chart.styledMode) {
