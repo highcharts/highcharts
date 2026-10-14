@@ -2707,9 +2707,9 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            { hasRendered, options, xAxis, yAxis } = series,
+            { options, xAxis, yAxis } = series,
             { stacking, threshold } = options,
-            { polar } = series.chart,
+            { hasRendered, polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
@@ -2854,10 +2854,13 @@ class Series {
             point.plotY = getPlotY(yValue, point);
 
             // Set the starting point of point entrance animation
-            point.origin = hasRendered && !point.graphic && !polar ? {
-                x: getPlotX(xValue, true),
-                y: getPlotY(yValue, point, true)
-            } : void 0;
+            point.origin = (
+                // The isNumber check is for toggling treemap/treegraph series
+                hasRendered && !point.graphic && !polar && isNumber(yValue)
+            ) ? {
+                    x: getPlotX(xValue, true),
+                    y: getPlotY(yValue, point, true)
+                } : void 0;
 
             point.isInside = this.isPointInside(point);
 
