@@ -22,7 +22,8 @@
             introduced.
             */
             positioner: function (width, height, point) {
-                const chart = this.chart;
+                const chart = this.chart,
+                    series = point.series;
                 let position;
 
                 if (point.isHeader) {
@@ -36,12 +37,13 @@
                                 chart.chartWidth - width - chart.marginRight
                             )
                         ),
-                        y: point.plotY + 10
+                        y: chart.plotTop + point.plotY + 5
                     };
                 } else {
                     position = {
-                        x: point.series.chart.plotLeft,
-                        y: point.series.yAxis.top - chart.plotTop
+                        x: series.chart.plotLeft,
+                        y: series.yAxis.top +
+                            series.yAxis.series.indexOf(series) * height + 3
                     };
                 }
 
@@ -54,30 +56,33 @@
         },
 
         yAxis: [{
-            height: '34%',
+            height: '32%',
             resize: {
                 enabled: true
             },
             labels: {
                 align: 'right',
                 x: -3
-            }
+            },
+            lineWidth: 2
         }, {
             top: '34%',
-            height: '33%',
+            height: '32%',
             labels: {
                 align: 'right',
                 x: -3
             },
-            offset: 0
+            offset: 0,
+            lineWidth: 2
         }, {
-            top: '67%',
-            height: '33%',
+            top: '68%',
+            height: '32%',
             labels: {
                 align: 'right',
                 x: -3
             },
-            offset: 0
+            offset: 0,
+            lineWidth: 2
         }],
 
 
