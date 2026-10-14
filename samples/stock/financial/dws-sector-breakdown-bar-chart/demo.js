@@ -87,8 +87,8 @@ async function renderChart() {
             headerFormat:
                 '<span style="font-size:10px;">{series.name}</span></br>',
             pointFormat:
-                '<span style="color:{point.color}">\u25CF</span>' +
-                '{translate point.key}<b> {point.y:.2f}%</b><br/>'
+                '<span style="color:{point.color}">\u25CF</span> ' +
+                '{translateSectors point.key}<b> {point.y:.2f}%</b><br/>'
         },
         series: [{
             name: 'Capital Group Global Equity Fund (LUX) B',
