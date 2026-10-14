@@ -48,7 +48,6 @@ import {
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.variwide
  *
@@ -63,6 +62,7 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static compose = VariwideComposition.compose;
 
     /** @internal */
@@ -132,7 +132,7 @@ class VariwideSeries extends ColumnSeries {
      * Translate an x value inside a given category index into the distorted
      * axis translation.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#postTranslate
      *
      * @param {number} index
@@ -203,7 +203,7 @@ class VariwideSeries extends ColumnSeries {
 
     /**
      * Function that corrects stack labels positions
-     * @private
+     * @internal
      */
     public correctStackLabels(): void {
         const series = this,

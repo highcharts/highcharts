@@ -135,12 +135,16 @@ interface VariwideSeriesOptions extends ColumnSeriesOptions {
     /**
      * In a variwide chart, the group padding is 0 in order to express the
      * horizontal stacking of items.
+     *
+     * @default 0
      */
     groupPadding?: number;
 
     /**
      * In a variwide chart, the point padding is 0 in order to express the
      * horizontal stacking of items.
+     *
+     * @default 0
      */
     pointPadding?: number;
 

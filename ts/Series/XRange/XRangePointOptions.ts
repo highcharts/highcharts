@@ -30,18 +30,6 @@ import type ColorType from '../../Core/Color/ColorType';
 export interface XRangePointOptions extends ColumnPointOptions {
 
     /**
-     * A partial fill for each point, typically used to visualize how much
-     * of a task is performed. See [completed](series.gantt.data.completed).
-     *
-     * @sample gantt/demo/progress-indicator
-     *         Gantt with progress indicator
-     *
-     * @product gantt
-     *
-     * @apioption plotOptions.gantt.partialFill
-     */
-
-    /**
      * A partial fill for each point, typically used to visualize how much of
      * a task is performed. The partial fill object can be set either on series
      * or point level. When set as a number, works as `{ amount: number }`.
@@ -106,20 +94,23 @@ export interface XRangePointPartialFillOptions {
      * The fill color to be used for partial fills. Defaults to a darker shade
      * of the point color.
      *
-     * @type {Highcharts.ColorType}
-     *
      * @product highcharts highstock gantt
      */
     fill?: ColorType;
 
+    /** @internal */
     height?: number;
 
+    /** @internal */
     r?: number;
 
+    /** @internal */
     width?: number;
 
+    /** @internal */
     x?: number;
 
+    /** @internal */
     y?: (number|null);
 
 }
