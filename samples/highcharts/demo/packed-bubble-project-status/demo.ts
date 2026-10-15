@@ -111,4 +111,4 @@ Highcharts.chart('container', {
             value: 3
         }]
     }]
-});
+} satisfies Highcharts.Options);
