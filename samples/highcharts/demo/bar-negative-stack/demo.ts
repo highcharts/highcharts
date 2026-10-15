@@ -1,5 +1,5 @@
 // Custom template helper
-Highcharts.Templating.helpers.abs = value => Math.abs(value);
+Highcharts.Templating.helpers.abs = (value: number) => Math.abs(value);
 
 // Age categories
 const categories = [
@@ -60,7 +60,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        bar: {
             stacking: 'normal',
             borderRadius: '50%'
         }
@@ -88,4 +88,4 @@ Highcharts.chart('container', {
             1.39, 0.99, 1.15
         ]
     }]
-});
+} satisfies Highcharts.Options);
