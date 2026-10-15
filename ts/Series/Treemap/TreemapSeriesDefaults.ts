@@ -76,7 +76,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      */
     allowTraversingTree: false,
 
-    animationLimit: 250,
+    animationLimit: 1000,
 
     /**
      * The border radius for each treemap item.

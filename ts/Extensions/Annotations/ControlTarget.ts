@@ -358,7 +358,18 @@ namespace ControlTarget {
             return pointOptions as any;
         }
 
-        if (!point || point.series === null) {
+        // When the annotation is first outside the cropped viewport, then
+        // moved inside
+        if (point?.mock) {
+            const realPoint = typeof pointOptions === 'string' && (
+                (this.chart.get(pointOptions) as any)
+            );
+            if (realPoint) {
+                return realPoint;
+            }
+        }
+
+        if (!point || !point.series) {
             if (isObject(pointOptions)) {
                 point = new MockPoint(
                     this.chart,
@@ -366,7 +377,16 @@ namespace ControlTarget {
                     pointOptions as AnnotationMockPointOptionsObject
                 );
             } else if (isString(pointOptions)) {
-                point = (this.chart.get(pointOptions) as any) || null;
+
+                point = (this.chart.get(pointOptions) as any) || new MockPoint(
+                    this.chart,
+                    this,
+                    {}
+                );
+
+                if (point?.mock) {
+                    point.visible = false;
+                }
             } else if (typeof pointOptions === 'function') {
                 const pointConfigOrPoint: (
                     MockPoint | AnnotationMockPointOptionsObject

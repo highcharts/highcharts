@@ -264,15 +264,6 @@ class BubbleSeries extends ScatterSeries {
         },
 
         /**
-         * If there are more points in the series than the `animationLimit`, the
-         * animation won't run. Animation affects overall performance and
-         * doesn't work well with heavy data series.
-         *
-         * @since 6.1.0
-         */
-        animationLimit: 250,
-
-        /**
          * When using automatic point colors pulled from the global
          * [colors](colors) or series-specific
          * [plotOptions.bubble.colors](series.colors) collections, this option
@@ -588,7 +579,7 @@ class BubbleSeries extends ScatterSeries {
     public animate(init?: boolean): void {
         if (
             !init &&
-            this.points.length < (this.options.animationLimit as any) // #8099
+            this.points.length < (this.options.animationLimit || 1000) // #8099
         ) {
             this.points.forEach(function (this: BubbleSeries, point): void {
                 const { graphic, plotX = 0, plotY = 0 } = point;

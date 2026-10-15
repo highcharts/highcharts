@@ -643,9 +643,6 @@ class Chart {
     public plotWidth!: number;
 
     /** @internal */
-    public pointCount!: number;
-
-    /** @internal */
     public pointer?: Pointer;
 
     /** @internal */
@@ -786,6 +783,22 @@ class Chart {
      *  Functions
      *
      * */
+
+    /** @internal */
+    public pointCount(): number {
+        return this.series.reduce(
+            (count, series): number =>
+                count +
+                (
+                    // Navigator doesn't count towards the limit because it's
+                    // usually static during redraws (#25418)
+                    series.options.isInternal || !series.visible ?
+                        0 :
+                        series.dataTable.getModified().rowCount
+                ),
+            0
+        );
+    }
 
     /**
      * Function setting zoom options after chart init and after chart update.
@@ -1003,7 +1016,7 @@ class Chart {
              */
             chart.yAxis = [];
 
-            chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
+            chart.colorCounter = chart.symbolCounter = 0;
 
             this.setZoomOptions();
 
@@ -4520,7 +4533,7 @@ class Chart {
 
                 this.redraw(
                     trigger === 'zoom' &&
-                    (this.options.chart.animation ?? this.pointCount < 100)
+                    (this.options.chart.animation ?? this.pointCount() < 100)
                 );
             }
         }
