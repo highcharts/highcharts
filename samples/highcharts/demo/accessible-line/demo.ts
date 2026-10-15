@@ -1,5 +1,3 @@
-const colors = Highcharts.getOptions().colors;
-
 Highcharts.chart('container', {
     chart: {
         type: 'spline'
@@ -15,8 +13,8 @@ Highcharts.chart('container', {
     },
 
     subtitle: {
-        text:
-      'Source: WebAIM. Click on points to visit official screen reader website',
+        text: 'Source: WebAIM. Click on points to visit official screen ' +
+            'reader website',
         align: 'left'
     },
 
@@ -58,7 +56,7 @@ Highcharts.chart('container', {
             point: {
                 events: {
                     click: function () {
-                        top.location.href = this.series.options.website;
+                        top.location.href = this.series.options.custom.website;
                     }
                 }
             },
@@ -71,41 +69,53 @@ Highcharts.chart('container', {
         {
             name: 'NVDA',
             data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4, 58.8, 65.6],
-            website: 'https://www.nvaccess.org',
-            color: colors[2],
+            custom: {
+                website: 'https://www.nvaccess.org'
+            },
+            color: 'var(--highcharts-color-2)',
             accessibility: {
                 description: 'This is the most used screen reader in 2024.'
             }
         }, {
             name: 'JAWS',
             data: [69.6, 63.7, 63.9, 43.7, 66.0, 61.7, 70.0, 60.5],
-            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
+            custom: {
+                website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
+            },
             dashStyle: 'ShortDashDot',
-            color: colors[0]
+            color: 'var(--highcharts-color-0)'
         }, {
             name: 'VoiceOver',
             data: [20.2, 30.7, 36.8, 30.9, 39.6, 47.1, 41.3, 43.9],
-            website: 'https://www.apple.com/accessibility/osx/voiceover',
+            custom: {
+                website: 'https://www.apple.com/accessibility/osx/voiceover'
+            },
             dashStyle: 'ShortDot',
-            color: colors[1]
+            color: 'var(--highcharts-color-1)'
         }, {
             name: 'Narrator',
             data: [null, null, null, null, 21.4, 30.3, 36.8, 37.3],
-            website: 'https://support.microsoft.com/en-us/help/22798/windows-10-complete-guide-to-narrator',
+            custom: {
+                website: 'https://support.microsoft.com/en-us/help/22798/windows-10-complete-guide-to-narrator'
+            },
             dashStyle: 'Dash',
-            color: colors[9]
+            color: 'var(--highcharts-color-9)'
         }, {
             name: 'ZoomText/Fusion',
             data: [6.1, 6.8, 5.3, 27.5, 6.0, 5.5, 8.9, 7.5],
-            website: 'https://vispero.com/zoomtext-screen-magnifier-software/',
+            custom: {
+                website: 'https://vispero.com/zoomtext-screen-magnifier-software/'
+            },
             dashStyle: 'ShortDot',
-            color: colors[5]
+            color: 'var(--highcharts-color-5)'
         }, {
             name: 'Other',
             data: [42.6, 51.5, 54.2, 45.8, 20.2, 15.4, 15.5, 25.6],
-            website: 'https://www.disabled-world.com/assistivedevices/computer/screen-readers.php',
+            custom: {
+                website: 'https://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
+            },
             dashStyle: 'ShortDash',
-            color: colors[3],
+            color: 'var(--highcharts-color-3)',
             accessibility: {
                 description:
                     'Represents less common screen readers. Usage increases ' +
@@ -138,7 +148,7 @@ Highcharts.chart('container', {
                         'June 2021',
                         'Jan. 2024'
                     ],
-                    title: ''
+                    title: null
                 },
                 yAxis: {
                     visible: false
@@ -146,4 +156,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
