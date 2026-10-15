@@ -228,6 +228,65 @@ already uses leaves the input open and marked instead of saving.
 Set `columns[].header.contextMenu.enabled` to `false` to drop the header menu
 on a single column.
 
+## A menu on an element of your own
+
+`grid.contextMenu.attach(element, options)` gives any element the same menu
+the Grid uses for its cells, on right-click and on `ContextMenu` / `Shift+F10`:
+
+```js
+const grid = Grid.grid('container', { /* … */ });
+
+grid.contextMenu.attach(document.getElementById('actions'), {
+    items: [{
+        label: 'Cheapest first',
+        icon: 'arrowUp',
+        onClick: () => grid.update({
+            columns: [{ id: 'price', sorting: { order: 'asc' } }]
+        })
+    }, {
+        separator: true
+    }, {
+        label: 'Rename this button',
+        onClick: button => {
+            button.textContent = 'Renamed';
+        }
+    }]
+});
+```
+
+The `items` are the same as for cells, except that the element takes the place
+of the cell: it is bound to `this` and passed as the first argument to
+`onClick`. Built-in action IDs are not available here, since they act on a row
+or a column.
+
+The element does not have to sit inside the Grid. A menu opened on an attached
+element renders in the browser's top layer, so the Grid, which hides its own
+overflow, cannot clip it.
+
+The call returns a function that detaches the menu again:
+
+```js
+const detach = grid.contextMenu.attach(element, { items });
+
+detach();
+```
+
+<iframe src="https://www.highcharts.com/samples/embed/grid-lite/basic/context-menu-attach?force-light-theme" allow="fullscreen"></iframe>
+
+## Menus and the Grid's edges
+
+The Grid container hides its overflow, so anything laid out inside it is cut
+off at its edges. Menus therefore open as native popovers, which nothing on
+the page clips - a menu taller than a short Grid spills over it rather than
+scrolling within it, and a menu opened on an attached element outside the Grid
+is whole wherever that element sits.
+
+A popover is positioned against the window, so it closes itself once its
+anchor has scrolled off screen.
+
+On browsers without the Popover API, which is Baseline since January 2025,
+menus fall back to being laid out inside the Grid, and clipped by it.
+
 ## Nested submenus
 
 Use `type: 'submenu'` and `items` to define a branch item with a submenu.

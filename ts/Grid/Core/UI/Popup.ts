@@ -32,6 +32,18 @@ import { fireEvent } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
 
+/**
+ * Whether the browser can render an element in the top layer. Popover is
+ * Baseline since January 2025, so anything older falls back to the popup
+ * being laid out, and clipped, inside the grid container.
+ *
+ * @return
+ * True when the Popover API is available.
+ */
+function supportsPopover(): boolean {
+    return typeof HTMLElement.prototype.showPopover === 'function';
+}
+
 
 /* *
  *
@@ -145,6 +157,10 @@ export abstract class Popup {
         this.container = makeHTMLElement('div', {
             className: Globals.getClassName('popup')
         });
+
+        if (this.usesPopover) {
+            this.container.popover = 'manual';
+        }
         this.content = makeHTMLElement('div', {
             className: Globals.getClassName('popupContent')
         });
@@ -161,6 +177,18 @@ export abstract class Popup {
         this.isVisible = true;
 
         this.grid.contentWrapper?.appendChild(this.container);
+
+        // The top layer is what nothing clips. The grid container hides its
+        // overflow and, through `container-type`, is a containing block for
+        // fixed positioning too, so a popup laid out inside it cannot reach
+        // past its edges. The element stays where it is in the DOM, so the
+        // grid's styles and theme still reach it. Manual, because the
+        // dismiss and key handling below are the grid's own, and guarded on
+        // `isConnected`, because `showPopover` throws on a detached element.
+        if (this.usesPopover && this.container.isConnected) {
+            this.container.showPopover();
+        }
+
         this.position(anchorElement);
         this.addEventListeners();
 
@@ -215,11 +243,53 @@ export abstract class Popup {
      * Reflows the popup.
      */
     public reflow(): void {
-        if (this.anchorElement?.isConnected) {
-            this.position(this.anchorElement);
-        } else {
+        const anchor = this.anchorElement;
+
+        if (!anchor?.isConnected) {
             this.hide();
+            return;
         }
+
+        if (this.usesPopover) {
+            const rect = anchor.getBoundingClientRect();
+
+            // Nothing clips a popup in the top layer, so it has to leave the
+            // screen itself once its anchor has, rather than hang over
+            // whatever the page scrolled into its place.
+            if (
+                rect.bottom < 0 || rect.top > window.innerHeight ||
+                rect.right < 0 || rect.left > window.innerWidth
+            ) {
+                this.hide();
+                return;
+            }
+        }
+
+        this.position(anchor);
+    }
+
+    /**
+     * Whether the popup opens as a native popover, which renders in the
+     * browser's top layer, where the grid container cannot clip it.
+     *
+     * @return
+     * True when a popover is used.
+     */
+    protected get usesPopover(): boolean {
+        return supportsPopover() && this.prefersPopover;
+    }
+
+    /**
+     * Whether the popup asks for a popover, before the browser gets a say.
+     * Subclasses override this, not `usesPopover`, so that the support check
+     * stays in one place.
+     *
+     * @return
+     * True when a popover is wanted.
+     */
+    protected get prefersPopover(): boolean {
+        return this.options.popover ??
+            this.grid.options?.rendering?.popups?.insideContainer !== true;
     }
 
     /**
@@ -230,55 +300,72 @@ export abstract class Popup {
      * positioned relative to the parent element.
      */
     private position(anchorElement?: HTMLElement): void {
+        const { container, content } = this;
+
+        if (!container || !content) {
+            return;
+        }
+
         const wrapper = this.grid.contentWrapper;
-        if (!this.container || !this.content || !wrapper) {
+        const anchorRect =
+            anchorElement?.getBoundingClientRect() ??
+            wrapper?.getBoundingClientRect();
+
+        if (!anchorRect) {
+            return;
+        }
+
+        // What the popup has to fit into: the viewport in the top layer,
+        // where nothing clips it, and the grid otherwise. `innerHeight` and
+        // not `documentElement.clientHeight`, which is the root element in
+        // quirks mode rather than the viewport.
+        const bounds = this.usesPopover ?
+            new DOMRect(0, 0, window.innerWidth, window.innerHeight) :
+            wrapper?.getBoundingClientRect();
+
+        if (!bounds) {
             return;
         }
 
         const next = this.options.nextToAnchor || false;
         const edgePadding = 8;
-        const parentRect = wrapper.getBoundingClientRect();
 
-        // The popup is positioned inside the grid, which clips it, so it can
-        // never usefully be taller than the grid. Capping it here is what
-        // lets its `overflow` scroll; without the cap the bottom alignment
-        // below only moves the clipping to the top edge. Applied before the
-        // popup is measured, so the measurement reflects the cap.
-        this.container.style.maxHeight =
-            `${Math.max(parentRect.height - 2 * edgePadding, 0)}px`;
+        // Capping the height before the popup is measured is what lets its
+        // `overflow` scroll; without the cap the bottom alignment below only
+        // moves the overflow to the top edge.
+        container.style.maxHeight =
+            `${Math.max(bounds.height - 2 * edgePadding, 0)}px`;
 
-        const popupRect = this.container.getBoundingClientRect();
-        const anchorRect = anchorElement?.getBoundingClientRect() ?? parentRect;
+        const popupRect = container.getBoundingClientRect();
 
-        const top = next ? anchorRect.top : anchorRect.bottom + 4;
+        const top = Math.max(
+            next ? anchorRect.top : anchorRect.bottom + 4,
+            bounds.top + edgePadding
+        );
         let left = next ? anchorRect.right + 3 : anchorRect.left;
 
-        // If popup's right side is after the parent's right side, shift popup
-        // to the left of the anchor element.
-        if (left + popupRect.width > parentRect.right - edgePadding) {
+        // If the popup's right side runs past the bounds, flip it to the
+        // other side of the anchor.
+        if (left + popupRect.width > bounds.right - edgePadding) {
             left = -popupRect.width + (
                 next ? anchorRect.left + 4 : anchorRect.right
             );
         }
 
-        // If popup's left side is before the parent's left side,
-        // shift popup so it's aligned to parent's left.
-        if (left < parentRect.left + edgePadding) {
-            left = parentRect.left + edgePadding;
+        if (left < bounds.left + edgePadding) {
+            left = bounds.left + edgePadding;
         }
 
-        // Apply positioning
-        this.container.style.top = `${top - parentRect.top}px`;
-        this.container.style.left = `${left - parentRect.left}px`;
+        container.style.left = `${left - bounds.left}px`;
 
-        // If the content is too tall, constrain the container to the bottom
-        // of the parent to enable content Y-scrolling.
-        if (top + popupRect.height > parentRect.bottom - edgePadding) {
-            this.container.style.top = 'auto';
-            this.container.style.bottom = `${edgePadding}px`;
+        // If the content is too tall, pin it to the bottom of the bounds so
+        // that the content scrolls instead of the popup running off.
+        if (top + popupRect.height > bounds.bottom - edgePadding) {
+            container.style.top = 'auto';
+            container.style.bottom = `${edgePadding}px`;
         } else {
-            this.container.style.top = `${top - parentRect.top}px`;
-            this.container.style.bottom = 'auto';
+            container.style.top = `${top - bounds.top}px`;
+            container.style.bottom = 'auto';
         }
     }
 
@@ -369,13 +456,25 @@ export abstract class Popup {
             this.onKeyDown(event);
         };
 
+        const scrollListener = (): void => {
+            this.reflow();
+        };
+
         document.addEventListener('mousedown', clickOutsideListener);
         container.addEventListener('keydown', keyDownListener);
+
+        // Captured, so that a scroll in any container the anchor sits in is
+        // caught: a popup in the top layer is placed against the viewport, so
+        // it does not travel with its anchor on its own.
+        if (this.usesPopover) {
+            window.addEventListener('scroll', scrollListener, true);
+        }
 
         this.eventListenerDestroyers.push(
             (): void => {
                 document.removeEventListener('mousedown', clickOutsideListener);
                 container.removeEventListener('keydown', keyDownListener);
+                window.removeEventListener('scroll', scrollListener, true);
             }
         );
     }
@@ -418,6 +517,13 @@ export interface PopupOptions {
          */
         label: string;
     };
+
+    /**
+     * Whether to open this popup as a native popover, regardless of
+     * `rendering.popups.popover`. Used where the grid container cannot
+     * contain the popup at all.
+     */
+    popover?: boolean;
 }
 
 

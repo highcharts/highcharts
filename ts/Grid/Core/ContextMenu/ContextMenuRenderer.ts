@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Cell Context Submenu
+ *  Grid Context Menu renderer
  *
  *  (c) 2020-2026 Highsoft AS
  *
@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Mikkel Espolin Birkeland
+ *  - Dawid Dragula
  *
  * */
 
@@ -21,19 +22,16 @@
  *
  * */
 
-import type TableCell from '../Body/TableCell';
-import type { ContextMenu as ContextMenuType } from '../../UI/ContextMenu';
-import type {
-    CellContextMenuDividerItemOptions
-} from './CellContextMenuOptions';
-import type {
-    ResolvedCellContextMenuItemOptions
-} from './CellContextMenuBuiltInActions';
+import type Grid from '../Grid';
+import type { MenuContext } from './ContextMenuTarget';
+import type { ResolvedMenuItem } from './ContextMenuResolver';
 
-import ContextMenu from '../../UI/ContextMenu.js';
-import ContextMenuButton from '../../UI/ContextMenuButton.js';
-import Globals from '../../Globals.js';
-import Grid from '../../Grid.js';
+import Globals from '../Globals.js';
+import GridUtils from '../GridUtils.js';
+import Menu from '../UI/Menu.js';
+import MenuButton from '../UI/MenuButton.js';
+
+const { makeHTMLElement } = GridUtils;
 
 /* *
  *
@@ -42,7 +40,7 @@ import Grid from '../../Grid.js';
  * */
 
 /**
- * Closes all sibling submenus for a menu level.
+ * Closes all sibling submenus of a menu level.
  *
  * @param menu
  * Parent menu level.
@@ -50,46 +48,29 @@ import Grid from '../../Grid.js';
  * @param activeButton
  * Button that should keep its submenu open.
  */
-function closeSiblingSubMenus(
-    menu: ContextMenuType,
-    activeButton: ContextMenuButton
-): void {
+function closeSiblingSubMenus(menu: Menu, activeButton: MenuButton): void {
     for (const button of menu.buttons) {
         if (button === activeButton || !button.popup?.isVisible) {
             continue;
         }
+
         button.popup.hide();
     }
 }
 
 /**
- * Checks whether item is a divider.
- *
- * @param item
- * Resolved context menu item.
- *
- * @return
- * True when the item is a divider.
- */
-function isDividerItem(
-    item: ResolvedCellContextMenuItemOptions
-): item is CellContextMenuDividerItemOptions {
-    return 'separator' in item && item.separator === true;
-}
-
-/**
- * Closes the full chain of menus from current submenu to root.
+ * Closes the full chain of menus from the current submenu up to the root.
  *
  * @param menu
  * Current menu in the chain.
  */
-export function closeCellContextMenuTree(menu: ContextMenuType): void {
-    let currentMenu: ContextMenuType | undefined = menu;
+export function closeMenuTree(menu: Menu): void {
+    let currentMenu: Menu | undefined = menu;
 
     while (currentMenu) {
-        const parentMenu: ContextMenuType | undefined =
-            currentMenu instanceof CellContextSubMenu ?
-                currentMenu.openerButton?.contextMenu :
+        const parentMenu: Menu | undefined =
+            currentMenu instanceof ContextSubMenu ?
+                currentMenu.openerButton?.menu :
                 void 0;
 
         currentMenu.hide();
@@ -98,12 +79,12 @@ export function closeCellContextMenuTree(menu: ContextMenuType): void {
 }
 
 /**
- * Opens focused branch submenu if available.
+ * Opens the submenu of the focused branch, when there is one.
  *
  * @param menu
  * Menu instance.
  */
-export function openFocusedSubMenu(menu: ContextMenuType): void {
+export function openFocusedSubMenu(menu: Menu): void {
     const focusedButton = menu.buttons[menu.focusCursor];
 
     if (
@@ -117,45 +98,42 @@ export function openFocusedSubMenu(menu: ContextMenuType): void {
 }
 
 /**
- * Renders resolved menu items into a context menu.
+ * Renders resolved entries into a menu.
  *
  * @param menu
- * Menu to render items into.
+ * Menu to render the entries into.
  *
- * @param cell
- * Target table cell.
+ * @param context
+ * Context the menu was opened in.
  *
  * @param items
- * Resolved menu items.
+ * Resolved entries.
  */
-export function renderResolvedCellContextMenuItems(
-    menu: ContextMenuType,
-    cell: TableCell,
-    items: ResolvedCellContextMenuItemOptions[]
+export function renderMenuItems(
+    menu: Menu,
+    context: MenuContext,
+    items: ResolvedMenuItem[]
 ): void {
     for (const item of items) {
-        if (isDividerItem(item)) {
+        if (item.separator) {
             const container = menu.ensureItemsContainer();
+
             if (container) {
-                const divider = document.createElement('li');
-                divider.className = Globals.getClassName('menuDivider');
-                container.appendChild(divider);
+                makeHTMLElement('li', {
+                    className: Globals.getClassName('menuDivider')
+                }, container);
             }
             continue;
         }
 
         const isBranch = !!item.items?.length;
 
-        const button = new ContextMenuButton({
+        const button: MenuButton | undefined = new MenuButton({
             label: item.label,
             icon: item.icon,
             chevron: isBranch,
             onClick: (): void => {
-                if (!button) {
-                    return;
-                }
-
-                if (item.disabled) {
+                if (!button || item.disabled) {
                     return;
                 }
 
@@ -163,11 +141,11 @@ export function renderResolvedCellContextMenuItems(
                     closeSiblingSubMenus(menu, button);
 
                     if (!button.popup) {
-                        button.popup = new CellContextSubMenu(
+                        button.popup = new ContextSubMenu(
                             menu.grid,
                             button,
-                            cell,
-                            item.items as ResolvedCellContextMenuItemOptions[]
+                            context,
+                            item.items || []
                         );
                     }
 
@@ -177,8 +155,8 @@ export function renderResolvedCellContextMenuItems(
                     return;
                 }
 
-                item.onClick?.call(cell, cell);
-                closeCellContextMenuTree(menu);
+                item.onClick?.();
+                closeMenuTree(menu);
             }
         }).add(menu);
 
@@ -197,22 +175,37 @@ export function renderResolvedCellContextMenuItems(
  *
  * */
 
-class CellContextSubMenu extends ContextMenu {
+/**
+ * One nested level of a context menu.
+ */
+export class ContextSubMenu extends Menu {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     /**
-     * Cell bound to this submenu chain.
+     * Context the menu chain was opened in.
      */
-    public readonly cell: TableCell;
+    public readonly context: MenuContext;
 
     /**
-     * Resolved submenu items.
+     * Resolved entries of this level.
      */
-    public readonly items: ResolvedCellContextMenuItemOptions[];
+    public readonly items: ResolvedMenuItem[];
 
     /**
      * Branch button that opened this submenu.
      */
-    public readonly openerButton: ContextMenuButton;
+    public readonly openerButton: MenuButton;
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
 
     /**
      * Builds a submenu anchored next to its parent button.
@@ -223,26 +216,32 @@ class CellContextSubMenu extends ContextMenu {
      * @param button
      * Parent branch button.
      *
-     * @param cell
-     * Target table cell.
+     * @param context
+     * Context the menu chain was opened in.
      *
      * @param items
-     * Submenu items.
+     * Resolved entries of this level.
      */
     constructor(
         grid: Grid,
-        button: ContextMenuButton,
-        cell: TableCell,
-        items: ResolvedCellContextMenuItemOptions[]
+        button: MenuButton,
+        context: MenuContext,
+        items: ResolvedMenuItem[]
     ) {
         super(grid, button, { nextToAnchor: true });
-        this.cell = cell;
+        this.context = context;
         this.items = items;
         this.openerButton = button;
     }
 
+    /* *
+     *
+     *  Methods
+     *
+     * */
+
     protected override renderContent(): void {
-        renderResolvedCellContextMenuItems(this, this.cell, this.items);
+        renderMenuItems(this, this.context, this.items);
     }
 
     protected override onKeyDown(event: KeyboardEvent): void {
@@ -262,11 +261,3 @@ class CellContextSubMenu extends ContextMenu {
         super.onKeyDown(event);
     }
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default CellContextSubMenu;

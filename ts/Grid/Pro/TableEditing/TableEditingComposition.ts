@@ -24,7 +24,7 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type {
     CellContextMenuContext
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions';
+} from '../../Core/ContextMenu/ContextMenuCompat';
 
 import { createGridIcon } from '../../Core/UI/SvgIcons.js';
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
@@ -33,7 +33,7 @@ import GridUtils from '../../Core/GridUtils.js';
 import {
     registerBuiltInAction,
     registerBuiltInGroup
-} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+} from '../../Core/ContextMenu/ContextMenuCompat.js';
 import {
     registerHeaderContextMenuAction
 } from '../../Core/Table/Header/HeaderContextMenu.js';
@@ -504,8 +504,8 @@ declare module '../../Core/Options' {
     }
 }
 
-declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
-    interface CellContextMenuBuiltInActionIdRegistry {
+declare module '../../Core/ContextMenu/ContextMenuOptions' {
+    interface MenuItemIdRegistry {
         addRowAbove: never;
         addRowBelow: never;
         deleteRow: never;
@@ -514,7 +514,7 @@ declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
         deleteColumn: never;
     }
 
-    interface CellContextMenuBuiltInGroupIdRegistry {
+    interface MenuItemIdRegistry {
         rows: never;
         columns: never;
     }

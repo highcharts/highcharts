@@ -31,7 +31,7 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import CellContextMenuBuiltInActions
-    from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+    from '../Grid/Core/ContextMenu/ContextMenuCompat.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
