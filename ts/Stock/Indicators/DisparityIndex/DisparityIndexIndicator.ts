@@ -76,8 +76,8 @@ class DisparityIndexIndicator extends SMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/disparity-index
+     * @requires     indicators/indicators
+     * @requires     indicators/disparity-index
      * @optionparent plotOptions.disparityindex
      * @internal
      */
@@ -250,8 +250,8 @@ export default DisparityIndexIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
  *            pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/disparity-index
+ * @requires  indicators/indicators
+ * @requires  indicators/disparity-index
  * @apioption series.disparityindex
  */
 
