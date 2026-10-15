@@ -2707,9 +2707,9 @@ class Series {
         this.generatePoints();
 
         const series = this,
-            { hasRendered, options, xAxis, yAxis } = series,
+            { options, xAxis, yAxis } = series,
             { stacking, threshold } = options,
-            { polar } = series.chart,
+            { hasRendered, polar } = series.chart,
             points = series.points.concat(series.condemnedPoints),
             dataLength = points.length,
             pointPlacement = series.pointPlacementToXValue(), // #7860
@@ -2854,10 +2854,13 @@ class Series {
             point.plotY = getPlotY(yValue, point);
 
             // Set the starting point of point entrance animation
-            point.origin = hasRendered && !point.graphic && !polar ? {
-                x: getPlotX(xValue, true),
-                y: getPlotY(yValue, point, true)
-            } : void 0;
+            point.origin = (
+                // The isNumber check is for toggling treemap/treegraph series
+                hasRendered && !point.graphic && !polar && isNumber(yValue)
+            ) ? {
+                    x: getPlotX(xValue, true),
+                    y: getPlotY(yValue, point, true)
+                } : void 0;
 
             point.isInside = this.isPointInside(point);
 
@@ -5643,8 +5646,28 @@ export default Series;
  *     }]
  * });
  *
- * @interface Highcharts.DataMappingOptionsObject
+ * @typedef {Record<string, string|Highcharts.DataMappingItemObject>} Highcharts.DataMappingOptionsObject
  * @since 13.0.0
+ */
+
+/**
+ * The data table and column to read a point property from in
+ * [dataMapping](#plotOptions.series.dataMapping).
+ *
+ * @interface Highcharts.DataMappingItemObject
+ * @since 13.0.0
+ *//**
+ * The column from which to read the value for this data point property. This
+ * can be either a column id (string) or a column index (number) in the data
+ * table. Defaults to the column with the same id as the point property.
+ * @name Highcharts.DataMappingItemObject#column
+ * @type {number|string|undefined}
+ *//**
+ * The data table from which to read the value for this data point property.
+ * This can be either a data table id (string) or a data table index (number).
+ * Defaults to the first data table.
+ * @name Highcharts.DataMappingItemObject#dataTable
+ * @type {number|string|undefined}
  */
 
 /**

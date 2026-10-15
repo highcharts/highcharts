@@ -22,6 +22,7 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
+import { interpolateAxisValue } from '../AnnotationUtilities.js';
 import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
@@ -206,14 +207,23 @@ class Fibonacci extends Tunnel {
 
     public linkRetracementsPoints(): void {
         const points = this.points,
-            startDiff = (points[0].y as any) - (points[3].y as any),
-            endDiff = (points[1].y as any) - (points[2].y as any),
+            yAxis = points[0].series?.yAxis,
             startX: number = points[0].x as any,
             endX: number = points[1].x as any;
 
         Fibonacci.levels.forEach((level, i): void => {
-            const startRetracement = (points[0].y as any) - startDiff * level,
-                endRetracement = (points[1].y as any) - endDiff * level,
+            const startRetracement = interpolateAxisValue(
+                    points[0].y,
+                    points[3].y,
+                    level,
+                    yAxis
+                ),
+                endRetracement = interpolateAxisValue(
+                    points[1].y,
+                    points[2].y,
+                    level,
+                    yAxis
+                ),
                 index = this.options.typeOptions.reversed ?
                     (Fibonacci.levels.length - i - 1) : i;
 
