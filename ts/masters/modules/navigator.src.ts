@@ -21,8 +21,11 @@ import Scrollbar from '../../Stock/Scrollbar/Scrollbar.js';
 const G: AnyRecord = Highcharts;
 G.StandaloneNavigator = G.StandaloneNavigator || StandaloneNavigator;
 G.navigator = G.StandaloneNavigator.navigator;
+G.Navigator = G.Navigator || Navigator;
+G.Scrollbar = G.Scrollbar || Scrollbar;
 
-Scrollbar.compose(G.Axis);
-Navigator.compose(G.Chart, G.Axis, G.Series);
+
+G.Scrollbar.compose(G.Axis);
+G.Navigator.compose(G.Chart, G.Axis, G.Series);
 
 export default Highcharts;

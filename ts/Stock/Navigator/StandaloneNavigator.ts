@@ -34,6 +34,7 @@ import standaloneNavigatorDefaults, {
 import {
     addEvent,
     defined,
+    find,
     fireEvent,
     merge
 } from '../../Shared/Utilities.js';
@@ -182,9 +183,14 @@ class StandaloneNavigator {
             { navigator: { enabled: true } }
         );
 
-        const chart = new Chart(element, this.chartOptions);
-        this.navigator = chart.navigator as Navigator;
-        this.initNavigator();
+        const chart = new Chart(element, this.chartOptions),
+            navigator = this.navigator = chart.navigator as Navigator,
+            { min, max } = navigator.xAxis.getExtremes();
+
+        chart.xAxis[0].userMin = min;
+        chart.xAxis[0].userMax = max;
+
+        navigator.render(min, max);
     }
 
     /**
@@ -255,9 +261,10 @@ class StandaloneNavigator {
         );
         removeEventCallbacks.push(removeSetRangeEvent);
 
-        let boundAxis = this.boundAxes.filter(function (boundAxis): boolean {
-            return boundAxis.axis === axis;
-        })[0];
+        let boundAxis = find(
+            this.boundAxes,
+            (boundAxis): boolean => boundAxis.axis === axis
+        );
 
         if (!boundAxis) {
             boundAxis = { axis, callbacks: [] };
@@ -450,31 +457,6 @@ class StandaloneNavigator {
     }
 
     /**
-     * Initialize the standalone navigator.
-     *
-     * @internal
-     */
-    public initNavigator(): void {
-        const nav = this.navigator;
-        nav.xAxis.setScale();
-        nav.yAxis.setScale();
-        nav.xAxis.render();
-        nav.yAxis.render();
-        nav.series?.forEach((s): void => {
-            s.translate();
-            s.render();
-            s.redraw();
-        });
-
-        const { min, max } = this.getInitialExtremes();
-
-        nav.chart.xAxis[0].userMin = min;
-        nav.chart.xAxis[0].userMax = max;
-
-        nav.render(min, max);
-    }
-
-    /**
      * Get the current range of the standalone navigator.
      *
      * @sample stock/standalone-navigator/getrange/
@@ -534,23 +516,6 @@ class StandaloneNavigator {
                 eventArguments: merge(eventArguments, { trigger: 'navigator' })
             }
         );
-    }
-
-    /**
-     * Get the initial, options based extremes for the standalone navigator.
-     *
-     * @internal
-     *
-     * @return {{ min: number, max: number }}
-     *         The initial minimum and maximum extremes values.
-     */
-    public getInitialExtremes(): { min: number, max: number } {
-        const { min, max } = this.navigator.xAxis.getExtremes();
-
-        return {
-            min: min,
-            max: max
-        };
     }
 }
 
