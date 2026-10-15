@@ -1040,5 +1040,61 @@ test.describe('Cell Context Menu', () => {
             await expect(page.locator('.hcg-popup')).toHaveCount(0);
         });
 
+        test(
+            'A menu attached to an element of your own opens and runs',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    document.getElementById('cm-attach')?.remove();
+                    document.getElementById('cm-attach-button')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-attach';
+                    document.body.appendChild(container);
+
+                    const button = document.createElement('button');
+                    button.id = 'cm-attach-button';
+                    button.type = 'button';
+                    button.textContent = 'Actions';
+                    document.body.appendChild(button);
+
+                    const grid = (window as any).Grid.grid(container, {
+                        data: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        }
+                    });
+
+                    grid.contextMenu.attach(button, {
+                        items: [{
+                            label: 'Rename the button',
+                            onClick: (target: HTMLElement) => {
+                                target.textContent = 'Renamed';
+                            }
+                        }, {
+                            separator: true
+                        }, {
+                            label: 'Second action'
+                        }]
+                    });
+                });
+
+                const button = page.locator('#cm-attach-button');
+                await button.click({ button: 'right' });
+
+                const popup = page.locator('.hcg-popup');
+                await expect(popup).toBeVisible();
+                await expect(popup.locator('.hcg-menu-divider')).toHaveCount(1);
+
+                await popup.locator('.hcg-menu-item', {
+                    hasText: 'Rename the button'
+                }).click();
+
+                await expect(button).toHaveText('Renamed');
+                await expect(popup).toHaveCount(0);
+            }
+        );
+
     });
 });

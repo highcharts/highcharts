@@ -206,4 +206,31 @@ function test_grid() {
     grid.rowPinning?.unpin('A');
     grid.rowPinning?.getPinnedRows();
     grid.tableEditing?.isEnabled();
+
+    const detach = grid.contextMenu.attach(document.createElement('button'), {
+        items: [
+            {
+                label: 'Rename this button',
+                icon: 'pencil',
+                onClick: function (button): void {
+                    button.textContent = 'Renamed';
+                }
+            },
+            {
+                separator: true
+            },
+            {
+                label: 'Branch',
+                items: [{
+                    label: 'Leaf',
+                    visible: context => context.target.type === 'element',
+                    onClick: function (): void {
+                        this.blur();
+                    }
+                }]
+            }
+        ]
+    });
+
+    detach();
 }

@@ -250,7 +250,14 @@ export abstract class Popup {
         const popupRect = this.container.getBoundingClientRect();
         const anchorRect = anchorElement?.getBoundingClientRect() ?? parentRect;
 
-        const top = next ? anchorRect.top : anchorRect.bottom + 4;
+        // Clamped to the top edge for the same reason the left and bottom are
+        // clamped below: the popup lives inside the grid, so an anchor above
+        // it - an element given a menu with `contextMenu.attach` - would
+        // otherwise open a menu that is cut off.
+        const top = Math.max(
+            next ? anchorRect.top : anchorRect.bottom + 4,
+            parentRect.top + edgePadding
+        );
         let left = next ? anchorRect.right + 3 : anchorRect.left;
 
         // If popup's right side is after the parent's right side, shift popup

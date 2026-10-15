@@ -23,8 +23,8 @@ import type Grid from '../../Grid';
 import type HeaderCell from './HeaderCell';
 import type { GridIconName } from '../../UI/SvgIcons';
 
-import ContextMenu from '../../UI/ContextMenu.js';
-import ContextMenuButton from '../../UI/ContextMenuButton.js';
+import Menu from '../../UI/Menu.js';
+import MenuButton from '../../UI/MenuButton.js';
 import Globals from '../../Globals.js';
 
 /* *
@@ -212,7 +212,7 @@ export function resolveHeaderContextMenuItems(
 /**
  * Context menu of a column header cell.
  */
-class HeaderContextMenu extends ContextMenu {
+class HeaderContextMenu extends Menu {
 
     /* *
      *
@@ -306,7 +306,7 @@ class HeaderContextMenu extends ContextMenu {
                 this.addDivider();
             }
 
-            const button = new ContextMenuButton({
+            const button = new MenuButton({
                 label: item.label,
                 icon: item.icon,
                 onClick: (): void => {

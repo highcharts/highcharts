@@ -252,14 +252,14 @@ export interface RowPinningLangA11yOptions {
     };
 }
 
-declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
-    interface CellContextMenuBuiltInActionIdRegistry {
+declare module '../../Core/ContextMenu/ContextMenuOptions' {
+    interface MenuItemIdRegistry {
         pinRowTop: never;
         pinRowBottom: never;
         unpinRow: never;
     }
 
-    interface CellContextMenuBuiltInGroupIdRegistry {
+    interface MenuItemIdRegistry {
         pinning: never;
     }
 }

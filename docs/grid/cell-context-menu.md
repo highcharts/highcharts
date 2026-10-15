@@ -228,6 +228,51 @@ already uses leaves the input open and marked instead of saving.
 Set `columns[].header.contextMenu.enabled` to `false` to drop the header menu
 on a single column.
 
+## A menu on an element of your own
+
+`grid.contextMenu.attach(element, options)` gives any element the same menu
+the Grid uses for its cells, on right-click and on `ContextMenu` / `Shift+F10`:
+
+```js
+const grid = Grid.grid('container', { /* … */ });
+
+grid.contextMenu.attach(document.getElementById('actions'), {
+    items: [{
+        label: 'Cheapest first',
+        icon: 'arrowUp',
+        onClick: () => grid.update({
+            columns: [{ id: 'price', sorting: { order: 'asc' } }]
+        })
+    }, {
+        separator: true
+    }, {
+        label: 'Rename this button',
+        onClick: button => {
+            button.textContent = 'Renamed';
+        }
+    }]
+});
+```
+
+The `items` are the same as for cells, except that the element takes the place
+of the cell: it is bound to `this` and passed as the first argument to
+`onClick`. Built-in action IDs are not available here, since they act on a row
+or a column.
+
+The menu is rendered inside the Grid, so it opens at the edge of the Grid
+nearest the element rather than under the cursor when the element sits outside
+it. Keep the element close to the Grid.
+
+The call returns a function that detaches the menu again:
+
+```js
+const detach = grid.contextMenu.attach(element, { items });
+
+detach();
+```
+
+<iframe src="https://www.highcharts.com/samples/embed/grid-lite/basic/context-menu-attach?force-light-theme" allow="fullscreen"></iframe>
+
 ## Nested submenus
 
 Use `type: 'submenu'` and `items` to define a branch item with a submenu.

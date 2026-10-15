@@ -42,9 +42,8 @@ import type {
     HeaderContextMenuOptions
 } from './Table/Header/HeaderContextMenu';
 import type TableCell from './Table/Body/TableCell';
-import type {
-    CellContextMenuOptions
-} from './Table/CellContextMenu/CellContextMenuOptions';
+import type { CellMenuTarget } from './ContextMenu/ContextMenuTarget';
+import type { ContextMenuOptions } from './ContextMenu/ContextMenuOptions';
 import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
@@ -605,7 +604,7 @@ export interface ColumnCellOptions {
      * @sample grid-lite/demo/cell-context-menu Cell context menu
      * @sample grid-pro/basic/cell-context-menu Cell context menu with built-ins
      */
-    contextMenu?: CellContextMenuOptions;
+    contextMenu?: ContextMenuOptions<CellMenuTarget>;
 
     /**
      * CSS styles for table body cells in the column.

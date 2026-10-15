@@ -1,6 +1,6 @@
 /* *
  *
- * Grid Context Menu abstract class
+ * Grid Menu abstract class
  *
  *  (c) 2020-2026 Highsoft AS
  *
@@ -26,7 +26,7 @@
 import Popup from './Popup.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
-import ContextMenuButton from './ContextMenuButton.js';
+import MenuButton from './MenuButton.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -38,9 +38,10 @@ const { makeHTMLElement } = GridUtils;
  * */
 
 /**
- * The context menu.
+ * A popup holding a keyboard-navigable list of buttons. Used by the context
+ * menus and by the header toolbar popups.
  */
-export abstract class ContextMenu extends Popup {
+export abstract class Menu extends Popup {
 
     /* *
      *
@@ -51,7 +52,7 @@ export abstract class ContextMenu extends Popup {
     /**
      * The array of buttons in the context menu.
      */
-    public readonly buttons: ContextMenuButton[] = [];
+    public readonly buttons: MenuButton[] = [];
 
     /**
      * The index of the focused button in the context menu.
@@ -162,7 +163,7 @@ export abstract class ContextMenu extends Popup {
             }
 
             const popupButtons = (popup as {
-                buttons?: ContextMenuButton[];
+                buttons?: MenuButton[];
             }).buttons;
 
             if (!popupButtons) {
@@ -227,4 +228,4 @@ export abstract class ContextMenu extends Popup {
  *
  * */
 
-export default ContextMenu;
+export default Menu;
