@@ -177,4 +177,4 @@ Highcharts.chart('container', {
             ['Cime de l\'Est', 3178]
         ]
     }]
-});
+} satisfies Highcharts.Options);
