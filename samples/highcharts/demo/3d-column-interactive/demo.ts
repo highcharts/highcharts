@@ -59,20 +59,22 @@ const chart = new Highcharts.Chart({
 function showValues() {
     document.getElementById(
         'alpha-value'
-    ).innerHTML = chart.options.chart.options3d.alpha;
+    ).innerHTML = String(chart.options.chart.options3d.alpha);
     document.getElementById(
         'beta-value'
-    ).innerHTML = chart.options.chart.options3d.beta;
+    ).innerHTML = String(chart.options.chart.options3d.beta);
     document.getElementById(
         'depth-value'
-    ).innerHTML = chart.options.chart.options3d.depth;
+    ).innerHTML = String(chart.options.chart.options3d.depth);
 }
 
 // Activate the sliders
 document.querySelectorAll(
     '#sliders input'
 ).forEach(input => input.addEventListener('input', e => {
-    chart.options.chart.options3d[e.target.id] = parseFloat(e.target.value);
+    chart.options.chart.options3d[
+        (e.target as HTMLInputElement).id as 'alpha' | 'beta' | 'depth'
+    ] = parseFloat((e.target as HTMLInputElement).value);
     showValues();
     chart.redraw(false);
 }));
