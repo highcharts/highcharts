@@ -69,4 +69,4 @@ Highcharts.chart('container', {
         data: [582, 571, 533, 555, 473],
         stack: 'Europe'
     }]
-});
+} satisfies Highcharts.Options);

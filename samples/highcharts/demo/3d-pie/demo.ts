@@ -51,4 +51,4 @@ Highcharts.chart('container', {
             ['Others', 30]
         ]
     }]
-});
+} satisfies Highcharts.Options);
