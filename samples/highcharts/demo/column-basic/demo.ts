@@ -3,17 +3,19 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Corn vs wheat estimated production for 2023',
+        text: 'Milano Cortina 2026 Winter Olympic medals, top six nations',
         align: 'left'
     },
     subtitle: {
         text:
             'Source: <a target="_blank" ' +
-            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
+            'href="https://www.olympics.com/en/olympic-games/milano-cortina-2026/medals">www.olympics.com</a>',
         align: 'left'
     },
     xAxis: {
-        categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
+        categories: [
+            'Norway', 'USA', 'Netherlands', 'Italy', 'Germany', 'France'
+        ],
         crosshair: true,
         accessibility: {
             description: 'Countries'
@@ -22,7 +24,7 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0,
         title: {
-            text: '1000 metric tons (MT)'
+            text: 'Medals'
         }
     },
     legend: {
@@ -44,7 +46,7 @@ Highcharts.chart('container', {
         </tr>
         `,
         footerFormat: '</table>',
-        valueSuffix: ' GT',
+        // valueSuffix: '',
         useHTML: true
     },
     plotOptions: {
@@ -55,12 +57,16 @@ Highcharts.chart('container', {
     },
     series: [
         {
-            name: 'Corn',
-            data: [387749, 280000, 129000, 64300, 54000, 34300]
+            name: 'Gold medals',
+            data: [18, 12, 10, 10, 8, 8]
         },
         {
-            name: 'Wheat',
-            data: [45321, 140000, 10000, 140500, 19500, 113500]
+            name: 'Silver medals',
+            data: [12, 12, 7, 6, 10, 9]
+        },
+        {
+            name: 'Bronze medals',
+            data: [11, 9, 3, 14, 8, 6]
         }
     ]
 });
