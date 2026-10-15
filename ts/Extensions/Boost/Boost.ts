@@ -490,4 +490,17 @@ export default Boost;
  * @apioption  plotOptions.series.boostBlending
  */
 
+/**
+ * Sets the shape used when drawing boosted area and arearange series.
+ *
+ * By default, these series are drawn as one pixel wide lines. Set this option
+ * to `triangles` to draw the boosted area as a filled surface.
+ *
+ * @type       {string}
+ * @default    lines
+ * @validvalue ["lines", "triangles"]
+ * @requires   modules/boost
+ * @apioption  plotOptions.series.boostShape
+ */
+
 ''; // Adds doclets above to transpiled file
