@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure column-pyramid series for category comparisons, including
+  stacked and inverted layouts. The article notes the required module and
+  shows a basic data configuration for displaying one pyramid per value.
+---
+
 Column pyramid
 ===
 

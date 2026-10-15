@@ -1,12 +1,15 @@
 /* eslint-env node, es6 */
 /* eslint-disable */
 const fs = require('fs');
-const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
 const { getLatestCommitShaSync } = require('../tools/libs/git');
 const log = require('../tools/libs/log');
 const aliases = require('../samples/data/json-sources/index.json');
+const {
+    excludedSamples,
+    getVisualSampleSkipReason
+} = require('./visual-test-samples');
 
 const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
 const version = require('../package.json').version;
@@ -176,25 +179,11 @@ function resolveJSON(js) {
  * @param  {String} path The sample path
  * @return {Boolean}     False if we should skip the test
  */
-function handleDetails(path) {
-    // Skip it?
-    if (fs.existsSync(`samples/${path}/demo.details`)) {
-        let details = fs.readFileSync(
-            `samples/${path}/demo.details`,
-            'utf8'
-        );
-        details = details && yaml.load(details);
-        if (details && details.skipTest) {
-            // console.log(`- skipTest: ${path}`.gray);
-            return false;
-        }
-        if (details && details.requiresManualTesting) {
-            // console.log(`- requiresManualTesting: ${path}`.gray);
-            return false;
-        }
-        return true;
-    }
-    return true;
+function handleDetails(samplePath) {
+    return !getVisualSampleSkipReason(
+        path.join(__dirname, '..'),
+        samplePath
+    );
 }
 
 const browserStackBrowsers = require('./karma-bs.json');
@@ -309,6 +298,7 @@ module.exports = function (config) {
             ...files,
 
             // Set up
+            'test/visual-comparator.js',
             'test/karma-setup.js',
 
             // Tests
@@ -340,66 +330,39 @@ module.exports = function (config) {
             },
         ],
 
-        // These ones fail
         exclude: [
-            // --- VISUAL TESTS ---
-
-            // Custom data source
-            'samples/highcharts/blog/annotations-aapl-iphone/demo.js',
-            'samples/highcharts/blog/gdp-growth-annual/demo.js',
-            'samples/highcharts/blog/gdp-growth-multiple-request-v2/demo.js',
-            'samples/highcharts/blog/gdp-growth-multiple-request/demo.js',
-            'samples/highcharts/website/xmas-2021/demo.js',
-
-            // Error #13, renders to other divs than #container. Sets global
-            // options.
-            'samples/highcharts/demo/bullet-graph/demo.js',
-            // Network loading?
-            'samples/highcharts/demo/combo-meteogram/demo.js',
-
-            // CSV data, parser fails - why??
-            'samples/highcharts/demo/line-csv/demo.js',
-
-            // Clock
-            'samples/highcharts/demo/dynamic-update/demo.js',
-            'samples/highcharts/demo/gauge-clock/demo.js',
-            'samples/highcharts/demo/gauge-vu-meter/demo.js',
-
-            // Too heavy
-            'samples/highcharts/demo/parallel-coordinates/demo.js',
-            'samples/highcharts/demo/sparkline/demo.js',
-
-            // Maps
-            'samples/maps/demo/map-pies/demo.js', // advanced data
-            'samples/maps/demo/us-counties/demo.js', // advanced data
-            'samples/maps/plotoptions/series-animation-true/demo.js', // animation
-            'samples/highcharts/blog/map-europe-electricity-price/demo.js', // strange fails, remove this later
-
-            // Unknown error
-            'samples/highcharts/boost/arearange/demo.js',
-            'samples/highcharts/boost/scatter-smaller/demo.js',
-            'samples/highcharts/data/google-spreadsheet/demo.js',
-
-            // Various
-            'samples/highcharts/data/delimiters/demo.js', // data island
-            'samples/highcharts/css/exporting/demo.js', // advanced demo
-            'samples/highcharts/css/pattern/demo.js', // styled mode, setOptions
-            'samples/highcharts/studies/logistics/demo.js', // overriding
-
-            // Failing on Edge only
-            'samples/unit-tests/pointer/members/demo.js',
-
-            // visual tests excluded for now due to failure
-            'samples/highcharts/demo/funnel3d/demo.js',
-            'samples/highcharts/demo/live-data/demo.js',
-            'samples/highcharts/demo/organization-chart/demo.js',
-            'samples/highcharts/demo/pareto/demo.js',
-            'samples/highcharts/demo/pyramid3d/demo.js',
-            'samples/highcharts/demo/synchronized-charts/demo.js',
-
-            // Visual test fails due to external library used
-            'samples/highcharts/blog/ternary-blade-steels/demo.js',
-            'samples/highcharts/demo/combo-regression/demo.js',
+            ...excludedSamples,
+            // Karma lacks the assets or recorded data these demos need for
+            // deterministic captures. Playwright covers them with offline
+            // fixtures. Keep exact paths so new financial demos remain eligible.
+            // interactive-chart also fails on master until its getRow fix lands.
+            'samples/stock/financial/asset-allocations-bar/demo.js',
+            'samples/stock/financial/asset-allocations-pie/demo.js',
+            'samples/stock/financial/bond-style-box-breakdown-chart/demo.js',
+            'samples/stock/financial/calendar-year-return/demo.js',
+            'samples/stock/financial/correlation-matrix-xrayus/demo.js',
+            'samples/stock/financial/country-breakdown-chart/demo.js',
+            'samples/stock/financial/credit-quality-breakdown/demo.js',
+            'samples/stock/financial/dws-equity-aggregates-residual-risk/demo.js',
+            'samples/stock/financial/dws-equity-residual-risk/demo.js',
+            'samples/stock/financial/dws-equity-style-box/demo.js',
+            'samples/stock/financial/dws-region-breakdown-chart/demo.js',
+            'samples/stock/financial/dws-sector-breakdown-bar-chart/demo.js',
+            'samples/stock/financial/dws-sector-breakdown-spider/demo.js',
+            'samples/stock/financial/equity-style-box/demo.js',
+            'samples/stock/financial/growth-chart-hypo/demo.js',
+            'samples/stock/financial/interactive-chart/demo.js',
+            'samples/stock/financial/key-stats/demo.js',
+            'samples/stock/financial/magnum-ice-cream/demo.js',
+            'samples/stock/financial/market-capitalization/demo.js',
+            'samples/stock/financial/region-breakdown-chart/demo.js',
+            'samples/stock/financial/returns-chart/demo.js',
+            'samples/stock/financial/risk-return-chart/demo.js',
+            'samples/stock/financial/sector-breakdown-bar-chart/demo.js',
+            'samples/stock/financial/sector-breakdown-pie-chart/demo.js',
+            'samples/stock/financial/sector-breakdown-spider/demo.js',
+            'samples/stock/financial/top-holdings-chart/demo.js',
+            'samples/stock/financial/xray-us-trailing-returns/demo.js'
         ],
         reporters: ['progress'],
         port: 9876,  // karma web server port
@@ -570,7 +533,7 @@ module.exports = function (config) {
                     // Set reference image
                     if (argv.reference) {
                         assertion = `
-                            let svg = getSVG(chart);
+                            let svg = VisualComparator.getSVG(chart);
                             saveSVGSnapshot(svg, '${path}/reference.svg');
 
                             assert.ok(

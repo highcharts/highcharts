@@ -1,3 +1,10 @@
+---
+description: >-
+  Create DataTables from a DataPool, connector, modifier, or column data, then
+  read, update, clone, and delete rows or columns; the examples also show
+  multiple keyed tables from one connector.
+---
+
 # Data Table
 
 A data table (class `DataTable`) is a structured representation of data consisting of columns and rows.

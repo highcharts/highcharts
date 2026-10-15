@@ -6,5 +6,8 @@ export default {
     controls: [{
         path: 'xAxis.labels.enabled',
         value: false
+    }, {
+        path: 'yAxis.labels.enabled',
+        value: true
     }]
 } satisfies SampleGeneratorConfig;

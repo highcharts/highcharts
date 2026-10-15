@@ -1,3 +1,10 @@
+---
+description: >-
+  Compare several securities by selecting identifiers, view IDs, and converter
+  types, then use the returned columns—named with each security's
+  identifier—to chart measures such as trailing performance side by side.
+---
+
 # Security Compare
 
 This type retrieves investment data for multiple securities, making it ideal for

@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure an X-Ray connector with portfolio holdings, benchmarks, currency,
+  and data points, then load portfolio or holding tables; the page covers
+  APAC/EMEA and Americas APIs and multiple Americas portfolios.
+---
+
 # X-Ray
 
 The Morningstar **X-Ray** capability enables you to quickly analyze a

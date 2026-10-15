@@ -1,3 +1,10 @@
+---
+description: >-
+  Set up the DWS InvestmentsConnector with Morningstar credentials and a
+  security identifier, select one or more converters, and retrieve their named
+  data tables for use in Highcharts or Dashboards.
+---
+
 # Investment Details Connector
 
 The `HighchartsConnectors.MorningstarDWS.InvestmentsConnector` provides access

@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a custom interface for chart annotations by binding HTML buttons to
+  annotation actions. Follow an example that opens a dialog and saves changes
+  to an annotation's fill color.
+---
+
 Annotations GUI
 ===
 

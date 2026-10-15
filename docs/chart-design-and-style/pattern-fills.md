@@ -1,3 +1,10 @@
+---
+description: >-
+  Load the pattern fill module and use predefined patterns, custom SVG paths,
+  or images as chart colors. Configure sizing, point anchoring, and pattern
+  reuse to control how fills are rendered.
+---
+
 Pattern fills
 =============
 

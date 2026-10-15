@@ -68,7 +68,6 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
 /**
  * The Aroon series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.aroon
  *
@@ -96,9 +95,10 @@ class AroonIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/aroon
+     * @requires     indicators/indicators
+     * @requires     indicators/aroon
      * @optionparent plotOptions.aroon
+     * @internal
      */
     public static defaultOptions: AroonOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -160,6 +160,7 @@ class AroonIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: AroonParamsOptions
@@ -244,7 +245,6 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof AroonIndicator;
@@ -259,7 +259,6 @@ SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
  *
  * */
 
-/** @internal */
 export default AroonIndicator;
 
 /* *
@@ -275,11 +274,11 @@ export default AroonIndicator;
  * @extends   series,plotOptions.aroon
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,
+ * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/aroon
+ * @requires  indicators/indicators
+ * @requires  indicators/aroon
  * @apioption series.aroon
  */
 

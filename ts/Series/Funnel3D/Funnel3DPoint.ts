@@ -45,12 +45,15 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public dlBoxRaw!: Record<string, number>;
 
     public options!: Funnel3DPointOptions;
 
+    /** @internal */
     public series!: Funnel3DSeries;
 
+    /** @internal */
     public y!: number;
 
 }
@@ -62,6 +65,7 @@ class Funnel3DPoint extends ColumnSeries.prototype.pointClass {
  * */
 
 interface Funnel3DPoint {
+    /** @internal */
     shapeType: string;
 }
 extend(Funnel3DPoint.prototype, {

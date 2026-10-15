@@ -34,9 +34,12 @@ import type FlagsSeriesOptions from './FlagsSeriesOptions';
  *         Flags on a line series
  *
  * @extends      plotOptions.column
- * @excluding    animation, borderColor, borderWidth,
- *               colorByPoint, cropThreshold, dataGrouping, pointPadding,
- *               pointWidth, turboThreshold
+ * @excluding    animation, boostBlending, boostThreshold, borderColor,
+ *               borderWidth, colorByPoint, cropThreshold, dataGrouping, depth,
+ *               edgeColor, edgeWidth, groupZPadding, lowMarker,
+ *               nullInteraction, onPoint, pointPadding, pointWidth,
+ *               startFromThreshold, threshold, trackByArea, turboThreshold,
+ *               zoomEnabled
  * @product      highstock
  * @optionparent plotOptions.flags
  */
@@ -67,9 +70,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
 
     /**
-   * What type of legend symbol to render for this series. For flags
-   * series, the default is `flag-icon`, a pole with a pennant.
-   *
+     * What type of legend symbol to render for this series. For flags
+     * series, the default is `flag-icon`, a pole with a pennant.
+     *
      * @default   flag-icon
      * @product   highstock
      * @apioption plotOptions.flags.legendSymbol
@@ -150,10 +153,9 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
         pointFormat: '{point.text}'
     },
 
-    /**
-     * @type {number|null}
-     */
-    threshold: null,
+    /** @ignore-option */
+    threshold: null, // Don't stretch the Y axis like column does
+
 
     /**
      * The text to display on each flag. This can be defined on series
@@ -268,7 +270,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * `.highcharts-flag-series .highcharts-point` rule.
      *
      * @type    {Highcharts.CSSObject}
-     * @default {"fontSize": "11px", "fontWeight": "bold"}
+     * @default { "color": "var(--highcharts-neutral-color-100)", "fontSize": "0.7em", "fontWeight": "bold" }
      * @product highstock
      */
     style: {
@@ -288,12 +290,21 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flags
- * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
- *            connectNulls, cropThreshold, dashStyle, dataGrouping, dataParser,
- *            dataURL, gapSize, gapUnit, linecap, lineWidth, marker,
- *            pointPadding, pointWidth, step, turboThreshold, useOhlcData
+ * @excluding animation, boostBlending, boostThreshold, borderColor,
+ *            borderWidth, colorByPoint, connectNulls, cropThreshold,
+ *            dashStyle, dataGrouping, depth, edgeColor, edgeWidth, gapSize,
+ *            gapUnit, groupZPadding, linecap, lowMarker, marker,
+ *            nullInteraction, onPoint, pointPadding, pointWidth,
+ *            startFromThreshold, step, threshold, trackByArea,
+ *            turboThreshold, useOhlcData, zoomEnabled
  * @product   highstock
  * @apioption series.flags
+ */
+
+/**
+ * @excluding changeDecimals, valueDecimals, valuePrefix, valueSuffix
+ * @product   highstock
+ * @apioption series.flags.tooltip
  */
 
 /**

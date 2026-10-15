@@ -1,5 +1,9 @@
 ---
 tags: ["grid-pro"]
+description: >-
+  Implement custom cell content and renderer classes, register a renderer type
+  for grid options, and add the interfaces required for edit mode; the example
+  builds a textarea renderer.
 ---
 
 # Custom renderers

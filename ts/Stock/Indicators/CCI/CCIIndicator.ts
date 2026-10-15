@@ -65,7 +65,6 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 /**
  * The CCI series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.cci
  *
@@ -89,9 +88,10 @@ class CCIIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cci
+     * @requires     indicators/indicators
+     * @requires     indicators/cci
      * @optionparent plotOptions.cci
+     * @internal
      */
     public static defaultOptions: CCIOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -118,6 +118,7 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CCIParamsOptions
@@ -187,7 +188,6 @@ class CCIIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface CCIIndicator {
     pointClass: typeof CCIPoint;
 }
@@ -198,7 +198,6 @@ interface CCIIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cci: typeof CCIIndicator;
@@ -213,7 +212,6 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  *
  * */
 
-/** @internal */
 export default CCIIndicator;
 
 /* *
@@ -228,10 +226,9 @@ export default CCIIndicator;
  *
  * @extends   series,plotOptions.cci
  * @since     6.0.0
- * @excluding dataParser, dataURL
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cci
+ * @requires  indicators/indicators
+ * @requires  indicators/cci
  * @apioption series.cci
  */
 

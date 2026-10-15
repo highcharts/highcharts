@@ -13,6 +13,9 @@ The resulting data set can be visualized at https://jsfiddle.net/highcharts/mh61
 
 */
 
+// Tags to list. Set false to fetch all tags.
+const TAGS = ['12.4.0', '12.5.0', '12.6.0', '13.0.0', '13.0.1', '13.0.2'];
+
 const { Octokit } = require('@octokit/rest');
 const fs = require('fs').promises; // eslint-disable-line
 const gzipSize = require('gzip-size');
@@ -31,7 +34,7 @@ const octokit = new Octokit({
 (async function () {
     const getReleases = async () => {
         //*
-        let tags = await octokit
+        let tags = TAGS || await octokit
             .paginate(
                 'GET /repos/:owner/:repo/tags',
                 {
@@ -41,7 +44,7 @@ const octokit = new Octokit({
             );
 
         tags = tags
-            .map(tag => tag.name.replace(/^v/, ''))
+            .map(tag => (tag.name || tag).replace(/^v/, ''))
             .filter(ver => semver.valid(ver));
 
         tags = semverSort(tags);
@@ -75,25 +78,33 @@ const octokit = new Octokit({
     };
 
     const getVersionFilesize = async version => new Promise((resolve, reject) => {
-        https.get(`https://code.highcharts.com/${version}/${filepath}`, res => {
-            const data = [];
+        https.get(
+            `https://code.highcharts.com/${version}/${filepath}`,
+            {
+                headers: {
+                    Referer: 'https://www.highcharts.com/'
+                }
+            },
+            res => {
+                const data = [];
 
-            res.on('data', chunk => {
-                data.push(chunk);
-            });
+                res.on('data', chunk => {
+                    data.push(chunk);
+                });
 
-            res.on('end', () => {
-                const bytes = data.reduce((prev, current) => prev + current.length, 0);
-                const kB = parseFloat((bytes / 1024).toFixed(1));
+                res.on('end', () => {
+                    const bytes = data.reduce((prev, current) => prev + current.length, 0);
+                    const kB = parseFloat((bytes / 1024).toFixed(1));
 
-                const gzipped = gzipSize.sync(data.join(), { level: 9, memLevel: 9 });
-                const gzippedKB = parseFloat((gzipped / 1024).toFixed(1));
+                    const gzipped = gzipSize.sync(data.join(), { level: 9, memLevel: 9 });
+                    const gzippedKB = parseFloat((gzipped / 1024).toFixed(1));
 
-                resolve([version, kB, gzippedKB]);
-            });
+                    resolve([version, kB, gzippedKB]);
+                });
 
-            res.on('error', e => reject(e));
-        });
+                res.on('error', e => reject(e));
+            }
+        );
     });
 
     const releases = await getReleases();

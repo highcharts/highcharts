@@ -37,7 +37,6 @@ import { clamp, merge } from '../../Shared/Utilities.js';
 /**
  * The ColumnPyramidSeries class
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.columnpyramid
  *
@@ -51,6 +50,7 @@ class ColumnPyramidSeries extends ColumnSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ColumnPyramidSeriesOptions = merge(
         ColumnSeries.defaultOptions,
         ColumnPyramidSeriesDefaults
@@ -266,7 +266,6 @@ class ColumnPyramidSeries extends ColumnSeries {
  *
  * */
 
-/** @internal */
 interface ColumnPyramidSeries {
     pointClass: typeof ColumnPyramidPoint;
 }
@@ -277,7 +276,6 @@ interface ColumnPyramidSeries {
  *
  * */
 
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnpyramid: typeof ColumnPyramidSeries;
@@ -292,5 +290,4 @@ SeriesRegistry.registerSeriesType('columnpyramid', ColumnPyramidSeries);
  *
  * */
 
-/** @internal */
 export default ColumnPyramidSeries;

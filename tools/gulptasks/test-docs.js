@@ -54,6 +54,11 @@ async function checkDocsConsistency() {
             let requires = match[1]
                 .replace(/^(stock|maps|gantt)\//u, '');
 
+            // Product markers like `product:highmaps` have no master file.
+            if (requires.startsWith('product:')) {
+                continue;
+            }
+
             // The @require tags in the master files are relative to the npm
             // package root (#21470)
             if (

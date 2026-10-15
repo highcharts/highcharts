@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [ 'master' ]
     paths:
+      - 'package.json'
+      - 'package-lock.json'
       - 'css/**'
       - '!css/dashboards*'
       - '!css/grid*'

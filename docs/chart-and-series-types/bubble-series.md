@@ -1,3 +1,10 @@
+---
+description: >-
+  Map x and y positions alongside a z value that controls bubble area or
+  width, then set size bounds, thresholds, symbols, and a color key.
+  Examples show how a color axis adds another data dimension.
+---
+
 Bubble series
 =============
 

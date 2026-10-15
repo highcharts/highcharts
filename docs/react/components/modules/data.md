@@ -1,3 +1,9 @@
+---
+description: >-
+  Load the data module through its React component and provide module settings
+  as props; the example supplies CSV text for Highcharts to use as chart data.
+---
+
 # Data
 
 You can add the [data module](https://www.highcharts.com/docs/working-with-data/data-module) to your chart using the `Data` component:
