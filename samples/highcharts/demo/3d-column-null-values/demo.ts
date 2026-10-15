@@ -56,4 +56,4 @@ Highcharts.chart('container', {
             ['Vietnam', 10014]
         ]
     }]
-});
+} satisfies Highcharts.Options);
