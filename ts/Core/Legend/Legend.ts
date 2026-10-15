@@ -41,6 +41,8 @@ import {
     animObject,
     setAnimation
 } from '../Animation/AnimationUtilities.js';
+import D from '../Defaults.js';
+const { setOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -48,6 +50,7 @@ const {
     composed,
     marginNames
 } = H;
+import LegendDefaults from './LegendDefaults.js';
 import Series from '../Series/Series.js';
 import Point from '../Series/Point.js';
 import R from '../Renderer/RendererUtilities.js';
@@ -1958,8 +1961,13 @@ namespace Legend {
                  * @name Highcharts.Chart#legend
                  * @type {Highcharts.Legend}
                  */
-                this.legend = new Legend(this, this.options.legend);
+                this.legend = new Legend(
+                    this,
+                    this.options.legend as LegendOptions
+                );
             });
+
+            setOptions({ legend: LegendDefaults });
         }
 
     }

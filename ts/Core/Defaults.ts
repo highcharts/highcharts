@@ -23,7 +23,6 @@ import type { DefaultOptions, Options } from './Options';
 
 import ChartDefaults from './Chart/ChartDefaults.js';
 import H from './Globals.js';
-import LegendDefaults from './Legend/LegendDefaults.js';
 const {
     isTouchDevice
 } = H;
@@ -1079,9 +1078,6 @@ const defaultOptions: DefaultOptions = {
      * [the series array](#series).
      */
     plotOptions: {},
-
-    legend: LegendDefaults,
-
 
     /**
      * The loading options control the appearance of the loading screen

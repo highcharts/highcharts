@@ -52,7 +52,7 @@ declare module '../Options' {
          * legend. Either as a gradient, or as multiple legend items for
          * `dataClasses`.
          */
-        legend: LegendOptions;
+        legend?: LegendOptions;
     }
 }
 
