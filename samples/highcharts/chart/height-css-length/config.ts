@@ -5,7 +5,9 @@ import type {
 export default {
     controls: [{
         path: 'chart.height',
-        type: 'text',
+        type: 'number',
+        min: 10,
+        max: 40,
         value: '20rem'
     }],
     chartOptionsExtra: {

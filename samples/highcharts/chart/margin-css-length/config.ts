@@ -5,19 +5,23 @@ import type {
 export default {
     controls: [{
         path: 'chart.marginTop',
-        type: 'text',
+        min: 0,
+        max: 10,
         value: '5rem'
     }, {
         path: 'chart.marginRight',
-        type: 'text',
+        min: 0,
+        max: 10,
         value: '3rem'
     }, {
         path: 'chart.marginBottom',
-        type: 'text',
+        min: 0,
+        max: 10,
         value: '4rem'
     }, {
         path: 'chart.marginLeft',
-        type: 'text',
+        min: 0,
+        max: 10,
         value: '6rem'
     }],
     details: {

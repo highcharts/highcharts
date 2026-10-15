@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'scrollbar.height',
-        type: 'text',
+        min: 0.5,
+        max: 3,
         value: '1.5rem'
     }],
     dataFile: 'usdeur.json',

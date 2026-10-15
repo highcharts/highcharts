@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'plotOptions.treegraph.marker.radius',
-        type: 'text',
+        min: 0.5,
+        max: 3,
         value: '1.5rem'
     }],
     modules: ['modules/treemap', 'modules/treegraph'],

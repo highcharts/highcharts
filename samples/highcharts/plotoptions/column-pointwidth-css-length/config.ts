@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'plotOptions.column.pointWidth',
-        type: 'text',
+        min: 0.5,
+        max: 6,
         value: '1.5rem'
     }],
     chartOptionsExtra: {

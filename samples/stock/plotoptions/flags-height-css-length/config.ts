@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'plotOptions.flags.height',
-        type: 'text',
+        min: 1,
+        max: 3,
         value: '2rem'
     }],
     templates: [],
@@ -29,6 +30,7 @@ export default {
             type: 'flags',
             name: 'Events',
             shape: 'squarepin',
+            y: -56,
             data: [{
                 x: Date.UTC(2025, 0, 3),
                 title: 'A'

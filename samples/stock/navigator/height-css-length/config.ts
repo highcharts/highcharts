@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'navigator.height',
-        type: 'text',
+        min: 2,
+        max: 12,
         value: '6rem'
     }],
     dataFile: 'usdeur.json',

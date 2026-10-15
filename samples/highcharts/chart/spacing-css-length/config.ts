@@ -5,19 +5,23 @@ import type {
 export default {
     controls: [{
         path: 'chart.spacingTop',
-        type: 'text',
+        min: 0,
+        max: 6,
         value: '3rem'
     }, {
         path: 'chart.spacingRight',
-        type: 'text',
+        min: 0,
+        max: 6,
         value: '2rem'
     }, {
         path: 'chart.spacingBottom',
-        type: 'text',
+        min: 0,
+        max: 6,
         value: '3rem'
     }, {
         path: 'chart.spacingLeft',
-        type: 'text',
+        min: 0,
+        max: 6,
         value: '4rem'
     }],
     details: {

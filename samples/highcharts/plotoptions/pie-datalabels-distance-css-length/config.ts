@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'plotOptions.pie.dataLabels.distance',
-        type: 'text',
+        min: -3,
+        max: 6,
         value: '3rem'
     }],
     templates: [],

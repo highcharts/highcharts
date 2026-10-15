@@ -40,7 +40,8 @@ Highcharts.stockChart('container', {
             ],
             name: 'Events',
             shape: 'squarepin',
-            type: 'flags'
+            type: 'flags',
+            y: -56
         }
     ]
 });

@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'plotOptions.funnel.borderRadius',
-        type: 'text',
+        min: 0,
+        max: 3,
         value: '1rem'
     }],
     modules: ['modules/funnel'],

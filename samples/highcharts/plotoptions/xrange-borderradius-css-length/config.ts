@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'plotOptions.xrange.borderRadius',
-        type: 'text',
+        min: 0,
+        max: 2,
         value: '1rem'
     }],
     modules: ['modules/xrange'],

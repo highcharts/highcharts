@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'legend.width',
-        type: 'text',
+        min: 5,
+        max: 30,
         value: '10rem'
     }],
     templates: [],

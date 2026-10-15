@@ -5,7 +5,8 @@ import type {
 export default {
     controls: [{
         path: 'chart.borderRadius',
-        type: 'text',
+        min: 0,
+        max: 5,
         value: '2rem'
     }],
     chartOptionsExtra: {
