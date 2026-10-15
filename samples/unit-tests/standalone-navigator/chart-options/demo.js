@@ -279,7 +279,26 @@ QUnit.test('Standalone navigator stays at the top, #24714', function (assert) {
 
     assert.strictEqual(
         sized.navigator.chart.chartWidth,
+        100,
+        'Navigator height should set the chart width when inverted, #24714.'
+    );
+
+    sized.destroy();
+
+    const unsized = Highcharts.navigator('container', {
+        chartOptions: {
+            chart: {
+                inverted: true
+            }
+        },
+        series: [{
+            data: [[0, 0], [600, 1]]
+        }]
+    });
+
+    assert.strictEqual(
+        unsized.navigator.chart.chartWidth,
         70,
-        'Inverted navigator should take its breadth across the width.'
+        'Inverted navigator should take its default breadth, #24714.'
     );
 });
