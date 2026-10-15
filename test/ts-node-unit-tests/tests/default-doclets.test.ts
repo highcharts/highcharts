@@ -339,7 +339,8 @@ function parseDocletTags(block: string): Map<string, string> {
     const tags = new Map<string, string>();
     let lines: (Array<string>|undefined);
 
-    for (const line of block.slice(3, -2).split('\n')) {
+    // Split on CRLF too, as `.` in the tag regex doesn't match a trailing `\r`
+    for (const line of block.slice(3, -2).split(/\r?\n/u)) {
         const text = line.replace(/^\s*\*?\s?/u, '');
         const match = text.match(/^@(\w+)\s*(.*)$/u);
 
@@ -816,6 +817,20 @@ describe('Helper: collectApiOptionDefaults', () => {
             "['#2caffe', '#544fc5']"
         );
         strictEqual(defaults.has('plotOptions.foo.noDefault'), false);
+    });
+
+    it('reads blocks with CRLF line endings', () => {
+        const src = parseSource([
+            '/**',
+            ' * @default   true',
+            ' * @apioption scrollbar.showFull',
+            ' */'
+        ].join('\r\n'));
+
+        strictEqual(
+            collectApiOptionDefaults(src).get('scrollbar.showFull'),
+            'true'
+        );
     });
 });
 
