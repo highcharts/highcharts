@@ -234,6 +234,11 @@ export interface RenderingSettings {
     header?: HeaderSettings;
 
     /**
+     * Options to control how popups are rendered.
+     */
+    popups?: PopupsSettings;
+
+    /**
      * Options to control the table rendering.
      */
     table?: TableSettings;
@@ -445,6 +450,22 @@ export interface HeaderSettings {
 /**
  * Options to control the table rendering.
  */
+export interface PopupsSettings {
+
+    /**
+     * Whether popups, such as context menus and the column filter, are laid
+     * out inside the Grid container, which hides its overflow and so cuts
+     * them off at its edges.
+     *
+     * Defaults to whether the browser lacks the Popover API: where popovers
+     * are available, popups are laid out against the window instead, where
+     * nothing clips them, and close when their anchor scrolls off screen.
+     *
+     * @internal
+     */
+    insideContainer?: boolean;
+}
+
 export interface TableSettings {
     /**
      * The custom CSS class name for the table.

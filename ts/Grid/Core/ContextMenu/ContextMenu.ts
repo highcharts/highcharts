@@ -247,6 +247,12 @@ class ContextMenu extends Menu {
         super.show(anchor);
     }
 
+    protected override get prefersPopover(): boolean {
+        // An element given a menu with `attach` may sit anywhere on the page,
+        // which the grid container cannot contain.
+        return this.context?.target.type === 'element' || super.prefersPopover;
+    }
+
     public override hide(): void {
         const target = this.context?.target;
 

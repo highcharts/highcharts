@@ -383,7 +383,9 @@ test.describe('Table editing column rename', () => {
         await expect(page.locator('.hcg-menu-divider')).toHaveCount(1);
     });
 
-    test('A menu taller than the grid scrolls instead of being cut off', async ({ page }) => {
+    test('A menu taller than the viewport scrolls instead of being cut off', async ({ page }) => {
+        // Short enough that the five item menu cannot fit on screen either.
+        await page.setViewportSize({ width: 900, height: 150 });
         await page.setContent(PAGE, { waitUntil: 'networkidle' });
         await page.evaluate(async () => {
             // Short enough that the five item menu cannot fit.
@@ -402,20 +404,20 @@ test.describe('Table editing column rename', () => {
 
         const fit = await page.evaluate(() => {
             const popup = document.querySelector('.hcg-popup');
-            const wrapper = popup.parentElement;
             const p = popup.getBoundingClientRect();
-            const w = wrapper.getBoundingClientRect();
             return {
-                insideTop: p.top >= w.top,
-                insideBottom: p.bottom <= w.bottom,
-                scrolls: popup.scrollHeight > popup.clientHeight
+                insideTop: p.top >= 0,
+                insideBottom: p.bottom <= window.innerHeight,
+                scrolls: popup.scrollHeight > popup.clientHeight,
+                isPopover: popup.matches(':popover-open')
             };
         });
 
         expect(fit).toEqual({
             insideTop: true,
             insideBottom: true,
-            scrolls: true
+            scrolls: true,
+            isPopover: true
         });
 
         // The items past the fold still have to be reachable by keyboard.

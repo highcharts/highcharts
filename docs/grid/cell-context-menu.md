@@ -259,9 +259,9 @@ of the cell: it is bound to `this` and passed as the first argument to
 `onClick`. Built-in action IDs are not available here, since they act on a row
 or a column.
 
-The menu is rendered inside the Grid, so it opens at the edge of the Grid
-nearest the element rather than under the cursor when the element sits outside
-it. Keep the element close to the Grid.
+The element does not have to sit inside the Grid. A menu opened on an attached
+element renders in the browser's top layer, so the Grid, which hides its own
+overflow, cannot clip it.
 
 The call returns a function that detaches the menu again:
 
@@ -272,6 +272,20 @@ detach();
 ```
 
 <iframe src="https://www.highcharts.com/samples/embed/grid-lite/basic/context-menu-attach?force-light-theme" allow="fullscreen"></iframe>
+
+## Menus and the Grid's edges
+
+The Grid container hides its overflow, so anything laid out inside it is cut
+off at its edges. Menus therefore open as native popovers, which nothing on
+the page clips - a menu taller than a short Grid spills over it rather than
+scrolling within it, and a menu opened on an attached element outside the Grid
+is whole wherever that element sits.
+
+A popover is positioned against the window, so it closes itself once its
+anchor has scrolled off screen.
+
+On browsers without the Popover API, which is Baseline since January 2025,
+menus fall back to being laid out inside the Grid, and clipped by it.
 
 ## Nested submenus
 
