@@ -580,11 +580,40 @@ QUnit.test('General Navigator tests', function (assert) {
     assert.strictEqual(
         chart.navigator.height,
         40,
-        '#23989: navigator.height should resolve to pixels when set ' +
-        'via a CSS variable scoped to chart.container'
+        'navigator.height should resolve to pixels when set via a CSS ' +
+        'variable scoped to chart.container, #23989.'
     );
 
     chart.renderTo.style.removeProperty('--hc-navigator-height');
+
+    chart.update({
+        navigator: {
+            height: '25%'
+        }
+    });
+
+    assert.strictEqual(
+        chart.navigator.height,
+        chart.chartHeight / 4,
+        'A percentage navigator.height should resolve against the chart ' +
+        'height, #23989.'
+    );
+
+    chart.redraw(false);
+
+    assert.strictEqual(
+        chart.navigator.height,
+        chart.chartHeight / 4,
+        'Another layout pass should not change the navigator height, #23989.'
+    );
+
+    chart.setSize(void 0, 600, false);
+
+    assert.strictEqual(
+        chart.navigator.height,
+        chart.chartHeight / 4,
+        'The navigator height should follow the new chart height, #23989.'
+    );
 });
 
 QUnit.test('Reversed xAxis with navigator', function (assert) {

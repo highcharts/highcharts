@@ -2998,9 +2998,12 @@ namespace AxisDefaults {
 
         /**
          * The width of a vertical scrollbar or height of a horizontal
-         * scrollbar. Defaults to 20 on touch devices.
+         * scrollbar, either in pixels or as a CSS length expression, e.g.
+         * `'1rem'`. A percentage like `'5%'` is relative to the chart
+         * height, also for a vertical scrollbar. Defaults to 20 on touch
+         * devices.
          *
-         * @type      {number}
+         * @type      {number|Highcharts.CSSLength}
          * @default   14
          * @since     4.2.6
          * @product   highstock

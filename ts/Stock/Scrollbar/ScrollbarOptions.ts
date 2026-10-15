@@ -140,7 +140,7 @@ export interface ScrollbarOptions {
 
     /**
      * The height of the scrollbar, either in pixels or as a CSS length
-     * expression, e.g. a percentage of the chart's plot area height like
+     * expression, e.g. a percentage of the chart height like
      * `'5%'`. If `buttonsEnabled` is true, the height also applies to the
      * width of the scroll arrows so that they are always squares.
      *
@@ -214,7 +214,7 @@ export interface ScrollbarOptions {
     /**
      * The width of a vertical scrollbar or height of a horizontal
      * scrollbar, either in pixels or as a CSS length expression, e.g. a
-     * percentage of the chart's plot area height like `'5%'`. Defaults to
+     * percentage of the chart height like `'5%'`. Defaults to
      * 20 on touch devices.
      *
      * @default   14

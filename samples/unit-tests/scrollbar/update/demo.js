@@ -87,6 +87,35 @@ QUnit.test(
             'variable scoped to chart.container'
         );
 
+        chart.update({
+            scrollbar: {
+                size: '5%'
+            }
+        });
+
+        const scrollbar = chart.scrollbar;
+
+        assert.strictEqual(
+            scrollbar.size,
+            chart.chartHeight / 20,
+            'A percentage scrollbar.size should resolve against the chart ' +
+            'height, #23989.'
+        );
+
+        chart.setSize(void 0, 600, false);
+
+        assert.strictEqual(
+            scrollbar.size,
+            chart.chartHeight / 20,
+            'The scrollbar size should follow the new chart height, #23989.'
+        );
+
+        assert.strictEqual(
+            scrollbar.scrollbar.getBBox().height,
+            scrollbar.size - scrollbar.trackBorderWidth,
+            'The thumb should follow the new scrollbar size, #23989.'
+        );
+
         chart.destroy();
         document.body.removeChild(container);
     }

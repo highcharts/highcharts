@@ -614,7 +614,7 @@ class Navigator {
             // Update navigator axis
             if (options.height || options.xAxis || options.yAxis) {
                 this.height = defined(options.height) ?
-                    chart.relativeLength(options.height, chart.plotHeight) :
+                    chart.relativeLength(options.height, chart.chartHeight) :
                     this.height;
                 const offsets = this.getXAxisOffsets();
 
@@ -1321,12 +1321,12 @@ class Navigator {
             height = navigatorEnabled ?
                 chart.relativeLength(
                     navigatorOptions.height || 0,
-                    chart.plotHeight
+                    chart.chartHeight
                 ) : 0,
             scrollbarHeight = scrollbarEnabled ?
                 chart.relativeLength(
                     scrollbarOptions.height || 0,
-                    chart.plotHeight
+                    chart.chartHeight
                 ) : 0,
             scrollButtonSize =
                 scrollbarOptions.buttonsEnabled && scrollbarHeight || 0;
@@ -2169,14 +2169,14 @@ class Navigator {
                         navigator = chart.navigator as Navigator,
                         scrollbarOptions = navigator.scrollbarOptions,
                         navHeight = navigator.navigatorOptions.height || 0,
-                        scrollbarHeight = scrollbarOptions?.height || 0,
-                        plotHeight = chart.plotHeight;
+                        chartHeight = chart.chartHeight;
 
-                    // Re-resolve against the current plot height (#23989)
+                    // Re-resolve on resize. The chart height is the base, as
+                    // the plot height depends on the navigator size (#23989)
                     navigator.height = navigator.navigatorEnabled ?
-                        chart.relativeLength(navHeight, plotHeight) : 0;
-                    navigator.scrollbarHeight = navigator.scrollbarEnabled ?
-                        chart.relativeLength(scrollbarHeight, plotHeight) : 0;
+                        chart.relativeLength(navHeight, chartHeight) : 0;
+                    navigator.scrollbarHeight = navigator.scrollbarEnabled &&
+                        navigator.scrollbar?.updateSize() || 0;
                     navigator.scrollButtonSize = (
                         scrollbarOptions?.buttonsEnabled &&
                         navigator.scrollbarHeight
