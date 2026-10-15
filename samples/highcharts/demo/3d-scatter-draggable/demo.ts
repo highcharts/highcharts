@@ -1,7 +1,7 @@
 // Give the points a 3D feel by adding a radial gradient
 Highcharts.setOptions({
-    colors: Highcharts.getOptions().colors.map(function (color) {
-        return {
+    colors: Highcharts.getOptions().colors.map(
+        (color: string): Highcharts.GradientColorObject => ({
             radialGradient: {
                 cx: 0.4,
                 cy: 0.3,
@@ -9,10 +9,10 @@ Highcharts.setOptions({
             },
             stops: [
                 [0, color],
-                [1, Highcharts.color(color).brighten(-0.2).get('rgb')]
+                [1, Highcharts.color(color).brighten(-0.2).get('rgb') as string]
             ]
-        };
-    })
+        })
+    )
 });
 
 // Set up the chart
@@ -41,13 +41,6 @@ const chart = new Highcharts.Chart({
     },
     subtitle: {
         text: 'Click and drag the plot area to rotate in space'
-    },
-    plotOptions: {
-        scatter: {
-            width: 10,
-            height: 10,
-            depth: 10
-        }
     },
     yAxis: {
         min: 0,
@@ -97,18 +90,18 @@ const chart = new Highcharts.Chart({
 
 
 // Add mouse and touch events for rotation
-(function (H) {
-    function dragStart(eStart) {
+(({ addEvent }) => {
+    function dragStart(eStart: Highcharts.PointerEventObject) {
         eStart = chart.pointer.normalize(eStart);
 
         const posX = eStart.chartX,
             posY = eStart.chartY,
             alpha = chart.options.chart.options3d.alpha,
             beta = chart.options.chart.options3d.beta,
-            sensitivity = 5,  // lower is more sensitive
-            handlers = [];
+            sensitivity = 5, // lower is more sensitive
+            handlers: Array<Function> = [];
 
-        function drag(e) {
+        function drag(e: Highcharts.PointerEventObject) {
             // Get e.chartX and e.chartY
             e = chart.pointer.normalize(e);
 
@@ -131,13 +124,12 @@ const chart = new Highcharts.Chart({
             handlers.length = 0;
         }
 
-        handlers.push(H.addEvent(document, 'mousemove', drag));
-        handlers.push(H.addEvent(document, 'touchmove', drag));
+        handlers.push(addEvent(document, 'mousemove', drag));
+        handlers.push(addEvent(document, 'touchmove', drag));
 
-
-        handlers.push(H.addEvent(document, 'mouseup', unbindAll));
-        handlers.push(H.addEvent(document, 'touchend', unbindAll));
+        handlers.push(addEvent(document, 'mouseup', unbindAll));
+        handlers.push(addEvent(document, 'touchend', unbindAll));
     }
-    H.addEvent(chart.container, 'mousedown', dragStart);
-    H.addEvent(chart.container, 'touchstart', dragStart);
-}(Highcharts));
+    addEvent(chart.container, 'mousedown', dragStart);
+    addEvent(chart.container, 'touchstart', dragStart);
+})(Highcharts);
