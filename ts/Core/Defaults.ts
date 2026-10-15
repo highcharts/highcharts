@@ -2313,11 +2313,12 @@ const defaultOptions: DefaultOptions = {
         /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility. Since v12.6.0, the callback also receives `ctx` as the
-         * first argument, so that arrow functions can access the same context
-         * as regular functions using `this`.
+         * flexibility. The callback receives the `pointFormat` string as the
+         * first argument. Since v12.6.0, it also receives `ctx` as the second
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
          *
-         * @type      {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
+         * @type      {Highcharts.TooltipPointFormatterCallbackFunction}
          * @since     4.1.0
          * @context   Highcharts.Point
          * @apioption tooltip.pointFormatter

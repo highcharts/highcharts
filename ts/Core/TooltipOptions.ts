@@ -19,8 +19,6 @@ import type { AlignValue, VerticalAlignValue } from './Renderer/AlignObject';
 import type AnimationOptions from './Animation/AnimationOptions';
 import type ColorType from './Color/ColorType';
 import type CSSObject from './Renderer/CSSObject';
-import type F from './Templating';
-import type Point from './Series/Point';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type Time from './Time';
 import type Tooltip from './Tooltip';
@@ -587,7 +585,7 @@ export interface TooltipOptions {
      *
      * @since     4.1.0
      */
-    pointFormatter?: F.FormatterCallback<Point>;
+    pointFormatter?: Tooltip.PointFormatterCallbackFunction;
     /**
      * Positioning options for fixed tooltip, taking effect only when
      * [tooltip.fixed](#tooltip.fixed) is `true`.
