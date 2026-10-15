@@ -377,3 +377,87 @@ QUnit.test('Shared tooltip with multiple axes', assert => {
         'Tooltip should NOT have anchorY for multiple points'
     );
 });
+
+QUnit.test(
+    'Scatter and bubble use shared tooltips with default formats',
+    function (assert) {
+        [
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: '[<b>1</b>, <b>12</b>]<br/>'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: '[<b>1</b>, <b>12</b>], Size: <b>2</b><br/>'
+            },
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: '<b>12</b><br/>',
+                xAxisType: 'datetime'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: '<b>12</b>, Size: <b>2</b><br/>',
+                xAxisType: 'datetime'
+            },
+            {
+                type: 'scatter',
+                data: [[1, 12]],
+                expected: '<b>12</b><br/>',
+                categories: ['A', 'B', 'C'],
+                xAxisType: 'category'
+            },
+            {
+                type: 'bubble',
+                data: [[1, 12, 2]],
+                expected: '<b>12</b>, Size: <b>2</b><br/>',
+                categories: ['A', 'B', 'C'],
+                xAxisType: 'category'
+            }
+        ].forEach(function (testCase) {
+            const chart = Highcharts.chart('container', {
+                    chart: {
+                        type: testCase.type
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    series: [{
+                        name: 'Temperature',
+                        data: testCase.data
+                    }, {
+                        name: 'Humidity',
+                        data: testCase.data
+                    }],
+                    xAxis: {
+                        type: testCase.xAxisType || 'linear',
+                        categories: testCase.categories
+                    }
+                }),
+                points = chart.series.map(series => series.points[0]);
+
+            points[0].onMouseOver();
+
+            assert.strictEqual(
+                chart.hoverPoints.length,
+                2,
+                `Both ${testCase.type} series should be in the shared tooltip`
+            );
+            assert.deepEqual(
+                chart.tooltip.bodyFormatter(points),
+                points.map(point =>
+                    '<span style="color:' + point.color + '">●</span> ' +
+                    point.series.name + ': ' +
+                    testCase.expected
+                ),
+                `${testCase.type} should use the default point format`
+            );
+
+            chart.destroy();
+        });
+    }
+);
