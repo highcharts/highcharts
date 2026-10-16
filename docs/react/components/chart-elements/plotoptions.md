@@ -35,3 +35,5 @@ option and specific series keys like
 [`plotOptions.line`](https://api.highcharts.com/highcharts/plotOptions.line)
 and
 [`plotOptions.column`](https://api.highcharts.com/highcharts/plotOptions.column).
+
+See [Series](https://www.highcharts.com/docs/chart-concepts/series) for how `plotOptions` and individual series options combine.

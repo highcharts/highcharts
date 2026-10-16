@@ -50,7 +50,7 @@ Highcharts React provides dedicated React components for chart elements and modu
 
 ### Chart elements
 
-You can use element components to shape your chart structure:
+You can use element components to shape your chart structure. Element components and series go inside `<Chart>`, and each maps to a Highcharts option such as `title`, `legend`, or a `series` entry:
 
 ```tsx
 import { Chart, Title, Legend } from "@highcharts/react";
@@ -118,7 +118,7 @@ export default function MarkerClustersChart() {
           [1, 5],
           [1, 6],
         ]}
-        cluster={{ enabled: true }}
+        options={{ cluster: { enabled: true } }}
       />
     </Chart>
   );

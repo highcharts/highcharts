@@ -1,8 +1,8 @@
 ---
 description: >-
-  Configure y-axis options with the YAxis component, including plot bands,
-  pass axis API settings as props, and supply axis title text as child content
-  within a chart.
+  Configure y-axis options such as plot bands with the YAxis component, pass
+  axis API settings as props, set the axis title through children or the title
+  prop, and add several y-axes that series select by index.
 ---
 
 # YAxis
@@ -25,4 +25,24 @@ export default function YAxisChart() {
 }
 ```
 
-The `YAxis` component accepts all [y-axis API options](https://api.highcharts.com/highcharts/yAxis) as props. The [axis title text](https://api.highcharts.com/highcharts/yAxis.title.text) can be passed as `children`.
+The `YAxis` component accepts all [y-axis API options](https://api.highcharts.com/highcharts/yAxis) as props.
+
+Children set [`title.text`](https://api.highcharts.com/highcharts/yAxis.title.text), and the `title` prop carries the other [title options](https://api.highcharts.com/highcharts/yAxis.title), as in `<YAxis title={{ align: "high" }}>Y axis values</YAxis>`.
+
+A chart can have several y-axes, one `YAxis` component per axis. A series selects an axis by its index, which follows the order the components are written in (see [Child order](https://www.highcharts.com/docs/react/component-children#child-order)):
+
+```tsx
+import { Chart, YAxis } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+
+export default function MultipleYAxesChart() {
+  return (
+    <Chart>
+      <YAxis /> {/* index 0 */}
+      <YAxis opposite={true} /> {/* index 1 */}
+      <LineSeries data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[1, 2, 5, 3, 4]} options={{ yAxis: 1 }} />
+    </Chart>
+  );
+}
+```

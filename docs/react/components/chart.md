@@ -1,8 +1,9 @@
 ---
 description: >-
   Create Core, Stock, Maps, or Gantt charts with the corresponding root
-  component, place series and elements inside it, and configure selected chart
-  props, options, refs, and container attributes.
+  component, configure selected chart props, options, refs, and container
+  attributes, see which value wins when an option is set twice, and pass Stock
+  range selector, navigator, and scrollbar options.
 ---
 
 # Chart
@@ -39,7 +40,7 @@ export default function ChartComponent() {
 }
 ```
 
-### Props:
+### Props
 
 | Option           | Type                                                                                          | Default                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | ---------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -68,6 +69,22 @@ export default function ChartComponent() {
 
 > **Note:** These props cover only selected chart options. Configure all other options through the `options` prop.
 
+The `options` prop is available on the chart components (`Chart`, `StockChart`, `MapsChart`, `GanttChart`), series components, and technical indicator components. Option components such as `Title` and `XAxis` do not have it.
+
+To set other title, subtitle, or credits properties, use the `Title`, `Subtitle`, and `Credits` components. There is no `Caption` component; set other caption properties in [`options.caption`](https://api.highcharts.com/highcharts/caption).
+
+Instead of the `height` and `width` props, you can size the chart by styling its container `<div>` through `containerProps.style`. See [Design and style](https://www.highcharts.com/docs/chart-design-and-style/design-and-style#chart).
+
+### Option precedence
+
+When the same option is set in more than one place, this merge order determines which value wins, from lowest to highest priority:
+
+1. `options` prop
+2. Direct props
+3. Options from children
+
+This applies to `Chart`, `StockChart`, `MapsChart`, and `GanttChart`.
+
 ## Highcharts Stock
 
 Use the `StockChart` component to create Stock charts:
@@ -92,6 +109,34 @@ export default function StockChartComponent() {
 ```
 
 **Note:** Shares the exact same [props](#props) as the `Chart` component.
+
+Options for the range selector, navigator, and scrollbar have no dedicated components or direct props. Pass them through the `options` prop:
+
+```tsx
+import { StockChart } from "@highcharts/react/Stock";
+import { LineSeries } from "@highcharts/react/series/Line";
+
+export default function StockOptionsChart() {
+  return (
+    <StockChart
+      options={{
+        rangeSelector: { inputEnabled: false },
+        navigator: { enabled: false },
+        scrollbar: { enabled: false },
+      }}
+    >
+      <LineSeries
+        data={[
+          [1609459200000, 100],
+          [1609545600000, 105],
+          [1609632000000, 110],
+          // More data...
+        ]}
+      />
+    </StockChart>
+  );
+}
+```
 
 You can also use **technical indicators** with your Stock charts. See the [Technical indicators](https://www.highcharts.com/docs/react/components/technical-indicators) documentation.
 
