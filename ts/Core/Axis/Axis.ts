@@ -1957,7 +1957,7 @@ class Axis {
         axis.minPixelPadding = transA * minPointOffset;
 
         // Scale for a linked axis with its own pixel length
-        axis.lenRatio = (!axis.isRadial && axis.len && linkedParent?.len) ?
+        axis.lenRatio = (axis.len && linkedParent?.len) ?
             axis.len / linkedParent.len :
             1;
 
