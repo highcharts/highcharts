@@ -65,6 +65,7 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         LineSeries.defaultOptions,
         ScatterSeriesDefaults
@@ -91,7 +92,7 @@ class ScatterSeries extends LineSeries {
     /* eslint-disable valid-jsdoc */
     /**
      * Optionally add the jitter effect.
-     * @private
+     * @internal
      */
     public applyJitter(): void {
         const series = this,
@@ -101,7 +102,7 @@ class ScatterSeries extends LineSeries {
         /**
          * Return a repeatable, pseudo-random number based on an integer
          * seed.
-         * @private
+         * @internal
          */
         function unrandom(seed: number): number {
             const rand = Math.sin(seed) * 10000;
@@ -141,7 +142,7 @@ class ScatterSeries extends LineSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public drawGraph(): void {
         if (this.options.lineWidth) {
@@ -161,6 +162,7 @@ class ScatterSeries extends LineSeries {
  * */
 
 interface ScatterSeries {
+    /** @internal */
     pointClass: typeof ScatterPoint;
 }
 extend(ScatterSeries.prototype, {
