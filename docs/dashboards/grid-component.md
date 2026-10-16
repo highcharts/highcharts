@@ -15,12 +15,12 @@ The **Grid Component** acts as a wrapper for **Highcharts Grid** that can be pla
 
 ### 1. Import
 
-To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [grid-pro.js](https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
+To use **Grid Pro** as a component in Dashboards, you need to import the required modules, [grid-pro.js](https://code.highcharts.com/grid-pro/grid-pro.js) and [dashboards.js](https://code.highcharts.com/dashboards/dashboards.js), and bind them together.
 
 The order of the imports is essential, so ensure the **Dashboards** module is imported after the **Grid** module.
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://code.highcharts.com/grid-pro/grid-pro.js"></script>
 <script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
 ```
 
@@ -40,7 +40,7 @@ You must also import the styles in your main CSS file.
 
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/grid-pro/css/grid-pro.css");
 ```
 
 ### 3. Cell identifier
