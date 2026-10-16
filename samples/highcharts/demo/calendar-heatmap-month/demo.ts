@@ -21,10 +21,9 @@ function createChart(data, weekdays) {
         tooltip: {
             enabled: true,
             outside: true,
-            zIndex: 20,
             headerFormat: '',
-            pointFormat: '{#unless point.custom.empty}{point.date:%A, %b %e, ' +
-                '%Y}{/unless}',
+            pointFormat: '{#unless point.custom.empty}' +
+                '{point.custom.date:%A, %b %e, %Y}{/unless}',
             nullFormat: 'No data'
         },
 
@@ -112,10 +111,15 @@ function createChart(data, weekdays) {
                 y: 1
             }]
         }]
-    });
+    } satisfies Highcharts.Options);
 }
 
-const data = [{
+interface TemperatureData {
+    date: string;
+    temperature: number;
+}
+
+const data: TemperatureData[] = [{
     date: '2023-07-01',
     temperature: 19.1
 },
@@ -244,7 +248,9 @@ const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 // The function takes in a dataset and calculates how many empty tiles needed
 // before and after the dataset is plotted.
-function generateChartData(data) {
+function generateChartData(
+    data: TemperatureData[]
+): Highcharts.PointOptionsObject[] {
 
     // Calculate the starting weekday index (0-6 of the first date in the given
     // array)
@@ -254,7 +260,7 @@ function generateChartData(data) {
         lastWeekday = new Date(lastElement).getDay(),
         lengthOfWeek = 6,
         emptyTilesFirst = firstWeekday,
-        chartData = [];
+        chartData: Highcharts.PointOptionsObject[] = [];
 
     // Add the empty tiles before the first day of the month with null values to
     // take up space in the chart
@@ -263,8 +269,8 @@ function generateChartData(data) {
             x: emptyDay,
             y: 5,
             value: null,
-            date: null,
             custom: {
+                date: null,
                 empty: true
             }
         });
@@ -287,8 +293,8 @@ function generateChartData(data) {
             x: xCoordinate,
             y: 5 - yCoordinate,
             value: temperature,
-            date: new Date(date).getTime(),
             custom: {
+                date: new Date(date).getTime(),
                 monthDay: id
             }
         });
@@ -301,8 +307,8 @@ function generateChartData(data) {
             x: (lastWeekday + emptyDay) % 7,
             y: 0,
             value: null,
-            date: null,
             custom: {
+                date: null,
                 empty: true
             }
         });
