@@ -97,12 +97,13 @@
         document.getElementById(
             'overlays'
         ).addEventListener('change', function (e) {
-            const series = chart.get('overlay');
+            const series = chart.get('overlay'),
+                target = e.target as HTMLSelectElement;
 
             if (series) {
                 series.remove(false);
                 chart.addSeries({
-                    type: e.target.value,
+                    type: target.value,
                     linkedTo: 'aapl',
                     id: 'overlay'
                 });
@@ -112,12 +113,13 @@
         document.getElementById(
             'oscillators'
         ).addEventListener('change', function (e) {
-            const series = chart.get('oscillator');
+            const series = chart.get('oscillator'),
+                target = e.target as HTMLSelectElement;
 
             if (series) {
                 series.remove(false);
                 chart.addSeries({
-                    type: e.target.value,
+                    type: target.value,
                     linkedTo: 'aapl',
                     id: 'oscillator',
                     yAxis: 2
