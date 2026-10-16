@@ -81,7 +81,7 @@ function getChartDefaults(inverted?: boolean): DeepPartial<Options> {
         chart: inverted ? {
             width: 70,
             height: void 0,
-            margin: [5, 0, 5, 0]
+            margin: [5, 0, 25, 0]
         } : {
             width: void 0,
             height: 70,
