@@ -5,18 +5,10 @@
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
 
-    // split the data set into ohlc and volume
+    // Split the data set into ohlc and volume
     const ohlc = [],
         volume = [],
-        dataLength = data.length,
-        // set the allowed units for data grouping
-        groupingUnits = [[
-            'week',                         // unit name
-            [1]                             // allowed multiples
-        ], [
-            'month',
-            [1, 2, 3, 4, 6]
-        ]];
+        dataLength = data.length;
 
     for (let i = 0; i < dataLength; i += 1) {
         ohlc.push([
@@ -33,7 +25,7 @@
         ]);
     }
 
-    // create the chart
+    // Create the chart
     Highcharts.stockChart('container', {
 
         rangeSelector: {
@@ -84,7 +76,13 @@
         plotOptions: {
             series: {
                 dataGrouping: {
-                    units: groupingUnits
+                    units: [[
+                        'week', // unit name
+                        [1]     // allowed multiples
+                    ], [
+                        'month',
+                        [1, 2, 3, 4, 6]
+                    ]]
                 }
             }
         },
@@ -121,5 +119,5 @@
                 enabled: false
             }
         }]
-    });
+    } satisfies Highcharts.Options);
 })();
