@@ -11,6 +11,7 @@ import { hideBin } from 'yargs/helpers';
 const ROOT = process.cwd();
 const SAMPLE_GLOB = 'samples/stock/demo/**/demo.js';
 const HIGHCHARTS_DECLARATIONS = path.join(ROOT, 'code', 'highcharts.d.ts');
+const STOCK_DECLARATIONS = path.join(ROOT, 'code', 'modules', 'stock.d.ts');
 const exclude = [
     // Highcharts.patterns not typed in highcharts.d.ts
     'highcharts/demo/accessible-pie',
@@ -136,7 +137,7 @@ async function writeSampleFiles(demoJsPath, sourceText) {
     return path.relative(ROOT, demoTsPath);
 }
 
-function compileDemo(sourceFileName) {
+function compileDemo(sourceFileName, demoJsPath) {
     const compilerOptions = {
         target: TS.ScriptTarget.ES2022,
         module: TS.ModuleKind.ES2022,
@@ -150,10 +151,13 @@ function compileDemo(sourceFileName) {
         strict: false
     };
 
-    const program = TS.createProgram([
-        HIGHCHARTS_DECLARATIONS,
-        sourceFileName
-    ], compilerOptions);
+    const rootFiles = [HIGHCHARTS_DECLARATIONS];
+
+    if (demoJsPath.includes(`${path.sep}samples${path.sep}stock${path.sep}`)) {
+        rootFiles.push(STOCK_DECLARATIONS);
+    }
+
+    const program = TS.createProgram([...rootFiles, sourceFileName], compilerOptions);
     return TS.getPreEmitDiagnostics(program);
 }
 
@@ -182,7 +186,7 @@ async function verifySample(demoJsPath, tempRoot) {
     const tempDemoTsPath = path.join(sampleTempDir, 'demo.ts');
     await fs.writeFile(tempDemoTsPath, transformedText, 'utf8');
 
-    const diagnostics = compileDemo(tempDemoTsPath);
+    const diagnostics = compileDemo(tempDemoTsPath, demoJsPath);
     const hasDiagnostics = diagnostics.length > 0;
     const shouldWrite = !exclude.some(pattern =>
         relativeJsPath.includes(pattern)
