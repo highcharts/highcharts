@@ -5,22 +5,11 @@
         'https://www.highcharts.com/samples/data/large-dataset.json'
     ).then(response => response.json());
 
-    // Create a timer
-    const start = +new Date();
+    console.time('Chart render');
 
     // Create the chart
     Highcharts.stockChart('container', {
         chart: {
-            events: {
-                load: function () {
-                    if (!window.TestController) {
-                        this.setTitle(null, {
-                            text:
-                            'Built chart in ' + (new Date() - start) + 'ms'
-                        });
-                    }
-                }
-            },
             zooming: {
                 type: 'x'
             }
@@ -66,13 +55,6 @@
             align: 'left'
         },
 
-        subtitle: {
-            text:
-                'Built chart in ...', // placeholder text to reserve space
-            // for dynamic subtitle
-            align: 'left'
-        },
-
         series: [{
             name: 'Temperature',
             data: data.data,
@@ -85,5 +67,7 @@
         }]
 
     });
+
+    console.timeEnd('Chart render');
 
 })();
