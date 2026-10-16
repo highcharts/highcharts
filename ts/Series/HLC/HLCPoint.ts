@@ -73,7 +73,8 @@ class HLCPoint extends ColumnPoint {
     public yBottom?: number;
 
     /**
-     * Get the origin position for entrance animation of new points
+     * Get the origin position for entrance animation of new points.
+     * @internal
      */
     public getOrigin(
         { x = 0 }: SVGAttributes,
