@@ -43,11 +43,11 @@ function createChart(data) {
             opacity: 0.5,
             enableMouseTracking: false
         }]
-    });
+    } satisfies Highcharts.Options);
 }
 
 // One-dimensional data
-const data = [
+const data: number[] = [
     3.5993454979464623,
     3.308439047292145,
     4.84618516110036,
@@ -251,9 +251,9 @@ const data = [
 ];
 
 // Plugin to add bell curve zones and labels
-(({ addEvent, seriesTypes }) => {
+(({ addEvent, Series }) => {
     const decoratedSeries = [];
-    addEvent(seriesTypes.bellcurve, 'render', function () {
+    addEvent(Series.types.bellcurve, 'render', function () {
 
         if (decoratedSeries.includes(this)) {
             return;
