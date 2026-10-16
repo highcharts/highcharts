@@ -18,6 +18,8 @@ const exclude = [
     'highcharts/demo/advanced-accessible',
     // Sonification methods are not yet typed, although they are part of the API
     'highcharts/demo/all-instruments',
+    // HighchartsConnectors is not available
+    'highcharts/demo/annotations',
     // Sonification methods are not yet typed, although they are part of the API
     'highcharts/demo/audio-boxplot'
 ];

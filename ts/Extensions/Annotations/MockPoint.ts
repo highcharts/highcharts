@@ -301,7 +301,7 @@ class MockPoint {
     public target: (ControlTarget|null);
     public ttBelow?: boolean;
     public visible?: boolean;
-    public x?: number;
+    public x?: number|string;
     public y?: (number|null);
 
     /* *
@@ -601,10 +601,10 @@ export default MockPoint;
  *
  * @interface Highcharts.AnnotationMockPointOptionsObject
  *//**
- * The x position of the point. Units can be either in axis
- * or chart pixel coordinates.
+ * The x position of the point. Units can be either in axis or chart pixel
+ * coordinates. Date strings can be used for datetime axes.
  *
- * @type      {number}
+ * @type      {number|string}
  * @name      Highcharts.AnnotationMockPointOptionsObject.x
  *//**
  * The y position of the point. Units can be either in axis
