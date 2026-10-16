@@ -16,7 +16,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     annotations: [{
-        draggable: false,
+        draggable: '',
         shapeOptions: {
             type: 'path',
             strokeWidth: 0
@@ -162,7 +162,7 @@ Highcharts.chart('container', {
             padding: 10,
             style: {
                 fontSize: '12px',
-                fontWeight: 700,
+                fontWeight: '700',
                 textOutline: '3px light-dark(#ffffff80, #00000080)'
             }
         },
@@ -388,4 +388,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
