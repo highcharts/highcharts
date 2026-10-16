@@ -42,7 +42,7 @@ import {
     setAnimation
 } from '../Animation/AnimationUtilities.js';
 import D from '../Defaults.js';
-const { setOptions } = D;
+const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
@@ -1967,7 +1967,7 @@ namespace Legend {
                 );
             });
 
-            setOptions({ legend: LegendDefaults });
+            merge(true, defaultOptions, { legend: LegendDefaults });
         }
 
     }
