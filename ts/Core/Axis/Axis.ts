@@ -1863,6 +1863,15 @@ class Axis {
                 minPointOffset = linkedParent.minPointOffset as any;
                 pointRangePadding = linkedParent.pointRangePadding;
             } else {
+                // #25477: `userMin`/`userMax`, or parsed `min`/`max`
+                const hasExplicitExtremes = isNumber(
+                    axis.userMin ??
+                        axis.chart.time.parse(axis.options.min)
+                ) && isNumber(
+                    axis.userMax ??
+                        axis.chart.time.parse(axis.options.max)
+                );
+
                 axis.series.forEach(function (series): void {
                     const seriesPointRange = hasCategories ?
                             1 :
@@ -1899,11 +1908,21 @@ class Axis {
                         );
 
                         // Determine the total padding needed to the length of
-                        // the axis to make room for the pointRange. If the
-                        // series' pointPlacement is 'on', no padding is added.
+                        // the axis to make room for the pointRange. Padding is
+                        // omitted for pointPlacement 'on', and for 'between'
+                        // when both extremes are explicit finite numbers, so
+                        // shared scales keep the same gridline pixels. An
+                        // automatic extreme keeps the padding so the shifted
+                        // column stays inside the plot (#25477).
                         pointRangePadding = Math.max(
                             pointRangePadding,
-                            isPointPlacementAxis && pointPlacement === 'on' ?
+                            isPointPlacementAxis && (
+                                pointPlacement === 'on' ||
+                                (
+                                    pointPlacement === 'between' &&
+                                    hasExplicitExtremes
+                                )
+                            ) ?
                                 0 :
                                 seriesPointRange
                         );
