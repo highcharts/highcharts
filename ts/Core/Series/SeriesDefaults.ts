@@ -556,7 +556,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @see [navigator.series](#navigator.series)
      *
-     * @type      {Highcharts.PlotSeriesOptions}
+     * @type      {Highcharts.NavigatorSeriesOptions}
      * @since     5.0.0
      * @product   highstock gantt
      * @apioption plotOptions.series.navigatorOptions

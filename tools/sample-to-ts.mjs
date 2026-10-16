@@ -111,7 +111,12 @@ function addOptionsSatisfiesAssertion(sourceText) {
         if (
             TS.isCallExpression(node) &&
             TS.isPropertyAccessExpression(node.expression) &&
-            node.expression.name.text === 'chart' &&
+            (
+                node.expression.name.text === 'chart' ||
+                node.expression.name.text === 'stockChart' ||
+                node.expression.name.text === 'mapChart' ||
+                node.expression.name.text === 'ganttChart'
+            ) &&
             node.arguments.length >= 2 &&
             TS.isObjectLiteralExpression(node.arguments[1])
         ) {
