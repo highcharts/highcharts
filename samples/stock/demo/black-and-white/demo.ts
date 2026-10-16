@@ -1,3 +1,8 @@
+declare namespace Highcharts {
+    interface Series {
+        currentDataGrouping: TimeTicksInfoObject;
+    }
+}
 (async () => {
     const data = await fetch(
         'https://www.highcharts.com/samples/data/new-intraday.json'
@@ -198,11 +203,11 @@
 
                     if (this.isFirst || isAboveD1) {
                         return this.chart.time.dateFormat(
-                            '%d %b %Y', this.value
+                            '%d %b %Y', Number(this.value)
                         );
                     }
                     return this.chart.time.dateFormat(
-                        '%d %b %k:%M', this.value
+                        '%d %b %k:%M', Number(this.value)
                     );
                 }
             }
