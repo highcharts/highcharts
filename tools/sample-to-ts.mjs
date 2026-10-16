@@ -26,7 +26,10 @@ const exclude = [
     // Sonification methods are not yet typed, although they are part of the API
     'highcharts/demo/audio-boxplot',
     // Contains text animation plugin, extending internal props like Fx
-    'highcharts/demo/bar-race'
+    'highcharts/demo/bar-race',
+
+    // Plugin with internal series props
+    'stock/demo/candlestick-volume-width'
 ];
 const ANSI = {
     green: '\u001b[32m',

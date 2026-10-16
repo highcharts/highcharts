@@ -4,7 +4,9 @@
     ).then(response => response.json());
 
     // Define a custom symbol path
-    Highcharts.SVGRenderer.prototype.symbols.oval = function (x, y, w, h) {
+    Highcharts.SVGRenderer.prototype.symbols.oval = (
+        x: number, y: number, w: number, h: number
+    ) => {
         const r = w / 2;
 
         return [
@@ -54,7 +56,7 @@
                     style: {
                         color: '#c5c7c9',
                         opacity: 1,
-                        textOutline: 0
+                        textOutline: 'none'
                     }
                 }
             },
