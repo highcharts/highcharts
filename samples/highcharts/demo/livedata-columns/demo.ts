@@ -76,7 +76,7 @@ Highcharts.chart('container', {
     },
     yAxis: {
         max: 100,
-        title: false,
+        title: null,
         plotBands: [{
             from: 0,
             to: 30,
@@ -91,4 +91,4 @@ Highcharts.chart('container', {
             color: '#ff002633'
         }]
     }
-});
+} satisfies Highcharts.Options);
