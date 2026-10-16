@@ -35,7 +35,9 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
             zooming: {
                 type: 'x'
             },
-            panning: true,
+            panning: {
+                type: 'x'
+            },
             panKey: 'shift',
             scrollablePlotArea: {
                 minWidth: 600,

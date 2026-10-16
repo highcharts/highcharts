@@ -29,16 +29,21 @@ const chart = Highcharts.chart('container', {
             }
         }
     },
-    chart: {
-        events: {
-            render: function () {
-                // Force tooltip below point for last portion of 1st series
-                this.series[0].points.forEach(function (point) {
-                    if (point.x >= new Date('2022').getTime()) {
-                        point.ttBelow = true;
-                    }
-                });
+    tooltip: {
+        positioner: function (x, y, ctx) {
+            const bBox = this.getLabel().getBBox();
+            y = this.chart.plotTop + ctx.plotY - bBox.height - 10;
+            if (y < this.chart.plotTop) {
+                // Go below point
+                y = this.chart.plotTop + ctx.plotY + 10;
             }
+            return {
+                x: Math.min(
+                    this.chart.plotLeft + ctx.plotX - bBox.width / 2,
+                    this.chart.chartWidth - bBox.width - 10
+                ),
+                y
+            };
         }
     },
     accessibility: {
