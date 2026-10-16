@@ -20,7 +20,8 @@ Highcharts.stockChart('container', {
     },
 
     time: {
-        useUTC: false
+        // Local time
+        timezone: void 0
     },
 
     rangeSelector: {
@@ -68,4 +69,4 @@ Highcharts.stockChart('container', {
             return data;
         }())
     }]
-});
+} satisfies Highcharts.Options);

@@ -43,6 +43,10 @@ const argv = Yargs(hideBin(process.argv))
         type: 'number',
         describe: 'Maximum number of demos to verify'
     })
+    .option('index', {
+        type: 'number',
+        describe: 'Index of one eligible unconverted demo to verify'
+    })
     .option('write', {
         choices: ['pass', 'all'],
         describe: 'Write demo.ts files for passing demos or for all demos'
@@ -263,6 +267,23 @@ async function getDemoJsFiles() {
 
 async function main() {
     let demoJsFiles = await getDemoJsFiles();
+
+    if (typeof argv.index === 'number') {
+        if (!Number.isInteger(argv.index) || argv.index < 0) {
+            throw new Error('--index must be a non-negative integer');
+        }
+
+        const selectedDemo = demoJsFiles[argv.index];
+
+        if (!selectedDemo) {
+            throw new Error(
+                `--index ${argv.index} is out of range for ${demoJsFiles.length} eligible demos`
+            );
+        }
+
+        demoJsFiles = [selectedDemo];
+        console.log(`Selecting demo index ${argv.index}: ${path.relative(ROOT, selectedDemo)}`);
+    }
 
     if (typeof argv.limit === 'number') {
         if (!Number.isInteger(argv.limit) || argv.limit < 0) {
