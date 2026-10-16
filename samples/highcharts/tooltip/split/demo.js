@@ -20,7 +20,7 @@ Highcharts.chart('container', {
         distance: 30,
         padding: 5,
         header: {
-            distance: 8
+            distance: 7
         }
     },
 
