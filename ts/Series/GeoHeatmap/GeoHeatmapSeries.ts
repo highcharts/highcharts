@@ -592,7 +592,6 @@ class GeoHeatmapSeries extends MapSeries {
 
 addEvent(GeoHeatmapSeries, 'afterDataClassLegendClick', function (): void {
     this.isDirtyCanvas = true;
-    this.drawPoints();
 });
 
 /* *
