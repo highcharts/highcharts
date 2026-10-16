@@ -53,7 +53,7 @@ Highcharts.setOptions({
     navigator: {
         series: {
             fillColor: {
-                linearGradient: [0, 0, 0, 40],
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 stops: [
                     [0, '#5c0d13'],
                     [1, '#000000']
@@ -137,7 +137,7 @@ Highcharts.setOptions({
             threshold: null,
             color: '#f23644',
             fillColor: {
-                linearGradient: [0, 0, 0, 450],
+                linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
                 stops: [
                     [0, '#5c0d13'],
                     [1, '#000000']
