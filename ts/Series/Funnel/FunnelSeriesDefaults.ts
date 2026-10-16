@@ -52,10 +52,15 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
     /**
      * The corner radius of the border surrounding all points or series. A
      * number signifies pixels. A percentage string, like for example `50%`,
-     * signifies a size relative to the series width.
+     * signifies a size relative to the series width. Also accepts a CSS
+     * length expression, e.g. `'1em'`.
      *
      * @sample highcharts/plotoptions/funnel-border-radius
      *         Funnel and pyramid with rounded border
+     * @sample highcharts/plotoptions/funnel-borderradius-css-length/
+     *         Border radius as a CSS length
+     *
+     * @type {number|Highcharts.CSSLength}
      */
     borderRadius: 0,
 

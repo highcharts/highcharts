@@ -613,7 +613,9 @@ class Navigator {
 
             // Update navigator axis
             if (options.height || options.xAxis || options.yAxis) {
-                this.height = options.height ?? this.height;
+                this.height = defined(options.height) ?
+                    chart.relativeLength(options.height, chart.chartHeight) :
+                    this.height;
                 const offsets = this.getXAxisOffsets();
 
                 this.xAxis.update({
@@ -1316,8 +1318,16 @@ class Navigator {
             navigatorEnabled = navigatorOptions.enabled,
             scrollbarOptions = chartOptions.scrollbar || {},
             scrollbarEnabled = scrollbarOptions.enabled,
-            height = navigatorEnabled && navigatorOptions.height || 0,
-            scrollbarHeight = scrollbarEnabled && scrollbarOptions.height || 0,
+            height = navigatorEnabled ?
+                chart.relativeLength(
+                    navigatorOptions.height || 0,
+                    chart.chartHeight
+                ) : 0,
+            scrollbarHeight = scrollbarEnabled ?
+                chart.relativeLength(
+                    scrollbarOptions.height || 0,
+                    chart.chartHeight
+                ) : 0,
             scrollButtonSize =
                 scrollbarOptions.buttonsEnabled && scrollbarHeight || 0;
 
@@ -2156,7 +2166,28 @@ class Navigator {
                 'getMargins',
                 function (): void {
                     const chart = this,
-                        navigator = chart.navigator as Navigator;
+                        navigator = chart.navigator as Navigator,
+                        scrollbarOptions = navigator.scrollbarOptions,
+                        navHeight = navigator.navigatorOptions.height || 0,
+                        chartHeight = chart.chartHeight;
+
+                    // Re-resolve on resize. The chart height is the base, as
+                    // the plot height depends on the navigator size (#23989)
+                    navigator.height = navigator.navigatorEnabled ?
+                        chart.relativeLength(navHeight, chartHeight) : 0;
+                    navigator.scrollbarHeight = navigator.scrollbarEnabled &&
+                        navigator.scrollbar?.updateSize() || 0;
+                    navigator.scrollButtonSize = (
+                        scrollbarOptions?.buttonsEnabled &&
+                        navigator.scrollbarHeight
+                    ) || 0;
+
+                    // Sync the navigator's own axes so their length updates too
+                    if (navigator.xAxis && navigator.yAxis) {
+                        const dim = chart.inverted ? 'width' : 'height';
+                        navigator.xAxis.options[dim] = navigator.height;
+                        navigator.yAxis.options[dim] = navigator.height;
+                    }
 
                     let marginName: keyof Chart = navigator.opposite ?
                         'plotTop' : 'marginBottom';

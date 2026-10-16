@@ -294,13 +294,16 @@ const PieSeriesDefaults: PieSeriesOptions = {
         /**
          * The distance of the data label from the pie's edge. Negative
          * numbers put the data label on top of the pie slices. Can also be
-         * defined as a percentage of pie's radius. Connectors are only
-         * shown for data labels outside the pie.
+         * defined as a percentage of pie's radius, or as a CSS length
+         * expression, e.g. `'2em'`. Connectors are only shown for data
+         * labels outside the pie.
          *
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
          *         Data labels on top of the pie
+         * @sample highcharts/plotoptions/pie-datalabels-distance-css-length/
+         *         Distance as a CSS length
          *
-         * @type    {number|string}
+         * @type    {number|Highcharts.CSSLength}
          * @since   2.1
          * @product highcharts highmaps
          */

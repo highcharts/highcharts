@@ -58,3 +58,65 @@ QUnit.test('Remove base series with scrollbar only (#7378)', function (assert) {
         'Index of NaN in SVG should be -1'
     );
 });
+
+QUnit.test(
+    'Scrollbar size from CSS expression, including container-scoped ' +
+    'variables (#23989)',
+    function (assert) {
+        const container = document.createElement('div');
+        container.style.setProperty('--hc-scrollbar-size', '18px');
+        document.body.appendChild(container);
+
+        const chart = Highcharts.stockChart(container, {
+            navigator: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: true,
+                size: 'var(--hc-scrollbar-size)'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.strictEqual(
+            chart.scrollbar.size,
+            18,
+            'scrollbar.size should resolve to pixels when set via a CSS ' +
+            'variable scoped to chart.container'
+        );
+
+        chart.update({
+            scrollbar: {
+                size: '5%'
+            }
+        });
+
+        const scrollbar = chart.scrollbar;
+
+        assert.strictEqual(
+            scrollbar.size,
+            chart.chartHeight / 20,
+            'A percentage scrollbar.size should resolve against the chart ' +
+            'height, #23989.'
+        );
+
+        chart.setSize(void 0, 600, false);
+
+        assert.strictEqual(
+            scrollbar.size,
+            chart.chartHeight / 20,
+            'The scrollbar size should follow the new chart height, #23989.'
+        );
+
+        assert.strictEqual(
+            scrollbar.scrollbar.getBBox().height,
+            scrollbar.size - scrollbar.trackBorderWidth,
+            'The thumb should follow the new scrollbar size, #23989.'
+        );
+
+        chart.destroy();
+        document.body.removeChild(container);
+    }
+);

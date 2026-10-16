@@ -217,7 +217,7 @@ class TreegraphSeries extends TreemapSeries {
                     this,
                     columnCount
                 ),
-                radius = relativeLength(
+                radius = chart.relativeLength(
                     markerOptions.radius || 0,
                     Math.min(plotSizeX, plotSizeY)
                 ),

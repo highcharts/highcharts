@@ -28,8 +28,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import {
     extend,
     isNumber,
-    merge,
-    relativeLength
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -123,8 +122,8 @@ class BulletSeries extends ColumnSeries {
                     shapeArgs = point.dlBox;
                 }
 
-                width = relativeLength(
-                    targetOptions.width as any,
+                width = chart.relativeLength(
+                    targetOptions.width,
                     (shapeArgs as any).width
                 );
                 y = series.yAxis.translate(

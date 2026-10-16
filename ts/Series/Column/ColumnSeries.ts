@@ -316,10 +316,16 @@ class ColumnSeries extends Series {
             groupWidth = categoryWidth - 2 * groupPadding,
             pointOffsetWidth = groupWidth / (columnCount || 1),
             pointWidth = Math.min(
-                options.maxPointWidth || xAxis.len,
-                (options.pointWidth ?? pointOffsetWidth * (
-                    1 - 2 * (options.pointPadding as any)
-                ))
+                series.chart.relativeLength(
+                    options.maxPointWidth,
+                    pointOffsetWidth
+                ) || xAxis.len,
+                series.chart.relativeLength(
+                    options.pointWidth ?? pointOffsetWidth * (
+                        1 - 2 * (options.pointPadding as any)
+                    ),
+                    pointOffsetWidth
+                )
             ),
             pointPadding = (pointOffsetWidth - pointWidth) / 2,
             // #1251, #3737
@@ -596,8 +602,12 @@ class ColumnSeries extends Series {
             // Handle point.options.pointWidth
             // @todo Handle grouping/stacking too. Calculate offset properly
             if (defined(point.options.pointWidth)) {
-                pointWidth = barW =
-                    Math.ceil(point.options.pointWidth as any);
+                pointWidth = barW = Math.ceil(
+                    chart.relativeLength(
+                        point.options.pointWidth,
+                        seriesPointWidth
+                    )
+                );
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 
