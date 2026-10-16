@@ -7,9 +7,9 @@
     // Convert the data rows to columns and create a DataTable
     const columns = ['DateTime', 'Open', 'High', 'Low', 'Close', 'Volume']
         .reduce((acc, name, i) => {
-            acc[name] = data.map(row => row[i]);
+            acc[name] = data.map((row: number[]) => row[i]);
             return acc;
-        }, {});
+        }, {} as Record<string, Array<number>>);
     const dataTable = new Highcharts.DataTable({ columns });
 
     // Create the chart
@@ -100,5 +100,5 @@
             },
             yAxis: 1
         }]
-    });
+    } as Highcharts.Options);
 })();
