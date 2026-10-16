@@ -507,23 +507,36 @@ class Fx {
         // For sideways animation, find out how much we need to shift to get the
         // start path Xs to match the end path Xs.
         if (startX && endX && endX.length) {
+            const xLengthDelta = endX.length - startX.length;
+
             for (i = 0; i < startX.length; i++) {
                 // Moving left, new points coming in on right
                 if (startX[i] === endX[0]) {
                     shift = i;
                     break;
                 // Moving right
-                } else if (
-                    startX[0] ===
-                        endX[endX.length - startX.length + i]
-                ) {
+                } else if (startX[0] === endX[xLengthDelta + i]) {
                     shift = i;
                     reverse = true;
                     break;
+                // Shared x in the middle, both edges may differ (#25280).
+                } else if (
+                    endX.length > 2 &&
+                    startX[i] === endX[Math.floor(endX.length / 2)]
+                ) {
+                    const diff = i - Math.floor(endX.length / 2);
+                    // Shift is always a pad count (>= 0). Reverse covers
+                    // sliding either way (new points on the left vs right).
+                    // Subtract length delta so growing windows are not
+                    // over-padded.
+                    shift = Math.max(0, Math.abs(diff) - xLengthDelta);
+                    reverse = diff < 0;
+                    break;
                 // Fixed from the right side, "scaling" left
                 } else if (
-                    startX[startX.length - 1] ===
-                        endX[endX.length - startX.length + i]
+                    startX[startX.length - 1] === endX[xLengthDelta + i] &&
+                    // Ensure right side is not moving (#25280)
+                    startX[startX.length - 1] === endX[endX.length - 1]
                 ) {
                     shift = startX.length - i;
                     break;
