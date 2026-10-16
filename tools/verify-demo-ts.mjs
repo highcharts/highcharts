@@ -20,6 +20,8 @@ const exclude = [
     'highcharts/demo/all-instruments',
     // HighchartsConnectors is not available
     'highcharts/demo/annotations',
+    // Complex demo, various custom props and methods
+    'highcharts/demo/area-race-chart',
     // Sonification methods are not yet typed, although they are part of the API
     'highcharts/demo/audio-boxplot'
 ];

@@ -1,20 +1,26 @@
 /**
  * Highcharts plugin for creating individual arrow-head like inverted bars.
  */
-(function (H) {
-    H.addEvent(
-        H.seriesTypes.column,
+declare namespace Highcharts {
+    interface Point {
+        dlBox?: Highcharts.SVGAttributes;
+        shapeType?: string;
+        stackY?: number;
+    }
+}
+(({ addEvent, Series }) => {
+    addEvent(
+        Series.types.column,
         'afterColumnTranslate',
         function () {
-            const series = this,
-                options = series.options,
-                topMargin = options.topMargin || 0,
-                bottomMargin = options.bottomMargin || 0,
-                idx = series.index;
+            const options = this.options,
+                topMargin: number = options.custom.topMargin || 0,
+                bottomMargin: number = options.custom.bottomMargin || 0,
+                idx = this.index;
 
-            if (options.headSize) {
+            if (options.custom.headSize) {
 
-                series.points.forEach(function (point) {
+                this.points.forEach(point => {
                     const shapeArgs = point.shapeArgs,
                         w = shapeArgs.width,
                         h = shapeArgs.height,
@@ -23,7 +29,7 @@
                         cutLeft = idx !== 0,
                         cutRight = point.stackY !== point.y || !cutLeft;
 
-                    let len = options.headSize; // in pixels
+                    let len = options.custom.headSize; // in pixels
 
                     if (point.y < 0) {
                         len *= -1;
@@ -63,7 +69,7 @@
             }
         }
     );
-}(Highcharts));
+})(Highcharts);
 
 Highcharts.chart('container', {
     chart: {
@@ -75,7 +81,9 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         bar: {
-            headSize: 6,
+            custom: {
+                headSize: 6
+            },
             stacking: 'normal',
             dataLabels: {
                 enabled: true,
@@ -110,7 +118,7 @@ Highcharts.chart('container', {
         labels: {
             enabled: false
         },
-        title: '',
+        title: null,
         accessibility: {
             description: ''
         },
@@ -127,7 +135,7 @@ Highcharts.chart('container', {
     },
     xAxis: {
         visible: false,
-        title: '',
+        title: null,
         accessibility: {
             description: ''
         }
@@ -152,4 +160,4 @@ Highcharts.chart('container', {
         { name: 'Retro Rockets (Powered decent)', data: [-1.5] },
         { name: 'Sky Crane Operation', data: [-1] }
     ]
-});
+} satisfies Highcharts.Options);
