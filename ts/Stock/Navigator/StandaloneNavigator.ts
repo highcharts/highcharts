@@ -20,13 +20,24 @@
 
 import type { StandaloneNavigatorOptions } from './NavigatorOptions';
 import type { SeriesOptions } from '../../Core/Series/SeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { Options } from '../../Core/Options';
+import type Navigator from './Navigator';
+import type { SetRangeEvent } from './Navigator';
+
 import Chart from '../../Core/Chart/Chart.js';
-import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
 import Axis from '../../Core/Axis/Axis.js';
-import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
-import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
+import standaloneNavigatorDefaults, {
+    getChartDefaults
+} from './StandaloneNavigatorDefaults.js';
+import {
+    addEvent,
+    defined,
+    find,
+    fireEvent,
+    merge
+} from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
 /** @internal */
@@ -70,6 +81,23 @@ function compatChartOptions(
     }
 
     return options;
+}
+
+/** @internal */
+function getSizeOptions(
+    options: StandaloneNavigatorOptions
+): DeepPartial<Options> {
+    const { height, width, margin, inverted } =
+            options.chartOptions?.chart || {},
+        chartHeight = height ?? (inverted ? void 0 : options.height || void 0),
+        chartWidth = width ?? (inverted ? options.height || void 0 : void 0);
+
+    return merge(
+        getChartDefaults(inverted),
+        defined(margin) ? { chart: { margin } } : void 0,
+        defined(chartWidth) ? { chart: { width: chartWidth } } : void 0,
+        defined(chartHeight) ? { chart: { height: chartHeight } } : void 0
+    );
 }
 
 /* *
@@ -146,40 +174,24 @@ class StandaloneNavigator {
         userOptions: StandaloneNavigatorOptions
     ) {
         this.userOptions = userOptions = compatChartOptions(userOptions);
+
         this.chartOptions = merge(
             (G as any).getOptions(),
             standaloneNavigatorDefaults,
             userOptions.chartOptions,
-            { navigator: userOptions }
+            getSizeOptions(userOptions),
+            { navigator: userOptions },
+            { navigator: { enabled: true } }
         );
 
-        // For a non-inverted navigator, the height option sets the chart
-        // height unless it is set explicitly in chart options (#21268,
-        // #24715).
-        if (
-            this.chartOptions.chart &&
-            !this.chartOptions.chart.inverted &&
-            !userOptions.chartOptions?.chart?.height &&
-            userOptions.height
-        ) {
-            this.chartOptions.chart.height = userOptions.height;
-        }
+        const chart = new Chart(element, this.chartOptions),
+            navigator = this.navigator = chart.navigator as Navigator,
+            { min, max } = navigator.xAxis.getExtremes();
 
-        const chart = new Chart(element, this.chartOptions);
+        chart.xAxis[0].userMin = min;
+        chart.xAxis[0].userMax = max;
 
-        chart.options = merge(
-            chart.options,
-            { navigator: { enabled: true }, scrollbar: { enabled: true } }
-        );
-
-        if (this.chartOptions.navigator && this.chartOptions.scrollbar) {
-            this.chartOptions.navigator.enabled = true;
-            this.chartOptions.scrollbar.enabled = true;
-        }
-
-        this.navigator = new Navigator(chart);
-        chart.navigator = this.navigator;
-        this.initNavigator();
+        navigator.render(min, max);
     }
 
     /**
@@ -250,9 +262,10 @@ class StandaloneNavigator {
         );
         removeEventCallbacks.push(removeSetRangeEvent);
 
-        let boundAxis = this.boundAxes.filter(function (boundAxis): boolean {
-            return boundAxis.axis === axis;
-        })[0];
+        let boundAxis = find(
+            this.boundAxes,
+            (boundAxis): boolean => boundAxis.axis === axis
+        );
 
         if (!boundAxis) {
             boundAxis = { axis, callbacks: [] };
@@ -405,18 +418,13 @@ class StandaloneNavigator {
         redraw?: boolean
     ): void {
         newOptions = compatChartOptions(newOptions, this.navigator.chart);
-        this.userOptions = merge(this.userOptions, newOptions);
 
-        const chartUserOptions = this.userOptions.chartOptions?.chart;
+        this.userOptions = merge(this.userOptions, newOptions);
 
         this.chartOptions = merge(
             this.chartOptions,
-            (
-                newOptions.height &&
-                !chartUserOptions?.inverted &&
-                !chartUserOptions?.height
-            ) ? { chart: { height: newOptions.height } } : void 0,
             newOptions.chartOptions,
+            getSizeOptions(this.userOptions),
             { navigator: newOptions }
         );
 
@@ -447,32 +455,6 @@ class StandaloneNavigator {
         ));
 
         this.navigator.setBaseSeries();
-    }
-
-    /**
-     * Initialize the standalone navigator.
-     *
-     * @internal
-     */
-    public initNavigator(): void {
-        const nav = this.navigator;
-        nav.top = 1;
-        nav.xAxis.setScale();
-        nav.yAxis.setScale();
-        nav.xAxis.render();
-        nav.yAxis.render();
-        nav.series?.forEach((s): void => {
-            s.translate();
-            s.render();
-            s.redraw();
-        });
-
-        const { min, max } = this.getInitialExtremes();
-
-        nav.chart.xAxis[0].userMin = min;
-        nav.chart.xAxis[0].userMax = max;
-
-        nav.render(min, max);
     }
 
     /**
@@ -535,23 +517,6 @@ class StandaloneNavigator {
                 eventArguments: merge(eventArguments, { trigger: 'navigator' })
             }
         );
-    }
-
-    /**
-     * Get the initial, options based extremes for the standalone navigator.
-     *
-     * @internal
-     *
-     * @return {{ min: number, max: number }}
-     *         The initial minimum and maximum extremes values.
-     */
-    public getInitialExtremes(): { min: number, max: number } {
-        const { min, max } = this.navigator.xAxis.getExtremes();
-
-        return {
-            min: min,
-            max: max
-        };
     }
 }
 
