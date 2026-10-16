@@ -18,7 +18,7 @@ const targets = [
         destination: path.join(repoRoot, '.claude', 'skills')
     },
     {
-        source: path.join(src, 'code-review'),
+        source: path.join(src, 'review-pr'),
         destination: path.join(repoRoot, '.github', 'skills', 'code-review')
     }
 ];
@@ -37,7 +37,7 @@ function printHelp() {
     process.stdout.write(
         [
             'Sync canonical .agents/skills to .claude/skills.',
-            'Also sync code-review to .github/skills/code-review.',
+            'Also sync review-pr to .github/skills/code-review (name: code-review).',
             '',
             'Usage:',
             '  npm run sync:skills -- [--yes]',
@@ -143,6 +143,10 @@ async function run() {
         }
     }
 
+    const reviewSkill = fs.readFileSync(
+        path.join(src, 'review-pr', 'SKILL.md'), 'utf8'
+    ).replace(/^(---\r?\n)name: review-pr(?=\r?\n)/u, '$1name: code-review');
+
     if (targets.some(target => hasEntries(target.destination)) && !assumeYes) {
         if (!process.stdin.isTTY) {
             throw new CliError(
@@ -165,6 +169,11 @@ async function run() {
         clearDirectory(destination);
         copyDirectory(source, destination);
     }
+
+    fs.writeFileSync(
+        path.join(repoRoot, '.github', 'skills', 'code-review', 'SKILL.md'),
+        reviewSkill
+    );
 
     process.stdout.write(`Synced .agents/skills -> ${destinationNames}\n`);
 }

@@ -15,7 +15,8 @@ function fixture(t) {
         fs.writeFileSync(file, content);
     }
 
-    write('.agents/skills/code-review/SKILL.md', 'canonical review');
+    write('.agents/skills/review-pr/SKILL.md',
+        '---\nname: review-pr\n---\ncanonical review-pr review');
     write('.agents/skills/other/SKILL.md', 'canonical other skill');
     write('tools/sync-agent-skills.js', fs.readFileSync(
         new URL('./sync-agent-skills.js', import.meta.url)
@@ -34,19 +35,24 @@ function fixture(t) {
 
 test('syncs review mirrors and preserves unrelated GitHub skills', t => {
     const f = fixture(t);
-    f.write('.claude/skills/obsolete-review/SKILL.md', 'obsolete review');
+    f.write('.claude/skills/code-review/SKILL.md', 'obsolete review');
     f.write('.github/skills/code-review/SKILL.md', 'old review');
     f.write('.github/skills/unrelated/SKILL.md', 'keep this skill');
 
     const result = f.run('--yes');
     assert.equal(result.status, 0, result.stderr);
-    assert.equal(f.read('.claude/skills/code-review/SKILL.md'),
-        'canonical review');
+    assert.equal(f.read('.claude/skills/review-pr/SKILL.md'),
+        '---\nname: review-pr\n---\ncanonical review-pr review');
     assert.equal(f.read('.github/skills/code-review/SKILL.md'),
-        'canonical review');
+        '---\nname: code-review\n---\ncanonical review-pr review');
+    assert.equal(f.read('.agents/skills/review-pr/SKILL.md'),
+        f.read('.claude/skills/review-pr/SKILL.md'));
+    assert.equal(f.exists('.claude/skills/code-review'), false);
+    assert.equal(f.run('--yes').status, 0);
+    assert.equal(f.read('.github/skills/code-review/SKILL.md'),
+        '---\nname: code-review\n---\ncanonical review-pr review');
     assert.equal(f.read('.claude/skills/other/SKILL.md'),
         'canonical other skill');
-    assert.equal(f.exists('.claude/skills/obsolete-review'), false);
     assert.equal(f.exists('.github/skills/other'), false);
     assert.equal(f.read('.github/skills/unrelated/SKILL.md'),
         'keep this skill');
@@ -66,16 +72,16 @@ test('refuses both replacements when only the GitHub mirror exists', t => {
 
 test('checks all sources before replacing either mirror', t => {
     const f = fixture(t);
-    fs.rmSync(path.join(f.root, '.agents/skills/code-review'), {
+    fs.rmSync(path.join(f.root, '.agents/skills/review-pr'), {
         recursive: true
     });
-    f.write('.claude/skills/code-review/SKILL.md', 'keep Claude review');
+    f.write('.claude/skills/review-pr/SKILL.md', 'keep Claude review');
     f.write('.github/skills/code-review/SKILL.md', 'keep GitHub review');
 
     const result = f.run('--yes');
     assert.equal(result.status, 1);
     assert.match(result.stderr, /Missing source directory/);
-    assert.equal(f.read('.claude/skills/code-review/SKILL.md'),
+    assert.equal(f.read('.claude/skills/review-pr/SKILL.md'),
         'keep Claude review');
     assert.equal(f.read('.github/skills/code-review/SKILL.md'),
         'keep GitHub review');

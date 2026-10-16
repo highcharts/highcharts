@@ -3,7 +3,7 @@ name: code-review
 description: Review Highcharts code and pull requests (PRs), branch diffs, staged diffs or selected files for correctness, performance, API consistency, accessibility, security, docs/doclets and tests using CODE_REVIEWS.md.
 ---
 
-# Highcharts Code Review
+# Highcharts PR Review
 
 Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 
