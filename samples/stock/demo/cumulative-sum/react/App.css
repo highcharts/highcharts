@@ -1,0 +1,4 @@
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
