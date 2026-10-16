@@ -54,10 +54,6 @@
             text: 'Custom data grouping tied to range selector'
         },
 
-        _navigator: {
-            enabled: false
-        },
-
         series: [{
             name: 'AAPL',
             data: data,
@@ -71,5 +67,5 @@
                 valueDecimals: 2
             }
         }]
-    });
+    } satisfies Highcharts.Options);
 })();
