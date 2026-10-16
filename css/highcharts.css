@@ -325,9 +325,13 @@
 }
 
 .highcharts-tooltip text,
-.highcharts-tooltip foreignObject div:not(foreignObject > div) {
+.highcharts-tooltip foreignObject > div {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
+}
+
+.highcharts-tooltip foreignObject > div {
+    color: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-tooltip .highcharts-header {
@@ -485,7 +489,7 @@ g.highcharts-series,
 }
 
 .highcharts-data-label text,
-.highcharts-data-label div,
+.highcharts-data-label foreignObject > div,
 text.highcharts-data-label {
     font-size: 0.7em;
     font-weight: bold;
@@ -499,6 +503,10 @@ text.highcharts-data-label {
 .highcharts-data-label text,
 text.highcharts-data-label {
     fill: var(--highcharts-neutral-color-80);
+}
+
+.highcharts-data-label foreignObject > div {
+    color: var(--highcharts-neutral-color-80);
 }
 
 .highcharts-data-label-connector {
@@ -644,18 +652,27 @@ text.highcharts-data-label {
 }
 
 .highcharts-legend-item > text,
-.highcharts-legend-item div {
+.highcharts-legend-item foreignObject > div {
     fill: var(--highcharts-neutral-color-80);
     font-size: 0.8em;
     cursor: pointer;
     stroke-width: 0;
 }
 
+.highcharts-legend-item foreignObject > div {
+    color: var(--highcharts-neutral-color-80);
+}
+
 .highcharts-legend-item:hover text {
     fill: var(--highcharts-neutral-color-100);
 }
 
+.highcharts-legend-item:hover foreignObject > div {
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-legend-item-hidden * {
+    color: var(--highcharts-neutral-color-60) !important;
     fill: var(--highcharts-neutral-color-60) !important;
     stroke: var(--highcharts-neutral-color-60) !important;
     transition: fill 250ms;
