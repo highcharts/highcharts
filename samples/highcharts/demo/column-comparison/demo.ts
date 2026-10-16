@@ -1,10 +1,32 @@
-function generateChart(countries, data, getData, locations) {
+interface Country {
+    name: string;
+    color: string;
+    ucCode?: string;
+}
+
+interface Countries {
+    [key: string]: Country;
+}
+
+interface GameLocation {
+    city: string;
+    year: number;
+}
+
+interface DataGetter {
+    (data: [string, number][]): Highcharts.PointOptionsType[];
+}
+
+function generateChart(
+    countries: Countries,
+    dataRecord: Record<number, Highcharts.PointOptionsType[]>,
+    getData: DataGetter,
+    locations: GameLocation[]
+) {
     const chart =  Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
-        // Custom option for templates
-        countries,
         title: {
             text: 'Summer Olympics 2024 - Top 5 countries by Gold medals',
             align: 'left'
@@ -16,7 +38,7 @@ function generateChart(countries, data, getData, locations) {
             align: 'left'
         },
         plotOptions: {
-            series: {
+            column: {
                 grouping: false,
                 borderWidth: 0
             }
@@ -27,7 +49,7 @@ function generateChart(countries, data, getData, locations) {
         tooltip: {
             shared: true,
             headerFormat: '<span style="font-size: 15px">' +
-                '{series.chart.options.countries.(point.key).name}' +
+                '{series.options.custom.countries.(point.key).name}' +
                 '</span><br/>',
             pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
                 '{series.name}: <b>{point.y} medals</b><br/>'
@@ -40,9 +62,9 @@ function generateChart(countries, data, getData, locations) {
             max: 4,
             labels: {
                 useHTML: true,
-                animate: true,
-                format: '{chart.options.countries.(value).ucCode}<br>' +
-                    '<span class="f32">' +
+                format:
+                    '{chart.series.0.options.custom.countries.(value).ucCode}' +
+                    '<br><span class="f32">' +
                     '<span style="display:inline-block;height:32px;' +
                     'vertical-align:text-top;" class="flag {value}">' +
                     '</span></span>',
@@ -61,8 +83,11 @@ function generateChart(countries, data, getData, locations) {
             color: 'rgba(158, 159, 163, 0.5)',
             pointPlacement: -0.2,
             linkedTo: 'main',
-            data: data[2020].slice(),
-            name: '2020'
+            data: dataRecord[2020].slice(),
+            name: '2020',
+            custom: {
+                countries
+            }
         }, {
             name: '2024',
             id: 'main',
@@ -77,15 +102,15 @@ function generateChart(countries, data, getData, locations) {
                     fontSize: '16px'
                 }
             }],
-            data: getData(data[2024]).slice()
+            data: getData(dataRecord[2024]).slice()
         }],
         exporting: {
             allowHTML: true
         }
-    });
+    } satisfies Highcharts.Options);
 
     locations.forEach(location => {
-        const btn = document.getElementById(location.year);
+        const btn = document.getElementById(location.year.toString());
 
         btn.addEventListener('click', () => {
 
@@ -109,11 +134,11 @@ function generateChart(countries, data, getData, locations) {
                         '/medals" target="_blank">Olympics</a>'
                 },
                 series: [{
-                    name: location.year - 4,
-                    data: data[location.year - 4].slice()
+                    name: String(location.year - 4),
+                    data: dataRecord[location.year - 4].slice()
                 }, {
-                    name: location.year,
-                    data: getData(data[location.year]).slice()
+                    name: String(location.year),
+                    data: getData(dataRecord[location.year]).slice()
                 }]
             }, true, false, {
                 duration: 800
@@ -122,7 +147,7 @@ function generateChart(countries, data, getData, locations) {
     });
 }
 
-const data = {
+const dataRecord = {
     2024: [
         ['kr', 13],
         ['jp', 20],
@@ -202,7 +227,7 @@ const data = {
     ]
 };
 
-const countries = {
+const countries: Countries = {
     kr: {
         name: 'South Korea',
         color: '#FE2371'
@@ -247,13 +272,13 @@ for (const [key, value] of Object.entries(countries)) {
 }
 
 
-const getData = data => data.map(point => ({
+const getData: DataGetter = data => data.map(point => ({
     name: point[0],
     y: point[1],
     color: countries[point[0]].color
 }));
 
-const locations = [
+const locations: GameLocation[] = [
     {
         city: 'Paris',
         year: 2024
@@ -275,4 +300,4 @@ const locations = [
     }
 ];
 
-generateChart(countries, data, getData, locations);
+generateChart(countries, dataRecord, getData, locations);
