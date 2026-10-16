@@ -12,11 +12,14 @@ const ROOT = process.cwd();
 const SAMPLE_GLOB = 'samples/highcharts/demo/**/demo.js';
 const HIGHCHARTS_DECLARATIONS = path.join(ROOT, 'code', 'highcharts.d.ts');
 const exclude = [
-    // @todo: Sonification methods are not yet typed, although they are part
-    // of the API
-    'highcharts/demo/audio-boxplot',
+    // Highcharts.patterns not typed in highcharts.d.ts
+    'highcharts/demo/accessible-pie',
     // Uses custom series type and custom props like Point.highPlot
-    'highcharts/demo/advanced-accessible'
+    'highcharts/demo/advanced-accessible',
+    // Sonification methods are not yet typed, although they are part of the API
+    'highcharts/demo/all-instruments',
+    // Sonification methods are not yet typed, although they are part of the API
+    'highcharts/demo/audio-boxplot'
 ];
 const ANSI = {
     green: '\u001b[32m',
@@ -175,7 +178,9 @@ async function verifySample(demoJsPath, tempRoot) {
 
     const diagnostics = compileDemo(tempDemoTsPath);
     const hasDiagnostics = diagnostics.length > 0;
-    const shouldWrite = (
+    const shouldWrite = !exclude.some(pattern =>
+        relativeJsPath.includes(pattern)
+    ) && (
         argv.write === 'all' ||
         (argv.write === 'pass' && !hasDiagnostics)
     );
@@ -210,13 +215,41 @@ async function fileExists(filePath) {
     }
 }
 
-async function main() {
-    let demoJsFiles = (await glob(SAMPLE_GLOB, {
+function isExcludedDemo(relativePath) {
+    return exclude.some(pattern => relativePath.includes(pattern));
+}
+
+async function getDemoJsFiles() {
+    const demoJsFiles = (await glob(SAMPLE_GLOB, {
         cwd: ROOT,
         absolute: true,
         nodir: true,
         ignore: ['**/node_modules/**']
     })).sort();
+
+    const eligibleFiles = [];
+
+    for (const demoJsPath of demoJsFiles) {
+        const relativeJsPath = path.relative(ROOT, demoJsPath);
+
+        if (isExcludedDemo(relativeJsPath)) {
+            continue;
+        }
+
+        const demoTsPath = demoJsPath.replace(/\.js$/u, '.ts');
+
+        if (await fileExists(demoTsPath)) {
+            continue;
+        }
+
+        eligibleFiles.push(demoJsPath);
+    }
+
+    return eligibleFiles;
+}
+
+async function main() {
+    let demoJsFiles = await getDemoJsFiles();
 
     if (typeof argv.limit === 'number') {
         if (!Number.isInteger(argv.limit) || argv.limit < 0) {
