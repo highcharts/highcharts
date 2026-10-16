@@ -9,7 +9,7 @@ import Yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 const ROOT = process.cwd();
-const SAMPLE_GLOB = 'samples/highcharts/demo/**/demo.js';
+const SAMPLE_GLOB = 'samples/stock/demo/**/demo.js';
 const HIGHCHARTS_DECLARATIONS = path.join(ROOT, 'code', 'highcharts.d.ts');
 const exclude = [
     // Highcharts.patterns not typed in highcharts.d.ts

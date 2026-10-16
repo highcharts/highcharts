@@ -235,4 +235,4 @@ Highcharts.chart('container', {
         ],
         color: '#fc5857'
     }]
-});
+} satisfies Highcharts.Options);
