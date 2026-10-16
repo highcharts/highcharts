@@ -36,7 +36,6 @@
         },
 
         rangeSelector: {
-            animate: false,
             verticalAlign: 'bottom',
             x: 0,
             y: 0,
@@ -77,7 +76,9 @@
                     const chart = e.target.chart;
                     chart.update({
                         subtitle: {
-                            text: '$' + chart.series[0].lastVisiblePrice.y
+                            text: '$' + (
+                                chart.series[0] as any
+                            ).lastVisiblePrice.y
                         }
                     });
                 }
@@ -96,33 +97,43 @@
             // Graph glow effect
             neon: {
                 tagName: 'filter',
-                id: 'neon',
+                attributes: {
+                    id: 'neon'
+                },
                 children: [{
                     tagName: 'feDropShadow',
-                    dx: 0,
-                    dy: 0,
-                    stdDeviation: 1,
-                    'flood-color': lightColor
+                    attributes: {
+                        dx: 0,
+                        dy: 0,
+                        stdDeviation: 1,
+                        'flood-color': lightColor
+                    }
                 }, {
                     tagName: 'feDropShadow',
-                    dx: 0,
-                    dy: 0,
-                    stdDeviation: 2,
-                    'flood-color': lightColor,
-                    'flood-opacity': 0.7
+                    attributes: {
+                        dx: 0,
+                        dy: 0,
+                        stdDeviation: 2,
+                        'flood-color': lightColor,
+                        'flood-opacity': 0.7
+                    }
                 }, {
                     tagName: 'feDropShadow',
-                    dx: 0,
-                    dy: 0,
-                    stdDeviation: 2,
-                    'flood-color': ambientColor
+                    attributes: {
+                        dx: 0,
+                        dy: 0,
+                        stdDeviation: 2,
+                        'flood-color': ambientColor
+                    }
                 }, {
                     tagName: 'feDropShadow',
-                    dx: 0,
-                    dy: 0,
-                    stdDeviation: 8,
-                    'flood-color': ambientColor,
-                    'flood-opacity': 0.8
+                    attributes: {
+                        dx: 0,
+                        dy: 0,
+                        stdDeviation: 8,
+                        'flood-color': ambientColor,
+                        'flood-opacity': 0.8
+                    }
                 }]
             }
         },
@@ -164,5 +175,5 @@
                 }
             }]
         }
-    });
+    } satisfies Highcharts.Options);
 })();

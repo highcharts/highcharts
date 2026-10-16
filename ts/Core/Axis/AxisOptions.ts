@@ -1996,7 +1996,7 @@ export interface AxisSetExtremesEventObject extends Axis.ExtremesObject {
     preventDefault: Function;
     rangeSelectorButton?: RangeSelectorButtonOptions;
     scale?: number;
-    target: SVGElement;
+    target: Axis;
     trigger?: string;
     triggerOp?: string;
     type: 'setExtremes';
