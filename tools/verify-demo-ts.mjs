@@ -11,10 +11,18 @@ import { hideBin } from 'yargs/helpers';
 const ROOT = process.cwd();
 const SAMPLE_GLOB = 'samples/highcharts/demo/**/demo.js';
 const HIGHCHARTS_DECLARATIONS = path.join(ROOT, 'code', 'highcharts.d.ts');
+const exclude = [
+    // @todo: Sonification methods are not yet typed, although they are part
+    // of the API
+    'highcharts/demo/audio-boxplot',
+    // Uses custom series type and custom props like Point.highPlot
+    'highcharts/demo/advanced-accessible'
+];
 const ANSI = {
     green: '\u001b[32m',
     red: '\u001b[31m',
-    reset: '\u001b[39m'
+    reset: '\u001b[39m',
+    yellow: '\u001b[33m'
 };
 
 const argv = Yargs(hideBin(process.argv))
@@ -230,9 +238,20 @@ async function main() {
         for (const demoJsPath of demoJsFiles) {
             const result = await verifySample(demoJsPath, tempRoot);
 
+            for (const pattern of exclude) {
+                if (result.relativePath.includes(pattern)) {
+                    result.status = 'skip';
+                    result.reason = 'Excluded';
+                    break;
+                }
+            }
+
             if (result.status === 'skip') {
                 skipped += 1;
-                console.log(`SKIP  ${result.relativePath}  (${result.reason})`);
+                console.log(colorize(
+                    'yellow',
+                    `SKIP  ${result.relativePath}  (${result.reason})`
+                ));
             } else if (result.status === 'pass') {
                 passed += 1;
                 console.log(colorize('green', `PASS  ${result.relativePath}`));

@@ -14,7 +14,7 @@ Highcharts.setOptions({
         gridLineWidth: 0
     },
     plotOptions: {
-        series: {
+        bullet: {
             pointPadding: 0.25,
             borderWidth: 0,
             targetOptions: {
@@ -69,7 +69,7 @@ Highcharts.chart('container1', {
     tooltip: {
         pointFormat: '<b>{point.y}</b> (with target at {point.target})'
     }
-});
+} satisfies Highcharts.Options);
 
 Highcharts.chart('container2', {
     xAxis: {
