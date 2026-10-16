@@ -661,7 +661,9 @@ namespace OrdinalAxis {
             } else if (!extendedAxis.ordinal.positions) {
                 runBase = true;
 
-            } else if (Math.abs(movedUnits) > 1) {
+            } else if (
+                Math.abs(movedUnits) > ((e as AnyRecord).mouseWheel ? 0 : 1)
+            ) {
 
                 // Remove active points for shared tooltip
                 if (hoverPoints) {

@@ -85,3 +85,51 @@ QUnit.test('#14426: Vertical panning after zooming', assert => {
         'It should be possible to pan up to 0'
     );
 });
+
+QUnit.test('Mousewheel panning in x direction', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zooming: {
+                type: 'x'
+            },
+            panning: true,
+            panKey: 'shift'
+        },
+
+        series: [{
+            data: [
+                23,
+                10,
+                50,
+                100,
+                4,
+                10,
+                23,
+                10,
+                50,
+                100,
+                4,
+                10
+            ]
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.mouseWheel(200, 100, -10000);
+    controller.mouseWheel(200, 100, { deltaY: 10000, shiftKey: true });
+
+    console.log(chart.xAxis[0]);
+
+    assert.close(
+        chart.xAxis[0].min,
+        -0.05,
+        'It should be possible to wheel pan up to 0'
+    );
+
+    assert.close(
+        chart.xAxis[0].max,
+        4.95,
+        'Wheel panning should keep the zoomed range.'
+    );
+
+});
