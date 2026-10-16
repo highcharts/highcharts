@@ -1,6 +1,8 @@
 (async () => {
-    Highcharts.Templating.helpers.lastValue = function () {
-        const data = arguments[0].ctx.data;
+    Highcharts.Templating.helpers.lastValue = function (
+        ...args: { ctx: { data: { y: number; }[]; }; }[]
+    ) {
+        const data = args[0].ctx.data;
         return data[data.length - 1].y.toFixed(2);
     };
 
@@ -63,10 +65,10 @@
         series: [{
             name: 'Invested amount',
             data: data[0],
-            step: true
+            step: 'left'
         }, {
             name: 'Portfolio value',
             data: data[1]
         }]
-    });
+    } satisfies Highcharts.Options);
 })();
