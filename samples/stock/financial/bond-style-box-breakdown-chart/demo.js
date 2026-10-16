@@ -26,6 +26,7 @@ async function renderChart() {
         chart: {
             type: 'heatmap'
         },
+        dataTable: securityDetailsConnector.getTable('BondStyleBoxBreakdown'),
         title: {
             text: 'Aviva Investors - Emerging Markets Bond Fund K USD Acc',
             align: 'left'
@@ -103,9 +104,12 @@ async function renderChart() {
             name: 'Portfolio Weight',
             borderWidth: 1,
             borderColor: '#e5e7e9',
-            keys: ['Type', 'value', 'x', 'y'],
-            data: securityDetailsConnector.getTable('BondStyleBoxBreakdown')
-                .getRows(0, 9),
+            dataMapping: {
+                x: 'Term',
+                y: 'Quality',
+                value: 'N',
+                type: 'Type'
+            },
             dataLabels: {
                 enabled: true,
                 style: {
