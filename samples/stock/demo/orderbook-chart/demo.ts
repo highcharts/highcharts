@@ -1,9 +1,17 @@
-function getRandomNumber(min, max) {
+function getRandomNumber(min: number, max: number): number {
     return Math.round(Math.random() * (max - min)) + min;
 }
 
-function generateBidAndAskData(n) {
-    const data = [[], []];
+interface BidsAsksObject {
+    x: number;
+    y: number;
+    price: number;
+}
+
+function generateBidAndAskData(
+    n: number
+): [BidsAsksObject[], BidsAsksObject[]] {
+    const data: [BidsAsksObject[], BidsAsksObject[]] = [[], []];
     let bidPrice = getRandomNumber(29000, 30000),
         askPrice = bidPrice + 0.5;
     for (let i = 0; i < n; i++) {
@@ -26,7 +34,7 @@ function generateBidAndAskData(n) {
 
 const [bidsData, asksData] = generateBidAndAskData(10);
 
-function updateData(chart) {
+function updateData(chart: Highcharts.Chart) {
     const data = generateBidAndAskData(10);
     chart.series.forEach((s, i) => {
         s.setData(data[i], false);
@@ -44,22 +52,23 @@ Highcharts.chart('container', {
         marginTop: 70,
         events: {
             load() {
-                const chart = this,
-                    toggleButton = document.getElementById('animation-toggle');
+                const toggleButton = document.getElementById(
+                    'animation-toggle'
+                ) as HTMLButtonElement;
 
-                let intervalId = null;
+                let intervalId: number;
                 const toggleInterval = () => {
-                    if (intervalId) {
-                        chart.update({
+                    if (intervalId !== undefined) {
+                        this.update({
                             accessibility: {
                                 enabled: true
                             }
                         });
                         clearInterval(intervalId);
-                        intervalId = null;
+                        intervalId = undefined;
                         toggleButton.innerText = 'Start animation';
                     } else {
-                        chart.update({
+                        this.update({
                             accessibility: {
                                 enabled: false
                             }
@@ -99,7 +108,7 @@ Highcharts.chart('container', {
         shape: 'rect',
         positioner(labelWidth, _, point) {
             const { plotX, plotY, h } = point,
-                negative = plotX < this.chart.yAxis[0].left;
+                negative = plotX < this.chart.yAxis[0].pos;
 
             return {
                 x: negative ? plotX + h - labelWidth + 10 : plotX - h + 10,
@@ -180,7 +189,7 @@ Highcharts.chart('container', {
             style: {
                 color: '#ffffff',
                 fontSize: 16,
-                fontWeight: 700
+                fontWeight: '700'
             },
             y: 10
         }
@@ -199,7 +208,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        bar: {
             animation: false,
             pointPadding: 0,
             groupPadding: 0,
@@ -218,7 +227,7 @@ Highcharts.chart('container', {
             alignTo: 'plotEdges',
             style: {
                 fontSize: 14,
-                textOutline: 0
+                textOutline: 'none'
             },
             format: '{point.y:,.0f}'
         }, {
@@ -226,7 +235,7 @@ Highcharts.chart('container', {
             inside: true,
             style: {
                 fontSize: 13,
-                textOutline: 0
+                textOutline: 'none'
             },
             format: '{point.price:,.1f}'
         }],
@@ -239,7 +248,7 @@ Highcharts.chart('container', {
             alignTo: 'plotEdges',
             style: {
                 fontSize: 14,
-                textOutline: 0
+                textOutline: 'none'
             },
             format: '{point.y:,.0f}'
         }, {
@@ -247,7 +256,7 @@ Highcharts.chart('container', {
             inside: true,
             style: {
                 fontSize: 13,
-                textOutline: 0
+                textOutline: 'none'
             },
             format: '{point.price:,.1f}'
         }],
@@ -256,4 +265,4 @@ Highcharts.chart('container', {
         data: bidsData,
         yAxis: 1
     }]
-});
+} satisfies Highcharts.Options);
