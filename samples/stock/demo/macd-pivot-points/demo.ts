@@ -56,7 +56,7 @@
             zIndex: 0,
             lineWidth: 1,
             dataLabels: {
-                overflow: 'none',
+                overflow: 'allow',
                 crop: false,
                 y: 4,
                 style: {
@@ -68,5 +68,5 @@
             yAxis: 1,
             linkedTo: 'aapl'
         }]
-    });
+    } satisfies Highcharts.Options);
 })();
