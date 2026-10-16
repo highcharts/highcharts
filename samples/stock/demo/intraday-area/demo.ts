@@ -16,10 +16,6 @@
             text: 'Using ordinal X axis'
         },
 
-        xAxis: {
-            gapGridLineWidth: 0
-        },
-
         rangeSelector: {
             buttons: [{
                 type: 'hour',
@@ -67,5 +63,5 @@
             },
             threshold: null
         }]
-    });
+    } satisfies Highcharts.Options);
 })();
