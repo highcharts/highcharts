@@ -27,10 +27,15 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            borderRadius: '25%',
             dataMapping: {
                 name: 'Product'
             }
+        },
+        column: {
+            borderRadius: '25%'
+        },
+        pie: {
+            borderRadius: '25%'
         }
     },
     series: [{
@@ -92,4 +97,4 @@ Highcharts.chart('container', {
             enabled: false
         }
     }]
-});
+} satisfies Highcharts.Options);
