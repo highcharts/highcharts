@@ -6,7 +6,7 @@
         'https://demo-live-data.highcharts.com/aapl-ohlcv.json'
     ).then(response => response.json());
 
-    // split the data set into ohlc and volume
+    // Split the data set into ohlc and volume
     const ohlc = [],
         volume = [],
         dataLength = data.length;
@@ -37,8 +37,7 @@
         },
         xAxis: {
             crosshair: {
-                className: 'highcharts-crosshair-custom',
-                enabled: true
+                className: 'highcharts-crosshair-custom'
             }
         },
         yAxis: [{
@@ -49,11 +48,9 @@
                 snap: false,
                 className: 'highcharts-crosshair-custom',
                 label: {
-                    className: 'highcharts-crosshair-custom-label',
                     enabled: true,
                     format: '{value:.2f}'
-                },
-                enabled: true
+                }
             },
             labels: {
                 align: 'left'
@@ -66,12 +63,10 @@
             crosshair: {
                 className: 'highcharts-crosshair-custom',
                 snap: false,
-                enabled: true,
                 label: {
                     format:
                         '{#if value ge 1000000} {(divide value 1000000):.2f} ' +
                         'M {else} {value} {/if}',
-                    className: 'highcharts-crosshair-custom-label',
                     enabled: true
                 }
             },
@@ -86,10 +81,8 @@
             styledMode: true
         },
         tooltip: {
-            shape: 'square',
             split: false,
             shared: true,
-            headerShape: 'callout',
             fixed: true,
             format: `<span style="font-size: 1.4em">{point.series.name}</span>
 O<span style="color:${colorTemplate}";>{point.open}</span>
@@ -110,8 +103,7 @@ Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`
                 enabled: true,
                 label: {
                     enabled: true,
-                    align: 'left',
-                    x: 8
+                    align: 'left'
                 }
             },
             data: ohlc
@@ -123,8 +115,7 @@ Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`
                     format: '{#if value ge 1000000} ' +
                         '{(divide value 1000000):.2f} M {else} {value} {/if}',
                     enabled: true,
-                    align: 'left',
-                    x: 8
+                    align: 'left'
                 }
             },
             keys: ['x', 'y', 'className'],
@@ -148,5 +139,5 @@ Volume<span style="color:${colorTemplate}";>{points.1.y}</span>`
                 }
             }]
         }
-    });
+    } satisfies Highcharts.Options);
 })();
