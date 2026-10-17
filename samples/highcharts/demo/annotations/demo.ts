@@ -258,5 +258,5 @@ const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
                 threshold: null
             }
         ]
-    });
+    } satisfies Highcharts.Options);
 })();

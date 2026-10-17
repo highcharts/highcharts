@@ -10,8 +10,6 @@ import { hideBin } from 'yargs/helpers';
 
 const ROOT = process.cwd();
 const DEFAULT_SAMPLE_GLOB = 'highcharts/demo/**';
-const HIGHCHARTS_DECLARATIONS = path.join(ROOT, 'code', 'highcharts.d.ts');
-const STOCK_DECLARATIONS = path.join(ROOT, 'code', 'modules', 'stock.d.ts');
 const exclude = [
     // Highcharts.patterns not typed in highcharts.d.ts
     'highcharts/demo/accessible-pie',
@@ -19,8 +17,6 @@ const exclude = [
     'highcharts/demo/advanced-accessible',
     // Sonification methods are not yet typed, although they are part of the API
     'highcharts/demo/all-instruments',
-    // HighchartsConnectors is not available
-    'highcharts/demo/annotations',
     // Complex demo, various custom props and methods
     'highcharts/demo/area-race-chart',
     // Sonification methods are not yet typed, although they are part of the API
@@ -158,27 +154,98 @@ async function writeSampleFiles(demoJsPath, sourceText) {
     return path.relative(ROOT, demoTsPath);
 }
 
-function compileDemo(sourceFileName, demoJsPath) {
-    const compilerOptions = {
-        target: TS.ScriptTarget.ES2022,
-        module: TS.ModuleKind.ES2022,
-        moduleResolution: TS.ModuleResolutionKind.Node10,
-        jsx: TS.JsxEmit.Preserve,
-        noEmit: true,
-        noEmitOnError: true,
-        skipLibCheck: true,
-        allowSyntheticDefaultImports: true,
-        esModuleInterop: true,
-        strict: false
-    };
+function getSampleProduct(relativePath) {
+    return relativePath.split(path.sep)[1];
+}
 
-    const rootFiles = [HIGHCHARTS_DECLARATIONS];
+function getSampleProjectConfigPath(demoJsPath) {
+    const relativePath = path.relative(ROOT, demoJsPath);
+    const product = getSampleProduct(relativePath);
 
-    if (demoJsPath.includes(`${path.sep}samples${path.sep}stock${path.sep}`)) {
-        rootFiles.push(STOCK_DECLARATIONS);
+    if (!product) {
+        throw new Error(`Cannot determine sample product for ${relativePath}`);
     }
 
-    const program = TS.createProgram([...rootFiles, sourceFileName], compilerOptions);
+    return path.join(ROOT, 'samples', `tsconfig.${product}.json`);
+}
+
+function getAncestorSampleConfigPaths(demoJsPath) {
+    const configPaths = [];
+    const samplesRoot = path.join(ROOT, 'samples');
+    let currentDir = path.dirname(demoJsPath);
+
+    while (currentDir.startsWith(samplesRoot)) {
+        const configPath = path.join(currentDir, 'tsconfig.json');
+
+        if (TS.sys.fileExists(configPath)) {
+            configPaths.push(configPath);
+        }
+
+        if (currentDir === samplesRoot) {
+            break;
+        }
+
+        currentDir = path.dirname(currentDir);
+    }
+
+    return configPaths;
+}
+
+function readParsedConfig(configPath) {
+    const parsed = TS.getParsedCommandLineOfConfigFile(
+        configPath,
+        {},
+        TS.sys
+    );
+
+    if (!parsed) {
+        throw new Error(`Unable to parse ${path.relative(ROOT, configPath)}`);
+    }
+
+    return parsed;
+}
+
+function isDeclarationFile(fileName) {
+    return fileName.endsWith('.d.ts') || fileName.endsWith('.d.mts');
+}
+
+function getSampleCompilerContext(demoJsPath) {
+    const projectConfigPath = getSampleProjectConfigPath(demoJsPath);
+    const projectConfig = readParsedConfig(projectConfigPath);
+    const declarationFiles = new Set(
+        projectConfig.fileNames.filter(isDeclarationFile)
+    );
+
+    for (const configPath of getAncestorSampleConfigPaths(demoJsPath)) {
+        const ancestorConfig = readParsedConfig(configPath);
+
+        for (const fileName of ancestorConfig.fileNames) {
+            if (isDeclarationFile(fileName)) {
+                declarationFiles.add(fileName);
+            }
+        }
+    }
+
+    return {
+        compilerOptions: {
+            ...projectConfig.options,
+            noEmit: true,
+            noEmitOnError: true,
+            skipLibCheck: true
+        },
+        declarationFiles: [...declarationFiles]
+    };
+}
+
+function compileDemo(sourceFileName, demoJsPath) {
+    const { compilerOptions, declarationFiles } = getSampleCompilerContext(
+        demoJsPath
+    );
+    const program = TS.createProgram(
+        [...declarationFiles, sourceFileName],
+        compilerOptions
+    );
+
     return TS.getPreEmitDiagnostics(program);
 }
 
