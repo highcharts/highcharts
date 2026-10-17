@@ -15,8 +15,6 @@ const exclude = [
     'highcharts/demo/advanced-accessible',
     // Complex demo, various custom props and methods
     'highcharts/demo/area-race-chart',
-    // Sonification methods are not yet typed, although they are part of the API
-    'highcharts/demo/audio-boxplot',
     // Contains text animation plugin, extending internal props like Fx
     'highcharts/demo/bar-race',
 

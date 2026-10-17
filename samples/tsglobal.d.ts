@@ -37,6 +37,10 @@ declare global {
             sonification: Sonification;
             toggleSonify(): void;
         }
+
+        interface Point {
+            sonify(): void;
+        }
         interface Series {
             // @todo: Add proper support. Used in black-and-white demo.
             currentDataGrouping: TimeTicksInfoObject;

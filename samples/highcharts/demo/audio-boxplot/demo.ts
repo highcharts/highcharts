@@ -22,9 +22,7 @@ const chart = Highcharts.chart('container', {
         csv: document.getElementById('csv').textContent
     },
     xAxis: {
-        crosshair: {
-            enabled: true
-        }
+        crosshair: true
     },
     yAxis: {
         max: 100,
@@ -106,7 +104,7 @@ const chart = Highcharts.chart('container', {
             }]
         }
     }]
-});
+} satisfies Highcharts.Options);
 
 document.getElementById('sonify').onclick = function () {
     chart.toggleSonify();
