@@ -11,8 +11,6 @@ import { hideBin } from 'yargs/helpers';
 const ROOT = process.cwd();
 const DEFAULT_SAMPLE_GLOB = 'highcharts/demo/**';
 const exclude = [
-    // Highcharts.patterns not typed in highcharts.d.ts
-    'highcharts/demo/accessible-pie',
     // Uses custom series type and custom props like Point.highPlot
     'highcharts/demo/advanced-accessible',
     // Sonification methods are not yet typed, although they are part of the API

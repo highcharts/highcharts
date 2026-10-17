@@ -11,6 +11,11 @@ import '../test/test-controller.d';
 import '../test/test-template.d';
 import '../test/test-utilities.d';
 
+declare module '../code/highcharts' {
+    // @todo: Add proper typing for `Highcharts.patterns`
+    export const patterns: Array<PatternOptionsObject>;
+}
+
 /**
  * Global test typings for use in samples.
  */
