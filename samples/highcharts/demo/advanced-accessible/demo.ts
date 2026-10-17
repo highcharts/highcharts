@@ -1,5 +1,17 @@
 // Define custom series type for displaying low/med/high values using
 // boxplot as a base
+declare namespace Highcharts {
+    interface Point {
+        highPlot?: number;
+        isNull?: boolean;
+        medianPlot?: number;
+        low?: number;
+        lowPlot?: number;
+    }
+    interface PlotSeriesOptions {
+        whiskerWidth?: number;
+    }
+}
 Highcharts.seriesType('lowmedhigh', 'boxplot', {
     keys: ['low', 'median', 'high'],
     tooltip: {
@@ -12,9 +24,8 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
     // Change point shape to a line with three crossing lines for
     // low/median/high
     // Stroke width is hardcoded to 1 for simplicity
-    drawPoints: function () {
-        const series = this;
-        this.points.forEach(function (point) {
+    drawPoints: function (this: Highcharts.Series) {
+        this.points.forEach(point => {
             let graphic = point.graphic;
             const verb = graphic ? 'animate' : 'attr',
                 shapeArgs = point.shapeArgs,
@@ -33,13 +44,13 @@ Highcharts.seriesType('lowmedhigh', 'boxplot', {
             }
 
             if (!graphic) {
-                point.graphic = graphic = series.chart.renderer
-                    .path('point')
-                    .add(series.group);
+                point.graphic = graphic = this.chart.renderer
+                    .path()
+                    .add(this.group);
             }
 
             graphic.attr({
-                stroke: point.color || series.color,
+                stroke: point.color || this.color,
                 'stroke-width': 1
             });
 
@@ -143,7 +154,7 @@ const chart = Highcharts.chart('container', {
         ]
     }]
 
-});
+} satisfies Highcharts.Options);
 
 
 // Remove click events on container to avoid having "clickable" announced by AT
