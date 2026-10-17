@@ -121,7 +121,7 @@ Highcharts.chart('container', {
         marker: {
             enabled: false
         },
-        dashStyle: 'shortdot',
+        dashStyle: 'ShortDot',
         tooltip: {
             valueSuffix: ' mb'
         }
@@ -168,4 +168,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
