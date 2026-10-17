@@ -612,6 +612,7 @@ const defaultOptions: DefaultOptions = {
          *         False
          *
          * @deprecated 12.0.0
+         * @type     {boolean}
          */
         useUTC: void 0
     },
