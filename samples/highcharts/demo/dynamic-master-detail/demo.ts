@@ -5,12 +5,12 @@
         'https://www.highcharts.com/samples/data/usdeur.json'
     ).then(response => response.json());
 
-    let detailChart;
+    let detailChart: Highcharts.Chart;
 
     // create the detail chart
-    function createDetail(masterChart) {
+    function createDetail(masterChart: Highcharts.Chart) {
         // prepare the detail chart
-        const detailData = [],
+        const detailData: number[] = [],
             detailStart = data[0][0];
 
         masterChart.series[0].data.forEach(point => {
@@ -82,7 +82,7 @@
                 enabled: false
             }
 
-        }); // return chart
+        } satisfies Highcharts.Options); // return chart
     }
 
     // create the master chart
@@ -106,7 +106,7 @@
                         const extremesObject = event.xAxis[0],
                             min = extremesObject.min,
                             max = extremesObject.max,
-                            detailData = [],
+                            detailData: [number, number][] = [],
                             xAxis = this.xAxis[0];
 
                         // reverse engineer the last part of the data
@@ -179,11 +179,11 @@
                 enabled: false
             },
             plotOptions: {
-                series: {
+                area: {
                     fillColor: {
-                        linearGradient: [0, 0, 0, 70],
+                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1.5 },
                         stops: [
-                            [0, Highcharts.getOptions().colors[0]],
+                            [0, Highcharts.getOptions().colors[0] as string],
                             [1, 'rgba(255,255,255,0)']
                         ]
                     },
