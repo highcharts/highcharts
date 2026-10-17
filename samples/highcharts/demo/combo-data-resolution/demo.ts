@@ -49,7 +49,6 @@ Highcharts.chart('container', {
         labels: {
             format: '{value:.1f}°C'
         },
-        name: 'Temperature change',
         title: {
             text: 'Temp anomaly (compared to 1951-1980 avg.)'
         }
@@ -58,4 +57,4 @@ Highcharts.chart('container', {
         endOnTick: true,
         type: 'datetime'
     }
-});
+} satisfies Highcharts.Options);
