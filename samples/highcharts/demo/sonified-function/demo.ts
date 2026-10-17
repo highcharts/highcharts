@@ -53,7 +53,7 @@ const chart = Highcharts.chart('container', {
     series: [{
         data
     }]
-});
+} satisfies Highcharts.Options);
 
 document.getElementById('sonify').onclick = function () {
     chart.toggleSonify();
