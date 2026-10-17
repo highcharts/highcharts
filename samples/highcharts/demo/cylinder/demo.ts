@@ -41,18 +41,14 @@ Highcharts.chart('container', {
     tooltip: {
         headerFormat: '<b>Age: {category}</b><br>'
     },
-    plotOptions: {
-        series: {
-            depth: 25,
-            colorByPoint: true
-        }
-    },
     series: [{
         data: [
             95321, 169339, 121105, 136046, 106800, 58041, 26766, 14291,
             7065, 3283
         ],
         name: 'Cases',
-        showInLegend: false
+        showInLegend: false,
+        depth: 25,
+        colorByPoint: true
     }]
-});
+} satisfies Highcharts.Options);
