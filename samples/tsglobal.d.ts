@@ -14,6 +14,8 @@ import '../test/test-utilities.d';
 declare module '../code/highcharts' {
     // @todo: Add proper typing for `Highcharts.patterns`
     export const patterns: Array<PatternOptionsObject>;
+
+    export const sonification: Sonification;
 }
 
 /**
@@ -21,6 +23,20 @@ declare module '../code/highcharts' {
  */
 declare global {
     namespace Highcharts {
+
+        interface Sonification {
+            InstrumentPresets: string[];
+            speak(
+                text: string,
+                options?: any,
+                delay?: number
+            ): void;
+        }
+
+        interface Chart {
+            sonification: Sonification;
+            toggleSonify(): void;
+        }
         interface Series {
             // @todo: Add proper support. Used in black-and-white demo.
             currentDataGrouping: TimeTicksInfoObject;

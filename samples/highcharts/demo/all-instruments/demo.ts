@@ -12,11 +12,11 @@ const chart = Highcharts.chart('container', {
         afterSeriesWait: 1100,
         events: {
             // Announce first series before playing
-            beforePlay: function (e) {
+            beforePlay: function (e: { chart: Highcharts.Chart }) {
                 e.chart.sonification.speak('Revenue');
             },
             // Announce second series after first one ends
-            onSeriesEnd: function (e) {
+            onSeriesEnd: function (e: { series: Highcharts.Series }) {
                 if (e.series.index === 0) {
                     e.series.chart.sonification.speak('Profit margin', {}, 150);
                 }
@@ -106,7 +106,7 @@ const chart = Highcharts.chart('container', {
         yAxis: 1,
         pointWidth: 30
     }]
-});
+} satisfies Highcharts.Options);
 
 document.getElementById('sonify').onclick = function () {
     chart.toggleSonify();
@@ -121,12 +121,13 @@ Object.keys(
     document.getElementById('preset').appendChild(option);
 });
 
-document.getElementById('preset').onchange = function () {
-    chart.update({
-        sonification: {
-            defaultInstrumentOptions: {
-                instrument: this.value
+(document.getElementById('preset') as HTMLSelectElement)
+    .addEventListener('change', function () {
+        chart.update({
+            sonification: {
+                defaultInstrumentOptions: {
+                    instrument: this.value
+                }
             }
-        }
-    }, false);
-};
+        }, false);
+    });

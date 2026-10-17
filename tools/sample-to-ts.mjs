@@ -13,8 +13,6 @@ const DEFAULT_SAMPLE_GLOB = 'highcharts/demo/**';
 const exclude = [
     // Uses custom series type and custom props like Point.highPlot
     'highcharts/demo/advanced-accessible',
-    // Sonification methods are not yet typed, although they are part of the API
-    'highcharts/demo/all-instruments',
     // Complex demo, various custom props and methods
     'highcharts/demo/area-race-chart',
     // Sonification methods are not yet typed, although they are part of the API
