@@ -10,16 +10,6 @@ const commonOptions = {
 
 const NVIDIACorpId = '0P000003RE';
 
-declare namespace HighchartsConnectors {
-    namespace Morningstar {
-        class TimeSeriesConnector {
-            constructor(options: any);
-            load(): Promise<void>;
-            getTable(): Highcharts.DataTable;
-        }
-    }
-}
-
 const NVIDIAPriceConnector =
     new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         ...commonOptions,

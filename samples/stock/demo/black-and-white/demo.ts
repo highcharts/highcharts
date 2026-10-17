@@ -1,8 +1,3 @@
-declare namespace Highcharts {
-    interface Series {
-        currentDataGrouping: TimeTicksInfoObject;
-    }
-}
 (async () => {
     const data = await fetch(
         'https://www.highcharts.com/samples/data/new-intraday.json'
