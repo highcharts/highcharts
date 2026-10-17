@@ -34,7 +34,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        dumbbell: {
             dataSorting: {
                 enabled: true,
                 sortKey: 'low'
@@ -106,4 +106,4 @@ Highcharts.chart('container', {
         }]
     }]
 
-});
+} satisfies Highcharts.Options);
