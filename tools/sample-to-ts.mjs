@@ -9,7 +9,7 @@ import Yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 const ROOT = process.cwd();
-const SAMPLE_GLOB = 'samples/stock/demo/**/demo.js';
+const DEFAULT_SAMPLE_GLOB = 'highcharts/demo/**';
 const HIGHCHARTS_DECLARATIONS = path.join(ROOT, 'code', 'highcharts.d.ts');
 const STOCK_DECLARATIONS = path.join(ROOT, 'code', 'modules', 'stock.d.ts');
 const exclude = [
@@ -31,7 +31,9 @@ const exclude = [
     // Plugin with internal series props
     'stock/demo/candlestick-volume-width',
     // Stock Tools
-    'stock/demo/stock-tools-custom-gui'
+    'stock/demo/stock-tools-custom-gui',
+    // @todo: Document `annotations.langKey`
+    'stock/demo/technical-analysis'
 ];
 const ANSI = {
     green: '\u001b[32m',
@@ -41,6 +43,11 @@ const ANSI = {
 };
 
 const argv = Yargs(hideBin(process.argv))
+    .option('samples', {
+        type: 'string',
+        default: DEFAULT_SAMPLE_GLOB,
+        describe: 'Glob under samples/ to include, e.g. highcharts/demo/**'
+    })
     .option('limit', {
         type: 'number',
         describe: 'Maximum number of demos to verify'
@@ -244,7 +251,8 @@ function isExcludedDemo(relativePath) {
 }
 
 async function getDemoJsFiles() {
-    const demoJsFiles = (await glob(SAMPLE_GLOB, {
+    const sampleGlob = (argv.samples || DEFAULT_SAMPLE_GLOB).replace(/^samples\//u, '');
+    const demoJsFiles = (await glob(`samples/${sampleGlob}/demo.js`, {
         cwd: ROOT,
         absolute: true,
         nodir: true,

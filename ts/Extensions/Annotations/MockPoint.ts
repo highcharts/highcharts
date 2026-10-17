@@ -619,7 +619,7 @@ export default MockPoint;
  * is not found the point's x coordinate refers to the chart
  * pixels.
  *
- * @type      {number|string|null}
+ * @type      {number|string|null|undefined}
  * @name      Highcharts.AnnotationMockPointOptionsObject.xAxis
  *//**
  * This option defines which `yAxis` the point is connected to.
@@ -628,7 +628,7 @@ export default MockPoint;
  * is not found the point's y coordinate refers to the chart
  * pixels.
  *
- * @type      {number|string|null}
+ * @type      {number|string|null|undefined}
  * @name      Highcharts.AnnotationMockPointOptionsObject.yAxis
  */
 

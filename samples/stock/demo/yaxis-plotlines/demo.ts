@@ -53,7 +53,7 @@
             plotLines: [{
                 value: minRate,
                 color: 'green',
-                dashStyle: 'shortdash',
+                dashStyle: 'ShortDash',
                 width: 2,
                 label: {
                     text: 'Last quarter minimum',
@@ -62,7 +62,7 @@
             }, {
                 value: maxRate,
                 color: 'red',
-                dashStyle: 'shortdash',
+                dashStyle: 'ShortDash',
                 width: 2,
                 label: {
                     text: 'Last quarter maximum'
@@ -77,5 +77,5 @@
                 valueDecimals: 2
             }
         }]
-    });
+    } satisfies Highcharts.Options);
 })();
