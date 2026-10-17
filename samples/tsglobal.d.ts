@@ -55,4 +55,8 @@ declare global {
             }
         }
     }
+
+    interface Math {
+       easeOutBounce(pos: number): number;
+    }
 }

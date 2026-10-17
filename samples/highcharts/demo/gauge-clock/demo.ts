@@ -94,7 +94,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        format: '{series.chart.tooltipText}'
+        format: '{series.options.custom.tooltipText}'
     },
 
     series: [{
@@ -130,11 +130,14 @@ Highcharts.chart('container', {
             }
         }],
         animation: false,
+        custom: {
+            tooltipText: ''
+        },
         dataLabels: {
             enabled: false
         }
     }]
-},
+} satisfies Highcharts.Options,
 
 // Move
 function (chart) {
@@ -143,12 +146,15 @@ function (chart) {
         now = getNow();
 
         if (chart.axes) { // not destroyed
-            const hour = chart.get('hour'),
-                minute = chart.get('minute'),
-                second = chart.get('second');
+            const hour = chart.get('hour') as Highcharts.Point,
+                minute = chart.get('minute') as Highcharts.Point,
+                second = chart.get('second') as Highcharts.Point;
 
             // Cache the tooltip text
-            chart.tooltipText = Highcharts.dateFormat('%H:%M:%S', now.date);
+            chart.series[0].options.custom.tooltipText = Highcharts.dateFormat(
+                '%H:%M:%S',
+                now.date.getTime()
+            );
 
             hour.update(now.hours, true, false);
             minute.update(now.minutes, true, false);
