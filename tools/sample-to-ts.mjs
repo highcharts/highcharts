@@ -29,7 +29,9 @@ const exclude = [
     'highcharts/demo/bar-race',
 
     // Plugin with internal series props
-    'stock/demo/candlestick-volume-width'
+    'stock/demo/candlestick-volume-width',
+    // Stock Tools
+    'stock/demo/stock-tools-custom-gui'
 ];
 const ANSI = {
     green: '\u001b[32m',

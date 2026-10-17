@@ -10,6 +10,16 @@ const commonOptions = {
 
 const NVIDIACorpId = '0P000003RE';
 
+declare namespace HighchartsConnectors {
+    namespace Morningstar {
+        class TimeSeriesConnector {
+            constructor(options: any);
+            load(): Promise<void>;
+            getTable(): Highcharts.DataTable;
+        }
+    }
+}
+
 const NVIDIAPriceConnector =
     new HighchartsConnectors.Morningstar.TimeSeriesConnector({
         ...commonOptions,
@@ -50,7 +60,7 @@ const NVIDIAPriceConnector =
             selected: 4
         },
         tooltip: {
-            shape: 'square',
+            shape: 'rect',
             headerShape: 'callout',
             borderWidth: 0,
             shadow: false,
@@ -93,5 +103,5 @@ const NVIDIAPriceConnector =
                 }
             }]
         }
-    });
+    } satisfies Highcharts.Options);
 })();
