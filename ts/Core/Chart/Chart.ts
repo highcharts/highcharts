@@ -1717,6 +1717,15 @@ class Chart {
              * @name Highcharts.Chart#subtitle
              * @type {Highcharts.SubtitleObject}
              */
+
+            /**
+             * The chart caption. The caption has an `update` method that
+             * allows modifying the options directly or indirectly via
+             * `chart.update`.
+             *
+             * @name Highcharts.Chart#caption
+             * @type {Highcharts.CaptionObject}
+             */
             this[key] = elem;
         }
 
