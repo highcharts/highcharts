@@ -91,7 +91,7 @@ Highcharts.chart('container', {
                 enabled: true,
                 format: '{point.hc-a2}',
                 style: {
-                    textOutline: false
+                    textOutline: 'none'
                 }
             }
         }
@@ -458,4 +458,4 @@ Highcharts.chart('container', {
             value: 584057
         }]
     }]
-});
+} satisfies Highcharts.Options);

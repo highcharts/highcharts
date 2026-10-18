@@ -64,7 +64,7 @@ function colorize(color, text) {
     return `${ANSI[color]}${text}${ANSI.reset}`;
 }
 
-function formatDiagnostics(diagnostics) {
+function formatDiagnostics(diagnostics, filePathOverride) {
     return diagnostics.filter(diagnostic => {
         const message = TS.flattenDiagnosticMessageText(
             diagnostic.messageText,
@@ -85,7 +85,7 @@ function formatDiagnostics(diagnostics) {
             const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(
                 diagnostic.start
             );
-            const fileName = path.basename(diagnostic.file.fileName);
+            const fileName = filePathOverride || path.basename(diagnostic.file.fileName);
 
             return `${fileName}:${line + 1}:${character + 1} ${message}`;
         }
@@ -316,7 +316,10 @@ async function verifySample(demoJsPath, tempRoot) {
         return {
             status: 'fail',
             relativePath: relativeJsPath,
-            reason: formatDiagnostics(diagnostics),
+            reason: formatDiagnostics(
+                diagnostics,
+                shouldWrite ? path.relative(ROOT, demoJsPath).replace(/\.js$/u, '.ts') : undefined
+            ),
             writtenAs
         };
     }
@@ -352,11 +355,13 @@ async function getDemoJsFiles() {
     })).sort();
 
     const eligibleFiles = [];
+    const excludedFiles = [];
 
     for (const demoPath of demoFiles) {
         const relativePath = path.relative(ROOT, demoPath);
 
         if (isExcludedDemo(relativePath)) {
+            excludedFiles.push(demoPath);
             continue;
         }
 
@@ -374,11 +379,12 @@ async function getDemoJsFiles() {
         eligibleFiles.push(demoPath);
     }
 
-    return eligibleFiles;
+    return { eligibleFiles, excludedFiles };
 }
 
 async function main() {
-    let demoJsFiles = await getDemoJsFiles();
+    const { eligibleFiles, excludedFiles } = await getDemoJsFiles();
+    let demoJsFiles = eligibleFiles;
 
     if (typeof argv.index === 'number') {
         if (!Number.isInteger(argv.index) || argv.index < 0) {
@@ -410,8 +416,15 @@ async function main() {
 
     let passed = 0;
     let failed = 0;
-    let skipped = 0;
+    let skipped = excludedFiles.length;
     let written = 0;
+
+    for (const excludedDemoJsPath of excludedFiles) {
+        console.log(colorize(
+            'yellow',
+            `SKIP  ${path.relative(ROOT, excludedDemoJsPath)}  (Excluded)`
+        ));
+    }
 
     try {
         for (const demoJsPath of demoJsFiles) {
@@ -452,7 +465,7 @@ async function main() {
         await fs.rm(tempRoot, { recursive: true, force: true });
     }
 
-    const total = demoJsFiles.length;
+    const total = demoJsFiles.length + excludedFiles.length;
     console.log('');
     console.log(`Checked ${total} demos: ${passed} pass, ${failed} fail, ${skipped} skipped, ${written} written.`);
 
