@@ -1,4 +1,17 @@
-function generateChart(dataset) {
+type RegressionPoint = [number, number];
+type Matrix = number[][];
+
+interface MathJsApi {
+    transpose(matrix: Matrix): Matrix;
+    multiply(a: Matrix | number[], b: Matrix | number[]): number[] | Matrix;
+    inv(matrix: Matrix): Matrix;
+}
+
+type WindowWithMath = Window & {
+    math: MathJsApi;
+};
+
+function generateChart(dataset: RegressionPoint[]) {
     Highcharts.chart('container', {
         title: {
             text: 'Scatter plot with regression lines'
@@ -54,9 +67,9 @@ function generateChart(dataset) {
             },
             enableMouseTracking: false
         }]
-    });
+    } satisfies Highcharts.Options);
 }
-const dataset = [
+const dataset: RegressionPoint[] = [
     [4.648, 2.013],
     [4.583, 1.354],
     [-2.548, 1.066],
@@ -162,31 +175,40 @@ const dataset = [
 // Matrix calculations to calculate the variables for least square regression.
 // Utilizing the mathjs library for matrix operations
 
-function linearRegression(dataset, nDegrees) {
+function linearRegression(
+    dataset: RegressionPoint[],
+    nDegrees: number
+): number[] {
 
     // Split the dataset into x and y
-    const x = dataset.map(val => val[0]);
-    const y = dataset.map(val => val[1]);
-    const X = [];
+    const x = dataset.map((val: RegressionPoint): number => val[0]);
+    const y = dataset.map((val: RegressionPoint): number => val[1]);
+    const X: Matrix = [];
 
     // Create n-dimensional X-matrix
     for (let i = 0; i <= nDegrees; i++) {
-        X.push(x.map(num => num ** i));
+        X.push(x.map((num: number): number => num ** i));
     }
 
     // Calculate least square variables
-    const Xt = window.math.transpose(X);
-    const XtX = window.math.multiply(X, Xt);
-    const invXtX = window.math.inv(XtX);
-    const Xty = window.math.multiply(y, Xt);
-    const b = window.math.multiply(Xty, invXtX);
+    const math = (window as WindowWithMath).math;
+    const Xt = math.transpose(X);
+    const XtX = math.multiply(X, Xt) as Matrix;
+    const invXtX = math.inv(XtX);
+    const Xty = math.multiply(y, Xt) as Matrix;
+    const b = math.multiply(Xty, invXtX) as number[];
 
     // return variables [a, b, c, ...], to be applied as a + b*x + c*x^2 + ...
     return b;
 }
 
-function generateLineData(constants, start, end, resolution) {
-    const outData = [];
+function generateLineData(
+    constants: number[],
+    start: number,
+    end: number,
+    resolution: number
+): Array<[number, number]> {
+    const outData: Array<[number, number]> = [];
     for (let x = start; x <= end; x += 1 / resolution) {
         let y = 0;
         for (let j = 0; j < constants.length; j++) {
