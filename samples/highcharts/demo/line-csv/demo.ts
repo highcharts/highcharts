@@ -1,5 +1,10 @@
 // A point click event that uses the Renderer to draw a label next to the point
 // On subsequent clicks, move the existing label instead of creating a new one.
+declare namespace Highcharts {
+    interface Chart {
+        sticky: SVGElement|void;
+    }
+}
 Highcharts.addEvent(Highcharts.Point, 'click', function () {
     if (this.series.options.className.indexOf('popup-on-click') !== -1) {
         const chart = this.series.chart;
@@ -24,7 +29,9 @@ Highcharts.addEvent(Highcharts.Point, 'click', function () {
                     color: 'white'
                 })
                 .on('click', function () {
-                    chart.sticky = chart.sticky.destroy();
+                    if (chart.sticky) {
+                        chart.sticky = chart.sticky.destroy();
+                    }
                 })
                 .add();
         } else {
@@ -130,4 +137,4 @@ Highcharts.chart('container', {
     }, {
         name: 'New users'
     }]
-});
+} satisfies Highcharts.Options);
