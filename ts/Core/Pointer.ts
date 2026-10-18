@@ -2495,6 +2495,16 @@ export default Pointer;
  *
  * @name Highcharts.PointerEventObject#chartY
  * @type {number}
+ *//**
+ * Axis positions of the pointer interaction on the x-axis.
+ *
+ * @name Highcharts.PointerEventObject#xAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>}
+ *//**
+ * Axis positions of the pointer interaction on the y-axis.
+ *
+ * @name Highcharts.PointerEventObject#yAxis
+ * @type {Array<Highcharts.PointerAxisCoordinateObject>}
  */
 
 /**

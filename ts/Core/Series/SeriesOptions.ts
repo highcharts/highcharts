@@ -238,6 +238,44 @@ export interface SeriesAfterAnimateEventObject {
 }
 
 /**
+ * Function callback when adding a point
+ *
+ * @callback Highcharts.SeriesAddPointCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAddPointEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+export type SeriesAddPointCallbackFunction =
+    EventCallback<Series, SeriesAddPointEventObject>;
+
+/**
+ * Event information regarding adding a point to a series.
+ */
+export interface SeriesAddPointEventObject {
+    /**
+     * The point that was added.
+     */
+    point: Point;
+
+    /**
+     * Animated series.
+     */
+    target: Series;
+
+    /**
+     * Event type.
+     */
+    type: 'addPoint';
+}
+
+/**
  * Function callback when a series is clicked. Return false to cancel toggle
  * actions.
  *

@@ -5683,6 +5683,41 @@ export default Series;
  * @type {number|string|undefined}
  */
 
+
+/**
+ * Function callback when adding a point
+ *
+ * @callback Highcharts.SeriesAddPointCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAddPointEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+
+/**
+ * Event information regarding adding a point to a series.
+ *
+ * @interface Highcharts.SeriesAddPointEventObject
+ *//**
+ * Point that was added to the series.
+ * @name Highcharts.SeriesAddPointEventObject#point
+ * @type {Highcharts.Point}
+ *//**
+ * Series to which the point was added.
+ * @name Highcharts.SeriesAddPointEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAddPointEventObject#type
+ * @type {"addPoint"}
+ */
+
 /**
  * Function callback when a series has been animated.
  *
