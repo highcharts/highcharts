@@ -52,17 +52,23 @@ function renderChart() {
                 ]
             }
         ]
-    },
-    function () {
+    } satisfies Highcharts.Options,
+    function (this: Highcharts.Chart) {
         this.showLoading();
     });
 }
 
 renderChart();
 
-document.querySelector('select#lang-select')
-    .addEventListener('change', async function (e) {
-        const lang = e.target.value === 'default' ? 'lang' : e.target.value;
+const langSelect = document.querySelector(
+    'select#lang-select'
+) as HTMLSelectElement;
+const container = document.querySelector('#container') as HTMLElement;
+
+langSelect.addEventListener('change', (e: Event) => {
+    void (async () => {
+        const target = e.target as HTMLSelectElement;
+        const lang = target.value === 'default' ? 'lang' : target.value;
         const src = `https://code.highcharts.com/i18n/${lang}.json`;
 
         const langOptions = await fetch(src)
@@ -72,8 +78,9 @@ document.querySelector('select#lang-select')
             lang: langOptions
         });
 
-        document.querySelector('#container').setAttribute('lang', lang);
+        container.setAttribute('lang', lang);
 
         // As the lang object is global we need to fully re-render the chart
         renderChart();
-    });
+    })();
+});
