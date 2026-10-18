@@ -123,7 +123,11 @@ const chart = Highcharts.chart('container', {
         yAxis: 1
     }]
 
-});
+} satisfies Highcharts.Options);
+
+type WindowWithWebkitAudio = Window & {
+    webkitAudioContext?: typeof AudioContext;
+};
 
 const MIN_DB = -20,
     MAX_DB = 6;
@@ -168,7 +172,7 @@ const simulatedTrack = (function () {
          * @param {number} deltaTime Seconds elapsed since the previous frame.
          * @return {Array<number>} Amplitude for channel A and B.
          */
-        advance: function (deltaTime) {
+        advance: function (deltaTime: number) {
             time += deltaTime;
 
             const currentStep = Math.floor(time / stepDuration),
@@ -216,10 +220,10 @@ const microphone = (function () {
     // Root mean square level that should read as 0 dB on the gauges
     const sensitivity = 100;
 
-    let analyser,
-        dataArray,
-        audioContext,
-        stream;
+    let analyser: AnalyserNode | undefined,
+        dataArray: Uint8Array<ArrayBuffer> | undefined,
+        audioContext: AudioContext | undefined,
+        stream: MediaStream | undefined;
 
     return {
         get active() {
@@ -230,18 +234,34 @@ const microphone = (function () {
             stream = await navigator.mediaDevices
                 .getUserMedia({ audio: true });
 
-            audioContext = new (
-                window.AudioContext || window.webkitAudioContext
-            )();
+            const AudioContextClass = window.AudioContext ||
+                (window as WindowWithWebkitAudio)
+                    .webkitAudioContext;
+
+            if (!AudioContextClass) {
+                throw new Error(
+                    'AudioContext is not supported in this browser.'
+                );
+            }
+
+            audioContext = new AudioContextClass();
             analyser = audioContext.createAnalyser();
             analyser.fftSize = 256;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            dataArray = new Uint8Array(
+                analyser.frequencyBinCount
+            ) as Uint8Array<ArrayBuffer>;
 
             audioContext.createMediaStreamSource(stream).connect(analyser);
         },
 
         stop: function () {
-            stream.getTracks().forEach(track => track.stop());
+            if (!stream || !audioContext || !analyser) {
+                return;
+            }
+
+            stream.getTracks().forEach(
+                (track: MediaStreamTrack) => track.stop()
+            );
             audioContext.close();
             analyser = undefined;
             audioContext = undefined;
@@ -254,6 +274,10 @@ const microphone = (function () {
          * @return {Array<number>} Amplitude for channel A and B.
          */
         read: function () {
+            if (!analyser || !dataArray) {
+                return [0, 0];
+            }
+
             analyser.getByteFrequencyData(dataArray);
 
             let sum = 0;
@@ -271,7 +295,7 @@ const microphone = (function () {
 /**
  * Convert an amplitude to decibels within the range of the gauges.
  */
-function toDecibels(amplitude) {
+function toDecibels(amplitude: number): number {
     return Math.max(
         MIN_DB,
         Math.min(MAX_DB, 20 * Math.log10(Math.max(amplitude, 1e-3)))
@@ -279,11 +303,11 @@ function toDecibels(amplitude) {
 }
 
 // Displayed levels, smoothed towards the amplitude of the active source
-const levels = [0, 0];
+const levels: number[] = [0, 0];
 
-let lastFrame;
+let lastFrame: number | undefined;
 
-function renderFrame(now) {
+function renderFrame(now: number): void {
     requestAnimationFrame(renderFrame);
 
     // Cap the delta so that a backgrounded tab doesn't skip the whole track
@@ -309,29 +333,31 @@ function renderFrame(now) {
 
 requestAnimationFrame(renderFrame);
 
-const audioButton = document.getElementById('audioButton');
+const audioButton = document.getElementById('audioButton') as HTMLButtonElement;
 
-function updateButton() {
+function updateButton(): void {
     audioButton.textContent = microphone.active ?
         'Use simulated audio' :
         'Use microphone';
-    audioButton.setAttribute('aria-pressed', microphone.active);
+    audioButton.setAttribute('aria-pressed', String(microphone.active));
 }
 
-audioButton.addEventListener('click', async () => {
-    if (microphone.active) {
-        microphone.stop();
-        simulatedTrack.reset();
-    } else {
-        try {
-            await microphone.start();
-        } catch (err) {
-            console.error('Error accessing microphone: ', err);
-            alert('Please allow microphone access to use this feature.');
+audioButton.addEventListener('click', () => {
+    void (async () => {
+        if (microphone.active) {
+            microphone.stop();
+            simulatedTrack.reset();
+        } else {
+            try {
+                await microphone.start();
+            } catch (err) {
+                console.error('Error accessing microphone: ', err);
+                alert('Please allow microphone access to use this feature.');
+            }
         }
-    }
 
-    updateButton();
+        updateButton();
+    })();
 });
 
 updateButton();
