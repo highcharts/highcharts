@@ -30,7 +30,7 @@ Highcharts.chart('container', {
             }
         }],
         plotLines: [{
-            dashStyle: 'dash',
+            dashStyle: 'Dash',
             color: 'var(--highcharts-color-4)',
             width: 2,
             value: 5
@@ -148,4 +148,4 @@ Highcharts.chart('container', {
             ['2027',    19.278, 36.122]
         ]
     }]
-});
+} satisfies Highcharts.Options);
