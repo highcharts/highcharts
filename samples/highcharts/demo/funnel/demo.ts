@@ -6,7 +6,7 @@ Highcharts.chart('container', {
         text: 'Sales funnel'
     },
     plotOptions: {
-        series: {
+        funnel: {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
@@ -39,7 +39,7 @@ Highcharts.chart('container', {
             },
             chartOptions: {
                 plotOptions: {
-                    series: {
+                    funnel: {
                         dataLabels: {
                             inside: true
                         },
@@ -50,4 +50,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
