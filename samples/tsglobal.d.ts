@@ -34,6 +34,17 @@ declare global {
         }
 
         interface Chart {
+            annotations: Array<{
+                labels: Array<{
+                    options: {
+                        point: {
+                            x: number;
+                            y: number;
+                        };
+                        text?: string;
+                    };
+                }>;
+            }>;
             sonification: Sonification;
             toggleSonify(): void;
         }

@@ -1,20 +1,28 @@
-const btn = document.getElementById('play-pause-button'),
-    input = document.getElementById('play-range'),
+declare namespace Highcharts {
+    interface Chart {
+        sequenceTimer?: number;
+    }
+}
+
+type StringNumberTuple = [string, number];
+
+const btn = document.getElementById('play-pause-button') as HTMLButtonElement,
+    input = document.getElementById('play-range') as HTMLInputElement,
     startRound = 0,
     endRound = 20,
     animationDuration = 1000;
 
 // General helper functions
-const arrToAssociative = arr => {
-    const tmp = {};
-    arr.forEach(item => {
+const arrToAssociative = (arr: StringNumberTuple[]): Record<string, number> => {
+    const tmp: Record<string, number> = {};
+    arr.forEach((item: StringNumberTuple) => {
         tmp[item[0]] = item[1];
     });
 
     return tmp;
 };
 
-const formatPoints = [];
+const formatPoints: Array<Record<string, number>> = [];
 
 const chart = Highcharts.chart('container', {
     chart: {
@@ -22,7 +30,7 @@ const chart = Highcharts.chart('container', {
         marginRight: 110,
         animation: {
             duration: animationDuration,
-            easing: t => t
+            easing: (t: number): number => t
         }
     },
     title: {
@@ -33,13 +41,18 @@ const chart = Highcharts.chart('container', {
         y: 50
     },
     data: {
-        csv: document.getElementById('csv').innerText,
+        csv: (document.getElementById('csv') as HTMLElement)
+            .innerText,
         itemDelimiter: '\t',
         complete: function (options) {
             // Store the data for later use, and remove it from the series
             for (let i = 0; i < options.series.length; i++) {
-                formatPoints[i] = arrToAssociative(options.series[i].data);
-                options.series[i].data = [];
+                const seriesOptions =
+                    options.series[i] as Highcharts.SeriesLineOptions;
+                formatPoints[i] = arrToAssociative(
+                    seriesOptions.data as StringNumberTuple[]
+                );
+                seriesOptions.data = [] as Array<never>;
             }
         }
     },
@@ -139,26 +152,30 @@ const chart = Highcharts.chart('container', {
             }
         ]
     }
-});
+} satisfies Highcharts.Options);
 
-function pause(button) {
+function pause(button: HTMLButtonElement): void {
     button.title = 'play';
     button.className = 'fa fa-play';
     clearTimeout(chart.sequenceTimer);
     chart.sequenceTimer = undefined;
 }
 
-function update(sliderClicked) {
+function update(sliderClicked: boolean): void {
 
     const series = chart.series,
         labels = chart.annotations[0].labels,
-        yearIndex = input.value - startRound,
-        dataLength = series[0].options.data.length;
+        yearIndex = Number(input.value) - startRound,
+        dataLength = (
+            series[0].options as Highcharts.SeriesLineOptions
+        ).data.length;
 
     // If slider moved back in time
     if (yearIndex < dataLength - 1) {
         for (let i = 0; i < series.length; i++) {
-            const seriesData = series[i].options.data.slice(0, yearIndex);
+            const seriesData = (
+                series[i].options as Highcharts.SeriesLineOptions
+            ).data.slice(0, yearIndex);
             series[i].setData(seriesData, false);
         }
     }
@@ -166,27 +183,31 @@ function update(sliderClicked) {
     // If slider moved forward in time
     if (yearIndex > dataLength - 1) {
         const remainingYears = yearIndex - dataLength;
+        const currentValue = Number(input.value);
         for (let i = 0; i < series.length; i++) {
-            for (let j = input.value - remainingYears; j < input.value; j++) {
-                series[i].addPoint([formatPoints[i][j]], false);
+            for (let j = currentValue - remainingYears; j < currentValue; j++) {
+                series[i].addPoint([formatPoints[i][String(j)]], false);
             }
         }
     }
 
-    const nextnums = [];
+    const nextnums: number[] = [];
     // Add current year if applicable, and update labels
     for (let i = 0; i < series.length; i++) {
-        const newY = formatPoints[i][input.value];
+        const newY = formatPoints[i][String(input.value)];
         labels[i].options.point.x = yearIndex;
         labels[i].options.point.y = newY;
 
         if (yearIndex === 0) {
+            const seriesColor = (series[i].color as string) || '';
             labels[i].options.text =
-                `<span style="color:${series[i].color}">●</span>
-                ${series[i].name}</span>`;
+                '<span style="color:' + seriesColor + '">●</span>' +
+                ' ' + String(series[i].name) + '</span>';
         }
         nextnums.push(newY);
-        if (series[i].options.data.length <= yearIndex) {
+        if ((
+            series[i].options as Highcharts.SeriesLineOptions
+        ).data.length <= yearIndex) {
             series[i].addPoint(newY, false);
         }
     }
@@ -197,18 +218,18 @@ function update(sliderClicked) {
         chart.redraw();
     }
 
-    input.value = parseInt(input.value, 10) + 1;
+    input.value = String(parseInt(input.value, 10) + 1);
 
-    if (input.value > endRound) {
+    if (parseInt(input.value, 10) > endRound) {
         // Auto-pause
         pause(btn);
     }
 }
 
-function play(button) {
+function play(button: HTMLButtonElement): void {
     // Reset slider at the end
-    if (input.value > endRound) {
-        input.value = startRound;
+    if (parseInt(input.value, 10) > endRound) {
+        input.value = String(startRound);
     }
     button.title = 'pause';
     button.className = 'fa fa-pause';
@@ -219,9 +240,9 @@ function play(button) {
 
 btn.addEventListener('click', function () {
     if (chart.sequenceTimer) {
-        pause(this);
+        pause(this as HTMLButtonElement);
     } else {
-        play(this);
+        play(this as HTMLButtonElement);
     }
 });
 
