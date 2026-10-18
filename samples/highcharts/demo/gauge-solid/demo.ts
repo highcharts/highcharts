@@ -1,4 +1,4 @@
-const gaugeOptions = {
+const gaugeOptions: Highcharts.Options = {
     chart: {
         type: 'solidgauge'
     },
@@ -101,7 +101,7 @@ const chartRpm = Highcharts.chart(
             }
         }]
 
-    }));
+    } satisfies Highcharts.Options));
 
 // Bring life to the dials
 setInterval(function () {

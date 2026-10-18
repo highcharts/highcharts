@@ -48,6 +48,11 @@ const argv = Yargs(hideBin(process.argv))
         choices: ['pass', 'all'],
         describe: 'Write demo.ts files for passing demos or for all demos'
     })
+    .option('validate', {
+        type: 'boolean',
+        default: false,
+        describe: 'Validate existing demo.ts files instead of converting demo.js files'
+    })
     .strict()
     .parse();
 
@@ -246,6 +251,33 @@ async function verifySample(demoJsPath, tempRoot) {
     const relativeJsPath = path.relative(ROOT, demoJsPath);
     const relativeTsPath = path.relative(ROOT, demoTsPath);
 
+    if (argv.validate) {
+        if (!await fileExists(demoTsPath)) {
+            return {
+                status: 'skip',
+                relativePath: relativeJsPath,
+                reason: `${relativeTsPath} does not exist`
+            };
+        }
+
+        const diagnostics = compileDemo(demoTsPath, demoTsPath);
+        const hasDiagnostics = diagnostics.length > 0;
+
+        if (hasDiagnostics) {
+            return {
+                status: 'fail',
+                relativePath: relativeJsPath,
+                reason: formatDiagnostics(diagnostics)
+            };
+        }
+
+        return {
+            status: 'pass',
+            relativePath: relativeJsPath,
+            savedAs: relativeTsPath
+        };
+    }
+
     if (await fileExists(demoTsPath)) {
         return {
             status: 'skip',
@@ -270,7 +302,7 @@ async function verifySample(demoJsPath, tempRoot) {
     const hasDiagnostics = diagnostics.length > 0;
     const shouldWrite = !exclude.some(pattern =>
         relativeJsPath.includes(pattern)
-    ) && (
+    ) && !argv.validate && (
         argv.write === 'all' ||
         (argv.write === 'pass' && !hasDiagnostics)
     );
@@ -311,7 +343,8 @@ function isExcludedDemo(relativePath) {
 
 async function getDemoJsFiles() {
     const sampleGlob = (argv.samples || DEFAULT_SAMPLE_GLOB).replace(/^samples\//u, '');
-    const demoJsFiles = (await glob(`samples/${sampleGlob}/demo.js`, {
+    const demoFilePattern = argv.validate ? 'demo.ts' : 'demo.js';
+    const demoFiles = (await glob(`samples/${sampleGlob}/${demoFilePattern}`, {
         cwd: ROOT,
         absolute: true,
         nodir: true,
@@ -320,20 +353,25 @@ async function getDemoJsFiles() {
 
     const eligibleFiles = [];
 
-    for (const demoJsPath of demoJsFiles) {
-        const relativeJsPath = path.relative(ROOT, demoJsPath);
+    for (const demoPath of demoFiles) {
+        const relativePath = path.relative(ROOT, demoPath);
 
-        if (isExcludedDemo(relativeJsPath)) {
+        if (isExcludedDemo(relativePath)) {
             continue;
         }
 
-        const demoTsPath = demoJsPath.replace(/\.js$/u, '.ts');
+        if (argv.validate) {
+            eligibleFiles.push(demoPath);
+            continue;
+        }
+
+        const demoTsPath = demoPath.replace(/\.js$/u, '.ts');
 
         if (await fileExists(demoTsPath)) {
             continue;
         }
 
-        eligibleFiles.push(demoJsPath);
+        eligibleFiles.push(demoPath);
     }
 
     return eligibleFiles;
@@ -396,7 +434,7 @@ async function main() {
             } else if (result.status === 'pass') {
                 passed += 1;
                 console.log(colorize('green', `PASS  ${result.relativePath}`));
-                if (result.savedAs && argv.write) {
+                if (result.savedAs && argv.write && !argv.validate) {
                     written += 1;
                     console.log(`WRITE ${result.savedAs}`);
                 }
@@ -404,7 +442,7 @@ async function main() {
                 failed += 1;
                 console.log(colorize('red', `FAIL  ${result.relativePath}`));
                 console.log(result.reason);
-                if (result.writtenAs) {
+                if (result.writtenAs && !argv.validate) {
                     written += 1;
                     console.log(`WRITE ${result.writtenAs}`);
                 }
