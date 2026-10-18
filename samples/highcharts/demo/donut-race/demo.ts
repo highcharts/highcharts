@@ -1,21 +1,37 @@
+type CountryDataMap = Record<string, Record<string, number>>;
+type DonutRacePoint = [string, number];
+type DonutRaceChart = Highcharts.Chart & {
+    sequenceTimer?: number;
+};
+
 const startYear = 1965,
     endYear = 2020,
-    btn = document.getElementById('play-pause-button'),
-    input = document.getElementById('play-range'),
+    btn = document.getElementById('play-pause-button') as HTMLButtonElement,
+    input = document.getElementById('play-range') as HTMLInputElement,
     nbr = 6;
 
-let dataset, chart;
+let dataset: CountryDataMap;
+let chart: DonutRaceChart;
 
-function getData(year) {
-    const output = Object.entries(dataset).map(country => {
-        const [countryName, countryData] = country;
-        return [countryName, Number(countryData[year])];
-    });
-    return [output[0], output.slice(1, nbr)];
+function getYearData(year: number | string): {
+    total: DonutRacePoint;
+    countries: DonutRacePoint[];
+} {
+    const output: DonutRacePoint[] = Object.keys(dataset).map(
+        (countryName: string): DonutRacePoint => {
+            const countryData = dataset[countryName];
+            return [countryName, Number(countryData[String(year)])];
+        }
+    );
+    const total = output[0] ?? ['', 0];
+    return {
+        total,
+        countries: output.slice(1, nbr)
+    };
 }
 
-function getSubtitle() {
-    const totalNumber = getData(input.value)[0][1].toFixed(2);
+function getSubtitle(): string {
+    const totalNumber = getYearData(input.value).total[1].toFixed(2);
     return `<span style="font-size: 80px">${input.value}</span>
         <br>
         <span style="font-size: 22px">
@@ -23,10 +39,10 @@ function getSubtitle() {
         </span>`;
 }
 
-(async () => {
+(async (): Promise<void> => {
     dataset = await fetch(
         'https://www.highcharts.com/samples/data/nuclear-energy-production.json'
-    ).then(response => response.json());
+    ).then((response: Response): Promise<CountryDataMap> => response.json());
 
     chart = Highcharts.chart('container', {
         title: {
@@ -52,10 +68,8 @@ function getSubtitle() {
         },
 
         plotOptions: {
-            series: {
+            pie: {
                 borderWidth: 0,
-                colorByPoint: true,
-                type: 'pie',
                 size: '100%',
                 innerSize: '80%',
                 dataLabels: {
@@ -74,18 +88,18 @@ function getSubtitle() {
         series: [
             {
                 type: 'pie',
-                name: startYear,
-                data: getData(startYear)[1]
+                name: String(startYear),
+                data: getYearData(startYear).countries
             }
         ]
-    });
+    } satisfies Highcharts.Options);
 })();
 
 /*
  * Pause the timeline, either when the range is ended, or when clicking the
  * pause button. Pausing stops the timer and resets the button to play mode.
  */
-function pause(button) {
+function pause(button: HTMLButtonElement): void {
     button.title = 'play';
     button.className = 'fa fa-play';
     clearTimeout(chart.sequenceTimer);
@@ -96,11 +110,11 @@ function pause(button) {
  * Update the chart. This happens either on updating (moving) the range input,
  * or from a timer when the timeline is playing.
  */
-function update(increment) {
+function update(increment?: number): void {
     if (increment) {
-        input.value = parseInt(input.value, 10) + increment;
+        input.value = String(parseInt(input.value, 10) + increment);
     }
-    if (input.value >= endYear) {
+    if (Number(input.value) >= endYear) {
         // Auto-pause
         pause(btn);
     }
@@ -118,31 +132,31 @@ function update(increment) {
 
     chart.series[0].update({
         name: input.value,
-        data: getData(input.value)[1]
-    });
+        data: getYearData(input.value).countries
+    } as Highcharts.SeriesPieOptions);
 }
 
 /*
  * Play the timeline.
  */
-function play(button) {
+function play(button: HTMLButtonElement): void {
     button.title = 'pause';
     button.className = 'fa fa-pause';
-    chart.sequenceTimer = setInterval(function () {
+    chart.sequenceTimer = window.setInterval(() => {
         update(1);
     }, 500);
 }
 
-btn.addEventListener('click', function () {
+btn.addEventListener('click', function (): void {
     if (chart.sequenceTimer) {
-        pause(this);
+        pause(this as HTMLButtonElement);
     } else {
-        play(this);
+        play(this as HTMLButtonElement);
     }
 });
 /*
  * Trigger the update on the range bar click.
  */
-input.addEventListener('input', function () {
+input.addEventListener('input', function (): void {
     update();
 });
