@@ -1191,12 +1191,13 @@ namespace AxisDefaults {
 
             /**
              * Rotation of the labels in degrees. When `undefined`, the
-             * `autoRotation` option takes precedence.
+             * `autoRotation` option takes precedence. On radial axes, labels
+             * can be rotated along the axis by setting the rotation to 'auto'.
              *
              * @sample {highcharts} highcharts/xaxis/labels-rotation/
              *         X axis labels rotated 90°
              *
-             * @type      {number}
+             * @type      {number|"auto"}
              * @default   0
              * @apioption xAxis.labels.rotation
              */

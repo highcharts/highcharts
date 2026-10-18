@@ -79,7 +79,7 @@ Highcharts.chart('container', {
         }
     }]
 
-},
+} satisfies Highcharts.Options,
 // Add some life
 function (chart) {
     setInterval(function () {
