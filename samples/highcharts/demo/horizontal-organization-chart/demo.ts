@@ -12,12 +12,6 @@ Highcharts.chart('container', {
         text: 'Tracing the Evolutionary Relationship of Carnivores'
     },
 
-    plotOptions: {
-        series: {
-            nodeWidth: '22%'
-        }
-    },
-
     accessibility: {
         point: {
             descriptionFormat: '{toNode.name} ' +
@@ -33,45 +27,23 @@ Highcharts.chart('container', {
     series: [{
         type: 'organization',
         name: 'Carnivora Phyologeny',
-        keys: ['from', 'to'],
         data: [
-            ['Carnivora', 'Felidae'],
-            ['Carnivora', 'Mustelidae'],
-            ['Carnivora', 'Canidae'],
-            ['Felidae', 'Panthera'],
-            ['Mustelidae', 'Taxidea'],
-            ['Mustelidae', 'Lutra'],
-            ['Panthera', 'Panthera pardus'],
-            ['Taxidea', 'Taxidea taxus'],
-            ['Lutra', 'Lutra lutra'],
-            ['Canidae', 'Canis'],
-            ['Canis', 'Canis latrans'],
-            ['Canis', 'Canis lupus']
+            { from: 'Carnivora', to: 'Felidae' },
+            { from: 'Carnivora', to: 'Mustelidae' },
+            { from: 'Carnivora', to: 'Canidae' },
+            { from: 'Felidae', to: 'Panthera' },
+            { from: 'Mustelidae', to: 'Taxidea' },
+            { from: 'Mustelidae', to: 'Lutra' },
+            { from: 'Panthera', to: 'Panthera pardus' },
+            { from: 'Taxidea', to: 'Taxidea taxus' },
+            { from: 'Lutra', to: 'Lutra lutra' },
+            { from: 'Canidae', to: 'Canis' },
+            { from: 'Canis', to: 'Canis latrans' },
+            { from: 'Canis', to: 'Canis lupus' }
         ],
         levels: [{
             level: 0,
-            color: '#DEDDCF',
-            dataLabels: {
-                color: 'black'
-            }
-        }, {
-            level: 1,
-            color: '#DEDDCF',
-            dataLabels: {
-                color: 'black'
-            },
-            height: 25
-        }, {
-            level: 2,
-            color: '#DEDDCF',
-            dataLabels: {
-                color: 'black'
-            }
-        }, {
-            level: 3,
-            dataLabels: {
-                color: 'black'
-            }
+            color: '#DEDDCF'
         }],
         nodes: [{
             id: 'Carnivora',
@@ -205,7 +177,8 @@ Highcharts.chart('container', {
         }],
         colorByPoint: false,
         borderColor: 'black',
-        borderWidth: 2
+        borderWidth: 2,
+        nodeWidth: '22%'
     }],
 
     tooltip: {
@@ -221,4 +194,4 @@ Highcharts.chart('container', {
         sourceWidth: 800,
         sourceHeight: 600
     }
-});
+} satisfies Highcharts.Options);
