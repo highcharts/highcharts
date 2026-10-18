@@ -1,7 +1,9 @@
 const defaultData = 'https://demo-live-data.highcharts.com/time-data.csv';
-const urlInput = document.getElementById('fetchURL');
-const pollingCheckbox = document.getElementById('enablePolling');
-const pollingInput = document.getElementById('pollingTime');
+const urlInput = document.getElementById('fetchURL') as HTMLInputElement;
+const pollingCheckbox =
+    document.getElementById('enablePolling') as HTMLInputElement;
+const pollingInput =
+    document.getElementById('pollingTime') as HTMLInputElement;
 
 function createChart() {
     Highcharts.chart('container', {
@@ -53,10 +55,16 @@ function createChart() {
             enablePolling: pollingCheckbox.checked === true,
             dataRefreshRate: parseInt(pollingInput.value, 10)
         }
-    });
+    } satisfies Highcharts.Options);
 
-    if (pollingInput.value < 1 || !pollingInput.value) {
-        pollingInput.value = 1;
+    const pollingInterval = parseInt(pollingInput.value, 10);
+
+    if (
+        !pollingInput.value ||
+        Number.isNaN(pollingInterval) ||
+        pollingInterval < 1
+    ) {
+        pollingInput.value = '1';
     }
 }
 
