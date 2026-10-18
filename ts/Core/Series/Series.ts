@@ -540,7 +540,12 @@ class Series {
      */
     public linkedSeries!: Array<Series>;
 
-    /** @internal */
+    /**
+     * The SVG group containing point marker elements that should not be
+     * clipped.
+     *
+     * @readonly
+     */
     public markerGroup?: SVGElement;
 
     /**
@@ -742,6 +747,14 @@ class Series {
      *
      * @name Highcharts.Series#linkedSeries
      * @type {Array<Highcharts.Series>}
+     * @readonly
+     */
+    /**
+     * The SVG group containing point marker elements that should not be
+     * clipped.
+     *
+     * @name Highcharts.Series#markerGroup
+     * @type {Highcharts.SVGElement}
      * @readonly
      */
     /**
