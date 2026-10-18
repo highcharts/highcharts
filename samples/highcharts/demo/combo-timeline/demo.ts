@@ -7,10 +7,10 @@
 /**
  * Fires on chart load, called from the chart.events.load option.
  */
-function onChartLoad() {
+function onChartLoad(this: Highcharts.Chart): void {
     const centerX = 140,
         centerY = 110,
-        path = [],
+        path: Highcharts.SVGPathArray = [],
         badgeColor = Highcharts.color(Highcharts.getOptions().colors[0])
             .brighten(-0.2)
             .get();
@@ -28,15 +28,15 @@ function onChartLoad() {
     // Draw the spiked disc
     for (angle = 0; angle < 2 * Math.PI; angle += Math.PI / 24) {
         radius = spike ? 80 : 70;
-        path.push(
-            'L',
-            centerX + radius * Math.cos(angle),
-            centerY + radius * Math.sin(angle)
-        );
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        const segment: Highcharts.SVGPathArray[number] = path.length === 0 ?
+            ['M', x, y] :
+            ['L', x, y];
+        path.push(segment);
         spike = !spike;
     }
-    path[0] = 'M';
-    path.push('z');
+    path.push(['Z']);
     this.renderer
         .path(path)
         .attr({
@@ -63,7 +63,7 @@ function onChartLoad() {
 
     // Big 5
     const big5 = this.renderer
-        .text(yearsSince)
+        .text(String(yearsSince))
         .attr({
             zIndex: 6
         })
@@ -104,59 +104,31 @@ function onChartLoad() {
     right = centerX + 90;
     this.renderer
         .path([
-            'M',
-            left,
-            centerY + 30,
-            'L',
-            right,
-            centerY + 30,
-            right,
-            centerY + 50,
-            left,
-            centerY + 50,
-            'z',
-            'M',
-            left,
-            centerY + 40,
-            'L',
-            left - 20,
-            centerY + 40,
-            left - 10,
-            centerY + 50,
-            left - 20,
-            centerY + 60,
-            left + 10,
-            centerY + 60,
-            left,
-            centerY + 50,
-            left + 10,
-            centerY + 60,
-            left + 10,
-            centerY + 50,
-            left,
-            centerY + 50,
-            'z',
-            'M',
-            right,
-            centerY + 40,
-            'L',
-            right + 20,
-            centerY + 40,
-            right + 10,
-            centerY + 50,
-            right + 20,
-            centerY + 60,
-            right - 10,
-            centerY + 60,
-            right,
-            centerY + 50,
-            right - 10,
-            centerY + 60,
-            right - 10,
-            centerY + 50,
-            right,
-            centerY + 50,
-            'z'
+            ['M', left, centerY + 30],
+            ['L', right, centerY + 30],
+            ['L', right, centerY + 50],
+            ['L', left, centerY + 50],
+            ['Z'],
+            ['M', left, centerY + 40],
+            ['L', left - 20, centerY + 40],
+            ['L', left - 10, centerY + 50],
+            ['L', left - 20, centerY + 60],
+            ['L', left + 10, centerY + 60],
+            ['L', left, centerY + 50],
+            ['L', left + 10, centerY + 60],
+            ['L', left + 10, centerY + 50],
+            ['L', left, centerY + 50],
+            ['Z'],
+            ['M', right, centerY + 40],
+            ['L', right + 20, centerY + 40],
+            ['L', right + 10, centerY + 50],
+            ['L', right + 20, centerY + 60],
+            ['L', right - 10, centerY + 60],
+            ['L', right, centerY + 50],
+            ['L', right - 10, centerY + 60],
+            ['L', right - 10, centerY + 50],
+            ['L', right, centerY + 50],
+            ['Z']
         ])
         .attr({
             fill: badgeColor,
@@ -185,10 +157,15 @@ function onChartLoad() {
 
     // Prepare mouseover
     const renderer = this.renderer;
-    if (renderer.defs) {
+    const employeesSeries = this.get('employees') as Highcharts.Series & {
+        points: Array<Highcharts.Point & { image?: string }>;
+    };
+    if (renderer.defs && employeesSeries) {
         // is SVG
-        this.get('employees').points.forEach(point => {
-            let pattern;
+        employeesSeries.points.forEach((
+            point: Highcharts.Point & { image?: string }
+        ) => {
+            let pattern: Highcharts.SVGElement | undefined;
             if (point.image) {
                 pattern = renderer
                     .createElement('pattern')
@@ -226,7 +203,7 @@ function onChartLoad() {
     }
 }
 
-const employees = [
+const employees: Highcharts.PointOptionsObject[] = [
     { x: '2009-11-01', y: 1 },
     { x: '2010-11-20', y: 2 },
     { x: '2011-04-01', y: 3 },
@@ -295,7 +272,7 @@ const employees = [
     { x: '2023-07-01', y: 38 }
 ];
 
-const options = {
+const options: Highcharts.Options = {
     chart: {
         events: {
             load: onChartLoad
@@ -407,13 +384,15 @@ const options = {
         }
     ],
     plotOptions: {
+        area: {
+            fillOpacity: 0.5
+        },
         series: {
             marker: {
                 enabled: false,
                 symbol: 'circle',
                 radius: 2
-            },
-            fillOpacity: 0.5
+            }
         },
         flags: {
             tooltip: {
@@ -626,7 +605,7 @@ const options = {
 
 // Add flags for important milestones. This requires Highcharts Stock.
 if (Highcharts.Series.types.flags) {
-    options.series.push(
+    const flagsSeries: Highcharts.SeriesFlagsOptions[] = [
         {
             type: 'flags',
             name: 'Cloud',
@@ -636,8 +615,7 @@ if (Highcharts.Series.types.flags) {
                 {
                     x: '2014-05-01',
                     text: 'Highcharts Cloud Beta',
-                    title: 'Cloud',
-                    shape: 'squarepin'
+                    title: 'Cloud'
                 }
             ],
             showInLegend: false
@@ -812,7 +790,11 @@ if (Highcharts.Series.types.flags) {
             onSeries: 'revenue',
             showInLegend: false
         }
-    );
+    ];
+    options.series = [
+        ...(options.series ?? []),
+        ...flagsSeries
+    ];
 }
 
 Highcharts.chart('container', options);

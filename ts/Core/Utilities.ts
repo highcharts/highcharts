@@ -500,7 +500,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Width of the element.
  * @name Highcharts.CSSObject#width
- * @type {number|undefined}
+ * @type {number|string|undefined}
  */
 
 /**
