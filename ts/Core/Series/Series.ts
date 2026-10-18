@@ -4767,7 +4767,6 @@ class Series {
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
             initialType = series.initialType || series.type,
-            plotOptions = chart.options.plotOptions,
             initialSeriesProto = seriesTypes[initialType].prototype,
             groups = [
                 'dataLabelsGroup',
@@ -4861,11 +4860,7 @@ class Series {
                 // When oldOptions.index is null it should't be cleared.
                 // Otherwise navigator series will have wrong indexes (#10193).
                 index: oldOptions.index === void 0 ?
-                    series.index : oldOptions.index,
-                pointStart:
-                    // When updating from blank (#7933)
-                    plotOptions?.series?.pointStart ??
-                    oldOptions.pointStart
+                    series.index : oldOptions.index
             },
             !keepPoints && { data: series.options.data },
             options,
