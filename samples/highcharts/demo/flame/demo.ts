@@ -1,3 +1,23 @@
+declare namespace Highcharts {
+    interface Point {
+        low?: number;
+        high?: number;
+    }
+
+    interface Series {
+        drawDataLabels?: Function;
+    }
+
+    interface SeriesFlameOptions
+            extends Omit<SeriesColumnrangeOptions, 'type'> {
+        type: 'flame';
+    }
+
+    interface SeriesOptionsRegistry {
+        SeriesFlameOptions: SeriesFlameOptions;
+    }
+}
+
 const colors = Highcharts.getOptions().colors,
     sunburstData = [{
         name: '(anonymous)',
@@ -997,9 +1017,8 @@ const colors = Highcharts.getOptions().colors,
     }];
 
 // Add new series type for the flame series
-
-(function (H) {
-    H.seriesType('flame', 'columnrange', {
+((({ seriesType, Series }) => {
+    seriesType('flame', 'columnrange', {
         cursor: 'pointer',
         dataLabels: {
             enabled: true,
@@ -1017,14 +1036,13 @@ const colors = Highcharts.getOptions().colors,
         point: {
             events: {
                 click: function () {
-                    const point = this,
-                        chart = point.series.chart,
-                        series = point.series,
+                    const chart = this.series.chart,
+                        series = this.series,
                         xAxis = series.xAxis,
                         yAxis = series.yAxis;
 
-                    xAxis.setExtremes(xAxis.min, point.x, false);
-                    yAxis.setExtremes(point.low, point.high, false);
+                    xAxis.setExtremes(xAxis.min, this.x, false);
+                    yAxis.setExtremes(this.low, this.high, false);
 
                     chart.showResetZoom();
                     chart.redraw();
@@ -1034,9 +1052,9 @@ const colors = Highcharts.getOptions().colors,
         pointPadding: 0,
         groupPadding: 0
     }, {
-        drawDataLabels: H.seriesTypes.line.prototype.drawDataLabels
+        drawDataLabels: Series.types.line.prototype.drawDataLabels
     });
-}(Highcharts));
+}))(Highcharts);
 
 // Create the chart
 
@@ -1114,14 +1132,18 @@ const chart = Highcharts.chart('container', {
         headerFormat: '',
         pointFormat: 'selfSize of <b>{point.name}</b> is <b>{point.value}</b>'
     }
-});
+} satisfies Highcharts.Options);
 
 // Set up buttons for the chart layout change
 
-const icicleButton = document.getElementById('icicle'),
-    flameButton = document.getElementById('flame'),
-    sunburstButton = document.getElementById('sunburst'),
-    allButtons = [icicleButton, flameButton, sunburstButton];
+const icicleButton = document.getElementById('icicle') as HTMLButtonElement,
+    flameButton = document.getElementById('flame') as HTMLButtonElement,
+    sunburstButton = document.getElementById('sunburst') as HTMLButtonElement,
+    allButtons = [
+        icicleButton,
+        flameButton,
+        sunburstButton
+    ] as HTMLButtonElement[];
 
 let activeButtonIndex = 1;
 
