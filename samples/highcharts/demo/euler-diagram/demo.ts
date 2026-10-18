@@ -13,20 +13,20 @@ Highcharts.chart('container', {
                 '<b>{point.name}</b><br>' +
             '{/if}'
     },
+    colors: [
+        'rgb(180, 210, 255)',
+        'rgb(180, 255, 210)',
+        'rgb(180, 235, 235)',
+        'rgb(200, 200, 200)',
+        'rgb(170, 230, 250)',
+        'rgb(170, 250, 230)',
+        'rgb(170, 240, 240)',
+        'rgb(190, 190, 190)',
+        'rgb(160, 220, 245)',
+        'rgb(160, 245, 220)'
+    ],
     series: [{
         type: 'venn',
-        colors: [
-            'rgb(180, 210, 255)',
-            'rgb(180, 255, 210)',
-            'rgb(180, 235, 235)',
-            'rgb(200, 200, 200)',
-            'rgb(170, 230, 250)',
-            'rgb(170, 250, 230)',
-            'rgb(170, 240, 240)',
-            'rgb(190, 190, 190)',
-            'rgb(160, 220, 245)',
-            'rgb(160, 245, 220)'
-        ],
         dataLabels: {
             style: {
                 color: 'black'
@@ -149,4 +149,4 @@ Highcharts.chart('container', {
                 '{series.points.length} relations.'
         }
     }
-});
+} satisfies Highcharts.Options);
