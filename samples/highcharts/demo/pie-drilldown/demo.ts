@@ -302,4 +302,4 @@ Highcharts.chart('container', {
             }
         }
     }
-});
+} satisfies Highcharts.Options);
