@@ -19,36 +19,33 @@ Highcharts.chart('container', {
     series: [{
         type: 'organization',
         name: 'Acme Corp',
-        keys: ['from', 'to'],
         data: [
-            ['Shareholders', 'Board'],
-            ['Board', 'CEO'],
-            ['CEO', 'CTO'],
-            ['CEO', 'CPO'],
-            ['CEO', 'CSO'],
-            ['CEO', 'HR'],
-            ['CTO', 'Product'],
-            ['CTO', 'Web'],
-            ['CSO', 'Sales'],
-            ['HR', 'Market'],
-            ['CSO', 'Market'],
-            ['HR', 'Market'],
-            ['CTO', 'Market']
+            { from: 'Shareholders', to: 'Board' },
+            { from: 'Board', to: 'CEO' },
+            { from: 'CEO', to: 'CTO' },
+            { from: 'CEO', to: 'CPO' },
+            { from: 'CEO', to: 'CSO' },
+            { from: 'CEO', to: 'HR' },
+            { from: 'CTO', to: 'Product' },
+            { from: 'CTO', to: 'Web' },
+            { from: 'CTO', to: 'Market' },
+            { from: 'CSO', to: 'Sales' },
+            { from: 'CSO', to: 'Market' },
+            { from: 'HR', to: 'Market' },
+            { from: 'CTO', to: 'Market' }
         ],
         levels: [{
             level: 0,
             color: 'silver',
             dataLabels: {
                 color: 'black'
-            },
-            height: 25
+            }
         }, {
             level: 1,
             color: 'silver',
             dataLabels: {
                 color: 'black'
-            },
-            height: 25
+            }
         }, {
             level: 2,
             color: '#980104'
@@ -122,4 +119,4 @@ Highcharts.chart('container', {
         sourceHeight: 600
     }
 
-});
+} satisfies Highcharts.Options);
