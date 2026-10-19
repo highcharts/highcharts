@@ -4,18 +4,21 @@
 Highcharts.addEvent(
     Highcharts.Series,
     'afterSetOptions',
-    function (e) {
+    function (e: Highcharts.SeriesAfterSetOptionsEventObject): void {
 
-        const colors = Highcharts.getOptions().colors,
-            nodes = {};
+        const colors = Highcharts.getOptions().colors as string[],
+            nodes: Record<string, Highcharts.SeriesNetworkgraphNodesOptions> =
+                {},
+            options = e.options as Highcharts.SeriesNetworkgraphOptions;
 
         let i = 0;
 
         if (
             this instanceof Highcharts.Series.types.networkgraph &&
-            e.options.id === 'lang-tree'
+            options.id === 'lang-tree' &&
+            Array.isArray(options.data)
         ) {
-            e.options.data.forEach(function (link) {
+            options.data.forEach(function (link: [string, string]): void {
 
                 if (link[0] === 'Proto Indo-European') {
                     nodes['Proto Indo-European'] = {
@@ -39,7 +42,7 @@ Highcharts.addEvent(
                 }
             });
 
-            e.options.nodes = Object.keys(nodes).map(function (id) {
+            options.nodes = Object.keys(nodes).map(function (id) {
                 return nodes[id];
             });
         }
@@ -213,4 +216,4 @@ Highcharts.chart('container', {
             ['South Slavic', 'Rusyn']
         ]
     }]
-});
+} satisfies Highcharts.Options);

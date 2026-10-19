@@ -129,6 +129,11 @@ export interface SeriesDataSortingOptions {
  */
 export interface SeriesEventsOptions {
     /**
+     * Fires after the series has set its options.
+     */
+    afterSetOptions?: SeriesAfterSetOptionsCallbackFunction;
+
+    /**
      * Fires after the series has finished its initial animation, or in case
      * animation is disabled, immediately as the series is displayed.
      *
@@ -202,6 +207,44 @@ export interface SeriesEventsOptions {
      * @since 1.2.0
      */
     show?: SeriesShowCallbackFunction;
+}
+
+/**
+ * Function callback when a series has set its options.
+ *
+ * @callback Highcharts.SeriesAfterSetOptionsCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAfterSetOptionsEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+export type SeriesAfterSetOptionsCallbackFunction =
+    EventCallback<Series, SeriesAfterSetOptionsEventObject>;
+
+/**
+ * Event information regarding the options as a series has been set.
+ */
+export interface SeriesAfterSetOptionsEventObject {
+    /**
+     * Series whose options were updated.
+     */
+    target: Series;
+
+    /**
+     * The final merged series options.
+     */
+    options: SeriesOptions;
+
+    /**
+     * Event type.
+     */
+    type: 'afterSetOptions';
 }
 
 /**

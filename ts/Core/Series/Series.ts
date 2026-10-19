@@ -5719,6 +5719,40 @@ export default Series;
  */
 
 /**
+ * Function callback when the series has set its options.
+ *
+ * @callback Highcharts.SeriesAfterSetOptionsCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        The series where the event occurred.
+ *
+ * @param {Highcharts.SeriesAfterSetOptionsEventObject} event
+ *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
+ */
+
+/**
+ * Event information regarding the options after a series has been set.
+ *
+ * @interface Highcharts.SeriesAfterSetOptionsEventObject
+ *//**
+ * Series whose options were updated.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#target
+ * @type {Highcharts.Series}
+ *//**
+ * The final merged series options.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#options
+ * @type {Highcharts.SeriesOptionsType}
+ *//**
+ * Event type.
+ * @name Highcharts.SeriesAfterSetOptionsEventObject#type
+ * @type {"afterSetOptions"}
+ */
+
+/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
