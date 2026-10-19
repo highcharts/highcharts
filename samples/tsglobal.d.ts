@@ -41,7 +41,9 @@ declare global {
             plotLines: Array<Highcharts.PlotLineOrBand>;
             labelGroup: Highcharts.SVGElement;
         }
-
+        interface Pane {
+            update(options: Highcharts.PaneOptions): void;
+        }
         interface Sonification {
             InstrumentPresets: string[];
             speak(
@@ -50,15 +52,14 @@ declare global {
                 delay?: number
             ): void;
         }
-
         interface Chart {
             annotations: Array<{
                 labels: Array<AnnotationLabelType>;
             }>;
+            pane: Array<Pane>;
             sonification: Sonification;
             toggleSonify(): void;
         }
-
         interface Point {
             dataLabels: Array<Highcharts.SVGElement>;
             opacity: number;

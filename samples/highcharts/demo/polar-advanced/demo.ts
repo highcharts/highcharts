@@ -1,167 +1,177 @@
-const
-    data = JSON.parse(document.getElementById('data').innerHTML),
-    scoreData = data[3],
-    colors = Highcharts.getOptions().colors.map(Highcharts.Color.parse),
+const data = JSON.parse(document.getElementById('data')?.innerHTML || '[]');
+const scoreData = data[3];
+const colors: Array<Highcharts.Color> =
+    Highcharts.getOptions().colors.map(color => Highcharts.color(color));
 
-    // Defining recurring values.
-    monthExtremes = { min: 0, max: 26 },
-    weekExtremes = { min: 1, max: 5 },
-    paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 },
-    noLabelProp = { labels: { enabled: false } },
-    specialSeriesProps = {
-        showInLegend: false,
-        groupPadding: 0,
-        pointPadding: 0
+// Defining recurring values.
+const monthExtremes = { min: 0, max: 26 };
+const weekExtremes = { min: 1, max: 5 };
+const paneOpeningAngles = { startAngle: 40.5, endAngle: 319.5 };
+const noLabelProp = { labels: { enabled: false } };
+const specialSeriesProps = {
+    showInLegend: false,
+    groupPadding: 0,
+    pointPadding: 0
+};
+
+// A gradient background for the inner circle (aka pane.)
+const toggleableGradient: Highcharts.GradientColorObject = {
+    radialGradient: { cx: 1, cy: 0.25, r: 0.1 },
+    stops: [
+        [0, '#1f1836'],
+        [1, '#45445d']
+    ]
+};
+
+// Set the background of the middle pane
+const setMidPaneBackground = function (
+    chart: Highcharts.Chart,
+    background: Highcharts.PaneOptions['background']
+): void {
+    chart.pane[1].update({ background });
+};
+
+// A function which (re)sets the inner circles background to our gradient.
+const setGradient = function (this: Highcharts.Point): void {
+    const chart = this.series.chart;
+    setMidPaneBackground(chart, {
+        backgroundColor: toggleableGradient,
+        outerRadius: '75%'
+    });
+    chart.subtitle.element.style.opacity = '1';
+};
+
+// A function used in the creation of our second custom tooltip.
+const asColFieldStr = (str: string): string => (
+    '<span class="col-display-fieldwrap">' +
+    '<span class="symbolSize" ' +
+    'style="color:{point.color};">●</span> ' + str + '</span>'
+);
+
+// We create our teams, 1 serie per team.
+const teamNames = ['Ulambaator', 'Sofia', 'Asmara'];
+const teamColors: Array<string> = [
+    colors[9 % colors.length].tweenTo(colors[0], 0.25) as string,
+    colors[9 % colors.length].tweenTo(
+        colors[8 % colors.length], 0.65
+    ) as string,
+    colors[9 % colors.length].tweenTo(colors[3], 0.85) as string
+];
+
+const teamSeries = Array(3).fill({
+    type: 'bubble',
+    maxSize: '4%',
+    minSize: '1%',
+    clip: false,
+    point: {
+        events: {
+
+            // When hovering a bubble, change the inner circles background
+            // to the color of its parent series.
+            mouseOver: function (this: Highcharts.Point): void {
+                const chart = this.series.chart;
+                chart.subtitle.element.style.opacity = '0';
+                setMidPaneBackground(chart, {
+                    backgroundColor: {
+                        radialGradient: { cx: 1, cy: 0.25, r: 0.1 },
+                        stops: [
+                            [0, teamColors[this.series.index]],
+                            [1, teamColors[this.series.index]]
+                        ]
+                    },
+                    innerRadius: '0%'
+                });
+            },
+            mouseOut: setGradient
+        }
     },
+    colorKey: 't',
 
-    // A gradient background for the inner circle (aka pane.)
-    toggleableGradient = {
-        pattern: undefined,
-        radialGradient: [1, 0.25, 0.1],
-        stops: [
-            [0, '#1f1836'],
-            [1, '#45445d']
-        ]
-    },
+    // A custom tooltip, using our own CSS
+    tooltip: {
+        headerFormat: (
+            '<div class="team-day center">' +
+            '<span class="team-header">' +
+            '<b class="team-index">Day {point.x}</b></span>' +
+            '<span class="team-name" style="' +
+            'border: 0 outset {series.color};' +
+            'border-block-end: 0 outset {series.color};">' +
+            '<b>{series.name}</b></span>'
+        ),
+        pointFormat: (
+            '<span class="team-points">' +
+            '<span class="team-salescount-header">Daily Sales:</span>' +
+            '</br>' +
+            '<span class="team-salescount">{point.z}</span>'
+        ),
+        footerFormat: '</div>'
+    }
+}).map((seriesProps, i) => ({
+    ...seriesProps,
+    name: teamNames[i],
+    data: data[i],
+    color: teamColors[i],
+    marker: {
+        fillColor: teamColors[i],
+        fillOpacity: 1,
+        lineColor: '#46465C',
+        lineWidth: 2
+    }
+}));
 
-    // A function which (re)sets the inner circles background to our gradient.
-    setGradient = function () {
-        const chart = this.series.chart;
-        chart.setMidPaneBg({
-            backgroundColor: toggleableGradient,
-            outerRadius: '75%'
-        });
-        chart.subtitle.element.style.opacity = 1;
-    },
-
-    // A function used in the creation of our second custom tooltip.
-    asColFieldStr = str => (
-        '<span class="col-display-fieldwrap">' +
-        '<span class="symbolSize" ' +
-        'style="color:{point.color};">●</span> ' + str + '</span>'
-    ),
-
-    // We create our teams, 1 serie per team.
-    teamNames = ['Ulambaator', 'Sofia', 'Asmara'],
-    teamColors = [
-        colors[9 % colors.length].tweenTo(colors[0], 0.25),
-        colors[9 % colors.length].tweenTo(colors[8 % colors.length], 0.65),
-        colors[9 % colors.length].tweenTo(colors[3], 0.85)
-    ],
-    teamSeries = Array(3).fill({
-        type: 'bubble',
-        maxSize: '4%',
-        minSize: '1%',
-        clip: false,
-        point: {
-            events: {
-
-                // When hovering a bubble, change the inner circles background
-                // to the color of its parent series.
-                mouseOver: function () {
-                    const chart = this.series.chart;
-                    chart.subtitle.element.style.opacity = 0;
-                    chart.setMidPaneBg({
-                        backgroundColor: teamColors[this.series.index],
-                        innerRadius: '0%'
-                    });
-                },
-                mouseOut: setGradient
+// We create a series which only purpose is to act as a label
+// indicating the week in which a given datapoint occurred.
+const weekLabels = Array(4)
+    .fill(0)
+    .map((_value, index) => ({
+        dataLabels: {
+            format: 'Week {x}',
+            enabled: true,
+            inside: true,
+            style: {
+                textOutline: undefined,
+                fontSize: '0.7em',
+                fontWeight: '700',
+                textTransform: 'uppercase',
+                fontStyle: 'normal',
+                letterSpacing: '0.01em'
+            } as Highcharts.CSSObject,
+            textPath: {
+                enabled: true,
+                attributes: {
+                    startOffset: (
+                        index % 3 ? '75%' : (
+                            index % 2 ? '22%' : '28%'
+                        )
+                    ),
+                    dx: index % 2 ? '-2%' : '0%',
+                    dy: index % 3 ? '2.8%' : '3.3%'
+                }
             }
         },
-        colorKey: 't',
-
-        // A custom tooltip, using our own CSS
-        tooltip: {
-            headerFormat: (
-                '<div class="team-day center">' +
-                '<span class="team-header">' +
-                '<b class="team-index">Day {point.x}</b></span>' +
-                '<span class="team-name" style="' +
-                'border: 0 outset {series.color};' +
-                'border-block-end: 0 outset {series.color};">' +
-                '<b>{series.name}</b></span>'
-            ),
-            pointFormat: (
-                '<span class="team-points">' +
-                '<span class="team-salescount-header">Daily Sales:</span>' +
-                '</br>' +
-                '<span class="team-salescount">{point.z}</span>'
-            ),
-            footerFormat: '</div>'
-        }
-    }).map((seriesProps, i) => ({
-        ...seriesProps,
-        name: teamNames[i],
-        data: data[i],
-        color: teamColors[i],
-        marker: {
-            fillColor: teamColors[i],
-            fillOpacity: 1,
-            lineColor: '#46465C',
-            lineWidth: 2
-        }
-    })),
-
-    // We create a series which only purpose is to act as a label
-    // indicating the week in which a given datapoint occurred.
-    weekLabels = Array(4)
-        .fill(0)
-        .map((_value, index) => ({
-            dataLabels: {
-                format: 'Week {x}',
-                enabled: true,
-                inside: true,
-                style: {
-                    textOutline: undefined,
-                    fontSize: '0.7em',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    fontStyle: 'normal',
-                    letterSpacing: '0.01em'
-                },
-                textPath: {
-                    enabled: true,
-                    attributes: {
-                        startOffset: (
-                            index % 3 ? '75%' : (
-                                index % 2 ? '22%' : '28%'
-                            )
-                        ),
-                        dx: index % 2 ? '-2%' : '0%',
-                        dy: index % 3 ? '2.8%' : '3.3%'
-                    }
-                }
-            },
-            x: index + 1,
-            y: 1.5
-        }));
+        x: index + 1,
+        y: 1.5
+    }));
 
 Highcharts.chart('container', {
     chart: {
         polar: true,
         height: '100%',
         events: {
-
-            load: function () {
-                const midPane = this.pane[1];
-
-                // Our custom background functions are actually wrappers of the
-                // function defined below. This function needs to be defined in
-                // the load-event so that it is able to reference an instance
-                // of Highcharts, without Highcharts being instantiated yet.
-                this.setMidPaneBg = function (background) {
-                    midPane.update({ background: background });
-                };
-            },
-
             // We assign a function which positions our  dynamically
             // regardless of viewport or chart dimensions.
-            render: function () {
+            render: function (this: Highcharts.Chart): void {
                 if (this.legend.group) {
 
                     const
-                        { chartWidth, chartHeight, legend  } = this,
+                        { chartWidth, chartHeight, legend } = this as
+                            Highcharts.Chart & {
+                                legend: Highcharts.Legend & {
+                                    legendWidth: number;
+                                    legendHeight: number;
+                                    group: Highcharts.SVGElement;
+                                };
+                            },
                         { legendWidth, legendHeight } = legend;
 
                     legend.group.translate(
@@ -179,7 +189,7 @@ Highcharts.chart('container', {
     },
     subtitle: {
         text: 'Sales Team<br>Performance',
-        useHTML: 'true',
+        useHTML: true,
         align: 'center',
         y: 35,
         verticalAlign: 'middle',
@@ -201,8 +211,8 @@ Highcharts.chart('container', {
         }
     },
     colorAxis: [{
-        minColor: colors[0].brighten(0.05).get('rgba'),
-        maxColor: colors[5].brighten(0.05).get('rgba'),
+        minColor: colors[0].brighten(0.05).get('rgba') as string,
+        maxColor: colors[5].brighten(0.05).get('rgba') as string,
         showInLegend: false,
         ...weekExtremes
     }, {
@@ -221,7 +231,7 @@ Highcharts.chart('container', {
         innerSize: '75%',
         ...paneOpeningAngles,
         background: {
-            borderColor: colors[4],
+            borderColor: colors[4].get('rgba') as string,
             backgroundColor: toggleableGradient,
             innerRadius: '40%',
             shape: 'circle'
@@ -234,7 +244,7 @@ Highcharts.chart('container', {
             borderWidth: 0,
             backgroundColor: toggleableGradient,
             outerRadius: '75%',
-            innerRadius: 0,
+            innerRadius: '0%',
             shape: 'circle'
         }
 
@@ -246,7 +256,7 @@ Highcharts.chart('container', {
         endAngle: 343.5,
         background: {
             borderWidth: 1,
-            borderColor: colors[4],
+            borderColor: colors[4].get('rgba') as string,
             backgroundColor: '#46465C',
             innerRadius: '55%',
             outerRadius: '100%',
@@ -291,7 +301,7 @@ Highcharts.chart('container', {
     yAxis: [{
         pane: 0,
         gridLineWidth: 0.5,
-        gridLineDashStyle: 'longdash',
+        gridLineDashStyle: 'LongDash',
         tickInterval: 1,
         title: null,
         ...noLabelProp,
@@ -339,7 +349,7 @@ Highcharts.chart('container', {
         symbolPadding: 8,
         symbolHeight: 8,
         width: '36%',
-        maxHeight: '14%'
+        maxHeight: 120
     },
     plotOptions: {
         columnrange: {
@@ -488,13 +498,13 @@ Highcharts.chart('container', {
 
                     // Here we change our circle once again but this time
                     // it is when the innermost column series is hovered.
-                    mouseOver: function () {
+                    mouseOver: function (this: Highcharts.Point): void {
                         const chart = this.series.chart;
-                        chart.setMidPaneBg({
+                        setMidPaneBackground(chart, {
                             backgroundColor: toggleableGradient,
                             outerRadius: '75%'
                         });
-                        chart.subtitle.element.style.opacity = 0;
+                        chart.subtitle.element.style.opacity = '0';
                     },
 
                     // We reuse our originally defined "setGradient" function
@@ -533,4 +543,4 @@ Highcharts.chart('container', {
             }
         }
     ]
-});
+} satisfies Highcharts.Options);
