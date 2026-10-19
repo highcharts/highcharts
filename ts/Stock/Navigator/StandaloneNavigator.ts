@@ -89,7 +89,11 @@ function getSizeOptions(
 ): DeepPartial<Options> {
     const { height, width, margin, inverted } =
             options.chartOptions?.chart || {},
-        chartHeight = height ?? (inverted ? void 0 : options.height || void 0),
+        chartHeight = height ?? (
+            !inverted && options.height ?
+                options.height + 1 :
+                void 0
+        ),
         chartWidth = width ?? (
             inverted && options.height ?
                 options.height + 20 :
