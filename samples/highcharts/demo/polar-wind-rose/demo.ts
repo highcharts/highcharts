@@ -53,11 +53,11 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        column: {
             stacking: 'normal',
             shadow: false,
             groupPadding: 0,
             pointPlacement: 'on'
         }
     }
-});
+} satisfies Highcharts.Options);
