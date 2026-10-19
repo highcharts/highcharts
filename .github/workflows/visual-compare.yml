@@ -154,6 +154,23 @@ jobs:
         with:
           ref: ${{ steps.revisions.outputs.reference_sha }}
 
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install reference toolchain
+        run: npm ci
+
+      # Build before overlaying any candidate files or dependencies.
+      - name: Build reference Highcharts
+        run: npx gulp scripts
+
+      - name: Preserve reference build
+        run: |
+          tar -czf "$RUNNER_TEMP/karma-reference-build.tar.gz" code js
+
       - name: Restore candidate harness
         run: tar -xf "$RUNNER_TEMP/karma-harness.tar" -C "$GITHUB_WORKSPACE"
 
@@ -168,13 +185,7 @@ jobs:
           FIREFOX_PATH: ${{ steps.reference-firefox.outputs.firefox-path }}
         run: node .github/scripts/disableFirefoxUpdates.js
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-
-      - name: Install dependencies
+      - name: Install candidate toolchain for reference
         run: npm ci
 
       - name: Restore reference package metadata
@@ -186,8 +197,10 @@ jobs:
             tests/package.json tests/package-lock.json \
             tools/docs-preview/package.json
 
-      - name: Build Highcharts
-        run: npx gulp scripts
+      # npm ci runs clean. Restore the build after installation and do not
+      # rebuild it with the candidate toolchain before reference capture.
+      - name: Restore reference build
+        run: tar -xzf "$RUNNER_TEMP/karma-reference-build.tar.gz" -C "$GITHUB_WORKSPACE"
 
       - id: reference-highcharts
         run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
