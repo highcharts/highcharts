@@ -1,11 +1,3 @@
-const data = [
-    // Name (Symbol),Atomic Number,Atomic Radius,Boiling Point,Density,Phase
-    ['Mercury (Hg)', 80, 151, 629, 13.546, 1],
-    ['Iron (Fe)', 26, 126, 3134, 7.874, 2],
-    ['Silver (Ag)', 47, 144, 2435, 10.503, 2],
-    ['Xenon (Xe)', 54, 108, 165, 3.408, 0]
-];
-
 Highcharts.chart('container', {
     chart: {
         parallelCoordinates: true,
@@ -71,7 +63,7 @@ Highcharts.chart('container', {
         plotLines: Array.from({ length: 5 }, (_, value) => ({
             value,
             width: 1,
-            dashStyle: '2,2',
+            dashStyle: 'Dot',
             color: '#75738c'
         })),
         min: 0,
@@ -106,14 +98,24 @@ Highcharts.chart('container', {
         min: -0.5,
         max: 2.5
     }],
-    series: data.map(function (set) {
-        return {
-            name: set[0],
-            data: set.slice(1)
-        };
-    }),
+    series: [{
+        name: 'Mercury (Hg)',
+        data: [80, 151, 629, 13.546, 1]
+    },
+    {
+        name: 'Iron (Fe)',
+        data: [26, 126, 3134, 7.874, 2]
+    },
+    {
+        name: 'Silver (Ag)',
+        data: [47, 144, 2435, 10.503, 2]
+    },
+    {
+        name: 'Xenon (Xe)',
+        data: [54, 108, 165, 3.408, 0]
+    }],
     plotOptions: {
-        series: {
+        area: {
             fillOpacity: 0,
             states: {
                 hover: {
@@ -170,4 +172,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
