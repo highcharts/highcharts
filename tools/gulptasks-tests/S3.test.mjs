@@ -637,4 +637,34 @@ describe('S3 utils', async () => {
             ['docs/DELETE report.html', 'docs/report.html']
         );
     });
+
+    await it('rejects writer buckets that escape the deletion-marker tree', async () => {
+        const fixture = makeFixture();
+        const sourceFile = writeSourceFile(
+            fixture.sourcePath,
+            'report.html',
+            'new report'
+        );
+        const existingObjectPath = writeDryRunObject(
+            fixture.bucketPath,
+            'DELETE report.html',
+            'preserve this mirrored object'
+        );
+
+        fixture.session.bucket = `../s3/${fixture.bucket}`;
+
+        await assert.rejects(
+            S3.uploadFile(sourceFile, 'report.html', fixture.session),
+            /escapes its root/u
+        );
+
+        assert.equal(
+            readFileSync(existingObjectPath, 'utf8'),
+            'preserve this mirrored object'
+        );
+        assert.equal(
+            existsSync(Path.join(fixture.bucketPath, 'report.html')),
+            false
+        );
+    });
 });

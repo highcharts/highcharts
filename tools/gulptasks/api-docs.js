@@ -55,11 +55,28 @@ const TARGET_DIRECTORY = 'build/api/';
  * Promise to keep.
  */
 async function apiDocs() {
-    const ProcessLib = require('../libs/process');
     const Yargs = require('yargs');
-    const path = require('node:path');
+    await runApiDocs(Yargs.argv);
+}
 
-    const args = Yargs.argv;
+
+/**
+ * Runs API documentation generation with optional dependencies for tests.
+ *
+ * @param {object} args
+ * Parsed yargs arguments.
+ *
+ * @param {object} dependencies
+ * Injectable dependencies for task tests.
+ *
+ * @return {Promise<void>}
+ * Promise to keep.
+ */
+async function runApiDocs(args, dependencies = {}) {
+    const ProcessLib = dependencies.processLib || require('../libs/process');
+    const path = require('node:path');
+    const targetDirectory = dependencies.targetDirectory || TARGET_DIRECTORY;
+    let reactStatic = dependencies.reactStatic;
 
     if (args.info) {
         process.stdout.write(INFO);
@@ -83,7 +100,7 @@ async function apiDocs() {
             );
         }
 
-        const reactStatic = require('./lib/reactStatic');
+        reactStatic = reactStatic || require('./lib/reactStatic');
 
         verifiedReactArtifact = await reactStatic.verifyArtifact(
             path.resolve(args.reactArtifact.trim()),
@@ -92,6 +109,11 @@ async function apiDocs() {
                     args.expectedHighchartsVersion.trim(),
                 expectedReactVersion: args.expectedReactVersion.trim()
             }
+        );
+
+        await reactStatic.validateStagingRoots(
+            verifiedReactArtifact,
+            path.resolve(targetDirectory)
         );
     } else if (
         args.expectedHighchartsVersion !== void 0 ||
@@ -114,14 +136,12 @@ async function apiDocs() {
             ` --source "${source}"`
     );
 
-    await createApiDocumentation();
+    await (dependencies.createApiDocumentation || createApiDocumentation)();
 
     if (verifiedReactArtifact) {
-        const reactStatic = require('./lib/reactStatic');
-
         await reactStatic.stageArtifact(
             verifiedReactArtifact,
-            path.resolve(TARGET_DIRECTORY)
+            path.resolve(targetDirectory)
         );
     }
 }
@@ -171,3 +191,5 @@ function createApiDocumentation() {
 require('./api-tree');
 
 Gulp.task('api-docs', apiDocs);
+
+module.exports = { runApiDocs };

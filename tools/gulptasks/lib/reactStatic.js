@@ -314,13 +314,12 @@ async function physicalPath(file) {
 }
 
 /**
- * Stage inventory files and extend legacy navigation, retaining old releases.
+ * Reject overlapping artifact and output roots before any build side effects.
  * @param {object} artifact Verified artifact.
  * @param {string} directory Staging directory.
- * @param {object} options Optional legacy navigation settings.
- * @return {Promise<object>} Artifact with its staged root.
+ * @return {Promise<void>} Resolves when the roots are separate.
  */
-async function stageArtifact(artifact, directory, options = {}) {
+async function validateStagingRoots(artifact, directory) {
     const destinationRoot = await physicalPath(directory);
     for (const source of new Set([artifact.root, artifact.sourceRoot].filter(Boolean))) {
         const sourceRoot = await physicalPath(source);
@@ -329,6 +328,17 @@ async function stageArtifact(artifact, directory, options = {}) {
             fail('artifact and staging directories must not overlap');
         }
     }
+}
+
+/**
+ * Stage inventory files and extend legacy navigation, retaining old releases.
+ * @param {object} artifact Verified artifact.
+ * @param {string} directory Staging directory.
+ * @param {object} options Optional legacy navigation settings.
+ * @return {Promise<object>} Artifact with its staged root.
+ */
+async function stageArtifact(artifact, directory, options = {}) {
+    await validateStagingRoots(artifact, directory);
     await FS.mkdir(directory, { recursive: true });
     if ((await FS.lstat(directory)).isSymbolicLink()) {
         fail('staging directory cannot be a symlink');
@@ -401,7 +411,7 @@ async function preparePublicationReport(artifact, destination) {
     }
     const reportDirectory = Path.dirname(reportPath);
     await FS.mkdir(reportDirectory, { recursive: true });
-    const reportInfo = await FS.stat(reportPath).catch(error => {
+    const reportInfo = await FS.lstat(reportPath).catch(error => {
         if (error.code !== 'ENOENT') {
             throw error;
         }
@@ -535,4 +545,4 @@ async function publishArtifact(artifact, session, options = {}) {
     return report;
 }
 
-module.exports = { isReactOwnedKey, verifyArtifact, stageArtifact, preparePublicationReport, publishArtifact };
+module.exports = { isReactOwnedKey, verifyArtifact, validateStagingRoots, stageArtifact, preparePublicationReport, publishArtifact };

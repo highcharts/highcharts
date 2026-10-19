@@ -597,6 +597,32 @@ describe('static React artifact consumer', async () => {
         assert.equal(calls.length, fixture.records.length);
     });
 
+    await it('rejects dangling report symlinks into release content before uploading', async t => {
+        const fixture = await makeFixture();
+        const artifact = await stage(fixture);
+        const calls = [];
+        const session = remoteSession(fixture.bucket, { putObject(params) { calls.push(params); } });
+        for (const [index, root] of [fixture.artifactDirectory, fixture.stagingDirectory].entries()) {
+            const target = Path.join(root, 'unowned-report.json');
+            const alias = Path.join(fixture.directory, `dangling-report-${index}.json`);
+            try {
+                await symlink(target, alias, 'file');
+            } catch (error) {
+                if (process.platform === 'win32' && ['EPERM', 'EACCES', 'ENOTSUP'].includes(error.code)) {
+                    t.skip('Creating symlinks is not permitted on this Windows host.');
+                    return;
+                }
+                throw error;
+            }
+            await assert.rejects(ReactStatic.publishArtifact(artifact, session, {
+                reportPath: alias
+            }), /Publication report must be a regular file/u);
+            assert.deepEqual(calls, []);
+            await assert.rejects(readFile(target), { code: 'ENOENT' });
+        }
+        await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+    });
+
     await it('rejects a publication report through a symlink to staged content', async t => {
         const fixture = await makeFixture();
         const artifact = await stage(fixture);

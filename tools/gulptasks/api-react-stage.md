@@ -5,7 +5,8 @@ Highcharts versions before any files are staged or uploaded. Its manifest and
 inventory remain outside the public `build/api` tree. The artifact itself is
 copied into `build/api` without changing file bytes.
 Keep the artifact outside the staging tree: identical or nested artifact and
-staging roots are rejected before copying, including overlaps through symlinks.
+staging roots are rejected before generation or copying, including overlaps
+through symlinks.
 
 When the legacy product `api.js` files are present, staging also adds a **React**
 entry to their JS/iOS/Android dropdown. Each product links to its own
@@ -97,6 +98,7 @@ another location outside release content. The task checks that the
 report destination can be written before any legacy or React upload. If both
 publication and report writing fail, the upload error retains the report error
 as `reportError`.
+Dangling report symlinks are rejected before uploads.
 
 Progress is printed when each React phase starts and finishes, and every five
 seconds while it runs, including completed/total files, uploaded/reused counts,

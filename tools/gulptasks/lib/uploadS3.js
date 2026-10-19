@@ -801,17 +801,15 @@ async function writeDryRunObject(key, content, session) {
     const deleteMarkerPath = getDryRunDeleteMarkerPath(key, session);
     const tempRoot = NativePath.resolve('tmp');
     const mirrorRoot = NativePath.resolve('tmp', 's3');
+    const markerRoot = NativePath.resolve('tmp', 's3-delete-markers');
     const mirrorBucketPath = NativePath.resolve(mirrorRoot, session.bucket);
-    const markerBucketPath = NativePath.resolve(
-        'tmp',
-        's3-delete-markers',
-        session.bucket
-    );
+    const markerBucketPath = NativePath.resolve(markerRoot, session.bucket);
 
     assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+    assertNoDryRunSymlinkAncestors(markerRoot, tempRoot);
     assertNoDryRunSymlinkAncestors(mirrorBucketPath, mirrorRoot);
     assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
-    assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+    assertNoDryRunSymlinkAncestors(markerBucketPath, markerRoot);
     assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
     FS.mkdirSync(Path.dirname(targetPath), { recursive: true });
     assertNoDryRunSymlinkAncestors(targetPath, mirrorBucketPath);
