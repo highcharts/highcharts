@@ -13,7 +13,7 @@ Highcharts.chart('container', {
         text: 'Highcharts Pyramid3D Chart'
     },
     plotOptions: {
-        series: {
+        pyramid3d: {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
@@ -36,4 +36,4 @@ Highcharts.chart('container', {
             ['Finalized', 846]
         ]
     }]
-});
+} satisfies Highcharts.Options);
