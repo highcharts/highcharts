@@ -78,7 +78,10 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
  *
  * */
 
-function getChartDefaults(inverted?: boolean): DeepPartial<Options> {
+function getChartDefaults(
+    inverted?: boolean,
+    chartWidth: number = 70
+): DeepPartial<Options> {
     return merge(
         {
             chart: inverted ? {
@@ -96,7 +99,7 @@ function getChartDefaults(inverted?: boolean): DeepPartial<Options> {
                 xAxis: {
                     labels: {
                         style: {
-                            width: '80px'
+                            width: (chartWidth - 30) + 'px'
                         }
                     }
                 }

@@ -277,9 +277,11 @@ QUnit.test('Standalone navigator stays at the top, #24714', function (assert) {
 
     sized.update({ chartOptions: { chart: { inverted: true } } });
 
+    // The chart also leaves room for the strip's offset from the left edge,
+    // so that the outline is not cut off, #24714
     assert.strictEqual(
         sized.navigator.chart.chartWidth,
-        100,
+        120,
         'Navigator height should set the chart width when inverted, #24714.'
     );
 

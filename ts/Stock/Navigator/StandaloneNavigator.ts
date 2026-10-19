@@ -90,10 +90,14 @@ function getSizeOptions(
     const { height, width, margin, inverted } =
             options.chartOptions?.chart || {},
         chartHeight = height ?? (inverted ? void 0 : options.height || void 0),
-        chartWidth = width ?? (inverted ? options.height || void 0 : void 0);
+        chartWidth = width ?? (
+            inverted && options.height ?
+                options.height + 20 :
+                void 0
+        );
 
     return merge(
-        getChartDefaults(inverted),
+        getChartDefaults(inverted, chartWidth),
         defined(margin) ? { chart: { margin } } : void 0,
         defined(chartWidth) ? { chart: { width: chartWidth } } : void 0,
         defined(chartHeight) ? { chart: { height: chartHeight } } : void 0
