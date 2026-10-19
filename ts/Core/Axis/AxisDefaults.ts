@@ -475,6 +475,15 @@ namespace AxisDefaults {
          */
 
         /**
+         * A reserved subspace to store options and values for customized
+         * functionality. Here you can add additional data for your own event
+         * callbacks and formatter callbacks.
+         *
+         * @type      {Highcharts.Dictionary<*>}
+         * @apioption xAxis.custom
+         */
+
+        /**
          * The value on a perpendicular axis where this axis should cross. This
          * is typically used on mathematical plots where the axes cross at 0.
          * When `crossing` is set, space will not be reserved at the sides of

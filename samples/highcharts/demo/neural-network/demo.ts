@@ -1,6 +1,12 @@
+type Layer = {
+    nodes: number;
+    activation: 'tanh'|'ReLU'|'sigmoid';
+    label: string;
+};
+
 // Define an array of layers, where each layer is an object
 // with the number of nodes and the activation function
-const layers = [{
+const layers: Array<Layer> = [{
     nodes: 1,
     activation: 'tanh',
     label: 'Input Layer (#0)'
@@ -23,17 +29,17 @@ const layers = [{
 }];
 
 // Generates series for a neural network based on the defined layers.
-function generateData() {
+function generateData(): Array<{ data: Array<number> }> {
     // If there are no layers defined, we have no neural network to visualize
     if (layers.length === 0) {
         return [];
     }
 
-    const data = [];
+    const data: Array<{ data: Array<number> }> = [];
 
     // Recursive function to generate all possible connections of nodes
     // for each layer in then network
-    function generate(currentIndices) {
+    function generate(currentIndices: Array<number>): void {
         // Base case: If the current indices length matches the number of
         // layers, store the combination in the data array.
         if (currentIndices.length === layers.length) {
@@ -151,4 +157,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
