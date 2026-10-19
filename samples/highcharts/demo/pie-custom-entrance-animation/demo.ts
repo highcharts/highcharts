@@ -1,16 +1,19 @@
 (function (H) {
-    H.seriesTypes.pie.prototype.animate = function (init) {
+    H.Series.types.pie.prototype.animate = function (init) {
         const series = this,
             chart = series.chart,
             points = series.points,
             {
-                animation
-            } = series.options,
-            {
-                startAngleRad
-            } = series;
+                animation,
+                startAngle = -90
+            } = series.options as Highcharts.SeriesPieOptions,
+            animationObject = H.animObject(animation),
+            startAngleRad = startAngle * Math.PI / 180;
 
-        function fanAnimate(point, startAngleRad) {
+        function fanAnimate(
+            point: Highcharts.Point,
+            startAngleRad: number
+        ): void {
             const graphic = point.graphic,
                 args = point.shapeArgs;
 
@@ -28,7 +31,7 @@
                         start: args.start,
                         end: args.end
                     }, {
-                        duration: animation.duration / points.length
+                        duration: animationObject.duration / points.length
                     }, function () {
                         // On complete, start animating the next point
                         if (points[point.index + 1]) {
@@ -45,12 +48,10 @@
                                 points.forEach(point => {
                                     point.opacity = 1;
                                 });
-                                series.update({
-                                    enableMouseTracking: true
-                                }, false);
                                 chart.update({
                                     plotOptions: {
                                         pie: {
+                                            enableMouseTracking: true,
                                             innerSize: '40%',
                                             borderRadius: 8
                                         }
@@ -61,7 +62,6 @@
                     });
             }
         }
-
         if (init) {
             // Hide points on init
             points.forEach(point => {
@@ -99,6 +99,8 @@ Highcharts.chart('container', {
             allowPointSelect: true,
             borderWidth: 2,
             cursor: 'pointer',
+            // Disable mouse tracking on load, enable after custom animation
+            enableMouseTracking: false,
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b><br>{point.percentage}%',
@@ -107,8 +109,6 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        // Disable mouse tracking on load, enable after custom animation
-        enableMouseTracking: false,
         animation: {
             duration: 2000
         },
@@ -130,4 +130,4 @@ Highcharts.chart('container', {
             y: 25.6
         }]
     }]
-});
+} satisfies Highcharts.Options);

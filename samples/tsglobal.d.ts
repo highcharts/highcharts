@@ -61,12 +61,13 @@ declare global {
 
         interface Point {
             dataLabels: Array<Highcharts.SVGElement>;
+            opacity: number;
             sonify(): void;
         }
         interface Series {
             // @todo: Add proper support. Used in black-and-white demo.
             currentDataGrouping: TimeTicksInfoObject;
-
+            dataLabelsGroup: Highcharts.SVGElement;
             graph?: Highcharts.SVGElement;
         }
         interface SVGElement {
