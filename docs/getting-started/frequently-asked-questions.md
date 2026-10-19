@@ -1,3 +1,10 @@
+---
+description: >-
+  Find answers to common integration questions about external resources,
+  server data, Stock features, exporting, performance, character encoding, and
+  irregular time data, with examples and links to more detailed guides.
+---
+
 Frequently asked questions
 ===
 

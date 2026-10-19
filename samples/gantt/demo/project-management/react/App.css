@@ -1,0 +1,8 @@
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-label-icon {
+    opacity: 0.5;
+}

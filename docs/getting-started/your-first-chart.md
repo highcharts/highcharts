@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a bar chart in a web page by adding a container and configuring
+  titles, axes, and series. See the Stock chart constructor and options for
+  applying a theme.
+---
+
 Your first chart
 ===
 

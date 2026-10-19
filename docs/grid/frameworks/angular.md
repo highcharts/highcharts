@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Angular"
+description: >-
+  Install a Grid Lite or Grid Pro package, import its bundle and stylesheet,
+  add a container, and create a grid from an Angular component with a
+  configuration object.
 ---
 
 # Highcharts Grid with Angular

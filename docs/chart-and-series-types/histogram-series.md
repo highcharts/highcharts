@@ -1,3 +1,10 @@
+---
+description: >-
+  Build a histogram from one-dimensional data using a base series, then set
+  bin width or a bin-count rule. The article also shows displaying already
+  aggregated bins in a column chart with zero padding.
+---
+
 Histogram
 ===
 

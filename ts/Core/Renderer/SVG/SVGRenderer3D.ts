@@ -41,11 +41,10 @@ const {
     charts,
     deg2rad
 } = H;
-import Math3D from '../../Math3D.js';
-const {
+import {
     perspective,
     shapeArea
-} = Math3D;
+} from '../../Math3D.js';
 import SVGElement3D from './SVGElement3D.js';
 import { defined, extend, merge } from '../../../Shared/Utilities.js';
 
