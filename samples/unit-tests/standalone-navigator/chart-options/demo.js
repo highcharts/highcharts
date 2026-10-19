@@ -261,18 +261,18 @@ QUnit.test('Standalone navigator stays at the top, #24714', function (assert) {
     });
 
     assert.strictEqual(
-        sized.navigator.chart.chartHeight,
+        sized.navigator.height,
         100,
-        'Navigator height should set the chart height, #24714.'
+        'Navigator height should set the navigator height, #24714.'
     );
 
     sized.update({ chartOptions: { chart: { inverted: true } } });
     sized.update({ chartOptions: { chart: { inverted: false } } });
 
     assert.strictEqual(
-        sized.navigator.chart.chartHeight,
+        sized.navigator.height,
         100,
-        'Chart height should be restored after a round trip, #24714.'
+        'Navigator height should be restored after a round trip, #24714.'
     );
 
     sized.update({ chartOptions: { chart: { inverted: true } } });
