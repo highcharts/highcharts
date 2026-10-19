@@ -20,28 +20,27 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38d619238/samples/data/morningstar/magnum-ice-cream-company-ohlcv.json'
     ).then(r => r.json());
 
+    const rawData = json.ts.results[0].data,
+        dataTable = new Highcharts.DataTable();
+
     // The data is sorted from newest to oldest, with values as strings
-    const rawData = json.ts.results[0].data.toReversed(),
-        getColumn = key => rawData.map(entry => +entry[key]);
+    for (let i = rawData.length - 1; i >= 0; i--) {
+        const entry = rawData[i],
+            parts = entry['Date Received (GMT)'].split('-');
+
+        dataTable.setRow({
+            Date: `${parts[2]}-${parts[1]}-${parts[0]}`,
+            Open: +entry['Open price'],
+            High: +entry['High price'],
+            Low: +entry['Low price'],
+            Close: +entry['Last price'],
+            Volume: +entry['Cumulative volume']
+        });
+    }
 
     Highcharts.stockChart('container', {
 
-        dataTable: {
-            columns: {
-                // Convert dates from DD-MM-YYYY to YYYY-MM-DD
-                Date: rawData.map(
-                    entry => entry['Date Received (GMT)']
-                        .split('-')
-                        .reverse()
-                        .join('-')
-                ),
-                Open: getColumn('Open price'),
-                High: getColumn('High price'),
-                Low: getColumn('Low price'),
-                Close: getColumn('Last price'),
-                Volume: getColumn('Cumulative volume')
-            }
-        },
+        dataTable,
 
         chart: {
             spacing: 16,
