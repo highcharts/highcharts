@@ -1,6 +1,6 @@
 declare namespace Highcharts {
     interface YAxisPlotLinesOptions {
-        animation: Highcharts.AnimationOptionsObject;
+        animation?: Highcharts.AnimationOptionsObject;
     }
 }
 

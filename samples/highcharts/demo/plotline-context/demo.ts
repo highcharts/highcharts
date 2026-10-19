@@ -57,7 +57,7 @@ const chart = Highcharts.chart('container', {
         plotLines: [{
             value: 0,
             color: '#59D',
-            dashStyle: 'shortDash',
+            dashStyle: 'ShortDash',
             width: 2
         }],
         title: {
@@ -109,7 +109,7 @@ const chart = Highcharts.chart('container', {
         data: [-5, -6, -2, 4, 10, 14, 17, 15, 10, 6, 0, -4],
         color: 'var(--highcharts-neutral-color-80, #334eff)'
     }]
-});
+} satisfies Highcharts.Options);
 
 document.getElementById('sonify').onclick = function () {
     chart.toggleSonify();
