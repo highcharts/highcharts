@@ -761,15 +761,10 @@ NO_REWRITES=1 npx playwright test
 
 ## Playwright Visual Comparisons
 
-> **Note:** Playwright and Karma share sample exclusions, but financial samples
-> run only in Playwright. Successful Playwright runs for same-repository
-> PRs publish to production Visual Review and can replace the current Karma
-> review for that PR with results for the selected manifest only.
-
 The `visual` Playwright project (`tests/visual/visual.spec.ts`) renders samples to
 SVG, compares them against references, and records a pixel-difference count. It
 runs on Chromium only. Discovery includes eligible Highcharts, Stock, Maps, and
-Gantt samples by default. It uses Karma's exclusion list in
+Gantt samples by default. It uses the shared visual exclusion list in
 `test/visual-test-samples.js` and the `skipTest` and `requiresManualTesting`
 sample metadata. Add exceptions to that shared exclusion list. CI compares
 the samples present and eligible on both the candidate and pinned master
@@ -778,18 +773,18 @@ The selected IDs are saved in the workflow artifacts as `visual-samples.json`.
 A sample introduced in a PR has no master reference and joins comparisons once
 it is present on master. `VISUAL_TEST_PATH` remains a substring filter for
 focused local runs. `VISUAL_TEST_MANIFEST` selects exact IDs when a fixed set is
-needed and cannot be combined with a path filter.
+needed and cannot be combined with a path filter. Explicit IDs excluded by the
+shared exclusions are rejected.
 
 Discovery covers demos and focused API-option samples, including multi-chart
 rendering, polar and range series, network diagrams, stock navigation and
 indicators, map projections and color axes, and Gantt progress, hierarchy, and
 grid columns.
-Discovery includes `demo.js` and TypeScript sources compiled by Karma's `--ts`
-mode. Module-only `demo.mjs` samples are not loaded by Karma and are excluded.
-The visual setup builds Highcharts, Dashboards and Grid in sequence. The runner
-preloads both Morningstar connector bundles. Dashboard samples use a separate
-page with Dashboards and Grid assets so their connector data layer cannot affect
-standalone charts.
+Discovery includes `demo.js` and TypeScript sources. Module-only `demo.mjs`
+samples are not loaded. The visual setup builds Highcharts, Dashboards and Grid
+in sequence. The runner preloads both Morningstar connector bundles. Dashboard
+samples use a separate page with Dashboards and Grid assets so their connector
+data layer cannot affect standalone charts.
 API-backed samples use recorded responses in `tests/visual/data`; these routes
 are limited to the visual project and retain offline execution. Requests match
 the recorded URL, method and POST body, including portfolios sharing an endpoint.
@@ -872,7 +867,7 @@ are failures:
   failures fail CI. Listed reference failures do not fail the run by themselves
 - `test/visual-test-errors.log` is non-empty after the candidate run
 - expected results are missing, the selected sample set is invalid, or an
-  explicitly requested manifest ID is excluded by Karma
+  explicitly requested manifest ID is excluded by the shared exclusions
 - `test/visual-test-complete` is absent after the run (indicates the full
 candidate run did not finish normally)
 
@@ -889,12 +884,6 @@ The comparison results and rendered candidates must account for the full selecte
 sample set. A skipped candidate is an incomplete run. PR comments distinguish a
 partial comparison or no comparable samples from a complete comparison.
 
-Karma remains strict: reference failures stop its workflow. Both revisions run
-the candidate's pinned harness and exclusion rules. New samples without a master
-reference retain Karma's existing omission from comparison. Financial samples
-use Playwright's existing offline fixtures; samples marked for manual testing
-remain excluded.
-
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.
 Locally these markers are informational.
@@ -903,10 +892,8 @@ Locally these markers are informational.
 
 After validation, same-repository PR runs use `gulp update-pr-testresults` to
 publish the complete result JSON and SVG/GIF artifacts for differing samples to
-`https://vrevs.highsoft.com`. Playwright is the sole production publisher. Karma
-continues comparing samples and links to its GitHub Actions artifacts using
-`gulp update-pr-testresults --artifacts-url URL`, which skips API submission.
-The Playwright PR comment identifies the number of compared samples. Manual
+`https://vrevs.highsoft.com`. Playwright is the production publisher. The
+Playwright PR comment identifies the number of compared samples. Manual
 workflow runs and fork PRs only upload GitHub Actions diagnostics.
 
 Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with
