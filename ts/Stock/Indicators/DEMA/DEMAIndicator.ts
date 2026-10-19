@@ -65,8 +65,8 @@ class DEMAIndicator extends EMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dema
+     * @requires     indicators/indicators
+     * @requires     indicators/dema
      * @optionparent plotOptions.dema
      * @internal
      */
@@ -257,8 +257,8 @@ export default DEMAIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dema
+ * @requires  indicators/indicators
+ * @requires  indicators/dema
  * @apioption series.dema
  */
 

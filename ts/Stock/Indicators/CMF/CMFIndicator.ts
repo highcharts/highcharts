@@ -66,8 +66,8 @@ class CMFIndicator extends SMAIndicator {
      * @since        6.0.0
      * @excluding    animationLimit
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/cmf
+     * @requires     indicators/indicators
+     * @requires     indicators/cmf
      * @optionparent plotOptions.cmf
      * @internal
      */
@@ -365,8 +365,8 @@ export default CMFIndicator;
  * @extends   series,plotOptions.cmf
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/cmf
+ * @requires  indicators/indicators
+ * @requires  indicators/cmf
  * @apioption series.cmf
  */
 

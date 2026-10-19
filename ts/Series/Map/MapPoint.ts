@@ -102,9 +102,6 @@ class MapPoint extends ScatterPoint {
     public insetIndex?: number;
 
     /** @internal */
-    public labelrank?: number;
-
-    /** @internal */
     public middleX?: number;
 
     /** @internal */

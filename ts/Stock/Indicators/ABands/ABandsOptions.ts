@@ -43,8 +43,8 @@ import type {
  *               navigatorOptions, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointRange, pointStart, showInNavigator,
  *               stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/acceleration-bands
+ * @requires     indicators/indicators
+ * @requires     indicators/acceleration-bands
  * @interface Highcharts.ABandsOptions
  */
 export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
