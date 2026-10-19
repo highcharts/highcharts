@@ -21,6 +21,8 @@
 import type { DeepPartial } from '../../Shared/Types';
 import type { Options } from '../../Core/Options';
 
+import { merge } from '../../Shared/Utilities.js';
+
 /* *
  *
  *  Constants
@@ -77,17 +79,30 @@ const standaloneNavigatorDefaults: DeepPartial<Options> = {
  * */
 
 function getChartDefaults(inverted?: boolean): DeepPartial<Options> {
-    return {
-        chart: inverted ? {
-            width: 70,
-            height: void 0,
-            margin: [5, 0, 25, 0]
-        } : {
-            width: void 0,
-            height: 70,
-            margin: [0, 5, 0, 5]
-        }
-    };
+    return merge(
+        {
+            chart: inverted ? {
+                width: 70,
+                height: void 0,
+                margin: [5, 0, 25, 0]
+            } : {
+                width: void 0,
+                height: 70,
+                margin: [0, 5, 0, 5]
+            }
+        },
+        inverted ? {
+            navigator: {
+                xAxis: {
+                    labels: {
+                        style: {
+                            width: '80px'
+                        }
+                    }
+                }
+            }
+        } : void 0
+    );
 }
 
 /* *
