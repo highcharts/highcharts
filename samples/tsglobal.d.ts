@@ -24,6 +24,17 @@ declare module '../code/highcharts' {
 declare global {
     namespace Highcharts {
 
+        type AnnotationLabelType = {
+            graphic: Highcharts.SVGElement;
+            options: {
+                id?: string;
+                point: {
+                    x: number;
+                    y: number;
+                };
+            };
+        }
+
         interface Sonification {
             InstrumentPresets: string[];
             speak(
@@ -35,15 +46,7 @@ declare global {
 
         interface Chart {
             annotations: Array<{
-                labels: Array<{
-                    options: {
-                        point: {
-                            x: number;
-                            y: number;
-                        };
-                        text?: string;
-                    };
-                }>;
+                labels: Array<AnnotationLabelType>;
             }>;
             sonification: Sonification;
             toggleSonify(): void;

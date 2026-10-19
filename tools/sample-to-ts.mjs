@@ -11,8 +11,6 @@ import { hideBin } from 'yargs/helpers';
 const ROOT = process.cwd();
 const DEFAULT_SAMPLE_GLOB = 'highcharts/demo/**';
 const exclude = [
-    // Complex demo, various custom props and methods
-    'highcharts/demo/area-race-chart',
     // Contains text animation plugin, extending internal props like Fx
     'highcharts/demo/bar-race',
 

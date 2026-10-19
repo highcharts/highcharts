@@ -1,34 +1,41 @@
-const btn = document.getElementById('play-pause-button'),
-    input = document.getElementById('play-range'),
+declare namespace Highcharts {
+    interface Chart {
+        sequenceTimer?: number;
+    }
+}
+
+type StringNumberTuple = [string, number];
+
+const btn = document.getElementById('play-pause-button') as HTMLButtonElement,
+    input = document.getElementById('play-range') as HTMLInputElement,
     startYear = 1973,
     endYear = 2024,
     animationDuration = 400;
 
 // General helper functions
-const arrToAssociative = arr => {
-    const tmp = {};
-    arr.forEach(item => {
+const arrToAssociative = (arr: StringNumberTuple[]): Record<string, number> => {
+    const tmp: Record<string, number> = {};
+    arr.forEach((item: StringNumberTuple) => {
         tmp[item[0]] = item[1];
     });
 
     return tmp;
 };
 
-function getSubtitle() {
+function getSubtitle(): string {
     return `<span style='font-size: 60px'>${input.value}</span>`;
 }
 
-const formatRevenue = [];
+const formatRevenue: Array<Record<string, number>> = [];
 
 const chart = Highcharts.chart('container', {
     chart: {
         events: {
             // Some annotation labels need to be rotated to make room
-            load: function () {
-                const labels = this.annotations[0].labels;
-                labels
-                    .find(a => a.options.id === 'vinyl-label')
-                    .graphic.attr({
+            load: function (this: Highcharts.Chart): void {
+                this.annotations[0].labels
+                    .find((a): boolean => a.options.id === 'vinyl-label')
+                    ?.graphic.attr({
                         rotation: -20
                     });
             }
@@ -37,7 +44,7 @@ const chart = Highcharts.chart('container', {
         marginTop: 100,
         animation: {
             duration: animationDuration,
-            easing: t => t
+            easing: (t: number): number => t
         }
     },
     title: {
@@ -52,12 +59,17 @@ const chart = Highcharts.chart('container', {
         y: -110
     },
     data: {
-        csv: document.getElementById('csv').innerHTML,
+        csv: (document.getElementById('csv') as HTMLElement).innerHTML,
         itemDelimiter: '\t',
-        complete: function (options) {
+        complete: function (options): void {
             for (let i = 0; i < options.series.length; i++) {
-                formatRevenue[i] = arrToAssociative(options.series[i].data);
-                options.series[i].data = [];
+                const seriesOptions = (
+                    options.series[i] as Highcharts.SeriesAreaOptions
+                );
+                formatRevenue[i] = arrToAssociative(
+                    seriesOptions.data as StringNumberTuple[]
+                );
+                seriesOptions.data = [] as Array<never>;
             }
         }
     },
@@ -228,18 +240,18 @@ const chart = Highcharts.chart('container', {
             }
         ]
     }
-});
+} satisfies Highcharts.Options);
 
-function pause(button) {
+function pause(button: HTMLButtonElement): void {
     button.title = 'play';
     button.className = 'fa fa-play';
     clearTimeout(chart.sequenceTimer);
     chart.sequenceTimer = undefined;
 }
 
-function update(sliderClicked) {
+function update(sliderClicked: boolean): void {
     if (!sliderClicked) {
-        input.value = parseInt(input.value, 10) + 1;
+        input.value = String(parseInt(input.value, 10) + 1);
     }
 
     chart.update(
@@ -254,14 +266,18 @@ function update(sliderClicked) {
     );
 
     const series = chart.series,
-        labels = chart.annotations[0].labels,
-        yearIndex = input.value - startYear,
-        dataLength = series[0].options.data.length;
+        labels = chart.annotations[0].labels as Array<AnnotationLabel>,
+        yearIndex = Number(input.value) - startYear,
+        dataLength = (
+            series[0].options as Highcharts.SeriesAreaOptions
+        ).data.length;
 
     // If slider moved back in time
     if (yearIndex < dataLength - 1) {
         for (let i = 0; i < series.length; i++) {
-            const seriesData = series[i].options.data.slice(0, yearIndex);
+            const seriesData = (
+                series[i].options as Highcharts.SeriesAreaOptions
+            ).data.slice(0, yearIndex);
             series[i].setData(seriesData, false);
         }
     }
@@ -269,9 +285,11 @@ function update(sliderClicked) {
     // If slider moved forward in time
     if (yearIndex > dataLength - 1) {
         const remainingYears = yearIndex - dataLength;
+        const currentValue = Number(input.value);
         for (let i = 0; i < series.length; i++) {
-            for (let j = input.value - remainingYears; j < input.value; j++) {
-                series[i].addPoint([formatRevenue[i][j]], false);
+            for (let j = currentValue - remainingYears; j < currentValue; j++) {
+                const value = Number(formatRevenue[i][String(j)]);
+                series[i].addPoint([value], false);
             }
         }
     }
@@ -280,17 +298,15 @@ function update(sliderClicked) {
     if (yearIndex !== dataLength - 1) {
         // Add current year
         for (let i = 0; i < series.length; i++) {
-            const newY = formatRevenue[i][input.value];
+            const newY = Number(formatRevenue[i][String(input.value)]);
             series[i].addPoint([newY], false);
         }
     }
 
-    labels.forEach(label => {
-        label
-            .graphic
-            .css({
-                opacity: input.value >= label.options.point.x | 0
-            });
+    labels.forEach((label): void => {
+        label.graphic.css({
+            opacity: Number(input.value) >= label.options.point.x ? 1 : 0
+        });
     });
 
     if (sliderClicked) {
@@ -299,19 +315,22 @@ function update(sliderClicked) {
         chart.redraw();
     }
 
-    if (input.value === endYear) {
+    if (Number(input.value) === endYear) {
         // Auto-pause
         pause(btn);
     }
 }
 
-function play(button) {
+function play(button: HTMLButtonElement): void {
     // Reset slider and series data at the end
-    if (input.value === endYear) {
-        input.value = startYear;
+    if (Number(input.value) === endYear) {
+        input.value = String(startYear);
         for (let i = 0; i < chart.series.length; i++) {
             chart.series[i].setData(
-                chart.series[i].options.data.slice(0, 1), false
+                (
+                    chart.series[i].options as Highcharts.SeriesAreaOptions
+                ).data.slice(0, 1),
+                false
             );
         }
         chart.redraw();
@@ -325,9 +344,9 @@ function play(button) {
 
 btn.addEventListener('click', function () {
     if (chart.sequenceTimer) {
-        pause(this);
+        pause(this as HTMLButtonElement);
     } else {
-        play(this);
+        play(this as HTMLButtonElement);
     }
 });
 
