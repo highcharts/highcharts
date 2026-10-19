@@ -11,9 +11,6 @@ import { hideBin } from 'yargs/helpers';
 const ROOT = process.cwd();
 const DEFAULT_SAMPLE_GLOB = 'highcharts/demo/**';
 const exclude = [
-    // Contains text animation plugin, extending internal props like Fx
-    'highcharts/demo/bar-race',
-
     // Plugin with internal series props
     'stock/demo/candlestick-volume-width',
     // Stock Tools

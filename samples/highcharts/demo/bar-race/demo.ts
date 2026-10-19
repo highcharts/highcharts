@@ -1,23 +1,56 @@
-const startYear = 1960,
-    endYear = 2022,
-    btn = document.getElementById('play-pause-button'),
-    input = document.getElementById('play-range'),
-    nbr = 20;
+type CountryData = Record<string, number>;
+type CountryValueTuple = [string, number];
 
-let dataset, chart;
+type DataSet = Record<string, CountryData>;
 
 
-/*
- * Animate dataLabels functionality
- */
-(function (H) {
+// Plugin to add text animation to data labels
+declare namespace Highcharts {
+    interface Chart {
+        isResizing: number;
+        sequenceTimer?: number;
+    }
+    interface SVGElement {
+        endText?: string;
+        textGetter(): string;
+    }
+}
+
+type FxLike = {
+    elem: Highcharts.SVGElement & {
+        renderer: {
+            chartIndex: number;
+        };
+        attr: (...args: any[]) => any;
+    };
+    end: string;
+    pos: number;
+    prop: string;
+    start: string;
+};
+
+type HighchartsExtended = typeof Highcharts & {
+    Fx: {
+        prototype: {
+            textSetter: (this: FxLike) => void;
+        };
+    };
+};
+(Highcharts => {
+    const {
+        charts,
+        Fx,
+        Series,
+        SVGElement,
+        wrap
+    } = Highcharts as HighchartsExtended;
     const FLOAT = /^-?\d+\.?\d*$/;
 
     // Add animated textSetter, just like fill/strokeSetters
-    H.Fx.prototype.textSetter = function () {
-        const chart = H.charts[this.elem.renderer.chartIndex];
+    Fx.prototype.textSetter = function (this: FxLike): void {
+        const chart = charts[this.elem.renderer.chartIndex];
 
-        let thousandsSep = chart.numberFormatter('1000.0')[1];
+        let thousandsSep = chart.numberFormatter(1000.0, 1)[1];
 
         if (/[0-9]/.test(thousandsSep)) {
             thousandsSep = ' ';
@@ -25,13 +58,13 @@ let dataset, chart;
 
         const replaceRegEx = new RegExp(thousandsSep, 'g');
 
-        let startValue = this.start.replace(replaceRegEx, ''),
-            endValue = this.end.replace(replaceRegEx, ''),
-            currentValue = this.end.replace(replaceRegEx, '');
+        let startValue: string | number = this.start.replace(replaceRegEx, ''),
+            endValue: string | number = this.end.replace(replaceRegEx, ''),
+            currentValue: string | number = this.end.replace(replaceRegEx, '');
 
-        if ((startValue || '').match(FLOAT)) {
-            startValue = parseInt(startValue, 10);
-            endValue = parseInt(endValue, 10);
+        if ((String(startValue || '')).match(FLOAT)) {
+            startValue = parseInt(String(startValue), 10);
+            endValue = parseInt(String(endValue), 10);
 
             // No support for float
             currentValue = chart.numberFormatter(
@@ -46,24 +79,30 @@ let dataset, chart;
     };
 
     // Add textGetter, not supported at all at this moment:
-    H.SVGElement.prototype.textGetter = function () {
+    SVGElement.prototype.textGetter = function (): string {
         const ct = this.text.element.textContent || '';
         return this.endText ? this.endText : ct.substring(0, ct.length / 2);
     };
 
     // Temporary change label.attr() with label.animate():
     // In core it's simple change attr(...) => animate(...) for text prop
-    H.wrap(H.Series.prototype, 'drawDataLabels', function (proceed) {
-        const attr = H.SVGElement.prototype.attr,
+    wrap(Series.prototype, 'drawDataLabels', function (
+        this: Highcharts.Series,
+        proceed: (...args: any[]) => any,
+        ...args: any[]
+    ): void {
+        const attr = SVGElement.prototype.attr,
             chart = this.chart;
 
         if (chart.sequenceTimer) {
             this.points.forEach(point =>
                 (point.dataLabels || []).forEach(
                     label =>
-                        (label.attr = function (hash) {
+                        (label.attr = function (...labelArgs: any[]): any {
+                            const [hash, ...rest] = labelArgs;
+
                             if (
-                                hash &&
+                                typeof hash === 'object' &&
                                 hash.text !== undefined &&
                                 chart.isResizing === 0
                             ) {
@@ -72,20 +111,17 @@ let dataset, chart;
                                 delete hash.text;
 
                                 return this
-                                    .attr(hash)
+                                    .attr(hash, ...rest)
                                     .animate({ text });
                             }
-                            return attr.apply(this, arguments);
+                            return attr.apply(this, labelArgs);
 
                         })
                 )
             );
         }
 
-        const ret = proceed.apply(
-            this,
-            Array.prototype.slice.call(arguments, 1)
-        );
+        const ret = proceed.apply(this, args);
 
         this.points.forEach(p =>
             (p.dataLabels || []).forEach(d => (d.attr = attr))
@@ -93,21 +129,30 @@ let dataset, chart;
 
         return ret;
     });
-}(Highcharts));
+})(Highcharts as HighchartsExtended);
 
+const startYear = 1960,
+    endYear = 2022,
+    btn = document.getElementById('play-pause-button') as HTMLButtonElement,
+    input = document.getElementById('play-range') as HTMLInputElement,
+    nbr = 20;
 
-function getData(year) {
-    const output = Object.entries(dataset)
-        .map(country => {
-            const [countryName, countryData] = country;
-            return [countryName, Number(countryData[year])];
-        })
-        .sort((a, b) => b[1] - a[1]);
+let dataset: DataSet;
+let chart: Highcharts.Chart;
+
+function getData(year: number): [CountryValueTuple, CountryValueTuple[]] {
+    const output: CountryValueTuple[] = Object.keys(dataset)
+        .map((countryName: string) => [
+            countryName,
+            Number(dataset[countryName][String(year)])
+        ] as CountryValueTuple)
+        .sort((a: CountryValueTuple, b: CountryValueTuple) => b[1] - a[1]);
     return [output[0], output.slice(1, nbr)];
 }
 
-function getSubtitle() {
-    const population = (getData(input.value)[0][1] / 1000000000).toFixed(2);
+function getSubtitle(): string {
+    const currentYear = Number(input.value);
+    const population = (getData(currentYear)[0][1] / 1000000000).toFixed(2);
     return `<span style="font-size: 80px">${input.value}</span>
         <br>
         <span style="font-size: 22px">
@@ -115,16 +160,16 @@ function getSubtitle() {
         </span>`;
 }
 
-const linearEasing = function (pos) {
+const linearEasing = function (pos: number): number {
     return pos;
 };
 
-(async () => {
+(async (): Promise<void> => {
 
-    dataset = await fetch(
+    const response = await fetch(
         'https://demo-live-data.highcharts.com/population.json'
-    ).then(response => response.json());
-
+    );
+    dataset = await response.json() as DataSet;
 
     chart = Highcharts.chart('container', {
         chart: {
@@ -162,7 +207,7 @@ const linearEasing = function (pos) {
             }
         },
         plotOptions: {
-            series: {
+            bar: {
                 animation: false,
                 groupPadding: 0,
                 pointPadding: 0.1,
@@ -172,7 +217,6 @@ const linearEasing = function (pos) {
                     enabled: true,
                     matchByName: true
                 },
-                type: 'bar',
                 dataLabels: {
                     enabled: true
                 }
@@ -181,7 +225,7 @@ const linearEasing = function (pos) {
         series: [
             {
                 type: 'bar',
-                name: startYear,
+                name: String(startYear),
                 data: getData(startYear)[1]
             }
         ],
@@ -216,14 +260,14 @@ const linearEasing = function (pos) {
                 }
             }]
         }
-    });
+    } satisfies Highcharts.Options);
 })();
 
 /*
  * Pause the timeline, either when the range is ended, or when clicking the
  * pause button. Pausing stops the timer and resets the button to play mode.
  */
-function pause(button) {
+function pause(button: HTMLButtonElement): void {
     button.title = 'play';
     button.className = 'fa fa-play';
     clearTimeout(chart.sequenceTimer);
@@ -234,11 +278,11 @@ function pause(button) {
  * Update the chart. This happens either on updating (moving) the range input,
  * or from a timer when the timeline is playing.
  */
-function update(increment) {
+function update(increment?: number): void {
     if (increment) {
-        input.value = parseInt(input.value, 10) + increment;
+        input.value = String(parseInt(input.value, 10) + increment);
     }
-    if (input.value >= endYear) {
+    if (Number(input.value) >= endYear) {
         // Auto-pause
         pause(btn);
     }
@@ -248,15 +292,16 @@ function update(increment) {
     }, false);
 
     chart.series[0].update({
+        type: 'bar',
         name: input.value,
-        data: getData(input.value)[1]
+        data: getData(Number(input.value))[1]
     });
 }
 
 /*
  * Play the timeline.
  */
-function play(button) {
+function play(button: HTMLButtonElement): void {
     button.title = 'pause';
     button.className = 'fa fa-pause';
     chart.sequenceTimer = setInterval(function () {
@@ -266,9 +311,9 @@ function play(button) {
 
 btn.addEventListener('click', function () {
     if (chart.sequenceTimer) {
-        pause(this);
+        pause(this as HTMLButtonElement);
     } else {
-        play(this);
+        play(this as HTMLButtonElement);
     }
 });
 /*

@@ -53,11 +53,19 @@ declare global {
         }
 
         interface Point {
+            dataLabels: Array<Highcharts.SVGElement>;
             sonify(): void;
         }
         interface Series {
             // @todo: Add proper support. Used in black-and-white demo.
             currentDataGrouping: TimeTicksInfoObject;
+        }
+        interface SVGElement {
+            text?: SVGElement;
+        }
+
+        interface SVGRenderer {
+            chartIndex?: number;
         }
     }
     namespace HighchartsConnectors {
