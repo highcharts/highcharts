@@ -2866,6 +2866,21 @@ const defaultOptions: DefaultOptions = {
         headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
 
         /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in a network-type data series,
+         * like sankey, organization, and dependency wheel. This is relevant
+         * when nodes and links require different formatting, where the links
+         * are formatted by `tooltip.pointFormat`.
+         *
+         * @sample highcharts/plotoptions/sankey-link-datalabels/
+         *         Node and link data labels
+         *
+         * @type      {string}
+         * @apioption tooltip.nodeFormat
+         */
+
+        /**
          * The HTML of the null point's line in the tooltip. Works analogously
          * to [pointFormat](#tooltip.pointFormat).
          *
