@@ -145,8 +145,6 @@ export default function App() {
 }
 ```
 
-Without a type argument, `SeriesProps` defaults to `SeriesProps<"line">`.
-
 ## See also
 
 - [Chart component](https://www.highcharts.com/docs/react/components/chart)
