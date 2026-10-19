@@ -35,6 +35,13 @@ declare global {
             };
         }
 
+        interface Axis {
+            axisGroup: Highcharts.SVGElement;
+            gridGroup: Highcharts.SVGElement;
+            plotLines: Array<Highcharts.PlotLineOrBand>;
+            labelGroup: Highcharts.SVGElement;
+        }
+
         interface Sonification {
             InstrumentPresets: string[];
             speak(
@@ -59,6 +66,8 @@ declare global {
         interface Series {
             // @todo: Add proper support. Used in black-and-white demo.
             currentDataGrouping: TimeTicksInfoObject;
+
+            graph?: Highcharts.SVGElement;
         }
         interface SVGElement {
             text?: SVGElement;
@@ -66,6 +75,7 @@ declare global {
 
         interface SVGRenderer {
             chartIndex?: number;
+            globalAnimation?: boolean|Highcharts.AnimationOptionsObject;
         }
     }
     namespace HighchartsConnectors {

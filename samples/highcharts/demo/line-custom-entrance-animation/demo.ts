@@ -1,6 +1,16 @@
-(function (H) {
-    const animateSVGPath = (svgElem, animation, callback = void 0) => {
-        const length = svgElem.element.getTotalLength();
+declare namespace Highcharts {
+    interface YAxisPlotLinesOptions {
+        animation: Highcharts.AnimationOptionsObject;
+    }
+}
+
+(({ addEvent, animObject, Axis, Series }) => {
+    const animateSVGPath = (
+        svgElem: Highcharts.SVGElement,
+        animation: Highcharts.AnimationOptionsObject,
+        callback: Function = void 0
+    ) => {
+        const length = (svgElem.element as SVGPathElement).getTotalLength();
         svgElem.attr({
             'stroke-dasharray': length,
             'stroke-dashoffset': length,
@@ -11,20 +21,20 @@
         }, animation, callback);
     };
 
-    H.seriesTypes.line.prototype.animate = function (init) {
-        const series = this,
-            animation = H.animObject(series.options.animation);
+    Series.types.line.prototype.animate = function (init) {
+        const animation = animObject(
+            (this.options as Highcharts.SeriesLineOptions).animation
+        );
         if (!init) {
-            animateSVGPath(series.graph, animation);
+            animateSVGPath(this.graph, animation);
         }
     };
 
-    H.addEvent(H.Axis, 'afterRender', function () {
-        const axis = this,
-            chart = axis.chart,
-            animation = H.animObject(chart.renderer.globalAnimation);
+    addEvent(Axis, 'afterRender', function () {
+        const chart = this.chart,
+            animation = animObject(chart.renderer.globalAnimation);
 
-        axis.axisGroup
+        this.axisGroup
             // Init
             .attr({
                 opacity: 0,
@@ -38,8 +48,8 @@
                 rotation: 0,
                 scaleY: 1
             }, animation);
-        if (axis.horiz) {
-            axis.labelGroup
+        if (this.horiz) {
+            this.labelGroup
                 // Init
                 .attr({
                     opacity: 0,
@@ -54,7 +64,7 @@
                     scaleY: 1
                 }, animation);
         } else {
-            axis.labelGroup
+            this.labelGroup
                 // Init
                 .attr({
                     opacity: 0,
@@ -70,8 +80,10 @@
                 }, animation);
         }
 
-        axis.plotLines.forEach(plotLine => {
-            const animation = H.animObject(plotLine.options.animation);
+        this.plotLines.forEach(plotLine => {
+            const animation = animObject(
+                (plotLine.options as Highcharts.YAxisPlotLinesOptions).animation
+            );
 
             // Animate
             animateSVGPath(
@@ -85,7 +97,7 @@
             );
         });
     });
-}(Highcharts));
+})(Highcharts);
 
 Highcharts.chart('container', {
     chart: {
@@ -214,4 +226,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
