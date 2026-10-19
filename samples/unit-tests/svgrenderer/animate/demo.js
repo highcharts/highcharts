@@ -335,7 +335,7 @@ QUnit.test(
         assert.strictEqual(
             sameLength[0].length,
             5,
-            'Same-length middle-align keeps path length when shift = 0'
+            'Same-length middle-align should keep path length when shift = 0'
         );
 
         // Window grows (11 -> 12): first two x differ, new last point arrives,
@@ -451,6 +451,49 @@ QUnit.test(
             midWithLengthDelta[0].length,
             8,
             'Middle-align should subtract xLengthDelta (not over-pad to 10)'
+        );
+
+        // Leading x not shared, both edges move (#25280): mid-align,
+        // not reversed — do not subtract negative xLengthDelta.
+        const setDataShift = Highcharts.Fx.prototype.initPath.call(
+            null,
+            {
+                startX: [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                endX: [2.5, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+                isArea: false
+            },
+            [
+                ['M', 0, 120],
+                ['L', 10, 120],
+                ['L', 20, 120],
+                ['L', 30, 120],
+                ['L', 40, 120],
+                ['L', 50, 120],
+                ['L', 60, 120],
+                ['L', 70, 120],
+                ['L', 80, 120],
+                ['L', 90, 120],
+                ['L', 100, 120]
+            ],
+            [
+                ['M', 0, 120],
+                ['L', 10, 120],
+                ['L', 20, 120],
+                ['L', 30, 120],
+                ['L', 40, 120],
+                ['L', 50, 120],
+                ['L', 60, 120],
+                ['L', 70, 120],
+                ['L', 80, 120],
+                ['L', 90, 120]
+            ]
+        );
+
+        assert.strictEqual(
+            setDataShift[0].length,
+            12,
+            'Shift with shorter end (11->10) should pad to 12, ' +
+            'not over-pad to 13'
         );
     }
 );

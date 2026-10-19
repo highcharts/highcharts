@@ -528,9 +528,11 @@ class Fx {
                     // Shift is always a pad count (>= 0). Reverse covers
                     // sliding either way (new points on the left vs right).
                     // Subtract length delta so growing windows are not
-                    // over-padded.
-                    shift = Math.max(0, Math.abs(diff) - xLengthDelta);
+                    // over-padded (when reversed).
                     reverse = diff < 0;
+                    shift = reverse ?
+                        Math.max(0, Math.abs(diff) - xLengthDelta) :
+                        Math.abs(diff);
                     break;
                 // Fixed from the right side, "scaling" left
                 } else if (
