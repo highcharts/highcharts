@@ -1,11 +1,13 @@
-const createChart = data => Highcharts.chart('container', {
+const createChart = (
+    data: Highcharts.SeriesSunburstOptions['data']
+) => Highcharts.chart('container', {
 
     chart: {
         height: '100%'
     },
 
     // Let the center circle be white transparent
-    colors: ['#ffffff01'].concat(Highcharts.getOptions().colors),
+    colors: ['#ffffff01'].concat(Highcharts.getOptions().colors as string[]),
 
     title: {
         text: 'World population 2023'
@@ -78,10 +80,10 @@ const createChart = data => Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
 
 // Define the data
-const data = [{
+const data: Highcharts.SeriesSunburstOptions['data'] = [{
     id: '0.0',
     parent: '',
     name: 'The World'
