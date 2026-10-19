@@ -26,7 +26,7 @@ export default function ColumnChart() {
 }
 ```
 
-**Note:** Dedicated series components import any module their series type needs, so no extra imports are needed. The exceptions are `FlagsSeries`, `HLCSeries`, `OHLCSeries`, `MapSeries`, `MapBubbleSeries`, `MapLineSeries`, and `MapPointSeries`. Use them in `StockChart` or `MapsChart`, or [import their module](#generic-series) when using `Chart`.
+**Note:** Dedicated series components bundle any required modules automatically — no extra imports needed.
 
 ### Dedicated series options
 
@@ -35,31 +35,24 @@ Each dedicated series component accepts all options available for its correspond
 You can provide the most common options as direct props, and all of them via the `options` prop:
 
 ```tsx
-import { Chart } from "@highcharts/react";
-import { LineSeries } from "@highcharts/react/series/Line";
+// Via direct props
+<LineSeries
+  data={[1, 2, 3]}
+  name="Line series"
+  color="red"
+/>
 
-export default function LineChart() {
-  return (
-    <Chart>
-      {/* Via direct props */}
-      <LineSeries data={[1, 2, 3]} name="Direct props" color="red" />
-      {/* Via the options prop */}
-      <LineSeries
-        data={[3, 2, 1]}
-        options={{
-          name: "Options prop",
-          color: "green",
-          dashStyle: "Dash",
-        }}
-      />
-    </Chart>
-  );
-}
+// Via options prop
+<LineSeries
+  data={[1, 2, 3]}
+  options={{
+    name: "Line series",
+    color: "red"
+  }}
+/>
 ```
 
 ### Props
-
-Both dedicated and generic series components accept these props. The generic `Series` component accepts one more, `type`, described under [Additional props](#additional-props).
 
 | Prop      | Type     | Default | Description                                                                                                                                      |
 | --------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -71,83 +64,6 @@ Both dedicated and generic series components accept these props. The generic `Se
 | index     | `number` | -       | The index of the series (see [series.line.index](https://api.highcharts.com/highcharts/series.line.index)).                                      |
 | events    | `object` | -       | The events of the series (see [series.line.events](https://api.highcharts.com/highcharts/series.line.events)).                                   |
 | options   | `object` | -       | Configuration options for the series. Available options depend on `type` (see [series.line](https://api.highcharts.com/highcharts/series.line)). |
-
-### Available dedicated series components
-
-The table below lists each dedicated series component with its series type and the product it belongs to. Each component is exported from `@highcharts/react/series/<Name>`, where `<Name>` is the component name without `Series`, as with `ColumnSeries` and `@highcharts/react/series/Column` in the example above.
-
-| Series type       | Component                     | Product                                             |
-| ----------------- | ----------------------------- | --------------------------------------------------- |
-| arcdiagram        | `<ArcDiagramSeries />`        | Highcharts Core                                     |
-| area              | `<AreaSeries />`              | Highcharts Core, Highcharts Stock                   |
-| arearange         | `<AreaRangeSeries />`         | Highcharts Core, Highcharts Stock                   |
-| areaspline        | `<AreaSplineSeries />`        | Highcharts Core, Highcharts Stock                   |
-| areasplinerange   | `<AreaSplineRangeSeries />`   | Highcharts Core, Highcharts Stock                   |
-| bar               | `<BarSeries />`               | Highcharts Core                                     |
-| bellcurve         | `<BellcurveSeries />`         | Highcharts Core                                     |
-| boxplot           | `<BoxPlotSeries />`           | Highcharts Core                                     |
-| bubble            | `<BubbleSeries />`            | Highcharts Core, Highcharts Stock                   |
-| bullet            | `<BulletSeries />`            | Highcharts Core                                     |
-| column            | `<ColumnSeries />`            | Highcharts Core, Highcharts Stock                   |
-| columnpyramid     | `<ColumnPyramidSeries />`     | Highcharts Core, Highcharts Stock                   |
-| columnrange       | `<ColumnRangeSeries />`       | Highcharts Core, Highcharts Stock                   |
-| contour           | `<ContourSeries />`           | Highcharts Core, Highcharts Maps                    |
-| cylinder          | `<CylinderSeries />`          | Highcharts Core                                     |
-| dependencywheel   | `<DependencyWheelSeries />`   | Highcharts Core                                     |
-| dumbbell          | `<DumbbellSeries />`          | Highcharts Core, Highcharts Stock                   |
-| errorbar          | `<ErrorBarSeries />`          | Highcharts Core                                     |
-| funnel            | `<FunnelSeries />`            | Highcharts Core                                     |
-| funnel3d          | `<Funnel3DSeries />`          | Highcharts Core                                     |
-| gauge             | `<GaugeSeries />`             | Highcharts Core                                     |
-| heatmap           | `<HeatmapSeries />`           | Highcharts Core, Highcharts Maps                    |
-| histogram         | `<HistogramSeries />`         | Highcharts Core                                     |
-| item              | `<ItemSeries />`              | Highcharts Core                                     |
-| line              | `<LineSeries />`              | Highcharts Core, Highcharts Stock                   |
-| lollipop          | `<LollipopSeries />`          | Highcharts Core, Highcharts Stock                   |
-| networkgraph      | `<NetworkgraphSeries />`      | Highcharts Core                                     |
-| organization      | `<OrganizationSeries />`      | Highcharts Core                                     |
-| packedbubble      | `<PackedBubbleSeries />`      | Highcharts Core                                     |
-| pareto            | `<ParetoSeries />`            | Highcharts Core                                     |
-| pictorial         | `<PictorialSeries />`         | Highcharts Core                                     |
-| pie               | `<PieSeries />`               | Highcharts Core, Highcharts Maps                    |
-| polygon           | `<PolygonSeries />`           | Highcharts Core, Highcharts Stock                   |
-| pyramid           | `<PyramidSeries />`           | Highcharts Core                                     |
-| pyramid3d         | `<Pyramid3DSeries />`         | Highcharts Core                                     |
-| sankey            | `<SankeySeries />`            | Highcharts Core                                     |
-| scatter           | `<ScatterSeries />`           | Highcharts Core, Highcharts Stock                   |
-| scatter3d         | `<Scatter3DSeries />`         | Highcharts Core                                     |
-| solidgauge        | `<SolidGaugeSeries />`        | Highcharts Core                                     |
-| spline            | `<SplineSeries />`            | Highcharts Core, Highcharts Stock                   |
-| streamgraph       | `<StreamgraphSeries />`       | Highcharts Core, Highcharts Stock                   |
-| sunburst          | `<SunburstSeries />`          | Highcharts Core                                     |
-| timeline          | `<TimelineSeries />`          | Highcharts Core                                     |
-| treegraph         | `<TreegraphSeries />`         | Highcharts Core                                     |
-| treemap           | `<TreemapSeries />`           | Highcharts Core                                     |
-| variablepie       | `<VariablePieSeries />`       | Highcharts Core                                     |
-| variwide          | `<VariwideSeries />`          | Highcharts Core                                     |
-| vector            | `<VectorSeries />`            | Highcharts Core, Highcharts Stock                   |
-| venn              | `<VennSeries />`              | Highcharts Core                                     |
-| waterfall         | `<WaterfallSeries />`         | Highcharts Core                                     |
-| windbarb          | `<WindbarbSeries />`          | Highcharts Core, Highcharts Stock                   |
-| wordcloud         | `<WordcloudSeries />`         | Highcharts Core                                     |
-| candlestick       | `<CandlestickSeries />`       | Highcharts Stock                                    |
-| flags             | `<FlagsSeries />`             | Highcharts Stock                                    |
-| heikinashi        | `<HeikinAshiSeries />`        | Highcharts Stock                                    |
-| hlc               | `<HLCSeries />`               | Highcharts Stock                                    |
-| hollowcandlestick | `<HollowCandlestickSeries />` | Highcharts Stock                                    |
-| ohlc              | `<OHLCSeries />`              | Highcharts Stock                                    |
-| pointandfigure    | `<PointAndFigureSeries />`    | Highcharts Stock                                    |
-| renko             | `<RenkoSeries />`             | Highcharts Stock                                    |
-| flowmap           | `<FlowMapSeries />`           | Highcharts Maps                                     |
-| geoheatmap        | `<GeoHeatmapSeries />`        | Highcharts Maps                                     |
-| map               | `<MapSeries />`               | Highcharts Maps                                     |
-| mapbubble         | `<MapBubbleSeries />`         | Highcharts Maps                                     |
-| mapline           | `<MapLineSeries />`           | Highcharts Maps                                     |
-| mappoint          | `<MapPointSeries />`          | Highcharts Maps                                     |
-| tiledwebmap       | `<TiledWebMapSeries />`       | Highcharts Maps                                     |
-| tilemap           | `<TilemapSeries />`           | Highcharts Core, Highcharts Maps                    |
-| gantt             | `<GanttSeries />`             | Highcharts Gantt                                    |
-| xrange            | `<XRangeSeries />`            | Highcharts Core, Highcharts Stock, Highcharts Gantt |
 
 ## Generic series
 
@@ -165,10 +81,11 @@ export default function ColumnChart() {
 }
 ```
 
-Some series types need an additional Highcharts module. For most of them, `Chart` loads that module when the chart renders, so you do not import it yourself:
+When using the `Series` component, some series types require you to import an additional module:
 
 ```tsx
 import { Chart, Series } from "@highcharts/react";
+import "highcharts/es-modules/masters/modules/venn.src.js";
 
 export default function VennChart() {
   return (
@@ -195,15 +112,13 @@ export default function VennChart() {
 }
 ```
 
-These series types are not loaded this way: `candlestick`, `ohlc`, `hlc`, and `flags` from Highcharts Stock, and `map`, `mapbubble`, `mapline`, and `mappoint` from Highcharts Maps. `StockChart` and `MapsChart` already include them, so no import is needed there. With `Chart`, import the module yourself, or the chart fails with [Highcharts error #17](https://www.highcharts.com/errors/17/).
-
 > **Note:** You should import additional modules using their ESM versions. See the [Bundling and tree shaking](https://www.highcharts.com/docs/react/bundling-and-tree-shaking) documentation.
 
 To determine which module is needed, refer to the **Requires** section under each [series](https://api.highcharts.com/highcharts/series).
 
-### Additional props
+### Props
 
-The generic `Series` component also accepts `type`:
+The generic `Series` component accepts the same [props](#props) as dedicated components, with the addition of `type`:
 
 | Prop | Type     | Default | Description                                                                                                |
 | ---- | -------- | ------- | ---------------------------------------------------------------------------------------------------------- |
@@ -222,3 +137,81 @@ Each chart type has its own generic series component:
 ### When to use generic series
 
 We recommend using [dedicated series](#dedicated-series) components in most cases to keep your code lean. Reserve the generic `Series` component for situations where dedicated components become impractical — for example, when [adding series dynamically](https://www.highcharts.com/docs/react/data-handling#add-series-dynamically).
+
+Dedicated series components support the same [props](#props) as `Series`, except for `type`.
+
+## Available dedicated series components
+
+Each component is exported from `@highcharts/react/series/<Name>`, where `<Name>` is the component name without `Series`, so `ColumnSeries` is imported from `@highcharts/react/series/Column`.
+
+| Series Type       | Component                     | Product          |
+| ----------------- | ----------------------------- | ---------------- |
+| arcdiagram        | `<ArcDiagramSeries />`        | Highcharts Core  |
+| area              | `<AreaSeries />`              | Highcharts Core  |
+| arearange         | `<AreaRangeSeries />`         | Highcharts Core  |
+| areaspline        | `<AreaSplineSeries />`        | Highcharts Core  |
+| areasplinerange   | `<AreaSplineRangeSeries />`   | Highcharts Core  |
+| bar               | `<BarSeries />`               | Highcharts Core  |
+| bellcurve         | `<BellcurveSeries />`         | Highcharts Core  |
+| boxplot           | `<BoxPlotSeries />`           | Highcharts Core  |
+| bubble            | `<BubbleSeries />`            | Highcharts Core  |
+| bullet            | `<BulletSeries />`            | Highcharts Core  |
+| column            | `<ColumnSeries />`            | Highcharts Core  |
+| columnpyramid     | `<ColumnPyramidSeries />`     | Highcharts Core  |
+| columnrange       | `<ColumnRangeSeries />`       | Highcharts Core  |
+| cylinder          | `<CylinderSeries />`          | Highcharts Core  |
+| dependencywheel   | `<DependencyWheelSeries />`   | Highcharts Core  |
+| dumbbell          | `<DumbbellSeries />`          | Highcharts Core  |
+| errorbar          | `<ErrorBarSeries />`          | Highcharts Core  |
+| funnel            | `<FunnelSeries />`            | Highcharts Core  |
+| funnel3d          | `<Funnel3DSeries />`          | Highcharts Core  |
+| gauge             | `<GaugeSeries />`             | Highcharts Core  |
+| heatmap           | `<HeatmapSeries />`           | Highcharts Core  |
+| histogram         | `<HistogramSeries />`         | Highcharts Core  |
+| item              | `<ItemSeries />`              | Highcharts Core  |
+| line              | `<LineSeries />`              | Highcharts Core  |
+| lollipop          | `<LollipopSeries />`          | Highcharts Core  |
+| networkgraph      | `<NetworkgraphSeries />`      | Highcharts Core  |
+| organization      | `<OrganizationSeries />`      | Highcharts Core  |
+| packedbubble      | `<PackedBubbleSeries />`      | Highcharts Core  |
+| pareto            | `<ParetoSeries />`            | Highcharts Core  |
+| pictorial         | `<PictorialSeries />`         | Highcharts Core  |
+| pie               | `<PieSeries />`               | Highcharts Core  |
+| polygon           | `<PolygonSeries />`           | Highcharts Core  |
+| pyramid           | `<PyramidSeries />`           | Highcharts Core  |
+| pyramid3d         | `<Pyramid3DSeries />`         | Highcharts Core  |
+| sankey            | `<SankeySeries />`            | Highcharts Core  |
+| scatter           | `<ScatterSeries />`           | Highcharts Core  |
+| scatter3d         | `<Scatter3DSeries />`         | Highcharts Core  |
+| solidgauge        | `<SolidGaugeSeries />`        | Highcharts Core  |
+| spline            | `<SplineSeries />`            | Highcharts Core  |
+| streamgraph       | `<StreamgraphSeries />`       | Highcharts Core  |
+| sunburst          | `<SunburstSeries />`          | Highcharts Core  |
+| timeline          | `<TimelineSeries />`          | Highcharts Core  |
+| treegraph         | `<TreegraphSeries />`         | Highcharts Core  |
+| treemap           | `<TreemapSeries />`           | Highcharts Core  |
+| variablepie       | `<VariablePieSeries />`       | Highcharts Core  |
+| variwide          | `<VariwideSeries />`          | Highcharts Core  |
+| vector            | `<VectorSeries />`            | Highcharts Core  |
+| venn              | `<VennSeries />`              | Highcharts Core  |
+| waterfall         | `<WaterfallSeries />`         | Highcharts Core  |
+| windbarb          | `<WindbarbSeries />`          | Highcharts Core  |
+| wordcloud         | `<WordcloudSeries />`         | Highcharts Core  |
+| candlestick       | `<CandlestickSeries />`       | Highcharts Stock |
+| flags             | `<FlagsSeries />`             | Highcharts Stock |
+| heikinashi        | `<HeikinAshiSeries />`        | Highcharts Stock |
+| hlc               | `<HLCSeries />`               | Highcharts Stock |
+| hollowcandlestick | `<HollowCandlestickSeries />` | Highcharts Stock |
+| ohlc              | `<OHLCSeries />`              | Highcharts Stock |
+| pointandfigure    | `<PointAndFigureSeries />`    | Highcharts Stock |
+| renko             | `<RenkoSeries />`             | Highcharts Stock |
+| flowmap           | `<FlowMapSeries />`           | Highcharts Maps  |
+| geoheatmap        | `<GeoHeatmapSeries />`        | Highcharts Maps  |
+| map               | `<MapSeries />`               | Highcharts Maps  |
+| mapbubble         | `<MapBubbleSeries />`         | Highcharts Maps  |
+| mapline           | `<MapLineSeries />`           | Highcharts Maps  |
+| mappoint          | `<MapPointSeries />`          | Highcharts Maps  |
+| tiledwebmap       | `<TiledWebMapSeries />`       | Highcharts Maps  |
+| tilemap           | `<TilemapSeries />`           | Highcharts Maps  |
+| gantt             | `<GanttSeries />`             | Highcharts Gantt |
+| xrange            | `<XRangeSeries />`            | Highcharts Gantt |
