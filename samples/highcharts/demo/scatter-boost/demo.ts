@@ -1,6 +1,6 @@
 // Prepare the data
 
-function getDataTableOptions(n) {
+function getDataTableOptions(n: number): Highcharts.DataTableOptionsObject {
     const xColumn = new Float64Array(n),
         yColumn = new Float64Array(n);
 
@@ -25,10 +25,6 @@ function getDataTableOptions(n) {
 }
 
 const dataTable = getDataTableOptions(1000000);
-
-if (!Highcharts.Series.prototype.renderCanvas) {
-    throw 'Module not loaded';
-}
 
 console.time('scatter');
 Highcharts.chart('container', {
@@ -95,5 +91,5 @@ Highcharts.chart('container', {
         }
     }]
 
-});
+} satisfies Highcharts.Options);
 console.timeEnd('scatter');
