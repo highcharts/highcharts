@@ -117,12 +117,12 @@ jobs:
 
       # Build before overlaying any candidate files or dependencies.
       - name: Build reference products
-        run: npx playwright test --project=setup-visual
+        run: npx playwright test --project=setup-visual --pass-with-no-tests
 
       - name: Preserve reference build
         run: |
           tar -czf "$RUNNER_TEMP/visual-reference-build.tar.gz" \
-            code js tmp/json-sources.js
+            code tmp/json-sources.js
 
       - name: Restore candidate visual harness
         run: tar -xzf "$RUNNER_TEMP/visual-harness.tar.gz" -C "$GITHUB_WORKSPACE"

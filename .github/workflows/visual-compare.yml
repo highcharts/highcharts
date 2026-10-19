@@ -169,7 +169,7 @@ jobs:
 
       - name: Preserve reference build
         run: |
-          tar -czf "$RUNNER_TEMP/karma-reference-build.tar.gz" code js
+          tar -czf "$RUNNER_TEMP/karma-reference-build.tar.gz" code
 
       - name: Restore candidate harness
         run: tar -xf "$RUNNER_TEMP/karma-harness.tar" -C "$GITHUB_WORKSPACE"
