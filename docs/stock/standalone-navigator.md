@@ -1,3 +1,10 @@
+---
+description: >-
+  Create a standalone navigator, bind or unbind charts and axes, control
+  shared ranges with setRange and getRange, and configure its own chart size
+  and navigator height.
+---
+
 Standalone Navigator
 ====================
 

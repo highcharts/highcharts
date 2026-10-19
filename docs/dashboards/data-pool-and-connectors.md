@@ -1,3 +1,10 @@
+---
+description: >-
+  Configure a dashboard DataPool and load data through CSV, JSON, Google
+  Sheets, or HTML table connectors; the guide also outlines custom connectors
+  and an MQTT example that parses incoming messages.
+---
+
 # Data Pool & Connectors
 
 The data pool provides central data and data management access in a

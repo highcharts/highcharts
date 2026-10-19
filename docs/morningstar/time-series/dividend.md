@@ -1,3 +1,10 @@
+---
+description: >-
+  Request dividend time-series data for one or more securities with the
+  TimeSeriesConnector, set the Dividend series type, and account for how a
+  multi-security request takes its starting date.
+---
+
 # Dividend
 
 This type yields dividend time series data for single or multiple securities.

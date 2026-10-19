@@ -294,6 +294,11 @@ QUnit.test('Script injection through AST options', assert => {
             styledMode: true
         },
 
+        title: {
+            text: '<a xlink:href="javascript:document.body.innerText=' +
+                '\'Compromised :/\'">Click me</a>'
+        },
+
         defs: {
             xss: {
                 tagName: 'script',
@@ -308,6 +313,13 @@ QUnit.test('Script injection through AST options', assert => {
         chart.container.querySelector('script'),
         null,
         'No script tag should be allowed in the definitions'
+    );
+
+    const svg = chart.exporting.getSVG();
+    assert.strictEqual(
+        svg.indexOf('xlink:href="javascript:'),
+        -1,
+        'Links with javascript: should not be allowed in the exported SVG'
     );
 });
 

@@ -546,7 +546,8 @@ The following URL patterns are automatically rewritten:
 | `https://fonts.googleapis.com/**` | Empty stylesheet | Google Fonts |
 | `**/font-awesome/**` | Empty stylesheet | Font Awesome |
 | `**/grid-lite.js`, `**/grid-pro.js` | `code/grid/` | Grid modules |
-| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles |
+| `**/grid-lite.css`, `**/grid-pro.css` | `css/grid/` | Grid styles, including jsDelivr's `css/` URLs |
+| `/grid-lite/**`, `/grid-pro/**`, `/samples/grid-lite/**`, `/samples/grid-pro/**` | `samples/grid-lite/`, `samples/grid-pro/` | Grid samples; npm asset paths use the library rewrites above |
 | `**/{samples/graphics}/**` | `samples/graphics/` | Sample graphics |
 | `**/testimage.png` | `test/testimage.png` | Test image |
 | `**/shim.html` | Empty HTML page | Shim page |
@@ -780,14 +781,29 @@ rendering, polar and range series, network diagrams, stock navigation and
 indicators, map projections and color axes, and Gantt progress, hierarchy, and
 grid columns.
 Discovery includes `demo.js` and TypeScript sources. Module-only `demo.mjs`
-samples are not loaded. The visual runner preloads the Morningstar connector.
-Its five API-backed samples use recorded responses in `tests/visual/data`;
-these routes are limited to the visual project and retain offline execution. See the
-[fixture provenance](visual/data/README.md) before refreshing those responses.
+samples are not loaded. The visual setup builds Highcharts, Dashboards and Grid
+in sequence. The runner preloads both Morningstar connector bundles. Dashboard
+samples use a separate page with Dashboards and Grid assets so their connector
+data layer cannot affect standalone charts.
+API-backed samples use recorded responses in `tests/visual/data`; these routes
+are limited to the visual project and retain offline execution. Requests match
+the recorded URL, method and POST body, including portfolios sharing an endpoint.
+See the [fixture provenance](visual/data/README.md) before refreshing those
+responses.
+
+Dashboard capture waits for pending XHR requests and for every chart and Grid
+component to finish its initial render. It embeds a screenshot of the complete
+dashboard in the SVG artifact, covering HTML grids as well as charts. Sample
+cleanup removes sample scripts and styles, including styled-mode CSS, destroys
+the dashboard and its components before restoring chart state, and cancels
+sample timeouts and animation frames. This prevents earlier styles from
+affecting later renders on a reused page. The sample date stays fixed while
+native timers continue to run.
 
 SVG capture waits for the selected chart's load handler and the sample's initial
-XHR data requests to finish. Image markers can delay the load handler, and charts
-can emit their load event before CSV data arrives, so both checks are needed.
+XHR and fetch requests to finish downloading. Image markers can delay the load
+handler, and charts can emit their load event before CSV data arrives, so both
+checks are needed.
 Pending requests share the chart's 10-second readiness timeout and are aborted
 during sample cleanup. Once ready, capture
 yields to queued zero-delay sample updates and checks readiness again. Empty
@@ -829,10 +845,11 @@ as a substring, while optional manifest entries are exact sample IDs.
 | File | Written when |
 |------|-------------|
 | `samples/<path>/reference.svg` | Reference mode only |
-| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 |
+| `samples/<path>/candidate.svg` | Candidate mode, numeric difference > 0 or a listed reference failure |
 | `samples/<path>/diff.gif` | Candidate mode, numeric difference > 0 |
-| `test/visual-test-results.json` | Candidate mode, always (pixel count per sample) |
+| `test/visual-test-results.json` | Candidate mode, always (pixel counts for comparable samples only) |
 | `test/visual-test-errors.log` | Any sample or terminal error during the run |
+| `test/visual-reference-failures.json` | Completed Playwright reference runs; `[]` when no sample failed |
 | `test/visual-test-complete` | Candidate mode, after every selected sample finishes, including completed sample errors |
 
 ### Failure semantics
@@ -843,18 +860,29 @@ are failures:
 
 - The sample script throws or the chart does not load within the timeout
 - The browser context or Playwright process terminates unexpectedly
-- `reference.svg` is absent when candidate mode is run
-- `test/visual-test-errors.log` is non-empty after the run
+- `reference.svg` is absent when candidate mode is run, except for samples listed
+  in `test/visual-reference-failures.json`, which must still render successfully
+  and produce a fresh `candidate.svg` but have no pixel comparison
+- Candidate execution errors, unlisted reference errors, and terminal reference
+  failures fail CI. Listed reference failures do not fail the run by themselves
+- `test/visual-test-errors.log` is non-empty after the candidate run
 - expected results are missing, the selected sample set is invalid, or an
   explicitly requested manifest ID is excluded by the shared exclusions
 - `test/visual-test-complete` is absent after the run (indicates the full
-  candidate run did not finish normally)
+candidate run did not finish normally)
 
 A completed sample execution error fails CI and remains in the error log, but
 does not prevent the completion signal when all selected samples finish.
 Interrupted runs, unexecuted samples, and fixture or browser failures omit the
 signal. Completion alone is not permission to publish: the workflow also
-requires successful reference and candidate outcomes and an empty error log.
+requires successful candidate outcomes, no unlisted reference errors, and no
+terminal reference failure. Candidate errors must be empty; listed reference
+failures are reported as not compared.
+
+Every selected candidate must execute, including samples whose reference failed.
+The comparison results and rendered candidates must account for the full selected
+sample set. A skipped candidate is an incomplete run. PR comments distinguish a
+partial comparison or no comparable samples from a complete comparison.
 
 The CI workflow uploads diagnostics from both revisions and gates the result on
 the reference and candidate outcomes plus the candidate completion marker.
@@ -864,8 +892,8 @@ Locally these markers are informational.
 
 After validation, same-repository PR runs use `gulp update-pr-testresults` to
 publish the complete result JSON and SVG/GIF artifacts for differing samples to
-`https://vrevs.highsoft.com`. Playwright is the production publisher.
-The Playwright PR comment identifies the number of selected samples. Manual
+`https://vrevs.highsoft.com`. Playwright is the production publisher. The
+Playwright PR comment identifies the number of compared samples. Manual
 workflow runs and fork PRs only upload GitHub Actions diagnostics.
 
 Publishing uses `VISUAL_REVIEW_INGESTION_API_KEY` and the PR head SHA, with

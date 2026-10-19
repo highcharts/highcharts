@@ -1,3 +1,10 @@
+---
+description: >-
+  Enable the draggable-points module with its React component and configure
+  horizontal and vertical dragging through series options, following an
+  example that adds draggable points to a bubble chart.
+---
+
 # DraggablePoints
 
 You can add the draggable-points module to your chart using the `DraggablePoints` component:

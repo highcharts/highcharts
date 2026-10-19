@@ -524,6 +524,11 @@ class SankeySeries extends ColumnSeries {
         for (const column of nodeColumns) {
             for (const node of column) {
                 series.translateNode(node, column);
+
+                // Rank node labels by the node size. The node's `y` is only
+                // a placeholder, so the generic value based rank would let
+                // the data order decide (#23585).
+                node.labelrank = node.options.labelrank ?? node.getSum();
             }
         }
 

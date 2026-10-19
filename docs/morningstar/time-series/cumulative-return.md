@@ -1,3 +1,10 @@
+---
+description: >-
+  Request cumulative month-end return data for one or more securities with the
+  TimeSeriesConnector, select the CumulativeReturn series type, and account
+  for the first security's start date in multi-security requests.
+---
+
 # Cumulative Return
 
 This type yields cumulative return time series data for single or multiple

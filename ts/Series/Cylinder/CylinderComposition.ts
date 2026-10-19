@@ -36,8 +36,7 @@ const {
     charts,
     deg2rad
 } = H;
-import Math3D from '../../Core/Math3D.js';
-const { perspective } = Math3D;
+import { perspective } from '../../Core/Math3D.js';
 import SVGElement3DCylinder from './SVGElement3DCylinder.js';
 import { extend } from '../../Shared/Utilities.js';
 

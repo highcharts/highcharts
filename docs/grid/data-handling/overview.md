@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Compare local and remote data providers and connector-backed loading to
+  choose where sorting, filtering, and pagination run; see how data settings
+  select a model and custom providers fit.
 ---
 
 # Data handling

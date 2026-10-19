@@ -178,7 +178,7 @@ function checkDemosConsistency() {
 
         if (/\/samples\/(\w+)\/demo\//u.test(detailsFile)) {
             try {
-                const details = yaml.load(
+                const details = yaml.safeLoad(
                     fs.readFileSync(detailsFile, 'utf-8')
                 );
 

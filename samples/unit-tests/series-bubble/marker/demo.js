@@ -36,6 +36,29 @@ QUnit.test('Global marker is null (#6321)', function (assert) {
     );
 });
 
+QUnit.test('Bubble data label rank follows bubble radius', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            type: 'bubble',
+            dataLabels: {
+                enabled: true,
+                allowOverlap: false
+            },
+            data: [
+                [1, 1, 1],
+                [1, 1, 10]
+            ]
+        }]
+    });
+
+    const points = chart.series[0].points;
+
+    assert.ok(
+        points[1].dataLabel.labelrank > points[0].dataLabel.labelrank,
+        'The larger bubble has the higher data label rank'
+    );
+});
+
 QUnit.test('Clicking marker (#6705)', function (assert) {
     var clicked;
 
