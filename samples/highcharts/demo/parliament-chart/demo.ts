@@ -52,12 +52,14 @@ Highcharts.chart('container', {
                 maxWidth: 600
             },
             chartOptions: {
-                series: [{
-                    dataLabels: {
-                        distance: -30
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            distance: -30
+                        }
                     }
-                }]
+                }
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
