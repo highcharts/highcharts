@@ -111,6 +111,9 @@ class PieSeries extends Series {
     /** @internal */
     public center!: Array<number>;
 
+    /** @internal */
+    public condemnedPoints!: Array<PiePoint>;
+
     public data!: Array<PiePoint>;
 
     /** @internal */
@@ -269,9 +272,7 @@ class PieSeries extends Series {
     ): number {
         const center = this.center,
             // Variable pie has individual radius
-            radius = this.radii ?
-                this.radii[point.index as any] || 0 :
-                center[2] / 2,
+            radius = point.shapeArgs?.r || 0,
             labelPosition = dataLabel.dataLabelPosition,
             distance = labelPosition?.distance || 0;
 
@@ -322,7 +323,7 @@ class PieSeries extends Series {
         }
 
         // Draw the slices
-        series.points.forEach(function (point): void {
+        series.points.concat(series.condemnedPoints).forEach((point): void => {
             const animateTo = {};
             graphic = point.graphic;
             if (!point.isNull && graphic) {
@@ -371,19 +372,11 @@ class PieSeries extends Series {
                         visibility: point.visible ? 'inherit' : 'hidden'
                     });
 
-                graphic.addClass(point.getClassName(), true);
+                graphic.addClass(point.getClassName(), !point.condemned);
 
             } else if (graphic) {
                 point.graphic = graphic.destroy();
             }
-        });
-
-        series.condemnedPoints.forEach((point): void => {
-            point.graphic?.animate({ opacity: 0 });
-            point.dataLabels?.forEach((dataLabel): void => {
-                dataLabel.animate({ opacity: 0 });
-                dataLabel.connector?.animate({ opacity: 0 });
-            });
         });
     }
 
@@ -422,9 +415,8 @@ class PieSeries extends Series {
             startAngleRad = series.startAngleRad = radians.start,
             endAngleRad = series.endAngleRad = radians.end,
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
-            points = series.points,
-            ignoreHiddenPoint = options.ignoreHiddenPoint,
-            len = points.length;
+            points = series.points.slice(),
+            ignoreHiddenPoint = options.ignoreHiddenPoint;
         let start,
             end,
             angle,
@@ -450,14 +442,22 @@ class PieSeries extends Series {
             series.center = positions = series.getCenter();
         }
 
-        // Calculate the geometry for each point
-        for (i = 0; i < len; i++) {
+        // Put the condemned points back at their former index, where they
+        // shrink into zero-width slices (#25504)
+        series.condemnedPoints
+            .sort((a, b): number => a.index - b.index)
+            .forEach((point): void => {
+                points.splice(point.index, 0, point);
+            });
 
+        // Calculate the geometry for each point
+        for (i = 0; i < points.length; i++) {
             point = points[i];
 
             // Set start and end angle
             start = startAngleRad + (cumulative * circ);
             if (
+                !point.condemned &&
                 point.isValid() &&
                 (!ignoreHiddenPoint || point.visible)
             ) {

@@ -317,58 +317,70 @@ QUnit.test('Set extremes with entrance and exit animations', assert => {
     }
 });
 
-QUnit.test('Remove pie slice with exit animation (#25504)', assert => {
-    let clock;
-    try {
-        clock = TestUtilities.lolexInstall();
+QUnit.test(
+    'Removed pie slices shrink in place and fade out with their labels ' +
+    '(#25504)',
+    assert => {
+        let clock;
+        try {
+            clock = TestUtilities.lolexInstall();
 
-        const chart = Highcharts.chart('container', {
-                chart: {
-                    animation: {
-                        duration: 100
-                    }
-                },
-                series: [{
-                    type: 'pie',
-                    data: [
-                        { id: 'a', y: 1 },
-                        { id: 'b', y: 3 },
-                        { id: 'c', y: 6 }
-                    ]
-                }]
-            }),
-            point = chart.series[0].points[2];
+            const data = [
+                    { id: 'a', y: 10 },
+                    { id: 'b', y: 20 },
+                    { id: 'c', y: 30 },
+                    { id: 'd', y: 25 },
+                    { id: 'e', y: 15 }
+                ],
+                chart = Highcharts.chart('container', {
+                    chart: {
+                        animation: {
+                            duration: 100
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        data
+                    }]
+                }),
+                series = chart.series[0],
+                [a, b, c, d] = series.points;
 
-        chart.series[0].setData([
-            { id: 'a', y: 1 },
-            { id: 'b', y: 3 }
-        ]);
+            series.setData([data[0], data[2], data[4]]);
 
-        setTimeout(() => {
-            assert.close(
-                point.graphic.opacity,
-                0.5,
-                0.3,
-                'The removed slice should be semi-opaque mid exit'
+            assert.deepEqual(
+                [b, d].map(p => [p.shapeArgs.start, p.shapeArgs.end]),
+                [a, c].map(p => [p.shapeArgs.end, p.shapeArgs.end]),
+                'The removed slices should shrink into zero-width slices ' +
+                'in place'
             );
 
-            assert.close(
-                point.dataLabel.opacity,
-                0.5,
-                0.3,
-                'The removed data label should be semi-opaque mid exit'
-            );
+            setTimeout(() => {
+                assert.close(
+                    b.graphic.opacity,
+                    0.5,
+                    0.3,
+                    'The removed slice should be semi-opaque mid exit'
+                );
 
-            assert.close(
-                point.dataLabel.connector.opacity,
-                0.5,
-                0.3,
-                'The removed connector should be semi-opaque mid exit'
-            );
-        }, 50);
+                assert.close(
+                    b.dataLabel.opacity,
+                    0.5,
+                    0.3,
+                    'The removed data label should be semi-opaque mid exit'
+                );
 
-        TestUtilities.lolexRunAndUninstall(clock);
-    } finally {
-        TestUtilities.lolexUninstall(clock);
+                assert.close(
+                    b.dataLabel.connector.opacity,
+                    0.5,
+                    0.3,
+                    'The removed connector should be semi-opaque mid exit'
+                );
+            }, 50);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
     }
-});
+);
