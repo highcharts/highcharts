@@ -292,6 +292,27 @@ async function addReactNavigation(root) {
     }
 }
 
+// Resolve existing ancestors too: macOS /var and /private/var name the same tree.
+async function physicalPath(file) {
+    let ancestor = Path.resolve(file);
+    const suffix = [];
+    for (;;) {
+        try {
+            return Path.join(await FS.realpath(ancestor), ...suffix);
+        } catch (error) {
+            if (error.code !== 'ENOENT') {
+                throw error;
+            }
+            const parent = Path.dirname(ancestor);
+            if (parent === ancestor) {
+                throw error;
+            }
+            suffix.unshift(Path.basename(ancestor));
+            ancestor = parent;
+        }
+    }
+}
+
 /**
  * Stage inventory files and extend legacy navigation, retaining old releases.
  * @param {object} artifact Verified artifact.
@@ -300,6 +321,14 @@ async function addReactNavigation(root) {
  * @return {Promise<object>} Artifact with its staged root.
  */
 async function stageArtifact(artifact, directory, options = {}) {
+    const destinationRoot = await physicalPath(directory);
+    for (const source of new Set([artifact.root, artifact.sourceRoot].filter(Boolean))) {
+        const sourceRoot = await physicalPath(source);
+        if ([Path.relative(sourceRoot, destinationRoot), Path.relative(destinationRoot, sourceRoot)].some(relative =>
+            relative !== '..' && !relative.startsWith(`..${Path.sep}`) && !Path.isAbsolute(relative))) {
+            fail('artifact and staging directories must not overlap');
+        }
+    }
     await FS.mkdir(directory, { recursive: true });
     if ((await FS.lstat(directory)).isSymbolicLink()) {
         fail('staging directory cannot be a symlink');
@@ -354,27 +383,6 @@ async function dryrunPath(session, record) {
     assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
     assertNoDryRunSymlinkAncestors(root, mirrorRoot);
     return filePath(root, record.path, true);
-}
-
-// Resolve existing ancestors too: macOS /var and /private/var name the same tree.
-async function physicalPath(file) {
-    let ancestor = Path.resolve(file);
-    const suffix = [];
-    for (;;) {
-        try {
-            return Path.join(await FS.realpath(ancestor), ...suffix);
-        } catch (error) {
-            if (error.code !== 'ENOENT') {
-                throw error;
-            }
-            const parent = Path.dirname(ancestor);
-            if (parent === ancestor) {
-                throw error;
-            }
-            suffix.unshift(Path.basename(ancestor));
-            ancestor = parent;
-        }
-    }
 }
 
 /**

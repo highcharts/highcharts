@@ -257,6 +257,36 @@ describe('static React artifact consumer', async () => {
         );
     });
 
+    await it('rejects overlapping artifact and staging roots before modifying either tree', async () => {
+        const fixture = await makeFixture();
+        const artifact = await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+        const nestedStage = Path.join(fixture.artifactDirectory, 'nested-stage');
+        for (const destination of [fixture.artifactDirectory, fixture.directory, nestedStage]) {
+            await assert.rejects(ReactStatic.stageArtifact(artifact, destination), /must not overlap/u);
+            await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+        }
+        await assert.rejects(readdir(nestedStage), { code: 'ENOENT' });
+        await assert.rejects(readdir(Path.join(fixture.directory, 'react-assets')), { code: 'ENOENT' });
+    });
+
+    await it('rejects overlaps through symlinked staging ancestors', async t => {
+        const fixture = await makeFixture();
+        const artifact = await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+        const alias = Path.join(fixture.directory, 'alias');
+        try {
+            await symlink(fixture.artifactDirectory, alias, process.platform === 'win32' ? 'junction' : 'dir');
+        } catch (error) {
+            if (process.platform === 'win32' && ['EPERM', 'EACCES', 'ENOTSUP'].includes(error.code)) {
+                t.skip('Creating symlinks is not permitted on this Windows host.');
+                return;
+            }
+            throw error;
+        }
+        await assert.rejects(ReactStatic.stageArtifact(artifact, Path.join(alias, 'stage')), /must not overlap/u);
+        await assert.rejects(readdir(Path.join(fixture.artifactDirectory, 'stage')), { code: 'ENOENT' });
+        await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+    });
+
     await it('stages inventory files while preserving legacy output and refusing immutable conflicts', async () => {
         const fixture = await makeFixture();
         const legacyFile = Path.join(fixture.stagingDirectory, 'samples', 'legacy.js');
@@ -344,7 +374,8 @@ describe('static React artifact consumer', async () => {
             await mkdir(directory, { recursive: true });
             await writeFile(Path.join(directory, 'api.js'), originalScript);
         }
-        const artifact = await stage(fixture);
+        const sourceArtifact = await ReactStatic.verifyArtifact(fixture.artifactDirectory, EXPECTED_VERSIONS);
+        const artifact = await ReactStatic.stageArtifact(sourceArtifact, fixture.stagingDirectory);
         for (const [index, product] of PRODUCTS.entries()) {
             const scriptPath = Path.join(artifact.root, product, 'api.js');
             const script = await readFile(scriptPath, 'utf8');
@@ -392,7 +423,7 @@ describe('static React artifact consumer', async () => {
             } finally {
                 dom.window.close();
             }
-            await ReactStatic.stageArtifact(artifact, fixture.stagingDirectory);
+            await ReactStatic.stageArtifact(sourceArtifact, fixture.stagingDirectory);
             assert.equal(await readFile(scriptPath, 'utf8'), script);
         }
         for (const record of fixture.records) {

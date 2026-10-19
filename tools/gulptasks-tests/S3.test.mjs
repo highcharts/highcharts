@@ -526,6 +526,34 @@ describe('S3 utils', async () => {
         );
     });
 
+    await it('rejects parent-directory dry-run buckets without touching tmp files', async () => {
+        const fixture = makeFixture();
+        const key = `gulptasks-s3-delete-${randomUUID()}.txt`;
+        const outsideObjectPath = Path.join(process.cwd(), 'tmp', key);
+        const outsideMarkerPath = Path.join(
+            process.cwd(),
+            'tmp',
+            `DELETE ${key}`
+        );
+
+        mkdirSync(Path.dirname(outsideObjectPath), { recursive: true });
+        writeFileSync(outsideObjectPath, 'preserve this file');
+        fixture.session.bucket = '..';
+
+        try {
+            await assert.rejects(
+                S3.deleteS3Object(key, fixture.session),
+                /escapes its root/u
+            );
+
+            assert.equal(readFileSync(outsideObjectPath, 'utf8'), 'preserve this file');
+            assert.equal(existsSync(outsideMarkerPath), false);
+        } finally {
+            rmSync(outsideObjectPath, { force: true });
+            rmSync(outsideMarkerPath, { force: true });
+        }
+    });
+
     await it('writes direct dry-run objects in dotted paths and clears deletion markers', async () => {
         const fixture = makeFixture(`gulptasks-s3-test.${randomUUID()}`);
         const content = 'Høycharts 😀';

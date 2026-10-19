@@ -187,20 +187,16 @@ async function deleteS3Object(
         );
         const deleteMarkerPath = getDryRunDeleteMarkerPath(path, session);
         const tempRoot = NativePath.resolve('tmp');
-        const mirrorBucketPath = NativePath.resolve(
-            'tmp',
-            's3',
-            session.bucket
-        );
-        const markerBucketPath = NativePath.resolve(
-            'tmp',
-            's3-delete-markers',
-            session.bucket
-        );
+        const mirrorRoot = NativePath.resolve('tmp', 's3');
+        const mirrorBucketPath = NativePath.resolve(mirrorRoot, session.bucket);
+        const markerRoot = NativePath.resolve('tmp', 's3-delete-markers');
+        const markerBucketPath = NativePath.resolve(markerRoot, session.bucket);
 
-        assertNoDryRunSymlinkAncestors(mirrorBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(mirrorRoot, tempRoot);
+        assertNoDryRunSymlinkAncestors(mirrorBucketPath, mirrorRoot);
         assertNoDryRunSymlinkAncestors(objectPath, mirrorBucketPath);
-        assertNoDryRunSymlinkAncestors(markerBucketPath, tempRoot);
+        assertNoDryRunSymlinkAncestors(markerRoot, tempRoot);
+        assertNoDryRunSymlinkAncestors(markerBucketPath, markerRoot);
         assertNoDryRunSymlinkAncestors(deleteMarkerPath, markerBucketPath);
         await FS.promises.mkdir(
             NativePath.dirname(deleteMarkerPath),

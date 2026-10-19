@@ -4,6 +4,8 @@ The React static artifact is validated against the expected React and
 Highcharts versions before any files are staged or uploaded. Its manifest and
 inventory remain outside the public `build/api` tree. The artifact itself is
 copied into `build/api` without changing file bytes.
+Keep the artifact outside the staging tree: identical or nested artifact and
+staging roots are rejected before copying, including overlaps through symlinks.
 
 When the legacy product `api.js` files are present, staging also adds a **React**
 entry to their JS/iOS/Android dropdown. Each product links to its own
