@@ -241,6 +241,71 @@ test.describe('HTML Component', () => {
         expect(result.elementsText, 'HTML from elements should be rendered and text should be correct.').toBe('HTML from elements');
         expect(result.stringText, 'HTML from string should be rendered and text should be correct.').toBe('HTML from string');
     });
+
+    test('HTML Component tags should not widen the shared allow lists', async ({ page }) => {
+        await page.setContent(dashboardsWithLayoutHTML, { waitUntil: 'networkidle' });
+
+        const result = await page.evaluate(async () => {
+            const Dashboards = (window as any).Dashboards;
+            const AST = Dashboards.AST;
+
+            const onImport = {
+                input: AST.allowedTags.indexOf('input'),
+                selected: AST.allowedAttributes.indexOf('selected'),
+                dataImage: AST.allowedReferences
+                    .filter((r: string) => r.indexOf('data:') === 0)
+            };
+
+            const board = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{ cells: [{ id: 'dashboard-cell-1' }] }]
+                    }]
+                },
+                components: [{
+                    type: 'HTML',
+                    renderTo: 'dashboard-cell-1',
+                    html: '<label for="a">L</label>' +
+                        '<select id="a"><option>o</option></select>' +
+                        '<img src="data:image/png;base64,iVBORw0KGgo=">' +
+                        '<img class="svg" src="data:image/svg+xml,<svg/>">'
+                }]
+            }, true);
+
+            const el = board.mountedComponents[0].component.element;
+
+            return {
+                onImport,
+                // Still widened while the component renders
+                hasSelect: !!el.querySelector('select'),
+                hasOption: !!el.querySelector('option'),
+                hasLabelFor: el.querySelector('label')?.getAttribute('for'),
+                pngKept: !!el.querySelector('img[src^="data:image/png"]'),
+                svgHref: el.querySelector('img.svg')?.getAttribute('src'),
+                // Restored afterwards
+                afterRender: {
+                    input: AST.allowedTags.indexOf('input'),
+                    selected: AST.allowedAttributes.indexOf('selected'),
+                    dataImage: AST.allowedReferences
+                        .filter((r: string) => r.indexOf('data:') === 0)
+                }
+            };
+        });
+
+        expect(result.onImport.input, 'Importing the module must not add tags.').toBe(-1);
+        expect(result.onImport.selected, 'Importing the module must not add attributes.').toBe(-1);
+        expect(result.onImport.dataImage, 'Importing the module must not add references.').toEqual([]);
+
+        expect(result.hasSelect, 'The component still renders a select.').toBe(true);
+        expect(result.hasOption, 'The component still renders an option.').toBe(true);
+        expect(result.hasLabelFor, 'The component still keeps the for attribute.').toBe('a');
+        expect(result.pngKept, 'A data: PNG source is kept.').toBe(true);
+        expect(result.svgHref, 'A data: SVG source is dropped.').toBeFalsy();
+
+        expect(result.afterRender.input, 'Tags are restored after rendering.').toBe(-1);
+        expect(result.afterRender.selected, 'Attributes are restored after rendering.').toBe(-1);
+        expect(result.afterRender.dataImage, 'References are restored after rendering.').toEqual([]);
+    });
 });
 
 test.describe('Grid Component', () => {
@@ -1417,5 +1482,54 @@ test.describe('Highcharts Component', () => {
         expect(result.stringsPointsAfter, 'Strings navigator should have 2 points after extremes changed.').toBe(2);
         expect(result.numbersPointsAfter, 'Numbers navigator should have 5 points after extremes changed.').toBe(5);
         expect(result.tableModifiedRowCount, 'DataTable should have 1 row after extremes changed.').toBe(1);
+    });
+});
+
+test.describe('Navigator Component', () => {
+    test('Destroy unregisters the chart', async ({ page }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
+
+        const pageErrors: string[] = [];
+        page.on('pageerror', (error): void => {
+            pageErrors.push(error.message);
+        });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'navigator-cell' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    type: 'Navigator',
+                    renderTo: 'navigator-cell'
+                }]
+            }, true);
+
+            const component = dashboard.mountedComponents[0].component;
+            const chart = component.chart;
+
+            component.resize();
+            component.destroy();
+
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            return Highcharts.charts.includes(chart);
+        });
+
+        expect(pageErrors, 'Destroy should not raise a Highstock error.').toEqual([]);
+        expect(
+            result,
+            'Destroyed navigator chart should be removed from Highcharts.charts.'
+        ).toBe(false);
     });
 });

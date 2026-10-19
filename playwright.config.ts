@@ -12,7 +12,8 @@ export default defineConfig({
     reporter: [
         [process.env.CI ? 'dot' : 'line'],
         ['html', { open: 'never' }],
-        ['./tests/qunit/utils/browser-log-note-reporter.ts']
+        ['./tests/qunit/utils/browser-log-note-reporter.ts'],
+        ['./tests/visual/visual-reporter.ts']
     ],
     use: {
         trace: 'on-first-retry',
@@ -23,6 +24,10 @@ export default defineConfig({
         {
             name: 'setup-highcharts',
             testMatch: 'setup-highcharts.mts',
+        },
+        {
+            name: 'setup-visual',
+            testMatch: 'setup-visual.mts',
         },
         {
             name: 'highcharts',
@@ -65,6 +70,8 @@ export default defineConfig({
         {
             name: 'visual',
             testDir: './tests/visual',
+            fullyParallel: false,
+            workers: 1,
             use: {
                 ...devices['Desktop Chrome'],
                 headless: true,
@@ -79,10 +86,7 @@ export default defineConfig({
                     ]
                 }
             },
-            dependencies: [
-                'setup-dashboards',
-                'setup-highcharts'
-            ],
+            dependencies: ['setup-visual'],
         },
         {
             name: 'qunit-firefox',

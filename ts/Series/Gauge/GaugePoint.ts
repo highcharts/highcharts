@@ -47,9 +47,12 @@ class GaugePoint extends Point {
      *
      * */
 
+    /** @internal */
     public dial?: SVGElement;
     public options!: GaugePointOptions;
+    /** @internal */
     public series!: GaugeSeries;
+    /** @internal */
     public shapeArgs!: SVGAttributes;
 
 
@@ -62,7 +65,7 @@ class GaugePoint extends Point {
 
     /**
      * Don't do any hover colors or anything
-     * @private
+     * @internal
      */
     public setState(state?: StatesOptionsKey): void {
         this.state = state;

@@ -61,11 +61,13 @@ export default class ContourSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         ScatterSeries.defaultOptions,
         ContourSeriesDefaults
     );
 
+    /** @internal */
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -85,8 +87,10 @@ export default class ContourSeries extends ScatterSeries {
 
     public options!: ContourSeriesOptions;
 
+    /** @internal */
     public context?: GPUCanvasContext | null;
 
+    /** @internal */
     public renderFrame?: () => void;
 
     private foreignObject?: SVGForeignObjectElement;
@@ -99,6 +103,7 @@ export default class ContourSeries extends ScatterSeries {
 
     private buffers?: Record<string, GPUBuffer>;
 
+    /** @internal */
     public renderPromise?: Promise<void>;
 
     /* Uniforms:
@@ -121,6 +126,7 @@ export default class ContourSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public getContourData(): [Uint32Array, Float32Array] {
         const points = this.points,
             len = points.length,
@@ -143,6 +149,7 @@ export default class ContourSeries extends ScatterSeries {
         return [new Delaunay(points2d).triangles, points3d];
     }
 
+    /** @internal */
     public override update(
         options: DeepPartial<ContourSeriesOptions>,
         redraw?: boolean
@@ -234,6 +241,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public async run(): Promise<void> {
         const series = this,
             chart = series.chart,
@@ -495,6 +503,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public override destroy(): void {
         // Remove the foreign object. The canvas will be removed with it.
         // For some reason, `series.update` calls `series.destroy` even if
@@ -505,6 +514,7 @@ export default class ContourSeries extends ScatterSeries {
         super.destroy();
     }
 
+    /** @internal */
     public override drawGraph(): void {
         // Do nothing
     }
@@ -515,6 +525,7 @@ export default class ContourSeries extends ScatterSeries {
      * @param {boolean} renderFrame
      * Whether to rerender the series' context after setting the uniforms.
      * Defaults to `true`.
+     * @internal
      */
     public setUniforms(renderFrame = true): void {
         this.setFrameExtremesUniform(false);
@@ -534,6 +545,7 @@ export default class ContourSeries extends ScatterSeries {
      * @param {boolean} renderFrame
      * Whether to rerender the series' context after setting the uniform.
      * Defaults to `true`.
+     * @internal
      */
     public setContourIntervalUniform(renderFrame = true): void {
         if (this.device && this.buffers?.contourIntervalUniform) {
@@ -550,6 +562,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the contour offset uniform according to the series options.
+     * @internal
      */
     public setContourOffsetUniform(renderFrame = true): void {
         if (this.device && this.buffers?.contourOffsetUniform) {
@@ -566,6 +579,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the smooth coloring uniform according to the series options.
+     * @internal
      */
     public setSmoothColoringUniform(renderFrame = true): void {
         if (this.device && this.buffers?.smoothColoringUniform) {
@@ -582,6 +596,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the line width uniform according to the series options.
+     * @internal
      */
     public setLineWidthUniform(renderFrame = true): void {
         if (this.device && this.buffers?.lineWidthUniform) {
@@ -598,6 +613,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the contour line color uniform according to the series options.
+     * @internal
      */
     public setContourLineColorUniform(renderFrame = true): void {
         if (this.device && this.buffers?.contourLineColor) {
@@ -614,6 +630,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the frame extremes uniform according to the series options.
+     * @internal
      */
     public setFrameExtremesUniform(renderFrame = true): void {
         if (this.device && this.buffers?.extremesUniform) {
@@ -630,6 +647,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the value extremes uniform according to the series data.
+     * @internal
      */
     public setValueExtremesUniform(renderFrame = true): void {
         if (this.device && this.buffers?.valueExtremesUniform) {
@@ -646,6 +664,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the color axis stops uniforms according to the color axis options.
+     * @internal
      */
     public setColorAxisStopsUniforms(renderFrame = true): void {
         const stopsBuffer = this.buffers?.colorAxisStopsUniform;
@@ -676,6 +695,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the is inverted uniform according to the series options.
+     * @internal
      */
     public setIsInvertedUniform(renderFrame = true): void {
         if (this.device && this.buffers?.isInvertedUniform) {
@@ -832,6 +852,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the RGBA color as a fraction of the 255 range.
+     * @internal
      */
     public static rgbaAsFrac(rgba: Color.RGBA): number[] {
         return [
@@ -850,7 +871,6 @@ extend(ContourSeries.prototype, {
 });
 
 // Registry
-/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;

@@ -1,3 +1,10 @@
+---
+description: >-
+  Plot values on a geographic grid using longitude, latitude, and value
+  points, with row and column sizes controlling cell span. The article
+  covers color-axis mapping and interpolation for map projections.
+---
+
 GeoHeatMap Series
 =================
 

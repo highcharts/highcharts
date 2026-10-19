@@ -28,6 +28,7 @@ import type HistogramSeries from './HistogramSeries';
 
 declare class HistogramPoint extends ColumnPointType {
     public options: HistogramPointOptions;
+    /** @internal */
     public series: HistogramSeries;
 }
 

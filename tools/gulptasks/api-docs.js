@@ -65,12 +65,12 @@ async function apiDocs() {
     const source = (args.source || 'ts');
 
     await ProcessLib.exec(
-        'npx ts-node tools/api-docs/api-classes.ts' +
+        'node --import tsx tools/api-docs/api-classes.ts' +
             ` --source "${source}"`
     );
 
     await ProcessLib.exec(
-        'npx ts-node tools/api-docs/api-options.ts' +
+        'node --import tsx tools/api-docs/api-options.ts' +
             ` --source "${source}"`
     );
 

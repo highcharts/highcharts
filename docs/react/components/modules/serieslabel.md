@@ -1,3 +1,10 @@
+---
+description: >-
+  Place labels beside chart series with SeriesLabel, optionally disable the
+  legend, and configure label behavior per series or across series through
+  PlotOptions using the documented API options.
+---
+
 # SeriesLabel
 
 You can add the series-label module to your chart using the `SeriesLabel` component:

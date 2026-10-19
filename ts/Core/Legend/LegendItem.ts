@@ -16,6 +16,7 @@
  *
  * */
 
+import type BBoxObject from '../Renderer/BBoxObject';
 import type Chart from '../Chart/Chart';
 import type ColorAxis from '../Axis/Color/ColorAxis';
 import type ColorType from '../Color/ColorType';
@@ -39,6 +40,7 @@ export interface LegendItemObject {
     line?: SVGElement;
     pageIx?: number;
     symbol?: SVGElement;
+    symbolBBox?: BBoxObject;
     x?: number;
     y?: number;
 }

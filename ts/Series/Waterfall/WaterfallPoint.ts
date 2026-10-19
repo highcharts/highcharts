@@ -38,18 +38,24 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public below?: boolean;
 
+    /** @internal */
     public box?: BBoxObject;
 
+    /** @internal */
     public isIntermediateSum?: boolean;
 
+    /** @internal */
     public isSum?: boolean;
 
+    /** @internal */
     public minPointLengthOffset?: number;
 
     public options!: WaterfallPointOptions;
 
+    /** @internal */
     public series!: WaterfallSeries;
 
     /* *
@@ -58,6 +64,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public getClassName(): string {
         let className = Point.prototype.getClassName.call(this);
 
@@ -71,6 +78,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
     }
 
     // Pass the null test in ColumnSeries.translate.
+    /** @internal */
     public isValid(): boolean {
         return (
             isNumber(this.y) ||

@@ -131,9 +131,42 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout candidate harness
+        uses: actions/checkout@v6
         with:
-          ref: master
+          fetch-depth: 0
+
+      - name: Preserve candidate harness and pin revisions
+        id: revisions
+        run: |
+          {
+            echo "candidate_sha=$(git rev-parse HEAD)"
+            echo "reference_sha=$(git rev-parse origin/master)"
+          } >> "$GITHUB_OUTPUT"
+          git archive HEAD \
+            .gulp.js gulpfile.ts package.json package-lock.json tsconfig.json \
+            test tools .github/scripts \
+            tests/package.json tests/package-lock.json \
+            > "$RUNNER_TEMP/karma-harness.tar"
+
+      - name: Checkout pinned master reference
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.revisions.outputs.reference_sha }}
+
+      - name: Restore candidate harness
+        run: tar -xf "$RUNNER_TEMP/karma-harness.tar" -C "$GITHUB_WORKSPACE"
+
+      - name: Use Firefox 153.0.4
+        id: reference-firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.reference-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -144,19 +177,44 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore reference package metadata
+        env:
+          REFERENCE_SHA: ${{ steps.revisions.outputs.reference_sha }}
+        run: |
+          git restore --source "$REFERENCE_SHA" -- \
+            package.json package-lock.json \
+            tests/package.json tests/package-lock.json \
+            tools/docs-preview/package.json
+
       - name: Build Highcharts
         run: npx gulp scripts
 
-      - run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
-      - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-highcharts
+        run: npx karma start test/karma-conf.js --tests highcharts/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-maps
+        run: npx karma start test/karma-conf.js --tests maps/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-stock
+        run: npx karma start test/karma-conf.js --tests stock/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
+      - id: reference-gantt
+        run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
         uses: actions/checkout@v6
         with:
+          ref: ${{ steps.revisions.outputs.candidate_sha }}
           clean: false
           fetch-depth: 0
+
+      - name: Use Firefox 153.0.4
+        id: candidate-firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: '153.0.4'
+
+      - name: Disable Firefox updates
+        env:
+          FIREFOX_PATH: ${{ steps.candidate-firefox.outputs.firefox-path }}
+        run: node .github/scripts/disableFirefoxUpdates.js
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -180,51 +238,18 @@ jobs:
         run: node .github/scripts/runVisualCompare.js "Maps" "maps/*/*"
 
       - name: Compare Gantt visual tests
+        id: candidate-gantt
         run: node .github/scripts/runVisualCompare.js "Gantt" "gantt/*/*"
 
       - name: Generate visual test report
         run: |
           npx gulp update-pr-testresults \
-          --fail-silently \
-          --pr ${{github.event.pull_request.number}}
-        if: ${{ always() }}
+          --pr ${{github.event.pull_request.number}} \
+          --artifacts-url "$ARTIFACTS_URL" \
+          --fail-silently
+        if: ${{ always() && steps.candidate-gantt.outcome == 'success' }}
         env:
-          GITHUB_TOKEN: ${{secrets.PR_COMMENT_TOKEN}}
-          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-
-      - name: Purge references with no candidate
-        if: ${{ always() }}
-        run: |
-          find ./samples -type f -name "reference.svg" \
-            -exec sh -c '
-              for f do
-                dir="$(dirname "$f")"
-                candidate_path="$dir/candidate.svg"
-                if [ ! -f "$candidate_path" ]; then
-                  echo "Deleting unpaired reference: $f"
-                  rm "$f"
-                fi
-              done
-            ' sh {} +
-
-      - name: Upload visual test images
-        if: ${{ always() }}
-        run: |
-          aws s3 sync ./samples \
-          "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/pullrequests/$PR_NUMBER/" \
-          --exclude "*" \
-          --include "*/reference.svg" \
-          --include "*/candidate.svg" \
-          --include "*/diff.gif"
-        env:
-          HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
-          AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.VISUAL_TESTS_AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
-          PR_NUMBER: ${{github.event.pull_request.number}}
+          ARTIFACTS_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts
 
       - name: Comment on PR
         uses: actions/github-script@v8
@@ -268,9 +293,11 @@ jobs:
         with:
           name: visual-test-results
           path: |
+            samples/**/reference.svg
+            samples/**/candidate.svg
+            samples/**/diff.gif
             test/visual-test-results.json
             test/visual-test-errors.log
-            test/review-pr-*.json
             tmp/pr-visual-test-comment.json
 
       - name: Fail on visual test execution errors

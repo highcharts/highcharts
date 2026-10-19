@@ -42,6 +42,7 @@ class Pie3DPoint extends PiePoint {
      *
      * */
 
+    /** @internal */
     public series!: Pie3DSeries;
 
     /* *
@@ -51,7 +52,7 @@ class Pie3DPoint extends PiePoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public haloPath(): SVGPath {
         return this.series?.chart.is3d() ?
