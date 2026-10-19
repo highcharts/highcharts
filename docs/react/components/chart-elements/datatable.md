@@ -31,7 +31,7 @@ export default function DataTableChart() {
 }
 ```
 
-The `DataTable` component accepts all [`dataTable` API options](https://api.highcharts.com/highcharts/dataTable) as props. The `columns` prop holds the table data keyed by column ID.
+The `DataTable` component accepts all [`dataTable` API options](https://api.highcharts.com/highcharts/dataTable) as props. The `columns` prop holds the table data keyed by column ID, and an optional `id` prop names the table so that `dataMapping` can select it when a chart holds more than one.
 
 Each series selects which columns to read through `dataMapping`, where the keys are point properties (such as `x` and `y`) and the values are column IDs. A single `DataTable` can feed multiple series, each mapping different columns. If a column ID already matches a series key (for example `x` or `y`), the mapping for that property can be omitted.
 
