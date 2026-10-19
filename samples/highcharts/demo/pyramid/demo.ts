@@ -7,7 +7,7 @@ Highcharts.chart('container', {
         x: -50
     },
     plotOptions: {
-        series: {
+        pyramid: {
             dataLabels: {
                 enabled: true,
                 format: '<b>{point.name}</b> ({point.y:,.0f})',
@@ -38,7 +38,7 @@ Highcharts.chart('container', {
             },
             chartOptions: {
                 plotOptions: {
-                    series: {
+                    pyramid: {
                         dataLabels: {
                             inside: true
                         },
@@ -49,4 +49,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
