@@ -58,7 +58,7 @@ Highcharts.chart('container', {
     },
 
     plotOptions: {
-        series: {
+        pictorial: {
             pointPadding: 0,
             groupPadding: 0,
             borderWidth: 0,
@@ -127,4 +127,4 @@ Highcharts.chart('container', {
         data: [1800]
     }
     ]
-});
+} satisfies Highcharts.Options);
