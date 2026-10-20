@@ -23,8 +23,8 @@ const chart = Highcharts.chart('container', {
                 rate: 2
             },
             // Active on first point in series only
-            activeWhen: function (e) {
-                return e.point && !e.point.index;
+            activeWhen: function (e: { point?: { index?: number } }): boolean {
+                return !!(e.point && !e.point.index);
             }
         }]
     },
@@ -79,7 +79,7 @@ const chart = Highcharts.chart('container', {
     legend: {
         enabled: false
     }
-});
+} satisfies Highcharts.Options);
 
 
 // Handle the keyboard navigation
@@ -94,7 +94,15 @@ document.getElementById('controls').onkeydown = function (e) {
     // just reuse the accessibility description for the point, for simplicity.
     // We use a single SonificationSpeaker for the announcement, since it makes
     // it easy to avoid multiple announcements overlapping.
-    function onSinglePointPlayed(e) {
+    function onSinglePointPlayed(
+        e: {
+            pointsPlayed?: Array<Highcharts.Point & {
+                accessibility: {
+                    valueDescription: string
+                }
+            }>
+        }
+    ): void {
         const point = e.pointsPlayed && e.pointsPlayed[0];
         if (point) {
             speaker.sayAtTime(

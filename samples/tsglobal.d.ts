@@ -15,7 +15,7 @@ declare module '../code/highcharts' {
     // @todo: Add proper typing for `Highcharts.patterns`
     export const patterns: Array<PatternOptionsObject>;
 
-    export const sonification: Sonification;
+    export const sonification: SonificationGlobalObject;
 }
 
 /**
@@ -44,12 +44,37 @@ declare global {
         interface Pane {
             update(options: Highcharts.PaneOptions): void;
         }
+        interface SonificationGlobalObject {
+            InstrumentPresets: Record<string, any>;
+            SonificationSpeaker: new (options?: any) => {
+                cancel(): void;
+                sayAtTime(time: number, message: string): void;
+            };
+        }
+
         interface Sonification {
-            InstrumentPresets: string[];
+            InstrumentPresets: Record<string, any>;
+            cancel(): void;
             speak(
                 text: string,
                 options?: any,
                 delay?: number
+            ): void;
+            playAdjacent(
+                next: boolean,
+                onEnd?: any,
+                eventFilter?: any
+            ): void;
+            playAdjacentSeries(
+                next?: boolean,
+                prop?: keyof Highcharts.Point,
+                onEnd?: any
+            ): Highcharts.Series | null;
+            getLastPlayedPoint(): Highcharts.Point | null;
+            playNote(
+                instrument: string | any,
+                options: any,
+                delayMs?: number
             ): void;
             timeline: {
                 channels: Array<{
@@ -72,7 +97,7 @@ declare global {
         interface Point {
             dataLabels: Array<Highcharts.SVGElement>;
             opacity: number;
-            sonify(): void;
+            sonify(onEnd?: Function): void;
         }
         interface Series {
             // @todo: Add proper support. Used in black-and-white demo.
