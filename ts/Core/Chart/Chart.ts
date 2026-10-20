@@ -4212,12 +4212,20 @@ class Chart {
         }
 
         fireEvent(this, 'pan', { originalEvent: event }, (): void => {
+            const {
+                dragStartX = 0, dragStartY = 0, mouseDownX = 0, mouseDownY = 0
+            } = chart;
+
             chart.transform({
                 axes,
                 event,
+                // Zero-size boxes, like a one-finger touch pan
+                from: { x: dragStartX, y: dragStartY, width: 0, height: 0 },
                 to: {
-                    x: event.chartX - (chart.mouseDownX || 0),
-                    y: event.chartY - (chart.mouseDownY || 0)
+                    x: dragStartX + event.chartX - mouseDownX,
+                    y: dragStartY + event.chartY - mouseDownY,
+                    width: 0,
+                    height: 0
                 },
                 trigger: 'pan'
             });
@@ -4253,7 +4261,7 @@ class Chart {
                 trigger,
                 allowResetButton = true
             } = params,
-            { dragStartX = 0, dragStartY = 0, time } = this;
+            { time } = this;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -4293,13 +4301,12 @@ class Chart {
                 minPx = move;
 
             // Zooming in multiple panes, zoom only in the pane that receives
-            // the input. Panning has no `from` box, use the drag start position
-            // instead (#21809).
-            const inputPos = trigger === 'pan' && !axis.isRadial ?
-                (horiz ? dragStartX : dragStartY) - axis.pos :
-                fromCenter;
-
-            if (!reset && (inputPos < 0 || inputPos > len)) {
+            // the input. Radial axes are not linear in screen space (#21809).
+            if (
+                !reset &&
+                !axis.isRadial &&
+                (fromCenter < 0 || fromCenter > len)
+            ) {
                 continue;
             }
 
