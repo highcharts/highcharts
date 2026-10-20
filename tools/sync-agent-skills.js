@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Synchronize canonical skills to Claude and GitHub code review.
+ * Synchronize local coding-agent skills from .agents/skills to .claude/skills.
  * Usage: node tools/sync-agent-skills.js [--yes|-y] [--help|-h]
  */
 
@@ -12,19 +12,7 @@ const readline = require('node:readline');
 
 const repoRoot = path.resolve(__dirname, '..');
 const src = path.join(repoRoot, '.agents', 'skills');
-const targets = [
-    {
-        source: src,
-        destination: path.join(repoRoot, '.claude', 'skills')
-    },
-    {
-        source: path.join(src, 'review-pr'),
-        destination: path.join(repoRoot, '.github', 'skills', 'code-review')
-    }
-];
-const destinationNames = targets.map(
-    target => path.relative(repoRoot, target.destination)
-).join(' and ');
+const dest = path.join(repoRoot, '.claude', 'skills');
 
 class CliError extends Error {
     constructor(message, exitCode = 1) {
@@ -36,8 +24,7 @@ class CliError extends Error {
 function printHelp() {
     process.stdout.write(
         [
-            'Sync canonical .agents/skills to .claude/skills.',
-            'Also sync review-pr to .github/skills/code-review (name: code-review).',
+            'Sync agent skills from .agents/skills to .claude/skills.',
             '',
             'Usage:',
             '  npm run sync:skills -- [--yes]',
@@ -135,29 +122,20 @@ async function run() {
         return;
     }
 
-    for (const { source } of targets) {
-        if (!fs.existsSync(source) || !fs.statSync(source).isDirectory()) {
-            throw new CliError(
-                `Missing source directory: ${path.relative(repoRoot, source)}`
-            );
-        }
+    if (!fs.existsSync(src) || !fs.statSync(src).isDirectory()) {
+        throw new CliError(`Missing source directory: ${path.relative(repoRoot, src)}`);
     }
 
-    const reviewSkill = fs.readFileSync(
-        path.join(src, 'review-pr', 'SKILL.md'), 'utf8'
-    ).replace(/^(---\r?\n)name: review-pr(?=\r?\n)/u, '$1name: code-review');
+    fs.mkdirSync(dest, { recursive: true });
 
-    if (targets.some(target => hasEntries(target.destination)) && !assumeYes) {
+    if (hasEntries(dest) && !assumeYes) {
         if (!process.stdin.isTTY) {
             throw new CliError(
-                `Refusing to replace ${destinationNames} without ` +
-                'confirmation in non-interactive mode. Re-run with --yes.'
+                'Refusing to replace .claude/skills without confirmation in non-interactive mode. Re-run with --yes.'
             );
         }
 
-        const reply = await askToContinue(
-            `This will replace contents of ${destinationNames}. Continue? [y/N] `
-        );
+        const reply = await askToContinue('This will replace contents of .claude/skills. Continue? [y/N] ');
 
         if (!/^(?:y|yes)$/iu.test(reply.trim())) {
             process.stdout.write('Aborted.\n');
@@ -165,17 +143,10 @@ async function run() {
         }
     }
 
-    for (const { source, destination } of targets) {
-        clearDirectory(destination);
-        copyDirectory(source, destination);
-    }
+    clearDirectory(dest);
+    copyDirectory(src, dest);
 
-    fs.writeFileSync(
-        path.join(repoRoot, '.github', 'skills', 'code-review', 'SKILL.md'),
-        reviewSkill
-    );
-
-    process.stdout.write(`Synced .agents/skills -> ${destinationNames}\n`);
+    process.stdout.write('Synced .agents/skills -> .claude/skills\n');
 }
 
 run().catch(error => {

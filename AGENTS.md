@@ -12,7 +12,6 @@ Scope: instructions for coding/review agents working in this repository.
 
 - Source of truth is `.agents/skills`.
 - Mirror skills to `.claude/skills` with `npm run sync:skills`.
-- The same command mirrors `review-pr` to `.github/skills/code-review` for GitHub Copilot code review, rewriting its frontmatter name to `code-review`; edit the canonical skill, not the mirrors.
 - Use `npm run sync:skills -- --help` to inspect script options.
 
 ## Guides
