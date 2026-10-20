@@ -52,6 +52,6 @@ Highcharts.chart('container', {
         dataLabels: {
             enabled: true
         }
-    }]
+    } as Highcharts.PlotXrangeOptions]
 
-});
+} satisfies Highcharts.Options);
