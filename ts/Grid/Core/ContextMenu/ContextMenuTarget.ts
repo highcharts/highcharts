@@ -75,11 +75,39 @@ export interface ElementMenuTarget {
 }
 
 /**
- * The thing a context menu was opened on. One variant per surface: opening
- * menus somewhere else means adding a variant here, not a second menu
- * implementation.
+ * The surfaces a context menu can open on, keyed by the discriminator of
+ * each. A feature adds its own through module augmentation, so that opening
+ * menus somewhere new needs no change here:
+ *
+ * ```ts
+ * declare module '.../ContextMenuTarget' {
+ *     interface MenuTargetRegistry {
+ *         header: HeaderMenuTarget;
+ *     }
+ * }
+ * ```
+ *
+ * Carry what the menu was opened on as `cell` when it is a cell of some
+ * kind, and as `element` when it is a plain node, so that `MenuTargetObject`
+ * and the callbacks find it.
  */
-export type MenuTarget = CellMenuTarget | ElementMenuTarget;
+export interface MenuTargetRegistry {
+
+    /**
+     * A table body cell.
+     */
+    cell: CellMenuTarget;
+
+    /**
+     * An element given a menu with `grid.contextMenu.attach()`.
+     */
+    element: ElementMenuTarget;
+}
+
+/**
+ * The thing a context menu was opened on.
+ */
+export type MenuTarget = MenuTargetRegistry[keyof MenuTargetRegistry];
 
 /**
  * Discriminator value of a menu target.
@@ -115,6 +143,25 @@ export interface MenuContext<T extends MenuTarget = MenuTarget> {
  *  Functions
  *
  * */
+
+/**
+ * Returns what a menu item callback receives: whatever the target was opened
+ * on. A variant carries it as `cell` when it is a cell of some kind, and as
+ * `element` when it is a plain node, which is what `MenuTargetObject` reads.
+ *
+ * @param target
+ * What the menu was opened on.
+ *
+ * @return
+ * The target object.
+ */
+export function getMenuTargetObject<T extends MenuTarget>(
+    target: T
+): MenuTargetObject<T> {
+    return (
+        'cell' in target ? target.cell : target.element
+    ) as MenuTargetObject<T>;
+}
 
 /**
  * Builds the context of a menu opened on a table body cell.

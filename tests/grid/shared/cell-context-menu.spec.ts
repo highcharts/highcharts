@@ -1297,5 +1297,71 @@ test.describe('Cell Context Menu', () => {
             }
         );
 
+        test(
+            'A feature can open a menu on a surface of its own',
+            async ({ page }) => {
+                // What a composition would do: listen where the element is
+                // built, then hand `open` a target of its own. No Core
+                // change, and no registered item involved.
+                await page.evaluate(async () => {
+                    document.getElementById('cm-surface')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-surface';
+                    document.body.appendChild(container);
+
+                    const grid = await (window as any).Grid.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } }
+                    }, true);
+
+                    const header = container.querySelector('thead th');
+
+                    header.addEventListener('contextmenu', e => {
+                        const opened = grid.contextMenu.open(
+                            {
+                                grid,
+                                target: {
+                                    type: 'header',
+                                    cell: { htmlElement: header },
+                                    column: grid.viewport.columns[0]
+                                }
+                            },
+                            e.clientX,
+                            e.clientY,
+                            {
+                                items: [{
+                                    label: 'Sort this column',
+                                    onClick: target => {
+                                        target.htmlElement.setAttribute(
+                                            'data-acted', 'yes'
+                                        );
+                                    }
+                                }]
+                            }
+                        );
+
+                        if (opened) {
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                await page.waitForFunction(() => (
+                    document.querySelector('#cm-surface thead th') !== null
+                ));
+
+                const header = page.locator('#cm-surface thead th').first();
+                await header.click({ button: 'right' });
+
+                await expect(page.locator('.hcg-popup')).toBeVisible();
+                await expect(page.locator('.hcg-menu-item')).toHaveText([
+                    'Sort this column'
+                ]);
+
+                await page.locator('.hcg-menu-item').click();
+                await expect(header).toHaveAttribute('data-acted', 'yes');
+            }
+        );
+
     });
 });

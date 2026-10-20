@@ -30,6 +30,8 @@ import type {
 } from './ContextMenuOptions';
 import type { MenuContext, MenuTarget } from './ContextMenuTarget';
 
+import { getMenuTargetObject } from './ContextMenuTarget.js';
+
 import {
     getDefaultMenuItemIds,
     getMenuItem,
@@ -255,9 +257,7 @@ function resolveItem(
     const { onClick } = options;
 
     if (onClick) {
-        const { target } = context;
-        const targetObject =
-            target.type === 'cell' ? target.cell : target.element;
+        const targetObject = getMenuTargetObject(context.target);
 
         resolved.onClick = (): void => {
             onClick.call(targetObject, targetObject, context);
@@ -369,8 +369,9 @@ function resolveDefaultItems(context: MenuContext): ResolvedMenuItem[] {
 }
 
 /**
- * Returns the options a surface keeps in the Grid options. This is the one
- * place that knows where each of them looks.
+ * Returns the options a surface keeps in the Grid options. Only the cell menu
+ * keeps any; a feature adding a surface of its own reads them wherever it
+ * put them and hands them to `ContextMenu.open`.
  *
  * @param context
  * Context the menu was opened in.
