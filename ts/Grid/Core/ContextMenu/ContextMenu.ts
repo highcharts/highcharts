@@ -37,6 +37,7 @@ import {
     renderMenuItems
 } from './ContextMenuRenderer.js';
 import { addEvent } from '../../../Shared/Utilities.js';
+import { ContextMenuLongPress } from './ContextMenuLongPress.js';
 import { resolveContextMenu } from './ContextMenuResolver.js';
 
 /* *
@@ -177,9 +178,31 @@ class ContextMenu extends Menu {
         element.addEventListener('contextmenu', onContextMenu);
         element.addEventListener('keydown', onKeyDown);
 
+        // Safari fires no `contextmenu` event on long-press, and an element
+        // outside the table is not covered by the table's own polyfill.
+        const longPress = Globals.isIos ?
+            new ContextMenuLongPress({
+                getContextFromTarget: (
+                    target
+                ): MenuContext<ElementMenuTarget> | undefined => (
+                    target instanceof Node &&
+                    element.contains(target) &&
+                    resolveContextMenu(context, options).length ?
+                        context :
+                        void 0
+                ),
+                // The host yields this one context and no other.
+                openContextMenu: (_ctx, clientX, clientY): boolean =>
+                    this.open(context, clientX, clientY, options)
+            }) :
+            void 0;
+
+        longPress?.addEvents(element);
+
         return (): void => {
             element.removeEventListener('contextmenu', onContextMenu);
             element.removeEventListener('keydown', onKeyDown);
+            longPress?.removeEvents();
         };
     }
 

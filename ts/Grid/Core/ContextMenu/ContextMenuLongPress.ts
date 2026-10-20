@@ -21,11 +21,10 @@
  *
  * */
 
-import type TableCell from '../Table/Body/TableCell';
+import type { MenuContext } from './ContextMenuTarget';
 
 import Globals from '../Globals.js';
-import { getCellMenuContext } from './ContextMenuTarget.js';
-import { resolveContextMenu } from './ContextMenuResolver.js';
+import { getMenuTargetElement } from './ContextMenuTarget.js';
 
 /* *
  *
@@ -37,7 +36,7 @@ const LONG_PRESS_MS = 500;
 const MOVE_THRESHOLD_PX = 10;
 const MOVE_THRESHOLD_SQ = MOVE_THRESHOLD_PX * MOVE_THRESHOLD_PX;
 
-const { win, isIos } = Globals;
+const { win } = Globals;
 
 /* *
  *
@@ -46,21 +45,36 @@ const { win, isIos } = Globals;
  * */
 
 export interface ContextMenuLongPressHost {
-    getTableCellFromTarget(target: EventTarget | null): TableCell | undefined;
+
+    /**
+     * Resolves what the touch landed on, and only when a menu would open
+     * there: the press suppresses the iOS callout, so it must not do that
+     * for a touch that leads nowhere.
+     */
+    getContextFromTarget(target: EventTarget | null): MenuContext | undefined;
+
+    /**
+     * Whether the target is being edited, in which case the press belongs to
+     * the editor rather than to a menu.
+     */
+    isTargetEditing?(context: MenuContext): boolean;
+
+    /**
+     * Opens the menu.
+     */
     openContextMenu(
-        cell: TableCell,
+        context: MenuContext,
         clientX: number,
         clientY: number
     ): boolean;
-    isCellInEditMode(cell: TableCell): boolean;
 }
 
 interface LongPressState {
-    timer: number;
-    cell: TableCell;
+    calloutTarget: HTMLElement;
     clientX: number;
     clientY: number;
-    touchCalloutTarget: HTMLElement;
+    context: MenuContext;
+    timer: number;
 }
 
 /* *
@@ -70,7 +84,8 @@ interface LongPressState {
  * */
 
 /**
- * iOS long-press polyfill for cell context menus.
+ * iOS long-press polyfill for context menus, on whatever surface the host
+ * resolves. Safari fires no `contextmenu` event on long-press.
  */
 export class ContextMenuLongPress {
 
@@ -85,7 +100,7 @@ export class ContextMenuLongPress {
     }
 
     public addEvents(target: HTMLElement): void {
-        if (!isIos || this.eventsTarget) {
+        if (!Globals.isIos || this.eventsTarget) {
             return;
         }
 
@@ -111,7 +126,7 @@ export class ContextMenuLongPress {
         target.removeEventListener('touchend', this.onTouchEnd);
         target.removeEventListener('touchcancel', this.onTouchEnd);
 
-        if (this.state && target.contains(this.state.cell.htmlElement)) {
+        if (this.state && target.contains(this.state.calloutTarget)) {
             this.cancelLongPress();
         }
 
@@ -121,38 +136,35 @@ export class ContextMenuLongPress {
     private readonly onTouchStart = (e: TouchEvent): void => {
         const target = e.target;
 
-        if (
-            e.touches.length !== 1 ||
-            (
-                target instanceof Element && (
-                    target.closest('input,select,textarea,button,option') ||
-                    target.closest(
-                        '.' + Globals.getClassName('cellEditingContainer')
-                    )
-                )
-            )
-        ) {
+        if (e.touches.length !== 1) {
             this.cancelLongPress();
             return;
         }
 
-        const cell = this.host.getTableCellFromTarget(e.target);
-        if (
-            !cell ||
-            this.host.isCellInEditMode(cell) ||
-            !resolveContextMenu(getCellMenuContext(cell)).length
-        ) {
+        const context = this.host.getContextFromTarget(target);
+
+        if (!context || this.host.isTargetEditing?.(context)) {
+            this.cancelLongPress();
+            return;
+        }
+
+        const calloutTarget = getMenuTargetElement(context.target);
+        const control = target instanceof Element &&
+            target.closest('input,select,textarea,button,option');
+
+        // A native control is the user's to press, unless it is the very
+        // element the menu was attached to.
+        if (control && control !== calloutTarget) {
             this.cancelLongPress();
             return;
         }
 
         const touch = e.touches[0];
-        const touchCalloutTarget = cell.htmlElement;
 
         this.cancelLongPress();
-        touchCalloutTarget.style.setProperty('-webkit-touch-callout', 'none');
-        touchCalloutTarget.style.setProperty('-webkit-user-select', 'none');
-        touchCalloutTarget.style.setProperty('user-select', 'none');
+        calloutTarget.style.setProperty('-webkit-touch-callout', 'none');
+        calloutTarget.style.setProperty('-webkit-user-select', 'none');
+        calloutTarget.style.setProperty('user-select', 'none');
 
         const timer = win.setTimeout((): void => {
             if (!this.state || this.state.timer !== timer) {
@@ -161,18 +173,18 @@ export class ContextMenuLongPress {
 
             this.state.timer = 0;
             this.host.openContextMenu(
-                this.state.cell,
+                this.state.context,
                 this.state.clientX,
                 this.state.clientY
             );
         }, LONG_PRESS_MS);
 
         this.state = {
-            timer,
-            cell,
+            calloutTarget,
             clientX: touch.clientX,
             clientY: touch.clientY,
-            touchCalloutTarget
+            context,
+            timer
         };
     };
 
@@ -205,9 +217,9 @@ export class ContextMenuLongPress {
             win.clearTimeout(state.timer);
         }
 
-        state.touchCalloutTarget.style.removeProperty('-webkit-touch-callout');
-        state.touchCalloutTarget.style.removeProperty('-webkit-user-select');
-        state.touchCalloutTarget.style.removeProperty('user-select');
+        state.calloutTarget.style.removeProperty('-webkit-touch-callout');
+        state.calloutTarget.style.removeProperty('-webkit-user-select');
+        state.calloutTarget.style.removeProperty('user-select');
         delete this.state;
     }
 }

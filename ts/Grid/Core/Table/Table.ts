@@ -24,6 +24,7 @@
  * */
 
 import type TableCell from './Body/TableCell';
+import type { MenuContext } from '../ContextMenu/ContextMenuTarget';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
@@ -43,6 +44,7 @@ import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import { ContextMenuLongPress } from '../ContextMenu/ContextMenuLongPress.js';
 import { getCellMenuContext } from '../ContextMenu/ContextMenuTarget.js';
+import { resolveContextMenu } from '../ContextMenu/ContextMenuResolver.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
@@ -358,16 +360,25 @@ class Table {
 
         if (!this.contextMenuLongPress) {
             this.contextMenuLongPress = new ContextMenuLongPress({
-                getTableCellFromTarget: (target): TableCell | undefined =>
-                    this.getTableCellFromTarget(target),
-                openContextMenu: (cell, clientX, clientY): boolean =>
-                    this.grid.contextMenu.open(
-                        getCellMenuContext(cell),
-                        clientX,
-                        clientY
-                    ),
-                isCellInEditMode: (cell): boolean =>
-                    this.cellEditing?.editedCell === cell
+                getContextFromTarget: (target): MenuContext | undefined => {
+                    const cell = this.getTableCellFromTarget(target);
+
+                    if (!cell) {
+                        return;
+                    }
+
+                    const context = getCellMenuContext(cell);
+
+                    return resolveContextMenu(context).length ?
+                        context :
+                        void 0;
+                },
+                isTargetEditing: (context): boolean => (
+                    'cell' in context.target &&
+                    this.cellEditing?.editedCell === context.target.cell
+                ),
+                openContextMenu: (context, clientX, clientY): boolean =>
+                    this.grid.contextMenu.open(context, clientX, clientY)
             });
         }
 

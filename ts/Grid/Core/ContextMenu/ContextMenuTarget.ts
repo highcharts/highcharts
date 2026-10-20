@@ -164,6 +164,20 @@ export function getMenuTargetObject<T extends MenuTarget>(
 }
 
 /**
+ * Returns the element a target occupies, which is the cell's own element when
+ * the target carries a cell, and the node itself when it carries one.
+ *
+ * @param target
+ * What the menu was opened on.
+ *
+ * @return
+ * The element.
+ */
+export function getMenuTargetElement(target: MenuTarget): HTMLElement {
+    return 'cell' in target ? target.cell.htmlElement : target.element;
+}
+
+/**
  * Builds the context of a menu opened on a table body cell.
  *
  * @param cell

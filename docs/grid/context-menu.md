@@ -260,8 +260,10 @@ When a cell is focused, open its menu with the `ContextMenu` key or
 `Shift+F10`. The same keys work on an element you attached a menu to, once it
 has the focus.
 
-On touch devices, a long-press opens the menu. This matters most on iOS, where
-browsers do not fire the `contextmenu` event on long-press.
+On touch devices, a long-press opens the menu, on a cell and on an attached
+element alike. This matters most on iOS, where browsers do not fire the
+`contextmenu` event on long-press at all. A long-press that lands on a native
+control inside the target is left to that control.
 
 ## Localize built-in labels
 
