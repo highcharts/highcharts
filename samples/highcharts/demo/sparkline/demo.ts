@@ -1,12 +1,25 @@
 /**
  * Create a constructor for sparklines that takes some sensible defaults
- * and merges in the individual chart options. This function is also available
- * from the jQuery plugin as $(element).highcharts('SparkLine').
+ * and merges in the individual chart options.
  */
-Highcharts.SparkLine = function (a, b, c) {
+declare namespace Highcharts {
+    function SparkLine(
+        a: string|HTMLElement,
+        b?: any,
+        c?: (true|Highcharts.ChartCallbackFunction)
+    ): Highcharts.Chart;
+    interface ChartOptions {
+        skipClone?: boolean;
+    }
+}
+Highcharts.SparkLine = function (
+    a: string|HTMLElement,
+    b?: any,
+    c?: any
+): Highcharts.Chart {
     const hasRenderToArg = typeof a === 'string' || a.nodeName;
-    let options = arguments[hasRenderToArg ? 1 : 0];
-    const defaultOptions = {
+    let options = hasRenderToArg ? b : a;
+    const defaultOptions: Highcharts.Options = {
         chart: {
             renderTo: (
                 (options.chart && options.chart.renderTo) ||
@@ -111,11 +124,13 @@ function doChunk() {
         len = tds.length;
 
     for (let i = 0; i < len; i += 1) {
-        const td = tds[i];
-        const stringdata = td.dataset.sparkline;
+        const td = tds[i] as HTMLTableCellElement;
+        const stringdata = td.dataset.sparkline || '';
         const arr = stringdata.split('; ');
-        const data = arr[0].split(', ').map(parseFloat);
-        const chart = {};
+        const data = arr[0]
+            .split(', ')
+            .map((value): number => parseFloat(value));
+        const chart: { type?: string } = {};
 
         if (arr[1]) {
             chart.type = arr[1];
@@ -139,7 +154,7 @@ function doChunk() {
 
         // If the process takes too much time, run a timeout
         // to allow interaction with the browser
-        if (new Date() - time > 500) {
+        if (Date.now() - time > 500) {
             tds.splice(0, i + 1);
             setTimeout(doChunk, 0);
             break;
@@ -151,7 +166,7 @@ function doChunk() {
                 'Generated ' +
                 fullLen +
                 ' sparklines in ' +
-                (new Date() - start) + ' ms';
+                (Date.now() - start) + ' ms';
         }
     }
 }
