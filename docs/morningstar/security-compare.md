@@ -129,9 +129,16 @@ Highcharts.chart('container', {
 });
 ```
 
-## Relevant demo
+## Relevant demos
 
 You will find examples of how to use `SecurityCompareConnector` in our demos.
+
+- [Highcharts Stock + Morningstar Returns Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/returns-chart/)
+- [Highcharts Core + Morningstar Country Breakdown Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/country-breakdown-chart/)
+- [Highcharts Core + Morningstar Region Breakdown Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/region-breakdown-chart/)
+- [Highcharts Core + Morningstar Credit Quality Breakdown](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/credit-quality-breakdown/)
+- [Highcharts Core + Morningstar Sector Breakdown Bar Chart](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/sector-breakdown-bar-chart/)
+- [Highcharts Core + Morningstar Sector Breakdown Spider](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/sector-breakdown-spider/)
 
 ## Morningstar API Reference
 
