@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Context Menu Button class
+ *  Grid Menu Button class
  *
  *  (c) 2020-2026 Highsoft AS
  *
@@ -23,7 +23,7 @@
  *
  * */
 
-import type ContextMenu from './ContextMenu';
+import type Menu from './Menu';
 import type Button from './Button';
 import type Popup from './Popup';
 
@@ -40,7 +40,7 @@ const { makeHTMLElement } = GridUtils;
  *
  * */
 
-export class ContextMenuButton implements Button {
+export class MenuButton implements Button {
 
     /* *
      *
@@ -56,7 +56,7 @@ export class ContextMenuButton implements Button {
     /**
      * The context menu that the button belongs to.
      */
-    public contextMenu?: ContextMenu;
+    public menu?: Menu;
 
     public popup?: Popup;
 
@@ -73,7 +73,7 @@ export class ContextMenuButton implements Button {
     /**
      * The options for the context menu button.
      */
-    protected options: ContextMenuButtonOptions;
+    protected options: MenuButtonOptions;
 
     /**
      * The container for the icon element.
@@ -102,7 +102,7 @@ export class ContextMenuButton implements Button {
      *
      * */
 
-    constructor(options: ContextMenuButtonOptions) {
+    constructor(options: MenuButtonOptions) {
         this.options = options;
     }
 
@@ -116,15 +116,15 @@ export class ContextMenuButton implements Button {
     /**
      * Adds the button to the context menu.
      *
-     * @param contextMenu
+     * @param menu
      * The context menu to add the button to.
      */
-    public add(contextMenu: ContextMenu): this | undefined {
+    public add(menu: Menu): this | undefined {
         const cfg = this.options;
-        this.contextMenu = contextMenu;
-        contextMenu.buttons.push(this);
+        this.menu = menu;
+        menu.buttons.push(this);
 
-        const container = contextMenu.ensureItemsContainer();
+        const container = menu.ensureItemsContainer();
         if (!container) {
             return;
         }
@@ -158,7 +158,7 @@ export class ContextMenuButton implements Button {
         this.refreshState();
 
         if (cfg.chevron) {
-            const grid = this.contextMenu?.grid;
+            const grid = this.menu?.grid;
             chevronEl.appendChild(createGridIcon(
                 'chevronRight',
                 grid?.options?.rendering?.icons
@@ -177,7 +177,7 @@ export class ContextMenuButton implements Button {
     public focus(options?: FocusOptions): void {
         this.buttonEl?.focus(options);
 
-        const cm = this.contextMenu;
+        const cm = this.menu;
         if (cm) {
             cm.focusCursor = cm.buttons.indexOf(this);
         }
@@ -208,7 +208,7 @@ export class ContextMenuButton implements Button {
             return;
         }
 
-        const grid = this.contextMenu?.grid;
+        const grid = this.menu?.grid;
         this.icon = createGridIcon(
             icon,
             grid?.options?.rendering?.icons
@@ -239,13 +239,13 @@ export class ContextMenuButton implements Button {
         this.wrapper?.remove();
 
         // Unregister from the context menu
-        const cm = this.contextMenu;
+        const cm = this.menu;
         if (cm) {
             const buttonIndex = cm.buttons.indexOf(this);
             if (buttonIndex !== -1) {
                 cm.buttons.splice(buttonIndex, 1);
             }
-            delete this.contextMenu;
+            delete this.menu;
         }
     }
 
@@ -298,7 +298,7 @@ export class ContextMenuButton implements Button {
  *
  * */
 
-export interface ContextMenuButtonOptions {
+export interface MenuButtonOptions {
     /**
      * The label for the button.
      */
@@ -337,7 +337,7 @@ export interface ContextMenuButtonOptions {
     /**
      * The click handler for the button.
      */
-    onClick?: (event: MouseEvent, button: ContextMenuButton) => void;
+    onClick?: (event: MouseEvent, button: MenuButton) => void;
 }
 
 
@@ -347,4 +347,4 @@ export interface ContextMenuButtonOptions {
  *
  * */
 
-export default ContextMenuButton;
+export default MenuButton;

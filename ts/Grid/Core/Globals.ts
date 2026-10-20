@@ -99,6 +99,7 @@ export const rawClassNames = {
     popupContent: 'popup-content',
     columnFilterWrapper: 'column-filter-wrapper',
     columnFilterOperatorSpacer: 'column-filter-operator-spacer',
+    contextMenuCell: 'context-menu-cell',
     menuContainer: 'menu-container',
     menuItem: 'menu-item',
     menuHeader: 'menu-header',

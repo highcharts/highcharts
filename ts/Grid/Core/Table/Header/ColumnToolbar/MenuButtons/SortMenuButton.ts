@@ -27,7 +27,7 @@ import type MenuPopup from '../MenuPopup';
 import type { LangOptions } from '../../../../Options';
 import type Column from '../../../Column';
 
-import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
+import MenuButton from '../../../../UI/MenuButton.js';
 import StateHelpers from '../StateHelpers.js';
 import { addEvent } from '../../../../../../Shared/Utilities.js';
 
@@ -38,7 +38,7 @@ import { addEvent } from '../../../../../../Shared/Utilities.js';
  *
  * */
 
-class SortMenuButton extends ContextMenuButton {
+class SortMenuButton extends MenuButton {
 
 
     /* *
@@ -47,7 +47,7 @@ class SortMenuButton extends ContextMenuButton {
      *
      * */
 
-    public override contextMenu?: MenuPopup;
+    public override menu?: MenuPopup;
 
     private direction: ('asc'|'desc');
 
@@ -80,7 +80,7 @@ class SortMenuButton extends ContextMenuButton {
      * */
 
     protected override refreshState(): void {
-        const column = this.contextMenu?.button?.toolbar?.column;
+        const column = this.menu?.button?.toolbar?.column;
         if (!column) {
             return;
         }
@@ -129,7 +129,7 @@ class SortMenuButton extends ContextMenuButton {
     protected override addEventListeners(): void {
         super.addEventListeners();
 
-        const column = this.contextMenu?.button?.toolbar?.column;
+        const column = this.menu?.button?.toolbar?.column;
         if (!column) {
             return;
         }
@@ -146,7 +146,7 @@ class SortMenuButton extends ContextMenuButton {
 
     protected override clickHandler(event: MouseEvent): void {
         super.clickHandler(event);
-        const sorting = this.contextMenu?.button?.toolbar?.column.sorting;
+        const sorting = this.menu?.button?.toolbar?.column.sorting;
         if (!sorting) {
             return;
         }

@@ -44,6 +44,22 @@ function test_grid() {
         }
     );
 
+    Grid.ContextMenu.registerItem('showColumnId', {
+        icon: 'checkmark',
+        label: (context): string => context.target.column.id,
+        targets: ['cell'],
+        visible: (context): boolean => context.target.row.id !== void 0,
+        onClick: function (cell): void {
+            cell.row.id;
+        }
+    });
+
+    Grid.ContextMenu.registerItem('sampleGroup', {
+        defaultIn: ['cell'],
+        items: ['showColumnId', 'showCellValue'],
+        label: 'Sample group'
+    });
+
     const grid = Grid.grid('container', {
         data: {
             providerType: 'remote',
@@ -196,4 +212,31 @@ function test_grid() {
     grid.rowPinning?.unpin('A');
     grid.rowPinning?.getPinnedRows();
     grid.tableEditing?.isEnabled();
+
+    const detach = grid.contextMenu.attach(document.createElement('button'), {
+        items: [
+            {
+                label: 'Rename this button',
+                icon: 'pencil',
+                onClick: function (button): void {
+                    button.textContent = 'Renamed';
+                }
+            },
+            {
+                separator: true
+            },
+            {
+                label: 'Branch',
+                items: [{
+                    label: 'Leaf',
+                    visible: context => context.target.type === 'element',
+                    onClick: function (): void {
+                        this.blur();
+                    }
+                }]
+            }
+        ]
+    });
+
+    detach();
 }

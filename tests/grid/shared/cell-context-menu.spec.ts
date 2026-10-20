@@ -1014,5 +1014,288 @@ test.describe('Cell Context Menu', () => {
             await expect(page.locator('.hcg-popup')).toHaveCount(0);
         });
 
+        test(
+            'A menu attached to an element of your own opens and runs',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    document.getElementById('cm-attach')?.remove();
+                    document.getElementById('cm-attach-button')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-attach';
+                    document.body.appendChild(container);
+
+                    const button = document.createElement('button');
+                    button.id = 'cm-attach-button';
+                    button.type = 'button';
+                    button.textContent = 'Actions';
+                    document.body.appendChild(button);
+
+                    const grid = (window as any).Grid.grid(container, {
+                        data: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        }
+                    });
+
+                    grid.contextMenu.attach(button, {
+                        items: [{
+                            label: 'Rename the button',
+                            onClick: (target: HTMLElement) => {
+                                target.textContent = 'Renamed';
+                            }
+                        }, {
+                            separator: true
+                        }, {
+                            label: 'Second action'
+                        }]
+                    });
+                });
+
+                const button = page.locator('#cm-attach-button');
+                await button.click({ button: 'right' });
+
+                const popup = page.locator('.hcg-popup');
+                await expect(popup).toBeVisible();
+                await expect(popup.locator('.hcg-menu-divider')).toHaveCount(1);
+
+                // The grid clips its overflow, so a menu opened on an element
+                // outside it is only whole because it renders in the top
+                // layer. It stays a child of the grid, which is what keeps
+                // the styles and the theme on it.
+                expect(await page.evaluate(() => {
+                    const el = document.querySelector('.hcg-popup');
+                    const grid = document.querySelector('#cm-attach');
+                    const p = el.getBoundingClientRect();
+                    const g = grid.getBoundingClientRect();
+                    return {
+                        isPopover: el.matches(':popover-open'),
+                        reachesPastTheGrid:
+                            p.top < g.top || p.bottom > g.bottom,
+                        insideViewport:
+                            p.top >= 0 && p.bottom <= window.innerHeight,
+                        insideTheGridElement: grid.contains(el)
+                    };
+                })).toEqual({
+                    isPopover: true,
+                    reachesPastTheGrid: true,
+                    insideViewport: true,
+                    insideTheGridElement: true
+                });
+
+                await popup.locator('.hcg-menu-item', {
+                    hasText: 'Rename the button'
+                }).click();
+
+                await expect(button).toHaveText('Renamed');
+                await expect(popup).toHaveCount(0);
+            }
+        );
+
+        test(
+            'A menu outgrows the grid by default, and not when kept inside',
+            async ({ page }) => {
+                const open = async (inside: boolean | undefined) => {
+                    await page.evaluate((insideContainer) => {
+                        document.getElementById('cm-top-layer')?.remove();
+
+                        const container = document.createElement('div');
+                        container.id = 'cm-top-layer';
+                        // Too short for the menu below to fit in it.
+                        container.style.height = '90px';
+                        document.body.appendChild(container);
+
+                        (window as any).Grid.grid(container, {
+                            data: { columns: { id: ['ROW-001'] } },
+                            rendering: { popups: { insideContainer } },
+                            columnDefaults: {
+                                cells: {
+                                    contextMenu: {
+                                        items: [
+                                            { label: 'One' },
+                                            { label: 'Two' },
+                                            { label: 'Three' },
+                                            { label: 'Four' }
+                                        ]
+                                    }
+                                }
+                            }
+                        });
+                    }, inside);
+
+                    await page.locator(
+                        '#cm-top-layer tbody td[data-column-id="id"]'
+                    ).click({ button: 'right' });
+                    await expect(page.locator('.hcg-popup')).toBeVisible();
+
+                    return page.evaluate(() => {
+                        const popup = document.querySelector('.hcg-popup');
+                        const grid = document.getElementById('cm-top-layer');
+                        const p = popup.getBoundingClientRect();
+                        const g = grid.getBoundingClientRect();
+                        return {
+                            isPopover: popup.matches(':popover-open'),
+                            outgrowsTheGrid: p.height > g.height
+                        };
+                    });
+                };
+
+                expect(await open(void 0)).toEqual({
+                    isPopover: true,
+                    outgrowsTheGrid: true
+                });
+
+                await page.keyboard.press('Escape');
+
+                // Kept inside, the grid clips the menu, which scrolls within
+                // it instead.
+                expect(await open(true)).toEqual({
+                    isPopover: false,
+                    outgrowsTheGrid: false
+                });
+            }
+        );
+
+        test(
+            'Without the Popover API the popup stays inside the container',
+            async ({ page }) => {
+                await page.addInitScript(() => {
+                    // Popover is Baseline only since January 2025.
+                    delete (HTMLElement.prototype as {
+                        showPopover?: unknown;
+                    }).showPopover;
+                });
+                await page.reload({ waitUntil: 'networkidle' });
+                await page.waitForFunction(() => (
+                    (window as any).Grid?.grids?.length > 0
+                ));
+
+                await page.evaluate(() => {
+                    const container = document.createElement('div');
+                    container.id = 'cm-no-popover';
+                    container.style.height = '90px';
+                    document.body.appendChild(container);
+
+                    const grid = (window as any).Grid.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } },
+                        // Asked for, but the browser cannot deliver it.
+                        rendering: { popups: { insideContainer: false } },
+                        columnDefaults: {
+                            cells: {
+                                contextMenu: {
+                                    items: [
+                                        { label: 'One' },
+                                        { label: 'Two' },
+                                        { label: 'Three' }
+                                    ]
+                                }
+                            }
+                        }
+                    });
+
+                    const button = document.createElement('button');
+                    button.id = 'cm-no-popover-button';
+                    document.body.appendChild(button);
+                    grid.contextMenu.attach(button, {
+                        items: [{ label: 'Attached' }]
+                    });
+                });
+
+                const popup = page.locator('.hcg-popup');
+
+                await page.locator(
+                    '#cm-no-popover tbody td'
+                ).first().click({ button: 'right' });
+                await expect(popup).toBeVisible();
+                expect(await page.evaluate(() => (
+                    document.querySelector('.hcg-popup').hasAttribute('popover')
+                ))).toBe(false);
+
+                await page.keyboard.press('Escape');
+
+                // The attached menu asks for a popover unconditionally, so it
+                // is the one that would throw without the fallback.
+                await page.locator(
+                    '#cm-no-popover-button'
+                ).click({ button: 'right' });
+                await expect(popup).toBeVisible();
+            }
+        );
+
+        test(
+            'Items can be registered through the new and the old API',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    const G = (window as any).Grid;
+
+                    G.ContextMenu.registerItem('sayHello', {
+                        label: 'Say hello',
+                        targets: ['cell'],
+                        onClick: (cell: { htmlElement: HTMLElement }) => {
+                            cell.htmlElement.setAttribute('data-said', 'new');
+                        }
+                    });
+
+                    // The pre-3.3.0 API, which nothing in Grid itself uses
+                    // any more, still has to reach the same menu.
+                    G.CellContextMenuBuiltInActions.registerBuiltInAction(
+                        'sayLegacy',
+                        {
+                            getLabel: () => 'Say legacy',
+                            icon: 'checkmark',
+                            onClick: (context: {
+                                cell: { htmlElement: HTMLElement };
+                            }) => {
+                                context.cell.htmlElement.setAttribute(
+                                    'data-said',
+                                    'legacy'
+                                );
+                            }
+                        }
+                    );
+
+                    document.getElementById('cm-register')?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-register';
+                    document.body.appendChild(container);
+
+                    G.grid(container, {
+                        data: { columns: { id: ['ROW-001'] } },
+                        columnDefaults: {
+                            cells: {
+                                contextMenu: {
+                                    items: ['sayHello', 'sayLegacy']
+                                }
+                            }
+                        }
+                    });
+                });
+
+                const cell = page.locator(
+                    '#cm-register tbody td[data-column-id="id"]'
+                );
+
+                await cell.click({ button: 'right' });
+                await expect(page.locator('.hcg-menu-item')).toHaveText([
+                    'Say hello',
+                    'Say legacy'
+                ]);
+
+                await page.locator('.hcg-menu-item', {
+                    hasText: 'Say legacy'
+                }).click();
+                await expect(cell).toHaveAttribute('data-said', 'legacy');
+
+                await cell.click({ button: 'right' });
+                await page.locator('.hcg-menu-item', {
+                    hasText: 'Say hello'
+                }).click();
+                await expect(cell).toHaveAttribute('data-said', 'new');
+            }
+        );
+
     });
 });

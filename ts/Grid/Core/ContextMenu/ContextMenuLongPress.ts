@@ -1,6 +1,6 @@
 /* *
  *
- *  Grid Cell Context Menu long-press polyfill (iOS)
+ *  Grid Context Menu long-press polyfill (iOS)
  *
  *  (c) 2020-2026 Highsoft AS
  *
@@ -21,10 +21,11 @@
  *
  * */
 
-import type TableCell from '../Body/TableCell';
+import type TableCell from '../Table/Body/TableCell';
 
-import CellContextMenuBuiltInActions from './CellContextMenuBuiltInActions.js';
-import Globals from '../../Globals.js';
+import Globals from '../Globals.js';
+import { getCellMenuContext } from './ContextMenuTarget.js';
+import { resolveContextMenu } from './ContextMenuResolver.js';
 
 /* *
  *
@@ -44,9 +45,9 @@ const { win, isIos } = Globals;
  *
  * */
 
-export interface CellContextMenuLongPressHost {
+export interface ContextMenuLongPressHost {
     getTableCellFromTarget(target: EventTarget | null): TableCell | undefined;
-    openCellContextMenu(
+    openContextMenu(
         cell: TableCell,
         clientX: number,
         clientY: number
@@ -71,15 +72,15 @@ interface LongPressState {
 /**
  * iOS long-press polyfill for cell context menus.
  */
-export class CellContextMenuLongPress {
+export class ContextMenuLongPress {
 
-    private readonly host: CellContextMenuLongPressHost;
+    private readonly host: ContextMenuLongPressHost;
 
     private state?: LongPressState;
 
     private eventsTarget?: HTMLElement;
 
-    public constructor(host: CellContextMenuLongPressHost) {
+    public constructor(host: ContextMenuLongPressHost) {
         this.host = host;
     }
 
@@ -139,9 +140,7 @@ export class CellContextMenuLongPress {
         if (
             !cell ||
             this.host.isCellInEditMode(cell) ||
-            !CellContextMenuBuiltInActions
-                .resolveCellContextMenuItems(cell)
-                .length
+            !resolveContextMenu(getCellMenuContext(cell)).length
         ) {
             this.cancelLongPress();
             return;
@@ -161,7 +160,7 @@ export class CellContextMenuLongPress {
             }
 
             this.state.timer = 0;
-            this.host.openCellContextMenu(
+            this.host.openContextMenu(
                 this.state.cell,
                 this.state.clientX,
                 this.state.clientY

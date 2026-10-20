@@ -524,6 +524,18 @@
     }
 }
 
+/* Rendered in the top layer, where nothing clips it. The user agent's
+   `[popover]` geometry has to be reset before the popup can be placed by
+   hand. */
+.hcg-container .hcg-popup[popover] {
+    position: fixed;
+    inset: auto;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    height: auto;
+}
+
 /* ----------------------------------------------------------
   MENU ELEMENTS
 ------------------------------------------------------------ */
