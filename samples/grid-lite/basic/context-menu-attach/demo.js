@@ -29,7 +29,6 @@ grid.contextMenu.attach(document.getElementById('actions'), {
         separator: true
     }, {
         label: 'Rename this button',
-        icon: 'pencil',
         onClick: button => {
             button.textContent = 'Renamed (right-click me)';
         }

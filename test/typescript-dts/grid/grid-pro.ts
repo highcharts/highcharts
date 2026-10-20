@@ -217,7 +217,6 @@ function test_grid() {
         items: [
             {
                 label: 'Rename this button',
-                icon: 'pencil',
                 onClick: function (button): void {
                     button.textContent = 'Renamed';
                 }
