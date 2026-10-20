@@ -1,4 +1,55 @@
-const data = [
+const createTreeGraphChart = (
+    data: Highcharts.SeriesTreegraphOptions['data']
+): Highcharts.Chart =>
+    Highcharts.chart('container', {
+        title: {
+            text: 'Treegraph with box layout'
+        },
+        series: [{
+            type: 'treegraph',
+            data,
+            tooltip: {
+                pointFormat: '{point.name}'
+            },
+            marker: {
+                symbol: 'rect'
+            },
+            nodeWidth: '25%',
+            borderRadius: 10,
+            dataLabels: {
+                pointFormat: '{point.name}',
+                style: {
+                    whiteSpace: 'nowrap'
+                }
+            },
+            levels: [
+                {
+                    level: 1,
+                    levelIsConstant: false
+                },
+                {
+                    level: 2,
+                    colorByPoint: true
+                },
+                {
+                    level: 3,
+                    colorVariation: {
+                        key: 'brightness',
+                        to: -0.5
+                    }
+                },
+                {
+                    level: 4,
+                    colorVariation: {
+                        key: 'brightness',
+                        to: 0.5
+                    }
+                }
+            ]
+        }]
+    } satisfies Highcharts.Options);
+
+createTreeGraphChart([
     {
         id: '0.0',
         parent: '',
@@ -165,54 +216,4 @@ const data = [
         parent: '1.5',
         name: 'Polynesia'
     }
-];
-
-Highcharts.chart('container', {
-    title: {
-        text: 'Treegraph with box layout'
-    },
-    series: [
-        {
-            type: 'treegraph',
-            data,
-            tooltip: {
-                pointFormat: '{point.name}'
-            },
-            marker: {
-                symbol: 'rect',
-                width: '25%'
-            },
-            borderRadius: 10,
-            dataLabels: {
-                pointFormat: '{point.name}',
-                style: {
-                    whiteSpace: 'nowrap'
-                }
-            },
-            levels: [
-                {
-                    level: 1,
-                    levelIsConstant: false
-                },
-                {
-                    level: 2,
-                    colorByPoint: true
-                },
-                {
-                    level: 3,
-                    colorVariation: {
-                        key: 'brightness',
-                        to: -0.5
-                    }
-                },
-                {
-                    level: 4,
-                    colorVariation: {
-                        key: 'brightness',
-                        to: 0.5
-                    }
-                }
-            ]
-        }
-    ]
-});
+]);

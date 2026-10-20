@@ -41,7 +41,7 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
  *               colorKey, compare, dataGrouping, endAngle, gapSize, gapUnit,
  *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
  *               minSize, navigatorOptions, pointRange, allowTraversingTree,
- *               alternateStartingDirection, borderRadius, breadcrumbs,
+ *               alternateStartingDirection, breadcrumbs,
  *               interactByLeaf, layoutStartingDirection, levelIsConstant,
  *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
  *               zones, cluster
