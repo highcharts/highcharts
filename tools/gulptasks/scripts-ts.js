@@ -71,16 +71,26 @@ function removeHighcharts(removeFromCode = false, product = 'Highcharts') {
         pathsToDelete.push([...folder, 'Grid']);
     }
 
-    const preserveSvgDts = removeFromCode && product === 'Grid';
-    const svgRendererPath = fsLib.path([...folder, 'Core', 'Renderer', 'SVG']);
+    // Files still referenced by the kept code, mapped by their folder.
+    const preserved = removeFromCode && product === 'Grid' ?
+        {
+            [fsLib.path([...folder, 'Core', 'Renderer', 'SVG'])]:
+                filePath => filePath.endsWith('.d.ts'),
+            // Imported by Core/Defaults
+            [fsLib.path([...folder, 'Core', 'Legend'])]:
+                filePath => path.basename(filePath)
+                    .startsWith('LegendDefaults.')
+        } :
+        {};
 
     for (const pathToDelete of pathsToDelete) {
         const targetPath = fsLib.path(pathToDelete);
+        const keepFile = preserved[targetPath];
 
-        if (preserveSvgDts && targetPath === svgRendererPath) {
+        if (keepFile) {
             if (fsLib.isDirectory(targetPath)) {
                 for (const filePath of fsLib.getFilePaths(targetPath, true)) {
-                    if (!filePath.endsWith('.d.ts')) {
+                    if (!keepFile(filePath)) {
                         fsLib.deleteFile(filePath);
                     }
                 }
