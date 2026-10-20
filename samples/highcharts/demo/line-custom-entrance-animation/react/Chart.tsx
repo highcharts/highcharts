@@ -4,12 +4,12 @@ import { SplineSeries } from '@highcharts/react/series/Spline';
 import { Data } from '@highcharts/react/modules/Data';
 import { Exporting } from '@highcharts/react/modules/Exporting';
 import { Accessibility } from '@highcharts/react/modules/Accessibility';
+import { csv } from './data';
 import type {
     AnimatedPlotLineOptions,
     AxisInstance,
     HighchartsWithLineSeries
 } from './types';
-import { csv } from './data';
 
 (function (H: HighchartsWithLineSeries) {
     const animateSVGPath = (
@@ -17,7 +17,7 @@ import { csv } from './data';
         animation: Partial<Highcharts.AnimationOptionsObject>,
         callback: (() => void) | undefined = void 0
     ) => {
-        const length = (svgElem.element as SVGPathElement).getTotalLength();
+        const length = (svgElem.element as SVGGeometryElement).getTotalLength();
         svgElem.attr({
             'stroke-dasharray': length,
             'stroke-dashoffset': length,
