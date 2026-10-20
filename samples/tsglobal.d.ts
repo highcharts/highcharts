@@ -42,6 +42,7 @@ declare global {
             labelGroup: Highcharts.SVGElement;
         }
         interface Pane {
+            center: Array<number>;
             update(options: Highcharts.PaneOptions): void;
         }
         interface SonificationGlobalObject {

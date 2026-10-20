@@ -1,3 +1,9 @@
+declare namespace Highcharts {
+    interface Series {
+        customLabel?: Highcharts.SVGElement;
+    }
+}
+
 const colors = ['#6CDDCA', '#C771F3', '#4D90DB', '#FAB776'];
 
 Highcharts.chart('container', {
@@ -89,7 +95,7 @@ Highcharts.chart('container', {
         },
         gridLineWidth: 0.5,
         gridLineColor: '#BBBAC5',
-        gridLineDashStyle: 'longdash',
+        gridLineDashStyle: 'LongDash',
         endOnTick: false
     },
     tooltip: {
@@ -118,7 +124,9 @@ Highcharts.chart('container', {
         pie: {
             states: {
                 hover: {
-                    halo: 0
+                    halo: {
+                        size: 0
+                    }
                 }
             }
         }
@@ -154,7 +162,8 @@ Highcharts.chart('container', {
                     </td>
                 </tr>
             </table>`
-        }
+        },
+        type: 'bubble'
     }, {
         type: 'pie',
         dataLabels: {
@@ -253,16 +262,23 @@ Highcharts.chart('container', {
                     innerSize: '47%'
                 },
                 series: [{
+                    type: 'bubble',
                     maxSize: 8
                 }, {
+                    type: 'pie',
                     size: '45%'
                 }]
             }
         }]
     }
-});
+} satisfies Highcharts.Options);
 
-function fillCenter(percentage, decade, chart, customLabel) {
+function fillCenter(
+    percentage: number,
+    decade: string|number,
+    chart: Highcharts.Chart,
+    customLabel?: Highcharts.SVGElement
+): Highcharts.SVGElement {
     const labelText = `<div class="center-label">
         <p class="symbol">☉</p>
         <p class="uppercase">${decade}<small>s</p>
@@ -286,11 +302,12 @@ function fillCenter(percentage, decade, chart, customLabel) {
             text: labelText
         });
     }
+    const center = chart.pane[0].center,
+        width = Number(customLabel.attr('width')),
+        height = Number(customLabel.attr('height'));
     customLabel.attr({
-        x: (chart.pane[0].center[0] + chart.plotLeft) -
-            customLabel.attr('width') / 2,
-        y: (chart.pane[0].center[1] + chart.plotTop) -
-            customLabel.attr('height') / 2 - 10
+        x: (center[0] + chart.plotLeft) - width / 2,
+        y: (center[1] + chart.plotTop) - height / 2 - 10
     });
     return customLabel;
 }
