@@ -12,6 +12,7 @@ body {
         sans-serif;
     background: #202d3b;
     color: #fff;
+    color-scheme: dark;
 }
 
 .highcharts-figure {
@@ -29,10 +30,6 @@ body {
 
 .highcharts-point-down {
     stroke: #b82d0d;
-}
-
-.highcharts-button-symbol {
-    stroke: #c5c7c9;
 }
 
 .highcharts-description {
