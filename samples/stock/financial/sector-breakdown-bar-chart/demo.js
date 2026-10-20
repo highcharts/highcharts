@@ -33,8 +33,8 @@ function buildDataTable(source) {
 
     for (const [type, sector] of Object.entries(globalStockSectorBreakdown)) {
         name.push(sector);
-        category.push(categoryByType[type] || '-');
-        target.push(targetByType[type] || '-');
+        category.push(categoryByType[type] ?? '-');
+        target.push(targetByType[type] ?? '-');
     }
 
     return new Highcharts.DataTable({
