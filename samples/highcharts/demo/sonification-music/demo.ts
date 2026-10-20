@@ -1,10 +1,24 @@
 const masterVolume = 0.85;
 
+declare namespace Highcharts {
+    interface Chart {
+        plotBackground: Highcharts.SVGElement;
+    }
+}
+
+type ExtendedSeriesOptions = Highcharts.SeriesOptionsType & {
+    sonification?: Highcharts.SeriesSonificationOptions;
+}
+
 // ------------------------------------------------------------------------
 // Controls
 
 // Mute/unmute an instrument without stopping play
-function setInstrumentMute(targetSeriesIx, channels, mute) {
+function setInstrumentMute(
+    targetSeriesIx: number,
+    channels: Highcharts.Sonification['timeline']['channels'],
+    mute: boolean
+): void {
     channels.forEach(function (ch) {
         if (ch.events[0].relatedPoint.series.index === targetSeriesIx) {
             ch.engine.setMasterVolume(mute ? 0 : masterVolume);
@@ -13,7 +27,7 @@ function setInstrumentMute(targetSeriesIx, channels, mute) {
 }
 
 // Called on chart render
-function onRender() {
+function onRender(this: Highcharts.Chart): void {
     const chart = this;
 
     // Chart play button
@@ -31,29 +45,33 @@ function onRender() {
     [
         'bass-on', 'chimes-on', 'shaker1-on', 'piano-on', 'flute-on',
         'synth-on', 'shaker2-on', 'pad-on', 'basspad-on'
-    ].forEach(function (id, seriesIx) {
+    ].forEach(function (id: string, seriesIx: number) {
         const series = chart.series[seriesIx];
-        document.getElementById(id).onclick = function () {
+        const options = series.options as ExtendedSeriesOptions;
+        const checkbox = document.getElementById(id) as HTMLInputElement | null;
+        if (!checkbox) {
+            return;
+        }
+        checkbox.onclick = function (this: HTMLInputElement) {
             const timeline = chart.sonification.timeline,
                 muted = !this.checked;
             if (timeline) {
                 if (
-                    series.options.sonification &&
-                    series.options.sonification.enabled === false &&
+                    options.sonification?.enabled === false &&
                     !muted
                 ) {
                     // Series was muted before timeline was made, have to do
                     // update & rebuild
                     series.update({
                         sonification: { enabled: true }
-                    });
+                    } as ExtendedSeriesOptions);
                 }
                 setInstrumentMute(seriesIx, timeline.channels, muted);
             } else {
                 // Timeline not built yet - user interaction needed on page
                 series.update({
                     sonification: { enabled: !muted }
-                }, false);
+                } as ExtendedSeriesOptions, false);
             }
             series.setState(muted ? 'inactive' : 'normal');
         };
@@ -78,7 +96,13 @@ Highcharts.AST.allowedTags.push('label');
 Highcharts.AST.allowedAttributes.push('checked');
 
 // Convenience function to get y axis options, since we have 9 of them
-function buildYAxisOpts(height, top, labelText, checkboxId, iconSrc) {
+function buildYAxisOpts(
+    height: number,
+    top: number,
+    labelText: string,
+    checkboxId: string,
+    iconSrc: string
+): Highcharts.YAxisOptions {
     return {
         height: height + '%', // Axis height
         top: top + '%', // Axis offset from top
@@ -186,7 +210,6 @@ Highcharts.chart('container', {
     },
     xAxis: {
         crosshair: {
-            enabled: true,
             width: 10,
             color: '#609A5E',
             className: 'hc-crosshair' // Smoothed with CSS transitions
@@ -276,7 +299,8 @@ Highcharts.chart('container', {
             radius: 5,
             lineColor: '#505F55',
             lineWidth: 3
-        }
+        },
+        type: 'scatter'
     }, {
         // Chimes
         sonification: {
@@ -312,7 +336,8 @@ Highcharts.chart('container', {
             radius: 4,
             lineColor: '#608060',
             lineWidth: 2
-        }
+        },
+        type: 'scatter'
     }, {
         // Shaker 1
         sonification: {
@@ -347,7 +372,8 @@ Highcharts.chart('container', {
         marker: {
             symbol: 'box',
             radius: 2
-        }
+        },
+        type: 'scatter'
     }, {
         // Piano
         sonification: {
@@ -579,7 +605,8 @@ Highcharts.chart('container', {
         marker: {
             symbol: 'box',
             radius: 2
-        }
+        },
+        type: 'scatter'
     }, {
         // Pad
         sonification: {
@@ -674,4 +701,4 @@ Highcharts.chart('container', {
             lineWidth: 2
         }
     }]
-});
+} satisfies Highcharts.Options);

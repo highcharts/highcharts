@@ -51,6 +51,12 @@ declare global {
                 options?: any,
                 delay?: number
             ): void;
+            timeline: {
+                channels: Array<{
+                    events: Array<{ relatedPoint: Highcharts.Point }>;
+                    engine: { setMasterVolume: (volume: number) => void };
+                }>;
+            }
         }
         interface Chart {
             annotations: Array<{
@@ -58,7 +64,10 @@ declare global {
             }>;
             pane: Array<Pane>;
             sonification: Sonification;
-            toggleSonify(): void;
+            toggleSonify(
+                reset?: boolean,
+                callback?: Function
+            ): void;
         }
         interface Point {
             dataLabels: Array<Highcharts.SVGElement>;
