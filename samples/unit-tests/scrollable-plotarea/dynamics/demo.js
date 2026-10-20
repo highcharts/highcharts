@@ -363,29 +363,25 @@ QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
     });
 
     assert.ok(
-        chart.xAxis[1].gridGroup.getBBox().height,
-        chart.yAxis[1].height,
+        chart.xAxis[1].gridGroup.getBBox().height <= chart.yAxis[1].height,
         'Grid lines should not exceed navigator height, #20354'
     );
-});
 
-QUnit.test('Navigator grid line height in scrollablePlotArea chart', assert => {
-    const chart = Highcharts.stockChart('container', {
-        chart: {
-            scrollablePlotArea: {
-                minHeight: 500
-            }
-        },
-        series: [{
-            data: [1, 2, 3, 4, 5]
-        }]
-    });
+    const { rangeSelector } = chart,
+        { inputGroup, minDateBox, minInput } = rangeSelector;
 
-    assert.ok(
-        chart.xAxis[1].gridGroup.getBBox().height,
-        chart.yAxis[1].height,
-        'Grid lines should not exceed navigator height, #20354'
+    rangeSelector.showInput('min');
+
+    assert.strictEqual(
+        new TestController(chart).elementFromPoint(
+            inputGroup.translateX + minDateBox.x + minDateBox.width / 2,
+            inputGroup.translateY + minDateBox.height / 2
+        ),
+        minInput,
+        'Range selector input should be above its fixed label, #22630'
     );
+
+    rangeSelector.hideInput('min');
 });
 
 QUnit.test('Pointer events', assert => {

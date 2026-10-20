@@ -708,7 +708,7 @@ export interface AxisLabelOptions {
      *         Red X axis labels
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor80} */
+        /** @default 'var(--highcharts-neutral-color-80)' */
         color?: CSSObject['color'];
 
         /** @default 'default' */
@@ -2035,7 +2035,7 @@ export interface AxisTitleOptions {
     align: ('high'|'low'|'middle');
 
     /**
-     * Deprecated. Set the `text` to `undefined` to disable the title.
+     * Deprecated. Set the `text` to `null` to disable the title.
      *
      * @deprecated 3.0.0
      * @product highcharts
@@ -2100,7 +2100,7 @@ export interface AxisTitleOptions {
      *         Styled mode
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor60} */
+        /** @default 'var(--highcharts-neutral-color-60)' */
         color?: CSSObject['color'];
 
         /** @default '0.8em' */

@@ -66,8 +66,8 @@ class OBVIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        9.1.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/obv
+     * @requires     indicators/indicators
+     * @requires     indicators/obv
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
@@ -238,8 +238,8 @@ export default OBVIndicator;
  * @extends   series,plotOptions.obv
  * @since     9.1.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/obv
+ * @requires  indicators/indicators
+ * @requires  indicators/obv
  * @apioption series.obv
  */
 

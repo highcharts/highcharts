@@ -130,12 +130,6 @@ Highcharts.stockChart('container', {
 });
 ```
 
-## Relevant demos
-
-Examples of using the **Time Series Connector** are available in our demos:
-
-- **Highcharts Stock + Morningstar Time Series**
-
 ## Morningstar API Reference
 
 For more details, see [Morningstar’s Time Series API].
