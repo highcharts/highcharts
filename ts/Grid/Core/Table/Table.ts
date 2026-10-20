@@ -367,9 +367,7 @@ class Table {
                         clientY
                     ),
                 isCellInEditMode: (cell): boolean =>
-                    (this as unknown as {
-                        cellEditing?: { editedCell?: TableCell };
-                    }).cellEditing?.editedCell === cell
+                    this.cellEditing?.editedCell === cell
             });
         }
 
