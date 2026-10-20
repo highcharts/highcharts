@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Sebastian Bochan
+ *  - Dawid Draguła
  *
  * */
 
@@ -21,10 +22,7 @@
  *
  * */
 
-import type { MenuContext } from './ContextMenuTarget';
-
 import Globals from '../Globals.js';
-import { getMenuTargetElement } from './ContextMenuTarget.js';
 
 /* *
  *
@@ -35,6 +33,7 @@ import { getMenuTargetElement } from './ContextMenuTarget.js';
 const LONG_PRESS_MS = 500;
 const MOVE_THRESHOLD_PX = 10;
 const MOVE_THRESHOLD_SQ = MOVE_THRESHOLD_PX * MOVE_THRESHOLD_PX;
+const CONTROLS = 'input,select,textarea,button,option';
 
 const { win } = Globals;
 
@@ -44,152 +43,109 @@ const { win } = Globals;
  *
  * */
 
-export interface ContextMenuLongPressHost {
-
-    /**
-     * Resolves what the touch landed on, and only when a menu would open
-     * there: the press suppresses the iOS callout, so it must not do that
-     * for a touch that leads nowhere.
-     */
-    getContextFromTarget(target: EventTarget | null): MenuContext | undefined;
-
-    /**
-     * Whether the target is being edited, in which case the press belongs to
-     * the editor rather than to a menu.
-     */
-    isTargetEditing?(context: MenuContext): boolean;
-
-    /**
-     * Opens the menu.
-     */
-    openContextMenu(
-        context: MenuContext,
-        clientX: number,
-        clientY: number
-    ): boolean;
-}
-
 interface LongPressState {
-    calloutTarget: HTMLElement;
     clientX: number;
     clientY: number;
-    context: MenuContext;
+    target: HTMLElement;
     timer: number;
 }
 
 /* *
  *
- *  Class
+ *  Functions
  *
  * */
 
 /**
- * iOS long-press polyfill for context menus, on whatever surface the host
- * resolves. Safari fires no `contextmenu` event on long-press.
+ * Makes a long press on an element fire `contextmenu`, which Safari does not
+ * do on iOS. Nothing about menus is involved: the synthetic event reaches
+ * whatever listens for `contextmenu` exactly as a right-click would, so a
+ * menu opens the same way on both, and a surface added later needs nothing
+ * here.
+ *
+ * The press suppresses the native callout for as long as it lasts. That has
+ * to be decided before anyone has had a chance to handle the event, so it
+ * happens whether or not the press ends up opening anything.
+ *
+ * @param element
+ * The element to watch. The event is dispatched on whatever inside it the
+ * touch landed on.
+ *
+ * @return
+ * Callback that stops watching.
  */
-export class ContextMenuLongPress {
-
-    private readonly host: ContextMenuLongPressHost;
-
-    private state?: LongPressState;
-
-    private eventsTarget?: HTMLElement;
-
-    public constructor(host: ContextMenuLongPressHost) {
-        this.host = host;
+export function addLongPressContextMenu(element: HTMLElement): () => void {
+    if (!Globals.isIos) {
+        return (): void => void 0;
     }
 
-    public addEvents(target: HTMLElement): void {
-        if (!Globals.isIos || this.eventsTarget) {
+    let state: LongPressState | undefined;
+
+    const release = (): void => {
+        if (!state) {
             return;
         }
 
-        this.eventsTarget = target;
-        target.addEventListener('touchstart', this.onTouchStart, {
-            passive: true
-        });
-        target.addEventListener('touchmove', this.onTouchMove, {
-            passive: true
-        });
-        target.addEventListener('touchend', this.onTouchEnd);
-        target.addEventListener('touchcancel', this.onTouchEnd);
-    }
+        if (state.timer) {
+            win.clearTimeout(state.timer);
+        }
 
-    public removeEvents(): void {
-        const target = this.eventsTarget;
-        if (!target) {
+        const { style } = state.target;
+
+        style.removeProperty('-webkit-touch-callout');
+        style.removeProperty('-webkit-user-select');
+        style.removeProperty('user-select');
+        state = void 0;
+    };
+
+    const onTouchStart = (e: TouchEvent): void => {
+        const { target } = e;
+
+        release();
+
+        if (e.touches.length !== 1 || !(target instanceof HTMLElement)) {
             return;
         }
 
-        target.removeEventListener('touchstart', this.onTouchStart);
-        target.removeEventListener('touchmove', this.onTouchMove);
-        target.removeEventListener('touchend', this.onTouchEnd);
-        target.removeEventListener('touchcancel', this.onTouchEnd);
-
-        if (this.state && target.contains(this.state.calloutTarget)) {
-            this.cancelLongPress();
-        }
-
-        delete this.eventsTarget;
-    }
-
-    private readonly onTouchStart = (e: TouchEvent): void => {
-        const target = e.target;
-
-        if (e.touches.length !== 1) {
-            this.cancelLongPress();
-            return;
-        }
-
-        const context = this.host.getContextFromTarget(target);
-
-        if (!context || this.host.isTargetEditing?.(context)) {
-            this.cancelLongPress();
-            return;
-        }
-
-        const calloutTarget = getMenuTargetElement(context.target);
-        const control = target instanceof Element &&
-            target.closest('input,select,textarea,button,option');
+        const control = target.closest(CONTROLS);
 
         // A native control is the user's to press, unless it is the very
-        // element the menu was attached to.
-        if (control && control !== calloutTarget) {
-            this.cancelLongPress();
+        // element being watched.
+        if (control && control !== element) {
             return;
         }
 
         const touch = e.touches[0];
+        const { style } = target;
 
-        this.cancelLongPress();
-        calloutTarget.style.setProperty('-webkit-touch-callout', 'none');
-        calloutTarget.style.setProperty('-webkit-user-select', 'none');
-        calloutTarget.style.setProperty('user-select', 'none');
+        style.setProperty('-webkit-touch-callout', 'none');
+        style.setProperty('-webkit-user-select', 'none');
+        style.setProperty('user-select', 'none');
 
         const timer = win.setTimeout((): void => {
-            if (!this.state || this.state.timer !== timer) {
+            if (!state || state.timer !== timer) {
                 return;
             }
 
-            this.state.timer = 0;
-            this.host.openContextMenu(
-                this.state.context,
-                this.state.clientX,
-                this.state.clientY
-            );
+            state.timer = 0;
+            state.target.dispatchEvent(new MouseEvent('contextmenu', {
+                bubbles: true,
+                cancelable: true,
+                clientX: state.clientX,
+                clientY: state.clientY,
+                view: win
+            }));
         }, LONG_PRESS_MS);
 
-        this.state = {
-            calloutTarget,
+        state = {
             clientX: touch.clientX,
             clientY: touch.clientY,
-            context,
+            target,
             timer
         };
     };
 
-    private readonly onTouchMove = (e: TouchEvent): void => {
-        const state = this.state;
+    const onTouchMove = (e: TouchEvent): void => {
         if (!state || !e.touches.length) {
             return;
         }
@@ -199,27 +155,20 @@ export class ContextMenuLongPress {
         const dy = touch.clientY - state.clientY;
 
         if ((dx * dx + dy * dy) > MOVE_THRESHOLD_SQ) {
-            this.cancelLongPress();
+            release();
         }
     };
 
-    private readonly onTouchEnd = (): void => {
-        this.cancelLongPress();
+    element.addEventListener('touchstart', onTouchStart, { passive: true });
+    element.addEventListener('touchmove', onTouchMove, { passive: true });
+    element.addEventListener('touchend', release);
+    element.addEventListener('touchcancel', release);
+
+    return (): void => {
+        element.removeEventListener('touchstart', onTouchStart);
+        element.removeEventListener('touchmove', onTouchMove);
+        element.removeEventListener('touchend', release);
+        element.removeEventListener('touchcancel', release);
+        release();
     };
-
-    private cancelLongPress(): void {
-        const state = this.state;
-        if (!state) {
-            return;
-        }
-
-        if (state.timer) {
-            win.clearTimeout(state.timer);
-        }
-
-        state.calloutTarget.style.removeProperty('-webkit-touch-callout');
-        state.calloutTarget.style.removeProperty('-webkit-user-select');
-        state.calloutTarget.style.removeProperty('user-select');
-        delete this.state;
-    }
 }

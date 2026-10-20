@@ -24,7 +24,6 @@
  * */
 
 import type TableCell from './Body/TableCell';
-import type { MenuContext } from '../ContextMenu/ContextMenuTarget';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
@@ -42,9 +41,8 @@ import ColumnLayout from './Layout/ColumnLayout.js';
 
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
-import { ContextMenuLongPress } from '../ContextMenu/ContextMenuLongPress.js';
+import { addLongPressContextMenu } from '../ContextMenu/ContextMenuLongPress.js';
 import { getCellMenuContext } from '../ContextMenu/ContextMenuTarget.js';
-import { resolveContextMenu } from '../ContextMenu/ContextMenuResolver.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
@@ -190,7 +188,7 @@ class Table {
     /**
      * The iOS long-press polyfill for cell context menus.
      */
-    private contextMenuLongPress?: ContextMenuLongPress;
+    private removeLongPressContextMenu?: () => void;
 
 
     /**
@@ -251,7 +249,8 @@ class Table {
             passive: false
         });
         this.addBodyEventListeners(this.tbodyElement);
-        this.getContextMenuLongPress()?.addEvents(this.tableElement);
+        this.removeLongPressContextMenu =
+            addLongPressContextMenu(this.tableElement);
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
         document.addEventListener(
             'pointerdown',
@@ -349,42 +348,6 @@ class Table {
         body.removeEventListener('mouseover', this.onCellMouseOver);
         body.removeEventListener('mouseout', this.onCellMouseOut);
         body.removeEventListener('keydown', this.onCellKeyDown);
-    }
-
-    /**
-     * Returns the long-press polyfill, building it on first use. Only iOS
-     * needs one, and only iOS pays for it.
-     *
-     * @return
-     * The polyfill, or nothing when the browser fires `contextmenu` on
-     * long-press by itself.
-     */
-    private getContextMenuLongPress(): ContextMenuLongPress | undefined {
-        if (!Globals.isIos) {
-            return;
-        }
-
-        return (this.contextMenuLongPress ??= new ContextMenuLongPress({
-            getContextFromTarget: (target): MenuContext | undefined => {
-                const cell = this.getTableCellFromTarget(target);
-
-                if (!cell) {
-                    return;
-                }
-
-                const context = getCellMenuContext(cell);
-
-                return resolveContextMenu(context).length ?
-                    context :
-                    void 0;
-            },
-            isTargetEditing: (context): boolean => (
-                'cell' in context.target &&
-                this.cellEditing?.editedCell === context.target.cell
-            ),
-            openContextMenu: (context, clientX, clientY): boolean =>
-                this.grid.contextMenu.open(context, clientX, clientY)
-        }));
     }
 
     private getTableCellFromTarget(
@@ -1294,8 +1257,8 @@ class Table {
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
         this.grid.contextMenu.hide();
-        this.contextMenuLongPress?.removeEvents();
-        delete this.contextMenuLongPress;
+        this.removeLongPressContextMenu?.();
+        delete this.removeLongPressContextMenu;
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i]?.destroy();
