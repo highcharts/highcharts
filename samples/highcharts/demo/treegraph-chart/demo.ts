@@ -155,7 +155,7 @@ Highcharts.chart('container', {
                 },
                 x: 24,
                 crop: false,
-                overflow: 'none'
+                overflow: 'allow'
             },
             levels: [
                 {
@@ -192,4 +192,4 @@ Highcharts.chart('container', {
             ]
         }
     ]
-});
+} satisfies Highcharts.Options);
