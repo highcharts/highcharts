@@ -1,4 +1,19 @@
-const renderChart = data => {
+declare namespace Highcharts {
+    interface Point {
+        custom?: {
+            fullName?: string;
+            performance?: string;
+        };
+        dlOptions?: Highcharts.DataLabelsOptions;
+        node?: {
+            level?: number;
+            children?: Array<{ point: Highcharts.Point }>;
+        };
+        value?: number;
+    }
+}
+
+const renderChart = (data: Array<Highcharts.PointOptionsObject>): void => {
     Highcharts.chart('container', {
         chart: {
             backgroundColor: '#252931'
@@ -148,7 +163,7 @@ const renderChart = data => {
             buttons: {
                 fullscreen: {
                     text: '<i class="fa fa-arrows-alt"></i> Fullscreen',
-                    onclick: function () {
+                    onclick: function (this: Highcharts.Chart): void {
                         this.fullscreen.toggle();
                     }
                 },
@@ -187,62 +202,87 @@ const renderChart = data => {
                 y: -2
             }
         }
-    });
+    } satisfies Highcharts.Options);
 };
 
 (async () => {
 
     // Plugin for relative font size
-    Highcharts.addEvent(Highcharts.Series, 'drawDataLabels', function () {
-        if (this.type === 'treemap') {
-            this.points.forEach(point => {
-
-                // Color the level 2 headers with the combined performance of
-                // its children
-                if (point.node.level === 2 && Number.isFinite(point.value)) {
-                    const previousValue = point.node.children
-                        .reduce(
-                            (acc, child) => acc + (child.point.value || 0) -
-                            (child.point.value || 0) *
-                            (child.point.colorValue || 0) / 100,
-                            0
-                        );
-
-                    // Percentage change from previous value to point.value
-                    const perf = 100 * (point.value - previousValue) /
-                        (previousValue || 1);
-
-                    point.custom = {
-                        performance: (perf < 0 ? '' : '+') +
-                            perf.toFixed(2) + '%'
+    Highcharts.addEvent(
+        Highcharts.Series,
+        'drawDataLabels',
+        function (this: Highcharts.Series): void {
+            if (this.type === 'treemap') {
+                this.points.forEach((point: Highcharts.Point): void => {
+                    const node = point.node || {
+                        level: 0,
+                        children: []
                     };
 
-                    if (point.dlOptions) {
-                        point.dlOptions.backgroundColor = this.colorAxis
-                            .toColor(perf);
+                    // Color the level 2 headers with the combined performance
+                    // of its children
+                    if (
+                        node.level === 2 &&
+                        Number.isFinite(point.value)
+                    ) {
+                        const previousValue = (node.children || [])
+                            .reduce(
+                                (acc: number, child) =>
+                                    acc + (child.point.value || 0) -
+                                    (child.point.value || 0) *
+                                    (child.point.colorValue || 0) / 100,
+                                0
+                            );
+
+                        // Percentage change from previous value to point.value
+                        const perf =
+                            100 * ((point.value || 0) - previousValue) /
+                            (previousValue || 1);
+
+                        point.custom = {
+                            performance: (
+                                (perf < 0 ? '' : '+') + perf.toFixed(2) + '%'
+                            )
+                        };
+
+                        if (point.dlOptions) {
+                            point.dlOptions.backgroundColor = this.colorAxis
+                                .toColor(perf);
+                        }
                     }
-                }
 
-                // Set font size based on area of the point
-                if (point.node.level === 3 && point.shapeArgs) {
-                    const area = point.shapeArgs.width * point.shapeArgs.height;
-                    point.dlOptions.style.fontSize =
-                        `${Math.min(32, 7 + Math.round(area * 0.0008))}px`;
-                }
-            });
+                    // Set font size based on area of the point
+                    if (node.level === 3 && point.shapeArgs) {
+                        const area = point.shapeArgs.width *
+                            point.shapeArgs.height;
+                        if (point.dlOptions && point.dlOptions.style) {
+                            point.dlOptions.style.fontSize = `${Math.min(
+                                32,
+                                7 + Math.round(area * 0.0008)
+                            )}px`;
+                        }
+                    }
+                });
+            }
         }
-    });
+    );
 
-    const getCSV = async url => {
+    const getCSV = async (
+        url: string
+    ): Promise<Array<Record<string, string>>> => {
         const csv = await fetch(url).then(response => response.text());
 
-        const data = new Highcharts.Data({ csv });
+        const data = new Highcharts.Data({ csv }) as Highcharts.Data & {
+            columns: Array<Array<string>>;
+        };
 
         const arr = data.columns[0]
-            .map((_, i) => data.columns.reduce((obj, column) => {
-                obj[column[0]] = column[i];
-                return obj;
-            }, {}));
+            .map((_: string, i: number): Record<string, string> =>
+                data.columns.reduce((obj: Record<string, string>, column) => {
+                    obj[column[0]] = column[i];
+                    return obj;
+                }, {})
+            );
         return arr;
     };
 
@@ -258,7 +298,7 @@ const renderChart = data => {
     );
 
     // Create the industries for the top level
-    const data = [{
+    const data: Array<Highcharts.PointOptionsObject> = [{
         id: 'Technology'
     }, {
         id: 'Financial'
@@ -284,7 +324,7 @@ const renderChart = data => {
 
     // Create a static mapping object where of the sectors above is
     // mapped to an industry in the industries array.
-    const sectorToIndustry = {
+    const sectorToIndustry: Record<string, string> = {
         'Industrial Conglomerates': 'Industrials',
         'Building Products': 'Industrials',
         'Health Care Equipment': 'Healthcare',
@@ -417,7 +457,7 @@ const renderChart = data => {
 
 
     // Create the sectors for the second level
-    csvData.forEach(row => {
+    csvData.forEach((row: Record<string, string>): void => {
         const sector = row.Sector;
         if (!data.find(point => point.id === sector)) {
             data.push({
@@ -428,7 +468,7 @@ const renderChart = data => {
     });
 
     // Register name for the categories and sectors
-    data.forEach(point => {
+    data.forEach((point): void => {
         point.name = point.id;
         point.custom = {
             fullName: point.id
@@ -436,32 +476,37 @@ const renderChart = data => {
     });
 
     csvData
-        .filter(row =>
+        .filter((row: Record<string, string>): boolean =>
             // Google class C usually left out in visualizations like this
             row.Symbol !== 'GOOG' &&
-            row.Price &&
-            row['Market Cap']
+            Boolean(row.Price) &&
+            Boolean(row['Market Cap'])
         )
-        .forEach(row => {
+        .forEach((row: Record<string, string>): void => {
             const old = oldData
-                .find(oldRow => oldRow.Symbol === row.Symbol);
+                .find((oldRow: Record<string, string>): boolean =>
+                    oldRow.Symbol === row.Symbol
+                );
 
-            let perf = null;
+            let perf: number|null = null;
             if (old) {
                 const oldPrice = parseFloat(old.Price),
                     newPrice = parseFloat(row.Price);
                 perf = 100 * (newPrice - oldPrice) / oldPrice;
             }
 
+            const performance = perf === null ? '' :
+                (perf < 0 ? '' : '+') + perf.toFixed(2) + '%';
+
             data.push({
                 name: row.Symbol,
                 id: row.Symbol,
                 value: parseFloat(row['Market Cap']),
                 parent: row.Sector,
-                colorValue: perf,
+                colorValue: perf || 0,
                 custom: {
                     fullName: row.Name,
-                    performance: (perf < 0 ? '' : '+') + perf.toFixed(2) + '%'
+                    performance
                 }
             });
         });

@@ -88,6 +88,9 @@ declare global {
             annotations: Array<{
                 labels: Array<AnnotationLabelType>;
             }>;
+            fullscreen?: {
+                toggle: () => void;
+            };
             pane: Array<Pane>;
             sonification: Sonification;
             toggleSonify(
@@ -96,11 +99,15 @@ declare global {
             ): void;
         }
         interface Point {
+            colorValue?: number;
             dataLabels: Array<Highcharts.SVGElement>;
             opacity: number;
             sonify(onEnd?: Function): void;
         }
         interface Series {
+            colorAxis: {
+                toColor: (value: number) => string;
+            };
             // @todo: Add proper support. Used in black-and-white demo.
             currentDataGrouping: TimeTicksInfoObject;
             dataLabelsGroup: Highcharts.SVGElement;
