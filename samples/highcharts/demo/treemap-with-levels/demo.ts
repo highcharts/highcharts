@@ -26,7 +26,6 @@ Highcharts.chart('container', {
                     color: 'var(--highcharts-neutral-color-100, #000)'
                 }
             },
-            borderRadius: 3,
             borderWidth: 1,
             colorByPoint: true
 
@@ -119,4 +118,4 @@ Highcharts.chart('container', {
         pointFormat: 'The area of <b>{point.name}</b> is \
             <b>{point.value} km²</b>'
     }
-});
+} satisfies Highcharts.Options);
