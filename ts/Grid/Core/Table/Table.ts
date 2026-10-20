@@ -251,9 +251,7 @@ class Table {
             passive: false
         });
         this.addBodyEventListeners(this.tbodyElement);
-        if (this.isContextMenuLongPressed()) {
-            this.contextMenuLongPress!.addEvents(this.tableElement);
-        }
+        this.getContextMenuLongPress()?.addEvents(this.tableElement);
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
         document.addEventListener(
             'pointerdown',
@@ -353,36 +351,40 @@ class Table {
         body.removeEventListener('keydown', this.onCellKeyDown);
     }
 
-    private isContextMenuLongPressed(): boolean {
+    /**
+     * Returns the long-press polyfill, building it on first use. Only iOS
+     * needs one, and only iOS pays for it.
+     *
+     * @return
+     * The polyfill, or nothing when the browser fires `contextmenu` on
+     * long-press by itself.
+     */
+    private getContextMenuLongPress(): ContextMenuLongPress | undefined {
         if (!Globals.isIos) {
-            return false;
+            return;
         }
 
-        if (!this.contextMenuLongPress) {
-            this.contextMenuLongPress = new ContextMenuLongPress({
-                getContextFromTarget: (target): MenuContext | undefined => {
-                    const cell = this.getTableCellFromTarget(target);
+        return (this.contextMenuLongPress ??= new ContextMenuLongPress({
+            getContextFromTarget: (target): MenuContext | undefined => {
+                const cell = this.getTableCellFromTarget(target);
 
-                    if (!cell) {
-                        return;
-                    }
+                if (!cell) {
+                    return;
+                }
 
-                    const context = getCellMenuContext(cell);
+                const context = getCellMenuContext(cell);
 
-                    return resolveContextMenu(context).length ?
-                        context :
-                        void 0;
-                },
-                isTargetEditing: (context): boolean => (
-                    'cell' in context.target &&
-                    this.cellEditing?.editedCell === context.target.cell
-                ),
-                openContextMenu: (context, clientX, clientY): boolean =>
-                    this.grid.contextMenu.open(context, clientX, clientY)
-            });
-        }
-
-        return true;
+                return resolveContextMenu(context).length ?
+                    context :
+                    void 0;
+            },
+            isTargetEditing: (context): boolean => (
+                'cell' in context.target &&
+                this.cellEditing?.editedCell === context.target.cell
+            ),
+            openContextMenu: (context, clientX, clientY): boolean =>
+                this.grid.contextMenu.open(context, clientX, clientY)
+        }));
     }
 
     private getTableCellFromTarget(
