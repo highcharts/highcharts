@@ -51,6 +51,8 @@ jobs:
     name: Playwright visual comparison
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      VISUAL_TEST_BATCHES: '2'
     steps:
       - name: Checkout candidate
         uses: actions/checkout@v6
@@ -176,6 +178,7 @@ jobs:
 
           for file in \
             test/visual-test-results.json \
+            test/visual-test-timing.json \
             test/visual-test-errors.log \
             test/visual-reference-failures.json; do
             if [ -f "$file" ]; then
@@ -343,6 +346,8 @@ jobs:
             samples/**/candidate.svg
             samples/**/diff.gif
             test/visual-test-results.json
+            test/visual-test-results/
+            test/visual-test-timing.json
             test/visual-test-errors.log
             test/visual-test-complete
             tmp/pr-visual-test-comment.json
