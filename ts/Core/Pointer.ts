@@ -2351,6 +2351,11 @@ namespace Pointer {
          */
         resetSelection?: boolean;
 
+        /**
+         * The chart that the selection event belongs to.
+         */
+        target: Chart;
+
         /** @internal */
         trigger?: string;
 
@@ -2543,6 +2548,10 @@ export default Pointer;
  * Indicates a reset event to restore default state.
  * @name Highcharts.SelectEventObject#resetSelection
  * @type {boolean|undefined}
+ *//**
+ * The Chart that the selection belongs to.
+ * @name Highcharts.SelectEventObject#target
+ * @type {Highcharts.Chart}
  *//**
  * Arrays containing the axes of each dimension and each axis' min and max
  * values.
