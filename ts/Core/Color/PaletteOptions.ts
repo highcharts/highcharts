@@ -76,6 +76,42 @@ export interface PaletteSchemeColors {
 }
 
 /**
+ * Palette options for dark mode.
+ */
+export interface PaletteSchemeColorsDark extends PaletteSchemeColors {
+
+    /** @default '#141414' */
+    backgroundColor?: PaletteSchemeColors['backgroundColor'];
+
+    /** @default '#ffffff' */
+    neutralColor?: PaletteSchemeColors['neutralColor'];
+
+    /** @default '#2caffe' */
+    highlightColor?: PaletteSchemeColors['highlightColor'];
+}
+
+/**
+ * Palette options for light mode.
+ */
+export interface PaletteSchemeColorsLight extends PaletteSchemeColors {
+
+    /** @default '#ffffff' */
+    backgroundColor?: PaletteSchemeColors['backgroundColor'];
+
+    /** @default '#000000' */
+    neutralColor?: PaletteSchemeColors['neutralColor'];
+
+    /** @default '#0022ff' */
+    highlightColor?: PaletteSchemeColors['highlightColor'];
+
+    /** @default '#06b535' */
+    positiveColor?: PaletteSchemeColors['positiveColor'];
+
+    /** @default '#f21313' */
+    negativeColor?: PaletteSchemeColors['negativeColor'];
+}
+
+/**
  * The palette object specifies colors for the charts and how to apply them.
  *
  * Each color scheme (`light` and `dark`) has three primary colors:
@@ -160,7 +196,7 @@ export interface PaletteOptions {
     /**
      * Palette options for dark mode.
      */
-    dark?: PaletteSchemeColors;
+    dark?: PaletteSchemeColorsDark;
 
     /**
      * Whether to inject the CSS for the dark and light mode. If not injected,
@@ -179,7 +215,7 @@ export interface PaletteOptions {
     /**
      * Palette options for light mode.
      */
-    light?: PaletteSchemeColors;
+    light?: PaletteSchemeColorsLight;
 }
 
 
