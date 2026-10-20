@@ -4268,8 +4268,10 @@ class Chart {
             const {
                     horiz,
                     len,
+                    logarithmic: log,
                     minPointOffset = 0,
                     options,
+                    paddedTicks: ticks = [],
                     reversed
                 } = axis,
                 wh = horiz ? 'width' : 'height',
@@ -4375,22 +4377,44 @@ class Chart {
                     range,
                     safeDataMax - safeDataMin
                 ),
-                paddedMin = safeDataMin - padRange * (
-                    defined(optionsMin) ? 0 : options.minPadding
-                ),
-                paddedMax = safeDataMax + padRange * (
-                    defined(optionsMax) ? 0 : options.maxPadding
-                ),
 
                 // We're allowed to zoom outside the data extremes if we're
                 // dealing with a bubble chart, if we're panning, or if we're
                 // pinching or mousewheeling in.
                 allowZoomOutside = axis.allowZoomOutside ||
                     scale === 1 ||
-                    (trigger !== 'zoom' && scale > 1),
+                    (trigger !== 'zoom' && scale > 1);
 
-                // Calculate the floor and the ceiling
-                floor = Math.min(
+            let paddedMin = safeDataMin - padRange * (
+                    defined(optionsMin) ? 0 : options.minPadding
+                ),
+                paddedMax = safeDataMax + padRange * (
+                    defined(optionsMax) ? 0 : options.maxPadding
+                );
+
+            if (
+                !axis.categories &&
+                (options.startOnTick || options.endOnTick)
+            ) {
+                const toVal = (val: number): number => (
+                        log ? log.lin2log(val) : val
+                    ),
+                    span = (axis.max ?? 0) - (axis.min ?? 0),
+                    minShift = options.startOnTick ? 0 : span,
+                    maxShift = options.endOnTick ? 0 : span;
+
+                paddedMin = ticks
+                    .map((t): number => toVal(t - minShift))
+                    .filter((val): boolean => val <= paddedMin)
+                    .pop() ?? paddedMin;
+
+                paddedMax = ticks
+                    .map((t): number => toVal(t + maxShift))
+                    .find((val): boolean => val >= paddedMax) ?? paddedMax;
+            }
+
+            // Calculate the floor and the ceiling
+            const floor = Math.min(
                     optionsMin ?? paddedMin,
                     paddedMin,
                     allowZoomOutside ? min : paddedMin
