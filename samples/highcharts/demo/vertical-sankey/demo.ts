@@ -36,18 +36,19 @@ Highcharts.chart('container', {
         name: 'Energy consumed for water use in U.S.',
         dataLabels: {
             nodeFormatter() {
-                const maxLetters = this.point.shapeArgs.height / 8,
-                    name = this.point.name,
+                const maxLetters = this.shapeArgs.height / 8,
+                    name = this.name,
                     firstWord = name.slice(0, maxLetters);
 
                 if (firstWord.length >= name.length) {
-                    return firstWord.toUpperCase();
+                    return firstWord;
                 }
-                return name.toUpperCase();
+                return name;
             },
             style: {
+                color: 'var(--highcharts-neutral-color-80, #333)',
                 textOutline: 'none',
-                color: 'var(--highcharts-neutral-color-80, #333)'
+                textTransform: 'uppercase'
             }
         },
         borderRadius: 0,
@@ -296,4 +297,4 @@ Highcharts.chart('container', {
             ]
         ]
     }]
-});
+} satisfies Highcharts.Options);
