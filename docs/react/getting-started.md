@@ -29,7 +29,7 @@ npm install @highcharts/react
 
 ## 2. Create your chart
 
-Start by creating a simple chart using a series component:
+Every chart starts with a [chart component](https://www.highcharts.com/docs/react/components/chart), and all other components go inside it. Start by creating a simple chart using a series component:
 
 ```tsx
 import { Chart } from "@highcharts/react";
@@ -46,11 +46,11 @@ export default function LineChart() {
 
 ## 3. Customize your chart
 
-Highcharts React provides dedicated React components for chart elements, series, and modules to customize your chart.
+Highcharts React provides dedicated React components for chart elements and modules to customize your chart.
 
 ### Chart elements
 
-You can use element components and series components to shape your chart structure. Both go inside `<Chart>`, and each maps to a Highcharts option such as `title`, `legend`, or a `series` entry:
+You can use element components to shape your chart structure:
 
 ```tsx
 import { Chart, Title, Legend } from "@highcharts/react";
@@ -79,7 +79,7 @@ The result should look like this:
 
 ### Modules (optional)
 
-You can use module components to load additional Highcharts modules. Like element and series components, they go inside `<Chart>`:
+You can use module components to load additional Highcharts modules:
 
 ```tsx
 import { Chart } from "@highcharts/react";
