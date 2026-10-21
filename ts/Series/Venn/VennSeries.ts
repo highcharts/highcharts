@@ -91,6 +91,7 @@ class VennSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static splitter = 'highcharts-split';
 
     /** @internal */

@@ -106,12 +106,13 @@ class WordcloudSeries extends ColumnSeries {
     public options!: WordcloudSeriesOptions;
     public points!: Array<WordcloudPoint>;
 
-    /**
+    /* *
      *
      * Functions
      *
-     */
+     * */
 
+    /** @internal */
     public pointAttribs(
         point: WordcloudPoint,
         state?: StatesOptionsKey

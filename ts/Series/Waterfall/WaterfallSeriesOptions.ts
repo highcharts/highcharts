@@ -60,7 +60,6 @@ import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
  */
 export interface WaterfallSeriesOptions extends ColumnSeriesOptions {
 
-    color?: ColorType;
 
     /**
      * An array of data points for the series. For the `waterfall` series
