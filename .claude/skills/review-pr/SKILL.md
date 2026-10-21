@@ -47,8 +47,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - If not automatable, require a manual test plan.
 - For PRs and branch reviews, check whether passing CI covers the current target branch (`master` by default). Record the PR head, current target SHA, and the head/base or merge SHA actually tested; resolve the tested base from that run, rather than assuming the PR's current base was tested.
 - Inspect target-branch changes since the tested base for interactions with the PR: test assertions, discovery globs and file renames, runners/configuration, workflow triggers, build steps, dependencies and lockfiles. Include merged side-branch changes; matching filenames alone is not enough to establish coverage or overlap.
-- For a concrete interaction, explain what the older run missed and explicitly ask: "Please merge the latest master into this PR branch and rerun <relevant checks> before merging this PR." Use the actual target branch name if it differs from master, and name the affected checks. For example, renaming `.d.ts` to `.ts` can expose stale doclets to a newly expanded checker on master. Use existing CI evidence or permitted local validation; keep external PR execution within the Inputs restrictions.
-- Put that request and its reason in the review summary, even if no inline comment can be published. Treat a confirmed combined-tree failure as blocking until fixed and validated. Being behind the target alone is not a finding.
+- For a concrete interaction, explain what the older run missed and identify the affected checks. For example, renaming `.d.ts` to `.ts` can expose stale doclets to a newly expanded checker on master. Use existing CI evidence or permitted local validation; keep external PR execution within the Inputs restrictions. Treat a confirmed combined-tree failure as blocking until fixed and validated. Being behind the target alone is not a finding.
 - Report the checked SHAs and any interaction found, or state that no relevant interaction was found. Put unavailable evidence under skipped checks. Older green checks alone do not verify the current combination. Keep the review read-only: ask the author to update and validate the branch; do not merge, rebase or rerun CI yourself.
 
 7. For PRs from outside the team, check the rules in `CONTRIBUTING.md`. Needs PR data from GitHub; without it, skip this step.
@@ -63,6 +62,12 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - Reply: if a rule is broken, draft a short, polite reply naming each broken rule with a link to its `CONTRIBUTING.md` section.
 
 ## Output format
+
+When step 6 finds a concrete interaction with target-branch changes, start the review summary with this author action:
+
+> Please merge the latest <target branch> into this PR branch, fix <specific issue>, and rerun <named checks> before merging this PR.
+
+Replace every placeholder with the actual branch, issue and checks. For Copilot's fixed review template, put this action in the approval assessment explanation directly below the readiness heading. Preserve the merge request and named checks when shortening or aggregating the review, including re-reviews with no new inline findings. Then explain the interaction and the tested revisions. Completion requires the published summary to contain the merge request and named checks; a generic request for validation does not satisfy it.
 
 For each finding:
 
