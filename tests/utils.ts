@@ -98,7 +98,9 @@ export function transpileTS(script: string) {
     return ts.transpileModule(script, {
         compilerOptions: {
             target: ts.ScriptTarget.ES2018,
-            module: ts.ModuleKind.None
+            module: ts.ModuleKind.CommonJS,
+            // Samples run as sloppy-mode scripts (TS 6 defaults to strict)
+            alwaysStrict: false
         }
     }).outputText;
 }

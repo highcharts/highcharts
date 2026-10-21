@@ -741,6 +741,7 @@ npx playwright show-trace test-results/<test-folder>/trace.zip
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
 | `VISUAL_TEST_PATH` | Filter visual tests by one or more path substrings |
 | `VISUAL_TEST_MANIFEST` | Select the exact visual sample IDs listed in a JSON manifest; mutually exclusive with `VISUAL_TEST_PATH` |
+| `VISUAL_TEST_BATCHES` | Set to `2` for two concurrent batches with separate reused pages (default: `1`) |
 | `VISUAL_TEST_REFERENCE` | Set to `1` to write reference SVGs instead of comparing |
 
 Examples:
@@ -779,6 +780,21 @@ A sample introduced in a PR has no master reference and joins comparisons once
 it is present on master. `VISUAL_TEST_PATH` remains a substring filter for
 focused local runs. `VISUAL_TEST_MANIFEST` selects exact IDs when a fixed set is
 needed and cannot be combined with a path filter.
+
+Set `VISUAL_TEST_BATCHES=2` to split the selected samples into two concurrent
+batches, each reusing its own pages. The default remains one batch. For example:
+
+```bash
+VISUAL_TEST_BATCHES=2 npm run test:pw:visual
+```
+
+Visual runs write `test/visual-test-timing.json` with time before samples and
+sample wall time, plus summed sample, capture and comparison durations in
+milliseconds. Summed durations overlap when batches run concurrently. Build
+work performed while loading setup modules is excluded; measure process wall
+time separately. Compare batches using the same `VISUAL_TEST_MANIFEST` and
+reference SVGs. Results are collected per sample and merged into the existing
+results JSON at the end of the run.
 
 Discovery covers demos and focused API-option samples, including multi-chart
 rendering, polar and range series, network diagrams, stock navigation and

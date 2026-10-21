@@ -73,7 +73,7 @@ Highcharts.chart('container', {
 You will find examples of how to use `CountryAndRegionExposure` converter in
 our demos.
 
-- **Highcharts Core + Morningstar Country and Region Exposure**
+- [Highcharts Core + Morningstar Country and Region Exposure](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/dws-region-breakdown-chart/)
 
 ## Morningstar API Reference
 

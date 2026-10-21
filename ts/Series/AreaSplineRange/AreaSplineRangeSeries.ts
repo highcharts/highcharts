@@ -86,9 +86,6 @@ extend(AreaSplineRangeSeries.prototype, {
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         areasplinerange: typeof AreaSplineRangeSeries;

@@ -282,9 +282,6 @@ extend(ColumnRangeSeries.prototype, {
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         columnrange: typeof ColumnRangeSeries;

@@ -43,7 +43,7 @@ import { clamp } from '../../Shared/Utilities.js';
 
 /**
  * Utility func to get padding definition from tile size division
- * @private
+ * @internal
  */
 function tilePaddingFromTileSize(
     series: TilemapSeries,
@@ -72,6 +72,7 @@ namespace TilemapShapes {
      *
      * */
 
+    /** @internal */
     export interface DefinitionObject {
         alignDataLabel(
             this: TilemapSeries,
@@ -89,6 +90,7 @@ namespace TilemapShapes {
         translate(this: TilemapSeries): void;
     }
 
+    /** @internal */
     export interface PaddingObject {
         xPad: number;
         yPad: number;
@@ -104,7 +106,7 @@ namespace TilemapShapes {
 
 /**
  * Map of shape types.
- * @private
+ * @internal
  */
 const TilemapShapes: Record<TilemapShapeValue, TilemapShapes.DefinitionObject> = {
 
