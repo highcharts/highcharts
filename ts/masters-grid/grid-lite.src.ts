@@ -33,7 +33,7 @@ import Globals from '../Grid/Core/Globals.js';
 import CellContextMenuBuiltInActions
     from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import {
-    isHighContrastModeActive as whcmIsHighContrastModeActive
+    isHighContrastModeActive
 } from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
@@ -79,7 +79,7 @@ const G = {
     Grid: _Grid,
     grid: _Grid.grid,
     grids: _Grid.grids,
-    isHighContrastModeActive: whcmIsHighContrastModeActive,
+    isHighContrastModeActive,
     merge: merge,
     Pagination,
     product: 'Grid Lite',
@@ -120,11 +120,12 @@ export {
     Templating
 };
 
+export { isHighContrastModeActive };
+
 export const {
     defaultOptions,
     grid,
     grids,
-    isHighContrastModeActive,
     product,
     setOptions,
     version,
