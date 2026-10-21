@@ -87,30 +87,6 @@ const optionsToObject = (
 };
 
 /** @internal */
-const getAxes = function (
-    chart: Chart,
-    xAxis: Array<Axis>,
-    yAxis: Array<Axis>,
-    options: MouseWheelZoomOptions
-): Array<Axis> {
-    const type = (options.type ?? chart.zooming.type ?? '');
-
-    if (type === 'x') {
-        return xAxis;
-    }
-
-    if (type === 'y') {
-        return yAxis;
-    }
-
-    if (type === 'xy') {
-        return chart.axes;
-    }
-
-    return [];
-};
-
-/** @internal */
 const scheduleDrop = function (chart: Chart): void {
     if (defined(wheelTimer)) {
         internalClearTimeout(wheelTimer);
@@ -129,13 +105,12 @@ const scheduleDrop = function (chart: Chart): void {
 /** @internal */
 const transformBy = function (
     chart: Chart,
-    xAxis: Array<Axis>,
-    yAxis: Array<Axis>,
+    axes: Array<Axis>,
     options: MouseWheelZoomOptions,
     geometry: TransformGeometry
 ): boolean {
     const hasTransformed = chart.transform({
-        axes: getAxes(chart, xAxis, yAxis, options),
+        axes,
         ...geometry,
         trigger: 'mousewheel',
         allowResetButton: options.showResetButton
@@ -152,13 +127,12 @@ const transformBy = function (
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
-    xAxis: Array<Axis>,
-    yAxis: Array<Axis>,
+    axes: Array<Axis>,
     mouseX: number,
     mouseY: number,
     options: MouseWheelZoomOptions
 ): boolean {
-    return transformBy(chart, xAxis, yAxis, options, {
+    return transformBy(chart, axes, options, {
         // Create imaginary reference and target rectangles around the mouse
         // point that scales up or down with `howMuch`;
         to: {
@@ -183,36 +157,34 @@ const zoomBy = function (
 const panBy = function (
     chart: Chart,
     howMuch: number,
-    xAxis: Array<Axis>,
-    yAxis: Array<Axis>,
+    allAxes: Array<Axis>,
     options: MouseWheelZoomOptions
 ): boolean {
-    const axes = getAxes(chart, xAxis, yAxis, options),
-        type = (options.type ?? chart.zooming.type ?? '');
+    const type = chart.options.chart.panning?.type || 'x',
+        axes = allAxes.filter((axis): boolean =>
+            axis.options.panningEnabled && !axis.options.isInternal
+        );
 
     // Nothing to pan (e.g. no zooming type set).
-    if (!axes.length || !type) {
+    if (!axes.length) {
         return false;
     }
 
     const chartOptions = chart.options.chart,
         prevPanning = chartOptions.panning,
-        ordinalAxis = chart.xAxis[0] as Axis & {
-            ordinal?: {
-                slope?: number;
-                overscrollPointsRange?: number;
-            };
-        };
+        ordinalAxis = chart.xAxis[0];
 
     // To keep the on-screen pan speed constant at different zoom levels,
     // accumulate the pixel movement and pan only when it adds up to
     // a whole point. Keep any leftover pixels for the next notch.
     let panX = howMuch;
     if (type !== 'y' && ordinalAxis?.isOrdinal && ordinalAxis.ordinal) {
-        const closestPointRange = ordinalAxis.closestPointRange ||
-                ordinalAxis.ordinal.overscrollPointsRange,
-            pointPixelWidth = ordinalAxis.translationSlope *
-                (ordinalAxis.ordinal.slope || (closestPointRange as number));
+        const pointPixelWidth = ordinalAxis.translationSlope * (
+            ordinalAxis.ordinal.slope ||
+            ordinalAxis.closestPointRange ||
+            ordinalAxis.ordinal.overscrollPointsRange ||
+            0
+        );
         if (pointPixelWidth) {
             // Restart the accumulation when the scroll direction reverses.
             if (howMuch * wheelPanRemainder < 0) {
@@ -279,8 +251,7 @@ const panBy = function (
 
 /** @internal */
 function onAfterGetContainer(this: Chart): void {
-    const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel),
-        panKey = this.options.chart.panKey;
+    const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
     if (wheelZoomOptions.enabled) {
         addEvent(this.container, 'wheel', (e: PointerEvent): void => {
@@ -297,29 +268,47 @@ function onAfterGetContainer(this: Chart): void {
                 e.chartX - this.plotLeft,
                 e.chartY - this.plotTop
             ) && allowZoom) {
+                const xAxisCoords = getAssignedAxis(
+                        pointer.getCoordinates(e).xAxis
+                    ),
+                    yAxisCoords = getAssignedAxis(
+                        pointer.getCoordinates(e).yAxis
+                    ),
+                    xAxis = xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
+                    yAxis = yAxisCoords ? [yAxisCoords.axis] : this.yAxis;
 
-                const panKeyPressed = panKey && e[`${panKey}Key`],
+                let axes: Array<Axis> = [];
+                switch (wheelZoomOptions.type ?? this.zooming.type ?? '') {
+                    case 'x':
+                        axes = xAxis;
+                        break;
+                    case 'y':
+                        axes = yAxis;
+                        break;
+                    case 'xy':
+                        axes = this.axes;
+                        break;
+                }
+
+                const panning = this.options.chart.panning,
+                    panningEnabled = isObject(panning) ?
+                        panning.enabled : panning;
+                const panKey = this.options.chart.panKey,
+                    panKeyPressed = panKey && e[`${panKey}Key`],
                     // On Apple platforms, holding shift natively moves the
                     // wheel delta from deltaY to deltaX, so swap it back.
                     deltaY = panKeyPressed && panKey === 'shift' && isApple ?
                         e.deltaY || e.deltaX :
                         e.deltaY,
                     wheelSensitivity = wheelZoomOptions.sensitivity || 1.1,
-                    delta = e.detail || ((deltaY || 0) / 120),
-                    xAxisCoords = getAssignedAxis(
-                        pointer.getCoordinates(e).xAxis
-                    ),
-                    yAxisCoords = getAssignedAxis(
-                        pointer.getCoordinates(e).yAxis
-                    );
+                    delta = e.detail || ((deltaY || 0) / 120);
 
-                if (panKeyPressed) {
+                if (panKeyPressed && panningEnabled) {
                     // Pan
                     const hasPanned = panBy(
                         this,
                         delta * 15 * wheelSensitivity,
-                        xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
-                        yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
+                        axes,
                         wheelZoomOptions
                     );
 
@@ -328,15 +317,13 @@ function onAfterGetContainer(this: Chart): void {
                         e.preventDefault?.();
                     }
                 } else {
-
                     const hasZoomed = zoomBy(
                         this,
                         Math.pow(
                             wheelSensitivity,
                             delta
                         ),
-                        xAxisCoords ? [xAxisCoords.axis] : this.xAxis,
-                        yAxisCoords ? [yAxisCoords.axis] : this.yAxis,
+                        axes,
                         e.chartX,
                         e.chartY,
                         wheelZoomOptions

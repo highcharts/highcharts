@@ -590,7 +590,8 @@ namespace OrdinalAxis {
         this: Chart,
         e: Event & {
             originalEvent: PointerEvent,
-            touches: Touch[] | undefined
+            touches: Touch[] | undefined,
+            mouseWheel?: boolean
         }
     ): void {
         const chart = this,
@@ -662,7 +663,7 @@ namespace OrdinalAxis {
                 runBase = true;
 
             } else if (
-                Math.abs(movedUnits) > ((e as AnyRecord).mouseWheel ? 0 : 1)
+                Math.abs(movedUnits) > ((e).mouseWheel ? 0 : 1)
             ) {
 
                 // Remove active points for shared tooltip
