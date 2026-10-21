@@ -30,7 +30,9 @@ import DataPool from '../Data/DataPool.js';
 import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
-import whcm from '../Accessibility/HighContrastMode.js';
+import {
+    isHighContrastModeActive as whcmIsHighContrastModeActive
+} from '../Accessibility/HighContrastMode.js';
 import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
@@ -137,7 +139,7 @@ const G = {
     grid: _Grid.grid,
     grids: _Grid.grids,
     HeaderCell,
-    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    isHighContrastModeActive: whcmIsHighContrastModeActive,
     merge: merge,
     Pagination,
     Popup,
