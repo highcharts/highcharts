@@ -165,6 +165,7 @@
     "tests/"
   ],
   "overrides": {
+    "sanitize-html": "2.18.1",
     "gulp-jsdoc3": {
       "jsdoc": "^4.0.3"
     },
