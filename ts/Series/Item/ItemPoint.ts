@@ -48,6 +48,7 @@ class ItemPoint extends PiePoint {
 
     public options!: ItemPointOptions;
 
+    /** @internal */
     public series!: ItemSeries;
 
 }

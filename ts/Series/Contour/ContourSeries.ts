@@ -10,7 +10,6 @@
  *
  * */
 
-/// <reference types="@webgpu/types" />
 'use strict';
 
 
@@ -48,11 +47,33 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+/*
+ * TypeScript 6 ships WebGPU interfaces in `lib.dom`, but not the usage flag
+ * namespaces.
+ */
+declare const GPUBufferUsage: {
+    readonly COPY_DST: GPUFlagsConstant;
+    readonly INDEX: GPUFlagsConstant;
+    readonly STORAGE: GPUFlagsConstant;
+    readonly UNIFORM: GPUFlagsConstant;
+    readonly VERTEX: GPUFlagsConstant;
+};
+declare const GPUTextureUsage: {
+    readonly COPY_SRC: GPUFlagsConstant;
+    readonly RENDER_ATTACHMENT: GPUFlagsConstant;
+};
+
+
+/* *
+ *
  *  Class
  *
  * */
 
-/** @internal */
 export default class ContourSeries extends ScatterSeries {
 
     /* *
@@ -61,11 +82,13 @@ export default class ContourSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions = merge(
         ScatterSeries.defaultOptions,
         ContourSeriesDefaults
     );
 
+    /** @internal */
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
@@ -85,20 +108,28 @@ export default class ContourSeries extends ScatterSeries {
 
     public options!: ContourSeriesOptions;
 
+    /** @internal */
     public context?: GPUCanvasContext | null;
 
+    /** @internal */
     public renderFrame?: () => void;
 
+    /** @internal */
     private foreignObject?: SVGForeignObjectElement;
 
+    /** @internal */
     private canvas?: HTMLCanvasElement;
 
+    /** @internal */
     private adapter?: GPUAdapter | null;
 
+    /** @internal */
     private device?: GPUDevice;
 
+    /** @internal */
     private buffers?: Record<string, GPUBuffer>;
 
+    /** @internal */
     public renderPromise?: Promise<void>;
 
     /* Uniforms:
@@ -121,6 +152,7 @@ export default class ContourSeries extends ScatterSeries {
      *
      * */
 
+    /** @internal */
     public getContourData(): [Uint32Array, Float32Array] {
         const points = this.points,
             len = points.length,
@@ -143,6 +175,7 @@ export default class ContourSeries extends ScatterSeries {
         return [new Delaunay(points2d).triangles, points3d];
     }
 
+    /** @internal */
     public override update(
         options: DeepPartial<ContourSeriesOptions>,
         redraw?: boolean
@@ -185,6 +218,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public override drawPoints(): void {
         const { group } = this;
         if (!group) {
@@ -234,13 +268,15 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public async run(): Promise<void> {
         const series = this,
             chart = series.chart,
             renderer = chart.renderer,
             canvas = series.canvas as HTMLCanvasElement,
             gpu = navigator.gpu,
-            context = series.context = canvas.getContext('webgpu');
+            context = series.context =
+                canvas.getContext('webgpu') as GPUCanvasContext | null;
 
         if (!gpu || !context) {
             error(37, false, chart);
@@ -353,16 +389,8 @@ export default class ContourSeries extends ScatterSeries {
                     isInvertedUniform: isInvertedUniformBuffer
                 } = buffers;
 
-                device.queue.writeBuffer(
-                    vertexBuffer,
-                    0,
-                    vertices as GPUAllowSharedBufferSource
-                );
-                device.queue.writeBuffer(
-                    indexBuffer,
-                    0,
-                    indices as GPUAllowSharedBufferSource
-                );
+                device.queue.writeBuffer(vertexBuffer, 0, vertices);
+                device.queue.writeBuffer(indexBuffer, 0, indices);
 
                 const vertexBufferLayout: GPUVertexBufferLayout = {
                     arrayStride: 12,
@@ -495,6 +523,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public override destroy(): void {
         // Remove the foreign object. The canvas will be removed with it.
         // For some reason, `series.update` calls `series.destroy` even if
@@ -505,6 +534,7 @@ export default class ContourSeries extends ScatterSeries {
         super.destroy();
     }
 
+    /** @internal */
     public override drawGraph(): void {
         // Do nothing
     }
@@ -515,6 +545,7 @@ export default class ContourSeries extends ScatterSeries {
      * @param {boolean} renderFrame
      * Whether to rerender the series' context after setting the uniforms.
      * Defaults to `true`.
+     * @internal
      */
     public setUniforms(renderFrame = true): void {
         this.setFrameExtremesUniform(false);
@@ -534,6 +565,7 @@ export default class ContourSeries extends ScatterSeries {
      * @param {boolean} renderFrame
      * Whether to rerender the series' context after setting the uniform.
      * Defaults to `true`.
+     * @internal
      */
     public setContourIntervalUniform(renderFrame = true): void {
         if (this.device && this.buffers?.contourIntervalUniform) {
@@ -550,6 +582,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the contour offset uniform according to the series options.
+     * @internal
      */
     public setContourOffsetUniform(renderFrame = true): void {
         if (this.device && this.buffers?.contourOffsetUniform) {
@@ -566,6 +599,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the smooth coloring uniform according to the series options.
+     * @internal
      */
     public setSmoothColoringUniform(renderFrame = true): void {
         if (this.device && this.buffers?.smoothColoringUniform) {
@@ -582,6 +616,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the line width uniform according to the series options.
+     * @internal
      */
     public setLineWidthUniform(renderFrame = true): void {
         if (this.device && this.buffers?.lineWidthUniform) {
@@ -598,6 +633,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the contour line color uniform according to the series options.
+     * @internal
      */
     public setContourLineColorUniform(renderFrame = true): void {
         if (this.device && this.buffers?.contourLineColor) {
@@ -614,6 +650,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the frame extremes uniform according to the series options.
+     * @internal
      */
     public setFrameExtremesUniform(renderFrame = true): void {
         if (this.device && this.buffers?.extremesUniform) {
@@ -630,6 +667,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the value extremes uniform according to the series data.
+     * @internal
      */
     public setValueExtremesUniform(renderFrame = true): void {
         if (this.device && this.buffers?.valueExtremesUniform) {
@@ -646,6 +684,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the color axis stops uniforms according to the color axis options.
+     * @internal
      */
     public setColorAxisStopsUniforms(renderFrame = true): void {
         const stopsBuffer = this.buffers?.colorAxisStopsUniform;
@@ -655,17 +694,13 @@ export default class ContourSeries extends ScatterSeries {
             const { array, length } = this.getColorAxisStopsData();
 
             // Write the stops to the buffer
-            this.device.queue.writeBuffer(
-                stopsBuffer,
-                0,
-                array as GPUAllowSharedBufferSource
-            );
+            this.device.queue.writeBuffer(stopsBuffer, 0, array);
 
             // Write the count to the buffer
             this.device.queue.writeBuffer(
                 countBuffer,
                 0,
-                new Uint32Array([length]) as GPUAllowSharedBufferSource
+                new Uint32Array([length])
             );
 
             if (renderFrame) {
@@ -676,6 +711,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Set the is inverted uniform according to the series options.
+     * @internal
      */
     public setIsInvertedUniform(renderFrame = true): void {
         if (this.device && this.buffers?.isInvertedUniform) {
@@ -693,6 +729,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour interval from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourInterval(): number {
         const interval = this.options.contourInterval ?? ((): number => {
@@ -712,6 +749,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour offset from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourOffset(): number {
         const offset = this.options.contourOffset ?? 0;
@@ -724,6 +762,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the smooth coloring from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getSmoothColoring(): number {
         return this.options.smoothColoring ? 1 : 0;
@@ -732,6 +771,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the lineWidth from the series options, which controls the
      * visibility of contour lines, in format of the WebGPU uniform.
+     * @internal
      */
     private getLineWidth(): number {
         return this.userOptions.lineWidth ?? 1;
@@ -740,6 +780,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour line color from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourLineColor(): number[] {
         const { lineColor = '#000000' } = this.options;
@@ -748,6 +789,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the extremes of the x and y axes in format of the WebGPU uniform.
+     * @internal
      */
     private getFrameExtremes(): number[] {
         const { xAxis, yAxis } = this;
@@ -762,6 +804,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the extremes of the data in format of the WebGPU uniform.
+     * @internal
      */
     private getValueAxisExtremes(): number[] {
         const series = this;
@@ -791,6 +834,7 @@ export default class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
+    /** @internal */
     private getColorAxisStopsData(): { array: Float32Array, length: number } {
         const colorAxisStops = this.colorAxis?.stops;
 
@@ -832,6 +876,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the RGBA color as a fraction of the 255 range.
+     * @internal
      */
     public static rgbaAsFrac(rgba: Color.RGBA): number[] {
         return [
@@ -849,8 +894,12 @@ extend(ContourSeries.prototype, {
     invertible: false
 });
 
-// Registry
-/** @internal */
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;

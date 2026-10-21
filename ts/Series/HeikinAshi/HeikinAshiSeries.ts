@@ -53,7 +53,7 @@ type OHLCObject = {
 /**
  * After processing and grouping the data, calculate how the heikinashi data
  * set should look like.
- * @private
+ * @internal
  */
 function onAxisPostProcessData(
     this: Axis
@@ -71,7 +71,7 @@ function onAxisPostProcessData(
 
 /**
  * Assign heikinashi data into the points.
- * @private
+ * @internal
  * @todo move to HeikinAshiPoint class
  */
 function onHeikinAshiSeriesAfterTranslate(
@@ -97,7 +97,7 @@ function onHeikinAshiSeriesAfterTranslate(
 
 /**
  * Force to recalculate the heikinashi data set after updating data.
- * @private
+ * @internal
  */
 function onHeikinAshiSeriesUpdatedData(
     this: HeikinAshiSeries
@@ -115,11 +115,8 @@ function onHeikinAshiSeriesUpdatedData(
 /**
  * The Heikin Ashi series.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.heikinashi
- *
- * @augments Highcharts.Series
  */
 class HeikinAshiSeries extends CandlestickSeries {
 
@@ -129,6 +126,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: HeikinAshiSeriesOptions = merge(
         CandlestickSeries.defaultOptions,
         HeikinAshiSeriesDefaults
@@ -140,6 +138,7 @@ class HeikinAshiSeries extends CandlestickSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         SeriesClass: typeof Series,
         AxisClass: typeof Axis
@@ -171,14 +170,17 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public data!: Array<HeikinAshiPoint>;
 
+    /** @internal */
     public heikinashiData: Array<Array<number>> = [];
 
     public options!: HeikinAshiSeriesOptions;
 
     public points!: Array<HeikinAshiPoint>;
 
+    /** @internal */
     public yData!: Array<Array<number>>;
 
+    /** @internal */
     public processedYData!: Array<Array<(number|null)>>;
 
     /* *
@@ -189,7 +191,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /**
      * Calculate data set for the heikinashi series before creating the points.
-     * @private
+     * @internal
      */
     public getHeikinashiData(): void {
         const series = this,
@@ -215,9 +217,7 @@ class HeikinAshiSeries extends CandlestickSeries {
         series.heikinashiData = heikinashiData;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public init(): void {
         super.init.apply(this, arguments as any);
 
@@ -226,7 +226,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /**
      * Calculate and modify the first data point value.
-     * @private
+     * @internal
      * @param {Object} dataPoint
      *        Current data point.
      */
@@ -244,7 +244,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     /**
      * Calculate and modify the data point's value.
-     * @private
+     * @internal
      * @param {Object} dataPoint
      *        Current data point.
      * @param {Array<(number)>} previousDataPoint

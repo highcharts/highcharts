@@ -1,3 +1,10 @@
+---
+description: >-
+  Request cumulative month-end return data for one or more securities with the
+  TimeSeriesConnector, select the CumulativeReturn series type, and account
+  for the first security's start date in multi-security requests.
+---
+
 # Cumulative Return
 
 This type yields cumulative return time series data for single or multiple
@@ -34,9 +41,7 @@ For more details, see [Morningstar’s Time Series API - Cumulative Return].
 
 ## Relevant demos
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
-`TimeSeriesConnector` to retrieve Price time series. Specify type
-`CumulativeReturn`.
+- [Highcharts Stock + Morningstar Time Series](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/interactive-chart/)
 
 ## Morningstar API Reference
 

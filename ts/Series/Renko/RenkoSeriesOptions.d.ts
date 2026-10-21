@@ -16,7 +16,7 @@
  *
  * */
 
-import type CandlestickSeriesOptions from '../Candlestick/CandlestickSeriesOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type RenkoPointOptions from './RenkoPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ColorType from '../../Core/Color/ColorType';
@@ -48,10 +48,9 @@ import type ColorType from '../../Core/Color/ColorType';
  * @requires modules/renko
  *
  * @excluding boost, compare, compareStart, connectNulls, cumulative,
- * cumulativeStart, dataGrouping, dataParser, dataSorting, dataURL,
- * dragDrop, marker, step
+ * cumulativeStart, dataGrouping, dataSorting, dragDrop, marker, step
  */
-export interface RenkoSeriesOptions extends CandlestickSeriesOptions {
+export interface RenkoSeriesOptions extends ColumnSeriesOptions {
     /**
      *
      * Color of the point if there is a down trend. (color of point with up

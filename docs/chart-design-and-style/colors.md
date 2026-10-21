@@ -1,3 +1,10 @@
+---
+description: >-
+  Set chart colors using browser-supported values, palettes, and CSS
+  variables. Learn how to define linear and radial gradients with color stops,
+  choose gradient coordinates, and enable pattern fills.
+---
+
 Colors
 ======
 

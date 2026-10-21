@@ -38,11 +38,16 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public beaufort!: string;
+    /** @internal */
     public beaufortLevel!: number;
+    /** @internal */
     public direction!: number;
     public options!: WindbarbPointOptions;
+    /** @internal */
     public series!: WindbarbSeries;
+    /** @internal */
     public value!: number;
 
     /* *
@@ -51,6 +56,7 @@ class WindbarbPoint extends ColumnSeries.prototype.pointClass {
      *
      * */
 
+    /** @internal */
     public isValid(): boolean {
         return isNumber(this.value) && this.value >= 0;
     }

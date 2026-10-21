@@ -289,6 +289,15 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
             initialPositionRadius: 100,
             seriesInteraction: true,
             /**
+             * The distance between two parent nodes, when the algorithm
+             * starts to treat them as overlapping. Defaults to the
+             * [layoutAlgorithm.bubblePadding](#plotOptions.packedbubble.layoutAlgorithm.bubblePadding)
+             * value.
+             *
+             * @type      {number}
+             * @apioption plotOptions.packedbubble.layoutAlgorithm.parentNodeOptions.bubblePadding
+             */
+            /**
              * Styling options for parentNodes markers. Similar to
              * line.marker options.
              *
@@ -371,8 +380,8 @@ export default PackedBubbleSeriesDefaults;
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
- *            boostThreshold, boostBlending
+ * @excluding cropThreshold, dataSorting, dragDrop, stack, boostThreshold,
+ *            boostBlending
  * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble

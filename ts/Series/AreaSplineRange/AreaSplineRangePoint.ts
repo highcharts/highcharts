@@ -26,9 +26,10 @@ import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
  *
  * */
 
-/** @internal */
 declare class AreaSplineRangePoint extends AreaRangePoint {
+    /** @internal */
     public option: AreaSplineRangePointOptions;
+    /** @internal */
     public series: AreaSplineRangeSeries;
 }
 
@@ -38,5 +39,4 @@ declare class AreaSplineRangePoint extends AreaRangePoint {
  *
  * */
 
-/** @internal */
 export default AreaSplineRangePoint;

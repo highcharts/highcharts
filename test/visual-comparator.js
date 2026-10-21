@@ -120,7 +120,8 @@
             }
         }
 
-        return prettyXML(svg);
+        // HTML serialization uses &nbsp;, which is invalid in standalone SVG.
+        return prettyXML(svg.replace(/&nbsp;/g, '\u00A0'));
     }
 
     function compare(data1, data2) {
