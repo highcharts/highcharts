@@ -580,6 +580,32 @@ export interface SeriesOptions {
      * @basic
      */
     color?: ColorType;
+
+    /**
+     * When using automatic point colors pulled from the global
+     * [colors](colors) or series-specific
+     * [plotOptions.series.colors](series.colors) collections, this option
+     * determines whether the chart should receive one color per series or
+     * one color per point.
+     *
+     * In styled mode, the `colors` or `series.colors` arrays are not
+     * supported, and instead this option gives the points individual color
+     * class names on the form `highcharts-color-{n}`.
+     *
+     * @see [series colors](#plotOptions.series.colors)
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
+     *         False by default
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
+     *         True
+     *
+     * @default false
+     *
+     * @since 2.0
+     *
+     * @product highcharts highstock gantt
+     */
     colorByPoint?: boolean;
 
     /**
@@ -595,6 +621,16 @@ export interface SeriesOptions {
      * @since 5.0.0
      */
     colorIndex?: number;
+
+    /**
+     * A series specific or series type specific color set to apply instead
+     * of the global [colors](#colors) when [colorByPoint](
+     * #plotOptions.series.colorByPoint) is true.
+     *
+     * @since 3.0
+     *
+     * @product highcharts highstock gantt
+     */
     colors?: Array<ColorType>;
     connectNulls?: boolean;
 

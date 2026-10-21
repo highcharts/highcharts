@@ -238,6 +238,31 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * When using automatic point colors pulled from the global
+     * [colors](colors) or series-specific
+     * [plotOptions.series.colors](series.colors) collections, this option
+     * determines whether the chart should receive one color per series or
+     * one color per point.
+     *
+     * In styled mode, the `colors` or `series.colors` arrays are not
+     * supported, and instead this option gives the points individual color
+     * class names on the form `highcharts-color-{n}`.
+     *
+     * @see [series colors](#plotOptions.series.colors)
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-false/
+     *         False by default
+     * @sample {highcharts} highcharts/plotoptions/column-colorbypoint-true/
+     *         True
+     *
+     * @type      {boolean}
+     * @default   false
+     * @since     2.0
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.series.colorByPoint
+     */
+
+    /**
      * Styled mode only. A specific color index to use for the series, so its
      * graphic representations are given the class name `highcharts-color-{n}`.
      *
@@ -250,6 +275,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type      {number}
      * @since     5.0.0
      * @apioption plotOptions.series.colorIndex
+     */
+
+    /**
+     * A series specific or series type specific color set to apply instead
+     * instead of the global [colors](#colors) when [colorByPoint](
+     * #plotOptions.series.colorByPoint) is true.
+     *
+     * @type      {Array<Highcharts.ColorType>}
+     * @since     3.0
+     * @product   highcharts highstock gantt
+     * @apioption plotOptions.series.colors
      */
 
     /**
