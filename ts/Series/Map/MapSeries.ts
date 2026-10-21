@@ -80,11 +80,17 @@ import {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         clearBounds?(): void;
+        /** @internal */
         getProjectedBounds?(): MapBounds|undefined;
+        /** @internal */
         mapTitle?: string;
+        /** @internal */
         transformGroups?: Array<SVGElement>|undefined;
+        /** @internal */
         tupleKey?: string;
+        /** @internal */
         useMapGeometry?: boolean;
 
         /**
@@ -182,6 +188,7 @@ class MapSeries extends ScatterSeries {
     /** @internal */
     public valueMin?: number;
 
+    /** @internal */
     public tupleKey = 'hc-key';
 
     /* *

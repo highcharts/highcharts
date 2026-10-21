@@ -328,7 +328,7 @@ export interface NetworkgraphSeriesOptions
                  *
                  * @default 0.3
                  */
-                opacity?: Required<Required<PointMarkerOptions>['states']>['inactive']['opacity'];
+                opacity?: number;
             };
         };
     };

@@ -79,6 +79,7 @@ class MapBubbleSeries extends BubbleSeries {
 
     public points!: Array<MapBubblePoint>;
 
+    /** @internal */
     public clearBounds = mapProto.clearBounds;
 
     /** @internal */

@@ -162,13 +162,9 @@ export interface MapPointOptions extends ScatterPointOptions {
      * @product   highmaps
      */
     path?: (string|SVGPath);
+    /** @internal */
     properties?: AnyRecord;
 
-    /**
-     *
-     *
-     * @product   highmaps
-     */
     states?: PointMarkerStatesOptions<MapPointOptions>;
 
     /**

@@ -58,6 +58,7 @@ class ReingoldFruchtermanLayout {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -74,30 +75,55 @@ class ReingoldFruchtermanLayout {
      *
      * */
 
+    /** @internal */
     public approximation?: string;
+    /** @internal */
     public attractiveForce!: Function;
+    /** @internal */
     public barycenter?: Record<string, number>;
+    /** @internal */
     public box: Record<string, number> = {};
+    /** @internal */
     public currentStep: number = 0;
+    /** @internal */
     public diffTemperature?: number;
+    /** @internal */
     public enableSimulation?: boolean;
+    /** @internal */
     public forcedStop?: boolean;
+    /** @internal */
     public forces?: Array<string>;
+    /** @internal */
     public chart?: Chart;
+    /** @internal */
     public initialRendering: boolean = true;
+    /** @internal */
     public integration!: GraphIntegrationObject;
+    /** @internal */
     public k?: number;
+    /** @internal */
     public links: Array<Point> = [];
+    /** @internal */
     public maxIterations?: number;
+    /** @internal */
     public nodes: Array<Point> = [];
+    /** @internal */
     public options!: ReingoldFruchtermanLayout.Options;
+    /** @internal */
     public prevSystemTemperature?: number;
+    /** @internal */
     public quadTree!: QuadTree;
+    /** @internal */
     public repulsiveForce!: Function;
+    /** @internal */
     public series: Array<Series> = [];
+    /** @internal */
     public simulation: (false|number) = false;
+    /** @internal */
     public startTemperature?: number;
+    /** @internal */
     public systemTemperature?: number;
+    /** @internal */
     public temperature?: number;
 
     /* *
@@ -106,8 +132,10 @@ class ReingoldFruchtermanLayout {
      *
      * */
 
+    /** @internal */
     public beforeStep?(): void;
 
+    /** @internal */
     public init(
         options: ReingoldFruchtermanLayout.Options
     ): void {
@@ -141,12 +169,14 @@ class ReingoldFruchtermanLayout {
         this.approximation = options.approximation;
     }
 
+    /** @internal */
     public updateSimulation(
         enable?: boolean
     ): void {
         this.enableSimulation = (enable ?? this.options.enableSimulation);
     }
 
+    /** @internal */
     public start(): void {
         const layout = this,
             series = this.series,
@@ -175,6 +205,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public step(): void {
         const anyLayout: AnyRecord = this,
             allSeries = this.series;
@@ -232,12 +263,14 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public stop(): void {
         if (this.simulation) {
             win.cancelAnimationFrame(this.simulation as any);
         }
     }
 
+    /** @internal */
     public setArea(
         x: number,
         y: number,
@@ -252,12 +285,14 @@ class ReingoldFruchtermanLayout {
         };
     }
 
+    /** @internal */
     public setK(): void {
         // Optimal distance between nodes,
         // available space around the node:
         this.k = this.options.linkLength || this.integration.getK(this);
     }
 
+    /** @internal */
     public addElementsToCollection<T, C extends T>(
         elements: Array<C>,
         collection: Array<T>
@@ -269,6 +304,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public removeElementFromCollection<T>(
         element: T,
         collection: Array<T>
@@ -280,6 +316,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public clear(): void {
         this.nodes.length = 0;
         this.links.length = 0;
@@ -287,6 +324,7 @@ class ReingoldFruchtermanLayout {
         this.resetSimulation();
     }
 
+    /** @internal */
     public resetSimulation(): void {
         this.forcedStop = false;
         this.systemTemperature = 0;
@@ -295,6 +333,7 @@ class ReingoldFruchtermanLayout {
         this.setDiffTemperature();
     }
 
+    /** @internal */
     public restartSimulation(): void {
 
         if (!this.simulation) {
@@ -319,28 +358,33 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public setMaxIterations(
         maxIterations?: number
     ): void {
         this.maxIterations = (maxIterations ?? this.options.maxIterations);
     }
 
+    /** @internal */
     public setTemperature(): void {
         this.temperature = this.startTemperature =
             Math.sqrt(this.nodes.length);
     }
 
+    /** @internal */
     public setDiffTemperature(): void {
         this.diffTemperature = (this.startTemperature as any) /
             ((this.options.maxIterations as any) + 1);
     }
 
+    /** @internal */
     public setInitialRendering(
         enable: boolean
     ): void {
         this.initialRendering = enable;
     }
 
+    /** @internal */
     public createQuadTree(): void {
         this.quadTree = new QuadTree(
             this.box.left,
@@ -352,6 +396,7 @@ class ReingoldFruchtermanLayout {
         this.quadTree.insertNodes(this.nodes);
     }
 
+    /** @internal */
     public initPositions(): void {
         const initialPositions = this.options.initialPositions;
 
@@ -376,6 +421,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public setCircularPositions(): void {
         const box = this.box,
             nodes = this.nodes,
@@ -437,6 +483,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public setRandomPositions(): void {
         const box = this.box,
             nodes = this.nodes,
@@ -467,6 +514,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public force(
         name: string,
         ...args: Array<unknown>
@@ -474,11 +522,13 @@ class ReingoldFruchtermanLayout {
         this.integration[name].apply(this, args);
     }
 
+    /** @internal */
     public barycenterForces(): void {
         this.getBarycenter();
         this.force('barycenter');
     }
 
+    /** @internal */
     public getBarycenter(): Record<string, number> {
         let systemMass = 0,
             cx = 0,
@@ -500,6 +550,7 @@ class ReingoldFruchtermanLayout {
 
         return this.barycenter;
     }
+    /** @internal */
     barnesHutApproximation(
         node: Point,
         quadNode: QuadTreeNode
@@ -549,6 +600,7 @@ class ReingoldFruchtermanLayout {
 
         return goDeeper;
     }
+    /** @internal */
     repulsiveForces(): void {
         if (this.approximation === 'barnes-hut') {
             for (const node of this.nodes) {
@@ -599,6 +651,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public attractiveForces(): void {
         let distanceXY,
             distanceR,
@@ -627,6 +680,7 @@ class ReingoldFruchtermanLayout {
         }
     }
 
+    /** @internal */
     public applyLimits(): void {
         const nodes = this.nodes as Array<NetworkgraphPoint>;
 
@@ -726,6 +780,7 @@ class ReingoldFruchtermanLayout {
         return temperature - temperatureStep * currentStep;
     }
 
+    /** @internal */
     public isStable(): boolean {
         return Math.abs(
             (this.systemTemperature as any) -
@@ -733,6 +788,7 @@ class ReingoldFruchtermanLayout {
         ) < 0.00001 || (this.temperature as any) <= 0;
     }
 
+    /** @internal */
     public getSystemTemperature(): number {
         let value = 0;
 
@@ -743,12 +799,14 @@ class ReingoldFruchtermanLayout {
         return value;
     }
 
+    /** @internal */
     public vectorLength(
         vector: Record<string, number>
     ): number {
         return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
     }
 
+    /** @internal */
     public getDistR(
         nodeA: NetworkgraphPoint,
         nodeB: (NetworkgraphPoint|QuadTreeNode)
@@ -758,6 +816,7 @@ class ReingoldFruchtermanLayout {
         return this.vectorLength(distance);
     }
 
+    /** @internal */
     public getDistXY(
         nodeA: Point,
         nodeB: (Point|QuadTreeNode)
