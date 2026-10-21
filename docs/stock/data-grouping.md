@@ -1,15 +1,16 @@
 ---
 description: >-
-  Control how Highcharts Stock groups dense data by pixel width, choose
-  approximations and time units, include off-screen points, force grouping,
-  position grouped values, and compare rendering performance.
+  Control how Highcharts Stock groups dense data by pixel width, see which
+  series types are grouped by default, choose approximations and time units,
+  include off-screen points, force grouping, position grouped values, and
+  compare rendering performance.
 ---
 
 Data grouping
 ===========
 
 The `dataGrouping` feature in Highcharts Stock is a reliable tool for dealing with large sets of data in a more efficient way. By grouping data points into larger chunks, it streamlines the loading and rendering process for your charts.
-Data grouping is enabled by default in Highcharts Stock (`Highcharts.stockChart`), so you don't need to set `dataGrouping.enabled: true` yourself. Start with the default setup and only adjust options such as `groupPixelWidth`, `approximation` or `units` when you need different grouping.
+Data grouping is enabled by default in Highcharts Stock (`Highcharts.stockChart`) for the [series types listed below](#series-types-grouped-by-default), so you don't need to set `dataGrouping.enabled: true` yourself. Start with the default setup and only adjust options such as `groupPixelWidth`, `approximation` or `units` when you need different grouping.
 Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used.
 In Highcharts Stock charts, data grouping is done based on the pixel width of the horizontal axis, specifically through the `groupPixelWidth`. Essentially, each group on the chart holds a pixel width on the x-axis, The default value varies depending on the type of the series, because it is easier to fit more points in e.g. line chart compared to column. If the `groupPixelInterval` is set to 2 pixels, this means if your chart is displayed within 1000 pixels, it can hold up to 500 data points at once, organized according to the chart's range.
 
@@ -41,6 +42,21 @@ Highcharts.stockChart('container', {
 Here is an example of a difference between two series with the same data, but one of them is grouped:
 
 <iframe width="600" height="450" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-enabled" allowfullscreen></iframe>
+
+#### Series types grouped by default
+
+In `Highcharts.stockChart`, data grouping is applied by default to these series types:
+
+*   `line`, `spline`, `area`, `areaspline` and `arearange`
+*   `column` and `columnrange`
+*   `candlestick`, `hollowcandlestick`, `heikinashi`, `ohlc` and `hlc`
+*   Technical indicators
+
+Other series types, such as `scatter` and `bubble`, are not grouped by default and `flags` series are never grouped.
+
+#### Data grouping and the Boost module
+
+A series is not boosted while data grouping is enabled for it. Disabling data grouping only allows boosting for the series types supported by the [Boost module](https://www.highcharts.com/docs/advanced-chart-features/boost-module). For example, `candlestick` and `ohlc` series are not boosted, even with `dataGrouping.enabled: false`.
 
 #### Overview of the most important data grouping options
 
