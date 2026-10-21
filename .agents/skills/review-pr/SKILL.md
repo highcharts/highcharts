@@ -63,11 +63,11 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 
 ## Output format
 
-When step 6 finds a concrete interaction with target-branch changes, start the review summary with this author action:
+When step 6 finds an interaction with target-branch changes that requires fresh validation, start the review summary with this author action:
 
 > Please merge the latest <target branch> into this PR branch, fix <specific issue>, and rerun <named checks> before merging this PR.
 
-Replace every placeholder with the actual branch, issue and checks. For Copilot's fixed review template, put this action in the approval assessment explanation directly below the readiness heading. Preserve the merge request and named checks when shortening or aggregating the review, including re-reviews with no new inline findings. Then explain the interaction and the tested revisions. Completion requires the published summary to contain the merge request and named checks; a generic request for validation does not satisfy it.
+Use the actual branch and check names. Include the fix clause only for a confirmed defect, naming that defect. For Copilot's fixed review template, put this action in the approval assessment explanation directly below the readiness heading. Preserve the merge request and named checks when shortening or aggregating the review, including re-reviews with no new inline findings. Then explain the interaction and the tested revisions. The final summary must contain the merge request and named checks; a generic request for validation does not satisfy it.
 
 For each finding:
 
