@@ -1,8 +1,7 @@
-import { StockChart } from '@highcharts/react/Stock';
+import { StockChart, Highcharts } from '@highcharts/react/Stock';
 import {
     Title,
     Subtitle,
-    Highcharts,
     PlotOptions,
     Tooltip,
     XAxis
