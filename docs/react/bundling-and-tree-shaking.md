@@ -32,7 +32,6 @@ import { Exporting } from "@highcharts/react/modules/Exporting";
 If you use modules without a dedicated Highcharts React component, import only those you need using the `/es-modules/masters` path to use ESM:
 
 ```tsx
-import { Chart } from "@highcharts/react";
 import "highcharts/es-modules/masters/modules/annotations.src.js";
 import "highcharts/es-modules/masters/modules/pattern-fill.src.js";
 ```

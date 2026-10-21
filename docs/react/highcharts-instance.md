@@ -25,4 +25,4 @@ export default function MyChartComponent() {
 
 **Note:** Setting global options will affect all charts rendered using the Highcharts instance, so use this feature thoughtfully.
 
-Use this export rather than `import Highcharts from "highcharts"`. The `highcharts` package import is a separate instance, so options set on it, such as with `setOptions`, do not apply to the charts that Highcharts React renders.
+Use this export rather than `import Highcharts from "highcharts"`, which loads a second, separate copy of `Highcharts`. Anything applied to that copy, such as `setOptions`, plugins, or modules, does not affect the charts Highcharts React renders.
