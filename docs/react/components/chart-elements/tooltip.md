@@ -25,23 +25,4 @@ export default function TooltipChart() {
 
 The `Tooltip` component renders as HTML (via the [useHTML](https://api.highcharts.com/highcharts/tooltip.useHTML) option, defaulting to `true`). It accepts all [tooltip API options](https://api.highcharts.com/highcharts/tooltip) as props, with the [tooltip format](https://api.highcharts.com/highcharts/tooltip.format) passed as `children`.
 
-The children can also be JSX elements, which are converted to an HTML string. Text inside them is escaped, so write markup as elements rather than inside a string:
-
-```tsx
-import { Chart, Tooltip } from "@highcharts/react";
-import { LineSeries } from "@highcharts/react/series/Line";
-
-export default function JSXTooltipChart() {
-  return (
-    <Chart>
-      <Tooltip>
-        <b>{"{series.name}"}</b>
-        {": {point.y} USD"}
-      </Tooltip>
-      <LineSeries data={[3, 4, 1, 5, 2]} />
-    </Chart>
-  );
-}
-```
-
 **Note:** For a more structured tooltip, it's a good practice to use the `data-hc-option` attribute to map child elements to specific tooltip options. See the [Option binding](https://www.highcharts.com/docs/react/options-component-format#option-binding) documentation for more details.

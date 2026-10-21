@@ -25,7 +25,7 @@ export default function XAxisChart() {
 }
 ```
 
-The `XAxis` component accepts all [x-axis API options](https://api.highcharts.com/highcharts/xAxis) as props. The [axis title text](https://api.highcharts.com/highcharts/xAxis.title.text) can be passed as `children`, and the other [title options](https://api.highcharts.com/highcharts/xAxis.title) through the `title` prop.
+The `XAxis` component accepts all [x-axis API options](https://api.highcharts.com/highcharts/xAxis) as props. The [axis title text](https://api.highcharts.com/highcharts/xAxis.title.text) can be passed as `children`.
 
 A chart can have several x-axes, one `XAxis` component per axis. The first `XAxis` has index `0`, the second index `1`, and so on, and a series selects an axis by that index:
 

@@ -25,7 +25,7 @@ export default function YAxisChart() {
 }
 ```
 
-The `YAxis` component accepts all [y-axis API options](https://api.highcharts.com/highcharts/yAxis) as props. The [axis title text](https://api.highcharts.com/highcharts/yAxis.title.text) can be passed as `children`, and the other [title options](https://api.highcharts.com/highcharts/yAxis.title) through the `title` prop.
+The `YAxis` component accepts all [y-axis API options](https://api.highcharts.com/highcharts/yAxis) as props. The [axis title text](https://api.highcharts.com/highcharts/yAxis.title.text) can be passed as `children`.
 
 A chart can have several y-axes, one `YAxis` component per axis. The first `YAxis` has index `0`, the second index `1`, and so on, and a series selects an axis by that index:
 

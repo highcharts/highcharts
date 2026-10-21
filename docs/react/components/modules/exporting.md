@@ -25,5 +25,3 @@ export default function ExportingChart() {
 ```
 
 The `Exporting` component accepts all [exporting API options](https://api.highcharts.com/highcharts/exporting) as props.
-
-`Exporting` also loads the offline-exporting and export-data modules, so you do not import them yourself. See the [export module overview](https://www.highcharts.com/docs/export-module/export-module-overview) for what each module adds.
