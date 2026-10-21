@@ -58,7 +58,7 @@ const composedClasses: Array<(Function|GlobalsBase)> = [],
         showResetButton: false
     };
 
-let wheelTimer: number;
+const wheelTimers = new WeakMap<Chart, number>();
 // Accumulated sub-point pixel movement for ordinal wheel panning, so that
 // fractional point movements add up across notches instead of being lost to
 // rounding. Reset when the wheel gesture ends or reverses direction.
@@ -112,18 +112,25 @@ const getAxes = function (
 
 /** @internal */
 const scheduleDrop = function (chart: Chart): void {
+    const wheelTimer = wheelTimers.get(chart);
+
     if (defined(wheelTimer)) {
         internalClearTimeout(wheelTimer);
     }
 
     // Some time after the last mousewheel event, run drop. In case any of
     // the affected axes had `startOnTick` or `endOnTick`, they will be
-    // re-adjusted now.
-    wheelTimer = setTimeout((): void => {
-        // End of the gesture, start accumulating from scratch next time.
-        wheelPanRemainder = 0;
-        chart.pointer?.drop();
-    }, 400);
+    // re-adjusted now. Timers are per chart so a wheel on another chart
+    // does not cancel this one (#25099).
+    wheelTimers.set(
+        chart,
+        setTimeout((): void => {
+            // End of the gesture, start accumulating from scratch next time.
+            wheelPanRemainder = 0;
+            chart.pointer?.drop();
+            wheelTimers.delete(chart);
+        }, 400)
+    );
 };
 
 /** @internal */
