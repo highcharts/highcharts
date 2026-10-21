@@ -19,7 +19,7 @@ interface DataGetter {
 
 function generateChart(
     countries: Countries,
-    dataRecord: Record<number, Highcharts.PointOptionsType[]>,
+    dataRecord: Record<number, [string, number][]>,
     getData: DataGetter,
     locations: GameLocation[]
 ) {
@@ -147,7 +147,7 @@ function generateChart(
     });
 }
 
-const dataRecord = {
+const dataRecord: Record<number, [string, number][]> = {
     2024: [
         ['kr', 13],
         ['jp', 20],
@@ -158,7 +158,7 @@ const dataRecord = {
         ['gb', 14],
         ['us', 40],
         ['fr', 16]
-    ],
+    ] as [string, number][],
     2020: [
         ['kr', 6],
         ['jp', 27],
@@ -169,7 +169,7 @@ const dataRecord = {
         ['gb', 22],
         ['us', 39],
         ['fr', 10]
-    ],
+    ] as [string, number][],
     2016: [
         ['kr', 9],
         ['jp', 12],
@@ -180,7 +180,7 @@ const dataRecord = {
         ['gb', 27],
         ['us', 46],
         ['fr', 10]
-    ],
+    ] as [string, number][],
     2012: [
         ['kr', 13],
         ['jp', 7],
@@ -191,7 +191,7 @@ const dataRecord = {
         ['gb', 29],
         ['us', 47],
         ['fr', 11]
-    ],
+    ] as [string, number][],
     2008: [
         ['kr', 13],
         ['jp', 9],
@@ -202,7 +202,7 @@ const dataRecord = {
         ['gb', 19],
         ['us', 36],
         ['fr', 7]
-    ],
+    ] as [string, number][],
     2004: [
         ['kr', 9],
         ['jp', 17],
@@ -213,7 +213,7 @@ const dataRecord = {
         ['gb', 9],
         ['us', 37],
         ['fr', 11]
-    ],
+    ] as [string, number][],
     2000: [
         ['kr', 8],
         ['jp', 5],
@@ -224,7 +224,7 @@ const dataRecord = {
         ['gb', 11],
         ['us', 37],
         ['fr', 13]
-    ]
+    ] as [string, number][]
 };
 
 const countries: Countries = {
@@ -267,9 +267,9 @@ const countries: Countries = {
 };
 
 // Add upper case country code
-for (const [key, value] of Object.entries(countries)) {
-    value.ucCode = key.toUpperCase();
-}
+Object.keys(countries).forEach(key => {
+    countries[key].ucCode = key.toUpperCase();
+});
 
 
 const getData: DataGetter = data => data.map(point => ({

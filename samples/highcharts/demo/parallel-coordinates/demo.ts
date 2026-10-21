@@ -1,6 +1,6 @@
 (async () => {
 
-    const data = await fetch(
+    const data: number[][] = await fetch(
         'https://www.highcharts.com/samples/data/marathon.json'
     ).then(response => response.json());
 
@@ -104,10 +104,8 @@
             categories: ['Before', 'After']
         }],
         colors: ['rgba(11, 200, 200, 0.1)'],
-        series: data.map(function (set) {
-            return {
-                data: set
-            };
-        })
+        series: data.map(set => ({
+            data: set
+        }))
     } satisfies Highcharts.Options);
 })();

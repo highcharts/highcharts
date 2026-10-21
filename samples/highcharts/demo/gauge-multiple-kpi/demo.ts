@@ -1,8 +1,12 @@
 /**
  * In the chart render event, add icons on top of the circular shapes
  */
-function renderIcons() {
-
+declare namespace Highcharts {
+    interface Series {
+        icon?: SVGElement;
+    }
+}
+function renderIcons(this: Highcharts.Chart) {
     this.series.forEach(series => {
         if (!series.icon) {
             series.icon = this.renderer

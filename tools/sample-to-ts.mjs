@@ -262,7 +262,7 @@ async function verifySample(demoJsPath, tempRoot) {
             return {
                 status: 'fail',
                 relativePath: relativeJsPath,
-                reason: formatDiagnostics(diagnostics)
+                reason: formatDiagnostics(diagnostics, relativeTsPath)
             };
         }
 

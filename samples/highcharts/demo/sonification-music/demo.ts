@@ -85,10 +85,15 @@ function onRender(this: Highcharts.Chart): void {
 // ------------------------------------------------------------------------
 // Chart
 
-Highcharts.SVGRenderer.prototype.symbols.box = function (x, y, w, h) {
-    const x2 = w * 2;
-    return ['M', x, y, 'L', x + x2, y, 'L', x + x2, y + h, 'L', x, y + h, 'z'];
-};
+Highcharts.SVGRenderer.prototype.symbols.box = (
+    x: number, y: number, w: number, h: number
+): Highcharts.SVGPathArray => [
+    ['M', x, y],
+    ['L', x + w * 2, y],
+    ['L', x + w * 2, y + h],
+    ['L', x, y + h],
+    ['z']
+];
 
 // Allow input tags in axis labels
 Highcharts.AST.allowedTags.push('input');

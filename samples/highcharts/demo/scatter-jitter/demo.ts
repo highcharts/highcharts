@@ -1,5 +1,5 @@
 // Generate test data with discrete X values and continuous Y values.
-const getTestData = x => {
+const getTestData = (x: number): [number, number][] => {
     const off = 0.2 + 0.2 * Math.random();
     return new Array(200).fill(1).map(() => [
         x,

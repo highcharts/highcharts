@@ -1,4 +1,7 @@
-function createChart(data, weekdays) {
+function createChart(
+    data: Highcharts.PointOptionsObject[],
+    weekdays: string[]
+) {
     Highcharts.chart('container', {
         chart: {
             type: 'heatmap'

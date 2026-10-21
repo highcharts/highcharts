@@ -266,7 +266,7 @@ function update(sliderClicked: boolean): void {
     );
 
     const series = chart.series,
-        labels = chart.annotations[0].labels as Array<AnnotationLabel>,
+        labels = chart.annotations[0].labels,
         yearIndex = Number(input.value) - startYear,
         dataLength = (
             series[0].options as Highcharts.SeriesAreaOptions

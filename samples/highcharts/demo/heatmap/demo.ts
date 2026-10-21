@@ -1,6 +1,7 @@
 // Substring template helper for the responsive labels
-Highcharts.Templating.helpers.substr = (s, from, length) =>
-    s.substr(from, length);
+Highcharts.Templating.helpers.substr = (
+    s: string, from: number, length: number
+) => s.substr(from, length);
 
 // Create the chart
 Highcharts.chart('container', {

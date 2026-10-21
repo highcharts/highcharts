@@ -191,7 +191,7 @@ function linearRegression(
     }
 
     // Calculate least square variables
-    const math = (window as WindowWithMath).math;
+    const math = (window as unknown as WindowWithMath).math;
     const Xt = math.transpose(X);
     const XtX = math.multiply(X, Xt) as Matrix;
     const invXtX = math.inv(XtX);

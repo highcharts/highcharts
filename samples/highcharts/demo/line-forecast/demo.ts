@@ -2,7 +2,7 @@
     const json = await fetch(
             'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=64.128288&lon=-21.827774'
         ).then(response => response.json()),
-        data = json.properties.timeseries.slice(0, 10).map(el =>
+        data = json.properties.timeseries.slice(0, 10).map((el: any) =>
             [
                 new Date(el.time).getTime(),
                 el.data.instant.details.air_temperature

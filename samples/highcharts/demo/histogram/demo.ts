@@ -1,4 +1,4 @@
-function generateChart(data) {
+function generateChart(data: number[]): void {
     Highcharts.chart('container', {
         title: {
             text: 'Highcharts Histogram'

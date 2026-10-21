@@ -14,7 +14,11 @@ const text =
         'by her.',
     lines = text.replace(/[():'?0-9]+/g, '').split(/[,. ]+/g),
     data = lines.reduce((arr, word) => {
-        let obj = Highcharts.find(arr, obj => obj.name === word);
+        let obj: Highcharts.PointOptionsObject | undefined =
+            Highcharts.find(
+                arr,
+                (obj: Highcharts.PointOptionsObject) => obj.name === word
+            );
         if (obj) {
             obj.weight += 1;
         } else {
@@ -25,7 +29,7 @@ const text =
             arr.push(obj);
         }
         return arr;
-    }, []);
+    }, [] as Array<Highcharts.PointOptionsObject>);
 
 Highcharts.chart('container', {
     accessibility: {

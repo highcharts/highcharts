@@ -1,4 +1,4 @@
-function createChart(data) {
+function createChart(data: number[]) {
     Highcharts.chart('container', {
 
         title: {
@@ -252,15 +252,16 @@ const data: number[] = [
 
 // Plugin to add bell curve zones and labels
 (({ addEvent, Series }) => {
-    const decoratedSeries = [];
+    const decoratedSeries: Highcharts.Series[] = [];
     addEvent(Series.types.bellcurve, 'render', function () {
 
-        if (decoratedSeries.includes(this)) {
+        if (decoratedSeries.indexOf(this) !== -1) {
             return;
         }
 
         decoratedSeries.push(this);
-        const pointsInInterval = this.options.pointsInInterval,
+        const options = this.options as Highcharts.SeriesBellcurveOptions,
+            pointsInInterval = options.pointsInInterval,
             labels = ['3σ', '2σ', 'σ', 'μ', 'σ', '2σ', '3σ'],
             opacities = [0.1, 0.2, 0.6, 1, 1, 0.6, 0.2, 0.1];
 
@@ -274,7 +275,7 @@ const data: number[] = [
         this.update({
             zoneAxis: 'x',
             zones
-        });
+        } as Highcharts.SeriesBellcurveOptions);
 
         this.points
             .filter(
@@ -284,7 +285,7 @@ const data: number[] = [
                     dataLabels: {
                         enabled: true,
                         format: labels[i],
-                        overflow: 'none',
+                        overflow: 'allow',
                         crop: false,
                         y: -2,
                         style: {
