@@ -126,7 +126,7 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
 
 export interface MapPointSeriesDataLabelsOptions extends DataLabelOptions {
     style?: DataLabelOptions['style'] & {
-        /** @default ${palette.neutralColor100} */
+        /** @default 'var(--highcharts-neutral-color-100)' */
         color?: Required<DataLabelOptions>['style']['color'];
     };
 }
