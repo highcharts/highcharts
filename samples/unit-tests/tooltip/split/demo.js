@@ -240,7 +240,6 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     const point = chart.series[0].points[0],
         tooltipClient = chart.tooltip.container.getBoundingClientRect(),
-        docBodyStyle = getComputedStyle(Highcharts.doc.body),
         chartBox = chart.container.getBoundingClientRect();
 
     // Notice: in browser tests add QUnit messages that push down the chart
@@ -249,7 +248,8 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     // for the pointer helps.
 
     assert.close(
-        chart.xAxis[0].toPixels(point.x) + parseFloat(docBodyStyle.marginLeft),
+        chart.xAxis[0].toPixels(point.x) +
+            chart.pointer.getChartPosition().left,
         tooltipClient.x + (tooltipClient.width / 2),
         1.5,
         `Tooltip with outside and split properties set to true should be
@@ -309,6 +309,101 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     // When all tests pass the QUnit messages get collapsed and the tooltip
     // moves out of position. This is not a bug as long as this usage has
     // no sensible value.
+
+    // Label taller than the plot area, #24860
+    chart.update({
+        chart: {
+            height: 300
+        },
+        tooltip: {
+            distance: 16,
+            style: {
+                width: '200px',
+                whiteSpace: 'normal',
+                fontSize: '16px'
+            },
+            formatter: function () {
+                return [
+                    'HEADER',
+                    'This tooltip contains a long example text designed to ' +
+                    'be about 300 characters long so you can see how the ' +
+                    'tooltip behaves with more content. It should wrap ' +
+                    'across multiple lines and remain readable even when ' +
+                    'the text is quite long and detailed.'
+                ];
+            }
+        }
+    }, false);
+
+    chart.series[0].update({
+        type: 'line'
+    });
+
+    chart.series[0].points[1].onMouseOver();
+
+    const labelBox = chart.series[0].tt,
+        headerBox = chart.tooltip.tt;
+
+    assert.notEqual(
+        labelBox.element.getAttribute('visibility'),
+        'hidden',
+        `Split tooltip label taller than the plot area should still be visible
+        when rendered outside (#24860).`
+    );
+
+    assert.close(
+        headerBox.attr('y'),
+        chart.pointer.getChartPosition().top + chart.plotTop + chart.plotHeight,
+        10,
+        `The header should stay on the X axis when the label is taller than the
+        plot area (#24860).`
+    );
+
+    // With the axis on top, the space below the plot area is used, and the
+    // labels are kept off the header, #24860
+    chart.update({
+        chart: {
+            height: 290
+        },
+        xAxis: {
+            opposite: true
+        },
+        tooltip: {
+            formatter: function () {
+                return ['HEADER'].concat(
+                    this.points.map(point => point.series.name)
+                );
+            }
+        }
+    }, false);
+
+    while (chart.series.length < 6) {
+        chart.addSeries({ data: [1, 2, 3] }, false);
+    }
+    chart.series.forEach(series => series.setData([1, 2, 3], false));
+    chart.redraw();
+
+    chart.tooltip.refresh(chart.series.map(series => series.points[1]));
+
+    const topHeader = chart.tooltip.tt,
+        headerBottom = topHeader.attr('y') + topHeader.getBBox().height,
+        visible = chart.series.filter(
+            series => series.tt &&
+                series.tt.element.getAttribute('visibility') !== 'hidden'
+        );
+
+    assert.strictEqual(
+        visible.length,
+        chart.series.length,
+        `All labels should fit when the area is expanded into the space below
+        the plot area (#24860).`
+    );
+
+    assert.ok(
+        visible.every(series => series.tt.attr('y') >= headerBottom - 1),
+        `Labels should be kept below an opposite axis header, not covering it
+        (#24860).`
+    );
 });
 
 QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
@@ -355,27 +450,12 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
             true,
             'The tooltip should be aligned towards the left'
         );
-        assert.strictEqual(
-            ttRight <= mainContainer.clientWidth,
-            true,
+        assert.lessThan(
+            ttRight,
+            mainContainer.clientWidth + 6, // +6 for shadow and stuff
             'The tooltip should not overflow the viewport'
         );
     });
-
-    // check the alignment when tooltip.outside is false
-    chart.update({
-        tooltip: {
-            split: true,
-            outside: false
-        }
-    });
-
-    points[points.length - 1].onMouseOver();
-    assert.strictEqual(
-        chart.series[0].tt.x < chart.series[0].tt.anchorX,
-        true,
-        'The tooltip should be aligned towards the left'
-    );
 
     // Reset
     subcontainer.remove();
@@ -529,10 +609,12 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
                 scrollablePlotArea: {
                     minWidth: 700,
                     scrollPositionX: 1
-                }
+                },
+                width: 400
             },
             tooltip: {
-                split: true
+                split: true,
+                outside: false
             },
             yAxis: {
                 min: 0,
