@@ -113,14 +113,13 @@ export {
     DataProviderRegistry,
     DataTable,
     _Grid as Grid,
+    isHighContrastModeActive,
     _Options as Options,
     Pagination,
     SvgIcons,
     Table,
     Templating
 };
-
-export { isHighContrastModeActive };
 
 export const {
     defaultOptions,

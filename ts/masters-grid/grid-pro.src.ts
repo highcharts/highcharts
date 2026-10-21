@@ -196,6 +196,7 @@ export {
     DataTable,
     _Grid as Grid,
     HeaderCell,
+    isHighContrastModeActive,
     _Options as Options,
     Pagination,
     Popup,
@@ -204,8 +205,6 @@ export {
     TableCell,
     Templating
 };
-
-export { isHighContrastModeActive };
 
 export const {
     classNamePrefix,

@@ -161,19 +161,12 @@ const TimeDefaults: TimeBase.TimeOptions = {
     useUTC: void 0
 };
 
-/**
- * The time instance backing `Highcharts.dateFormat` and any formatting done
- * without a chart or grid owner.
- * @internal
- */
-const defaultTime = new Time(TimeDefaults, LangDefaults);
+export const defaultTime = new Time(TimeDefaults, LangDefaults);
 
 /* *
  *
  *  Default Export
  *
  * */
-
-export { defaultTime };
 
 export default TimeDefaults;
