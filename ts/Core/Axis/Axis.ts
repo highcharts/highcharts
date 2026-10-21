@@ -4461,8 +4461,8 @@ class Axis {
 
         // Destroy elements and clear reference
         ([
-            'axisLine', 'axisTitle', 'axisGroup',
-            'gridGroup', 'labelGroup', 'cross', 'scrollbar'
+            'axisLine', 'axisTitle', 'axisGroup', 'gridGroup', 'labelGroup',
+            'cross', 'plotBandClip', 'scrollbar'
         ] as const).forEach(
             (prop): void => {
                 this[prop] = this[prop]?.destroy();

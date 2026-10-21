@@ -709,7 +709,7 @@ export interface AxisLabelOptions {
      *         Red X axis labels
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor80} */
+        /** @default 'var(--highcharts-neutral-color-80)' */
         color?: CSSObject['color'];
 
         /** @default 'default' */
@@ -2111,7 +2111,7 @@ export interface AxisTitleOptions {
      *         Styled mode
      */
     style: CSSObject & {
-        /** @default ${palette.neutralColor60} */
+        /** @default 'var(--highcharts-neutral-color-60)' */
         color?: CSSObject['color'];
 
         /** @default '0.8em' */
