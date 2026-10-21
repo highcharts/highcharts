@@ -23,7 +23,7 @@ QUnit.test('Standalone navigator general tests', function (assert) {
 
     assert.strictEqual(
         navigator.navigator.chart.container.offsetHeight,
-        151,
+        180,
         'Container should leave room for the navigator, #21268, #24714.'
     );
 
@@ -39,7 +39,7 @@ QUnit.test('Standalone navigator general tests', function (assert) {
 
     assert.strictEqual(
         navigator.navigator.chart.container.offsetHeight,
-        201,
+        230,
         `Container should leave room for the navigator after update, #21268,
         #24714.`
     );

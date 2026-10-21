@@ -87,24 +87,26 @@ function getChartDefaults(
             chart: inverted ? {
                 width: 70,
                 height: void 0,
-                margin: [5, 0, 25, 0]
+                margin: [15, 0, 25, 0]
             } : {
                 width: void 0,
                 height: 70,
                 margin: [0, 5, 0, 5]
             }
         },
-        inverted ? {
+        {
             navigator: {
                 xAxis: {
                     labels: {
                         style: {
-                            width: (chartWidth - 30) + 'px'
+                            width: inverted ?
+                                (chartWidth - 30) + 'px' :
+                                void 0
                         }
                     }
                 }
             }
-        } : void 0
+        }
     );
 }
 

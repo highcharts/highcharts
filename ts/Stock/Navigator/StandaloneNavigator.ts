@@ -91,7 +91,7 @@ function getSizeOptions(
             options.chartOptions?.chart || {},
         chartHeight = height ?? (
             !inverted && options.height ?
-                options.height + 1 :
+                options.height + 30 :
                 void 0
         ),
         chartWidth = width ?? (
