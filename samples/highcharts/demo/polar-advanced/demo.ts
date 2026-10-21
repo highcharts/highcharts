@@ -16,7 +16,12 @@ const specialSeriesProps = {
 
 // A gradient background for the inner circle (aka pane.)
 const toggleableGradient: Highcharts.GradientColorObject = {
-    radialGradient: { cx: 1, cy: 0.25, r: 0.1 },
+    radialGradient: {
+        cx: '50%',
+        cy: '50%',
+        r: '30%',
+        gradientUnits: 'userSpaceOnUse'
+    },
     stops: [
         [0, '#1f1836'],
         [1, '#45445d']
