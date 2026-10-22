@@ -3,7 +3,7 @@ const dataURL = 'https://demo-live-data.highcharts.com/aapl-historical.json';
 /**
  * Load new data depending on the selected min and max
  */
-function afterSetExtremes(e) {
+function afterSetExtremes(e: Highcharts.AxisSetExtremesEventObject): void {
     const { chart } = e.target;
     chart.showLoading('Loading data from server...');
     fetch(`${dataURL}?start=${Math.round(e.min)}&end=${Math.round(e.max)}`)
@@ -79,7 +79,7 @@ fetch(dataURL)
 
             xAxis: {
                 events: {
-                    afterSetExtremes: afterSetExtremes
+                    afterSetExtremes
                 },
                 minRange: 3600 * 1000 // one hour
             },

@@ -94,6 +94,12 @@
             yAxis: 2
         }]
     }, function (chart) {
+        type IndicatorType = (
+            'abands' | 'bb' | 'dema' | 'ema' | 'ikh' | 'keltnerchannels' |
+            'linearregression' | 'pivotpoints' | 'pc' | 'priceenvelopes' |
+            'psar' | 'sma' | 'supertrend' | 'tema' | 'vbp' | 'vwap' | 'wma' |
+            'zigzag'
+        );
         document.getElementById(
             'overlays'
         ).addEventListener('change', function (e) {
@@ -103,7 +109,7 @@
             if (series) {
                 series.remove(false);
                 chart.addSeries({
-                    type: target.value,
+                    type: target.value as IndicatorType,
                     linkedTo: 'aapl',
                     id: 'overlay'
                 });
@@ -119,7 +125,7 @@
             if (series) {
                 series.remove(false);
                 chart.addSeries({
-                    type: target.value,
+                    type: target.value as IndicatorType,
                     linkedTo: 'aapl',
                     id: 'oscillator',
                     yAxis: 2

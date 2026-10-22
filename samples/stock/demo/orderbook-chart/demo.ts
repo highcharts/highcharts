@@ -107,11 +107,14 @@ Highcharts.chart('container', {
         pointFormat: '{series.name}: <b>{point.y:,.0f}</b>',
         shape: 'rect',
         positioner(labelWidth, _, point) {
-            const { plotX, plotY, h } = point,
+            const chartCenter = this.chart.chartWidth / 2,
+                { plotX, plotY } = point,
                 negative = plotX < this.chart.yAxis[0].pos;
 
             return {
-                x: negative ? plotX + h - labelWidth + 10 : plotX - h + 10,
+                x: negative ?
+                    chartCenter - labelWidth - 10 :
+                    chartCenter + 10,
                 y: plotY
             };
         }

@@ -8,7 +8,7 @@
      * Create the chart when all data is loaded
      * @return {undefined}
      */
-    function createChart(series) {
+    function createChart(series: Highcharts.UnknownSeriesOptions[]): void {
 
         Highcharts.stockChart('container', {
 
@@ -47,7 +47,7 @@
 
     }
 
-    const series = [];
+    const series: Highcharts.UnknownSeriesOptions[] = [];
     for (const name of names) {
         const response = await fetch(
             'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f0e61a1/' +

@@ -80,10 +80,15 @@ function typecheckSamples(argv = {}) {
                     options: parsed.options,
                     host
                 });
-                diagnostics = diagnostics.concat(
-                    ts.getPreEmitDiagnostics(program)
+                const demoDiagnostics = ts.getPreEmitDiagnostics(program);
+                diagnostics = diagnostics.concat(demoDiagnostics);
+                process.stdout.write(
+                    demoDiagnostics.some(
+                        diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
+                    ) ? 'F' : '.'
                 );
             }
+            process.stdout.write('\n');
         }
 
         if (diagnostics.length) {
@@ -94,6 +99,9 @@ function typecheckSamples(argv = {}) {
         }
     }
 
+    if (sampleCount) {
+        process.stdout.write('\n');
+    }
     if (errorCount) {
         throw new Error(`Sample typechecking failed with ${errorCount} errors.`);
     }
