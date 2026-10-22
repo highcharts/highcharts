@@ -118,15 +118,13 @@ QUnit.test('Mousewheel panning in x direction', assert => {
     controller.mouseWheel(200, 100, -10000);
     controller.mouseWheel(200, 100, { deltaY: 10000, shiftKey: true });
 
-    console.log(chart.xAxis[0]);
-
-    assert.close(
+    assert.strictEqual(
         chart.xAxis[0].min,
         -0.05,
         'It should be possible to wheel pan up to 0'
     );
 
-    assert.close(
+    assert.strictEqual(
         chart.xAxis[0].max,
         4.95,
         'Wheel panning should keep the zoomed range.'

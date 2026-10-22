@@ -203,7 +203,11 @@ const panBy = function (
         }
     }
 
-    const panEvent: AnyRecord = {
+    const panEvent: {
+        originalEvent: { chartX: number; chartY: number };
+        mouseWheel: boolean;
+        defaultPrevented?: boolean;
+    } = {
         originalEvent: { chartX: panX, chartY: howMuch },
         mouseWheel: true
     };
