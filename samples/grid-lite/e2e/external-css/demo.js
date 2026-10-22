@@ -6,6 +6,15 @@ const columns = {
 Grid.grid('container', {
     data: {
         columns
+    },
+    columnDefaults: {
+        filtering: {
+            enabled: true,
+            inline: true
+        }
+    },
+    pagination: {
+        enabled: true
     }
 });
 

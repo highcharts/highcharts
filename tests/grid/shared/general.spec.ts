@@ -105,7 +105,7 @@ test.describe('Page-wide CSS', () => {
             .toBeVisible();
     });
 
-    test('Element rules should not add borders or margin', async ({ page }) => {
+    test('Element rules should not style the grid', async ({ page }) => {
         for (const id of ['container', 'unthemed']) {
             const td = page.locator(`#${id} tbody td`).nth(1);
             const th = page.locator(`#${id} thead th`).first();
@@ -116,6 +116,23 @@ test.describe('Page-wide CSS', () => {
             await expect(page.locator(`#${id} table`))
                 .toHaveCSS('margin-bottom', '0px');
         }
+
+        const td = page.locator('#container tbody td').first();
+        await expect(td).not.toHaveCSS('vertical-align', 'bottom');
+        await expect(td).not.toHaveCSS('text-transform', 'uppercase');
+
+        // Controls and the Grid's own wrappers
+        for (const selector of ['.hcg-button', 'input', '.hcg-container']) {
+            const el = page.locator(`#container ${selector}`).first();
+
+            await expect(el).not.toHaveCSS('margin-top', /^[67]px$/);
+        }
+        await expect(page.locator('#container .hcg-button').first())
+            .not.toHaveCSS('min-width', '120px');
+        await expect(page.locator('#container input').first())
+            .toHaveCSS('box-shadow', 'none');
+        await expect(page.locator('#container .hcg-container'))
+            .toHaveCSS('padding-top', '0px');
 
         // Theme borders still apply
         await expect(page.locator('#container tbody td').first())

@@ -8,6 +8,20 @@ table {
 th,
 td {
     border: 2px solid red;
+    vertical-align: bottom;
+    text-transform: uppercase;
+}
+
+button,
+input {
+    margin: 6px;
+    min-width: 120px;
+    box-shadow: 0 0 10px red;
+}
+
+div {
+    margin: 7px;
+    padding: 7px;
 }
 
 /* A rule targeting grid cells on purpose should still apply */

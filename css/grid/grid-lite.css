@@ -9,6 +9,7 @@
  * See www.highcharts.com/license
  */
 
+@import url("./grid-element-reset.css");
 @import url("./grid-base-variables.css");
 @import url("./grid-popup-variables.css");
 @import url("./grid-menu-variables.css");
@@ -157,7 +158,6 @@
 /* <table> */
 .hcg-container .hcg-table {
     width: 100%;
-    margin: 0;
     border-collapse: separate;
     border-spacing: 0;
     overflow: hidden;
@@ -246,15 +246,6 @@
     > tbody > tr > :where(.hcg-cell):focus {
         outline: none;
     }
-}
-
-/*
- * Reset borders so that page-wide th and td rules don't leak into the table.
- * One class of specificity: beats bare element selectors, but not the theme
- * rules or cell class names.
- */
-.hcg-table > :where(thead, tbody, tfoot) > :where(tr) > :where(th, td) {
-    border: none;
 }
 
 /* ----------------------------------------------------------
