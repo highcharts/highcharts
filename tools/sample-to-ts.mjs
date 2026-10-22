@@ -51,6 +51,11 @@ const argv = Yargs(hideBin(process.argv))
     .strict()
     .parse();
 
+if (argv.validate) {
+    console.error('The --validate argument is obsolete. Use "gulp typecheck-samples" instead.');
+    process.exit(1);
+}
+
 function colorize(color, text) {
     if (!process.stdout.isTTY) {
         return text;

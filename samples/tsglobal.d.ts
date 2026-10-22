@@ -73,7 +73,7 @@ declare global {
             ): Highcharts.Series | null;
             getLastPlayedPoint(): Highcharts.Point | null;
             playNote(
-                instrument: string | any,
+                instrument: string,
                 options: any,
                 delayMs?: number
             ): void;
