@@ -269,19 +269,20 @@ const renderChart = (data: Array<Highcharts.PointOptionsObject>): void => {
 
     const getCSV = async (
         url: string
-    ): Promise<Array<Record<string, string>>> => {
+    ): Promise<Array<Record<string, number|string>>> => {
         const csv = await fetch(url).then(response => response.text());
 
-        const data = new Highcharts.Data({ csv }) as Highcharts.Data & {
-            columns: Array<Array<string>>;
-        };
+        const data = new Highcharts.Data({ csv });
 
         const arr = data.columns[0]
-            .map((_: string, i: number): Record<string, string> =>
-                data.columns.reduce((obj: Record<string, string>, column) => {
-                    obj[column[0]] = column[i];
-                    return obj;
-                }, {})
+            .map((_: string, i: number): Record<string, number|string> =>
+                data.columns.reduce(
+                    (obj: Record<string, number|string>, column) => {
+                        obj[column[0]] = column[i];
+                        return obj;
+                    },
+                    {}
+                )
             );
         return arr;
     };

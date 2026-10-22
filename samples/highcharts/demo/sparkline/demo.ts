@@ -6,7 +6,7 @@ declare namespace Highcharts {
     function SparkLine(
         a: string|HTMLElement,
         b?: any,
-        c?: (true|Highcharts.ChartCallbackFunction)
+        c?: any
     ): Highcharts.Chart;
     interface ChartOptions {
         skipClone?: boolean;

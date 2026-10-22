@@ -98,6 +98,10 @@ declare global {
                 callback?: Function
             ): void;
         }
+
+        interface Data {
+            columns: Array<Array<string|number>>;
+        }
         interface Point {
             colorValue?: number;
             dataLabels: Array<Highcharts.SVGElement>;

@@ -1,3 +1,10 @@
+declare namespace Highcharts {
+    interface Legend {
+        legendWidth: number;
+        legendHeight: number;
+    }
+}
+
 const data = JSON.parse(document.getElementById('data')?.innerHTML || '[]');
 const scoreData = data[3];
 const colors: Array<Highcharts.Color> =
@@ -168,21 +175,11 @@ Highcharts.chart('container', {
             render: function (this: Highcharts.Chart): void {
                 if (this.legend.group) {
 
-                    const
-                        { chartWidth, chartHeight, legend } = this as
-                            Highcharts.Chart & {
-                                legend: Highcharts.Legend & {
-                                    legendWidth: number;
-                                    legendHeight: number;
-                                    group: Highcharts.SVGElement;
-                                };
-                            },
+                    const { chartWidth, chartHeight, legend } = this,
                         { legendWidth, legendHeight } = legend;
 
                     legend.group.translate(
-                        (
-                            (chartWidth - legendWidth) / 2
-                        ),
+                        (chartWidth - legendWidth) / 2,
                         legendHeight * (chartWidth / chartHeight)
                     );
                 }
