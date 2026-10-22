@@ -106,16 +106,14 @@ test.describe('Page-wide CSS', () => {
     });
 
     test('Element rules should not style the grid', async ({ page }) => {
-        for (const id of ['container', 'unthemed']) {
-            const td = page.locator(`#${id} tbody td`).nth(1);
-            const th = page.locator(`#${id} thead th`).first();
+        const th = page.locator('#container thead th').first();
 
-            await expect(td).toHaveCSS('border-left-width', '0px');
-            await expect(th).toHaveCSS('border-top-width', '0px');
-            await expect(th).toHaveCSS('border-left-width', '0px');
-            await expect(page.locator(`#${id} table`))
-                .toHaveCSS('margin-bottom', '0px');
-        }
+        await expect(page.locator('#container tbody td').nth(1))
+            .toHaveCSS('border-left-width', '0px');
+        await expect(th).toHaveCSS('border-top-width', '0px');
+        await expect(th).toHaveCSS('border-left-width', '0px');
+        await expect(page.locator('#container table'))
+            .toHaveCSS('margin-bottom', '0px');
 
         const td = page.locator('#container tbody td').first();
         await expect(td).not.toHaveCSS('vertical-align', 'bottom');
@@ -145,5 +143,7 @@ test.describe('Page-wide CSS', () => {
         await expect(page.locator('#unthemed .hcg-themed')).toHaveCount(0);
         await expect(page.locator('#unthemed tbody td').first())
             .toHaveCSS('border-top-width', '3px');
+        await expect(page.locator('#unthemed tbody td').first())
+            .toHaveCSS('text-align', 'right');
     });
 });

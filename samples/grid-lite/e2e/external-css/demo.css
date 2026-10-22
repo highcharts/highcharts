@@ -24,7 +24,14 @@ div {
     padding: 7px;
 }
 
-/* A rule targeting grid cells on purpose should still apply */
+/* Rules targeting grid cells on purpose should still apply */
 .my-cell {
     border-top: 3px solid green;
+}
+
+/* Layered, like Tailwind utilities */
+@layer utilities {
+    .my-cell {
+        text-align: right;
+    }
 }

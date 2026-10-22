@@ -3,10 +3,11 @@
  * or `button { margin: … }`, would otherwise set on the Grid's own elements.
  * One class of specificity, and imported before all other Grid CSS: beats
  * bare element selectors, but not the Grid's own rules, the theme or class
- * names.
+ * names. Only when themed, as these unlayered rules would also override
+ * layered utilities (e.g. Tailwind) used with `theme: ''`.
  */
-.hcg-container,
-.hcg-container :where(
+.hcg-themed,
+.hcg-themed :where(
     table, th, td, div, span, p, label, ul, li,
     button, input, select, textarea, svg
 ) {
@@ -27,7 +28,7 @@
 }
 
 /* Not cells: revert drops their default padding (a presentational hint) */
-.hcg-container,
-.hcg-container :where(div, span, p, label, ul, li) {
+.hcg-themed,
+.hcg-themed :where(div, span, p, label, ul, li) {
     padding: revert;
 }
