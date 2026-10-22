@@ -1,0 +1,16 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+/* Page-wide rules that should not affect the grid */
+table {
+    margin-bottom: 40px;
+}
+
+th,
+td {
+    border: 2px solid red;
+}
+
+/* A rule targeting grid cells on purpose should still apply */
+.my-cell {
+    border-top: 3px solid green;
+}

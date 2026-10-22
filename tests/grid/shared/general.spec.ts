@@ -97,3 +97,35 @@ test.describe('Rendering size', () => {
     });
 });
 
+
+test.describe('Page-wide CSS', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/external-css');
+        await expect(page.locator('#unthemed tbody td').first())
+            .toBeVisible();
+    });
+
+    test('Element rules should not add borders or margin', async ({ page }) => {
+        for (const id of ['container', 'unthemed']) {
+            const td = page.locator(`#${id} tbody td`).nth(1);
+            const th = page.locator(`#${id} thead th`).first();
+
+            await expect(td).toHaveCSS('border-left-width', '0px');
+            await expect(th).toHaveCSS('border-top-width', '0px');
+            await expect(th).toHaveCSS('border-left-width', '0px');
+            await expect(page.locator(`#${id} table`))
+                .toHaveCSS('margin-bottom', '0px');
+        }
+
+        // Theme borders still apply
+        await expect(page.locator('#container tbody td').first())
+            .toHaveCSS('border-right-width', '1px');
+        await expect(page.locator('#container tbody td').first())
+            .toHaveCSS('border-top-width', '0px');
+    });
+
+    test('Cell class name rules should still apply', async ({ page }) => {
+        await expect(page.locator('#unthemed tbody td').first())
+            .toHaveCSS('border-top-width', '3px');
+    });
+});
