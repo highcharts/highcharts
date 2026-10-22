@@ -13,11 +13,14 @@ import { GIFEncoder, applyPalette, quantize } from 'gifenc';
 import {
     appendError,
     readReference,
+    readReferenceFailures,
     recordCandidateResult,
-    writeReference
+    writeReference,
+    writeUncomparedCandidate
 } from './visual-results.ts';
 import { selectVisualSamples } from './visual-samples.ts';
 import { captureVisualSVG } from './visual-capture.ts';
+import { injectVisualSampleStyles } from './visual-styles.ts';
 import { setVisualTime } from './visual-clock.ts';
 import {
     compareVisualSVGs,
@@ -74,6 +77,7 @@ function throwRuntimeError(
 
 const root = process.cwd();
 const referenceMode = process.env.VISUAL_TEST_REFERENCE === '1';
+const referenceFailures = referenceMode ? [] : readReferenceFailures(root);
 const runtimeErrorMode = process.env.VISUAL_TEST_RUNTIME_ERROR;
 
 const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
@@ -108,7 +112,13 @@ function createAnimatedGif(
     return gif.bytes();
 }
 
-test.describe('Visual tests', () => {
+const samples = selectVisualSamples(root, {
+    manifest: process.env.VISUAL_TEST_MANIFEST,
+    filter: process.env.VISUAL_TEST_PATH
+});
+const batchCount = Number(process.env.VISUAL_TEST_BATCHES || 1);
+
+function defineBatch(batch: number): void {
     test.describe.configure({
         mode: 'default',
         timeout: 15_000,
@@ -187,13 +197,6 @@ test.describe('Visual tests', () => {
         if (!page) {
             return;
         }
-        await page.evaluate(() => {
-            const elementsToRemove = document.querySelectorAll(
-                '#visual-test-script, #visual-test-styles'
-            );
-            elementsToRemove.forEach((el) => el.remove());
-        });
-
         await page.evaluate(() => window.HCVisualSetup?.afterSample());
     });
 
@@ -208,15 +211,16 @@ test.describe('Visual tests', () => {
         }
     });
 
-    const samples = selectVisualSamples(root, {
-        manifest: process.env.VISUAL_TEST_MANIFEST,
-        filter: process.env.VISUAL_TEST_PATH
-    });
-
-    for (const { id: visualSamplePath, path: samplePath } of samples) {
+    const batchSamples = samples.filter(
+        (_, index) => index % batchCount === batch
+    );
+    for (const { id: visualSamplePath, path: samplePath } of batchSamples) {
         // The visual reporter validates outcomes across all samples.
         // eslint-disable-next-line playwright/expect-expect
         test(`${visualSamplePath}`, async () => {
+            const referenceFailure = referenceFailures.find(failure =>
+                failure.sample === visualSamplePath
+            );
             const sample = getSample(
                 dirname(samplePath), true, basename(samplePath)
             );
@@ -240,7 +244,7 @@ test.describe('Visual tests', () => {
                     dashboardPage ??= await createVisualPage(true);
                     page = dashboardPage;
                 } else {
-                    page = chartPage;
+                    page = chartPage ??= await createVisualPage(false);
                 }
                 if (!page) {
                     throw new Error('Page not initialized');
@@ -277,31 +281,11 @@ test.describe('Visual tests', () => {
                 );
                 const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
 
-                if (isStyledMode) {
-                    // Add highcharts.css
-                    const highchartsCSS = await page.evaluate(() => {
-                        return (window as any).highchartsCSS || '';
-                    });
-
-                    if (highchartsCSS) {
-                        const styleHandle = await page.addStyleTag({
-                            content: highchartsCSS
-                        });
-                        await styleHandle.evaluate(
-                            (el: HTMLStyleElement) => el.id = 'highcharts.css'
-                        );
-                    }
-                }
-                if (sample.css) {
-                    // Use the styled mode ID for SVG injection.
-                    const styleHandle = await page.addStyleTag({
-                        content: sample.css
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement, id: string) => el.id = id,
-                        isStyledMode ? 'demo.css' : 'visual-test-styles'
-                    );
-                }
+                await injectVisualSampleStyles(
+                    page,
+                    isStyledMode,
+                    sample.css
+                );
 
                 // Load script with timeout handling
                 page.on('pageerror', pageErrorListener);
@@ -361,22 +345,38 @@ test.describe('Visual tests', () => {
                     );
                 }
 
+                const captureStart = performance.now();
                 const candidateSVG = await captureVisualSVG(page);
+                test.info().annotations.push({
+                    type: 'visual-capture-ms',
+                    description: String(performance.now() - captureStart)
+                });
 
-                if (referenceMode) {
+                if (referenceMode || referenceFailure) {
                     const runtimeError = pageError ?? await page.evaluate(() =>
                         (window as VisualWindow)
                             .visualTestUnhandledRejection
                     );
                     throwRuntimeError(runtimeError);
-                    writeReference(root, visualSamplePath, candidateSVG);
+                    if (referenceMode) {
+                        writeReference(root, visualSamplePath, candidateSVG);
+                    } else {
+                        writeUncomparedCandidate(
+                            root, visualSamplePath, candidateSVG
+                        );
+                    }
                 } else {
                     const referenceSVG = readReference(root, visualSamplePath);
+                    const comparisonStart = performance.now();
                     const comparison = await compareVisualSVGs(
                         page,
                         referenceSVG,
                         candidateSVG
                     );
+                    test.info().annotations.push({
+                        type: 'visual-comparison-ms',
+                        description: String(performance.now() - comparisonStart)
+                    });
 
                     const runtimeError = pageError ?? await page.evaluate(() =>
                         (window as VisualWindow)
@@ -447,6 +447,16 @@ test.describe('Visual tests', () => {
                     );
                 }
                 if (sampleFailed && page) {
+                    await page.evaluate(() =>
+                        window.HCVisualSetup.afterSample()
+                    );
+                    await page.close();
+                    if (page === chartPage) {
+                        chartPage = undefined;
+                    } else {
+                        dashboardPage = undefined;
+                    }
+                    page = undefined;
                     // Successful cleanup distinguishes a sample error from
                     // a browser or environment failure that prevents cleanup.
                     test.info().annotations.push({
@@ -454,6 +464,15 @@ test.describe('Visual tests', () => {
                     });
                 }
             }
+        });
+    }
+}
+
+test.describe('Visual tests', () => {
+    test.describe.configure({ mode: 'parallel' });
+    for (let batch = 0; batch < Math.min(batchCount, samples.length); batch++) {
+        test.describe(`Batch ${batch + 1}`, () => {
+            defineBatch(batch);
         });
     }
 });

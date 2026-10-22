@@ -5,7 +5,7 @@ type Athlete = {
     continent: string;
 };
 
-const series: Highcharts.SeriesScatterOptions[] = [{
+const series: Highcharts.SeriesOptionsRegistry['SeriesScatterOptions'][] = [{
     name: 'Triathlon',
     type: 'scatter',
     id: 'triathlon',

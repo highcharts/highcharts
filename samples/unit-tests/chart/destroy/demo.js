@@ -156,3 +156,38 @@ QUnit.test('Destroy in own callback and recreate (#3600)', function (assert) {
         hovers over points during destroy #20560.`
     );
 });
+
+QUnit.test(
+    'Destroy during a container mouse event (#25305)',
+    function (assert) {
+        ['mousedown', 'mousemove', 'click'].forEach(type => {
+            const chart = Highcharts.chart('container', {
+                    series: [{
+                        data: [1, 2, 3]
+                    }]
+                }),
+                destroyChart = () => chart.destroy();
+
+            let error;
+            const onError = e => {
+                error = e.message;
+            };
+
+            document.body.addEventListener(type, destroyChart, true);
+            window.addEventListener('error', onError);
+
+            chart.container.querySelector('svg').dispatchEvent(
+                new MouseEvent(type, { bubbles: true })
+            );
+
+            window.removeEventListener('error', onError);
+            document.body.removeEventListener(type, destroyChart, true);
+
+            assert.notOk(
+                error,
+                `The container's ${type} handler should not run after the ` +
+                'chart is destroyed earlier in the same event dispatch'
+            );
+        });
+    }
+);

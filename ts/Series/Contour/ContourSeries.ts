@@ -10,7 +10,6 @@
  *
  * */
 
-/// <reference types="@webgpu/types" />
 'use strict';
 
 
@@ -48,11 +47,33 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+/*
+ * TypeScript 6 ships WebGPU interfaces in `lib.dom`, but not the usage flag
+ * namespaces.
+ */
+declare const GPUBufferUsage: {
+    readonly COPY_DST: GPUFlagsConstant;
+    readonly INDEX: GPUFlagsConstant;
+    readonly STORAGE: GPUFlagsConstant;
+    readonly UNIFORM: GPUFlagsConstant;
+    readonly VERTEX: GPUFlagsConstant;
+};
+declare const GPUTextureUsage: {
+    readonly COPY_SRC: GPUFlagsConstant;
+    readonly RENDER_ATTACHMENT: GPUFlagsConstant;
+};
+
+
+/* *
+ *
  *  Class
  *
  * */
 
-/** @internal */
 export default class ContourSeries extends ScatterSeries {
 
     /* *
@@ -93,14 +114,19 @@ export default class ContourSeries extends ScatterSeries {
     /** @internal */
     public renderFrame?: () => void;
 
+    /** @internal */
     private foreignObject?: SVGForeignObjectElement;
 
+    /** @internal */
     private canvas?: HTMLCanvasElement;
 
+    /** @internal */
     private adapter?: GPUAdapter | null;
 
+    /** @internal */
     private device?: GPUDevice;
 
+    /** @internal */
     private buffers?: Record<string, GPUBuffer>;
 
     /** @internal */
@@ -192,6 +218,7 @@ export default class ContourSeries extends ScatterSeries {
         }
     }
 
+    /** @internal */
     public override drawPoints(): void {
         const { group } = this;
         if (!group) {
@@ -248,7 +275,8 @@ export default class ContourSeries extends ScatterSeries {
             renderer = chart.renderer,
             canvas = series.canvas as HTMLCanvasElement,
             gpu = navigator.gpu,
-            context = series.context = canvas.getContext('webgpu');
+            context = series.context =
+                canvas.getContext('webgpu') as GPUCanvasContext | null;
 
         if (!gpu || !context) {
             error(37, false, chart);
@@ -361,16 +389,8 @@ export default class ContourSeries extends ScatterSeries {
                     isInvertedUniform: isInvertedUniformBuffer
                 } = buffers;
 
-                device.queue.writeBuffer(
-                    vertexBuffer,
-                    0,
-                    vertices as GPUAllowSharedBufferSource
-                );
-                device.queue.writeBuffer(
-                    indexBuffer,
-                    0,
-                    indices as GPUAllowSharedBufferSource
-                );
+                device.queue.writeBuffer(vertexBuffer, 0, vertices);
+                device.queue.writeBuffer(indexBuffer, 0, indices);
 
                 const vertexBufferLayout: GPUVertexBufferLayout = {
                     arrayStride: 12,
@@ -674,17 +694,13 @@ export default class ContourSeries extends ScatterSeries {
             const { array, length } = this.getColorAxisStopsData();
 
             // Write the stops to the buffer
-            this.device.queue.writeBuffer(
-                stopsBuffer,
-                0,
-                array as GPUAllowSharedBufferSource
-            );
+            this.device.queue.writeBuffer(stopsBuffer, 0, array);
 
             // Write the count to the buffer
             this.device.queue.writeBuffer(
                 countBuffer,
                 0,
-                new Uint32Array([length]) as GPUAllowSharedBufferSource
+                new Uint32Array([length])
             );
 
             if (renderFrame) {
@@ -713,6 +729,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour interval from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourInterval(): number {
         const interval = this.options.contourInterval ?? ((): number => {
@@ -732,6 +749,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour offset from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourOffset(): number {
         const offset = this.options.contourOffset ?? 0;
@@ -744,6 +762,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the smooth coloring from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getSmoothColoring(): number {
         return this.options.smoothColoring ? 1 : 0;
@@ -752,6 +771,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the lineWidth from the series options, which controls the
      * visibility of contour lines, in format of the WebGPU uniform.
+     * @internal
      */
     private getLineWidth(): number {
         return this.userOptions.lineWidth ?? 1;
@@ -760,6 +780,7 @@ export default class ContourSeries extends ScatterSeries {
     /**
      * Returns the contour line color from the series options in format of the
      * WebGPU uniform.
+     * @internal
      */
     private getContourLineColor(): number[] {
         const { lineColor = '#000000' } = this.options;
@@ -768,6 +789,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the extremes of the x and y axes in format of the WebGPU uniform.
+     * @internal
      */
     private getFrameExtremes(): number[] {
         const { xAxis, yAxis } = this;
@@ -782,6 +804,7 @@ export default class ContourSeries extends ScatterSeries {
 
     /**
      * Returns the extremes of the data in format of the WebGPU uniform.
+     * @internal
      */
     private getValueAxisExtremes(): number[] {
         const series = this;
@@ -811,6 +834,7 @@ export default class ContourSeries extends ScatterSeries {
         return [min || 0, max || 0];
     }
 
+    /** @internal */
     private getColorAxisStopsData(): { array: Float32Array, length: number } {
         const colorAxisStops = this.colorAxis?.stops;
 
@@ -870,7 +894,12 @@ extend(ContourSeries.prototype, {
     invertible: false
 });
 
-// Registry
+/* *
+ *
+ *  Registry
+ *
+ * */
+
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         contour: typeof ContourSeries;
