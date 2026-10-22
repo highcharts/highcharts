@@ -10,9 +10,11 @@ Grid.grid('container', {
 });
 
 Grid.grid('unthemed', {
-    theme: '',
     data: {
         columns
+    },
+    rendering: {
+        theme: ''
     },
     columnDefaults: {
         cells: {

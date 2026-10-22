@@ -125,6 +125,7 @@ test.describe('Page-wide CSS', () => {
     });
 
     test('Cell class name rules should still apply', async ({ page }) => {
+        await expect(page.locator('#unthemed .hcg-themed')).toHaveCount(0);
         await expect(page.locator('#unthemed tbody td').first())
             .toHaveCSS('border-top-width', '3px');
     });
