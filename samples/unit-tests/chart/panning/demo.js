@@ -927,3 +927,97 @@ QUnit.test('The chart.events.pan event (#10833)', function (assert) {
         'Calling preventDefault should leave the extremes unchanged'
     );
 });
+
+QUnit.test('Panning y-axes in multiple panes (#21809)', function (assert) {
+    const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        chart = Highcharts.chart('container', {
+            chart: {
+                panning: {
+                    enabled: true,
+                    type: 'xy'
+                }
+            },
+            yAxis: [{
+                height: '50%',
+                max: 6
+            }, {
+                top: '50%',
+                height: '50%',
+                max: 6
+            }],
+            series: [{
+                data
+            }, {
+                data,
+                yAxis: 1
+            }]
+        }),
+        controller = new TestController(chart),
+        [top, bottom] = chart.yAxis,
+        x = chart.plotLeft + chart.plotWidth / 2,
+        initialMax = top.max,
+        panIn = axis => {
+            const y = axis.pos + axis.len / 2;
+            controller.pan([x, y], [x, y + 50]);
+        };
+
+    panIn(bottom);
+
+    assert.deepEqual(
+        [top.max, bottom.max > initialMax],
+        [initialMax, true],
+        'Dragging the bottom pane should pan only the bottom y-axis'
+    );
+
+    const bottomMax = bottom.max;
+
+    panIn(top);
+
+    assert.deepEqual(
+        [top.max > initialMax, bottom.max],
+        [true, bottomMax],
+        'Dragging the top pane should pan only the top y-axis'
+    );
+
+    const topMax = top.max;
+
+    controller.pan([x, top.pos + top.len - 10], [x, bottom.pos + 40]);
+
+    assert.deepEqual(
+        [top.max > topMax, bottom.max],
+        [true, bottomMax],
+        'Dragging into another pane should keep panning the initial pane'
+    );
+
+    let extremes = [top.max, bottom.max];
+
+    bottom.update({ panningEnabled: false });
+    panIn(bottom);
+
+    assert.deepEqual(
+        [top.max, bottom.max],
+        extremes,
+        'Updating panningEnabled to false should disable panning of the pane'
+    );
+
+    top.update({ height: '40%' }, false);
+    top.setExtremes(2, 6, false);
+    bottom.update({ top: '60%', height: '40%' });
+
+    const y = top.pos + top.len - 30;
+
+    extremes = [top.min, top.max];
+
+    controller.setPosition(x, y);
+    controller.mouseDown();
+    controller.moveTo(x, y + 50);
+    controller.moveTo(x, y);
+
+    assert.deepEqual(
+        [top.min, top.max].map(Math.round),
+        extremes,
+        'Dragging into the pane gap and back should restore the extremes'
+    );
+
+    controller.mouseUp();
+});
