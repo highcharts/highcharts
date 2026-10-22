@@ -43,8 +43,8 @@ import type TreegraphSeriesOptions from './TreegraphSeriesOptions';
  *               minSize, navigatorOptions, pointRange, allowTraversingTree,
  *               alternateStartingDirection, borderRadius, breadcrumbs,
  *               interactByLeaf, layoutStartingDirection, levelIsConstant,
- *               lineWidth, negativeColor, nodes, sortIndex, zoneAxis,
- *               zones, cluster
+ *               lineWidth, negativeColor, nodes, nodeSizeBy, sortIndex,
+ *               zoneAxis, zones, cluster
  *
  * @product      highcharts
  * @since        10.3.0
