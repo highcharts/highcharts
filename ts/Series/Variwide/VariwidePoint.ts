@@ -35,6 +35,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         crosshairWidth?: VariwidePoint['crosshairWidth'];
