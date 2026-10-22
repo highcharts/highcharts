@@ -32,7 +32,6 @@ import Globals from '../Globals.js';
 
 const LONG_PRESS_MS = 500;
 const MOVE_THRESHOLD_PX = 10;
-const MOVE_THRESHOLD_SQ = MOVE_THRESHOLD_PX * MOVE_THRESHOLD_PX;
 const CONTROLS = 'input,select,textarea,button,option';
 
 const { win } = Globals;
@@ -154,7 +153,7 @@ export function addLongPressContextMenu(element: HTMLElement): () => void {
         const dx = touch.clientX - state.clientX;
         const dy = touch.clientY - state.clientY;
 
-        if ((dx * dx + dy * dy) > MOVE_THRESHOLD_SQ) {
+        if ((dx * dx + dy * dy) > MOVE_THRESHOLD_PX * MOVE_THRESHOLD_PX) {
             release();
         }
     };

@@ -25,8 +25,7 @@
  *
  * */
 
-import { error } from '../../../Core/Utilities.js';
-import { setHTMLContent } from '../GridUtils.js';
+import { setHTMLContent, warnOnce } from '../GridUtils.js';
 import { defined, isString } from '../../../Shared/Utilities.js';
 
 /* *
@@ -58,8 +57,6 @@ export type GridIconName = (
 /**
  * The registry of all Grid Svg icons with their SVG path data.
  */
-export const warnedIconNames = new Set<string>();
-
 const icons: Record<GridIconName, SVGDefinition> = {
     filter: {
         width: 12,
@@ -396,26 +393,6 @@ export function getIconFromRegistry(
 }
 
 /**
- * Warns about an icon name no registry knows, once per name, since icons are
- * created on every render.
- *
- * @param name
- * The name that was asked for.
- */
-function warnUnknownIcon(name: string): void {
-    if (warnedIconNames.has(name)) {
-        return;
-    }
-    warnedIconNames.add(name);
-
-    error(
-        `Grid: Unknown icon "${name}", falling back to a placeholder. Add it ` +
-        'through the `rendering.icons` option, or use a built-in name.',
-        false
-    );
-}
-
-/**
  * Creates an SVG icon element from the SvgIcons registry or a custom
  * registry. When `customIcons` is provided, `name` can be any registered
  * name (built-in or custom). When omitted, only built-in `GridIconName`
@@ -441,7 +418,12 @@ export function createGridIcon(
         // A placeholder rather than nothing, so that the button keeps its
         // layout, but said out loud: a silent stand-in reads as the icon the
         // caller asked for.
-        warnUnknownIcon(name);
+        warnOnce(
+            'icon:' + name,
+            `Grid: Unknown icon "${name}", falling back to a placeholder. ` +
+            'Add it through the `rendering.icons` option, or use a built-in ' +
+            'name.'
+        );
         return createSvgFromDefinition(icons.filter);
     }
 

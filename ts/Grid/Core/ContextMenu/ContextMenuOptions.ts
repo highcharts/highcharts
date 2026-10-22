@@ -35,12 +35,6 @@ import type {
  * */
 
 /**
- * Known ids with support for custom ones.
- */
-type MenuId<T> =
-    keyof T extends never ? (string & {}) : keyof T | (string & {});
-
-/**
  * Registry of menu item ids known at compile time. Features extend it through
  * module augmentation, so that their ids autocomplete while custom ids stay
  * allowed.
@@ -48,9 +42,13 @@ type MenuId<T> =
 export interface MenuItemIdRegistry {}
 
 /**
- * Id of a registered menu item.
+ * Id of a registered menu item. The registered ids autocomplete, while any
+ * other string stays allowed, which is what `string & {}` keeps from
+ * swallowing them.
  */
-export type MenuItemId = MenuId<MenuItemIdRegistry>;
+export type MenuItemId = keyof MenuItemIdRegistry extends never ?
+    (string & {}) :
+    keyof MenuItemIdRegistry | (string & {});
 
 /**
  * A menu item value that is either given up front or derived from the context

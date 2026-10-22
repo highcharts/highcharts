@@ -64,7 +64,7 @@ function closeSiblingSubMenus(menu: Menu, activeButton: MenuButton): void {
  * @param menu
  * Current menu in the chain.
  */
-export function closeMenuTree(menu: Menu): void {
+function closeMenuTree(menu: Menu): void {
     let currentMenu: Menu | undefined = menu;
 
     while (currentMenu) {
@@ -178,7 +178,7 @@ export function renderMenuItems(
 /**
  * One nested level of a context menu.
  */
-export class ContextSubMenu extends Menu {
+class ContextSubMenu extends Menu {
 
     /* *
      *

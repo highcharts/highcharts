@@ -145,39 +145,6 @@ export interface MenuContext<T extends MenuTarget = MenuTarget> {
  * */
 
 /**
- * Returns what a menu item callback receives: whatever the target was opened
- * on. A variant carries it as `cell` when it is a cell of some kind, and as
- * `element` when it is a plain node, which is what `MenuTargetObject` reads.
- *
- * @param target
- * What the menu was opened on.
- *
- * @return
- * The target object.
- */
-export function getMenuTargetObject<T extends MenuTarget>(
-    target: T
-): MenuTargetObject<T> {
-    return (
-        'cell' in target ? target.cell : target.element
-    ) as MenuTargetObject<T>;
-}
-
-/**
- * Returns the element a target occupies, which is the cell's own element when
- * the target carries a cell, and the node itself when it carries one.
- *
- * @param target
- * What the menu was opened on.
- *
- * @return
- * The element.
- */
-export function getMenuTargetElement(target: MenuTarget): HTMLElement {
-    return 'cell' in target ? target.cell.htmlElement : target.element;
-}
-
-/**
  * Builds the context of a menu opened on a table body cell.
  *
  * @param cell

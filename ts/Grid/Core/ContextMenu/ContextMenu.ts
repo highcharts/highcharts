@@ -204,7 +204,7 @@ class ContextMenu extends Menu {
      * @param clientY
      * Viewport Y coordinate to anchor at.
      */
-    public showAt(
+    private showAt(
         context: MenuContext,
         items: ResolvedMenuItem[],
         clientX: number,

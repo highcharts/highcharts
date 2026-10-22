@@ -32,18 +32,6 @@ import { fireEvent } from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
 
-/**
- * Whether the browser can render an element in the top layer. Popover is
- * Baseline since January 2025, so anything older falls back to the popup
- * being laid out, and clipped, inside the grid container.
- *
- * @return
- * True when the Popover API is available.
- */
-function supportsPopover(): boolean {
-    return typeof HTMLElement.prototype.showPopover === 'function';
-}
-
 
 /* *
  *
@@ -276,7 +264,11 @@ export abstract class Popup {
      * True when a popover is used.
      */
     protected get usesPopover(): boolean {
-        return supportsPopover() && this.prefersPopover;
+        // Popover is Baseline since January 2025, so anything older falls
+        // back to the popup being laid out, and clipped, inside the grid
+        // container.
+        return typeof HTMLElement.prototype.showPopover === 'function' &&
+            this.prefersPopover;
     }
 
     /**

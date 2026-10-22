@@ -31,7 +31,7 @@ import type {
     MenuTargetType
 } from './ContextMenuTarget';
 
-import { error } from '../../../Core/Utilities.js';
+import { warnOnce } from '../GridUtils.js';
 
 /* *
  *
@@ -42,10 +42,6 @@ import { error } from '../../../Core/Utilities.js';
 const definitions: Record<string, MenuItemDefinition> = {};
 
 const defaultIds: Partial<Record<MenuTargetType, MenuItemId[]>> = {};
-
-const warnedIds = new Set<string>();
-
-const defaultTargets: MenuTargetType[] = ['cell'];
 
 /* *
  *
@@ -81,16 +77,44 @@ export function registerMenuItem<T extends MenuTarget = CellMenuTarget>(
 }
 
 /**
- * Returns a registered menu item.
+ * Returns a registered menu item usable on a surface, and says why not when
+ * there is none.
  *
  * @param id
  * Id of the item.
  *
+ * @param targetType
+ * Surface the menu opens on.
+ *
  * @return
- * The item, or undefined when nothing is registered under the id.
+ * The item, or undefined when nothing is registered under the id or it does
+ * not apply here.
  */
-export function getMenuItem(id: string): MenuItemDefinition | undefined {
-    return definitions[id];
+export function getMenuItemFor(
+    id: string,
+    targetType: MenuTargetType
+): MenuItemDefinition | undefined {
+    const definition = definitions[id];
+
+    if (!definition) {
+        warnOnce(
+            'menuItem:' + id,
+            `Grid context menu: Unknown menu item id "${id}".`
+        );
+        return;
+    }
+
+    // An item applies to the cell menu unless it names its surfaces.
+    if (!(definition.targets || ['cell']).includes(targetType)) {
+        warnOnce(
+            'menuItem:' + id,
+            `Grid context menu: Menu item "${id}" does not apply to a ` +
+            `"${targetType}" context menu.`
+        );
+        return;
+    }
+
+    return definition;
 }
 
 /**
@@ -106,44 +130,6 @@ export function getDefaultMenuItemIds(
     targetType: MenuTargetType
 ): MenuItemId[] {
     return defaultIds[targetType] || [];
-}
-
-/**
- * Checks whether an item applies to a surface.
- *
- * @param definition
- * Item to check.
- *
- * @param targetType
- * Surface the menu opens on.
- *
- * @return
- * True when the item may be used there.
- */
-export function menuItemAppliesTo(
-    definition: MenuItemDefinition,
-    targetType: MenuTargetType
-): boolean {
-    return (definition.targets || defaultTargets).includes(targetType);
-}
-
-/**
- * Logs a menu warning, once per id, so that a menu rebuilt on every open does
- * not repeat itself.
- *
- * @param id
- * Id the warning is about.
- *
- * @param message
- * Warning text.
- */
-export function warnMenuItem(id: string, message: string): void {
-    if (warnedIds.has(id)) {
-        return;
-    }
-    warnedIds.add(id);
-
-    error(message, false);
 }
 
 /* *

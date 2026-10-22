@@ -23,20 +23,17 @@
 
 import type {
     ContextMenuOptions,
-    MenuItemDefinition,
     MenuItemId,
     MenuItemOptions,
     MenuItemResolvable
 } from './ContextMenuOptions';
 import type { MenuContext, MenuTarget } from './ContextMenuTarget';
 
-import { getMenuTargetObject } from './ContextMenuTarget.js';
+import { warnOnce } from '../GridUtils.js';
 
 import {
     getDefaultMenuItemIds,
-    getMenuItem,
-    menuItemAppliesTo,
-    warnMenuItem
+    getMenuItemFor
 } from './ContextMenuRegistry.js';
 
 /* *
@@ -132,19 +129,9 @@ function dereference(
     context: MenuContext,
     override: MenuItemOptions
 ): MenuItemOptions | undefined {
-    const definition: MenuItemDefinition | undefined = getMenuItem(id);
+    const definition = getMenuItemFor(id, context.target.type);
 
     if (!definition) {
-        warnMenuItem(id, `Grid context menu: Unknown menu item id "${id}".`);
-        return;
-    }
-
-    if (!menuItemAppliesTo(definition, context.target.type)) {
-        warnMenuItem(
-            id,
-            `Grid context menu: Menu item "${id}" does not apply to a ` +
-            `"${context.target.type}" context menu.`
-        );
         return;
     }
 
@@ -201,8 +188,8 @@ function resolveItem(
 
     if (id) {
         if (seen.has(id)) {
-            warnMenuItem(
-                id,
+            warnOnce(
+                'menuItem:' + id,
                 `Grid context menu: Menu item "${id}" refers to itself.`
             );
             return;
@@ -257,7 +244,11 @@ function resolveItem(
     const { onClick } = options;
 
     if (onClick) {
-        const targetObject = getMenuTargetObject(context.target);
+        // What a callback receives is whatever the menu was opened on: a
+        // target carries it as `cell` when it is a cell of some kind, and as
+        // `element` when it is a plain node.
+        const { target } = context;
+        const targetObject = 'cell' in target ? target.cell : target.element;
 
         resolved.onClick = (): void => {
             onClick.call(targetObject, targetObject, context);
@@ -369,26 +360,6 @@ function resolveDefaultItems(context: MenuContext): ResolvedMenuItem[] {
 }
 
 /**
- * Returns the options a surface keeps in the Grid options. Only the cell menu
- * keeps any; a feature adding a surface of its own reads them wherever it
- * put them and hands them to `ContextMenu.open`.
- *
- * @param context
- * Context the menu was opened in.
- *
- * @return
- * The options, when the surface keeps any there.
- */
-function getSurfaceOptions(
-    context: MenuContext
-): ContextMenuOptions | undefined {
-    return context.target.type === 'cell' ?
-        context.target.column.options.cells?.contextMenu as
-            ContextMenuOptions | undefined :
-        void 0;
-}
-
-/**
  * Resolves the items of one context menu.
  *
  * @param context
@@ -408,8 +379,16 @@ export function resolveContextMenu<T extends MenuTarget>(
     // Widened here and nowhere else. The target type only ever narrowed the
     // callbacks for whoever wrote them; resolving treats all surfaces alike.
     const ctx = context as MenuContext;
+
+    // Only the cell menu keeps its options in the Grid options. A feature
+    // adding a surface of its own reads them wherever it put them and hands
+    // them in.
     const options = (
-        surfaceOptions || getSurfaceOptions(ctx)
+        surfaceOptions || (
+            ctx.target.type === 'cell' ?
+                ctx.target.column.options.cells?.contextMenu :
+                void 0
+        )
     ) as ContextMenuOptions | undefined;
 
     if (options?.enabled === false) {
