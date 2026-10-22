@@ -50,7 +50,7 @@ In `Highcharts.stockChart`, data grouping is applied by default to these series 
 *   `line`, `spline`, `area`, `areaspline` and `arearange`
 *   `column` and `columnrange`
 *   `candlestick`, `hollowcandlestick`, `heikinashi`, `ohlc` and `hlc`
-*   Technical indicators
+*   Technical indicators, except for Volume by Price (`vbp`)
 
 Other series types, such as `scatter` and `bubble`, are not grouped by default and `flags` series are never grouped.
 
