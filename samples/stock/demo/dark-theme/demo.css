@@ -12,7 +12,6 @@ body {
         sans-serif;
     background: #202d3b;
     color: #fff;
-    color-scheme: dark;
 }
 
 .highcharts-figure {
@@ -34,6 +33,7 @@ body {
 
 .highcharts-description {
     background: light-dark(#f2f6f2, #323232);
+    color: light-dark(#000, #fff);
     border-radius: 0 4px 4px 0;
     border-left: 2px solid light-dark(#1d6aff, #fff);
     font-size: 0.8rem;

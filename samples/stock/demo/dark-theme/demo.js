@@ -91,13 +91,22 @@
             buttonTheme: {
                 padding: 1,
                 r: 2
+            },
+            inputStyle: {
+                color: 'var(--highcharts-neutral-color-80)'
+            },
+            labelStyle: {
+                color: 'var(--highcharts-neutral-color-80)'
             }
         },
         tooltip: {
             backgroundColor: '#fbfbfb',
             borderRadius: 0,
             borderWidth: 0,
-            padding: 3
+            padding: 3,
+            style: {
+                color: '#000'
+            }
         },
         xAxis: {
             gridLineColor: 'var(--highcharts-neutral-color-3)',
