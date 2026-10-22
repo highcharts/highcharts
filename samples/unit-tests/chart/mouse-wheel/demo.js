@@ -83,3 +83,75 @@ QUnit.test('Mouse wheel zoom on chart', function (assert) {
 
     TestUtilities.lolexRunAndUninstall(clock);
 });
+
+QUnit.test(
+    'Mouse wheel zoom drop timers are isolated per chart (#25099)',
+    function (assert) {
+        const clock = TestUtilities.lolexInstall();
+        const container1 = document.getElementById('container');
+        const container2 = document.createElement('div');
+
+        [container1, container2].forEach(container => {
+            container.style.width = '300px';
+            container.style.height = '200px';
+        });
+        document.body.append(container2);
+
+        const getChart = container => Highcharts.chart(container, {
+            chart: {
+                zooming: {
+                    mouseWheel: {
+                        type: 'x'
+                    }
+                }
+            },
+            xAxis: {
+                startOnTick: true,
+                endOnTick: true
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }]
+        });
+
+        const chart1 = getChart(container1);
+        const chart2 = getChart(container2);
+
+        let drops1 = 0;
+        let drops2 = 0;
+
+        // Count scheduled drops
+        chart1.pointer.drop = () => drops1++;
+        chart2.pointer.drop = () => drops2++;
+
+        try {
+            new TestController(chart1).mouseWheel(100, 80, {
+                deltaY: -1000,
+                target: chart1.container
+            });
+            new TestController(chart2).mouseWheel(100, 80, {
+                deltaY: -1000,
+                target: chart2.container
+            });
+
+            clock.tick(400);
+
+            assert.strictEqual(
+                drops1,
+                1,
+                'First chart delayed drop should run (#25099)'
+            );
+            assert.strictEqual(
+                drops2,
+                1,
+                'Second chart delayed drop should run (#25099)'
+            );
+        } finally {
+            chart1.destroy();
+            chart2.destroy();
+            container1.style.cssText = '';
+            container2.remove();
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);
