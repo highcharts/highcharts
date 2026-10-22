@@ -39,7 +39,7 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
  * @product      highstock
  * @excluding    boostBlending, boostThreshold, compare, compareBase,
  *               compareStart, cumulative, cumulativeStart, dataGrouping,
- *               dataGrouping, dragDrop
+ *               dragDrop
  * @requires     modules/pointandfigure
  * @optionparent plotOptions.pointandfigure
  */
@@ -81,8 +81,8 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
     },
 
     /**
-     * Marker options for the up direction column, inherited from
-     * `series.marker` options.
+     * Marker options for the up direction column, used instead of `marker`
+     * for rising columns.
      *
      * @extends plotOptions.series.marker
      * @product highstock
@@ -125,7 +125,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  * @product   highstock
  * @excluding boostBlending, boostThreshold, compare, compareBase,
  *            compareStart, cumulative, cumulativeStart, dataGrouping,
- *            dataGrouping, dragDrop
+ *            dragDrop
  * @requires  modules/pointandfigure
  * @apioption series.pointandfigure
  */

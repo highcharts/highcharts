@@ -16,7 +16,11 @@
  *
  * */
 
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type {
+    PointMarkerOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
+import type PointAndFigurePointOptions from './PointAndFigurePointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 
 /* *
@@ -39,9 +43,7 @@ import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
  *
  * @product highstock
  *
- * @excluding boostBlending, boostThreshold, compare, compareBase,
- *            compareStart, cumulative, cumulativeStart, dataGrouping,
- *            dragDrop
+ * @excluding dataGrouping
  *
  * @requires modules/pointandfigure
  */
@@ -60,16 +62,61 @@ export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     boxSize: number|string;
 
     /**
-     * Threshold that should be met to create a new column in opposite
-     * direction.
+     * An array of data points for the series. For the `pointandfigure` series
+     * type, points can be given in the following way:
      *
-     * @default 3
+     * 1. An array of arrays with 2 values. In this case, the values correspond
+     *    to `x, y`. Y values are parsed under the hood to create
+     *    point and figure format data points.
+     *    ```js
+     *    data: [
+     *        [1665408600000, 140.42],
+     *        [1665495000000, 138.98],
+     *        [1665581400000, 138.34]
+     *    ]
+     *    ```
+     * 2. An array of objects with named values `{x, y}`.
+     *    ```js
+     *    data: [
+     *        {x: 1665408600000, y: 140.42},
+     *        {x: 1665495000000, y: 138.98},
+     *        {x: 1665581400000, y: 138.34}
+     *    ]
+     *    ```
      *
-     * @since 12.0.0
+     * @extends series.scatter.data
      *
      * @product highstock
      */
-    reversalAmount: number;
+    data?: Array<(PointAndFigurePointOptions|PointShortOptions)>;
+
+    /**
+     * Padding between each value groups, in x axis units.
+     *
+     * @default 0.2
+     *
+     * @product highstock
+     */
+    groupPadding: number;
+
+    /**
+     * Marker options for the down direction column.
+     *
+     * @default {"symbol": "circle", "fillColor": "transparent", "lineColor": "#FF0000", "lineWidth": 2}
+     *
+     * @product highstock
+     */
+    marker: PointMarkerOptions;
+
+    /**
+     * Marker options for the up direction column, used instead of `marker`
+     * for rising columns.
+     *
+     * @default {"symbol": "cross", "lineColor": "#00FF00", "lineWidth": 2}
+     *
+     * @product highstock
+     */
+    markerUp: PointMarkerOptions;
 
     /**
      * Padding between each column or bar, in x axis units.
@@ -81,27 +128,16 @@ export interface PointAndFigureSeriesOptions extends ScatterSeriesOptions {
     pointPadding: number;
 
     /**
-     * Marker options for the down direction column.
+     * Threshold that should be met to create a new column in opposite
+     * direction.
      *
-     * @extends plotOptions.series.marker
+     * @default 3
      *
-     * @default {"symbol": "circle", "fillColor": "transparent", "lineColor": "#FF0000", "lineWidth": 2}
-     *
-     * @product highstock
-     */
-    marker: PointMarkerOptions;
-
-    /**
-     * Marker options for the up direction column, inherited from
-     * `series.marker` options.
-     *
-     * @extends plotOptions.series.marker
-     *
-     * @default {"symbol": "cross", "lineColor": "#00FF00", "lineWidth": 2}
+     * @since 12.0.0
      *
      * @product highstock
      */
-    markerUp: PointMarkerOptions;
+    reversalAmount: number;
 
     /* *
      *
