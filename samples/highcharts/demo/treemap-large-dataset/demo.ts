@@ -491,8 +491,8 @@ const renderChart = (data: Array<Highcharts.PointOptionsObject>): void => {
 
             let perf: number|null = null;
             if (old) {
-                const oldPrice = parseFloat(old.Price),
-                    newPrice = parseFloat(row.Price);
+                const oldPrice = +old.Price,
+                    newPrice = +row.Price;
                 perf = 100 * (newPrice - oldPrice) / oldPrice;
             }
 
@@ -502,7 +502,7 @@ const renderChart = (data: Array<Highcharts.PointOptionsObject>): void => {
             data.push({
                 name: row.Symbol,
                 id: row.Symbol,
-                value: parseFloat(row['Market Cap']),
+                value: +row['Market Cap'],
                 parent: row.Sector,
                 colorValue: perf || 0,
                 custom: {
