@@ -55,7 +55,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     plotOptions: {
-        series: {
+        pie: {
             allowPointSelect: true,
             cursor: 'pointer',
             borderRadius: 8,
