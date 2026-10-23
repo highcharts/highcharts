@@ -666,7 +666,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      *
      * @sample  {highcharts} highcharts/series-treemap/nodesizeby/
      *          Node sizing
-     * @since 12.2.0
+     * @since   12.2.0
      * @default group
      */
     nodeSizeBy?: 'group'|'leaf';
