@@ -49,13 +49,24 @@ declare module '../../Core/Series/PointOptions' {
  */
 export interface NetworkgraphDataOptions extends PointOptions {
 
+    /**
+     * Individual data label for the link. The options are the same as the
+     * ones for
+     * [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
+     */
     dataLabels?: (
         NetworkgraphPointDataLabelsOptions |
         Array<NetworkgraphPointDataLabelsOptions>
     );
 
+    /**
+     * The `id` of the node the link comes from.
+     */
     from?: string;
 
+    /**
+     * The `id` of the node the link goes to.
+     */
     to?: string;
 
 }
@@ -82,15 +93,14 @@ export interface NetworkgraphPointOptions
      */
     colorIndex?: number;
 
+    /**
+     * A name for the dash style to use for the link.
+     */
     dashStyle?: DashStyleValue;
 
     /**
      * Individual data label for each node. The options are the same as the ones
      * for [series.networkgraph.dataLabels](#series.networkgraph.dataLabels).
-     *
-     * @type {Highcharts.SeriesNetworkgraphDataLabelsOptionsObject|Array<Highcharts.SeriesNetworkgraphDataLabelsOptionsObject>}
-     *
-     * @apioption series.networkgraph.nodes.dataLabels
      */
     dataLabels?: (
         NetworkgraphPointDataLabelsOptions |
@@ -137,8 +147,18 @@ export interface NetworkgraphPointOptions
      */
     name?: string;
 
+    /**
+     * Opacity of the link between two nodes.
+     *
+     * @default 1
+     */
     opacity?: number;
 
+    /**
+     * Width (px) of the link between two nodes.
+     *
+     * @default 1
+     */
     width?: number;
 
 }

@@ -25,6 +25,7 @@ import type { MapBounds } from '../../Maps/MapViewOptions';
 import type { ProjectedXY } from '../../Maps/MapViewOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+import type { SymbolFunction } from '../../Core/Renderer/SVG/SymbolType';
 
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -47,7 +48,6 @@ import { extend, fireEvent, isNumber, merge } from '../../Shared/Utilities.js';
  * */
 
 /**
- * @private
  * @class
  * @name Highcharts.seriesTypes.mappoint
  *
@@ -81,6 +81,7 @@ class MapPointSeries extends ScatterSeries {
 
     public points!: Array<MapPointPoint>;
 
+    /** @internal */
     public clearBounds = MapSeries.prototype.clearBounds;
 
     /* *
@@ -103,7 +104,7 @@ class MapPointSeries extends ScatterSeries {
      * Resolve `lon`, `lat` or `geometry` options and project the resulted
      * coordinates.
      *
-     * @private
+     * @internal
      */
     public projectPoint(
         pointOptions: MapPointPointOptions
@@ -220,17 +221,15 @@ class MapPointSeries extends ScatterSeries {
  *
  * */
 
-/* *
+/**
  * The mapmarker symbol
+ *
+ * @internal
  */
 const mapmarker = (
-    /** @internal */
     x: number,
-    /** @internal */
     y: number,
-    /** @internal */
     w: number,
-    /** @internal */
     h: number,
     options?: SymbolOptions
 ): SVGPath => {
@@ -271,7 +270,7 @@ const mapmarker = (
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Highcharts Maps */
-        mapmarker: typeof mapmarker;
+        mapmarker: SymbolFunction;
     }
 }
 SVGRenderer.prototype.symbols.mapmarker = mapmarker;

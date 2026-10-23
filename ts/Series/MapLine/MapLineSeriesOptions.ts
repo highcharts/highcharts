@@ -87,10 +87,6 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
      *     }]
      *  ```
      *
-     * @type {Array<number|Array<string,(number|null)>|null|*>}
-     *
-     * @extends series.map.data
-     *
      * @excluding drilldown
      *
      * @product highmaps
@@ -99,8 +95,6 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
 
     /**
      * Fill color for the map line shapes
-     *
-     * @type {Highcharts.ColorType}
      */
     fillColor?: ColorType;
 
@@ -120,31 +114,33 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
      */
     lineWidth?: number;
 
+    states?: MapLineSeriesStatesOptions;
+
+}
+
+type MapLineStatesOptionsAlias = SeriesStatesOptions<MapLineSeriesOptions>;
+
+export interface MapLineSeriesStatesOptions
+    extends MapLineStatesOptionsAlias {
+
     /**
-     *
-     * @type {number}
-     *
-     * @product highmaps
+     * Options for the hovered series.
      *
      * @excluding borderWidth
      *
-     * @apioption plotOptions.mapline.states.hover
-     */
-
-    /**
-     * Pixel width of the mapline line.
-     *
-     * @type {number}
-     *
-     * @since 10.2.0
-     *
      * @product highmaps
-     *
-     * @apioption plotOptions.mapline.states.hover.lineWidth
      */
+    hover?: MapLineStatesOptionsAlias['hover'] & {
 
-    states?: SeriesStatesOptions<MapLineSeriesOptions>;
-
+        /**
+         * Pixel width of the mapline line.
+         *
+         * @since 10.2.0
+         *
+         * @product highmaps
+         */
+        lineWidth?: number;
+    };
 }
 
 /* *
