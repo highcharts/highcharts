@@ -35,8 +35,8 @@ import type {
  * @since        6.0.0
  * @excluding    animationLimit
  * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/cmf
+ * @requires     indicators/indicators
+ * @requires     indicators/cmf
  * @interface Highcharts.CMFOptions
  */
 export interface CMFOptions extends SMAOptions {

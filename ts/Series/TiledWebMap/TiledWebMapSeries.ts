@@ -68,7 +68,7 @@ interface TilesItem {
  *
  * */
 
-/** @private */
+/** @internal */
 function onRecommendMapView(
     this: MapView,
     e: {
@@ -128,7 +128,6 @@ function onRecommendMapView(
 /**
  * The series type
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.tiledwebmap
  *
@@ -142,6 +141,7 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: TiledWebMapSeriesOptions = merge(
         MapSeries.defaultOptions,
         TiledWebMapSeriesDefaults
@@ -153,6 +153,7 @@ class TiledWebMapSeries extends MapSeries {
      *
      * */
 
+    /** @internal */
     public static compose(
         MapViewClass: typeof MapView
     ): void {
@@ -169,14 +170,19 @@ class TiledWebMapSeries extends MapSeries {
 
     public options!: TiledWebMapSeriesOptions;
 
+    /** @internal */
     public tiles: Record<string, TilesItem> | undefined;
 
+    /** @internal */
     public minZoom: number | undefined;
 
+    /** @internal */
     public maxZoom: number | undefined;
 
+    /** @internal */
     public redrawTiles: boolean = false;
 
+    /** @internal */
     public isAnimating: boolean = false;
 
     /* *
@@ -187,7 +193,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert map coordinates in longitude/latitude to tile
-     * @private
+     * @internal
      * @param  {Highcharts.MapLonLatObject} lonLat
      *         The map coordinates
      * @return {Highcharts.PositionObject}
@@ -215,7 +221,7 @@ class TiledWebMapSeries extends MapSeries {
 
     /**
      * Convert tile to map coordinates in longitude/latitude
-     * @private
+     * @internal
      * @return {Highcharts.MapLonLatObject}
      *         The map coordinates
      */
@@ -233,6 +239,7 @@ class TiledWebMapSeries extends MapSeries {
         return { lon, lat };
     }
 
+    /** @internal */
     public drawPoints(): void {
         const chart = this.chart,
             mapView = chart.mapView;
@@ -775,6 +782,7 @@ class TiledWebMapSeries extends MapSeries {
         }
     }
 
+    /** @internal */
     public update(options: TiledWebMapSeriesOptions): void {
         const { transformGroups } = this,
             chart = this.chart,

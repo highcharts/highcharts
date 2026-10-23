@@ -42,6 +42,7 @@ class Pie3DPoint extends PiePoint {
      *
      * */
 
+    /** @internal */
     public series!: Pie3DSeries;
 
     /* *

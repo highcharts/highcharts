@@ -38,7 +38,6 @@ import { correctFloat, extend, merge } from '../../Shared/Utilities.js';
 /**
  * The pareto series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pareto
  *
@@ -53,6 +52,7 @@ class ParetoSeries extends LineSeries {
      *
      * */
 
+    /** @internal */
     public static defaultOptions: ParetoSeriesOptions = merge(
         LineSeries.defaultOptions,
         ParetoSeriesDefaults
@@ -178,9 +178,6 @@ DerivedComposition.compose(ParetoSeries);
  *
  * */
 
-/**
- * @internal
- */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pareto: typeof ParetoSeries;

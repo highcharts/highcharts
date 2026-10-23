@@ -3,13 +3,13 @@
         "target": "ES2020",
         "module": "Preserve",
         "lib": [],
+        "types": ["node"],
         "allowJs": true,
         "isolatedModules": true,
         "moduleDetection": "force",
         "resolveJsonModule": true,
         "strict": false,
-        "moduleResolution": "Node",
-        "baseUrl": "./",
+        "moduleResolution": "bundler",
         "paths": {
             "highcharts": [
                 "../../code/highcharts.src"

@@ -98,7 +98,6 @@ function populateAverage(
 /**
  * The SMA series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.wma
  *
@@ -122,9 +121,10 @@ class WMAIndicator extends SMAIndicator {
      * @extends      plotOptions.sma
      * @since        6.0.0
      * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/wma
+     * @requires     indicators/indicators
+     * @requires     indicators/wma
      * @optionparent plotOptions.wma
+     * @internal
      */
     public static defaultOptions: WMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
@@ -149,6 +149,7 @@ class WMAIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: WMAParamsOptions
@@ -218,7 +219,6 @@ class WMAIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface WMAIndicator {
     pointClass: typeof WMAPoint;
 }
@@ -229,7 +229,6 @@ interface WMAIndicator {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
@@ -244,7 +243,6 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  *
  * */
 
-/** @internal */
 export default WMAIndicator;
 
 /* *
@@ -260,8 +258,8 @@ export default WMAIndicator;
  * @extends   series,plotOptions.wma
  * @since     6.0.0
  * @product   highstock
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/wma
+ * @requires  indicators/indicators
+ * @requires  indicators/wma
  * @apioption series.wma
  */
 

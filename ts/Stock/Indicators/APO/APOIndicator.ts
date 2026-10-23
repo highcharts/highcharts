@@ -39,7 +39,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The APO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.apo
  *
@@ -66,9 +65,10 @@ class APOIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/apo
+     * @requires     indicators/indicators
+     * @requires     indicators/apo
      * @optionparent plotOptions.apo
+     * @internal
      */
     public static defaultOptions: APOOptions = merge(EMAIndicator.defaultOptions, {
         /**
@@ -106,6 +106,7 @@ class APOIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: APOParamsOptions
@@ -174,7 +175,6 @@ class APOIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface APOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -192,7 +192,6 @@ extend(APOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         apo: typeof APOIndicator;
@@ -207,7 +206,6 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
  *
  * */
 
-/** @internal */
 export default APOIndicator;
 
 /* *
@@ -226,8 +224,8 @@ export default APOIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/apo
+ * @requires  indicators/indicators
+ * @requires  indicators/apo
  * @apioption series.apo
  */
 

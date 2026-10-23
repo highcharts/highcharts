@@ -39,7 +39,6 @@ import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Keltner Channels series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.keltnerchannels
  *
@@ -68,9 +67,10 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart,showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/keltner-channels
+     * @requires     indicators/indicators
+     * @requires     indicators/keltner-channels
      * @optionparent plotOptions.keltnerchannels
+     * @internal
      */
     public static defaultOptions: KeltnerChannelsOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -161,6 +161,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public init(this: KeltnerChannelsIndicator): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
@@ -178,6 +179,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
         }, this.options);
     }
 
+    /** @internal */
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KeltnerChannelsParamsOptions
@@ -272,7 +274,6 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
@@ -286,7 +287,6 @@ SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
  *
  * */
 
-/** @internal */
 export default KeltnerChannelsIndicator;
 
 /* *
@@ -306,8 +306,8 @@ export default KeltnerChannelsIndicator;
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               stacking, showInNavigator
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/keltner-channels
+ * @requires     indicators/indicators
+ * @requires     indicators/keltner-channels
  * @apioption    series.keltnerchannels
  */
 

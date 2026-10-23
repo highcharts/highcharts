@@ -1,5 +1,9 @@
 ---
 sidebar_label: "Overview"
+description: >-
+  Explore how Grid rows come from the data provider, then choose guides for
+  reading and updating row data, pagination, pinning, TreeView, grouping,
+  virtualization, and rendering performance.
 ---
 
 # Rows overview

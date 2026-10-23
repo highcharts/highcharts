@@ -1,3 +1,10 @@
+---
+description: >-
+  Control how Highcharts Stock groups dense data by pixel width, choose
+  approximations and time units, include off-screen points, force grouping,
+  position grouped values, and compare rendering performance.
+---
+
 Data grouping
 ===========
 

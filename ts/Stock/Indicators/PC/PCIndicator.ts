@@ -39,7 +39,6 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Channel series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.pc
  *
@@ -67,9 +66,10 @@ class PCIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/price-channel
+     * @requires     indicators/indicators
+     * @requires     indicators/price-channel
      * @optionparent plotOptions.pc
+     * @internal
      */
     public static defaultOptions: PCOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -140,6 +140,7 @@ class PCIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: PCParamsOptions
@@ -218,7 +219,6 @@ MultipleLinesComposition.compose(PCIndicator);
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pc: typeof PCIndicator;
@@ -233,7 +233,6 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  *
  * */
 
-/** @internal */
 export default PCIndicator;
 
 /* *
@@ -253,8 +252,8 @@ export default PCIndicator;
  *               joinBy, keys, navigatorOptions, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
  *               showInNavigator, stacking
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/price-channel
+ * @requires     indicators/indicators
+ * @requires     indicators/price-channel
  * @apioption    series.pc
  */
 

@@ -74,11 +74,14 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
     threshold: null,
 
     /**
-     * What type of legend symbol to render for this series. For candlestick
-     * series, the default is `candlestick`, a vertical line (wick) with a
-     * rectangular body.
+     * What type of legend symbol to render for this series. The default
+     * `candlestick` shows two candles, each a wick with a rectangular body.
+     * The first stands for a falling point, the second for a rising one.
      *
-     * @default   candlestick
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Financial series legend symbols
+     *
+     * @default   'candlestick'
      * @product   highstock
      * @apioption plotOptions.candlestick.legendSymbol
      */
@@ -96,10 +99,10 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      *         Candlestick line colors
      *
      * @type    {Highcharts.ColorType}
-     * @default #000000
      * @product highstock
      */
     lineColor: 'var(--highcharts-neutral-color-100)',
+
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -110,6 +113,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @product highstock
      */
     lineWidth: 1,
+
     /**
      * The fill color of the candlestick when values are rising.
      *
@@ -122,11 +126,10 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      *         Colors in styled mode
      *
      * @type    {Highcharts.ColorType}
-     * @default #ffffff
      * @product highstock
     */
-
     upColor: 'var(--highcharts-background-color)',
+
     /**
      * @product highstock
      */
@@ -140,7 +143,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding marker
+ * @excluding borderColor, borderRadius, borderWidth, marker
  * @product   highstock
  * @apioption series.candlestick
  */

@@ -40,7 +40,6 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Chaikin series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.chaikin
  *
@@ -67,9 +66,10 @@ class ChaikinIndicator extends EMAIndicator {
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/chaikin
+     * @requires     indicators/indicators
+     * @requires     indicators/chaikin
      * @optionparent plotOptions.chaikin
+     * @internal
      */
     public static defaultOptions: ChaikinOptions = merge(EMAIndicator.defaultOptions, {
         /**
@@ -118,6 +118,7 @@ class ChaikinIndicator extends EMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions
@@ -195,7 +196,6 @@ class ChaikinIndicator extends EMAIndicator {
  *
  * */
 
-/** @internal */
 interface ChaikinIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -212,7 +212,6 @@ extend(ChaikinIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
@@ -225,7 +224,6 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  *  Default Export
  *
  * */
-/** @internal */
 export default ChaikinIndicator;
 
 /* *
@@ -244,8 +242,8 @@ export default ChaikinIndicator;
  * @excluding allAreas, colorAxis, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, stacking, showInNavigator
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/chaikin
+ * @requires  indicators/indicators
+ * @requires  indicators/chaikin
  * @apioption series.chaikin
  */
 

@@ -68,7 +68,6 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -96,9 +95,10 @@ class DPOIndicator extends SMAIndicator {
      *               navigatorOptions, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, showInNavigator,
      *               stacking
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/dpo
+     * @requires     indicators/indicators
+     * @requires     indicators/dpo
      * @optionparent plotOptions.dpo
+     * @internal
      */
     public static defaultOptions: DPOOptions = merge(SMAIndicator.defaultOptions, {
         /**
@@ -130,6 +130,7 @@ class DPOIndicator extends SMAIndicator {
      *
      * */
 
+    /** @internal */
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DPOParamsOptions
@@ -199,7 +200,6 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
-/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -214,7 +214,6 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
-/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -229,7 +228,6 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
-/** @internal */
 export default DPOIndicator;
 
 /* *
@@ -248,8 +246,8 @@ export default DPOIndicator;
  * @excluding allAreas, colorAxis, compare, compareBase,
  *            joinBy, keys, navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/dpo
+ * @requires  indicators/indicators
+ * @requires  indicators/dpo
  * @apioption series.dpo
  */
 

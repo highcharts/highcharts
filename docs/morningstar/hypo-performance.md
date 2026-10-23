@@ -1,3 +1,10 @@
+---
+description: >-
+  Build hypothetical return requests for portfolios and benchmarks with the
+  HypoPerformanceConnector, choose a view and calculation settings, and
+  configure currency, date range, taxes, fees, rebalancing, and holdings.
+---
+
 # Hypothetical Performance
 
 Using Morningstar **Historical Performance** data, financial advisors can
@@ -120,6 +127,12 @@ Example request:
 
     await connector.load();
 ```
+
+## Relevant demos
+
+You will find examples of how to use `HypoPerformanceConnector` in our demos.
+
+- [Highcharts Stock + Morningstar Growth Chart Hypothetical](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/financial/growth-chart-hypo/)
 
 ## Morningstar API Reference
 
