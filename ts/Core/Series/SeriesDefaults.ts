@@ -2016,12 +2016,12 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
-         * Text rotation in degrees. Note that due to a more complex
-         * structure, backgrounds, borders and padding will be lost on a
-         * rotated data label.
+         * Text rotation in degrees.
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
          *         Vertical labels
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-rotationmode-plugin
+         *         Perpendicular rotation in pie series via plugin
          *
          * @type      {number}
          * @default   0
