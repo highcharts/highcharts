@@ -2050,6 +2050,10 @@ namespace Tooltip {
         text?: string;
     }
 
+    export interface PointFormatterCallbackFunction<T extends Point = Point> {
+        (this: T, pointFormat: string, ctx: T): string;
+    }
+
     export interface PositionerCallbackFunction {
         (
             this: Tooltip,
@@ -2146,6 +2150,26 @@ export default Tooltip;
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  * Formatted text or false
+ */
+
+/**
+ * Callback function to format the HTML output for a single point in the
+ * tooltip.
+ *
+ * @callback Highcharts.TooltipPointFormatterCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ * The point to format.
+ *
+ * @param {string} pointFormat
+ * The `pointFormat` option for the point's series, or an empty string.
+ *
+ * @param {Highcharts.Point} ctx
+ * Since v12.6.0, the point context passed as an extra argument for arrow
+ * functions.
+ *
+ * @return {string}
+ * Formatted text
  */
 
 /**
