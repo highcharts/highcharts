@@ -3809,6 +3809,8 @@ class Chart {
             updateAllSeries,
             runSetSize;
 
+        setAnimation(animation, chart);
+
         options = diffObjects(options, chart.options);
 
         const e: AnyRecord = {
