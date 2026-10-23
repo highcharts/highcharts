@@ -1,0 +1,226 @@
+---
+sidebar_label: "Summary rows"
+tags: ["grid-pro"]
+description: >-
+  Add Grid Pro summary rows that aggregate columns above or below the table
+  body, override aggregators per column, choose which rows are aggregated,
+  handle TreeView parents, and format and style the rows.
+---
+
+# Summary rows
+
+Summary rows are a Highcharts Grid Pro feature that adds total rows, such as a
+sum or an average of each column, above or below the table body. The rows stay
+in place while the body scrolls, and they are recomputed whenever the data is
+sorted, filtered or edited.
+
+Summary rows work with the local data provider. With
+[server-side data handling](https://www.highcharts.com/docs/grid/data-handling/serverside),
+no summary rows are rendered.
+
+## Basic configuration
+
+Set `summaryRows` to an object with a default `aggregator`. Use `columns` to
+override single cells, for example to put a label in a text column:
+
+```js
+Grid.grid('container', {
+    data: {
+        columns: {
+            region: ['Americas', 'EMEA', 'APAC'],
+            q1: [1840, 1520, 1275],
+            q2: [1910, 1495, 1360]
+        }
+    },
+    summaryRows: {
+        aggregator: 'SUM',
+        columns: [{
+            id: 'region',
+            value: 'Total'
+        }]
+    }
+});
+```
+
+## Aggregators
+
+`aggregator` takes the name of an aggregation function: `SUM`, `AVERAGE`,
+`MIN`, `MAX`, `COUNT`, `MEDIAN`, `PRODUCT`, and others. The function receives the
+column's values; empty cells (`null` or `undefined`) are left out.
+
+The row `aggregator` applies to every column, including text columns, where
+numeric functions such as `SUM` resolve to `0`. Override it per column in
+`columns`:
+
+- `aggregator`: a different function for this column, or `false` to leave the
+  cell empty.
+- `value`: a static value, such as a `'Total'` label. It takes precedence over
+  the row `aggregator`.
+
+```js
+summaryRows: {
+    aggregator: 'SUM',
+    columns: [
+        { id: 'region', value: 'Total' },
+        { id: 'growth', aggregator: 'AVERAGE' },
+        { id: 'comment', aggregator: false }
+    ]
+}
+```
+
+`aggregator` can also be a callback that returns a function name, or a falsy
+value to leave the cell empty. It receives the `columnId`, the `rowCount` the
+aggregation runs over, and the `summaryRowId` and `summaryRowIndex` of the row
+being resolved:
+
+```js
+summaryRows: {
+    aggregator: ({ columnId }) => (
+        columnId.startsWith('q') ? 'SUM' : false
+    )
+}
+```
+
+## Several summary rows
+
+Pass an array to render several rows. Each row is stuck to the `bottom` of the
+body by default; set `position: 'top'` to show it above the data rows instead.
+Set `enabled: false` to hide a row without removing its options.
+
+```js
+summaryRows: [{
+    id: 'total',
+    aggregator: 'SUM',
+    position: 'top',
+    columns: [{ id: 'region', value: 'Total' }]
+}, {
+    id: 'average',
+    aggregator: 'AVERAGE',
+    columns: [{ id: 'region', value: 'Average' }]
+}]
+```
+
+The `id` is passed to an aggregator callback as `summaryRowId`. Without it, the
+row index is used.
+
+## Aggregated rows (`scope`)
+
+By default, a summary row aggregates the rows left after filtering, across all
+pages. Set `scope` to aggregate another stage of the data pipeline:
+
+- `'all'`: every source row, ignoring the active filters.
+- `'filtered'` (default): the rows left by filtering, across all pages.
+- `'page'`: the rows of the current page. Requires
+  [pagination](https://www.highcharts.com/docs/grid/rows/pagination), and is not
+  supported with TreeView or row grouping.
+
+When `'page'` does not apply, the row aggregates the filtered rows instead, and
+a warning is logged to the console once.
+
+Several rows with different scopes can show a page subtotal, a filtered total
+and a grand total side by side:
+
+```js
+summaryRows: [{
+    aggregator: 'SUM',
+    scope: 'page',
+    columns: [{ id: 'region', value: 'Page total' }]
+}, {
+    aggregator: 'SUM',
+    columns: [{ id: 'region', value: 'Filtered total' }]
+}, {
+    aggregator: 'SUM',
+    scope: 'all',
+    columns: [{ id: 'region', value: 'Grand total' }]
+}],
+pagination: {
+    enabled: true
+}
+```
+
+## Tree view and row grouping
+
+A summary row aggregates the source data, not the rows displayed in the tree.
+With [TreeView](https://www.highcharts.com/docs/grid/rows/tree-view), parent
+rows are source rows, so they are aggregated together with their children. When
+the parent rows already hold the totals of their children, set `skipParents` to
+avoid counting the values twice:
+
+```js
+summaryRows: {
+    aggregator: 'SUM',
+    skipParents: true,
+    columns: [{ id: 'name', value: 'Total' }]
+}
+```
+
+With `skipParents`, a row is skipped whenever any of its child rows is
+aggregated as well, so a parent that a filter left on its own still counts. Set
+`skipParents` in `columns` to override it for a single column. See the
+[pre-calculated parent values sample](https://www.highcharts.com/samples/grid/options/summary-rows-skip-parents).
+
+The group rows generated by
+[row grouping](https://www.highcharts.com/docs/grid/rows/grouping) are not
+source rows, so they are never part of a summary row. Values derived by
+`rowAggregator` don't affect summary rows either.
+
+## Formatting and styling
+
+A summary cell uses the `cells.format` of its column. Set `format` on the
+summary row to override it for every cell of the row, or in `columns` for a
+single cell. Use `'{value}'` to render a cell unformatted:
+
+```js
+columnDefaults: {
+    cells: {
+        format: '${value:,.0f}'
+    }
+},
+summaryRows: {
+    aggregator: 'AVERAGE',
+    format: '${value:,.2f}',
+    columns: [{
+        id: 'region',
+        value: 'Average',
+        format: '{value}'
+    }]
+}
+```
+
+Use `className` and `style` on the row for the row element, or in `columns` for
+a single cell. The cell options are added to the column's `cells.className` and
+`cells.style`.
+
+Summary rows carry the `hcg-summary-row` class. Each position renders its rows
+in a separate section, with a separator border towards the data rows. Set
+`rendering.rows.summary.top.className` and
+`rendering.rows.summary.bottom.className` to add class names to these sections.
+For the CSS variables of summary rows, see
+[Summary separators](https://www.highcharts.com/docs/grid/theming/grid-variables#summary-separators).
+
+## Editing
+
+When a cell of an aggregated column is edited, the summary rows are recomputed.
+The cells of summary rows are not editable themselves.
+
+## Accessibility
+
+Assistive technology announces summary rows with the role description
+`'Summary row.'`. Change the text with
+`lang.accessibility.summaryRows.descriptions.summary`.
+
+## Summary columns
+
+To aggregate the cells of each row instead of each column, use
+[summary columns](https://www.highcharts.com/docs/grid/columns/index#summary-columns-columnaggregator).
+The two features can be combined, as in the
+[summary rows and columns demo](https://www.highcharts.com/samples/grid/basic/summary-rows-and-columns).
+
+## API reference
+
+- [`summaryRows`](https://api.highcharts.com/grid/summaryRows)
+- [`rendering.rows.summary`](https://api.highcharts.com/grid/rendering.rows.summary)
+
+## Demo
+
+<iframe src="https://www.highcharts.com/samples/embed/grid/options/summary-rows?force-light-theme" allow="fullscreen"></iframe>
