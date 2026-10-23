@@ -31,7 +31,9 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import CellContextMenuBuiltInActions
-    from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
+    from '../Grid/Core/ContextMenu/ContextMenuCompat.js';
+import ContextMenu
+    from '../Grid/Core/ContextMenu/ContextMenuRegistry.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
@@ -65,6 +67,7 @@ import '../Grid/Core/Responsive/ResponsiveComposition.js';
 const G = {
     AST,
     CellContextMenuBuiltInActions,
+    ContextMenu,
     ColumnResizing,
     DataConnector,
     DataConverter,
@@ -102,6 +105,7 @@ ResponsiveComposition.compose(G.Grid);
 export {
     AST,
     CellContextMenuBuiltInActions,
+    ContextMenu,
     ColumnResizing,
     DataConnector,
     DataConverter,

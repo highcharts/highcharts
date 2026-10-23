@@ -149,7 +149,7 @@ module.exports = {
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
                     'grid/cells/formatting',
-                    'grid/cell-context-menu'
+                    'grid/context-menu'
                 ]
             },
             {

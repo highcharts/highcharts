@@ -41,9 +41,8 @@ import ColumnLayout from './Layout/ColumnLayout.js';
 
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
-import CellContextMenu from './CellContextMenu/CellContextMenu.js';
-import CellContextMenuBuiltInActions from './CellContextMenu/CellContextMenuBuiltInActions.js';
-import { CellContextMenuLongPress } from './CellContextMenu/CellContextMenuLongPress.js';
+import { addLongPressContextMenu } from '../ContextMenu/ContextMenuLongPress.js';
+import { getCellMenuContext } from '../ContextMenu/ContextMenuTarget.js';
 
 const { makeHTMLElement, applyUserClassNames } = GridUtils;
 
@@ -187,14 +186,9 @@ class Table {
     public virtualColumns: boolean = false;
 
     /**
-     * Cell context menu instance (lazy created).
-     */
-    private cellContextMenu?: CellContextMenu;
-
-    /**
      * The iOS long-press polyfill for cell context menus.
      */
-    private cellContextMenuLongPress?: CellContextMenuLongPress;
+    private removeLongPressContextMenu?: () => void;
 
 
     /**
@@ -255,9 +249,8 @@ class Table {
             passive: false
         });
         this.addBodyEventListeners(this.tbodyElement);
-        if (this.isContextMenuLongPressed()) {
-            this.cellContextMenuLongPress!.addEvents(this.tableElement);
-        }
+        this.removeLongPressContextMenu =
+            addLongPressContextMenu(this.tableElement);
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
         document.addEventListener(
             'pointerdown',
@@ -355,27 +348,6 @@ class Table {
         body.removeEventListener('mouseover', this.onCellMouseOver);
         body.removeEventListener('mouseout', this.onCellMouseOut);
         body.removeEventListener('keydown', this.onCellKeyDown);
-    }
-
-    private isContextMenuLongPressed(): boolean {
-        if (!Globals.isIos) {
-            return false;
-        }
-
-        if (!this.cellContextMenuLongPress) {
-            this.cellContextMenuLongPress = new CellContextMenuLongPress({
-                getTableCellFromTarget: (target): TableCell | undefined =>
-                    this.getTableCellFromTarget(target),
-                openCellContextMenu: (cell, clientX, clientY): boolean =>
-                    this.openCellContextMenu(cell, clientX, clientY),
-                isCellInEditMode: (cell): boolean =>
-                    (this as unknown as {
-                        cellEditing?: { editedCell?: TableCell };
-                    }).cellEditing?.editedCell === cell
-            });
-        }
-
-        return true;
     }
 
     private getTableCellFromTarget(
@@ -799,7 +771,13 @@ class Table {
             return;
         }
 
-        if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
+        const opened = this.grid.contextMenu.open(
+            getCellMenuContext(tableCell),
+            e.clientX,
+            e.clientY
+        );
+
+        if (opened) {
             e.preventDefault();
         }
     };
@@ -854,8 +832,8 @@ class Table {
         if (isContextMenuKey && 'column' in cell && 'row' in cell) {
             const tableCell = cell as TableCell;
             const rect = tableCell.htmlElement.getBoundingClientRect();
-            const opened = this.openCellContextMenu(
-                tableCell,
+            const opened = this.grid.contextMenu.open(
+                getCellMenuContext(tableCell),
                 rect.left + 4,
                 rect.bottom - 2
             );
@@ -868,61 +846,6 @@ class Table {
 
         (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };
-
-    /**
-     * Opens a cell context menu if configured and enabled.
-     *
-     * @param tableCell
-     * The target cell.
-     *
-     * @param clientX
-     * The viewport X coordinate for anchoring.
-     *
-     * @param clientY
-     * The viewport Y coordinate for anchoring.
-     *
-     * @returns
-     * True if the menu was opened.
-     */
-    private openCellContextMenu(
-        tableCell: TableCell,
-        clientX: number,
-        clientY: number
-    ): boolean {
-        const options = tableCell.column?.options.cells?.contextMenu;
-
-        if (options?.enabled === false) {
-            return false;
-        }
-
-        const items =
-            CellContextMenuBuiltInActions.resolveCellContextMenuItems(
-                tableCell
-            );
-        if (!items.length) {
-            return false; // Keep native browser menu
-        }
-
-        if (!this.cellContextMenu) {
-            this.cellContextMenu = new CellContextMenu(this.grid);
-        }
-
-        // Close any existing popups before opening a new menu.
-        // Copy to array to avoid mutation during iteration.
-        for (const popup of Array.from(this.grid.popups)) {
-            if (popup !== this.cellContextMenu) {
-                popup.hide();
-            }
-        }
-
-        if (this.cellContextMenu.isVisible) {
-            this.cellContextMenu.hide();
-        }
-
-        this.cellContextMenu.showAt(tableCell, clientX, clientY);
-
-        return true;
-    }
 
     /**
      * Scrolls the table to the specified row.
@@ -1333,10 +1256,9 @@ class Table {
         this.resizeObserver.disconnect();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
-        this.cellContextMenu?.hide();
-        delete this.cellContextMenu;
-        this.cellContextMenuLongPress?.removeEvents();
-        delete this.cellContextMenuLongPress;
+        this.grid.contextMenu.hide();
+        this.removeLongPressContextMenu?.();
+        delete this.removeLongPressContextMenu;
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i]?.destroy();
