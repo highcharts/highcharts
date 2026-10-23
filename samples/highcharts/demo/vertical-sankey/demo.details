@@ -7,7 +7,10 @@ alt_text: >-
     Vertical Sankey chart, which shows energy consumed for water use in the
     United States in 2010.
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Inspiration:
+      priority: 12
   - More chart types
 ...

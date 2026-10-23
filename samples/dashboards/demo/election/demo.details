@@ -6,8 +6,11 @@ requiresManualTesting: true
 js_wrap: b
 new_until: 2024-05-11
 tags:
+  - Highcharts overview
   - Highcharts Dashboards demo
 categories:
+  - Inspiration:
+      priority: 10
   - Advanced:
         priority: 30
 use_png_thumbnail: true
