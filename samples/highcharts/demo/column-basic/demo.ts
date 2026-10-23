@@ -46,7 +46,6 @@ Highcharts.chart('container', {
         </tr>
         `,
         footerFormat: '</table>',
-        // valueSuffix: '',
         useHTML: true
     },
     plotOptions: {
