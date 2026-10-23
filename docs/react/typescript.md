@@ -97,15 +97,15 @@ import { useState } from "react";
 import { Chart, Series, type SeriesOptions } from "@highcharts/react";
 
 export default function App() {
-  const [seriesOptions] = useState<SeriesOptions<"line">>({
+  const [seriesOptions] = useState<SeriesOptions<"column">>({
     name: "Revenue",
     data: [1, 2, 3],
-    dashStyle: "Dash"
+    borderRadius: 8
   });
 
   return (
     <Chart>
-      <Series type="line" options={seriesOptions} />
+      <Series type="column" options={seriesOptions} />
     </Chart>
   );
 }
