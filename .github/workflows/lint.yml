@@ -9,6 +9,9 @@ on:
       - 'gulpfile.ts'
       - 'tools/gulptasks/lint-samples.js'
       - 'tools/gulptasks/typecheck-samples.js'
+      - 'tools/sample-typecheck/**'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/lint.yml'
 
 permissions:

@@ -1,0 +1,9 @@
+{
+  "name": "@highcharts/sample-typecheck",
+  "private": true,
+  "type": "module",
+  "exports": "./index.mjs",
+  "dependencies": {
+    "typescript": "7.1.0-beta"
+  }
+}

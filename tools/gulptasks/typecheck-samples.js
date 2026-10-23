@@ -10,11 +10,10 @@ const gulp = require('gulp');
  * @param {object} argv
  *        Task options, including a path glob or an array of globs.
  */
-function typecheckSamples(argv = {}) {
+async function typecheckSamples(argv = {}) {
     const fs = require('node:fs');
     const glob = require('glob');
     const path = require('node:path');
-    const ts = require('typescript');
     const log = require('../libs/log');
     const products = ['highcharts', 'stock', 'maps', 'gantt'];
     const selectedPath = argv.p || argv.path;
@@ -29,69 +28,68 @@ function typecheckSamples(argv = {}) {
 
     let sampleCount = 0;
     let errorCount = 0;
-    const formatHost = {
-        getCanonicalFileName: file => file,
-        getCurrentDirectory: ts.sys.getCurrentDirectory,
-        getNewLine: () => ts.sys.newLine
-    };
+    // The legacy Node plugin cannot resolve workspace exports or dynamic import.
+    // eslint-disable-next-line node/no-missing-import, node/no-unsupported-features/es-syntax
+    const { API, DiagnosticCategory, formatDiagnostics } = await import('@highcharts/sample-typecheck');
+    const api = new API();
 
-    for (const product of products) {
-        const configPath = path.resolve(`samples/tsconfig.${product}.json`);
-        const config = ts.readConfigFile(configPath, ts.sys.readFile);
-        const parsed = ts.parseJsonConfigFileContent(
-            config.config || {},
-            ts.sys,
-            path.dirname(configPath),
-            {
+    try {
+        for (const product of products) {
+            const configPath = path.resolve(`samples/tsconfig.${product}.json`);
+            const config = api.readConfigFile(configPath);
+            const parsed = api.parseJsonConfigFileContent(
+                config.config || {},
+                { configFileName: configPath }
+            );
+            const options = {
+                ...parsed.options,
                 noEmit: true,
                 composite: false,
                 incremental: false
-            }
-        );
-        const demos = parsed.fileNames.filter(file => (
-            path.basename(file) === 'demo.ts' &&
-            (!selected || selected.has(path.resolve(file)))
-        ));
-        let diagnostics = [
-            ...(config.error ? [config.error] : []),
-            ...parsed.errors
-        ];
-
-        if (demos.length) {
-            log.message(`Typechecking ${product}: ${demos.length} samples...`);
-            sampleCount += demos.length;
-            const declarations = parsed.fileNames.filter(
-                file => file.endsWith('.d.ts')
-            );
-            const host = ts.createCompilerHost(parsed.options);
-            const getSourceFile = host.getSourceFile.bind(host);
-            const sourceFiles = new Map();
-
-            // Reuse parsed declarations, but keep each demo's globals isolated.
-            host.getSourceFile = (file, ...args) => {
-                if (!sourceFiles.has(file)) {
-                    sourceFiles.set(file, getSourceFile(file, ...args));
-                }
-                return sourceFiles.get(file);
             };
-            for (const demo of demos) {
-                const program = ts.createProgram({
-                    rootNames: [...declarations, demo],
-                    options: parsed.options,
-                    host
-                });
-                diagnostics = diagnostics.concat(
-                    ts.getPreEmitDiagnostics(program)
+            const demos = parsed.fileNames.filter(file => (
+                path.basename(file) === 'demo.ts' &&
+                (!selected || selected.has(path.resolve(file)))
+            ));
+            let diagnostics = [
+                ...(config.error ? [config.error] : []),
+                ...parsed.errors
+            ];
+
+            if (demos.length) {
+                log.message(`Typechecking ${product}: ${demos.length} samples...`);
+                sampleCount += demos.length;
+                const declarations = parsed.fileNames.filter(
+                    file => file.endsWith('.d.ts')
                 );
+
+                // Keep each demo's globals and namespace augmentations isolated.
+                for (const demo of demos) {
+                    const program = api.createProgram(
+                        [...declarations, demo], options
+                    );
+                    try {
+                        diagnostics = diagnostics.concat(
+                            program.getGlobalDiagnostics(),
+                            program.getProgramDiagnostics(),
+                            program.getSyntacticDiagnostics(),
+                            program.getSemanticDiagnostics()
+                        );
+                    } finally {
+                        program.dispose();
+                    }
+                }
+            }
+
+            if (diagnostics.length) {
+                log.message(formatDiagnostics(diagnostics, api));
+                errorCount += diagnostics.filter(
+                    diagnostic => diagnostic.category === DiagnosticCategory.Error
+                ).length;
             }
         }
-
-        if (diagnostics.length) {
-            log.message(ts.formatDiagnostics(diagnostics, formatHost));
-            errorCount += diagnostics.filter(
-                diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
-            ).length;
-        }
+    } finally {
+        api.close();
     }
 
     if (errorCount) {
@@ -104,11 +102,10 @@ function typecheckSamples(argv = {}) {
 }
 
 function task() {
-    typecheckSamples(require('yargs').argv);
-    return Promise.resolve();
+    return typecheckSamples(require('yargs').argv);
 }
 
-task.description = 'Typecheck demo.ts samples after running gulp jsdoc-dts';
+task.description = 'Typecheck demo.ts samples with TypeScript 7.1 after gulp jsdoc-dts';
 task.flags = {
     '--path': 'Check matching demo.ts files (repeat for multiple globs)',
     '-p': 'Alias for --path'
