@@ -1,8 +1,9 @@
 import { deepStrictEqual, rejects } from 'node:assert';
 import { test } from 'node:test';
 import {
-    copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync
+    copyFileSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync
 } from 'node:fs';
+import { rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { typecheckSamples } from '../../../tools/gulptasks/typecheck-samples.js';
@@ -65,7 +66,8 @@ async function withFixture(
         await run(root);
     } finally {
         process.chdir(previousDirectory);
-        rmSync(root, { recursive: true, force: true });
+        // The native compiler may briefly retain its working directory on Windows.
+        await rm(root, { recursive: true, force: true, maxRetries: 10 });
     }
 }
 
