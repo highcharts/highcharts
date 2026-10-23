@@ -1,7 +1,7 @@
 import { deepStrictEqual, throws } from 'node:assert';
 import { test } from 'node:test';
 import {
-    mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync
+    copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -38,28 +38,16 @@ function withFixture(
 
         writeFileSync(join(root, 'samples/tsglobal.d.ts'),
             "import '../code/highcharts';\n");
-        writeFileSync(join(root, 'samples/tsconfig.json'), JSON.stringify({
-            compilerOptions: {
-                baseUrl: '../',
-                module: 'es2022',
-                moduleDetection: 'auto',
-                moduleResolution: 'node',
-                allowUmdGlobalAccess: true,
-                target: 'ES2022',
-                types: []
-            },
-            files: ['tsglobal.d.ts']
-        }, null, 2));
+        copyFileSync(join(__dirname, '../../../samples/tsconfig.json'),
+            join(root, 'samples/tsconfig.json'));
 
         for (const product of products) {
             const directory = join(root, 'samples', product, 'demo');
             mkdirSync(directory, { recursive: true });
-            writeFileSync(join(root, `samples/tsconfig.${product}.json`),
-                JSON.stringify({
-                    extends: './tsconfig.json',
-                    compilerOptions: { composite: true },
-                    include: [`${product}/**/*.ts`]
-                }, null, 2));
+            copyFileSync(
+                join(__dirname, `../../../samples/tsconfig.${product}.json`),
+                join(root, `samples/tsconfig.${product}.json`)
+            );
             writeFileSync(join(root, 'samples', product, `${product}.d.ts`),
                 `declare const ${product}Sample: '${product}';\n`);
             writeFileSync(join(directory, 'demo.ts'), `
