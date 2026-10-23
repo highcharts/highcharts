@@ -83,7 +83,6 @@ interface LayoutModifiers {
 /**
  * The Treegraph series type.
  *
- * @private
  * @class
  * @name Highcharts.seriesTypes.treegraph
  *
@@ -356,7 +355,7 @@ class TreegraphSeries extends TreemapSeries {
 
     /**
      * Run pre-translation by generating the nodeColumns.
-     * @private
+     * @internal
      */
     public translate(): void {
         const series = this,
@@ -615,7 +614,7 @@ class TreegraphSeries extends TreemapSeries {
 
     /**
      * Return the presentational attributes.
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: TreegraphPoint,
@@ -672,7 +671,7 @@ class TreegraphSeries extends TreemapSeries {
     }
     /**
      * Run translation operations for one node.
-     * @private
+     * @internal
      */
     public translateNode(point: TreegraphPoint): void {
         const chart = this.chart,
