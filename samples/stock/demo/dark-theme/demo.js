@@ -18,8 +18,13 @@
     };
 
     Highcharts.setOptions({
-        chart: {
-            backgroundColor: '#202d3b'
+        palette: {
+            colorScheme: 'dark',
+            dark: {
+                backgroundColor: '#202d3b',
+                neutralColor: '#e6e8ea',
+                highlightColor: '#0190b7'
+            }
         },
         accessibility: {
             typeDescription: 'Combination chart with 2 data series.'
@@ -30,20 +35,12 @@
             },
             rangeSelectorZoom: 'Timeframe'
         },
-        navigation: {
-            buttonOptions: {
-                theme: {
-                    fill: '#333333',
-                    'stroke-width': 0
-                }
-            }
-        },
         navigator: {
             handles: {
                 symbols: ['oval', 'oval'],
                 width: 8,
                 height: 24,
-                backgroundColor: '#0190b7',
+                backgroundColor: 'var(--highcharts-highlight-color-100)',
                 lineWidth: 0
             },
             maskInside: false,
@@ -52,7 +49,6 @@
                 gridLineWidth: 0,
                 labels: {
                     style: {
-                        color: '#c5c7c9',
                         opacity: 1,
                         textOutline: 0
                     }
@@ -93,44 +89,31 @@
         rangeSelector: {
             dropdown: 'always',
             buttonTheme: {
-                fill: '#333333',
                 padding: 1,
-                r: 2,
-                states: {
-                    hover: {
-                        style: {
-                            color: '#333333'
-                        }
-                    }
-                },
-                style: {
-                    color: '#c5c7c9'
-                }
+                r: 2
             },
             inputStyle: {
-                color: '#c5c7c9'
+                color: 'var(--highcharts-neutral-color-80)'
             },
             labelStyle: {
-                color: '#c5c7c9'
+                color: 'var(--highcharts-neutral-color-80)'
             }
         },
         tooltip: {
             backgroundColor: '#fbfbfb',
             borderRadius: 0,
             borderWidth: 0,
-            padding: 3
+            padding: 3,
+            style: {
+                color: '#000'
+            }
         },
         xAxis: {
-            gridLineColor: '#21323f',
+            gridLineColor: 'var(--highcharts-neutral-color-3)',
             gridLineWidth: 1,
-            lineColor: '#999999',
-            tickColor: '#999999',
-            tickLength: 5,
-            labels: {
-                style: {
-                    color: '#c5c7c9'
-                }
-            }
+            lineColor: 'var(--highcharts-neutral-color-60)',
+            tickColor: 'var(--highcharts-neutral-color-60)',
+            tickLength: 5
         },
         yAxis: {
             crosshair: {
@@ -144,14 +127,11 @@
                     }
                 }
             },
-            gridLineColor: '#21323f',
-            lineColor: '#999999',
+            gridLineColor: 'var(--highcharts-neutral-color-3)',
+            lineColor: 'var(--highcharts-neutral-color-60)',
             lineWidth: 1,
             labels: {
-                align: 'left',
-                style: {
-                    color: '#c5c7c9'
-                }
+                align: 'left'
             }
         }
     });
