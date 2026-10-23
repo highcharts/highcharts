@@ -479,6 +479,38 @@ class SMAIndicator extends LineSeries {
             indicator.visible &&
             indicator.points
         ) {
+            const oldX = indicator.getColumn('x'),
+                newX = processedData.xData,
+                overlapLast = Math.min(oldDataLength, newX.length) - 1;
+
+            let isIncrementalUpdate =
+                Math.abs(newX.length - oldDataLength) === 1 &&
+                overlapLast >= 0 &&
+                oldX[overlapLast] === newX[overlapLast];
+
+            // Length +1/-1 with matching edge x is not enough.
+            // Overlapping y values may still have changed
+            // (setData), so verify the shared range.
+            if (isIncrementalUpdate) {
+                for (const key of pointArrayMap) {
+                    const oldColumn = indicator.getColumn(key),
+                        newColumn = valueColumns[key];
+
+                    if (newColumn && oldColumn) {
+                        for (let i = 0; i <= overlapLast; i++) {
+                            if (newColumn[i] !== oldColumn[i]) {
+                                isIncrementalUpdate = false;
+                                break;
+                            }
+                        }
+
+                        if (!isIncrementalUpdate) {
+                            break;
+                        }
+                    }
+                }
+            }
+
             // When data is cropped update only available points (#9493)
             if (indicator.cropped) {
                 if (indicator.xAxis) {
@@ -496,9 +528,8 @@ class SMAIndicator extends LineSeries {
 
             } else if (
                 indicator.updateAllPoints || // #18710
-                // Omit addPoint() and removePoint() cases
-                processedData.xData.length !== oldDataLength - 1 &&
-                processedData.xData.length !== oldDataLength + 1
+                // Distinguish edge add/remove points from setData (#22081).
+                !isIncrementalUpdate
             ) {
                 overwriteData = false;
 
