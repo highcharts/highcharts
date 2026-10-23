@@ -161,6 +161,7 @@
   },
   "workspaces": [
     "tools/docs-preview",
+    "tools/sample-typecheck",
     "tests/"
   ],
   "overrides": {

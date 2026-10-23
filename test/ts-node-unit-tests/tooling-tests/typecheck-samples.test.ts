@@ -1,18 +1,19 @@
-import { deepStrictEqual, throws } from 'node:assert';
+import { deepStrictEqual, rejects } from 'node:assert';
 import { test } from 'node:test';
 import {
-    copyFileSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync
+    copyFileSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync
 } from 'node:fs';
+import { rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { typecheckSamples } from '../../../tools/gulptasks/typecheck-samples.js';
 
 const products = ['highcharts', 'stock', 'maps', 'gantt'];
 
-function withFixture(
-    run: (root: string) => void,
+async function withFixture(
+    run: (root: string) => Promise<void>,
     options: { declarations?: boolean } = {}
-): void {
+): Promise<void> {
     const root = mkdtempSync(join(tmpdir(), 'typecheck-samples-'));
     const previousDirectory = process.cwd();
 
@@ -62,10 +63,11 @@ function withFixture(
         }
 
         process.chdir(root);
-        run(root);
+        await run(root);
     } finally {
         process.chdir(previousDirectory);
-        rmSync(root, { recursive: true, force: true });
+        // The native compiler may briefly retain its working directory on Windows.
+        await rm(root, { recursive: true, force: true, maxRetries: 10 });
     }
 }
 
@@ -79,16 +81,16 @@ function findEmittedFiles(directory: string): string[] {
     });
 }
 
-test('uses the product configs and declarations for all four products', () => {
-    withFixture(() => {
+test('uses the product configs and declarations for all four products', async () => {
+    await withFixture(async () => {
         for (const product of products) {
-            typecheckSamples({ path: `samples/${product}/demo/demo.ts` });
+            await typecheckSamples({ path: `samples/${product}/demo/demo.ts` });
         }
     });
 });
 
-test('isolates globals between demos and emits no files', () => {
-    withFixture(root => {
+test('isolates globals between demos and emits no files', async () => {
+    await withFixture(async root => {
         for (const sample of ['first', 'second']) {
             const directory = join(root, 'samples/highcharts', sample);
             mkdirSync(directory, { recursive: true });
@@ -106,13 +108,13 @@ test('isolates globals between demos and emits no files', () => {
             `);
         }
 
-        typecheckSamples();
+        await typecheckSamples();
         deepStrictEqual(findEmittedFiles(root), []);
     });
 });
 
-test('throws for a real demo type error', () => {
-    withFixture(root => {
+test('throws for a real demo type error', async () => {
+    await withFixture(async root => {
         writeFileSync(join(root, 'samples/maps/demo/demo.ts'), `
             declare namespace Highcharts {
                 interface ChartOptions {
@@ -125,24 +127,24 @@ test('throws for a real demo type error', () => {
             });
         `);
 
-        throws(() => typecheckSamples(), /Sample typechecking failed/);
+        await rejects(() => typecheckSamples(), /Sample typechecking failed/);
     });
 });
 
-test('does not leak namespace augmentations between demos', () => {
-    withFixture(root => {
+test('does not leak namespace augmentations between demos', async () => {
+    await withFixture(async root => {
         const directory = join(root, 'samples/highcharts/leak');
         mkdirSync(directory, { recursive: true });
         writeFileSync(join(directory, 'demo.ts'), `
             Highcharts.chart('container', { value: 1, custom: 'leaked' });
         `);
 
-        throws(() => typecheckSamples(), /Sample typechecking failed/);
+        await rejects(() => typecheckSamples(), /Sample typechecking failed/);
     });
 });
 
-test('--path skips an unrelated failing demo', () => {
-    withFixture(root => {
+test('--path skips an unrelated failing demo', async () => {
+    await withFixture(async root => {
         const failingDemo = join(root, 'samples/highcharts/unrelated/demo.ts');
         mkdirSync(join(root, 'samples/highcharts/unrelated'), { recursive: true });
         writeFileSync(failingDemo, `
@@ -157,24 +159,24 @@ test('--path skips an unrelated failing demo', () => {
             });
         `);
 
-        typecheckSamples({ path: 'samples/highcharts/demo/demo.ts' });
+        await typecheckSamples({ path: 'samples/highcharts/demo/demo.ts' });
     });
 });
 
-test('--path preserves brace globs', () => {
-    withFixture(() => {
-        typecheckSamples({
+test('--path preserves brace globs', async () => {
+    await withFixture(async () => {
+        await typecheckSamples({
             path: 'samples/{highcharts,stock}/demo/demo.ts'
         });
     });
 });
 
-test('repeated --path selections include failures in every selected product', () => {
-    withFixture(root => {
+test('repeated --path selections include failures in every selected product', async () => {
+    await withFixture(async root => {
         writeFileSync(join(root, 'samples/stock/demo/demo.ts'),
             "Highcharts.chart('container', { value: 'not a number' });");
 
-        throws(() => typecheckSamples({
+        await rejects(() => typecheckSamples({
             path: [
                 'samples/maps/demo/demo.ts',
                 'samples/{highcharts,stock}/demo/demo.ts'
@@ -183,15 +185,31 @@ test('repeated --path selections include failures in every selected product', ()
     });
 });
 
-test('fails when no demo.ts matches --path', () => {
-    withFixture(() => {
-        throws(() => typecheckSamples({ path: 'samples/missing/**/demo.ts' }),
+test('fails when no demo.ts matches --path', async () => {
+    await withFixture(async () => {
+        await rejects(() => typecheckSamples({ path: 'samples/missing/**/demo.ts' }),
             /No demo\.ts samples matched/);
     });
 });
 
-test('fails when generated declarations are missing', () => {
-    withFixture(() => {
-        throws(() => typecheckSamples(), /Build declarations first/);
+test('fails when generated declarations are missing', async () => {
+    await withFixture(async () => {
+        await rejects(() => typecheckSamples(), /Build declarations first/);
     }, { declarations: false });
+});
+
+test('fails for a malformed product config', async () => {
+    await withFixture(async root => {
+        writeFileSync(join(root, 'samples/tsconfig.maps.json'), '{');
+
+        await rejects(() => typecheckSamples(), /Sample typechecking failed/);
+    });
+});
+
+test('fails for a demo syntax error', async () => {
+    await withFixture(async root => {
+        writeFileSync(join(root, 'samples/maps/demo/demo.ts'), 'const = ;');
+
+        await rejects(() => typecheckSamples(), /Sample typechecking failed/);
+    });
 });
