@@ -211,3 +211,30 @@ test('fails for a demo syntax error', async () => {
         await rejects(() => typecheckSamples(), /Sample typechecking failed/);
     });
 });
+
+test('uses declarations and compiler options from a demo config', async () => {
+    await withFixture(async root => {
+        const configPath = join(root, 'samples/highcharts/demo/tsconfig.json');
+        writeFileSync(join(root, 'code/sample-only.d.ts'),
+            'declare const sampleOnly: number;');
+        writeFileSync(configPath, JSON.stringify({
+            extends: '../../tsconfig.highcharts.json',
+            files: [
+                '../../tsglobal.d.ts',
+                '../../../code/sample-only.d.ts',
+                './demo.ts'
+            ],
+            include: [],
+            compilerOptions: { strictNullChecks: true }
+        }));
+        const demoPath = join(root, 'samples/highcharts/demo/demo.ts');
+        writeFileSync(demoPath, 'const value: number = sampleOnly;');
+        await typecheckSamples({ path: 'samples/highcharts/demo/demo.ts' });
+
+        writeFileSync(demoPath, 'const value: number = null;');
+        await rejects(() => typecheckSamples({
+            path: 'samples/highcharts/demo/demo.ts'
+        }),
+            /Sample typechecking failed/);
+    });
+});

@@ -41,12 +41,6 @@ async function typecheckSamples(argv = {}) {
                 config.config || {},
                 { configFileName: configPath }
             );
-            const options = {
-                ...parsed.options,
-                noEmit: true,
-                composite: false,
-                incremental: false
-            };
             const demos = parsed.fileNames.filter(file => (
                 path.basename(file) === 'demo.ts' &&
                 (!selected || selected.has(path.resolve(file)))
@@ -59,26 +53,53 @@ async function typecheckSamples(argv = {}) {
             if (demos.length) {
                 log.message(`Typechecking ${product}: ${demos.length} samples...`);
                 sampleCount += demos.length;
-                const declarations = parsed.fileNames.filter(
-                    file => file.endsWith('.d.ts')
-                );
-
                 // Keep each demo's globals and namespace augmentations isolated.
                 for (const demo of demos) {
+                    const demoConfigPath = path.resolve(
+                        path.dirname(demo), 'tsconfig.json'
+                    );
+                    const demoConfig = fs.existsSync(demoConfigPath) ?
+                        api.readConfigFile(demoConfigPath) : config;
+                    const demoParsed = fs.existsSync(demoConfigPath) ?
+                        api.parseJsonConfigFileContent(
+                            demoConfig.config || {},
+                            { configFileName: demoConfigPath }
+                        ) : parsed;
+                    const declarations = demoParsed.fileNames.filter(
+                        file => file.endsWith('.d.ts')
+                    );
+                    diagnostics = diagnostics.concat(
+                        ...(demoConfig.error ? [demoConfig.error] : []),
+                        ...demoParsed.errors
+                    );
                     const program = api.createProgram(
-                        [...declarations, demo], options
+                        [...new Set([...declarations, demo])],
+                        {
+                            ...demoParsed.options,
+                            noEmit: true,
+                            composite: false,
+                            incremental: false
+                        }
                     );
                     try {
-                        diagnostics = diagnostics.concat(
-                            program.getGlobalDiagnostics(),
-                            program.getProgramDiagnostics(),
-                            program.getSyntacticDiagnostics(),
-                            program.getSemanticDiagnostics()
+                        const demoDiagnostics = [
+                            ...program.getGlobalDiagnostics(),
+                            ...program.getProgramDiagnostics(),
+                            ...program.getSyntacticDiagnostics(),
+                            ...program.getSemanticDiagnostics()
+                        ];
+                        diagnostics = diagnostics.concat(demoDiagnostics);
+                        process.stdout.write(
+                            demoDiagnostics.some(
+                                diagnostic => diagnostic.category ===
+                                    DiagnosticCategory.Error
+                            ) ? 'F' : '.'
                         );
                     } finally {
                         program.dispose();
                     }
                 }
+                process.stdout.write('\n');
             }
 
             if (diagnostics.length) {
@@ -92,6 +113,9 @@ async function typecheckSamples(argv = {}) {
         api.close();
     }
 
+    if (sampleCount) {
+        process.stdout.write('\n');
+    }
     if (errorCount) {
         throw new Error(`Sample typechecking failed with ${errorCount} errors.`);
     }
