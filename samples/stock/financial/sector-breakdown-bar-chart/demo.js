@@ -14,7 +14,7 @@ const globalStockSectorBreakdown = {
     311: 'Technology'
 };
 
-// Parse data from two connectors and return a chart-ready DataTable
+// Parse data from a connector and return a chart-ready DataTable
 function buildDataTable(source) {
     const valuesByType = (typeColumn, valueColumn) => source
         .getRows(0, source.getRowCount(), [typeColumn, valueColumn])
