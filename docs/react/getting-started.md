@@ -29,7 +29,7 @@ npm install @highcharts/react
 
 ## 2. Create your chart
 
-Start by creating a simple chart using a series component:
+Every chart starts with a [chart component](https://www.highcharts.com/docs/react/components/chart), and all other components go inside it. Start by creating a simple chart using a series component:
 
 ```tsx
 import { Chart } from "@highcharts/react";
@@ -118,7 +118,7 @@ export default function MarkerClustersChart() {
           [1, 5],
           [1, 6],
         ]}
-        cluster={{ enabled: true }}
+        options={{ cluster: { enabled: true } }}
       />
     </Chart>
   );

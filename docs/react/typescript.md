@@ -1,8 +1,8 @@
 ---
 description: >-
-  Type the Chart options prop with exported ChartOptions, use
-  HighchartsReactRefObject for chart refs, and see links to the chart
-  component and Highcharts declarations for common integration patterns.
+  Type the Chart options prop with ChartOptions, chart refs with
+  HighchartsReactRefObject, and series with SeriesType, SeriesOptions, and
+  SeriesProps, with links to the chart component and Highcharts declarations.
 ---
 
 # TypeScript
@@ -57,6 +57,78 @@ export default function App() {
   return (
     <Chart ref={chartRef}>
       <LineSeries data={[1, 2, 3]} />
+    </Chart>
+  );
+}
+```
+
+### `SeriesType`
+
+Use `SeriesType` to type a state variable that holds the current series type, for example when switching series types at runtime:
+
+```tsx
+import { useState } from "react";
+import { Chart, Series, type SeriesType } from "@highcharts/react";
+
+export default function App() {
+  const [seriesType, setSeriesType] = useState<SeriesType>("line");
+
+  function toggleSeriesType() {
+    setSeriesType(prev => (prev === "line" ? "column" : "line"));
+  }
+
+  return (
+    <>
+      <button onClick={toggleSeriesType}>Toggle series type</button>
+      <Chart>
+        <Series type={seriesType} data={[1, 2, 3]} />
+      </Chart>
+    </>
+  );
+}
+```
+
+### `SeriesOptions`
+
+`SeriesOptions<K>` resolves to the options object for a specific series type, with the `type` key omitted. Use it to type a series configuration object that you pass to the `options` prop of a `Series` component with the same `type`:
+
+```tsx
+import { useState } from "react";
+import { Chart, Series, type SeriesOptions } from "@highcharts/react";
+
+export default function App() {
+  const [seriesOptions] = useState<SeriesOptions<"column">>({
+    name: "Revenue",
+    data: [1, 2, 3],
+    borderRadius: 8
+  });
+
+  return (
+    <Chart>
+      <Series type="column" options={seriesOptions} />
+    </Chart>
+  );
+}
+```
+
+### `SeriesProps`
+
+`SeriesProps<K>` resolves to the full prop set for a `Series` component constrained to series type `K`. Use it to type a props object that you spread onto a `Series` component:
+
+```tsx
+import { useState } from "react";
+import { Chart, Series, type SeriesProps } from "@highcharts/react";
+
+export default function App() {
+  const [seriesProps] = useState<SeriesProps<"column">>({
+    name: "Revenue",
+    data: [1, 2, 3],
+    options: { borderRadius: 10 }
+  });
+
+  return (
+    <Chart>
+      <Series type="column" {...seriesProps} />
     </Chart>
   );
 }
