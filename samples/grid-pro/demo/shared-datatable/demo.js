@@ -30,7 +30,7 @@ const dataTable = new Grid.DataTable({
 const chart = Highcharts.chart('chart', {
     dataTable,
     title: {
-        text: 'U.S Solar Employment Growth'
+        text: 'U.S. Solar Employment Growth'
     },
     yAxis: {
         title: {
@@ -60,12 +60,14 @@ Grid.grid('grid', {
         cells: {
             format: '{#if (ne value null)}{value:,.f}{else}-{/if}',
             editMode: {
-                enabled: true
+                enabled: true,
+                validationRules: ['notEmpty', 'number']
             },
             events: {
                 afterEdit: function () {
-                    // Re-read all series from the shared DataTable
-                    chart.series.forEach(s => s.setData(void 0, false));
+                    // Series don't listen to cell edits, so re-read them from
+                    // the shared DataTable
+                    chart.series.forEach(s => s.setData(undefined, false));
                     chart.redraw();
                 }
             }
@@ -73,7 +75,7 @@ Grid.grid('grid', {
     },
     columns: [{
         id: 'Year',
-        width: 65,
+        width: 80,
         cells: {
             format: '{value:.f}',
             editMode: {
