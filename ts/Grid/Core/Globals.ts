@@ -101,6 +101,7 @@ export const rawClassNames = {
     columnFilterOperatorSpacer: 'column-filter-operator-spacer',
     contextMenuCell: 'context-menu-cell',
     menuContainer: 'menu-container',
+    menuKeyboard: 'menu-keyboard',
     menuItem: 'menu-item',
     menuHeader: 'menu-header',
     menuHeaderCategory: 'menu-header-category',

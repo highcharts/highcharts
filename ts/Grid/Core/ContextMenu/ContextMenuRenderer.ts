@@ -128,6 +128,27 @@ export function renderMenuItems(
 
         const isBranch = !!item.items?.length;
 
+        let subMenu: ContextSubMenu | undefined;
+
+        const openSubMenu = (button: MenuButton): ContextSubMenu => {
+            closeSiblingSubMenus(menu, button);
+
+            if (!subMenu) {
+                subMenu = button.popup = new ContextSubMenu(
+                    menu.grid,
+                    button,
+                    context,
+                    item.items || []
+                );
+            }
+
+            if (!subMenu.isVisible) {
+                subMenu.show(button.wrapper);
+            }
+
+            return subMenu;
+        };
+
         const button: MenuButton | undefined = new MenuButton({
             label: item.label,
             icon: item.icon,
@@ -138,25 +159,37 @@ export function renderMenuItems(
                 }
 
                 if (isBranch) {
-                    closeSiblingSubMenus(menu, button);
-
-                    if (!button.popup) {
-                        button.popup = new ContextSubMenu(
-                            menu.grid,
-                            button,
-                            context,
-                            item.items || []
-                        );
-                    }
-
-                    if (!button.popup.isVisible) {
-                        button.popup.show(button.wrapper);
-                    }
+                    // Clicking the button focuses it, which takes the focus
+                    // back out of a submenu a hover had already opened.
+                    openSubMenu(button).buttons[0]?.focus();
                     return;
                 }
 
                 item.onClick?.();
                 closeMenuTree(menu);
+            },
+            onHover: (): void => {
+                // The branch already showing is the one the pointer is on.
+                if (!button || item.disabled || button.popup?.isVisible) {
+                    return;
+                }
+
+                const focused = document.activeElement as HTMLElement | null;
+
+                closeSiblingSubMenus(menu, button);
+
+                if (isBranch) {
+                    openSubMenu(button);
+                }
+
+                // A hover is none of the keyboard's business: opening a menu
+                // focuses its first item and closing one leaves the focus
+                // nowhere, so it goes back where it was.
+                if (focused?.isConnected) {
+                    focused.focus();
+                } else {
+                    button.focus();
+                }
             }
         }).add(menu);
 

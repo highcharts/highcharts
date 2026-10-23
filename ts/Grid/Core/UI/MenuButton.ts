@@ -278,6 +278,20 @@ export class MenuButton implements Button {
         this.eventListenerDestroyers.push((): void => {
             this.buttonEl?.removeEventListener('click', clickListener);
         });
+
+        const { onHover } = this.options;
+        if (!onHover) {
+            return;
+        }
+
+        const hoverListener = (event: MouseEvent): void => {
+            onHover(event, this);
+        };
+
+        this.buttonEl?.addEventListener('mouseenter', hoverListener);
+        this.eventListenerDestroyers.push((): void => {
+            this.buttonEl?.removeEventListener('mouseenter', hoverListener);
+        });
     }
 
     /**
@@ -338,6 +352,11 @@ export interface MenuButtonOptions {
      * The click handler for the button.
      */
     onClick?: (event: MouseEvent, button: MenuButton) => void;
+
+    /**
+     * The handler for the pointer entering the button.
+     */
+    onHover?: (event: MouseEvent, button: MenuButton) => void;
 }
 
 

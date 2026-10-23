@@ -138,7 +138,9 @@ override may only restrict an item: `visible` is combined with `and`,
 ## Nested submenus
 
 Give an item its own `items` to make it a branch. Branch items open their
-submenu on click and run no callback of their own.
+submenu on hover, and on click for touch, and run no callback of their own.
+Moving the pointer to another item closes the submenu again; the keyboard
+focus stays where it is, since a hover is not a move through the menu.
 
 To place row pinning actions in a submenu, define the branch yourself and list
 the individual built-in action IDs inside it. This example applies to Grid Pro
@@ -258,7 +260,8 @@ menus fall back to being laid out inside the Grid, and clipped by it.
 
 When a cell is focused, open its menu with the `ContextMenu` key or
 `Shift+F10`. The same keys work on an element you attached a menu to, once it
-has the focus.
+has the focus. Inside the menu, the arrow keys move between items, `ArrowRight`
+opens the submenu of a branch and `ArrowLeft` closes it again.
 
 On touch devices, a long-press opens the menu, on a cell and on an attached
 element alike. This matters most on iOS, where browsers do not fire the

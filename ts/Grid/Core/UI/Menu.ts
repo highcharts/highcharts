@@ -30,6 +30,32 @@ import MenuButton from './MenuButton.js';
 
 const { makeHTMLElement } = GridUtils;
 
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/**
+ * Whether the keyboard is what is driving the menus, which decides if the
+ * focused item is marked as such. Shared, so that a submenu opened with the
+ * keyboard is marked from the moment it appears.
+ */
+let keyboardActive = false;
+
+// Which of the two is driving is decided out here, because the key or the
+// press that opens a menu lands before the menu exists. Both run in the
+// capture phase, so the menu they open already reads the answer.
+if (typeof document !== 'undefined') {
+    document.addEventListener('keydown', (): void => {
+        keyboardActive = true;
+    }, true);
+
+    document.addEventListener('pointerdown', (): void => {
+        keyboardActive = false;
+    }, true);
+}
+
 
 /* *
  *
@@ -95,6 +121,7 @@ export abstract class Menu extends Popup {
 
     public override show(anchorElement?: HTMLElement): void {
         super.show(anchorElement);
+        this.markKeyboardUse();
         this.buttons[0]?.focus();
     }
 
@@ -180,6 +207,18 @@ export abstract class Menu extends Popup {
         return false;
     }
 
+    /**
+     * Marks the items as keyboard driven or not, which is what shows the
+     * focused one. A menu opened with the pointer marks nothing: the item
+     * under the pointer is already telling the user where they are.
+     */
+    private markKeyboardUse(): void {
+        this.itemsContainer?.classList.toggle(
+            Globals.getClassName('menuKeyboard'),
+            keyboardActive
+        );
+    }
+
     protected override addEventListeners(): void {
         super.addEventListeners();
 
@@ -190,13 +229,26 @@ export abstract class Menu extends Popup {
 
         const insideMouseDownListener = (event: MouseEvent): void => {
             event.stopPropagation();
+            this.markKeyboardUse();
+        };
+
+        // After the document listener has had its say, and before
+        // `onKeyDown`, which the menus override and return from early.
+        const insideKeyDownListener = (): void => {
+            this.markKeyboardUse();
         };
 
         container.addEventListener('mousedown', insideMouseDownListener);
+        container.addEventListener('keydown', insideKeyDownListener, true);
         this.eventListenerDestroyers.push((): void => {
             container.removeEventListener(
                 'mousedown',
                 insideMouseDownListener
+            );
+            container.removeEventListener(
+                'keydown',
+                insideKeyDownListener,
+                true
             );
         });
     }

@@ -903,6 +903,120 @@ test.describe('Cell Context Menu', () => {
             await expect(popup).not.toContainText('Unpin row');
         });
 
+        test('Hovering a branch opens its submenu, a leaf closes it', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-hover');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-hover';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            id: ['ROW-001'],
+                            value: [1]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                enabled: true,
+                                items: [{
+                                    label: 'Leaf'
+                                }, {
+                                    label: 'Branch',
+                                    items: [{ label: 'First child' }]
+                                }]
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-hover tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+            await cell.click({ button: 'right' });
+
+            const popups = page.locator('.hcg-popup');
+            const root = popups.first();
+            const focusedLabel = (): Promise<string> => page.evaluate(() => (
+                (document.activeElement as HTMLButtonElement | null)
+                    ?.innerText?.trim() || ''
+            ));
+
+            expect(await focusedLabel()).toContain('Leaf');
+
+            await root.locator('.hcg-menu-item', { hasText: 'Branch' })
+                .hover();
+
+            await expect(popups).toHaveCount(2);
+            await expect(popups.last()).toContainText('First child');
+
+            // The pointer opens the submenu without taking the keyboard
+            // along, so the focus stays where it was.
+            expect(await focusedLabel()).toContain('Leaf');
+
+            await root.locator('.hcg-menu-item', { hasText: 'Leaf' }).hover();
+
+            await expect(popups).toHaveCount(1);
+        });
+
+        test('The focused item is marked once the keyboard is used', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-focus-ring');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-focus-ring';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            id: ['ROW-001'],
+                            value: [1]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                enabled: true,
+                                items: [
+                                    { label: 'First' },
+                                    { label: 'Second' }
+                                ]
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-focus-ring tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+            const marked = (): Promise<string[]> => page.evaluate(() => (
+                [...document.querySelectorAll('.hcg-menu-item')]
+                    .filter((el): boolean => (
+                        getComputedStyle(el).boxShadow !== 'none'
+                    ))
+                    .map((el): string => (el as HTMLElement).innerText.trim())
+            ));
+
+            await cell.click({ button: 'right' });
+
+            // Opened with the pointer: nothing is marked, although the first
+            // item holds the focus for whoever reaches for a key.
+            await expect(page.locator('.hcg-popup')).toHaveCount(1);
+            expect(await marked()).toEqual([]);
+
+            await page.keyboard.press('ArrowDown');
+
+            expect(await marked()).toEqual(['Second']);
+        });
+
         test('ArrowRight opens submenu and focuses first child', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-key-right');
