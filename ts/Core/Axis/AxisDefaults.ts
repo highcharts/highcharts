@@ -2839,7 +2839,8 @@ namespace AxisDefaults {
              *
              * On polar charts, if it's a percentage string, it is interpreted
              * the same as [series.radius](#plotOptions.gauge.radius), so the
-             * label can be aligned under the gauge's shape.
+             * label can be aligned under the gauge's shape. Also accepts a
+             * CSS length expression, e.g. `'1em'` or `'calc(var(--gap) * 2)'`.
              *
              * @sample {highcharts} highcharts/yaxis/labels-distance/
              *         Polar chart, labels centered under the arc
@@ -2997,9 +2998,12 @@ namespace AxisDefaults {
 
         /**
          * The width of a vertical scrollbar or height of a horizontal
-         * scrollbar. Defaults to 20 on touch devices.
+         * scrollbar, either in pixels or as a CSS length expression, e.g.
+         * `'1rem'`. A percentage like `'5%'` is relative to the chart
+         * height, also for a vertical scrollbar. Defaults to 20 on touch
+         * devices.
          *
-         * @type      {number}
+         * @type      {number|Highcharts.CSSLength}
          * @default   14
          * @since     4.2.6
          * @product   highstock

@@ -50,8 +50,7 @@ import {
     fireEvent,
     isArray,
     isNumber,
-    merge,
-    relativeLength
+    merge
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -970,11 +969,11 @@ class ColorAxis extends Axis implements ColorAxisBase {
                 legend: legendOptions
             } = chart.options,
             width = defined(colorAxisWidth) ?
-                relativeLength(colorAxisWidth, chart.chartWidth) :
+                chart.relativeLength(colorAxisWidth, chart.chartWidth) :
                 (legendOptions?.symbolWidth ??
                     (horiz ? ColorAxis.defaultLegendLength : 12)),
             height = defined(colorAxisHeight) ?
-                relativeLength(colorAxisHeight, chart.chartHeight) :
+                chart.relativeLength(colorAxisHeight, chart.chartHeight) :
                 (legendOptions?.symbolHeight ??
                     (horiz ? 12 : ColorAxis.defaultLegendLength));
 

@@ -1,0 +1,18 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="text" path="chart.width" value="clamp(320px, 90vw, 760px)"></highcharts-control>
+      <highcharts-control type="text" path="chart.marginLeft" value="max(60px, 6vw)"></highcharts-control>
+      <highcharts-control type="text" path="legend.maxWidth" value="min(300px, 30vw)"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

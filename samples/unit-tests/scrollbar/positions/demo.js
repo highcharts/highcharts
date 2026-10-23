@@ -185,6 +185,26 @@ QUnit.test(
             true,
             'Correct scrollbar bar position.'
         );
+
+        chart.yAxis[0].update({
+            scrollbar: {
+                height: '5%'
+            }
+        });
+        chart.setSize(void 0, chart.chartHeight + 200, false);
+        scrollbar = chart.yAxis[0].scrollbar;
+
+        assert.strictEqual(
+            scrollbar.size,
+            chart.chartHeight / 20,
+            'A percentage size should follow the chart height, #23989.'
+        );
+
+        assert.strictEqual(
+            scrollbar.scrollbar.getBBox().width,
+            scrollbar.size - scrollbar.trackBorderWidth,
+            'The thumb should follow the scrollbar size, #23989.'
+        );
     }
 );
 

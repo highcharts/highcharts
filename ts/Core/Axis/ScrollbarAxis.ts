@@ -197,7 +197,7 @@ namespace ScrollbarAxis {
             // Reset scrollbars offsets
             axis.chart.scrollbarsOffsets = [0, 0];
             axis.chart.axisOffset[index] +=
-                scrollbar.size + (scrollbar.options.margin || 0);
+                scrollbar.updateSize() + (scrollbar.options.margin || 0);
         }
     }
 
