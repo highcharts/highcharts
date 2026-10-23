@@ -14,6 +14,10 @@ sum or an average of each column, above or below the table body. The rows stay
 in place while the body scrolls, and they are recomputed whenever the data is
 sorted, filtered or edited.
 
+Summary rows work with the local data provider. With
+[server-side data handling](https://www.highcharts.com/docs/grid/data-handling/serverside),
+no summary rows are rendered.
+
 ## Basic configuration
 
 Set `summaryRows` to an object with a default `aggregator`. Use `columns` to
@@ -104,15 +108,14 @@ row index is used.
 By default, a summary row aggregates the rows left after filtering, across all
 pages. Set `scope` to aggregate another stage of the data pipeline:
 
-- `'all'`: every source row, ignoring the active filters. Requires a local data
-  provider.
+- `'all'`: every source row, ignoring the active filters.
 - `'filtered'` (default): the rows left by filtering, across all pages.
 - `'page'`: the rows of the current page. Requires
   [pagination](https://www.highcharts.com/docs/grid/rows/pagination), and is not
   supported with TreeView or row grouping.
 
-When a scope does not apply, the row aggregates the filtered rows instead, and a
-warning is logged to the console once.
+When `'page'` does not apply, the row aggregates the filtered rows instead, and
+a warning is logged to the console once.
 
 Several rows with different scopes can show a page subtotal, a filtered total
 and a grand total side by side:
