@@ -86,7 +86,10 @@ const chart = Highcharts.chart('container', {
 document.getElementById('controls').onkeydown = function (e) {
     let lastPlayed;
 
-    const speaker = new Highcharts.sonification.SonificationSpeaker({
+    const speaker = new (
+        Highcharts.sonification.SonificationSpeaker as unknown as
+        typeof Highcharts.SonificationSpeaker
+    )({
         volume: 0.4, rate: 2
     });
 
@@ -114,12 +117,16 @@ document.getElementById('controls').onkeydown = function (e) {
 
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         chart.sonification.playAdjacent(
-            e.key === 'ArrowRight', onSinglePointPlayed
+            e.key === 'ArrowRight' ? 1 : 0, onSinglePointPlayed
         );
 
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         const newSeries = chart.sonification
-            .playAdjacentSeries(e.key === 'ArrowUp', 'x', onSinglePointPlayed);
+            .playAdjacentSeries(
+                e.key === 'ArrowUp' ? 1 : 0,
+                'x',
+                onSinglePointPlayed
+            );
         lastPlayed = chart.sonification.getLastPlayedPoint();
         if (lastPlayed.x && newSeries) {
             // Speak new series if not first point

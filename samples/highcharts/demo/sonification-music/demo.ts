@@ -4,6 +4,14 @@ declare namespace Highcharts {
     interface Chart {
         plotBackground: Highcharts.SVGElement;
     }
+    interface Sonification {
+        timeline: {
+            channels: Array<{
+                events: Array<{ relatedPoint: Highcharts.Point }>;
+                engine: { setMasterVolume: (volume: number) => void };
+            }>;
+        };
+    }
 }
 
 type ExtendedSeriesOptions = Highcharts.SeriesOptionsType & {

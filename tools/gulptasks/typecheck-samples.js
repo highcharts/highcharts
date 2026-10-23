@@ -36,12 +36,12 @@ function typecheckSamples(argv = {}) {
     };
 
     for (const product of products) {
-        const configPath = path.resolve(`samples/tsconfig.${product}.json`);
-        const config = ts.readConfigFile(configPath, ts.sys.readFile);
+        const productConfigPath = path.resolve(`samples/tsconfig.${product}.json`);
+        const productConfig = ts.readConfigFile(productConfigPath, ts.sys.readFile);
         const parsed = ts.parseJsonConfigFileContent(
-            config.config || {},
+            productConfig.config || {},
             ts.sys,
-            path.dirname(configPath),
+            path.dirname(productConfigPath),
             {
                 noEmit: true,
                 composite: false,
@@ -53,35 +53,58 @@ function typecheckSamples(argv = {}) {
             (!selected || selected.has(path.resolve(file)))
         ));
         let diagnostics = [
-            ...(config.error ? [config.error] : []),
+            ...(productConfig.error ? [productConfig.error] : []),
             ...parsed.errors
         ];
 
         if (demos.length) {
             log.message(`Typechecking ${product}: ${demos.length} samples...`);
             sampleCount += demos.length;
-            const declarations = parsed.fileNames.filter(
-                file => file.endsWith('.d.ts')
-            );
-            const host = ts.createCompilerHost(parsed.options);
-            const getSourceFile = host.getSourceFile.bind(host);
-            const sourceFiles = new Map();
-
-            // Reuse parsed declarations, but keep each demo's globals isolated.
-            host.getSourceFile = (file, ...args) => {
-                if (!sourceFiles.has(file)) {
-                    sourceFiles.set(file, getSourceFile(file, ...args));
-                }
-                return sourceFiles.get(file);
-            };
             for (const demo of demos) {
+                const demoConfigPath = path.resolve(
+                    path.dirname(demo),
+                    'tsconfig.json'
+                );
+                const configPath = fs.existsSync(demoConfigPath) ?
+                    demoConfigPath :
+                    productConfigPath;
+                const config = ts.readConfigFile(configPath, ts.sys.readFile);
+                const demoParsed = ts.parseJsonConfigFileContent(
+                    config.config || {},
+                    ts.sys,
+                    path.dirname(configPath),
+                    {
+                        noEmit: true,
+                        composite: false,
+                        incremental: false
+                    }
+                );
+                const declarations = demoParsed.fileNames.filter(
+                    file => file.endsWith('.d.ts')
+                );
+                const host = ts.createCompilerHost(demoParsed.options);
+                const getSourceFile = host.getSourceFile.bind(host);
+                const sourceFiles = new Map();
+
+                // Reuse parsed declarations, but keep each demo's globals isolated.
+                host.getSourceFile = (file, ...args) => {
+                    if (!sourceFiles.has(file)) {
+                        sourceFiles.set(file, getSourceFile(file, ...args));
+                    }
+                    return sourceFiles.get(file);
+                };
+
                 const program = ts.createProgram({
-                    rootNames: [...declarations, demo],
-                    options: parsed.options,
+                    rootNames: [...new Set([...declarations, demo])],
+                    options: demoParsed.options,
                     host
                 });
                 const demoDiagnostics = ts.getPreEmitDiagnostics(program);
-                diagnostics = diagnostics.concat(demoDiagnostics);
+                diagnostics = diagnostics.concat(
+                    ...(config.error ? [config.error] : []),
+                    ...demoParsed.errors,
+                    ...demoDiagnostics
+                );
                 process.stdout.write(
                     demoDiagnostics.some(
                         diagnostic => diagnostic.category === ts.DiagnosticCategory.Error
